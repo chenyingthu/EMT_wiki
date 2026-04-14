@@ -310,3 +310,8 @@
 - 修复 10 个未解析 wikilink（作者-年份格式 → 实际来源页文件名）
 - interpolation-method.md: 5 处, wind-farm-modeling.md: 3 处, gole.md: 1 处, mahseredjian.md: 1 处
 - 未解析 wikilink: 11 → 0（overview.md 中 `[[wikilink]]` 为文档语法说明）
+
+## [2026-04-14] llm-sources | LLM 分析填充 50 篇来源页
+- 编写 tools/analyze_pending_sources.py：PDF 文本提取 → LLM 分析 → 自动填充来源页
+- 50 篇来源页的 5 个章节全部填充：核心贡献、使用的方法、涉及的模型、相关主题、主要发现
+- 待分析占位符: 235 → 0（全部清除）
