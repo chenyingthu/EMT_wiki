@@ -67,16 +67,16 @@ created: "2026-04-14"
 
 | 论文 | 年份 |
 |------|------|
-| [[multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|Multi-rate real time hybrid simulation of controllable]] | 2026 |
+| [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|Multi-rate real time hybrid simulation of controllable]] | 2026 |
 | [[interpolation-for-power-electronic-circuit-simulation-revisited-with-matrix-expo|Interpolation for power electronic circuit simulation revisit]] | 2025 |
 | [[stability-evaluation-of-interpolation-extrapolation-and-numerical-oscillation-da|Stability evaluation of interpolation, extrapolation and num]] | 2025 |
-| [[shifting-frequency-analysis-based-real-time-simulation-method-for-dfig-wind-turb|Shifting frequency analysis based real-time simulation method]] | 2025 |
+| [[modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag|Shifting frequency analysis based real-time simulation method]] | 2025 |
 | [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|27&28/Multi-rate real time hybrid simulation of controllable]] | 2026 |
 | [[supplementary-techniques-for-2s-dirk-based-emt-simulations|Supplementary techniques for 2S-DIRK based EMT simulations]] | 2026 |
 | [[基于rtds和fpga联合仿真平台的多速率实时仿真方法|基于RTDS和FPGA联合仿真平台的多速率实时仿真方法]] | 2026 |
 | [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations|Stability assessment of multi-rate electromagnetic transient]] | 2026 |
 | [[stability-improved-network-partition-based-on-a-small-step-synthesis-model-for-e|Stability improved network partition based on a small step s]] | 2026 |
-| [[shu-2018-multi-rate-mmc|Shu 2018 (多速率MMC)]] | 2018 |
-| [[mu-2014-multi-rate-emt|Mu 2014 (多速率EMT)]] | 2014 |
+| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|Shu 2018 (多速率MMC)]] | 2018 |
+| [[a-parallel-multi-rate-electromagnetic-transient-simulation-algorithm-based-on-ne|Mu 2014 (多速率EMT)]] | 2014 |
 | [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems|Shifted frequency analysis EMTP multirate simulation of power]] | 2024 |
-| [[shu-2018-multi-rate-emt|Shu 2018 (MMC多速率EMT)]] | 2018 |
+| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|Shu 2018 (MMC多速率EMT)]] | 2018 |

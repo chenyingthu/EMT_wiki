@@ -74,7 +74,7 @@ created: "2026-04-14"
 
 | 论文 | 年份 |
 |------|------|
-| [[hussein-2013-type-4-wind|Hussein 2013 (4型风电等值)]] | 2013 |
-| [[yang-2011-wind-farm-aggregation|Yang 2011 (永磁风机群等值聚合)]] | 2011 |
+| [[a-type-4-wind-power-plant-equivalent-model|Hussein 2013 (4型风电等值)]] | 2013 |
+| [[an-aggregation-method-of-permanent-magnet-synchronous-wind-farms-for-electromech|Yang 2011 (永磁风机群等值聚合)]] | 2011 |
 | [[modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag|Modeling Method for DFIG-Based Wind Farm in High-Efficiency ]] | 2025 |
-| [[based-on-single-machine-model-extension-of-direct-drive-wind-farm-general-equiva|基于单机模型扩展的直驱风电场通用等值模型构建方法]] | 2026 |
+| [[基于单机模型扩展的直驱风电场通用等值模型构建方法|基于单机模型扩展的直驱风电场通用等值模型构建方法]] | 2026 |

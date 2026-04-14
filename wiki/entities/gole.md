@@ -50,4 +50,4 @@ A.M. Gole 是曼尼托巴大学（University of Manitoba）电气与计算机工
 | [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del|Rational approximation of frequency domain responses by vect]] | 1999 |
 | [[passivity-enforcement-for-transmission-line-models|Passivity enforcement for transmission line models]] | 2009 |
 | [[passivity-enforcement-of-wideband-model-through-a-new-and-full-perturbation-form|Passivity enforcement of wideband model through a new and fu]] | 2024 |
-| [[partitioning-and-optimizing-the-accuracy-equation-solving-process-of-power-syste|Partitioning and optimizing the accuracy equation solving pr]] | 2026 |
+| [[reduced-order-and-simultaneous-solution-of-power-and-control-system-equations-in|Partitioning and optimizing the accuracy equation solving pr]] | 2026 |

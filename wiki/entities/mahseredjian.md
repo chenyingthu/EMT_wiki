@@ -50,4 +50,4 @@ Jean Mahseredjian 是蒙特利尔理工学院（Polytechnique Montreal）教授�
 | [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transfo]] | 2014 |
 | [[a-novel-decoupled-emt-approach-and-parallel-simulation-framework-for-modularized|A Novel Decoupled EMT Approach and Parallel Simulation Frame]] | 2023 |
 | [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
-| [[emtp截断误差分析|EMTP截断误差分析]] | 2024 |
+| [[analysis-and-estimation-of-truncation-errors-in-modeling-complex-resonant-circui-fix|EMTP截断误差分析]] | 2024 |
