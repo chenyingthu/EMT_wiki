@@ -261,3 +261,25 @@
 - 分类页总数: 29 → 40
 - 未解析 wikilink: 11 → 0 (全部解析)
 - 更新 tools/build_backrefs.py：新增页面纳入自动构建
+
+## [2026-04-14] llm-deep | LLM 深度内容分析 — 11 个分类页
+- 编写 tools/deep_analyze_taxonomy.py：PDF 文本提取 → LLM 结构化分析 → checkpoint 保存
+- 编写 tools/generate_enriched_page.py：从分析结果生成富化分类页（方法对比表、设备统计、验证分布、技术演进、关键发现）
+- 已完成深度分析的分类页（11 页，共 494 篇论文）：
+  | 页面 | 论文数 | 行数 |
+  |------|--------|------|
+  | mmc-model | 73 | 539 |
+  | transmission-line-model | 56 | 463 |
+  | transformer-model | 44 | 407 |
+  | real-time-simulation | 52 | 339 |
+  | frequency-dependent-modeling | 52 | 326 |
+  | parallel-computing | 48 | 302 |
+  | cable-model | 28 | 296 |
+  | co-simulation | 46 | 287 |
+  | dynamic-phasor | 37 | 251 |
+  | vsc-model | 19 | 167+ |
+  | dfig-model | 18 | 158+ |
+  | average-value-model | 13 | 148+ |
+- 分析工具支持 16 种分类 wikilink
+- 论文 LLM 分析成功率: 486/486 = 100%
+- 下一步：继续增强剩余分类页（synchronous-machine-model, fdne-model, 各方法页等）
