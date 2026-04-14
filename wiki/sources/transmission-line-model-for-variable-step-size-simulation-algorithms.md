@@ -25,7 +25,9 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 ## 使用的方法
 
-（待进一步分析）
+- [[变步长仿真算法|变步长仿真算法]]
+- [[输电线路建模方法|输电线路建模方法]]
+- [[电磁暂态与机电暂态联合仿真|电磁暂态与机电暂态联合仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +35,11 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态|电磁暂态]]
+- [[暂态稳定|暂态稳定]]
+- [[变步长仿真|变步长仿真]]
+- [[波过程仿真|波过程仿真]]
+- [[混合仿真|混合仿真]]
 
 ## 主要发现
 

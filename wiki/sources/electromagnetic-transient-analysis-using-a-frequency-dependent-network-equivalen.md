@@ -26,7 +26,11 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 
 ## 使用的方法
 
-（待进一步分析）
+- [[fdne-model|FDNE]]
+- [[递推最小二乘法|递推最小二乘法]]
+- [[降阶建模|降阶建模]]
+- [[多正弦信号激励|多正弦信号激励]]
+- [[离散时间有理函数拟合|离散时间有理函数拟合]]
 
 ## 涉及的模型
 

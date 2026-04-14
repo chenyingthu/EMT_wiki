@@ -25,7 +25,12 @@ The paper presents a simple modulation index dependent thévenin equivalent circ
 
 ## 使用的方法
 
-（待进一步分析）
+- [[戴维南等效建模|戴维南等效建模]]
+- [[正交变换|正交变换]]
+- [[变压器类比法|变压器类比法]]
+- [[开关等效表示|开关等效表示]]
+- [[atp-emtp仿真|ATP-EMTP仿真]]
+- [[阻抗折算|阻抗折算]]
 
 ## 涉及的模型
 
@@ -33,7 +38,12 @@ The paper presents a simple modulation index dependent thévenin equivalent circ
 
 ## 相关主题
 
-（待进一步分析）
+- [[直流故障分析|直流故障分析]]
+- [[极对地故障|极对地故障]]
+- [[极间故障|极间故障]]
+- [[仿真加速|仿真加速]]
+- [[等效电路建模|等效电路建模]]
+- [[直流保护|直流保护]]
 
 ## 主要发现
 

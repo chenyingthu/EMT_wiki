@@ -27,7 +27,10 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 
 ## 使用的方法
 
-（待进一步分析）
+- [[移位相量法|移位相量法]]
+- [[戴维南等效电路法|戴维南等效电路法]]
+- [[开关依赖等效建模|开关依赖等效建模]]
+- [[fpga硬件实现|FPGA硬件实现]]
 
 ## 涉及的模型
 

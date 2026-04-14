@@ -26,7 +26,10 @@ The influence of earth stratification on the conductor impedances is investigate
 
 ## 使用的方法
 
-（待进一步分析）
+- [[数值积分技术|数值积分技术]]
+- [[电磁场方程解析法|电磁场方程解析法]]
+- [[卡森公式|卡森公式]]
+- [[有限元法|有限元法]]
 
 ## 涉及的模型
 

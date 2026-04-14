@@ -34,7 +34,11 @@ sources: ["EMT_Doc/27&28/Multirate EMT Simulation of Power Electronic Transforme
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[仿真效率提升|仿真效率提升]]
+- [[高开关频率建模|高开关频率建模]]
+- [[变步长仿真|变步长仿真]]
+- [[仿真稳定性|仿真稳定性]]
 
 ## 主要发现
 

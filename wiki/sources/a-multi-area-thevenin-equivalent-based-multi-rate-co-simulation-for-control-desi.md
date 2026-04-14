@@ -26,14 +26,25 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 
 ## 使用的方法
 
+- [[多区域戴维南等效-mate|多区域戴维南等效(MATE)]]
+- [[多速率联合仿真|多速率联合仿真]]
+- [[基于mate的输电线路模型-mate-tlm|基于MATE的输电线路模型(MATE-TLM)]]
+- [[虚拟阻抗控制策略|虚拟阻抗控制策略]]
 - [[multirate-method]]
 
 ## 涉及的模型
 
+- [[lcc-model|LCC]]
+- [[交直流电网|交直流电网]]
+- [[输电线路|输电线路]]
 - [[lcc-model]]
 
 ## 相关主题
 
+- [[换相失败|换相失败]]
+- [[控制策略设计|控制策略设计]]
+- [[高效电磁暂态仿真|高效电磁暂态仿真]]
+- [[新能源并网|新能源并网]]
 - [[co-simulation]]
 
 ## 主要发现

@@ -26,7 +26,9 @@ sources: ["EMT_Doc/02/Pereira和Tavares - 2022 - A New Approach to Represent the
 
 ## 使用的方法
 
-（待进一步分析）
+- [[矢量拟合|矢量拟合]]
+- [[递归卷积|递归卷积]]
+- [[诺顿等效|诺顿等效]]
 
 ## 涉及的模型
 

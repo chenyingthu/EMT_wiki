@@ -25,7 +25,9 @@ Rational models of frequency-dependent network equivalents (FDNEs) have been use
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模型压缩|模型压缩]]
+- [[网络分区|网络分区]]
+- [[有理函数建模|有理函数建模]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ Rational models of frequency-dependent network equivalents (FDNEs) have been use
 
 ## 相关主题
 
-（待进一步分析）
+- [[实时仿真|实时仿真]]
+- [[并行计算|并行计算]]
+- [[频率相关建模|频率相关建模]]
+- [[计算效率优化|计算效率优化]]
 
 ## 主要发现
 

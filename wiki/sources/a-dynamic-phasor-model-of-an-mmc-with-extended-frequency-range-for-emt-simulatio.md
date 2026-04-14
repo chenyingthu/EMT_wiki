@@ -26,7 +26,9 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 
 ## 使用的方法
 
-（待进一步分析）
+- [[动态相量法|动态相量法]]
+- [[基频动态相量技术|基频动态相量技术]]
+- [[等效建模|等效建模]]
 
 ## 涉及的模型
 

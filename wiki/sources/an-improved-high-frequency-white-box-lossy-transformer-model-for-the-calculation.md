@@ -25,7 +25,10 @@ Rural water networks in the developing world are typically branched networks wit
 
 ## 使用的方法
 
-（待进一步分析）
+- [[线性规划-lp|线性规划(LP)]]
+- [[整数线性规划-ilp|整数线性规划(ILP)]]
+- [[启发式算法|启发式算法]]
+- [[约束优化|约束优化]]
 
 ## 涉及的模型
 
@@ -33,7 +36,9 @@ Rural water networks in the developing world are typically branched networks wit
 
 ## 相关主题
 
-（待进一步分析）
+- [[管网成本优化|管网成本优化]]
+- [[压力约束设计|压力约束设计]]
+- [[离散管径选择|离散管径选择]]
 
 ## 主要发现
 

@@ -25,7 +25,12 @@ The model of a modular multilevel converter (MMC) determines the extent of criti
 
 ## 使用的方法
 
-（待进一步分析）
+- [[硬件在环仿真-hil|硬件在环仿真(HIL)]]
+- [[fpga硬件实现|FPGA硬件实现]]
+- [[igbt动态曲线拟合|IGBT动态曲线拟合]]
+- [[网络分区与合并简化|网络分区与合并简化]]
+- [[传输线桩等效|传输线桩等效]]
+- [[电磁-热联合仿真|电磁-热联合仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +38,11 @@ The model of a modular multilevel converter (MMC) determines the extent of criti
 
 ## 相关主题
 
-（待进一步分析）
+- [[实时仿真|实时仿真]]
+- [[电磁-热联合建模|电磁-热联合建模]]
+- [[开关损耗与结温评估|开关损耗与结温评估]]
+- [[fpga资源优化|FPGA资源优化]]
+- [[多详细程度建模|多详细程度建模]]
 
 ## 主要发现
 

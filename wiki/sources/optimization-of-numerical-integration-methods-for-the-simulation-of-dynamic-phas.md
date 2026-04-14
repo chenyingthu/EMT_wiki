@@ -30,7 +30,10 @@ Optimization of numerical integration methods for the simulation Power Systems L
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[动态相量模型|动态相量模型]]
+- [[电力系统模型|电力系统模型]]
+- [[dq0旋转参考系模型|DQ0旋转参考系模型]]
+- [[三相瞬时值模型|三相瞬时值模型]]
 
 ## 相关主题
 

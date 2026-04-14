@@ -26,7 +26,10 @@ A novel hybrid-model transient stability simulation algorithm for ac/dc power sy
 
 ## 使用的方法
 
-（待进一步分析）
+- [[动态相量法|动态相量法]]
+- [[混合模型仿真算法|混合模型仿真算法]]
+- [[交直流接口算法|交直流接口算法]]
+- [[机电暂态建模|机电暂态建模]]
 
 ## 涉及的模型
 

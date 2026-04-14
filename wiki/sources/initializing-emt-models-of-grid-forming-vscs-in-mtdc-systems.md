@@ -25,7 +25,10 @@ Initializing EMT models of grid forming VSCs in MTDC systems Ahmad Allabadi a,*,
 
 ## 使用的方法
 
-（待进一步分析）
+- [[稳态初始化方法|稳态初始化方法]]
+- [[解耦接口法-di|解耦接口法(DI)]]
+- [[潮流法-lf|潮流法(LF)]]
+- [[解析初始化|解析初始化]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Initializing EMT models of grid forming VSCs in MTDC systems Ahmad Allabadi a,*,
 
 ## 相关主题
 
-（待进一步分析）
+- [[emt仿真初始化|EMT仿真初始化]]
+- [[离线仿真|离线仿真]]
+- [[多端直流输电|多端直流输电]]
+- [[构网型控制|构网型控制]]
+- [[黑盒模型初始化|黑盒模型初始化]]
 
 ## 主要发现
 

@@ -25,7 +25,10 @@ Current source modular multilevel converter (CSMMC) is a good alternative for hi
 
 ## 使用的方法
 
-（待进一步分析）
+- [[诺顿等效建模|诺顿等效建模]]
+- [[节点消除技术|节点消除技术]]
+- [[混合建模|混合建模]]
+- [[fortran自定义模块编程|FORTRAN自定义模块编程]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Current source modular multilevel converter (CSMMC) is a good alternative for hi
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[计算效率优化|计算效率优化]]
+- [[动态特性研究|动态特性研究]]
+- [[vsc-hvdc|VSC-HVDC]]
+- [[可再生能源并网|可再生能源并网]]
 
 ## 主要发现
 

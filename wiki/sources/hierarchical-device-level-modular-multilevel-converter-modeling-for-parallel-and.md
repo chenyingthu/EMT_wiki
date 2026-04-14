@@ -26,7 +26,14 @@ System-level electromagnetic transient (EMT) simulation of large-scale power con
 
 ## 使用的方法
 
-（待进一步分析）
+- [[多层级建模|多层级建模]]
+- [[拓扑重构|拓扑重构]]
+- [[网络等效|网络等效]]
+- [[gpu并行计算|GPU并行计算]]
+- [[单指令多线程-simt-架构|单指令多线程(SIMT)架构]]
+- [[cpu-gpu异构计算|CPU/GPU异构计算]]
+- [[多速率仿真|多速率仿真]]
+- [[非线性模型分离|非线性模型分离]]
 
 ## 涉及的模型
 

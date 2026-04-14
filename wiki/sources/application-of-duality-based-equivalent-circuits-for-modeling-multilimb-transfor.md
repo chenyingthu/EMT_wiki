@@ -25,7 +25,9 @@ The principle of duality is applied for electromagnetic transient (EMT) modeling
 
 ## 使用的方法
 
-（待进一步分析）
+- [[对偶原理|对偶原理]]
+- [[等效电路法|等效电路法]]
+- [[替代求解技术|替代求解技术]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ The principle of duality is applied for electromagnetic transient (EMT) modeling
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态建模|电磁暂态建模]]
+- [[变压器饱和与磁滞特性|变压器饱和与磁滞特性]]
+- [[剩磁与励磁涌流分析|剩磁与励磁涌流分析]]
+- [[低频电磁暂态分析|低频电磁暂态分析]]
 
 ## 主要发现
 

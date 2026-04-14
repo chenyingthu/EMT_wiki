@@ -25,7 +25,10 @@ Single-ended travelling wave-based protection scheme for double-circuit Guangbin
 
 ## 使用的方法
 
-（待进一步分析）
+- [[行波分析法|行波分析法]]
+- [[单端保护算法|单端保护算法]]
+- [[交叉差动电流偏差分析|交叉差动电流偏差分析]]
+- [[数字故障仿真|数字故障仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Single-ended travelling wave-based protection scheme for double-circuit Guangbin
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态|电磁暂态]]
+- [[继电保护|继电保护]]
+- [[行波保护|行波保护]]
+- [[单端保护|单端保护]]
+- [[故障仿真|故障仿真]]
 
 ## 主要发现
 

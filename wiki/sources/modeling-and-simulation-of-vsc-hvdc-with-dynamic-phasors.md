@@ -26,7 +26,9 @@ sources: ["EMT_Doc/26/Yao 等 - 2008 - Modeling and simulation of VSC-HVDC with 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[动态相量法|动态相量法]]
+- [[时变傅立叶级数|时变傅立叶级数]]
+- [[开关函数法|开关函数法]]
 
 ## 涉及的模型
 

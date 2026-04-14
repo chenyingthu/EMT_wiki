@@ -25,7 +25,11 @@ Proposal of an alternative transmission line model for symmetrical Eduardo Coelh
 
 ## 使用的方法
 
-（待进一步分析）
+- [[集总参数法|集总参数法]]
+- [[状态空间法|状态空间法]]
+- [[模态分析技术|模态分析技术]]
+- [[频率相关参数拟合|频率相关参数拟合]]
+- [[数值积分算法|数值积分算法]]
 
 ## 涉及的模型
 
@@ -33,7 +37,10 @@ Proposal of an alternative transmission line model for symmetrical Eduardo Coelh
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态|电磁暂态]]
+- [[频率相关建模|频率相关建模]]
+- [[时域仿真|时域仿真]]
+- [[暂态与稳态仿真|暂态与稳态仿真]]
 
 ## 主要发现
 

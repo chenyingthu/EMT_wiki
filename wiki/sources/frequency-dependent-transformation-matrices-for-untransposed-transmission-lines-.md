@@ -26,7 +26,11 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 
 ## 使用的方法
 
-（待进一步分析）
+- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[传统对角化算法|传统对角化算法]]
+- [[特征值-特征向量跟踪技术|特征值/特征向量跟踪技术]]
+- [[有理函数拟合|有理函数拟合]]
+- [[梯形积分法|梯形积分法]]
 
 ## 涉及的模型
 

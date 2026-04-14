@@ -34,7 +34,10 @@ Several approaches to calculate the ground-return impedance and admittance matri
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态分析|电磁暂态分析]]
+- [[雷电感应电压|雷电感应电压]]
+- [[频率相关土壤参数|频率相关土壤参数]]
+- [[大地回路阻抗建模|大地回路阻抗建模]]
 
 ## 主要发现
 

@@ -25,7 +25,12 @@ A 2-TRANSFORM MODEL OF TRANSFORMERS FOR THE STUDY OF Department of Electrical Po
 
 ## 使用的方法
 
-（待进一步分析）
+- [[z变换法|Z变换法]]
+- [[增益函数法|增益函数法]]
+- [[频率相关建模|频率相关建模]]
+- [[分布参数建模|分布参数建模]]
+- [[梯形网络等效|梯形网络等效]]
+- [[脉冲响应计算|脉冲响应计算]]
 
 ## 涉及的模型
 
@@ -33,7 +38,11 @@ A 2-TRANSFORM MODEL OF TRANSFORMERS FOR THE STUDY OF Department of Electrical Po
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[变压器高频暂态特性|变压器高频暂态特性]]
+- [[变电站防雷与操作过电压|变电站防雷与操作过电压]]
+- [[emt程序集成|EMT程序集成]]
 
 ## 主要发现
 

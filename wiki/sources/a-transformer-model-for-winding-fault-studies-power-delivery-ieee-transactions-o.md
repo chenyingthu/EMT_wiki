@@ -25,7 +25,11 @@ This paper deals with a method of modeling intemal faults in a power transformer
 
 ## 使用的方法
 
-（待进一步分析）
+- [[emtp仿真|EMTP仿真]]
+- [[bctran程序|BCTRAN程序]]
+- [[漏磁系数计算|漏磁系数计算]]
+- [[电阻电感矩阵建模|电阻电感矩阵建模]]
+- [[实验验证|实验验证]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ This paper deals with a method of modeling intemal faults in a power transformer
 
 ## 相关主题
 
-（待进一步分析）
+- [[绕组故障仿真|绕组故障仿真]]
+- [[变压器建模|变压器建模]]
+- [[漏磁参数评估|漏磁参数评估]]
+- [[差动保护验证|差动保护验证]]
+- [[emtp兼容建模|EMTP兼容建模]]
 
 ## 主要发现
 

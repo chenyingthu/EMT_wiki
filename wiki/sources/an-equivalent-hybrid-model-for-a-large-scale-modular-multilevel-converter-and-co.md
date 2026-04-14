@@ -25,7 +25,10 @@ Modular multilevel converter (MMC) is adopted mainly for high voltage applicatio
 
 ## 使用的方法
 
-（待进一步分析）
+- [[混合仿真|混合仿真]]
+- [[放大控制结构法|放大控制结构法]]
+- [[简化建模技术|简化建模技术]]
+- [[详细等效建模|详细等效建模]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Modular multilevel converter (MMC) is adopted mainly for high voltage applicatio
 
 ## 相关主题
 
-（待进一步分析）
+- [[实时仿真|实时仿真]]
+- [[硬件在环-hil-仿真|硬件在环(HIL)仿真]]
+- [[大规模系统仿真|大规模系统仿真]]
+- [[计算效率优化|计算效率优化]]
+- [[内部动态与系统级动态分析|内部动态与系统级动态分析]]
 
 ## 主要发现
 

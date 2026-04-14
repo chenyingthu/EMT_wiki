@@ -25,7 +25,11 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 ## 使用的方法
 
-（待进一步分析）
+- [[梯形积分法|梯形积分法]]
+- [[特征线法|特征线法]]
+- [[状态变量法|状态变量法]]
+- [[修改π型电路等效|修改π型电路等效]]
+- [[并联rl支路等效|并联RL支路等效]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[数值振荡抑制|数值振荡抑制]]
+- [[emtp仿真|EMTP仿真]]
+- [[输电线路建模|输电线路建模]]
 
 ## 主要发现
 

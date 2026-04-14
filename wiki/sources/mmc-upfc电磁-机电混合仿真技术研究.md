@@ -25,7 +25,9 @@ In view of the demand for large-scale power grid simulation ability in the south
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁-机电混合仿真|电磁-机电混合仿真]]
+- [[电磁暂态建模|电磁暂态建模]]
+- [[混合仿真接口技术|混合仿真接口技术]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ In view of the demand for large-scale power grid simulation ability in the south
 
 ## 相关主题
 
-（待进一步分析）
+- [[混合仿真|混合仿真]]
+- [[大规模电网仿真|大规模电网仿真]]
+- [[接口位置适应性|接口位置适应性]]
+- [[柔性交流输电系统-facts|柔性交流输电系统(FACTS)]]
 
 ## 主要发现
 

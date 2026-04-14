@@ -26,7 +26,9 @@ sources: ["EMT_Doc/26/Liu 等 - 2025 - Modeling Method for DFIG-Based Wind Farm 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[延迟解耦法|延迟解耦法]]
+- [[多级嵌套快速同步求解法-m-nfss|多级嵌套快速同步求解法(M-NFSS)]]
+- [[节点缩减技术|节点缩减技术]]
 
 ## 涉及的模型
 

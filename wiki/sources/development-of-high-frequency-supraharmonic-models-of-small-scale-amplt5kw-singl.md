@@ -25,11 +25,12 @@ Development of high frequency (Supraharmonic) models of small-scale (< 5 kW), si
 
 ## 使用的方法
 
-（待进一步分析）
+- [[黑盒建模法|黑盒建模法]]
+- [[基于实验室实验的建模|基于实验室实验的建模]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[小功率-5kw-单相并网光伏逆变器|小功率(<5kW)单相并网光伏逆变器]]
 
 ## 相关主题
 

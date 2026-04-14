@@ -25,15 +25,16 @@ sources: ["EMT_Doc/07&08/Analysis of the Harmonic Transmission Characteristics o
 
 ## 使用的方法
 
-（待进一步分析）
+- [[统一端口理论模型|统一端口理论模型]]
+- [[谐波传输分析|谐波传输分析]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[vsc-hvdc|VSC-HVDC]]
 
 ## 相关主题
 
-（待进一步分析）
+- [[谐波传输特性|谐波传输特性]]
 
 ## 主要发现
 

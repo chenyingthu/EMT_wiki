@@ -25,7 +25,8 @@ A waveform-dependence lightning impulse corona model in PSCAD/EMTDC for investig
 
 ## 使用的方法
 
-（待进一步分析）
+- [[临界体积法|临界体积法]]
+- [[无迭代求解算法|无迭代求解算法]]
 
 ## 涉及的模型
 
@@ -33,7 +34,11 @@ A waveform-dependence lightning impulse corona model in PSCAD/EMTDC for investig
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[雷电过电压分析|雷电过电压分析]]
+- [[冲击波传播|冲击波传播]]
+- [[电晕效应|电晕效应]]
+- [[波形依赖性|波形依赖性]]
 
 ## 主要发现
 

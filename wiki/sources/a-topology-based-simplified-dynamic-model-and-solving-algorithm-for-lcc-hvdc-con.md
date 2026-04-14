@@ -25,7 +25,11 @@ A topology-based simplified dynamic model and solving algorithm for LCC-HVDC con
 
 ## 使用的方法
 
-（待进一步分析）
+- [[基于拓扑的简化动态建模|基于拓扑的简化动态建模]]
+- [[理想开关表示|理想开关表示]]
+- [[主网络与阀级辅助网络分解|主网络与阀级辅助网络分解]]
+- [[结构稳定的求解算法|结构稳定的求解算法]]
+- [[自适应步长控制策略|自适应步长控制策略]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ A topology-based simplified dynamic model and solving algorithm for LCC-HVDC con
 
 ## 相关主题
 
-（待进一步分析）
+- [[换相失败|换相失败]]
+- [[动态建模|动态建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[计算效率优化|计算效率优化]]
+- [[暂态过程跟踪|暂态过程跟踪]]
 
 ## 主要发现
 

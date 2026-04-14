@@ -25,7 +25,10 @@ An ultra-fast MMC-HVDC fault location algorithm based on transient State Key Lab
 
 ## 使用的方法
 
-（待进一步分析）
+- [[回归神经网络-rnn|回归神经网络(RNN)]]
+- [[暂态电压特征提取|暂态电压特征提取]]
+- [[集中参数rlc等效电路分析|集中参数RLC等效电路分析]]
+- [[单端故障定位算法|单端故障定位算法]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ An ultra-fast MMC-HVDC fault location algorithm based on transient State Key Lab
 
 ## 相关主题
 
-（待进一步分析）
+- [[故障定位|故障定位]]
+- [[暂态电压响应|暂态电压响应]]
+- [[快速保护配合|快速保护配合]]
+- [[数据驱动算法|数据驱动算法]]
+- [[抗噪与参数鲁棒性|抗噪与参数鲁棒性]]
 
 ## 主要发现
 

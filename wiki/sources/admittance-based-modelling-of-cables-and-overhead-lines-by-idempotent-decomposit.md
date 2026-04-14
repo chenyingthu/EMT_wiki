@@ -25,7 +25,10 @@ Admittance-based modelling of cables and overhead lines by idempotent Felipe Cam
 
 ## 使用的方法
 
-（待进一步分析）
+- [[幂等分解|幂等分解]]
+- [[节点导纳矩阵|节点导纳矩阵]]
+- [[矢量拟合|矢量拟合]]
+- [[相域建模|相域建模]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ Admittance-based modelling of cables and overhead lines by idempotent Felipe Cam
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态|电磁暂态]]
+- [[频率相关建模|频率相关建模]]
+- [[导纳建模|导纳建模]]
+- [[大时间步长仿真|大时间步长仿真]]
 
 ## 主要发现
 

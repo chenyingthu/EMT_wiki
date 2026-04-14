@@ -25,7 +25,9 @@ International Journal of Electrical Power and Energy Systems Shooting method bas
 
 ## 使用的方法
 
-（待进一步分析）
+- [[打靶法|打靶法]]
+- [[稳态初始化技术|稳态初始化技术]]
+- [[戴维南等效技术|戴维南等效技术]]
 
 ## 涉及的模型
 
@@ -33,7 +35,11 @@ International Journal of Electrical Power and Energy Systems Shooting method bas
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[系统初始化|系统初始化]]
+- [[周期稳态求解|周期稳态求解]]
+- [[暂态抑制|暂态抑制]]
+- [[计算效率优化|计算效率优化]]
 
 ## 主要发现
 

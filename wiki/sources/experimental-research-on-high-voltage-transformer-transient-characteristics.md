@@ -25,7 +25,9 @@ A scheme to examine acting characteristics of high-voltage transmission line pro
 
 ## 使用的方法
 
-（待进一步分析）
+- [[机电-电磁暂态混合仿真|机电-电磁暂态混合仿真]]
+- [[并行仿真技术|并行仿真技术]]
+- [[在线数据接口技术|在线数据接口技术]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ A scheme to examine acting characteristics of high-voltage transmission line pro
 
 ## 相关主题
 
-（待进一步分析）
+- [[混合仿真|混合仿真]]
+- [[继电保护测试|继电保护测试]]
+- [[在线数据交互|在线数据交互]]
+- [[大电网仿真|大电网仿真]]
 
 ## 主要发现
 

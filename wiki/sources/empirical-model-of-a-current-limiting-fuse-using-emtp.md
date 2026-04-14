@@ -25,15 +25,17 @@ Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,
 
 ## 使用的方法
 
-（待进一步分析）
+- [[emtp仿真|EMTP仿真]]
+- [[经验建模|经验建模]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[限流熔断器|限流熔断器]]
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[熔断器建模|熔断器建模]]
 
 ## 主要发现
 

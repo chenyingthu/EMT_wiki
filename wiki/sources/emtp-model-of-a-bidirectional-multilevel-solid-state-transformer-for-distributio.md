@@ -25,7 +25,8 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 ## 使用的方法
 
-（待进一步分析）
+- [[emtp-atp仿真|EMTP/ATP仿真]]
+- [[脉宽调制-pwm|脉宽调制(PWM)]]
 
 ## 涉及的模型
 
@@ -33,7 +34,10 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 ## 相关主题
 
-（待进一步分析）
+- [[电能质量|电能质量]]
+- [[配电系统研究|配电系统研究]]
+- [[谐波抑制|谐波抑制]]
+- [[双向功率流动|双向功率流动]]
 
 ## 主要发现
 

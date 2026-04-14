@@ -25,11 +25,17 @@ Modeling and application of DQ-sequence dynamic phasors under Xiaoming Mao a,*, 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[dq序列动态相量法|DQ序列动态相量法]]
+- [[瞬时对称分量分解|瞬时对称分量分解]]
+- [[park变换|Park变换]]
+- [[状态空间建模|状态空间建模]]
+- [[复数状态方程实虚部分离|复数状态方程实虚部分离]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[mmc-model|MMC]]
+- [[mmc-model|MMC]]
+- [[电力电子设备|电力电子设备]]
 
 ## 相关主题
 

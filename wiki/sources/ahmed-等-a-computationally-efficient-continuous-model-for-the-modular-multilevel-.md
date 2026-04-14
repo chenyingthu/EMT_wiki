@@ -25,7 +25,9 @@ sources: ["EMT_Doc/01/Ahmed 等 - 2014 - A Computationally Efficient Continuous 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[连续模型|连续模型]]
+- [[平均模型|平均模型]]
+- [[电磁暂态仿真|电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +35,11 @@ sources: ["EMT_Doc/01/Ahmed 等 - 2014 - A Computationally Efficient Continuous 
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[闭锁状态建模|闭锁状态建模]]
+- [[故障仿真|故障仿真]]
+- [[计算效率优化|计算效率优化]]
+- [[高压直流输电|高压直流输电]]
 
 ## 主要发现
 

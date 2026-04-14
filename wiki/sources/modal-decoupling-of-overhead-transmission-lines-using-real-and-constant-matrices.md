@@ -25,7 +25,11 @@ Modal decoupling of overhead transmission lines using real and constant Pablo To
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模态解耦|模态解耦]]
+- [[clarke矩阵变换|Clarke矩阵变换]]
+- [[频变模态变换|频变模态变换]]
+- [[时频域分析|时频域分析]]
+- [[数值变换|数值变换]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ Modal decoupling of overhead transmission lines using real and constant Pablo To
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[模态分析|模态分析]]
+- [[线路长度影响评估|线路长度影响评估]]
+- [[实常数矩阵近似|实常数矩阵近似]]
 
 ## 主要发现
 

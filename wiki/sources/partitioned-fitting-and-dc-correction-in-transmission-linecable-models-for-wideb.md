@@ -27,7 +27,12 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 
 ## 使用的方法
 
-（待进一步分析）
+- [[分区拟合|分区拟合]]
+- [[直流校正|直流校正]]
+- [[有理函数逼近|有理函数逼近]]
+- [[状态空间实现|状态空间实现]]
+- [[曲线拟合|曲线拟合]]
+- [[数值积分与插值|数值积分与插值]]
 
 ## 涉及的模型
 

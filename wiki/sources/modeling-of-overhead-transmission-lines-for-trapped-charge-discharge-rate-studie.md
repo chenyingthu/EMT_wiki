@@ -25,7 +25,10 @@ sources: ["EMT_Doc/27&28/Modeling of overhead transmission lines for trapped cha
 
 ## 使用的方法
 
-（待进一步分析）
+- [[数值拉普拉斯变换法|数值拉普拉斯变换法]]
+- [[灵敏度分析|灵敏度分析]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[矢量拟合|矢量拟合]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ sources: ["EMT_Doc/27&28/Modeling of overhead transmission lines for trapped cha
 
 ## 相关主题
 
-（待进一步分析）
+- [[残余电荷放电|残余电荷放电]]
+- [[输电线路暂态建模|输电线路暂态建模]]
+- [[频率相关建模|频率相关建模]]
+- [[开关暂态分析|开关暂态分析]]
 
 ## 主要发现
 

@@ -26,7 +26,11 @@ Assessment of the transmission line theory in the modeling of multiconductor und
 
 ## 使用的方法
 
-（待进一步分析）
+- [[全波有限差分时域法-fdtd|全波有限差分时域法(FDTD)]]
+- [[传输线理论|传输线理论]]
+- [[闭式近似法|闭式近似法]]
+- [[大地返回参数计算|大地返回参数计算]]
+- [[准tem近似|准TEM近似]]
 
 ## 涉及的模型
 
@@ -35,7 +39,11 @@ Assessment of the transmission line theory in the modeling of multiconductor und
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态分析|电磁暂态分析]]
+- [[大地返回阻抗与导纳建模|大地返回阻抗与导纳建模]]
+- [[快速暂态仿真|快速暂态仿真]]
+- [[模型验证与评估|模型验证与评估]]
+- [[仿真效率优化|仿真效率优化]]
 
 ## 主要发现
 

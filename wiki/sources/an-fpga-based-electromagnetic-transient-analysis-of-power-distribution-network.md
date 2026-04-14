@@ -25,11 +25,18 @@ sources: ["EMT_Doc/07&08/An FPGA based electromagnetic transient analysis of pow
 
 ## 使用的方法
 
-（待进一步分析）
+- [[fpga硬件加速|FPGA硬件加速]]
+- [[共轭梯度法-cg-网络求解器|共轭梯度法(CG)网络求解器]]
+- [[电磁暂态-emt-仿真框架|电磁暂态(EMT)仿真框架]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[配电网-pdn|配电网(PDN)]]
+- [[配电变压器|配电变压器]]
+- [[配电馈线|配电馈线]]
+- [[负荷|负荷]]
+- [[分布式电源-der-dg|分布式电源(DER/DG)]]
+- [[rlc等效电路|RLC等效电路]]
 
 ## 相关主题
 

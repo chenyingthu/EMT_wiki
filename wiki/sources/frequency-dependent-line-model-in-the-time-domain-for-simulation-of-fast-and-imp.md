@@ -25,11 +25,18 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 
 ## 使用的方法
 
-（待进一步分析）
+- [[transmission-line-model|Bergeron线路模型]]
+- [[频变建模|频变建模]]
+- [[级联分段法|级联分段法]]
+- [[状态矩阵法|状态矩阵法]]
+- [[数值拉普拉斯变换|数值拉普拉斯变换]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[输电线路|输电线路]]
+- [[transmission-line-model|Bergeron线路模型]]
+- [[集中参数模型|集中参数模型]]
+- [[分布参数模型|分布参数模型]]
 
 ## 相关主题
 

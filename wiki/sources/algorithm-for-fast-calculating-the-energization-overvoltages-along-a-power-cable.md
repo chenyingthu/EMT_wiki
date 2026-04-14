@@ -25,7 +25,10 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模态理论|模态理论]]
+- [[相模变换|相模变换]]
+- [[拉普拉斯变换|拉普拉斯变换]]
+- [[数值拉普拉斯逆变换-nilt|数值拉普拉斯逆变换(NILT)]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 
 ## 相关主题
 
-（待进一步分析）
+- [[合闸过电压|合闸过电压]]
+- [[暂态过电压|暂态过电压]]
+- [[计算效率|计算效率]]
+- [[频变建模|频变建模]]
 
 ## 主要发现
 

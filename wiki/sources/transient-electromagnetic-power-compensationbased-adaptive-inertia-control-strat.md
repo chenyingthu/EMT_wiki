@@ -26,7 +26,10 @@ Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[状态空间方程分析|状态空间方程分析]]
+- [[传递函数分析|传递函数分析]]
+- [[暂态电磁功率补偿控制|暂态电磁功率补偿控制]]
+- [[自适应惯量控制|自适应惯量控制]]
 
 ## 涉及的模型
 

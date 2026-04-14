@@ -25,7 +25,9 @@ sources: ["EMT_Doc/25/Sun 等 - 2024 - Inverter-Based Resources Model Verificati
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态回放仿真|电磁暂态回放仿真]]
+- [[瞬时电压回放|瞬时电压回放]]
+- [[初始化技术|初始化技术]]
 
 ## 涉及的模型
 
@@ -33,7 +35,9 @@ sources: ["EMT_Doc/25/Sun 等 - 2024 - Inverter-Based Resources Model Verificati
 
 ## 相关主题
 
-（待进一步分析）
+- [[模型验证|模型验证]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[并网标准合规|并网标准合规]]
 
 ## 主要发现
 

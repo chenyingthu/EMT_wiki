@@ -26,7 +26,10 @@ To meet the needs of accurate, fast and flexible simulation of electromagnetic a
 
 ## 使用的方法
 
-（待进一步分析）
+- [[移频分析法|移频分析法]]
+- [[希尔伯特变换|希尔伯特变换]]
+- [[多尺度仿真|多尺度仿真]]
+- [[动态相量法|动态相量法]]
 
 ## 涉及的模型
 
@@ -35,7 +38,11 @@ To meet the needs of accurate, fast and flexible simulation of electromagnetic a
 
 ## 相关主题
 
-（待进一步分析）
+- [[多尺度暂态建模|多尺度暂态建模]]
+- [[电磁暂态|电磁暂态]]
+- [[机电暂态|机电暂态]]
+- [[混合仿真|混合仿真]]
+- [[柔性直流输电|柔性直流输电]]
 
 ## 主要发现
 

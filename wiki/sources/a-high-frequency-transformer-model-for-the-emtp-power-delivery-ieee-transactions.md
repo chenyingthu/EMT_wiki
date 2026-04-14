@@ -25,7 +25,9 @@ A model to simulate the high frequency behaviour of a power transformer is prese
 
 ## 使用的方法
 
-（待进一步分析）
+- [[有理函数拟合|有理函数拟合]]
+- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[rlc网络综合|RLC网络综合]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ A model to simulate the high frequency behaviour of a power transformer is prese
 
 ## 相关主题
 
-（待进一步分析）
+- [[频率相关建模|频率相关建模]]
+- [[高频电磁暂态|高频电磁暂态]]
+- [[emtp仿真|EMTP仿真]]
+- [[端口等效建模|端口等效建模]]
 
 ## 主要发现
 

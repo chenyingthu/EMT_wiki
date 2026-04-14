@@ -31,11 +31,17 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[ac-dc变流器|AC-DC变流器]]
+- [[average-value-model|平均值模型]]
+- [[电网换相整流器-lcr|电网换相整流器(LCR)]]
+- [[average-value-model|平均值模型]]
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真-emtp|电磁暂态仿真(EMTP)]]
+- [[实时仿真|实时仿真]]
+- [[大时间步长仿真|大时间步长仿真]]
+- [[数值稳定性|数值稳定性]]
 
 ## 主要发现
 

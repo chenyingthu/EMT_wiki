@@ -25,15 +25,22 @@ The traditional method for developing electric network analysis computer program
 
 ## 使用的方法
 
-（待进一步分析）
+- [[时域网络分析|时域网络分析]]
+- [[基于matlab的高级编程|基于MATLAB的高级编程]]
 
 ## 涉及的模型
 
-（待进一步分析）
+
+- [[matemtp仿真程序|MatEMTP仿真程序]]
+- [[emtp电磁暂态模型|EMTP电磁暂态模型]]
+- [[电力网络模型|电力网络模型]]
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[仿真软件开发|仿真软件开发]]
+- [[软件工程|软件工程]]
+- [[计算引擎架构|计算引擎架构]]
 
 ## 主要发现
 

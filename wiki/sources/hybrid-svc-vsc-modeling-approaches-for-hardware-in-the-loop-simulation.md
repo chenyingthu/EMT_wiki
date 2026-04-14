@@ -26,7 +26,8 @@ sources: ["EMT_Doc/22/Le-Huy和Tremblay - 2023 - Hybrid SVC-VSC modeling approac
 
 ## 使用的方法
 
-（待进一步分析）
+- [[常规电磁暂态仿真|常规电磁暂态仿真]]
+- [[小步长法|小步长法]]
 
 ## 涉及的模型
 

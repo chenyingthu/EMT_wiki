@@ -34,7 +34,10 @@ A state-space approach for accelerated simulation of modular a State Key Laborat
 
 ## 相关主题
 
-（待进一步分析）
+- [[仿真加速|仿真加速]]
+- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+- [[大规模电力电子系统|大规模电力电子系统]]
+- [[mmc-model|MMC]]
 
 ## 主要发现
 

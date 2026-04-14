@@ -25,7 +25,9 @@ Modeling of cross-magnetization effects in saturated synchronous machines a A. B
 
 ## 使用的方法
 
-（待进一步分析）
+- [[基于磁动势-mmf-幅值与角度的饱和评估算法|基于磁动势(MMF)幅值与角度的饱和评估算法]]
+- [[d-q轴磁化电感调整法|d/q轴磁化电感调整法]]
+- [[dq0理论-双反应理论|dq0理论（双反应理论）]]
 
 ## 涉及的模型
 
@@ -33,7 +35,11 @@ Modeling of cross-magnetization effects in saturated synchronous machines a A. B
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[磁饱和建模|磁饱和建模]]
+- [[交叉磁化效应|交叉磁化效应]]
+- [[实时数字仿真|实时数字仿真]]
+- [[负载能力分析|负载能力分析]]
 
 ## 主要发现
 

@@ -25,7 +25,9 @@ To shorten the time expended in electromagnetic transient simulation for modular
 
 ## 使用的方法
 
-（待进一步分析）
+- [[数值计算模型|数值计算模型]]
+- [[混合仿真方法|混合仿真方法]]
+- [[平均值模型|平均值模型]]
 
 ## 涉及的模型
 
@@ -33,7 +35,9 @@ To shorten the time expended in electromagnetic transient simulation for modular
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[快速仿真|快速仿真]]
+- [[模型等效|模型等效]]
 
 ## 主要发现
 

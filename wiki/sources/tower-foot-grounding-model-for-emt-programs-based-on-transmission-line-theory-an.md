@@ -25,7 +25,10 @@ sources: ["EMT_Doc/38/Alipio 等 - 2023 - Tower-foot grounding model for EMT pro
 
 ## 使用的方法
 
-（待进一步分析）
+- [[传输线理论|传输线理论]]
+- [[marti模型|Marti模型]]
+- [[电报方程求解|电报方程求解]]
+- [[atp仿真|ATP仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +36,12 @@ sources: ["EMT_Doc/38/Alipio 等 - 2023 - Tower-foot grounding model for EMT pro
 
 ## 相关主题
 
-（待进一步分析）
+- [[雷电暂态|雷电暂态]]
+- [[接地建模|接地建模]]
+- [[emt仿真|EMT仿真]]
+- [[反击跳闸|反击跳闸]]
+- [[地电位升|地电位升]]
+- [[线路过电压|线路过电压]]
 
 ## 主要发现
 

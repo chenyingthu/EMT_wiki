@@ -25,7 +25,11 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[全通滤波器法|全通滤波器法]]
+- [[延迟均衡|延迟均衡]]
+- [[有理拟合|有理拟合]]
+- [[矢量拟合|矢量拟合]]
+- [[迭代估计算法|迭代估计算法]]
 
 ## 涉及的模型
 
@@ -33,7 +37,12 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 
 ## 相关主题
 
-（待进一步分析）
+- [[时延估计|时延估计]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[有理逼近|有理逼近]]
+- [[线路建模|线路建模]]
+- [[因果性与最小相位特性|因果性与最小相位特性]]
+- [[行波模型|行波模型]]
 
 ## 主要发现
 

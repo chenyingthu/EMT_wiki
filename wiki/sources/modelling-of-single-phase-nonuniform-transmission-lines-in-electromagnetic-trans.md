@@ -25,7 +25,10 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 
 ## 使用的方法
 
-（待进一步分析）
+- [[有理函数综合|有理函数综合]]
+- [[快速递归卷积技术|快速递归卷积技术]]
+- [[频域综合与时域转换|频域综合与时域转换]]
+- [[transmission-line-model|Bergeron线路模型]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[非均匀线路建模|非均匀线路建模]]
+- [[emtp兼容算法|EMTP兼容算法]]
+- [[时域仿真|时域仿真]]
 
 ## 主要发现
 

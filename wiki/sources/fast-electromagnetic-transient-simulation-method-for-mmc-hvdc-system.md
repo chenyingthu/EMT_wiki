@@ -25,7 +25,10 @@ sources: ["EMT_Doc/18/Gao 等 - 2014 - Fast electromagnetic transient simulation
 
 ## 使用的方法
 
-（待进一步分析）
+- [[细粒度并行算法|细粒度并行算法]]
+- [[基于simd的运算级并行策略|基于SIMD的运算级并行策略]]
+- [[基于共享内存的运算级并行策略|基于共享内存的运算级并行策略]]
+- [[改进emtp算法|改进EMTP算法]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ sources: ["EMT_Doc/18/Gao 等 - 2014 - Fast electromagnetic transient simulation
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[快速仿真|快速仿真]]
+- [[并行计算|并行计算]]
+- [[gpu加速|GPU加速]]
 
 ## 主要发现
 

@@ -25,7 +25,12 @@ sources: ["EMT_Doc/27&28/New Compact White-Box Transformer Model for the Calcula
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模型降阶|模型降阶]]
+- [[白盒建模|白盒建模]]
+- [[集中参数电路建模|集中参数电路建模]]
+- [[状态空间法|状态空间法]]
+- [[子矩阵秩缩减|子矩阵秩缩减]]
+- [[频响分析验证|频响分析验证]]
 
 ## 涉及的模型
 
@@ -33,7 +38,12 @@ sources: ["EMT_Doc/27&28/New Compact White-Box Transformer Model for the Calcula
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态计算|电磁暂态计算]]
+- [[模型紧凑化|模型紧凑化]]
+- [[阻尼建模|阻尼建模]]
+- [[涡流效应模拟|涡流效应模拟]]
+- [[仿真效率优化|仿真效率优化]]
+- [[atp-emtp兼容性|ATP-EMTP兼容性]]
 
 ## 主要发现
 

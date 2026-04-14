@@ -25,7 +25,11 @@ This paper presents a method of obtaining transmission network equivalents from 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[prony-analysis|Prony分析]]
+- [[模态分解|模态分解]]
+- [[时域网络等值方法|时域网络等值方法]]
+- [[脉冲激励法|脉冲激励法]]
+- [[离散时间滤波器建模|离散时间滤波器建模]]
 
 ## 涉及的模型
 
@@ -33,7 +37,10 @@ This paper presents a method of obtaining transmission network equivalents from 
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态分析|电磁暂态分析]]
+- [[网络等值与降阶|网络等值与降阶]]
+- [[驱动点阻抗特性复现|驱动点阻抗特性复现]]
+- [[时域仿真|时域仿真]]
 
 ## 主要发现
 

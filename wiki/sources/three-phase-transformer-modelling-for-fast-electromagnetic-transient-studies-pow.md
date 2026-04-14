@@ -25,7 +25,9 @@ THREE PHASE TRANSFORMER MODELL.ING FOR FAST ELECTROMAGNETIC TRANSIENT SI'UDII3 I
 
 ## 使用的方法
 
-（待进一步分析）
+- [[emtp仿真|EMTP仿真]]
+- [[三相变压器建模|三相变压器建模]]
+- [[现场试验对比验证|现场试验对比验证]]
 
 ## 涉及的模型
 
@@ -33,7 +35,11 @@ THREE PHASE TRANSFORMER MODELL.ING FOR FAST ELECTROMAGNETIC TRANSIENT SI'UDII3 I
 
 ## 相关主题
 
-（待进一步分析）
+- [[快速电磁暂态分析|快速电磁暂态分析]]
+- [[开关过电压|开关过电压]]
+- [[小电感电流开断|小电感电流开断]]
+- [[变压器建模精度评估|变压器建模精度评估]]
+- [[相间耦合效应|相间耦合效应]]
 
 ## 主要发现
 

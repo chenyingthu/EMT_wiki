@@ -34,7 +34,10 @@ sources: ["EMT_Doc/07&08/An improved passivity enforcement algorithm for transmi
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[无源性强制|无源性强制]]
+- [[频率相关建模|频率相关建模]]
+- [[宽频带线路建模|宽频带线路建模]]
 
 ## 主要发现
 

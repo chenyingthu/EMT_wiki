@@ -25,7 +25,10 @@ Electromagnetic Transients Program make extensive use of transmission line model
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模态变换-clarke矩阵|模态变换（Clarke矩阵）]]
+- [[理想变压器等效电路|理想变压器等效电路]]
+- [[节点导纳矩阵分析|节点导纳矩阵分析]]
+- [[频域与时域仿真|频域与时域仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Electromagnetic Transients Program make extensive use of transmission line model
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[模态域建模|模态域建模]]
+- [[频率相关建模|频率相关建模]]
+- [[emt软件自定义模型实现|EMT软件自定义模型实现]]
+- [[土壤参数频率特性|土壤参数频率特性]]
 
 ## 主要发现
 

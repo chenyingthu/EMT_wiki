@@ -25,7 +25,10 @@ sources: ["EMT_Doc/17/Luchini 等 - 2023 - Equivalent grid-following inverter-ba
 
 ## 使用的方法
 
-（待进一步分析）
+- [[时域建模|时域建模]]
+- [[等效建模|等效建模]]
+- [[atp-atpdraw仿真|ATP/ATPDraw仿真]]
+- [[控制策略实现|控制策略实现]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ sources: ["EMT_Doc/17/Luchini 等 - 2023 - Equivalent grid-following inverter-ba
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态|电磁暂态]]
+- [[电网故障|电网故障]]
+- [[时域仿真|时域仿真]]
+- [[模型简化|模型简化]]
+- [[计算效率提升|计算效率提升]]
 
 ## 主要发现
 

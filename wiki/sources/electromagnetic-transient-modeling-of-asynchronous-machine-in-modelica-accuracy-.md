@@ -25,7 +25,14 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 
 ## 使用的方法
 
-（待进一步分析）
+- [[modelica方程建模|Modelica方程建模]]
+- [[变步长求解器|变步长求解器]]
+- [[固定步长求解器|固定步长求解器]]
+- [[伴随电路法|伴随电路法]]
+- [[诺顿等效|诺顿等效]]
+- [[改进增广节点分析法|改进增广节点分析法]]
+- [[梯形积分法|梯形积分法]]
+- [[参考系变换|参考系变换]]
 
 ## 涉及的模型
 
@@ -33,7 +40,11 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[电机顺序启动|电机顺序启动]]
+- [[时域仿真|时域仿真]]
+- [[精度与性能评估|精度与性能评估]]
+- [[声明式建模|声明式建模]]
 
 ## 主要发现
 

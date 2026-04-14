@@ -25,7 +25,11 @@ The nearest level modulation (NLM) is used to automatically generate ac side vol
 
 ## 使用的方法
 
-（待进一步分析）
+- [[等效建模|等效建模]]
+- [[最近电平调制-nlm|最近电平调制(NLM)]]
+- [[平均值模型|平均值模型]]
+- [[电压闭环控制|电压闭环控制]]
+- [[占空比分量分解|占空比分量分解]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ The nearest level modulation (NLM) is used to automatically generate ac side vol
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[快速仿真|快速仿真]]
+- [[毫秒级精度仿真|毫秒级精度仿真]]
+- [[子模块电压平衡|子模块电压平衡]]
+- [[低频动态仿真|低频动态仿真]]
 
 ## 主要发现
 

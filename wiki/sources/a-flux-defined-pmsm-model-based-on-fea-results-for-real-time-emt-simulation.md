@@ -25,7 +25,11 @@ A Flux-Defined PMSM Model Based on FEA Results for Real-Time To expedite the PMS
 
 ## 使用的方法
 
-（待进一步分析）
+- [[基于磁链数据的电流导数计算|基于磁链数据的电流导数计算]]
+- [[三线性插值法|三线性插值法]]
+- [[降阶建模|降阶建模]]
+- [[查表法|查表法]]
+- [[外推稳定性处理|外推稳定性处理]]
 
 ## 涉及的模型
 

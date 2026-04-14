@@ -25,11 +25,19 @@ Modern power systems are experiencing high penetration of voltage-source convert
 
 ## 使用的方法
 
-（待进一步分析）
+- [[离散阻抗建模-dibm|离散阻抗建模(DIBM)]]
+- [[导纳建模|导纳建模]]
+- [[拉普拉斯域分析|拉普拉斯域分析]]
+- [[离散化技术|离散化技术]]
+- [[戴维南等效电路构建|戴维南等效电路构建]]
+- [[状态变量法|状态变量法]]
+- [[average-value-model|平均值模型]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[vsc-model|VSC]]
+- [[换流器接口分布式能源|换流器接口分布式能源]]
+- [[vsc-model|VSC]]
 
 ## 相关主题
 

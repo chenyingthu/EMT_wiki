@@ -25,7 +25,11 @@ This paper studies the electromechanical transient modelling techniques of the m
 
 ## 使用的方法
 
-（待进一步分析）
+- [[机电暂态建模|机电暂态建模]]
+- [[等效电路法|等效电路法]]
+- [[数学建模|数学建模]]
+- [[控制策略设计|控制策略设计]]
+- [[仿真对比验证|仿真对比验证]]
 
 ## 涉及的模型
 

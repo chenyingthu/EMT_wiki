@@ -25,11 +25,17 @@ Real-time simulation with an industrial DCCB controller in a HVDC grid P. Raulta
 
 ## 使用的方法
 
-（待进一步分析）
+- [[硬件在环仿真-hil|硬件在环仿真(HIL)]]
+- [[实时仿真|实时仿真]]
+- [[离线模型对比验证|离线模型对比验证]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[直流断路器-dccb|直流断路器(DCCB)]]
+- [[mmc-model|MMC]]
+- [[vsc-hvdc|VSC-HVDC]]
+- [[换流器控制器|换流器控制器]]
+- [[直流电缆|直流电缆]]
 
 ## 相关主题
 

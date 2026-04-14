@@ -25,11 +25,13 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[故障录波数据分析|故障录波数据分析]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[级联h桥多电平变流器|级联H桥多电平变流器]]
+- [[并联变流器|并联变流器]]
 
 ## 相关主题
 

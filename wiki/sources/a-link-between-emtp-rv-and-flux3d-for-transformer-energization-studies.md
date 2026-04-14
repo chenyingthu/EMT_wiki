@@ -22,7 +22,9 @@ A link between EMTP-RV and FLUX3D for transformer energization studies S. Dennet
 
 ## 使用的方法
 
-（待进一步分析）
+- [[有限元法-fem|有限元法(FEM)]]
+- [[电路-场耦合仿真|电路-场耦合仿真]]
+- [[协同仿真|协同仿真]]
 
 ## 涉及的模型
 
@@ -30,7 +32,11 @@ A link between EMTP-RV and FLUX3D for transformer energization studies S. Dennet
 
 ## 相关主题
 
-（待进一步分析）
+- [[变压器投切暂态|变压器投切暂态]]
+- [[励磁涌流|励磁涌流]]
+- [[铁芯饱和|铁芯饱和]]
+- [[混合仿真|混合仿真]]
+- [[开关暂态|开关暂态]]
 
 ## 主要发现
 

@@ -26,7 +26,12 @@ Accelerated frequency-dependent method of characteristics for the simulation of 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[频变特征线法|频变特征线法]]
+- [[状态空间法|状态空间法]]
+- [[稀疏矩阵技术|稀疏矩阵技术]]
+- [[模态解耦|模态解耦]]
+- [[时间离散误差校正|时间离散误差校正]]
+- [[矢量拟合|矢量拟合]]
 
 ## 涉及的模型
 

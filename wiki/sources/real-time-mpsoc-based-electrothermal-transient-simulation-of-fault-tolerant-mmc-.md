@@ -26,7 +26,10 @@ Real-Time MPSoC-Based Electrothermal Transient Simulation of Fault Tolerant MMC 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[等效电路模型|等效电路模型]]
+- [[器件级电热建模|器件级电热建模]]
+- [[实时仿真技术|实时仿真技术]]
+- [[mpsoc硬件实现|MPSoC硬件实现]]
 
 ## 涉及的模型
 

@@ -25,7 +25,11 @@ This article presents a new model to represent transmission lines including the 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模域变换|模域变换]]
+- [[π型电路级联|π型电路级联]]
+- [[实数变换矩阵法|实数变换矩阵法]]
+- [[理想变压器建模|理想变压器建模]]
+- [[atp-emtp实现|ATP-EMTP实现]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ This article presents a new model to represent transmission lines including the 
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[模域分析|模域分析]]
+- [[时域仿真|时域仿真]]
+- [[多相系统建模|多相系统建模]]
 
 ## 主要发现
 

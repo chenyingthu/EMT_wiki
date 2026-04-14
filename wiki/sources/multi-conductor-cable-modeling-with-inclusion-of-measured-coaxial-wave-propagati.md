@@ -25,7 +25,10 @@ sources: ["EMT_Doc/27&28/Multi-Conductor Cable Modeling With Inclusion of Measur
 
 ## 使用的方法
 
-（待进一步分析）
+- [[行波模型|行波模型]]
+- [[宽频建模|宽频建模]]
+- [[模型融合技术|模型融合技术]]
+- [[单位长度参数提取|单位长度参数提取]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ sources: ["EMT_Doc/27&28/Multi-Conductor Cable Modeling With Inclusion of Measur
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[电缆建模|电缆建模]]
+- [[脉冲传播|脉冲传播]]
+- [[高频瞬态|高频瞬态]]
+- [[频率相关建模|频率相关建模]]
 
 ## 主要发现
 

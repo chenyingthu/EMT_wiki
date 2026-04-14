@@ -26,7 +26,12 @@ The phenomena of high frequency resonances caused by large time delay in flexibl
 
 ## 使用的方法
 
-（待进一步分析）
+- [[状态空间建模|状态空间建模]]
+- [[参与因子分析|参与因子分析]]
+- [[根轨迹法|根轨迹法]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[pade近似|Pade近似]]
+- [[多π型等效|多π型等效]]
 
 ## 涉及的模型
 
@@ -35,7 +40,10 @@ The phenomena of high frequency resonances caused by large time delay in flexibl
 
 ## 相关主题
 
-（待进一步分析）
+- [[高频振荡|高频振荡]]
+- [[稳定性分析|稳定性分析]]
+- [[大链路延时|大链路延时]]
+- [[柔性直流输电|柔性直流输电]]
 
 ## 主要发现
 

@@ -26,7 +26,9 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 ## 使用的方法
 
-（待进一步分析）
+- [[相模变换|相模变换]]
+- [[最小二乘法|最小二乘法]]
+- [[时域算法|时域算法]]
 
 ## 涉及的模型
 

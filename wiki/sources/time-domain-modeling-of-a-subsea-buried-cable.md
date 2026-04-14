@@ -25,7 +25,11 @@ sources: ["EMT_Doc/38/Camara 等 - 2024 - Time-domain modeling of a subsea burie
 
 ## 使用的方法
 
-（待进一步分析）
+- [[特征线法-moc|特征线法(MoC)]]
+- [[有理拟合|有理拟合]]
+- [[折叠线等效模型-fle|折叠线等效模型(FLE)]]
+- [[数值拉普拉斯变换-nlt|数值拉普拉斯变换(NLT)]]
+- [[准tem近似|准TEM近似]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ sources: ["EMT_Doc/38/Camara 等 - 2024 - Time-domain modeling of a subsea burie
 
 ## 相关主题
 
-（待进一步分析）
+- [[时域建模|时域建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[暂态分析|暂态分析]]
+- [[损耗介质建模|损耗介质建模]]
+- [[海底电缆建模|海底电缆建模]]
 
 ## 主要发现
 

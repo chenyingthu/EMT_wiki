@@ -25,7 +25,11 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 
 ## 使用的方法
 
-（待进一步分析）
+- [[详细等效模型-dem|详细等效模型(DEM)]]
+- [[辅助开关技术|辅助开关技术]]
+- [[插值算法|插值算法]]
+- [[补充决策公式|补充决策公式]]
+- [[加速计算方法|加速计算方法]]
 
 ## 涉及的模型
 
@@ -33,7 +37,10 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[故障工况仿真|故障工况仿真]]
+- [[仿真效率优化|仿真效率优化]]
+- [[稳态与暂态分析|稳态与暂态分析]]
 
 ## 主要发现
 

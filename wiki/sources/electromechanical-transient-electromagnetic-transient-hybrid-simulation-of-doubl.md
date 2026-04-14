@@ -25,7 +25,9 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态-机电暂态混合仿真|电磁暂态-机电暂态混合仿真]]
+- [[单机等值法|单机等值法]]
+- [[电磁暂态建模|电磁暂态建模]]
 
 ## 涉及的模型
 

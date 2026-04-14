@@ -25,7 +25,10 @@ This paper proposed an accurate and high-speed electromagnetic transient (EMT) e
 
 ## 使用的方法
 
-（待进一步分析）
+- [[等效建模|等效建模]]
+- [[递归节点消去法|递归节点消去法]]
+- [[降阶导纳矩阵求解|降阶导纳矩阵求解]]
+- [[迭代求解算法|迭代求解算法]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ This paper proposed an accurate and high-speed electromagnetic transient (EMT) e
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[模型降阶|模型降阶]]
+- [[高速仿真|高速仿真]]
+- [[柔性直流输电|柔性直流输电]]
 
 ## 主要发现
 

@@ -25,7 +25,10 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 
 ## 使用的方法
 
-（待进一步分析）
+- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[最小范数最小二乘法|最小范数最小二乘法]]
+- [[基于测量的黑盒建模|基于测量的黑盒建模]]
+- [[双端口网络建模|双端口网络建模]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[宽带建模|宽带建模]]
+- [[模型重构|模型重构]]
+- [[同步波形测量|同步波形测量]]
 
 ## 主要发现
 

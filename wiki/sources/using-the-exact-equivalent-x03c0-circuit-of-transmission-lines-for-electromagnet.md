@@ -25,7 +25,9 @@ This work presents a transmission line model for simulating electromagnetic tran
 
 ## 使用的方法
 
-（待进一步分析）
+- [[矢量拟合|矢量拟合]]
+- [[有理函数逼近|有理函数逼近]]
+- [[电路综合|电路综合]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ This work presents a transmission line model for simulating electromagnetic tran
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[分布参数建模|分布参数建模]]
+- [[时域仿真|时域仿真]]
 
 ## 主要发现
 

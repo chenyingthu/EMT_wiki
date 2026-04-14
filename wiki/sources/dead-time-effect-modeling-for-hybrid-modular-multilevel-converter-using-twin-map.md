@@ -25,7 +25,11 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 ## 使用的方法
 
-（待进一步分析）
+- [[双映射法-电容状态映射|双映射法（电容状态映射）]]
+- [[戴维南等效|戴维南等效]]
+- [[二极管h桥建模|二极管H桥建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[状态空间模型对比|状态空间模型对比]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 ## 相关主题
 
-（待进一步分析）
+- [[死区效应建模|死区效应建模]]
+- [[电磁暂态仿真加速|电磁暂态仿真加速]]
+- [[电路等效简化|电路等效简化]]
+- [[子模块状态映射|子模块状态映射]]
+- [[电力电子器件建模|电力电子器件建模]]
 
 ## 主要发现
 

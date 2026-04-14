@@ -25,7 +25,10 @@ The key issue of electromagnetic transient (EMT) modelling of modular multilevel
 
 ## 使用的方法
 
-（待进一步分析）
+- [[等效建模|等效建模]]
+- [[子模块拓扑识别|子模块拓扑识别]]
+- [[节点信息反解|节点信息反解]]
+- [[通用建模算法|通用建模算法]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ The key issue of electromagnetic transient (EMT) modelling of modular multilevel
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[等效模型|等效模型]]
+- [[柔性直流输电|柔性直流输电]]
+- [[直流故障穿越|直流故障穿越]]
+- [[仿真加速|仿真加速]]
 
 ## 主要发现
 

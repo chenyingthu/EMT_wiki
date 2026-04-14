@@ -26,7 +26,9 @@ This paper presents the theory and results of a new real-time digital simulator 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[时域法|时域法]]
+- [[实时数字仿真|实时数字仿真]]
+- [[数字信号处理|数字信号处理]]
 
 ## 涉及的模型
 

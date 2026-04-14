@@ -25,7 +25,9 @@ The objective of this two-part paper is to provide clarity to physical concepts 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[对偶原理|对偶原理]]
+- [[磁阻网络电气对偶推导|磁阻网络电气对偶推导]]
+- [[拓扑建模|拓扑建模]]
 
 ## 涉及的模型
 
@@ -33,7 +35,12 @@ The objective of this two-part paper is to provide clarity to physical concepts 
 
 ## 相关主题
 
-（待进一步分析）
+- [[低频暂态|低频暂态]]
+- [[数值稳定性|数值稳定性]]
+- [[铁磁谐振|铁磁谐振]]
+- [[地磁感应电流|地磁感应电流]]
+- [[励磁涌流|励磁涌流]]
+- [[谐波|谐波]]
 
 ## 主要发现
 

@@ -26,7 +26,10 @@ Eﬀect of frequency-dependent soil parameters on wave propagation and Haoyan Xu
 
 ## 使用的方法
 
-（待进一步分析）
+- [[扩展传输线法|扩展传输线法]]
+- [[大地返回阻抗-导纳计算|大地返回阻抗/导纳计算]]
+- [[频率相关土壤参数建模|频率相关土壤参数建模]]
+- [[emt瞬态仿真|EMT瞬态仿真]]
 
 ## 涉及的模型
 

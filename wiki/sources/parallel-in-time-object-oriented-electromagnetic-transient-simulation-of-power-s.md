@@ -25,11 +25,17 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 
 ## 使用的方法
 
-（待进一步分析）
+- [[时间并行算法|时间并行算法]]
+- [[parareal算法|Parareal算法]]
+- [[节点分析法|节点分析法]]
+- [[面向对象编程|面向对象编程]]
+- [[组件化求解器架构|组件化求解器架构]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[行波输电线路|行波输电线路]]
+- [[传统电磁暂态模型|传统电磁暂态模型]]
+- [[ieee-118测试系统|IEEE-118测试系统]]
 
 ## 相关主题
 

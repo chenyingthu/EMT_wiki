@@ -25,7 +25,10 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 
 ## 使用的方法
 
-（待进一步分析）
+- [[机电暂态建模|机电暂态建模]]
+- [[二阶直流侧等效电路推导|二阶直流侧等效电路推导]]
+- [[预设直流故障信息法|预设直流故障信息法]]
+- [[pss-e仿真验证|PSS/E仿真验证]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 
 ## 相关主题
 
-（待进一步分析）
+- [[直流故障仿真|直流故障仿真]]
+- [[暂态稳定分析|暂态稳定分析]]
+- [[机电暂态建模|机电暂态建模]]
+- [[交直流电力系统稳定性|交直流电力系统稳定性]]
 
 ## 主要发现
 

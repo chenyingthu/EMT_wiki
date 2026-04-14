@@ -25,7 +25,9 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 ## 使用的方法
 
-（待进一步分析）
+- [[详细等效模型-dem|详细等效模型(DEM)]]
+- [[戴维南等效电路|戴维南等效电路]]
+- [[导纳矩阵求逆优化|导纳矩阵求逆优化]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[仿真加速|仿真加速]]
+- [[计算效率优化|计算效率优化]]
+- [[闭锁工况建模|闭锁工况建模]]
 
 ## 主要发现
 

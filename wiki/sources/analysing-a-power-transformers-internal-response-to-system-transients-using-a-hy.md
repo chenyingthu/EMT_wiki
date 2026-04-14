@@ -25,7 +25,11 @@ Analysing a power transformer’s internal response to system transients a Schoo
 
 ## 使用的方法
 
-（待进一步分析）
+- [[混合建模|混合建模]]
+- [[黑盒建模|黑盒建模]]
+- [[灰盒建模|灰盒建模]]
+- [[emtp仿真|EMTP仿真]]
+- [[外部测试参数提取|外部测试参数提取]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ Analysing a power transformer’s internal response to system transients a Schoo
 
 ## 相关主题
 
-（待进一步分析）
+- [[系统暂态分析|系统暂态分析]]
+- [[变压器内部电压响应|变压器内部电压响应]]
+- [[谐振过电压|谐振过电压]]
+- [[频率响应特性|频率响应特性]]
+- [[无内部几何参数建模|无内部几何参数建模]]
 
 ## 主要发现
 

@@ -27,7 +27,10 @@ FPGA-based simulation of grid-tied converters using frequency-dependent a Dept. 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[fdne-model|FDNE]]
+- [[fpga硬件加速|FPGA硬件加速]]
+- [[实时电磁暂态仿真|实时电磁暂态仿真]]
+- [[导纳等效建模|导纳等效建模]]
 
 ## 涉及的模型
 

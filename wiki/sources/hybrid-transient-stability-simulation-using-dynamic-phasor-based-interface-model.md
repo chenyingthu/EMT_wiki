@@ -25,11 +25,20 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 ## 使用的方法
 
-（待进一步分析）
+- [[混合仿真框架|混合仿真框架]]
+- [[动态相量接口模型|动态相量接口模型]]
+- [[emt-ts联合仿真|EMT-TS联合仿真]]
+- [[多速率仿真|多速率仿真]]
+- [[缓冲区尺寸设计方法|缓冲区尺寸设计方法]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[mmc-model|MMC]]
+- [[vsc-hvdc|VSC-HVDC]]
+- [[vsc-hvdc|VSC-HVDC]]
+- [[东部互联电网-ei-暂态稳定模型|东部互联电网(EI)暂态稳定模型]]
+- [[vsc-model|VSC]]
+- [[vsc-hvdc|VSC-HVDC]]
 
 ## 相关主题
 

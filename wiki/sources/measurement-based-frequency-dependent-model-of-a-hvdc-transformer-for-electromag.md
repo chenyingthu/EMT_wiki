@@ -26,7 +26,12 @@ Measurement-based frequency-dependent model of a HVDC transformer for SINTEF Ene
 
 ## 使用的方法
 
-（待进一步分析）
+- [[导纳频率扫描|导纳频率扫描]]
+- [[黑盒建模|黑盒建模]]
+- [[有理函数拟合|有理函数拟合]]
+- [[特征值缩放|特征值缩放]]
+- [[模态揭示变换|模态揭示变换]]
+- [[时域仿真|时域仿真]]
 
 ## 涉及的模型
 

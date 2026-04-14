@@ -25,7 +25,9 @@ The hybrid modular multilevel converter (MMC), which composed of half-bridge sub
 
 ## 使用的方法
 
-（待进一步分析）
+- [[闭锁等效方法|闭锁等效方法]]
+- [[灵活堆排序算法|灵活堆排序算法]]
+- [[等效模型优化|等效模型优化]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ The hybrid modular multilevel converter (MMC), which composed of half-bridge sub
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[高效仿真|高效仿真]]
+- [[全状态仿真|全状态仿真]]
+- [[闭锁与解锁模式分析|闭锁与解锁模式分析]]
 
 ## 主要发现
 

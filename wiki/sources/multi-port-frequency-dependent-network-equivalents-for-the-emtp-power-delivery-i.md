@@ -26,7 +26,12 @@ A method is developed to reduce large power systems to single and multi-port fre
 
 ## 使用的方法
 
-（待进一步分析）
+- [[频变网络等值|频变网络等值]]
+- [[最小二乘法|最小二乘法]]
+- [[导纳匹配|导纳匹配]]
+- [[网络降阶|网络降阶]]
+- [[rlc模块拟合|RLC模块拟合]]
+- [[emtp时步循环集成|EMTP时步循环集成]]
 
 ## 涉及的模型
 

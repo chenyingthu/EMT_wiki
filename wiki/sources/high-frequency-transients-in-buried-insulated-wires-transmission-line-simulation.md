@@ -25,7 +25,10 @@ High-frequency transients in buried insulated wires: Transmission line Rafael Al
 
 ## 使用的方法
 
-（待进一步分析）
+- [[传输线仿真|传输线仿真]]
+- [[实验测量与验证|实验测量与验证]]
+- [[接地返回阻抗与导纳计算|接地返回阻抗与导纳计算]]
+- [[emt仿真|EMT仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ High-frequency transients in buried insulated wires: Transmission line Rafael Al
 
 ## 相关主题
 
-（待进一步分析）
+- [[高频暂态|高频暂态]]
+- [[接地返回效应|接地返回效应]]
+- [[地下电缆建模|地下电缆建模]]
+- [[emt仿真验证|EMT仿真验证]]
 
 ## 主要发现
 

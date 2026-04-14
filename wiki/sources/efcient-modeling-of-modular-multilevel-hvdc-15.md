@@ -25,7 +25,9 @@ sources: ["EMT_Doc/15/Efficient modeling of modular multilevel HVDC converters (
 
 ## 使用的方法
 
-（待进一步分析）
+- [[导纳矩阵分割|导纳矩阵分割]]
+- [[时变戴维南等效|时变戴维南等效]]
+- [[精确等效建模|精确等效建模]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ sources: ["EMT_Doc/15/Efficient modeling of modular multilevel HVDC converters (
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[高效建模|高效建模]]
+- [[仿真加速|仿真加速]]
+- [[控制算法|控制算法]]
 
 ## 主要发现
 

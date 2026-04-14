@@ -25,7 +25,11 @@ sources: ["EMT_Doc/24/Alipio 等 - 2023 - Influence of a lossy ground on the lig
 
 ## 使用的方法
 
-（待进一步分析）
+- [[sunde公式|Sunde公式]]
+- [[marti输电线路模型|Marti输电线路模型]]
+- [[carson公式|Carson公式]]
+- [[时域有限差分法-fdtd|时域有限差分法(FDTD)]]
+- [[时域仿真|时域仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +37,12 @@ sources: ["EMT_Doc/24/Alipio 等 - 2023 - Influence of a lossy ground on the lig
 
 ## 相关主题
 
-（待进一步分析）
+- [[输电线路雷电性能|输电线路雷电性能]]
+- [[大地返回阻抗|大地返回阻抗]]
+- [[频率相关土壤参数|频率相关土壤参数]]
+- [[土壤位移电流|土壤位移电流]]
+- [[反击闪络率|反击闪络率]]
+- [[雷电过电压计算|雷电过电压计算]]
 
 ## 主要发现
 

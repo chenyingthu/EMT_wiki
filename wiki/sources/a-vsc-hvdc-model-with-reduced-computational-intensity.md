@@ -22,7 +22,9 @@ The paper presents a simplified voltage-source converter (VSC) model to reduce t
 
 ## 使用的方法
 
-（待进一步分析）
+- [[动态平均值建模|动态平均值建模]]
+- [[受控源等效建模|受控源等效建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -30,7 +32,9 @@ The paper presents a simplified voltage-source converter (VSC) model to reduce t
 
 ## 相关主题
 
-（待进一步分析）
+- [[计算效率优化|计算效率优化]]
+- [[快速仿真|快速仿真]]
+- [[系统级仿真|系统级仿真]]
 
 ## 主要发现
 

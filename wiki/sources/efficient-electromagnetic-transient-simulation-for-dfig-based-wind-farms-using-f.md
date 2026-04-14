@@ -25,7 +25,10 @@ International Journal of Electrical Power and Energy Systems Efficient electroma
 
 ## 使用的方法
 
-（待进一步分析）
+- [[细粒度网络划分|细粒度网络划分]]
+- [[设备级解耦算法|设备级解耦算法]]
+- [[多线程并行计算|多线程并行计算]]
+- [[导纳矩阵降维|导纳矩阵降维]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ International Journal of Electrical Power and Energy Systems Efficient electroma
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[大规模风电场|大规模风电场]]
+- [[并行计算|并行计算]]
+- [[仿真效率优化|仿真效率优化]]
 
 ## 主要发现
 

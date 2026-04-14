@@ -25,7 +25,9 @@ To correctly apply transformer differential protection in the environment of ult
 
 ## 使用的方法
 
-（待进一步分析）
+- [[统一电磁等效电路-umec-建模|统一电磁等效电路(UMEC)建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[参数折算|参数折算]]
 
 ## 涉及的模型
 
@@ -33,7 +35,11 @@ To correctly apply transformer differential protection in the environment of ult
 
 ## 相关主题
 
-（待进一步分析）
+- [[特高压|特高压]]
+- [[励磁涌流|励磁涌流]]
+- [[内部故障电流|内部故障电流]]
+- [[变压器差动保护|变压器差动保护]]
+- [[二次谐波闭锁|二次谐波闭锁]]
 
 ## 主要发现
 

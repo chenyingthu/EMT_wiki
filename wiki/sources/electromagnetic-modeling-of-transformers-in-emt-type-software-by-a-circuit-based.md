@@ -25,7 +25,10 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of transformers in EMT-type softw
 
 ## 使用的方法
 
-（待进一步分析）
+- [[基于电路的方法|基于电路的方法]]
+- [[有限元法-fem|有限元法(FEM)]]
+- [[二维磁路建模|二维磁路建模]]
+- [[电路-场耦合验证|电路-场耦合验证]]
 
 ## 涉及的模型
 
@@ -33,7 +36,12 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of transformers in EMT-type softw
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[变压器详细建模|变压器详细建模]]
+- [[内部故障分析|内部故障分析]]
+- [[铁芯饱和|铁芯饱和]]
+- [[励磁涌流|励磁涌流]]
+- [[铁磁谐振|铁磁谐振]]
 
 ## 主要发现
 

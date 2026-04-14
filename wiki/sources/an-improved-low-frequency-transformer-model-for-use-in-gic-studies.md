@@ -25,7 +25,10 @@ sources: ["EMT_Doc/07&08/An improved low-frequency transformer model for use in 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[贾尔斯-阿瑟顿-jiles-atherton-磁滞模型|贾尔斯-阿瑟顿(Jiles-Atherton)磁滞模型]]
+- [[电磁暂态-emtp-仿真|电磁暂态(EMTP)仿真]]
+- [[时域仿真|时域仿真]]
+- [[涡流效应建模|涡流效应建模]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ sources: ["EMT_Doc/07&08/An improved low-frequency transformer model for use in 
 
 ## 相关主题
 
-（待进一步分析）
+- [[地磁感应电流-gic|地磁感应电流(GIC)]]
+- [[磁滞效应|磁滞效应]]
+- [[涡流损耗|涡流损耗]]
+- [[变压器半周饱和|变压器半周饱和]]
+- [[地磁暴影响|地磁暴影响]]
 
 ## 主要发现
 

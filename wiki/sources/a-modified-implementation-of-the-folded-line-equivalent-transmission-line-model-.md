@@ -25,7 +25,11 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 ## 使用的方法
 
-（待进一步分析）
+- [[折叠线等效模型-fle-改进实现|折叠线等效模型(FLE)改进实现]]
+- [[正交矩阵变换|正交矩阵变换]]
+- [[clarke矩阵模态解耦|Clarke矩阵模态解耦]]
+- [[atp-emtp电路实现|ATP-EMTP电路实现]]
+- [[大时间步长仿真|大时间步长仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 ## 相关主题
 
-（待进一步分析）
+- [[输电线路建模|输电线路建模]]
+- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+- [[emtp程序实现|EMTP程序实现]]
+- [[大时间步长-加速仿真|大时间步长/加速仿真]]
+- [[模态解耦|模态解耦]]
 
 ## 主要发现
 

@@ -25,7 +25,10 @@ Protection of direct current (DC) transmission lines is one of the key difﬁcul
 
 ## 使用的方法
 
-（待进一步分析）
+- [[二进小波变换|二进小波变换]]
+- [[行波保护原理|行波保护原理]]
+- [[模量电压分析|模量电压分析]]
+- [[电磁暂态仿真-pscad-emtdc|电磁暂态仿真(PSCAD/EMTDC)]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Protection of direct current (DC) transmission lines is one of the key difﬁcul
 
 ## 相关主题
 
-（待进一步分析）
+- [[直流电网保护|直流电网保护]]
+- [[行波保护|行波保护]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[故障区段识别与选线|故障区段识别与选线]]
+- [[超高速保护|超高速保护]]
 
 ## 主要发现
 

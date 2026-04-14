@@ -25,7 +25,10 @@ Effects of cable insulations’ physical and geometrical parameters on sheath Cy
 
 ## 使用的方法
 
-（待进一步分析）
+- [[emtp仿真|EMTP仿真]]
+- [[有限元法-fem|有限元法(FEM)]]
+- [[理论分析|理论分析]]
+- [[数值计算|数值计算]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Effects of cable insulations’ physical and geometrical parameters on sheath Cy
 
 ## 相关主题
 
-（待进一步分析）
+- [[护套暂态与过电压|护套暂态与过电压]]
+- [[介质损耗-绝缘损耗|介质损耗/绝缘损耗]]
+- [[电缆物理与几何参数影响|电缆物理与几何参数影响]]
+- [[介电常数与护套厚度优化|介电常数与护套厚度优化]]
+- [[接地电阻影响|接地电阻影响]]
 
 ## 主要发现
 

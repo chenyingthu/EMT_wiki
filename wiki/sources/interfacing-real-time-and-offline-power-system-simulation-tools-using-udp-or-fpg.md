@@ -25,11 +25,16 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 
 ## 使用的方法
 
-（待进一步分析）
+- [[emt-rms混合仿真|EMT-RMS混合仿真]]
+- [[udp以太网接口技术|UDP以太网接口技术]]
+- [[fpga-aurora光纤接口技术|FPGA/Aurora光纤接口技术]]
+- [[联合仿真耦合技术|联合仿真耦合技术]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[架空输电线路|架空输电线路]]
+- [[rtds实时仿真平台|RTDS实时仿真平台]]
+- [[pss-e离线仿真平台|PSS/E离线仿真平台]]
 
 ## 相关主题
 

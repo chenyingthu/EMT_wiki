@@ -25,7 +25,11 @@ Frequency and transient responses of A 275 kV pressure oil-filled cable: a Depar
 
 ## 使用的方法
 
-（待进一步分析）
+- [[频率相关建模|频率相关建模]]
+- [[电缆常数法|电缆常数法]]
+- [[模态分析|模态分析]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[现场测量验证|现场测量验证]]
 
 ## 涉及的模型
 
@@ -33,7 +37,12 @@ Frequency and transient responses of A 275 kV pressure oil-filled cable: a Depar
 
 ## 相关主题
 
-（待进一步分析）
+- [[频率响应|频率响应]]
+- [[暂态响应|暂态响应]]
+- [[模型验证|模型验证]]
+- [[内部传播特性|内部传播特性]]
+- [[电磁暂态分析|电磁暂态分析]]
+- [[输入阻抗评估|输入阻抗评估]]
 
 ## 主要发现
 

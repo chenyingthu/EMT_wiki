@@ -30,7 +30,11 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[vsc-hvdc|VSC-HVDC]]
+- [[facts装置|FACTS装置]]
+- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
+- [[同步发电机及控制器|同步发电机及控制器]]
+- [[交流电网|交流电网]]
 
 ## 相关主题
 

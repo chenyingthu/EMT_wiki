@@ -22,7 +22,10 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[磁滞特性建模|磁滞特性建模]]
+- [[经典变压器模型改进|经典变压器模型改进]]
+- [[试验数据驱动建模|试验数据驱动建模]]
 
 ## 涉及的模型
 
@@ -30,7 +33,11 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[励磁涌流|励磁涌流]]
+- [[磁滞特性|磁滞特性]]
+- [[铁心饱和|铁心饱和]]
+- [[谐波分析|谐波分析]]
 
 ## 主要发现
 

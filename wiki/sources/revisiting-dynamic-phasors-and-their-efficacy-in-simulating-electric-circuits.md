@@ -25,11 +25,18 @@ Revisiting dynamic phasors and their efficacy in simulating electric University 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[动态相量法|动态相量法]]
+- [[伴随电路模型法|伴随电路模型法]]
+- [[特征值分析|特征值分析]]
+- [[稳态分析|稳态分析]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[ieee-9节点系统|IEEE 9节点系统]]
+- [[lcc-model|LCC]]
+- [[mmc-model|MMC]]
+- [[facts|FACTS]]
+- [[感应电机|感应电机]]
 
 ## 相关主题
 

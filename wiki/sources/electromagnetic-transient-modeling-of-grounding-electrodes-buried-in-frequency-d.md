@@ -26,7 +26,10 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 ## 使用的方法
 
-（待进一步分析）
+- [[有限元法-fem|有限元法(FEM)]]
+- [[快速松弛矢量拟合-frvf|快速松弛矢量拟合(FRVF)]]
+- [[全波电磁场仿真|全波电磁场仿真]]
+- [[等效电路建模|等效电路建模]]
 
 ## 涉及的模型
 

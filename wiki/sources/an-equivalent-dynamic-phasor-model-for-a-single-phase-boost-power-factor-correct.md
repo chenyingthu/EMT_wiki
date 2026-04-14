@@ -25,11 +25,16 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 
 ## 使用的方法
 
-（待进一步分析）
+- [[动态相量法|动态相量法]]
+- [[小信号分析|小信号分析]]
+- [[符号函数变换|符号函数变换]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[单相boost功率因数校正变换器|单相Boost功率因数校正变换器]]
+- [[单相二极管桥式整流器|单相二极管桥式整流器]]
+- [[boost-dc-dc变换器|Boost DC-DC变换器]]
+- [[等效单相有源整流器模型|等效单相有源整流器模型]]
 
 ## 相关主题
 

@@ -31,11 +31,18 @@ Discrete detailed models of high-frequency switching voltage source converters (
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[vsc-model|VSC]]
+- [[详细开关模型|详细开关模型]]
+- [[受控电压-电流源模型|受控电压/电流源模型]]
+- [[average-value-model|平均值模型]]
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[数值效率|数值效率]]
+- [[接口技术|接口技术]]
+- [[大时间步长仿真|大时间步长仿真]]
+- [[数值稳定性与精度|数值稳定性与精度]]
 
 ## 主要发现
 

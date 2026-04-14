@@ -25,7 +25,10 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 ## 使用的方法
 
-（待进一步分析）
+- [[开关函数法|开关函数法]]
+- [[平均值建模|平均值建模]]
+- [[简化建模|简化建模]]
+- [[电路化简|电路化简]]
 
 ## 涉及的模型
 
@@ -33,7 +36,12 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[高压直流输电|高压直流输电]]
+- [[计算效率优化|计算效率优化]]
+- [[暂态事件分析|暂态事件分析]]
+- [[动态仿真|动态仿真]]
+- [[模型对比|模型对比]]
 
 ## 主要发现
 

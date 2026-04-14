@@ -22,11 +22,18 @@ sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the
 
 ## 使用的方法
 
-（待进一步分析）
+- [[混合仿真|混合仿真]]
+- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+- [[相量域分析-准静态时序-qsts-仿真|相量域分析/准静态时序(QSTS)仿真]]
+- [[emtp算法|EMTP算法]]
+- [[多域接口耦合技术|多域接口耦合技术]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[光伏-pv-系统|光伏(PV)系统]]
+- [[配电网馈线|配电网馈线]]
+- [[opendss相量模型|OpenDSS相量模型]]
+- [[simpowersystems全emt模型|SimPowerSystems全EMT模型]]
 
 ## 相关主题
 

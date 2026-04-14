@@ -26,7 +26,11 @@ Modeling a voltage source converter assisted resonant current DC breaker Seyed S
 
 ## 使用的方法
 
-（待进一步分析）
+- [[实时仿真|实时仿真]]
+- [[rtds建模|RTDS建模]]
+- [[频率相关建模|频率相关建模]]
+- [[保护算法测试|保护算法测试]]
+- [[外部伏安特性等效|外部伏安特性等效]]
 
 ## 涉及的模型
 

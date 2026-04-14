@@ -30,7 +30,11 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[宽频线路模型|宽频线路模型]]
+- [[通用线路模型-ulm|通用线路模型(ULM)]]
+- [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
+- [[输电线路与电缆|输电线路与电缆]]
+- [[特征导纳模型|特征导纳模型]]
 
 ## 相关主题
 

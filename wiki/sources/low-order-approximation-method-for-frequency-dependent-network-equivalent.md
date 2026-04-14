@@ -26,7 +26,10 @@ Rational function approximations of characteristic impedance and propagation coe
 
 ## 使用的方法
 
-（待进一步分析）
+- [[低阶有理函数拟合|低阶有理函数拟合]]
+- [[非线性最小二乘法|非线性最小二乘法]]
+- [[零极点定位|零极点定位]]
+- [[bode渐近线法|Bode渐近线法]]
 
 ## 涉及的模型
 

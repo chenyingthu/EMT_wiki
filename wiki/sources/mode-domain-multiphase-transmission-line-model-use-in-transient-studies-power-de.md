@@ -25,7 +25,11 @@ This paper presents a new model te represent multiphase transmission lines in tr
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模域变换|模域变换]]
+- [[克拉克变换|克拉克变换]]
+- [[综合电路-π型电路-等效|综合电路(π型电路)等效]]
+- [[理想变压器建模|理想变压器建模]]
+- [[emtp仿真|EMTP仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ This paper presents a new model te represent multiphase transmission lines in tr
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[模域分析|模域分析]]
+- [[线路换位与非换位建模|线路换位与非换位建模]]
+- [[参数频变特性|参数频变特性]]
 
 ## 主要发现
 

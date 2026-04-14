@@ -25,7 +25,9 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 ## 使用的方法
 
-（待进一步分析）
+- [[基于方程的建模|基于方程的建模]]
+- [[modelica声明式编程|Modelica声明式编程]]
+- [[精度与性能评估|精度与性能评估]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[电力系统暂态|电力系统暂态]]
+- [[声明式建模语言应用|声明式建模语言应用]]
+- [[仿真精度与性能评估|仿真精度与性能评估]]
 
 ## 主要发现
 

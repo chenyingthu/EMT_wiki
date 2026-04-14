@@ -25,7 +25,9 @@ sources: ["EMT_Doc/02/Morales 等 - 2023 - A new tool for calculation of line an
 
 ## 使用的方法
 
-（待进一步分析）
+- [[矩量法-mom-so|矩量法(MoM-SO)]]
+- [[单位长度参数计算|单位长度参数计算]]
+- [[串联阻抗与并联导纳计算|串联阻抗与并联导纳计算]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ sources: ["EMT_Doc/02/Morales 等 - 2023 - A new tool for calculation of line an
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+- [[参数计算|参数计算]]
+- [[集肤效应与邻近效应建模|集肤效应与邻近效应建模]]
+- [[emtp|EMTP]]
 
 ## 主要发现
 

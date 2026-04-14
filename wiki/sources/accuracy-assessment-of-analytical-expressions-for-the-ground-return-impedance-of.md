@@ -25,7 +25,10 @@ Accuracy assessment of analytical expressions for the ground return a Department
 
 ## 使用的方法
 
-（待进一步分析）
+- [[解析表达式评估|解析表达式评估]]
+- [[积分方程法|积分方程法]]
+- [[误差分析|误差分析]]
+- [[暂态仿真|暂态仿真]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ Accuracy assessment of analytical expressions for the ground return a Department
 
 ## 相关主题
 
-（待进一步分析）
+- [[接地回路阻抗|接地回路阻抗]]
+- [[电磁暂态|电磁暂态]]
+- [[土壤参数不确定性|土壤参数不确定性]]
+- [[宽频建模|宽频建模]]
+- [[仿真精度评估|仿真精度评估]]
 
 ## 主要发现
 

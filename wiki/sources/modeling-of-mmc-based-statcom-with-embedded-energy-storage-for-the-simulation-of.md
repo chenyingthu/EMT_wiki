@@ -25,7 +25,10 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态仿真-emt|电磁暂态仿真(EMT)]]
+- [[emtp仿真|EMTP仿真]]
+- [[灵活建模方法|灵活建模方法]]
+- [[动态性能对比分析|动态性能对比分析]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[储能集成|储能集成]]
+- [[换流器建模|换流器建模]]
+- [[动态性能分析|动态性能分析]]
 
 ## 主要发现
 

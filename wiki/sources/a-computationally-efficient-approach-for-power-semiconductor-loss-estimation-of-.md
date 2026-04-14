@@ -25,7 +25,9 @@ A computationally efficient approach for power semiconductor loss estimation of 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+- [[桥臂级损耗估算方法|桥臂级损耗估算方法]]
+- [[高效仿真算法|高效仿真算法]]
 
 ## 涉及的模型
 
@@ -33,7 +35,9 @@ A computationally efficient approach for power semiconductor loss estimation of 
 
 ## 相关主题
 
-（待进一步分析）
+- [[功率半导体损耗估算|功率半导体损耗估算]]
+- [[计算效率优化|计算效率优化]]
+- [[稳态与暂态分析|稳态与暂态分析]]
 
 ## 主要发现
 

@@ -25,7 +25,10 @@ Enhancements to Terminal Duality-based models for three-phase multi-limb This pa
 
 ## 使用的方法
 
-（待进一步分析）
+- [[终端对偶法-tdm|终端对偶法(TDM)]]
+- [[闭式公式计算|闭式公式计算]]
+- [[非线性电感割集稳定技术|非线性电感割集稳定技术]]
+- [[参考节点法|参考节点法]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ Enhancements to Terminal Duality-based models for three-phase multi-limb This pa
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[零序阻抗建模|零序阻抗建模]]
+- [[不对称运行分析|不对称运行分析]]
+- [[实时仿真|实时仿真]]
 
 ## 主要发现
 

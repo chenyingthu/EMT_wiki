@@ -25,7 +25,11 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 
 ## 使用的方法
 
-（待进一步分析）
+- [[增强型k-means两步聚类算法|增强型K-means两步聚类算法]]
+- [[概率初始中心选择|概率初始中心选择]]
+- [[kd树加速搜索|KD树加速搜索]]
+- [[davies-bouldin指数-dbi-评估|Davies-Bouldin指数(DBI)评估]]
+- [[动态等值建模|动态等值建模]]
 
 ## 涉及的模型
 
@@ -33,7 +37,10 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 
 ## 相关主题
 
-（待进一步分析）
+- [[动态等值建模|动态等值建模]]
+- [[低电压穿越-lvrt-特性|低电压穿越(LVRT)特性]]
+- [[风电场聚合|风电场聚合]]
+- [[电力系统稳定性分析|电力系统稳定性分析]]
 
 ## 主要发现
 

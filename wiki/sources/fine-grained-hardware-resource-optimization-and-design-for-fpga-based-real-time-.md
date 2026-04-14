@@ -26,7 +26,11 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[基于fpga的实时仿真|基于FPGA的实时仿真]]
+- [[细粒度硬件资源优化|细粒度硬件资源优化]]
+- [[自动硬件描述语言生成|自动硬件描述语言生成]]
+- [[算术运算级资源需求建模|算术运算级资源需求建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
 
 ## 涉及的模型
 

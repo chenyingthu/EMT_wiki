@@ -25,7 +25,10 @@ In response to the problem of low efficiency in calculating transient temperatur
 
 ## 使用的方法
 
-（待进一步分析）
+- [[本征正交分解-pod-降阶算法|本征正交分解(POD)降阶算法]]
+- [[αats自适应变步长策略|αATS自适应变步长策略]]
+- [[有限元离散法|有限元离散法]]
+- [[降阶自适应变步长瞬态计算方法|降阶自适应变步长瞬态计算方法]]
 
 ## 涉及的模型
 
@@ -33,7 +36,11 @@ In response to the problem of low efficiency in calculating transient temperatur
 
 ## 相关主题
 
-（待进一步分析）
+- [[瞬态温升计算|瞬态温升计算]]
+- [[流热耦合|流热耦合]]
+- [[模型降阶|模型降阶]]
+- [[快速计算方法|快速计算方法]]
+- [[非线性瞬态计算|非线性瞬态计算]]
 
 ## 主要发现
 

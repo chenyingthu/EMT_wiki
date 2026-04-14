@@ -25,7 +25,9 @@ Influence of approximate internal impedance formula on half-wavelength School of
 
 ## 使用的方法
 
-（待进一步分析）
+- [[近似与精确阻抗公式对比|近似与精确阻抗公式对比]]
+- [[稳态与暂态仿真分析|稳态与暂态仿真分析]]
+- [[统计开关操作分析|统计开关操作分析]]
 
 ## 涉及的模型
 
@@ -33,7 +35,12 @@ Influence of approximate internal impedance formula on half-wavelength School of
 
 ## 相关主题
 
-（待进一步分析）
+- [[内部阻抗建模|内部阻抗建模]]
+- [[远距离输电|远距离输电]]
+- [[波阻抗负载-sil|波阻抗负载(SIL)]]
+- [[过电压分析|过电压分析]]
+- [[开关暂态|开关暂态]]
+- [[模型精度评估|模型精度评估]]
 
 ## 主要发现
 

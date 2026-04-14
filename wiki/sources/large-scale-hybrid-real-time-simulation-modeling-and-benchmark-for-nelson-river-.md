@@ -25,11 +25,20 @@ sources: ["EMT_Doc/25/Zhou 等 - 2021 - Large-scale hybrid real time simulation 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[混合实时仿真|混合实时仿真]]
+- [[硬件在环-hil-仿真|硬件在环(HIL)仿真]]
+- [[rtds建模|RTDS建模]]
+- [[模块化系统拆分|模块化系统拆分]]
+- [[pscad-emtdc仿真|PSCAD/EMTDC仿真]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[lcc-model|LCC]]
+- [[bipole-i-ii系统|Bipole I/II系统]]
+- [[bipole-iii系统|Bipole III系统]]
+- [[交直流控制系统|交直流控制系统]]
+- [[北部汇集系统-ncs|北部汇集系统(NCS)]]
+- [[换流站|换流站]]
 
 ## 相关主题
 

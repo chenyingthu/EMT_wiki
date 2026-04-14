@@ -25,7 +25,9 @@ Spurious power and its elimination in modular multilevel converter models Anton 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[联立求解|联立求解]]
+- [[等效电路建模|等效电路建模]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ Spurious power and its elimination in modular multilevel converter models Anton 
 
 ## 相关主题
 
-（待进一步分析）
+- [[虚假功率消除|虚假功率消除]]
+- [[仿真数值效应|仿真数值效应]]
+- [[模型接口技术|模型接口技术]]
+- [[稳态与暂态分析|稳态与暂态分析]]
 
 ## 主要发现
 

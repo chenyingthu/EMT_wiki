@@ -25,11 +25,14 @@ Min Xiong a,b, Bin Wang c, Deepthi Vaidhynathan a, Jonathan Maack a, Matthew J. 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[并行计算|并行计算]]
+- [[高性能计算|高性能计算]]
+- [[模块化架构设计|模块化架构设计]]
+- [[python编程实现|Python编程实现]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
 
 ## 相关主题
 

@@ -25,7 +25,9 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[数字时域仿真|数字时域仿真]]
+- [[emtp仿真|EMTP仿真]]
+- [[实验对比验证|实验对比验证]]
 
 ## 涉及的模型
 
@@ -33,7 +35,10 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 
 ## 相关主题
 
-（待进一步分析）
+- [[暂态特性分析|暂态特性分析]]
+- [[铁磁谐振|铁磁谐振]]
+- [[继电保护与监测|继电保护与监测]]
+- [[故障与开关操作暂态|故障与开关操作暂态]]
 
 ## 主要发现
 

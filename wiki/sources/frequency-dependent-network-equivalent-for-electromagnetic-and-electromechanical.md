@@ -26,7 +26,8 @@ Electrom agnetic and Electrom echanical H ybrid Sim ulation KEY W oRDS：electro
 
 ## 使用的方法
 
-（待进一步分析）
+- [[矢量拟合|矢量拟合]]
+- [[频变网络等值|频变网络等值]]
 
 ## 涉及的模型
 

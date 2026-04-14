@@ -25,7 +25,11 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[解析分析|解析分析]]
+- [[接地阻抗与导纳计算|接地阻抗与导纳计算]]
+- [[暂态仿真计算|暂态仿真计算]]
+- [[频率相关建模|频率相关建模]]
+- [[传播特性分析|传播特性分析]]
 
 ## 涉及的模型
 
@@ -33,7 +37,11 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态分析|电磁暂态分析]]
+- [[频率相关大地传导效应|频率相关大地传导效应]]
+- [[接地参数建模|接地参数建模]]
+- [[传播特性|传播特性]]
+- [[模型适用性评估|模型适用性评估]]
 
 ## 主要发现
 

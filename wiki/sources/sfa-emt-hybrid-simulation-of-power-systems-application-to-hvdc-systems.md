@@ -25,11 +25,19 @@ SFA-EMT hybrid simulation of power systems: Application to a PSC North America, 
 
 ## 使用的方法
 
-（待进一步分析）
+- [[移频分析-电磁暂态混合仿真|移频分析-电磁暂态混合仿真]]
+- [[多速率仿真协议|多速率仿真协议]]
+- [[多区域戴维南等效-mate-框架|多区域戴维南等效(MATE)框架]]
+- [[移频分析法-sfa|移频分析法(SFA)]]
+- [[电磁暂态仿真-emt|电磁暂态仿真(EMT)]]
+- [[并行求解技术|并行求解技术]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[vsc-hvdc|VSC-HVDC]]
+- [[vsc-hvdc|VSC-HVDC]]
+- [[电力电子设备|电力电子设备]]
+- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
 
 ## 相关主题
 

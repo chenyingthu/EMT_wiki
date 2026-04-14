@@ -26,7 +26,10 @@ sources: ["EMT_Doc/01/Ahmadi 等 - 2021 - A guaranteed passive model for multi-p
 
 ## 使用的方法
 
-（待进一步分析）
+- [[网络综合法|网络综合法]]
+- [[brune综合法|Brune综合法]]
+- [[tellegen综合法|Tellegen综合法]]
+- [[无源网络实现技术|无源网络实现技术]]
 
 ## 涉及的模型
 

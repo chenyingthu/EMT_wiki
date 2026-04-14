@@ -25,11 +25,16 @@ With the wide application of power electronic devices in power systems, the dema
 
 ## 使用的方法
 
-（待进一步分析）
+- [[优化emtp算法|优化EMTP算法]]
+- [[恒导纳开关建模|恒导纳开关建模]]
+- [[支路拆分并行处理|支路拆分并行处理]]
+- [[高效矩阵运算|高效矩阵运算]]
+- [[cpu-fpga异构计算|CPU-FPGA异构计算]]
+- [[虚拟同步控制|虚拟同步控制]]
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[虚拟同步并网逆变器|虚拟同步并网逆变器]]
 
 ## 相关主题
 

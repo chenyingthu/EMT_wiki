@@ -27,7 +27,11 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 
 ## 使用的方法
 
-（待进一步分析）
+- [[模态截断法|模态截断法]]
+- [[平衡截断法|平衡截断法]]
+- [[模型降阶|模型降阶]]
+- [[矢量拟合|矢量拟合]]
+- [[递归卷积算法|递归卷积算法]]
 
 ## 涉及的模型
 

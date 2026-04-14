@@ -26,7 +26,11 @@ sources: ["EMT_Doc/25/Cheng 等 - 2025 - Machine-Learning-Reinforced Massively P
 
 ## 使用的方法
 
-（待进一步分析）
+- [[人工神经网络-ann|人工神经网络(ANN)]]
+- [[门控循环单元-gru|门控循环单元(GRU)]]
+- [[实体-组件-系统-ecs-架构|实体-组件-系统(ECS)架构]]
+- [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
+- [[数据驱动建模|数据驱动建模]]
 
 ## 涉及的模型
 

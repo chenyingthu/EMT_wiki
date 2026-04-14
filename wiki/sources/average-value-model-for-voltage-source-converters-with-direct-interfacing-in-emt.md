@@ -29,11 +29,16 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 ## 涉及的模型
 
-（待进一步分析）
+- [[vsc-model|VSC]]
+- [[average-value-model|平均值模型]]
+- [[vsc-hvdc|VSC-HVDC]]
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[接口技术|接口技术]]
+- [[大时间步长仿真|大时间步长仿真]]
+- [[数值稳定性与精度|数值稳定性与精度]]
 
 ## 主要发现
 

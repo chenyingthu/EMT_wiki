@@ -25,7 +25,10 @@ To address the problem that the calculation accuracy and speed of MMC losses are
 
 ## 使用的方法
 
-（待进一步分析）
+- [[平均值建模|平均值建模]]
+- [[损耗注入法|损耗注入法]]
+- [[开关频率曲面构建|开关频率曲面构建]]
+- [[受控电压源表征|受控电压源表征]]
 
 ## 涉及的模型
 
@@ -33,7 +36,10 @@ To address the problem that the calculation accuracy and speed of MMC losses are
 
 ## 相关主题
 
-（待进一步分析）
+- [[损耗快速评估|损耗快速评估]]
+- [[开关损耗注入|开关损耗注入]]
+- [[仿真精度与效率平衡|仿真精度与效率平衡]]
+- [[在线评估|在线评估]]
 
 ## 主要发现
 

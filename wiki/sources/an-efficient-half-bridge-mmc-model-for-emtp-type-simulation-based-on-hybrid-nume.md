@@ -34,7 +34,10 @@ sources: ["EMT_Doc/07&08/An Efficient Half-Bridge MMC Model for EMTP-Type Simula
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[恒定电导建模|恒定电导建模]]
+- [[仿真效率优化|仿真效率优化]]
+- [[模型等效与降阶|模型等效与降阶]]
 
 ## 主要发现
 

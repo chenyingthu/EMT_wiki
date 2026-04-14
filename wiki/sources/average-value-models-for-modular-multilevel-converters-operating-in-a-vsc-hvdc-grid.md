@@ -36,7 +36,11 @@ This paper investigates the applicability of averaged-value models (AVMs) for mo
 
 ## 相关主题
 
-（待进一步分析）
+- [[电磁暂态仿真-emt|电磁暂态仿真(EMT)]]
+- [[直流故障暂态分析|直流故障暂态分析]]
+- [[仿真加速|仿真加速]]
+- [[模型适用性评估|模型适用性评估]]
+- [[高压直流电网仿真|高压直流电网仿真]]
 
 ## 主要发现
 

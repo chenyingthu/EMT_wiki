@@ -27,7 +27,9 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 
 ## 使用的方法
 
-（待进一步分析）
+- [[改进的时域有限差分法-mfdtd|改进的时域有限差分法(MFDTD)]]
+- [[全波法|全波法]]
+- [[时域耦合建模|时域耦合建模]]
 
 ## 涉及的模型
 

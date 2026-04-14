@@ -26,7 +26,9 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 
 ## 使用的方法
 
-（待进一步分析）
+- [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
+- [[传输线理论|传输线理论]]
+- [[频率相关建模|频率相关建模]]
 
 ## 涉及的模型
 
