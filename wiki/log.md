@@ -2,7 +2,15 @@
 
 > 追加式记录，永不修改。每条以 `## [日期] 类型 | 标题` 开头。
 
-## [2026-04-13] init | Wiki 初始化
+## [2026-04-14] verify | 最终验证与补全
+- 验证所有 699 篇来源页均已摄入（100%）
+- 验证所有 699 篇来源页核心贡献已填充（100%）
+- 验证 40 个分类页结构（11 topics + 10 methods + 10 models + 9 entities）
+- 检查 3 个"未摄入"PDF 均为重复文件或空文件（0 bytes）
+- 更新 index.md 和 README.md 统计：699/699 已分析（100%）
+- 剩余 29 篇摘要未提取（编码问题或PDF格式不支持）
+- 剩余 ~600 篇使用的方法/涉及的模型/相关主题仍为"待进一步分析"（规则分析已完成，需 LLM 深度分析填充）
+
 - 创建目录结构：wiki/{topics,methods,models,entities,sources}, schema/, tools/
 - 编写 schema/WIKI.md：定义 Wiki 结构、模板和工作流程
 - 编写 tools/extract_metadata.py：PDF 元数据批量提取工具
