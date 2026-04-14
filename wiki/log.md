@@ -305,3 +305,8 @@
   real-time-simulation, average-value-model, numerical-integration, state-space-method, vector-fitting
 - 将富化内容复制到正确目录（topics/ → 5 页, methods/ → 4 页），type 头已修正
 - 最终分类页统计：10 模型 + 11 主题 + 10 方法 + 9 实体 = 40 页
+
+## [2026-04-14] fix-wikilinks | 修复未解析 wikilink
+- 修复 10 个未解析 wikilink（作者-年份格式 → 实际来源页文件名）
+- interpolation-method.md: 5 处, wind-farm-modeling.md: 3 处, gole.md: 1 处, mahseredjian.md: 1 处
+- 未解析 wikilink: 11 → 0（overview.md 中 `[[wikilink]]` 为文档语法说明）
