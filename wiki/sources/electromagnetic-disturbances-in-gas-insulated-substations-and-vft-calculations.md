@@ -17,7 +17,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction This paper is focused on VFTs from the viewpoint of electro- magnetic disturbances (EMDs). In Section 2, the voltage amplitudes It is well-known that lightning strikes to a transmission tower and oscillating frequencies of the VFTs are summarized based nearby a substation and swit...
 
 ## 核心贡献
 

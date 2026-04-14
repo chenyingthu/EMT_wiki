@@ -17,7 +17,7 @@ sources: ["EMT_Doc/18/Mashayekhi和Kordi - 2013 - Fast and efficient calculation
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction inherent features of distributed models, such as those based on the FDTD method [8–16], is the capability of determining the response Lightning-induced voltages on overhead transmission lines of the line to external exciting ﬁelds. However, these models are have been the subject o...
 
 ## 核心贡献
 

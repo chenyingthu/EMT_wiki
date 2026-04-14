@@ -17,7 +17,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2017.09.030.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction simpliﬁed and represented via controllable voltage sources at fun- damental frequency. This consideration does not allow a detailed Power electronic converters (PECs) have become an integral harmonic study [4]. On the other hand, there are few studies focus- part of electrical dis...
 
 ## 核心贡献
 

@@ -17,7 +17,7 @@ sources: ["EMT_Doc/36/j.epsr.2014.04.011.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Kikuma b , R. Yonezawa a a Electric Power Engineering Research Laboratory, Central Research Institute of Electric Power Industry (CRIEPI), 2-6-1 Nagasaka, Yokosuka, Kanagawa 240-0196, Japan b System Engineering Research L...
 
 ## 核心贡献
 

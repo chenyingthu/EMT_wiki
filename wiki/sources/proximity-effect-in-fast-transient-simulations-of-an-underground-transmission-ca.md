@@ -17,7 +17,7 @@ sources: ["EMT_Doc/32/j.epsr.2014.03.016.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction conductor (also called metal screen) should be more accurately rep- resented in the simulation software [3]. The analysis revealed how Nowadays, extruded (XLPE) cables are the most common cable the wired characteristics of the metal screen of the HV cable and types in high voltage...
 
 ## 核心贡献
 

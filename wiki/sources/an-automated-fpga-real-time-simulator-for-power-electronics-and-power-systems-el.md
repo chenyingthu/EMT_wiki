@@ -17,7 +17,7 @@ sources: ["EMT_Doc/06/j.epsr.2016.07.022.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction phenomena such as EMTs in power converters or travelling wave transients taking place in transmission lines (e.g., faults and switch- Electromagnetic transient (EMT) real-time simulators (RTSs) are ing transients). essential tools in power systems and power electronics to design, ...
 
 ## 核心贡献
 

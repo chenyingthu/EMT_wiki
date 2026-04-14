@@ -17,7 +17,7 @@ sources: ["EMT_Doc/01/Camara 等 - 2018 - A full frequency dependent line model 
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction The development of numerically accurate and efﬁcient methods for the rational approximation of frequency responses such as the Electromagnetic transient (EMT)-programs allowed for a rapid so-called vector ﬁtting routine [2–4], the frequency-partitioning and wide development of tim...
 
 ## 核心贡献
 

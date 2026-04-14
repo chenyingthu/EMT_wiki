@@ -17,7 +17,7 @@ sources: ["EMT_Doc/37/j.epsr.2018.03.003.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction we can excite each propagation mode separately and observe the respective cable responses, which is useful for model validation. In Projects of new cable installations have taken place worldwide the energization test, the full 64 km long cable was connected to in the last few year...
 
 ## 核心贡献
 

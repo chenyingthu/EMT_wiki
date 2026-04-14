@@ -17,7 +17,7 @@ sources: ["EMT_Doc/25/Trkulja 等 - 2017 - Lightning impulse voltage distributio
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction culated using simple analytical formulas [1–3] or ﬁnite element method (FEM) based calculations [4–7]. Calculation of lumped cir- Voltage transformers in a power system are designed to trans- cuit parameters can be performed using genetic algorithm [8]. form voltages from high vol...
 
 ## 核心贡献
 

@@ -17,7 +17,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2014.07.023.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction the electrical behavior of most power components are well-known in the time domain, this characteristic represents one of the main In general terms, the mathematical modeling of dynamic sys- advantages in TLM by lumped elements [1]. tems is a simpliﬁed and practical method to deﬁn...
 
 ## 核心贡献
 

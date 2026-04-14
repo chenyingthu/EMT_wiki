@@ -17,7 +17,7 @@ sources: ["EMT_Doc/29/j.epsr.2014.03.035.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+On ﬁxed-point iterations for the solution of control equations in power systems transients C.F. Mugombozi a,b,∗ , J. Mahseredjian a , O. Saad b a Ecole Polytechnique de Montréal, Canada b IREQ/Hydro-Quebec, Montréal, Canada
 
 ## 核心贡献
 

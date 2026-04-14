@@ -17,7 +17,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2018.04.002.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction that provides insight about voltage amplitudes along the winding is the ampliﬁcation factor. This parameter was studied in Ref. [1]. Transformers are important devices which are inevitable for the During non-standard waves, resonance overvoltages may take dif- existence and the op...
 
 ## 核心贡献
 

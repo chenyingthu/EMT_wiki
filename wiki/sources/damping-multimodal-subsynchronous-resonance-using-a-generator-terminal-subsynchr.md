@@ -17,7 +17,7 @@ sources: ["EMT_Doc/12/Xie 等 - 2013 - Damping multimodal subsynchronous resonan
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction the STATCOM-based scheme, auxiliary subsynchronous damping controller (SSDC) is generally adopted, which, by modulating the Series-capacitor compensation in long-distance transmission reactive current reference or bus voltage of STATCOM, produces systems is a very economical metho...
 
 ## 核心贡献
 

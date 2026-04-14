@@ -17,7 +17,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2015.05.019.pdf.pdf"]
 
 ## 摘要
 
-*（摘要未提取到）*
+1. Introduction more important speciﬁcally for the line model proposed in this research. The method of the characteristics, or Bergeron method, was An effective evolution in TLM was veriﬁed in the 1980s with the initially applied to solve hydraulic systems and after for electri- great improvement...
 
 ## 核心贡献
 
