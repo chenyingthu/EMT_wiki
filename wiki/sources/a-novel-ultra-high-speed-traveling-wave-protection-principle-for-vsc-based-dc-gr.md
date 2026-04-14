@@ -1,0 +1,40 @@
+---
+title: "A Novel Ultra-High-Speed Traveling-Wave Protection Principle for VSC-based DC Grids"
+type: source
+authors: ['未知']
+year: 2019
+journal: "IEEE Access;2019;7; ;10.1109/ACCESS.2019.2936276"
+tags: ['vsc']
+created: "2026-04-13"
+sources: ["EMT_Doc/03/ACCESS.2019.2936276.pdf.pdf"]
+---
+
+# A Novel Ultra-High-Speed Traveling-Wave Protection Principle for VSC-based DC Grids
+
+**作者**: 
+**年份**: 2019
+**来源**: `03/ACCESS.2019.2936276.pdf.pdf`
+
+## 摘要
+
+Protection of direct current (DC) transmission lines is one of the key difﬁculties to be urgently solved in the construction of the future voltage-sourced converter (VSC)-based DC grids. In this paper, a novel ultra-high-speed traveling-wave (TW) protection principle for DC transmission lines is proposed which is based on characteristics of modulus voltage TWs. First, the absolute value of the change in amplitude of the 1-mode voltage TW is used to construct the protection starting-up element. Then, the dyadic wavelet transform is utilized to extract the wavelet-transform modulus maxima (WTMM) of 1-mode and 0-mode initial reverse voltage TWs separately, which are used for fault section identiﬁcation and selection of fault line successively. A four-terminal annular VSC-based DC grid electro
+
+## 核心贡献
+
+- 改进了vsc的EMT建模方法，提升了系统级暂态分析精度
+
+## 使用的方法
+
+（待进一步分析）
+
+## 涉及的模型
+
+- [[vsc-model]]
+
+## 相关主题
+
+（待进一步分析）
+
+## 主要发现
+
+Protection of direct current (DC) transmission lines is one of the key difﬁculties to be urgently solved in the construction of the future voltage-sourced converter (VSC)-based DC grids

@@ -1,0 +1,40 @@
+---
+title: "Power converter simulation module connected to the EMTP - Power Systems, IEEE Transactions on"
+type: source
+authors: ['IEEE']
+year: 2004
+journal: ""
+tags: ['emtp']
+created: "2026-04-13"
+sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
+---
+
+# Power converter simulation module connected to the EMTP - Power Systems, IEEE Transactions on
+
+**作者**: IEEE
+**年份**: 2004
+**来源**: `31/59.76692.pdf.pdf`
+
+## 摘要
+
+Presently the EMTP models converter valves as ideal switches in parallel with dampers designed to damp numerical oscillations introduced by the commutations. The converter network is modelled through branches with the appropriate TACS control circuits. It is assembled as any other EMTP network, without explicit topology recognition. A more efficient method, both in terms of solution and initialization, is based on a separately programmed module dedicated to power converter simulation and exploiting analytical knowledge. This paper presents the solution method used in such a module and its interface with the EMTP. Keywords : Digital simulation, EMTP, power converter 1. INTRODUCTION The EMTP (Electromagnetic transients program) [l] is a nodal analysis program based on the fixed time-step tra
+
+## 核心贡献
+
+- 针对EMT仿真中的问题进行了研究
+
+## 使用的方法
+
+（待进一步分析）
+
+## 涉及的模型
+
+（待进一步分析）
+
+## 相关主题
+
+（待进一步分析）
+
+## 主要发现
+
+Presently the EMTP models converter valves as ideal switches in parallel with dampers designed to damp numerical oscillations introduced by the commutations

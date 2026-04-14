@@ -1,0 +1,40 @@
+---
+title: "Improvement of Numerical Stability for the Computation of Transients in Lines and Cables"
+type: source
+authors: ['未知']
+year: 2010
+journal: ""
+tags: ['emt']
+created: "2026-04-13"
+sources: ["EMT_Doc/23/Kocar 等 - 2010 - Improvement of Numerical Stability for the Computation of Transients in Lines and Cables-1.pdf"]
+---
+
+# Improvement of Numerical Stability for the Computation of Transients in Lines and Cables
+
+**作者**: 
+**年份**: 2010
+**来源**: `23/Kocar 等 - 2010 - Improvement of Numerical Stability for the Computation of Transients in Lines and Cables-1.pdf`
+
+## 摘要
+
+—This paper discusses numerical stability problems of a frequency-dependent transmission-line and cable modeling ap- proach used for electromagnetic transient analysis. Time-domain numerical errors due to the discrete computation of convolution in- tegrals can be estimated in terms of transfer function parameters for a given line or cable model. Based on this estimation, a method- ology for the improvement of numerical stability is presented. The numerical advantages of the new method are supported by demon- strations and comparisons with existing models. The method pre- sented in this paper is applicable to power cables and transmission lines. Index Terms—Electromagnetic transients, Electromagnetic Transients Program (EMTP), ﬁtting, wideband line and cable
+
+## 核心贡献
+
+- 建立了考虑频率相关特性的cable模型，提高了暂态仿真精度
+
+## 使用的方法
+
+（待进一步分析）
+
+## 涉及的模型
+
+- [[cable-model]]
+
+## 相关主题
+
+（待进一步分析）
+
+## 主要发现
+
+—This paper discusses numerical stability problems of a frequency-dependent transmission-line and cable modeling ap- proach used for electromagnetic transient analysis

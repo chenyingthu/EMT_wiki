@@ -1,0 +1,40 @@
+---
+title: "Time Domain Transformation Method"
+type: source
+authors: ['未知']
+year: 2012
+journal: ""
+tags: ['emt']
+created: "2026-04-13"
+sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
+---
+
+# Time Domain Transformation Method
+
+**作者**: 
+**年份**: 2012
+**来源**: `37/tpwrs.2012.2188913.pdf.pdf`
+
+## 摘要
+
+—Electromagnetic Transients Program (EMTP) is widely used in power system dynamics studies. However, in most cases EMTP is found inadequate for dealing with the realistic size power systems due to the small time step resulting in relatively slow simulation speeds. To accelerate the EMTP simulations of power system dynamics, a novel frequency-adaptive methodology is proposed. In this method, a new transformation is presented. The properties of the transformation and the numerical solutions based on the transformation are discussed. The component models obtained by discretizing the differential equations at the branch level are also given which are convenient for EMTP implementa- tion. The proposed method allows using large time steps without sacriﬁcing accuracy, which greatly improves the s
+
+## 核心贡献
+
+- 针对EMT仿真中的问题进行了研究
+
+## 使用的方法
+
+（待进一步分析）
+
+## 涉及的模型
+
+（待进一步分析）
+
+## 相关主题
+
+（待进一步分析）
+
+## 主要发现
+
+—Electromagnetic Transients Program (EMTP) is widely used in power system dynamics studies
