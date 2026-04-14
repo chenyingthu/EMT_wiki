@@ -51,6 +51,33 @@ created: "2026-04-14"
 - [[real-time-simulation]]
 - [[frequency-dependent-modeling]]
 
+
+## 论文方法分析
+> 基于 1 篇相关论文的深度内容分析生成
+### 使用的方法/技术
+| 方法/技术 | 使用次数 | 代表论文 |
+|----------|---------|----------|| 基于有限元分析(FEA)的降阶建模 | 1 | A Flux-Defined PMSM Model Based on FEA Results for Real-Time EMT Simul |
+| 磁链定义法 | 1 | A Flux-Defined PMSM Model Based on FEA Results for Real-Time EMT Simul |
+| 三线性插值算法 | 1 | A Flux-Defined PMSM Model Based on FEA Results for Real-Time EMT Simul |
+| 免数据表求逆的电流导数直接计算法 | 1 | A Flux-Defined PMSM Model Based on FEA Results for Real-Time EMT Simul |
+### 涉及的设备/模型
+| 设备/模型 | 使用次数 |
+|----------|----------|| 永磁同步电机(PMSM) | 1 |
+| 基于FEA的降阶模型(ROM) | 1 |
+| 传统集总参数PMSM模型 | 1 |
+| 电动汽车动力总成系统 | 1 |
+### 验证方式分布
+- **仿真与RTDS硬件实验对比**: 1 篇
+## 技术演进脉络
+### 2025年 (1篇)
+- **A Flux-Defined PMSM Model Based on FEA Results for Real-Time EMT Simulation**
+  - 💡 提出了一种直接基于磁链数据计算电流导数的免求逆方法，结合高效插值与外推稳定策略，实现了高保真FEA级PMSM模型的微秒级实时电磁暂态仿真。
+  - 提出了一种无需对磁链数据表求逆即可直接计算电流导数的新方法，大幅缩短模型预处理时间。
+  - 设计了一种高效的三线性插值算法，有效提升了模型在电磁暂态仿真中的计算效率。
+## 关键发现汇总
+- [2025] **A Flux-Defined PMSM Model Based on FEA Results for Real-Time**: 模型在RTDS硬件上实现了小于1 µs的仿真步长，满足严格的实时性要求。
+- [2025] **A Flux-Defined PMSM Model Based on FEA Results for Real-Time**: 仿真结果与高精度FEA基准高度一致，精度显著优于传统集总参数模型。
+- [2025] **A Flux-Defined PMSM Model Based on FEA Results for Real-Time**: 在电动汽车动力总成测试案例中验证了模型在复杂动态工况下的高保真度与实用性。
 ## 来源论文
 
 | 论文 | 年份 |
