@@ -283,3 +283,18 @@
 - 分析工具支持 16 种分类 wikilink
 - 论文 LLM 分析成功率: 486/486 = 100%
 - 下一步：继续增强剩余分类页（synchronous-machine-model, fdne-model, 各方法页等）
+
+## [2026-04-14] llm-deep | LLM 深度内容分析 — 第二批 6 个分类页
+- 完成剩余 taxonomy 页面的 LLM 深度分析（6 页，共 25 篇论文）：
+  | 页面 | 论文数 | 行数 |
+  |------|--------|------|
+  | synchronous-machine-model | 11 | 216 |
+  | state-space-method | 8 | 108+ |
+  | vector-fitting | 6 | 98+ |
+  | numerical-integration | 5 | 88+ |
+  | lcc-model | 4 | 67+ |
+  | pmsm-model | 1 | 27+ |
+- 在 deep_analyze_taxonomy.py 中新增 lcc-model 和 pmsm-model taxonomy 定义
+- 所有 18 个分类页已完成 LLM 深度分析，累计 519 篇论文
+- 论文 LLM 分析成功率: 519/519 = 100%
+- 所有页面已提交并推送到 GitHub (chenyingthu/EMT_wiki.git)
