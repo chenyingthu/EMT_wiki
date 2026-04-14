@@ -41,6 +41,84 @@ TAXONOMY_PAPERS = {
         'chinese_name': '实时仿真',
         'description': 'FPGA/RTDS/GPU实时仿真技术',
     },
+    'frequency-dependent-modeling': {
+        'wikilink': 'frequency-dependent-modeling',
+        'title': '频率相关建模',
+        'chinese_name': '频变建模',
+        'description': '矢量拟合、频变参数、宽频阻抗建模',
+    },
+    'parallel-computing': {
+        'wikilink': 'parallel-computing',
+        'title': '并行计算',
+        'chinese_name': '并行计算',
+        'description': '空间分解、时间并行、GPU加速',
+    },
+    'transformer-model': {
+        'wikilink': 'transformer-model',
+        'title': '变压器模型',
+        'chinese_name': '变压器',
+        'description': '磁滞、白盒、对偶电路、高频模型',
+    },
+    'co-simulation': {
+        'wikilink': 'co-simulation',
+        'title': '混合仿真',
+        'chinese_name': '混合仿真',
+        'description': '机电-电磁暂态混合仿真、多速率',
+    },
+    'vsc-model': {
+        'wikilink': 'vsc-model',
+        'title': '电压源换流器 (VSC)',
+        'chinese_name': 'VSC',
+        'description': '两电平/三电平拓扑、HVDC核心设备',
+    },
+    'synchronous-machine-model': {
+        'wikilink': 'synchronous-machine-model',
+        'title': '同步电机模型',
+        'chinese_name': '同步电机',
+        'description': '相域/dq0/VBR模型、交叉磁化',
+    },
+    'average-value-model': {
+        'wikilink': 'average-value-model',
+        'title': '平均值模型',
+        'chinese_name': '平均值模型',
+        'description': '换流器开关周期平均化建模',
+    },
+    'state-space-method': {
+        'wikilink': 'state-space-method',
+        'title': '状态空间法',
+        'chinese_name': '状态空间法',
+        'description': '一阶微分方程组建模、矩阵指数法',
+    },
+    'numerical-integration': {
+        'wikilink': 'numerical-integration',
+        'title': '数值积分',
+        'chinese_name': '数值积分',
+        'description': '梯形法、Gear法、2S-DIRK等',
+    },
+    'vector-fitting': {
+        'wikilink': 'vector-fitting',
+        'title': '矢量拟合',
+        'chinese_name': '矢量拟合',
+        'description': '频率响应的有理函数逼近算法',
+    },
+    'network-equivalent': {
+        'wikilink': 'network-equivalent',
+        'title': '网络等值',
+        'chinese_name': '网络等值',
+        'description': 'Ward/FDNE/Thevenin等值',
+    },
+    'dynamic-phasor': {
+        'wikilink': 'dynamic-phasor',
+        'title': '动态相量法',
+        'chinese_name': '动态相量',
+        'description': '扩展频率范围的相量域建模',
+    },
+    'vsc-hvdc': {
+        'wikilink': 'vsc-hvdc',
+        'title': 'VSC-HVDC',
+        'chinese_name': '柔性直流输电',
+        'description': '柔性直流输电、独立有功无功控制',
+    },
 }
 
 
