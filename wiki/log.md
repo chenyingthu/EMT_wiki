@@ -298,3 +298,10 @@
 - 所有 18 个分类页已完成 LLM 深度分析，累计 519 篇论文
 - 论文 LLM 分析成功率: 519/519 = 100%
 - 所有页面已提交并推送到 GitHub (chenyingthu/EMT_wiki.git)
+
+## [2026-04-14] cleanup | 清理重复页面
+- 删除 wiki/models/ 中 9 个重复文件（topics/methods 类型误放在 models/）：
+  co-simulation, dynamic-phasor, frequency-dependent-modeling, parallel-computing,
+  real-time-simulation, average-value-model, numerical-integration, state-space-method, vector-fitting
+- 将富化内容复制到正确目录（topics/ → 5 页, methods/ → 4 页），type 头已修正
+- 最终分类页统计：10 模型 + 11 主题 + 10 方法 + 9 实体 = 40 页

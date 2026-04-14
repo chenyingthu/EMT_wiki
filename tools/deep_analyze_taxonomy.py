@@ -119,6 +119,36 @@ TAXONOMY_PAPERS = {
         'chinese_name': '柔性直流输电',
         'description': '柔性直流输电、独立有功无功控制',
     },
+    'cable-model': {
+        'wikilink': 'cable-model',
+        'title': '电缆模型',
+        'chinese_name': '电缆',
+        'description': '地下/海底电缆建模、集肤效应',
+    },
+    'fdne-model': {
+        'wikilink': 'fdne-model',
+        'title': '频变网络等值 (FDNE)',
+        'chinese_name': 'FDNE',
+        'description': '多端口宽频阻抗等值',
+    },
+    'dfig-model': {
+        'wikilink': 'dfig-model',
+        'title': '双馈感应发电机 (DFIG)',
+        'chinese_name': 'DFIG',
+        'description': '双馈风机、风电并网',
+    },
+    'lcc-model': {
+        'wikilink': 'lcc-model',
+        'title': '线路换相换流器 (LCC)',
+        'chinese_name': 'LCC',
+        'description': '传统HVDC核心设备、电网换相',
+    },
+    'pmsm-model': {
+        'wikilink': 'pmsm-model',
+        'title': '永磁同步电机 (PMSM)',
+        'chinese_name': 'PMSM',
+        'description': '永磁同步电机、风力发电/电动汽车',
+    },
 }
 
 
