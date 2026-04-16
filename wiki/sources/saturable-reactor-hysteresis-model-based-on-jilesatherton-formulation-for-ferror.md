@@ -21,31 +21,31 @@ Saturable reactor hysteresis model based on Jiles–Atherton formulation for Wen
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出了一种用于EMTP-ATP的新型电压驱动动态磁链-电流（ψ-i）Jiles-Atherton磁滞电抗器模型
+- 利用Type-94元件将电压驱动动态损耗引入静态ψ-i JA模型，提升了铁磁谐振仿真的精度
 
 ## 使用的方法
 
-- [[jiles-atherton磁滞建模|Jiles-Atherton磁滞建模]]
-- [[电压驱动动态建模|电压驱动动态建模]]
-- [[emtp-atp仿真|EMTP-ATP仿真]]
-- [[type-94自定义元件实现|Type-94自定义元件实现]]
-- [[实验验证|实验验证]]
+
+- [[numerical-integration]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[饱和电抗器|饱和电抗器]]
-- [[动态磁链-电流-ψ-i-模型|动态磁链-电流(ψ-i)模型]]
-- [[铁芯磁滞模型|铁芯磁滞模型]]
-- [[铁磁谐振电路|铁磁谐振电路]]
+
+- [[transformer]]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[铁磁谐振|铁磁谐振]]
-- [[磁滞建模|磁滞建模]]
-- [[铁芯损耗建模|铁芯损耗建模]]
-- [[动态仿真|动态仿真]]
+
+- [[ferroresonance]]
+- [[harmonic]]
 
 ## 主要发现
 
-Saturable reactor hysteresis model based on Jiles–Atherton formulation for Wenxia Simaa, Mi Zoua,b, Ming Yanga,c,⁎, Daixiao Penga, Yonglai Liua a State Key Laboratory of Power Transmission Equipment &
+
+
+- 在50Hz和150Hz测试下，所提出的动态模型1与实验结果的吻合度优于动态模型2
+- 该电抗器模型能准确反映动态铁芯损耗与磁滞特性，在电磁暂态与铁磁谐振研究中具有广阔的应用前景

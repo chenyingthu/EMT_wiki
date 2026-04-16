@@ -21,29 +21,31 @@ The power electronic transformer (PET) applied to the medium and high voltage di
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出基于戴维南/诺顿等效与嵌套快速同时求解算法的级联H桥型电力电子变压器电磁暂态仿真加速模型
+- 通过构造高频变压器解耦伴随网络将级联子模块等效为仅含4个外部节点的单端口网络，使系统整体求解的计算复杂度几乎不随子模块数量增加
 
 ## 使用的方法
 
-- [[戴维南等效|戴维南等效]]
-- [[诺顿等效|诺顿等效]]
-- [[嵌套快速同时求解算法|嵌套快速同时求解算法]]
-- [[解耦伴随电路|解耦伴随电路]]
+
+- [[network-equivalent]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[级联h桥型电力电子变压器|级联H桥型电力电子变压器]]
-- [[级联h桥整流器|级联H桥整流器]]
-- [[双有源桥dc-dc变换器|双有源桥DC/DC变换器]]
-- [[高频变压器|高频变压器]]
+
+- [[transformer]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[仿真加速|仿真加速]]
-- [[等效建模|等效建模]]
-- [[计算复杂度优化|计算复杂度优化]]
+
+- [[network-equivalent]]
+- [[transformer]]
 
 ## 主要发现
 
-The power electronic transformer (PET) applied to the medium and high voltage distribution network widely adopts a two-stage cascade structure of a cascaded H-bridge rectifier and a dual-active bridge
+
+
+- 所提等效模型在PSCAD/EMTDC平台中能够精确复现级联H桥型电力电子变压器的暂态与稳态过程
+- 模型外部等效节点数固定，计算复杂度不随子模块数量增长，相比详细模型具有极高的仿真加速比

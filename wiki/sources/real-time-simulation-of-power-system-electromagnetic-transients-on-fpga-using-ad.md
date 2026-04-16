@@ -21,31 +21,37 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+
+- 提出全双精度与混合精度浮点计算方案，以在FPGA电磁暂态仿真中实现数值精度与计算资源成本的最佳平衡
+- 开发可调流水线、动态地址访问与序列控制器技术，优化高扇出与长数据路径的硬件实现资源与时序约束
+- 基于元件级灵敏度分析提出系统级混合精度方案，在保持接近全双精度精度的同时平均减少20%的FPGA资源占用
 
 ## 使用的方法
 
-- [[自适应混合精度计算|自适应混合精度计算]]
-- [[全双精度浮点方案|全双精度浮点方案]]
-- [[全单精度浮点方案|全单精度浮点方案]]
-- [[可调流水线技术|可调流水线技术]]
-- [[地址动态访问技术|地址动态访问技术]]
-- [[序列控制器技术|序列控制器技术]]
-- [[单精度迭代法|单精度迭代法]]
-- [[组件级灵敏度分析|组件级灵敏度分析]]
+
+- [[real-time]]
+- [[parallel]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[同步发电机-sg|同步发电机(SG)]]
-- [[mmc-model|MMC]]
-- [[vsc-hvdc|VSC-HVDC]]
-- [[输电线路|输电线路]]
-- [[kundur测试系统|Kundur测试系统]]
+
+- [[synchronous-machine]]
+- [[mmc-model]]
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[real-time]]
+- [[hvdc]]
+- [[synchronous-machine]]
 
 ## 主要发现
 
-—The massive integration of renewable energy sources and power electronics into the power grid leads to the strong need of real-time Electromagnetic Transients (EMT) simulation of power system using ﬁ
+
+
+- 对于非旋转元件，全双精度与全单精度计算均表现出优异的收敛性
+- 针对具有强非线性的旋转元件（同步电机），仅全双精度计算能够有效避免相位偏移问题
+- 系统级混合精度方案在Kundur测试系统中实现了与全双精度方案相近的仿真精度，并平均降低了20%的硬件资源消耗

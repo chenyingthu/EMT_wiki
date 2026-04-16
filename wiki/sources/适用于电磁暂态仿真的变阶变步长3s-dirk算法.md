@@ -21,19 +21,24 @@ When dealing with the numerical oscillation in electromagnetic transient simulat
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出适用于电磁暂态仿真的变阶变步长3S-DIRK算法
+- 设计基于4种分算法的切换策略，保证切换时等值导纳不变且全程计算精度不低于2阶
+- 利用算法的L稳定特性消除数值振荡，并支持变步长计算以提升仿真效率
 
 ## 使用的方法
 
-- [[numerical-integration|数值积分]]
-- [[变阶变步长积分|变阶变步长积分]]
-- [[临界阻尼调整方法-cda|临界阻尼调整方法(CDA)]]
-- [[算法切换策略|算法切换策略]]
-- [[布彻矩阵分析|布彻矩阵分析]]
+
+- [[numerical-integration]]
+- [[nodal-analysis]]
+- [[state-space]]
+- [[fixed-admittance]]
 
 ## 涉及的模型
 
-- [[线性元件|线性元件]]
+
+- [[network-equivalent]]
 
 ## 相关主题
 
@@ -44,4 +49,9 @@ When dealing with the numerical oscillation in electromagnetic transient simulat
 
 ## 主要发现
 
-When dealing with the numerical oscillation in electromagnetic transient simulation, a lower order numerical integration switched may lead to a larger numerical error
+
+
+- 3S-DIRK算法在整个仿真过程中可保持不低于2阶的计算精度
+- 算法的L稳定性能够有效消除电磁暂态计算中的数值振荡现象
+- 算法切换策略可在不同工况下保持元件等值导纳恒定，避免切换引入的误差
+- 变步长机制结合多分算法切换显著提升了复杂暂态过程的仿真效率与稳定性

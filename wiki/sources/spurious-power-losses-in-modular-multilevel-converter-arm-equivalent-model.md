@@ -21,26 +21,33 @@ sources: ["EMT_Doc/35/TPWRD.2019.2911052.pdf.pdf"]
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 揭示了MMC桥臂等效模型（AEM）在EMT仿真中因未与主网络方程联立求解而产生的虚假功率损耗问题
+- 提出了可变电阻模型与等效电压源模型，有效消除了虚假损耗并兼顾了仿真精度与计算效率
 
 ## 使用的方法
 
-- [[主网络方程联立求解|主网络方程联立求解]]
-- [[解析推导|解析推导]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+
+- [[nodal-analysis]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
+
 - [[mmc-model]]
+- [[average-value-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[虚假功率损耗|虚假功率损耗]]
-- [[换流器建模|换流器建模]]
-- [[模型接口与联立求解|模型接口与联立求解]]
-- [[仿真精度与计算效率|仿真精度与计算效率]]
+
+- [[mmc]]
+- [[vsc]]
+- [[hvdc]]
 
 ## 主要发现
 
-—This paper demonstrates the presence of spurious power losses or generation in the Arm Equivalent Model (AEM) of Modular Multilevel Converters
+
+
+- 当AEM通过控制框实现而非与主网络方程联立求解时，会因单步延迟产生显著的虚假功率损耗或发电，导致仿真结果失真
+- 可变电阻模型和等效电压源模型能够在不显著增加计算负担的前提下，准确消除虚假功率损耗并提供可靠的仿真结果

@@ -21,27 +21,37 @@ sources: ["EMT_Doc/40/tpwrd.2004.837676.pdf.pdf"]
 
 ## 核心贡献
 
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+
+- 提出了一种基于逆傅里叶变换的频变输电线路模型验证流程
+- 引入自适应非等距频率采样策略，结合被积函数频域特性大幅减少所需采样点数量
+- 采用采样点间的半解析积分技术，支持在任意大时间值下精确计算时域阶跃响应
+- 通过加权与时延阶跃响应的叠加，实现任意激励下系统响应的快速求解
 
 ## 使用的方法
 
-- [[逆傅里叶变换|逆傅里叶变换]]
-- [[半解析积分|半解析积分]]
-- [[自适应非等间隔采样|自适应非等间隔采样]]
-- [[阶跃响应叠加法|阶跃响应叠加法]]
-- [[频域导纳法|频域导纳法]]
+
+- [[frequency-dependent]]
+- [[numerical-integration]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[频率相关输电线路模型|频率相关输电线路模型]]
-- [[架空线路|架空线路]]
-- [[电缆系统|电缆系统]]
-- [[相域线路模型|相域线路模型]]
+
+- [[transmission-line]]
+- [[cable]]
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[frequency-dependent]]
+- [[transmission-line]]
+- [[cable]]
 
 ## 主要发现
 
-—The accuracy of a transmission line model can be veriﬁed by comparing its response to that by an alternative method of indisputable accuracy
+
+
+- 自适应非等距采样策略能显著降低逆傅里叶变换的计算负担，同时保持频域响应分辨率
+- 半解析积分方法有效克服了传统离散傅里叶变换在长时域仿真中的精度衰减与吉布斯现象
+- 该验证流程在架空线路与地下电缆系统中的测试结果与高精度相域模型（ULM）高度吻合，证明了其可靠性与工程实用性

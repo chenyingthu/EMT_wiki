@@ -21,20 +21,31 @@ sources: ["EMT_Doc/40/徐政 - 1996 - 耦合长线电磁暂态分析的扩展Ber
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出用于耦合长线电磁暂态分析的扩展Bergeron模型
+- 将多相耦合输电线路分解为集中电阻与无损线路两部分并在不同坐标系中分别处理
 
 ## 使用的方法
 
-- [[transmission-line-model|Bergeron线路模型]]
+
+- [[numerical-integration]]
+- [[interpolation]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
+
+- [[transmission-line]]
 
 ## 主要发现
 
-本文研究了相关问题，涉及等方法。
+
+
+- 扩展Bergeron模型能够有效处理多相耦合长线的电磁暂态过程
+- 通过坐标变换分离集中电阻与无损线路可显著简化耦合线路的暂态计算并提升仿真效率

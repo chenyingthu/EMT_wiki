@@ -21,25 +21,44 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 
 ## 核心贡献
 
-- 采用多速率方法对不同子系统采用不同时间步长，提高仿真效率
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+- 提出基于动态相量的统一多速率算法，避免传统EMT-TS联合仿真与模型分区
+- 设计快慢变量插值与平均耦合机制，结合误差校验实现步长自适应接受与回退
+- 在万节点巴西实际电网验证算法可扩展性，大幅降低计算耗时且保持暂态高保真
+
 
 ## 使用的方法
 
-- [[multirate-method]]
+
+- [[动态相量法|动态相量法]]
+- [[多速率仿真|多速率仿真]]
+- [[插值与平均耦合|插值与平均耦合]]
+- [[误差校验步长控制|误差校验步长控制]]
+
 
 ## 涉及的模型
 
-- [[vsc-hvdc|VSC-HVDC]]
-- [[facts装置|FACTS装置]]
-- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
-- [[同步发电机及控制器|同步发电机及控制器]]
-- [[交流电网|交流电网]]
+
+- [[同步电机|同步电机]]
+- [[发电机控制器|发电机控制器]]
+- [[交流输电网络|交流输电网络]]
+
 
 ## 相关主题
 
-- [[dynamic-phasor]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[动态相量建模|动态相量建模]]
+- [[多速率仿真|多速率仿真]]
+- [[大规模电网仿真|大规模电网仿真]]
+- [[暂态稳定分析|暂态稳定分析]]
+
 
 ## 主要发现
 
-Dynamic phasor simulations can be used for the analysis of transient stability (TS) of power systems, considering the influence of fast response equipment such as HVDC converters, FACTS and IBR (Inver
+
+- 多速率动态相量法在万节点电网中显著降低计算耗时，同时保持电磁与机电暂态高精度
+- 快慢变量插值平均耦合策略有效避免接口误差，步长自适应机制保障数值稳定性
+- 统一框架下无需模型分区即可准确捕捉微秒级电磁现象与秒级机电振荡的强耦合动态
+
+

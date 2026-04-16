@@ -21,24 +21,49 @@ sources: ["EMT_Doc/17/Liu 等 - 2014 - Electromechanical transient modeling of m
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+- 提出适用于机电暂态仿真的MMC-MTDC详细与简化动态模型，支持大步长计算
+- 建立含MMC-MTDC交直流系统的潮流计算方法，实现换流器节点等效处理
+- 推导MMC交流侧等效电路模型，将桥臂串联电感等效为相电感以简化分析
+
 
 ## 使用的方法
+
 
 - [[机电暂态建模|机电暂态建模]]
 - [[潮流计算|潮流计算]]
 - [[等效电路法|等效电路法]]
-- [[定量分析|定量分析]]
-- [[模型简化|模型简化]]
+- [[动态过程定量分析|动态过程定量分析]]
+- [[节点分析|节点分析]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[mtdc|MTDC]]
+- [[vsc-model|VSC]]
+- [[换流变压器|换流变压器]]
+- [[同步发电机|同步发电机]]
+- [[交直流电网|交直流电网]]
+
 
 ## 相关主题
 
-- [[co-simulation]]
+
+- [[机电暂态仿真|机电暂态仿真]]
+- [[多端直流输电|多端直流输电]]
+- [[电力系统稳定性|电力系统稳定性]]
+- [[交直流潮流|交直流潮流]]
+- [[故障隔离|故障隔离]]
+- [[模型降阶|模型降阶]]
+
 
 ## 主要发现
 
-—This paper studies the techniques for modeling mod- ular multilevel converter (MMC) based multi-terminal HVDC (MTDC) systems in the electromechanical transient mode
+
+- 详细与简化模型在PSS/E中实现，与PSCAD电磁暂态模型对比验证了精度
+- 简化模型通过忽略快速动态过程，可在机电暂态仿真中采用更大步长且保持精度
+- 异步联网的MMC-MTDC系统能有效隔离交流侧故障，提升大电网暂态稳定性
+
+

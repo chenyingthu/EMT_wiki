@@ -21,27 +21,31 @@ sources: ["EMT_Doc/38/Gunawardana和Kordi - 2020 - Time-Domain Modeling of Trans
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出基于电磁散射理论的散射场输电线路(SFTL)模型，用于计算导体交叉点附近空间变化的单位长度(PUL)参数矩阵
+- 开发一维时域有限差分(1D-FDTD)算法实现该模型的时域求解
+- 通过与三维全波电磁求解器对比，验证了模型在变交叉角无损导体场景下的准确性
 
 ## 使用的方法
 
-- [[电磁散射理论|电磁散射理论]]
-- [[一维有限差分时域法-1d-fdtd|一维有限差分时域法(1D-FDTD)]]
-- [[三维全波电磁求解器|三维全波电磁求解器]]
-- [[空间变化单位长度参数矩阵计算|空间变化单位长度参数矩阵计算]]
+
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[时域建模|时域建模]]
-- [[非均匀传输线|非均匀传输线]]
-- [[交叉线路电磁耦合|交叉线路电磁耦合]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率无关建模|频率无关建模]]
+
+- [[transmission-line]]
 
 ## 主要发现
 
-—Classical multiconductor transmission line (MTL) theory, which is employed in electromagnetic transient (EMT) simulators, is built on the assumptions that the wire structure is inﬁnitely long and has
+
+
+- 经典多导体传输线(MTL)理论因假设导线无限长且截面均匀，无法准确表征输电线路交叉等非均匀结构
+- 所提SFTL模型结合1D-FDTD算法能有效计算交叉区域的空间变化参数，时域仿真结果与三维全波求解器高度吻合
+- 该模型为EMT仿真中精确建模线路交叉引起的电磁干扰和暂态过电压提供了新途径

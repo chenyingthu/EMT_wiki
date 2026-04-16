@@ -21,24 +21,47 @@ Real-Time MPSoC-Based Electrothermal Transient Simulation of Fault Tolerant MMC 
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+- 提出CDSM子模块器件级电热模型，精确计算开关损耗、结温及瞬态波形
+- 融合系统等效电路与器件级模型，有效降低计算负担并保障实时仿真性能
+- 基于Xilinx Zynq MPSoC平台完成多端直流系统实时硬件仿真部署
+
 
 ## 使用的方法
 
-- [[等效电路模型|等效电路模型]]
-- [[器件级电热建模|器件级电热建模]]
-- [[实时仿真技术|实时仿真技术]]
-- [[mpsoc硬件实现|MPSoC硬件实现]]
+
+- [[等效电路法|等效电路法]]
+- [[器件级建模|器件级建模]]
+- [[电热耦合仿真|电热耦合仿真]]
+- [[实时仿真|实时仿真]]
+- [[mpsoc硬件加速|MPSoC硬件加速]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[cdsm|CDSM]]
+- [[igbt|IGBT]]
+- [[多端直流系统|多端直流系统]]
+
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[实时仿真|实时仿真]]
+- [[电热暂态|电热暂态]]
+- [[直流故障穿越|直流故障穿越]]
+- [[mmc-model|MMC]]
+- [[多端直流系统|多端直流系统]]
+- [[硬件加速|硬件加速]]
+
 
 ## 主要发现
 
-Real-Time MPSoC-Based Electrothermal Transient Simulation of Fault Tolerant MMC 1Electrical and Computer Engineering, University of Alberta, 2Electrical and Computer Engg
+
+- 模型在直流故障清除期间精确复现IGBT功率损耗与结温的动态耦合过程
+- 仿真波形与PSCAD及SaberRD结果高度一致，验证了模型精度与实时性
+- MPSoC硬件实现成功满足复杂CDSM电热模型的计算需求，实测波形稳定
+
+

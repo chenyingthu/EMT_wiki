@@ -21,22 +21,47 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 
 ## 核心贡献
 
-- 提出了适用于EMT仿真的dfig建模方法，适用于大规模风电场仿真
+
+- 基于dq0坐标系构建双馈风机电磁暂态模型采用梯形积分法离散求解
+- 在PSD-PSModel平台实现机电与电磁暂态混合仿真接口及迭代算法
+- 提出定子端口并联大电阻与补偿电流法有效解决电机开路数值不稳定问题
+
 
 ## 使用的方法
 
-- [[电磁暂态-机电暂态混合仿真|电磁暂态-机电暂态混合仿真]]
-- [[单机等值法|单机等值法]]
-- [[电磁暂态建模|电磁暂态建模]]
+
+- [[dq0坐标变换|dq0坐标变换]]
+- [[梯形积分法|梯形积分法]]
+- [[戴维南等值|戴维南等值]]
+- [[混合仿真接口|混合仿真接口]]
+- [[单台机等值|单台机等值]]
+
 
 ## 涉及的模型
 
-- [[dfig-model]]
+
+- [[dfig-model|DFIG]]
+- [[双质量块轴系模型|双质量块轴系模型]]
+- [[转子侧换流器|转子侧换流器]]
+- [[网侧换流器|网侧换流器]]
+- [[同步发电机|同步发电机]]
+
 
 ## 相关主题
 
-- [[co-simulation]]
+
+- [[混合仿真|混合仿真]]
+- [[风电场等值建模|风电场等值建模]]
+- [[暂态稳定性分析|暂态稳定性分析]]
+- [[故障动态响应|故障动态响应]]
+- [[控制系统建模|控制系统建模]]
+
 
 ## 主要发现
 
-To analyze the dynamic response of double-fed induction generator (DFIG) in-depth, based on the operation principle of DFIG an electromagnetic transient model of DFIG is built and the electromagnetic 
+
+- 三相与单相短路故障下双馈风机有功无功解耦控制策略均能快速恢复平稳
+- 暂态过程中转子电流与直流母线电压受冲击显著是触发机组保护动作主因
+- 桨距角控制能有效抑制机械转速突变混合仿真可清晰揭示风机内部动态响应
+
+

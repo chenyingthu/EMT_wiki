@@ -21,30 +21,36 @@ sources: ["EMT_Doc/37/Liu 等 - 2022 - The Averaged-value Model of a Flexible Po
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出了一种用于柔性电力电子变电站（FPES）的平均值模型（AVM），以加速混合交直流配电系统的电磁暂态仿真
+- 针对基于四绕组中频变压器的多端口DC-DC变换器，开发了基于受控源的集总平均模型
+- 通过与详细IGBT模型对比，验证了所提AVM在保持高精度的同时显著提升了仿真计算效率
 
 ## 使用的方法
 
-- [[average-value-model|平均值模型]]
-- [[受控源建模|受控源建模]]
-- [[集中参数平均建模|集中参数平均建模]]
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+
+- [[average-value-model]]
+- [[nodal-analysis]]
+- [[state-space]]
 
 ## 涉及的模型
 
-- [[柔性电力电子变电站-fpes|柔性电力电子变电站(FPES)]]
-- [[mmc-model|MMC]]
-- [[四绕组中频变压器-fwmft|四绕组中频变压器(FWMFT)]]
-- [[多端口dc-dc变换器|多端口DC-DC变换器]]
-- [[详细igbt模型|详细IGBT模型]]
+
+- [[mmc-model]]
+- [[transformer]]
 
 ## 相关主题
 
-- [[电磁暂态仿真加速|电磁暂态仿真加速]]
-- [[高效精确建模|高效精确建模]]
-- [[交直流混合配电系统|交直流混合配电系统]]
-- [[电力电子变压器-pet|电力电子变压器(PET)]]
+
+- [[mmc]]
+- [[hvdc]]
+- [[transformer]]
 
 ## 主要发现
 
-—The concept of a flexible power electronics substa- tion (FPES) was first applied in the Zhangbei DC distribution network demonstration project
+
+
+- 所提平均值模型相比详细IGBT开关模型显著加快了电磁暂态仿真速度
+- 该模型在混合交直流配电系统动态仿真中能够保持较高的电压与电流波形精度
+- 基于受控源的集总平均方法能有效表征多端口DC-DC变换器的平均电流传输特性

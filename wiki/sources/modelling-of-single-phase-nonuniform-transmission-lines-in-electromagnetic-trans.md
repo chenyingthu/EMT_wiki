@@ -21,27 +21,43 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+- 提出基于参数指数变化假设的单相非均匀线路频域二端口模型
+- 采用最小相移型有理函数综合频变特性，实现时域快速递归卷积
+- 推导出类Bergeron形式的时域等效电路，可直接兼容EMTP程序
+
 
 ## 使用的方法
 
+
 - [[有理函数综合|有理函数综合]]
-- [[快速递归卷积技术|快速递归卷积技术]]
-- [[频域综合与时域转换|频域综合与时域转换]]
+- [[快速递归卷积|快速递归卷积]]
 - [[transmission-line-model|Bergeron线路模型]]
+- [[频域二端口建模|频域二端口建模]]
+
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[单相非均匀输电线路|单相非均匀输电线路]]
+- [[指数变化线路模型|指数变化线路模型]]
+- [[级联多段均匀线路模型|级联多段均匀线路模型]]
+
 
 ## 相关主题
 
+
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
-- [[非均匀线路建模|非均匀线路建模]]
-- [[emtp兼容算法|EMTP兼容算法]]
-- [[时域仿真|时域仿真]]
+- [[时域行波仿真|时域行波仿真]]
+- [[emtp兼容建模|EMTP兼容建模]]
+
 
 ## 主要发现
 
-An exponential single-phase line model is introduced to represent nonuniform transmission lines, When the line parameters are assumed to vary exponentially, a set of two- port equations can be formed 
+
+- 时域仿真结果与已发表实验数据高度吻合，验证了模型准确性
+- 模型计算结果与级联多段均匀线路模型一致，且计算效率更高
+- 有理函数综合的幅频与相频特性曲线与精确解几乎完全重合
+
+

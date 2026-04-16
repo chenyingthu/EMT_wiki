@@ -337,3 +337,11 @@
 - 编写 tools/analyze_pending_sources.py：PDF 文本提取 → LLM 分析 → 自动填充来源页
 - 50 篇来源页的 5 个章节全部填充：核心贡献、使用的方法、涉及的模型、相关主题、主要发现
 - 待分析占位符: 235 → 0（全部清除）
+
+## [2026-04-16] retry-low-quality | 重处理 132 篇低质量来源页（pdftotext + LLM）
+- 问题识别：132 篇来源页内容长度 <1000 字符或核心贡献 <2 项（可能使用了 pdftotext 回退）
+- 编写 tools/retry_fast_papers.py：pdftotext 快速提取（5 秒/PDF）+ LLM 中文分析（qwen3.6-plus，30 秒/篇）
+- 处理结果：132/132 成功（100%），失败 2 篇（编码问题或 PDF 格式不支持）
+- 耗时：145.1 分钟（约 66 秒/篇）
+- 失败文件：saturation-in-transient-and-stability-phenomena-for-cylindrical-13&14.md, 模块化多电平换流器的高效电磁暂态仿真方法研究.md
+- 质量验证：抽样检查显示核心贡献 2-4 项，主要发现 2-4 项，方法/模型/主题 wikilink 正确

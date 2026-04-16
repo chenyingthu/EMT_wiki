@@ -21,27 +21,46 @@ Current source modular multilevel converter (CSMMC) is a good alternative for hi
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+- 提出CSMMC桥臂诺顿等效两节点模型，消除内部中间节点，大幅降低电磁暂态仿真计算负担
+- 构建支持冗余子模块故障安全研究的混合模型，兼顾子模块级动态特性与仿真效率
+- 在PSCAD中通过FORTRAN实现等效模型，验证其在背靠背系统动态研究中的高精度
+
 
 ## 使用的方法
 
+
 - [[诺顿等效建模|诺顿等效建模]]
-- [[节点消除技术|节点消除技术]]
+- [[梯形积分法|梯形积分法]]
+- [[节点分析法|节点分析法]]
 - [[混合建模|混合建模]]
-- [[fortran自定义模块编程|FORTRAN自定义模块编程]]
+- [[自定义fortran模块|自定义FORTRAN模块]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[半桥子模块|半桥子模块]]
+- [[背靠背变流器系统|背靠背变流器系统]]
+- [[传统详细模型|传统详细模型]]
+
 
 ## 相关主题
 
+
 - [[电磁暂态仿真|电磁暂态仿真]]
-- [[计算效率优化|计算效率优化]]
+- [[等效建模|等效建模]]
 - [[动态特性研究|动态特性研究]]
-- [[vsc-hvdc|VSC-HVDC]]
-- [[可再生能源并网|可再生能源并网]]
+- [[背靠背变流器|背靠背变流器]]
+- [[电流平衡控制|电流平衡控制]]
+
 
 ## 主要发现
 
-Current source modular multilevel converter (CSMMC) is a good alternative for high-power applications with medium-voltage and high-current requirements
+
+- 等效模型仿真结果与传统详细模型高度吻合，在保持精度的同时显著缩短计算时间
+- 混合模型可准确复现冗余子模块故障安全功能及电流平衡控制器的动态交互特性
+- 背靠背系统动态仿真验证表明，该模型适用于中高压大功率场景的系统级暂态分析
+
+

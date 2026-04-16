@@ -21,31 +21,32 @@ An external network model to be used in Electromagnetic Tran- sients Programs (E
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出了一种直接在时域构建外部系统等效模型的方法，避免了传统频域拟合的复杂性
+- 基于多正弦激励响应构建离散时间滤波器，并将其转换为诺顿等效源直接集成到EMTP中
+- 提供了一种易于实现且可直接应用于现有电磁暂态仿真程序的外部网络等效技术
 
 ## 使用的方法
 
-- [[时域等值法|时域等值法]]
-- [[离散时间滤波器建模|离散时间滤波器建模]]
-- [[多正弦激励响应分析|多正弦激励响应分析]]
-- [[诺顿等效转换|诺顿等效转换]]
-- [[系统辨识|系统辨识]]
+
+- [[network-equivalent]]
 
 ## 涉及的模型
 
-- [[外部网络等值模型|外部网络等值模型]]
-- [[离散时间诺顿等效源|离散时间诺顿等效源]]
-- [[开路输电线路|开路输电线路]]
-- [[三相测试系统|三相测试系统]]
+
+- [[transmission-line]]
+- [[network-equivalent]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[网络等值|网络等值]]
-- [[时域建模|时域建模]]
-- [[外部系统建模|外部系统建模]]
-- [[emtp应用|EMTP应用]]
+
+- [[network-equivalent]]
 
 ## 主要发现
 
-An external network model to be used in Electromagnetic Tran- sients Programs (EMTPs) is developed based on techniques directly applicable in the time domain
+
+
+- 时域离散滤波器能够准确复现外部系统在宽频暂态过程中的动态响应
+- 无需显式综合RLC元件网络，直接生成的诺顿等效源可无缝集成至现有EMTP程序
+- 在空载输电线路合闸暂态测试中，该等效模型与完整系统仿真结果高度一致，验证了其有效性与计算效率

@@ -21,27 +21,46 @@ A novel hybrid-model transient stability simulation algorithm for ac/dc power sy
 
 ## 核心贡献
 
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+- 提出基于动态相量理论的HVDC详细建模方法，兼顾换流器开关动态与计算效率
+- 设计交直流混合仿真接口算法，利用牛顿法实现动态相量与机电暂态模型的高效耦合
+- 构建适用于大规模交直流电网暂态稳定分析的混合仿真框架，有效降低CPU耗时
+
 
 ## 使用的方法
 
+
 - [[动态相量法|动态相量法]]
-- [[混合模型仿真|混合模型仿真]]
+- [[开关函数法|开关函数法]]
+- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[混合仿真算法|混合仿真算法]]
 - [[机电暂态建模|机电暂态建模]]
-- [[交直流接口算法|交直流接口算法]]
+
 
 ## 涉及的模型
 
-- [[vsc-hvdc|VSC-HVDC]]
-- [[交流系统机电暂态模型|交流系统机电暂态模型]]
-- [[电磁暂态模型|电磁暂态模型]]
-- [[准稳态模型|准稳态模型]]
+
+- [[lcc-model|LCC]]
+- [[交流电网|交流电网]]
 - [[多馈入直流系统|多馈入直流系统]]
+- [[换流器开关模型|换流器开关模型]]
+
 
 ## 相关主题
 
-- [[dynamic-phasor]]
+
+- [[混合仿真|混合仿真]]
+- [[暂态稳定分析|暂态稳定分析]]
+- [[交直流互联系统|交直流互联系统]]
+- [[接口算法|接口算法]]
+- [[动态相量建模|动态相量建模]]
+
 
 ## 主要发现
 
-A novel hybrid-model transient stability simulation algorithm for ac/dc power systems is suggested in this paper, where dynamic phasors theory is applied for HVDC transmission system modeling, and tra
+
+- 动态相量HVDC模型精度与电磁暂态模型相当，但仿真CPU时间大幅减少
+- 所提接口算法在两区域及多馈入直流系统中验证有效，能准确捕捉暂态稳定过程
+- 混合模型成功兼顾换流器非对称故障响应与大规模系统仿真效率，适用性强
+
+

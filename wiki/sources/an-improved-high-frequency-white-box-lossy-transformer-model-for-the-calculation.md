@@ -21,25 +21,43 @@ Rural water networks in the developing world are typically branched networks wit
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+- 提出多管段管径线性规划模型，保持全局最优并显著提升求解效率
+- 开发集成GIS的JalTantra系统，实现树状供水管网自动化优化设计
+
 
 ## 使用的方法
 
+
 - [[线性规划-lp|线性规划(LP)]]
 - [[整数线性规划-ilp|整数线性规划(ILP)]]
-- [[启发式算法|启发式算法]]
-- [[约束优化|约束优化]]
+- [[hazen-williams水头损失公式|Hazen-Williams水头损失公式]]
+- [[约束优化算法|约束优化算法]]
+
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[树状供水管网模型|树状供水管网模型]]
+- [[单水源无环网络|单水源无环网络]]
+- [[多管段组合模型|多管段组合模型]]
+- [[jaltantra优化系统|JalTantra优化系统]]
+
 
 ## 相关主题
 
-- [[管网成本优化|管网成本优化]]
-- [[压力约束设计|压力约束设计]]
-- [[离散管径选择|离散管径选择]]
+
+- [[供水管网优化设计|供水管网优化设计]]
+- [[管径离散选择|管径离散选择]]
+- [[压力约束优化|压力约束优化]]
+- [[线性规划应用|线性规划应用]]
+- [[gis集成设计|GIS集成设计]]
+
 
 ## 主要发现
 
-Rural water networks in the developing world are typically branched networks with a single water source
+
+- 不预设管段限制的LP模型运行更快，且自然收敛至最多两种相邻管径最优解
+- 新模型在求解精度与计算耗时上均优于传统启发式算法及单管径整数规划方法
+
+

@@ -21,34 +21,46 @@ A new topology for current limiting HVDC circuit breaker☆ Shuai Li⁎, Jiyuan 
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+- 提出一种含主断路器与支路断路器的模块化限流直流断路器新拓扑
+- 设计可灵活配置的电感支路结构，有效增强限流效果并降低单支路电流应力
+- 实现疑似故障提前限流，将最大故障检测延时放宽至12ms且保障电流不越限
+
 
 ## 使用的方法
 
-- [[仿真建模|仿真建模]]
-- [[实验验证|实验验证]]
+
+- [[pscad-emtdc电磁暂态仿真|PSCAD/EMTDC电磁暂态仿真]]
+- [[等效电路分析|等效电路分析]]
+- [[硬件实验验证|硬件实验验证]]
+
 
 ## 涉及的模型
 
-- [[高压直流断路器-dccb|高压直流断路器(DCCB)]]
-- [[限流型高压直流断路器-cl-dccb|限流型高压直流断路器(CL-DCCB)]]
-- [[主断路器-mcb|主断路器(MCB)]]
-- [[分支断路器-bcb|分支断路器(BCB)]]
+
+- [[cl-dccb|CL-DCCB]]
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
-- [[子模块-sm|子模块(SM)]]
-- [[机械开关|机械开关]]
-- [[电感支路|电感支路]]
+- [[igbt模块|IGBT模块]]
+- [[金属氧化物避雷器-moa|金属氧化物避雷器(MOA)]]
+- [[超快机械开关-ufd|超快机械开关(UFD)]]
+
 
 ## 相关主题
 
-- [[高压直流电网|高压直流电网]]
-- [[直流故障清除|直流故障清除]]
-- [[限流技术|限流技术]]
+
+- [[vsc-hvdc|VSC-HVDC]]
+- [[直流限流技术|直流限流技术]]
 - [[过电压保护|过电压保护]]
-- [[系统稳定性|系统稳定性]]
-- [[故障检测|故障检测]]
+- [[直流电网故障保护|直流电网故障保护]]
+- [[故障检测延时优化|故障检测延时优化]]
+
 
 ## 主要发现
 
-A new topology for current limiting HVDC circuit breaker☆ Shuai Li⁎, Jiyuan Zhang, Jianzhong Xu, Chengyong Zhao The State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sour
+
+- 仿真与实验验证表明，该拓扑可将最大故障检测延时安全延长至12ms
+- 增加电感支路数量或单支路电感值可显著提升限流效果并降低器件应力
+- 提前限流机制有效配合ROCOV检测，确保故障电流始终低于断路器开断极限
+
+

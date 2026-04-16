@@ -21,23 +21,47 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+- 提出基频动态相量新结构，实现外部变量任意频率分量的高效建模
+- 构建可直接嵌入EMT仿真器的MMC模型，支持任意拓扑网络接口
+- 实现模型精度与计算负担灵活调节，兼顾内部谐波动态与外部交互
+
 
 ## 使用的方法
 
+
 - [[动态相量法|动态相量法]]
-- [[基频动态相量技术|基频动态相量技术]]
-- [[等效建模|等效建模]]
+- [[基频动态相量建模|基频动态相量建模]]
+- [[最近电平逼近调制|最近电平逼近调制]]
+- [[电容电压平衡算法|电容电压平衡算法]]
+- [[节点导纳矩阵求解|节点导纳矩阵求解]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[半桥子模块|半桥子模块]]
+- [[vsc-model|VSC]]
+- [[背靠背直流系统|背靠背直流系统]]
+- [[12节点交流系统|12节点交流系统]]
+
 
 ## 相关主题
 
-- [[dynamic-phasor]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[扩展频率范围建模|扩展频率范围建模]]
+- [[谐波分析|谐波分析]]
+- [[计算效率优化|计算效率优化]]
+- [[vsc-hvdc|VSC-HVDC]]
+
 
 ## 主要发现
 
-—This paper presents a new dynamic phasor model of a modular multilevel converter (MMC) with extended frequency range for direct interfacing to an electromagnetic transient (EMT) simulator
+
+- 在逆变器、背靠背HVDC及12节点系统中验证，精度与详细EMT模型高度一致
+- 相比现有模型计算效率显著提升，支持灵活调节谐波数量且不增加计算负担
+- 缩比实验室台架实验验证了模型在真实硬件接口下的动态响应准确性
+
+

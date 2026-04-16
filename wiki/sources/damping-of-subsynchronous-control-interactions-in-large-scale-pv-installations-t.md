@@ -21,31 +21,51 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+- 提出基于FPGA的EMT-TS混合仿真架构，实现超实时动态推演
+- 设计功率-电压接口实现电磁暂态与机电暂态模型的并行协同计算
+- 利用光伏逆变器等效STATCOM，通过有功无功注入抑制次同步振荡
+
 
 ## 使用的方法
 
-- [[超实时-ftrt-仿真|超实时(FTRT)仿真]]
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
-- [[暂态稳定-ts-仿真|暂态稳定(TS)仿真]]
-- [[emt-ts混合仿真|EMT-TS混合仿真]]
-- [[fpga硬件并行仿真|FPGA硬件并行仿真]]
-- [[功率-电压接口技术|功率-电压接口技术]]
-- [[预测控制|预测控制]]
-- [[振荡模式分析|振荡模式分析]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[机电暂态仿真|机电暂态仿真]]
+- [[混合仿真|混合仿真]]
+- [[fpga硬件仿真|FPGA硬件仿真]]
+- [[并行计算|并行计算]]
+- [[特征值分析|特征值分析]]
+- [[功率-电压接口|功率-电压接口]]
+
 
 ## 涉及的模型
 
-- [[大型光伏电站|大型光伏电站]]
-- [[光伏阵列|光伏阵列]]
-- [[变流器|变流器]]
+
+- [[光伏电站|光伏电站]]
+- [[电压源换流器|电压源换流器]]
 - [[交流电网|交流电网]]
 - [[串联补偿输电线路|串联补偿输电线路]]
+- [[pv-statcom|PV-STATCOM]]
+
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[次同步控制交互|次同步控制交互]]
+- [[超实时仿真|超实时仿真]]
+- [[硬件仿真|硬件仿真]]
+- [[混合仿真|混合仿真]]
+- [[弱电网稳定性|弱电网稳定性]]
+- [[光伏并网|光伏并网]]
+- [[并行计算|并行计算]]
+
 
 ## 主要发现
 
-Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in the integration into transmission and distribution network, manifesting subsynchronous control interaction (SSCI) when th
+
+- 提出的FPGA硬件仿真平台实现了122倍超实时加速比，满足快速预测需求
+- 通过有功无功功率控制策略有效阻尼了弱电网下光伏电站的次同步振荡
+- 硬件仿真结果与Matlab及TSAT离线工具高度吻合，验证了模型准确性
+
+

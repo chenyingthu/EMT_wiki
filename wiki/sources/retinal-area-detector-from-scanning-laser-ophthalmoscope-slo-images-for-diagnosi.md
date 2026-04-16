@@ -21,7 +21,10 @@ sources: ["EMT_Doc/04/ACCESS.2020.2983356.pdf.pdf"]
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出一种基于图像处理和机器学习的方法，自动从SLO图像中提取真实视网膜区域
+- 利用超像素分组降低图像处理复杂度，提取纹理与结构特征以区分视网膜区域与伪影
 
 ## 使用的方法
 
@@ -46,4 +49,7 @@ sources: ["EMT_Doc/04/ACCESS.2020.2983356.pdf.pdf"]
 
 ## 主要发现
 
-—Scanning laser ophthalmoscopes (SLOs) can be used for early detection of retinal diseases
+
+
+- 该方法能有效排除睫毛、眼睑等成像伪影，整体分类准确率达到92%
+- 去除伪影可提升视网膜疾病特征的自动检测效率，并支持多视角图像配准

@@ -21,22 +21,46 @@ sources: ["EMT_Doc/07&08/An Enhanced Average Value Model of Modular Multilevel C
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
-- 采用平均值模型简化换流器开关过程，大幅提升计算效率
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 提出增强型MMC平均值模型，利用桥臂电流初始化补偿闭锁瞬间初始条件缺失。
+- 在闭锁模块引入受控电流源初始化电感电流，消除传统模型交直流侧电流不连续现象。
+
 
 ## 使用的方法
 
-- [[average-value-model]]
+
+- [[平均值模型|平均值模型]]
+- [[控制信号建模|控制信号建模]]
+- [[戴维南等效电路|戴维南等效电路]]
+- [[桥臂电流初始化|桥臂电流初始化]]
+- [[闭锁模块建模|闭锁模块建模]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[半桥子模块|半桥子模块]]
+- [[mmc-model|MMC]]
+- [[igbt与续流二极管|IGBT与续流二极管]]
+- [[桥臂电感与电阻|桥臂电感与电阻]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[mmc-model|MMC]]
+- [[换流器闭锁工况|换流器闭锁工况]]
+- [[实时仿真|实时仿真]]
+- [[电力电子等效建模|电力电子等效建模]]
+
 
 ## 主要发现
 
-—Modular Multilevel Converter (MMC) has demonstrated significant advantage in harmonic elimination and improved converter efficiency due to the use of large number of submodules and low switching freq
+
+- 在Simulink平台验证，闭锁工况下电气量波形与详细开关模型高度吻合。
+- 有效消除了正常运行至闭锁模式切换时的直流电流不连续现象，提升了暂态仿真精度。
+- 相比传统平均值模型，新模型在保持高计算效率的同时显著提高了闭锁过程建模精度。
+
+

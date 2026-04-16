@@ -21,27 +21,45 @@ Protection of direct current (DC) transmission lines is one of the key difﬁcul
 
 ## 核心贡献
 
-- 改进了vsc的EMT建模方法，提升了系统级暂态分析精度
+
+- 提出基于模电压行波特征的超高速保护原理，利用一模电压幅值变化构建启动元件
+- 采用二进小波变换提取一零模反向行波模极大值，实现故障区段精准识别与选线
+
 
 ## 使用的方法
 
+
+- [[相模变换|相模变换]]
 - [[二进小波变换|二进小波变换]]
+- [[小波变换模极大值提取|小波变换模极大值提取]]
 - [[行波保护原理|行波保护原理]]
-- [[模量电压分析|模量电压分析]]
-- [[电磁暂态仿真-pscad-emtdc|电磁暂态仿真(PSCAD/EMTDC)]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+
 
 ## 涉及的模型
 
-- [[vsc-model]]
+
+- [[vsc-model|VSC]]
+- [[mmc-model|MMC]]
+- [[架空输电线路|架空输电线路]]
+- [[直流限流电抗器|直流限流电抗器]]
+- [[直流断路器|直流断路器]]
+
 
 ## 相关主题
 
-- [[直流电网保护|直流电网保护]]
+
+- [[直流线路保护|直流线路保护]]
 - [[行波保护|行波保护]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[故障区段识别与选线|故障区段识别与选线]]
+- [[vsc-model|VSC]]
+- [[故障区段识别|故障区段识别]]
 - [[超高速保护|超高速保护]]
+
 
 ## 主要发现
 
-Protection of direct current (DC) transmission lines is one of the key difﬁculties to be urgently solved in the construction of the future voltage-sourced converter (VSC)-based DC grids
+
+- 仿真验证表明该保护原理在不同故障条件下均具备毫秒级动作速度与高可靠性
+- 模极大值特征可有效区分区内区外故障，对高阻故障及噪声干扰具有强鲁棒性
+
+

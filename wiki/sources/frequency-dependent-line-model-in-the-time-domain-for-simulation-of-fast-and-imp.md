@@ -21,27 +21,46 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 
 ## 核心贡献
 
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 将频变效应引入Bergeron模型纵向参数，构建时域线路新模型
+- 采用频变Bergeron电路级联结构，拓宽适用频带至大气冲击暂态
+- 利用状态矩阵表征微分方程，实现宽频电磁暂态的高效时域求解
+
 
 ## 使用的方法
 
+
 - [[transmission-line-model|Bergeron线路模型]]
-- [[频变建模|频变建模]]
-- [[级联分段法|级联分段法]]
+- [[矢量拟合|矢量拟合]]
+- [[级联电路建模|级联电路建模]]
 - [[状态矩阵法|状态矩阵法]]
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
 
+
 ## 涉及的模型
+
 
 - [[输电线路|输电线路]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[集中参数模型|集中参数模型]]
-- [[分布参数模型|分布参数模型]]
+- [[频变线路模型|频变线路模型]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[时域分析|时域分析]]
+- [[冲击暂态仿真|冲击暂态仿真]]
+- [[输电线路建模|输电线路建模]]
+
 
 ## 主要发现
 
-Frequency-dependent line model in the time domain for simulation Pablo Torrez Caballero a, Eduardo C
+
+- 模型在操作冲击与大气冲击下均与数值拉普拉斯法结果高度吻合
+- 级联频变Bergeron结构有效覆盖低频至高频宽频带暂态过程
+- 相比传统集中参数级联模型，该方法在保证精度的同时降低计算负担
+
+

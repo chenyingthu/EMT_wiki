@@ -21,14 +21,16 @@ Simulation of electromagnetic transients with a family of implicit Tecnológico 
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出并应用一族隐式多步后向微分公式（BDF）进行电磁暂态仿真，克服了传统梯形法的数值振荡缺陷
+- 基于改进节点分析法构建可灵活切换积分阶数的计算框架，历史项仅影响右端向量，易于集成至现有EMT程序
 
 ## 使用的方法
 
-- [[后向微分公式-bdf|后向微分公式(BDF)]]
-- [[隐式积分规则|隐式积分规则]]
-- [[修正节点分析法-mna|修正节点分析法(MNA)]]
-- [[多步积分法|多步积分法]]
+
+- [[numerical-integration]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
@@ -37,11 +39,13 @@ Simulation of electromagnetic transients with a family of implicit Tecnológico 
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[时域仿真|时域仿真]]
-- [[数值振荡抑制|数值振荡抑制]]
-- [[开关操作暂态|开关操作暂态]]
+
+- [[numerical-integration]]
+- [[harmonic]]
 
 ## 主要发现
 
-Simulation of electromagnetic transients with a family of implicit Tecnológico Nacional de México / I
+
+
+- 1至5阶BDF公式在保持绝对稳定性的同时显著提升了计算精度，且完全消除了开关操作引起的数值振荡
+- 该算法额外内存需求极小，无需特殊控制或额外校验即可支持固定或可变步长仿真，具备极高的工程实用性

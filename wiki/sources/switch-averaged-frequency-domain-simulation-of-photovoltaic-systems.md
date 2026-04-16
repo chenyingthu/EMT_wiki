@@ -21,29 +21,33 @@ sources: ["EMT_Doc/37/Agudelo 等 - 2023 - Switch-Averaged Frequency Domain Simu
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出基于数值拉普拉斯变换(NLT)的分时窗频域仿真框架，专用于光伏开关网络的暂态分析
+- 引入开关函数平均与样本重叠技术，有效抑制时间窗接口处的上升沿数值振荡，显著提升动态仿真效率
 
 ## 使用的方法
 
-- [[数值拉普拉斯变换-nlt|数值拉普拉斯变换(NLT)]]
-- [[频域建模|频域建模]]
-- [[分区时间仿真|分区时间仿真]]
-- [[开关函数平均|开关函数平均]]
-- [[样本重叠|样本重叠]]
+
+- [[numerical-integration]]
+- [[interpolation]]
+- [[average-value-model]]
 
 ## 涉及的模型
 
-- [[光伏系统|光伏系统]]
-- [[开关网络|开关网络]]
+
+- [[average-value-model]]
+- [[network-equivalent]]
 
 ## 相关主题
 
-- [[频域仿真|频域仿真]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[暂态仿真|暂态仿真]]
-- [[数值振荡抑制|数值振荡抑制]]
-- [[高效动态仿真|高效动态仿真]]
+
+- [[harmonic]]
+- [[frequency-dependent]]
 
 ## 主要发现
 
-—This paper pushes forward frequency domain (FD) modeling of switched networks aimed at transient simulation, with particular interest in photovoltaic (PV) systems
+
+
+- 开关平均与样本重叠策略能彻底消除传统分时窗NLT方法在接口处产生的数值振荡
+- 所提方法在保持精度的前提下，计算效率显著优于经典单窗全采样NLT及非平均频域模型，且经主流EMT工具验证可靠

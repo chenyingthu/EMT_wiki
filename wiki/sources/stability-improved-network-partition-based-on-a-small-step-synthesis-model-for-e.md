@@ -21,32 +21,33 @@ International Journal of Electrical Power and Energy Systems Stability-improved 
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出了一种基于小步长综合模型的稳定性改进网络分割方法，用于提升电磁暂态仿真效率
+- 基于李雅普诺夫准则和谱半径分析，严格推导了仿真时间步长与综合阶数的数值稳定性边界
 
 ## 使用的方法
 
-- [[网络分割|网络分割]]
-- [[半隐式蛙跳法|半隐式蛙跳法]]
-- [[小步长综合模型|小步长综合模型]]
-- [[李雅普诺夫准则|李雅普诺夫准则]]
-- [[谱半径分析|谱半径分析]]
+
+- [[network-equivalent]]
+- [[numerical-integration]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[电容与电感|电容与电感]]
-- [[ieee-14节点系统|IEEE 14节点系统]]
-- [[风电场模型|风电场模型]]
-- [[电力电子设备|电力电子设备]]
-- [[输电线路|输电线路]]
+
+- [[wind-farm]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[数值稳定性|数值稳定性]]
-- [[仿真效率|仿真效率]]
-- [[网络分区|网络分区]]
-- [[稳定性边界分析|稳定性边界分析]]
+
+- [[parallel]]
+- [[multirate]]
+- [[real-time]]
 
 ## 主要发现
 
-International Journal of Electrical Power and Energy Systems Stability-improved network partition based on a small-step synthesis model School of Electrical Engineering, Shandong University, Jinan 250
+
+
+- 所提方法在维持原有仿真精度与计算效率的前提下，有效突破了传统网络分割算法受时间步长限制的数值稳定性瓶颈
+- IEEE 14节点系统与风电场模型的测试结果表明，该方法能够显著增强高渗透电力电子系统的电磁暂态仿真稳定性

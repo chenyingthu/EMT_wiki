@@ -21,24 +21,44 @@ Rational function approximations of characteristic impedance and propagation coe
 
 ## 核心贡献
 
-- 改进了多端口频率相关网络等值方法，保证无源性和宽频精度
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 提出频变线路低阶有理函数拟合方法，消除传统Bode法产生的冗余零极点
+- 基于单调区间划分与分段误差区间实现零极点初始低阶定位
+- 引入非线性最小二乘法优化零极点位置，实现降阶与高精度拟合的统一
+
 
 ## 使用的方法
 
-- [[低阶有理函数拟合|低阶有理函数拟合]]
-- [[非线性最小二乘法|非线性最小二乘法]]
-- [[零极点定位|零极点定位]]
+
+- [[有理函数拟合|有理函数拟合]]
 - [[bode渐近线法|Bode渐近线法]]
+- [[非线性最小二乘法|非线性最小二乘法]]
+- [[递归卷积|递归卷积]]
+- [[相模变换|相模变换]]
+
 
 ## 涉及的模型
 
-- [[fdne-model]]
+
+- [[频变输电线路模型|频变输电线路模型]]
+- [[j-r-marti模型|J.R. Marti模型]]
+- [[分布参数线路模型|分布参数线路模型]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[输电线路建模|输电线路建模]]
+- [[网络等值|网络等值]]
+
 
 ## 主要发现
 
-Rational function approximations of characteristic impedance and propagation coefficient are crucial in modeling of frequency-dependent transmission line
+
+- 相比传统Bode法，新方法在显著降低有理函数阶数的同时提升了拟合精度
+- 消除冗余零极点有效减少递归卷积计算量，大幅加速电磁暂态仿真过程
+- 分段误差与最小二乘优化结合，克服了零极点密集导致的实际拟合偏差
+
+

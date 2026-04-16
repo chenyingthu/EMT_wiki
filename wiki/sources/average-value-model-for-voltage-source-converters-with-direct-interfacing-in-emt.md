@@ -21,25 +21,43 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 ## 核心贡献
 
-- 采用平均值模型简化换流器开关过程，大幅提升计算效率
+
+- 提出VSC平均值模型直接接口方法，消除传统间接接口的一步延迟
+- 将AVM重构为节点导纳形式，与外部网络节点方程联立同步求解
+- 突破大仿真步长下的数值不稳定瓶颈，显著提升系统级仿真效率
+
 
 ## 使用的方法
 
-- [[average-value-model]]
+
+- [[平均值建模|平均值建模]]
+- [[直接接口技术|直接接口技术]]
+- [[节点分析法|节点分析法]]
+- [[dq坐标变换|dq坐标变换]]
+
 
 ## 涉及的模型
 
+
 - [[vsc-model|VSC]]
-- [[average-value-model|平均值模型]]
-- [[vsc-hvdc|VSC-HVDC]]
+- [[交直流系统|交直流系统]]
+- [[戴维南等效电路|戴维南等效电路]]
+
 
 ## 相关主题
 
+
 - [[电磁暂态仿真|电磁暂态仿真]]
-- [[接口技术|接口技术]]
 - [[大时间步长仿真|大时间步长仿真]]
-- [[数值稳定性与精度|数值稳定性与精度]]
+- [[vsc-model|VSC]]
+- [[数值稳定性|数值稳定性]]
+
 
 ## 主要发现
 
-—Average-value models (AVMs) of high-frequency switching voltage-source converters (VSCs) are indispensable for fast/efﬁcient simulation of VSC-based power systems
+
+- 消除接口延迟后，仿真步长可显著增大且保持数值稳定与高精度
+- 在大时间步长下，新模型精度优于传统间接接口平均值模型
+- 节点联立求解有效避免了传统方法因单步延迟引发的数值发散问题
+
+

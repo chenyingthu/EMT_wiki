@@ -21,29 +21,34 @@ This paper presents the influence of reactance saturation in transient and stabi
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 研究了电抗饱和对圆柱形同步电机暂态和稳定现象的影响
+- 基于EMTP-ATP对比评估了传统线性Park模型与考虑磁饱和及q轴暂态电抗的改进Park模型
+- 揭示了磁饱和与q轴暂态电抗对大容量汽轮发电机暂态特性分析的重要性
 
 ## 使用的方法
 
-- [[emtp-atp仿真|EMTP-ATP仿真]]
-- [[等效电路建模|等效电路建模]]
-- [[磁饱和折线近似|磁饱和折线近似]]
-- [[运算阻抗分析|运算阻抗分析]]
+
+- [[numerical-integration]]
+- [[state-space]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[隐极同步电机-汽轮发电机|隐极同步电机(汽轮发电机)]]
-- [[park模型-线性|Park模型(线性)]]
-- [[park模型-含磁饱和|Park模型(含磁饱和)]]
-- [[d-q轴等效电路|d-q轴等效电路]]
+
+- [[synchronous-machine]]
 
 ## 相关主题
 
-- [[电抗饱和-磁饱和|电抗饱和/磁饱和]]
-- [[暂态现象|暂态现象]]
-- [[稳定性分析|稳定性分析]]
-- [[大容量发电机建模|大容量发电机建模]]
+
+- [[synchronous-machine]]
+- [[network-equivalent]]
 
 ## 主要发现
 
-This paper presents the influence of reactance saturation in transient and stability phenomena for cylindrical synchronous machine
+
+
+- 磁饱和对同步电机的暂态和稳定特性有显著影响
+- 在等效电路中考虑磁饱和与q轴暂态电抗（x'q）能显著提高大容量汽轮发电机暂态过程（如甩负荷）的仿真精度
+- 传统恒定电抗的线性Park模型不足以准确评估大容量机组的暂态行为

@@ -21,36 +21,35 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 开发了首个开源的基于EMT仿真的频域识别工具Z-Tool，支持多端交直流系统的自动化扫描与小信号稳定性分析
+- 提出了多频激励与对称性利用等优化策略，显著降低计算耗时，并量化了时间步长依赖下的精度与效率权衡
 
 ## 使用的方法
 
-- [[频域辨识|频域辨识]]
-- [[多频激励|多频激励]]
-- [[对称性利用|对称性利用]]
-- [[导纳测量|导纳测量]]
-- [[小信号稳定性分析|小信号稳定性分析]]
-- [[自动化扫描|自动化扫描]]
+
+- [[numerical-integration]]
+- [[state-space]]
+- [[frequency-dependent]]
 
 ## 涉及的模型
 
-- [[mmc-model|MMC]]
-- [[vsc-hvdc|VSC-HVDC]]
-- [[交直流电力系统|交直流电力系统]]
-- [[多端系统|多端系统]]
-- [[电力电子换流器|电力电子换流器]]
-- [[黑盒模型|黑盒模型]]
+
+- [[mmc-model]]
+- [[vsc-hvdc]]
+- [[hvdc]]
 
 ## 相关主题
 
-- [[小信号稳定性分析|小信号稳定性分析]]
-- [[频域特征化|频域特征化]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[黑盒建模|黑盒建模]]
-- [[次同步振荡筛查|次同步振荡筛查]]
-- [[仿真加速|仿真加速]]
-- [[多端交直流系统|多端交直流系统]]
+
+- [[harmonic]]
+- [[passivity]]
+- [[network-equivalent]]
 
 ## 主要发现
 
-Z-Tool: Frequency-domain characterization of EMT models for small-signal a Department of Electrical Engineering (ESAT-ELECTA), KU Leuven, 3000, Leuven, Belgium This paper presents a novel frequency-do
+
+
+- 基于EMT的频域识别误差具有时间步长依赖性，需在计算效率与模型精度之间进行合理权衡
+- 采用多频激励与对称性优化可大幅缩短扫描时间，同时保持对次同步振荡等小信号稳定性评估的准确性

@@ -21,27 +21,31 @@ sources: ["EMT_Doc/36/Li 等 - 2022 - Structure Preserving Aggregation Method fo
 
 ## 核心贡献
 
-- 提出了适用于EMT仿真的dfig建模方法，适用于大规模风电场仿真
+
+
+- 提出一种保持结构的DFIG聚合方法，将多台DFIG等效为单台模型并保留群体动态特性
+- 通过递归聚合与状态方程阶数匹配，显著降低风电场模型阶数以提升EMT仿真效率
 
 ## 使用的方法
 
-- [[状态变量法|状态变量法]]
-- [[递归聚合方法|递归聚合方法]]
-- [[模型降阶|模型降阶]]
-- [[结构保持方法|结构保持方法]]
+
+- [[state-space]]
+- [[network-equivalent]]
 
 ## 涉及的模型
+
 
 - [[dfig-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[动态建模|动态建模]]
-- [[模型聚合与等值|模型聚合与等值]]
-- [[仿真效率优化|仿真效率优化]]
-- [[结构保持|结构保持]]
+
+- [[wind-farm]]
+- [[dfig]]
 
 ## 主要发现
 
-—An aggregation method is proposed that transforms the multiple DFIGs into an equivalent DFIG model that retains the major collective dynamic characteristics of a group of DFIGs
+
+
+- 聚合模型在稳态性能上与详细未简化系统完全一致
+- 聚合模型能准确复现系统主导暂态响应，同时大幅降低模型阶数并提高仿真效率

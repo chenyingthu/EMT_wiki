@@ -21,29 +21,31 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出了一种显式包含杆塔接地配置与终端变电站接地系统的架空输电线路新模型
+- 实现了从直流到数兆赫兹的精确频率相关参数表示，并显式建模线路不对称性，同时具备高数值计算效率
 
 ## 使用的方法
 
-- [[线性卷积法|线性卷积法]]
-- [[阶跃响应矩阵法|阶跃响应矩阵法]]
-- [[逆傅里叶变换|逆傅里叶变换]]
-- [[频率相关参数建模|频率相关参数建模]]
-- [[多端口网络分析|多端口网络分析]]
+
+- [[frequency-dependent]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[接地系统显式建模|接地系统显式建模]]
-- [[暂态地电位升|暂态地电位升]]
-- [[线路不对称性|线路不对称性]]
-- [[雷击与操作过电压|雷击与操作过电压]]
+
+- [[frequency-dependent]]
+- [[network-equivalent]]
 
 ## 主要发现
 
-Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling with Explicit Grounding Representation Electrical Engineering Department, University of South Carolina, Columbia, SC (U
+
+
+- 显式接地表示能够准确预测雷击或开关浪涌引起的杆塔与变电站暂态地电位升高
+- 基于阶跃响应矩阵的线性卷积时域仿真方法在保证宽频带精度的同时显著提升了计算效率，且经实际系统测试数据验证有效

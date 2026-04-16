@@ -21,25 +21,35 @@ Spurious power and its elimination in modular multilevel converter models Anton 
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 揭示了MMC的AEM和AVM模型中因控制框实现导致的一步延迟会产生非物理虚假功率
+- 提出了消除AEM和AVM模型中虚假功率的改进方案，并在MMC-HVDC系统中验证了其有效性
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[联立求解|联立求解]]
-- [[等效电路建模|等效电路建模]]
+
+- [[numerical-integration]]
+- [[nodal-analysis]]
+- [[state-space]]
 
 ## 涉及的模型
 
+
 - [[mmc-model]]
+- [[average-value-model]]
+- [[vsc-model]]
 
 ## 相关主题
 
-- [[虚假功率消除|虚假功率消除]]
-- [[仿真数值效应|仿真数值效应]]
-- [[模型接口技术|模型接口技术]]
-- [[稳态与暂态分析|稳态与暂态分析]]
+
+- [[mmc]]
+- [[vsc-hvdc]]
+- [[hvdc]]
 
 ## 主要发现
 
-Spurious power and its elimination in modular multilevel converter models Anton Stepanova,⁎, Hani Saadb, Ulas Karaagacc, Jean Mahseredjiana c Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong 
+
+
+- 当模型方程未与主网络方程联立求解（如使用控制框实现）时，数值效应会导致AEM和AVM模型产生虚假功率
+- 虚假功率可能显著影响甚至超过换流站实际损耗，导致仿真结果失真；联立求解或特定修正可有效消除该现象

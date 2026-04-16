@@ -21,29 +21,46 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 ## 核心贡献
 
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+- 提出基于无功注入与电压灵敏度的缓冲区划分方法，精准界定EMT仿真边界
+- 构建首个将高保真MMC-HVDC模型与东部互联电网全模型联合仿真的混合框架
+- 实现PSCAD与PSS/E跨平台接口集成，支持微秒级与毫秒级多速率协同仿真
+
 
 ## 使用的方法
 
-- [[混合仿真框架|混合仿真框架]]
-- [[动态相量接口模型|动态相量接口模型]]
-- [[emt-ts联合仿真|EMT-TS联合仿真]]
+
+- [[混合仿真|混合仿真]]
 - [[多速率仿真|多速率仿真]]
-- [[缓冲区尺寸设计方法|缓冲区尺寸设计方法]]
+- [[无功注入法|无功注入法]]
+- [[电压灵敏度分析|电压灵敏度分析]]
+- [[动态相量接口|动态相量接口]]
+
 
 ## 涉及的模型
 
+
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[vsc-hvdc|VSC-HVDC]]
-- [[东部互联电网-ei-暂态稳定模型|东部互联电网(EI)暂态稳定模型]]
-- [[vsc-model|VSC]]
-- [[vsc-hvdc|VSC-HVDC]]
+- [[东部互联电网|东部互联电网]]
+- [[cdc6t直流模型|CDC6T直流模型]]
+
 
 ## 相关主题
 
-- [[dynamic-phasor]]
+
+- [[emt-ts混合仿真|EMT-TS混合仿真]]
+- [[mmc-model|MMC]]
+- [[缓冲区划分|缓冲区划分]]
+- [[大规模电网仿真|大规模电网仿真]]
+- [[暂态稳定分析|暂态稳定分析]]
+
 
 ## 主要发现
 
-—Modular multilevel converters (MMCs) are widely used in the design of modern high-voltage direct current (HVdc) transmission system
+
+- 基于1.4%电压偏差阈值确定的缓冲区能有效平衡仿真精度与计算规模
+- 混合框架成功实现近八万节点电网与微秒级MMC模型的跨平台稳定协同仿真
+- 对比验证表明不同步长与缓冲区规模组合可满足系统级暂态稳定分析需求
+
+

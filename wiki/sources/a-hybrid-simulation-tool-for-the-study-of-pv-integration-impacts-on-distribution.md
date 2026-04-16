@@ -18,27 +18,47 @@ sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the
 
 ## 核心贡献
 
-- 针对EMT仿真中的co-simulation问题进行了研究
+
+- 提出EMT与OpenDSS相量域耦合架构，实现配网与光伏多速率协同求解。
+- 针对高渗透率光伏配网开发专用混合工具，兼顾局部暂态精度与全网计算效率。
+
 
 ## 使用的方法
 
+
 - [[混合仿真|混合仿真]]
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
-- [[相量域分析-准静态时序-qsts-仿真|相量域分析/准静态时序(QSTS)仿真]]
-- [[emtp算法|EMTP算法]]
-- [[多域接口耦合技术|多域接口耦合技术]]
+- [[多速率仿真|多速率仿真]]
+- [[准稳态时间序列-qsts|准稳态时间序列(QSTS)]]
+- [[相量域分析|相量域分析]]
+- [[串行接口协议|串行接口协议]]
+- [[电磁暂态算法|电磁暂态算法]]
+
 
 ## 涉及的模型
 
-- [[光伏-pv-系统|光伏(PV)系统]]
+
+- [[并网光伏系统|并网光伏系统]]
 - [[配电网馈线|配电网馈线]]
+- [[智能逆变器|智能逆变器]]
 - [[opendss相量模型|OpenDSS相量模型]]
 - [[simpowersystems全emt模型|SimPowerSystems全EMT模型]]
 
+
 ## 相关主题
 
-- [[co-simulation]]
+
+- [[混合仿真|混合仿真]]
+- [[光伏并网影响|光伏并网影响]]
+- [[配电网仿真|配电网仿真]]
+- [[多速率协同|多速率协同]]
+- [[电能质量分析|电能质量分析]]
+- [[电压调节研究|电压调节研究]]
+
 
 ## 主要发现
 
-—This paper introduces a hybrid simulation tool that is used to study the impacts of integration of photovoltaic (PV) systems on distribution networks
+
+- 与全EMT模型对比验证表明，混合工具在保持高暂态精度的同时显著缩短计算时间。
+- 实际馈线测试证实，该工具可准确捕捉光伏并网引发的快速暂态与慢速电压波动。
+
+

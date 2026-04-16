@@ -21,24 +21,49 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+- 阐述EMTP-RV软件架构与图形化建模流程，提供完整电磁暂态仿真环境
+- 构建SVC晶闸管阀组开关暂态模型，验证软件处理电力电子动态过程能力
+- 演示避雷器保护对晶闸管过电压的抑制效果，为阀组绝缘配合提供仿真依据
+
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[图形化建模|图形化建模]]
+
+- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[非线性迭代求解|非线性迭代求解]]
+- [[时域仿真|时域仿真]]
+- [[谐波分析|谐波分析]]
+- [[离散傅里叶变换|离散傅里叶变换]]
+
 
 ## 涉及的模型
 
-- [[静止无功补偿器-svc|静止无功补偿器(SVC)]]
+
+- [[svc|SVC]]
+- [[tcr|TCR]]
 - [[晶闸管阀组|晶闸管阀组]]
+- [[zno避雷器|ZnO避雷器]]
+- [[rlc支路|RLC支路]]
+- [[断路器|断路器]]
+
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
 - [[开关暂态|开关暂态]]
-- [[仿真软件应用|仿真软件应用]]
+- [[过电压保护|过电压保护]]
+- [[绝缘配合|绝缘配合]]
+- [[facts装置建模|FACTS装置建模]]
+- [[谐波分析|谐波分析]]
+
 
 ## 主要发现
 
-：In order tO introduce hoW tO use EMTP-RV(Restructured Version)．a new generation Windows-platform- based graphic software of electromagnetic transient simulation which is developed by EMTP_DCG(Develop
+
+- 仿真表明加装ZnO避雷器后晶闸管两端峰值电压由110.03kV降至62.29kV
+- 软件可准确复现120度触发角下TCR阀组动态开关过程及过电压波形特征
+- 图形化建模结合稀疏矩阵求解显著提升复杂电力网络电磁暂态仿真效率
+
+

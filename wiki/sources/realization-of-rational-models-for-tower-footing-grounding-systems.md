@@ -21,39 +21,33 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 对比了接地系统有理逼近的两种拓扑结构在最小阶数表示方面的差异
+- 探讨了有效长度对有理逼近实现的影响及其与模型阶数的关系
 
 ## 使用的方法
 
-- [[有理逼近|有理逼近]]
-- [[fdne-model|FDNE]]
-- [[电路综合|电路综合]]
-- [[矩量法-mom|矩量法(MoM)]]
-- [[部分元等效电路法-peec|部分元等效电路法(PEEC)]]
-- [[混合电磁模型-hem|混合电磁模型(HEM)]]
-- [[时域有限差分法-fdtd|时域有限差分法(FDTD)]]
-- [[无源性强制|无源性强制]]
-- [[模型降阶|模型降阶]]
+
+- [[nodal-analysis]]
+- [[passivity]]
 
 ## 涉及的模型
 
-- [[杆塔接地系统|杆塔接地系统]]
-- [[频变网络等效模型|频变网络等效模型]]
-- [[有理函数模型|有理函数模型]]
-- [[谐波阻抗模型|谐波阻抗模型]]
+
+- [[fdne]]
+- [[network-equivalent]]
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[时域分析|时域分析]]
-- [[雷击过电压|雷击过电压]]
-- [[接地系统建模|接地系统建模]]
-- [[频率相关建模|频率相关建模]]
-- [[数值稳定性|数值稳定性]]
-- [[模型降阶|模型降阶]]
-- [[无源性保证|无源性保证]]
-- [[有效长度效应|有效长度效应]]
+
+- [[harmonic]]
+- [[frequency-dependent]]
 
 ## 主要发现
 
-Realization of rational models for tower-footing grounding systems$ a Universidade Federal do Rio de Janeiro, P
+
+
+- 准确的频变网络等效（FDNE）在遵循有效长度时具有略高的数值鲁棒性
+- 传统降阶方法在高频范围内精度不足，需采用新方法以实现最小阶数表示

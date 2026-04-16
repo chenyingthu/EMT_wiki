@@ -21,27 +21,32 @@ Single-ended travelling wave-based protection scheme for double-circuit Guangbin
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出了一种适用于双回输电线路的单端行波保护方案
+- 引入累积交叉差动电流偏差判据，有效区分区内故障与断路器操作等非故障暂态事件
 
 ## 使用的方法
 
-- [[行波分析法|行波分析法]]
-- [[单端保护算法|单端保护算法]]
-- [[交叉差动电流偏差分析|交叉差动电流偏差分析]]
-- [[数字故障仿真|数字故障仿真]]
+
+- [[dynamic-phasor]]
+- [[parallel]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[继电保护|继电保护]]
-- [[行波保护|行波保护]]
-- [[单端保护|单端保护]]
-- [[故障仿真|故障仿真]]
+
+- [[transmission-line]]
+- [[dynamic-phasor]]
 
 ## 主要发现
 
-Single-ended travelling wave-based protection scheme for double-circuit Guangbin Zhanga,⁎, Hongchun Shua, F
+
+
+- 该方案可与传统相量保护并行运行，在多数故障场景下显著缩短跳闸时间
+- 基于行波幅值、极性及到达时间差的特征可可靠识别保护区内扰动
+- 大量数字电磁暂态仿真与现场录波数据验证了该保护方案的可行性与有效性

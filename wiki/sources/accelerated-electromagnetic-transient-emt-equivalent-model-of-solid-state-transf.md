@@ -21,26 +21,44 @@ sources: ["EMT_Doc/05/Gao 等 - 2022 - Accelerated Electromagnetic Transient (EM
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+- 提出节点导纳方程预处理与短路导纳参数转换技术，实现高频链路高效等效
+- 建立适配多种拓扑连接的多端口参数统一转换框架，避免传统近似引入额外误差
+- 构建MMC型固态变压器加速电磁暂态等效模型，消除内部节点并保留端口特性
+
 
 ## 使用的方法
 
+
 - [[节点导纳方程预处理|节点导纳方程预处理]]
 - [[短路导纳参数转换|短路导纳参数转换]]
-- [[等效建模|等效建模]]
-- [[加速仿真|加速仿真]]
+- [[多端口网络等效|多端口网络等效]]
+- [[节点消去法|节点消去法]]
+
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[固态变压器-sst|固态变压器(SST)]]
+- [[mmc-model|MMC]]
+- [[双有源桥-dab|双有源桥(DAB)]]
+- [[高频链路-hfl|高频链路(HFL)]]
+
 
 ## 相关主题
 
+
 - [[电磁暂态仿真|电磁暂态仿真]]
+- [[加速等效建模|加速等效建模]]
 - [[系统级仿真|系统级仿真]]
-- [[加速等效模型|加速等效模型]]
-- [[电力电子变换器建模|电力电子变换器建模]]
+- [[多端口网络等值|多端口网络等值]]
+
 
 ## 主要发现
 
-—Accurate and efﬁcient electromagnetic transient (EMT) simulation of various types of solid-state transform- ers (SSTs) is extremely time-consuming due to the complex module structure, ﬂexible topolog
+
+- 加速模型在PSCAD中验证，仿真速度较详细模型提升一至两个数量级
+- 等效模型在保留内部动态信息的同时，未牺牲电压电流波形仿真精度
+- 硬件实验验证表明，所提模型能准确复现固态变压器高频链路的暂态响应
+
+

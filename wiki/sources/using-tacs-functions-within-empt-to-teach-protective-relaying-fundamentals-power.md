@@ -21,22 +21,24 @@ The purpose of this discussion is to provide an educational tool for investigati
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出基于EMTP/TACS闭环仿真的数字继电器教学建模框架
+- 系统化整合TACS函数以复现继电器ADC采样、DSP算法及保护逻辑
+- 开发定时限过流继电器实例以演示EMTP在继电保护教学中的应用
 
 ## 使用的方法
 
-- [[tacs控制函数|TACS控制函数]]
-- [[闭环仿真|闭环仿真]]
-- [[数字信号处理-dsp-算法|数字信号处理(DSP)算法]]
-- [[数字滤波|数字滤波]]
-- [[传输延迟与脉冲发生器建模|传输延迟与脉冲发生器建模]]
+
+- [[numerical-integration]]
+- [[nodal-analysis]]
+- [[state-space]]
 
 ## 涉及的模型
 
-- [[数字保护继电器|数字保护继电器]]
-- [[定时限过流继电器|定时限过流继电器]]
-- [[模数转换-adc-系统|模数转换(ADC)系统]]
-- [[采样系统|采样系统]]
+
+- [[transmission-line]]
+- [[transformer]]
 
 ## 相关主题
 
@@ -47,4 +49,8 @@ The purpose of this discussion is to provide an educational tool for investigati
 
 ## 主要发现
 
-The purpose of this discussion is to provide an educational tool for investigating relaying concepts by modeling digital relays using TACS functions within EM- in a closed- loop manner
+
+
+- EMTP与TACS结合可有效模拟数字继电器的硬件动态与离散控制过程
+- TACS传输延迟与脉冲发生器能准确表征模数转换与采样系统的时序特性
+- 该闭环建模方法为继电保护原理教学提供了直观、可交互的仿真环境

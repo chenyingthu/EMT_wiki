@@ -21,30 +21,34 @@ Type-3 wind turbine generator model with generic high-level control for Electrom
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出了一种用于电磁暂态(EMT)仿真的三型风力发电机(DFIG)模型
+- 将WECC通用高层控制系统与详细的DFIG电气模型相结合，实现控制参数无缝复用
+- 显著提升了平衡与不对称故障等快速暂态工况下的仿真精度
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[通用模型与详细电气模型结合|通用模型与详细电气模型结合]]
-- [[控制参数复用|控制参数复用]]
-- [[对称与不对称故障分析|对称与不对称故障分析]]
+
+- [[state-space]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[dfig-model|DFIG]]
-- [[type-3风力发电机组|Type-3风力发电机组]]
-- [[wecc通用风电模型|WECC通用风电模型]]
-- [[逆变器型电源-ibr|逆变器型电源(IBR)]]
+
+- [[dfig]]
+- [[dfig-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[风电机组建模|风电机组建模]]
-- [[暂态精度提升|暂态精度提升]]
-- [[故障动态响应|故障动态响应]]
-- [[电网规划与风险分析|电网规划与风险分析]]
+
+- [[wind-farm]]
+- [[dynamic-phasor]]
 
 ## 主要发现
 
-Type-3 wind turbine generator model with generic high-level control for Electromagnetic transient (EMT) simulations are instrumental in providing researchers and engineers with detailed data about the
+
+
+- 所提模型在保留WECC通用控制架构优势的同时，通过详细电气建模克服了传统相量域模型在快速暂态中精度不足的问题
+- 模型可直接继承现有WECC模型的控制参数设置，无需在EMT环境中重新整定，大幅提高了工程应用效率
+- 在对称与不对称故障等极端暂态条件下，该模型能够提供比简化通用模型更准确的动态响应数据

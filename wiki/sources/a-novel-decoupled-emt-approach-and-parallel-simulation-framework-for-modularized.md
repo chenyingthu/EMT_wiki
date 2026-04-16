@@ -21,24 +21,46 @@ sources: ["EMT_Doc/02/Feng 等 - 2023 - A Novel Decoupled EMT Approach and Paral
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
-- 设计了并行计算策略，加速大规模电网EMT仿真
+
+- 基于UMEC方法建立多绕组变压器模型，精确刻画铁芯饱和与复杂电磁耦合特性
+- 提出基于割集的子模块解耦建模方法，简化桥臂等效电路，显著提升仿真速度
+- 构建多核并行仿真框架，将子模块等效计算分配至不同CPU核心实现高效计算
+
 
 ## 使用的方法
 
-- [[子模块解耦建模|子模块解耦建模]]
-- [[并行仿真框架|并行仿真框架]]
-- [[多绕组变压器详细建模|多绕组变压器详细建模]]
-- [[状态方程法|状态方程法]]
+
+- [[统一磁等效电路法-umec|统一磁等效电路法(UMEC)]]
+- [[割集解耦法|割集解耦法]]
+- [[高精度高速等效模型-hem|高精度高速等效模型(HEM)]]
+- [[多核并行计算|多核并行计算]]
+
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[模块化固态变压器-msst|模块化固态变压器(MSST)]]
+- [[多主动桥-mab|多主动桥(MAB)]]
+- [[双主动桥-dab|双主动桥(DAB)]]
+- [[多绕组变压器|多绕组变压器]]
+- [[级联h桥拓扑|级联H桥拓扑]]
+
 
 ## 相关主题
 
-- [[parallel-computing]]
+
+- [[电磁暂态建模|电磁暂态建模]]
+- [[并行仿真|并行仿真]]
+- [[解耦建模|解耦建模]]
+- [[电力电子变压器|电力电子变压器]]
+- [[仿真加速|仿真加速]]
+
 
 ## 主要发现
 
-—Electromagnetic transient (EMT) modeling for the modularized solid-state transformer (MSST) faces critical difﬁ- culties because the dynamics of the complex-structured submod- ules, which contain dua
+
+- PSCAD验证表明模型宽频带精度高，有效避免电压跳变引发的数值不稳定问题
+- 相比详细模型，并行框架大幅降低计算耗时，实现秒级暂态过程的高效仿真
+- 解耦等效电路在保持与详细模型一致精度的同时，显著提升多模块系统的仿真效率
+
+

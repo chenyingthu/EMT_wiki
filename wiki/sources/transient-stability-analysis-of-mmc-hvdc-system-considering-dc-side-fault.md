@@ -21,27 +21,37 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/tpwrd.2015.2492983.pdf.pdf"]
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出基于GPU的电磁暂态仿真加速架构
+- 实现2D并行矩阵向量乘法与GPU专用稀疏矩阵算法
+- 在GPU平台上完成电力电子子系统及同步发电机的并行建模
 
 ## 使用的方法
 
-- [[gpu加速计算|GPU加速计算]]
-- [[二维并行矩阵向量乘法|二维并行矩阵向量乘法]]
-- [[gpu专用稀疏矩阵技术|GPU专用稀疏矩阵技术]]
-- [[并行化算法|并行化算法]]
+
+- [[parallel]]
+- [[nodal-analysis]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
+
+- [[transmission-line]]
+- [[synchronous-machine]]
 - [[mmc-model]]
 
 ## 相关主题
 
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
-- [[并行计算|并行计算]]
-- [[gpu高性能计算|GPU高性能计算]]
-- [[仿真加速|仿真加速]]
-- [[稀疏矩阵优化|稀疏矩阵优化]]
+
+- [[real-time]]
+- [[hvdc]]
+- [[mmc]]
 
 ## 主要发现
 
-—This paper presents a novel approach to speedup EMT simulation, using GPU-based computing
+
+
+- GPU稀疏技术仅能带来微小的仿真时间优化
+- 系统粒度过高会显著降低GPU并行仿真效率
+- 2D并行矩阵向量乘法在计算速度上优于传统1D方法

@@ -21,29 +21,34 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+
+- 提出了一种基于开关函数的通用解耦等效电路模型，可统一适用于全桥、DAB及三电平等多种功率变换器的去闭锁与闭锁模式
+- 采用直流链路解耦策略实现恒定导纳矩阵并显著减少系统节点数，结合开关插值技术在大步长下精确捕捉开关事件，大幅提升EMT仿真效率
 
 ## 使用的方法
 
-- [[开关函数法|开关函数法]]
-- [[解耦等效电路建模|解耦等效电路建模]]
-- [[直流链路解耦策略|直流链路解耦策略]]
-- [[开关插值技术|开关插值技术]]
-- [[基于开关函数的平均价值模型|基于开关函数的平均价值模型]]
+
+- [[average-value-model]]
+- [[interpolation]]
+- [[fixed-admittance]]
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[transformer]]
+- [[vsc-model]]
 
 ## 相关主题
 
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
-- [[加速仿真|加速仿真]]
-- [[等效电路建模|等效电路建模]]
-- [[快速控制原型设计|快速控制原型设计]]
-- [[恒定g矩阵求解|恒定G矩阵求解]]
-- [[大时间步长仿真|大时间步长仿真]]
+
+- [[real-time]]
+- [[numerical-integration]]
+- [[nodal-analysis]]
 
 ## 主要发现
 
-—Multilevel Multimodule Solid-State Transformer (SST) is emerging as a key technology interfacing MVAC and LVAC systems via chainlink AC-DC converter and Dual Active Bridge (DAB) DC-DC converters
+
+
+- 所提等效模型通过恒定导纳矩阵和节点缩减有效克服了传统详细模型因开关数量庞大导致的计算瓶颈
+- 引入开关插值技术后，模型在采用较大仿真步长时仍能保持高精度，相比传统详细模型和变导纳矩阵等效模型显著提升了数值计算效率

@@ -21,27 +21,31 @@ sources: ["EMT_Doc/37/pesmg.2013.6672704.pdf.pdf"]
 
 ## 核心贡献
 
-- 改进了synchronous-machine的相域/dq0建模方法，提升了暂态仿真精度
+
+
+- 基于改进增广节点分析（MANA）公式实现了相域同步电机模型，提供与励磁绕组直接同步的电气连接，实现励磁系统精确电路建模。
+- 为现有dq0型同步电机模型提出并验证了一种简单的电流源接口，用于励磁控制信号输入，提升了模型兼容性与仿真灵活性。
 
 ## 使用的方法
 
-- [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
-- [[相域建模|相域建模]]
-- [[电流源接口法|电流源接口法]]
-- [[节点分析法-na|节点分析法(NA)]]
+
+- [[nodal-analysis]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[synchronous-machine-model]]
+
+- [[synchronous-machine]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[励磁系统建模|励磁系统建模]]
-- [[励磁绕组电气接口|励磁绕组电气接口]]
-- [[暂态性能分析|暂态性能分析]]
-- [[emtp仿真|EMTP仿真]]
+
+- [[synchronous-machine]]
+- [[parallel]]
 
 ## 主要发现
 
-—This paper presents the implementation of a phase domain (PD) synchronous machine (SM) model through modified-augmented-nodal-analysis (MANA) formulation for the computation of electromagnetic transi
+
+
+- 基于MANA的相域同步电机模型可实现励磁绕组与外部电路的直接同步连接，显著提升励磁系统瞬态性能及元件故障分析的准确性。
+- 提出的电流源接口能有效兼容现有dq0型同步电机模型，在保证精度的同时简化励磁控制接入，并通过并联机组实际案例验证了其有效性。

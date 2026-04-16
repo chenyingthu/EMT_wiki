@@ -21,15 +21,18 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 数学证明了线性插值与临界阻尼调整（CDA）等效于在仿真中引入额外的开关状态
+- 引入公共二次李雅普诺夫函数（CQLF）理论，建立了含开关切换的EMT仿真数值稳定性分析框架
+- 证明了该分析框架可推广用于评估其他实际插值与外推算法的数值稳定性
 
 ## 使用的方法
 
-- [[线性插值法|线性插值法]]
-- [[外推法|外推法]]
-- [[临界阻尼调整-cda|临界阻尼调整(CDA)]]
-- [[公共二次李雅普诺夫函数-cqlf-理论|公共二次李雅普诺夫函数(CQLF)理论]]
-- [[数值振荡阻尼方法|数值振荡阻尼方法]]
+
+- [[interpolation]]
+- [[numerical-integration]]
+- [[state-space]]
 
 ## 涉及的模型
 
@@ -39,12 +42,13 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
-- [[数值稳定性分析|数值稳定性分析]]
-- [[开关暂态|开关暂态]]
-- [[数值鲁棒性|数值鲁棒性]]
-- [[严格无源性|严格无源性]]
+
+- [[passivity]]
 
 ## 主要发现
 
-—For Electro-Magnetic-Transient (EMT) simulations of power networks with switches, techniques such as linear interpolation and Critical Damping Adjustment (CDA) are widely used for improving numerical
+
+
+- 线性插值和CDA步骤在数学上可严格等效为系统引入了额外的开关状态
+- 若原始开关系统在所有开关状态下均满足严格无源性，则采用线性插值或CDA的EMT仿真必然保持数值稳定
+- 基于CQLF的稳定性判据为各类插值、外推及数值振荡抑制方法提供了通用的理论验证工具

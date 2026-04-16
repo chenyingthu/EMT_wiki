@@ -21,25 +21,47 @@ Grounding grids in electro-magnetic transient simulations with frequency- The fr
 
 ## 核心贡献
 
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 提出结合电磁场计算与有理函数拟合的混合建模方法，精确表征接地网宽频阻抗特性
+- 构建π型双端口等效电路，将频变导纳直接映射为ATP-EMTP内置无源支路
+- 采用纯无源网络替代MODELS语言算法，大幅降低接地网暂态仿真计算耗时
+
 
 ## 使用的方法
 
-- [[频率相关等效电路建模|频率相关等效电路建模]]
-- [[拉普拉斯域有理函数拟合|拉普拉斯域有理函数拟合]]
-- [[双端口网络建模|双端口网络建模]]
+
 - [[混合建模方法|混合建模方法]]
-- [[atp-emtp仿真|ATP-EMTP仿真]]
+- [[arma算法|ARMA算法]]
+- [[频变等效电路|频变等效电路]]
+- [[双端口网络法|双端口网络法]]
+- [[atp-emtp时域仿真|ATP-EMTP时域仿真]]
+
 
 ## 涉及的模型
 
+
 - [[接地网|接地网]]
-- [[双端口等效电路模型|双端口等效电路模型]]
+- [[变压器|变压器]]
+- [[避雷器|避雷器]]
+- [[π型等效电路|π型等效电路]]
+- [[频变导纳支路|频变导纳支路]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[频率相关建模|频率相关建模]]
+- [[绝缘配合|绝缘配合]]
+- [[快速暂态分析|快速暂态分析]]
+- [[接地网等值|接地网等值]]
+
 
 ## 主要发现
 
-Grounding grids in electro-magnetic transient simulations with frequency- The frequency behaviour of a grounding grid cannot be neglected in insulation coordination studies
+
+- 接地网阻抗在20Hz至2MHz频段呈显著频变特性，传统工频电阻模型存在较大误差
+- 所提π型无源网络在ATP-EMTP中仿真稳定，计算效率显著优于传统MODELS方法
+- 模型兼容任意土壤参数与网格拓扑，能准确复现雷击下接地网电位分布与行波传播
+
+

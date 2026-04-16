@@ -21,23 +21,46 @@ sources: ["EMT_Doc/26/Yao 等 - 2008 - Modeling and simulation of VSC-HVDC with 
 
 ## 核心贡献
 
-- 改进了vsc的EMT建模方法，提升了系统级暂态分析精度
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+- 首次将动态相量法应用于VSC-HVDC建模，完整推导系统动态相量方程
+- 基于开关函数保留直流与基频分量，有效简化高频开关过程并降低模型阶数
+- 构建复杂度可调的VSC-HVDC动态相量模型，兼顾暂态仿真精度与计算效率
+
 
 ## 使用的方法
 
+
 - [[动态相量法|动态相量法]]
-- [[时变傅立叶级数|时变傅立叶级数]]
+- [[时变傅里叶级数|时变傅里叶级数]]
 - [[开关函数法|开关函数法]]
+- [[平均值近似|平均值近似]]
+
 
 ## 涉及的模型
 
-- [[vsc-model]]
+
+- [[vsc-model|VSC]]
+- [[电压源型换流器|电压源型换流器]]
+- [[直流输电线路|直流输电线路]]
+- [[直流电容|直流电容]]
+- [[换流电抗|换流电抗]]
+
 
 ## 相关主题
 
-- [[dynamic-phasor]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[动态相量建模|动态相量建模]]
+- [[暂态过程分析|暂态过程分析]]
+- [[模型降阶|模型降阶]]
+- [[高频开关简化|高频开关简化]]
+
 
 ## 主要发现
 
-：To meet the needs of rapid accurate simulation and analysis of the power systema newly developed meth- od-dynamic phasors method is applied to a model voltage sources converter based HVDC（VSC-HVDC）t
+
+- 动态相量模型能精确复现VSC-HVDC系统的暂态变化过程与稳态运行特性
+- 相比详细电磁暂态模型，该方法大幅缩短仿真耗时且维持良好的工程计算精度
+- 仅保留直流与基频分量即可准确捕捉系统主导动态，验证了模型降阶的有效性
+
+

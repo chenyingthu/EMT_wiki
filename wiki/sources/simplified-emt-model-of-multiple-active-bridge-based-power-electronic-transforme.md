@@ -21,27 +21,34 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+
+- 提出基于广义状态空间平均法的MAB-PET简化电磁暂态（EMT）建模方法
+- 构建多端口功率模块聚合等效模型，通过傅里叶分解忽略高次谐波，导出四端口等效电压源电路
 
 ## 使用的方法
 
-- [[广义状态空间平均法|广义状态空间平均法]]
-- [[开关函数法|开关函数法]]
-- [[dommel算法|Dommel算法]]
-- [[傅里叶分解|傅里叶分解]]
-- [[多端口聚合建模|多端口聚合建模]]
+
+- [[state-space]]
+- [[average-value-model]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[transformer]]
+- [[mmc-model]]
 
 ## 相关主题
 
-- [[简化电磁暂态仿真|简化电磁暂态仿真]]
-- [[等效建模|等效建模]]
-- [[仿真加速|仿真加速]]
-- [[多端口网络建模|多端口网络建模]]
+
+- [[harmonic]]
+- [[network-equivalent]]
+- [[dynamic-phasor]]
 
 ## 主要发现
 
-—Due to the advanced features of multidirectional power transfer and fast smoothing of the power ﬂuctuation in renewable energy systems, the multiple-active-bridge based power-electronic-transformer (
+
+
+- 所提简化等效模型在PSCAD/EMTDC中与详细模型对比具有极高的仿真精度
+- 该模型通过状态平均与谐波忽略策略，使仿真速度比详细模型快2至3个数量级，有效克服了MAB-PET节点多、步长小导致的计算瓶颈

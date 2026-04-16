@@ -21,25 +21,46 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 
 ## 核心贡献
 
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 基于PEEC构建风塔与邻近配电线路全波电磁暂态仿真模型
+- 引入CIGRE公式实现土壤电阻率与介电常数频率相关特性建模
+- 量化评估频率相关土壤参数对雷击风塔暂态电压及线路感应过电压影响
+
 
 ## 使用的方法
 
+
 - [[部分元等效电路法-peec|部分元等效电路法(PEEC)]]
 - [[全波电磁场仿真|全波电磁场仿真]]
-- [[频变土壤参数建模-cigré表达式|频变土壤参数建模(CIGRÉ表达式)]]
+- [[cigre频率相关土壤模型|CIGRE频率相关土壤模型]]
+- [[heidler雷电流函数|Heidler雷电流函数]]
+
 
 ## 涉及的模型
 
-- [[风力发电机塔筒-wt|风力发电机塔筒(WT)]]
+
+- [[风力发电机塔架-wt|风力发电机塔架(WT)]]
 - [[架空配电线路-dl|架空配电线路(DL)]]
-- [[频变土壤-大地模型|频变土壤/大地模型]]
-- [[雷击源|雷击源]]
+- [[接地系统-环形网与垂直接地极|接地系统(环形网与垂直接地极)]]
+- [[频率相关土壤|频率相关土壤]]
+- [[雷电流源|雷电流源]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[电磁暂态分析|电磁暂态分析]]
+- [[雷击感应过电压|雷击感应过电压]]
+- [[频率相关土壤特性|频率相关土壤特性]]
+- [[风电场接地系统|风电场接地系统]]
+- [[瞬态地电位升|瞬态地电位升]]
+
 
 ## 主要发现
 
-—This paper investigates the impact of the frequency- dependent soil electrical parameters on the transient voltages generated along the wind tower (WT) and on the induced voltages on an overhead dist
+
+- 采用频率相关土壤模型时风塔底部暂态地电位升峰值显著降低约65%
+- 叶片注入点电压峰值受土壤频率特性影响极小偏差低于1.5%
+- 土壤电阻率超2500Ωm时频率相关特性对后续雷击感应电压影响显著
+
+

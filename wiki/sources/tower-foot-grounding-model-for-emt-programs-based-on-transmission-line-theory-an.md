@@ -21,28 +21,32 @@ sources: ["EMT_Doc/38/Alipio 等 - 2023 - Tower-foot grounding model for EMT pro
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出了一种基于传输线理论与Marti模型的杆塔接地系统EMT仿真模型
+- 在ATP平台中实现该模型，并验证了其在雷击暂态、地电位升、绝缘子过电压及反击跳闸率计算中的高精度
 
 ## 使用的方法
 
-- [[传输线理论|传输线理论]]
-- [[marti模型|Marti模型]]
-- [[电报方程求解|电报方程求解]]
-- [[atp仿真|ATP仿真]]
+
+- [[transmission-line]]
+- [[frequency-dependent]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[雷电暂态|雷电暂态]]
-- [[接地建模|接地建模]]
-- [[emt仿真|EMT仿真]]
-- [[反击跳闸|反击跳闸]]
-- [[地电位升|地电位升]]
-- [[线路过电压|线路过电压]]
+
+- [[transmission-line]]
+- [[frequency-dependent]]
 
 ## 主要发现
 
-0378-7796/© 2023 Elsevier B
+
+
+- 基于传输线理论的接地模型在模拟地电位升和绝缘子过电压方面与全波电磁基准模型高度一致
+- 该模型克服了传统集中电阻模型的局限性，能够更准确地评估输电线路的雷击反击跳闸率，同时兼顾了计算效率

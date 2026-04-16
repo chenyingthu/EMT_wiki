@@ -18,27 +18,47 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+- 提出基于PSCAD的考虑磁滞特性三相变压器自定义电磁暂态仿真模型
+- 采用可变电感法构建闭环控制逻辑实现磁滞回线工作点实时跟踪与轨迹转换
+- 利用分段线性插值法拟合主次磁滞回线簇仅需最大磁滞回线数据即可建模
+
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[磁滞特性建模|磁滞特性建模]]
-- [[经典变压器模型改进|经典变压器模型改进]]
-- [[试验数据驱动建模|试验数据驱动建模]]
+
+- [[自定义建模-ud|自定义建模(UD)]]
+- [[可变电感法|可变电感法]]
+- [[分段线性插值法|分段线性插值法]]
+- [[延时比较法|延时比较法]]
+- [[闭环控制逻辑|闭环控制逻辑]]
+
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[三相变压器|三相变压器]]
+- [[换流变压器|换流变压器]]
+- [[非线性电感|非线性电感]]
+- [[bctran模型|BCTRAN模型]]
+- [[umec模型|UMEC模型]]
+
 
 ## 相关主题
 
+
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[励磁涌流|励磁涌流]]
-- [[磁滞特性|磁滞特性]]
-- [[铁心饱和|铁心饱和]]
+- [[磁滞特性建模|磁滞特性建模]]
+- [[高压直流输电|高压直流输电]]
 - [[谐波分析|谐波分析]]
+
 
 ## 主要发现
 
-In order to research the inrush problems in HVDC transmission projects, a new three-phase transformer model with hysteresis characteristics of PSCAD/EMTDC was presented, which derives from ideas of th
+
+- 采用磁滞中线替代完整磁滞回线模拟时励磁涌流峰值在暂态过程中保持一致
+- 完整磁滞回线对涌流稳态过程及高次谐波特性具有更显著的影响
+- 所提模型仅需最大磁滞回线数据即可准确反映变压器铁心非线性励磁特性
+
+

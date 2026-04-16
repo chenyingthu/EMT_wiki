@@ -21,27 +21,31 @@ The integration scheme i n  the EJectromagnetic Transients Program EMTP has been
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出临界阻尼调整（CDA）算法，通过在间断点执行两个半步长的后向欧拉积分，彻底消除梯形积分法引发的数值振荡
+- 使EMTP能够全程使用梯形积分法而无需切换或添加人工阻尼，在抑制振荡的同时避免了相位误差与正常响应失真
 
 ## 使用的方法
 
-- [[临界阻尼调整-cda|临界阻尼调整(CDA)]]
-- [[后向欧拉积分法|后向欧拉积分法]]
-- [[梯形积分法则|梯形积分法则]]
-- [[半步长积分|半步长积分]]
+
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[电感|电感]]
-- [[电力系统网络|电力系统网络]]
+
+- [[transmission-line]]
+- [[frequency-dependent]]
 
 ## 相关主题
 
-- [[数值振荡抑制|数值振荡抑制]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[积分规则|积分规则]]
-- [[临界阻尼|临界阻尼]]
+
+- [[numerical-integration]]
+- [[interpolation]]
 
 ## 主要发现
 
-The integration scheme i n  the EJectromagnetic Transients Program EMTP has been modified t o  solve the problem of sustained numerical oscillations that
+
+
+- 后向欧拉积分法具备在两个半步长内对间断点提供完全临界阻尼的特性，可有效抑制梯形法在电流开断等场景下的数值振荡
+- CDA方法实现简单且通用性强，可直接应用于电感、电容及频变传输线等复杂非线性模型，且不影响系统其余部分的仿真精度

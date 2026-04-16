@@ -21,27 +21,38 @@ Revisiting dynamic phasors and their efficacy in simulating electric University 
 
 ## 核心贡献
 
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+
+- 重新审视动态相量理论及其在电路仿真中的应用机制
+- 揭示动态相量提供计算优势所需的基础条件，纠正其优势具有普遍性的误解
+- 通过特征值与稳态分析系统评估EMT与动态相量建模精度随时间步长的变化规律
+- 基于IEEE 9节点系统验证大时间步长下动态相量在暂态过程中的精度局限性
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
-- [[伴随电路模型法|伴随电路模型法]]
-- [[特征值分析|特征值分析]]
-- [[稳态分析|稳态分析]]
+
+- [[dynamic-phasor]]
+- [[numerical-integration]]
+- [[state-space]]
 
 ## 涉及的模型
 
-- [[ieee-9节点系统|IEEE 9节点系统]]
-- [[lcc-model|LCC]]
-- [[mmc-model|MMC]]
-- [[facts|FACTS]]
-- [[感应电机|感应电机]]
+
+- [[dynamic-phasor]]
+- [[nodal-analysis]]
 
 ## 相关主题
 
+
 - [[dynamic-phasor]]
+- [[co-simulation]]
+- [[harmonic]]
 
 ## 主要发现
 
-Revisiting dynamic phasors and their efficacy in simulating electric University of Manitoba, Winnipeg, MB R3T 5V6, Canada In this paper, the theory and application of dynamic phasors (DPs) to model an
+
+
+- 动态相量建模在使用较大时间步长时能够准确表征电路的稳态行为
+- 在暂态工况下动态相量模型的精度会因大时间步长而显著受限
+- 动态相量带来的计算效率提升并非无条件成立，高度依赖于基础仿真条件的设定
+- 合理选择仿真时间步长是平衡动态相量仿真精度与计算效率的关键

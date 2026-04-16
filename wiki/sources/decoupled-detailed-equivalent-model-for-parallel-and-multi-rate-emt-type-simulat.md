@@ -21,22 +21,48 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
-- 采用多速率方法对不同子系统采用不同时间步长，提高仿真效率
-- 设计了并行计算策略，加速大规模电网EMT仿真
+
+- 提出解耦详细等效模型实现恒定导纳矩阵与节点缩减支持闭锁解锁状态
+- 提出多速率仿真与开关插值技术实现变步长求解与步内开关事件精确补偿
+- 开发CPU-GPU混合并行求解器大幅提升含储能MMC电磁暂态仿真效率
+
 
 ## 使用的方法
 
-- [[multirate-method]]
+
+- [[多速率仿真|多速率仿真]]
+- [[开关插值技术|开关插值技术]]
+- [[节点分析法|节点分析法]]
+- [[混合并行计算|混合并行计算]]
+- [[等效电路建模|等效电路建模]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[bess|BESS]]
+- [[子模块|子模块]]
+- [[dc-dc变换器|DC-DC变换器]]
+- [[详细等效模型|详细等效模型]]
+
 
 ## 相关主题
 
-- [[parallel-computing]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[并行计算|并行计算]]
+- [[多速率仿真|多速率仿真]]
+- [[mmc-model|MMC]]
+- [[储能系统集成|储能系统集成]]
+- [[开关事件补偿|开关事件补偿]]
+
 
 ## 主要发现
 
-—Modular multilevel converters (MMCs) integrated with battery energy storage systems (BESS) enable efﬁcient uti- lization of renewable energy resources such as wind and photo- voltaic, while enhancing
+
+- D-DEM在1微秒步长下与详细模型精度一致CPU单核仿真速度提升2.81倍
+- 采用CPU-GPU混合并行求解器后仿真速度较纯CPU串行实现提升79倍
+- 多速率与开关插值技术有效支持大时间步长同时保持闭锁解锁动态高精度
+
+

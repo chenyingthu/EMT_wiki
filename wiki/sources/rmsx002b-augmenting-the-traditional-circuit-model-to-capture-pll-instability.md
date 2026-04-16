@@ -21,39 +21,34 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出RMS+增强型电路模型，在保留网络与PLL交互动态的同时有效减少系统状态变量
+- 基于慢快系统理论建立分析框架，利用电磁暂态与PLL动态的时间尺度分离特性提升大电网同步稳定性分析效率
 
 ## 使用的方法
 
-- [[模态分析|模态分析]]
-- [[慢快系统理论|慢快系统理论]]
-- [[时间尺度分离|时间尺度分离]]
-- [[小信号稳定性分析|小信号稳定性分析]]
-- [[增广电路模型构建|增广电路模型构建]]
+
+- [[state-space]]
+- [[nodal-analysis]]
+- [[fixed-admittance]]
 
 ## 涉及的模型
 
-- [[rms模型|RMS模型]]
-- [[emt模型|EMT模型]]
-- [[rms-模型|RMS+模型]]
-- [[vsc-model|VSC]]
-- [[vsc-model|VSC]]
-- [[锁相环-pll-srf-pll|锁相环(PLL/SRF-PLL)]]
-- [[单机无穷大系统-scib|单机无穷大系统(SCIB)]]
-- [[wscc-9节点系统|WSCC 9节点系统]]
-- [[ieee-39节点系统|IEEE 39节点系统]]
+
+- [[vsc-model]]
+- [[synchronous-machine]]
 
 ## 相关主题
 
-- [[锁相环失稳|锁相环失稳]]
-- [[同步稳定性|同步稳定性]]
-- [[跟网型控制|跟网型控制]]
-- [[弱电网|弱电网]]
-- [[低频振荡|低频振荡]]
-- [[电磁暂态与机电暂态建模对比|电磁暂态与机电暂态建模对比]]
-- [[时间尺度分离|时间尺度分离]]
-- [[大电网动态分析|大电网动态分析]]
+
+- [[vsc]]
+- [[synchronous-machine]]
 
 ## 主要发现
 
-—Electrical circuits are modelled with a constant ad- mittance matrix for steady-state studies and for dynamic stud- ies involving synchronous machines
+
+
+- 传统RMS模型的恒定导纳矩阵无法准确捕捉跟网型VSC中PLL与网络的交互动态及小信号失稳机制
+- 电感“di/dt”效应是引发PLL相关小信号失稳的关键物理机制
+- RMS+模型通过引入慢快系统理论成功分离时间尺度，在大幅降低计算维度的同时实现了对PLL同步稳定性的精确评估

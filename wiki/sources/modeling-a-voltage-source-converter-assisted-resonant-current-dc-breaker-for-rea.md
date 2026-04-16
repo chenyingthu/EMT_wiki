@@ -21,25 +21,50 @@ Modeling a voltage source converter assisted resonant current DC breaker Seyed S
 
 ## 核心贡献
 
-- 改进了vsc的EMT建模方法，提升了系统级暂态分析精度
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+- 提出基于RTDS的VARC直流断路器系统级详细实时仿真模型
+- 设计VSC等效电压源与开关RLC等效电路克服RTDS建模限制
+- 实现含频率相关参数电缆的多端直流电网保护与开断联合仿真
+
 
 ## 使用的方法
 
+
 - [[实时仿真|实时仿真]]
-- [[rtds建模|RTDS建模]]
-- [[频率相关建模|频率相关建模]]
-- [[保护算法测试|保护算法测试]]
-- [[外部伏安特性等效|外部伏安特性等效]]
+- [[小步长节点分析|小步长节点分析]]
+- [[开关等效电路法|开关等效电路法]]
+- [[vsc-model|VSC]]
+- [[控制逻辑建模|控制逻辑建模]]
+
 
 ## 涉及的模型
 
-- [[vsc-model]]
+
+- [[varc直流断路器|VARC直流断路器]]
+- [[vsc-model|VSC]]
+- [[谐振lc电路|谐振LC电路]]
+- [[避雷器|避雷器]]
+- [[限流电抗器|限流电抗器]]
+- [[mtdc电网|MTDC电网]]
+- [[频率相关电缆模型|频率相关电缆模型]]
+
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[实时仿真|实时仿真]]
+- [[直流断路器建模|直流断路器建模]]
+- [[多端直流电网保护|多端直流电网保护]]
+- [[频率相关建模|频率相关建模]]
+- [[系统级仿真|系统级仿真]]
+- [[故障开断特性|故障开断特性]]
+
 
 ## 主要发现
 
-Modeling a voltage source converter assisted resonant current DC breaker Seyed Sattar Mirhosseinia,b, Siyuan Liua,c, Jose Chavez Muroa, Zhou Liud, Sadegh Jamalib, a Delft University of Technology, Fac
+
+- 模型外部伏安特性与实际设备高度一致验证系统级仿真准确性
+- 在含频率相关电缆的MTDC电网中成功验证保护算法与开断性能
+- 等效建模方法避免导纳矩阵重算满足小步长实时仿真计算要求
+
+

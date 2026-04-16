@@ -21,27 +21,46 @@ sources: ["EMT_Doc/03/tpwrd.2020.2998397.pdf.pdf"]
 
 ## 核心贡献
 
-- 设计了并行计算策略，加速大规模电网EMT仿真
+
+- 提出基于连接域提取的导纳矩阵分解方法，实现大规模网络并行求解
+- 证明连接域矩阵可通过0/1/-1变换矩阵由对角阵转换并推导数学引理
+- 结合Woodbury恒等式直接并行计算网络矩阵逆矩阵，避免每步迭代
+
 
 ## 使用的方法
 
-- [[区域分解法|区域分解法]]
+
+- [[连接域提取分解法|连接域提取分解法]]
 - [[舒尔补法|舒尔补法]]
-- [[链接域提取分解法-lde|链接域提取分解法(LDE)]]
-- [[伍德伯里矩阵恒等式|伍德伯里矩阵恒等式]]
+- [[woodbury矩阵恒等式|Woodbury矩阵恒等式]]
 - [[并行计算|并行计算]]
 - [[fpga-gpu硬件加速|FPGA/GPU硬件加速]]
 
+
 ## 涉及的模型
 
-- [[大规模交直流网络|大规模交直流网络]]
+
+- [[大规模交直流电网|大规模交直流电网]]
 - [[mmc-model|MMC]]
-- [[子模块|子模块]]
+- [[输电线路|输电线路]]
+- [[线性网络导纳矩阵|线性网络导纳矩阵]]
+
 
 ## 相关主题
 
-- [[parallel-computing]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[并行计算|并行计算]]
+- [[网络分解|网络分解]]
+- [[矩阵求逆加速|矩阵求逆加速]]
+- [[fpga-gpu硬件实现|FPGA/GPU硬件实现]]
+
 
 ## 主要发现
 
-—Domain decomposition of the network conductance matrix is one of the efﬁcient approaches to solve large-scale networks in parallel, wherein the most commonly-used non- iterative method is the Schur c
+
+- 在FPGA与GPU架构上验证算法，相比舒尔补法显著提升求解速度与精度
+- 直接并行计算矩阵逆矩阵，有效克服重叠域扩大导致的计算成本激增问题
+- 导纳矩阵恒定支持预先求逆，大幅降低单步仿真延迟，验证了算法高效性
+
+

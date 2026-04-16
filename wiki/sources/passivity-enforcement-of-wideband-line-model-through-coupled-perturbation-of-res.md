@@ -21,25 +21,48 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 
 ## 核心贡献
 
-- 提出无源性强制校正方法，确保频率相关模型的数值稳定性
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 提出同时扰动特征导纳留数、极点与常数项的无源性强制方法
+- 引入基于相对误差与状态空间Frobenius距离的偏差度量以保持精度
+- 建立线性化凸优化框架实现宽频线路模型无源性校正与精度保持联合求解
+
 
 ## 使用的方法
 
-- [[passivity-enforcement]]
+
+- [[矢量拟合|矢量拟合]]
+- [[无源性强制|无源性强制]]
+- [[凸优化|凸优化]]
+- [[频率扫描法|频率扫描法]]
+- [[状态空间建模|状态空间建模]]
+- [[frobenius范数|Frobenius范数]]
+
 
 ## 涉及的模型
 
-- [[宽频线路模型|宽频线路模型]]
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
+
+- [[宽频线路模型-ulm|宽频线路模型(ULM)]]
 - [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
-- [[输电线路与电缆|输电线路与电缆]]
-- [[特征导纳模型|特征导纳模型]]
+- [[输电线路|输电线路]]
+- [[电缆|电缆]]
+- [[特征导纳有理模型|特征导纳有理模型]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[无源性强制|无源性强制]]
+- [[宽频建模|宽频建模]]
+- [[频率相关建模|频率相关建模]]
+- [[电磁暂态仿真稳定性|电磁暂态仿真稳定性]]
+- [[有理函数逼近|有理函数逼近]]
+
 
 ## 主要发现
 
-Passivity enforcement of wideband line model through coupled perturbation Juan Becerra⁎, Ilhan Kocar, Keyhan Sheshyekani, Jean Mahseredjian Department of Electrical Engineering, Ecole Polytechnique de
+
+- 联合扰动极点与留数可显著降低校正引起的频响偏差，精度优于传统方法
+- 所提偏差度量指标能有效控制模型失真，确保电磁暂态仿真数值稳定性
+- 针对近直流频段大幅违规需结合直流校正预处理，以保证线性化算法收敛
+
+

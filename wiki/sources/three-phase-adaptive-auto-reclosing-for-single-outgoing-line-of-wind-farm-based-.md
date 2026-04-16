@@ -21,32 +21,33 @@ sources: ["EMT_Doc/37/TPWRD.2019.2956943.pdf.pdf"]
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出基于并联STATCOM主动注入低电流的风电场单回出线故障性质识别方法
+- 设计基于注入电流波形相关系数的三相自适应自动重合闸方案
 
 ## 使用的方法
 
-- [[主动电流注入法|主动电流注入法]]
-- [[波形相关系数分析法|波形相关系数分析法]]
-- [[自适应重合闸控制|自适应重合闸控制]]
-- [[电力电子开关序列控制|电力电子开关序列控制]]
+
+- [[vsc]]
+- [[parallel]]
 
 ## 涉及的模型
 
-- [[statcom|STATCOM]]
-- [[风电场|风电场]]
-- [[架空输电线路|架空输电线路]]
-- [[断路器|断路器]]
-- [[直流电容|直流电容]]
-- [[电力电子变流器|电力电子变流器]]
+
+- [[wind-farm]]
+- [[transmission-line]]
+- [[vsc-model]]
 
 ## 相关主题
 
-- [[自适应自动重合闸|自适应自动重合闸]]
-- [[故障性质识别|故障性质识别]]
-- [[主动检测技术|主动检测技术]]
-- [[风电并网保护|风电并网保护]]
-- [[电磁暂态特性分析|电磁暂态特性分析]]
+
+- [[wind-farm]]
+- [[transmission-line]]
 
 ## 主要发现
 
-—Difficulties in identification of the fault property, for a fault on a single outgoing line of windfarm, arise due to rapid decrease in the electromagnetic energy of the transmission line after the t
+
+
+- STATCOM直流电容短时放电注入的低电流波形相关系数可准确区分瞬时性与永久性故障
+- 所提主动检测与自适应重合闸策略在PSCAD/EMTDC仿真中验证了有效性与鲁棒性，能显著提升风电场并网系统的运行稳定性

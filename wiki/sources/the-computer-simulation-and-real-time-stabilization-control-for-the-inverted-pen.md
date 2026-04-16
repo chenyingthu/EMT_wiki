@@ -21,16 +21,18 @@ sources: ["EMT_Doc/13&14/files/icnc.2009.724.pdf.pdf"]
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+
+- 建立了倒立摆系统的非线性数学模型
+- 设计了基于线性二次型调节器(LQR)的状态反馈控制策略
+- 在Simulink中搭建实时控制模型并成功完成物理实时控制实验
 
 ## 使用的方法
 
-- [[线性二次型调节器-lqr|线性二次型调节器(LQR)]]
-- [[状态反馈控制|状态反馈控制]]
-- [[计算机仿真|计算机仿真]]
-- [[实时控制|实时控制]]
-- [[数学建模|数学建模]]
-- [[simulink仿真|Simulink仿真]]
+
+- [[state-space]]
+- [[real-time]]
+- [[parallel]]
 
 ## 涉及的模型
 
@@ -40,8 +42,13 @@ sources: ["EMT_Doc/13&14/files/icnc.2009.724.pdf.pdf"]
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[real-time]]
+- [[state-space]]
 
 ## 主要发现
 
-—The paper established mathematical model of inverted pendulum system, based on the elaborate mechanical analysis
+
+
+- LQR状态反馈矩阵能够有效实现倒立摆角度与小车位置的快速稳定控制
+- 实时控制实验结果与计算机仿真结果高度吻合，验证了理论模型与控制算法的正确性

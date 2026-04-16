@@ -21,26 +21,34 @@ This paper proposed an accurate and high-speed electromagnetic transient (EMT) e
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出适用于任意双端口MMC的电磁暂态通用等效建模方法
+- 设计递归节点消去算法，将桥臂等效为4个外部节点并完整保留内部动态信息
+- 在PSCAD/EMTDC环境中验证了所提模型的高精度与显著加速效果
 
 ## 使用的方法
 
-- [[等效建模|等效建模]]
-- [[递归节点消去法|递归节点消去法]]
-- [[降阶导纳矩阵求解|降阶导纳矩阵求解]]
-- [[迭代求解算法|迭代求解算法]]
+
+- [[nodal-analysis]]
+- [[network-equivalent]]
 
 ## 涉及的模型
+
 
 - [[mmc-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[模型降阶|模型降阶]]
-- [[高速仿真|高速仿真]]
-- [[柔性直流输电|柔性直流输电]]
+
+- [[mmc]]
+- [[hvdc]]
+- [[vsc-hvdc]]
 
 ## 主要发现
 
-This paper proposed an accurate and high-speed electromagnetic transient (EMT) equivalent modeling method for arbitrary novel two-port MMC by using paralleled full bridge sub-module (SMs) modular mult
+
+
+- 递归消去算法能在大幅降低计算复杂度的同时精确复现系统内外动态特性
+- 所提等效模型相比传统详细模型显著提升了电磁暂态仿真速度
+- 该方法克服了传统单端口等效算法的局限，可通用化应用于各类双端口子模块拓扑

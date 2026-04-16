@@ -21,23 +21,43 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
-- 设计了并行计算策略，加速大规模电网EMT仿真
+
+- 推导适用于同塔双回线的新相模变换矩阵，实现单一模量反映所有故障类型
+- 提出基于单模量电弧电压电流转移特性的时域测距算法，无需滤波且时间窗短
+- 引入最小二乘法优化测距方程，使算法精度不受过渡电阻及对端阻抗影响
+
 
 ## 使用的方法
 
+
 - [[相模变换|相模变换]]
-- [[最小二乘法|最小二乘法]]
 - [[时域算法|时域算法]]
+- [[最小二乘法|最小二乘法]]
+- [[阻抗矩阵解耦|阻抗矩阵解耦]]
+
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[耦合双回输电线路|耦合双回输电线路]]
+- [[电弧故障模型|电弧故障模型]]
+- [[六相系统|六相系统]]
+
 
 ## 相关主题
 
-- [[parallel-computing]]
+
+- [[故障测距|故障测距]]
+- [[电磁暂态分析|电磁暂态分析]]
+- [[线路解耦|线路解耦]]
+- [[电弧故障定位|电弧故障定位]]
+
 
 ## 主要发现
 
-：According to t he relationship bet ween t he i mpedance matrix of t hree-phase syste m and parallel trans mis- sion line syste m a novel phase-mode transfor m matrix of parallel trans mission line s
+
+- 电磁暂态仿真验证表明，该算法在不同故障类型下均能保持极高的测距精度
+- 算法测距结果不受过渡电阻变化及对端系统阻抗波动的影响，鲁棒性强
+- 采用短时窗时域计算无需滤波环节，显著提升了故障定位的实时性与计算效率
+
+

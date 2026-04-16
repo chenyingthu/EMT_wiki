@@ -21,13 +21,17 @@ sources: ["EMT_Doc/35/tpwrd.2019.2919252.pdf.pdf"]
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 将EMT仿真算法的稳定性分析扩展至含开关元件与非线性电感的非线性系统
+- 基于公共二次李雅普诺夫函数(CQLF)理论，证明了梯形法在满足无源性与能量函数不变性时对任意步长均稳定
+- 证明了分段线性电感的仿真等价于集总严格无源开关电路(LSPSC)仿真，验证了梯形法的稳定性
 
 ## 使用的方法
 
-- [[梯形法|梯形法]]
-- [[公共二次李雅普诺夫函数-cqlf-理论|公共二次李雅普诺夫函数(CQLF)理论]]
-- [[a稳定积分法|A稳定积分法]]
+
+- [[numerical-integration]]
+- [[state-space]]
 
 ## 涉及的模型
 
@@ -38,12 +42,14 @@ sources: ["EMT_Doc/35/tpwrd.2019.2919252.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[数值算法稳定性|数值算法稳定性]]
-- [[开关系统仿真|开关系统仿真]]
-- [[无源性|无源性]]
-- [[李雅普诺夫能量函数|李雅普诺夫能量函数]]
+
+- [[passivity]]
+- [[numerical-integration]]
 
 ## 主要发现
 
-— This paper extends the analysis of the stability of electromagnetic transient simulation algorithms to non-linear systems with switching elements and non-linear inductor branches
+
+
+- 含开关的非线性系统仅当满足无源性和李雅普诺夫能量函数不变性时，梯形法才能保证任意步长下的仿真稳定
+- 与线性时不变系统不同，非线性开关系统的各开关状态单独稳定不能保证整体仿真稳定
+- 分段线性电感的EMT仿真可等效为集总严格无源开关电路仿真，使用梯形法同样具有稳定性

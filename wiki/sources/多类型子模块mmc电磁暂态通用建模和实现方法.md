@@ -21,27 +21,34 @@ The key issue of electromagnetic transient (EMT) modelling of modular multilevel
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出了一种适用于任意多端口（单端口/双端口）MMC拓扑的电磁暂态通用等效建模方法
+- 提出了一种子模块拓扑自动识别方法，大幅降低特定拓扑建模工作量并实现模型代码的高度继承
 
 ## 使用的方法
 
-- [[等效建模|等效建模]]
-- [[子模块拓扑识别|子模块拓扑识别]]
-- [[节点信息反解|节点信息反解]]
-- [[通用建模算法|通用建模算法]]
+
+- [[nodal-analysis]]
+- [[numerical-integration]]
+- [[network-equivalent]]
 
 ## 涉及的模型
 
+
 - [[mmc-model]]
+- [[mmc]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[等效模型|等效模型]]
-- [[柔性直流输电|柔性直流输电]]
-- [[直流故障穿越|直流故障穿越]]
-- [[仿真加速|仿真加速]]
+
+- [[hvdc]]
+- [[vsc-hvdc]]
+- [[mmc]]
 
 ## 主要发现
 
-The key issue of electromagnetic transient (EMT) modelling of modular multilevel converters (MMC) is calculation of equivalent circuit of entire MMC arm containing a large number of cascaded sub-modul
+
+
+- 所提出的通用等效建模算法能够在消除大量内部节点的同时精确反解保留内部信息，且适用于传统单端口及新型双端口MMC
+- 在PSCAD/EMTDC中的仿真验证表明该算法具有极强的通用性、高计算效率及良好的工程适用性

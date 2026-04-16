@@ -21,26 +21,31 @@ To address the problem that the calculation accuracy and speed of MMC losses are
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出一种基于MMC平均值模型与确定调制策略的损耗快速在线评估方法，有效平衡计算精度与速度
+- 提出基于衰减函数的开关损耗注入方法，避免注入电压尖峰并改善注入效果，实现损耗对仿真结果的实时表征
 
 ## 使用的方法
 
-- [[平均值建模|平均值建模]]
-- [[损耗注入法|损耗注入法]]
-- [[开关频率曲面构建|开关频率曲面构建]]
-- [[受控电压源表征|受控电压源表征]]
+
+- [[average-value-model]]
 
 ## 涉及的模型
 
+
 - [[mmc-model]]
+- [[average-value-model]]
 
 ## 相关主题
 
-- [[损耗快速评估|损耗快速评估]]
-- [[开关损耗注入|开关损耗注入]]
-- [[仿真精度与效率平衡|仿真精度与效率平衡]]
-- [[在线评估|在线评估]]
+
+- [[mmc]]
+- [[hvdc]]
 
 ## 主要发现
 
-To address the problem that the calculation accuracy and speed of MMC losses are difficult to balance, a fast online evaluation method of losses is proposed based on the determined modulation model an
+
+
+- 利用平均值模型计算开关频率与损耗上限，结合开关频率曲面可实现实际开关损耗的快速高精度近似计算
+- 基于衰减函数的损耗注入方法能有效避免传统注入产生的电压尖峰，显著提升在线评估的仿真稳定性与计算效率

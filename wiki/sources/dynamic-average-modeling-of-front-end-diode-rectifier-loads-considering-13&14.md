@@ -21,24 +21,42 @@ Dynamic Average Modeling of Front-End Diode Rectifier Loads Considering Disconti
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+- 提出三相六脉波前端二极管整流器的动态平均值建模方法涵盖断续与连续导通模式
+- 构建计及电网不平衡工况的整流器动态平均模型有效提升大规模系统级暂态仿真效率
+
 
 ## 使用的方法
 
-- [[动态平均建模|动态平均建模]]
+
+- [[动态平均值建模|动态平均值建模]]
+- [[平均值建模|平均值建模]]
+- [[系统级暂态仿真|系统级暂态仿真]]
+
 
 ## 涉及的模型
 
+
 - [[前端二极管整流器|前端二极管整流器]]
-- [[三相六脉冲整流器|三相六脉冲整流器]]
+- [[三相六脉波整流器|三相六脉波整流器]]
+- [[开关级详细模型|开关级详细模型]]
+- [[动态平均模型|动态平均模型]]
+
 
 ## 相关主题
 
+
+- [[整流器建模|整流器建模]]
 - [[断续导通模式|断续导通模式]]
 - [[不平衡运行|不平衡运行]]
-- [[系统级暂态仿真|系统级暂态仿真]]
-- [[仿真效率优化|仿真效率优化]]
+- [[系统级暂态分析|系统级暂态分析]]
+- [[负荷建模|负荷建模]]
+
 
 ## 主要发现
 
-Dynamic Average Modeling of Front-End Diode Rectifier Loads Considering Discontinuous Conduction Mode and Unbalanced Operation Sina Chiniforoosh1, Hamid Atighechi1, Ali Davoudi2, Juri Jatskevich1, Ami
+
+- 所提动态平均模型在断续与连续导通模式下均能准确复现整流器动态响应特性
+- 模型在电网不平衡工况下保持高精度且相比开关级详细模型显著降低计算耗时
+
+

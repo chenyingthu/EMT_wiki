@@ -21,28 +21,34 @@ sources: ["EMT_Doc/39/tpwrd.2018.2875073.pdf.pdf"]
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出适用于任意单端口子模块结构的MMC统一高速EMT等效与实现方法
+- 基于节点导纳矩阵自动生成与内部节点消去技术，实现子模块降阶等效与桥臂戴维南等效
+- 通过时间步末更新机制恢复被消去的内部节点信息，确保稳态与暂态仿真无细节丢失
 
 ## 使用的方法
 
-- [[节点导纳矩阵法|节点导纳矩阵法]]
-- [[内部节点消去|内部节点消去]]
-- [[模型降阶等效|模型降阶等效]]
-- [[戴维南等效级联|戴维南等效级联]]
-- [[统一矩阵建模|统一矩阵建模]]
+
+- [[nodal-analysis]]
+- [[network-equivalent]]
 
 ## 涉及的模型
 
+
 - [[mmc-model]]
+- [[vsc-hvdc]]
 
 ## 相关主题
 
-- [[高速电磁暂态仿真|高速电磁暂态仿真]]
-- [[实时仿真|实时仿真]]
-- [[模型降阶|模型降阶]]
-- [[统一等效建模|统一等效建模]]
-- [[用户自定义拓扑|用户自定义拓扑]]
+
+- [[mmc]]
+- [[hvdc]]
+- [[real-time]]
 
 ## 主要发现
 
-—This paper proposes a unified high-speed electromagnetic transient (EMT) equivalent and implementation method for modular multilevel converter (MMC) with arbitrary single-port submodule (SM) structur
+
+
+- 所提方法无需推导复杂解析解即可自动处理任意子模块拓扑，显著提升EMT仿真计算效率
+- 降阶等效模型在大幅减少系统节点数量的同时，完整保留了子模块内部电容电压与电流的暂态动态特性

@@ -21,26 +21,30 @@ This paper proposes an electromagnetic transient model of the two-core Sen trans
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出基于统一磁路模型(UMEC)的双芯Sen变压器电磁暂态建模方法
+- 揭示双芯结构下分接开关电流减半与调节步长缩小的特性，验证其经济性与控制精度优势
 
 ## 使用的方法
 
-- [[统一磁等值电路法-umec|统一磁等值电路法(UMEC)]]
-- [[磁路等效建模|磁路等效建模]]
-- [[时域仿真|时域仿真]]
+
+- [[state-space]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[双芯sen变压器-tcst|双芯Sen变压器(TCST)]]
-- [[串联绕组|串联绕组]]
-- [[励磁绕组|励磁绕组]]
+
+- [[transformer]]
 
 ## 相关主题
 
-- [[电磁暂态建模|电磁暂态建模]]
-- [[潮流控制|潮流控制]]
-- [[串联电压补偿|串联电压补偿]]
+
+- [[transformer]]
 
 ## 主要发现
 
-This paper proposes an electromagnetic transient model of the two-core Sen transformer (TCST) based on the unified magnetic equivalent circuit (UMEC) in order to analyze its electromagnetic characteri
+
+
+- 流过双芯Sen变压器分接开关的电流约为线路电流的50%，可显著降低设备制造成本
+- 双芯Sen变压器的实际调节步长约为单芯结构的0.5倍，具备更高的潮流控制精度

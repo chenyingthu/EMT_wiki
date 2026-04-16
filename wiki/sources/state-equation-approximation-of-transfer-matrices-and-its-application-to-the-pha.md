@@ -21,30 +21,36 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出了一种基于传递矩阵数据的多输入多输出线性系统状态方程近似通用方法
+- 将该方法应用于非换位输电线路的相域建模，实现了直接在相域进行EMTP计算，避免了传统模态变换，显著提升了计算效率
 
 ## 使用的方法
 
-- [[状态方程逼近|状态方程逼近]]
-- [[特征值分析|特征值分析]]
-- [[传递矩阵对角化|传递矩阵对角化]]
-- [[标量参数估计|标量参数估计]]
-- [[高斯-牛顿迭代优化|高斯-牛顿迭代优化]]
-- [[相域直接计算|相域直接计算]]
+
+- [[state-space]]
+- [[frequency-dependent]]
+- [[vector-fitting]]
 
 ## 涉及的模型
 
-- [[非换位输电线路|非换位输电线路]]
-- [[多端口线性系统|多端口线性系统]]
+
+- [[transmission-line]]
+- [[transformer]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[相域建模|相域建模]]
-- [[频率相关建模|频率相关建模]]
-- [[系统辨识|系统辨识]]
-- [[emtp计算|EMTP计算]]
+
+- [[state-space]]
+- [[frequency-dependent]]
+- [[transmission-line]]
+- [[network-equivalent]]
 
 ## 主要发现
 
-A general methodology is presented for the state equa- tion appmximation of a multiple input-output linear system from transfer matrix data A complex transformation matrix, obtained by eigenandysis at
+
+
+- 通过在单一固定频率下进行特征分析获得的复变换矩阵，可有效实现对全频段传递矩阵的对角化
+- 迭代Gauss-Newton优化过程能显著降低整体近似误差，且所得状态方程为最小实现，模型阶数较低
+- 直接在相域进行电磁暂态计算可省去模态变换步骤，在保证精度的同时大幅节省计算时间

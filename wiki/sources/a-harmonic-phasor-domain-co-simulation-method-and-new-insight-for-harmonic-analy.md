@@ -21,29 +21,47 @@ sources: ["EMT_Doc/01/Shu 等 - 2021 - A Harmonic Phasor Domain Cosimulation Met
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
-- 改进了vsc的EMT建模方法，提升了系统级暂态分析精度
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 提出谐波相量域建模方法，同步输出瞬时波形与谐波相量波形
+- 构建HPD输电线路接口模型，实现EMT交流网与HPD直流网协同仿真
+- 建立基于节点分析的大信号动态模型，系统方程维数不随谐波阶数扩展
+
 
 ## 使用的方法
 
-- [[谐波相量域建模|谐波相量域建模]]
-- [[联合仿真|联合仿真]]
+
+- [[谐波相量法|谐波相量法]]
 - [[电磁暂态仿真|电磁暂态仿真]]
-- [[解耦协调时间序列|解耦协调时间序列]]
+- [[协同仿真|协同仿真]]
+- [[节点分析法|节点分析法]]
+- [[解耦时序协调|解耦时序协调]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
-- [[vsc-model]]
+
+- [[vsc-model|VSC]]
+- [[mmc-model|MMC]]
+- [[交流电网|交流电网]]
+- [[直流电网|直流电网]]
+- [[输电线路|输电线路]]
+
 
 ## 相关主题
 
-- [[co-simulation]]
-- [[dynamic-phasor]]
-- [[frequency-dependent-modeling]]
+
+- [[谐波分析|谐波分析]]
+- [[交直流电网|交直流电网]]
+- [[vsc-model|VSC]]
+- [[宽频带振荡|宽频带振荡]]
+- [[大规模电网建模|大规模电网建模]]
+
 
 ## 主要发现
 
-—Recently, frequency coupling oscillation events, such as harmonic oscillations, sub- and super-synchronous oscillations (S2SO), driven by multiple converters with different switching frequencies have
+
+- HPD模型将仿真步长扩展至500微秒，同时保持瞬时与谐波波形的高精度
+- 在中国实际大规模VSC-MMC交直流电网中验证了方法的高效性与准确性
+- 谐波相量波形可精确包络瞬时谐波值，有效追踪故障后大信号动态过程
+
+

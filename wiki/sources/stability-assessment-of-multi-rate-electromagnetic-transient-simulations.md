@@ -21,25 +21,34 @@ sources: ["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Ele
 
 ## 核心贡献
 
-- 采用多速率方法对不同子系统采用不同时间步长，提高仿真效率
+
+
+- 提出了一种评估线性时不变（LTI）网络多速率电磁暂态（EMT）仿真稳定性的解析方法
+- 推导了多速率仿真网络的采样数据时不变表示，并建立了基于特征值分析的数值稳定性评估框架
 
 ## 使用的方法
 
-- [[multirate-method]]
+
+- [[multirate]]
+- [[numerical-integration]]
+- [[state-space]]
+- [[interpolation]]
 
 ## 涉及的模型
 
-- [[线性时不变-lti-网络|线性时不变(LTI)网络]]
-- [[快慢子网络|快慢子网络]]
+
+- [[network-equivalent]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[数值稳定性评估|数值稳定性评估]]
-- [[多速率仿真|多速率仿真]]
-- [[离散时间系统|离散时间系统]]
-- [[时间步长划分|时间步长划分]]
+
+- [[multirate]]
+- [[numerical-integration]]
 
 ## 主要发现
 
-—Multi-rate Electromagnetic Transient (EMT) simu- lations use smaller time-steps for parts of the network requiring greater accuracy, and larger time-steps for the rest of the network
+
+
+- 多速率EMT仿真生成的离散时间系统本质上是时间周期性的
+- 即使采用A稳定的梯形积分法则，多速率EMT仿真仍可能出现数值不稳定现象
+- 通过特征值分析采样数据时不变模型可准确预测和评估整体仿真的数值稳定性

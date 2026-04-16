@@ -21,31 +21,35 @@ sources: ["EMT_Doc/37/TPWRD.2014.2332557.pdf.pdf"]
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出改进的MMC平均值模型拓扑结构，解决直流故障暂态仿真精度不足的问题
+- 验证改进模型在VSC-HVDC电网仿真中的适用性与显著的计算效率优势
 
 ## 使用的方法
 
-- [[average-value-model|平均值模型]]
-- [[详细电磁暂态模型|详细电磁暂态模型]]
-- [[戴维南等效|戴维南等效]]
-- [[模型对比验证|模型对比验证]]
-- [[拓扑改进|拓扑改进]]
+
+- [[average-value-model]]
+- [[state-space]]
 
 ## 涉及的模型
 
-- [[mmc-model|MMC]]
-- [[vsc-model|VSC]]
-- [[子模块-sm|子模块(SM)]]
-- [[详细模型-dm|详细模型(DM)]]
+
+- [[mmc-model]]
+- [[vsc-model]]
+- [[average-value-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[直流故障仿真|直流故障仿真]]
-- [[模型简化|模型简化]]
-- [[仿真加速|仿真加速]]
-- [[高压直流电网|高压直流电网]]
+
+- [[vsc-hvdc]]
+- [[hvdc]]
+- [[mmc]]
 
 ## 主要发现
 
-—This paper investigates the applicability of averaged- value models (AVMs) for modular multilevel converters (MMCs) operating in a voltage-sourced converter-based-high-voltage dc (VSC-HVDC) grid
+
+
+- 平均值模型仅在子模块电容足够大以维持电压近似恒定时有效
+- 现有MMC平均值模型无法准确模拟直流故障条件下的暂态过程
+- 改进拓扑后的平均值模型能显著提升直流故障仿真精度并大幅节省计算时间

@@ -21,26 +21,38 @@ Real-time simulation with an industrial DCCB controller in a HVDC grid P. Raulta
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+
+- 开发了适用于实时仿真的混合直流断路器（DCCB）模型并完成离线验证
+- 构建了包含物理MMC控制器与12个DCCB的三端直流电网硬件在环测试平台
+- 验证了工业DCCB控制器与换流器控制器在复杂工况下的互操作性与协调控制能力
 
 ## 使用的方法
 
-- [[硬件在环仿真-hil|硬件在环仿真(HIL)]]
-- [[实时仿真|实时仿真]]
-- [[离线模型对比验证|离线模型对比验证]]
+
+- [[real-time]]
+- [[co-simulation]]
 
 ## 涉及的模型
 
-- [[直流断路器-dccb|直流断路器(DCCB)]]
-- [[mmc-model|MMC]]
-- [[vsc-hvdc|VSC-HVDC]]
-- [[换流器控制器|换流器控制器]]
-- [[直流电缆|直流电缆]]
+
+- [[mmc-model]]
+- [[cable]]
+- [[frequency-dependent]]
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[hvdc]]
+- [[vsc-hvdc]]
+- [[real-time]]
+- [[co-simulation]]
+- [[mmc]]
 
 ## 主要发现
 
-Real-time simulation with an industrial DCCB controller in a HVDC grid P
+
+
+- 混合DCCB实时仿真模型精度高，与离线电磁暂态仿真结果高度一致
+- 硬件在环平台成功实现了工业级DCCB控制器与MMC换流器控制器的无缝交互测试
+- 电缆投运与直流故障清除等关键暂态过程可在实时环境中准确复现，证明了出厂前硬件在环测试可有效替代部分现场调试

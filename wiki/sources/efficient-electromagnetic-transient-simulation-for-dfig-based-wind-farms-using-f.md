@@ -21,26 +21,48 @@ International Journal of Electrical Power and Energy Systems Efficient electroma
 
 ## 核心贡献
 
-- 提出了适用于EMT仿真的dfig建模方法，适用于大规模风电场仿真
+
+- 建立核心设备全电磁暂态高效模型，避免频繁矩阵求逆，提升单机计算效率
+- 提出设备级细粒度网络解耦方法，降低导纳矩阵维度，突破亚微秒步长限制
+- 构建基于OpenMP的可扩展并行框架，计算流程简洁，适应大规模风电场仿真
+
 
 ## 使用的方法
 
-- [[细粒度网络划分|细粒度网络划分]]
-- [[设备级解耦算法|设备级解耦算法]]
+
+- [[节点分析法|节点分析法]]
+- [[细粒度网络解耦|细粒度网络解耦]]
 - [[多线程并行计算|多线程并行计算]]
-- [[导纳矩阵降维|导纳矩阵降维]]
+- [[开关函数法|开关函数法]]
+- [[集中参数模型|集中参数模型]]
+
 
 ## 涉及的模型
 
-- [[dfig-model]]
+
+- [[dfig-model|DFIG]]
+- [[vsc-model|VSC]]
+- [[变压器|变压器]]
+- [[lcl滤波器|LCL滤波器]]
+- [[输电线路|输电线路]]
+- [[风电场|风电场]]
+
 
 ## 相关主题
 
+
 - [[电磁暂态仿真|电磁暂态仿真]]
-- [[大规模风电场|大规模风电场]]
 - [[并行计算|并行计算]]
-- [[仿真效率优化|仿真效率优化]]
+- [[风电场建模|风电场建模]]
+- [[网络解耦|网络解耦]]
+- [[大规模系统仿真|大规模系统仿真]]
+
 
 ## 主要发现
 
-International Journal of Electrical Power and Energy Systems Efficient electromagnetic transient simulation for DFIG-based wind farms Jiale Yu, Haoran Zhao ∗, Yibao Jiang ∗, Bing Li, Linghan Meng, Fut
+
+- 50台风机规模下仿真速度提升两个数量级，最大相对误差仅1.68%，兼顾高效与高精度
+- 细粒度解耦有效降低导纳矩阵维度，避免亚微秒步长限制，显著提升大规模仿真效率
+- 基于OpenMP的并行框架具备强扩展性，随规模扩大仍保持高计算效率与良好加速比
+
+

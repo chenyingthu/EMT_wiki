@@ -21,25 +21,35 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 验证了Modelica声明式/方程建模语言在电磁暂态(EMT)仿真中的适用性与开发优势
+- 基于Modelica开发并对比了输电线路恒定参数(CP)与宽频(WB)模型的精度与计算性能
 
 ## 使用的方法
 
-- [[基于方程的建模|基于方程的建模]]
-- [[modelica声明式编程|Modelica声明式编程]]
-- [[精度与性能评估|精度与性能评估]]
+
+- [[numerical-integration]]
+- [[nodal-analysis]]
+- [[state-space]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
+- [[fixed-admittance]]
+- [[frequency-dependent]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[电力系统暂态|电力系统暂态]]
-- [[声明式建模语言应用|声明式建模语言应用]]
-- [[仿真精度与性能评估|仿真精度与性能评估]]
+
+- [[harmonic]]
+- [[frequency-dependent]]
+- [[numerical-integration]]
 
 ## 主要发现
 
-Simulation of electromagnetic transients with Modelica, accuracy and performance assessment for transmission line models Alireza Masooma, Tarek Ould-Bachirb, Jean Mahseredjian⁎,a, Adrien Guironnetc, N
+
+
+- Modelica等声明式语言能显著提升EMT模型的可读性、可维护性与跨平台开发效率
+- 基于Modelica实现的CP与WB输电线路模型在仿真精度上与传统命令式编程工具相当，且具备优异的计算性能

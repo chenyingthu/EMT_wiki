@@ -21,29 +21,32 @@ sources: ["EMT_Doc/35/Fu 等 - 2025 - Splitting State-Space Method for Converter
 
 ## 核心贡献
 
-- 使用状态空间法建立系统方程，便于稳定性分析和实时仿真
+
+
+- 提出了一种具有数值误差控制的高效分裂状态空间法，显著降低了含变流器电力系统EMT仿真的计算负担。
+- 设计了基于状态矩阵时变部分分离的通用解耦原则，并引入多阶精度的指数分裂公式以加速矩阵指数计算。
 
 ## 使用的方法
 
-- [[state-space-method]]
+
+- [[state-space]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[含变流器电力系统|含变流器电力系统]]
-- [[llc谐振变换器|LLC谐振变换器]]
-- [[大型风电场|大型风电场]]
-- [[mmc-model|MMC]]
-- [[交直流混合电网|交直流混合电网]]
-- [[配电网|配电网]]
+
+- [[mmc-model]]
+- [[wind-farm]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[计算效率提升|计算效率提升]]
-- [[高保真建模|高保真建模]]
-- [[宽频振荡分析|宽频振荡分析]]
-- [[系统暂态分析|系统暂态分析]]
+
+- [[real-time]]
+- [[vsc]]
 
 ## 主要发现
 
-—As the utilization of power electronic-based compo- nents in power systems continues to grow, a comprehensive un- derstanding of their dynamics becomes increasingly important for system design, contr
+
+
+- 该方法在含直流负载配电网、LLC变换器、大型风电场及MMC电路等多种测试案例中均验证了高保真度与计算准确性。
+- 基于自动开关分组与相邻状态变量识别的解耦策略结合指数分裂方案，有效控制了数值误差并大幅提升了大规模电力电子系统EMT仿真的计算效率。

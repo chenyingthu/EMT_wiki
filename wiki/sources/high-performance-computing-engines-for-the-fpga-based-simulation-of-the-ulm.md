@@ -21,27 +21,47 @@ High performance computing engines for the FPGA-based simulation of the Tarek Ou
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+- 提出ULM的FPGA设计方法，优化计算调度与历史项管理以降低延迟
+- 采用深度流水线与浮点运算架构，实现250MHz主频与200ns仿真步长
+- 基于状态空间法求解极留数拟合模型，提升硬件资源利用率与计算性能
+
 
 ## 使用的方法
 
+
 - [[状态空间法|状态空间法]]
-- [[有理拟合-极点-留数形式|有理拟合（极点-留数形式）]]
-- [[浮点运算|浮点运算]]
-- [[计算调度与流水线优化|计算调度与流水线优化]]
-- [[历史项管理|历史项管理]]
-- [[fpga硬件实现|FPGA硬件实现]]
+- [[极留数有理拟合|极留数有理拟合]]
+- [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
+- [[深度流水线调度|深度流水线调度]]
+- [[浮点运算架构|浮点运算架构]]
+- [[线性插值时延处理|线性插值时延处理]]
+
 
 ## 涉及的模型
+
 
 - [[通用线路模型-ulm|通用线路模型(ULM)]]
 - [[输电线路|输电线路]]
 - [[电缆|电缆]]
+- [[诺顿等效电路|诺顿等效电路]]
+
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[fpga实时仿真|FPGA实时仿真]]
+- [[硬件在环测试|硬件在环测试]]
+- [[频率相关线路建模|频率相关线路建模]]
+- [[行波故障定位|行波故障定位]]
+- [[高性能计算架构|高性能计算架构]]
+
 
 ## 主要发现
 
-High performance computing engines for the FPGA-based simulation of the Tarek Ould-Bachira,⁎,1, Hossein Chalangarb,1, Keyhan Sheshyekanib, Jean Mahseredjianb a Department of Computer Engineering and S
+
+- 仿真步长降至200ns且主频达250MHz，突破现有FPGA微秒级限制
+- 与EMTP对比验证模型精度，满足行波故障定位硬件在环测试需求
+- 优化调度策略有效降低延迟，浮点运算下实现高吞吐与低延迟平衡
+
+

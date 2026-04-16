@@ -21,24 +21,48 @@ A Flux-Defined PMSM Model Based on FEA Results for Real-Time To expedite the PMS
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+- 提出基于磁链数据直接求解电流导数的方法，免去传统查表反演耗时。
+- 设计高效三线性插值与外推平滑策略，提升实时仿真数值稳定性。
+- 将FEA降阶模型部署于RTDS平台，实现亚微秒步长实时电磁暂态仿真。
+
 
 ## 使用的方法
 
-- [[基于磁链数据的电流导数计算|基于磁链数据的电流导数计算]]
-- [[三线性插值法|三线性插值法]]
-- [[降阶建模|降阶建模]]
-- [[查表法|查表法]]
-- [[外推稳定性处理|外推稳定性处理]]
+
+- [[有限元分析-fea|有限元分析(FEA)]]
+- [[查表法-lut|查表法(LUT)]]
+- [[降阶模型-rom|降阶模型(ROM)]]
+- [[三线性插值|三线性插值]]
+- [[外推平滑算法|外推平滑算法]]
+- [[dq0坐标变换|dq0坐标变换]]
+
 
 ## 涉及的模型
 
-- [[pmsm-model]]
+
+- [[pmsm-model|PMSM]]
+- [[pmsm-model|PMSM]]
+- [[集中参数电机模型|集中参数电机模型]]
+- [[电动汽车动力总成|电动汽车动力总成]]
+
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[实时仿真|实时仿真]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[基于有限元的降阶建模|基于有限元的降阶建模]]
+- [[空间谐波与磁饱和建模|空间谐波与磁饱和建模]]
+- [[硬件在环测试|硬件在环测试]]
+- [[电动汽车动力总成仿真|电动汽车动力总成仿真]]
+
 
 ## 主要发现
 
-A Flux-Defined PMSM Model Based on FEA Results for Real-Time To expedite the PMSM design and test process, high-fidelity PMSM model derived from Finite Element Analysis (FEA) has been studied by many 
+
+- 模型在RTDS上以小于1微秒步长稳定运行，计算效率显著优于传统FEA联合仿真。
+- 仿真结果与FEA及集中参数模型对比验证，新模型能精确捕捉空间谐波与饱和效应。
+- 外推平滑策略有效解决查表越界数值振荡，保障电动汽车工况下的仿真精度。
+
+

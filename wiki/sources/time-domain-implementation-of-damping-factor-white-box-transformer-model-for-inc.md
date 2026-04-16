@@ -21,28 +21,34 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+
+- 提出了一种将d因子白盒变压器模型直接集成到EMT仿真程序中的时域实现方法
+- 利用模型的对角结构结合实数运算优化了瞬态仿真速度，并支持正弦稳态初始化
+- 扩展了模型功能，使其既可作为端口等效模型，也可用于计算变压器内部节点电压
 
 ## 使用的方法
 
-- [[时域实现|时域实现]]
-- [[状态空间法|状态空间法]]
-- [[绕组离散化|绕组离散化]]
-- [[实数运算|实数运算]]
-- [[稳态初始化|稳态初始化]]
+
+- [[state-space]]
+- [[frequency-dependent]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transformer-model]]
+
+- [[transformer]]
+- [[network-equivalent]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[内部过电压|内部过电压]]
-- [[瞬态谐振|瞬态谐振]]
-- [[模型集成|模型集成]]
+
+- [[harmonic]]
+- [[frequency-dependent]]
 
 ## 主要发现
 
-—White-box detailed transformer models are used by manufacturers for predicting internal overvoltages in transformer windings during the lightning impulse test
+
+
+- d因子模型的对角结构结合实数运算可显著提升EMT瞬态仿真的计算效率
+- 该模型能够准确预测变压器绕组内部过电压，并适用于电网过电压的通用研究

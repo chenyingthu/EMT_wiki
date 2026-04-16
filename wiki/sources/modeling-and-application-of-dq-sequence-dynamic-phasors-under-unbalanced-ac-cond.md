@@ -21,26 +21,45 @@ Modeling and application of DQ-sequence dynamic phasors under Xiaoming Mao a,*, 
 
 ## 核心贡献
 
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+- 定义dq序动态相量并推导乘法性质，提供非对称工况状态方程统一推导步骤
+- 提出复数状态方程快速分离实虚部并化简为最简实数形式的方法
+- 建立非对称交流工况下MMC简洁状态空间模型，显著降低计算量
+
 
 ## 使用的方法
 
-- [[dq序列动态相量法|DQ序列动态相量法]]
+
+- [[动态相量法|动态相量法]]
+- [[dq序动态相量法|dq序动态相量法]]
 - [[瞬时对称分量分解|瞬时对称分量分解]]
 - [[park变换|Park变换]]
 - [[状态空间建模|状态空间建模]]
-- [[复数状态方程实虚部分离|复数状态方程实虚部分离]]
+
 
 ## 涉及的模型
 
+
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
-- [[电力电子设备|电力电子设备]]
+- [[电力电子换流器|电力电子换流器]]
+
 
 ## 相关主题
 
-- [[dynamic-phasor]]
+
+- [[非对称工况建模|非对称工况建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[状态空间模型|状态空间模型]]
+- [[小信号稳定性分析|小信号稳定性分析]]
+- [[动态相量建模|动态相量建模]]
+
 
 ## 主要发现
 
-Modeling and application of DQ-sequence dynamic phasors under Xiaoming Mao a,*, Hongbo Luo a, Wenda Zhong a, Liang Wu b, Zhiyong Yuan c a School of Automation, Guangdong University of Technology, Guan
+
+- 两端MMC-HVDC系统算例验证了所提dq序动态相量建模方法的有效性
+- 新模型在保持精度的同时显著降低计算量，优于现有同类非对称工况模型
+- 该方法避免了控制方程向abc坐标系转换，简化了非对称工况下的推导过程
+
+

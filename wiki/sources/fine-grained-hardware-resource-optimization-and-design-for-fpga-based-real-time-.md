@@ -21,25 +21,45 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 
 ## 核心贡献
 
-- 提出了适用于EMT仿真的dfig建模方法，适用于大规模风电场仿真
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+- 提出面向FPGA的细粒度硬件资源优化方法，实现新能源控制系统实时仿真
+- 建立算术运算级资源需求模型，综合优化最小求解时间与硬件资源约束
+- 提出自动硬件描述语言生成技术，快速构建控制系统求解的功能硬件模块
+
 
 ## 使用的方法
 
-- [[基于fpga的实时仿真|基于FPGA的实时仿真]]
+
+- [[fpga时空并行计算|FPGA时空并行计算]]
+- [[算术运算级资源调度|算术运算级资源调度]]
+- [[自动hdl代码生成|自动HDL代码生成]]
 - [[细粒度硬件资源优化|细粒度硬件资源优化]]
-- [[自动硬件描述语言生成|自动硬件描述语言生成]]
-- [[算术运算级资源需求建模|算术运算级资源需求建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+
 
 ## 涉及的模型
 
-- [[dfig-model]]
+
+- [[光伏阵列-pv|光伏阵列(PV)]]
+- [[风力发电机-wt|风力发电机(WT)]]
+- [[并网变流器|并网变流器]]
+- [[控制系统详细模型|控制系统详细模型]]
+
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[实时仿真|实时仿真]]
+- [[fpga硬件加速|FPGA硬件加速]]
+- [[硬件资源优化|硬件资源优化]]
+- [[自动代码生成|自动代码生成]]
+- [[大规模新能源并网|大规模新能源并网]]
+
 
 ## 主要发现
 
-Fine-grained hardware resource optimization and design for FPGA-based real-time simulation of large-scale renewable energy generations a Key Laboratory of Smart Grid of Ministry of Education, Tianjin 
+
+- 单FPGA实现15台光伏与风机系统实时仿真，步长分别达9μs与10μs
+- 相比传统设计硬件资源占用降低约30%，显著提升FPGA并行计算效率
+- 仿真结果与PSCAD对比相对误差小于0.5%，验证了模型的高精度
+
+

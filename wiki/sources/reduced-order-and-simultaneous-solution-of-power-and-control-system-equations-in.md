@@ -21,30 +21,32 @@ Reduced-order and simultaneous solution of power and control system a State Key 
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出基于指数积分器的降阶同步求解方法，消除电力与控制系统方程求解间的时间步延迟
+- 引入 Sylvester 方程及其线性变换，将非对角块矩阵指数求解难题转化为线性矩阵求解过程
+- 提出矩阵子块特征值平移技术，解决因结构诱导重复特征值导致的 Sylvester 方程无解问题，提升求解鲁棒性
 
 ## 使用的方法
 
-- [[指数积分器|指数积分器]]
-- [[联立求解|联立求解]]
-- [[西尔维斯特方程|西尔维斯特方程]]
-- [[矩阵子块特征值平移技术|矩阵子块特征值平移技术]]
-- [[降阶实现|降阶实现]]
-- [[同步插值|同步插值]]
+
+- [[state-space]]
+- [[numerical-integration]]
+- [[interpolation]]
 
 ## 涉及的模型
 
-- [[换流器|换流器]]
-- [[电力系统与控制系统的状态空间模型|电力系统与控制系统的状态空间模型]]
+
+- [[vsc-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[电力与控制系统联立求解|电力与控制系统联立求解]]
-- [[降阶求解|降阶求解]]
-- [[数值稳定性与精度提升|数值稳定性与精度提升]]
-- [[统一时间步长|统一时间步长]]
+
+- [[real-time]]
 
 ## 主要发现
 
-Reduced-order and simultaneous solution of power and control system a State Key Laboratory of Smart Power Distribution Equipment and System, Tianjin University, Tianjin 300072, China b Department of E
+
+
+- 同步求解策略能有效消除传统分离求解引入的人工延迟，避免特定场景下的数值不稳定并显著提升换流器仿真精度
+- 结合 Sylvester 方程与特征值平移技术的降阶算法成功解耦了矩阵指数计算，实现了状态变量的同步插值与统一时间步进，兼顾了计算效率与准确性

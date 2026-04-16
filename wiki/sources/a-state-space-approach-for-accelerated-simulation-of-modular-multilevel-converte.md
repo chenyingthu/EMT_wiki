@@ -21,24 +21,46 @@ A state-space approach for accelerated simulation of modular a State Key Laborat
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
-- 使用状态空间法建立系统方程，便于稳定性分析和实时仿真
+
+- 基于开关状态组合对子模块分组并引入虚拟状态变量，大幅降低状态矩阵维度
+- 提出基于状态变量分组的高效电容电压均衡算法，完整保留子模块个体动态信息
+- 构建状态空间框架下的MMC降阶模型，使计算耗时随电平数呈对数级增长
+
 
 ## 使用的方法
 
-- [[state-space-method]]
+
+- [[状态空间法|状态空间法]]
+- [[降阶建模|降阶建模]]
+- [[数值积分|数值积分]]
+- [[分段线性开关模型|分段线性开关模型]]
+- [[电容电压均衡算法|电容电压均衡算法]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[hbsm|HBSM]]
+- [[mmc-model|MMC]]
+- [[电力网络|电力网络]]
+
 
 ## 相关主题
 
+
+- [[电磁暂态仿真|电磁暂态仿真]]
 - [[仿真加速|仿真加速]]
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
+- [[状态空间建模|状态空间建模]]
 - [[大规模电力电子系统|大规模电力电子系统]]
-- [[mmc-model|MMC]]
+- [[电容电压均衡|电容电压均衡]]
+
 
 ## 主要发现
 
-A state-space approach for accelerated simulation of modular a State Key Laboratory of Smart Power Distribution Equipment and System, Tianjin University, Tianjin 300072, China b Department of Electric
+
+- 仿真计算时间随MMC电平数增加呈对数增长，显著提升大规模系统仿真效率
+- 降阶模型在保留各子模块电容电压动态的同时，与详细模型仿真精度高度一致
+- 所提算法兼容高阶数值积分器，在加速仿真的同时未引入额外精度损失
+
+

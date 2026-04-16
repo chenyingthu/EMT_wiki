@@ -21,31 +21,32 @@ The fdLoad model for accurate frequency dynamics in the SFA-EMT a Department of 
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+
+- 提出fdLoad（频率相关负荷）合成模型并将其集成至SFA-EMT仿真器中
+- 验证了SFA-EMT方法通过在每一步隐式求解频率，能够以相量域的计算成本实现高精度的频率动态仿真
 
 ## 使用的方法
 
-- [[移频分析法-sfa|移频分析法(SFA)]]
-- [[sfa-emt仿真|SFA-EMT仿真]]
-- [[dommel-emt时域解法|Dommel EMT时域解法]]
-- [[相量法|相量法]]
-- [[频率相关网络综合法|频率相关网络综合法]]
+
+- [[dynamic-phasor]]
+- [[numerical-integration]]
+- [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[频率相关负荷模型-fdload|频率相关负荷模型(fdLoad)]]
-- [[ieee-39节点系统|IEEE-39节点系统]]
-- [[逆变器接口资源-ibr|逆变器接口资源(IBR)]]
-- [[指数负荷模型|指数负荷模型]]
+
+- [[frequency-dependent]]
 
 ## 相关主题
 
-- [[频率动态|频率动态]]
-- [[低惯量系统|低惯量系统]]
-- [[频率摆动|频率摆动]]
-- [[切负荷仿真|切负荷仿真]]
-- [[频率相关建模|频率相关建模]]
+
+- [[frequency-dependent]]
+- [[dynamic-phasor]]
 
 ## 主要发现
 
-The fdLoad model for accurate frequency dynamics in the SFA-EMT a Department of Electrical and Computer Engineering, University of British Columbia, Vancouver, BC, V6T 1Z4, Canada b Department of Civi
+
+
+- 在低惯量系统发生切负荷等扰动时，采用频率相关负荷模型会显著影响系统的最大频率偏差
+- SFA-EMT结合fdLoad模型可在避免全系统EMT高昂计算成本的同时，准确捕捉负荷频率特性对暂态稳定性的影响

@@ -21,25 +21,32 @@ This work presents a transmission line model for simulating electromagnetic tran
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出了一种基于精确等效π型电路的输电线路时域电磁暂态仿真模型
+- 利用矢量拟合技术将频变导纳近似为有理函数并综合为离散RLC电路，避免了卷积与频域变换，可直接用于通用电路仿真软件
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
-- [[有理函数逼近|有理函数逼近]]
-- [[电路综合|电路综合]]
+
+- [[vector-fitting]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
+- [[network-equivalent]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[分布参数建模|分布参数建模]]
-- [[时域仿真|时域仿真]]
+
+- [[frequency-dependent]]
+- [[harmonic]]
 
 ## 主要发现
 
-This work presents a transmission line model for simulating electromagnetic transients directly in the time domain
+
+
+- 该模型在时域中完整保留了精确等效π型电路的特性，在稳态和电磁暂态过程中均具有高精度
+- 模型通过离散无源元件综合实现，无需卷积或拉普拉斯/傅里叶逆变换，且支持非线性元件的直接接入

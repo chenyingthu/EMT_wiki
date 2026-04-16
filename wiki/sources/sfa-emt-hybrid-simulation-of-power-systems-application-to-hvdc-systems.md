@@ -21,28 +21,34 @@ SFA-EMT hybrid simulation of power systems: Application to a PSC North America, 
 
 ## 核心贡献
 
-- 针对EMT仿真中的co-simulation问题进行了研究
+
+
+- 提出基于MATE框架的新型混合多速率协议，实现SFA与EMT的直接接口，消除时间步延迟、迭代及传输线解耦需求
+- 引入并行EMT解法跟踪复数实虚部，允许SFA采用大时间步且无需与EMT时间步成倍数关系，显著提升大规模系统仿真效率
 
 ## 使用的方法
 
-- [[移频分析-电磁暂态混合仿真|移频分析-电磁暂态混合仿真]]
-- [[多速率仿真协议|多速率仿真协议]]
-- [[多区域戴维南等效-mate-框架|多区域戴维南等效(MATE)框架]]
-- [[移频分析法-sfa|移频分析法(SFA)]]
-- [[电磁暂态仿真-emt|电磁暂态仿真(EMT)]]
-- [[并行求解技术|并行求解技术]]
+
+- [[co-simulation]]
+- [[multirate]]
+- [[dynamic-phasor]]
+- [[network-equivalent]]
 
 ## 涉及的模型
 
-- [[vsc-hvdc|VSC-HVDC]]
-- [[vsc-hvdc|VSC-HVDC]]
-- [[电力电子设备|电力电子设备]]
-- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
+
+- [[hvdc]]
 
 ## 相关主题
 
+
+- [[hvdc]]
 - [[co-simulation]]
+- [[multirate]]
 
 ## 主要发现
 
-SFA-EMT hybrid simulation of power systems: Application to a PSC North America, 155-4299 Canada Way, Burnaby, BC V5G4Y2, Canada b Department of Civil Engineering, University of British Columbia, Vanco
+
+
+- 该协议成功应用于改进型CIGRE HVDC基准系统，验证了其在含电力电子设备子系统仿真中的有效性与高精度
+- 相比纯EMT仿真，SFA-EMT混合多速率方法在频率偏移较小时计算效率显著提升，为大规模电力系统仿真提供了可行的加速方案

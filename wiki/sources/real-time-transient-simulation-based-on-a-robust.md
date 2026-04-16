@@ -21,27 +21,35 @@ sources: ["EMT_Doc/33/tpwrs.2007.907963.pdf.pdf"]
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+
+- 提出了一种鲁棒的双层网络等值（TLNE）模型，将外部系统划分为表层（降阶频变线路模型）和深层（低阶FDNE），有效降低了大规模系统实时仿真的计算负担。
+- 开发了基于PC集群的并行实时仿真架构，结合向量拟合与优化算法，实现了宽频带高精度低阶模型的自动生成与最优阶数确定。
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
-- [[优化方法|优化方法]]
-- [[pc集群并行计算|PC集群并行计算]]
-- [[面向对象编程|面向对象编程]]
-- [[网络等值技术|网络等值技术]]
+
+- [[vector-fitting]]
+- [[parallel]]
+- [[real-time]]
 
 ## 涉及的模型
 
-- [[两层网络等值模型-tlne|两层网络等值模型(TLNE)]]
-- [[fdne-model|FDNE]]
-- [[频率相关输电线路模型|频率相关输电线路模型]]
-- [[低阶等值模型|低阶等值模型]]
+
+- [[fdne]]
+- [[network-equivalent]]
+- [[transmission-line]]
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[frequency-dependent]]
+- [[passivity]]
+- [[real-time]]
 
 ## 主要发现
 
-—Real-time digital simulation of large power systems requires not only signiﬁcant computational power but also simpler and accurate models
+
+
+- 所提低阶等值模型在宽频带范围内具有高精度，且在直流、工频及暂态频率下均能保持优异的准确性。
+- 该方法在稳定性和正实性（无源性）方面具有强鲁棒性，能够自动确定最优模型阶数，并在PC集群上实现了20微秒步长的高效实时仿真，结果与ATP/EMTP全规模离线仿真高度吻合。

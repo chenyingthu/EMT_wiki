@@ -21,26 +21,32 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+
+- 提出了一种突破传统EMTP线路模型最大步长限制的新型输电线路建模方法
+- 实现了基于网络暂态状态动态调整步长的仿真算法，兼顾电磁暂态波传播与低频机电暂态的精度与效率
 
 ## 使用的方法
 
-- [[变步长仿真算法|变步长仿真算法]]
-- [[输电线路建模方法|输电线路建模方法]]
-- [[电磁暂态与机电暂态联合仿真|电磁暂态与机电暂态联合仿真]]
+
+- [[numerical-integration]]
+- [[interpolation]]
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[transmission-line]]
+- [[frequency-dependent]]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[暂态稳定|暂态稳定]]
-- [[变步长仿真|变步长仿真]]
-- [[波过程仿真|波过程仿真]]
-- [[混合仿真|混合仿真]]
+
+- [[co-simulation]]
+- [[network-equivalent]]
 
 ## 主要发现
 
-In this paper, we describe a novel modeling approach for transmission lines that overcomes the maximum step size constraint of regular line models used in electromagnetic transients programs
+
+
+- 新模型成功解除了传统线路模型对仿真步长必须小于等于最小波传播时间的严格约束
+- CIGRE线路投切测试表明，变步长算法结合新模型能高效准确地同时捕捉电磁暂态波传播与低频网络频率变化

@@ -21,26 +21,35 @@ International Journal of Electrical Power and Energy Systems Shooting method bas
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出了一种基于打靶法的模块化多电平换流器（MMC）初始化策略，用于电磁暂态仿真
+- 该策略兼容不同详细程度的MMC模型及包含调制与电容电压平衡的控制算法，能显著减少初始化暂态及额外CPU时间
 
 ## 使用的方法
 
-- [[打靶法|打靶法]]
-- [[稳态初始化技术|稳态初始化技术]]
-- [[戴维南等效技术|戴维南等效技术]]
+
+- [[numerical-integration]]
+- [[network-equivalent]]
+- [[state-space]]
 
 ## 涉及的模型
 
+
+- [[mmc]]
 - [[mmc-model]]
+- [[average-value-model]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[系统初始化|系统初始化]]
-- [[周期稳态求解|周期稳态求解]]
-- [[暂态抑制|暂态抑制]]
-- [[计算效率优化|计算效率优化]]
+
+- [[mmc]]
+- [[hvdc]]
+- [[vsc-hvdc]]
 
 ## 主要发现
 
-International Journal of Electrical Power and Energy Systems Shooting method based modular multilevel converter initialization for D
+
+
+- 基于打靶法的初始化策略可使仿真直接从接近稳态的条件启动，有效抑制了初始化暂态过程
+- 在含128电平MMC的NORDIC32系统测试中，该方法大幅缩短了达到稳态所需的仿真时间，提升了EMT计算效率

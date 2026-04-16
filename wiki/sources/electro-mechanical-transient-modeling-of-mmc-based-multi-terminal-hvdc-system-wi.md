@@ -21,26 +21,47 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+- 推导含等效电感与电阻的MMC直流侧二阶机电暂态等效电路模型
+- 提出基于预设直流故障信息的处理方法，无需重构拓扑即可高效仿真各类直流故障
+- 建立适用于大规模交直流系统暂态稳定分析的MMC-MTDC机电暂态模型
+
 
 ## 使用的方法
 
-- [[机电暂态建模|机电暂态建模]]
-- [[二阶直流侧等效电路推导|二阶直流侧等效电路推导]]
-- [[预设直流故障信息法|预设直流故障信息法]]
-- [[pss-e仿真验证|PSS/E仿真验证]]
+
+- [[微分代数方程建模|微分代数方程建模]]
+- [[二阶等效电路推导|二阶等效电路推导]]
+- [[预设故障信息法|预设故障信息法]]
+- [[dq-ri坐标系变换|dq/RI坐标系变换]]
+- [[级联控制策略|级联控制策略]]
+
 
 ## 涉及的模型
 
-- [[mmc-model]]
+
+- [[mmc-model|MMC]]
+- [[mtdc|MTDC]]
+- [[ieee-39节点交流系统|IEEE 39节点交流系统]]
+- [[直流线路|直流线路]]
+- [[接地短路故障模型|接地短路故障模型]]
+
 
 ## 相关主题
 
+
+- [[机电暂态建模|机电暂态建模]]
 - [[直流故障仿真|直流故障仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
-- [[机电暂态建模|机电暂态建模]]
-- [[交直流电力系统稳定性|交直流电力系统稳定性]]
+- [[交直流混合系统|交直流混合系统]]
+- [[多端高压直流输电|多端高压直流输电]]
+
 
 ## 主要发现
 
-Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xiao, Zheng Xu, Huangqing Xiao⁎, Zheren Zhang, Guoteng Wang, Yuzhe Xu College of Electrical Engineering, Zhejiang Universit
+
+- 考虑直流故障时MMC直流侧必须建立为二阶电路而非传统一阶模型
+- 所提预设故障法可在不重构直流网络拓扑下高效模拟多种直流故障
+- 改进模型在PSS/E中验证了大规模交直流系统暂态稳定分析的准确性
+
+

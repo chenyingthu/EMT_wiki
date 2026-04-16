@@ -21,23 +21,46 @@ sources: ["EMT_Doc/02/Pereira和Tavares - 2022 - A New Approach to Represent the
 
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
+
+- 提出电压频率相关线路模型，将电晕效应与频变特性直接耦合于分布式参数中
+- 将特征导纳与传播函数扩展为电压频率双重依赖参数，突破传统线性模型限制
+- 基于诺顿等效与递归卷积构建算法，实现与现有EMT仿真程序的无缝兼容
+
 
 ## 使用的方法
 
+
 - [[矢量拟合|矢量拟合]]
 - [[递归卷积|递归卷积]]
+- [[有理函数逼近|有理函数逼近]]
 - [[诺顿等效|诺顿等效]]
+- [[行波方程求解|行波方程求解]]
+
 
 ## 涉及的模型
 
-- [[transmission-line-model]]
+
+- [[输电线路|输电线路]]
+- [[频变线路模型|频变线路模型]]
+- [[宽带线路模型|宽带线路模型]]
+- [[电晕模型|电晕模型]]
+
 
 ## 相关主题
 
-- [[frequency-dependent-modeling]]
+
+- [[电晕效应|电晕效应]]
+- [[频率相关建模|频率相关建模]]
+- [[输电线路建模|输电线路建模]]
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[雷电过电压|雷电过电压]]
+
 
 ## 主要发现
 
-—This paper presents an accurate and efﬁcient model to represent the corona effect and frequency dependence of line parameters in electromagnetic transient simulations
+
+- 与三组现场实测数据对比验证，模型在暂态过电压波形拟合上高度吻合
+- 仿真验证表明该模型兼具数值稳定性、计算高效性与参数表征准确性
+- 成功在EMT平台实现电晕非线性与线路频变特性的全分布式统一建模
+
+

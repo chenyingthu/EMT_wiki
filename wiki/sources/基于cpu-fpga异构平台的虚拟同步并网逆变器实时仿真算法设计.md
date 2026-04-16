@@ -21,25 +21,33 @@ With the wide application of power electronic devices in power systems, the dema
 
 ## 核心贡献
 
-- 实现了real-time仿真方法，满足硬件在环测试的实时性要求
+
+
+- 构建了面向虚拟同步并网逆变器系统的CPU-FPGA异构实时仿真计算平台
+- 提出了基于FPGA的优化EMTP算法，结合恒导纳开关建模、支路拆分并行处理与矩阵化高效运算，实现≤2μs小步长电磁暂态仿真
 
 ## 使用的方法
 
-- [[优化emtp算法|优化EMTP算法]]
-- [[恒导纳开关建模|恒导纳开关建模]]
-- [[支路拆分并行处理|支路拆分并行处理]]
-- [[高效矩阵运算|高效矩阵运算]]
-- [[cpu-fpga异构计算|CPU-FPGA异构计算]]
-- [[虚拟同步控制|虚拟同步控制]]
+
+- [[fixed-admittance]]
+- [[parallel]]
+- [[nodal-analysis]]
+- [[real-time]]
 
 ## 涉及的模型
 
-- [[虚拟同步并网逆变器|虚拟同步并网逆变器]]
+
+- [[vsc-model]]
 
 ## 相关主题
 
-- [[real-time-simulation]]
+
+- [[real-time]]
+- [[co-simulation]]
 
 ## 主要发现
 
-With the wide application of power electronic devices in power systems, the demand for small time-step (≤ 2μs) electromagnetic transient real-time simulation increases
+
+
+- CPU-FPGA异构架构结合优化EMTP算法可有效突破单一CPU的计算瓶颈，满足电力电子系统小步长实时仿真需求
+- 所提平台的实时仿真波形与Simulink离线仿真结果高度吻合，验证了算法的准确性与FPGA资源利用的高效性

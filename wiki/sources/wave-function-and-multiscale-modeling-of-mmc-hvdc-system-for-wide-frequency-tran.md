@@ -21,31 +21,34 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 ## 核心贡献
 
-- 提出了一种改进的mmc建模方法，提高了EMT仿真效率和精度
+
+
+- 提出基于波传播函数(WPF)的MMC子模块瞬态行为描述方法
+- 开发基于傅里叶级数的移频相量(SFP)以加速系统级动态计算
+- 构建适用于宽频带瞬态仿真的MMC多尺度建模框架并实现与控制系统的无缝接口
 
 ## 使用的方法
 
-- [[多尺度建模|多尺度建模]]
-- [[波传播函数-wpf|波传播函数(WPF)]]
-- [[移频相量法-sfp|移频相量法(SFP)]]
-- [[动态相量法|动态相量法]]
-- [[多频移技术|多频移技术]]
-- [[emtp建模方法|EMTP建模方法]]
+
+- [[dynamic-phasor]]
+- [[numerical-integration]]
 
 ## 涉及的模型
 
+
 - [[mmc-model]]
+- [[vsc-hvdc]]
+- [[mmc]]
 
 ## 相关主题
 
-- [[宽频暂态仿真|宽频暂态仿真]]
-- [[电磁暂态-emt|电磁暂态(EMT)]]
-- [[多尺度建模|多尺度建模]]
-- [[电力系统建模与仿真|电力系统建模与仿真]]
-- [[高效计算|高效计算]]
-- [[故障暂态分析|故障暂态分析]]
-- [[功率振荡|功率振荡]]
+
+- [[harmonic]]
+- [[wind-farm]]
 
 ## 主要发现
 
-—The detailed modeling of power electronic (PE) devices poses challenging problems to an efﬁcient transient simulation of large-scale PE-dominated power systems
+
+
+- 所提多尺度模型在直流故障、内部故障及功率振荡等工况下，与全EMT模型相比具有极高的计算精度
+- 基于移频相量与波传播函数的方法显著提升了宽频带瞬态仿真的计算效率，且能无缝对接控制系统

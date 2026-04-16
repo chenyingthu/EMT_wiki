@@ -21,14 +21,21 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 
 ## 核心贡献
 
-- 针对EMT仿真中的问题进行了研究
+
+- 在ATP-EMTP中基于MODELS语言开发在线瞬时离散小波变换分解工具箱
+- 实现逐采样点实时小波分解，支持多级分量同步计算，突破传统离线分析限制
+- 提供可选全阶与降阶母小波及可调降阶度，有效降低在线计算负担
+
 
 ## 使用的方法
 
+
 - [[离散小波变换-dwt|离散小波变换(DWT)]]
-- [[在线瞬时分解|在线瞬时分解]]
-- [[多分辨率分析|多分辨率分析]]
-- [[models语言编程|MODELS语言编程]]
+- [[瞬时小波变换分解-iwtd|瞬时小波变换分解(IWTD)]]
+- [[models编程语言|MODELS编程语言]]
+- [[降阶滤波器设计|降阶滤波器设计]]
+- [[滑动数据窗技术|滑动数据窗技术]]
+
 
 ## 涉及的模型
 
@@ -37,11 +44,19 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 
 ## 相关主题
 
-- [[电力系统暂态仿真|电力系统暂态仿真]]
-- [[在线信号分析|在线信号分析]]
-- [[仿真软件工具箱集成|仿真软件工具箱集成]]
-- [[暂态信号处理|暂态信号处理]]
+
+- [[电磁暂态仿真|电磁暂态仿真]]
+- [[在线信号分解|在线信号分解]]
+- [[小波变换|小波变换]]
+- [[atp-emtp二次开发|ATP-EMTP二次开发]]
+- [[电力系统暂态分析|电力系统暂态分析]]
+
 
 ## 主要发现
 
-Implementation of an integrated online instantaneous discrete wavelet Nima Mahmoudpour a,c, Farhad Haghjoo b,c, Seyed Mohammad Shahrtash c,⇑ a Azarbaijan Regional Electricity Company, Tabriz, Iran c C
+
+- 与MATLAB小波工具箱对比验证，在ATP-EMTP环境中具备高精度与可靠性
+- 降阶滤波器在保持频带匹配与正交性的同时显著减少数学运算量
+- 支持将基于小波的保护控制算法无缝嵌入暂态仿真循环，实现闭环在线测试
+
+

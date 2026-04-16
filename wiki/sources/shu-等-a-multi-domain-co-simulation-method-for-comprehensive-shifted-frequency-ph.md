@@ -21,29 +21,36 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 
 ## 核心贡献
 
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+
+
+- 提出了一种多域协同仿真方法，将交直流系统划分为采用移频相量(SFP)模型的直流子系统和采用传统EMT模型的交流子系统
+- 开发了混合多域传输线模型(HMD-TLM)作为接口，有效耦合SFP与EMT模型，实现瞬时值与相量波形的同步输出
 
 ## 使用的方法
 
-- [[多域协同仿真|多域协同仿真]]
-- [[移频相量法-sfp|移频相量法(SFP)]]
-- [[混合多域传输线模型-hmd-tlm-接口技术|混合多域传输线模型(HMD-TLM)接口技术]]
-- [[系统分区|系统分区]]
-- [[仿真时序设计|仿真时序设计]]
+
+- [[co-simulation]]
+- [[dynamic-phasor]]
+- [[multirate]]
+- [[transmission-line]]
 
 ## 涉及的模型
 
-- [[移频相量模型-sfp|移频相量模型(SFP)]]
-- [[电磁暂态模型-emt|电磁暂态模型(EMT)]]
-- [[mmc-model|MMC]]
-- [[多端直流电网|多端直流电网]]
-- [[交直流混合系统|交直流混合系统]]
+
+- [[mmc-model]]
+- [[transmission-line]]
 
 ## 相关主题
 
+
+- [[hvdc]]
+- [[vsc-hvdc]]
 - [[co-simulation]]
 - [[dynamic-phasor]]
 
 ## 主要发现
 
-— To accurately capture the dynamics of a large-scale AC/DC system as a whole and the interactions between its individual components, a simulation method with high precision and efficiency is in great
+
+
+- SFP模型允许采用比传统EMT大得多的时间步长，在满足精度要求的前提下显著提升了大规模交直流系统的仿真效率
+- 所提HMD-TLM接口模型能够准确反映SFP域与EMT域之间的动态交互，在CIGRE标准系统及实际MMC多端直流电网中验证了方法的高精度与高效性

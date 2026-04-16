@@ -21,27 +21,33 @@ sources: ["EMT_Doc/34/tpwrd.2009.2035916.pdf.pdf"]
 
 ## 核心贡献
 
-- 提出无源性强制校正方法，确保频率相关模型的数值稳定性
+
+
+- 提出了一种针对多导体电缆与输电线路时域仿真模型的鲁棒无源性强制算法
+- 通过线性约束最小二乘法扰动传播矩阵对角元素，有效消除曲线拟合模型中的无源性违规，并成功集成于通用线路模型(ULM)
 
 ## 使用的方法
 
-- [[passivity-enforcement]]
+
+- [[passivity]]
+- [[vector-fitting]]
+- [[frequency-dependent]]
 
 ## 涉及的模型
 
-- [[多导体输电线路|多导体输电线路]]
-- [[多导体电缆|多导体电缆]]
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
-- [[地下电缆系统|地下电缆系统]]
+
+- [[transmission-line]]
+- [[cable]]
 
 ## 相关主题
 
-- [[时域仿真|时域仿真]]
-- [[无源性校正|无源性校正]]
-- [[电磁暂态|电磁暂态]]
-- [[频率相关建模|频率相关建模]]
-- [[仿真稳定性|仿真稳定性]]
+
+- [[hvdc]]
+- [[passivity]]
 
 ## 主要发现
 
-—This paper proposes an algorithm to enforce passivity on the time-domain simulation model for a multi-conductor cable or transmission line
+
+
+- 所提算法能有效识别并消除多导体线路时域模型中的无源性违规，避免非物理能量生成导致的仿真数值不稳定
+- 在交流与高压直流(HVDC)地下电缆系统中的应用验证表明，该方法在保证计算效率的同时显著提升了电磁暂态仿真的鲁棒性与准确性
