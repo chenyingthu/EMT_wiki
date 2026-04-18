@@ -1,0 +1,192 @@
+                                                            Electrical Power and Energy Systems 159 (2024) 110014
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                            International Journal of Electrical Power and Energy Systems
+                                                          journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Shifted frequency analysis based, faster-than-real-time simulation of power
+systems on graphics processing unit✩
+Junjie Zhang a ,∗, Marcel Mittenbühler a , Andrea Benigni a,b,c
+a
+    IEK-10: Energy Systems Engineering, Forschungszentrum Jülich, Wilhelm-Johnen-Straße, Jülich, 52428, NRW, Germany
+b
+    RWTH Aachen University, Templergraben 55, Aachen, 52062, NRW, Germany
+c
+    JARA-Energy, Jülich, 52425, NRW, Germany
+
+
+
+ARTICLE                 INFO                              ABSTRACT
+
+Keywords:                                                 In this paper we present a scalable approach based on the latency-based linear multistep compound method to
+Graphics processing unit (GPU)                            use graphic processing unit (GPU) to accelerate the power system simulations with electromagnetic transients.
+Power system simulation                                       To balance between the computational load and accuracy, we modeled the power system using shifted
+Parallel programming
+                                                          frequency analysis. Then, to efficiently exploit the hardware, our computational approach is designed to utilize
+Shifted frequency analysis
+                                                          both data-parallel and task-parallel execution. In addition, a graph-based thread safety design is introduced
+Dynamic phasor
+                                                          to achieve high scalability in the paralleled component computations. Furthermore, our implementation
+                                                          introduces a translation layer for different heterogeneous computing frameworks during compile time, so that
+                                                          a wide range of GPU devices can be supported without losing performance. Finally, benchmark results show
+                                                          that our approach achieves faster-than-real-time capability for systems with hundreds to thousands of nodes.
+
+
+
+1. Introduction                                                                               capability for massively parallel execution and fast memory access [7,
+                                                                                              11–14]. Among then, [7] uses fine-grained parallelization methods,
+    The 2050-carbon-neutral goal has sparked increasing installation of                       which decomposes the equations of the power system into linear and
+renewables, leading to a growing number of power electronic devices                           nonlinear part and uses GPU to solve the decomposed linear sys-
+in electric power systems. As a result, the required simulation time                          tem with direct method, and non-linear system with Newton–Raphson
+step to get accurate results is decreased; at the same time, the problem                      method, in a parallel way. This design can efficiently achieve data-
+size has also grown, posing high challenge to the traditional simulation                      parallelism within the linear and non-linear solver kernels. Similarly,
+techniques.                                                                                   in [13], a fine-grained method is applied to simulate power electronic
+    To balance between increasing computational load and require-                             systems where the integration of each state variable is computed in
+ments on accuracy, the shifted-frequency analysis (SFA), has been                             parallel. However, the algorithm, as many EMT and transient stability
+studied and becoming an accepted solution [1,2].                                              simulation approaches, requires updating the LU factorizations at each
+    Besides new modeling techniques, in the past few decades, sev-                            time step. This is avoided in the parallelization method [9] employed in
+eral parallel simulation methods have been proposed to overcome the                           this work so to improve scalability. The approaches shown in [11,14]
+computational challenge of simulating modern power systems. These
+                                                                                              design dedicated kernels for the different type of components consid-
+methods can be roughly categorized into explicit and automatic paral-
+                                                                                              ered, those approaches share a similar approach to the one presented
+lelization methods [3]. The former includes transmission line modeling
+                                                                                              in this paper. [11] is one of the earliest example of using GPU for
+(TLM) [4], diakoptics [5], waveform relaxation (WR) [6], etc., and
+                                                                                              transient stability simulation and had highlighted the potential of using
+the latter including fine-grained methods like [7], and coarse-grained
+                                                                                              GPU to accelerate dynamic simulations. [14] utilizes CUDA’s dynamic
+methods such as the combined state-space nodal method (SSNA) [8]
+                                                                                              parallelism, thanks to that a kernel can launch new kernels during
+and latency-based linear multistep compound (LB-LMC) [9]. A sys-
+                                                                                              execution. With this feature, the whole power grid is implemented as
+tematic comparison of different parallel methods can be found in [3,
+10].                                                                                          a single kernel, during each simulation time step, it launches several
+    Since parallel hardware is needed to efficiently execute the parallel                     component computation kernels as child kernels. Within the child
+algorithms, GPU has gaining attention in the recent years due to its                          kernels, there’re multiple kernels for components with detailed models,
+
+
+    ✩ This work was supported by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Grant 450829162.
+    ∗ Corresponding author.
+       E-mail address: junjie.zhang1@rwth-aachen.de (J. Zhang).
+
+https://doi.org/10.1016/j.ijepes.2024.110014
+Received 28 July 2023; Received in revised form 5 April 2024; Accepted 24 April 2024
+Available online 8 May 2024
+0142-0615/© 2024 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+J. Zhang et al.                                                                              International Journal of Electrical Power and Energy Systems 159 (2024) 110014
+
+
+e.g. kernels that simulates the identical circuit parts within the MMC            and the graph-based thread safety design; in Section 4 we explain the
+model. Therefore, this approach can simulate systems containing very              implementation of the simulator; and in Section 5 and Section 6 we
+detailed component models efficiently. Overall the approach proposed              demonstrate and evaluate the approach using an IEEE test case, to
+in [14] is very efficient, however, managing the whole simulation on              better highlight the achievable performance, a synthesized test network
+device makes applying vendor’s math library sometimes not possible                with increasing size is used. Finally, in Section 7 we discuss the major
+as the device-side API is not always available [15]. Launching kernel             advantages and limits of the proposed approach.
+from the device side is not free and only limited resources can be
+dedicated to the child kernels [16], therefore, it can generate significant       2. Mathematical representation
+overheads when the number of child kernels increases.
+    Related works regarding faster-than-real-time (FTRT) are mainly                   For simulation purposes, power systems can be represented by a
+focused on using reconfigurable devices [17,18] as well as using high-            differential-algebraic system of equations (DAE)
+performance computing (HPC) platforms [19]. Reconfigurable devices                𝑥̇ = 𝑓 (𝑥, 𝑢)
+usually has very limited memory and computing resources that re-                                                                                                       (1)
+                                                                                  0 = 𝑔(𝑥, 𝑢)
+stricts the application to simulation of large scale grids. HPC platforms
+usually does not have these constraints but the communication be-                 where the ordinary differential equations (ODEs) represent the dynamic
+tween parallel processes as well as the memory bandwidth becomes                  components in the system: for example, in traditional transient stability
+bottleneck.                                                                       analysis (TSA) programs, these differential equations come from the
+    In this work, we focus on using GPU to accelerate coarse-grained              machine equations and the corresponding controllers; the algebraic
+automatic parallelization methods, and we choose LB-LMC due to its                equations (AEs) represent the topological constraints of the network.
+high scalability—as discussed in [9]. The main contributions of this              Such formulation can also be extended to model modern power sys-
+work are:                                                                         tems with suitable modeling of distributed generation components e.g.
+                                                                                  photovoltaic fields, wind turbines, etc.
+     • We propose an approach that exploits data- and task-parallelism
+       in an automated way for component computations so to effi-                 2.1. Shifted frequency analysis
+       ciently utilize the GPU and to increase the performance, as well
+       as maintaining scalability when the type of component increases               The procedure of performing SFA can be briefly described as fol-
+       with the future developments. Moreover, as we schedule kernel              lowing [2]. First, the analytical signal of the original signal is produced
+       launch from the host side, vendor-optimized math libraries can             with the help of Hilbert transform:
+       be used.
+       GPU-based approaches are intuitively data-parallel, but there              𝑥𝑎 (𝑡) = 𝑥(𝑡) + 𝑗 [𝑥(𝑡)] ,                                                          (2)
+       were few studies regarding the application of task-parallel. In            where [⋅] denotes the Hilbert transform, defined formally as:
+       [12], task-parallelism was considered to create data-parallel ker-
+                                                                                                      +∞
+       nel so that load balancing among GPU cores is improved. In                                 1      𝑥(𝜏)
+                                                                                   [𝑥(𝑡)] =                  𝑑𝜏.                                                      (3)
+       the end, a single compute kernel is created via automatic code                             𝜋 ∫−∞ 𝑡 − 𝜏
+       generation technique. This implementation is improved to real-             Suppose that a power system signal 𝑥(𝑡) = 𝐴(𝑡)𝑐𝑜𝑠(𝜔𝑠 𝑡 + 𝜃) is given, then
+       time execution, but it also limits the customization and extension         the analytical signal is obtained by
+       of the kernel code, for example using a numerical library for part             [                ]
+                                                                                     𝐴(𝑡)𝑐𝑜𝑠(𝜔𝑠 𝑡 + 𝜃) = 𝐴(𝑡)𝑠𝑖𝑛(𝜔𝑠 𝑡 + 𝜃),
+       of computations. A multi-stream approach is applied in [13] but
+       is not completely task-parallel, because the concurrently executed         𝑥𝑎 (𝑡) = 𝑥(𝑡) + 𝑗[𝑥(𝑡)] = 𝐴(𝑡)𝑐𝑜𝑠(𝜔𝑠 𝑡 + 𝜃) + 𝑗𝑠𝑖𝑛(𝜔𝑠 𝑡 + 𝜃)
+       two LU-solver kernels are the same with different input data,                                             = 𝐴(𝑡)𝑒𝑗𝜃 𝑒𝑗𝜔𝑡 .
+       therefore, it is still possible to achieve similar performance via a
+       pure data-parallel implementation. The task-parallelism exploited          Afterwards, the signal is shifted by the frequency −𝑓𝑠 , using its angular
+       in this work is different to previous studies as it affects the            speed we get
+       execution order and concurrency of different compute kernels.              𝑥𝑎−𝑠ℎ𝑖𝑓 𝑡𝑒𝑑 (𝑡) = (𝐴(𝑡)𝑐𝑜𝑠(𝜔𝑠 𝑡 + 𝜃) + 𝑗𝑠𝑖𝑛(𝜔𝑠 𝑡 + 𝜃)) ⋅ 𝑒−𝑗𝜔𝑠 𝑡 ,
+     • We propose a graph-based approach to overcome race condition
+                                                                                                   = 𝐴(𝑡)𝑒𝑗𝜃 𝑒𝑗𝜔𝑡 ⋅ 𝑒−𝑗𝜔𝑠 𝑡
+       issues while maintaining high scalability. Paralleled component
+       computations can easily cause race conditions since each bus                                = 𝐴(𝑡)𝑒𝑗𝜃 .
+       can have connections to multiple components. Previous studies              Therefore, the original power system signal is shifted to frequency equal
+       often use programming tools such as mutex, atomic operations               to zero. The model of network components e.g. capacitors, inductors
+       to avoid this issue. However, these can potentially degrade the            can be found in [1].
+       performance largely [20].                                                      Moreover, if the original signal has a spread of different frequency
+     • We demonstrate the use of a flexibility layer that could translate         components, the SFA can also be extended by using a set of Fourier
+       the compute kernel as well as the host program to the target               coefficients as explained in [21]. The application as well as accu-
+       heterogeneous computing framework during compile time. The                 racy analysis regarding SFA and Hilbert transform based method are
+       implementations of almost all previous GPU-oriented approaches             discussed in [1,2,21–23].
+       had only focused on using CUDA as the programming framework,
+       which can efficiently utilize the performance of Nvidia GPU but            2.2. Parallelization method
+       does not allow the use of hardware from other vendors. The
+       compatibility of our implementation is extended without compro-                 The main idea of the LB-LMC method [9] employed in this work is to
+       mising on the performance. Moreover, vendor-tuned numerical                separate the component computation from the global network solution.
+       libraries can be used when executing on GPUs from different                Explicit integration is used typically for the non-linear components, and
+       vendors, leading to efficient utilization of the GPU hardware.             implicit integration is used for the linear network representation. Once
+                                                                                  components equations are discretized, components can be clustered in
+   This paper is organized as follows: in Section 2 we introduce the
+                                                                                  voltage or current type based on their characteristics at the terminal,
+mathematical representation of power systems using dynamic phasors
+                                                                                  i.e.
+and the parallel simulation algorithm; in Section 3 we introduce the
+computational approach including the data- and task-parallel approach             𝐼 𝑛 (𝑘 + 1) = 𝐟(𝑣(𝑘), 𝑖(𝑘), 𝑥(𝑘), 𝑢(𝑘), 𝑘),                                          (4)
+
+                                                                              2
+J. Zhang et al.                                                                                   International Journal of Electrical Power and Energy Systems 159 (2024) 110014
+
+
+
+
+                                                                                        Fig. 2. Simple connected directed graph and its incidence matrix. The dynamic edges
+                                                                                        are marked with red.
+
+
+
+
+                                                                                        Finally, since we have a component step and network step during each
+                                                                                        simulation step, our GPU kernels are designed for the two steps, re-
+                                                                                        spectively. In this work, the component kernels are designed following
+                                                                                        the SIMT model, i.e. a compute kernel is designed for each type of
+         Fig. 1. SIMT-based compute kernel design for different components.
+                                                                                        component, and each instance of such component is computed by a
+                                                                                        thread, as shown in Fig. 1. Therefore, the complete routine of one
+                                                                                        type of component – including the numerical integration as well as
+𝑉 𝑛 (𝑘 + 1) = 𝐟 (𝑣(𝑘), 𝑖(𝑘), 𝑥(𝑘), 𝑢(𝑘), 𝑘).                                  (5)       auxiliary transformations e.g. park transform – is performed inside the
+Since the decoupled components are represented by controlled source                     corresponding component kernel. As a result, different threads for the
+in the original network, the new network solution is obtained by                        same compute kernel follows an identical execution path. Therefore,
+applying the modified nodal analysis (MNA) method. Combining Eqs.                       thread homogeneity is maintained for each type of component.
+(4)–(5), we can represent this step as                                                      The network step is formulated as a set of algebraic equations;
+                                                                                        therefore, it can be solved via standard BLAS libraries or linear solver
+𝑌 𝑋(𝑘 + 1) = 𝑏(𝑣(𝑘), 𝑖(𝑘), 𝐼 𝑛 (𝑘), 𝑉 𝑛 (𝑘), 𝑘),                              (6)       libraries, which automatically generate compute kernels and exploits
+where 𝑌 is the admittance matrix, 𝑏 is the source vector, and 𝑋(𝑘 + 1)                  data-parallelism during execution. These libraries have been exten-
+is the new network solution vector.                                                     sively studied and developed for different platforms, hardware vendors
+    By using explicit integrator for nonlinear components we achieve                    also provide their own implementations, e.g. cuBLAS, cuSOLVER by
+high parallelizability of the solution while by implicitly integrate the                Nvidia, and rocBLAS, rocSOLVER by AMD, etc.
+linear components of the network we improve the s

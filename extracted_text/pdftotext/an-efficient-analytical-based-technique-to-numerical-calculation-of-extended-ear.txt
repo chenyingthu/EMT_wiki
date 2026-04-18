@@ -1,0 +1,194 @@
+                                                         Electric Power Systems Research 197 (2021) 107330
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                      Electric Power Systems Research
+                                                       journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An efficient analytical based technique to numerical calculation of
+extended earth return impedance and admittance of overhead lines
+Z. Liu a, H.M.J. De Silva a, *
+a
+    Manitoba Hydro international, MB, Canada R3Y0C5
+
+
+
+
+A R T I C L E I N F O                                 A B S T R A C T
+
+Keywords:                                             This paper describes an efficient numerical integration technique for the extended overhead line earth return
+Electromagnetic transient modelling                   impedance and admittance formula. In-appropriate handling of the infinite integral in the formula can lead to
+Earth return impedance and admittance                 erroneous calculated earth-return parameters at extreme frequencies, and a significant increase in computational
+Numerical integration
+                                                      effort. In this paper, an efficient technique based on an analytical approach is introduced to enforce proper
+Overhead lines
+                                                      discretization of the extended transmission line equations. Firstly, the line equations are analyzed, and a common
+                                                      cause of improper discretization is identified. Then the equations are further broken down numerically, based on
+                                                      which a procedure to suitably select a discretization interval and step is developed. Validation was conducted by
+                                                      calculating the earth return parameters of overhead-line cases using the proposed method and equal distance
+                                                      discretization. The proposed technique shows accurate results while using fewer discretization points than equal
+                                                      distance discretization.
+
+
+
+
+1. Introduction                                                                        integrand and applying various suitable integration method to each
+                                                                                       partitions [14]. However, most of the time the evaluation of integration
+    Electromagnetic transient study of power system requires trans­                    variables such as truncation length, and discretization step size is not
+mission line’s earth return parameters to be accurately evaluated in a                 straightforward. This leads to the use of recursive algorithms which
+wide range of frequencies [1-4]. The frequency of interest can vary from               enforces convergence by recalculating using different integration pa­
+0 Hz for DC operation [5], to serval MHz for lightning transient, and Gas              rameters repeatedly. To avoid recursive methods, past researchers have
+insulated substation studies [6-7].                                                    developed analytical based approach for Pollaczek’s underground cable
+    Carson/Pollaczek’s earth-return impedance and space admittance                     earth impedance [15], however, no similar methods has yet been con­
+(classical transmission line (TL) approach) are widely used in EMT                     ducted for the extended TL formula for overhead line.
+programs [8,9]. The recent extended TL approach with accurate                              This paper proposes a systematic procedure derived analytically to
+earth-return impedance and admittance [10,11] improves the accuracy                    compute the earth return parameters extended TL formulas accurately,
+for a wide frequency range and more importantly enhances the stability                 numerically efficiently, and without recursive steps.
+of the time domain simulation [7].
+    Numerous amounts of previous studies on proper implementation of                   2. Review of Overhead Line equations
+the classic TL formula has been conducted, but not for the extended TL
+formula. Although they are technically different, it is still possible to              2.1. The approximate overhead line earth return formula
+develop similar implementation methods by correlating with pervious
+works. This is due to the similarity of complexity in the formula them­                    In this paper, Z,Y,R,L,G,C,f, ω represents per unit length impedance,
+selves (i.e. integrand components). Previous studies have developed                    admittance, resistance, inductance, conductance, capacitance, fre­
+serval different approaches to the classic TL formulas. These includes                 quency, angular frequency respectively.
+generalized discretization variable [12], solving the infinite integral via                Fig. 1 shows a typical two conductors overhead transmission line
+series expansion [1], Taku Noda’s integral transformation techniques                   system. Where, σe , μe , ∈e , y, h represent earth resistivity, permeability,
+[13], asymmetric extraction method [2], or custom partitioning of                      permittivity, line separation, and height above ground respectively.
+
+
+
+    * Corresponding author.
+      E-mail addresses: jliu@mhi.ca (Z. Liu), jeewantha@mhi.ca (H.M.J. De Silva).
+
+https://doi.org/10.1016/j.epsr.2021.107330
+Received 27 November 2020; Received in revised form 21 April 2021; Accepted 27 April 2021
+Available online 15 May 2021
+0378-7796/© 2021 Published by Elsevier B.V.
+Z. Liu and H.M.J. De Silva                                                                                                                       Electric Power Systems Research 197 (2021) 107330
+
+
+
+                                                                                                                    e− (hi +hj )s cos(ys)
+                                                                                         F1 (s) =        √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                       (11)
+                                                                                                      s + s2 + ω2 μ0 ∈0 (1 − μr ∈r ) + jωμe σe
+
+                                                                                                             ∫∞
+                                                                                         M + jN = 2               F2 (s) ds                                                                      (12)
+                                                                                                             0
+
+
+
+                                                                                                                            e− (hi +hj )s cos(ys)
+                                                                                         F2 (s) = √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ (σe +jω∈e )s                 (13)
+                                                                                                   s + ω μ0 ∈0 (1 − μr ∈r ) + jωμe σ e + jω∈0
+                                                                                                     2          2
+
+
+                                                                                            Where, μ0 is the vacuum permeability, μr is the relative perme­
+     Fig. 1. Transmission line configuration with overhead lines and cables.             ability, ∈0 is the vacuum permittivity, ∈r is the relative permittivity.
+                                                                                            The earth return admittance can be calculated as Yeij = jω[C], [C] =
+Traditionally, the overhead line earth return value is solved using for­                 [Pij ]− 1 . Note for the case of only a single conductor where i = j, y =
+mulas developed by J. R. Carson in 1926 [8]. One difficulty arises when                   radius of conductor.
+adopting the Carson formula is the high computation effort required to                         One difficulty associated with the overhead line equations is the
+evaluate its infinite integral. Hence, later an approximate formula to                   evaluation of the infinite integral. For any numerical integration, two
+represent Carson’s integral is derived by Gary [16, 17]. The closed form                 important parameters need to be determined are point of truncation and
+approximate was further worked on and refined by many engineers such                     discretization step.
+as Alvarado [18], Noda [19]. To accommodate for displacement this                              Often the improper selection of truncation point will lead to
+paper will use the approximate modified Carson’s formula given in (1)                    improper discretization step, and thus erroneous earth-return parame­
+[20].                                                                                    ters are computed.
+                                                                                               Usually, the selection of truncation point can be roughly estimated
+                 ( / ) [Ω]
+Z = jω(μ0 / 2π)ln Sij dij                                             (1)                by considering the exponential decay term in (11) and (13). A logical
+                             m                                                           choice is to select the truncation point as − ln0.001
+                                                                                                                                       hi +hj , which corresponds to a
+
+where,                                                                                   99.9% magnitude decay of initial value (i.e. f(s = 0)). Next, for a given
+                                                                                         discretization interval, the discretization step can be determined. A
+ω = 2π f                                                                       (2)       simplistic approach is to use a recursive method such that discretization
+     (             )2                                                                    step is decremented during each iteration until a convergent solution is
+Sij = hi + hj + 2he + y2                                                       (3)       obtained. However, this method can be numerically expensive. The
+                                                                                         number of samples required for the earth-return parameters to converge
+                           1                                                             tend to be unreasonably high for cases with extreme frequency and long
+he = √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                       (4)
+      jωμ0 (σ e + jω∈0 (∈r − 1))                                                         line separation.
+     (       )2                                                                              An example is shown by calculating the earth return parameters of
+dij = hi − hj + y2                                                             (5)       overhead-line arrangement shown in Fig. 1. The accurate earth return
+                                                                                         values are computed for the input parameters tabulated below.
+    This approximate formula has the benefit of taking in consideration
+                                                                                             The earth return values for 63,504 input parameter combinations
+of displacement current which most other closed form approximate does
+                                                                                         using table I are calculated. A percentage error analysis of calculated
+not consider. The closed form approximate formula for earth return
+                                                                                         earth return parameter values vs converged earth return parameter
+admittance is calculated using the well-known formula in (6). The closed
+                                                                                         values are tabulated in Table II. Error is defined as when any of the
+form approximate was further improved by other researchers such as
+                                                                                         calculated values (i.e. R,L,G,C) showed more than 10% difference in
+D’Amore [21]
+                                                                                         magnitude comparing to the converged values. As a summary, a recur­
+            ( ) [ ]
+     jωμ0    Sij     S                                                                   sive solver as ones shown below with a logical initial guess for trunca­
+Y=        ln                                                         (6)
+      2π     dij     m                                                                   tion will still require many iterations prior to obtaining an acceptable
+                                                                                         solution for majority of the cases in Table I.
+2.2. The extended overhead line formula                                                      In order to efficiently discretize and perform integration for the
+                                                                                         extended TL equations, a systematic procedure is developed analytically
+    The extended earth-return impedance of a multi-phase overhead line                   and described in the section 3.
+is given as (7) [10, 22]. The extended earth-return admittance by
+Nakagawa is given in (8) which is the same as that derived by Wise [11,                  3. Analytical break down of Extended TL equation
+23].
+        (μ )                                                                             3.1. Analysis of error
+Zij = jω 0 [P0 + (Q − jR)]                                          (7)
+         2π
+                                                                                                The extended TL equations can be interpreted as two exponential
+      P0 + M + jN
+Pij =                                                                          (8)
+          2π∈0                                                                           Table 1
+                                                                                         Transmission line data
+where,
+                                                                                           h1 , h2                       [5, 10, 20, 50, 100, 150, 200]meters
+        ( )
+         Dij                                                                               y                             [10− 3 , 10− 2 , 10− 1 , 1, 5, 10, 100, 1000 ]meters
+P0 = ln                                                                        (9)
+         dij                                                                               μr                            [1, 5, 10]
+                                                                                           ∈r                            [1, 5, 10]
+                    ∫∞                                                                     σe                                                                                                      1
+                                                                                                                         [10− 1 , 2 × 10− 2 , 10− 3 , 5 × 10− 4 , 3.3 × 10− 4 , 2.5 × 10− 4 ]
+Q − jR = 2               F1 (s) ds                                        (10)                                           [ −9                                                                 ]   Ωm
+                                                                                           f                               10 , 10− 8 , 10− 7 , 10− 6 , 10− 5 , 10− 4 , 10− 3 , 10− 2 , 10− 1
+                                                                                                                                                                                               Hz
+                    0
+                                                                                                                                  100 , 101 , 102 , 103 , 104 , 105 , 106 , 107 , 108
+
+
+                                                                                     2
+Z. Liu and H.M.J. De Silva                                                                                                                                 Electric Power Systems Research 197 (2021) 107330
+
+
+Table 2                                                                                                                  maxima, magnitude, magnitude polarity change). Hence, a truncation
+Convergence vs discretization                                                                                            point should not be generalized for (7), and (8). From this example, it
+  Number of samples                        5 × 101                   5 × 102                  5 × 103    5 × 104         can be deduced that the improper integration is due to:
+  Percentage Error                         %                         73.55%                   60.07%     33.875%
+                                                                                                                         1) Selection of discretization parameter without considering both real
+                                                                                                                            and imaginary parts.
+decaying sinusoidal (i.e. one for impedance, one for admittance). This is                                                2) Neglecting the effects of the square root envelope in (15), and (16).
+further separated into a message term and three envelope terms as                                                           (i.e. magnitude, polarity change).
+shown below:
+                                                                                                                         3.2. The solution procedure
+f msg (s) = cos(ys)                                                                                           (14)
+                                                                                                                            To evaluate the extended TL earth return equations effectively, the
+f ev1 (s) = e− (hi +hj )s                                                                                     (15)       point of truncation and discretization step for integration needs to be
+                                                                                                                         calculated analytically and assessed logically. As concluded in the pre­
+                                              1
+f zev2 (s) =        √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                         (16)       vious section, the integration variables need to be determined for both
+               s+    s2 + ω2 μ0 ∈0 (1 − μr ∈r ) + jωμe σe                                                                real and imaginary part of (6), and (7). In order to do this one needs to:
+
+                                                   1
+f yev2 (s) = (σe +jω∈e )s       √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅             (17)       1) Isolate the real/imaginary component from (16), (17).
+            

@@ -1,0 +1,205 @@
+                                                                   Electric Power Systems Research 252 (2026) 112395
+
+
+                                                                         Contents lists available at ScienceDirect
+
+
+                                                             Electric Power Systems Research
+                                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Improving EMT simulations using frequency-shifted rational
+approximations ⋆
+A. A. Kida              a,∗, A. C. S. Lima               b , F. A. Moreira               c , F. M. Vasconcellos            c
+
+a Federal Institute of Bahia, Salvador, BA, Brazil
+b
+    Department of Electrical Engineering, COPPE/UFRJ, Federal University of Rio de Janeiro, Rio de Janeiro, Brazil
+c Department of Electrical and Computer Engineering, Federal University of Bahia, Salvador, BA, Brazil
+
+
+
+
+a r t i c l e              i n f o                             a b s t r a c t
+
+Keywords:                                                      Accurate electromagnetic transient (EMT) simulations require accounting for the frequency-dependent behavior
+Rational modeling                                              of system components and equivalents. Rational approximations derived from curve-ﬁtting techniques such as
+vector ﬁtting                                                  Vector Fitting (VF) are commonly employed to represent these equivalents. Complex Vector Fitting (CVF), a
+complex vector ﬁtting
+                                                               variant developed for modeling baseband communication systems, eliminates the complex conjugacy symmetry
+power system transients
+frequency-shifted simulations
+                                                               constraint found in VF. This work introduces a CVF-based framework incorporating analytic signals and frequency
+                                                               shifts to enhance EMT simulations of power systems. Validation with a transmission line and a distribution
+                                                               network demonstrates that CVF reduces errors by up to eight orders of magnitude compared to VF, along with
+                                                               notable passivity diﬀerences. Frequency shifts further enhanced the accuracy of the CVF-based framework by
+                                                               up to two additional orders of magnitude. Additionally, these frequency shifts enabled a time-step size increase
+                                                               by a factor of 2.33 to 5.5 for the same target accuracy, thereby reducing computational eﬀort. These ﬁndings
+                                                               establish the proposed framework as an eﬀective tool for power system analysis.
+
+
+
+1. Introduction                                                                                          To address this limitation, Ye et al. [10] proposed Complex Vector
+                                                                                                     Fitting (CVF) for baseband modeling of photonic systems described by
+    High-accuracy modeling of power system components (lines, cables,                                scattering parameters. In [11], the scope of CVF was extended to the
+transformers, switchgear, generators and loads) must represent their dy-                             modeling of electric power system components represented by admit-
+namic behavior across a wide frequency range. However, detailed mod-                                 tance parameters along with strategies aimed at enhancing its com-
+eling of every component in a large and complex power system is com-                                 putational eﬃciency. However, that study focused solely on a single
+putationally prohibitive for electromagnetic transient (EMT) studies.                                test system, neglected time-domain simulations, and did not explore the
+    A conventional approach that balances accuracy and eﬃciency di-                                  frequency-shifting capabilities of CVF for EMT applications. This paper
+vides the system into a study area and an external area [1]. The latter                              addresses these limitations.
+can be represented by a frequency-dependent equivalents (FDE), pre-                                      This work advances the ﬁndings of [11] through several contribu-
+serving its frequency response beyond the grid frequency. Rational ap-                               tions. First, it provides further evidence that the enhanced ﬂexibility of
+proximations are widely used for representing such equivalents [2].                                  CVF improves ﬁtting accuracy, even without frequency shifts. Addition-
+    The pole-relocation algorithm known as Vector Fitting (VF) [3–5]                                 ally, it reveals signiﬁcant diﬀerences in passivity characteristics between
+is a reliable tool for ﬁtting a rational approximation to a tabulated fre-                           the model set up with VF and CVF, which were previously unidentiﬁed.
+quency response data set. VF is also integrated into major EMT simula-                               Lastly, it proposes a novel framework that utilizes frequency shifting
+tion software, such as ATP [6], PSCAD [7] and EMTP [8].                                              and analytic signals to enhance the eﬃciency of EMT simulations.
+    The model built with VF inherently produces real-valued impulse re-                                  This paper is structured as follows. Section II introduces admittance
+sponse, 𝑥(𝑡), whose spectra, 𝑋(𝜔), exhibit Hermitian symmetry, satisfy-                              matrix synthesis and passivity conditions. Section III addresses the ana-
+ing 𝑋(−𝜔) = 𝑋 ∗ (𝜔) [9]. However, this constraint limits its applicability                           lytic signals. Section IV introduces the proposed framework for eﬃcient
+to physical systems only, hindering VF from leveraging computationally                               EMT simulations. Results followed by discussions are presented in Sec-
+eﬃcient baseband (frequency-shifted) simulations.                                                    tion V. Finally, Section VI presents the main conclusions of this work.
+
+    ⋆
+        Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    ∗ Corresponding author.
+
+   E-mail addresses: alexandre.kida@ifba.edu.br (A.A. Kida), acsl@dee.ufrj.br (A.C.S. Lima), moreiraf@ufba.br (F.A. Moreira), felipe.vasconcellos@ufba.br (F.M.
+Vasconcellos).
+
+https://doi.org/10.1016/j.epsr.2025.112395
+Received 6 January 2025; Received in revised form 28 February 2025; Accepted 17 October 2025
+Available online 2 November 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A.A. Kida et al.                                                                                                        Electric Power Systems Research 252 (2026) 112395
+
+
+2. Frequency-domain realization                                                     where ′ denotes the transpose operator for systems exhibiting Hermi-
+                                                                                    tian symmetry [15] and the complex conjugate transpose operator for
+    Frequency response samples of an unknown 𝑁-port admittance ma-                  systems lacking it [16]. Consequently, CVF cannot leverage the eﬃcient
+trix 𝐘(𝑠) ∈ ℂ𝑁×𝑁 can be obtained through measurements or simula-                    half-size singularity test used for passivity assessment in VF [15], as this
+tions. The behavior of 𝐘(𝑠) can be modeled by a rational approximation              test is designed for real-valued systems [10].
+𝐘(𝑠) ∈ ℂ𝑁×𝑁 using a suitable curve-ﬁtting algorithm. For pole-residue
+formulation,                                                                        3. Analytic signal
+                    𝑁𝑝
+                   ∑ 𝐑𝑖
+𝐘(𝑠) ≈ 𝐘(𝑠) =                 + 𝐃,                                        (1)           The synthesized FDE using the CVF framework exhibits a complex
+                   𝑖=1
+                       𝑠 − 𝑝𝑖                                                       impulse response, even for real-valued inputs [17]. While such responses
+where 𝑠 = 𝑗𝑤: the complex frequency, 𝜔 is the angular frequency in                  do not occur in the physical systems [2], they oﬀer the potential for
+rad∕s, 𝑁𝑝 : the model order, 𝐃 ∈ ℝ𝑁×𝑁 : the constant term matrix, 𝑝𝑖 :              enhancing simulation eﬃciency [18].
+the 𝑖th pole, 𝐑𝑖 ∈ ℂ𝑁×𝑁 : the residue matrix associated with 𝑝𝑖 .                       Simulations utilizing the CVF framework employ analytic sig-
+   The pole-residue realization of 𝐘(𝑠) in (1) can be expressed in a state-         nals [10], which are a class of complex-valued functions that satisfy
+space form [12] as                                                                  the Cauchy-Riemann conditions for diﬀerentiability [19].
+                                                                                        An analytic signal 𝑢𝐴 (𝑡) provides a complex-valued representation of
+𝐘(𝑠) = 𝐂(𝑠𝐈 − 𝐀)−1 𝐁 + 𝐃,                                                 (2)
+                                                                                    a real-valued signal 𝑢(𝑡) and is deﬁned as [20]:
+                   𝑁⋅𝑁𝑝 ×𝑁                                         𝑁⋅𝑁𝑝 ×𝑁⋅𝑁𝑝
+where 𝐂 ∈ ℝ          : a matrix containing all residues, 𝐈 ∈ ℕ        :
+                                                                                    𝑢𝐴 (𝑡) = 𝑢(𝑡) + 𝑗{𝑢(𝑡)},                                                        (6)
+the identity matrix, 𝐀 ∈ ℂ𝑁⋅𝑁𝑝 ×𝑁⋅𝑁𝑝 : a diagonal matrix containing all
+                                                                                                         ∞
+poles, 𝐁 ∈ ℂ𝑁⋅𝑁𝑝 ×𝑁 : a selection matrix with ones and zeros.                       where {𝑢(𝑡)} = 𝜋1 ∫−∞ 𝑢(𝜏) 𝑑𝜏: the Hilbert transform of 𝑢(𝑡).
+                                                                                                           𝑡−𝜏
+                                                                                        The Hilbert transform is a linear operator that shifts the phase of each
+2.1. Constraint relaxation                                                          frequency component of 𝑢(𝑡) by −90𝑜 for positive frequencies and 90𝑜 for
+                                                                                    negative frequencies. This transformation ensures that 𝑢𝐴 (𝑡) retains only
+    𝐘(𝑠) is typically employed to calculate the current (output) corre-             the non-negative frequency components 𝑢(𝑡), scaled by a factor of two.
+sponding to a given excitation voltage (input). VF imposes the realness                 The spectrum of 𝑢𝐴 (𝑡) can be shifted toward 0 Hz by an arbitrary
+constraint to ensure that the output remains real-valued. Consequently,             frequency oﬀset Δ𝑓 , resulting in the frequency-shifted analytic signal:
+the complex poles and residues of the VF-derived model are constrained
+to appear as complex conjugate pairs, such that                                     𝑢𝐴,𝑠ℎ (𝑡) = exp(−𝑗2𝜋Δ𝑓 𝑡)𝑢𝐴 (𝑡).                                                 (7)
+
+𝑝𝑖 = ℝ(𝑝𝑖 ) + 𝑗𝕀(𝑝𝑖 ),       𝑝𝑖+1 = ℝ(𝑝𝑖 ) − 𝑗𝕀(𝑝𝑖 )   ∀𝑖,                (3)          For example, consider the cosine signal deﬁned as
+                                                                                                            exp(𝑗2𝜋𝑓𝑒 𝑡) + exp(−𝑗2𝜋𝑓𝑒 𝑡)
+                                                                                    𝑥(𝑡) = cos(2𝜋𝑓𝑒 𝑡) =                                 ,                           (8)
+                                                                                                                          2
+𝐑𝐢 = ℝ(𝐑𝐢 ) + 𝑗𝕀(𝐑𝐢 ),        𝐑𝐢+𝟏 = ℝ(𝐑𝐢 ) − 𝑗𝕀(𝐑𝐢 )        ∀𝑖,          (4)
+                                                                                    where 𝑓𝑒 is the excitation frequency in Hz.
+where 𝑝𝑖 and 𝑝𝑖+1 : represent a pair of complex conjugate poles, 𝐑𝐢 ∈                  Eliminating the negative frequency component of (8) and multiply-
+ℝ𝑁⋅𝑁𝑝 ×𝑁 and 𝐑𝐢+𝟏 ∈ ℝ𝑁⋅𝑁𝑝 ×𝑁 : represent a pair of complex conjugate                ing by two yields its analytic representation:
+residues matrix, ℝ(⋅) and 𝕀(⋅): denote the real and imaginary parts, re-
+                                                                                                 exp(𝑗2𝜋𝑓𝑒 𝑡)
+spectively.                                                                         𝑥𝐴 (𝑡) = 2                = exp (𝑗2𝜋𝑓𝑒 𝑡).                                       (9)
+    CVF shares several similarities with the VF approach, such as the                                 2
+relaxation of the non-triviality constraint to improve convergence [13]                Applying a frequency shift of Δ𝑓 in (9) yields:
+and the use of QR decomposition to enhance numerical performance [5].               𝑥𝐴,𝑠ℎ (𝑡) = exp(−𝑗2𝜋Δ𝑓 𝑡) exp(𝑗2𝜋𝑓𝑒 𝑡).                                        (10)
+The key distinction of CVF lies in the relaxation of the realness con-
+straint (3)–(4). This relaxation enables more ﬂexible modeling by ac-                  In the case where Δ𝑓 = 𝑓𝑒 , (10) becomes a dc signal.
+commodating frequency-shifted models that lack Hermitian symmetry.
+                                                                                    4. Proposed framework
+2.2. Passivity assessment
+                                                                                        The proposed framework integrates the CVF with baseband model-
+    Stable time-domain simulations require a rational approximation                 ing techniques, commonly used in communication systems, to enhance
+                   (             )
+with stable poles ℝ(𝑝𝑖 ) ≤ 0 ∀𝑖 and passive characteristics [2]. The lat-           the eﬃciency of EMT simulations within the context of electric power
+ter ensures that the system does not generate energy. A system is consid-           systems. Its core principle is constructing rational approximations with
+ered passive if 𝐆(𝑠) = ℝ(𝐘(𝑠)) ∈ ℝ𝑁×𝑁 is a positive-deﬁnite matrix [14].            frequency shifts Δ𝑓 tailored to the phenomenon under study.
+This condition implies that 𝐆(𝑠) is symmetric and its eigenvalues 𝜆(𝑠) are              Fig. 1 illustrates the workﬂow of the proposed framework, where
+positive.                                                                           the voltage 𝑒(𝑡) and current 𝑖(𝑡) serve as the input and output real-valued
+    Passivity violations occur in frequency regions where 𝜆(𝑠) < 0. Such            signals, respectively. Their corresponding analytic representations, 𝑒𝐴 (𝑡)
+violations can lead to instability in time-domain simulations, even if the          and 𝑖𝐴 (𝑡), are deﬁned as (6). Subsequently, the frequency-shifted ana-
+rational approximation consists only of stable poles [14]. It is also worth         lytic signals, 𝑒𝐴,𝑠ℎ (𝑡) and 𝑖𝐴,𝑠ℎ (𝑡), are obtained using (7).
+noting that passivity violations may occur outside the frequency range
+of interest, regardless of the accuracy of the model. The model can still           5. Results and discussion
+be considered passive for band-limited signals in such cases.
+    Passivity can be assessed both analytically and via brute-force meth-               Two numerical examples, Case A and Case B, are applied to validate
+     (                               )
+ods e.g., frequency sweeping 𝜆(𝑠) . Analytically, passivity violation re-           the proposed framework. Case A focuses on transmission line modeling,
+gions can be identiﬁed by the cross-over frequencies, computed from the             whereas Case B evaluates a distribution network. These cases were se-
+singular values (purely imaginary eigenvalues) of the Hamiltonian ma-               lected to facilitate result reproducibility, as all frequency response data
+trix 𝐇 ∈ ℂ2𝑁⋅𝑁𝑝 ×2𝑁⋅𝑁𝑝 [15]. The computation of 𝐇 depends on whether                are available at the oﬃcial repository of VF [21].
+the rational approximation exhibits Hermitian symmetry, inﬂuencing its                  The same conditions of model order, number of iterations, weighting
+formulation as follows:                                                             function and pole initialization strategy were applied for both VF and
+      [                                              ]
+        𝐀 − 𝐁(𝐃 + 𝐃′ )−𝟏 𝐂       𝐁(𝐃 + 𝐃′ )−𝟏 𝐁′                                    CVF for a fair comparison. Numerical simulations were executed on an
+𝐇=          ′     ′ −𝟏          ′     ′       ′ −𝟏 ′   ,                (5)         Intel i5-1240P processor with 16 GB of RAM, using MATLAB 2018a.
+         −𝐂 (𝐃 + 𝐃 ) 𝐂       −𝐀 + 𝐂 (𝐃 + 𝐃 ) 𝐁
+
+                                                                                2
+A.A. Kida et al.                                                                                                        Electric Power Systems Research 252 (2026) 112395
+
+
+
+
+                                                                                                 Fig. 2. Test circuit conﬁguration for Case A and Case B.
+
+
+
+
+                        Fig. 1. Proposed framework.
+
+
+
+    Fig. 2 depicts the circuit-test conﬁguration used to obtain time-                 Fig. 3. Conﬁguration of a 132 kV three-phase transmission line for Case A.
+domain responses, adhering to the terminology from the original data                  Black and white circles represent the phase and ground conductors, respec-
+in [21]. Only port 1 is active (ungrounded) in this setup, while all other            tively. The dc resistance per kilometer is 0.121 Ω km−1 for the phase conductor
+                                                                                      and 0.359 Ω km−1 for the ground conductor. The total line length is 12 km, with
+ports remain grounded. The excitation consists of a single real-valued
+                                                                                      diameters of 21.66 mm for the phase conductors and 12.33 mm for the ground
+voltage source 𝑒(𝑡) = cos(2𝜋𝑓𝑒 𝑡) pu, applied at port 1 for both cases, start-
+                                                                                      conductors. Adapted from [15].
+ing at 𝑡 = 0 s. For the proposed methodology, EMT simulations utilize
+analytic signals and frequency shifts. Consequently, 𝑒(𝑡) is replaced by
+𝑒𝐴,𝑠ℎ (𝑡), as in (10), during simulations. High-frequency transients are ex-
+amined by setting the excitation frequency 𝑓𝑒 to either 50 kHz or 90 kHz.
+Three CVF-based rational models are constructed for each case, consid-
+ering frequency shifts of Δ𝑓 ∈ {0 Hz, 50 kHz, 90 kHz}. The resulting cur-
+rents 𝑖𝑗 (𝑡), for 𝑗 = 1, … , 𝑁, illustrated in Fig. 2 correspond to the outputs
+and are computed using the framework described in Fig. 1, employing
+the trapezoidal rule for discretization.
+    Accuracy is evaluated using the relative root mean square error
+(RRMSE), a normalized and dimensionless metric. In the frequency do-
+main, the RRMSE of 𝐘(𝑠) is deﬁned as:
+        √
+        √ ∑𝑁 ∑𝑁 ∑𝑁𝑆
+        √
+        √ 𝑚=1 𝑞=1 𝑘=1 |𝑌 𝑚𝑞 (𝑠𝑘 ) − 𝑌𝑚𝑞 (𝑠𝑘 )|
+                                                    2
+𝑌𝐸 = √              ∑𝑁 ∑𝑁 ∑𝑁𝑆                         ,                    (11)
+                𝑁𝑠 𝑚=1 𝑞=1 𝑘=1 |𝑌 𝑚𝑞 (𝑠𝑘 )|2                                                      Fig. 4. Magnitude of the frequency response, Case A.
+
+where 𝑠𝑘 : the 𝑘th complex frequency sample, 𝑁𝑠 : the number of fre

@@ -1,0 +1,240 @@
+          第 35 卷 第 8 期                          中    国 电 机 工 程 学               报          Vol.35 No.8 Apr.20, 2015
+         2015 年 4 月 20 日                             Proceedings of the CSEE             ©2015 Chin.Soc.for Elec.Eng. 1919
+DOI：10.13334/j.0258-8013.pcsee.2015.08.011               文章编号：0258-8013 (2015) 08-1919-11       中图分类号：TM 46
+
+
+
+      模块化多电平换流器戴维南等效整体建模方法
+                                   许建中 1，赵成勇 1，Aniruddha M. Gole2
+                 (1．新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206；
+                                  2．曼尼托巴大学，加拿大 曼尼托巴 温尼伯 R3T 5V6)
+
+
+              Research on the Thévenin’s Equivalent based Integral Modelling Method of
+                              the Modular Multilevel Converter (MMC)
+                                   XU Jianzhong1, ZHAO Chengyong1, Aniruddha M. Gole2
+    (1. State Key Laboratory of Alternate Electrical Power System With Renewable Energy Sources (North China Electric Power
+       University), Changping District, Beijing 102206, China; 2. University of Manitoba, R3T 5V6, Winnipeg, MB, Canada)
+
+
+ABSTRACT: In order to further speed up the electromagnetic             电阻无穷大)；2）采用同样绝对稳定的后退欧拉法来替代通
+transient (EMT) model of the modular multilevel converters             常采用的梯形积分法对子模块电容进行离散化；3）结合 1）
+(MMC) over the previously developed Thévenin’s equivalent              和 2），提出一种计算复杂度与 MMC 桥臂子模块数相同的
+algorithms. The integral MMC model was proposed addressing             高效排序均压算法；4）针对所提出模型的特点，提出一种
+the following four features: 1) assuming the switches of MMC           精确的 MMC 闭锁仿真方法。所提 MMC 整体模型的计算复
+to be ideal if they are switched off; 2) using the A-stable            杂度随着电平数的增加线性增长。在 PSCAD/EMTDC 下与
+Backward Euler Method (BEM) to discretize the sub-module
+                                                                       MMC 详细模型仿真对比表明，所提 MMC 整体模型的暂稳
+capacitors instead of the Trapezoidal Rule (TR); 3) an efficient
+                                                                       态最大精度误差在 2‰以内，并且在仿真 121 电平 MMC 时
+ranking based MMC capacitor voltage balancing algorithm was
+                                                                       所提模型的加速比在 2 770 倍以上。
+proposed based on 1) and 2) to work with the MMC model; 4)
+using the diodes with interpolation functions to simulate the          关键词：模块化多电平换流器；戴维南等效；整体建模；电
+MMC blocking mode. Simulations on PSCAD/EMTDC                          磁暂态；电容电压排序均压法
+validate its accuracy and speedup factor by testing over the
+                                                                       0 引言
+fully detailed MMC model, the maximum steady and transient
+states errors are less than 2‰, and the proposed model is 2 770            截止目前，国内外在建的柔性直流输电工程大
+times faster over the 121-level fully detailed model.                  多 采 用 模 块 化 多 电 平 换 流 器 (modular multilevel
+KEY WORDS: modular multilevel converter (MMC);                         converter，MMC)或类似结构[1-5]。通常 MMC 需要
+Thévenin’s equivalent; integral modelling; electromagnetic             达到数百电平才能满足实际工程对高电压、大容量
+transient (EMT); ranking based capacitor voltage balancing
+                                                                       的需求，并且 MMC 电平数有不断升高的趋势[6]。
+algorithm
+                                                                       例如，美国“跨湾工程”双端 MMC 型高压直流输
+摘要：针对模块化多电平换流器(modular multilevel converter，                           电(high voltage direct current，HVDC)系统包含 2 592
+MMC)在电平数很高时电磁暂态离线仿真效率低下的问题，
+                                                                       个子模块[7]；我国舟山 5 端柔性直流输电示范工程
+提出一种基于戴维南等效的 MMC 电磁暂态整体建模方法。
+                                                                       共包含超过 8 000 个子模块等。在 PSCAD/EMTDC
+具体而言，在建立 MMC 戴维南等效模型的过程中：1）假
+设 MMC 中全部开关器件都具备理想的关断特性(也即关断                                           等电磁暂态离线仿真平台中仿真如此大规模
+                                                                       MMC-HVDC 的详细模型几乎是无法实现的，以
+     基金项目：国家自然科学基金项目(51177042)；国家 863 高技术基
+                                                                       20 μs 的步长仿真 5 s 动辄需要数月之久[8-10]。
+金项目(2013AA050105)；新能源电力系统国家重点实验室开放课题资助
+(LAPS15017)。                                                               针对这一问题，有文献提出了 MMC 电磁暂态
+     Project Supported by Natural Science Foundation of China          高效仿真模型[8-15]，它们均从 MMC 的详细模型出
+(51177042); The National High Technology Research and Development of
+China 863 Program (2013AA050105); State Key Laboratory of Alternate
+                                                                       发，在仿真精度与计算效率之间进行折中，分别适
+Electrical Power System With Renewable Energy Sources (LAPS15017).     用于不同的场合。本文将已有的 MMC 提速模型按
+1920                        中        国   电   机   工   程   学    报                                第 35 卷
+
+照所建模型是否可以精确仿真桥臂中每个子模块                            型提出一种高效排序均压算法，使得所提出 MMC
+电容电压充、放电这一本质特征作为判据，分为如                           整体模型的计算复杂度随着电平数的增加而线性
+下两类。                                             增长。
+                            [8-11]
+       第 1 类模型：MMC 精确等效模型        。文献[8]                  文献[8]仅针对半桥型 MMC 换流器提出了戴维
+中提出 MMC 电磁暂态戴维南等效模型，在仿真平                         南等效模型，本文将结合全桥型 MMC 的特殊拓扑
+台中搭建的 2 节点戴维南模型可以整体等效详细模                         及调制机制，推导出全桥型 MMC 的戴维南等效模
+型桥臂中 N 个子模块的戴维南信息，并可以反解求                         型，进而应用提出的 MMC 整体建模方法搭建全桥
+出每个子模块的电容电压值，具有极高的仿真精                            型 MMC 的整体模型，并进行仿真验证。
+度。文献[9-10]中提出一种基于受控源的 MMC 电
+                                                 1   MMC 换流器的戴维南等效模型
+磁暂态通用建模方法，它采用受控电压源和电流源
+分别等效 MMC 桥臂及全部子模块，通过二次信息                                 本节首先简要介绍 MMC 的基本拓扑，进而重
+的传递对 MMC 换流器进行了电气解耦，该模型最                         点介绍文献[8]中所提出的 MMC 戴维南等效模型。
+大的特点是实现方法简单且保持了详细模型的仿                            三相 MMC 的拓扑如图 1[16]所示。它包括 3 个相单
+真精度。文献[11]所提出 MMC 快速仿真模型中，                       元(a、b、c)，每个相单元包含上、下两个桥臂，每
+充分利用了 MMC 上、下桥臂开关状态互补的特性，                        个桥臂都由 N 个相同的子模块(sub-module，SM)串
+在一定程度上简化了换流器模型，并可以精确仿真                           联连接。其中，IARM 为桥臂电流(以 a 相上桥臂为例)，
+子模块电容的充、放电过程，但由于子模块间仍为                           桥臂电抗器 L0 用于控制和平衡相间环流以及抑制
+直接串联，换流器部分的仿真效率随着电平数的增                           故障电流的上升率。MMC 可以通过文献[17-19]中
+加而迅速降低。                                          所述的站级解耦控制策略以及阀级调制均压策略，
+       然而，上述 3 种主要的 MMC 电磁暂态等效模                  实现有功和无功功率的可控传输。
+型都仅对换流器部分的计算复杂度进行了优化，并                                   MMC 换流器的戴维南等效模型的目标是从
+未涉及 MMC 正常运行所必备的电容电压平衡算法                         图 1 所示的 MMC 出发，建立包含 N 个子模块的一
+的优化，随着 MMC 电平数的增加，电压平衡算法                         个 MMC 桥臂的戴维南等效模型，其核心内容是建
+的复杂度将占据很大的比重，因此上述模型在中低                           立单个子模块的戴维南等效模型后进行代数叠加。
+电平数领域的计算效率比详细模型高出 1~2 个数量                        MMC 子模块如图 2 所示。图 2(a)中每个 IGBT 开关
+级[8-10]，但是在仿真很高电平数 MMC 及其组成的                     组(即 1 个 IGBT 和 1 个二极管的反并联)可以看作
+多端直流电网时，计算效率依然较低[12]。                            在高、低电阻值间切换的可变电阻[20]。当开关组导
+       第 2 类模型：MMC 简化模型[12-15]。这类模型              通时，电阻值等于 RON(非常小的值)；当开关组关
+包括考虑开关函数的 MMC 平均值模型[12-13]，仅考                    断时，电阻值等于 ROFF(非常大的值)。R1 和 R2 分别
+虑基频的 MMC 平均值模型[14]和 MMC 连续模型[15]                 表示子模块中上、下两个开关组的等效电阻，它们
+等。单就仿真效率而言，该类模型非常适合于超大                                             IARM
+                                                                          SM1   SM1   SM1
+规模 MMC 组成的多端直流电网。然而，文献[13]
+                                                                          SM2   SM2   SM2
+指出，MMC 简化模型通常对其所仿真的精确模型                                                    #     #     #
+                                                                          SMN   SMN   SMN
+的电容参数等有一定的限制，并且仿真诸如换流器
+                                                                          L0    L0    L0
+闭锁以及严重交直流故障等特殊工况时需要对模                                          a
+                                                               b
+型进行改进。                                                         c
+       针对上述两类模型各自的优缺点，本文的研究                                               L0    L0    L0
+
+目标是提出一种基于戴维南等效的 MMC 电磁暂态                                                  SM1   SM1   SM1
+整体模型，它仍然属于第 1 类模型(MMC 精确等效                                                SM2   SM2   SM2
+模型)，但是其计算效率与第 2 类模型(MMC 简化模                                                #     #     #
+                                                                          SMN   SMN   SMN
+型)具有可比性。具体而言，即从文献[8]中提出的
+MMC 戴维南等效模型出发，对 MMC 换流器部分                                          图1      三相 MMC 结构图
+进一步优化，进而基于优化后的 MMC 换流器模                              Fig. 1   Schematic diagram of a three-phase MMC
+第8期                                                许建中等：模块化多电平换流器戴维南等效整体建模方法                                                         1921
+
+           IC                                       IC         +    ISM                           +      IARM
+    T1     D1                          R1                                                                          U C ( N × 1)
+   ISM              +            ISM                 RC           RSMEQ                                   RARMEQ
+                C        UC                   D0          UC   USM                                UARM
++                             +                                                                                    TSM ( N × 1)
+                    −                                                                                    UARMEQ
+ USM T2    D2                  USM     R2          UCEQ            USMEQ
+−                             −                                −                                  −
+  (a) 电路结构                           (b) 伴随电路             (c) 戴维南等效电路
+                                                                                            图3   MMC 单个桥臂的戴维南等效电路
+                           图2        MMC 子模块
+                                                                                   Fig. 3   Thévenin equivalent for a single phase arm of
+                        Fig. 2   MMC sub-module
+                                                                                                             MMC
+均根据自身开关状态决定阻值为 RON 或 ROFF，其开
+                                                                                                             N
+关状态由 MMC 的控制器决定[8]。                                                                          U ARMEQ (t ) = ∑ U SMEQ_k (t − ΔT )        (7)
+                                                                                                            k =1
+    除了上述对 IGBT 开关组的等效之外，对子模
+块进行戴维南等效还必须将子模块中的电容进行                                                            式中 RSMEQ_k 和 USMEQ_k 分别为如图 2(c)所示的第 k
+离散化，以使其可以在电磁暂态仿真环境中进行建                                                           个子模块的戴维南等效电阻和电压，即图 3 中的桥
+模。文献[8]中采用了应用较广泛的梯形积分法                                                           臂等效电路取决于其中 N 个子模块各自的导通状
+(trapezoidal rule，TR)进行离散化，得到每个子模块                                               态和瞬时电压信息。由文献[12]可知，上述 MMC
+的伴随电路如图 2(b)所示，图中二极管 D0 是为了                                                      模型在仿真超高电平 MMC 组成的多端直流电网时
+确保等效模型的子模块电容电压不会出现负值。                                                            仿真效率依然很低。
+图 2(b)中，戴维南等效电阻 RC 和等效电压 UCEQ 整                                                        以下将介绍本文所提出的基于戴维南等效的
+体等效子模块电容 C，它们的值均是时间的函数，                                                          MMC 整体建模方法，它比本节所介绍的 MMC 戴
+如式(1)和(2)所示。电容电流 IC(t)由式(3)计算而得，                                                 维南等效模型的计算效率还要高 1~2 个数量级，且
+它用于在每个仿真步长中更新子模块电容电压。公                                                           不降低仿真精度。
+式中上标 T 表示在伴随电路的构造过程中使用了梯
+                                                                                 2 基于戴维南等效的 MMC 整体建模
+形积分法。
+                                              ΔT                                 2.1   采用理想开关器件带来的 MMC 仿真加速
+                                 RCT =                                     (1)
+                                              2C                                       本节将对第 1 节介绍的 MMC 戴维南模型的换
+       T
+     U CEQ (t − ΔT ) = U CT (t − ΔT ) + RCT I C (t − ΔT )                  (2)   流器与均压算法两个方面进行 3 个层面的整体优
+                                                                                 化，并提出一种适合于该整体模型的换流器闭锁仿
+                           I ARM (t ) R2 − U CEQ (t − ΔT )
+           I C (t ) =                                                      (3)   真方法，最后将给出所提出整体模型的计算流程。
+                                       R1 + R2 + RC
+                                                                                       在工程实际中，IGBT 器件的导通电阻 RON 和
+    将图 2(b)转化为如图 2(c)所示的子模块戴维南                                                   关断电阻 ROFF 会随着负载电流以及器件的正向电
+等效电路，等效参数 RSMEQ 和 USMEQ 由式(4)、(5)                                                压降而改变。但大部分情况下， ROFF 要远远大于
+可得。式(4)中，R1 和 R2 为 2 个状态的变量，因此                                                   RON。例如，在某些电磁暂态仿真程序中(如 PSCAD/
+RSMEQ 也为时变量。                                                                     EMTDC 等)，典型的默认值是 RON = 0.01 Ω、ROFF =
+                                      R2                                         106 Ω[20]。对第 1 节所介绍的 MMC 换流器戴维南等
+            RSMEQ (t ) = R2 (1 −              )                            (4)
+                                 R1 + R2 + RC
+                                                                                 效模型进行求解时，电磁暂态仿真平台需要在每个
+                                      R2                                         仿真步长执行式(3)—(5) 以更新戴维南电路并反解
+    U SMEQ (t − ΔT ) = (                      )U CEQ (t − ΔT ) (5)
+                                 R1 + R2 + RC                                    出每个子模块电容电压信息，尽管相应的数学计算
+    将 MMC 桥臂中的 N 个子模块等效电路串联为                                                     复杂度较低，但是大量的计算也会在一定程度上降
+一个桥臂等效电路，如图 3 所示，图中 UC 和 TSM                                                     低计算效率。
+分别为桥臂输出的 N 个子模块电容电压以及控制                                                                为了在不损失仿真精度的前提下，为 MMC 模
+器输入桥臂的子模块触发信号。桥臂的戴维南等效                                                           型的后续改进提供基础，假设每个 IGBT 开关组在
+电阻 RARMEQ 和 UARMEQ 由式(6)、(7)可得。                                                  关断状态时电阻为无穷大，也即假设理想的关断状
+                                            N
+                                                                                 态，则对式(3)—(5)在 ROFF 趋于无穷时求极限，可
+                    RARMEQ (t ) = ∑ RSMEQ_k (t )                           (6)
+                                            k =1                                 将其简化为式(8)—(10)。
+1922                                                      中       国      电       机   工   程    学   报                                               第 35 卷
+
+                             ⎧I    (t ), 投入                                          的导通状态必处于“切除–切除”或“投入–投入”
+                  I C (t ) = ⎨ ARM                                          (8)
+                             ⎩ 0,        切除                                          二者之一，每个步长只需要根据桥臂电流 IARM(t)的
+                           ⎧ R + RC , 投入                                             不同，计算 2 次，即可用于全部子模块电压的更新，
+              RSMEQ (t ) = ⎨ ON                                             (9)
+                           ⎩ RON ,    切除                                             这大大减少了计算量。而当不采取理想关断器件这
+                                                                                     一假设时，即使处于关断状态的子模块，也会流入
+                           ⎧U (t − ΔT ), 投入
+        U SMEQ (t − ΔT ) = ⎨ CEQ                                          (10)       极小的电流对电容进行充、放电，导致任意时刻都
+                           ⎩0,           切除
+                                                                                     需要对全部子模块的电容电压进行更新，这既无必
+       式(8)—(10)的计算复杂度要远小于式(3)—(5)，                                                  要，也降低了计算效率。
+且没有乘法和除法运算。通常情况下，在 MMC 的                                                             2.2      采用后退欧拉法离散化子模块电容带来的
+详细模型中，全部子模块的结构参数是完全一致                                                                MMC 仿真加速
+的，因此，式 (6) 中求解等效戴维南电阻时可以由                                                                    与 梯 形 积 分 法 相 同 ， 后 退 欧 拉 法 (backward
+式(11)计算而得。                                                                           Euler method，BEM)也是绝对稳定的(A-stable)，也
+                RARMEQ (t ) = NRON + N ON RC                              (11)       即如果实际系统是稳定的，仿真结果也将是稳定
+式中 NON 为在 t 时刻控制器要求 MMC 桥臂中导通                                                        的。如果采用后退欧拉法对 MMC 全部子模块中的
+的子模块数目。同时，由式(10)可知，即将处于切                                                             电容进行离散化，则图 2(b)中的伴随电路中参数将
+除状态的子模块的戴维南电压确切地为 0，这与采                                                              如式(13)—(15)所示，其中上标 E 表示采用了后退
+取这一假设之前该等效电压为极小值不同。因此，                                                               欧拉法。
+式 (7) 也可以通过只对即将导通的子模块的等效戴                                                                                              ΔT
+                                                                                                               RCE =                                 (13)
+维南电压求和而得，这也会在一定程度上减少计                                                                                                  C
+算量。                                                                                                   E
+                                                                                                    U CEQ (t − ΔT ) = U CE (t − ΔT )                 (14)
+       由图 2(b)结合式(2)，可得使用梯形积分法对电
+                                                                                                  ⎪⎧U C (t ) = U C (t − ΔT ) + ΔU C (t )
+                                                                                                      E          E                E
+容进行离散化时，每个仿真步长计算完毕后子模块                                                                             ⎨                                                 (15)
+                                                                                                   ⎪⎩ΔU C (t ) = I C (t ) RC
+                                                                                                         E                 E
+电容电压的瞬时值和增量为
+            ⎧U CT (t ) = U CT (t − ΔT ) + ΔU CT (t )                                         由于此处只是改变了子模块伴随电路的生成
+            ⎪ T                                                                      方法，因此之前的式(8)—(11)依然是适用的，结合
+            ⎪ΔU C (t ) = ( I C (t ) + I C (t − ΔT )) RCT
+            ⎨                                                             (12)
+                                                                                     式(8)、(15)，当采用后退欧拉法时，MMC 子模块
+            ⎪ T ΔT
+            ⎪⎩ RC = 2C                                                               电容电压的增量如表 2 所示。与表 1 不同，该增量
+                                                                                     只由当前时刻子模块的导通状态决定。
+       结合式(8)、(12)可得采用梯形积分法时每个仿
+真步长的电容电压增量，如表 1 所示。                                                                          表2   MMC 子模块电容电压增量(后退欧拉法)
+                                                                                         Tab. 2   Capacitor voltage increment in MMC (BEM)
+       由表 1 可知，基于理想关断器件这一假设，采
+                                                                                             t 时刻子模块导通状态                    电容电压增量 ΔU CE (t )
+用梯形积分时，电容电压增量根据子模块当前步长
+                                                                                                   切除                                  0
+与前一个步长的导通状态不同而分为 4 组，这使得
+                                                                                                   投入                            I ARM (t ) RCE
+进一步减少计算量成为可能。例如，当 MMC 采用
+基于最近电平逼近控制 (nearest level control ，                                                          由表 2 可知，采用后退欧拉法后的一个直接好
+NLC)[18]的排序均压算法且实时触发时，在调制波                                                           处是电容电压增量只与当前时刻有关，而与历史导
+台阶不跃变时，桥臂中全部子模块在相邻两个步长                                                               通状态无关。因此，每个仿真步长只需要计算一次
+                                                                                     电压增量，即可加到全部投入状态的子模块电容电
+       表1       MMC 子模块电容电压增量(梯形积分)
+   Tab. 1    Capacitor voltage increment in MMC (TR)                                 压中，而切除状态的子模块电容电压保持不变，无
+   (t − ΔT)时刻                       t 

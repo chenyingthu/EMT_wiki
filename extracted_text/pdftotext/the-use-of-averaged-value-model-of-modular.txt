@@ -1,0 +1,244 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                           1
+
+
+
+
+         The Use of Averaged-Value Model of Modular
+               Multilevel Converter in DC Grid
+  Jianzhong Xu, Student Member, IEEE, Aniruddha M. Gole, Fellow, IEEE, and Chengyong Zhao, Member, IEEE
+
+
+   Abstract—This paper investigates the applicability of averaged-
+value models (AVMs) for modular multilevel converters (MMCs)
+operating in a voltage-sourced converter-based-high-voltage dc
+(VSC-HVDC) grid. The AVM models are benchmarked by com-
+parison with a detailed electromagnetic transient model of the
+grid, including a fully detailed MMC model. Analysis results show
+that the AVM is only effective as long as the capacitors are large
+enough to maintain nearly constant voltage across each MMC sub-
+module. This paper also shows that previously developed MMC
+averaged models are not able to accurately simulate the transients
+under dc fault conditions. This paper introduces topology changes
+to a previously proposed averaged model that results in much
+improved simulation for such conditions. This paper also shows
+that the model can be used effectively to study HVDC grids with
+significant time savings.
+  Index Terms—Averaged-value model (AVM), detailed model
+(DM), electromagnetic transient (EMT), modular multilevel con-
+verter (MMC), submodule (SM).
+
+
+                             I. INTRODUCTION
+
+
+
+R     ECENTLY, voltage-sourced converters (VSC) are
+      being increasingly used in high-voltage direct-current
+(HVDC) transmission applications. The modular multilevel
+                                                                                     Fig. 1. Schematic detailed MMC structure.
+
+
+converter (MMC) is proposed for its improved waveforms,                              characteristics are very complex and computationally chal-
+reduced switching losses and easy expansion, etc. [1]–[4].                           lenging for electromagnetic-transient (EMT) programs, given
+This topology uses a series of identical capacitor submodules                        the large number of switching elements, such as insulated-gate
+(SMs) that can be switched in and out of a phase in a controlled                     bipolar transistors (IGBTs) [5], [6].
+manner to create a near-sinusoidal waveform as shown in Fig. 1.                         For accelerating the simulation of MMCs, several approaches
+However, the MMC-HVDC converter uses a large number of                               are proposed [7]. Each is suitable for a particular operating as-
+submodules. Detailed models (DM) for the MMC that provide                            pect of the MMC and is described as follows.:
+completely faithful representations of converter and system                            • Highly accurate models based on Thevenin equivalents
+                                                                                           have been developed [5], [6], which can simulate each
+                                                                                           level separately and run significantly faster than the con-
+   Manuscript received May 03, 2013; revised February 12, 2014 and May 19,
+                                                                                           ventional DM of the MMC. However, these models are
+2014; accepted June 08, 2014. This work was supported in part by the Chi-
+nese Scholarship Council (CSC), in part by the Natural Science Foundation of               still computationally inefficient for simulating cases with
+China ( 51177042), in part by National High Technology Research and Devel-                 a large number of MMCs, such as HVDC grids.
+opment Program of China (863 Program) (No. 2013AA050105), and in part by
+                                                                                       • The continuous model, which is derived from the con-
+the Natural Sciences and Engineering Council (NSERC) of Canada. Paper no.
+TPWRD-00534-2013.                                                                          verter’s ordinary differential equations, can be used for the
+   J. Xu is with the State Key Laboratory of Alternate Electrical Power System             controller design [8], [9].
+with Renewable Energy Sources, North China Electric Power University, Bei-
+                                                                                       • The averaged-value models (AVM), which consider the
+jing 102206, China, and also with the University of Manitoba, Winnipeg, MB
+R3T 5V6 Canada (e-mail: xujianzhong@ncepu.edu.cn).                                         fundamental frequency behavior on the ac side, are used
+   A. M. Gole is with the Electrical and Computer Engineering Department,                  for system-level analysis [10], [11].
+University of Manitoba, Winnipeg, MB R3T 5V6 Canada (e-mail: gole@ee.
+                                                                                       • An extension to the AVM is to introduce a stepped wave-
+umanitoba.ca).
+   C. Zhao is with the State Key Laboratory of Alternate Electrical Power                  form on the ac side, more representative of the actual
+System with Renewable Energy Sources, North China Electric Power Univer-                   converter waveform [12]. This waveform is not derived
+sity, Beijing 102206, China (e-mail: chengyongzhao@ncepu.edu.cn).
+                                                                                           from the actual individual capacitor voltages, but instead, a
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                             simple quantization of a sine wave is carried out, which is
+   Digital Object Identifier 10.1109/TPWRD.2014.2332557                                    based on the control algorithm being used, and superposes
+
+                          0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+         This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+      staircase steps on the underlying fundamental frequency
+      waveform.
+   In the AVM, the large-scale dynamic behavior is accurately
+modeled although the individual capacitor voltages are not cal-
+culated. Instead, a single dc-side voltage is calculated. Hence,
+this type of model is significantly more efficient than models
+which consider the detailed MMC converter topology and has
+been proposed for studying the dynamic behavior of large sys-
+tems, such as dc grids [7], [12], [13].
+   This paper focuses on the analysis and improvements of the                      Fig. 2. Schematic MMC submodule structure.
+AVM. Although the previously developed AVMs [7], [12], are
+quite adequate for a large range of VSC studies, as shown in this
+paper, their performance under dc faults and some other contin-
+gencies is not sufficiently accurate. This paper presents an ap-
+proach to improve the model to remedy this inefficiency. Using
+EMT simulation, it also generally investigates the applicability
+of AVMs to different types of contingencies and suggests guide-
+lines on when it can be used and how to use it.
+
+
+             II. AVERAGED-VALUE MMC MODEL
+
+  This section discusses the topology of the modular multilevel
+converter (MMC) and existing work on the AVM of the MMC.
+                                                                                   Fig. 3. AVM representations: (a) ac side, (b) dc side [12].
+
+A. Modular Multilevel Converter (MMC)
+                                                                                   B. Previous Work on AVM
+   The structure of the MMC [1] is shown in Fig. 1. It includes
+three phase modules, each with upper and lower arms. Each                             As mentioned in the introduction, the AVM is computation-
+arm has       identical submodules connected in series. The arm                    ally superior to more detailed models of the MMC. This subsec-
+reactor      helps to control and balance the circulating currents                 tion summarizes the previous work on the MMC AVM. Refer-
+among the phase modules and limits the rising-rate of the fault                    ence [12] proposed the structure and basic principles of AVM,
+currents. The other variables in Fig. 1 are defined as follows:                    which is composed of 6 controlled voltage sources to represent
+                                     ;                                             its ac side and a controlled current source to represent its dc side,
+       ;                                  ; : arm current in arm                   as shown in Fig. 3.
+of phase- ;          : the th SM in arm of phase- ;          : Sum                    The upper and lower controlled voltage sources (              and
+of capacitor voltages in arm- of phase- ; : phase- ac current;                               , respectively) of phase- ,                 in Fig. 3 are
+    : MMC dc current;         : MMC line-to-line dc voltage.                       as shown in (1) and (2). Here,         is the measured dc voltage
+   As shown in Fig. 2, each submodule of the detailed MMC                          shown in Fig. 3(b);           represents the reference ac voltage
+contains two IGBT/DIODE switches (T1 and D1, T2 and D2)                            of phase- which is obtained from the inner decoupled current
+and a capacitor          . Three different modes of operation are                  control [14]. Mod[] is a quantizing function representing the
+possible [5]:                                                                      specific modulation scheme used
+      Inserted Mode: T1 is on and T2 is off, allowing the capac-
+      itor to charge or discharge, and submodule voltage         is
+                                                                                                                                                            (1)
+      equal to the capacitor voltage      .
+      Bypassed Mode: T1 is off and T2 is on, the capacitor
+      voltage remains constant, and the submodule voltage                                                                                                   (2)
+      is zero.
+      Blocked Mode: Both T1 and T2 are off, this condition could
+      occur at startup and during MMC protective actions. Nor-                        Reference [12] considered the nearest level control (NLC).
+      mally the capacitor voltage       remains constant and under                 An alternative scheme, also discussed in this paper is the carrier
+      abnormal conditions of high ac voltage,             may still                phase shifted sinusoidal pulse width modulation (CPS-SPWM).
+      charge through D1.                                                              The dc-side current source in the AVM in Fig. 3(b),          is
+                                                                                   calculated from a component       as calculated in (3) and
+  The high-speed bypass switch K1 is used to increase safety                       as in (4) derived using the principle of power balance
+and reliability of the MMC in case of the submodules failure,
+and the press-pack thyristor K2 is used to protect the other semi-                                                                                          (3)
+conductors from large surge currents [12].
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+XU et al.: USE OF AVERAGED-VALUE MODEL OF MMC IN DC GRID                                                                                                         3
+
+
+
+
+                                                                            (4)
+                                                                            (5)
+
+   The current         responsible for resistive loss must be sub-
+tracted from the current      to yield the current transferred to the
+external dc network       , as shown in (5).            is the equiv-
+alent resistance of the MMC representing both switching and
+resistive losses, whose value is selected using the losses from
+MMC which are close to 1% per converter.
+   Using the energy conservation principle a single equivalent
+capacitance          that represents the total capacitance of the
+MMC can be calculated as in (6), where              is the individual
+submodule capacitance:
+
+                                                                            (6)    Fig. 4. Schematic diagram of the NLC-based MMC modulation and capacitor
+                                                                                   voltage balancing schemes.
+
+   The following method is used for the AVM to imitate the
+freewheeling function of MMC under line-to-line dc fault:
+  1) All of the controlled voltage sources are set to zero.
+  2) Disconnect the dc capacitor           by opening S1.
+  3) Switch the series thyristor S3 into the dc busbar by opening
+     S2 and triggering S3 to force the dc current flow direction
+     from the ac to dc side.
+
+
+        III. CONTROL ALGORITHMS AND TEST SYSTEM
+
+   This section briefly describes a 4-terminal dc grid test system
+and the internal modulation and capacitor voltage balancing
+schemes used in the paper. The purpose of the test system is
+to compare the behavior of the AVM with a detailed model and
+identify any deficiencies.
+
+A. Nearest Level Control
+                                                                                   Fig. 5. Carrier phase-shifted SPWM waveforms: (a) sinusoidal reference and
+   The schematic diagram of the nearest level control (NLC)-                       carriers, (b) first submodule triggering signal, (c) second submodule triggering
+based MMC capacitor voltage balancing scheme is shown in                           signal, and (d) 5-level MMC arm reference.
+Fig. 4 [6]. The modulation module is to calculate the required
+number of conducting submodules             by quantizing the ratio
+of the reference       and the average capacitor voltage            .              content. Each carrier is shifted by an angle equal to          from
+The capacitor voltage sorting/balancing module ranks the MMC                       the previous one. By comparing a sinusoidal reference wave-
+capacitor voltages                          in ascending order and                 form with the       carrier waveforms, the firing signals for each
+depending on the arm current              direction, generates the                 submodule are generated.
+firing signals                             for the    submodules.                     In Fig. 5, with       4, the reference sinusoidal voltage wave-
+When the modulation module orders a capacitor to be switched                       form, two of the four phase shifted carrier signals, the firing sig-
+on (i.e.       increments by 1), if          (e.g.    ,    , etc. in               nals for the first two submodules and the summation of the sig-
+Fig. 1) is positive, that is in a direction increase the capacitor                 nals for all the four submodules are shown. Assuming constant
+charge, then the off capacitor with lowest voltage is switched                     capacitor voltages, the MMC output voltage would be a scaled
+on. Similar logic is used for          is negative or        decre-                replica of the 5-level staircase waveform in Fig. 5(d).
+menting.                                                                              The above basic scheme uses the same sinusoidal reference
+   The capacitor voltages can be controlled in a narrow band by                    waveform for all of the submodules. Capacitor voltage bal-
+applying the above method for all of the MMC arms [5].                             ancing is achieved by shifting the reference waveform up or
+                                                                                   down (i.e. adding/subtracting a dc component), depending on
+B. Carrier Phase-Shifted SPWM                                                      the difference of the corresponding capacitor voltage from the
+                                                                                   average capacitor voltage of all capacitors in the arm [15],
+  The carrier phase shifted SPWM (CPS-SPWM) scheme uses                            [16]. Therefore, the computation complexity of CPS-SPWM is
+  triangular carrier signals to reduce the MMC output harmonic                     larger than NLC in EMT-type simulations.
+         This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+4                                                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+
+Fig. 6. Four-terminal MMC-MTdc test system.
+
+
+
+C. Test System
+   The 11-level 4-terminal MMC-MTdc system shown in Fig. 6
+is used to ascertain the applicability of the AVM for HVDC
+studies. For this purpose, the AVM can be compared with the
+full-detail MMC model.              is the dc voltage controlling
+converter and regulates its dc voltage          . The other three
+converters regulate their own dc powers. All converters also
+regulate their own ac-side voltage magnitudes. A symmetrical
+monopole configuration is assumed [5], [12], and the resonant                      Fig. 7. Transient responses of the real power controller setpoint change: (a)
+                                                                                   dc-link voltage, (b) capacitor voltage, (c) real power, (d) ac phase current. The
+dc circuit breaker [17] is installed in the dc terminal of each                    left-hand column refers to          20 mF,             12 mF, and the right-hand
+MMC converter.                                                                     column refers to           10 mF,             6 mF.
+   Normally,           and         work in rectification mode and
+feed real power from the neighboring ac systems into the dc line.
+         and           work in inverter mode by transferring real                       5 s. Fig. 7 shows waveforms of dc voltage of                (the
+power from the dc line to the neighboring ac systems.                              dc voltage controlling converter), single submodule capacitor
+   All converters have the same ac voltage and power ratings,                      voltage of          , the real power of            and ac phase cur-
+which are given in Fig. 18 and Table III. Several tests are car-                   rent of         . Simulations are conducted with               20 mF
+ried out on the test system. These include steady state operation                  and 10 mF, respectively, these correspond to an averaged capac-
+with varying magnitudes of the capacitance, and dc- and ac-side                    itance of         of 12 mF and 6 mF respectively from (6).
+faults. All models were implemented on the PSCAD/EMTDC                                Fig. 7 shows that for the larger            20 mF, the responses
+progra

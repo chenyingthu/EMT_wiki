@@ -1,0 +1,195 @@
+                                                                                                                                                 1
+
+
+
+
+     Co-simulation of Electromagnetic Transients and
+         Phasor Models: a Relaxation Approach
+        F. Plumier, Student Member, IEEE, P. Aristidou, Student Member, IEEE, C. Geuzaine, Member, IEEE,
+                                   and T. Van Cutsem, Fellow Member, IEEE
+
+
+
+   Abstract—Co-simulation opens new opportunities to combine                    while performing detailed EMT simulations of the sub-system
+mature ElectroMagnetic Transients (EMT) and Phasor-Mode                         of greater interest [3]. This approach is faster than full EMT
+(PM) solvers, and take advantage of their respective high ac-                   simulation, but with some decrease of accuracy. Even more
+curacy and execution speed. In this paper, a relaxation approach
+is presented, iterating between an EMT and a PM solver. This                    simplified, the PM solvers, used in stability studies, are usually
+entails interpolating over time the phasors of the PM simula-                   based on the positive-sequence phasors and assume negligible
+tion, extracting phasors from the time evolutions of the EMT                    (or compensated) negative- and zero-sequence components [4].
+simulation, and representing each sub-system by a proper multi-                 While this is the fastest category of solvers, EMT phenomena
+port equivalent when simulating the other sub-system. Various                   are not considered. The approach reported in this paper
+equivalents are reviewed and compared in terms of convergence
+of the PM-EMT iterations. The paper also considers the update                   combines PM and EMT solvers.
+with frequency of the Thévenin impedances involved in the EMT                      The idea of combining PM and EMT models can be traced
+simulation, the possibility to compute the EMT solution only                    back to [5], involving studies of High Voltage Direct Current
+once per time step, and the acceleration of convergence through                 (HVDC) current-source converters. Still today, PM-EMT hy-
+a prediction over time of the boundary variables. Results are                   brid simulations are mainly applied to HVDC systems (e.g.
+presented on a 74-bus, 23-machine test system, split into one
+EMT and one PM sub-system with several interface buses.                         [6], [7]). A comprehensive literature review can be found in
+                                                                                [8]. A drawback of many proposed methods is the relatively
+  Index Terms—co-simulation, phasor mode simulation, electro-                   small size of the EMT sub-system considered, mainly for
+magnetic transients, hybrid simulation, hardware-in-the-loop
+                                                                                performance reasons. However, with the computational power
+                                                                                available nowadays, larger EMT models can be simulated
+                          I. I NTRODUCTION                                      efficiently. Thus, a larger neighborhood of the device being
+      HE term co-simulation refers to the combination of (at                    investigated can be included in the detailed EMT model.
+T     least) two different tools for performing a single multi-
+physics or multi-model simulation. This paper deals specif-
+                                                                                Similarly, when a contingency is simulated in the EMT sub-
+                                                                                system, a larger number of the impacted components can be
+ically with the co-simulation of EMT and phasor models.                         represented in detail. In this way, when the boundary between
+The main motivation behind this work is to combine the                          the PM and EMT sub-systems is located further away from the
+accuracy of EMT with the computational efficiency of PM                         disturbance, the voltages and currents at the interface are closer
+simulations. While mature software exist for both models,                       to the balanced, quasi-sinusoidal evolution assumed in PM
+further investigations and developments are needed for their                    simulations. This makes the extraction of boundary voltages
+efficient and accurate coupling.                                                and currents from the response of the EMT sub-system easier.
+   A number of simulation and/or system reduction techniques                    On the contrary, if the PM-EMT boundary is too close to the
+have been proposed in the literature. EMT models [1] are the                    disturbance location, a wide-band multi-port system equivalent
+most accurate. They can represent network components at var-                    has to be used, as discussed in [6] and its references, to
+ious levels of detail. Moreover, there are a number of mature                   represent the PM sub-system in the EMT simulation. Enlarging
+EMT simulation software (e.g. EMTP-RV, PSCAD, Hypersim,                         the EMT sub-system generally means increasing the number
+etc.). Nevertheless, they are also the most computationally                     of interface buses between PM and EMT sub-systems. One
+demanding, compared to simplified models. Dynamic Phasor                        issue tackled in this paper is the proper choice and update
+models (e.g. [2]) can be as accurate as EMT ones and, at the                    of the multi-port equivalent attached to those interface buses.
+same time, faster to simulate, when the waveforms are quasi-                    This is an extension of the authors’ previous work reported in
+sinusoidal. However, to the authors’ knowledge, there exists                    [9], [10].
+no industry-grade tool relying on this approach. Reduced,                          The paper is organized as follows. Section II reviews the
+equivalent models of a large portion of the system can be                       main PM-EMT boundary conditions proposed in the litera-
+used, for instance in the form of a Low Frequency Equivalent,                   ture. Section III details the relaxation process including time
+                                                                                interpolation and phasor extraction. Simulation results are
+   Frédéric Plumier (f.plumier@alumni.ulg.ac.be), Petros Aristidou
+(p.aristidou@ieee.org) and Christophe Geuzaine (cgeuzaine@ulg.ac.be)            presented in Section IV, before concluding in Section V.
+are with the Dept. of Elec. Eng. and Comp. Sc., Univ. of Liège, Belgium.
+   Thierry Van Cutsem (t.vancutsem@ulg.ac.be) is with the Fund for Scientific        II. A SHORT REVIEW OF BOUNDARY CONDITIONS
+Research at Dept. of Elec. Eng. and Comp. Sc., Univ. of Liège, Belgium.
+   Work supported by the Belgian Science Policy (IAP P7/02) and by Walloon         Boundary conditions deal with the equivalent model used
+Region of Belgium (WBGreen Grant FEDO).                                         to replace one sub-system when simulating the other. Figure 1
+                                                                                                                                                2
+
+
+
+
+                                                                             Figure 2. Protocol of computation combining PM and EMT solvers
+
+
+                                                                                k             k
+                                                                             V¯1 , . . . , V¯n are the voltage phasors at the n boundary buses,
+                                                                                       k          k
+                                                                             and I¯1 , . . . , I¯n the corresponding currents, all at the k-
+                                                                             th iteration of the relaxation process. Clearly, the coupling
+                                                                             between boundary buses is neglected.
+                                                                                With the Thévenin (or Norton) equivalents, shown in
+                                                                             Figs. 1.b, c and d, the coupling between boundary buses is
+                                                                             taken into account through an n × n Thévenin impedance
+                                                                             matrix Zpm . This equivalent makes up a first-order (linear)
+Figure 1. Boundary conditions. Arrows indicate information transfers from    approximation of the variation of voltages with currents at
+one solver to the other at successive iterations of the relaxation process
+                                                                             the boundary buses of the replaced sub-system. With proper
+                                                                             updates of Zpm , this approximation shows good accuracy and
+                                                                             fast convergence, as confirmed by the results in Section IV.
+summarizes the main approaches found in the literature.                      Furthermore, Zpm does not need to be updated frequently, but
+   In the simplest scheme, shown in Fig. 1.a, when simulating                only when a significant change (such as fault inception and
+one sub-system, the other is replaced by an ideal voltage or                 clearing) takes place in the system.
+current source whose value is given by the previous iteration
+of the relaxation scheme [11]. Another approach, used for                         III. T HE PROPOSED CO - SIMULATION ALGORITHM
+instance in [6] and shown in Fig. 1.b, consists of a current
+                                                                             A. Relaxation process
+source to represent the EMT sub-system, while a Frequency
+Dependent Network Equivalent (FDNE) admittance in parallel                      The overall protocol for the interaction between the PM
+with an ideal current source is used to replace the PM sub-                  and the EMT solvers is sketched in Fig. 2. PM simulation is
+system. This representation is more accurate and valid over a                performed with a “large” time-step size H, and EMT with a
+wider frequency range, thus allowing to move the PM-EMT                      “small” time-step size h. The focus is on iterations performed
+boundary closer to the disturbance location without degrading                when passing from time t to time t + H, i.e. over one step of
+accuracy [8]. A variant of the latter is shown in Fig. 1.c and               the PM simulation. Based on some prediction of the interface
+used in [12], where the EMT sub-system is represented by an                  voltages and currents (step 0), the PM sub-system is computed
+impedance updated at each relaxation iteration.                              first (step 1). It is solved once again (step 5) after having
+   The last approach, and the one used in this work, makes use               simulated the EMT sub-system (step 3). Steps 2 and 4 consist
+of a Norton and a Thévenin equivalent, as shown in Fig. 1.d.                 in updating the boundary conditions for resp. the EMT and the
+It must be noted that the choice between Norton and Thévenin                 PM sub-systems. Steps 2 to 5 are repeated until convergence
+is arbitrary, as for each one there is an equivalent model in                or for a predefined number of iterations.
+the other representation. This approach can be already found                    Figure 3 shows the main computation steps, the information
+in [13], while further investigations have been reported in [7],             exchanged by both solvers and the update of the equivalents.
+[9], [10]. Nevertheless, the above references report on results                 The PM simulation is performed first, relying on the
+with a single boundary bus, and on small test systems.                       last updated equivalent of the EMT sub-system (or on an
+   The main issue with the current source equivalent (left-hand              equivalent derived from the predicted values, as described in
+side in Figs. 1.a and 1.b) is that it does not take into account             Section III-E). It yields the intermediate values of the boundary
+                                                                                                                1          1
+
+the variations of current with voltage at the boundary bus.                  bus voltages and currents, V̄ k+ 2 and I¯k+ 2 , which are passed
+In other words, the sensitivity of the replaced sub-system to                to the EMT simulation.
+voltage is neglected and the co-simulation process needs to                     First, they are used to compute the vector of Thévenin
+wait for the next iteration to get an updated boundary current               voltage phasors:
+                                                                                                            1            1
+value. The voltage source representation (right-hand side in                                   Ēpm = V̄ k+ 2 − Zpm I¯k+ 2 ,                  (1)
+Fig. 1.a) has a similar limitation concerning the sensitivity to
+current variations.                                                          with:
+   The equivalent impedance representation, shown on the                                       Zpm = Rpm + jωnom Lpm ,                        (2)
+                                                           )
+left-hand side in Fig. 1.c, leads to a (dynamically updated,                 where Zpm is an estimate of the Thévenin impedance matrix
+                                            ¯k         ¯ k
+diagonal impedance matrix Z k = diag VI¯1k , . . . , VI¯nk where             of the PM sub-system, as seen from its boundary buses, Rpm
+                                                  1          n
+                                                                                                                                             3
+
+
+
+
+                                                                           Figure 4. Interpolation of Thévenin voltage sources
+
+
+                                                                           detailed in Section III-C) the voltages e used in Eq. (3)
+                                                                           introduces some inconsistency. A more accurate approach, in
+                                                                           case of large frequency deviations, consists in updating Zpm
+                                                                           with frequency before computing the Thévenin voltage Ēpm .
+                                                                              Because frequency differs from one boundary bus to an-
+Figure 3. Main steps and information exchange relaxation process for co-   other, the following approximation is considered:
+simulation [10]
+                                                                                      Zpm ≃ Rpm + j Lpm diag (ω1 , . . . , ωn ) .         (4)
+                                                                           Thus, the i-th column of Lpm is multiplied by the frequency
+(resp. Lpm ) is the corresponding resistance (resp. inductance)
+                                                                           ωi of the current at the i-th boundary bus (i = 1, . . . , n). The
+matrix, computed prior to the simulation, and ωnom is the
+                                                                           latter frequency is evaluated numerically at discrete time t+H
+nominal angular frequency.
+                                                                           as:
+   Next, the components of Ēpm are interpolated as described                                                ψi (t + H) − ψi (t)
+in Section III-C, to obtain the vector e of voltages at each                          ωi (t + H) ≃ ωnom +                        ,         (5)
+                                                                                                                     H
+discrete time t + mh (m = 0, . . . , ρ). Finally, the Thévenin
+                                                                           where ψi (t) is the phase angle of the extracted current at the
+equivalent is replaced by the differential equations of the
+                                                                           previous discrete time t and ψi (t+H) the corresponding phase
+corresponding RL circuit:
+                                                                           angle obtained from the last EMT simulation at the current
+                           abc            d                                time t + H.
+                  v = e + Rpm  i + Labc
+                                    pm       i,              (3)
+                                          dt                                  Zpm is updated at every co-simulation iteration, and used
+where v, e and i are vectors of dimension 3n relative to the               to compute Ēpm according to Eq. (1).
+                                                abc
+three phases of the n boundary buses, and Rpm       (resp. Labc
+                                                            pm )
+is the 3n × 3n three-phase resistance (resp. inductance) matrix            C. Time interpolation
+derived from Zpm (and, hence, accounting for the coupling
+                                                                              Time interpolation is used to obtain from the phasors pro-
+between boundary buses).
+                                                                           vided by PM simulation the corresponding waveforms used by
+   At the end of the EMT simulation, after the phasors have
+                                                                           EMT simulation. The phasors of concern are the n Thévenin
+been extracted, the updated boundary voltages and currents
+                                                                           voltages. A linear interpolation of respectively the magnitude
+V̄ k+1 and I¯k+1 are made available. They are in turn used
+                                                                           and phase angle of each phasor Ēpm is considered, as shown
+to update the Norton equivalent used by the PM simulation.
+                                                                           in Fig. 4. H is assumed to be a multiple of h, i.e. H = ρh
+That equivalent is represented with standard models of current
+                                                                           where ρ is an integer. Note that this choice is for simplicity of
+injectors, impedance loads, and branches with pi-equivalents.
+                                                                           presentation, but is not required by the procedure. Thus, at the
+   Convergence is checked in the PM solver at the level of
+                                                                           discrete time instant t + mh (m = 0, . . . , ρ), the interpolated
+network equations. Iterations are stopped when the current
+                                                                           Thévenin voltage magnitude is given by:
+mismatches at all buses (including the boundary buses) fall be-
+                                                              

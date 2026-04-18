@@ -1,0 +1,175 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023                                                                                         2879
+
+
+
+
+An Automatable Approach for Small-Signal Stability
+Analysis of Power Electronic-Based Power Systems
+         Using EMT Companion Circuits
+                                     Vinay Chindu            and A. M. Kulkarni , Senior Member, IEEE
+
+
+   Abstract—The increasing presence of power electronic (PE) con-                 transients cannot be studied using the conventional fundamental
+trolled devices in power systems has widened the bandwidth of                     frequency positive sequence phasor models as these models
+transients to be studied for grid stability. While these transients               assume the electric network to be in a quasi-sinusoidal steady
+are normally studied using time-domain simulation (TDS), wide
+bandwidth linear time-invariant (LTI) state-space models are a                    state. Stability studies of PE-based power systems using time
+useful complement to TDS for diagnostics, controller design and                   domain simulation (TDS) programs is a widely used approach
+parametric analysis. A general automatable method to compute an                   as it can easily include wide-bandwidth models with detailed
+LTI sampled-data model of a PE-based circuit is presented in this                 nonlinearities and perform large-signal disturbance studies. The
+paper. The proposed method is based on the techniques employed
+                                                                                  inferences drawn from a TDS study, however, are largely specific
+in electro-magnetic-transient (EMT) programs to perform TDS of
+PE-based circuits. The method uses the building blocks of EMT                     to the case simulated and thus a large number of disturbance
+nodal formulation such as conductance matrix of companion circuit                 cases have to be simulated to assess small-signal stability. In the
+and its LU factors computed during TDS, interpolation and chatter                 small-signal linear time-invariant (LTI) state-space modelling
+elimination corrections, and EMT model of the firing angle control                approach, handling detailed models is generally cumbersome
+system. The method yields a small-signal LTI sampled-data model
+                                                                                  but the stability inferences are more nuanced with information
+which is amenable to eigenanalysis and is illustrated using simple
+PE-based circuits such as a buck converter and a grid-connected                   such as eigenvalues, participation factors, observability and
+STATCOM with closed-loop control.                                                 controllability of modes. This information is very useful for
+                                                                                  diagnostics, parametric analysis, and an informed design and
+  Index Terms—Electro-magnetic-transient (EMT) program,
+small-signal analysis, state-space model, sampled-data model.                     tuning of controls. Hence small-signal LTI models can be a
+                                                                                  useful complement to TDS studies.
+                           I. INTRODUCTION
+      NERGY sources in traditional power grids were predomi-
+E     nantly synchronous machine based. Grid stability analyses
+were primarily concerned with low frequency rotor swings (0.1–
+                                                                                  A. Stability Analysis of Time-Periodic Systems
+                                                                                     The wide-band models of PE-based power systems are period-
+2 Hz). With the increasing penetration of power electronic (PE)                   ically time varying and nonlinear. This is due to the presence of
+converter interfaced renewable energy sources and numerous                        periodic switching in PE modules, and nonlinear mathematical
+installations of FACTS and HVDC devices, power systems                            modules such as phase-locked-loops (PLLs) in control system.
+have become hybrid dynamical systems with both continuous-                        Hence, the steady state of PE-based power systems is not a fixed
+time and switching dynamics. The PE converter controls are                        fundamental frequency phasor but is periodic and non-sinusoidal
+of multiple time-scales with fast inner control loops and slow                    in nature. The small-signal models of PE-based power systems
+outer control loops. Hence they can interact with slow elec-                      in phase variables are linear time-periodic (LTP) and not LTI.
+tromechanical oscillations as well as with fast electromagnetic                   This is because they are obtained by linearizing the dynamical
+transients. As a result, phenomena of wider bandwidth (tens                       equations along a periodic steady state and not about a fixed
+of Hz to hundreds of Hz) such as sub-synchronous torsional                        equilibrium point.
+and control interactions (SSTI, SSCI) and harmonic instabilities                     The techniques developed for stability analysis of LTI models
+such as second harmonic instability in LCC-HVDC systems are                       are not directly applicable to LTP models. Many of the popular
+increasingly of concern for grid stability. A detailed literature                 methods for stability analysis of LTP models are based on trans-
+survey and summary of various dynamic phenomena in PE-                            forming the model variables. For example, in balanced three-
+based power systems is provided in [1], [2]. The wider bandwidth                  phase systems with negligible lower order harmonics, Park’s
+                                                                                  transformation can be applied to obtain an approximate LTI
+   Manuscript received 7 July 2022; revised 2 January 2023; accepted 10 March
+2023. Date of publication 4 April 2023; date of current version 25 July 2023.     model in dq0 variables; however this approach may be inaccurate
+Paper no. TPWRD-01016-2022. (Corresponding author: Vinay Chindu.)                 for systems with phase imbalance and low pulse PE modules
+   The authors are with the Department of Electrical Engineering, In-             like TCSCs [3]. Several other methods to obtain an accurate
+dian Institute of Technology Bombay, Mumbai 400076, India (e-mail:
+vinaychindu@gmail.com; anil@ee.iitb.ac.in).                                       LTI model of LTP systems have been studied in literature such
+   Digital Object Identifier 10.1109/TPWRD.2023.3264296                           as dynamic phasors [4], generalised switching functions [5],
+                         0885-8977 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2880                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+                                                                                         the availability of the periodic steady state for the given
+                                                                                         circuit.
+                                                                                      2) The method is general enough and uses many of the com-
+                                                                                         putations performed by EMT programs during TDS such
+                                                                                         as LU factorisation of conductance matrix and therefore
+                                                                                         is amenable for automation.
+                                                                                      3) A subset of the eigenvalues of the computed sampled-data
+                                                                                         model are not related to the dynamics of the actual circuit
+                                                                                         and are purely an artefact of simulation methods of EMT
+                                                                                         programs. The criteria for recognising such eigenvalues
+                                                                                         which have no physical significance among the computed
+Fig. 1.   EMT Companion Circuit based stability analysis.                                ones are brought out.
+
+
+harmonic state spaces [6], and sampled-data models or Poincarè                    C. Literature Related to Presented Work
+maps [7].                                                                            A method to compute eigenvalues of an LTI RLC circuit from
+   Among these methods, the sampled-data modelling is com-                        its EMT Companion Circuit is given in [10]. It does not explore
+putationally more involved and non-intuitive for control de-                      using the computations performed by EMT program during TDS
+sign. However, it is a straight-forward approach applicable                       for obtaining the state-space matrix of the Companion Circuit.
+to any general circuit topology. Most of the computational                        Choosing state variables of EMT Companion Circuit in the
+steps in sampled-data modelling are similar to those in a                         presence of inductor cut-sets or capacitor loops in the original
+TDS and hence it is amenable to automation alongside a                            circuit is not discussed. Moreover, stability analysis of time-
+TDS program. Other methods such as dynamic phasors, al-                           varying systems has been carried out by computing eigenvalues
+though more sophisticated and intuitive, generally involve pru-                   at every simulation time step. However, this approach does not
+dent simplifying approximations [4]. These approximations                         necessarily give meaningful results with regard to stability of
+are based on a prior deep understanding of the working of                         time-varying systems [11].
+the given circuit. Moreover, the computations involved in                            Algorithms which are general and automatable for small-
+these sophisticated methods are significantly different from                      signal stability analysis of PE circuits are presented in [12], [13].
+those in TDS and therefore do not easily lend themselves for                      However, these algorithms require formulation of continuous-
+automation.                                                                       time domain state-space models for each switching interval
+                                                                                  which in turn requires selecting a set of linearly independent
+                                                                                  state variables. This is a computationally involved task as it
+B. Contributions of This Paper
+                                                                                  requires (i) topological analysis involving searching for cutsets
+   Electro-Magnetic-Transient (EMT) programs such as ATP                          consisting of only inductors and current sources and searching
+and PSCAD/EMTDC are widely used for TDS of PE-based                               for loops consisting of only capacitors and voltage sources [14]
+power systems. Based on the input circuit data, they derive                       or (ii) matrix reduction operations to get a row echelon form [15].
+a resistive circuit representation (Companion Circuit) of the                     It is shown in [16] that selection of a set of independent state
+discretised equations of each component [8]. EMT techniques                       variables is not of concern while formulating state space model
+for handling PE switches, nonlinear components, and interfacing                   of discretised circuit equations. However, the method proposed
+control block solver with the electric circuit solver have been                   in [16] uses history terms of node voltages as state variables
+developed for a fast and efficient TDS of power systems [9].                      and hence, is not compatible with the EMT method. Also, [16]
+Using these techniques, an EMT program obtains nodal for-                         does not consider circuits with time-varying models. The method
+mulation of the Companion Circuit model at each time step.                        presented in this paper is not limited by the aforementioned
+The building blocks of the EMT model are the conductance                          issues and is based on well established TDS techniques of EMT
+matrix of the Companion Circuit, node-branch incidence data,                      programs.
+history term current sources and discretised models of control                       The rest of the paper is organized as follows: Section II
+blocks.                                                                           discusses using EMT computations to extract LTI models of
+   The aim of the work presented in this paper, as shown in                       RLC circuits along with interpreting the computed eigenvalues.
+Fig. 1, is to explore the feasibility of an add-on program to EMT                 Sampled-data modeling is introduced in Section III and mod-
+programs which numerically computes the small-signal stability                    eling of control systems in EMT programs is briefly discussed.
+information based on the computations carried out by EMT                          The method to obtain sampled-data model using EMT computa-
+programs during TDS. In this regard, the main contributions                       tions and interpreting the computed eigenvalues is detailed. The
+of this paper are:                                                                proposed method in an algorithmic form along with illustrative
+   1) Using the building blocks of EMT nodal formulation, a                       case studies is given in Section IV. Some of the limitations to
+       methodology to compute an LTI state-space model of                         the proposed method from becoming a full-fledged automatable
+       an RLC circuit and an LTI sampled-data model of a                          one are discussed in Section V. Future work and conclusions
+       PE-based circuit is detailed. The methodology assumes                      drawn are given in Section VI.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+CHINDU AND KULKARNI: AUTOMATABLE APPROACH FOR SMALL-SIGNAL STABILITY ANALYSIS OF PE-BASED POWER SYSTEMS                                                2881
+
+
+
+II. STABILITY ANALYSIS OF LTI RLC NETWORKS USING EMT
+              NODAL ANALYSIS FORMULATION
+A. Nodal Analysis Formulation in EMT Programs
+   The approach employed in EMT programs is based on the
+Dommel’s Companion Circuits method [8]. In this approach,
+difference equations for each individual component of the circuit
+are obtained using trapezoidal method and subsequently the                      Fig. 2.   EMT companion circuit representation.
+simulation model of the entire circuit is obtained by linking
+the difference equations of circuit components through nodal
+analysis. A Companion Circuit is an equivalent resistive circuit                B. Formulation of Discrete-Time State-Space Model of EMT
+representation of the set of difference equations obtained for a                Companion Circuits
+given circuit. The voltages and currents of the previous discrete                   A state-variable vector of a system is the minimum informa-
+time instant, also referred to as history terms, are represented as             tion required to know at a time instant in order to completely
+current sources in the Companion Circuit model for the current                  determine the future behaviour of the system in the absence
+discrete time instant. The Companion Circuit models of R, L,                    of external excitation. In continuous-time domain models, a lin-
+and C branches are detailed in [8], [9] and are not explained here              early independent set of capacitor voltages and inductor currents
+for brevity.                                                                    forms the state vector of RLC circuits. For EMT Companion Cir-
+   Consider an LTI, lumped, RLC circuit with n nodes, nL                        cuits, based on the EMT nodal formulation discussed previously,
+inductors, and nC capacitors. Let [L] and [C] of sizes nL × nL                  it is apparent that the history term current sources are the state
+and nC × nC be diagonal matrices with inductance and capac-                     variables. Defining the state vector as xTk = [iThist,L,k iThist,C,k ]
+itance values respectively, and AL and AC of sizes n × nL and                   and using the equations (1)–(4), a discrete-time state-space
+n × nC be the node-branch incidence matrices of inductor and                    model of the EMT Companion Circuit is obtained and is of
+capacitor branches respectively. It is straightforward to obtain                the form given in (5).
+the conductance matrix (G) of the Companion Circuit and is
+given by (1), where YR is the conductance matrix of the actual                                            xk+1 = Axk + Buk                             (5)
+circuit considering only the resistor branches and h is simulation              The matrices A and B can be computed using (6) and (7)
+step size.                                                                      respectively. These matrices can be computed as a by-product
+                                            −1                              of TDS performed in an EMT program as explained here. The
+                                2C    T       2L                                information such as node-branch incidence matrices can be
+         G = YR + AC                 AC + AL       ATL                   (1)
+                                 h             h                                easily obtained from circuit netlist and are already used directly
+                                                                                or indirectly during TDS by EMT programs. Moreover, the
+By carrying out nodal analysis, the EMT nodal formulation for                   computation of A and B using (6) and (7) does not require
+the kth step as given in (2) is obtained where ihist,L and ihist,C              a fresh computation of inverse of G. The LU factors of G
+are the vectors of history term current sources of inductors and                already computed while solving (2) during TDS can be reused.
+capacitors respectively, v is the vector of node voltages and u                 Therefore, the state space model of the EMT Companion Circuit
+is the vector of external current source injections at each node.               can be obtained from the TDS computations without significant
+                                                                                additional co

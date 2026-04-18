@@ -1,0 +1,152 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2019.2919252, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                        Stability of Algorithms for Electro-Magnetic-
+                      Transient Simulation of Networks with Switches
+                                  and Non-linear Inductors
+                    Huanfeng Zhao, Student Member, IEEE, Shengtao Fan, Member, IEEE, Aniruddha M. Gole, Fellow, IEEE,
+
+               Abstract— This paper extends the analysis of the stability of                                   with switches such as power electronic systems. However, one
+           electromagnetic transient simulation algorithms to non-linear                                       unexplored area is the theory to support this observed
+           systems with switching elements and non-linear inductor                                             experience. The focus of this paper is the stability of
+           branches. A theoretical analysis based on common quadratic
+                                                                                                               simulations of this class of non-linear systems, an area that has
+           Lyapunov function (CQLF) theory is used to investigate the
+           stability of numerical algorithms for the simulation of lumped                                      not been worked on in the past.
+           strictly passive switched circuits (LSPSC). It is proved that only                                     Some publications have discussed the stability of actual
+           when certain fundamental physical properties, i.e., passivity and                                   switched systems [4-8], but little has been done to analyze the
+           invariance of Lyapunov energy function are satisfied, does the                                      stability of the simulations of such systems. Consider a system
+           widely used trapezoidal method result in stable simulations of such                                 with linear elements and s switches. Each of the 2s switching
+           networks for any time-step size. This is different from the
+                                                                                                               state combinations individually is a linear circuit, and would
+           simulation of linear time invariant (LTI) systems where any real-
+           world stable system has a stable simulation if an A-stable                                          result in a stable simulation if no switch operated and the system
+           integration method (e.g., trapezoidal rule) is used. Subsequently, it                               remained in that configuration. However [9] shows that even
+           is shown that the problem of simulating a piecewise linear inductor                                 though every switching state is individually stable, it does not
+           can be equivalent to simulating a LSPSC; and ergo its simulation                                    imply that the system is stable, under arbitrary operation of the
+           with the trapezoidal rule is also stable.                                                           switches. In reference [10], an example is provided to show that
+                                                                                                               a real-world switched system can still be unstable even if every
+              Index Terms—Switched system simulation, Stability, EMT,
+           Lyapunov energy function, Passivity, Non-linear inductor, Power
+                                                                                                               switching state is stable and strictly passive.
+           electronic switch                                                                                      The above works considered the stability of real-world
+                                                                                                               switched systems. This paper investigates the stability of the
+                                             I. INTRODUCTION                                                   simulations of such systems. Earlier research has focused on
+                                                                                                               the stability of simulation of linear lumped energy storage
+           E     LECTRO-MAGNETIC-TRANSIENT (EMT) type digital
+                 simulation tools such as ATP, EMTP, PSCAD/EMTDC,
+           RTDS, etc. are widely used in power system applications,
+                                                                                                               components such as inductors and capacitors [11-13]. However,
+                                                                                                               it does not consider the stability when non-linear elements are
+                                                                                                               present, nor does it discuss the stability of networks in which
+           especially when power electronic converters are included [1, 2].
+                                                                                                               such elements are connected by switches that turn on and off.
+           These digital tools model the network in very high detail and
+                                                                                                               In this paper, the Lypunov energy function technique is applied
+           provide the most accurate simulation results over a wide
+                                                                                                               to study the global stability of numerical algorithms for
+           frequency range, as compared with more approximate
+                                                                                                               simulating circuits with switches and nonlinear inductors. Here
+           modelling tools such as transient stability programs. An
+                                                                                                               the switches are assumed to be modeled as bi-valued
+           important necessary property for the simulation algorithm is
+                                                                                                               resistances. Such models are routinely used for the simulation
+           that a stable real-world system should have a stable simulation
+                                                                                                               of power systems with power-electronic devices, e.g., HVDC
+           (i.e., one that has bounded output for bounded excitation).
+                                                                                                               or FACTS systems.
+              Typically, these tools utilize the trapezoidal rule for
+                                                                                                                  Lyapunov theory and the passivity property are briefly
+           numerical integration. This A-stable algorithm is known to
+                                                                                                               summarized in Section II, after which Section III develops the
+           result in stable simulations of stable linear time-invariant (LTI)
+                                                                                                               theoretical approach to investigate the stability of numerical
+           real-world systems [3], regardless of the time-step used.
+                                                                                                               algorithms of switched circuits. Firstly, the simulation of
+           However, the type of simulations being carried out today
+                                                                                                               autonomous, arbitrarily switched circuits, i.e., circuits with no
+           include systems with a large number of switching devices, such
+                                                                                                               external sources, using various integration methods is
+           as HVDC converters and non-linear elements such as saturating
+                                                                                                               considered. Common quadratic Lyapunov function (CQLF)
+           inductors and transformers. It is a common experience that
+                                                                                                               theory is used to analyze global asymptotic stability. Using the
+           EMT type simulation usually generates good results for systems
+                                                                                                               results, the approach is then extended to determine the stability
+                                                                                                               of simulations of non-autonomous switched systems in a
+               This work was supported by the IRC program of NSERC, Canada.                                    bounded-input-bounded-output (BIBO) [5] sense. The
+               H. Zhao (email: huanfengzhao@gmail.com), S. Fan (email:
+            shengtaofan@gmail.com) and A. M. Gole (email: gole@umanitoba.ca) are                               investigation shows that in switched linear system simulation,
+            with the Department of Electrical and Computer Engineering, University of                          numerical stability of trapezoidal and Backward Euler methods
+            Manitoba, MB, Canada.                                                                              is only guaranteed if passivity and invariance of Lyapunov
+
+
+
+  0885-8977 (c) 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2019.2919252, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             2
+
+           energy function are satisfied.                                                                      A. Energy Function of Lumped Strictly Passive Switched
+              Section IV provides a counterexample to show that with the                                       Circuit (LSPSC) System
+           trapezoidal rule the real-world stability of a switched system                                        Note that as the switches are bi-valued resistors, capacitor
+           does not automatically guarantee the stability of the simulated                                     voltages and inductor currents remain the state variables,
+           system, which is contrary to the situation in a LTI system.                                         regardless of the operation of the switches. Switching also does
+           Subsequently, a second example is used to show that the                                             not alter the capacitance and inductance values. Hence, the
+           Backward Euler method can also result an unstable simulation                                        energy stored in the LSPSC system at any time t, regardless of
+           of a real-world stable switched system.                                                             switching state is given as:
+              Section V shows that a non-linear inductor represented by a                                                                          1                          1
+           flux-current characteristic with an arbitrary number of                                                                 𝐸(𝑡) =            ∙ 𝐶 ∙ 𝑈 (𝑡) +              ∙ 𝐿 ∙ 𝐼 (𝑡)               (3)
+                                                                                                                                                   2                          2
+           piecewise linear segments can be considered as a special case
+           of a circuit with switches. By applying the conclusions of                                              The index i  {1, 2 nL } ranges over the set of inductances,
+           Section IV, this proves that simulation of circuits with switches                                   and the index j  {1, 2  nC } ranges over the set of capacitors.
+           and such non-linear inductor models will be stable.
+                                                                                                               𝑈 (𝑡) and 𝐼 (𝑡) denote the voltage in capacitance 𝐶 and current
+              It should be noted that the focus of this paper is for BIBO
+                                                                                                               in inductance 𝐿 .
+           stability of numerical algorithms in switched circuit simulation,
+                                                                                                                  Equation (3) is a quadratic energy function as in (4) :
+           and therefore excludes discussion of bounded numerical
+           oscillation (sometimes referred to as chatter [11]). Also,                                                                     𝐸 =𝒙 ∙𝑽∙𝒙                          (4)
+           although a simulation may be stable in the BIBO sense, it does                                                                            ⋯ 0         0 ⋯ 0
+           not imply that the simulation is accurate.                                                                           𝑈
+                                                                                                                                               ⎛⋮ ⋱       ⋮      ⋮ ⋱ ⋮ ⎞
+                                                                                                                                 ⋮
+                                                                                                                              ⎛𝑈 ⎞             ⎜0 ⋯              0 ⋯ 0 ⎟
+                   II. ENERGY FUNCTION BASED STABILITY ANALYSIS                                                  Where 𝒙 = ⎜ 𝐼 ⎟ and 𝑽 = ⎜                                 ⎟
+                                                                                                                              ⎜     ⎟          ⎜ 0 ⋯ 0             ⋯ 0⎟
+              This section provides the background on Lyapunov function                                                          ⋮             ⎜
+                                                                                                                                                  ⋮ ⋱ ⋮         ⋮ ⋱      ⋮ ⎟
+           based stability analysis of actual switched circuits (not their                                                    ⎝𝐼 ⎠
+                                                                                                                                                 0 ⋯ 0         0 ⋯
+           simulations). These ideas are later expanded to simulated                                                                           ⎝                           ⎠
+           systems. First consider a switched network with lumped                                                Note that from (3), ∀𝒙 ≠ 𝟎 , E > 0. From (4) and the
+           elements like capacitors, inductors, resistors etc.; where the                                      definition of positive definiteness, 𝑽 is positive definite.
+           switch is modeled as a bi-valued resistor (which can include                                        B. System Properties When Each State Is Strictly Passive
+           ideal switches with zero/infinite resistor values). This approach
+           is commonly used for the simulation of HVDC converters,                                                This section sets up the mathematical relationships that
+           FACTS controllers and so on. Each switch can be in the ON or                                        follow if every switching state is strictly passive. These are
+           OFF state, and is represented by a small resistance when ON                                         required in subsequent sections to investigate global stability
+           and a large resistance when OFF. With s switches, there exist                                       for systems with operating switches. A network is passive, if
+           2 different network configurations. Hence the system is                                             over an arbitrary time period [𝑡 , t], the energy injected into it
+           described by 2 state space equations, each with state variable                                      is always greater than the energy stored in it [14, 15].
+           vector 𝒙 , input vector 𝒖 time-varying system matrix 𝑨𝒊 and                                         Mathematically, ∀t > 𝑡 :
+           input matrix 𝑩𝒊 as in (1):
+                             𝑑𝒙(𝑡)                                                                                                          𝒖(𝑠)𝑻 ∙ 𝒚(𝑠) ∙ 𝑑𝑠 ≥ 𝐸(𝑡) − 𝐸(𝑡 )                              (5)
+                                   = 𝑨𝒊 ∙ 𝒙(𝑡) + 𝑩 ∙ 𝒖(𝑡); 𝑖 ∈ {1,2,3 … 2 }                           (1)
+                              𝑑𝑡
+              The application of an integration method allows the                                                 Where 𝒖(𝒔) and 𝒚(𝑠) are input and output vectors. 𝐸(𝑡) and
+           conversion of the above continuous-time state space equation                                        𝐸(𝑡 ) denote the corresponding “energy” stored in the network
+           to a discrete state space equation:                                                                 at time t and time 𝑡 , (with 𝑡 > 𝑡 ) in its energy storage
+                               𝒙 (𝑛 + 1) ∙ ∆𝑡 = 𝑮 ∙ 𝒙(𝑛 ∙ ∆𝑡) + 𝑯 ∙ 𝒖(𝑡);                                      components.
+                                                                                                                  Setting 𝑡 = 𝑡 + ∆𝑡 in (5), dividing both sides by ∆𝑡 , and
+                                                  𝑖 ∈ {1,2,3 … 2 }         (2)
+                                                                                                               taking the limit ∆𝑡  0 gives the equivalent condition:
+              In (2), x(n∙∆t) is the value of the state variable in the n th
+                                                                                                                                        𝒖(𝑡)𝑻 ∙ 𝒚(𝑡) ≥ 𝐸̇ (𝒙(𝑡))               (6)
+           simulation step and x((n

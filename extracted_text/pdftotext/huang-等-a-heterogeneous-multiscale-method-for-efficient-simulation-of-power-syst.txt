@@ -1,0 +1,165 @@
+                                           ACCEPTED BY IEEE TRANSACTIONS ON POWER SYSTEMS (DOI: 10.1109/TPWRS.2025.3539567)                                                                 1
+
+
+
+
+                                               A Heterogeneous Multiscale Method for Efficient
+                                               Simulation of Power Systems with Inverter-Based
+                                                                 Resources
+                                                       Kaiyang Huang, Student Member, IEEE, Min Xiong, Member, IEEE, Yang Liu, Member, IEEE,
+                                                                                       Kai Sun, Fellow, IEEE.
+arXiv:2503.09892v2 [eess.SY] 14 Mar 2025
+
+
+
+
+                                              Abstract—As inverter-based resources (IBRs) penetrate power                   threats from multiple timescales. However, simulating a real-
+                                           systems, the dynamics become more complex, exhibiting multiple                   world power grid with high IBR penetration poses significant
+                                           timescales, including electromagnetic transient (EMT) dynamics                   challenges to the accuracy and efficiency requirements. If its
+                                           of power electronic controllers and electromechanical dynamics
+                                           of synchronous generators. Consequently, the power system                        dynamics of all timescales, such as EMT dynamics and electro-
+                                           model becomes highly stiff, posing a challenge for efficient                     mechanical oscillations, are taken into account, this will result
+                                           simulation using existing methods that focus on dynamics within a                in a large number of nonlinear ordinary differential equations
+                                           single timescale. This paper proposes a Heterogeneous Multiscale                 (ODEs) with a high stiffness ratio. Thus, a step size in microsec-
+                                           Method for highly efficient multi-timescale simulation of a power                onds is often required for numerical stability. Additionally,
+                                           system represented by its EMT model. The new method alternates
+                                           between the microscopic EMT model of the system and an                           simulating a series of quasi-steady-state behaviors of the grid
+                                           automatically reduced macroscopic model, varying the step size                   mixed with inverter controls and inter-area oscillations for an
+                                           accordingly to achieve significant acceleration while maintaining                extended period of tens of minutes will result in an extremely
+                                           accuracy in both fast and slow dynamics of interests. It also                    slow simulation due to a huge computational burden. Therefore,
+                                           incorporates a semi-analytical solution method to enable a more                  the best practice of multi-timescale simulations today for power
+                                           adaptive variable-step mechanism. The new simulation method
+                                           is illustrated using a two-area system and is then tested on a                   system engineers is still co-simulation, which defines interfaces
+                                           detailed EMT model of the IEEE 39-bus system.                                    between EMT models, transient stability models, and quasi-
+                                                                                                                            steady-state models and co-simulates them iteratively using
+                                              Index Terms—Heterogeneous Multiscale Method, differential
+                                           transformation, variable-step solver, electromagnetic transient                  different simulation tools, with each tool focusing on a portion
+                                           simulation, time-domain simulation, inverter-based resource.                     of the grid in one timescale while reducing the rest [2], [3].
+                                                                                                                            However, it is still an open question how to determine the
+                                                                                                                            interface boundaries. Furthermore, the overall convergence,
+                                                                     I. I NTRODUCTION
+                                                                                                                            accuracy, and time performance for such co-simulations still
+
+                                           I   NVERTER-based resources (IBRs), including renewables
+                                               and energy storage systems, are rapidly increasing their
+                                           presence in power grids worldwide for low-carbon, clean
+                                                                                                                            pose major technical challenges [4].
+                                                                                                                               Fully detailed simulations such as EMT simulations of an
+                                                                                                                            interconnected power grid as a single, nonlinear stiff system
+                                           electricity generation. This trend is challenging the traditional                to capture its dynamics in all timescales are highly complex
+                                           dominance of conventional power plants. However, as IBRs                         tasks [5]. In practice, power system engineers typically focus
+                                           become more prevalent in power grids, the analysis and control                   the modeling and simulating a utility-scale grid on a specific
+                                           of power grid dynamics become more complex due to their                          timescale for, e.g., EMT controls, transient stability and quasi-
+                                           increased timescales, as well as the high dimensionality and                     steady-state analysis, depending on the purpose of the study.
+                                           nonlinearity of power grid models. During contingencies, power                   When EMT simulations are required for the integration studies
+                                           grid dynamics can span a wide spectrum, from electromagnetic                     of IBRs, a reduced EMT model can be offline developed,
+                                           transient (EMT) dynamics with power electronic controllers                       which maintains details only for a specific region of concern,
+                                           of IBRs in microseconds to quasi-steady-state grid behaviors                     while the rest of the grid is either equivalenced or ignored
+                                           in minutes or hours to balance demand and supply against                         beyond its boundary [4]–[6]. Simulating of a power system
+                                           uncertainties of renewables. These dynamics are respectively                     using a manually reduced model pose accuracy concerns.
+                                           1,000-10,000 times faster and slower than transient stability                    Conventionally, models for longer timescale simulations [7]
+                                           related electromechanical dynamics of synchronous generators                     are generated manually from circuit-based EMT models by
+                                           [1]. Time-domain simulation is the most important tool for                       developers. The structures and parameters of these models are
+                                           assessing the stability and reliability of a power grid against                  pending identification and validation using field event data,
+                                                                                                                            which, if inaccurate, can lead to incorrect simulation results.
+                                              This work was supported in part by NSF grant ECCS-2329924 and in part by
+                                           the ISSE seed grant of the University of Tennessee, Knoxville.(Corresponding     For power systems with high-penetration of IBRs, model
+                                           author: Kai Sun.)                                                                reduction becomes even more challenging due to two factors.
+                                              K. Huang, M. Xiong, Y. Liu and K. Sun are with the Department of Electrical   First, a phasor-based postive-sequence model is mainly used in
+                                           Engineering and Computer Science, University of Tennessee, Knoxville,
+                                           TN 37996 USA (e-mail: khuang12@vols.utk.edu; mxiong3@vols.utk.edu;               transient stability simulations becomes less accurate, even for
+                                           yang.powersystems@gmail.com; kaisun@utk.edu).                                    some not very fast dynamics, particularly when IBRs induce
+ACCEPTED BY IEEE TRANSACTIONS ON POWER SYSTEMS (DOI: 10.1109/TPWRS.2025.3539567)                                                      2
+
+
+
+high-frequency oscillations in the sub-synchronous frequency              II. H ETEROGENOUS M ULTISCALE M ETHOD FOR
+range (e.g. 5-60 Hz). These oscillations simulated on a phasor-           S IMULATING P OWER S YSTEMS IN EMT M ODELS
+based model can manifest a significant sacrifice in accuracy        A. Introduction of a generic HMM
+[1]. Second, some IBR models provided by the developers are
+                                                                       Consider a stiff ODE system of two or more timescales:
+black box models encoded to protect intellectual properties,                                      I
+which are hard to reduce using a traditional model reduction                                        ẋ = f I (xI , xII , t)
+                                                                             ẋ = f (x, t) ⇐⇒                                   ,    (1)
+method for mathematical equations.                                                                  ϵẋII = f II (xI , xII , t)
+   For efficient and accurate simulations of a power system         where x(t) : R 7→ R is the state variable vector, and nx
+                                                                                     +       nx
+
+with IBRs, this paper proposes a multi-timescale simulation         is the dimension of the system. The system has dynamics of
+approach built upon the Heterogeneous Multiscale Method             a fast timescale so that the system can be represented as a
+(HMM) [8], which provides a general framework for designing         two-timescale system with a slow vector xI and a fast vector
+multiscale algorithms to model and simulate complex, stiff          xII , which are distinguished by a nonsingular matrix ϵ having
+nonlinear dynamical systems. Over the past two decades, the         eigenvalues close to zero [8]. The stiffness of a dynamical
+HMM has demonstrated its efficacy in simulating complex             system described in the form of (1) can be defined based on
+systems across various fields of science and engineering,           the eigenvalues of the Jacobian of f . Specifically, stiffness is
+particularly when macroscopic behaviors are of major interest       measured as the ratio of the largest eigenvalue to the smallest
+but only microscopic models are available or accurate [8], [9].     eigenvalue in terms of absolution value, i.e. |λmax / |/λmin | . For
+Unlike [8], this paper for the first time proposes a novel HMM      a two-timescale system like (1), the eigenvalues separate into
+framework along with its theoretical foundation and a scalable      two groups due to the time-scale gap defined    by ϵ. Hence, the
+simulation approach for efficient two-timescale simulations of      stiffness ratio is approximately O ∥ϵ−1 ∥ ≫ 1, in particular
+a power system represented in its EMT model. The proposed           ∥ϵ−1 ∥ represents the largest absolute value of eigenvalues of
+method enables an automatic, case-specific reduction of a           ϵ−1 when 2-norm (∥ · ∥2 ) is applied.
+detailed microscopic EMT model into a macroscopic model                This paper focuses on accelerating power system simulations
+during the simulation, significantly improving computational        that include both fast EMT dynamics arising from, e.g.,
+efficiency while preserving essential dynamics. The macro-state     IBRs and the network and relatively slow electromechanical
+in the proposed HMM framework is linked to the original micro-      dynamics associated with synchronous generators. These
+state via two transformations with a flexible dimension, which      dynamics span time scales from approximately 10−6 s to 102 s,
+is lower than or equal to that of the micro-state. Additionally,    resulting in a stiffness ratio approaching 108 or higher. To
+the framework introduces a kernel-based convolution method          address the stiffness of power system models with IBRs for
+to approximate macro-dynamics from micro-dynamics without           efficient simulation, two types of fast dynamics need to be
+requiring an explicitly reduced macro-model, enabling smooth        considered: 1) dissipative EMT transients characterized by large
+and robust transitions between the micro-process and macro-         eigenvalues with negative real parts, which occur immediately
+process. Furthermore, the paper establishes the theoretical         after a disturbance like a fault or switching, and 2) sustained
+foundation of the method, uncovering relationships between          oscillatory dynamics characterized by eigenvalues having near-
+simulation accuracy, computational complexity, and speedup          zero real parts, whose examples include instantaneous current
+through rigorous theorems. The framework also introduces            and voltage waveforms around the synchronous frequency and
+variable-step algorithms to simulate both micro-state and           subsynchronous oscillations with IBRs. Conventional EMT
+macro-state efficiently. By leveraging a semi-analytical solution   simulation tools face challenges in efficiently simulating such
+(SAS) method, a new theorem ensures the accurate capture of         two-timescale power system models over extended time periods
+critical EMT dynamics while dynamically skipping unimportant        due to their stiffness. These tools often require very small step
+microscopic dynamics for maximum acceleration in micro-state        sizes, in the microsecond range, to maintain numerical stability
+simulations.                                                        while simulating continuously until slow electromechanical
+   The rest of the paper is organized as follows: Section           dynamics, in the range of tens of seconds to minutes, conclude
+II briefly introduces a generic HMM framework and then              and the system approaches its steady-state condition. In contrast,
+provides a detailed presentation of the proposed HMM approach       the proposed HMM approach leverages the time-scale gap
+for efficient two-timescale simulations of power systems            defined by ϵ and introduces a macro-process to enable more
+represented in EMT models. The section includes the main            efficient simulations once dissipative EMT transients subside
+idea and steps, the overall flowchart of the approach, the power    or oscillatory dynamics reach a steady state. Suppose the
+system model considered in this paper, detailed algorithms          existence of an effective macro-model as a reduction of (1)
+for the micro-process and macro-process of the approach             with a vector u : R+ 7→ Rnu focusing on slow dynamics when
+on the power system model, and a discussion of the main             ∥ϵ∥ converges to 0
+differences from other multi-timescale methods for power                                        u̇ = f̄ (u, t).                      (2)
+system simulations. Section III validates the proposed HMM          To distinguish it from the original system(1), the state of the
+approach on three test systems represented in their EMT models:     original system (1) is defined as the micro-state, and directly
+a two-area system, the IEEE 39-bus system, and a 390-bus            solving the original micro-model is called the micro-process.
+large system, demonstrating the performance and scalability         An engineering approach for model reduction may assume
+of the proposed approach. Finally, Section IV presents the          fast dynamics are all stable and ignore their state variables in
+conclusions.                                                        (1) by simply letting ϵ = 0. Thus, the second equation in (1)
+ACCEPTED BY IEEE TRANSACTIONS ON POWER SYSTEMS (DOI: 10.1109/TPWRS.2025.3539567)                                                      3
+
+
+
+becomes an algebraic equation, reducing the stiff ODE system
+to a DAE (differential-algebraic equation) system, which is
+the conventional form of a power system model for transient
+stability simulations.
+   Comparatively, the HMM approach focuses on finding the
+authentic u and its vector field f̄ that characterize a macro-
+model as manifested from the real-time response of the stiff
+system. For instance, in [8], it is assumed that u ≡ x while
+the effective force f̄ on slow dynamics is obtained by:
+                                                   !
+                               1 t+δ
+                                 Z
+            f̄ (t) = lim  lim          f (x, τ ) dτ .      (3)
+                     δ→0 ∥ϵ∥→0 δ t
+                                                                      Fig. 1. A two-timescale HMM scheme.
+However, it is often time-consuming to derive f̄ by (3). Instead,
+the HMM suggests evaluating it “on the fly” of simulating (1).           For an EMT model in the form of (1), its eigenvalues
+Namely, the analytical form of f̄ (t), i.e., an explicit reduction    exhibit two distinct time scales, corresponding to the slow
+of (1) is neither used nor required. Rather, f̄ (t) is estimated      electromechanical dynamics associated with the state variables
+along the simulation as an implicit reduction, and hence it is        in xI , and the fast EMT dynamics associated with the state
+adaptive to each simulated case regarding averaged macroscopic        variables in xII . In general, fast state variables in xII include
+dynamics with u while important microscopic dynamics are              instantaneous currents of inductive components, instantaneous
+still regained by solving (1) and (2) interactively. For instance,    voltages of capacitive components and the terminal variables
+Ref. [8] processes f using a kernel function K p,q ∈ Kp,q (I)         controlled by power electronic converters. Slow state var

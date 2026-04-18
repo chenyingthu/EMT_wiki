@@ -1,0 +1,154 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2978128, IEEE
+                                                                                                  Transactions on Power Delivery
+           IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                                                               1
+
+
+
+
+                   A Hierarchical Low-Rank Approximation Based
+                        Network Solver for EMT Simulation
+                    Lu Zhang, Student Member, IEEE, Bin Wang, Member, IEEE, Xiangtian Zheng Student Member, IEEE,
+                         Weiping Shi, Fellow, IEEE, P. R. Kumar, Fellow, IEEE, and Le Xie, Senior Member, IEEE
+
+
+
+              Abstract—In electromagnetic transient (EMT) simulation, 80-
+           97% of the computational time is devoted to solving the network
+           equations. A key observation is that the sub-matrix representing
+           the interaction between two far-away groups of buses is usually
+           sparse and can be approximated by a low-rank matrix. Based
+           on this observation, we propose a novel low-rank approximation
+           method which permits O(N log N )-time matrix-vector multi-
+           plication for each network solution time step. Comprehensive
+           numerical studies are conducted on a 39-bus system and a 179-
+           bus system from the literature, and large cases created from
+           the two systems. The results demonstrate that the proposed
+           approach is up to 2.8× faster than the state-of-the-art sparse
+           LU factorization based network solution, without compromising
+           simulation accuracy. Since our low-rank approximation is highly
+           parallelizable, further speedup may be possible.                                                          Fig. 1: EMT-related events in the power grid where
+                                                                                                                    SSO(sub-synchronous oscillations) is the main concern
+              Index Terms—Electromagnetic transient (EMT), network so-
+           lution, graphic partition, hierarchical low-rank approximation.
+                                                                                                               solution. Thus, the network solution is a bottleneck of the
+                                                                                                               EMT simulation. Among different network solvers, sparse LU
+                                            I. I NTRODUCTION                                                   based solver seems to be the most efficient for large grids [7].
+                                                                                                               However, its performance is insufficient to meet the challenge,
+           T     HE significant increase of variable energy resources in
+                 the power grid, coupled with the substantial growth of
+           electrified vehicles, lead to a more stressed grid with much
+                                                                                                               and LU-based solvers are sequential in nature and difficult to
+                                                                                                               parallelize for additional speedup. If any network delay exists,
+           higher variability at the operational stage. Such variability to-                                   it can be naturally used to decompose the network to achieve
+           gether with today’s lack of accurate online simulation capabil-                                     a limited parallelization. However, the resulting improvement
+           ities lead to the difficulty in predicting the transient dynamics                                   is limited when there exist large blocks, e.g., of greater than
+           across the grid. This, combined with lower operating reserves,                                      13K dimensions, representing dense regions [8].
+           pose significant challenges to online security assessment. To                                          There are also an excellent line of work based on hard-
+           address this requires a capability to accurately predict the                                        ware approach using multi-core CPUs, GPUs, and FPGAs
+           future transient behavior of the grid in a faster than real-                                        [6][7][8][9][10][11][12], achieving significant speedup.
+           time manner, taking all factors, such as electromechanical                                             In this paper, we propose a novel approach to accelerate
+           and electromagnetic, into account. Present operating practice                                       EMT simulation by taking advantage of the network topo-
+           considering only electromechanical transients is already slow,                                      logical structure and achieve fast matrix-vector multiplica-
+           which may have been acceptable in the past when there                                               tion by low-rank approximation. The low-rank approximation
+           were sufficient operating reserve buffers, but is insufficient                                      significantly reduces the computational time and speeds up
+           for the next-generation grid transformed by the reliance on                                         the network solution to O(N log N ) outperforming previous
+           many more variable resources and serving many more varying                                          network solvers, including sparse LU based solvers. The key
+           demands, with a much lower reserve margin [1], [2], [3]. Fig. 1                                     contributions of this paper are summarized below.
+           shows an incomplete list of growing physical anomaly partially                                          1) We propose a hierarchical low-rank approximation al-
+           induced by electromagnetic transients (EMTs) over the past                                                 gorithm to solve the network equation for fast EMT
+           five decades.                                                                                              simulation.
+              This paper targets at speeding up the challenging EMT                                                2) We present the time complexity, memory and error
+           simulation. It is motivated by the fact that a commercial EMT                                              analyses of the proposed approach.
+           simulator today takes up to 80 hours to simulate one second                                             3) We benchmark the accuracy of the proposed approach
+           of transient for an 87, 000-node system [4], with the majority                                             by comparing with the commercial software EMTP-RV.
+           of the time cost, 80 − 97% [5][6], being taken by the network                                           4) We conduct extensive performance tests and compare
+                                                                                                                      with the state-of-the-art sparse LU-based network solver.
+             Preferred address for correspondence: Le Xie, Dept. of ECE, Texas A&M
+           Univ., 3128 TAMU, College Station, TX 77843-3128.                                                       Our approach is parallelizable in similar way as [13], but
+
+
+  0885-8977 (c) 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                       Authorized licensed use limited to: University of Canberra. Downloaded on June 08,2020 at 00:44:09 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2978128, IEEE
+                                                                                                  Transactions on Power Delivery
+           IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                                                               2
+
+
+
+           the parallelization is not explored in this paper. The rest of the                                  C. Bottleneck of EMT Simulation − Network Solution
+           paper is organized as follows: Section II briefly reviews EMT                                          Reference [7] compares three types of network solution
+           simulation and how the network solution is a major bottleneck.                                      methods: (1) dense inversion and matrix-vector products, (2)
+           Section III introduces the hierarchical low-rank approximation                                      direct dense solver, and (3) direct sparse solver, and shows
+           method. Section IV describes a network partition method.                                            that the LU factorization-based direct sparse solver always
+           Section V provides the network solution by fast matrix-                                             outperforms the other two for systems with >2K dimensions.
+           vector multiplication. Section VI provides a comprehensive                                          This explains why the sparse LU method is the most widely
+           numerical study using a 39-bus system and a 179-bus system.                                         used solver in commercial EMT simulation software. Still,
+           Conclusions are drawn in Section VII.                                                               the network equation solved once at each time step takes
+                                                                                                               majority, e.g. > 80% [5][6], of the total simulation time
+                                                                                                               cost, therefore, is the bottleneck of EMT simulation, since
+                               II. R EVIEW OF EMT S IMULATION                                                  the involved computation tasks can hardly be parallelized.
+                                                                                                                  This paper will introduce a highly-parallelizable network
+           A. Framework of EMT Simulation
+                                                                                                               solver based on the hierarchical low-rank approximation,
+              The nodal formulation [14] is adopted to integrate all the                                       which is also more efficient even when computed sequentially.
+           models, e.g., generators, transformers, lines and loads. After
+           numerical discretization by an integration method and a choice                                             III. H IERARCHICAL L OW-R ANK A PPROXIMATION
+           of the time step, the electrical network equations can be                                              Traditionally, solving the EMT network equation (1) con-
+           formulated as in (1),                                                                               sists of a pre-processing step where G is LU-factored, followed
+                                                                                                               by repeated forward-backward substitutions at each time step.
+                                    Gv(t) = iin (t) + ihis (t − ∆t),                                  (1)      We rewrite the (1) from requiring forward-backward substitu-
+                                                                                                               tion to requiring matrix-vector multiplication:
+           where G is the network conductance matrix, v(t) is the vector
+                                                                                                                                                v(t) = G−1 i(t),
+           of nodal voltages, iin (t) is the vector of current injections, and                                                                                                                           (2)
+           ihis (t − ∆t) is the vector of historical currents, and all values                                                             i(t) =iin (t) + ihis (t − ∆t).
+           are real. A common flowchart of EMT simulation is shown                                             Now the bottleneck lies in the fast matrix-vector multiplication
+           in Fig. 2, which our method is based on. In each simulation                                         (mat-vec). Traditionally, mat-vec takes O(N 2 ) time, however
+           time step, ihis (t − ∆t) is calculated first using historic states.                                 we will propose a novel approach that performs mat-vec in
+           Then the current injection vector iin (t) is calculated by using                                    O(N log N ) time. Just like previous approaches, our proposed
+           electromagnetic generator equations. Following that, v(t) is                                        approach also requires a pre-processing step where G is
+           solved from the network equation. Finally, states associated                                        inverted. To handle scenarios where G changes, e.g., topology
+           with the controls are updated.                                                                      change caused by loss of line, we prepare all involved G−1
+                                                                                                               matrices in advance and load them online when needed.
+                                                          Start                                                More efficient handling methods which only consider modified
+                                              Initialize system t = tinitial                                   entries caused by changes deserve further explorations. Since
+                                Calculate ihis(t) for lines, transformers and generators                       mat-vec is more efficient than forward-backward substitution,
+                                              Time advances: t = t + Δt                                        the overall performance improves when the number of time
+                            Update iin(t) by generator model with some predicted states                        steps is high, as confirmed by experimental results.
+                                         Solve for v(t) by network equation                                       The fast matrix-vector multiplication (mat-vec) approach is
+                                           Correct those predicted states                                      based on two key concepts: low-rank approximation and hier-
+                               Update states of mechanical part and excitation system                          archical approximation, which are explained in the following
+                                                                     No
+                                                       t = tend                                                subsections.
+                                                   Yes
+                                                         End
+
+                                    Fig. 2: EMT simulation flow                                                A. Low-Rank Approximation
+                                                                                            2
+
+                                                                                                                  Fig. 3 illustrates the key idea of using low-rank approxima-
+                                                                                                               tion to speed up the network solution. Fig. 3(a)-(c) shows the
+                                                                                                               traditional approach to compute the impact of current in group
+           B. Modeling of Lines, Transformers, Generators and Loads                                            S on voltage in group T, where buses in each group are closely
+                                                                                                               connected but loosely connected between groups. Fig. 3(d)-(f)
+              The network solver to be proposed in this paper accepts                                          shows the proposed approach where the pairwise interaction
+           any device models that fit into the nodal formulation. In                                           matrix A, not necessarily square, represents any sub-matrix of
+           all tested cases in this paper, the following modeling is                                           G−1 which is approximated by a low-rank matrix Ar , thus
+           adopted: lumped π-circuit model for all transmission lines;                                         significantly reducing the computation time.
+           saturable model [15], containing a nonlinear inductor in the                                           There are a few ways to perform low-rank approximation.
+           magnetizing branch to represent the saturation effect, for all                                      We will use Singular Value Decomposition (SVD). The SVD
+           transformers; Brandwajn model [16] for all generators; and                                          of a matrix Am×n is given by A = U ΣV ∗ , where U is
+           constant impedance model for all loads.                                                             an m × m orthogonal matrix, Σ is an m × n diagonal
+
+
+  0885-8977 (c) 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                       Authorized licensed use limited to: University of Canberra. Downloaded on June 08,2020 at 00:44:09 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2978128, IEEE
+                                                                                                  Transactions on Power Delivery
+           IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                                                               3
+
+
+
+                                                                                                                 To calculate truncated SVD, we first compute the full SVD,
+                                                                                                               and then use (4) to truncate the first r terms. For large dense
+                                                                               

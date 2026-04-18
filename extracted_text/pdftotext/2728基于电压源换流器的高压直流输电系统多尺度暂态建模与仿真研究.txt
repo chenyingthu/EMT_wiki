@@ -1,0 +1,215 @@
+         第 40 卷 第 3 期                             中     国 电 机 工 程 学                 报              Vol.40 No.3 Feb. 5, 2020
+         2020 年 2 月 5 日                                 Proceedings of the CSEE                   ©2020 Chin.Soc.for Elec.Eng.   765
+DOI：10.13334/j.0258-8013.pcsee.190509                  文章编号：0258-8013 (2020) 03-0765-13             中图分类号：TM 73
+
+
+
+      基于电压源换流器的高压直流输电系统多尺度
+           暂态建模与仿真研究
+                   叶华 1,2，安婷 3，唐亚南 1,2，裴玮 1,2，齐智平 1,2，韩从达 3
+(1．中国科学院电工研究所，北京市 海淀区 100190；2．中国科学院大学，北京市 石景山区 100049；
+                            3．国网全球能源互联网研究院有限公司，北京市 昌平区 102211)
+
+
+                          Multi-scale Modeling and Simulation of Diverse Transients in
+                                       VSC-HVDC Transmission Systems
+                      YE Hua1,2, AN Ting3, TANG Yanan1,2, PEI Wei1,2, QI Zhiping1,2, HAN Congda3
+            (1. Institute of Electrical Engineering, Chinese Academy of Sciences, Haidian District, Beijing 100190, China;
+                         2. University of Chinese Academy of Sciences, Haidian District, Beijing 100049, China;
+              3. State Grid Global Energy Interconnection Research Institute, Changping District, Beijing 102211, China)
+
+
+ABSTRACT: Multi-scale modeling for accurate, fast and                       modeling; shifted-frequency analysis (SFA); voltage source
+flexible simulation of electromagnetic and electromechanical                converter (VSC)
+transients in voltage source converter-based high voltage direct
+                                                                            摘要：针对基于电压源转换器的高压直流(high voltage direct
+current (VSC-HVDC) transmission systems was presented and
+                                                                            current based voltage source converter，VSC-HVDC)输电系
+validated. It makes use of the methodologies such as shifted
+                                                                            统，该文提出电磁暂态–机电暂态多尺度建模方法并验证多
+frequency analysis (SFA). A novel analytical relationship
+                                                                            尺度仿真算法的准确、快速和灵活性。该模型采用频移分析
+between the shifted frequency (SF)-domain and dq-domain was
+                                                                            (shifted-frequency analysis，SFA)等多尺度建模方法。首先推
+derived leading to a system-level SFA-based VSC model.
+                                                                            导移频(shifted frequency，SF)域和 dq 域之间的解析变换关
+Additionally, a multi-scale model of DC transmission lines was
+                                                                            系，并提出用于系统特性分析的 VSC 移频多尺度模型；其
+developed with selective insertion of a -segment. By
+                                                                            次，选择性插入模型获得直流输电线的多尺度暂态模型；
+adjusting the simulation parameters such as time-step size,
+                                                                            最后，通过调整仿真参数，如仿真时间步长和移动频率，使
+diverse transients with multiple time-scales and in different
+                                                                            得建立的模型能够灵活仿真具有多个时间尺度和不同网络
+network-positions can be simulated. Simulation results are
+                                                                            位置的各种暂态。采用两端和五端 VSC-HVDC 输电系统作
+carried out on two-terminal and five-terminal VSC-HVDC
+                                                                            为算例，仿真结果对比表明，提出的模型和算法能够精确模
+transmission systems. It is proved that high-frequency
+                                                                            拟高频暂态，快速仿真慢变化暂态，降低计算成本。此外，
+transients are simulated accurately, and slow-changing
+                                                                            多尺度模型还可提高 VSC-HVDC 输电系统电磁–机电暂态
+transients are modulated with the computational costs reduced
+                                                                            混合仿真的灵活性。
+significantly. In addition, the flexibility of hybrid simulation of
+the electromagnetic and electromechanical transients in                     关键词：电磁暂态；机电暂态；高压直流输电系统；多尺度
+VSC-HVDC systems is improved.                                               建模；移频分析；电压源换流器
+
+KEY WORDS: electromagnetic transients; electromechanical                    0   INTRODUCTION
+transients; high voltage direct current (HVDC); multi-scale
+                                                                                 The voltage source converter-based high voltage
+    基金项目：国家自然科学基金(51707183)；中国科学院电工研究所                                      direct current (VSC-HVDC) technologies are widely
+科 研 发 展 基 金 (Y760141CSA) ； 中 国 科 学 院 前 沿 科 学 重 点 研 究 项 目
+                                                                            used in the fields of large-scale wind power
+(QYZDY-SSW-JSC025)。
+    Project Supported by the National Natural Science Foundation of China   integration, multi-terminal direct current (MTDC)
+(no. 51707183); Project Supported by the Foundation of Director of          power transmission and so on. To ensure an improved
+Institute of Electrical Engineering, Chinese Academy of Sciences
+(Y760141CSA); Project Supported by Key Front Science Project of the
+                                                                            planning design and operation of related applications,
+Chinese Academy of Sciences (QYZDY-SSW-JSC025).                             modeling    and    simulation    of   diverse    physical
+766                                        中      国     电   机   工   程    学   报                                       第 40 卷
+
+phenomena of VSC-HVDC system is essential [1].                  simulator for modulating high-frequency transients
+Including all time constants of the VSC-HVDC and                and TS programs to capture snapshots of the system
+associated AC systems, however, would lead to                   operation [13]. Considerable research efforts were
+complex     equations    to   be   resolved,     and     thus   addressed for hybrid simulation of electromagnetic
+multi-scale modeling would be a concern to simulate             and electromechanical transients of line-commutated
+electromagnetic and electromechanical transients                converter-based          HVDC        (LCC-HVDC),           for
+within a same simulation run.                                   example, [14-15]. Reference [16] offers algorithms of
+      Currently, modeling requirements of a VSC-                hybrid EMT and TS simulations for VSC-HVDCs and
+HVDC system mainly depend on the nature and scope               also      gives    the     interfacing      techniques.    The
+of the physical phenomena to be simulated [2]. For the          interface-based hybrid simulation using EMT and TS
+studies    involving    the power     electronic       device   models that are radically different may lead to the
+designing, electromagnetic transient (EMT) models of            inaccuracy and low-level flexibility in terms of data
+two/three-level converter and even modular multilevel           exchange and subsystem equivalence [17].
+converter (MMC) technologies are respected for the                      Power system blackouts such as the 2003 North
+accuracy in representing physical behaviors [3-5]. A            America blackout [18] have created requirements for
+detailed representation of high-frequency transients            profound          and     through         understanding     on
+for HVDC grids may lead to increasing computation               wide-frequency transients within the same study. The
+burden when the number of the sub-modules (SMs) in              shifted frequency analysis (SFA) method [19-21]
+MMCs increases significantly. To speed up the                   removes out fundamental frequency carrier in AC
+computational time of VSC-HVDC system, dynamic                  quantities    and       develops    the     SFA   models    in
+average-value models (AVMs) that only modulate the              electromagnetic transient program (EMTP) simulation
+average quantities of switching events were addressed           framework. These models can be used to efficiently
+in [5-7]. The AVMs were developed in the time-                  simulate power system slow dynamics, and also are
+domain EMT simulation environment using a                       capable of simulating fast transients. By introducing a
+time-step size of microseconds.                                 new simulation parameter, namely shift frequency, in
+      A detailed phasor model of MMC considering the            addition to the time-step size, the methodology
+circulating current control was derived in [8] where the        frequency-adaptive simulation of transients (FAST)
+MMC model is a two-level VSC model added by an                  was created [22-23]. Herein, the adaptive frequency
+equivalent series capacitance. The latter is also               shifting of the Fourier spectra of analytic signals that
+concluded in [9] where the detailed and simplified              describe diverse transients is achieved within the same
+transient stability (TS) models were derived, separately.       study. In this context, the FAST-based multi-scale
+As addressed in [9], both models have their relative            transient models of frequency-dependent transmission
+limitations in the simulation of slow or fast-changing          line and induction machinery were developed
+transients, and thus further studies are required. For          respectively in [24-25], respectively. The matrix
+large-scale VSC-HVDC transmission systems, the                  exponential function method was proposed to
+dynamic-phasor model of the VSC may be suitable for             accelerate the simulation of slow-changing transients,
+studying     slow-changing     dynamics        within     the   while fast transients are accurately reconstructed
+time-frame of interest [10]. However, the solution              through efficient dense output mechanism [26]. The
+method for phasor-based models has a low degree of              algorithm was validated by performing diverse
+the accuracy in modulating EMT phenomena because                transients in a wind farm consisting of 661.5MW
+of    simplifications   and   neglecting   fast-changing        fixed-speed induction generators. Currently the
+events [10-12].                                                 multi-scale methods above were well applied in
+      An alternative approach is to combing the EMT             modeling the multi-scale transients in pure ac power
+第3期                    叶华等：基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究                                                                           767
+
+electric systems. Recently, the shifted-frequency           electrical signal can be expressed as:
+model of MMC was proposed but it is difficult for                             x (t )  A(t ) cos[(c   (t ))t  0 ]             (1)
+modeling      electromechanical   transients    with   a
+                                                            where the angular carrier frequency  c2fc, and  0                     
+
+time-step size of milliseconds [27]. Therefore, it is
+                                                            is a constant depending on initial state of the system.
+still a challenge within the same study to model
+                                                            The amplitude A(t) and angular frequency deviation
+multiple time-scale transients from high-frequency
+                                                             (t) are variables of the time. Applying the
+                                                                   
+
+transients to system-level slow-changing dynamics in
+                                                            trigonometric identity, (1) is rewritten as:
+VSC-HVDC systems.
+                                                                              x (t )  xR (t ) cos(ct )  xI (t )sin(c t )        (2)
+     In this paper, multi-scale modeling of diverse
+electromagnetic and electromechanical transients for        with:
+VSC-HVDC transmission systems is presented. For                                   xR (t )  A(t ) cos(  (t )t  0 )
+                                                                                                                                   (3)
+VSC-HVDC transmission system-level modeling, this                                 xI (t )  A(t )sin(  (t )t  0 )
+paper gives reconfiguration and extension to authors’                   When the power system is subjected to low-
+former work [28]. A SFA-based VSC model is firstly          frequency dynamics, for example, electromechanical
+established, mathematical relationship of transforming      oscillations, xR(t) and xI(t) behave as two low-pass
+the SF-domain and dq-domain quantities is derived,          signals which contain all information except for the
+and then selective insertion technique of a-segment         fundamental-frequency component. To extract the
+leads to a multi-scale model of dc transmission lines.      low-pass signals, application of the Hilbert transform
+By adjusting the simulation parameters such as              as given in Appendix A into (2) yields:
+time-step size, the proposed model is used to simulate
+                                                                          x (t )  xR (t ) cos(c t )  xI (t )sin(ct ) 
+diverse transients with multiple time-scales and in
+                                                                                  j[ xR (t )sin(c t )  xI (t ) cos(ct )] 
+different network-positions. Finally, the multi-scale                            ( xR (t )  jxI (t ))[cos(c t )  jsin(c t )]    (4)
+model and simulation algorithm are verified and
+                                                            where the analytic signal x (t ) is structured by
+applied in diverse studies that include phase-to-ground
+                                                            adding to x(t) an imaginary part that is calculated
+faults, wind power fluctuations, and transient stability
+                                                            using the Hilbert transform.
+in two test systems.
+                                                                        It is visible from (4) that the carrier signal is
+     Section II is intended to provide the reader with          jct
+                                                            e          cos(ct)jsin(ct).     The signal xR(t)jxI(t) is
+background knowledge on the SFA. In Section III,
+                                                            the complex envelope of x(t), which corresponds to a
+multi-scale transient model of the VSC-HVDC
+                                                            dynamic phasor. The latter is readily obtained, and
+including components of the VSC, dc line, and
+                                                            multiplication of ejct on both sides of (4) leads to:
+associated controllers is developed. In Section IV,
+network-position-based      simulation   algorithms    of                     S ( x (t ))  xR (t )  jxI (t )  x (t )e jct      (5)
+simulating    multi-scale   transients   are   proposed.                The real and imaginary parts of (5) can be
+Verification and application of the multi-scale model       decomposed and then written in a vector-matrix
+are studied in Section V. Conclusions are remarked in       form as:
+Section VI.                                                               xR (t )   cos(c t ) sin(ct )   x (t ) 
+                                                                          x (t )     sin( t ) cos( t )   H ( x (t ))      (6)
+1   SHIFTED FREQUENCY ANALYSIS                                            I                 c         c                  
+
+     In an AC electric power system, electrical signals     where H(x(t)) is the Hilbert transform of x(t).
+of the voltages and currents have a fundamental-                        The effect of creating an analytic signal from the
+frequency carrier that is denoted by fc50Hz or           real signal with bandpass characteristics about the
+fc60Hz. By considering time-varying waveforms            carrier frequency is that Fourier spectra of the analytic
+with the fundamental-frequency component, the               signal only contain positive frequencies. Hereby, the
+768                                                               中        国       电       机   工       程     学          报                                                              第 40 卷
+
+frequency shifting is available to shift the Fourier                                           2 MULTI-SCALE MODELING OF TRA-
+spectra of the simulated quantities, such as voltage                                           NSIENTS IN VSC-HVDC TRANSMISSION
+and current, and so influence the maximal frequencies                                          SYSTEMS
+involved. When simulating slow-changing transients,
+                                                                                                           A representation of VSC-HVDC system requires
+the Fourier spectra of analytic signals concentrating
+                                                                                               modeling considerations of the components including
+around the carrier frequency are shifted as shown
+                                                                                               VSC, DC transmission line/cable, and associated
+from the center to the right of Fig. 1. The frequencies
+                                                                                               controllers. In what follows, by applying the method
+                F(x(t))                  | F(x(t)) |                      | F(D(x(t))) |
+                                                                                               SFA to the VSC-AVM as given in Section III-A, a
+                                                           
+                                                                                               multi-scale transient model of the VSC is developed in
+   0          0     0          0   0    0               0       0    0             Section III-B, then in Section III-C a relationship of
+                      图1         希尔伯特变换与频率移动
+                                                                                               SF-domain to dq-domain quantities is derived for
+             Fig. 1    Hilbert transform and frequency shift
+                                                                                               seamless integration of control schemes into VSC
+around the carrier frequency become frequencies
+                                                                                               multi-scale model. In Section III-D, multi-scale
+around DC (0Hz). In accordance with Shannon's
+                                                                                               modeling of a DC transmission line/cable is represented.
+sampling theory [29], a larger time-step size can be
+                                                                                               2.1           Dynamic Average-Value Model of the VSC-
+used for tracking slow-changing complex envelope.
+                                                                                               HVDC
+                                     1       
+                       max( t )                                                   (7)                   By           replicating        average                    responses        of    the
+                                   2f (t )  (t )
+                                                                                               converters with controlled s

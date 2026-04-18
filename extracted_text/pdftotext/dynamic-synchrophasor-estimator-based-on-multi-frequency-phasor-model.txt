@@ -1,0 +1,242 @@
+          第 38 卷 第 13 期                         中     国 电 机 工 程 学               报            Vol.38 No.13 Jul. 5, 2018
+ 3748     2018 年 7 月 5 日                              Proceedings of the CSEE               ©2018 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.171367                文章编号：0258-8013 (2018) 13-3748-08         中图分类号：TM 77
+
+
+
+      基于多频率相量模型的动态同步相量测量算法
+                                            白莎，符玲*，熊思宇，麦瑞坤
+                                   (西南交通大学电气工程学院，四川省 成都市 610031)
+
+
+             Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model
+                                          BAI Sha, FU Ling*, XIONG Siyu, MAI Ruikun
+            (College of Electrical Engineering, Southwest Jiaotong University, Chengdu 610031, Sichuan Province, China)
+
+
+ABSTRACT: When the power system was suffered from                        关键词：频率偏移；同步相量测量；多频率相量模型；离散
+unbalance and fault, the fundamental frequency would deviate             傅里叶变换；PSCAD/EMTDC 仿真
+from the nominal frequency, and the measurement accuracy of
+synchrophasor estimator also would rapidly reduce. Therefore,            0 引言
+a dynamic synchrophasor estimator was proposed based on                     作为广域测量系统的基础和核心，同步相量测
+multi-frequency phasor model. The multi-frequency phasor
+                                                                         量单元(phasor measurement unit，PMU)被广泛安装
+model was employed to reflect the effective information around
+real frequency, and to establish a phasor model including                以获得电网全局动态变化特性[1-4]，其算法的精确性
+multi-frequency phasor. The accuracy phasor value could be               将直接影响到广域测量系统的高级应用性能[5-8]。同
+obtained by estimating rough frequency, looking the matrix               时随着电网规模的不断扩大，电力系统中负荷波
+table calculated offline, revising the discrete Fourier transform
+                                                                         动、电力故障等都可能引起基波频率大范围偏移和
+(DFT) value and shifting phasor. Test results of both simulated
+                                                                         电压、电流幅值振荡，造成同步相量测量算法出现
+signals and PSCAD/EMTDC generated signal show that the
+proposed estimator can provide accurate phasor estimations               非同步采样，测量精度下降[9-11]。
+under dynamic conditions of frequency ramping and power                     上述问题使得响应速度快、计算简便的离散傅
+oscillation at the cost of limited increase of computational             里叶变换(discrete Fourier transform，DFT)算法，在
+burden.
+                                                                         信号测量时受到很大限制，因此有学者提出泰勒级
+KEY WORDS: frequency deviation; synchrophasor estimator;                 数法[12-15]和插值法[16-18]来改善 DFT 的测量结果。泰
+multi-frequency phasor model; discrete Fourier transform
+                                                                         勒级数 法在 动态工 况下 有较好 的性 能体现 ，文
+(DFT); PSCAD/EMTDC simulation
+                                                                         献[12]提出基于泰勒模型的动态相量测量算法，详
+摘要：电力系统中由于发电出力与负载不平衡导致基波频率
+                                                                         尽地讨论了泰勒阶数取值对算法的影响，并在低频
+偏移，进而造成同步相量测量精度迅速下降。基于此，该文
+提出基于多频率相量模型的动态同步相量测量算法。首先，                                               振荡仿真中取得良好的测量结果；文献[13-14]在泰
+算法利用多个不同旋转频率的子相量来描述真实频率附近                                                勒模型的参数求解上分别利用时域和时频信息对
+的有效信息，并以此对动态相量进行建模；其次，通过计算                                               信号进行处理，利用离线矩阵对 DFT 结果进行修
+粗估频率、调用离线矩阵、修正离散傅里叶变换结果及相移
+                                                                         正，减少了相应的运算量，在抗噪和响应时间等方
+运算等步骤来获得精确的相量测量值。最后，仿真结果表明，
+                                                                         面也取得不错的效果；为了更进一步地优化算法性
+算法虽然增加了有限的运算量，但在频率斜坡变化、功率振
+荡等动态工况中，能够减小频率偏移带来的不利影响，提供                                               能，文献[15]综合考虑泰勒模型在时域、频域的数
+准确的测量结果。                                                                 据信息通过自适应切换，其切换条件是通过计算相
+                                                                         量估计值，反推各采样点的理论值，并与实测值进
+     基金项目：国家杰出青年科学基金项目(51525702)；国家自然科学
+基金面上项目(51777173)；国家自然科学青年基金项目(51407150)。                                 行比较，该自适应算法兼顾时域噪声和频域精度，
+     The National Science Fund for Distinguished Young Scholars          综合性能表现优良。但这类泰勒算法没有考虑信号
+(51525702); The General Programs of the National Natural Science
+Foundation of China (51777173); National Natural Science Foundation of
+                                                                         频率大范围偏移带来的影响，因此应用存在一定局
+China (51407150).                                                        限。插值法则利用 DFT 后的谱线信息获得高精度的
+第 13 期                               白莎等：基于多频率相量模型的动态同步相量测量算法                                                                                                          3749
+
+测量结果，文献[16]采用多点插值法，详细地推导                                           频率为 ωˆ 0 + mΔω = 2π( fˆ0 + mΔf ) / fs 。
+了不同插值点数下的多项式，利用多项式校正 DFT
+                                                                   2 模型参数的求解
+的测量结果，其测量结果精度高，在噪声工况中仍
+有较好的性能表现；文献[17]同样是基于 DFT 插值                                                如图 1 所示，假设单个周波内的采样点数为 N，
+的同步相量测量算法，更进一步地研究了不同基波                                             以等效窗的几何中心位置 lmid_p 为参考点，所加数
+
+周期长度、数据窗对算法的性能影响；文献[18]则                                           据窗为 h(n)，经傅里叶变换可得相量 Xˆ (l )：                                                         mid_p
+
+预先对信号的频率进行插值，获得较为准确的频率                                                                     N −1
+                                                                                            2
+                                                                                           ∑
+                                                                                                                                      − jω0 ( n + lmid_p )
+结果后，将其代入泰勒模型中，扩大了泰勒模型应                                              Xˆ (lmid_p ) =                x(n + lmid_p )h(n)e                                          =
+                                                                                           − N +1
+                                                                                         n=
+用范围。虽然插值法在精度方面有一定优势，但算                                                                          2
+                                                                            N −1                                                                  N −1
+法需要性能优良的窗函数和较多的采样点数配合，                                                       2                 M                                                   2
+                                                                            ∑     h(n) ∑ Am e                                                   + ∑ h( n) ⋅
+                                                                                                              j(ωˆ0 + mΔω −ω0 )( n + lmid_p )
+因此增加了运算负担。为了拓宽泰勒级数法的应用                                                      − N +1                                                                    − N +1
+                                                                                          m =− M
+                                                                         n=                                                                      n=
+面，同时优化插值法的运算量，文献[19]建立动态                                                        2                                                                       2
+                                                                            M
+                                                                           ∑ Am∗ e
+                                                                                         − j(ωˆ 0 + mΔω +ω0 )( n + lmid_p )
+相量建模的虚指数基函数模型，将干扰信号模型加                                                                                                        = CA + DA∗                                 (4)
+                                                                         m =− M
+入优化目标实现对特定波形的陷波，能够有效抑制
+衰减直流分量或间谐波，但当基波频率出现较大偏                                             式中：DFT 滤波频率 ω 0 = 2πf0 / fs，其中 f0 为基波
+
+移时，算法对基波频率的动态跟踪缺乏灵活性。                                              频率 50 或 60Hz；相量矩阵 A = [A−M                                                            A−M+1            ⋅⋅⋅
+                                                                   AM]；将旋转因子和数据窗整合形成 H(lmid_p, ω ) =
+    基于此，考虑电力系统基波频率出现较大偏移
+                                                                     ( N −1)/ 2
+
+                                                                        ∑
+                                                                                              − jω ( n + lmid_p )
+的情况下，兼顾算法的测量精度、运算量以及抗噪                                                                h(n)e                         ，相量矩阵 C 和 D 是关于函
+                                                                   n = ( − N +1)/ 2
+能力，本文提出基于多频率相量模型的动态同步相
+                                                                   数 H(lmid_p, ω )的相量矩阵，分别为：
+量测量算法。算法利用粗估频率的方式动态地调整
+                                                                                                                                                          T
+子相量的旋转频率，实现动态同步相量测量，在增                                                              ⎡ H (lmid_p , ω0 − ωˆ 0 + M Δω ) ⎤
+                                                                                    ⎢                                      ⎥
+加少量运算量的前提下，提高相量测量精度。                                                                  H (lmid_p , ω0 − ωˆ 0 + ( M − 1)Δω ) ⎥
+                                                                                  C=⎢                                                                                    (5)
+                                                                                    ⎢                   #                  ⎥
+1 多频率相量模型的建立                                                                        ⎢                                      ⎥
+                                                                                    ⎢⎣ H (lmid_p , ω0 − ωˆ 0 − M Δω ) ⎥⎦
+    考虑基波频率偏移的动态工况下，建立由多个                                                                                                                                  T
+                                                                                      ⎡ H (lmid_p , ωˆ 0 − ω0 − M Δω ) ⎤
+不同旋转频率的子相量构成的模型，基波相量 X(t)                                                             ⎢                                      ⎥
+                                                                                        H (lmid_p , ωˆ 0 − ω0 − ( M − 1)Δω ) ⎥
+和电力信号 x(t)表达式分别为：                                                                   D=⎢                                                                                  (6)
+                                                                                      ⎢                     #                ⎥
+                      M                                                               ⎢                                      ⎥
+            X (t ) = ∑                                                                ⎢⎣ H (lmid_p , ω0 − ωˆ 0 + M Δω ) ⎥⎦
+                                              ˆ
+                             2 Am e j2 π ( f0 + mΔf )t       (1)
+                    m =− M
+                                                                     进一步分析相量矩阵 C 和 D，可知算法不仅利
+                  x(t ) = 2 Re( X (t ))                      (2)
+                                                                   用了粗估频率 fˆ 的数据信息，主要体现在 ω̂ 上；      0                                                              0
+式中： fˆ0 表示粗估频率；Δf 表示子相量之间的频率                                       还包括 fˆ0 相邻频点的频域信息，体现在 mΔω 上。
+间隔；Am 表示第 m 个子相量的低频带限相量，当                                          为便于求解模型参数，分离相量矩阵虚部和实部，
+                                          ˆ
+m = 0 时，对应的相量 2 A0 e j2 πf0t 为中心子相量；M                                                                               电力信号
+表示以中心子相量正负频偏展开的子相量个数；                                                      lmid_–P            lmid_–P+1                lmid_p                           lmid_P
+
+2M + 1 则为子相量的总数；Re(⋅)表示取实部。若以
+采样频率 fs，对连续信号 x(t)进行离散处理，可得                                                                                                                                               nfs
+                                                                     数据窗                 数据窗                          数据窗                        数据窗
+序列 x(n)：
+                                                                                                                     报告 2P +1 个数 采样点
+                                                                                         单个周波内                       时刻 据窗内的总
+   x(n) = 2 Re( X (n)) =                                                                 采样点数 N                      trop 参考时刻 ttot
+           M                          M
+          ∑ Am e j(ωˆ + mΔω ) n + ∑ Am∗ e− j(ωˆ + mΔω ) n
+                      0                                  0
+                                                             (3)                         图1             数据窗与参考时刻关系图
+         m =− M                    m =− M
+                                                                              Fig. 1     Relationship between data window and
+式中：采样点 n = tfs；上标“*”表示共轭运算；角                                                                              reference time
+3750                                               中       国   电       机   工    程    学          报                                              第 38 卷
+
+即 Xˆ = Xˆ R + jXˆ I ，C = CR + jCI，D = DR + jDI，A = AR +                    波频率为 47.5Hz，振荡频率为 5Hz。从图 2 可以看
+jAI，可得：                                                                    出，当基波频率为 47.5Hz 时，通过 DFT 测量结果
+                                                                           计算的频率值在真实频率上下波动，取整运算后得
+         ⎡ Xˆ R ⎤ ⎡C R + DR         −C I + DI ⎤ ⎡ AR ⎤
+         ⎢ ⎥=⎢                                                      (7)    到粗估频率。粗估频率存在两种可能取值，分别为
+         ⎢⎣ Xˆ I ⎥⎦ ⎣ CI + DI       C R − DR ⎥⎦ ⎢⎣ AI ⎥⎦
+                                                                           47 和 48Hz。测量结果如图 3 所示，无论粗估频率
+       假设待求参数 A 对应的时刻为图 1 中对应的总                                            取值为 47 或 48Hz，测量结果均能满足测量标准。
+参考时刻 ttot，由于模型中一共有 2M + 1 个未知量，                                                                 49
+需联立相邻数据窗的 DFT 结果共同求解，当数据窗
+
+
+
+
+                                                                                      频率/Hz
+                                                                                                48
+的数量与未知量的数量满足 2P + 1 ≥ 2M + 1 时才能
+                                                                                                47
+进行求解。此外，相邻数据窗的 DFT 结果一方面可
+                                                                                                  0.5        0.6     0.7          0.8   0.9   1.0
+以为计算粗估频率提供数据，另一方面可以保存下                                                                                                      t/s
+
+来用于其他参考时刻对参数 A 的求解。                                                                                     图2         粗估频率测量误差
+       将式(7)重新简写为式(8)，采用最小二乘拟合可                                                     Fig. 2        Measurement error of rough frequency
+得所求相量矩阵 A：
+                                                                                                0.6
+                               Xˆ = GA                              (8)                         0.4
+
+
+                                                                                     基波 TVE/%
+                                                                                                0.2
+                                                                                                              fˆ0 = 47Hz
+                  A = (G T G )−1 G T Xˆ = FXˆ                       (9)                         0.0
+                                                                                                0.8
+                                                                                                      fˆ0 = 48Hz
+                                                               M                                0.6
+                       对其求和 ∑ Am
+       A 矩阵中的各个元素表示为 Am，                                                                        0.4
+                                                           m=− M                                0.2
+                                                                                                  0.5      0.6        0.7         0.8   0.9   1.0
+获得最终相量测量值。需要说明的是，矩阵 F 是与                                                                                                    t/s
+
+C、D 矩阵相关的，而矩阵 C、D 又与粗估频率 fˆ 和                                      0                                 图3      粗估频率对结果的影响
+子相量旋转频率之间的间隔 Δf 有关。若粗估频率                                                                 Fig. 3         The influence of rough frequency
+fˆ 保持为整数，且设定固定的 Δf，则矩阵 F 可离
+ 0
+                                                                           4 报告时刻相移运算
+线存表，计算时按粗估频率调用即可修正 DFT 估计
+值，从而可减少算法在线运算量。                                                                     在算法的工程应用中，由于数据窗采样时刻 ttot
+                                                                           与报告时刻 trep 不重合，因此需要对 ttot 时刻所得的
+3 粗估频率的计算                                                                  相量测量结果通过相移运算进行校正。
+       设 XL1 和 XL2 为不同数据窗下 DFT 测量结果的                                                                                 M
+
+                          −1                        P                                                        Aˆ = ∑ Am e jδ                         (12)
+求和，表示为 X L1= ∑ Xˆ (lmid_k ) ，X L2 = ∑ Xˆ (lmid_k ) ，                                                               m =− M
+
+                         k =- P                    k =1
+                                                                           式中 δ = 2πfΔτ，其中 Δτ = (trep − ttot)fs，f 为当前时刻
+利用该结果提供电力信号大致频率，根据频率定义
+                                                                           的频率。
+公式，由相位差 Δϕ 与时间差 Δt 的比值可得：
+                                                                           5 运算步骤及运算量分析
+                   Δϕ = angle( X L1 ⋅ X L2
+                                        *
+                                           )                       (10)
+                                                                                    本文提出的多频率相量模型 (multi-frequency
+                                      Δϕ
+                   fˆ0 = round( f0 +      )                        (11)    phasor model，MFPM)主要从以下三方面进行：初
+                                     2πΔt
+            P                  −1                                          始化部分参数后，首先经 DFT 后获得不同数据窗下
+式中 Δt = (∑ tmid_k − ∑ tmid_k ) / P ，其中 tmid_k 为第 k                         的估计值 Xˆ (l ) ；然后计算求和结果 XL1 和 XL2，
+           k =1            k =− P                                                                    mid_P
+
+个数据窗的参考时刻，粗估频率利用四舍五入函数                                                     获得粗估频率 fˆ0 ；最后根据粗估频率调用离线矩阵
+round(⋅)进行取值。                                                              F 数据，经矩阵运算和相移运算后获得相量矩阵
+       此外，计算粗估频率主要利用的是 DFT 结果，                                                 Â ，输出测量结果。算法流程如图 4 所示。
+而频率发生较大偏移时，DFT 结果有一定的测量误                                                           运算量方面，文献[13]提出的动态相量测量算
+差，因此有必要分析粗估频率对最终测量结果的影                                                     法(dynamic phasor measurement algorithm，DPMA)，
+                  [20]
+响。根据标准               ，设置一幅值振荡工况，信号的基                                       同样先利用 DFT 结果，然后调用离线矩阵进行修
+第 13 期                                    白莎等：基于多频率相量模型的动态同步相量测量算法                                                                   3751
+
+                  ω0 Δf
+              初始化 w0、Df、P、M、N、等参数                                        量相量之间的误差指标[20]，其表达式为
+              对 x(n)加窗傅里叶变换 XˆX(l
+                               (lmid_ p)(式(4))
+                                       )
+                       

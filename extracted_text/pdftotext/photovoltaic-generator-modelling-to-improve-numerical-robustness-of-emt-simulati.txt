@@ -1,0 +1,180 @@
+                                                                  Electric Power Systems Research 83 (2012) 136–143
+
+
+
+                                                           Contents lists available at SciVerse ScienceDirect
+
+
+                                                      Electric Power Systems Research
+                                                   journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Photovoltaic generator modelling to improve numerical robustness
+of EMT simulation
+Anna Rita Di Fazio ∗ , Mario Russo
+DAEIMI, Università degli Studi di Cassino, 03043 Cassino, Italy
+
+
+
+
+a r t i c l e         i n f o                             a b s t r a c t
+
+Article history:                                          Numerical simulation is an indispensable tool for studying photovoltaic (PV) systems, to derive com-
+Received 1 March 2011                                     ponent ratings, optimise protections, design controllers as well as to evaluate the impact of embedded
+Received in revised form 12 July 2011                     generation on distribution system operation. In EMT simulation, the non-linear equations representing
+Accepted 21 October 2011
+                                                          the PV generators are separated from the linear equations of the rest of the power system. This technique
+Available online 17 November 2011
+                                                          presents high computational efﬁciency but introduces a one-step delay, which can cause problems of
+                                                          numerical instability. These problems are particularly evident when the PV generator is represented by
+Keywords:
+                                                          multiple single-diode equivalent circuits, such as in the cases of PV generators composed of different
+Distributed generation
+EMT simulation
+                                                          types of arrays or subject to partial shading or interfaced by multilevel inverters. To overcome such prob-
+Grid-connected photovoltaic systems                       lems, in this paper a new approach is proposed to include the PV generator model into EMT simulation. A
+Photovoltaic generators                                   convergence analysis gives proof of the obtained improvements, which are also conﬁrmed by numerical
+                                                          results. The robustness of the proposed technique is tested by simulation of an IEEE benchmark system
+                                                          in the cases of partial shading and of electric faults.
+                                                                                                                             © 2011 Elsevier B.V. All rights reserved.
+
+
+
+1. Introduction                                                                                  When PV systems are included into the power system sim-
+                                                                                             ulation, the non-linearities present in the PV generator models
+    In recent years the growing concern for environment preserva-                            require special attention. On one side, they cannot be neglected
+tion has caused a wide spreading of photovoltaic (PV) systems in                             because they affect the performance of the various components
+distribution networks. To derive component ratings, optimise pro-                            of the PV systems, in particular of the control systems and of the
+tections, design controllers, evaluate the impact on the distribution                        Maximum Power Point Tracker (MPPT) [10]. On the other side,
+system operation, detailed modelling of grid connected PV systems                            the non-linearities can introduce numerical problems during the
+for power system simulation studies is needed.                                               power system simulation [11].
+    Research has deeply analysed the models for the components                                   From a strict mathematical point of view, in each step of the
+of a grid connected PV system, including equivalent circuits of                              simulation, the set formed by the non-linear equations represent-
+the PV generator [1–3], conﬁguration and dynamic response of                                 ing the PV generators and by the linear equations representing
+the inverter [4–6], behavior of the grid interface and performance                           the rest of the power system must be solved, using an iterative
+of the control system [7–9]. Other important aspects have been                               numerical algorithm. This approach is adopted by some simulation
+addressed, related to the inclusion of the PV system into the distri-                        tools, such as PSpice and Matlab; it is accurate but presents the
+bution network [10].                                                                         drawback of a heavy computational burden when simulating large
+    In a PV system, the PV generator consists of electrically                                distribution networks including several PV systems. To guarantee
+connected PV modules and it is modelled by physical-oriented                                 computational efﬁciency, some authors have proposed equivalent
+equivalent circuits, including one or more diode. The single-diode                           circuits based on simpliﬁed or linearised equations, thus losing in
+equivalent circuit is the most commonly used model for large PV                              terms of model accuracy [12–14].
+generators and it is adopted in this paper. This model introduces a                              An alternative approach consists of separating the non-linear
+non-linear dependency of the current injected by the PV generator                            equations of the PV generators from the linear equations of the
+on the voltage at its terminals, which in turn depends on the oper-                          rest of the power system. Then, the PV generator models are
+ating conditions of the whole power system which the PV generator                            solved substituting in the non-linear equations the values of volt-
+is connected to.                                                                             age and/or current available from the past simulation step [15,16].
+                                                                                             This approach can be used in any simulation tool and, in particu-
+                                                                                             lar, it is adopted by EMTP and EMTDC [17]. It keeps the accuracy of
+ ∗ Corresponding author. Tel.: +39 07762993636; fax: +39 07762993886.                        the PV generator model while presenting a computational burden
+    E-mail addresses: a.difazio@unicas.it (A.R. Di Fazio), russo@unicas.it (M. Russo).       which is comparable with the one of a linear system. Unfortunately,
+
+0378-7796/$ – see front matter © 2011 Elsevier B.V. All rights reserved.
+doi:10.1016/j.epsr.2011.10.013
+                                                        A.R. Di Fazio, M. Russo / Electric Power Systems Research 83 (2012) 136–143                                       137
+
+
+                                                          Ii              Rs     I                   In general, the ﬁve circuit parameters a, Ig , Io , Rs and Rp are func-
+                                                                                                tions of the type of PV device and of the environmental conditions,
+                                                                                                described by the solar irradiation G and the p–n junction temper-
+                                                                                                ature T [20]. In this paper, the dependency on the environmental
+ Ig                                 Id             Vi                Rp               V         conditions is accounted for only Ig and Io , whereas it is neglected for
+                                                                                                a, Rs and Rp . Furthermore, the values of the ﬁve circuit parameters
+                                                                                                are evaluated by using analytical expressions reported in [21] on
+                                                                                                the basis of the data provided by manufacturers.
+                                                                                                     The single-diode equivalent circuit can also be used to represent
+           Fig. 1. Single-diode equivalent circuit of the real PV module.                       a PV generator, equipped with Np parallel arrays of Ns series-
+                                                                                                connected PV modules, which are assumed to be all of the same
+the one-step delay introduced in the solution of the PV generator                               type and in the same environmental conditions. In this case, the ﬁve
+models can cause numerical instability problems. These problems                                 circuit parameters involved in (3) and the inverse thermal voltage
+arise especially when the PV generator is represented by multiple                               in (2) are related to the PV generator and indicated with agen , Ig,gen ,
+single-diode equivalent circuits, such as in the cases of PV gener-                             Io,gen , Rs,gen , Rp,gen and ˇgen respectively. They can be evaluated from
+ators composed of different types of arrays or subject to partial                               the PV module parameters as
+shading or interfaced by multilevel inverters [18,19]. In the follow-
+ing this approach is referred to as Basic Linear System Technique
+                                                                                                                                                                Ns
+(BLST).                                                                                         agen = a,      Ig,gen = Np Ig ,   Io,gen = Np Io ,   Rs,gen =      Rs ,
+                                                                                                                                                                Np
+   To overcome most numerical problems of the BLST simulation
+while keeping high computational efﬁciency, a new approach is                                                       Ns                  ˇ
+                                                                                                         Rp,gen =      Rp ,    ˇgen =                                     (4)
+proposed in this paper to include the PV generator model in EMT                                                     Np                  Ns
+simulation. The basic idea is to extend the original approach of BLST
+by adding some information extracted from the non-linear equa-                                  Anyway, the single-diode equivalent circuit can always be used to
+tions of the PV generator models into the linear equations of the                               represent one or more arrays of the same type and in the same
+rest of the power system. This approach is referred to as Extended                              environmental conditions, and various circuits can be electrically
+Linear System Technique (ELST).                                                                 connected to represent the whole PV generator.
+   In this paper, the inclusion of the PV generator model into                                      In practice, the PV generator is modelled by a non-ideal current
+EMT simulation of power systems is tackled. After brieﬂy recall-                                generator: it injects a current I whose value depends on the termi-
+ing the single-diode equivalent circuit, the BLST is described and                              nal voltage V, which, in turn, depends on the operating conditions
+the new ELST is presented. Then, a convergence analysis is per-                                 of the whole power system which the PV generator is connected
+formed to evidence the numerical instability problems of BLST and                               to. Moreover, the relationship (3) between I and V is non linear.
+the improvements introduced by ELST. Using PSCAD/EMTDC tool,                                        In the following, the problem of including the PV generator
+the theoretical results of the convergence analysis are veriﬁed by                              model into the EMT simulation is tackled by using BLST and ELST.
+simulation of a simple system. Eventually, the robustness of the                                For the sake of simplicity and clarity, but without any loss of gen-
+ELST is tested by simulation of an IEEE benchmark system in the                                 erality, some hypotheses are assumed: the power system includes
+cases of partial shading and of electric faults.                                                only a PV system; the power system is linear except for the pres-
+                                                                                                ence of the PV generator; the PV generator is composed of modules
+2. PV generator modelling for EMT simulation                                                    of the same type and in the same environmental conditions.
+
+
+2.1. PV generator modelling                                                                     2.2. BLST
+
+    A PV module can be modelled by the single-diode equivalent                                      The BLST is the simplest and most straightforward way to
+circuit shown in Fig. 1 [1]. The ideal PV module is composed of a                               include the relationship (3) in the EMT simulation. It is based on
+current generator Ig connected in parallel to a diode and it can be                             the separation of the non-linear equation of the PV generator from
+described by the following equation                                                             the linear equations of the rest of the power system. In particu-
+                                                                                                lar, the non-linear equations are solved by substituting the values
+Ii (Vi ) = Ig − Id (Vi ) = Ig − Io (eˇVi /a − 1)                                      (1)       of voltage and/or current available from the past simulation step
+where Ii and Vi are the terminal current and voltage of the ideal                               [15,16].
+PV module, Id is the current diverted through the diode, Io is the                                  Referring to EMT simulation, Fig. 2 shows the block diagram
+diode reverse saturation current, a is the diode ideality factor and                            related to the kth step of the simulation. In detail, the value I(k) is
+ˇ is the inverse thermal voltage. For a PV module composed of Ms                                evaluated by (3), given the value V(k − 1) available from the previ-
+series-connected PV cells, ˇ is deﬁned as                                                       ous step of the simulation. Then, the linear power system is solved,
+                                                                                                assuming a current injection equal to I(k) in place of the PV gen-
+           q
+ˇ(T ) =                                                                               (2)       erator. The resulting vector V(k) represents the values of all nodal
+          Ms kT
+                                                                                                voltages, which also includes the value V(k) of the voltage at the PV
+where k is the Boltzmann constant (1.3806503e−23 J/K), q is the                                 generator terminal.
+electron charge (1.60217646e−19 C) and T is the p–n junction tem-                                   The BLST simulation presents a computational burden which is
+perature. The real PV model is enriched by a series resistance Rs                               comparable to the one of linear power systems. However, using a
+and a parallel resistance Rp and it can be described by the following                           one-step delayed value of V it can introduce numerical instability
+equation                                                                                        in the simulation. Such problems are particularly evident when it is
+                                                                                                necessary to represent the PV generator with multiple single-diode
+                                         V + Rs I
+I(V ) = Ig − Io (eˇ(V +Rs I)/a − 1) −                                                 (3)       equivalent circuits. It is the case when arrays with different charac-
+                                           Rp
+                                                                                                teristics are present in the PV generator, as well as when the arrays
+where I and V are the terminal current and voltage of the real PV                               are subject to different environmental conditions, such as in the
+module.                                                                                         case of partial shading. In these circumstances the performance of
+138                                               A.R. Di Fazio, M. Russo / Electric Power Systems Research 83 (2012) 136–143
+
+
+
+
+           Fig. 2. Block diagram of the simulation steps in case of BLST.
+
+
+the MPPT can signiﬁcantly be limited from PV generator behaviour
+and detailed models are needed [18]. Moreover, multiple single-
+diode equivalent circuits must be used when the PV generator is
+interfaced by multilevel inverters (adopting neutral point clamped
+or cascaded H-bridge topologies) that are expected to be widely                                   Fig. 3. Block diagram of the simulation steps in the proposed ELST.
+used in large PV power plants [19].
+                                                                                          the linearised representation of the model is introduced in the rest
+2.3. ELST
+                                                                                          of the power system only to reduce numerical instability problems
+                                                                                          with respect to the BLST. Finally, concerning the efﬁciency of the
+    To improve numerical stability, a new approach is proposed.
+                                                                                          simulation, ELST presents a limited increase of the computational
+The basic idea of ELST is to extend the BLST adding a linear repre-
+                                                                                          burden with respect to the one of linear power systems.
+sentation of the non-linear equation of the PV generator into the
+solution of the rest of the power system. In practice, in each step
+of the simulation ﬁrstly the non-linear equations of the PV gener-                        3. Convergence analysis
+ators are evaluated using the values of voltage available from the
+previous step of the simulation and then the linearised represen-                             To identify the numerical stability problems that may arise in
+tations of these equations are added into the solution of the rest of 

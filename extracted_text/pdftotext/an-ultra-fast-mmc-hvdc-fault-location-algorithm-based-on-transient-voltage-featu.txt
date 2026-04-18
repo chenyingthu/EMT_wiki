@@ -1,0 +1,190 @@
+                                                              Electrical Power and Energy Systems 162 (2024) 110249
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                          International Journal of Electrical Power and Energy Systems
+                                                            journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+An ultra-fast MMC-HVDC fault location algorithm based on transient
+voltage features and regression neural network☆
+Yunqi Zhang *, Yue Yu , Guosheng Yang
+State Key Laboratory for Security and Energy Saving, China Electric Power Research Institute, Beijing, China
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   An ultra-fast fault location algorithm based on the single-ended transient voltage features and regression neural
+Fault location                                              network (RNN) is proposed, which utilizes 2.5 ms postfualt data window and is suitable for modular multilevel
+MMC-HVDC                                                    converter-based high-voltage DC (MMC-HVDC) grids equipped with quick-action protections and hybrid DC
+Transient voltage response
+                                                            circuit breakers (HDCCBs). Firstly, the analyses based on the lumped RLC equivalent circuit demonstrate that the
+Extraction of characteristic variables
+Regression neural network
+                                                            delay time, the first negative peak time and its value all have exact relationships with the fault location.
+                                                            Nevertheless, considering the actual parameters and topology of the MMC-HVDC grid, three features can only be
+                                                            approximately extracted. Thus, RNN is utilized to estimate fault locations. 2.02 × 104 distinct fault cases validate
+                                                            the algorithm’s high accuracy across all fault locations and transition resistances up to 1005 Ω. It can well
+                                                            tolerate reasonable deviations of line parameter and current limiting reactor value, as well as 40-dB white noise.
+                                                            Besides, it also has remarkable adaptability, and can be suitable for different systems.
+
+
+
+
+1. Introduction                                                                                    the propagation medium, so it is also frequency-dependent. When the
+                                                                                                   fault occurs at different locations, the frequency band of the initial
+    The modular multilevel converter-based high-voltage DC (MMC-                                   traveling wave distributes differently, and the TWPV is also different.
+HVDC) grids are usually equipped with quick-action protections and                                 Therefore, it is difficult to accurately obtain the TWPVs under different
+hybrid DC circuit breakers (HDCCBs) to isolate fault areas within few                              fault conditions. Besides, the initial traveling waves will have severe
+millionseconds. So after faults, only a quite short data window can be                             dispersion in the case of high-resistance faults or remote faults, so the
+acquired before HDCCBs opening, which increases the difficulty of ac­                              moments they reach the fault locators are also difficult to capture
+curate fault location in MMC-HVDC grids.                                                           accurately. By increasing the sampling frequency to several MHz or
+    Several exemplary traveling-wave-based fault location methods have                             adding more measurement points along the lines, the above problems
+been presented. Although the postfault data windows required by them                               can be mitigated to some extent but cannot be eliminated. In reference
+are generally compatible with MMC-HVDC grids, they still have several                              [6], on an attempt to reduce the potential fault location errors resulting
+drawbacks. The methods presented in [1–3] are all based on the fault-                              from low sampling frequency, while maintaining the cost to minimum, a
+generated surge arrival times of the traveling waves at double termi­                              machine learning approach is also introduced. Moreover, the accuracy
+nals. The authors in [4] present a fault location scheme for HVDC cable                            of these methods depends on the strictly synchronous signals from
+transmission based on the time difference between modal initial peaks.                             double-ended or line-distributed sensors. Therefore, these methods have
+However, these methods require quite high sampling frequencies up to                               higher requirements on communication and measurement equipment.
+several MHz. The fault location methods proposed in [5,6] both need                                The required synchronous measurement points distributed along the
+synchronized currents obtained by sensors distributed along the DC                                 line inflict more difficulties and costs in the practical implementation.
+lines. In fact, the accuracy of the traveling-wave-based fault location                                An electromagnetic time reversal (EMTR) fault location method is
+methods highly relies on the precise traveling wave propagation velocity                           presented in [7] based on the lossy back-propagation model. The au­
+(TWPV) through the faulted line and the accurate moment when the                                   thors in [8] present a data-driven fault location algorithm based on
+initial traveling wave reaches the fault locator. The TWPV depends on                              EMTR voltage energy in mismatched media. However, a fairly long
+
+
+ ☆
+   This work was supported by the Science and Technology Project of China Electric Power Research Institute. (No. 524200210049).
+ * Corresponding author.
+   E-mail address: zhangyunqi@epri.sgcc.com.cn (Y. Zhang).
+
+https://doi.org/10.1016/j.ijepes.2024.110249
+Received 10 January 2024; Received in revised form 23 June 2024; Accepted 13 September 2024
+Available online 23 September 2024
+0142-0615/© 2024 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+Y. Zhang et al.                                                                              International Journal of Electrical Power and Energy Systems 162 (2024) 110249
+
+
+postfault data window is used for them, which is not applicable to MMC-
+HVDC grids that use HDCCBs to quickly isolate DC faults.                                                                            Ldc                      x
+    Reference [9] presents a fault location scheme for MMC-HVDC grids                                                                           DCTransmission line
+                                                                                                          SM1         SM1     SM1
+that uses an estimated R-L representation of the transmission lines. In
+[10], a fault location method based on dynamic state estimation and                                       SM2         SM2     SM2
+                                                                                                                                      Voltage
+gradient descent is presented. However, frequency-independent lumped                                      SMn         SMn     SMn measurement
+model is used for DC line in the simulation verification. The authors in
+                                                                                                         Lm
+[11,12] proposed the least-square-based fault location algorithm. The
+authors in [13] proposed the fault location method based on the frog                                    Rm
+
+leaping particle swarm algorithm. Reference [14] proposed a DC fault
+location method by estimating the line inductance from the fault point to
+the DC line terminal, which is designated as L location. However, the
+methods in [11–14] are all calculated based on the lumped line model.
+The distribution characteristics and frequency-dependent characteristics
+                                                                                                              SM1     SM1     SM1
+of the actual line model are not considered. The fault location errors will                                                                             Cm
+increase significantly with the increase of line length. Thus, the fault                                     SM2      SM2     SM2
+
+location methods in [9–14] are only suitable for short lines, and cannot                                      SMn     SMn     SMn
+                                                                                                                                     Ldc
+be applied to long transmission lines. Moreover, the iterative least
+square algorithm and the frog leaping particle swarm algorithm are both
+sensitive to the initial value of the solution variable and may converge to                       Fig. 1. Diagram of a PGF in the HB-MMC-HVDC grid.
+local minima of the error criterion. Furthermore, their iterative calcu­
+lations would take a long time. In addition, with regard to L location in
+[14], the currents through the transition resistance are not accurately                                                     sxL                     sxL
+                                                                                                                     xR                    xR
+represented for all of the fault conditions during the calculation. Thus,                             sLdc                   2                       2
+the fault location errors are large when the fault resistances are rela­                                              2                     2
+                                                                                      HB-MMC
+tively high or the fault points are relatively far from the fault locators.                              Ufm
+    The application of machine learning can greatly improve the accu­                       N
+racy of high-resistance fault location. The authors in [15] present a                                               DC Transmission
+                                                                                          6 sCm
+HVDC fault location method based on double-ended unsynchronized
+                                                                                                                         line                                    Rf
+signals using convolutional neural network (CNN) and Hilbert–Huang                          Rm
+                                                                                                                             1
+transform. Nevertheless, the required data window and are too long to                        3
+be suitable for MMC-HVDC grids. Reference [16] proposes a single-                                                           sxC                                   Uf
+                                                                                           sLm
+ended fault location algorithm for AC transmission lines, which uses
+CNN to quantitatively evaluate the mapping relationships between the                        3
+traveling wave full waveforms and the fault locations. Reference [17]
+utilizes a combination of feedforward neural network and support vector
+classifier for locating faults in radial distribution systems. Reference                  Fig. 2. The fault component equivalent circuit of HB-MMC-HVDC.
+[18] presents utilizing Gaussian process regression (GPR) for fault
+location and support vector machine for fault identification in AC                2. Fault characteristics of transient voltage
+microgrids. In [19], a gradient boosting tree (GBT) model is proposed to
+localize single-phase-to-ground and three-phase faults in low voltage AC              A positive-to-ground fault (PGF) on a DC transmission line connected
+distribution grids. In [20], a Stack Auto-Encoder (SAE) is modeled to             to the half-bridge modular multilevel converter (HB-MMC) is depicted in
+pinpoint fault point with the voltage and current phasors for AC distri­          Fig. 1. Thereinto, Um is the measured voltage at the terminal of the
+bution network. The fault location methods utilizing machine learning             positive line. x is the distance from the fault point to the voltage mea­
+in [16–20] can also be improved and applied to HVDC grids.                        surement point. Rf is the transition resistance. Ldc is the DC inductance at
+    In order to effectively address the above problems, we propose an             the endpoint of line. Besides, the hybrid DC circuit breaker (HDCCB) is
+improved ultra-fast fault location algorithm for MMC–HVDC grids based             installed at the terminal of the DC line. Additionally, the capacitance of
+on transient voltage features and regression neural network (RNN).                each MMC submodule is indicated as Cm, and N is the number of the
+Firstly, three valuable features for the voltage fault transient response         submodules in each arm of the MMC. The inductance and resistance of
+are analyzed based on the lumped RLC model of the MMC-HVDC grid.                  each MMC arm are represented as Lm and Rm, respectively.
+Considering the actual parameters and topology of the MMC-HVDC grid,
+the three features can only be approximately extracted from the tran­
+sient voltage. Ergo, we use the well trained RNN to accurately locate             2.1. Analysis based on lumped RLC model
+faults through the three features of the single-ended transient voltage
+with ultra-high speed. Finally, this algorithm is validated by 2.02 × 104             For the DC line connected to the HB-MMC shown in Fig. 1, the fault
+different fault cases excluded in the training datasets. The generalization       component equivalent circuit in s-domain is depicted in Fig. 2. There­
+ability, adaptability and anti-noise ability of this algorithm are all            into, Uf denotes the fault excitation voltage source, the value of which is
+verified. Furthermore, the proposed fault location algorithm is                   the inverse prefault voltage at the fault point. Ufm is the fault component
+compared with other algorithms.                                                   voltage at the endpoint of the positive line. During the post-fault tran­
+    The remainder of this paper is organized as follows. The fault char­          sient period before the MMC blocking, the HB-MMC can be equipped as
+acteristics of the transient voltage in the HB-MMC-HVDC grid are                  RLC series model. The impedance of the HB-MMC Zeq in s-domain is
+analyzed in Section II. Section III introduces the reasons for using RNN          expressed as follows,
+to locate faults, as well as the structure of RNN. Section VI proposes the
+                                                                                          sLm Rm   N
+specific process of the ultra-fast fault location algorithm. In Section V,        Zeq =      +   +                                                                     (1)
+the simulation test results validate the superiority of the proposed                       3   3 6sCm
+method. Finally, the conclusion is provided in Section VI.                           To facilitate analysis, the DC transmission line is simplified into the
+
+                                                                              2
+Y. Zhang et al.                                                                                                International Journal of Electrical Power and Energy Systems 162 (2024) 110249
+
+
+Table 1                                                                                                              (  )
+Values of the parameters for HB-MMC and DC Line.
+                                                                                                                   xNC
+                                                                                                                         1+
+                                                                                                                          (2Lm Cm + 6Ldc Cm )
+                                                                                                                   6Cm
+  HB-MMC parameters                                                                                      k3 =                                +
+                                                                                                                            N
+  Rm(Ω)            Lm(mH)                     Cm(uF)          N            Ldc(mH)                        [ (               )          (          )]                                             (5)
+  1                29                         11,000          220          200                                Lm         xL              xR Rm
+                                                                                                        xC N     + Ldc +      + 2Rm Cm        +
+  DC Line parameters                                                                                           3          2               2     3
+  R (Ω/km)                                    L (mH/km)                    C (uF)
+                                                                                                                             N
+                                                                                                             (        )      (         )
+                                                                                                       2Rm Cm 1 + xNC
+                                                                                                                  6Cm
+                                                                                                                        + xNC xR
+                                                                                                                               2
+                                                                                                                                 + R3a
+                0                                                                             k4 =
+                                                                                                                                       N
+                                                                                                                                                                                                 (6)
+
+                        td                                                                                             3x2 LCCm
+            -0.5                                                                              k5 =                                 (
+                                                                                                       Cm (2Lm + 6Ldc + 3xL) + xCCm 3xR + 6Rf
+                                                                                                                                              )                                                  (7)
+fm (p.

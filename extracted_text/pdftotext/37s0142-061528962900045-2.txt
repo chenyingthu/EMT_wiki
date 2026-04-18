@@ -1,0 +1,205 @@
+                                                                                  Electrical Power & Energy Systems, Vol. 19, No. 4, pp. 221-227, 1997
+                                                                                                                          © 1997 Elsevier Science Ltd
+                                                                                                            Printed in Great Britain. All fights reserved
+ELSEVIER                                            PII: S0142-0615(96)00045-2                                                0142-0615/97/$17.0o+o.0o
+
+
+
+
+The implementation and effective-
+ness of linear interpolation
+within digital simulation
+P Kuffel and K Kent
+Manitoba Hydro, 820 Taylor Avenue, Winnipeg,
+Manitoba, Canada
+
+G Irwin
+Manitoba HVDC Research Centre, 400-1619 Pembina
+Highway, Winnipeg, Manitoba, Canada
+
+
+                                                                         solution resulted in significantly increased run times, how-
+The greater use of detailed models and the increasing size
+                                                                         ever since the system model was small, the study turnaround
+and complexity of system studies in power system digital
+                                                                         time penalties associated with simulation time step reduction
+simulation has resulted it,~,the need to re-examine the ability
+                                                                         were acceptable. Reduction of the time step size was also an
+of digital computations performed at finite time intervals to
+                                                                         effective way to reduce the inherent discretization errors
+accurately represent the actual system. These concerns are
+                                                                         within the controls model. However, as the combination of
+manifested in two distinct areas. The first is the ability to
+                                                                         increased system model size and the use of detailed controls
+switch elements at a specific point in time. Traditional digital
+                                                                         models has become more common [1-3], the reduction
+simulation techniques al~!ow switching elements to change
+                                                                         of simulation time step size has become an impractical
+state only at discrete computation times, whereas in reality
+                                                                         solution.
+switching can occur at any instant in time. The second area
+                                                                            The use of trapezoidal integration as the solution method
+of concern is in the abili(y to accurately represent detailed
+                                                                         in electromagnetic transients programs [4] is based on the
+control systems. These concerns are of particular import-
+                                                                         assumption that the change of any parameter from one time
+ance in simulations containing a large number of controlled
+                                                                         step to the next is linear. Since the change in a given
+switching devices, such as HVdc systems or ac systems
+                                                                         parameter across a time step is assumed to be linear, it is
+containing FACTs devices. This paper presents a discussion
+                                                                         possible to implement interpolation between time steps. This
+of the implementation and effectiveness of linear inter-
+                                                                         can effectively result in a "quasi-continuous time" solution
+polation techniques in a digital simulation program. The
+                                                                         with very little impact on overall run times.
+paper addresses interpolation in both the network solution
+                                                                            Some presently available electromagnetic transient simul-
+and the control system. The CIGRE HVdc Benchmark Model
+                                                                         ation programs employ interpolation techniques [5,6].
+(Szechtman, M. et al., Electra, 1991, 135 and Wess, T. and
+                                                                            Interpolation can be implemented in two distinct areas.
+Ring, H., CIGRE Repot;, WG 14-02, 1988) with detailed
+                                                                         The first of these is in the network solution, and the second is
+control models is used to demonstrate how linear inter-
+                                                                         in the controls model.
+polation is implemented and its effectiveness. All simulation
+results presented were generated using EMTDC (Nayak, O.
+et aL, IEEE Computer Applications in Power, 1995, 8(1)),
+but the techniques discussed can be applied to any electro-              II. Interpolation within the network solution
+magnetic transients program. © Elsevier Science Ltd. All                 A basic electromagnetic transients solution algorithm solves
+rights reserved.                                                         the network differential equations by applying trapezoidal
+                                                                         integration in discrete time steps. The selection of the time
+Keywords: digital simulation, Interpolation, HVdc, controls              step is usually based on the time constants in the system
+                                                                         model. A typical time step for most transient studies is 50/zs.
+                                                                         However, when fast acting switching devices such as thyr-
+                                                                         istors, diodes, or surge arresters must be modelled, the 50/~s
+I. Introduction                                                          time step may not provide sufficient accuracy in the simul-
+In the past, digital simulations of HVdc systems consisted of            ation of these devices.
+small network models, so concerns related to time step errors               To illustrate this, Figure 1 shows an example of a current
+could be addressed by reducing the time step size. This                  through a diode (or thyristor).
+
+
+                                                                   221
+222                                      Linear interpolation within digital simulation: R Kuffel et el.
+
+                                                                              where T is time at the end of the regular time step and At is
+                                                                              the time step.
+                                                                                 The interpolation is a very fast operation compared to the
+   ~0                      '                                                  time required to re-solve the network due to the switching. In
+                           0                  -   2'.0                        some algorithms, the interpolation can also be limited to a
+                                          ~                  Time Step        local subsystem, since each subsystem is mathematically
+                                                                              isolated from other subsystems by the inherent delays in the
+                                                                              travelling waves on transmission lines and cables of suffi-
+Figure 1. Simulated diode switching off at a current
+                                                                              cient length for a given solution time step.
+zero--fixed time step                                                            Once the system voltages and currents are obtained at time
+   Referring to Figure 1, the diode should switch off when                    1.2, a normal time step can be taken to time 2.2. The polling
+the current goes through zero, but due to the time step                       procedure should be repeated to check for additional switch-
+chosen, it will not be turned off until time 2.0. This error                  ing requirements before the end of the time step. Figure 2
+in the switching time can result in the following negative                    shows the normal time steps continuing to 2.2, 3.2, etc., but
+effects:                                                                      this may not be a practical method to implement in existing
+                                                                              programs as all controls and system models would have to
+• incorrect power flow due to inaccurate firing times and                     recognize the effective time step shift in their local inte-
+  controller errors,                                                          gration scheme. A suitable alternative would be to do one
+• switching instabilities due to interactions between many                    final interpolation between 1.2 and 2.2 to return back to time
+  switching devices,                                                          2.0, which is back on the original time step. Note that the
+• the generation of non-characteristic harmonics,                             time step has not been changed (which would require the
+• errors in the overall solution.                                             time consuming task of rebuilding the entire G matrix) and
+   A smaller time step can be used to minimize these errors,                  the control system and other dynamic models are still only
+but will result in longer execution times. A multiple or                      evaluated at the regular fixed time step intervals.
+variable time step algorithm can also be applied, but requires                   Figure 3 shows the switching sequence and method used
+significant structural changes to existing programs and will                  for all studies in this paper. An additional 1/2 step inter-
+result in longer execution times.                                             polation is automatically invoked after every time step in
+   Linear interpolation can be applied to eliminate the above                 which a switching occurs. This eliminates time step to time
+problems without significantly increasing execution times or                  step numerical oscillations (chatter) in inductive node volt-
+affecting the overall structure of electromagnetic transient                  ages or in the current in capacitive loops which can result
+type programs. Figure 2 shows the same diode current but                      from the use of trapezoidal integration. Other solutions to
+with a basic interpolating switching algorithm. After the                     eliminate chatter have been to add artificial damping resist-
+main program calculates the voltages and currents at time 2.0                 ors or to take two rectangular integration time steps, known
+(but before proceeding to the next time step), all switching                  as the Critical Damping Adjustment (CDA) method [7].
+devices are polled to see if their switching criteria has been                   The 1/2 step interpolation method used here has the
+met. For example, the diode's criteria would be to switch its                 advantage that it always uses the proven and stable trapez-
+branch resistance to a high value when the current goes                       oidal integration method and requires no extra programming
+negative. Each device polled then returns a quantity X                        once a basic interpolation algorithm has been implemented.
+(where 0.0 < X < 1.0) which is the fraction of a time step                    Since chatter can also be initiated from transients other than
+when it should have switched. The minimum X value,                            switching, such as steps in voltage or current sources, a
+indicating the device to switch first, is then used to inter-                 chatter detection algorithm should also be used to observe all
+polate all system voltages and currents to this point. The                    node voltages and system currents for chatter.
+network conductance matrix (G) can then be retriangularized                      This interpolation method is nearly transparent to all other
+normally to implement the switching, using a Gaussian type                    controls and system models and can thus be implemented in
+solution method.                                                              existing programs without major compatibility problems. An
+   In the example, X = 0.2, and the voltages and currents are                 enhancement of the method described above which allows
+given by:                                                                     instantaneous transitions due to switching operations as
+                                                                              opposed to transitions which occur over one time step, is
+  v(1.2) = v(1.0) + 0.2(v(2.0) - v(1.0)) and                                  presently being tested.
+  i(1.2) = i(1.0) -t- 0.2(i(2.0) - i(1.0))
+Or, in general form:                                                          III. Examplewbasic forced commutation
+                                                                              circuit
+  v(T-    2kt + X A t ) = v ( T - A t ) + X ( v ( T ) - v ( T - A t ) ) and
+                                                                              The simple circuit in Figure 4 is the basis of many power
+  i(T-    z~t + Xz~t) = i ( T - z~t) + X ( i ( T ) - i ( T - A t ) )
+                                                                              electronic and FACTS devices which employ a Gate
+
+
+
+
+                                                                                                              4    6   3     5    7
+   ¢0
+   (D
+      0                                            I     •      I •              ~0
+                         1.o,        x            20 ,        3.0,               "~                1"01!2" ,,~!7 2T02::2    2.7 3.0
+                               112       %       , 2.2          312
+   ¢)
+                                              " %'           Time Step                                           ',m~        Time Step
+
+Figure 2. Simulated diode switching off at a current                          Figure 3. Diode switching off at a current zero with
+z e r o - - w i t h interpolation                                             interpolation and chatter removal
+                                          Linear interpolation within digital simulation: R Kuffel et al.                                                      223
+
+                              GTO                    VL                                 numerical chatter, and the diode must turn on almost
+                                                                                        immediately after the GTO turns off.
+                                                                                          Each figure has three plots:
+
+     1.0 f ~ l                          L 0.1 H      L              Diode               (1) with chatter removal and with interpolation
+                                                                                        (2) with chatter removal, but without interpolation and
+                                                                                        (3) without chatter removal and without interpolation.
+
+             _-                                      _L                                    When both chatter removal and interpolation techniques
+                                                                                        are used, the waveforms are as expected. Note that the dc
+                                                                                        offset in the inductor current (IL) in Figure 6 is maintained.
+Figure 4. Basis of f o r c e d c o m m u t a t i o n             in i n d u c t i v e      When only a chatter removal technique is employed, but
+circuits                                                                                interpolation is not used, the results seem realistic, except
+                                                                                        that VL shows a large negative voltage spike (approximately
+Turn-Off device (GTO) and a free-wheeling diode. Note that                              -4,000kV) when the GTO first turns off because the
+the inductor could be the reactance of a transformer.                                   inductor is open-circuit for one time step. Note that the
+   Figure 5 shows the simulated inductor voltage (VL) when                              inductor current also falls to 0 instead of maintaining the dc
+the GTO is turned on and off at 100 Hz, and Figure 6 shows                              offset. If interpolation was used, the diode would conduct
+the inductor currents (IL)The simulation time step is 50 gS                             when the voltage crosses 0, and the voltage would remain at
+and snubber circuits are not used across either the GTO or the                          0. Reducing the simulation time step would have little effect
+diode.                                                                                  in this case, but adding artificially large snubber circuits to
+   When the GTO interrupts the inductor current (IL), a large                           provide an alternate path for the inductor current would
+voltage spike is created due to the L di/dt effect. However,                            improve the results slightly.
+the diode across the inductor should conduct almost                                        Without chatter removal or interpolation, the results show
+immediately so that the current can circulate in the diode-                             severe numerical oscillations initiated by the use of trape-
+inductor loop.                                                                          zoidal integration at an inductive node. The voltage in the
+   This circuit is challenging for simulation using digital
+
+
+
+
+                       ~ /L
+                                                                                        third graph of Figure 5 oscillates from approximately 15,000
+EMT techniques, because VL is an inductive node subject to                              to -15,000kV. The oscillation is driven by the chatter
+
+                            I __m With Chatter Removal,                                                                      With Chatter Removal,
+                                          With Interpolation                                                                 With Interpolation
+                                                                                                   10-
+            200
+            1 O0
+                                    I
+                                                                                                     5    -
+                                                                                                                                      /
+      >
+                  0                                                                           <v              /
+                                 

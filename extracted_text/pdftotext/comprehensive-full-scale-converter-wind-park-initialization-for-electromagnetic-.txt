@@ -1,0 +1,192 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 3, JUNE 2025                                                                                               1459
+
+
+
+
+      Comprehensive Full-Scale Converter Wind Park
+    Initialization for Electromagnetic Transient Studies
+      Juan Antonio Ocampo-Wilches , Member, IEEE, Jean Mahseredjian , Life Fellow, IEEE, Keijo Jacobs ,
+                Ahda G. Pavani , Senior Member, IEEE, and Haoyan Xue , Senior Member, IEEE
+
+
+   Abstract—This paper proposes a comprehensive method for                            However, the initialization can be challenging for power elec-
+initializing the electromagnetic transient models of full-scale con-               tronic grid components with complex control systems, such as
+verter wind parks. The method uses the ac load-flow solution                       WPs. Incorrect initial conditions can lead to erroneous steady-
+to initialize the mechanical model, the electrical components, the
+machine, the converter and the control systems. The effectiveness                  state operation modes, delays in achieving the desired steady-
+of the method is demonstrated through EMT simulations of three                     state operating point, improper activation of protection devices,
+different power system benchmarks: an aggregated WP connected                      and sometimes, saturation or lasting oscillations before reaching
+to a small transmission grid, a detailed WP model with wind                        the desired operating point [11].
+turbines connected to a small transmission grid, and a large-scale                    The comprehensive initialization of the full-scale converter
+transmission grid with ten different aggregated WPs. The results
+show that the proposed method reduces computing times required                     (FSC) WP EMT model has not been thoroughly addressed in
+to reach steady-state and consequently accelerates overall simula-                 previous studies. The steady-state conditions for the converter
+tions.                                                                             control system, the mechanical and electrical machine models
+   Index Terms—Initialization, full-size converter, wind park,
+                                                                                   cannot be derived directly from the load-flow solution, and
+large-scale power system, steady-state, electromagnetic transients.                additional computations are necessary. Most methods in the
+                                                                                   literature do not account for practical and realistic WP systems,
+                                                                                   including detailed converter and wind park controllers (WPC).
+                            I. INTRODUCTION                                           In [12], a WT initialization method is proposed for electro-
+      ECENTLY, power system oscillations originating from                          mechanical stability simulations. However, the presented tech-
+R     the interaction of wind parks (WPs) with other system
+components, have compromised the stable operation of trans-
+                                                                                   nique does not consider the converter model, filters, wind park
+                                                                                   control or external components. Besides, the initialization of the
+mission grids [1]. The growing number of WPs connected to                          generator is described based on the model equations. However,
+power systems necessitates fast and accurate electromagnetic                       complete access to the variables of the generator is not always
+transient (EMT-type) simulation models to ensure their safe                        given.
+and reliable operation [2]. There are ongoing efforts to develop                      The initialization methods for DFIG-based WP models pre-
+generic, non-proprietary, EMT-type models for WPs, that can                        sented in [13] and [14] are based on the analytical solution of
+capture all performance aspects as detailed as manufacturer-                       a set of equations, including the induction machine, turbine,
+specific models [3], [4].                                                          and converter equations. The initialization proposed in [15]
+   The initial conditions of most grid component models can                        uses the load-flow solution with an iterative method to compute
+be derived from the load-flow (LF) solution [5], [6], [7]. The                     the steady-state values. However, these methods do not address
+EMT models can be used to directly provide a multiphase and                        essential constraints imposed by realistic WP systems and com-
+unbalanced load-flow solution [8], [9], and techniques such as                     mercial EMT-simulation software, as they do not include the
+the modified-augmented nodal analysis (MANA) have proven to                        initialization of control systems, converters, and the wind park
+be generic and efficient multiphase load-flow solution methods                     controller (WPC). Thus, the existing initialization methods for
+for such applications [9], [10].                                                   DFIG WP systems do not offer solutions that can be adapted to
+                                                                                   FSC WP systems.
+   Received 16 July 2024; revised 27 December 2024; accepted 9 March                  For PV parks, an initialization technique based on a chain ma-
+2025. Date of publication 3 April 2025; date of current version 19 May             trix is proposed in [16]. The method is not directly applicable or
+2025. Paper no. TPWRD-01168-2024. (Corresponding author: Juan Antonio              compatible with typical solutions employed in EMT-simulation
+Ocampo-Wilches.)
+   Juan Antonio Ocampo-Wilches, Jean Mahseredjian, Keijo Jacobs, and               tools, since a secondary iterative method will be required to
+Haoyan Xue are with the Department of Electrical Engineering, Polytechnique        calculate the equivalent model at the point of interconnection
+Montreal, Montreal, QC H3T1J4, Canada (e-mail: juan-antonio.ocampo-wilche          (POI) increasing the computing time. In [17], a procedure to
+s@polymtl.ca; jean.mahseredjian@polymtl.ca; keijo.jacobs@polymtl.ca; haoy
+an.xue@polymtl.ca).                                                                compute the steady-state solution for portions of the electric
+   Ahda G. Pavani is with the Federal University of ABC (UFABC), Santo André       circuit and the control system of PV systems is presented.
+09280-560, Brazil (e-mail: ahda.pavani@ufabc.edu.br).                              This paper, however, does not provide details on the converter
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3551546.                                        initialization. Furthermore, it does not consider unbalanced LF
+   Digital Object Identifier 10.1109/TPWRD.2025.3551546                            considerations, and it requires different implementations for
+
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:11:12 UTC from IEEE Xplore. Restrictions apply.
+1460                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 3, JUNE 2025
+
+
+
+each outer control mode, i.e., it is not generic. In [18], a backward
+propagation method that calculates the internal parameters of the
+controllers based on the POI parameters for the initialization of
+a modular multilevel converter (MMC) is proposed. However,
+additional work is required to apply the method to WPs.
+   An existing initialization solution used for FSC-WP is the
+LF and source initialization (LFSI) [19]. In this technique, the
+WP is disconnected from the power grid that is temporarily
+connected to an ideal voltage source during the initialization.
+Critical control systems, such as the PLL and the grid-side
+controller, are initialized by a backward propagation method
+based on the method proposed in [18] for initializing MMC.
+The LFSI solution is practical and effective in allowing WP
+initialization without inducing large transients to the power grid.
+Besides, it does not need to access the internal variables of the
+electrical machine model, which may not be available in models                  Fig. 1.     FSC WP model (frame transformations of signals are omitted).
+provided by commercial software. However, the initialization
+of the converter and the electrical machine requires several
+time-points in time-domain simulation to achieve steady-state.
+Consequently, the initialization technique has room for improve-
+ment, particularly regarding the converter initialization.
+   In this paper, a novel comprehensive initialization method,
+called the Full Control Initialization (FCI) method, is proposed
+for FSC WPs. This method is designed for a generic FSC
+WP EMT-model. It encompasses the WPC, the wind turbine                          Fig. 2.     Wind Park initialization procedure.
+controller (WTC), the machine, the mechanical model, and
+various electrical components such as the collector grid, filter,
+and converter. The approach utilizes backward propagation to                        r inner and outer control of MSC and GSC,
+initialize the controllers. Furthermore, a unique technique is em-                  r central WPC.
+ployed for the converters and permanent-magnet synchronous                         The WPC is responsible for reactive power output regulation
+machine (PMSM). In addition, to its suitability for generic                     at the POI. It can be configured in either voltage- (V), reactive
+models, the proposed method is easily adaptable for various                     power- (Q), power factor- (PF) or Q-V curve control, depending
+EMT-type simulation tools, as it does not require access to                     on the requirements of the grid [23], [24]. The requirement will
+internal variables of the electrical machine model. The proposed                result in a reference of reactive power (Q P OI ) for the WPC,
+technique is compared to the existing LFSI method through EMT                   which is used to provide a reference for voltage (v  ) for the WTC.
+simulation of three power system models with varying WPs,                       The voltage and the frequency are monitored by the WPC using
+detail and scale.                                                               a phase-locked loop (PLL).
+   This paper is organized as follows. Section II explains the WP                  The WTC, consisting of outer and inner control for the MSC
+model configuration and control system. Section III is allocated                and the GSC, is implemented as vector control. The MSC con-
+to presenting the LFSI and the proposed initialization methods.                 trols the PMSM speed to reduce mechanical wear and controls
+Finally, Section IV compares the performance of the proposed                    the active power depending on the wind speed. The GSC control
+method with the currently available method LFSI.                                q-frame handles the reactive power or grid voltage [3], and the
+                                                                                d-frame maintains the dc-link voltage.
+       II. FULL-SCALE CONVERTER WIND PARK MODEL
+                                                                                                     III. WIND PARK INITIALIZATION
+   The generic EMT-model of FSC WP [3], depicted in Fig. 1,
+                                                                                   The initialization can be divided into three stages, as presented
+is adopted as a reference in this paper. It uses an aggregated
+                                                                                in Fig. 2.
+representation, i.e., all WTs in the park are considered by one
+single model, and the filters and the collector grid are averaged               Stage I performs the LF solution, determining the steady-state
+and scaled to fit the WP rating. The model consists of the                        operating condition of the grid and the WP. The LF results
+   r mechanical model of the wind turbine                                         provide the required phasors everywhere in the studied sys-
+   r PMSM                                                                         tem. The WPs and other active sources are modeled as LF
+   r ac-dc-ac converter, consisting of the machine-side con-                      constraints.
+     verter (MSC) and the grid-side converter (GSC) using the                   Stage II uses the results from the LF solution to perform a
+     average-value model (AVM),                                                   steady-state solution where the LF constraints are replaced
+   r filter and the collector grid [20], [21] and                                 by lumped models. The WPs are modeled as ideal voltage
+   r pitch control, described in [22], [23],                                      sources and some other sources (synchronous machines, for
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:11:12 UTC from IEEE Xplore. Restrictions apply.
+OCAMPO-WILCHES et al.: COMPREHENSIVE FULL-SCALE CONVERTER WIND PARK INITIALIZATION                                                                     1461
+
+
+
+  example) are given their equivalent steady-state models. At
+  this stage all passive components are initialized. The control
+  systems are initialized according to required steady-state con-
+  ditions. Initialization is performed by setting all history terms
+  in models for their following time-domain equivalents.
+Stage III performs the time-domain simulation to achieve the
+  system’s steady-state response as soon as possible. The com-
+  puted steady-state voltage and power values are used to de-                   Fig. 3.   LF and source initialization for the LFSI technique.
+  termine the converter currents in different axes (dq decompo-
+  sition), which are then used for initializing the WP controls.
+
+   In both initialization methods presented in this paper, all initial
+values are derived from an LF solution. As the LF method is not
+the subject of this work, further details can be found in [9] and
+[10]. The LF solution provides the voltage, active and reactive
+powers at POI without the internal components of the wind                       Fig. 4. Control diagram of WPC and WTC, including initialization with
+                                                                                history term Hv .
+park model that are disconnected from the system before the
+time-domain simulation, which enables to compute the converter
+currents in the different axes. Then, these values are used for the             zero [12]. The history terms are initialized as further described
+initialization of controls.                                                     in subsections 1 to 4.
+   The challenge in initializing controllers arises from the time                  In Stage III, as it is not possible to impose a current value on
+the integrators require to reach a steady-state value, which is                 the internal variables of the PMSM model, the PMSM rotor is
+at least a period. However, this usually requires significantly                 initialized via an auxiliary PI controller loop, as shown in Fig. 3.
+more time in practice since erroneous initial conditions (setting               The initial torque, Tinit , applied to the generator is calculated
+initial integrator values to zero, for example) immediately affect              from an initial nominal speed, ωinit based on the characteristics
+MSC and GSC. Therefore, even if electrical components are                       of the WT parameters and the wind speed, as explained in [25].
+initialized correctly, the control action will deviate from the LF              The auxiliary PI controller is active for the predefined time,
+initialization values. The integrators should be initialized at their           t < tinit1 , and at tinit1 the mechanical system is connected to
+steady-state values to avoid this condition. The initial value for              the PMSM rotor. This procedure minimizes the transients due
+the integrator is called history term H, and can be calculated                  to the mechanical system’s connection to the PMSM.
+using the backward propagation method [18].                                        The last step for this method is the WP reconnection to the
+   Another challenge is the initialization of the mechanical sys-               power system at tinit2 by switching from the ideal voltage
+tem and the PMSM. As the internal variables of PMSM models                      source. At this point, the variables are closer to the steady-state
+and other machine models available in EMT-type simulation                       values, and minimum transients are observed due to the recon-
+tools are inaccessible, their initialization requires a time-domain             nection. The delays tinit1 and tinit2 are typically defined as
+initialization stage.                                                           300 ms and 400 ms, respectively. It is important to note that the
+   Two methods are described below. The first method is named                   GSC and the PLL control systems are initialized in Stage II of
+LFSI, and is currently used to initialize FSC WPs in EMTP                       Fig. 2, as described below.
+[5]. It is important to emphasize that although the LFSI method                    1) WPC Initialization: The WPC primary purpose is to con-
+has never been described before in detail and constitutes also                  trol the WP reactive power. This control is performed by a PI
+a contribution in this paper. The FCI method is the main new                    controller, which provides the reference voltage variation Δv  of
+contribution in this paper, as explained below.                                 the q-frame GSC component to the outer control layer of the WT.
+                                                                                The WPC controller configuration and its WTC connection are
+                                                                                presented in Fig. 4. In steady-state condition, the output signal
+A. LF and Source Initialization (LFSI)
+                                                                                from the proportional term is zero, and a history term should
+   In the LFSI method [19], during the initialization, the WP is                be included in the integrator of the PI-controller. The history
+disconnected from the power grid and temporarily connected to                   term is calculated using backward propagation from the WTC
+an ideal voltage source for a time tinit2 , with magnitude and                  outer control. First, the output of the WPC PI regulator (Δv  ) is
+angle values found from the LF solution. The general scheme                     calculated by:
+for the LFSI is presented in Fig. 3. The voltage source connected                                             
+                

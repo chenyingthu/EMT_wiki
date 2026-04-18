@@ -1,0 +1,27 @@
+**A Systematic Approach to the Evaluation of the Influence of Multilayered Earth on Overhead Power Transmission Lines**
+Grigoris K. Papagiannis, Member, IEEE, Dimitrios A. Tsiamitros, Dimitris P. Labridis, Senior Member, IEEE, and Petros S. Dokopoulos, Member, IEEE
+
+*Manuscript received May 5, 2004; revised November 11, 2004. Paper no. TPWRD-00214-2004.*
+*The authors are with the Power Systems Laboratory, Department of Electrical and Computer Engineering, Aristotle University of Thessaloniki, GR-54124 Thessaloniki, Greece (e-mail: grigoris@eng.auth.gr).*
+*Digital Object Identifier 10.1109/TPWRD.2005.855448*
+
+**Abstract**—The influence of earth stratification on overhead power transmission line impedances is investigated in this paper. A systematic comparison of existing approaches is done, while results are also obtained using a finite-element method formulation. A novel numerical integration technique is proposed for the calculation of the infinite integrals involved. Typical single- and double-circuit line configurations are examined for a combination of layer depths and earth resistivities over a wide frequency range. The influence of the layer depth is also investigated. Results show significant differences from those, corresponding to the case of homogeneous earth. Using the multilayered earth return impedances in transient simulations, the transient responses show that differences occur mainly in cases of asymmetrical faults, justifying the need for a detailed earth model implementation.
+
+**Index Terms**—Electromagnetic transient analysis, finite element method, nonhomogeneous earth, power transmission lines.
+
+Fig. 1. Two conductors over a three-layer earth.
+
+## I. INTRODUCTION
+In transient simulations, detailed transmission line modeling is required. Transmission line modeling is strongly influenced by the presence of the resistive earth return path, which is included in transmission line impedances through proper correction terms. The latter are calculated using the widely accepted Carson’s formulas [1] developed for the case of semi-infinite, homogeneous earth.
+
+In practice, earth is composed of several layers of different electromagnetic properties. Wise and Sunde [9] developed new formulas for the two-layer earth case under certain simplifications. In 1966, Wedepohl and Wasley [2] calculated the line impedances for a two-layer earth model using a double complex Fourier transform. In 1973, Nakagawa [3] proposed a more rigorous and general solution for the multilayer earth case, allowing the relative permittivity and permeability of each layer to be different from unity. Nakagawa’s earth model is implemented in the electromagnetic transients program (EMTP) [11]. Finally, Moghram [4] extended in 1998 the solution of [2] for the case of a three-layer earth.
+
+The finite element method (FEM) is a numerical method widely used for the solution of the electromagnetic field equations in a region, regardless of the geometric complexity. In a recently proposed method by some of the authors [5], the electromagnetic field variables have been calculated using the FEM and properly linked with the transmission line equivalent circuit parameters. The new method is capable of handling cases of terrain surface irregularities and nonhomogeneous, stratified soil, where most classical methods usually fail.
+
+This paper presents a generalized methodology capable of handling all different approaches for the overhead transmission line impedance calculation, in cases where earth is considered to be multilayered. Instead of using infinite series approximations for the evaluation of the infinite integrals, a direct numerical integration scheme is adopted. The new method is applied to typical single- and double-circuit overhead transmission line configurations for varying soil parameters and over a wide frequency range. The obtained results show significant differences when checked against those obtained by Carson’s formulas under the assumption of homogeneous earth. The validity of the results is justified using a suitable FEM formulation for the multilayered earth case. Finally the new impedances are used in typical transient simulations in order to evaluate the influence of the earth stratification on the actual voltages and currents. The resulting differences reveal that earth stratification must be taken into account in the transmission line models, when zero sequence components may occur.
+
+## II. PROBLEM FORMULATION
+In the general case of a two conductors arrangement of Fig. 1, earth is assumed to consist of three layers. The distances of the two conductors from the earth surface are and respectively, while their horizontal distance is . The first earth layer is assumed to have a depth from the earth surface and permeability , permittivity and conductivity . The second layer has a thickness of and its electromagnetic characteristics are , and respectively. The third layer is assumed to be of infinite extent, starting at a depth of , with the corresponding
+
+- A sinusoidal current excitation of arbitrary magnitude is applied sequentially to each conductor, while the remaining conductors are forced to carry zero currents. The corresponding voltages are recorded.
+- Using (3), the self and mutual impedances of the conductors are calculated.

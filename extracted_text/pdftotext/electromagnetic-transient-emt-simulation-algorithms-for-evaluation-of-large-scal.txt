@@ -1,0 +1,180 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 5, SEPTEMBER 2023                                                                                       4069
+
+
+
+
+      Electromagnetic Transient (EMT) Simulation
+    Algorithms for Evaluation of Large-Scale Extreme
+         Fast Charging Systems (T&D Models)
+                          Suman Debnath , Senior Member, IEEE, and Jongchan Choi , Member, IEEE
+
+
+   Abstract—Simulation of high-fidelity models of extreme fast                        power rating as the transition happens from the traditional L1/L2
+charging (XFC) systems and large-area power grids with many                           chargers (in range of 10s kW) to extreme fast chargers (XFCs)
+XFCs can be time consuming in traditional simulators. Traditional                     that can charge electric vehicles (EVs) within 10 minutes. The
+simulators use a single method of discretization for all the com-
+ponents that results in imposing a large computational burden of                      typical range of the XFCs can be 400 kW or higher (e.g., 1 MW).
+inverting a large matrix as well as increased computations related                    The higher power range is needed to be delivered to medium or
+to single method of discretization (that is typically a trapezoidal                   heavy duty EVs to charge the batteries in less than 30 minutes [1].
+method). To overcome the problem of simulating large-area power                          With greater penetration of power electronics based resources
+grids with many XFCs, in this paper, advanced numerical simula-
+                                                                                      in the grid, it is anticipated that high-fidelity electromagnetic
+tion algorithms are applied for the first time together to reduce the
+dimension of matrix inversion. The algorithms include numerical                       transient (EMT) dynamic models of the power grid will be nec-
+stiffness-based segregation, time constant-based segregation, clus-                   essary. This requirement has been raised by the analyses of recent
+tering and aggregation on differential algebraic equations (DAEs),                    events in California [2], [3], [4]. The recent events (unbalanced
+and multi-order integration approaches. These algorithms apply                        faults on the power grid during fire incidents) in California led
+multiple discretization algorithms rather than a single discretiza-
+                                                                                      to utility-scale photovoltaic (PV) plants, and distributed energy
+tion algorithm that further reduces the computational burden. The
+approaches mentioned here have resulted in speed-up of up to 18x                      resources (DERs) in some cases like in [4], to disconnect from
+in the simulation of a single distribution system with 15 XFCs and of                 the power grid. The latter case of DERs disconnecting from the
+up to 271x in the simulation of a transmission-distribution system                    grid highlighted the need for detailed transmission-distribution
+with 300 XFCs in multiple distribution feeders with respect to                        grid models. As XFCs are integrated into the grid, high-fidelity
+conventional simulators (like power systems computer aided design
+                                                                                      EMT dynamic models of transmission-distribution grids with
+[PSCAD]).
+                                                                                      XFCs are needed. This includes use of switched system models
+   Index Terms—Electromagnetic transient simulation, EMT,                             to represent power electronics to capture the high-frequency
+electric vehicle chargers, EV chargers, extreme fast charging, XFC,                   transients observed during these faults. The high-frequency
+transmission-distribution grids.
+                                                                                      transients have led to disconnections. However, the simulation
+                                                                                      of such models is extremely time consuming. For example,
+                             I. INTRODUCTION                                          the simulation of a small portion of the power grid in Electric
+     HE trend towards increased electrification of transporta-                        Reliability Council of Texas (ERCOT) or in Australian Energy
+T    tion is expected to impose increased power electronics-
+based loads on the power grid. These loads are increasing in
+                                                                                      Market Operator (AEMO) regions have required 2 − 3 hours [5],
+                                                                                      [6], [7]. This compares to the order of half hour needed to
+                                                                                      simulate much larger grids like Western Interconnection (WI)
+   Manuscript received 20 September 2021; revised 1 February 2022, 3 May              grid in transient stability simulators. This deficiency highlights
+2022, and 4 August 2022; accepted 4 September 2022. Date of publication 10            the need for advanced simulation algorithms in EMT simulators
+October 2022; date of current version 21 August 2023. This work was supported
+by the Laboratory Directed Research and Development Program of Oak Ridge              to speed-up simulations, while preserving the accuracy of sim-
+National Laboratory, managed by UT-Battelle, LLC, with the U.S. Department            ulations. The deficiencies in existing simulators to study future
+of Energy, under Contract DE-AC05-00OR22725. This manuscript has been                 power grids with high-penetration of power electronics have
+authored by UT-Battelle, LLC under Contract No. DE-AC05-00OR22725 with
+the U.S. Department of Energy. The United States Government retains and the           also been discussed in detail in [7]. Some of the deficiencies
+publisher, by accepting the article for publication, acknowledges that the United     include the homogeneous use of numerical simulation algo-
+States Government retains a non-exclusive, paidup, irrevocable, world-wide            rithms in the entire system being simulated. The homogeneous
+license to publish or reproduce the published form of this manuscript, or allow
+others to do so, for United States Government purposes. The Department of En-         use of numerical simulation algorithms includes the use of one
+ergy will provide public access to these results of federally sponsored research in   discretization algorithm (like the trapezoidal method) for the
+accordance with the DOE Public Access Plan (http://energy.gov/downloads/doe-          entire system, the inversion of single matrix upon discretization
+public-access-plan). Paper no. TPWRS-01502-2021. (Corresponding author:
+Suman Debnath.)                                                                       for the entire system, among others. The increased presence
+   The authors are with the Oak Ridge National Laboratory, Knoxville, TN              of power electronics in the power grid and the correspond-
+37932 USA (e-mail: suman2k42000@gmail.com; choij1@ornl.gov).                          ing unique characteristics like switched system (present in
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3212639.                                           power electronics) has not been considered while designing
+   Digital Object Identifier 10.1109/TPWRS.2022.3212639                               the existing simulators. The deficiencies indicate the need for
+                          0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                        See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:04:46 UTC from IEEE Xplore. Restrictions apply.
+4070                                                                             IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 5, SEPTEMBER 2023
+
+
+
+significant research in improving the simulation algorithms                       II. SCENARIOS DESCRIPTION AND SYSTEM CONFIGURATION
+(including numerical simulation algorithms) used in EMT
+                                                                                   The circuit architectures of XFC systems, multiple XFC sta-
+simulators.                                                                     tions in distribution grid, and multiple XFC stations in multiple
+   There have been a few research in use of high-performance
+                                                                                distribution grids that are connected to different buses in the
+computing (HPC) algorithms to speed-up EMT simulations
+                                                                                transmission grid are explained in this section.
+using increased computing resources [8], [9]. There have also
+been several numerical simulation algorithms researched upon
+to speed-up EMT simulations. These methods can increase                         A. XFC System Description
+the speed of simulation and scale the size of the system that                      The XFC system considered in this paper consists of a direct
+can be studied in simulations without needing HPC resources.                    current (dc)-dc boost converter that connects to the alternating
+Additional speed-up and scalability of EMT simulations will                     current (ac) grid through a two-level three-phase inverter, and
+need incorporation of numerical simulation algorithms with                      a filter. The control system in XFC station consists of a dc-
+HPC techniques. Some of the numerical simulation algorithms                     dc converter that controls the active power flow and a dc-ac
+include numerical stiffness-based hybrid discretization [10] that               inverter that controls dc-link voltage and reactive power sent to
+has been applied to several power electronics resources as well as              ac grid. There is an additional inner loop in the dc-ac inverter
+in power electronics-based grid studies [11], Kron’s reduction of               that performs the dq current control. The XFC system is shown
+linear equations [12] that has been applied to transient stability              in Fig. 1.
+(TS) analysis of power grids [13] as well as to microgrids [12],
+variants of Kron’s reduction like nested fast and simultaneous
+                                                                                B. Multiple XFC Systems in an XFC Station
+simulation [14] that has been applied to power electronics re-
+sources [15] and in power electronics-based grid studies [14],                     Each individual XFC station may comprise of multiple XFC
+low-rank approximation based network solver [16], among oth-                    systems. The number of XFC systems connected through a
+ers. Some of the algorithms like in [14], [12], [13], and [16]                  single transformer are 3, which can be increased to the number
+are more applicable to nodal method of solving power system                     that may be present in a charging station. The XFC station’s
+dynamics that result in linear equations. The other algorithms                  configuration is shown in Fig. 2.
+like the one presented in [15] and [10] are not optimized for
+simulation of both power electronics and power grids in larger                  C. Distribution Grid With Multiple XFC Stations
+system studies. These methods are not directly applicable to
+                                                                                   An example case-study with 5 XFC stations is considered in
+power grids with power electronics present in them. In this
+                                                                                this paper. The XFC stations are connected through 5 different
+paper, the state-space approach is taken to solving power system
+                                                                                distribution feeders to the transmission grid. The overview of
+dynamics to enable application of different types and orders of
+                                                                                the distribution grid with the XFC stations is shown in Fig. 3. In
+solvers that can reduce the computational burden (as compared
+                                                                                this case-study, there is a total of 15 XFC systems.
+to use of single order and type of discretization used in previous
+papers). This approach is more suitable for studying power grids
+with power electronics and can further speed-up the simulation.                 D. Scenario: Transmission Grid - Multiple Distribution Grids
+Moreover, based on existing literature surveyed, it appears there               With Multiple XFC Stations
+are no large-scale XFC systems’ models that have been devel-                       IEEE 9-bus test system was utilized to develop the high-
+oped.                                                                           fidelity models of a transmission and distribution system for
+   The contribution of this paper are discussed briefly. In this pa-            the simulation in this paper. IEEE 9-bus system is a transmis-
+per, the detailed high-fidelity EMT dynamic models of individ-                  sion system consisting of three generators, three transformers,
+ual XFC system and multiple XFC stations in distribution grid                   three constant PQ loads (approximately 100 MW each), and six
+are developed, and multiple XFC stations in multiple distribution               transmission lines. To structure a transmission and distribution
+grids that are connected to different buses in a small transmission             system, the three PQ loads in the 9-bus system were replaced
+grid are developed. Advanced numerical simulation algorithms                    with 20 distribution grids that include 5 XFC stations (15 XFC
+like numerical stiffness-based hybrid discretization [10], time                 systems) in each. The nominal voltage of the transmission and
+constant-based segregation, clustering and aggregation on dif-                  distribution system is 230 kV and 34.5 kV, respectively. This
+ferential algebraic equations (DAEs), and multi-order integra-                  system is shown in Fig. 4. Similarly, an additional scenario with
+tion approaches are applied to these models together for the first              IEEE 118-bus test system is considered with some of the PQ
+time. These algorithms and the locations of their application                   loads replaced with XFC systems. A total of 10 distribution
+are explained in this paper. While the first three algorithms                   grids that include 5 XFC stations (15 XFC systems) in each are
+split the matrix that needs to be inverted from a large matrix                  considered in the upgraded IEEE 118-bus test system.
+to much smaller matrices, the multi-order algorithm reduces
+the computational burden of applying higher-order integration
+approaches in the complete system. The stability analysis of                                                III. EMT MODELS
+the partitioning approach to apply each type of algorithm is                      The EMT dynamic models of individual components and
+evaluated to provide an understanding of boundary definitions                   systems are briefly described in this section. The models are
+and advantages or limitations of the proposed algorithms.                       represented by DAEs.
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:04:46 UTC from IEEE Xplore. Restrictions apply.
+DEBNATH AND CHOI: ELECTROMAGNETIC TRANSIENT (EMT) SIMULATION ALGORITHMS FOR EVALUATION                                                                                 4071
+
+
+
+
+Fig. 1.   XFC system.
+
+
+                                                                                   A. Model: XFC System
+                                                                                     The dynamics of the k th XFC system are represented by the
+                                                                                   switched system model. The system is shown in Fig. 1 with the
+                                                                                   variables and constants shown in the figure. The dynamics can
+                                                                                   be modeled using DAEs as provided below.
+                                                                                               k                                                                   k
+                                                                                             dvc,ess                    1       1              k                   Vess
+                                                                                      Cess           =−                     +                 vc,ess − ikL,ess +        ,
+                                                                                               dt                      Ress   Ress,dc                              Ress
+                                                                                            dikL,ess                                   k              
+Fig. 2.   XFC station.                                                                 Ldc           = −RL,dc ikL,ess + vc,ess
+                                                                                                                           k       k
+                                                                                                                               − vdc                 k
+                                                                                                                                       S2,dc 1 − S1,dc
+                                                                                              dt                                              
+                                                                                                                k              k
+                                                                                                      + 1 − S2,dc       1 − S1,dc   sgn(ikL,ess ) ,
+                                                                                              dv k        vk             k               
+                                                                                           Cdc dc = − dc + ikL,ess S2,dc               k
+                                                                                                                                 1 − S1,dc
+                                                                                                dt       R
+                                                                                                         dc k               k
+                                                                                                                                                 
+                                                                                                      + 1 − S2,dc 1 − S1,dc         sgn(ikL,ess )
+                                                                                                               k     

@@ -1,0 +1,200 @@
+1396                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 3, JULY 2009
+
+
+
+
+          Fast Realization of the Modal Vector Fitting
+          Method for Rational Modeling With Accurate
+              Representation of Small Eigenvalues
+                                       Bjørn Gustavsen, Senior Member, IEEE, and Christoph Heitz
+
+
+
+
+   Abstract—Admittance-based rational modeling of multiport                          The extracted model can be subjected to passivity enforcement
+systems is prone to error magnification in applications with                         (perturbation) in order to guarantee a stable time domain simu-
+high-impedance terminations. This problem is overcome by the
+                                                                                     lation [8]–[11].
+modal vector fitting method (MVF) which is formulated in terms
+of modal components with inverse least-squares weighting by                             Multiport systems are often modeled by (rational)
+the eigenvalue magnitude. A direct realization of MVF is very                        pole-residue models, starting from an admittance based
+demanding in computation time and memory requirements. This                          description in the frequency domain. In power systems, the
+paper overcomes the performance deficiency via three steps: 1) the                   admittance matrix         of components and systems is often
+required number of MVF iterations is reduced by precalculating
+an improved initial pole set via conventional vector fitting with                    characterized by a large ratio between the largest and smallest
+inverse magnitude weighting; 2) the pole identification step is cal-                 eigenvalue. For instance,      of a transmission line has at low
+culated in an efficient manner by solving for only the few essential                 frequencies large eigenvalues that correspond to short circuit
+unknowns while exploiting the sparse matrix structure; and 3) the                    currents and small eigenvalues that correspond to charging cur-
+residue identification step is calculated efficiently by a row-wise
+solution procedure that takes advantage of symmetry. The ap-
+                                                                                     rents. Direct fitting of the matrix elements will often produce
+proach is demonstrated to give large savings for the modeling of a                   a model where the smallest eigenvalues of         are inaccurately
+frequency-dependent network equivalent.                                              represented, thereby leading to inaccurate model behavior
+   Index Terms—Electromagnetic transients, frequency-dependent                       when applied with high-impedance terminations [6]. For the
+network equivalent (FDNE), network equivalent, pole-residue                          modeling of transmission lines, this problem was overcome in
+model, rational model, simulation, state-space model, vector                         [12] by the Folded Line Equivalent (FLE) which decomposes
+fitting.                                                                             the admittance matrix into two parts that represent short circuit
+                                                                                     and open circuit conditions. Unfortunately, this approach is not
+                                                                                     applicable to general components, for instance frequency-de-
+                             I. INTRODUCTION
+                                                                                     pendent network equivalents (FDNEs).
+                                                                                        In order to overcome this problem, the modal vector fitting
+R      ATIONAL fitting is a powerful technique for wide-band
+       modeling of linear devices and systems. The procedure
+takes into account the frequency dependent effects in a straight-
+                                                                                     (MVF) approach was introduced [6]. MVF attempts to mini-
+                                                                                     mize the error of the modal components associated with ,
+                                                                                     rather than the matrix elements. These modal components are
+forward manner, and the obtained model can be easily included
+                                                                                     explicitly introduced in the VF formulation, thereby allowing
+in general simulation tools such as EMTP, for the simulation of
+                                                                                     to fit each component with relative error control. A disadvan-
+electromagnetic transients.
+                                                                                     tage of the MVF approach is that the least squares (LS) matrix
+   The fitting process can be carried out using the pole-relo-
+                                                                                     structures associated with the steps of pole-identification and
+cating method known as vector fitting (VF) [1] with recent en-
+                                                                                     residue-identification are much less favorable than in the VF for-
+hancements [2]–[4] and extensions [5]–[7]. It is both fast and
+                                                                                     mulation. This leads to a substantial increase in the computation
+robust, and it produces a model with guaranteed stable poles.
+                                                                                     time, limiting the MVF to relatively small problems.
+                                                                                        In this paper, we show three steps which in total gives large
+   Manuscript received April 15, 2008; revised June 24, 2008. Current version        savings in computation time and memory requirements com-
+published June 24, 2009. The first author was supported by the Norwegian Re-
+search Council (PETROMAKS Programme). This work was supported in part                pared to the original implementation of MVF. The number of
+by the Compagnie Deutsch, in part by FMC Technologies, in part by Framo, in          iterations needed with MVF is reduced by computing an im-
+part by Norsk Hydro, in part by Siemens, in part by Statoil, in part by Total, and
+Vetco Gray. Paper no. TPWRD-00248-2008. Color versions of one or more of
+                                                                                     proved initial pole set via modal decomposition by a real trans-
+the figures in this paper are available online at http://ieeexplore.ieee.org.        formation matrix. The computation time for the pole identifi-
+   B. Gustavsen is with SINTEF Energy Research, Trondheim N-7465, Norway             cation step is reduced by solving for only the few parameters
+(e-mail: bjorn.gustavsen@sintef.no).
+   C. Heitz is with the Institute for Data Analysis and Process Design, Zurich       of interest. The computation time for the residue identification
+University of Applied Sciences, Winterthur CH-8401, Switzerland (e-mail:             step is reduced by decoupling the matrix rows of the LS problem
+christoph.heitz@zhaw.ch).                                                            while taking into account the symmetry of . This fast realiza-
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       tion of MVF is demonstrated for the modeling of a frequency
+   Digital Object Identifier 10.1109/TPWRD.2008.2005462                              dependent network equivalent (FDNE).
+                                                                  0885-8977/$25.00 © 2009 IEEE
+GUSTAVSEN AND HEITZ: FAST REALIZATION OF THE MODAL VECTOR FITTING METHOD FOR RATIONAL MODELING                                       1397
+
+
+
+             II. ADMITTANCE-BASED MODELING                           magnification takes place if the small eigenvalues of are in-
+                                                                     accurately represented. It is noted that in an application with
+A. Pole-Residue Formulation                                          some open terminals, zero current is applied to these terminals
+   The modeling starts from the nodal admittance matrix    ,         and so a submatrix of is effectively inverted in the simulation.
+which relates voltages and currents at the terminals (ports)         Error magnifications will take place if this submatrix has a large
+of the device or system. is a symmetric matrix of dimension          eigenvalue ratio
+       , where is the number of terminals
+
+                                                              (1)                                                                    (5)
+
+   The objective is to calculate a rational approximation (2)        D. Modal Vector Fitting
+where terms      and are possibly zero. The poles        and             In order to overcome the error magnification problem, the
+residue matrices         are either real or come in complex          modal vector fitting (MVF) [6] was introduced. This approach
+conjugate pairs.       , and are symmetrical matrices                leads to a model where the eigenvalue contributions to           are
+                                                                     fitted with a relative error criterion. That way, all eigenvalues
+                                                              (2)    are represented with good accuracy and so the matrix inversion
+                                                                     (5) can be carried out without error magnification.
+                                                                            (data) is diagonalized into its eigenvectors and eigenvalues
+                                                                     (6). Postmultiplying with the eigenvector matrix           gives for
+B. Vector Fitting                                                    each eigenpair            the modal relation (7). Dividing with the
+   The rational approximation (2) can be calculated using vari-      eigenvalue magnitude (8) results in a LS problem where each
+ants of the pole relocating vector fitting (VF) method [1]. The      modal contribution tends to be fitted with an error that is pro-
+elements of the upper (or lower) triangle of are stacked into        portional to the size of the eigenvalue
+a vector of elements,       . A common pole fitting for is ob-
+tained by solving the least squares (LS) problem (3) with a set of                                                                   (6)
+initial poles      . The equation is normalized by requiring that                                                                    (7)
+the sum of the real part of be equal to the number of sample
+points (relaxed VF [2]). After solving (3), the new poles for                                                                        (8)
+are calculated as the zeros of , which are obtained by solving
+the eigenvalue problem (4). ( is a diagonal matrix holding the          The fitting problem (8) is combined with VF (3), leading to
+initial poles, is a column of ones, and the row-vector       holds   Modal VF (MVF), (9). After solving (9) with an initial pole set,
+the residues of .) The new poles are reused as initial poles in an   a new pole set is calculated as the zeros of by (4), just like
+iterative procedure. Finally, the residues for the fitting of are    in VF. The pole relocation is repeated to convergence, and the
+calculated by solving (3a) with equal to unity, and the rational     residues for the final fitting are calculated by setting equal to
+model for is converted into the pole-residue model (2) for           unity in (9a)
+by rearrangement of terms. In the pole and residue identifica-
+tion steps, the system matrix columns are scaled to unit length
+before solving, in order to improve the numerical conditioning
+                                                                                                                                    (9a)
+                                                             (3a)
+                                                                                                                                    (9b)
+
+                                                             (3b)
+                                                                       The actual solving of (9) is considerably more time con-
+                                                                     suming than that of VF (3), since the resulting system matrix is
+                                                              (4)
+                                                                     more dense. The differences in sparsity structure results from
+                                                                     the multiplication with the vector on the right side of (9a). A
+C. Error Magnification Problem                                       solution to this problem is described in the subsequent sections.
+
+   A direct application of VF to will produce a model which
+                                                                                 III. IMPROVING THE INITIAL POLE SET
+behaves accurately when voltages are applied to the terminals.
+If, however, we apply currents to the terminals, the voltage re-        In order to reduce the number of iterations needed by MVF,
+sponse is given by the impedance matrix , i.e., the inverse of       we first calculate an improved pole set using conventional VF.
+   . If   has both large and small eigenvalues, it is likely that       The condition number of            (ratio between largest and
+the small eigenvalues are corrupted by the fitting process since     smallest singular value) is calculated by sweeping over the
+they are only weakly observable in . By carrying out the ma-         frequency band of interest. It is noted that the condition number
+trix inversion (5), it is observed that the small eigenvalues of     is a precise measure of the eigenvalue ratio since the singular
+become the large eigenvalues of . Clearly, a catastrophic error      values are equal to the square-root of the eigenvalues of       .
+1398                                                                           IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 3, JULY 2009
+
+
+
+    is diagonalized at the frequency point         where     is max-                                  TABLE I
+imum (10)                                                                                         BLOCK STRUCTURE
+
+
+                                                                 (10)
+
+   The eigenvectors are rotated so as to minimize their imag-
+inary parts in the least squares sense [13] and the imaginary
+parts are discarded. The obtained (real) transformation   is ap-
+plied to       by (11), which gives a near diagonal matrix. The
+                                                                         seen (left column) that MVF produces (large) blocks in the
+off-diagonal elements are discarded and the diagonal elements
+                                                                         left partition of size            , whereas VF produces (small)
+are stacked into a single vector
+                                                                         blocks of size         . Clearly, MVF produces many more fill-ins
+                                                                         than VF, thereby requiring more memory and longer computa-
+                                                                 (11)
+                                                                         tion time.
+   The usage of a real and constant transformation matrix in (11)
+                                                                         B. Utilization of Symmetry
+causes the elements of         to be linear combinations of the ele-
+ments of        with real coefficients. As a consequence, the ele-          In VF, the symmetry of is trivially preserved by fitting only
+ments of       contain the same poles as . At the same time,             the upper (or lower) triangle of , thus reducing the number
+gives an excellent representation of the eigenvalues of in the           of blocks in the left partition from      to              . This
+neighborhood of , i.e., where the eigenvalue ratio is largest.           leads to a further reduction in computation time and memory
+(At other frequencies, the representation of the eigenvalues of          requirements.
+    is less good but this is not critical since the eigenvalue ratio        In the original implementation of MVF [6], symmetry was
+is lower.) It follows that the poles associated with the modes of        utilized for reducing the number of free variables. Unfortu-
+    are well observable in , including the small modes. By sub-          nately, this results in a coupling between the blocks as shown
+jecting the vector        to VF with inverse magnitude weighting,        in (14). In the case of systems with many ports, this leads to a
+the elements in        tend to be fitted with an error that is propor-   highly irregular system matrix and the solving for (9) becomes
+tional to the element magnitude and so the extracted poles are           time consuming, even when using a sparse solver
+suitable for representing the modes of . Thus, application of
+VF to       is a fast way of obtaining an improved initial pole set                                                                     (14)
+for MVF, thereby reducing the required number of iterations by
+MVF. In addition, the fitting of          gives a good indication of
+the required order.                                                      C. Fast Realization
+                                                                            The block structure (13) appears also with the conventional
+                    IV. POLE IDENTIFICATION                              VF. Based on an idea in [14], it was shown [4] that the block
+                                                                         structure can be utilized for obtaining a very fast solution pro-
+A. Direct Realization                                                    cedure for the poles (fast FV). This is possible since we are only
+   To see how the equations in MVF are built, consider the case          interested in the free variables associated with , which appear
+of a 2 2       which has been fitted with a single pole-residue          in the right partition     . The application to MVF is completely
+term with zero and terms. The matrix product             in (9a)         analogous and is described in what follows.
+is rewritten as shown in (12), giving a new coefficient matrix              In the fast realization, each row-partition in (13) is initially
+where each row corresponds to the same row in (and )                     considered independently. For the first partition we have
+
+                                                                                                                                        (15)
+
+                                                              (12)
+                                                                           Applying QR-factorization                  gives
+   It follows that for each eigenpair         , the building of (9)
+leads to an equation of the form (13) where each row o

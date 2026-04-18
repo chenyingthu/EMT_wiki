@@ -1,0 +1,198 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023                                                                                        861
+
+
+
+
+        Faster-Than-Real-Time Hardware Emulation of
+        Extensive Contingencies for Dynamic Security
+        Analysis of Large-Scale Integrated AC/DC Grid
+ Shiqi Cao , Graduate Student Member, IEEE, Ning Lin , Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—The rapid expansion of modern power systems has                      (HVDC) systems, making the modeling, simulation, protection,
+brought a tremendous computational challenge to dynamic security                 and control of the network significantly more complex. The
+analysis (DSA) tools which consequently need to process extensive                increasing scale of a power system also demands that more
+contingencies. In this work, hardware emulation is investigated to
+accelerate the DSA solution of a large-scale AC/DC system deployed               contingency scenarios be taken into consideration during DSA.
+on the field-programmable gate arrays (FPGAs) faster-than-real-                  To mitigate the adverse impacts of a variety of disturbances
+time (FTRT) execution. Electromagnetic transient (EMT) model-                    on the actual power system, online DSA is widely utilized to
+ing of the DC grid is conducted since the fast converter dynamics                continuously monitor the grid and take remedial actions [1], [2].
+require a small time-step for accuracy; in contrast, the transient
+                                                                                    The contingency screening type is a major factor that in-
+stability (TS) simulation is applicable to the AC grid which tolerates
+a much larger step size. To coordinate the 2 different types of simu-            fluences the speed of DSA. A typical contingency analysis
+lation, an interface based on dynamic voltage injection is proposed              applies the power flow calculation or state estimation, which
+to integrate the AC and DC grids, in addition to maintaining a low               only provides a single-state security index for contingency rank-
+hardware latency. An emulation platform consisting of multiple                   ing [2], [3]. Due to the relatively low computational burden,
+FPGA boards is established so that with a proper allocation it has a
+                                                                                 the power-flow based contingency analysis methods are widely
+sufficient capacity to accommodate the system under study which
+has 6 ACTIVSg 500-bus systems interconnected by a 6-terminal                     utilized in high-speed DSA [4]-[6]. However, more stringent
+DC grid. The efficacy of the proposed FTRT hardware emulation                    criteria have been proposed by the North American Electric
+platform is demonstrated by 2 case studies with more than 5500                   Reliability Corporation (NERC) [7], which brings many chal-
+contingencies analyzed in total, where an FTRT ratio of more than                lenges for conducting fast contingency analysis. Since it is
+208 is achieved for the hybrid AC/DC grid, while it is over 277
+                                                                                 computational onerous to evaluate all the contingencies at a time,
+times for a single 500-bus system. Furthermore, the FTRT dynamic
+emulation results, including the security indices, are validated by              a subset is usually selected for analysis in traditional contingency
+the simulation tool DSATools/TSAT.                                               screening methods such as the performance index contingency
+                                                                                 ranking [8]. However, when a larger subset is required for the
+   Index Terms—AC/DC grid, dynamic security analysis, faster
+than real time, field-programmable gate arrays (FPGAs), parallel                 contingency analysis of a large-scale grid, it is difficult to achieve
+processing, power system security, power system stability, real-time             real-time execution. Meanwhile, the power-flow based contin-
+systems, synchronous generator.                                                  gency ranking methods fall short of provision of subsequent
+                                                                                 dynamic process after a disturbance, and are hence excluded
+                                                                                 for predictive control in an energy control center. Therefore, the
+                           I. INTRODUCTION                                       transient stability (TS) simulation is adopted for DSA purpose.
+      YNAMIC security analysis (DSA) is necessary in assess-                     It enables the representation of the dynamic characteristics of all
+D     ing the ability of a power system to withstand cascading
+failures or contingencies in a specified time span to ensure that
+                                                                                 power system components in time-domain, which is a direct and
+                                                                                 precise method attributing to the utilization of detailed dynamic
+the power grid is at a secure operating point. In the last few                   models [9]-[11].
+decades, power transmission networks have been expanding sig-                       The processing hardware is another aspect that limits the
+nificantly including the integration of high voltage direct current              performance of DSA tools, which nowadays are usually sup-
+                                                                                 ported by high-performance CPUs or multiprocessors for ef-
+                                                                                 ficient simulation or even real-time execution [12]-[14]. Al-
+   Manuscript received 14 October 2021; revised 17 January 2022; accepted 19
+March 2022. Date of publication 28 March 2022; date of current version 22
+                                                                                 though presently CPU-based commercial DSA simulators are
+December 2022. This work was supported by the Natural Sciences and Engi-         prevalent in stability analysis, the massive scale of the target
+neering Research Council of Canada (NSERC). Paper no. TPWRS-01607-2021.          power system, as well as the huge number of contingencies
+(Corresponding author: Shiqi Cao.)
+   The authors are with the Department of Electrical and Computer Engi-
+                                                                                 to be analyzed, always poses a significant challenge to the
+neering, University of Alberta, Edmonton, AB T6G 2V4, Canada (e-mail:            simulation efficiency. The utilization of the multiprocessors or
+sc5@ualberta.ca; ning3@ualberta.ca; dinavahi@ualberta.ca).                       supercomputers is a straightforward solution for real-time DSA
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3161561.
+                                                                                 due to the sufficient hardware resources and high processing
+   Digital Object Identifier 10.1109/TPWRS.2022.3161561                          frequency [15]. However, as many as 24,000 CPU cores may
+
+
+                        0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:31:03 UTC from IEEE Xplore. Restrictions apply.
+862                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+
+
+
+be needed to realize a near real-time simulation of a real power                    II. AC GRID MODEL FOR DYNAMIC SECURITY ANALYSIS
+grid containing 3,000 generators [14], which is inconvenient and
+                                                                                A. Transient Stability Problem
+expensive for commercial use. Although parallel algorithms are
+utilized for accelerating transient stability simulation [16]-[21],                The transient stability simulation for DSA is based on a set of
+the execution time will still increase along with the dimension                 differential algebraic equations (DAEs). The dynamic processes
+of the admittance matrix [22], [23].                                            of the synchronous generators in a power transmission system
+   In this work, a multi-FPGA-based DSA platform is proposed                    can be summarized as
+to provide fast and accurate contingency screening data for a
+                                                                                                            ẋ(t) = F (x, u, t),                      (1)
+large-scale AC/DC grid by faster-than-real-time (FTRT) emula-
+tion. Compared with currently available commercial real-time                                                  x0 = x(t0 ).                            (2)
+(RT) simulation tools, the FPGA-based platform has the follow-
+                                                                                The network including transmission lines, transformers, and
+ing advantages. The most straightforward difference between an
+                                                                                various loads are represented by the algebraic equation (3).
+FTRT emulation platform and RT simulators is the computation
+speed. RT simulation implies that the hardware must solve the                                                 G(x, u, t) = 0,                         (3)
+model equations within an interval of the time-step. On the other
+                                                                                where x refers to the vector of state variables of the synchronous
+hand, FTRT is stricter in terms of hardware latency, and the
+                                                                                generator, u represents the vector of the inputs, such as the
+platform runs at least several times faster than a RT simulator.
+                                                                                mechanical torque (Tm ) from governor, and field voltages (Ef d )
+FTRT emulation can meet all the requirements of RT simulation,
+                                                                                calculated in the exciter model. (2) provides the initial conditions
+while the RT simulation tools are unable to reach FTRT due to
+                                                                                of the synchronous machines, which can be obtained from the
+their scalability and computational speed limits. Secondly, the
+                                                                                solution of the power flow data.
+capability and scalability of the FPGA-based FTRT emulation
+                                                                                   The accuracy of the transient stability simulation is highly
+platform are better than RT simulators. For example, the 141-bus
+                                                                                dependent on the solution strategies of the DAEs, which can
+system with 38 generators is simulated using the RTDS simu-
+                                                                                be roughly classified into two categories: implicit and explicit
+lator, and 4 PB5 racks were needed [24]. In order to reduce
+                                                                                integration methods. The former is essentially iterative methods
+the hardware resources and reduce the cost, only 5 buses and 2
+                                                                                such as Newton-Raphson, which has a higher accuracy under
+generators were simulated on RTDS , while the rest of the system
+                                                                                large time-steps. However, a large dimension of the DAEs may
+parts were simulated on FPGA boards. As shown later in this
+                                                                                lead to more iterations in every single time-step and conse-
+paper, two 500-bus systems with 180 generators in total can be
+                                                                                quently extra execution time. Furthermore, due to the inherently
+executed on a single Xilinx VCU128 board, which demonstrates
+                                                                                sequential iterations until convergence, the iterative method is
+the FPGA’s capability in emulating a large power system. The
+                                                                                not suitable for parallel processing in FPGAs. Therefore, the
+reconfigurability and the sufficient hardware resources allow the
+                                                                                explicit method 4th-order Runge-Kutta (RK4) is adopted in the
+entire grid to be deployed on the platform after proper system
+                                                                                hardware emulation for the high efficiency and low hardware
+partitioning and allocation. Meanwhile, a specific AC/DC grid
+                                                                                resource demand, as given below
+interface using dynamic voltage injection is proposed to main-
+tain a constant admittance matrix despite the HVDC converter                         RK1 = h · F (xn , un , tn ),                                     (4)
+outputs being time-varying, which consequently reduces hard-
+                                                                                     RK2 = h · F (xn + RK1 /2, un , tn + h/2),                        (5)
+ware resources utilization and expedite the emulation. As a re-
+sult, the FTRT DSA emulation is more than 208 times faster than                      RK3 = h · f (xn + RK2 /2, un , tn + h/2),                        (6)
+real-time.
+                                                                                     RK4 = h · f (xn + RK3 , un , tn + h),                            (7)
+   Since the FTRT emulation enables a high computation speed
+above real-time, the grid can be emulated much faster and                                          1
+                                                                                    xn+1 = xn + (RK1 + 2RK2 + 2RK3 + RK4 ), (8)
+therefore it can accelerate planning schedules, predict the up-                                    6
+coming disturbances, and help in devising new control strategies.               where xn+1 represents the vector of state variables for next time-
+The proposed FTRT emulation can also be used in the energy                      step, and h refers to the emulation time-step, which is defined
+control center to provide sufficient time to take remedial actions,             as 1 ms in this work.
+recommend an optimal control strategy to mitigate adverse
+impacts, and enhance the overall stability and security of the                  B. Formulation of Synchronous Generators
+system.
+                                                                                   To achieve high fidelity, a detailed 9th -order synchronous
+   The rest of the paper is organized as follows: Section II
+                                                                                generator model, which includes two mechanical equations, four
+introduces transient stability simulation, including modeling
+                                                                                electrical equations containing 2 windings on the d-axis and 2
+and solution of the AC grid. The DC grid modeling and its
+                                                                                damping windings on the q-axis, and an excitation system, is
+interfacing technique are specified in Section III. Section IV
+                                                                                applied for dynamic security analysis.
+illustrates the hardware design on the proposed multiple FPGA
+                                                                                   The 2 mechanical and 4 electrical equations describing the
+based platform. The emulation results of more than 5500 contin-
+                                                                                generator are given as
+gencies, as well as their analysis and validation, are provided in
+Section V. Section VI presents the conclusion and prospective                                  ˙ = ωR · Δω(t),
+                                                                                              δ(t)                                                    (9)
+work.
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:31:03 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: FASTER-THAN-REAL-TIME HARDWARE EMULATION OF EXTENSIVE CONTINGENCIES FOR DSA                                                                   863
+
+
+
+
+                                                                                  a time-step of 1 ms, which are not included in the 9th -order
+                                                                                  DAEs.
+
+                                                                                  C. AC Network Equations
+                                                                                     The AC network mainly comprises transmission lines, trans-
+                                                                                  formers, loads, and shunt capacitors. The transmission lines and
+                                                                                  the transformers are represented as lumped π models. The fixed
+                                                                                  loads and shunt capacitors are treated as the admittance which
+                                                                                  is associated with the buses, given as
+                                                                                                                    PLoad + jQLoad
+Fig. 1.   Excitation system of the synchronous generator.                                               YLoad =            2       ,                     (18)
+                                                                                                                         VBus
+                                                                                  where VBus refers to the voltage of the local bus, PLoad is
+                                                                                  the active power of the load, and QLoad represents the reactive
+                                                                                  power of the load or the shunt capacitor. Following the derivation
+                                                                                  of the admittance matrix of the AC network, the output current of
+                                                                                  the generators can be solved by the following matrix equations:
+                                                                                                                             
+                    

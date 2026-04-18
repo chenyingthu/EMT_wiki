@@ -1,0 +1,196 @@
+                                                           Electric Power Systems Research 223 (2023) 109630
+
+
+                                                                Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                        journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An improved high-accuracy interpolation method for switching devices in
+EMT simulation programs✩
+J. Na a,d , H. Kim b , H. Zhao c , A.M. Gole c , K. Hur a ,∗
+a
+  School of Electrical and Electronic Engineering, Yonsei University, Seoul 03722, South Korea
+b
+  R&D Center, Pion Electric, Gyeonggi-do 14348, Republic of Korea
+c
+  Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada
+d
+  R&D Center, Korea Grid Forming, Gyeonggi-do 14348, Republic of Korea
+
+
+
+ARTICLE              INFO                               ABSTRACT
+
+Keywords:                                               This paper presents an interpolation with Backward Euler (BE) method that enhances the switching simulations
+Backward Euler                                          accuracy in an electromagnetic transient (EMT) simulation with a fixed time-step. Because of the switching
+Discontinuity                                           operations on discrete instants, the simulations can show artificial voltage spikes and numerical oscillations
+Interpolation
+                                                        (chatter), compromising the accuracy and producing misleading results. We thus present a method that elim-
+Power-electronic switches
+                                                        inates the spurious switching losses and improves the accuracy by combining interpolation and extrapolation
+Trapezoidal
+                                                        with a half-time-step BE solution over existing interpolation-based approaches to resolve the issues above. In
+                                                        addition, this improved method requires the same calculation steps as the industry-accepted instantaneous
+                                                        interpolation. Analytical discussion reinforced by the simulation studies for a simple and complex power
+                                                        electronic circuits demonstrates the accuracy and efficacy of the proposed interpolation with BE method.
+
+
+
+1. Introduction                                                                            characteristic of the Trapezoidal method, employing the current state
+                                                                                           and past state in the same differential equation. This numerical chatter
+    Electromagnetic transient (EMT) simulation programs are widely                         happens when the switching occurs between time-steps, even at a
+used for modeling electric power systems with power electronic devices                     natural zero current [6]. Voltage spikes can also arise across inductor
+such as high-voltage dc (HVdc) converters, flexible ac transmission                        branches due to the current chopping. Finally, inaccurate represen-
+systems (FACTS), and renewable energy source (RES) converters [1,2].                       tation of the switching timing decreases accuracy of the simulation
+These power electronic switching devices are generally modeled as bi-                      results. To improve accuracy, a very small time-step (e.g., 0.1 μs) can
+valued resistors or ideal switches in the EMT [3]. The programs create                     be applied, which, however, significantly increases the execution time;
+a companion circuit of the network by applying numerical integration                       A trade-off between accuracy and execution time should be balanced.
+methods such as the Trapezoidal rule with a fixed time-step value                              There are several previously reported approaches to overcome the
+and then solve the circuit using nodal analysis (or modified nodal                         limitation of fixed time-step simulation with the Trapezoidal method.
+analysis) [4,5].
+                                                                                           Snubber circuits across switches were parameterized to reduce the
+    Fixed time-step simulation presents critical issues when model-
+                                                                                           effect of chatter [3,5]. However, the artificial parameters of the snubber
+ing semiconductor switches such as thyristors, gate turn-off thyris-
+                                                                                           circuit may adversely affect the simulation accuracy. Critical damping
+tors (GTO), insulated gate bipolar transistors (IGBT), etc. Without
+                                                                                           adjustment (CDA) has also been widely used to suppress the chatter
+mitigation measures, switching operations can result in:
+                                                                                           [7–10]. Two advantages of the CDA are as follows: (1) the Back-
+      • Numerical oscillation (chatter)                                                    ward Euler (BE) method suppresses numerical oscillation, and (2) the
+      • Voltage spike                                                                      admittance matrix of the half time-step BE method is the same as
+      • Inaccurate simulation results                                                      that of the one-step Trapezoidal method. However, CDA cannot cope
+                                                                                           with inaccurate representation of the switching timing. Variable time-
+   Numerical chatter is usually initiated by the opening of a switch
+                                                                                           step simulation is another alternative solution for accurate simulation
+in a branch containing inductor. This phenomenon comes from the
+
+
+    ✩ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+    ∗ Corresponding author.
+     E-mail addresses: jongseo529@yonsei.ac.kr, jongseo529@k-gfm.com (J. Na), h.kim@pionelectric.com (H. Kim), huanfengzhao@gmail.com (H. Zhao),
+aniruddha.gole@umanitoba.ca (A.M. Gole), khur@yonsei.ac.kr (K. Hur).
+
+https://doi.org/10.1016/j.epsr.2023.109630
+Received 11 December 2022; Received in revised form 13 March 2023; Accepted 21 June 2023
+Available online 6 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+J. Na et al.                                                                                                            Electric Power Systems Research 223 (2023) 109630
+
+
+
+
+               Fig. 1. Discontinuous inductor voltage due to switching.
+                                                                                           Fig. 2. The ordinary interpolation process of natural-commutation.
+
+
+
+results [11–14]; However, it is highly challenging to set the optimal
+variable time-step size. In addition, 2s-DIRK, TR-BDF2, and matrix                 eliminating spurious switch losses and suppressing numerical chatter
+exponential methods have been proposed to remove numerical oscil-                  without sacrificing execution time. The outline of this paper is as
+lation and improve accuracy. These are difficult to implement and                  follows. The interpolation and instantaneous interpolation methods are
+show slower performance compared to the Trapezoidal rule [15–17].                  described in Section 2. Section 3 introduces the proposed method.
+Therefore, the interpolation method was introduced to improve the                  Simulation results of the proposed method are presented in Section 4
+simulation accuracy without significantly increasing the execution time            followed by concluding remarks in Section 6. Additionally, the detailed
+and affecting the overall structure of programs [6,18–20]. The interpo-            mathematical equations of the Trapezoidal and BE methods, as well as
+                                                                                   an analysis of chatter, can be found in Appendix.
+lation method estimates the actual switching time 𝑡𝑧 ∈ (𝑡 − 𝛥𝑡, 𝑡), and
+the voltage and current at 𝑡𝑧 , by linearly interpolating states between
+                                                                                   2. Review of interpolation methods
+solutions at 𝑡 and 𝑡 − 𝛥𝑡. Interpolation can also be used to eliminate
+chatter with an additional half-step interpolation.
+                                                                                   2.1. Ordinary interpolation
+    Even with interpolation, some problems still remain. The inductor
+voltage is discontinuous as labeled 𝑣𝐿 (𝑡𝑧− ) and 𝑣𝐿 (𝑡𝑧+ ) just before and            Fig. 2 shows the diode current with the switching interpolated to the
+after the switch opening instant (𝑡𝑧 ), respectively, for clarity in Fig. 1.       correct instant 𝑡𝑧 . The bold line represents the final output displayed
+The calculation of the network solution at the next time instant (𝑡𝑧 +𝛥𝑡)          to EMT program users, while the dotted line denotes the internal
+by the Trapezoidal method requires knowledge of the inductor voltage               calculation results that remain concealed from the user interface. The
+and current at the previous time 𝑡𝑧 . As the switch is assumed to                  green arrow and numbering provide a visual depiction of the com-
+open at 𝑡𝑧 , the correct value to use for the voltage is 𝑣𝐿 (𝑡𝑧+ ), but the        putational sequence employed during the interpolation process. The
+interpolation step calculates the value before the switch opened, which            aforementioned explanation applies uniformly to all figures presented
+is 𝑣𝐿 (𝑡𝑧− ). To address this issue, NETOMAC, one of the EMT programs,             in this paper. The switch should open when the current goes to zero,
+applies a half time-step BE after the switch operation. The half time-             but this point falls inside a time-step, i.e., between 𝑡 − 𝛥𝑡 and 𝑡. Without
+step BE solution for the inductor voltage (non-continuous) is close to             using interpolation, the program only calculates the solution at 𝑡 − 𝛥𝑡
+the correct value of the state at 𝑡𝑧+ and so the program sets the voltage          and 𝑡. A linear interpolation allows estimating the turn-off time to be 𝑡𝑧
+to this value [18,21–23]. Programs like PSCAD/EMTDC use a modi-                    for the current zero. All the voltages and currents are also interpolated
+fication of basic interpolation (referred to as ‘‘instantaneous solution           to the switching instant. The admittance matrix is re-triangulaized, and
+interpolation’’), which includes additional steps for removing spurious            the solution continues with the original time-step, yielding the new
+loss of forced commutated switches [24]. The instantaneous solution                solution one time-step later at 𝑡𝑧 + 𝛥𝑡. One additional interpolation step
+method updates the admittance matrix reflecting the post-switching                 between 𝑡𝑧 and 𝑡𝑧 + 𝛥𝑡 yields the original time grid solution at 𝑡.
+state, but does not update the current input vector when calculating
+the post switching state at 𝑡𝑧+ . It is effective in eliminating spurious          2.2. Instantaneous solution interpolation
+losses in the switches caused by a straightforward implementation of
+interpolation. However, this method manifests numerical error as will                  The interpolation technique was initially proposed for naturally
+be shown in Section 2.2. This error produces a phase delay in energy               commutated power-electronic switches such as diodes and thyristors
+storage elements such as inductors, resulting in spurious inductor                 [18]. However, numerical losses occur especially when fully control-
+loss as reported in [25]. Other alternative methods are presented in               lable power-electronic switching devices (e.g., IGBTs) are simulated.
+[26–28] for improving numerical accuracy with the Trapezoidal                      These numerical device losses result from an interpolated solution
+method and interpolation. These methods show good accuracy but do                  point at which both the voltage and current in a switching device are
+not interpolate to the original time grid afterward. In addition, recent           non-zero as shown in Fig. 3.
+literature provides a comparison of numerous alternative solutions for                 The instantaneous interpolation method was proposed to remove
+treating discontinuities associated with simultaneous switching [29].              the spurious numerical loss in the device [24]. Consider the simulation
+These solutions are based on the CDA approach, and utilize two half-               of the circuit in Fig. 4(a), this circuit consists of a voltage source, an
+time step BE methods for post-switching. However, it is worth noting               inductor, an IGBT (S1), and a diode (D1). The command to turn switch
+that the BE method is generally less accurate than the Trapezoidal                 S1 ‘‘OFF’’ is issued at a time 𝑡𝑧 between time-step grid points 𝑡 − 𝛥𝑡
+method, except immediately after switching.                                        and 𝑡. The calculation steps in instantaneous interpolation are described
+    Motivated by the aforementioned research efforts in dealing with               below and illustrated in Fig. 5:
+switching discontinuity in the EMT simulation, this paper presents an
+                                                                                     (1) The solution at 𝑡 is found using the known solution at 𝑡−𝛥𝑡, with
+interpolation with BE method by combining half-time step BE with
+                                                                                         the existing admittance matrix 𝑌𝑜𝑙𝑑 .
+additional interpolation and extrapolation steps to return to the original
+                                                                                                    −1
+time grid. This method enhances the simulation accuracy by effectively                    𝑉 (𝑡) = 𝑌𝑜𝑙𝑑 [𝐼𝑠𝑜𝑢𝑟𝑐𝑒 (𝑡) + 𝐼ℎ𝑖𝑠𝑡𝑜𝑟𝑦 (𝑡 − 𝛥𝑡)]                             (1)
+
+                                                                               2
+J. Na et al.                                                                                                                         Electric Power Systems Research 223 (2023) 109630
+
+
+
+
+  Fig. 3. Voltage and current of S1 with a direct implementation of interpolation.                Fig. 5. Voltage and current of S1 with the instantaneous interpolation method.
+
+
+
+
+                                                                                                  (5) All node voltages, currents, and history terms are interpolated
+                                                                                                      to the original time grid 𝑡.
+
+                                                                                                       𝑉 (𝑡), 𝐼(𝑡), 𝑎𝑛𝑑 𝐼ℎ𝑖𝑠𝑡𝑜𝑟𝑦 (𝑡 − 𝛥𝑡)                                         (5)
+
+                                                                                                Note that 𝑉 , 𝐼, 𝐼ℎ𝑖𝑠𝑡𝑜𝑟𝑦 , 𝐼𝑠𝑜𝑢𝑟𝑐𝑒 , 𝑌𝑜𝑙𝑑 , and 𝑌𝑛𝑒𝑤 are the voltage vector,
+                                                                                                current vector, history current vector, source current vector, network
+                                                                                                admittance matrix before switching, and network admittance matrix
+                                                                                                after switching, respectively. It is worth noting that the instantaneous
+                                                                                                solution only updates the admittance matrix at 𝑡𝑧− , but does not update
+                                                                                                the history current vector. Nevertheless, the current at 𝑡𝑧+ is immedi-
+                                                                                                ately zero, unlike the ordinary interpolation method shown in Fig. 3,
+                                                                                                where the current zero occurs later at 𝑡𝑧 + 𝛥𝑡.
+                                                                                                    In step 3, the instantaneous interpolation method has a slight error,
+                                                                                                because the post switching matrix 𝑌𝑛𝑒𝑤 is used to obtain the solution at
+                                                                                                𝑡𝑧+ using history terms from 𝑡𝑧 − 𝛥𝑡. This is tantamount to an assump-
+                                                                                                tion that the matrix change occurred at 𝑡𝑧 − 𝛥𝑡 and not at 𝑡𝑧 , i.e., one
+                                                                                                time-step earlier.
+                                                                                                    This ‘‘one time-step advance’’ error has not been noticed and re-
+                                                                                                ported before this paper, probably because the error is not cumulative,
+                                                                                                as the time-step advance applies to both the turn on and turn off of
+                                                                                                the switch, and has a minimal impact on the conduction time of the
+                                                                                                switch. To overcome this error, an interpolation with BE method with
+                                                                                                enhanced accuracy is proposed in the next section.
+
+                                                                                                3. Interpolation with BE method
+
+                                                                                                    To overcome the drawbacks of the conventional interpolation meth-
+Fig. 4. Configuration of simple test circuit (a) to demonstrate accuracy, execution time,
+                                                                                                ods, this paper proposes an interpolation with BE method, described
+switching loss (b) to verify chatter removal.                                                   next and illustrated using Fig. 6. The first and second steps are the same
+                                                                                                as in the instantaneous interpolation method, so they are omitted:
+
+                                                                                                  (3) The solution at 𝑡𝑧 + 𝛥𝑡
+                                                                                                                           2
+                                                                                                                              is found using the known solution at 𝑡𝑧−

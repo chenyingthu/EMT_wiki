@@ -1,0 +1,22 @@
+# Multirate EMT Simulation of Power Electronic Transformers With High-Precision Firing Signals
+
+Huize Wang$^1$, Jianzhong Xu$^{1*}$, Senior Member, IEEE, and Moke Feng$^2$
+
+$^1$ State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing 102206, China (email: wanghuize@ncepu.edu.cn; xujianzhong@ncepu.edu.cn)
+$^2$ State Key Laboratory of Power Transmission Equipment Technology, Chongqing University, Chongqing, 400044, China (email: fengmoke@cqu.edu.cn)
+
+*This work was supported by the National Natural Science Foundation of China under Grant 52277094. (Corresponding author: Jianzhong Xu.)*
+
+**Abstract—**The electromagnetic transient (EMT) simulation of power electronic transformers (PETs) encounters significant computational challenges due to the high switching frequency nature imposing small simulation time step. This paper proposes a multirate simulation method incorporating high-precision firing signals, which enhances the simulation efficiency of PETs by reducing the number of numerical operations within specified simulation durations. Unlike the existing methods that utilize simplified models with unanimous simulation time step, the proposed approach leverages the inherent frequency disparities in multi-level conversion circuits of PETs to partition the entire system into distinct subsystems. They each are simulated with different time steps optimized for their specific frequencies and precision requirements. To achieve the coordination between subsystems with different rates while ensuring simulation stability, a simulation data transmission method for different subsystems and an interleaved equivalence multirate interaction algorithm are developed. By formulating the currents on both sides of the high frequency transformer as state variables, which are derived by modified nodal analysis (MNA), high-precision firing signals are introduced achieving significant time step enlargement in high frequency subsystem. The performance of the proposed method is validated through comparative studies with traditional single rate (TSR) EMT simulations under various operating conditions.
+
+**Index Terms—**cascaded H-bridge-type dual active bridge (DAB), electromagnetic transient (EMT) simulation, multi-rate simulation, power electronic transformer (PET).
+
+## I. INTRODUCTION
+
+Power electronic transformers (PETs) have garnered significant interest in modern power systems owing to their superior capabilities in efficient and flexible energy conversion with the large scale integration of distributed energy resources and renewable energy sources into power grids [1]. Many projects utilizing power electronic transformers as energy routing devices have been constructed in China in recent years, such as Xiaoertai Flexible Substation in Zhangbei and Tongli Integrated Energy Town in Suzhou. Therefore, the research into primary circuit parameters and control system design of PETs has become an important subject. Electromagnetic transient (EMT) simulation is widely adopted for this purpose due to its capability to characterize detailed dynamics of power electronic apparatus with microsecond-level temporal resolution [2].
+
+However, EMT software requires a substantial amount of computational time to simulate PETs [3], [4]. To satisfy the requirements of high voltage and large capacity, PETs are often comprised of multiple power units (PUs) connected in various configurations. A typical cascaded H-bridge-type dual active bridge (CHB-DAB) based PET [5] illustrated in Fig. 1 includes three phases configured in an input-series-output-parallel (ISOP) pattern. The cascading configuration of CHB provides significant enhancement of equivalent switching frequency, though its actual switching frequency is typically in the range of hundreds of Hertz. In contrast, to minimize the physical dimensions and manufacturing costs of apparatus, the DAB section containing high frequency transformers generally functions at kilohertz-level. The high switching frequency requires a sufficiently small time step to accurately capture the switching transients and ensure the simulation accuracy, ultimately leading to a huge computational burden.
+
+**Fig. 1.** Structure of the CHB-DAB-based PET.
+
+Several equivalent models from the perspective of single rate have been proposed to enhance simulation efficiency. For instance, in [6], by analyzing the power flow equations and inductance current waveforms, an average-value model of

@@ -1,0 +1,214 @@
+                                                                                                    www.ietdl.org
+    Published in IET Generation, Transmission & Distribution
+    Received on 5th July 2012
+    Revised on 9th December 2012
+    Accepted on 21st December 2012
+    doi: 10.1049/iet-gtd.2012.0374
+
+
+
+
+                                                                                                              ISSN 1751-8687
+
+
+Multi-FPGA digital hardware design for detailed
+large-scale real-time electromagnetic transient
+simulation of power systems
+Yuan Chen1, Venkata Dinavahi2
+1
+ RTDS Technologies Inc., 100-150 Innovation Drive, Winnipeg, Manitoba, Canada R3T 2E1
+2
+ Department of Electrical and Computer Engineering, University of Alberta, Edmonton, Alberta, Canada T6G 2V4
+E-mail: dinavahi@ece.ualberta.ca
+
+Abstract: Large-scale electromagnetic transient simulation of power systems in real-time using detailed modelling is
+computationally very demanding. This study introduces a multi-ﬁeld programmable gate array (FPGA) hardware design for
+this purpose. A functional decomposition method is proposed to map FPGA hardware resources to system modelling. This
+systematic method lends itself to fully pipelined and parallel hardware emulation of individual component models and
+numerical solvers, while preserving original system characteristics without the need for extraneous components to partition
+the system. Proof-of-concept is provided in terms of a 3-FPGA and 10-FPGA real-time hardware emulation of a three-phase
+42-bus and 420-bus power systems using detailed modelling of various system components and iterative non-linear solution
+on a 100 MHz FPGA clock. Real-time results are compared with ofﬂine simulation results, and conclusions are derived on
+the performance and scalability of this multi-FPGA hardware design.
+
+
+
+
+1      Introduction                                              entails excessive computational burden. To lower
+                                                                 computational burden using simpliﬁed modelling or a large
+In the wake of increased load growth, interconnectivity and      time-step would lower ﬁdelity of the simulation. For
+stressful operating conditions, many utilities worldwide are     transient simulation the most pervasive computationally
+employing large-scale real-time electromagnetic transient        demanding power system components are transmission
+(EMT) simulators for planning, operation and control of the      lines, electrical machines and non-linear elements on
+grid with adequate security and reliability [1–5]. Real-time     account of their frequency dependency, higher model order
+EMT simulators are widely employed for such applications         and iterative algorithmic nature; whereas power electronic
+as testing of advanced protective schemes for lines and          apparatus also constitute a higher computational burden
+generators, testing closed-loop control systems either for       (because of higher number of switches) and require smaller
+conventional power systems or for power electronic-based         time-steps (because of high switching frequency and the
+applications such as high voltage direct current (HVDC),         need for accounting the switching signals accurately), they
+ﬂexible AC transmission systems (FACTs) and distributed          tend to be more localised and not as ubiquitous as the other
+generation, and for the training of system operators under       three types of components. Inevitably, to meet real-time
+realistic scenarios [6–12]. Examples of commercial               constraints and to accommodate large system sizes, a
+large-scale real-time EMT simulators include RTDS® [1, 2],       compromise is needed in component model complexity to
+ARENE® [13], HYPERSIM® [14], NETOMAC® [15] and                   curtail simulator cost at the expense of accuracy. In such
+RT-LAB® [16]. At their core, these simulators employ             cases simpliﬁed modelling of system components is
+sequential processors for model calculation such as digital      tolerated. Simpliﬁed models [17] include Π or travelling
+signal processors (DSPs) or PowerPC® processors in               wave representation for lines and cables, Thévénin
+RTDS® and general purpose multi-core x86 central                 equivalent representation for machines and switched
+processing units (CPUs) in RT-LAB®. All these simulators         piece-wise linear approximation for non-linear elements.
+are highly extensible by adding additional racks or cluster         Parallel processing is extensively used in existing real-time
+nodes to existing simulator infrastructure.                      simulators to execute large-scale system models cooperatively
+   In large-scale real-time EMT simulators accuracy and          on multiple sequential processors. It relies on the fundamental
+computational efﬁciency are conﬂicting requirements that         premise that a power system can be decomposed into smaller
+have ramiﬁcations in terms of simulator hardware and cost.       subsystems because of the natural travel time delay of the
+A realistic reproduction of high-frequency transients            transmission line or cable which provides the decoupling
+requires detailed modelling of power system components           necessary for the subsystem calculations to occur without
+and a small simulation time-step. Thus, large system size        timing conﬂict [1, 2, 13–20]; thus one or more subsystems
+
+IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 5, pp. 451–463                                                               451
+doi: 10.1049/iet-gtd.2012.0374                                            & The Institution of Engineering and Technology 2013
+www.ietdl.org
+can be assigned to multiple sequential processors which share      the ofﬂine EMTP software. The performance and scalability
+the computational workload, subject to the condition that the      analysis for the proposed multi-FPGA hardware design is
+simulation time-step is less than the travel time on the link      also given in Section 3. Section 4 presents the conclusions.
+lines. However, this method has some limitations:
+
+1. If there is no real transmission line or cable connecting any   2 Functional components for hardware
+two subsystems or if two neighbouring subsystems are tightly       emulation of power systems
+coupled, ﬁctitious lines or cables with travel time are
+necessary to partition the network. Such artiﬁcial lines           2.1    Functional decomposition method
+introduce errors in the frequency response of the simulated
+transient; although the errors can be compensated or               This method of power system decomposition relies on
+minimised, the location and the length of the link lines still     systematically clustering the model calculation of system
+need to be carefully chosen to maintain accuracy.                  components on individual hardware based on the
+2. After executing their respective calculation the sequential     component functionality. As seen in Fig. 1, a generic power
+processors need to exchange subsystem data with each other         system is composed of lines, generators, non-linear
+at the cost of extra communication latency within the              elements, loads, buses, circuit breakers etc. In the hardware
+time-step, which limits the achievable bandwidth of the            emulation, the model calculations of each type of system
+real-time simulator.                                               components can be processed in their own processing
+3. The partitioning scheme to divide the original system into      hardware (PH) simultaneously. For example, all
+smaller subsystems is arbitrary at best, usually based on the      transmission lines are simulated in the speciﬁed PH2
+experience and the speciﬁc requirements of the user, albeit        hardware module, concurrently with the machines models
+some simulators such as HYPERSIM have an automatic                 being simulated in PH3. Meanwhile, multiple components
+partitioning method.                                               of the same type can be pipelined through each PH to
+4. Based on a given network topology it is quite possible to       increase the throughput for accommodating large system
+ﬁnd a large subsystem, which cannot be decomposed further,         size, allowing a trade-off between hardware resource area
+leading to uneven computational workload for the processors.       and processing speed (simulation time-step). Thus,
+In such cases, the overall computational bandwidth of the          functional decomposition lends itself to the full exploitation
+real-time simulator is limited by the speed of the processor       of pipelining and hardware parallelism inherent in an
+to which the largest subsystem is assigned.                        FPGA.       Conventional    network      partitioning   using
+                                                                   transmission line links is no longer required to simulate a
+   The traditional method for accommodating large network          large-scale system. It does not require artiﬁcial lines or
+sizes on limited simulator hardware was to use a                   cables of ﬁxed latency to be inserted, rendering the
+frequency-dependent network equivalent [21–24], where the          hardware emulation true to the original system. Since it is
+original system was divided into a study zone (modelled in         independent of the network topology, it removes the
+detail) and an external system (modelled as lumped RLCG            uncertainty related to partition boundaries, while allowing
+groups derived from approximating the frequency response           detailed modelling of all system components with an even
+of the external system at the interfacing port). Although          distribution of computational workload. Since system
+network equivalents are still used in some ofﬂine and              components of the same type are clustered together, this
+real-time simulators, the prevailing requirement is to             method naturally allows multi-rate simulation, where
+represent the original system in full detail without using         multiple time-steps can be chosen for various functional
+simpliﬁed equivalents.                                             types to account for model complexity or to increase
+   Digital hardware emulation of large-scale networks has the      computational efﬁciency.
+potential to alleviate all of the above compromises and
+uncertainties inherent in large-scale real-time EMT
+simulation, using the FPGA as the core simulator hardware.         2.2    Components for EMT simulation
+The FPGA is increasingly becoming the mainstream
+hardware for a wide variety of applications [25–29]. This          The most commonly used components in power systems for
+paper proposes a multi-FPGA hardware design for detailed           EMT simulation are transmission lines/cables, electrical
+real-time EMT simulation of large-scale systems. Prior             machines, transformers, loads, breakers and non-linear
+work on the modelling and implementation of system                 components. This section provides a summary of
+transients on FPGAs was limited to a small scale and on a
+single FPGA; the application of multiple FPGAs for
+detailed large-scale real-time EMT simulation has not been
+reported in the literature. A ‘functional decomposition’
+method is introduced for allocating the system model
+calculation to the multi-FPGA hardware resource. The
+proposed multi-FPGA hardware design for real-time EMT
+simulation includes detailed models for various
+components, full Newton solution for non-linear elements
+and IEEE 32-bit ﬂoating-point number representation for
+high accuracy. The paper is organised as follows: Section 2
+describes the system functional components for hardware
+emulation. Section 3 provides the details of
+multi-FPGA-based hardware design using functional
+decomposition for real-time EMT simulation with two case           Fig. 1 Functional decomposition of a power system for hardware
+studies. The real-time simulation results are validated using      emulation
+
+452                                                                      IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 5, pp. 451–463
+& The Institution of Engineering and Technology 2013                                                    doi: 10.1049/iet-gtd.2012.0374
+                                                                                                                  www.ietdl.org
+discrete-time equivalents and solution method for these                operating conditions. This model is ﬁrst formulated in the
+functional components for hardware emulation.                          frequency-domain through the characteristic admittance
+                                                                       matrix Yc and propagation function matrix H. In order to
+2.2.1 Linear lumped elements: The linear lumped R, L,                  implement the model in time-domain, the elements of Yc
+C elements are used to represent loads, transformers and other         and H are approximated using ﬁnite-order rational
+equivalent impedances. By applying the trapezoidal rule of             functions. The (i, j) element of Yc is expressed as
+integration, the R, L, C, G and their combinations such as
+RC, RL, LC and RLCG etc. are represented by a common                                                   
+                                                                                                       Np
+                                                                                                          rY ,(i,j) (m)
+discrete-time model [30], as shown in Fig. 2a, whose v–i                             Y c,(i,j) (s) =          c
+                                                                                                                          + d (i,j)    (2)
+                                                                                                       m=1
+                                                                                                           s − pY c (m)
+characteristic is given as
+                                                                       where Np is the number of poles; rY c , pY c , and d are the
+                    i(t) = Gv(t) + ihRLCG(t−Dt)                  (1)
+                                                                       residues, poles, and proportional terms, respectively. The
+                                                                       (i, j) element of H is expressed as
+where G is equivalent conductance, and ihRLCG(t − Δt) is equivalent
+history current which is updated at each time-step.                                                  N                   
+                                                                                                 Ng
+                                                                                                      p,k
+                                                                                                            rH,(i,j),k (n) −st
+                                                                                   H (i,j) (s) =                            e k        (3)
+2.2.2    Transmission lines and cables                                                           k=1 n=1
+                                                                                                           s − pH,k (n)
+
+The transmission lines and cables are modelled using the               where Ng denotes the number of propagation modes; Np,k and
+frequency-dependant phase-domain universal line model                  tk are the number of poles and time delays used for ﬁtting the
+(ULM) [30, 31]. The ULM is recognised as the most                      kth mode; rH, k and pH, k are residues and poles for the kth
+accurate and robust model for both overhead line and                   propagation mode.
+underground cable under symmetrical and unsymmetrical                     The resulting time-domain model of the ULM is given as
+                                                                       follows and shown in Fig. 2b
+
+                                                                                            i k (t) = Gvk (t) − i hlinek              (4a)
+
+                                                                                            i m (t) = Gvm (t) − i hlinem              (4b)
+
+                                                                       where G is equivalent conductance matrix, and i hlinek , i hlinem
+                                                                       are the history currents at sending-end ‘k’ and receiving-end
+                                                                       ‘m’ of the line, which are calculated as follows
+
+                                                                                     i hlinek = Y c ∗vk (t) − 2H∗i m (t − t)          (5a)
+
+                                                                                     i hlinem = Y c ∗vm (t) − 2H∗i k (t − t)          (5b)
+
+                                                                       where the symbol ‘*’ denotes the matrix–vector convolution.
+
+                                                                       2.2.3 Electrical machines: The rotating machine is
+                                                                       modelled using the universal machine (UM) model [32].
+                                                                       The UM model is a sufﬁciently generalised machine model,
+                                                                       which can accurately represent several types of rotating
+                                                                       machines for EMT studies. The number of windings on the
+                                                                       stator and rotor, and the mechanical parts are fully
+                                                                       customisable to model any speciﬁc machine. In this paper,
+                                                                       an eighth-order UM model is employed. The discrete-time
+                                                                       equation for the machine electrical side in the
+                                                                       synchronously rotating dq0 frame is given as
+
+                                                                                                            2
+                                                                               vdq0 (t) = −Ri dq0 (t) −       l (t) + u(t) + vhist     (6)
+                                                                                                            Dt dq0
+                                                                       where vdq0, idq0, λdq0, R and u are vectors of voltages,
+                                                                       currents, ﬂux linkages, resistances and speed voltages of the
+                                                                       windings; Δt is the simulation time-step and vhist is the
+                                                                       voltage history term. The mechanical dynamics for the UM
+                                                                       are given as
+
+                                                                                                        dv
+Fig. 2 Discrete-time equivalents for system functional components                           Tm = J         + Dv + T e                  (7)
+                                                                                                        dt
+a Lumped elements
+b Universal line mod

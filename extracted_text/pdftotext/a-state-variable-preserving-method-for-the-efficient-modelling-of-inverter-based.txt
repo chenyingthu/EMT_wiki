@@ -1,0 +1,188 @@
+Received: 22 October 2024       Revised: 3 January 2025    Accepted: 20 January 2025              IET Generation, Transmission & Distribution
+DOI: 10.1049/gtd2.70013
+
+
+ORIGINAL RESEARCH
+
+
+
+
+A state-variable-preserving method for the efficient modelling of
+inverter-based resources in parallel EMT simulation
+
+Qiguo Wang1                           Jin Xu1                 Keyou Wang1                    Guojie Li1                  Zhenyuan Feng2
+
+1
+ Key Laboratory of Control of Power Transmission          Abstract
+and Conversion (Shanghai Jiao Tong University),
+                                                          The aggregation models of renewable energy power stations are difficult to apply to the
+Ministry of Education, Shanghai, China
+2
+                                                          stability research of the fault inside the station or the oscillation analysis between the station
+ State Grid Jiaxing Power Supply Company, Jiaxing,
+Zhejiang, China
+                                                          and the grid-side system, and the high dimensional characteristics of their detailed model
+                                                          will pose an enormous challenge to the simulation efficiency. To alleviate the contradiction
+Correspondence                                            between accuracy and efficiency, this paper proposes a state-variable-preserving method
+Jin Xu, Key Laboratory of Control of Power                to efficiently model inverter-based resources and a node tearing method to realize parallel
+Transmission and Conversion (Shanghai Jiao Tong
+                                                          simulation of the renewable energy power station consisting of inverter-based resources.
+University), Ministry of Education, Shanghai, China.
+Email: xujin20506@sjtu.edu.cn                             The state-variable-preserving model uses discrete state space expression to eliminate the
+                                                          internal nodes on the basis of preserving the original variables of the generation unit and
+Funding information                                       reduces the solving scale of the generation station. The node tearing method reduces the
+National Key Research and Development Program             solving complexity of the associated variables, which is more consistent with the topology
+of China, Grant/Award Number:
+2022YFE0105200; State Grid Zhejiang Electric              characteristic that different power generation clusters are interconnected by the same bus.
+Power Co., LTD., Jiaxing power supply company,            In the case study, the results of numerical accuracy analysis and numerical stability anal-
+Grant/Award Number: 5211JX230004                          ysis of a photovoltaic power plant verify the reliability of the proposed method, and its
+                                                          simulation efficiency is verified by changing the scale of the photovoltaic power plant.
+
+
+
+1          INTRODUCTION                                                                    whole station [4], and its output power was the weighting of
+                                                                                           all the generation units in the station. Considering the different
+The power system is transforming into a complex network with                               operating conditions of various units, the multi-machine equiv-
+renewable energies as the main body. The proportion of power                               alent model [5] performed equivalent processing for units in
+electronic equipment in the power system has increased signifi-                            the same group according to different cluster indexes, further
+cantly, greatly changing the basic structure of the power grid and                         improving the accuracy of the aggregation model.
+the stability mechanism of the system [1]. Considering the cost                                However, the simplified model at the device level ignores the
+and safety of the electric power test, electromagnetic transient                           switch action process, and the aggregation model at the station
+(EMT) simulation is an important method to analyse the stable                              level cannot reflect the internal characteristics of the original
+operation mechanism of renewable energy power systems.                                     system [6]. They are hard to apply to the stability research of
+   For simulation scenarios with different precision and specific                          the fault inside the station or the cascading accident of multiple
+requirements, relevant research has improved the efficiency of                             stations [7] and the oscillation analysis between the renewable
+EMT simulation of renewable energy power stations through                                  energy stations and the grid-side system [8].
+model simplification. The device-level simplification mainly                                   The detailed modelling of renewable energy power stations
+increased the simulation step size by establishing the average                             based on the structure-preserving method retains the origi-
+value model [2] and the dynamic phasor model [3] of the power                              nal circuit topology and introduces the microsecond switching
+electronic equipment. The station-level simplification was                                 process, which will dramatically increase the simulation bur-
+mainly to reduce the number of renewable energy power gener-                               den of the system. Scholars put forward optimization methods
+ation units through aggregation. The single-machine equivalent                             to reduce the calculation amount of simulation and acceler-
+model used one equivalent generation unit to represent the                                 ate the solution process. The matrix exponential function [9]
+
+
+This is an open access article under the terms of the Creative Commons Attribution-NonCommercial-NoDerivs License, which permits use and distribution in any medium, provided the
+original work is properly cited, the use is non-commercial and no modifications or adaptations are made.
+© 2025 The Author(s). IET Generation, Transmission & Distribution published by John Wiley & Sons Ltd on behalf of The Institution of Engineering and Technology.
+
+IET Gener. Transm. Distrib. 2025;19:e70013.                                                                                            wileyonlinelibrary.com/iet-gtd     1 of 12
+https://doi.org/10.1049/gtd2.70013
+2 of 12                                                                                                                       WANG ET AL.
+
+
+used large step size to speed up the simulation of the slow           domain extraction decomposition method [28], were proposed
+dynamic process, which realized the multi-time scale simulation       for specific topologies, all of which are also difficult to apply to
+of large-scale wind farms based on ensuring high fidelity. Then,      decouple renewable energy power stations.
+an order reduction technique based on Krylov subspace [10]               Therefore, a state-variable-preserving (SVP) method for the
+was further introduced to improve the simulation efficiency of        efficient modelling of inverter-based resources in parallel EMT
+high-dimensional EMT models of wind farms. The state space            simulation is proposed in this work. Firstly, the SVP method
+node method [11] used the state variables of dynamic compo-           uses the combination of controlled admittances and controlled
+nents to form groups and the state space expression to solve          historical current sources determined by internal state variables
+the intra-group variables, which eliminated the internal nodes        to equivalent inverter-based resources. SVP eliminates the inter-
+of each group. In [12], the integrated equivalent model of large-     nal nodes while ensuring the modelling accuracy, and reduces
+scale offshore wind farms was established by combining the            the solving complexity of the detailed model of inverter-based
+EMT circuit models of each device in the wind power gener-            resources. Secondly, the node tearing method reconstructs the
+ation system, which decreased the scale of system simulation.         node voltage equation using the voltage of the associated nodes,
+However, the model needs to be reconstructed when the system          which reduces the solving complexity of associated variables
+structure changes. Additionally, the number of nodes eliminated       compared with the branch cutting method. Finally, based on the
+by the method mentioned in [12] is limited, and the system scale      independence of solving different power generation units and
+still shows an increasing trend with the growth of the number         solving different power generation clusters, a hierarchical par-
+of renewable energies.                                                allel algorithm is designed to improve the simulation efficiency
+   With the development of high-performance hardware plat-            of renewable energy power stations consisting of inverter-based
+forms, using massive computing resources to realize parallel          resources.
+solutions of large-scale power systems has become an effective           The paper is organized as follows: Section 2 shows the struc-
+means to improve simulation efficiency. Network interface algo-       ture of photovoltaic (PV) power plants. Section 3 elaborates
+rithms are divided into two types according to whether there          on the state-variable-preserving modelling of PV power gener-
+is a delay: one is the delay-based method, and the other is the       ation units. Section 4 represents the partition modelling of the
+delay-free method.                                                    PV power plant based on the node tearing method. Section 5
+   In [13], a combination circuit of the capacitance branch           introduces the design of the hierarchical parallel simulation algo-
+and the inductance branch was selected to divide the dis-             rithm. The simulation case and results are given in Section 6.
+tributed power supply and the grid-side system, which realized        Section 7 presents the conclusions.
+parallel simulation at the subsystem level. In [14] and [15],
+a semi-implicit delayed decoupling method was proposed to
+introduce multiple separated interfaces to achieve fine-grained       2  STRUCTURE OF PHOTOVOLTAIC
+decoupling of renewable energy power generation units. In             POWER PLANTS
+addition, inspired by the finite-difference time-domain method,
+the latency insertion method [16, 17] was proposed to improve         The collecting and distributing PV power generation sys-
+the design efficiency of large-scale integrated circuits, which was   tem combines the advantages of traditional AC systems and
+a component-level parallel simulation method. However, these          group-string systems, enabling both decentralized control and
+approaches introduce delay in the data interaction of parallel        centralized grid connection [29]. This system is suitable for
+solving units, and the existence of delay error often requires the    large-scale ground-mounted PV power plants, particularly in
+system to use microsecond step size to ensure the numerical           areas with inconsistent orientations and severe shading, whose
+stability of the simulation.                                          topology is shown in Figure 1. In the PV power genera-
+   In contrast, the delay-free decoupling method has better           tion unit of the system, the front-end DC/DC converter can
+numerical stability. Diakoptics [18] was the earliest delay-free      achieve maximum power point tracking (MPPT) control, and
+network partition idea, which was further developed by rele-          the rear-end DC/AC converter is used for inversion functions.
+vant scholars into a series of interface models such as bordered         Although the multi-branch structure of the PV power gen-
+blocked diagonal matrix method [19, 20], compensation model           eration unit enhances the reliability and efficiency of the PV
+[21, 22], and multi-area Thevenin equivalent model [23, 24].          power generation system, it also increases the complexity of the
+These methods used the associated branch to divide indepen-           topology. On the one hand, the increased number of convert-
+dent subsystems, and they could also be called the branch             ers expands the solving scale of each PV unit. On the other
+cutting method. In [25], a node splitting method was proposed         hand, the increased number of controllers leads to more con-
+to realize system partitioning, which was also a branch cutting       trol variables that need to be solved within each PV unit. When
+method in essence, and just the branch impedance used for seg-        this increase in complexity is further reflected in the PV power
+mentation was zero. However, when these methods apply to              plant, the solution efficiency becomes unacceptable.
+renewable energy power generation clusters interconnected by             To address the efficiency issue on the basis of maintain-
+the common bus, the complexity of solving associated variables        ing model accuracy, a state-variable-preserving (SVP) method
+will be significantly increased. In addition, other decoupling        is proposed for modelling the PV power generation unit. The
+methods, such as the loop current tearing method [26], the            SVP method uses discrete state space expression to extract the
+nested fast simultaneous solution method [27], and the linking-       output characteristics of the original circuit without considering
+WANG ET AL.                                                                                                                                                                                3 of 12
+
+
+
+
+FIGURE 1      Schematic diagram of the collecting and distributing photovoltaic power generation system.
+
+
+its detailed topology, which retains all the state variables of the                               PV array & Boost                               VSC                       LCL filter
+unit while reducing the scale it represents to the external system.                                             DC                         S1     S3          S5
+                                                                                                                  DC                                                    Lf1              Lf2   IPV
+                                                                                                                DC                   Cdc
+                                                                                                                  DC
+                                                                                            ...                  ...
+3  STATE-VARIABLE-PRESERVING                                                                                    DC                                                      Cf
+                                                                                                                                           S2     S4          S6
+MODELLING OF PHOTOVOLTAIC POWER                                                                                   DC
+
+GENERATION UNITS                                                                                        Np                     ipv
+                                                                                                                       Ns                                          Lb         Db
+                                                                                                                          Rs
+From the perspective of the control theory, the state space                                  Ns                        Np
+                                                                                    Npiph                 ...          N s upv                  upv                                udc
+expression can completely describe the input and output char-                                                             Rsh                          Cfdc        Sb
+                                                                                                                       Np
+acteristics of a system without considering the specific control                                         Dpv
+block diagram implementations. Inspired by this, the SVP                                                PV array                                                   Boost
+method uses discrete state space expression to extract the
+output characteristics of the original circuit after numerical inte-            FIGURE 2                Electrical model of the PV power generation unit.
+gration without considering the circuit structure. The following
+describes the construction process of the discrete state space
+expression of the PV power generation unit.                                     3.1.1                 Photovoltaic array equation
+
+                                                                                A complete PV array consists of multiple PV cell modules con-
+3.1       Electrical equations                                                  nected in parallel and series, and it is generally believed that the
+                                                                                characteristic parameters of each PV cell module in a PV array
+The electrical model of the PV power generation unit is shown                   are the same. Without considering the connection loss between
+in Figure 2, which consists of multiple PV arrays and boost                     different PV cell modules, the equivalent circuit of the PV array
+converters, an inverter, and a filter.                                          is shown in Figure 2. Its volt–ampere characteristic relationship
+4 of 12                                                                                                                                        WANG ET AL.
+
+
+is shown as follows.                                                                internal node j, Mh-in (i,j) = −1; If the first two conditions are
+                                               (                )
+                                                                                    not satisfied, Mh-in (i,j) = 0.
+                                   ⎛ q uarray + iarray Rs              ⎞               If there is an equivalent admittance Yij between the output
+           iarray = Np iph − Np is ⎜e AkT Ns       Np
+                                                                    − 1⎟            node i and internal node j, Yo-in (i,j) = Yij ; Otherwise, Yo-in (i,j)
+                                   ⎜                                   ⎟
+                                   ⎝                                   ⎠            = 0.
+                           (                 )
+                      Np uarray iarray Rs
+                    −                +                                        (1)
+                      Rsh     Ns         Np                                         3.1.3         State variable equation
+where iarray and uarray are the output current and output voltage                   The expression of the historical currents of the companion
+of the PV array respectively; iph is the photo-generated current;                   circuit models of dynamic components is as follows:
+is is the reverse saturation current of the diode; Rs is the series
+equivalent re

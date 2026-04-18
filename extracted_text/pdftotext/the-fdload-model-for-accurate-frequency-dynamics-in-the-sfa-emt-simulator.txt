@@ -1,0 +1,221 @@
+                                                               Electric Power Systems Research 251 (2026) 112325
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+The fdLoad model for accurate frequency dynamics in the SFA-EMT
+simulatorI
+Masoud Hajiakbari Fini a , Andrea T.J. Martí b , José R. Martí a                                          ,∗
+a
+    Department of Electrical and Computer Engineering, University of British Columbia, Vancouver, BC, V6T 1Z4, Canada
+b
+    Department of Civil Engineering, University of British Columbia, Vancouver, BC, V6T 1Z4, Canada
+
+
+
+ARTICLE                 INFO                               ABSTRACT
+
+Keywords:                                                  Due to the reduction in the system’s total mechanical inertia, frequency swing deviations increase with the
+Accurate frequency swing solutions in low                  penetration of inverter-based resources (IBR). For frequency swings, transient stability programs usually model
+inertia systems                                            the load as frequency-dependent using, for example, exponential load models. These programs usually use a
+Frequency dependent load model (fdLoad)
+                                                           phasor solution at 60 Hz for the AC network, and the frequency is estimated from the solution for the phase
+Shifted Frequency Analysis (SFA) modelling
+                                                           angles at previous and current time steps but is not explicitly included in the present time step solution. On
+                                                           the other hand, in Dommel’s EMT time domain solution, the frequency is implicitly included in the solution
+                                                           at all locations in the network, including the load busses. A full-system EMT solution, however, is expensive
+                                                           compared to a phasor solution. In this paper, the Shifted-Frequency Analysis method (SFA), which is a phasor
+                                                           solution with magnitude and phase angle discretized with the EMT method, is combined with a frequency-
+                                                           dependent load synthesis model to study the influence of the frequency dependence of the load in frequency
+                                                           swings. The IEEE-39-Bus system is used for tests of load-shedding conditions. The results show that using a
+                                                           frequency-dependent load model has an important influence on the maximum frequency deviations during the
+                                                           contingency.
+
+
+
+1. Introduction                                                                                    In SFA-EMT, the phase angles are continuous variables, and the
+                                                                                               frequency at the present solution step is implicit in the solution. As
+    The transition from synchronous generation to inverter-based re-                           a result, it is possible to model the frequency dependence of the
+sources (IBR) has created challenges for traditional power system sim-                         loads using a frequency-dependent network synthesis branch, as in the
+ulation software due to the wider swings caused by the decrease of                             frequency-dependent models of the EMT solutions (e.g., [7,8]).
+system inertia. In particular, frequency swings during generation loss,                            For the SFA-EMT solution, discontinuities can be treated as in the
+load shedding, and faults can be larger than expected by frequency                             EMT programs using, for example, CDA [9] or using the backward Euler
+relays.                                                                                        rule instead of the trapezoidal rule for the entire simulation. Since in
+    The SFA-EMT simulator [1] was developed to solve a phasor-domain                           the SFA-EMT solution, the frequency is implicit in the solution, the
+electric circuit using Dommel’s EMT discretization techniques [2] ap-                          system impedances or admittances are not constant at 60 Hz but are
+plied to the magnitude and phase angle of the voltage and current
+                                                                                               obtained at the correct frequency at every solution step.
+phasors. (In this paper, whenever the generic term EMT is used, it refers
+                                                                                                   This paper extends the accuracy of the SFA-EMT simulator of [1] for
+to Dommel’s EMT discretization method of [2].) SFA-EMT can simulate
+                                                                                               modelling frequency swings by developing a frequency-dependent load
+any frequency in the system, but it is particularly efficient for frequency
+                                                                                               model (fdLoad) that synthesizes the load as a combination of constant
+deviations around 60 Hz.
+                                                                                               𝑅, 𝐿, and 𝐶 components (Fig. 3).
+    In conventional phasor-based software, frequency is estimated from
+the rate of change of the phase angles from the previous solution to the                           The fdLoad model follows the EMT frequency-dependent line mod-
+present solution (e.g., [3–6]). This approach does not use the current                         els (e.g., [7]) that use a network synthesis to model impedances or
+step frequency for frequency dependent loads and has difficulties at                           admittances. The Vector Fitting procedure of [8] was chosen for this
+discontinuities, for example during load shedding.                                             modelling because it can synthesize complicated frequency-dependent
+
+
+
+    I This work was supported in part by the Natural Sciences and Engineering Research Council of Canada (NSERC).
+    ∗ Corresponding author.
+       E-mail addresses: mhf@ece.ubc.ca (M.H. Fini), andrea.marti@ubc.ca (A.T.J. Martí), jrms@ece.ubc.ca (J.R. Martí).
+
+https://doi.org/10.1016/j.epsr.2025.112325
+Received 5 January 2025; Received in revised form 3 March 2025; Accepted 30 September 2025
+Available online 8 October 2025
+0378-7796/© 2025 Published by Elsevier B.V.
+M.H. Fini et al.                                                                                                 Electric Power Systems Research 251 (2026) 112325
+
+
+functions defined in a relatively narrow frequency band, as compared
+to Bode’s method of [7].
+    The IEEE-39-Bus system is used to test the fdLoad model dur-
+ing frequency swings during load-shedding situations with variable
+amounts of IBR penetration. These results are important for Under-
+frequency Load Shedding schemes (UFLS). The existing UFLS may be
+set to operate too early when the load’s frequency dependence is not
+considered.
+
+2. SFA-EMT shifted frequency analysis simulation
+
+    The application of Dommel’s EMT solution methods to complex
+signals was discussed in [10]. The Shifted Frequency Analysis (SFA)
+algorithm to model synchronous machines was discussed in [11]. The
+SFA-EMT simulator to solve a general network for the time-dependent
+magnitude and phase angle of phasor voltages and currents using EMT
+discretization methods was developed in [1].                                     Fig. 1. The equivalent branch elements (𝑅, 𝐿 and 𝐶) with traditional RMS
+                                                                                 phasors, EMT discretization and SFA discretization.
+    As discussed in [1], in the SFA-EMT method, a frequency-shifting
+transformation of −60 Hz, 𝑒−𝑗(2𝜋60)𝑡 is applied to the instantaneous volt-
+age and current waveforms with the result that the 60 Hz components
+of the signals are shifted down to 0 Hz and the frequencies around
+60 Hz become frequencies around 0 Hz, that can be solved with large
+𝛥𝑡’s.
+    The SFA-EMT equivalent branches shown in Fig. 1, 3rd column,
+were obtained using Dommel’s EMT time discretization techniques
+of [2] on the phasor branches of Fig. 1, 1st column. Fig. 1, 2nd column
+shows the discretized branches for the basic circuit components 𝑅, 𝐿,
+and 𝐶. In addition to the time discretization techniques, other EMT
+solution strategies, such as CDA [9] for discontinuities, and frequency
+dependence synthesis modelling can be directly applied to the SFA-EMT
+solution.
+    Notice that the branches for the SFA-EMT model are a hybrid                  Fig. 2. Comparing the two phasor methods when calculating the bus fre-
+between the traditional phasor model and the EMT discretized branches            quency as a derivative of phase angle.
+for the circuit components. The solution in SFA-EMT proceeds one time
+step at a time, exactly like in the normal Dommel’s EMT, using the
+discretized phasor models for the branches and injecting the history             of the 60 Hz shifting, only the deviation from 60 Hz (0.9 Hz) needs
+sources calculated in the previous time steps. The only difference               to be captured. This gives a 𝛥𝑡 of 55 ms, which is 70 times larger
+between the EMT solution and the SFA-EMT is that SFA-EMT solves                  than for 60 Hz. In traditional transient stability programs based on
+a phasor system of equations.                                                    static phasor solutions, the time step is determined by the machine
+    Even though SFA-EMT is particularly advantageous for small devia-            acceleration and is in the order of 5 ms, which is smaller than the
+tions around 60 Hz in terms of being able to use very large discretiza-          time step required by the SFA-EMT solution. Therefore, using SFA-EMT
+tion steps, the method is still capable of solving for any transient with        with 5 ms results in basically zero error for the transient frequency
+higher or slower frequencies, as long as the time step size is chosen            deviations, with basically the same solution time as the conventional
+using the EMT rule of 𝛥𝑡 = 10⋅𝑓1 , only that now 𝛥𝑡 = 10⋅(𝑓 1 −60) .             static-phasor solution.
+                                   max                            max
+For example, to capture the third harmonic 𝑓3 = 180 Hz, the time step                Also because the EMT solution uses CDA [9] to soften up dis-
+                      1
+required is 𝛥𝑡 = 10⋅(120) = 0.833 ms. The normal EMT would require               continuities, the transitions at load-shedding are smoothed out. Fig.
+         1
+𝛥𝑡 = 10⋅180  = 0.556 ms. However, as the frequency deviates further              2 illustrates that the frequency simulated by the SFA-EMT program
+from 60 Hz, a regular EMT solution is preferred because the EMT                  is smooth and has a lower dip across a load shedding discontinuity
+solution is based on real-number operations while SFA-EMT requires               compared to the frequency calculated from the rate of change of the
+complex-number operations.                                                       phase angles in conventional steady-state transient stability solutions
+    Since SFA-EMT is based on phasors, if we express the equivalent              (e.g., [12]).
+SFA-EMT branch in shunt form, it is straightforward to modify a
+traditional transient stability solution [𝑌 ][𝑉 ] = [𝐼] into an SFA-EMT
+                                                                                 3. SFA-EMT frequency-dependent load model
+solution by replacing the normal phasor admittances with the SFA-EMT
+equivalent admittances and injecting the SFA-EMT history sources into
+the right-hand side of the transient stability solution.                             The models discussed in this paper are for dynamic studies in the
+    In terms of computer time, the SFA-EMT solution uses complex                 transmission system. At this level, the loads are seen as aggregates
+numbers as in the static-phasor solution, with an added small overhead           and do not have the physical details that could be included at the
+for the transformations between the original unshifted domain (phase             distribution system level [13]. At the transmission level, the expo-
+domain) and the shifted domain (SFA domain) during initialization and            nential load model in Eqs. (1) and (2) below [14] is often used to
+changes of topology. The introduction of a synthesis load model, as              capture the behaviour of load aggregates. However, the methodology
+presented in this paper, avoids the overhead due to changes of topology          presented in this paper is general and can be used for other analytical
+when the load values change due to frequency changes.                            approximations or, better, from direct measurements.
+    For transient or frequency stability studies, if we have a 0.9 Hz                The exponential load model is given by:
+frequency deviation in the 60 Hz signals, the 𝛥𝑡 required to capture                                 𝑓 𝛼𝑓 𝑉 𝛼𝑣
+59.1 Hz (or 60.9 Hz) in an EMT model is 0.8 ms. However, because                 𝑃 (𝑓 , 𝑉 ) = 𝑃0 (      ) ( )                                                 (1)
+                                                                                                     𝑓0    𝑉0
+
+                                                                             2
+M.H. Fini et al.                                                                                                  Electric Power Systems Research 251 (2026) 112325
+
+
+
+
+                                                                                       −140
+                                                                                       −145
+                                                                                       −150
+                                                                                       −155
+                                                                                       −160
+                                                                                       −165
+
+                   Fig. 3. Equivalent circuit for the fdLoad model.
+
+
+
+
+                   𝑓 𝛽𝑓 𝑉 𝛽𝑣
+𝑄(𝑓 , 𝑉 ) = 𝑄0 (      ) ( )                                           (2)
+                   𝑓0    𝑉0
+In this model, 𝑓0 , 𝑉0 , 𝑃0 , and 𝑄0 are the active and reactive values
+of the power at 60 Hz while 𝑓 and 𝑉 are the current values. The
+exponents, 𝛼𝑓 , 𝛽𝑓 , 𝛼𝑣 , and 𝛽𝑣 , depend on the type of load and give
+an approximation of the behaviour around the operating point. Typical
+values for these coefficients can be found in [14].
+    Because the SFA-EMT solution is a time-domain solution and fre-
+quency is implicit in it, if we express the load’s frequency behaviour
+in terms of the frequency behaviour of an impedance branch (Fig. 3)
+with constant 𝑅, 𝐿, and 𝐶 parameters, then we can use this branch as
+individual 𝑅, 𝐿, and 𝐶 elements in the network solution to model the
+load’s frequency dependence.
+                                                                                 Fig. 4. Active and reactive power (𝑃 , 𝑄) and admittance (𝑌 ) as functions of
+    To obtain the synthesis branch of Fig. 3 from (1) and (2), we can use        frequency based on Eqs. (1),(2), and (4) at load Bus 15. At 60 Hz, the actual
+the methods used in the EMT to model the frequency dependent charac-             network and the approximated synthesis network are identical.
+teristic admittance in the frequency-dependent line models (e.g., [7,8]),
+which fit the frequency response of the admittance with a rational
+function of poles and zeroes. In our case, from (1), (2):
+                                                                                 negative values, all the synthesis branches tested were minimum-phase
+         𝑃 (𝑓 ) − 𝑗𝑄(𝑓 )                                                         within the fitted frequency range. No numerical stability problems were
+𝑌 (𝑓 ) =                                                    (3)
+                𝑉2                                                               encountered in any of the simulations.
+and setting 𝑉 = 𝑉0 , we obtain a frequency-dependent admittance                      Using Vector Fitting for our example load, we get a transfer function
+linearized around the 𝑓0 = 60 Hz value:                                          of the form
+         𝑃0 𝑓 𝛼        𝑄 𝑓                                                                 (𝑠 + 𝑧1 )(𝑠 + 𝑧2 )            𝐾1
+𝑌 (𝑓 ) =    ( ) 𝑓 − 𝑗 0 ( )𝛽𝑓                                          (4)       𝑌 (𝑠) = 𝐻                    = 𝐾0 + (        ) + 𝑠𝐾2                  (5)
+         𝑉02 𝑓0       𝑉02 𝑓0                                                                   (𝑠 + 𝑝1 )               𝑠 + 𝑝1
+    Assuming, as an example, a typical motor load, with 𝛼𝑓 = 2.8 and             Expanding (5) into partial fractions, we find the synthesis network
+𝛽𝑓 = 1.8 [14], we can evaluate (4) to fit accurately the frequency range         of Fig. 3 to model the load’s frequency response. With 𝑠 = 𝑗𝜔, and
+of interest, say from 57 Hz to 63 Hz. Then the rational function fit can         matching the partial fraction terms in (5), we get
+be used to find the 𝑅, 𝐿, and 𝐶 elements of the synthesis. We call this
+synthesis the fdLoad model.                                                               1         1
+                                                                                 𝑌 (𝜔) =     +            + 𝑗𝜔𝐶                                       (6)
+                                                                                          𝑅2 𝑅1 + 𝑗𝜔𝐿
+    The fdLoad model of Fig. 3 was obtained for the 𝑃 and 𝑄 loads
+in Bus 15 of Fig. 5 for the Case Study of Section 4. For this bus                    The accuracy of the load synthesis with the fdLoad model of Fig.
+𝑃0 =306 MW, 𝑄0 =152 MVar, and 𝑉0 =350.52 kV. The results for the                 3 is plotted in Fig. 4 for the admittance function as well as the corre-
+synthesis of this branch were 𝐿 = −1.8 mH, 𝑅1 = −4.96 𝛺, 𝑅2 = 4.99 𝛺             sponding real and reactive power functions. For all plots, the maximum
+and 𝐶 = −75.1 𝜇F.                                                                error is about 0.5% in the considered frequency range of ± 3 Hz.
+    The parameters 𝛼𝑓 = 2.8 and 𝛽𝑓 = 1.8 depend only on the load
+type and not on the specific 𝑃 and 𝑄 values of the bus. For simplicity           4. Case study - IEEE 39 bus system
+in setting up the test case in Fig. 5, all busses were assumed to have
+the same type of load (𝛼𝑓 = 2.8 and 𝛽𝑓 = 1.8). Then, the 𝑅, 𝐿, and 𝐶                The Western Electricity Coordinating Council [15] recommends that
+parameters of Fig. 3 were re-scaled according to the values of 𝑃 and 𝑄           Underfrequency Load Shedding (UFLS) sequences should be calculated
+in these busses.                                                                 to stabilize the frequency within 59.5 Hz and 60.5 Hz by activating
+    The rational function fitting used in this work is the Vector Fitting        the controls at 0.9 Hz below the nominal frequency. These guidelines,
+procedure of [8]. Vector Fitting was chosen for this application because         however, do not consider the pene

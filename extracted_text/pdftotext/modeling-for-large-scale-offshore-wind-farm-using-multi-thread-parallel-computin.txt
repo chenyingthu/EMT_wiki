@@ -1,0 +1,182 @@
+                                                           Electrical Power and Energy Systems 148 (2023) 108928
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                         International Journal of Electrical Power and Energy Systems
+                                                          journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Modeling for large-scale offshore wind farm using multi-thread
+parallel computing☆
+Ming Zou , Chengyong Zhao , Jianzhong Xu *
+State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University (NCEPU), 102206 Beijing, China
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 Large-scale Offshore Wind Farms (OWFs) face difficulty when carrying out microsecond-level Electro-Magnetic
+Offshore Wind Farm (OWF)                                  Transient (EMT) simulations due to the large number of Wind Turbines (WTs) and electrical nodes. This paper
+Electro-Magnetic Transient (EMT)                          provides an OWF modeling method considering the electrical collection network based on the integrated
+Electrical collection network
+                                                          equivalent modeling method of single WT, which can eliminate the internal nodes and reduce the order of
+Multi-thread parallel computing
+                                                          admittance matrix. Meanwhile, the multi-thread parallel computing is integrated into the whole solution pro­
+                                                          cedure, which achieves further simulation speedup. Moreover, simulations are performed in PSCAD/EMTDC to
+                                                          compare the model accuracy and time efficiency of the proposed method with the detailed model. The simulation
+                                                          results show that the proposed method can accurately simulate the dynamic characteristics of large-scale OWFs
+                                                          with large speedup factors.
+
+
+
+
+1. Introduction                                                                                improving the serial solution efficiency of the model based on mathe­
+                                                                                               matical and equivalence principles. While references [17–21] pay
+    With the worsening of climate warming and environmental pollu­                             attention to the parallelism of model solution procedure and introduce
+tion, the transition from conventional fossil energy power to renewable                        multi-thread parallel computing to EMT simulation, thus to maximize
+energy power becomes urgent [1,2]. Offshore wind power has become a                            the computing potential of the CPU processors.
+promising approach for China to achieve the goal of “carbon peak and                               In terms of serial computation acceleration, reference [12] proposed
+carbon neutrality” and plays a very important role in the construction of                      a Thévenin’s equivalent EMT simulation model for Modular Multilevel
+new-type power system with renewable energy as the main body due to                            Converter (MMC) based on Nested Fast and Simultaneous Solution
+its advantages of abundant resource reserves, no occupation of land                            (NFSS) algorithm. This method can improve the simulation efficiency by
+resources and high utilization rate of wind energy [3–5].                                      eliminating internal nodes. Based on [12], the equivalent modeling
+    To accurately reflect the internal and external dynamic characteris­                       method is extended to Power Electronic Transformers (PET) [13,14].
+tics of large-scale Offshore Wind Farms (OWFs), the Electro-Magnetic                           However, this method is only applicable to models with modular
+Transient (EMT) simulation has become an important tool for wind                               cascaded topologies, and special considerations are required when to­
+farm planning, control protection design, and reproducing and handling                         pologies are more complex. So far, no literatures have employed the
+abnormal working conditions [6–8]. Since there are large number of                             above equivalent method to accelerate the accurate EMT simulations of
+WTs in the OWF, the microsecond-level time-step size is required.                              the Wind Turbines (WT). A large time step simulation technology for WT
+However, the detailed EMT simulation model, which employs discrete                             is proposed in [15] based on matrix transformation and phasor-domain
+components, requires super high-order admittance matrix reconstruc­                            shifted frequency modeling methods, although reduced the computa­
+tion and inversion operations, resulting in extremely low simulation                           tional burden, it is only fit for sub-/super-synchronous interaction
+efficiency [9–11].                                                                             conditions. In [16], the average-value modeling techniques are applied
+    To fill the research gap, many scholars have carried out researches on                     to WT model by representing the characteristics of switching systems
+accelerating the EMT simulations. References [12–16] focus on                                  with a set of algebraic equations. Yet, the simulation accuracy is
+
+
+ ☆
+   This work was supported by the National Natural Science Foundation of China (52277094) and Science and Technology Project of China Huaneng Group Co., Ltd.
+(HNKJ20-H88-02).
+ * Corresponding author.
+   E-mail address: xujianzhong@ncepu.edu.cn (J. Xu).
+
+https://doi.org/10.1016/j.ijepes.2022.108928
+Received 14 September 2022; Received in revised form 22 November 2022; Accepted 21 December 2022
+Available online 28 December 2022
+0142-0615/© 2022 Elsevier Ltd. All rights reserved.
+M. Zou et al.                                                                           International Journal of Electrical Power and Energy Systems 148 (2023) 108928
+
+
+                                                                               efficiency of EMT simulation procedure, but its universality is poor
+                                                                               compared with other equivalent programs. In [19], a one-step time-
+                                                                               delay parallel method is proposed based on the parallelism of the
+                                                                               explicit integration formula of the forward Euler method. The natural
+                                                                               decoupling of the network can be achieved by using a single inductor or
+                                                                               capacitor. However, due to the low accuracy of the forward Euler
+                                                                               method, numerical oscillation problem exists, and its applicability needs
+                                                                               to be improved. In [20], a fine-grained electrical circuit partitioning
+                                                                               method is proposed in which the graphics processing unit (GPU) based
+                                                                               parallel architecture is utilized. In addition, there are many multi-thread
+                                                                               parallel technologies with good performance. One of the typical
+                                                                               methods is OpenMP, which is a multi-thread programming scheme
+                                                                               based on shared memory to realize system parallelism. The “fork-join”
+                                                                               architecture is applied, which supports C, C++, and Fortran program­
+                                                                               ming languages, and is suitable for completing parallel programming on
+                                                                               multi-core CPU computers. OpenMP has been widely applied in many
+                                                                               fields, but have not been effectively employed in EMT simulation [21].
+                                                                                   Aiming at the problem that the transmission lines in OWFs are short
+                                                                               and may not meet the natural decoupling requirements, based on the
+                                                                               previous research, which is briefly introduced in Section II and the
+                                                                               Appendix, this paper proposes an integrated modeling method for large-
+   Fig. 1. The classical chain connection and topology of PMSG based WT.       scale OWFs considering the electrical collection network. Further, a
+                                                                               parallel equivalent computing method for large-scale OWFs is proposed,
+                                                                               and the parallel method is applied to the solution procedure of OWFs,
+                                                                               which improves the simulation speed.
+                                                                                   The rest of the paper is organized as follows: Section III introduces
+                                                                               the interphase decoupled method of WT model based on the integrated
+                                                                               equivalent model for WT. Section IV elaborates the modeling method of
+                                                                               OWF considering electrical collection network by integrating WT
+                                                                               models and transmission lines. A multi-thread parallel equivalent
+                                                                               computing method is proposed in Section V based on the modularity and
+                                                                               parallelism of computation among the WTs. Section VI verifies the ac­
+                                                                               curacy and efficiency of the proposed model. Finally, conclusions are
+                                                                               drawn in Section VII.
+
+                                                                               2. Integrated equivalent model for WT based on matrix order
+                                                                               reduction
+
+                                                                                  The integrated equivalent model for PMSG based WT was previously
+                                                                               developed by the authors and is briefly introduced in this Section. To
+                                                                               better illustrate the background knowledge of this paper, the main
+       Fig. 2. The nodal admittance equation of complete circuit of WT.        equations of the model are listed in Appendix.
+
+                                                                               A. PMSG Based WT
+
+                                                                                   The topology of PMSG based WT as shown in Fig. 1 includes PMSG,
+                                                                               back-to-back Full Rated Converter (FRC) with DC chopper branch, LC
+                                                                               filter, and three-phase AC transformer. Due to the complex equipment,
+                                                                               black-box model and large number of nodes, the detailed modelling of
+                                                                               WT is extremely low and the equivalent modeling is necessary.
+
+                                                                               B. EMT Equivalent Model
+
+                                                                                   Firstly, the mathematical equations of devices in a WT are discretized
+                Fig. 3. The EMT equivalent model of single WT.                 by Trapezoidal Rule (TR) and established to obtain their companion
+                                                                               circuits. Then the complete circuit of PMSG based WT is obtained and its
+reduced.                                                                       nodal admittance equation is shown in Fig. 2. Using the idea of parti­
+    In terms of parallel computation acceleration, reference [17] pro­         tioned matrix, the equation in Fig. 2 is written in a much-simplified form
+posed an Electric Network Interface (ENI) technology based on Bergeron         as in (1) by separating the internal and external nodes.
+transmission line model, which realized system partitioning and parallel       [           ][
+                                                                                 Y 11 Y 12 uEN
+                                                                                                  ] [
+                                                                                                       0
+                                                                                                          ] [
+                                                                                                               i
+                                                                                                                   ]
+simulation. Yet this method is only suitable for networks containing                               =        + EN                                       (1)
+                                                                                 Y 21 Y 22    uIN     JIN        0
+transmission lines, and the network decoupling is largely dependent on
+the length of transmission lines and simulation time step size. A mas­            where, the subscript “EN” represents the external nodes and “IN”
+ter–slave co-simulation scheme is proposed in [18] based on Functional         represents the internal nodes.
+Mock-up Interface (FMI) standard, which effectively improves the                  Finally, by eliminating the internal nodes of (1), the admittance
+
+
+                                                                           2
+M. Zou et al.                                                                                       International Journal of Electrical Power and Energy Systems 148 (2023) 108928
+
+
+                                                                                         structure, and all sub-modules are the same and bridge arm can be
+                                                                                         equivalent to one sub-module through Thévenin or Norton theorem,
+                                                                                         thus greatly reducing the computation burden and improving the
+                                                                                         simulation efficiency [12,22]. The modeling procedure of Power Elec­
+                                                                                         tronic Transformer (PET) is similar [13,14].
+                                                                                             WTs in an OWF also have similar structural characteristics. For
+                                                                                         example, the typical chain connection shown in Fig. 1 connects each WT
+                                                                                         in a collection string through transmission lines. If the WT model and the
+                                                                                         transmission line model can be processed to carry out Norton parallel
+                                                                                         connection, then the number of simulation nodes can also be signifi­
+                                                                                         cantly reduced. However, the WT model in Section II is phase-coupled,
+                                                                                         indicating that there is mutual-impedance among three phases, which
+                  Fig. 4. Interphase decoupled model of single WT.                       makes the WT model fail to meet the conditions of parallel connection.
+                                                                                         For this reason, this Section proposes an interphase decoupled method.
+                                                                                             Re-organize (2) and obtain:
+
+                                                                                         iEN (t) = (Y 11 − Y 12 Y −221 Y 21 )uEN (t) + Y 12 Y −221 JIN (t − Δt)
+                                                                                                                                                                              (3)
+                                                                                                              ≜GuEN (t) + J(t − Δt)
+                                                                                             where, G is the node admittance matrix and J(t-Δt) is the node in­
+                                                                                         jection current from the last simulation step.
+                                                                                             Then, define Ydiag and Yrest as the matrix composed of diagonal el­
+                                                                                         ements and none-diagonal elements of G, respectively. Therefore, (3)
+     Fig. 5. Equivalent circuit of single-phase π-section transmission line.             can be written as (4).
+                                                                                         iEN (t) = (Y diag + Y rest )uEN (t) + J(t − Δt)                                      (4)
+
+                                                                                            To eliminate the influence of Yrest on the final equivalent circuit of
+                                                                                         single WT, single time-step approximation is applied to uEN, with the
+                                                                                         assumption of uEN(t) is close to uEN(t-Δt). The rationality of the above
+               

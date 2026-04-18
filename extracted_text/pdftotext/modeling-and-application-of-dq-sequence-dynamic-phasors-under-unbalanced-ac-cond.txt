@@ -1,0 +1,200 @@
+                                                          Electrical Power and Energy Systems 166 (2025) 110524
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                         International Journal of Electrical Power and Energy Systems
+                                                        journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Modeling and application of DQ-sequence dynamic phasors under
+unbalanced AC conditions
+Xiaoming Mao a,* , Hongbo Luo a, Wenda Zhong a, Liang Wu b, Zhiyong Yuan c
+a
+  School of Automation, Guangdong University of Technology, Guangzhou, China
+b
+  Power Dispatching and Control Center of the China Southern Power Grid Company, Guangzhou, China
+c
+  Electric Power Research Institute of the China Southern Power Grid Company, Guangzhou, China
+
+
+
+
+A R T I C L E I N F O                                   A B S T R A C T
+
+Keywords:                                               Increasing unbalanced AC operating conditions generates the need of developing models for power electronic
+Dynamic phasor                                          equipment in such situations. The dq-sequence dynamic phasor method is proposed in this paper to model power
+DQ-sequence dynamic phasor                              electronic devices controlled in dq-rotating coordinates. Firstly, the instantaneous symmetric component
+MMC
+                                                        decomposition and Park transformation are sequentially performed on a set of three-phase time-domain signals
+Modeling
+                                                        to define the dq-sequence dynamic phasors. Then, the multiplication property is derived. Next, the general steps
+                                                        for forming the state equations are provided, and the specific expressions of the state matrices are derived.
+                                                        Furthermore, a method is provided for quickly separating the real and imaginary parts of the complex-form state
+                                                        equations, as well as obtaining their simplest real-form. Case study on a two-terminal Modular Multilevel
+                                                        Converter − High Voltage Direct Current system verifies the effectiveness of the proposed modeling method. And
+                                                        the developed state space model is compared with existing similar models to show its advantages.
+
+
+
+
+1. Introduction                                                                             of power electronic equipment under symmetric operating conditions,
+                                                                                            such as in [3] with Static Var Compensator (SVC), in [4] with Line
+    With the widespread application of power electronic devices, elec-                      Commutated Converter (LCC), in [5] with Modular Multilevel Converter
+tromagnetic transient (EMT) simulation with small time steps becomes                        (MMC), and in [6] with LCC-MMC, all for simulation purposes. The
+an important means of studying the operational characteristics of power                     above studies show that the DP can reflect not only the external oper-
+systems [1,2]. Due to the challenges of complicated models, heavy                           ation characteristics, but also their internal dynamics to some extent.
+computational burden, and slow simulation speed faced by large-scale                            DP is also used in small-signal stability study based on eigenvalue
+EMT simulations, it is necessary to develop more efficient simulation                       analysis [7]. Note that the fast on–off and complicated harmonic
+models and algorithms. In this regard, the dynamic phasor (DP) method                       behavior of power electronic equipment, such as MMC, makes it difficult
+provides a feasible and efficient solution.                                                 to get the DC operation point which is required by traditional lineari-
+    DP refers to the time-varying Fourier coefficient of a time-domain                      zation methods. Considering that these devices typically use vector
+signal based on Fourier decomposition. It breaks through the limita-                        control based on the dq rotating coordinate system, the researchers
+tion of quasi-steady assumption, and has larger frequency bandwidth                         select main frequency components and convert the AC system model to
+than conventional phasors. DP method selects the dominant frequency                         the dq rotating coordinate system for interface with the control systems
+components for modeling and its simulation speed and accuracy are                           and then linearize it [8–12]. The models in [8–12] can be classified
+between the electromagnetic and electromechanical transient                                 under the DP model category and explanations are provided in Part 3.4
+simulations.                                                                                of this article.
+    When studying the dynamics of a power system, detailed internal                             As aforementioned, the DP method has been applied in both simu-
+dynamics of power electronic devices are generally not the focus, using                     lations and small-signal stability analysis, and existing work mainly
+DP simulation with a lower computational cost is generally more ad-                         focuses on AC balanced systems. However, asymmetric faults are more
+vantageous. Currently, the DP method has been widely used in modeling                       common in utility grid disturbances [13]. To cope with imbalanced
+
+
+ * Corresponding author at: Guangdong University of Technology, School of Automation, No. 100 Waihuan Xi Road, Guangzhou Higher Education Mega Center,
+Panyu District, Guangzhou, China 510006.
+   E-mail address: mxmsunny@gdut.edu.cn (X. Mao).
+
+https://doi.org/10.1016/j.ijepes.2025.110524
+Received 9 May 2024; Received in revised form 20 November 2024; Accepted 8 February 2025
+Available online 16 February 2025
+0142-0615/© 2025 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+X. Mao et al.                                                                                 International Journal of Electrical Power and Energy Systems 166 (2025) 110524
+
+
+conditions, two DP modeling methods have been proposed, namely the                 state space model under unbalanced AC conditions in Section 6. Section
+three-phase and the sequence DP (SDP) modeling.                                    7 concludes the paper.
+    The three-phase DP modeling method is proposed in [14]. It defines
+the average value of the k-phasor in the three-phase time-domain signal            2. Review on the dynamic phasor theory
+within the frequency cycle as the corresponding k-DP and derives the
+differentiation property. Based on this method, [14] builds DP models              2.1. Single-phase dynamic phasor
+for transmission lines et al, and [15] models the LCC-HVDC system.
+    The SDP modeling method [16,17] uses k-phasor in sequence time-                    A time-domain signal x(τ) can be represented on the interval
+domain signals to form the DPs and derives the differentiation and                 τ ∈ (t − T, t] in the form of Fourier series given in (1) [22].
+conjugation properties. However, the multiplication property that is                        ∑
+                                                                                            ∞
+more critical for modeling is not provided. Based on this method                   x(τ) =            Xk (t)ejkωτ                                                        (1)
+together with the concept of space vector, [16,17] model a single ma-                       k=− ∞
+
+chine to infinite bus system and simulate the response of the motor and
+power grid under asymmetric faults. These studies show that the SDP                where ω = 2π/T, and Xk(t) is the k-th Fourier coefficient calculated by
+model provides satisfactory accuracy.                                              the averaging operation in (2).
+    Furthermore, for devices controlled in dq coordinate system, sym-                       ∫t               /
+metric component decomposition and Park transformation are used to                 Xk (t) =    x(τ)e− jkωτ dτ T = 〈x〉k (t)                             (2)
+                                                                                              t− T
+model the Doubly-fed Induction Generator (DFIG) [18], VSC [19] and
+MMC [20] under unbalanced conditions. Similar to [8–12], the models                    If the dynamics of Xk(t) cannot be ignored when the interval with a
+obtained can be classified under the DP model category. However,                   width T slides on the time axis, we regard it as a DP. The DP has addition,
+[18–20] do not utilize the mathematical properties of DPs, resulting in a          multiplication, differentiation and conjugation properties, which can
+laborious derivation process. Also, [18] transforms the fundamental-               simplify modeling [22]. Among them, the multiplication property
+frequency negative-sequence signal into a second harmonic signal thus              shown in (3) is the most crucial. For better distinguish, the time-domain
+fails to establish a steady-state operating point for the system to obtain a       signal is represented as a function of time τ; while the DP is represented
+linearized small-signal model.                                                     as a function of time t in this paper.
+    It is thus clear that the three-phase DP modeling method proposed in                         ∑
+                                                                                                 ∞
+[14] is suitable for modeling static electromagnetic components (e.g.              〈xy〉k (t) =           〈x〉k− i (t)〈y〉i (t)                                            (3)
+transmission lines), and power electronic devices controlled by a-b-c                            i=− ∞
+
+phases (e.g. LCC-HVDC). However, it is not optimal for sequentially
+controlled wind turbines and VSC-HVDC links in the dq coordinate                   2.2. Sequence dynamic phasor
+system, since transforming the control system equations from the dq
+coordinate system into the abc system adds modeling difficulty.                        A. M. Stanković, et al [16,17], extend the definition of single-phase
+    On the other hand, the existing SDP modeling method lacks corre-               DPs to unbalanced poly-phase systems. The sequence time-domain sig-
+sponding consideration for the dq frame. More importantly, the space               nals are first obtained by instantaneous symmetric component decom-
+vector can only consider the positive-sequence (PS) and negative-                  position in (4); then in (5) they are represented in the form of Fourier
+sequence (NS) quantities under imbalanced conditions, and zero-                    series.
+sequence (ZS) and DC quantities have to be treated separately. In                  ⎧[               ]T                      T
+                                                                                   ⎪ x
+                                                                                   ⎪
+                                                                                   ⎪     +
+                                                                                             x− x0 (τ) = S⋅[ xa xb xc ] (τ)
+addition, the multiplication property is not provided, limiting its                ⎪
+                                                                                   ⎪         ⎡           ⎤       ⎡            ⎤
+                                                                                   ⎪
+application involving multiplication operation of two variables with               ⎨           1 a a2               1 1 1
+                                                                                                                                                          (4)
+multi-frequency components. For better computation, [21] provides a                ⎪S = 1⎢
+                                                                                   ⎪
+                                                                                                         ⎥       ⎢
+                                                                                             ⎢ 1 a2 a ⎥S− 1 = ⎢ a2 a 1 ⎥
+                                                                                                                              ⎥
+                                                                                   ⎪       3 ⎣           ⎦       ⎣            ⎦
+set of formulas that can represent the product of two variables con-               ⎪
+                                                                                   ⎪
+                                                                                   ⎪
+taining multi-sequence and multiple-frequency using variables in the dq
+                                                                                   ⎩
+                                                                                               1 1 1                a a2 1
+coordinate system. Based on them, a small-signal model for DC power
+                                                                                                                    ∑
+                                                                                                                    ∞
+grid with MMC is developed. The set of formulas in [21] offers a rep-              [ +
+                                                                                    x    x−      x0
+                                                                                                       ]T
+                                                                                                            (τ) =
+                                                                                                                      [
+                                                                                                                            〈x〉+   〈x〉−k   〈x〉0k
+                                                                                                                                                   ]T
+                                                                                                                                                        (t)⋅ejkωτ       (5)
+                                                                                                                               k
+resentation for the multiplication property of DPs in fact. However, it is                                          k=− ∞
+not concise and can only simplify modeling complexity to limited extent.
+    From the above discussions, though DP theory has many applications             where S is the symmetric component decomposition matrix with
+in power system simulation and stability analysis, the current modeling            rotating factor a = ej2π/3 ; x+− 0 (τ) are the PS, NS and ZS time-domain
+method has room for improvement in imbalanced conditions and                       signals, respectively; 〈x〉+−
+                                                                                                             k
+                                                                                                                0
+                                                                                                                  (t) are the k-th PS, NS, and ZS DPs; T rep-
+computation. This article suggests the dq-sequence dynamic phasor (dq-             resents the transpose operation.
+SDP) method along with a new MMC state-space model, and contributes                    The SDPs in (5) are calculated by averaging operation as shown in
+in the following aspects:                                                          (6).
+                                                                                                               ∫t
+1) defines the dq-SDPs;                                                            [ +                ]T             [ +          ]T
+                                                                                     〈x〉k 〈x〉−k 〈x〉0k (t) =           x    x− x0 (τ)⋅e− jkωτ dτ           (6)
+2) derives the multiplication property;                                                                                     t− T
+
+3) provides the derivation steps and unified form of the dq-SDP state                 According to the above definition, the SDP refers to the Fourier series
+   equations, together with the specific expressions for the state                 of the sequence time-domain signals. Furthermore, the authors in
+   matrices;                                                                       [16,17] give the conjugation and differentiation properties of SDPs, as
+4) provides a quick method for converting complex-form state equa-                 shown in (7) and (8). Note that (7) holds for real-valued waveforms.
+   tions into real-form;                                                           [ + −           ]T    [                      ]T
+5) develops a more concise state space model for the MMC under un-                  〈x〉k 〈x〉k 〈x〉0k (t) = 〈x〉−− k 〈x〉+
+                                                                                                                     − k 〈x〉0− k (t)                      (7)
+   balanced AC conditions with less computation.
+
+    The remainder of this paper is organized as follows. Section 2 re-
+views the existing DP theory. The dq-SDP modeling method is described
+in detail in Section 3 to 5. MMC is used as an example to establish its
+
+                                                                               2
+X. Mao et al.                                                                                     International Journal of Electrical Power and Energy Systems 166 (2025) 110524
+
+                    ⎡      ⎤        ⎡      ⎤
+  ⎡ +        ⎤        〈x〉+            〈x〉+                                              where Xk+ and θ+  k are amplitude and initial phase-angle of the PS k-th
+   〈x (τ)〉k         ⎢ k− ⎥          ⎢ k− ⎥
+d⎣ −             d                                                                      component, and so on.
+   〈x (τ)〉 ⎦(t) = ⎢   〈x〉 ⎥(t) + jkω⎢      ⎥
+                                    ⎣ 〈x〉k ⎦(t)                               (8)
+dτ 〈x0 (τ)〉k     dt ⎣ k0 ⎦               0
+                                                                                           Using Tdq(θ) and Tdq(− θ) in (12) to perform Park transformation to the
+           k          〈x〉k            〈x〉k
+                                                                                        PS and NS signals in (11) respectively, we can get (13).
+                                                                                                   ⎡                                            ⎤
+              )                                                                                       cosθ    cos(θ − 2π/3)      cos(θ + 2π/3)
+where 〈x〉+k (t is the conjugation of 〈x〉k (t), and so on.
+                                        +
+                                                                                                  2⎢                                            ⎥
+    The SDP provides an important modeling method for a

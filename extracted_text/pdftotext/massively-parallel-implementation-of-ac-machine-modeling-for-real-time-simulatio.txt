@@ -1,0 +1,173 @@
+830                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+
+      Massively Parallel Implementation of AC Machine
+      Models for FPGA-Based Real-Time Simulation of
+                 Electromagnetic Transients
+                              Mahmoud Matar, Student Member, IEEE, and Reza Iravani, Fellow, IEEE
+
+
+   Abstract—This paper presents a generalized, parallel imple-                       a new field-programmable gate-array (FPGA)-based real-time
+mentation methodology for real-time simulation of ac machine                         simulator [13] which addresses such technical limits/challenges
+transients in an FPGA-based real-time simulator. The proposed                        of real-time simulators based on a new methodology for im-
+method adopts nanosecond range simulation time-step and
+exploits the large response time of a rotating machine to: 1)                        plementation of the system equations in a FPGA environment.
+eliminate the need for predictive-corrective action for the machine                  The salient feature of the implementation methodology of [13]
+electrical and mechanical variables, 2) decouple the solution of                     is that it maintains the calculation time, within each simulation
+the dq0 stator currents, and 3) enable the use of one-time-step                      time-step, nearly fixed irrespective of the size of the system.
+delayed interface between the machine and the rest of the system                        This paper extends the parallel implementation methodology
+which decouples the machine solution from that of the rest of
+the system. The proposed method simplifies the solution of the                       of [13] to simulate ac machines with a nanosecond range simu-
+machine model without compromising accuracy or numerical                             lation time-step in an FPGA environment. The proposed imple-
+stability of the simulation. This paper also presents a massively                    mentation methodology for ac machine models enables the use
+parallel, customized hardware architecture tailored to the solution                  of a small simulation time-step, in the range of tens to few hun-
+of the mathematical model of ac machines. The proposed method                        dred nanoseconds. Based on exploiting the nanosecond range
+and the developed hardware architecture are tested and verified
+based on the implementation of a permanent-magnet synchronous                        simulation time-step and the large response time of ac machines,
+machine model and an induction machine-based ac-drive system                         the proposed method: 1) eliminates the need for predictive-cor-
+in a field-programmable gate-array-based simulator. Real-time                        rective action for machine electrical and mechanical variables,
+simulation is achieved with a computation time of 44 ns within the                   2) allows parallel simulation of both the electrical and mechan-
+simulation timestep.                                                                 ical subsystems of the machine, and 3) allows the use of the ter-
+  Index Terms—AC machines, electromagnetic transients, field-                        minal voltages calculated at a given time-step to solve the ma-
+programmable gate array (FPGA), modeling, real-time simulation.                      chine’s variables in the subsequent time-step, without compro-
+                                                                                     mising accuracy or numerical stability of the simulation. Based
+                             I. INTRODUCTION                                         on the proposed parallel implementation methodology, a mas-
+                                                                                     sively parallel (i.e., having a large number of independent arith-
+
+R      EAL-TIME simulators do exist and have been widely
+       used for the analysis of electromagnetic transients
+(EMTs) and testing physical control/protection platforms
+                                                                                     metic units that operate simultaneously) customized hardware
+                                                                                     architecture is designed and implemented on a FPGA.
+                                                                                        The rest of this paper is organized as follows. Section II de-
+[1]–[4]. Existing real-time simulators are based on parallel                         scribes the mathematical model and procedures to simulate a
+processing, where multiprocessors, either general-purpose                            rotating ac machine. Section III analyzes the solution algorithm
+processors (GPPs) or digital signal processors (DSPs), or                            for the simulating ac machine to identify the potential paral-
+computer clusters are utilized [5]–[11]. The existing real-time                      lelism inherent to it as a means for speeding up the required
+simulators have limitations on the minimum time-step size, the                       computations. The hardware architecture of the proposed simu-
+frequency bandwidth of the simulation results [12], and the                          lator is then designed to exploit all possible levels of parallelism,
+accuracy of the adopted models. Therefore, their application                         inherent to the solution algorithm of ac machines, without im-
+are limited, particularly when power electronic-based appa-                          posing sever communication overhead time that otherwise can
+ratus with high switching frequencies are of concern. These                          limit the performance. Section IV describes implementation of
+limitations are the main motivation behind the development of                        the model in the FPGA environment. Section V evaluates the
+                                                                                     performance of the developed model in the FPGA-based simu-
+   Manuscript received December 18, 2009; revised May 21, 2010, September            lator. Conclusions are stated in Section VI.
+16, 2010, and September 30, 2010; accepted October 01, 2010. Date of publi-
+cation November 18, 2010; date of current version March 25, 2011. This work
+was supported in part by the University of Toronto and in part by the Natural                              II. MACHINE MODEL
+Sciences and Engineering Research Council of Canada (NSERC). Paper no.                 The ac electric machines that are often encountered in a
+TPWRD-00943-2009.
+   The authors are with the Energy Systems Group, Electrical and Computer En-        power system include: 1) conventional field-controlled syn-
+gineering Department, University of Toronto, Toronto, ON M5S 3G4, Canada             chronous machines (SMs); 2) permanent magnet synchronous
+(e-mail: mahmatar@ieee.org; iravani@ecf.utoronto.ca).                                machines (PMSMs); 3) squirrel-cage induction (asynchronous)
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       machines (IMs); and 4) doubly-fed asynchronous machines
+   Digital Object Identifier 10.1109/TPWRD.2010.2086499                              (DFAMs) [14].
+                                                                  0885-8977/$26.00 © 2010 IEEE
+MATAR AND IRAVANI: MASSIVELY PARALLEL IMPLEMENTATION OF AC MACHINE MODELS                                                              831
+
+
+
+   For the analysis of electromagnetic transients of a power            nanoseconds, these numerical instability and inaccuracy issues
+system, three different models for an ac electric machine are           are not of any concern for this paper.
+available. These models include 1) the phase-domain (PD)                   For the analysis of electromagnetic transients, the dq0 ma-
+model; 2) the voltage-behind-reactance (VBR) model; and 3)              chine model can be interfaced with the rest of the network model
+the dq0-based model. These models can be mathematically                 based on: 1) the compensation method [20], 2) the prediction-
+derived from each other and provide identical simulation results        based method [20], 3) the one time-step delay method [23], [24],
+for balanced and unbalanced operational scenarios provided              and 4) the network iterative method [25], [26].
+that the simulation time-step is adequately small [15]. Since              Compared to the other interfacing methods, the one time-step
+the time-step of the envisioned FPGA-based simulator can                delay method offers two main advantages in the context of this
+be in the order of nanoseconds, the selection of the machine            work as follows.
+model to be implemented in the simulator is judged based on               1) It is conceptually simple, computationally efficient, and re-
+its adoptability for FPGA implementation and its suitability for              quires relatively small hardware resources for implemen-
+parallelized analysis.                                                        tation on an FPGA.
+   Since the PD [16], [17] and the VBR [15], [18], [19] models            2) It provides a means to partition the power system model
+have time-varying inductances and since they are interfaced di-               into independent subsystems and, thus, enables the parallel
+rectly to the rest of network being simulated, thus, the overall              solution of the system.
+system admittance matrix needs to be upgraded and inverted/             Contrary to the technical literature, which consider this one
+factorized in each simulation time-step. This adds to the com-          time-step delay as a drawback, we consider this delay advanta-
+putational burden in each simulation time-step.                         geous to the parallelized solution method. However, we limit
+   The phase-domain dynamic electrical equations of an ac ma-           the time-step to ns range (in contrast to the reported literature
+chine can be transformed to a rotating dq0 frame [14] so that the       that uses several microseconds) to prevent numerical issues and
+time-variant inductance matrix of the machine is transformed            inaccuracy.
+to a constant matrix. The dq0 transformation matrix adopted in             Based on the one time-step delay method, the machine is in-
+this work is stated in Appendix A. The equations representing           terfaced with the rest of the network as a current source. The
+dynamics of the electrical system of a SM, a PMSM, an IM,               current source in each time-step is determined by solving the
+or a DFAM in a dq0 reference frame can be expressed as [14],            machine equations using the machine terminal voltages from
+[20], [21]                                                              the previous time-step solution. A terminating resistance, con-
+                                                                        nected between the machine terminal and the ground, may be
+                                                                        required to ensure numerical stability, or alternatively, a small
+                                                                 (1)    simulation time-step must be used [23], [24].
+                                                                           Since the dq0-based model provides a constant inductance
+                                                                        matrix compared with those of the phase-domain and VBR
+where        and      are the vectors of machine voltages and cur-      models, it has the advantage to relatively reduce the hardware
+rents, respectively, in the dq0 frame, R and L are the machine          resources for implementation. As explained in Sections III
+winding resistance and inductance matrices, respectively; and u         and IV of the paper, the coefficients matrix of the discretized
+is the speed voltage vector. Vectors         ,     , and u and ma-      machine equations can be made constant and, thus, its inverse
+trices R and L, for SM, PMSM, IM and DFAM are given in                  can be calculated once at the software level (i.e., before actual
+Appendix B.                                                             hardware implementation on the FPGA). The inverted matrix
+   If required, the saturation effects can be represented by se-        can then be stored on the FPGA and, thus, there is no need
+lecting the flux instead of the current as the state variable in (1).   to perform any matrix inversions on the FPGA. Moreover, the
+The machine currents can then be determined by using an ap-             decoupling effect of the one time-step delay interface enables
+proximated piecewise linear saturation characteristic.                  the parallel solution of the machine model and the network
+   Although the dq0 transformation simplifies the machine               model. Thus, in this paper, the dq0-based model and the one
+model by converting the time-varying inductances to constant            time-step delay interfacing method are adopted.
+inductances, however, it introduces another complication to the            The rotating mechanical system of an ac machine for
+EMT-type solution algorithm. The dq0-based machine model                power system studies can be represented by a set of lumped
+solves the machine equations in the dq0 frame, whereas, the             rigid masses that are connected to each other through the
+rest of the power system equations are solved in the abc frame,         corresponding shaft stiffness and damping, and dynamically
+and given that the dq0 transformation is a nonlinear transfor-          modeled as [20]
+mation, the simultaneous solution of the complete system is
+challenging. The dq0/abc interface between the machine and                                                                            (2)
+the network models can introduce errors to the simulation re-
+sults and cause numerical instability if the simulation time-step       where , , and           are the matrices of moments of inertias,
+is not adequately small [15]. Typically, the simulation time-step       damping coefficients, and stiffness coefficients, respectively;
+should be smaller than 50 s to maintain stability of the solution       and      are vectors of electrical and mechanical torques, respec-
+and keep the error within the acceptable range [22]. However,           tively; and is the vector of angular positions. Matrices , ,
+since the FPGA-based simulator is envisioned to operate with            and for an n-mass shaft train of a rotating machine are given
+a simulation time-step, in the order of tens to a few hundred           in Appendix C.
+832                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+  The electrical and mechanical equations (i.e., (1) and (2)) are     are coupled, that is,       and         are involved in the solution of
+coupled by the electrical torque      and the rotor speed             (5) since they are required to calculate the speed voltage vector
+                                                                            and for the conversion between the phase domain and dq0
+                                                               (3)    frame, whereas           ,        ,       , and       are involved in
+                                                                      the solution of (6) since they are required by (3) to calculate
+                                                               (4)    the electric torque.
+                                                                         However, since the simulation time-step is much smaller than
+   Digital time-domain simulation of the machine’s differ-            the time constants of the electrical and mechanical subsystems,
+ential equations requires their transformation into difference        the coupling can be removed by introducing one time-step delay
+equations. This transformation can be carried out by means of         between the solution of the two sets of equations. Thus, the two
+various numerical integration methods (e.g., the trapezoidal          subsystems of equations are solved independently. This estab-
+method, backward Euler method, Simpson method, and Gear               lishes the first level of parallelism exploited in the implementa-
+second order method [27], [28]). However, the selected method         tion of the hardware module corresponding to an electrical ma-
+must be simple, numerically stable, and accurate enough for           chine model, in the proposed FPGA-based simulator.
+practical purposes [28].                                                 Inspection of the discretized qd0 model, that is, (5) shows that
+   The backward Euler method is stable and provides total             except for the coupling between the d and q stator currents, due
+damping to numerical oscillations at each discontinuity in            to the speed voltage vector         , the independent solution for all
+two integration steps. However, it requires a much smaller            the currents of vector       , as defined in Appendix B, is possible.
+simulation time-step than that of the trapezoidal rule to obtain      This coupling can be effectively eliminated if            is accurately
+accurate simulation results [28]. As the proposed implemen-           predicted from previous time-steps data. In this paper, as the
+tation methodology allows calculations in real-time with a            simulation time-step is orders of magnitude less than the me-
+time-step in the range of tens to few hundred nanoseconds, in         chanical time constant and as the fluxes are slow changing vari-
+this paper the backward Euler method is used to discretize the        ables [20], rather than using prediction formulae that use sev-
+machine’s equations.                                                  eral data points from past time-steps, only the previous time-step
+   The discretized forms of the ac machine electrical and me-                  is considered, that is,         is approximated and substi-
+chanical equations, that is, (1), (2), and (4), based on the back-    tuted by              . This approximation is acceptable since the
+ward Euler method, are                                                simulation time-step is small (i.e., in the order of few hundred
+                                                                      nanoseconds), and the change in the fluxes and the mechanical
+                                                               (5)    speed, involved in the calculation of the speed voltage vector, in
+                                                                      one simulation time-step is significantly small. Thus, the error
+                                                               (6)    introduced due to this approximation is insignificant and out-
+                                                                      weighed by the potential benefits of parallelizing the solution of
+                                                               (7)    the equations. Based on this approximation, (5) can be rewritten
+                                                                      as
+   It should be noted that for a dq0 machine model, prediction of
+the rotor angle and speed are required at the beginning of each
+time-step. The angular rotor position is required for the conver-
+sion between phase domain and dq0 frame and the rotor speed
+is needed for the 

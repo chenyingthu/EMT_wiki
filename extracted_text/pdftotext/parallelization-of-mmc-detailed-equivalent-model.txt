@@ -1,0 +1,208 @@
+                                                             Electric Power Systems Research 195 (2021) 107168
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Parallelization of MMC detailed equivalent model
+A. Stepanov a, *, J. Mahseredjian a, H. Saad b, U. Karaagac c
+a
+  Department of Electrical Engineering, Polytechnique Montréal, Montreal, QC, Canada
+b
+  Réseau de Transport d’Electricité, Paris, France
+c
+  Department of Electrical Engineering, Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong Kong
+
+
+
+
+A R T I C L E I N F O                                    A B S T R A C T
+
+Keywords:                                                This paper proposes a method to parallelize the computations of the detailed equivalent model of modular
+Detailed equivalent model                                multilevel converter (MMC) on multicore CPUs in offline simulations of electromagnetic transients (EMTs). Each
+Parallelization                                          arm of the converter is implemented as a DLL independently from the main solver and is interfaced with it using
+Modular multilevel converter
+                                                         standard procedures. It is also proposed to parallelize the capacitor balancing algorithm using a similar approach.
+Simulations
+                                                         Depending on the simulated system, the proposed method allows to accelerate simulations by five times without
+                                                         affecting accuracy of the results. Results also demonstrate that parallelization of the capacitor balancing algo­
+                                                         rithm plays an important role in improving simulation speed and can have a larger impact than the paralleli­
+                                                         zation of electrical circuit equations.
+
+
+
+
+1. Introduction                                                                                • The arm equivalent model, that aggregates all SMs in each arm into a
+                                                                                                 single equivalent circuit.
+    Modular multilevel converter (MMC) is a power electronic converter                         • The average value model, that represents all SMs in whole converter
+that is used in many modern HVDC transmission projects, Fig. 1. It has                           as a single capacitor.
+several significant advantages, including easy scalability to high voltage
+levels, smooth AC voltage waveform, and relatively low losses, all due to                        While detailed models provide high accuracy, they are typically
+its modular structure and lower switching frequency. The MMC gener­                           much slower, which restricts their application. Efforts have been put
+ates AC voltages by inserting the appropriate number of submodules                            forward to improve the speed of simulations involving MMCs in various
+(SMs), which are essentially capacitors with quasi-constant voltage,                          ways [4-6]. However, parallelization of MMC model computations has
+each of which represents one level of the resulting voltage waveform                          not been widely researched [7].
+[1].                                                                                             Parallelization in EMT simulations has been applied through
+    It is essential to perform electromagnetic transient (EMT) simula­                        network decoupling by transmission lines [8,9], co-simulation methods
+tions to ensure safe and reliable operation of HVDC systems. To do so,                        [10], parallel implementation of LU factorization [11]. CPU or FPGA
+accurate time-domain models of various equipment are required. Owing                          implementations have been used to accelerate the simulations of power
+to the structural complexity of MMCs, numerous EMT models have been                           electronic devices. Real-time applications are investigated in [7,12].
+developed, some of the most used ones are [2-4]:                                                 This paper proposes a method to parallelize the computations of the
+                                                                                              DEM on multicore CPUs in offline simulations. Among the conventional
+    • The detailed model (DM), that represents IGBTs in each SM using a                       MMC models, the DEM is a good candidate for parallelization because:
+      piecewise linear v-i characteristic.
+    • The detailed equivalent model (DEM), that represents IGBTs as two-                       • It has relatively high computational burden, which offers potentially
+      value resistances.                                                                         significant time-gains.
+
+
+
+
+ This work was supported by the Natural Sciences and Engineering Research Council (NSERC) of Canada as part of the industrial chair “Multi time-frame simulation
+of transients for large scale power systems.”. Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June
+6–10, 2021.
+ * Corresponding author.
+     E-mail address: anton.stepanov@polymtl.ca (A. Stepanov).
+
+https://doi.org/10.1016/j.epsr.2021.107168
+Received 2 November 2020; Received in revised form 26 February 2021; Accepted 8 March 2021
+Available online 21 March 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+A. Stepanov et al.                                                                                              Electric Power Systems Research 195 (2021) 107168
+
+
+                                                                                 current time-point and then the solicited DEMs only retrieve the results
+                                                                                 when requested by CC, as shown in Fig. 2 (EMT-core is CC). The CBA
+                                                                                 parallelization is performed in a similar manner with the difference
+                                                                                 being that it only participates in the control system equations part, but
+                                                                                 not in the MNE.
+                                                                                    There are similarities between the proposed approach and the one
+                                                                                 used in [7]. However, this paper deals with offline simulations and fo­
+                                                                                 cuses on the simulation time reduction and evaluation of various
+                                                                                 contributing factors. Besides, the proposed parallelization approach is
+                                                                                 applicable to computers with any number of cores and to circuits with
+                                                                                 any number of DEM and CBA blocks and any number of SMs.
+
+                                                                                 3. DEM parallelization
+
+           Fig. 1. Structure of the detailed equivalent model of MMC.               Each DEM arm is interfaced with the CC by using its Norton equiv­
+                                                                                 alent circuit. To calculate it, the DEM requires the IGBT control signals
+ • The nonlinearities in the DEM are not as complex as in the DM, which          and the input voltage [2, 4]. The Norton equivalents values supplied by
+   allows for a relatively easier implementation.                                the DEM DLLs to the CC depend on the control and history values from
+ • The DEM is often implemented independently from the main EMT                  the previous time-point, so do not require iterations unless in blocked
+   solver, which results in easier interfacing.                                  mode.
+ • There are at least six DEM blocks per MMC.                                       Internal DEM actions are divided in the following groups:
+ • The DEM requires a capacitor balancing algorithm (CBA) block,
+   which can also be parallelized.                                                • Reading input data (IGBT commands, input arm voltage). This is
+                                                                                    reading from memory so can be parallelized.
+   Unlike FPGAs, multicore CPUs are often available in modern day PCs             • Internal computations (updating history currents, calculating the
+and laptops. This allows to prioritize CPU parallelization over other               Norton equivalent, updating capacitor voltage and current values).
+types due to the larger availability of the appropriate hardware.                   They only require local variables so can also be parallelized.
+                                                                                  • Output data exchange (provide the Norton equivalent and SM volt­
+2. Procedure overview                                                               ages to the CC). This has to be performed in series since calls to in­
+                                                                                    ternal CC functions are used, that cannot be guaranteed to be thread-
+    The EMT simulation software considered in this chapter is EMTP                  safe.
+[13], which is based on the request-participation interface with the
+constituting modules. The EMTP computational core (CC) sends requests               The DEM is implemented as a DLL using Fortran-2015 and paralle
+to each model one by one and they reply with the results of their internal
+calculations. The main requests of CC at a single time-point computation
+with nonlinear elements such as the DEM are as follows:
+
+ • Request admittances and history currents from all DEMs.
+ • Solve the main network equations (MNEs) matrix.
+ • Repeat two previous steps in case of insufficient precision.
+ • Request capacitor voltages for control system equations.
+ • Solve control system equations.
+ • Go to next time-point.
+
+    In the default sequential execution case, the internal model calcu­
+lations are performed one at a time for each arm when the CC requests
+them. The idea researched in this paper is that internal computations of
+all DEM blocks are performed at once in parallel at the beginning of the
+
+
+
+
+            Fig. 2. Overview of the proposed parallelization scheme.                         Fig. 3. Implemented DEM parallelization algorithm.
+
+                                                                             2
+A. Stepanov et al.                                                                                                   Electric Power Systems Research 195 (2021) 107168
+
+
+lization is performed using OpenMP provided by the Intel Fortran                    circuit NDEM .
+compiler. Each DEM DLL executes the algorithm shown in Fig. 3. To be                    It should be noted that the threads are created at the beginning of
+able to study the impact of the number of threads on the acceleration,              each time-step and suppressed at the end of the time-step and thread
+the total number of DEM DLLs NDEM is divided into several groups. The               management and affinity is performed by the operating system. Since
+DLLs within the same group are launched in parallel. Each DLL group                 (4) and (5) do not consider the time required to create and manage
+contains nthreads blocks and requires as many threads. Each DLL first               multiple threads, the actual acceleration factors will be smaller than the
+checks if it is the first in the group and if so, launches all group’s com­         theoretical limit.
+putations in parallel. To avoid multiple computations of the same data,
+the first DLL raises a special flag (“first DLL in the group”) that indicates       6. Simulation results
+that the calculations of this group have been performed. The DLLs also
+check if they are the last one in the group to reset the “first DLL in the             The parallelization tests are performed in EMTP on a point-to-point
+group” flag that has been raised by the first DLL in the group so that at           MMC–HVDC link with two MMC stations shown in Fig. 4 (except
+the next time-point the first DLL could be correctly assigned.                      subsection 6.1.1). There are 12 DEM blocks, yielding the maximum of 12
+                                                                                    threads.
+4. CBA parallelization
+                                                                                    6.1. Validation
+    The CBA control block, i.e. the block that keeps all SM voltages close
+to each other, deals only with control signals. As with the DEM, all in­                The tests in this subsection validate the implementation, accuracy
+ternal functions of the CBA are divided as follows:                                 and demonstrate dependencies between computing times and the
+                                                                                    number of DEM blocks.
+ • Reading input data (SM voltages, arm current). It can be performed                   In this and the following sections, the execution times are measured
+   in parallel because it is reading from memory.                                   as the average of multiple runs using internal clock of the simulation
+ • Internal computations (sorting SM voltages, selecting the SMs to                 software. This allows to consider the effects of parallelization on the
+   insert and to bypass). Only local variables are required so this can             simulation as a whole.
+   also be parallelized.
+ • Output data exchange (IGBT gating signals). Performed in series                  6.1.1. Parallelization validation
+   since it uses calls to the internal functions of the CC that cannot be                A simple electrical circuit shown in Fig. 5 is used for validation (the
+   guaranteed to be thread-safe.                                                    circuit does not represent a realistic HVDC system so the values of cur­
+                                                                                    rents and resistances are selected arbitrarily). It contains a DC current
+   The CBA is active during normal operation and only provides                      source and 12 DEM blocks with the corresponding CBAs, that exchange
+blocking signals during the blocked mode. The same implementation as                gating signals (Sj ) and capacitor voltages (VSM j ) between themselves.
+in Fig. 3 is used with the only difference being that the DEMs are                  Half-bridge SMs are used and all of them are inserted. Simulation time is
+replaced by the CBAs.                                                               1 s and the time-step is 5 μs. The tests are performed on a computer with
+                                                                                    4 physical and 8 logical cores. The number of SMs per arm is varied.
+                                                                                         Computing times depending on the number of threads and SMs are
+5. Performance evaluation
+                                                                                    shown in Table 1 and Fig. 6. The dependence on the number of SMs is
+                                                                                    linear for a given number of threads, which validates (2) and (3).
+     The goal of the proposed DEM parallelization scheme is to reduce the
+                                                                                    Extrapolating computing times to NSM = 0 yields the value of T0 . With
+time needed to perform simulations of MMC–HVDC systems. Therefore,
+                                                                                    parallelization, T0 is relatively higher because some additional time is
+the time gains must be evaluated. They are evaluated using the accel­
+                                                                                    spent on thread creation and management. No clearly identifiable de­
+eration factor, which is found as
+                                                                                    pendency of T0 on nthreads has been observed.
+         /
+facc = ts tp                                                          (1)                For further analysis, the computing times in Table 1 are adjusted for
+                                                                                    T0 , the value of T0 is subtracted from the corresponding computing times
+where tp is the computational time with parallelization and ts is the               for a given value of nthreads . The adjusted computing times are plotted in
+computational time with the default single-threaded sequential imple­               Fig. 7 as a function of the number of DEM blocks computed in series
+mentation of the DEM.
+                                                                                    nserial = NDEM / nthreads                                                     (6)
+   In the first approximation, the single-threaded and the multithreaded
+computing times can be represented by the following formulas                            The results show linear dependency, which confirms the imple­
+                                                                                    mented parallelization scheme. However, it can be observed that even
+ts = T0 + TDEM NDEM                                                      (2)
+                                                                                    after the adjustment the extrapolation does not yield zero computing
+tp = T0 + TDEM NDEM / nthreads                                           (3)        time for nserial = 0. This remaining time is due to the actions performed
+                                                                                    in series for each arm, as explained in sections 3 and 4. It is possible to
+where T0 is the time necessary to perform all sequential computations               make another observation: the time necessary to compute the DEM is
+such as the resolution of the MNE, line and machine models, etc.; TDEM is           proportional to the number of SMs, which also confirms the correctness
+the time to compute one arm.                                                        of the implementation.
+   Given that the number of DEM blocks in each group nthreads is be­
+tween 1 and NDEM , the value of facc is limited between the following               6.1.2. Power reference step
+values:                                                                                 In this test, the waveforms obtained with the single-thread simula­
+                                                                                    tion are considered as references. The plot lines used for waveforms in
+min(facc ) = 1                                                           (4)
+
+               T0 + TDEM NDEM
+max(facc ) =                                                             (5)
+                 

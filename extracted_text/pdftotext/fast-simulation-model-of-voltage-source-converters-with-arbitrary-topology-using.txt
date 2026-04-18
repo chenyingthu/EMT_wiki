@@ -1,0 +1,199 @@
+IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 37, NO. 10, OCTOBER 2022                                                                                    12167
+
+
+
+
+ Fast Simulation Model of Voltage Source Converters
+           With Arbitrary Topology Using
+               Switch-State Prediction
+      Shilin Gao , Student Member, IEEE, Yankan Song , Member, IEEE, Ying Chen , Senior Member, IEEE,
+                                    Zhitong Yu, Member, IEEE, and Rui Zhang
+
+
+   Abstract— Voltage source converter (VSC) is fundamental and                       Owing to the complexity of VSCs, digital simulation is
+critical in renewable energy integration and transmission and has                 needed in the design, analysis, and control of VSC systems.
+become ubiquitous in power systems. For the design and operation                  The modern circuit simulators fall into two classes: 1) The
+of power systems with VSCs, electromagnetic transient (EMT)
+simulation is indispensable. However, a large number of VSCs in                   state-space analysis method-based simulators, e.g., DSIM [7]
+power systems cause a high time-consuming issue in EMT sim-                       and Simulink [8], and 2) the nodal-analysis method-based simu-
+ulation. This article proposes a fast EMT simulation model for                    lators, e.g., PSCAD/EMTDC [9], [10] and EMTP-RV [11], [12].
+VSCs with arbitrary topology based on switch-state prediction. The                These two categories of methods have their own advantages and
+accurate switch-state prediction has two steps: Preliminary switch-               have different applications. Compared with the nodal analysis
+state prediction and simultaneous switching prediction. It avoids
+the iterative computation required to obtain a feasible switch-state              method, the state-space approach is widely used for power elec-
+combination in the traditional EMT simulators. Extensive tests on                 tronic system simulation as the state equation of power electronic
+different types of VSCs and a dc microgrid demonstrate that the                   systems can be readily constructed [13]. Besides, the state-
+proposed fast model significantly improves the EMT simulation                     space matrices are independent of step-size so a variable-step
+efficiency of power systems with VSCs.                                            solver can be readily implemented to obtain a faster simulation
+  Index Terms—Electromagnetic transient (EMT) simulation,                         speed. Under the framework of the state-space approach, the
+half-bridge converter, neural-point-clamped (NPC) converter,                      discrete state event-driven (DSED)-based simulation algorithm
+switching state prediction, t-type converter, voltage source                      for power electronic systems is proposed in [13]–[15], and the
+converter (VSC).
+                                                                                  simulator DSIM is developed based on the DSED method, which
+                                                                                  is very efficient. It is widely used in device-level studies of
+                           I. INTRODUCTION
+                                                                                  power electronic systems. The main disadvantage is that it has
+      OLTAGE source converter (VSC) is widely used in the
+V     modern power system for various applications, such as
+photovoltaic systems [1], wind farms [2], ac/dc microgrids [3],
+                                                                                  difficulty in system-level studies (e.g., difficulty in modeling
+                                                                                  transmission lines with distributed parameters [16]). In contrast,
+                                                                                  the nodal analysis method (also called EMTP-type method [17])
+and high voltage direct current (HVdc) systems [4], due to                        works well in power system electromagnetic transient (EMT)
+the advantages in the aspects of reliability, controllability, and                simulations. To study the dynamic characteristics of power sys-
+flexibility. Nowadays, with the high penetration of renewable                     tems with VSCs, the power converters have been modeled under
+energies, a large number of VSCs are integrated into the power                    the EMTP-type solution framework, such as PSCAD/EMTDC.
+system [5]. Along with this, the problems such as subsyn-                         Nowadays, the EMTP-type simulators are widely used in the
+chronous oscillations, voltage surges, and poor power quality                     system-level studies of power systems with converters, such as
+are becoming increasingly severe [6].                                             the oscillation analyses of renewable energy integration systems,
+                                                                                  the control and protection system characteristic analyses of
+   Manuscript received December 11, 2021; revised April 5, 2022; accepted         high-voltage direct current transmission grid, and hardware-in-
+May 16, 2022. Date of publication May 24, 2022; date of current version June
+24, 2022. This work was supported in part by the National Natural Science
+                                                                                  the-loop tests of controllers of the power electronic systems.
+Foundation of China under Grants 52007101, 51877115, and 51861135312.                Nevertheless, these traditional EMTP-type simulators are
+Recommended for publication by Associate Editor F. Gao. (Corresponding            usually confronted with low computational efficiency issues
+author: Yankan Song.)
+   Shilin Gao and Ying Chen are with the Department of Electrical Engineering,
+                                                                                  when simulating the power system with a large number of VSCs.
+Tsinghua University, Beijing 100084, China (e-mail: gaosl19@foxmail.com;          Four factors account for the low efficiency. First, since detailed
+chen_ying@tsinghua.edu.cn).                                                       models are commonly adopted for the VSCs, tiny time-steps (as
+   Yankan Song, Zhitong Yu, and Rui Zhang are with the Sichuan Energy
+Internet Research Institute, Tsinghua University, Chengdu 610042, China
+                                                                                  small as microseconds) are required to emulate switching events
+(e-mail: songyankan@cloudpss.net; yuzhitong@cloudpss.net; zhangrui_cq@            within the converters accurately [18]. Second, for the electric
+foxmail.com).                                                                     network of power system with numerous VSCs, there are too
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPEL.2022.3176687.
+                                                                                  many switches, resulting in a high-dimensional system dynamic
+   Digital Object Identifier 10.1109/TPEL.2022.3176687                            equation with a large admittance matrix [19]. Third, the nodal
+
+
+                         0885-8993 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:35:53 UTC from IEEE Xplore. Restrictions apply.
+12168                                                                         IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 37, NO. 10, OCTOBER 2022
+
+
+
+admittance matrix of the power system is frequently changed                     note that the fourth issue is hardly solved to the authors’ best
+in the EMT simulation. Every time the nodal admittance matrix                   knowledge.
+is modified, lower-upper (LU) factorization of it is required.                      To this end, a fast EMT simulation model for VSCs with
+Nevertheless, the LU factorization of a high-dimensional matrix                 arbitrary topology using switch-state prediction is proposed. It
+is quite time-consuming. Fourth, to determine the ON or OFF                     aims to accelerate the detailed EMT simulation of VSCs, which
+states of the switches in the converters, iterative calculation of              is popular in the design and characteristic analysis of VSCs. In
+the whole power system is required in each time-step of the EMT                 this article, the structures of the existing VSCs are first analyzed.
+simulation to obtain a feasible switch-state combination, which                 It is found that all of the widely used VSCs are composed of the
+will dramatically increase the computational time.                              parallel or series connections of half-bridge converters (HBCs),
+   Aiming at the first problem, the averaged-value modeling                     although there are a wide variety of topologies of VSCs. Specif-
+(AVM) technique is proposed for system-level simulations [20],                  ically, there exist three types of HBCs: The two-level HBC,
+[21], which ignores the switching characteristics of power elec-                three-level neural-point-clamped (NPC) HBC (abbreviated as
+tronic converters. Large time-steps can be adopted for the AVM                  NPCHBC), and three-level T-type HBC (abbreviated as THBC).
+simulation [22], [23]. Besides enlarging the time-step, the di-                 Second, the operational principles of the HBCs are analyzed. In
+mension of the system dynamic equation is usually reduced                       each time-step of the EMT simulation for VSCs, the switch
+since the converters are models as several voltages or current                  states of each HBC are hardly affected by other HBCs. Then,
+sources. Thus, the AVM is highly efficient. The problem is                      based on the two characteristics above, a switch-state prediction
+that the high-frequency transients of VSCs cannot be accurately                 method is proposed to determine the switch states of HBC one
+emulated. In [24]–[26], switching function models (SFMs) are                    by one, where the switch states of an HBC are constructed as a
+proposed, where the converters are modeled as voltage/current                   finite-state machine.
+sources controlled by the switching function. Compared with                         The contributions and features of the proposed model are
+AVM, the SFM is able to emulate the high-frequency transients,                  twofold. 1) The structural and operational characteristics of
+e.g., the voltage ripples, but a much smaller time-step is required.            various VSCs are analyzed. All of them are composed of HBCs,
+In addition to this shortcoming, the common problems with the                   and the switch states of an HBC are hardly influenced by the
+AVM and SFM are that they are incapable of emulating the inner                  switch states of the others in each step of the EMT simulation.
+fault characteristics of the VSCs and ignore the power loss of the              Thus, the switch-state judgments can be limited into the HBCs
+converters. This makes the AVM and SFM fail to analyze the                      rather than the whole system, reducing the complexity of the
+transient characteristics in some cases, e.g., impedance-based                  switch-state judgment. 2) By representing the switch states of
+stability analysis. Thus, it is of importance to accelerate the de-             each HBC as a finite-state machine, an accurate switch-state pre-
+tailed EMT simulation of power systems with VSCs without loss                   diction method is proposed for obtaining a feasible switch-state
+of accuracy. To address this, the Thevenin equivalence method                   combination, avoiding the iterative computation of the whole
+is proposed for modeling the modular multilevel converter [27]                  system in each time-step, which significantly improves the sim-
+and power electronic transformer [28]. The two types of typical                 ulation efficiency. Furthermore, extensive tests are performed
+VSCs are modeled as two-port Thevenin equivalent circuit in                     to examine the accuracy and efficiency of the proposed model
+the EMT simulation and the inner nodes are eliminated, which                    versus the state-of-the-art model.
+greatly reduce the dimension of the system dynamic equations                        The remainder of this article is organized as follows. The lim-
+with guaranteed accuracy. Considering the superiority of the                    itations of traditional EMT simulation for power systems with a
+method, it can be extended to the EMT simulation of all kinds of                number of VSCs are analyzed in Section II. Section III proposes
+VSCs. Besides the above techniques, aiming at the third cause of                a switch-state prediction method for determining the states of the
+low simulation efficiency, the associated discrete circuit (ADC)                converter. In Section IV, the flowchart EMT simulation based
+models of the converters are proposed [29], [30], where the                     on the above two techniques is presented. Section V validates
+switch is equivalent to inductance or capacitance according to                  the accuracy and efficiency of the proposed method on HBCs,
+the switch state. By selecting proper parameters, the equivalent                VSCs, and systems, respectively. Finally, Section VI concludes
+admittance becomes constant and the simulation efficiency is                    this article.
+thus improved. However, the parameter settings of ADC models
+are tough and unacceptable virtual power loss may emerge in                                            II. PROBLEM DESCRIPTION
+the simulation. To solve the fourth problem, heuristic works
+have been proposed in [31], [32]. Using predefined transition                   A. Brief Introduction to EMT Simulation
+rules, switch states of VSC devices can be predicted without                      In each time-step of EMTP-type simulation, there are five
+iterative calculation. Nevertheless, theoretical analyses of such               main steps [33].
+prediction methods are not explicitly given, which weakens their                  1) Solve the control system.
+applications for VSCs with complicated topology and varied                        2) Modify the nodal admittance matrix if there is a switching.
+operating conditions.                                                             3) Calculate the history current sources and external current
+   In summary, many researchers have been worked to resolve                          sources.
+the first three problems. Based on their work, the EMT efficiency                 4) Solve the nodal equation and obtain the nodal voltages
+of power systems with VSCs can be improved, although there
+is still room for improvement in these aspects. More notably,                                              Y (t)v(t) = is (t) + ih (t)                (1)
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:35:53 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: FAST SIMULATION MODEL OF VSCS WITH ARBITRARY TOPOLOGY USING SWITCH-STATE PREDICTION                                                        12169
+
+
+
+       where v(t) is the nodal voltage vector, Y (t) represents
+       the equivalent nodal admittance matrix, is (t) is the vector
+       of external current sources, and ih (t) is the history current
+       vector.
+  5) The inner variables of each branch are calculated for
+       updating the history current sources in the next time-step.
+  For an electric network without switches, Y (t) is always
+a constant matrix. Equation (1) is a set of linear algebraic
+equations, which can be solved by direct methods based on
+Gauss elimination.
+  It is worth noting that, for the EMT simulation with switches,
+Y (t) is dependent on the states of switches and can be repre-
+sented as
+                         Y (t) = fY (X(t))                               (2)
+where fY (·) is the function that represents the mapping from
+X(t) to Y (t). X(t) is the switch-state vector and can be written
+as
+                                                  
+            X(t) = x1 (t) x2 (t) · · · xn (t)                 (3)
+
+where n is the number of switches. xi (t) is the state of the ith
+switch, which can be represented as
+                            xi (t) = 0 or 1                              (4)
+where xi (t) = 0 represents that the switch is OFF, and xi (t) = 1
+represents that the switch is ON. When the switch is OFF, it can
+be equivalent to a large resistance (e.g., 108 Ω) in the simulation.
+On the contrary, when the switch is “ON,” it is equivalent to a
+small resistance [34]. X(t) is constrained by the voltage and
+current of the VSCs, which can be represented as
+                         X(t) = fX (v(t))                                (5)
+where fX (·) is the function that represents the mapping from
+                                                                                Fig. 1.   Flowchart of traditional EMT simulation for power system with VSCs.
+v(t) to X(t).
+  Besides, it is worth noting that the calculation of is (t) is
+dependent on Y (t).
+                                                                                the original EMTP-type simulation algorithm [33] to obtain a
+                          is (t) = fI (Y (t))                            (6)    feasible switch-state combination. Specifically, after calculating
+                                                                                the inner variables of the branches at each time-step, the state
+where fI (·) is the function that represents the mapping from
+                                                                                of each switch is calculated again and the switch-state vector is
+Y (t) to is (t).
+                                                                                updated, which can be denoted as X k (t) (i.e., the switch-state
+   For the EMT simulation of a power system with a number
+                                                                                vector in kth iteration at time t). If X k (t) = X k−1 (t), it means
+of VSCs, the switching of some converters will cause parasitic
+                                                                                that there are parasitic switching events. Then, the system ad-
+switching events simultaneously. The switch-state vector is hard
+                                                                                mittance matrix and the history current sources are reupdated
+to be determined before the solution of nodal equations. Then,
+                                                                                according to X k (t) and the system is solved again, obtaining a
+(1), (2), (5), and (6) become a set of discrete nonlinear algebraic
+                                                                                new switch-state vector X k+1 (t). The computation of the next
+equations.
+                                                                                time-step, i.e., t + Δt, will be executed until the switch-state
+                                                                                vector X k (t) does not change. For a power system with massive
+B. Limitation of EMT Simulation for Power System With a 

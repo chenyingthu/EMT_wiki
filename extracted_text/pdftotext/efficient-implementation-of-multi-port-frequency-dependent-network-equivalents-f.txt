@@ -1,0 +1,199 @@
+                                                     Electric Power Systems Research 212 (2022) 108432
+
+
+                                                         Contents lists available at ScienceDirect
+
+
+                                                Electric Power Systems Research
+                                                  journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Efficient Implementation of Multi-Port Frequency Dependent Network
+Equivalents for Electromagnetic Transient Studies using Norton
+Equivalent Circuits
+Claudio Saldaña *, Graciela Calzolari
+Consulting Engineer, Montevideo, Uruguay
+
+
+
+
+A R T I C L E I N F O                            A B S T R A C T
+
+Keywords:                                        Power system electromagnetic transient studies require that a small part of the electrical network be modelled in
+EMT                                              detail. The rest of the system is represented by a network equivalent taking into account the frequency depen­
+FDNE                                             dence of the system components (FDNE). With the purpose of getting a FDNE, this paper presents a procedure for
+Norton equivalent
+                                                 including high-order rational models in EMTP-type simulation programs based on Norton equivalent circuits.
+Rational models
+                                                 This approach has the advantage of using few conductance branches compared to those obtained by fitting any
+                                                 particular circuit structure.
+                                                    In relation to the work carried out, this paper presents the following issues: a) a procedure for calculating the
+                                                 admittance matrix of the rest of the system as a function of frequency b) this matrix is synthesized in the form of
+                                                 multi-terminal π-equivalent circuits, whose branches are fitted by rational functions in the pole-residue form c)
+                                                 each partial fraction is converted into a differential equation in time domain. The trapezoidal rule of integration
+                                                 is applied to that differential equation, resulting in a conductance in parallel with a history term current source.
+                                                 Considering all the partial fractions corresponding to a branch, a Norton equivalent circuit is obtained for that
+                                                 branch.
+                                                    This paper also shows how the procedure is implemented in three different ways in an EMTP-type program,
+                                                 along with the validation of such approach through simulations in an electric utility 500 kV transmission system.
+
+
+
+
+1. Introduction                                                                         With the purpose of getting a multi-port FDNE, this paper presents a
+                                                                                   procedure for including high-order rational models in EMTP-type
+    The size and complexity of current power systems continue to grow              simulation programs based on Norton equivalent circuits. This
+due to the deployment of renewable energy sources and the increased                approach has the advantage of using few conductance branches
+interconnections using high voltage direct current (HVDC) links.                   compared to those based on the fitting of any particular circuit structure.
+Because of this, Electromagnetic Transient (EMT) simulation studies                It is important to note that the procedure followed does not involve the
+demand a large amount of data and require long computer processing                 special handling of complex poles.
+times.                                                                                  To validate the procedure, a few switching transient events are
+    In order to save time and effort, it is common practice in EMT studies         simulated in an electric utility 500 kV transmission system. The results
+to model in detail a selected small area of the power system under study,          obtained with a complete power system representation, along with the
+denominated “study area”. The representation of the rest of the system,            FDNE implementations, are compared.
+termed “external area”, is performed using a frequency dependent                        The processing times of the different implementations are also
+network equivalent (FDNE).                                                         compared.
+    The FDNE should be able to replicate the responses of the external
+area to the changes in the study area with reasonable accuracy, but
+demanding much less computation.
+
+
+
+ Submitted to the 22nd Power Systems Computation Conference (PSCC 2022).
+ * Corresponding author.
+   E-mail addresses: claugra07@gmail.com (C. Saldaña), gracielacc99@gmail.com (G. Calzolari).
+
+https://doi.org/10.1016/j.epsr.2022.108432
+Received 1 October 2021; Received in revised form 7 April 2022; Accepted 2 July 2022
+Available online 18 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+C. Saldaña and G. Calzolari                                                                                     Electric Power Systems Research 212 (2022) 108432
+
+
+2. External Area Admittance Matrix                                               a) an input data file for the JMARTI SETUP routine should be created.
+                                                                                    This file contains the geometry of the line and conductor data, three
+    The first step for getting the FDNE is to calculate the frequency               lines of frequency data and one line specifying the output file name.
+dependent admittance matrix Y(ω) of the external area, as seen from its
+boundary. In the case of a three-phase bus bar, the admittance matrix Y              The first line of the frequency data that bears parameter FREQTRAN,
+(ω) is a 3 × 3 complex matrix whose elements are functions of frequency.         should be replaced by the following line: $INSERT, LINE1.INS. The
+In this work, the frequency domain characteristic of the external area is        $INSERT is an EMTP-ATP command that inserts the LINE1.INS file into
+obtained by frequency scans.                                                     the input data file. The LINE1.INS file contains the value of the
+    The Harmonic Frequency Scan (HFS) routine of the EMTP-ATP                    parameter FREQTRAN as required by the frequency scan.
+program [1,2] is utilized. This routine performs a sequence of phasor                The line specifying the output file name should be replaced by the
+solutions for sinusoidal voltage/current sources of various frequencies,         following line: $INSERT, LINE2.INS, where LINE2.INS is an ASCII file
+amplitudes and angles specified by the user.                                     that bears the name of the output file. In this way the name of the output
+    As it is well known EMTP-ATP is a free licensed program widely used          file is changed for each frequency of the frequency sweep.
+by the researches who investigate in the electromagnetic transient area.
+    To perform frequency scans, it is necessary to have the frequency            a) A Fortran 2003 program was written with the purpose of generating
+dependent model of each component of the external area. The models                  LINE1.INS and LINE2.INS files and calling the JMARTI SETUP
+used are presented below.                                                           routine for each frequency. The program execution produces a set of
+                                                                                    output files, which will be used by the HFS routine.
+2.1. Generator, Transformer and Load                                             b) The program execution produces a set of output files, which will be
+                                                                                    used by the HFS routine.
+    Generator and transformer resistances have a significant frequency
+dependence. The variation of their time constants (L/R) with frequency           2.3. Non-linearities in the external area
+is depicted in [3]. For the subtransient impedance of the generator, this
+variation is fitted by the electrical circuit shown in Fig. 1.                      If the behavior of a nonlinear component of the external area must be
+    The leakage impedance variation of typical transformers is fitted in         taken into account, it should not be included in the FDNE.
+the same way as for generators. As an example, Fig. 2 shows the fre­
+quency dependent models for a generator and its step-up transformer.             2.4. Frequency sweep of the external area
+    The load model significantly affects Y(ω) matrix. In order to reduce
+its influence, Cigre Technical Brochure [4] advises that the load be                 The admittance matrix Y(ω) of the external area is calculated column
+modelled one or two voltage levels downstream with respect to the                by column in phase coordinates due to the asymmetries of the trans­
+boundary bus voltage level.                                                      mission lines. This is carried out executing the HFS routine as many
+    The loads are modelled by constant series R-L circuits per phase,            times as there are columns.
+IEEE Model 1.                                                                        In the HFS input data file the user should model all the sections of
+                                                                                 each transmission line. This is done by including the names of the
+2.2. Transmission Line Procedure                                                 JMARTI SETUP routine output files corresponding to all the sections and
+                                                                                 to the frequency at which the phasor solution is being executed as well.
+    Uruguay’s 500 kV transmission system is radial and has long trans­           Each output file is included using the $INSERT command of the EMTP-
+mission lines, which are transposed. It is important to remark that while        ATP.
+a line may be reasonably balanced at power frequency, there may be                   Also, in the HFS input data file the user should include single-phase
+enough unbalance at higher frequencies [2].                                      voltage sources of 1 V amplitude whose frequencies varies according to
+    Each section of a transposition cycle is modeled using the JMARTI            the values of the frequency sweep. For each frequency, the voltage
+frequency-dependent line model. The JMARTI SETUP routine of the                  source is applied to one phase of the boundary bus and the remaining
+EMTP-ATP program generates the JMARTI model. The HFS routine                     phases are shorted to ground. This is repeated for the remaining phases
+converts the JMARTI model into an equivalent π circuit for the succes­           of the boundary bus. In this way, each column of the Y(ω) is obtained as
+sive phasor solutions.                                                           a function of frequency.
+    It is important to point out that the JMARTI model utilizes a real and           A Fortran 2003 program was written with the objective of generating
+constant modal transformation matrix calculated at a particular fre­             the ASCII files with the voltage sources mentioned above. These files
+quency. This particular frequency is specified as the parameter FREQ­            should be included in the HFS input data file with the $INCLUDE
+TRAN of the JMARTI SETUP routine. Indeed, the modal matrix elements              command of the EMTP-ATP.
+are complex and frequency-dependent, therefore, this approximation
+will introduce a few errors.                                                     3. Admittance Matrix Fitting
+    In order to avoid the errors mentioned above, an approach was
+developed by the authors, based on the following idea: to vary the                   Each element of Y(ω) is approximated by a rational function in a
+parameter FREQTRAN in such a way that it takes all the frequency                 pole-residue form using the Matrix Fitting Toolbox package [5–9]. The
+values corresponding to the frequency sweep. For each value of the               routines VFdriver.m and RPdriver.m were used to obtain the rational
+parameter FREQTRAN the JMARTI SETUP routine generates a JMARTI                   approximations and to guarantee the passivity of the fitted matrix
+model with a modal transformation matrix calculated at that frequency.           Yfit(ω). The admittance matrix of the external area is symmetric, thus it
+    The approach mentioned above consists of two steps:                          can be realized in the form of multi-terminal π-equivalent circuits, as
+                                                                                 shown in Fig. 3 for the case of a three-phase boundary bus.
+                                                                                     The admittances of Fig. 3 are derived using (1).
+                                                                                           ∑
+                                                                                           N
+                                                                                 yii,π =         Yij,fit             yij,π = − Yij,fit                        (1)
+                                                                                           j=1
+
+
+                                                                                 where N is the number of phases of the boundary bus. Since Yij,fit is in the
+                  Fig. 1. Subtransient impedance representation                  pole-residue form then (1) also leads to rational functions in the pole-
+
+                                                                             2
+C. Saldaña and G. Calzolari                                                                                                    Electric Power Systems Research 212 (2022) 108432
+
+
+
+
+                                                           Fig. 2. Generator and transformer representation
+
+
+                                                                                                    ai
+                                                                                      Ii (s) =          V(s)                                                                 (3)
+                                                                                                 s − ci
+
+                                                                                      dIi (t)
+                                                                                              = ci Ii (t) + ai V(t)                                                          (4)
+                                                                                        dt
+                                                                                          Applying the trapezoidal rule in (4) results:
+                                                                                       Ii (t) = histi (t − Δt) + Gi V(t)                                                     (5)
+
+                                                                                      where histi (t-Δt) is the history term current source and Gi is the asso­
+                                                                                      ciated parallel conductance, which are calculated as:
+
+                    Fig. 3. Multi-terminal π-equivalent circuits                           Δt                                  (1 + hci )Ii (t − Δt) + hai V(t − Δt)
+                                                                                      h=      ;            histi (t − Δt) =
+                                                                                           2                                                    1 − hci
+residue form for yii,π and yij,π.                                                              hai
+    Matrix Fitting Toolbox creates a SER structure with the information               Gi =
+                                                                                             1 − hci
+of the fitted matrix Yfit(ω). A routine which uses the SER structure was
+written to obtain the rational functions of the branches of the π circuits.                For the case of a pair of complex conjugate poles, the two partial
+This routine generates as many output files as there are branches, each               fractions can be arranged as follows:
+file containing the total real and complex poles as well as the corre­                         (                  )      (           )
+                                                                                                   aj       a∗j              Ms + N
+sponding residues.                                                                    Ij (s) =         +        ∗
+                                                                                                                   V(s) = 2            V(s)              (6)
+                                                                                                s − cj   s − cj            s + Ps + Q
+4. Norton Equivalent Circuits
+                                                                                      where: aj = m + jn and cj = p +jq; *denotes conjugate; M=2m; N=-2mp-
+    Reference [10] presents a procedure that converts each partial                    2nq; P=-2p; Q= p2+q2
+fraction of the rational approximation of any branch of the π circuits in                In the time domain (6) becomes:
+Laplace domain into a differential equation in time domain. The trape­                d2 Ij (t)    dIj (t)               dV(t)
+zoidal rule of integration is applied to that differential equation, leading            dt2
+                                                                                                +P
+                                                                                                     dt
+                                                                                                           + QIj (t) = M
+                                                                                                                          dt
+                                                                                                                               + NV(t)
+to a conductance in parallel with a history term current source.
+Considering all the partial fractions corresponding to a branch, a Norton                This second order differential equation can be converted to a first-
+equivalent circuit is obtained for that branch. This procedure has the                order system by introducing new variables:
+following advantages: a) no special handling of complex poles is                                                         dIj (t)
+necessary, therefore avoiding a more complicated implementation and                   Ij (t) = Ij (t);        Xj (t) =           − MV(t)                                     (7)
+                                                                                                                           dt
+some loss of accuracy b) a single equivalent conductance for each branch
+of the π circuits is computed. This means less processing time when                   dIj (t)
+                  

@@ -1,0 +1,202 @@
+     5304                                        IEEE JOURNAL OF EMERGING AND SELECTED TOPICS IN POWER ELECTRONICS, VOL. 10, NO. 5, OCTOBER 2022
+
+
+
+
+             A Testing Tool for Converter-Dominated Power
+              System: Stochastic Electromagnetic Transient
+                               Simulation
+            Pengwei Chen , Member, IEEE, Liang Lu, Xinbo Ruan , Fellow, IEEE, and Nian Liu , Member, IEEE
+
+1       Abstract— To investigate the impact of uncertain vari-                           L(t)            Inductance of an element with parameter             25
+2    ability and provide a rigorous testing environment for                                              migration at time t.
+3    converter-dominated power systems, this article develops a testing
+4    tool called stochastic electromagnetic transient simulation. The                     L (t)         Magnetic flux through inductance at time
+5    tool is derived from the stochastic differential equation (SDE)                                     t.
+6    representing the stochastic process of parameter migration.                         C(t)            Capacitance of an element with parameter
+7    By inheriting the principle of companion circuit, the dynamic                                       migration at time t.
+8    companion circuits of the lumped elements with parameter                            Q C (t)         Energy stored in capacitance at time t.
+9    migration are further established. Combined with the analysis
+10   of the numerical stability in discrete simulation as well as the                    t              Discretization time step in a simulation.
+11   stability of the continuous system with parameter migration,                        τn              τn = nt.
+12   a numerical algorithm that is compatible with the electromagnetic                   Rn              Numerical approximation to R(τn ) in
+13   transients program (EMTP) framework is designed, as well as a                                       stochastic     electromagnetic     transient
+14   C program package. The verification results on a grid-connected                                     simulation.
+15   three-phase two-level rectifier and a two-terminal dc distribution
+16   system demonstrate that the developed tool can simulate the                         Ln              Numerical approximation to L(τn ) in
+17   parameter migrations and the stimulated system dynamic process                                      stochastic     electromagnetic     transient
+18   simultaneously, which can also be used to efficiently reflect                                       simulation.
+19   the real performance of various control subsystems and their                        Cn              Numerical approximation to C(τn )
+20   coordination in extreme cases.                                                                      in stochastic electromagnetic transient
+21     Index Terms— Converter-dominated power system, electro-                                           simulation.
+22   magnetic transient (EMT) simulation, numerical algorithm, sto-                      v i,n , v j,n   Voltages of two terminal nodes i and j in
+     chastic differential equation (SDE), stochastic dynamic.
+23
+                                                                                                         numerical simulation at time τn .
+                                                                                         i R,n           Current through resistance in numerical
+24                            N OMENCLATURE                                                              simulation at time τn .
+      W (t)      Wiener process, and W (t) − W (0) satisfies                             i L ,n          Current through inductance in numerical
+                 the normal distribution N(0, t).                                                        simulation at time τn .
+      ξ          White noise and ξ = d W (t)/dt.                                         i C,n           Current injected into capacitance in numer-
+      α(·)       Drift process of the stochastic perturbation.                                           ical simulation at time τn .
+      β(·)       Diffusion process of the stochastic                                     Wn              Sampling value of W (t) at time τn = nt.
+                 perturbation.                                                           G E , GT        Nodal admittance matrices used in stochas-
+       R(t)      Resistance of an element with parameter                                                 tic electromagnetic transient simulation.           26
+                 migration at time t.
+                                                                                         Besides, the subscripts R, L, and C are used for resistance,        27
+        Manuscript received 4 October 2021; revised 3 December 2021 and 7 Jan-         inductance, and capacitance, respectively, while the super-           28
+     uary 2022; accepted 22 January 2022. Date of publication 25 January 2022;
+     date of current version 3 October 2022. This work was supported in part by the    script ∗ is used for the controller reference values or the exact     29
+
+     National Natural Science Foundation of China under Grant 52007080, in part        value of simulation, and other symbols are defined as required.       30
+     by the China Postdoctoral Science Foundation under Grant 2020TQ0142 and
+     Grant 2020M681583, and in part by the Opening Foundation of State Key
+     Laboratory of Alternate Electrical Power System with Renewable Energy
+     Sources under Grant LAPS21008. Recommended for publication by Associate
+                                                                                                                  I. I NTRODUCTION                           31
+
+     Editor Firuz Zare. (Corresponding author: Pengwei Chen.)
+        Pengwei Chen, Liang Lu, and Xinbo Ruan are with the Jiangsu Key Labora-
+     tory of New Energy Generation and Power Conversion, College of Automation
+     Engineering, Nanjing University of Aeronautics and Astronautics, Nanjing
+                                                                                       D     RIVEN by the rapid development of power electronics
+                                                                                             and control technologies in the past decades, converter-
+                                                                                       dominated power systems are becoming important components
+                                                                                                                                                             32
+
+                                                                                                                                                             33
+
+                                                                                                                                                             34
+     210016, China (e-mail: chenpw2019@nuaa.edu.cn; sx2003088@nuaa.edu.cn;             of electrical grids to facilitate the integration of renewable        35
+     ruanxb@nuaa.edu.cn).
+        Nian Liu is with the State Key Laboratory for Alternate Electrical Power       energy sources and the power supply of high quality, such             36
+
+     System with Renewable Energy Sources, North China Electric Power Univer-          as renewable power plants [1], microgrids [2], dc distribution        37
+     sity, Beijing 102206, China (e-mail: nianliu@ncepu.edu.cn).                       systems [3], and high-voltage dc transmission systems [4].            38
+        Color versions of one or more figures in this article are available at
+     https://doi.org/10.1109/JESTPE.2022.3146231.                                      Although these converter-dominated systems possess superior           39
+
+        Digital Object Identifier 10.1109/JESTPE.2022.3146231                          features of full controllability and high efficiency, the inter-      40
+
+                            2168-6777 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                          See https://www.ieee.org/publications/rights/index.html for more information.
+
+                Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:00:41 UTC from IEEE Xplore. Restrictions apply.
+     CHEN et al.: TESTING TOOL FOR CONVERTER-DOMINATED POWER SYSTEM: STOCHASTIC EMT SIMULATION                                                             5305
+
+
+
+41   actions between various converters and passive networks will                    trol of converters can result in cross couplings with both                   99
+
+42   increase the complexity of the system dynamics in the different                 the electromechanical dynamics of electrical machines and                    100
+
+43   frequency ranges [5].                                                           the EMTs of networks, such that the EMT simulation with                      101
+
+44      To analyze the system dynamics accurately, electromagnetic                   small step size is the premise, and 2) the EMT simulation                    102
+
+45   transient (EMT) simulation is often used [6], but limited by                    is based on state variables of branches, such as the cur-                    103
+
+46   the selection of step size, and the challenges from efficiency                  rent through an inductor and the voltage across a capacitor,                 104
+
+47   have emerged with the increased penetration of converters and                   which makes the stochastic perturbation of branch parameter                  105
+
+48   scale of the system. In this situation, boundary subsystems                     the root to stimulate the stochastic dynamics of systems.                    106
+
+49   and complicated converters are usually modeled by equivalent                    No matter how the system parameters change, it is worth                      107
+
+50   circuits [7], such as the main grid represented by the Thevenin                 emphasizing that any control system of converter for regulating              108
+
+51   equivalent circuit, the photovoltaic panels represented by the                  the current and power exchanged with the network should                      109
+
+52   controlled source, and the load represented by the RLC parallel                 coordinate with each other well to ensure satisfying dynamics.               110
+
+53   branch. However, against the background of renewable energy                     If the EMT simulation has the function of simulating the                     111
+
+54   integration and load deregulation, the converter-dominated                      stochastic perturbations of parameters, then the diversified                 112
+
+55   power system is currently operating under more stressed                         operating scenarios can be generated continuously to verify                  113
+
+56   conditions with much more uncertainties compared with the                       the performance of various control subsystems and their                      114
+
+57   traditional one, which also leads to the complexity of sys-                     coordination, which also essentially increases the severity of               115
+
+58   tem dynamic analysis, including the random excitation on                        disturbances.                                                                116
+
+59   stability [8] and the fault transient and relay protection under                   Motivated by the requirements of investigating the impact of              117
+
+60   different conditions [9].                                                       uncertain variability and providing a rigorous testing environ-              118
+
+61      To investigate the impact of uncertain variability on power                  ment for converter-dominated power systems, a testing tool                   119
+
+62   system dynamics, various models and methods have been                           named the stochastic EMT simulation is developed in this                     120
+
+63   proposed from different perspectives [10]–[18]. At an early                     article. The main contributions are given as follows.                        121
+
+64   stage, the uncertain variability in a system is assumed to be
+                                                                                        1) Based on the problem formulation of stochastic EMT                     122
+65   subject to a certain probability distribution, and the impact
+                                                                                           simulation, the SDE-based models to describe the para-                 123
+66   on system dynamic was studied using the Monte Carlo-based
+                                                                                           meter migration of linear lumped elements and stochas-                 124
+67   approaches [10]. Considering the deficiency of deterministic
+                                                                                           tic dynamics of state variables are established, and then,             125
+68   model and huge computational burden, the theory of stochas-
+                                                                                           by using the principle of companion circuit in electro-                126
+69   tic differential equations (SDEs) that is well applicable in
+                                                                                           magnetic transients program (EMTP) and the typical                     127
+70   describing the stochastic changes of system parameters has
+                                                                                           numerical methods of SDE, the dynamic companion                        128
+71   been gradually introduced into the field of electrical engineer-
+                                                                                           circuits of the elements with parameter migration are                  129
+72   ing [11], which prompts the system dynamics under uncertain
+                                                                                           derived to facilitate the integration of multiple elements             130
+73   variability modeled by a set of stochastic differential-algebraic
+                                                                                           during the simulation.                                                 131
+74   equations (SDAEs). Within this frame, a systematic method
+                                                                                        2) Taking an RL series branch as the theoretical analysis                 132
+75   to model stochastic dynamic systems is proposed in [12],
+                                                                                           object, the numerical stability characteristics of stochas-            133
+76   where the modeling object involves load, generator, and bus
+                                                                                           tic EMT simulation using the backward and trapezoidal                  134
+77   voltage phasor. Based on linear SDEs with additive noise of
+                                                                                           Milstein schemes are analyzed, where the necessary                     135
+78   nodal voltage, a transmission line model is derived in [13] to
+                                                                                           conditions to ensure stable simulation are indicated.                  136
+79   simulate respective stochastic trajectories and determine the
+                                                                                           The stability of the continuous system with stochastic                 137
+80   variances of responses. In [14], an SDE-based model of the
+                                                                                           perturbation of parameter is also derived, which shows                 138
+81   single-machine infinite-bus system is investigated, and in [15],
+                                                                                           that the deterministic simulation can be employed as a                 139
+82   the model of a grid-connected wind turbine is further focused
+                                                                                           reference in case of the stochastic perturbation within a              140
+83   on. With loads modeled as random variables that appear in
+                                                                                           reasonable distribution.                                               141
+84   algebraic equations, Wang and Crow [16] presented the first-
+                                                                                        3) For the easy application of stochastic EMT simulation                  142
+85   order backward Euler method for SDAEs in power system
+                                                                                           in large-scale systems, the main process of numerical                  143
+86   transient simulation. In [17], an SDAE-based framework of
+                                                                                           algorithm that is compatible with EMTP framework                       144
+87   numerical simulation is proposed to assess the stochastic
+                                                                                           is designed, and an acceleration technique based on                    145
+88   transients of large-scale systems, and in [18], the initialization
+                                                                                           node reassignment and matrix decomposition is further                  146
+89   problem of power systems modeled as SDAEs is addressed,
+                                                                                           proposed for network solution, which is all implemented                147
+90   as well as the efficient initialization method.
+                                                                                           in a C program package.                                                148
+91      Obviously, the above models and numerical methods are
+92   mainly aimed at traditional ac power systems, where the                            The remainder of this article is organized as follows.                    149
+
+93   dynamics concerning electromechanical transient are dom-                        Section II introduces the problem formulation of stochastic                  150
+
+94   inant. Therefore, it is understandable that electromagnetic                     EMT simulation. Section III summarizes the SDE-based model                   151
+
+95   power is given priority to be modeled as a stochastic process                   and dynamic companion circuit for the linear lumped elements                 152
+
+96   and power-flow equations are used mostly, but such a for-                       with parameter migration. Section IV presents the numerical                  153
+
+97   mulation does not apply to a converter-dominated power                          stability of stochastic EMT simulation, as well as the stability             154
+
+98   system. The reasons include: 1) the wide timescale con-         

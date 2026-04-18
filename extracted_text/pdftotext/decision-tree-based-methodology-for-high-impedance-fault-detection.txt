@@ -1,0 +1,191 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 19, NO. 2, APRIL 2004                                                                                            533
+
+
+
+
+            Decision Tree-Based Methodology for High
+                    Impedance Fault Detection
+                               Yong Sheng, Member, IEEE, and Steven M. Rovnyak, Member, IEEE
+
+
+
+    Abstract—This paper presents a high impedance fault (HIF)                       The DT uses only feeder current signals as these are standard
+detection method based on decision trees (DTs). The features of                  substation relaying inputs. Also similar to what most researchers
+HIF, which are the inputs of DTs, are those well-known ones,                     did, some of the feeder current harmonics are used in training the
+including current [in root mean square (rms)], magnitudes of
+the second, third, and fifth harmonics, and the phase of the                     DTs. The DTs trained show excellent performance in 100 test
+third harmonics. The only measurements needed in the proposed                    cases. This technique is verified with the aid of Electromagnetic
+method are the current signals sampled at 1920 Hz. It will reduce                Transients Program (EMTP). The proposed method could also
+the cost of hardware compared with methods that use high                         be trained using experimental data and those investigations are
+sampling rates. A new HIF model is also used. The data of current                recommended using some or all of the techniques described in
+signals are from the simulation of Electromagnetic Transients
+Program (EMTP). The DT algorithm trained can successfully                        this paper.
+distinguish the HIFs from most normal operations on simulation
+data, including switching loads, switching shunt capacitors, and                                       II. MODEL OF SIMULATIONS
+load transformer inrush currents. Testing on experimental data is
+recommended for future work.                                                        The one-line diagram of a 60-Hz distribution system is given
+  Index Terms—Arcing, decision trees, EMTP, harmonics, high                      in Fig. 1. Four overhead feeders are connected to a 138/12.5-kV
+impedance fault, protection, relay.                                              substation transformer, which is served by a 50-km transmission
+                                                                                 line from a bus considered to be infinite. Assume HIF faults
+                                                                                 occur near the end of a 5-km feeder that serves an industrial user
+                           I. INTRODUCTION                                       having a load transformer and 1800 kVar of shunt capacitors.
+
+A     high impedance fault (HIF) is the headache of most utilities
+      for its difficulty of being detected promptly and accurately.
+For the public safety and the potential huge expenses incurred
+                                                                                 The loads have a lagging power factor equal to 0.80.
+                                                                                    The modeling of most distribution system components is
+                                                                                 quite straightforward, including infinite source, transmission
+if sued for any loss or damages resulting from an energized                      line, feeders, shunt capacitors, circuit breakers, and loads. For
+downed conductor [1], [2], utilities often install expensive                     the transformers, BCTRAN, a supporting routine offered by
+and sophisticated commercial or self-developed HIF detection                     EMTP to improve calculating transformer parameters, has been
+devices. Two most commonly installed commercial products                         used to build their models. However, the most difficult model
+are the Digital Feeder Monitor (DFM) from General Electric                       is HIF fault because most HIF phenomena involve arcing,
+and the High Impedance Fault Analysis System (HIFAS) from                        which has not been accurately modeled so far. Some previous
+Nordon Technologies [2].                                                         researchers have reached agreement that HIF is nonlinear
+   This paper presents a decision tree (DT)-based solution with                  and asymmetric, and modeling should include random and
+reasonable cost to utilities. Regarding the implementation, a mi-                dynamic qualities of arcing. Emanuel et al. presented two dc
+croprocessor-based controller would perform the proposed DT                      sources connected in antiparallel with two diodes to simulate
+and the harmonics calculations. The DT for the results reported                  zero periods of arcing and asymmetry [3]. Yu and Khan used
+here has 45 nodes, which was too large to show here but is                       combinations of nonlinear resistors [4]. Wai and Xia introduced
+straightforward to program. Execution of the trained DT algo-                    a sophisticated TACS switch controlling the open/close loop of
+rithm is negligible compared to the harmonics calculations. DTs                  HIF to reach nonlinearity and asymmetry [5]. In this paper, a
+are to be trained offline from simulation and/or experimental                    more dynamic and random HIF model is applied. It combines
+data. DT training is relatively fast so updating with new data is                most advantages of previous models proposed while it remains
+a possibility. If the DT false trips for some reason, the DT could               simple and universal.
+potentially be updated with the samples on which it falsely de-                     The HIF model, as shown in Fig. 2, consists of a nonlinear
+tected an HIF. The desired output for these samples would be                     resistor, two diodes, and two dc sources that change amplitudes
+set to no HIF.                                                                   randomly every half cycle. Thus, some dynamics and random-
+                                                                                 ness are represented. Changing the mean and standard devia-
+                                                                                 tion of the dc source voltage amplitudes could be used to more
+  Manuscript received September 6, 2002. This work was supported by the          closely approximate different ground surfaces such as asphalt,
+Louisiana Board of Regents through the Board of Regents Support Fund under       sand, or grass. A typical HIF current generated from simulations
+Contract LEQSF(1999-02)-RD-A-25.                                                 and its frequency spectrum are shown in Figs. 3 and 4. Com-
+  The authors are with the Electrical and Computer Engineering Department,
+Indiana University–Purdue University Indianapolis (IUPUI), IN 46202 USA.         pared with real-life HIF current waveforms that are appropri-
+  Digital Object Identifier 10.1109/TPWRD.2003.820418                            ately conditioned and low-pass filtered, such as the one shown
+                                                              0885-8977/02$20.00 © 2004 IEEE
+              Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:58:37 UTC from IEEE Xplore. Restrictions apply.
+534                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 19, NO. 2, APRIL 2004
+
+
+
+
+Fig. 1. One-line diagram of a distribution system for simulations.
+
+
+in [6, Fig. 8] by Russell and Chinchali, the current waveform in
+Fig. 3 shows a nearly perfect match.
+                                                                                  Fig. 2.   HIF model.
+                       III. EMTP SIMULATIONS
+   The following events have been studied to distinguish HIF
+faults from normal operations: three-phase or single-phase
+load switching, shunt capacitor switching, no-load transformer
+switching, and HIF with or without downed conductor. For
+all load switching events, the power factor is kept unchanged,
+namely equal to 0.80. We also assume that no more than one
+event occurs simultaneously. EMTP input files, corresponding
+to different events, are generated by a C++ program according
+to the following rules.
+   Training data:
+    • Phase of infinite source varies from 0 to 150 degrees
+      in increments of 30 degrees for all events, namely,
+                                     .
+    • Six three-phase load changes:                      ,
+              ,                .
+    • Eight single-phase load changes:                     ,                      Fig. 3. Typical HIF current waveform generated from EMTP simulations.
+           ,               ,                    on each phase for a
+      total of               load changes.
+    • No-load transformer is energized and then cut off at dif-
+      ferent times in a cycle to obtain different remnant flux in
+      the iron core of the load transformer. The cut off occurs at
+                      , and 12/12 cycle.
+    • The following events were repeated for loads at 30%, 70%,
+      and 110% of their base-case amounts.
+    • Shunt capacitors are switched on or off.
+    • Five random configurations are selected as described
+      below and repeated for downed and not downed conduc-
+      tors for a total of 10 HIF events. In each configuration,
+      the central value         is randomly selected from the set
+                                      . The two dc sources are then
+      set to         and             where      and    are selected
+      randomly from                                  .
+   The grand total of training cases is hence equal to                            Fig. 4. Spectrum of HIF current corresponding to Fig. 3.
+                                             cases.
+   Test data.                                                                           For three-phase switches, both initial and final loads
+    • Phase of infinite source equals a random value in the in-                         are randomly chosen from the interval [30%, 110%].
+      terval [0, 180] degrees. This notation means                                      Switching between the two levels occurs at the starting
+            .                                                                           moment of the eight-cycle window.
+    • Twenty-five events of load switching. The loads are ran-                        • Twenty-five events of no-load transformer switching. The
+      domly either three phase or single phase. For single-phase                        cutoff time, after no-load transformer is energized, is ran-
+      switches, the initial load         is randomly selected from                      domly picked in the interval [0, 1] cycle.
+      the interval [30%, 110%], and the load after switching is                       • Shunt capacitors have been randomly switched either on
+      randomly selected from [                ,         ]. Also, the                    or off for 25 times with random loads in the interval [30%,
+      switching occurs randomly on or off the monitored phase.                          110%].
+              Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:58:37 UTC from IEEE Xplore. Restrictions apply.
+SHENG AND ROVNYAK: DECISION TREE-BASED METHODOLOGY FOR HIGH IMPEDANCE FAULT DETECTION                                                                    535
+
+
+
+    • Twenty-five events of HIF faults. The central value for the              several efforts have been made to implement pattern recogni-
+      HIF model        is randomly selected from [1000, 5000]                  tion methods. GE’s DFM is based on an expert system with nine
+      V, and two dc sources are chosen in the same way as for                  algorithms [2]. Kim and Russell also proposed expert systems
+      training events. The conductor is randomly either downed                 [8], and Ebron et al. introduced a neural network-based method
+      or not downed and the loads are randomly chosen in [30%,                 verified with simulation data [9].
+      110%].                                                                       DT is also a type of pattern recognition tool, and is capable of
+   The number of test cases is                 .                               classifying input vectors into discrete categories such as {0,1}.
+   One difficulty in EMTP simulations is to get random mag-                    It is based on the principle that many separation boundaries can
+nitudes of dc sources on every half cycle. In Fig. 2, it can be                be approximated by combinations of hyperplanes that are par-
+easily inferred that any dc source should change its magnitude                 allel to the coordinate axes. The advantages of DTs include fast
+during the open period of the diode with which it is in series. If             training compared with other popular pattern recognition tools,
+bad timing occurs, abrupt changes will be observed on current                  such as neural networks.
+waveforms. A C++ program, which implements trial and cor-                          Four hundred and sixty-eight events containing 26 676 cases
+rection methodology, is used to find the appropriate changing                  have been used to train the DTs. The DT training software,
+times.                                                                         CART, allows the user to specify a parameter called relative mis-
+   The output of EMTP is 32 points per cycle, which simu-                      classification cost, which can be used to adjust the frequency of
+lates a 1920-Hz sampling rate. In order to take advantage of                   the misclassification of 1 to 0 versus 0 to 1. This parameter spec-
+the powerful computation ability of Matlab, the optional MCAT                  ifies the consequence of misclassification. The misclassification
+package has been installed for EMTP. The ICAT field in the                     cost for 0 to 1 is set to be ten times larger than the cost for 1 to
+second miscellaneous data card is set to 3 so that EMTP exports                0 to make it much less likely for a 0 to be classified as a 1.
+data in Matlab form.                                                               One-hundred events consisting of 5700 cases were used in
+                                                                               testing the DTs previously trained. The raw DT output for these
+                                                                               5700 cases required further processing to decide whether the
+               IV. EMTP RESULTS PROCESSING
+                                                                               proposed DT-based controller produced the correct output for
+   Each simulation lasts ten cycles, of which eight cycles are                 every case in the event. The criterion used here is similar to
+picked up for further processing. Only current signals are pro-                studies of R-Rdot relays [10] in which two consecutive 1’s from
+cessed and made available to DTs. The most commonly used                       the DT are required to output yes from the DT-based relay. This
+features of HIF faults, which have been reinforced with either                 also gives the reason of setting relative misclassification cost.
+field or simulation data, including rms value, amplitudes of the               For an event with a fault, it ideally should consist of 57 cases of
+second, third, and fifth harmonics relative to the rms value, and              1’s. If the DT makes some mistakes and misclassifies some 1’s
+the phase of the third harmonics, are grouped into the input                   as 0’s, it can be seen that this event is more error tolerant even
+vectors of DTs. All of the values are calculated on a sliding                  though numerous cases may have been misclassified. On the
+one-cycle window, which consists of 32 sampling points. In                     other hand, for an event with no fault, it is much more vulnerable
+order to make values comparable for different cases, ampli-                    to mistakes the DT may make. Two misclassifications of 0 as 1
+tudes of harmonics have been normalized by dividing by the                     result in a wrong judgment if they are consecutive.
+rms value of the signal over the window being analyzed. The                        The result on the test set of 100 events was perfect. The DTs
+window slides 1/8 cycle (four sampling points) between calcu-                  distinguished all 25 events of HIF from 75 events of normal
+lations. An eight-cycle interval contains 57 of these windows.                 operations in two cycles. In other words, the DT, in fact, pro-
+Features calculated from one window together with the desired                  duced two consecutive 1 outputs during the first two cycles for
+output are defined as a case and the eight-cycle interval is called            every HIF in the test set. No false operations occurred during
+an event so there are 57 cases per event and they all have the                 the entire eight cycles of each normal event.
+same desired output. The desired output is the output the DT al-
+gorithm is supposed to produce for that input vector. A Matlab
+                                                                                          VI. IMPLEMENTATION AND COST EVALUATION
+program does all of the processing, including reading data from
+EMTP output files, doing fast Fourier transform (FFT), and                        The implementation of this method is straightforward, con-
+writing input-output pairs into a data file in the format required             sisting of three functional processes, as shown in Fig. 5.
+by CART DT software [7].                                                          To get rid of white noise and other high-frequency compo-
+   The desired outputs yes or no are represented as 1 or 0. For                nents, the current signals from feeders are low-pass filtered. This
+the training set, 288 events or 16 416 cases have outputs of 0;                conditioning can be realized by digital or analog filters. The re-
+180 events or 10 260 cases have outputs of 1. For the test set, 25             maining signals are decomposed into harmonics by FFT. The
+events implying 1425 cases are associated with 1, and 75 events                trained DT algorithm makes the judgment according to those
+containing 4275 cases are paired with 0.                                       selected harmonic features. The training of the DT algorithm is
+                                                                               offline. The online implementation is very fast.
+                                                                                  Our implementation does not require any new measurement
+                V. DTS TRAINING AND TESTING
+                                                                               equipment. All of the necessary features are derived from stan-
+  Pattern recognition is a learn-by-example mathematical tool,                 dard substation relay inputs. The sample rate of 1920 Hz is lower
+which is extremely useful for those problems that cannot be                    than some other schemes reported in the literature. The DT al-
+solved with analytical methods. For HIF detection problems,                    gorithm needs to be run on a microprocessor-based controller
+            Authorized licensed use limited to: Tsinghua University. Do

@@ -1,0 +1,343 @@
+第 48 卷 第 24 期                                     电力系统保护与控制                                                         Vol.48 No.24
+2020 年12 月16 日                                Power System Protection and Control                                   Dec. 16, 2020
+
+DOI: 10.19783/j.cnki.pspc.200165
+
+
+
+             含分层接入特高压直流的交直流混联电网机电—
+                                        电磁暂态混合仿真研究
+    熊华强 1，杨程祥 2，马 亮 1，熊永新 2，舒 展 1，姚 伟 2，陈 波 1，程思萌 1，陶 翔 1
+                            (1.国网江西省电力有限公司电力科学研究院，江西 南昌 330096；
+                       2.强电磁工程与新技术国家重点实验室(华中科技大学)，湖北 武汉 430074)
+
+
+     摘要：特高压直流分层接入系统在提升受端电网电压支撑的同时也带来了不同层间系统耦合关系复杂等问题。为
+     准确研究特高压分层接入后交直流混联系统运行特性，结合±800 kV 雅中—江西分层接入特高压直流输电工程，
+     基于 ADPSS 搭建含特高压分层直流输电系统的交直流电网混合仿真模型。首先通过仿真对比验证了纯电磁暂态
+     模型的正确性。然后对比分析关断角独立控制指令阶跃响应下混合仿真模型和纯电磁暂态模型的仿真结果，验证
+     了混合仿真模型的准确性和优越性。最后与机电暂态模型进行故障仿真对比。仿真分析表明，混合仿真能够准确
+     反映特高压直流分层接入后混联系统动态特性，提供很好的仿真模型基础。
+     关键词：分层接入；交直流混联电网；电磁暂态模型；机电暂态模型；ADPSS；混合仿真
+
+         Electromechanical-electromagnetic transient hybrid simulation of an AC/DC hybrid power
+                             grid with UHVDC hierarchical connection mode
+                             XIONG Huaqiang1, YANG Chengxiang2, MA Liang1, XIONG Yongxin2,
+                               SHU Zhan1, YAO Wei2, CHEN Bo1, CHENG Simeng1, TAO Xiang1
+      (1. State Grid Jiangxi Electric Power Research Institute, Nanchang 330096, China; 2. State Key Laboratory of Advanced
+      Electromagnetic Engineering and Technology, Huazhong University of Science and Technology, Wuhan 430074, China)
+
+     Abstract: UHVDC hierarchical connection to a system not only improves the voltage support of the receiving end grid
+     but also brings problems such as the complex coupling relationship between different layers of the system. In order to
+     study the operating characteristics of an AC/DC hybrid system with a UHVDC hierarchical connection, this paper
+     examines the ±800 kV Yazhong-Jiangxi UHVDC transmission project. An AC/DC hybrid simulation model with UHVDC
+     hierarchical connection mode is built based on ADPSS. First, the correctness of the electromagnetic transient model is
+     verified. Then the accuracy and superiority of the hybrid simulation model are verified by comparing the simulation
+     results under extinction angle step response of independent control command with the electromagnetic transient model.
+     Finally, the fault simulation of the hybrid model is compared with the electromechanical transient model. Results show
+     that hybrid simulation can accurately reflect the dynamic characteristics of a hybrid system and provide a simulation
+     foundation model.
+          This work is supported by National Natural Science Foundation of China (No. 51577075).
+     Key words: hierarchical connection; AC/DC hybrid grid; electromagnetic transient model; electromechanical transient
+     model; ADPSS; hybrid simulation
+
+
+                                                                   绿色能源的开发外送[4-6]；同时，区域电网之间的互
+0   引言
+                                                                   联缓解了河南、上海等中东部地区电网的用电缺口。
+  近年来，特高压直流输电技术的成熟发展和不                                             而多回特高压直流接入同一受端电网导致交流电网
+断应用[1-3]，促进了西北风电、光伏以及西南水电等                                         电压支撑能力受到严峻挑战[7-9]，因此文献[10]从电
+                                                                   网结构改进出发，创造性地提出特高压直流高、低
+基金项目：国家自然科学基金项目资助(51577075)                                        端逆变器以分层方式分别接入 500 kV 和 1 000 kV
+- 146 -                                  电力系统保护与控制
+
+不同电压等级交流电网中[11-12]。
+     特高压分层接入结构应用的同时也存在不同层
+级系统耦合关系复杂、协调控制困难等问题[13]。为
+准确研究特高压分层接入后混联系统运行特性，如
+何建立高效而精确的含特高压分层接入直流的交直
+流混联电网模型变得至关重要。
+     目前有关分层特高压直流的仿真分析大多基于
+电 磁 暂 态 建 模 [14-15] 和 机 电 暂 态 建 模 [16-17] 。 文 献
+[18-19]指出以上两种建模方式分别存在等值化简误
+差和仿真模拟精度不够的问题，降低了仿真计算的
+准确性 [20-21]。而采用混合仿真能够兼顾二者的优
+势[22-24]，且目前针对特高压分层直流系统混合仿真
+模型搭建鲜有研究和详细介绍。
+     因此，本文结合规划建设中±800 kV 雅中-江
+西分层接入特高压直流；应用 ADPSS 软件平台，
+详细阐述了对含特高压分层直流输电系统的交直流
+混联电网混合仿真模型的搭建。首先在 ADPSS 中
+搭建分层特高压直流电磁暂态模型，并与 PSCAD
+模型进行对比分析，         验证了电磁暂态模型的正确性。
+然后，结合关断角指令独立控制阶跃响应仿真，仿
+真对比说明混合仿真模型的有效性和优势。最后对
+比交流故障下混合仿真模型和机电暂态模型的仿真
+波形。结果表明，混合仿真模型能够提供很好的仿
+真模型基础和参考。
+                                                            图 1 2020 年规划江西电网网架结构
+1    ADPSS 混合仿真流程
+                                                   Fig. 1 Planning of Jiangxi power grid architecture in 2020
+     本节以雅中-江西分层接入特高压直流系统为
+例，对 ADPSS 混合仿真流程进行介绍。
+1.1 雅中特高压直流分层接入系统
+     为弥补江西电网用电缺口，计划 2020 年建成
+±800 kV 雅中-江西特高压直流输电工程[17]。特高
+压直流双极运行，高压阀组和低压阀组以分层方式
+分别接入 500 kV 和 1 000 kV 不同层级交流系统。
+特高压直流分层接入方式下江西受端电网网架结构
+如图 1 所示。
+     雅中-江西分层特高压直流输电工程输送功率
+10 000 MW，额定直流电流 6.25 kA，额定直流电压
+±800 kV[25]。基于 2020 年丰平大潮流运行方式，
+江西电网总负荷约 2 500 万 kW，通过 3 回 500 kV
+交流联络线和南昌-武汉 1 000 kV 特高压双回交流
+线和湖北电网相连，通过南昌-长沙 1 000 kV 特高
+                                                               图 2 混合仿真接口等值示意图
+压双回交流线和湖南电网相连。
+                                                   Fig. 2 Interface equivalent diagram of hybrid simulation
+1.2 基于 ADPSS 的混合仿真流程
+     ADPSS 混合仿真通过等值原理和数据接口技                         对特高压直流分层接入后交直流混联电网进行
+术实现[19]。如图 2 所示，在进行混合仿真计算时将                       机电—电磁暂态混合仿真建模需要完成机电侧数据
+对方模型进行戴维南/诺顿等值处理[26-27]。                          和电磁侧数据准备[22]。在 PSASP 中搭建机电模型
+           熊华强，等           含分层接入特高压直流的交直流混联电网机电—电磁暂态混合仿真研究                                                            - 147 -
+
+并进行网络分割，然后进行并行计算验证机电数据                                          模型的正确性。
+无误；在 ETSDAC 中搭建电磁模型并与 PSCAD 模                                   2.1 特高压分层接入一次系统建模
+型对比分析验证电磁数据无误。最后，进行任务分                                               雅中—江西特高压直流输电工程一次系统模型
+配并提交数据，启动混合仿真计算[28]。混合仿真模                                       拓扑如图 4 所示。 该系统主要包括等值钳位电压源、
+型搭建流程如图 3 所示。                                                   整流侧换流站、逆变侧 500 kV 和 1 000 kV 换流站、
+                                                                直流输电线路。其中，受端 500 kV 和 1 000 kV 交
+                                                                流系统短路比分别为 4.53 和 6.10，换流站主要包含
+                                                                有换流变压器、交直流滤波器、换流器和平波电抗
+                                                                器[29]等设备。换流器采用双桥 12 脉波换流阀搭建而
+                                                                成，高、低端换流器关断角稳态运行值均为 17°[29]。
+                                                                     各换流器通过 Y/Y 接线与 Y/D 接线的换流变压
+                                                                器和交流系统相连。各换流变压器的主要参数如表
+                                                                1 所示。
+                                                                                 表 1 换流变压器参数列表
+                                                                       Table 1 List of converter transformer parameters
+                                                                      参数            整流侧          逆变 500 kV      逆变 1 000 kV
+                                                                   容量/MVA           1 551             1 470         1 470
+                                                                  绕组电压/kV          512/175.3      532/161.8      1021/161.8
+                                                                   短路阻抗/%             23               19            20
+
+
+                                                                2.2 分层接入直流输电控制系统建模
+                                                                    直流输电控制系统对交直流混联电网安稳运行
+                                                                具有重要影响[30]。由于特高压直流分层接入不同电
+                                                                压等级的交流电网，因此每极逆变阀组应进行独立
+                                                                控制[31]。以正极控制为例，整流侧和逆变侧高、低
+              图 3 混合仿真模型搭建流程                                    端换流站控制系统结构如图 5 所示。
+    Fig. 3 Building process of hybrid simulation model              图 5 中，逆变侧高、低端换流器分别进行独立
+                                                                控制[14]，下标 1 和 2 分别表示 500 kV 和 1 000 kV
+2   特高压直流分层接入系统仿真建模
+                                                                系统换流器控制量。整流侧配置有定电流控制；逆
+  本节基于 ADPSS 平台建立雅中—江西分层接                                       变侧配置有定关断角控制、电流偏差控制、定电
+入特高压直流电磁暂态模型，并通过仿真对比验证                                          流控制、换相失败预防控制(CFPREV)和低压限流
+
+
+
+
+                                      图 4 雅中—江西特高压直流分层接入系统结构
+                        Fig. 4 Structure of Yazhong-Jiangxi UHVDC hierarchical connection to system
+- 148 -                                           电力系统保护与控制
+
+                                                           设置 3 s 时逆变侧 500 kV 换流母线处发生持续
+                                                      时间为 0.1 s 的三相感性接地故障，故障电感值设为
+                                                      0.35 H，仿真总时长为 5 s。对比故障后 ADPSS 和
+                                                      PSCAD 的暂态响应曲线如图 6 所示。
+                                                           从图 6 仿真曲线可以看出，500 kV 换流母线处
+                                                      发生三相感性接地故障后，换相电压降低，高端逆变
+                                                      器关断角减小至 0，直流功率下降，发生换相失败[11]。
+                                                      同时，直流电流迅速上升，使 1 000 kV 交流系统所连
+                                                      接逆变器运行关断角下降，也发生了换相失败。
+
+
+
+
+               图 5 直流控制系统结构
+          Fig. 5 Structure of DC control system
+
+ (Voltage Dependent Current Order Limiter, VDCOL)
+控制[32]。Idrec 表示整流侧直流电流测量值，αrec 表示
+整流侧定电流控制器输出触发角指令；Ides 为直流电
+流指令值，Idinv 为逆变侧直流电流测量值，Udinv 为
+逆变侧直流电压测量值；CEC 为电流偏差控制，γ
+为逆变侧熄弧角测量值，Ua、Ub、Uc 为逆变侧换流
+母线三相电压瞬时值；βinv 为逆变侧输出逆变角，αinv
+为逆变侧输出触发角，αCFPREV 为换相失败预防控制
+环节输出触发角指令减小值。直流输电控制系统模
+型可采用最新版 ADPSS 自带“特高压直流输电控
+制系统”封装模块进行搭建。同时，针对换相失败
+预防控制部分，采用用户自定义建模(UDM)搭建
+以完善直流系统控制功能，具体搭建过程可参考文
+献[33]。
+2.3 特高压分层接入直流电磁暂态模型验证
+    按照 2.1 节和 2.2 节所述建模思路和方法在
+ADPSS 中搭建雅中—江西分层接入特高压直流电
+磁暂态模型。通过和 PSCAD/EMTDC 中的电磁模
+型进行仿真对比，验证本文所搭建特高压分层接入
+直流电磁暂态模型的正确性。
+             熊华强，等           含分层接入特高压直流的交直流混联电网机电—电磁暂态混合仿真研究                             - 149 -
+
+                                                             其中，红线代表 500 kV 交流电网母线，绿线代表
+                                                             1 000 kV 交流电网母线。
+                                                                  由图 7 可以看出，雅中—江西分层接入特高压
+                                                             直流部分划分为电磁暂态子网，其余交流电网部分
+                                                             划分为机电暂态子网。
+                                                             3.2 机电—电磁暂态混合仿真
+                                                                  为验证混合仿真模型进行独立控制响应时的正
+                                                             确性和优势，本节通过设置关断角独立控制指令阶
+                                                             跃响应进行仿真对比，分析采用混合仿真模型的优
+                                                             势与不同。
+                                                                  设置 4 s 时 500 kV 逆变器关断角指令阶跃增加
+                                                             10°，7 s 时恢复至稳态值；1 000 kV 逆变器关断角
+                                                             保持不变。仿真总时长为 10 s，对比混合仿真模型
+                                                             阶跃响应与电磁暂态模型阶跃响应仿真结果如图 8
+                                                             所示。
+
+
+       图 6 分层接入特高压直流电磁暂态模型验证
+    Fig. 6 Electromagnetic transient model validation with
+           UHVDC hierarchical connection mode
+
+   由于暂态过程中 ADPSS 和 PSCAD 模型的动态
+响应趋势一致，仿真曲线拟合程度很好；因此验证
+了 ADPSS 中分层特高压直流电磁暂态模型的正确
+性，可以基于本文所搭建的电磁暂态模型进行机电
+—电磁暂态混合仿真研究。
+
+3    特高压分层直流机电—电磁混合仿真
+    本节基于所搭建的雅中—江西分层特高压直流
+电磁模型，进行交直流混联电网机电—电磁暂态混
+合仿真建模研究。
+3.1 机电暂态仿真数据准备
+    对 PSASP 中工程全网的机电暂态数据按照 1.2
+节所述进行网络分割。本文以换流变压器连接的交
+流侧母线为分网边界[22]，分网示意图如图 7 所示。
+
+
+
+
+                 图 7 混合仿真分网示意图
+    Fig. 7 Schematic diagram of hybrid simulation network
+- 150 -                                                   电力系统保护与控制
+
+                                                              且抚州站由于靠近换流母线，相比其他远离换流站
+                                                              的节点交流电压变化更大。
+
+                                                              4   混合仿真与机电暂态仿真对比
+                                                                本节对比交流故障后混合仿真模型与 PSASP
+                                                              中机电暂态模型的仿真结果，进而说明混合仿真模
+                                                              型相对机电暂态模型的优势。
+                                                                设置 10 s 时永修-梦山线路发生三相接地短路
+                                                              故障，持续时间为 0.1 s，仿真总时长为 20 s。对比
+                    图 8 阶跃响应波形对比                              混合仿真模型和 PSASP 机电暂态模型的暂态响应
+          Fig. 8 Comparison of step responses waveforms       曲线如图 10 所示。
+                                                                对比交流电网节点电压可知，暂态过程中混合
+   由图 8 可以看出，关断角阶跃响应过程中，混
+                                                              仿真与机电暂态仿真所得波形暂态响应趋势基本一
+合仿真模型中 500 kV 逆变器能够快速跟踪关断角
+                                                              致，说明混合仿真模型能够反映实际交流大系统的
+指令的变化，   而 1 000 kV 逆变器关断角则保持不变，
+                                                              动态特性。而由于机电暂态程序中基于基波相量方
+说明混合仿真模型能够对控制指令进行相对独立的
+                                                              程分析直流动态过程，仿真准确性较差[34]。因此虽
+控制和响应。同时，由于 500 kV 逆变器关断角指令
+                                                              然直流系统关断角响应曲线总体趋势一致，但机电
+的阶跃增加，导致逆变器吸收无功增多，500 kV 换
+                                                              暂态仿真波动幅度较大；而混合仿真模型的直流波
+流母线电压下降。
+   对比阶跃响应仿真结果可知，ADPSS 混合仿真
+模型与纯电磁暂态模型暂态响应一致，在关断角指
+令阶跃过程中能够很好地拟合，证明了混合仿真模
+型的正确性。而混合仿真模型能够体现交流网络机
+电暂态特性，因此其暂态响应波动幅度较大，恢复
+速度相对较慢。
+   同时，对阶跃响应过程中采用混合仿真模型和
+电磁暂态模型所需仿真计算时间进行统计；利用
+PSCAD 进行电磁暂态仿真耗时约 170 s，而基于
+ADPSS 进行机电—电磁混合仿真耗时约 138 s，其
+计算效率提升 23%左右。
+   此外，ADPSS 混合仿真模型还能够观察交流系
+统各节点的响应情况。如图 9 所示，给出阶跃响应
+后江西省内部分节点母线电压情况。
+
+
+
+
+             图 9 混合仿真机电暂态网络母线电压
+   Fig. 9 AC voltage in electromechanical transient network
+
+  如图 9 所示，关断角阶跃响应过程中，江西省
+内母线电压由于换流站无功消耗增多而略有下降；
+               熊华强，等           含分层接入特高压直流的交直流混联电网机电—电磁暂态混合仿真研究                                                            - 151 -
+
+                                                                       coordinated multi-objective reactive voltage control
+                                                                       system based on new type synchronous condenser[J].
+                                                                       Power System Technology, 2019, 43(8): 2961-2967.
+                                                                 [3]   WU Z, LI S. Reliability evaluation and sensitivity analysis
+                                                                       to AC/UHVDC systems based on sequential Monte Carlo
+                                                                       simulation[J]. IEEE Transactions on Power Systems,
+                                                                       2019, 34(4): 3156-3167.
+                                                                 [4]   LI Guodong, LI Gengyin, ZHOU Ming. Model and
+                                                                       application of renewable energy accommodation capacity
+                                                                       calculation considering utilization level of interprovincial
+             图 10 混合仿真与机电暂态仿真对比
+                                                                       tie-line[J]. Protection and Control of Modern Power
+    Fig. 10 Comparison of simulation results between hybrid
+                                                                       Systems, 2019, 4(1): 1-12. DOI: 10.1186/s41601-019-
+      simulation and electromechanical transient simulation
+                                                                       0115-7.
+形变化展现更加精细，因此能够更好地反映实际的                                           [5]   徐少华, 李建林, 宋新甫, 等. 大规模储能系统提升西
+直流输电响应情况。                                                              北地区可再生能源消纳能力分析[J]. 电力建设, 2018,
+                                                                       39(4): 67-74.
+5     结论                                                               XU Shaohua, LI Jianlin, SONG Xinfu, et al. Large-scale
+  特高压直流分层接入方式下交直流系统耦合关                                                 energy storage system help to improve northwest area’s
+                                                                       renewable energy absorption ability[J]. Electric Power
+系复杂。本文基于 ADPSS 平台详细阐述了含分层
+                                                                       Construction, 2018, 39(4): 67-74.
+特高压直流的交直流混联电网机电—电磁暂态混合
+                                                                 [6] SU C, CHENG C, WANG P, et al. Optimization model for
+仿真建模过程。通过仿真分析验证，得到了以下结论：
+                                                                       the short-term operation of hydropower plants transmitting
+  1) 通过与 PSCAD 电磁暂态模型进行仿真对                                             power to multiple power grids via HVDC transmission
+比，验证了所搭建分层特高压直流电磁暂态模型的                                                 lines[J]. IEEE Access, 2019, 7: 139236-139248.
+准确性。                                                             [7]   WANG L, XIE X, DONG X, et al. Real-time optimisation
+  2) 结合分层接入特高压直流关断角独立控制                                                of short-term frequency stability controls for a power
+指令阶跃响应进行仿真分析，结果表明混合仿真模                                                 system with renewables and multi-infeed HVDCs[J]. IET
+型与电磁暂态模型吻合程度很高，而且能够给出交                                                 Renewable Power Generation, 2018, 12(13): 1462-1469.
+流系统中各节点的响应情况。                                                    [8]   唐晓骏, 张正卫, 韩民晓, 等. 适应多直流馈入受端电
+                                                                       网 的 柔性 直 流配 置 方法[J]. 电 力 系统 保 护与 控 制,
+  3) 相对于 PSASP 机电暂态模型，混合仿真模型
+                                                                       2019, 47(10): 57-64.
+中直流系统模型能够展现更细节的波形变化，仿真准
+                                                                       TANG Xiaojun, ZHANG Zhengwei, HAN Minxiao, et al.
+确度更高。可为研究特高压直流分层接入方式下交
+                                                                       VSC-HVDC configuration method suitable for multi-DC
+直流混联大电网的特性提供很好的仿真模型和参考。                                                feeding receiving power grid[J]. Power System Protection
+参考文献                                                                   and Control, 2019, 47(10): 57-64.
+                                                                 [9]   王玲, 文俊, 司瑞华, 等. UHVDC 分极分层接入方式
+[1]    肖繁, 王涛, 高扬, 等. 基于特高压交直流混联电网的
+                                                                       及其运行特性[J]. 电工技术学报, 2018, 33(4): 730-738.
+       调相机无功补偿及快速响应机制研究[J]. 电力系统保
+                                                                       WANG Ling, WEN Jun, SI Ruihua, et al. The connection
+       护与控制, 2019, 47(17): 93-100.
+                                                                       mode and operation characteristics of UHVDC with
+       XIAO Fan, WANG Tao, GAO Yang, et al. Research on
+                                                                       hierarchical connection by pole[J]. Transactions of China
+       reactive power compensation and fast response mechanism
+                                                                       Electrotechnical Society, 2018, 33(4): 730-738.
+       of synchronous condenser based on UHVAC/DC hybrid
+                                                                 [10] 刘振亚, 秦晓辉, 赵良, 等. 特高压直流分层接入方式
+       grid[J]. Power System Protection and Control, 2019,
+                                                                       在多馈入直流电网的应用研究[J]. 中国电机工程学报,
+       47(17): 93-100.
+                                                                       2013, 33(10): 1-7, 25.
+[2]    李锴, 邵德军, 徐友平, 等. 基于新一代调相机的多目
+                                                                       LIU Zhenya, QIN Xiaohui, ZHAO Liang, et al. Study on
+       标无功电压协调控制系统研究[J]. 电网技术, 2019,
+                                                                       the application of UHVDC hierarchical connection mode
+       43(8): 2961-2967.
+                                                                       to mul

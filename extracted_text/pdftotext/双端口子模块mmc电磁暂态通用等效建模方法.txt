@@ -1,0 +1,254 @@
+         第 38 卷 第 20 期                          中    国 电 机 工 程 学                报              Vol.38 No.20 Oct.20, 2018
+        2018 年 10 月 20 日                             Proceedings of the CSEE                   ©2018 Chin.Soc.for Elec.Eng. 6079
+DOI：10.13334/j.0258-8013.pcsee.172160               文章编号：0258-8013 (2018) 20-6079-12               中图分类号：TM 721
+
+
+
+   双端口子模块 MMC 电磁暂态通用等效建模方法
+                                 徐义良，赵成勇，赵禹辰，石璐，许建中*
+                    (新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206)
+
+
+       Generalized Electromagnetic Transient (EMT) Equivalent Modeling of MMCs With
+                          Arbitrary Two-port Sub-module Structures
+                         XU Yiliang, ZHAO Chengyong, ZHAO Yuchen, SHI Lu, XU Jianzhong*
+     (State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources (North China Electric Power
+                                         University), Changping District, Beijing 102206, China)
+
+
+ABSTRACT: This paper proposed an accurate and high-speed                联节点均被迭代消去，整个桥臂在电磁暂态解算器中被等效
+electromagnetic transient (EMT) equivalent modeling method              成仅含 4 个外部节点，尽管在这一过程中求解的步骤有所增
+for arbitrary novel two-port MMC by using paralleled full               加，但依然能够完整保留各桥臂全部的内部信息。对降阶导
+bridge sub-module (SMs) modular multilevel converter (MMC)              纳矩阵进行求解后，即可完成之前被等效消去的节点信息例
+topology. Unlike the previous equivalent method for single-port         如电容电压、连接节点电流的更新。因此，该文提出的建模
+MMCs, the two-port MMC did not enjoy the feature that the               方法，能够在精确仿真系统内、外部动态特性的同时，大幅
+same arm current flows through all the SMs. With respect to             提高其电磁暂态仿真速度。在 PSCAD/EMTDC 环境中验证
+this issue, the recursive solution algorithm for two-port MMC           所提出模型的精度和加速比。
+was proposed. All the internal nodes both inside the SMs and
+                                                                        关键词：模块化多电平换流器；电磁暂态；双端口子模块；
+between SMs were eliminated recursively, then the whole
+bridge arm was represented by 4 nodes in the main EMT solver.           等效模型
+
+During this process, all the internal information was preserved         0 引言
+though increased the bookkeeping effort. After solving the
+reduced order admittance matrix, the previously eliminated                   模 块 化 多 电 平 换 流 器 (modular multilevel
+node information such as the capacitor voltages and interfacing         converter，MMC)凭借其开关损耗低等优点，已在
+node currents were updated. Therefore, the proposed algorithm           国内外 各大 柔性直 流输 电工程 中得 到了广 泛应
+is very time efficient yet satisfactorily accurate to reproduce         用[1-3]。但是，目前应用范围最广的半桥型子模块
+identical external as well as internal dynamics. The EMT
+                                                                        MMC 在发生直流侧短路故障闭锁后，依然可以通
+simulations on PSCAD/EMTDC validated the accuracy and
+                                                                        过反并联二极管向直流短路点馈入电流，因而无法
+speed up factor of the proposed model.
+                                                                        清除直流故障[4]。此外，当电平数较高时，半桥型
+KEY WORDS: modular multilevel converter (MMC);
+                                                                        子模块 MMC 的电容电压排序即使采用质因子分解
+electromagnetic transient (EMT); two-port sub-module (SM);
+                                                                        法、希尔排序法等低排序复杂度的方法[5-9]，依然存
+equivalent model
+                                                                        在较大数量的排序运算。
+摘要：针对一种新型并联全桥子模块构成的模块化多电平换
+                                                                             针对这些问题，目前国内外不断有新型双端口
+流器(paralleled full bridge sub-module MMC，PFB-MMC)拓
+                                                                        子模块拓扑被提出[10-12]，相比于全桥及钳位双子模
+扑，提出一种适用于任意新型双端口 MMC 的电磁暂态通用
+                                                                        块等单端口子模块拓扑，这些新型双端口子模块拓
+等效建模方法。传统单端口子模块 MMC 的等效算法要求全
+部子模块流过相同的桥臂电流，这对双端口 MMC 不再适                                             扑在具备直流故障钳位能力的同时还具备自均压
+用。针对这一问题，适用于双端口 MMC 的迭代求解算法被                                            的能力，被视为 MMC 子模块未来的候选拓扑之一，
+提出。MMC 桥臂中全部子模块的内部节点和模块间的互                                              具有一定的发展前景。文献[10]在并联 IGBT 开关
+                                                                        组型全桥子模块(full-bridge sub-module，FBSM)的
+    基金项目：国家自然科学基金项目(51607065)。
+                                                                        基础上，提出了开关分列运行的并联全桥子模块
+    Project Supported by National Natural Science Foundation of China
+(51607065).                                                             (paralleled full bridge sub-module，P-FBSM)拓扑，
+6080                   中   国   电   机   工   程     学                    报                                                       第 38 卷
+
+该拓扑通过 4 个端子能够实现相邻子模块之间的并               经对称翻转得到，其拓扑结构如图 1 所示。
+联均压，且能够有效的钳位直流故障，在电机等低                          T1                           T2                                  T6                T5
+                                                                        D1            D2                D6            D5
+压领域 MMC 中得到了应用，且呈现出向高压大容                         IP1                                                                          IN1
+                                           P1                                                  +                                        N1
+量 MMC 领域发展的趋势。在电磁暂态仿真中，由                         IP2                                       C
+                                                                                               -
+                                                                                                   VC                         IN2
+                                           P2                                                                                           N2
+新型双端口子模块构成的 MMC 电平数越高，非线                        T3
+                                                                        D3
+                                                                             T4
+                                                                                      D4                D8
+                                                                                                                 T8
+                                                                                                                      D7
+                                                                                                                                   T7
+
+性换流器模型导纳矩阵阶数也将越高。这将使得对
+非线性换流器模型的导纳矩阵求逆的计算量很大，                                                图1            并联全桥子模块拓扑结构
+从而导致其电磁暂态仿真速度极其缓慢，无法满足                                                Fig. 1        Topology of the P-FBSM
+
+科研需求。                                           由图 1 可知，与半桥、全桥等单端口(两端子)
+       目前国内外已有的关于 MMC 的电磁暂态等效          子模块不同，单个 P-FBSM 拥有 4 个端子：P1、P2、
+模型全部针对单端口子模块拓扑，例如半桥、全桥、                N1、N2，是一种双端口子模块，它由 8 个 IGBT 开
+双钳位型子模块等[13-20]。这些等效模型适用的前提            关器件及其反并联二极管和 1 个直流存储电容构
+是全部子模块必须流过相同的桥臂电流，单端口子                 成。通过 8 个开关器件的触发信号 T1—T8 工作状态
+模块必然满足这一条件，而双端口子模块因为包含                 的切换，单个 P-FBSM 一共有 9 种运行状态，具体
+4 个端子，相邻子模块间电流流通路径复杂多变，                的调制和电压平衡控制方法如文献[21]所示。文
+无法满足这一条件，因而现有的关于 MMC 的电磁               献[21]基于最近电平逼近调制，设计了一种 P-FBSM
+暂态等效模型均不适用。文献[13-16]提出了一种戴             动态分配均压控制策略，可同时实现子模块电容电
+维南等效模型，通过分别求解单个子模块的戴维南                 压的自均衡和直流故障电流快速清除。
+等效电路，进而直接求和得到单个桥臂的戴维南等                          并联全桥子模块 MMC(paralleled full bridge
+效电路。新型双端口子模块有 4 个端子，无法求解               sub-module MMC，PFB-MMC)拓扑如图 2 所示，它
+其戴维南等效电路，且无法像单端口子模块那样将                 依然为三相、六桥臂对称结构。
+全部子模块等效电路直接求和得到桥臂等效电路。                                                                                                         +
+                                                     P11       P21    N12    N11
+文献[16]提出了一种基于受控源的 MMC 通用建模
+方法，使用 PSCAD 软件中已有的器件搭建模型，
+                                                     N12       N 22   P22    P12           ARM                   ARM
+具有一定的通用性。但是其使用的器件数目多于详
+细模型，且扩展的灵活性受限。文献[18]提出了一
+                                                     P1N P2N N 2N N1N
+种改进平均值模型，该模型可以精确仿真换流器闭
+锁以及严重交、直流故障等工况，但忽略了各子模                          ARM                    LARM                    LARM                    LARM         Vdc
+块电容的区别，无法求解桥臂内部子模块电容电压
+                                                           A                          B                      C
+信息。文献[20]提出了一种高效等值建模方法，该                                               LARM                    LARM                    LARM
+
+方法将桥臂等效为一个桥臂导通压降模型和一个
+复合等值模型，具有一定的通用性。但该方法依赖
+                                                                ARM                        ARM                   ARM
+于单个桥臂内各导通子模块电容流过的电流相等
+均为桥臂电流这一前提，而新型双端口子模块有 4
+                                                                                                                               -
+个端子，电流流通路径多样不满足这一前提。
+                                                                图2                 并联全桥子模块 MMC 示意图
+       为解决这一问题，本文提出一种适用于任意新                      Fig. 2                     Schematic diagram of the PFB-MMC
+型双端口子模块 MMC 的电磁暂态通用等效建模方
+                                       2 双端口 MMC 的通用等效建模方法
+法。该方法首先列写出单个双端口子模块的节点电压
+方程，之后采用循环迭代的方法消去 MMC 桥臂中全              2.1      任意新型双端口子模块拓扑
+部双端口子模块的内部节点和模块间的互联节点，将                         目前国内外已提出的新型双端口子模块拓
+                                           [10-12]
+整个桥臂等效成仅含 4 个外部节点的等效电路。                扑             均包含 1 个子模块电容及 4 个外部节点，将
+                                       这些新型双端口子模块内部的 IGBT 及其反并联二
+1 并联全桥子模块 MMC
+                                       极管用一可变电导 G 等效代替，采用后退欧拉法将
+       并联全桥子模块可以看做由一个全桥子模块             t 时刻单个子模块电容 C 离散化为一个电导 GC 与一
+第 20 期                                         徐义良等：双端口子模块 MMC 电磁暂态通用等效建模方法                                                         6081
+
+个历史电流源 ICEQ(t−ΔT)并联，从而可将它们的伴                                        模型进行求解，更新得到此时等效模型各桥臂的 4
+随电路统一表示成图 3 的形式。                                                    个外部节点的节点电压、电流值。
+                                                                          3）步骤 3：步骤 2 中解算器无法直接求得各个
+         IPA
+                         5               n-2            INA         桥臂被等效消去的内部节点的电压、电流值，此时
+ VPA                1                               3         VNA
+                               I CEQ(t −ΔT )                        可根据步骤 1 中的 blockN−1 及第 N 个子模块的等
+         IPB                                            INB
+ VPB                2                               4         VNB
+                                                                    效电路参数，由步骤 2 求得的各个桥臂等效电路
+                                                n
+                         n-1        GC
+                                                                    blockN 的 4 个外部节点的节点电压、电流值反解更
+               图3       新型双端口子模块伴随电路                                新出 blockN-1 与第 N 个子模块之间被等效消去的中
+                Fig. 3    Companion circuit of                      间互联节点的电压、电流值。依此类推，循环迭代
+               the novel two-port sub-module                        可将各个桥臂内全部 N 个子模块之间的中间互联
+       由图 3 可知，该子模块共有 n 个节点，其中第                                     节点的电压、电流值求出，这样各个桥臂内每个子
+1~4 节点为子模块的 4 个外部节点，第 5~n 节点为                                       模块的 4 个外部节点的电压、电流值均已知，由此
+内部节点，第 n−1、n 个节点为子模块电容的两个                                           可进一步反解更新出每个子模块被等效消去的全
+端点。前一个子模块的 3、4 节点与后一个子模块                                            部内部节点的电压、电流值，进而完成每个子模块
+的 1、2 节点对应相连，多个双端口子模块通过这                                            电容电压的更新。之后进入下一仿真步长，重复步
+种方式级联构成双端口 MMC 的 6 个桥臂。                                             骤 1。
+2.2    电磁暂态通用等效建模方法                                                       本节提出的适用于任意双端口子模块 MMC 电
+       针对图 3 所示的任意新型双端口子模块构成的                                       磁暂态通用等效建模方法所体现出来的整体的建
+MMC，本文提出了一种电磁暂态通用等效建模方                                              模思路对于全桥及钳位双子模块等单端口结构依
+法，该方法在实现对外部等效的同时，能够完整保                                              然也是适用的。
+留单个桥臂的各种内部信息。该方法在每个仿真步
+                                                                    3     PFB-MMC 电磁暂态等效模型
+长内的主要步骤如下：
+       1）步骤 1：首先根据图 3 所示双端口子模块                                            本节将以 PFB-MMC 为例，使用第 2 节提出的
+伴随电 路列 写出这 一时 刻全部 双端 口子模 块各                                         通用等效建模方法搭建 PFB-MMC 电磁暂态等效
+自对应的节点电压方程，之后等效消去各子模块的                                              模型。
+全部内部节点(第 5~n 节点)，各子模块分别等效为只                                         3.1   单个 P-FBSM 等效模型
+剩 4 个外部节点的等效电路。在此基础上，利用双                                                  将单个 P-FBSM 的 8 个 IGBT 及其反并联二极
+端口子模块 MMC 单个桥臂内前一个子模块的 3、4                                          管分别用一可变电导(G1—G8)等效代替。采用后退
+节点与后一个子模块的 1、2 节点对应相连，对应节                                           欧拉法将 t 时刻单个 P-FBSM 的子模块电容 C 离散
+点的电压、电流相等这一规律，将单个桥臂内第 1、                                            化为一个电导 GC 与一个历史电流源 ICEQ(t−ΔT)并
+2 个子模块的中间互联节点等效消去，得到只剩 4                                            联，从而得到了 t 时刻单个 P-FBSM 的伴随电路如
+个外部节点的等效电路 block2，之后采用同样的                                           图 4 所示。也可采用梯形积分法离散化子模块电容，
+方法等效消去 block2 与第 3 个子模块的中间互联节                                       梯形积分法比后退欧拉法的仿真精度要高但二者
+点得到 block3，循环迭代最后将单个桥臂内全部 N                                         的仿真精度差别不大[16,22]，且本文考虑到相比于梯
+个子模 块之 间的中 间互 联节点 全部 等效消 去得                                         形积分法，后退欧拉法不需要存储上一时刻的数
+到只剩 4 个外部节点的单个桥臂等效电路 blockN。                                        值，因而采用后退欧拉法离散化子模块电容，以进
+该等效电路相比于实际的 MMC 单个桥臂共等效                                             一步提高等效模型的仿真速度。
+消去 N·n−2N−2 个节点，以 201 电平 PFB-MMC 为                                                             ⑤
+                                                                                G1      G2                          G6       G5
+例，消去节点数为 200·6−400−2=798，数目已经非                                            IP1                                                 IN1
+                                                                    VP1         ①                                        ③           VN1
+常可观。                                                                      IP2
+                                                                                               GC   I CEQ(t −ΔT )
+                                                                                                                              IN2
+                                                                    VP2                ②                    ④                         VN2
+       2）步骤 2：将 MMC 六个桥臂全部用单个桥臂
+                                                                                G3      G4                          G8       G7
+等效电路 blockN 替换，完成双端口子模块 MMC 电                                                                  ⑥
+
+磁暂态等效模型的搭建，之后由电磁暂态仿真软件                                                               图4      P-FBSM 伴随电路
+的解算器对整个双端口子模块 MMC 电磁暂态等效                                                    Fig. 4   Companion circuit of the P-FBSM
+6082                                              中    国   电   机   工   程    学    报                                              第 38 卷
+
+       由图 4 可知，单个 P-FBSM 共有 6 个节点，其                                                       YIFVIF = J IFTsf +I IF                    (4)
+中 1~4 节点为外部节点、5~6 节点为内部节点。假                                                式(4)即为单个 P-FBSM 消去内部节点后，等效
+设 1~6 节点的节点电压分别为 VPA、VPB、VNA、VNB、                                  为只有 4 个外部节点的等效电路(以大地为参考节
+VCA、VCB，1~4 节点的节点注入电流分别为 IPA、IPB、                                  点)对应的等效节点电压方程。其中， YIF = Y11 −
+−INA、−INB，正方向规定：流入节点为正。以大地                                         Y12Y22−1Y21 , J IFTsf = −Y12Y22−1J IN 。t 时刻单个 P-FBSM 的
+为参考节点，对 t 时刻单个 P-FBSM 伴随电路列节                                       运行状态已知，因此 YIF 已知；t−ΔT 时刻的电容电
+点电压方程如式(1)所示。                                                      压 VC(t−ΔT)也已知，由式(1)、(2)可计算出 JIN 进而
+⎡G1 +G3 0      0     0     −G1      −G3 ⎤                          求得 J IFTsf ，从而完成单个 P-FBSM 等效模型的搭建。
+⎢ 0 G +G       0     0    −G2      −G4 ⎥⎥
+⎢       2   4                                                              内部节点 VIN 的表达式如式(5)所示：
+⎢ 0       0 G5 + G7 0     −G5      −G7 ⎥
+⎢                                          ⎥                                          VIN = Y22−1[J IN − Y21VIF ]                   (5)
+⎢ 0       0    0 G6 + G8 −G6        −G8 ⎥
+⎢                       G1 + G2            ⎥                       3.2     任意两个相邻 P-FBSM 等效模型
+⎢                                          ⎥⋅                      3.2.1    单个 P-FBSM 等效节点电压方程按左右分块
+⎢ −G1 −G2     −G5 −G6 +G5          −GC ⎥
+⎢                       +G6 + GC           ⎥                       改写
+⎢                                          ⎥
+⎢                                G3 +G4 ⎥                                  将式(1)中的 VIF、IIF 代入式(4)中可得
+⎢                                          ⎥
+⎢ −G3 −G4     −G7   −G8   −GC +G7          ⎥                                   ⎧ ⎡V ⎤       ⎧ ⎡ J Tsf ⎤           ⎧ ⎡ I ⎤
+                                                                            VL ⎨ ⎢ PA ⎥ J L ⎨ ⎢ IF_PA
+                                                                                                    Tsf ⎥
+                                                                                                              I L ⎨ ⎢ PA ⎥
+⎢                                +     +   ⎥                                   ⎩ ⎢VPB ⎥     ⎩ ⎢ J IF_PB ⎥         ⎩ ⎢ I PB ⎥
+⎣                                  G 8   GC⎦
+                                                                       YIF ⋅            =                   +                   (6)
+                                                                               ⎧ ⎢VNA ⎥        ⎢   Tsf
+                                                                                            ⎧ J IF_NA     ⎥        ⎧ ⎢ − I NA ⎥
+    ⎧ ⎡VPA ⎤          ⎡          0        ⎤    ⎧ ⎡ I PA ⎤
+    ⎪ ⎢      ⎥        ⎢                   ⎥    ⎪ ⎢        ⎥
+                                                                            VR ⎨ ⎢    ⎥ J R ⎨ ⎢ Tsf ⎥ − I R ⎨ ⎢               ⎥
+    ⎪ V               ⎢          0        ⎥ I ⎨⎪ ⎢ I PB ⎥                      ⎩ ⎣VNB ⎦     ⎩ ⎢⎣ J IF_NB ⎥⎦        ⎩ ⎣ − I NB ⎦
+VIF ⎨ ⎢ PB ⎥
+    ⎪ ⎢VNA ⎥ =        ⎢          0        ⎥ IF ⎪ ⎢ − I NA ⎥                为便于之后对任意两个相邻 P-FBSM 进行连接
+    ⎪⎩ ⎢V ⎥           ⎢                   ⎥+ ⎪ ⎢          ⎥
+        ⎢ NB ⎥        ⎢          0        ⎥    ⎩ ⎢ − I NB ⎥        节点的消去，将单个 P-FBSM 等效节点电压方程即
+     ⎧ ⎢VCA ⎥       ⎧ ⎢ I CEQ (t −ΔT ) ⎥         ⎢ 0 ⎥
+                                                                   式(6)，按左(PA、PB 即 1、2 节点)、右(NA、NB
+VIN ⎨ ⎢      ⎥ J IN ⎨ ⎢                    ⎥      ⎢       ⎥
+     ⎩ ⎢⎣VCB ⎦⎥     ⎩ ⎣⎢ − I CEQ (t −ΔT ) ⎦⎥     ⎣⎢ 0 ⎦⎥           即 3、4 节点)节点进行分块得到式(7)，其中 4×4 矩
+或YV = J + I                                                 (1)    阵 YIF 分成 4 个 2×2 的子矩阵，VIF、IIF、 J IFTsf 各自
+       式(1)中 G1—G8 的取值由 t 时刻 P-FBSM 的运                             分为两个 2×1 的子矩阵。
+行状态决定。GC、ICEQ(t−ΔT)的取值如式(2)所示，
+                                                                                ⎡YLL YLR ⎤ ⎡VL ⎤ ⎡ I L ⎤ ⎡ J L ⎤
+其中 VC(t)、VC(t−ΔT)分别为 t、t−ΔT 时刻子模块电                                              ⎢Y         ⎥⎢ ⎥ = ⎢            ⎥+⎢ ⎥                (7)
+                                                                                ⎢⎣ RL YRR ⎥⎦ ⎢⎣VR ⎥⎦ ⎢⎣ − I R ⎥⎦ ⎢⎣ J R ⎥⎦
+容电压。
+            ⎧VC (t ) = VC (t − ΔT ) + I C (t ) ⋅ RC                        之后将左、右节点各自的节点电压、电流放在
+            ⎪                                                      一起，然后再严格按左 (L) 、右 (R) 进行分块，将
+            ⎪G = 1 = C
+            ⎨ C R                                          (2)     式(7)改写为式(8)的形式：
+            ⎪           C   ΔT
+            ⎪⎩ I CEQ (t − ΔT ) = GC ⋅ VC (t − ΔT )                       ⎡       ⎡1 0 ⎤  ⎡0 0⎤ ⎤     ⎧ ⎡VL ⎤
+                                                                          ⎢YLL − ⎢ ⎥ YLR ⎢ ⎥ ⎥ X L ⎨ ⎢ ⎥
+       将 式 (1) 中 节 点 电 压 列 向 量 V=[VPA, VPB,…,                            ⎢       ⎣0 1 ⎦  ⎣0 0⎦ ⎥     ⎩ ⎢ IL ⎥ ⎡ JL ⎤
+                                                                                                   ⋅             =      (8)
+       T                          

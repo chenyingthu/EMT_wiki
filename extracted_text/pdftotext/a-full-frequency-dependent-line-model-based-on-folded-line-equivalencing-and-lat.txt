@@ -1,0 +1,199 @@
+                                                           Electric Power Systems Research 154 (2018) 352–360
+
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                   journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A full frequency dependent line model based on folded line
+equivalencing and latency exploitation
+Felipe Camara a , Antonio C.S. Lima a,∗ , Fernando A. Moreira b
+a
+    Federal University of Rio de Janeiro, Brazil
+b
+    Federal University of Bahia, Brazil
+
+
+
+
+a r t i c l e            i n f o                        a b s t r a c t
+
+Article history:                                       This work proposes to improve the numerical performance in the rational modeling of full frequency
+Received 23 April 2017                                 dependent transmission lines. In this paper, latency is used to improve the numerical efﬁciency of time-
+Received in revised form 31 July 2017                  domain implementation of the pole-residue representation of the nodal admittance matrix in the case of
+Accepted 17 August 2017
+                                                       frequency dependent network equivalents. The idea of latency is to use different time-steps for distinct
+                                                       poles, i.e., fast poles are solved using a small time-step while slower poles may be solved using larger
+Keywords:
+                                                       time-steps. For the separation of the slow and fast dynamics, a technique named Multiple Companion
+Overhead line modeling
+                                                       Networks (MCN) has been developed. The technique has been applied to transient tests of a transmission
+Network synthesis
+Rational approximation
+                                                       line modeled with a rational model. The results obtained indicated that a gain in numerical efﬁciency is
+Time-domain modeling                                   possible without compromising accuracy.
+                                                                                                                          © 2017 Elsevier B.V. All rights reserved.
+
+
+
+
+1. Introduction                                                                           The development of numerically accurate and efﬁcient methods
+                                                                                      for the rational approximation of frequency responses such as the
+    Electromagnetic transient (EMT)-programs allowed for a rapid                      so-called vector ﬁtting routine [2–4], the frequency-partitioning
+and wide development of time-domain models for linear, nonlinear                      ﬁtting [5] or the matrix pencil [6,7] allowed the realization of full
+and frequency dependent devices. One main characteristic of such                      frequency dependent overhead lines and underground cable mod-
+approach is to rely on the use of a single time-step for the solution of              els in phase coordinates in EMT-simulations [8,9]. One drawback
+the whole network. This is often a waste of computational resources                   of such models which are based on the method of characteristics
+since it may be the case where only a small part of the network has                   (MoC) is that the time-step must be smaller than the fastest modal
+to be solved using a small time step, whereas a large part of the                     time-delay which requires a rather accurate procedure for this
+network could be solved with a larger time step. Thus a suboptimal                    identiﬁcation [10]. Furthermore, inaccurate interpolation schemes
+numerical performance is found leading to an unnecessary large                        between the simulation time-step and the modal traveling time
+simulation time.                                                                      might lead to numerical instabilities [11]. This scenario is more
+    One possibility to overcome the unnecessary simulation time                       important for shorter lines where a very small time-step might be
+and to improve the numerical performance of the models involved                       used and the interpolation of the modal time-delay might reduce
+is to rely on the concept of latency exploitation. In latency [1], the                the numerical efﬁciency of a line model based on MoC. An alterna-
+network is divided into at least two sub-networks. The ﬁrst one,                      tive to overcome this limitation is to use a rational approximation
+associated with the fastest time-constants, is solved using a small                   of the nodal admittance matrix associated with the transmission
+time-step, while a larger time-step is used to solve the other part                   line. However, as pointed out in [12], the direct ﬁtting of the nodal
+of the network. Naturally, the number of network subdivisions can                     admittance matrix is not suitable for a general transmission line
+increase leading to several sub-networks each being solved with a                     model as the smallest eigenvalues at the low-frequency range may
+given time-step. For this reason, latency exploitation may also be                    not be properly ﬁtted leading to inaccurate responses. The limita-
+called multirate simulation.                                                          tion associated with the direct ﬁtting can be overcome with the use
+                                                                                      of the folded line equivalent (FLE) model as also shown in [12].
+                                                                                          In [13], the authors proposed to exploit latency in a frequency
+                                                                                      dependent network using a rational approximation of the nodal
+    ∗ Corresponding author.                                                           admittance matrix developing the Multiple Companion Network
+   E-mail addresses: fcamara@ufrj.br (F. Camara), acsl@dee.ufrj.br (A.C.S. Lima),     (MCN) approach. In this work the formulation of the MCN based
+moreiraf@ufba.br (F.A. Moreira).
+
+http://dx.doi.org/10.1016/j.epsr.2017.08.018
+0378-7796/© 2017 Elsevier B.V. All rights reserved.
+                                                          F. Camara et al. / Electric Power Systems Research 154 (2018) 352–360                                      353
+
+
+on a model decomposition using the FLE has been extended. It was                               where I is the same as before. This formulation was proposed in [12]
+found that the earlier approach led to rather inaccurate results for                           and received the name folded line equivalent (FLE). It has some
+the time responses and it was needed to rearrange how latency is                               interesting characteristics, the matrices to be ﬁtted have half the
+exploited in the MCN.                                                                          dimension of the original admittance matrix, i.e., Yn has a dimen-
+    The paper is organized as follows: Section 2 summarizes the                                sion 2n × 2n while both Yoc and Ysc are n × n matrices. Furthermore,
+application of FLE to the modeling of an overhead line. Section 3                              the ratio between the largest and smallest eigenvalues in both Yoc
+explains the idea behind latency exploitation and the use of MCN                               and Ysc reduces considerably when compared with the ones found
+and how some improvements can be achieved using this formu-                                    in Yn .
+lation. Section 4 describes how a modiﬁed MCN can be integrated                                   The rational approximation of Yoc and Ysc is carried out indepen-
+in the time-step loop to allow an efﬁcient implementation of the                               dently. In this work, the use of the so-called vector ﬁtting routine
+proposed model in an EMT-type of program. Section 5 illustrates                                [2–4] was chosen although other identiﬁcation methods such as the
+the main idea of the paper, i.e., to exploit latency considering a FLE                         frequency-partitioning ﬁtting [5] or the matrix pencil [6,7] could be
+representation of an overhead line. The main conclusions of this                               used instead. Typically, a rational approximation of a nodal admit-
+work are presented in Section 6.                                                               tance matrix Yn leads to the following
+
+                                                                                                      
+                                                                                                      N
+                                                                                                        Rm
+2. Folded line equivalent                                                                      Yn ≈                  + R0                                            (5)
+                                                                                                            s − pm
+                                                                                                      m=1
+    Consider a transmission line with n phases, the nodal admit-
+                                                                                               where N is the number of poles (pre-deﬁned) to be used, pm is
+tance matrix Yn relating the injected currents and the node voltages
+                                                                                               a set of common poles, either real or in complex conjugates, Rm
+is given by (1) in the frequency domain,
+                                                                                               is the residue matrix, and R0 is a real-valued matrix associated
+                           
+             Ys        Ym                                                                      with the behavior of Yn at an inﬁnite frequency. In this case, R0 =
+Yn =                                                                                 (1)       R (Yc (∞)) = Gc (∞). For the matrices Yoc and Ysc , it is required that
+             Ym        Ys                                                                      both tend to the characteristic admittance in the high frequency
+                                                                                               range, i.e., both models must be asymptotically correct. Therefore,
+where Ys and Ym are n × n block matrices deﬁned by                                             the ﬁtting is carried out using (6),
+                                           −1
+Ys = Yc · I + H2 · I − H2                           and                                                                     
+                                                                                                                            N
+                                                                                                                              Rocm
+                                                                                                Yoc = Yoc − Gc (∞) ≈
+                                       −1                                                                                       s − pocm
+Ym = −2Yc · H · I − H2                                                               (2)                                    m=1
+                                                                                                                                                                     (6)
+                                                 √                                                                           Rsc
+                                                                                                                            M
+                                                            −1                                  Ysc = Ysc − Gc (∞) ≈             m
+where I is an n × n identity matrix, Yc =  √Z     Z · Y is the charac-
+                                                                                                                                  s − pscm
+teristic admittance matrix, H = exp(− Z · Y) is the propagation                                                            m=1
+matrix also known as voltage deformation matrix and  is the line
+                                                                                                  It is assumed that both functions to be ﬁtted, i.e., Ȳoc and Ȳsc ,
+length.
+                                                                                               are strictly proper and there is no a priori relationship between the
+    In EMT-programs, the line is not directly represented using a
+                                                                                               number of poles used in the ﬁtting of either function. Even though
+rational approximation of Yn as there is a large spread of the eigen-
+                                                                                               only stable poles are used in the ﬁtting of Yoc and Ysc , the passivity of
+values throughout the frequency range of interest. The method of
+                                                                                               both approximations must be enforced, as some of the eigenvalues
+characteristics (MoC) is used instead which implies in a rational
+                                                                                               might present a negative real part in the frequency band. Thus, a
+approximation of Yc and H. While the former is basically a smooth
+                                                                                               post-processing scheme based on residue perturbation is applied
+function in the frequency domain, the latter may present some
+                                                                                               to Yoc and Ysc to ensure passivity [18].
+oscillations that demand the use of several travelling time-delays
+                                                                                                  It is noteworthy a great feature of this approach that the accurate
+to achieve an accurate ﬁtting, for instance see [14,8]. This procedure
+                                                                                               eigenvalues obtained in the ﬁtting process allows to convert the
+also demands the use of a more elaborate interpolation scheme to
+                                                                                               FLE realization back to phase coordinates via (3) with small error-
+avoid numerical instability [11]. A possibility to overcome this lim-
+                                                                                               magniﬁcations to be applied in simulations with arbitrary terminal
+itation is to rely on the so-called idempotent decomposition of H
+                                                                                               conditions [12].
+[15]. However, as pointed out in [16], there might be some con-
+ﬁgurations where the overall accuracy of the rational ﬁtting of the
+                                                                                               3. Latency exploitation & Multiple Companion Networks
+idempotent is low. Alternatively, one may apply a rational approx-
+imation not to Yn but to a “folded” version of it. In this case, the
+                                                                                                  Latency was ﬁrst applied by researchers in the area of VLSI
+idea is to use a linear transformation to allow a distinct grouping in
+                                                                                               (Very Large System Integration) simulation [19]. The attempts were
+Yn in such way that the rational approximation has a lower order
+                                                                                               based on the waveform relaxation method which is an iterative
+and a higher accuracy. This procedure shares some similarities with
+                                                                                               method capable of exploiting time-domain latency to reach signif-
+the usage of a mode-revealing transformation matrix to improve
+                                                                                               icant speed gains without sacriﬁcing accuracy. It is based on the
+the observability of small eigenvalues at the lower frequency range
+                                                                                               Gauss-Seidel and Gauss-Jacobi relaxation methods applied to the
+[17]. Thus, the nodal admittance matrix is written as
+                                                                                               numerical integration of DAEs (differential algebraic equations).
+                                   
+                      Yoc       0                                                                 Latency was ﬁrst explored in power system problems, also
+Yn = K ·                                · K−1                                        (3)       within the context of the waveform relaxation method, for
+                      0     Ysc                                                                transient stability simulation [20] and later for the solution of
+                                                                                               electromagnetic transient simulations using multiple time-steps
+where Yoc = Ys + Ym is the admittance associated with the open cir-                            [21,22]. Also, latency has been exploited in an HVDC converter net-
+cuit current response and Ysc = Ys − Ym stands for the admittance                              work where the converter bridges have been simulated with a small
+related to the short circuit current response, and                                             time step while the ac sources, transformers and dc line have been
+                                                                                             simulated with a larger time step. Results have shown that accu-
+         I        I
+K=                                                                                   (4)       racy has been maintained while simulation time can be signiﬁcantly
+         I −I                                                                                  reduced [23].
+354                                          F. Camara et al. / Electric Power Systems Research 154 (2018) 352–360
+
+
+
+
+                                              Fig. 1. Simple parallel RL circuit to illustrate latency exploitation.
+
+
+     The use of latency in some applications in power systems relies
+on the concept of Multi-Area Thevenin equivalents (MATE) [24].
+In waveform relaxation each subsystem uses the previous iterate
+waveforms as “guesses” for the current state of the other subsys-
+tems. After that, iterations are performed to match the solutions at
+all interfacing points. This intrinsic iterative nature of the technique
+imposes limitations, particularly in the context of real-time sim-
+ulation and multi-computer simulation environments. In MATE,
+circuit latency has been exploit

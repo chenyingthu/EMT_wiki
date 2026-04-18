@@ -1,0 +1,27 @@
+## Analysis and estimation of truncation errors in modeling complex resonant circuits with the EMTP
+R. Carbone$^{a,*}$, H.W. Dommel$^{b,1}$, R. Langella$^{c,2}$, A. Testa$^{c,2}$
+$^a$ University of Reggio Calabria "Mediterranea", D.I.M.E.T., via Graziella, 89100 Reggio Calabria, Italy
+$^b$ Department of Electrical and Computer Engineering, University of British Columbia, 2356 Main Mall, Vancouver, BC, Canada V6T 1Z4
+$^c$ Dipartimento di Ingegneria dell'Informazione Aversa, II Univ. degli Studi di Napoli, Aversa Italy
+Received 9 August 2000; accepted 14 May 2001
+
+### Abstract
+Most common computer programs for time domain simulations of power systems calculate the state of the system step by step, either with fixed or with variable step size. They integrate differential equations by using numerical methods. Whichever method of integration is used, numerical errors in modeling power system impedances will arise, which may not be negligible in the presence of resonances. The problem of analytically describing these errors for complex circuits is analyzed, with particular reference to computer programs of the EMTP type.
+**Keywords:** EMTP; Resonant circuits; Truncation errors
+
+## 1. Introduction
+Computer programs for time domain simulations of power systems calculate the state of the system step-by-step, either with fixed or with variable step size. They are now being used over time spans, which are much larger than some of the program developers originally anticipated. Step-by-step simulations over millions of time steps raise questions about numerical errors, which may have been unimportant before.
+In a previous paper [1], Dommel reviewed some of the questions of round-off and truncation errors, and their propagation and numerical stability in the numerical integration of differential equations. Numerical errors are unavoidable, but living with them is easier for program users if the nature of the errors is well understood and if useful error indicators are available.
+The authors of Ref. [2] demonstrated that the numerical integration of differential equations may cause serious mathematical truncation errors in modeling electrical system impedances, especially if series and/or parallel resonances occur. The errors depend significantly on the type of the integration method, and on the circuit complexity. This first error analysis was only carried out with respect to the trapezoidal rule of integration and for the simplest R, L, C resonant circuits.
+In this paper, the error analysis of the trapezoidal method is extended to complex circuits. A generalized error investigation with respect to resonance frequencies, impedance amplitude at the resonance frequencies and equivalent impedance quality factors is described. For simple series and parallel R, L, C resonant circuits analytical error indicators are derived. For complex circuits the analysis, which is very difficult in principle, is developed by taking advantage of a curve fitting procedure, which preserves the use of analytical indices. Furthermore, for complex circuits in which very close resonances inhibit the aforementioned fitting procedure, a suitable numerical procedure based on the introduction of an apparent angular frequency is presented. Both the introduced analytical and numerical approaches give to program users information about the approximation involved in the integration method. Finally, the results of some comparisons with experimental error evaluations are discussed, which show the usefulness of the proposed error indicators.
+
+## 2. Single inductor and capacitor
+With reference to the trapezoidal rule of integration as used in the EMTP [3], analytical expressions can be derived for the relative error of single inductor and single capacitor impedances. This error, $\bar{e}_Z$, is defined as the difference between the EMTP modeled impedance (apparent impedance $\bar{Z}_{\text{APP}}$) and the actual impedance, $\bar{Z}$, normalized to the actual impedance amplitude:
+$$ \bar{e}_Z(v) = \frac{\bar{Z}_{\text{APP}}(v) - \bar{Z}(v)}{|\bar{Z}(v)|} \quad (1) $$
+This definition makes it easy to develop analytical relationships for the errors, as will be shown in the following. From Eq. (1) it is also simple to evaluate the magnitude and the phase of the apparent impedance:
+$$ \bar{Z}_{\text{APP}} = \bar{Z} + |\bar{Z}| \bar{e}_Z \quad (2) $$
+which allows the calculation of any other error defined differently.
+Furthermore, starting from Eq. (1) and having evaluated the error of the inductive reactance can now be easily obtained:
+$$ \bar{e}_X(v) = j \dots \quad (5) $$
+For a fixed simulation time step, this error increases with frequency, and vice versa, for a fixed frequency it decreases when the time step decreases. In Ref. [2] it was shown that for typical simulation time step values, the errors are significantly high for frequencies above 5000 Hz.
+Some computer programs approximate the lumped inductance of an inductor as a short-circuited `stub line' with distributed inductance $L_0$ and capacitance $C_0$. If the travel time of this shorted stub line is $\Delta t/2$, and if the distributed inductance multiplied with line length is equal to the value of the lumped inductance, then the surge impedance of the line becomes $2L/\Delta t$. The exact solution of this lossless distributed parameter line gives the same answers as the trapezoidal rule applied to the lumped inductance [3].

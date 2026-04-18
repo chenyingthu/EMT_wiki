@@ -1,0 +1,224 @@
+                                                       Electric Power Systems Research 252 (2026) 112312
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Co-simulation and compensation method for parallel simulation of
+electromagnetic transients
+Boris Bruned a,* , Mehdi Ouafi a , Jean Mahseredjian b, Sébastien Dennetière a
+a
+    RTE, Campus Transfo, Jonage, France
+b
+    Polytechnique Montréal, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          This paper introduces a co-simulation tool designed to parallelize the computation of electromagnetic transients
+Electromagnetic transient                          (EMTs) using the Compensation Method (CM). The CM is a delay-free parallel technique that allows decoupling
+Co-simulation                                      network equations anywhere while maintaining accuracy. It overcomes limitations in the delay-based (trans­
+Parallel computations
+                                                   mission line model delay) approach which cannot be used directly in several cases, without inserting artificial
+Compensation method
+FMI
+                                                   delays that can cause accuracy deterioration. It is generalized to the Modified Augmented Nodal Analysis
+                                                   (MANA) formulation. The Functional Mock-up Interface (FMI) is used for creating the co-simulation interface.
+                                                   The CM is automatically initialized from load-flow. To handle discontinuities, an adaptative time-step and order
+                                                   CM has been implemented. This generic and scalable co-simulation implementation of CM achieves substantial
+                                                   performance gains on networks with inverter-based resources (IBRs), enabling parallel EMT simulations up to six
+                                                   times faster.
+
+
+
+
+1. Introduction                                                                     significantly deteriorate accuracy or even become inapplicable. To
+                                                                                    maintain accuracy, it is possible to apply delay-free decoupling tech­
+    In the scope of modern energy transition, more and more power                   niques. Some implementations have been proposed for the real-time
+electronics converters are installed on the grid for the integration of             environment [6–10]. The compensation method (CM) [11,12] is one
+renewable energy resources. Electromagnetic transient (EMT) type                    of these delay-free techniques. Decoupling can be applied anywhere in
+modelling is required to study the impact of inverted-based resources               the network while maintaining accuracy. Other denominations of this
+(IBRs) on network stability and performance. The computation time of                techniques can be found in the literature [13,14]. Recent implementa­
+EMT simulations can become a bottleneck. Parallelization is a key                   tion [9,10] has shown promising performance gains for real-time EMT
+technique to speed up EMT simulations with multi-core computers.                    simulations.
+    The basic parallel decoupling approach is delay-based. It relies on the             This paper proposes a new implementation of the CM for offline EMT
+natural propagation delay of transmission line models (TLMs) to                     simulations through co-simulation. The co-simulation interface, based
+decouple network equations. Firstly, it has been widely implemented in              on the Functional Mock-up Interface (FMI) [15], is inspired by previous
+real-time EMT simulation tools [1,2] where performances are con­                    work [5,16] where it has been applied for TLM delay-based decoupling.
+strained due to hardware communication. Then, it has been developed                 It has demonstrated good scalability and performance. The master-slave
+for offline simulation tools [3–5]. The co-simulation technique used in             communication scheme on shared-memory is kept and adapted to CM
+[3,5] has proven to be an efficient method for parallelizing existing               inter-time-point communication which involves data exchange, such as
+serial codes, offering a scalable solution that accelerates the simulation          Thevenin equivalents and branch currents for compensation. The
+process.                                                                            co-simulation CM is implemented in EMTP® [17]. The proposed
+    However, for networks with IBRs, TLM delays are not always avail­               implementation is generic and can be applied to any other EMT simu­
+able for parallel TLM decoupling. Fictitious delays can be used to                  lation tool that embeds a co-simulation interface.
+emulate TLM propagation and to allow decoupling, but such delays may                    This paper proposes the following contributions, which enhance
+
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8-12, 2025.
+    * Corresponding author.
+      E-mail address: boris.bruned@rte-france.com (B. Bruned).
+
+https://doi.org/10.1016/j.epsr.2025.112312
+Received 6 January 2025; Received in revised form 11 April 2025; Accepted 30 September 2025
+Available online 21 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+B. Bruned et al.                                                                                                 Electric Power Systems Research 252 (2026) 112312
+
+
+previous CM implementation [9,10]:
+                                                                                ̂ (k) = J(k)
+                                                                                A
+1) A generalization of CM to modified augmented nodal analysis                                      (     )
+   (MANA) formulation [17,18], which uses an iterative solver for               B(k) = J(k) x(k) − F x(k)                                                     (6)
+   nonlinear models.
+                                                                                    The solution of nonlinear networks used in [18] is based on linear­
+2) A generic scalable co-simulation implementation of CM.
+                                                                                ization where each nonlinear device provides a linearized Norton
+3) Automatic initialization of CM using load-flow results.
+                                                                                equivalent. In this approach, the matrix A is the Jacobian matrix of
+4) An adaptative time-step and order CM to handle discontinuities [19].
+                                                                                network equations. At each iteration, solving Eq. (5) is equivalent to
+                                                                                solve Eq. (3).
+    The new co-simulation CM is validated on practical power grids.
+                                                                                    CM decoupling has the consequence of putting the augmented matrix
+    The structure of this paper is as follows. Firstly, in Section 2, the
+                                                                                A into a BBD form by adding compensation or wire currents im as extra
+theoretical foundation of the Compensation Method (CM) based on the
+                                                                                variables in x. This is equivalent to modeling ideal switches in MANA.
+singly bordered-block diagonal (SBBD) formulation is revisited and
+                                                                                Eq. (3) is transformed as follows:
+tailored to MANA. Then, in Section 3, the co-simulation schema using
+                                                                                 ⎡                       ⎤
+CM is described with new enhancements on load-flow solution and on
+adaptative time-step and numerical integration method to deal with              ⎢
+                                                                                ⎢ A1    0      ⋯   0
+                                                                                                            ⎥
+                                                                                                        ST1 ⎥⎡ ⎤ ⎡ ⎤
+discontinuities. Finally, CM accuracy and performance are validated             ⎢                           ⎥ x1      b1
+                                                                                ⎢ 0     ⋱      ⋱   ⋮    ⋮ ⎥
+                                                                                ⎢                           ⎥⎢ ⋮ ⎥ ⎢ ⋮ ⎥
+through practical test cases with IBRs that require CM for decoupling.          ⎢                           ⎥⎢ ⎥ ⎢ ⎥
+                                                                                ⎢ ⋮     ⋱      ⋱   0    ⋮ ⎥⎢ ⎥ = ⎢ ⎥                                          (7)
+                                                                                ⎢                           ⎥⎣ xn ⎦ ⎣ bn ⎦
+                                                                                ⎢ 0     ⋯      0   An   STn ⎥
+2. CM theoretical background                                                    ⎢
+                                                                                ⎢
+                                                                                                            ⎥ i
+                                                                                                            ⎥ m       0
+                                                                                ⎣ S1    ⋯      ⋯   Sn   0⎦
+    The generic framework of [10] based on Bordered-Block Diagonal
+(BDD) form is adapted to MANA to establish all computation steps of an
+iterative CM for nonlinear networks. Let us consider the generic case of        where Si is a connectivity matrix for interconnecting the subnetworks N1
+Fig. 1 where the CM decouples n subnetworks (N1 to Nn ) through wires.          to Nn through wires with zero impedances. Each connectivity matrix is
+MANA is used to formulate network equations.                                    filled out by +1 or − 1 coefficients to write branch/node relations on
+    Network equations are put into its Differential Algebraic Equation          cutting CM branches.
+(DAE) form:                                                                          It can be noticed that extra variable im leads to higher matrix
+                                                                                dimension. However, as pointed out in [13], with the usage of sparse
+F(t,
+̃ x, x⋅ ) = 0                                                         (1)       linear solver, matrix fill-ins (number of non- zeros) matter more than the
+                                                                                matrix dimension. With im , a few matrix fill-ins are created while of­
+   Where x is the vector of MANA variables which includes nodal
+                                                                                fering a higher tearing flexibility to get better partitions.
+voltages from nodal analysis and an augmented part. Then, differential
+                                                                                     Eq. (7) is transformed into its SBBD form to achieve its parallel
+equations are integrated numerically using the companion circuit
+                                                                                solution:
+technique based on discretized Norton equivalent. As a good trade-off
+                                                                                 ⎡                     ⎤
+between accuracy and stability, the trapezoidal method is used for the             1 0 ⋯ 0 C1 ⎡ ⎤ ⎡                     ⎤
+numerical integration. At each time-point, the following algebraic               ⎢                     ⎥ x1          b
+                                                                                                                     ̂
+                                                                                 ⎢ 0 ⋱ ⋱ ⋮ ⋮ ⎥⎢ ⎥ ⎢ 1 ⎥
+equations are solved:                                                            ⎢                     ⎥⎢ ⎥ ⎢
+                                                                                 ⎢                     ⎥ ⋮ ⎥ ⎢ ⋮ ⎥
+                                                                                 ⎢ ⋮ ⋱ ⋱ 0 ⋮ ⎥⎢                ⎥=⎢
+                                                                                                                        ⎥
+                                                                                                                                                       (8)
+                                                                                 ⎢                     ⎥⎢               ⎥
+F(x) = 0                                                              (2)        ⎢                     ⎥⎢ ⎣ xn ⎥
+                                                                                                               ⎦
+                                                                                                                   ⎢̂
+                                                                                                                   ⎣ bn ⎥
+                                                                                                                        ⎦
+                                                                                 ⎢ 0 ⋯ 0 1 Cn ⎥
+                                                                                 ⎣                     ⎦
+    If F is linear, it consists of solving a linear system:                                                 im       bm
+                                                                                                                     ̂
+                                                                                   0 ⋯ ⋯ 0 Cm
+Ax = b                                                                (3)
+                                                                                   The following steps are applied at a given time-point solution.
+where A is the augmented matrix, b contains known/historical currents
+and augmented known/historical values, and x contains the MANA                     1. Compute ̂b i of the SBBD form. Open all wires and solve in parallel
+variables to compute at each time-point. If F is nonlinear, a Newton               for each subnetwork:
+schema is used. The iteration k is formulated as follows                             ⎡
+                                                                                       A1 0 ⋯ 0            0 ⎡
+                                                                                                              ⎤
+                                                                                                                     ⎤ ⎡ ⎤
+ (    )      (             )                                                         ⎢                        ⎥ ̂ b1     b1
+F x(k) + J(k) x(k+1) − x(k) = 0                                   (4)                ⎢ 0 ⋱ ⋱ ⋮
+                                                                                     ⎢
+                                                                                                              ⎥
+                                                                                                            ⋮ ⎥⎢     ⎥ ⎢ ⎥
+                                                                                     ⎢                          ⎢    ⎥ ⎢
+                                                                                                              ⎥⎢ ⋮ ⎥ ⎢ ⋮ ⎥   ⎥
+                                                                                     ⎢ ⋮ ⋱ ⋱ 0              ⋮ ⎥      ⎥=⎢ ⎥                           (9)
+where J is the Jacobian matrix of F. Eq. (4) is put into the following               ⎢                        ⎥⎢
+                                                                                     ⎢                        ⎥⎢  b
+                                                                                                                  ̂  ⎥ ⎢ b n
+                                                                                                                             ⎥
+linearized form                                                                      ⎢ 0 ⋯ 0 An 0 ⎥⎣ n ⎦ ⎣ ⎦
+                                                                                     ⎣                        ⎦ ̂
+                                                                                                                  bm      0
+                                                                                       S1 ⋯ ⋯ Sn − 1
+̂ (k) x(k+1) = B(k)
+A                                                                     (5)
+
+where
+                                                                                   It corresponds to the computation of Thevenin voltages through
+                                                                                cutting wires.
+
+                                                                                   2. Find the border matrices Ci . With opened wires, solve in parallel:
+
+
+
+
+            Fig. 1. CM decoupling into n subnetworks through wires.
+
+                                                                            2
+B. Bruned et al.                                                                                                   Electric Power Systems Research 252 (2026) 112312
+
+                                           ⎡       ⎤
+      ⎡
+          A1   0   ⋯     0    0
+                                  ⎤                                                   solution process goes back to Step-1 after advancing the iteration
+                                   ⎡    ⎤
+      ⎢                           ⎥ C1    ⎢ ST1 ⎥                                     counter; if not, then convergence is achieved.
+      ⎢ 0      ⋱   ⋱     ⋮     ⋮ ⎥⎢       ⎢ ⎥
+      ⎢                           ⎥⎢ ⋮ ⎥ ⎢
+                                        ⎥
+                                          ⎢ ⋮ ⎥
+                                                ⎥                                     7. Advance to next time-point.
+      ⎢ ⋮      ⋱   ⋱     0        ⎥
+                               ⋮ ⎥⎢     ⎥=⎢ T⎥                          (10)
+                                  ⎥⎣ Cn ⎦ ⎢
+                                          ⎢ Sn ⎥
+      ⎢                                         ⎥
+      ⎢
+      ⎣ 0      ⋯   0     An    0 ⎦                                                 3. Parallel CM using co-simulation
+                                     Cm   ⎣0 ⎦
+          S1   ⋯   ⋯     Sn   − 1
+                                                                                   3.1. Parallel CM implementation
+
+                                                                                       The proposed parallel CM implementation uses the co-simulation
+   This step deals with the Thevenin impedance computation for each                environment of [5] based on the Functional Mock-up Interface (FMI)
+subnetwork.

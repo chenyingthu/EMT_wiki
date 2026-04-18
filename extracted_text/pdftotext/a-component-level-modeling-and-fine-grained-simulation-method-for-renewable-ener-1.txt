@@ -1,0 +1,185 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication.
+DOI: 10.17775/CSEEJPES.2024.05350
+
+
+
+
+        A Component-Level Modeling and Fine-Grained
+           Simulation Method for Renewable Energy
+         Power Systems Suitable for GPU Architecture
+          Qiguo Wang, Jin Xu, Member, IEEE, Keyou Wang, Member, IEEE, Guojie Li, Senior Member, IEEE,
+                                Jianqi Zhou and Junichi Arai, Senior Member, IEEE
+
+
+                                                                                     that the simplified model of power electronic equipment based
+   Abstract—The detailed modeling of renewable energy power                           on port characteristics [2], [3] will ignore some higher
+stations captures the full impedance characteristics of the system                    harmonics [4], and the equivalent model of renewable energy
+but significantly increases the scale of electromagnetic transient                    power stations based on aggregation [5], [6] has significant
+(EMT) simulations. Parallel computing is essential to enhance the
+simulation efficiency, but it requires algorithms that are
+                                                                                      differences in impedance characteristics compared with the
+specifically designed to leverage the architecture of                                 original system [7]. Therefore, it is necessary to conduct
+high-performance hardware. This paper proposes the generalized                        detailed modeling and electromagnetic transient (EMT)
+latency insertion method (GLIM) to establish component-level                          simulations of renewable energy power stations to ensure the
+models for renewable energy power systems. GLIM extends its                           stable operation of power systems.
+applicability to complex equipment incompatible with the                                 The EMT modeling methods can be broadly divided into two
+constraints of the traditional latency insertion method (LIM) by
+introducing controlled sources. In this way, the simulation of
+                                                                                      main categories: the state-space model and the companion
+complex power systems can be transformed into the solution of                         circuit model. The state-space model is solved by the state
+massive GLIM basic topologies. Then, according to the                                 variable method (SVM) [8], which can accurately capture the
+multi-thread parallel and optimized storage techniques, GLIM                          dynamics of nonlinear devices but has lower simulation
+conducts fine-grained simulations on graphics processing units                        efficiency due to the iterative steps involved in the solution
+(GPUs), significantly improving the solving efficiency. In the case                   process. The companion circuit model is often combined with
+study, a renewable energy power system with large-scale wind
+farm integration is used to demonstrate the effectiveness of GLIM
+                                                                                      the nodal analysis method (NAM) for solving [9], the core of
+on a GeForce RTX 3060 laptop GPU. The simulation accuracy of                          which is to establish the nodal voltage equation of the network.
+GLIM is verified through comparison with PSCAD, and the                               It avoids iteration within a single simulation step but has
+simulation efficiency is verified by changing the scale of wind                       limitations when handling complex dynamics and nonlinear
+farms.                                                                                behaviors. Additionally, some scholars have proposed
+                                                                                      improvements based on these two methods. The state-space
+   Index Terms—Component-level modeling, Fine-grained                                 nodal method [10] combines the advantages of both SVM and
+simulation, Renewable energy power systems, Graphics processor
+unit.                                                                                 NAM, which is suitable for multi-port circuits and complex
+                                                                                      power systems. The modified nodal analysis [11] and extended
+                                                                                      modified nodal analysis [12] methods address the challenges
+                            I. INTRODUCTION                                           posed by voltage source branches and current-dependent
+
+W
+                                                                                      circuits in traditional NAM. All of these methods can use
+       ITH the increasing access capacity of renewable energies,
+                                                                                      high-performance computing platforms to improve the solution
+       the proportion of power electronic devices in the power
+                                                                                      efficiency. However, NAM does not require considering the
+grid has significantly increased, and the multi-mode oscillation
+                                                                                      independence of interconnected branches when forming
+caused by the interaction between multiple control links has
+                                                                                      network equations compared to SVM, making it simple and
+gradually become prominent [1]. Relevant studies have shown
+                                                                                      effective in programming. As a result, NAM is the mainstream
+                                                                                      approach for algorithm optimization and parallel processing.
+   This work was supported in part by the National Key Research and
+Development Program of China (No. 2022YFE0105200) and in part by the                     Considering that the node admittance matrix formed by the
+project of State Grid Zhejiang Electric Power Co., LTD., Jiaxing power supply         NAM is extremely sparse [13], scholars began to focus on the
+company (5211JX230004). (Corresponding author: Jin Xu).                               parallel solution of large-scale sparse linear equations using
+   Q. Wang, J. Xu (e-mail: xujin20506@sjtu.edu.cn), K. Wang and G. Li are
+with the Key Laboratory of Control of Power Transmission and Conversion,              GPU. Some researchers have reconstructed parallel algorithms
+Ministry of Education, and Shanghai Non-Carbon Energy Conversion and                  adapted to GPU architecture based on traditional LU
+Utilization Institute, Shanghai Jiao Tong University, Shanghai 200240, China.         decomposition algorithms. The Crout algorithm realizes
+   J. Zhou is with the State Grid Jiaxing Power Supply Company, Jiaxing,
+China (e-mail: zhoucity@vip.sina.com).                                                parallel solutions by reducing the dependency on element
+   J. Arai is with Kogakuin University of Technology & Engineering, Tokyo             computation [14]. Left-looking LU decomposition ensures the
+163-8677, Japan (e-mail: arai@cc.kogakuin.ac.jp).                                     efficiency of solving matrices with different sparsity by using
+                                                                                                                                                2
+
+the sparsity index [15]. Right-looking LU decomposition can          generalized latency insertion method (GLIM), which includes
+complete the update of all elements at the bottom right of the       the equipment that cannot be directly expressed as the basic
+located column in a single loop, which has a higher parallelism      topological form of LIM. The proposed method breaks the
+advantage [16], [17]. All the above methods have been applied        topological constraints of LIM and can be applied to the
+in the simulation of power systems [18], and a good                  simulation of complex power systems.
+acceleration effect has been achieved. Although these methods           2) The model constructed by GLIM takes the three-phase
+reduce the solving complexity, their solving efficiency is still     node and three-phase branch as the basic parallel unit, and its
+related to the number of non-zero elements in the node               time complexity is linear, which is more in line with the
+admittance matrix, and the unpredictability of sparse                characteristics of the massive computing units of GPU. When
+construction seriously affects the single instruction multiple       combined with GPU, its simulation efficiency will not change
+thread execution and access efficiency of GPU cores [19].            significantly with the system scale, and this feature of GLIM
+    In addition to the above mathematical optimization methods,      can better meet the growing demand for renewable energy.
+large-scale systems can be decomposed into multiple                     The paper is organized as follows: Section II introduces the
+subsystems for parallel solutions according to the physical          unified component-level modeling of renewable energy power
+characteristics of the topology. The Diakoptics [20] method          systems based on GLIM. Section III elaborates on the design of
+proposed by Kron shows that the system tearing method can be         the fine-grained parallel algorithm based on GPU. The
+a combination of equations and topology. Subsequently,               simulation case and results are given in Section IV, and Section
+relevant scholars further developed it as the multi-area             V presents the conclusions.
+Thevenin equivalence [21], [22], node splitting method [23],
+[24], and compensation method [25], [26]. These methods              II. UNIFIED COMPONENT-LEVEL MODELING OF RENEWABLE
+introduce serial steps to solve the correlation current, so they             ENERGY POWER SYSTEMS BASED ON GLIM
+need to consider the equilibrium optimization of the scale of the    A. Basic theory of GLIM
+subsystem and the scale of the correlation equation. For
+renewable energy sources, such as wind power, which are                GLIM replaces the voltage/current source in two basic
+relatively independent of the main grid, they can be separated       topologies of LIM with the controlled voltage/current source,
+from the main grid by introducing delay [27], and then each          making it suitable for renewable energy power systems
+wind turbine generator (WTG) can be solved in parallel, but the      containing multiple types of equipment. The node topology and
+solution complexity of a single WTG is still high [7]. In            branch topology of GLIM are shown in Fig. 1.
+addition, the control part of the wind power converter is
+independent of the main circuit and can also be solved by
+different GPU threads [28]. On this basis, relevant scholars
+further introduced computational boundaries to carry out
+fine-grained reconstruction of the WTG system to realize
+parallel solutions with each equipment as the basic unit [29].
+However, the solution characteristics and complexity of diverse                           (a)                          (b)
+equipment are not uniform, and the irregularity of the basic         Fig. 1. Two basic topologies of GLIM. (a) node topology; (b) branch topology.
+parallel unit will affect the execution and access efficiency of        The circuit equations of the above topologies of GLIM are
+GPU multithreading. Therefore, it is necessary to establish a        listed separately. The difference equations can be obtained by
+unified fine-grained model of various equipment in renewable         using the leap-frog method [34], which is a difference scheme
+energy power systems to give full play to the advantages of          where the voltage and current are alternately solved in half a
+GPU resources.                                                       step, as shown in (1) and (2). The leap-frog scheme has
+    The latency insertion method (LIM) commonly used in              second-order precision, which samples the voltage field and the
+large-scale integrated circuit design has been applied to power      current field in a staggered way, and the staggered sampling
+systems due to its high parallelism. Some scholars have applied      yields a marching-on-in-time algorithm [35]. In the subsequent
+it to the strongly coupled transmission line [30], the three-phase   sections, unless explicitly stated otherwise, the leap-frog
+coupled transmission line [31], and the power electronic             method is also used for discretization.
+systems [32]. However, because its topology requires that the                                   1                       1
+                                                                                   C        Ci n 1 2  Ci      M                   
+node must contain a capacitor and the branch must contain an           U in 1 2   i  Gi      Ui      Gi   I ikn  I in,ctrl  (1)
+inductor [33], its application in renewable energy power                             t      t          t    k 1                
+systems needs to be further explored.                                                1
+                                                                               Lij   Lij         Lij 
+                                                                                                                1
+
+    In this work, inspired by LIM, a component-level modeling          I      Rij  I ijn    U in 1 2  U nj 1 2  U ijn,ctrl
+                                                                         n 1
+                                                                        ij
+                                                                                                                                      12
+                                                                                                                                           (2)
+and fine-grained simulation method suitable for GPU                            t   t           t 
+architecture is proposed to meet the efficiency requirements of      where Δt is the simulation step size; superscript n represents the
+fine simulation of renewable energy power systems. The               current simulation step; superscript n+1/2 means to advance
+proposed method has the following contributions:                     half a time step based on the current simulation step, and the
+    1) A unified modeling framework with high parallelism of         meaning of n-1/2 and n+1 can refer to n+1/2; Ui, Uj, Iij are the
+renewable energy power systems is constructed based on the           voltage of node i, the voltage of node j, and the current of
+                                                                                                                                       3
+
+branch ij respectively; Ii,ctrl, Uij,ctrl are the controlled current   the injection current of nodes and voltage difference of
+source of node i and the controlled voltage source of branch ij        branches, and its definition is as follows: a) When the current of
+respectively; M is the set of all nodes adjacent to node i, and the    branch p flows from node i, MGLIM(i,p)=1; b) When the current
+definition of Iik is similar to that of Iij; Ci, Gi are the ground     of branch p flows in from node i, MGLIM(i,p)=-1; c) When the
+capacitance and admittance of node i respectively; Lij, Rij are        current of branch p is independent of node i, MGLIM(i,p)=0;
+the inductance and resistance of branch ij respectively.                  Secondly, the transformer is equivalent by its leakage
+   It can be found from (1) that the node voltage of the next          reactance and a lossless ideal transformer, which can be
+simulation step is only related to the node voltage, branch            expressed as an ordinary branch.
+current, and controlled current source of the current simulation          Thirdly, the load adopts the constant impedance model,
+step, so the voltage solving of each node does not depend on the       which also corresponds to an ordinary branch. The distinction
+voltages of other nodes of the next simulation step, which             lies in that one end of the branch is grounded, and the node
+means that the voltage solving of each node is independent of          voltage of the ground point is directly set to 0.
+each other. The same is true for the current solving of each              Finally, the generators are replaced by ideal voltage sources.
+branch according to (2) after solving the node voltage of the          The value of the controlled source of the branch where the
+next simulation step. Therefore, GLIM is a component-level             generator is located is the value of the ideal voltage source.
+modeling method with the individual node and branch as the                Fig. 3 shows the GLIM model of the grid-side system, and
+basic unit.                                                            renewable energy power stations can connect to the grid from
+                                                                       different locations.
+B. Unified component-level modeling of renewable energy
+power systems based on GLIM
+   Wind power generation and photovoltaic power generation
+are important directions for the development of renewable
+energy power systems. The grid-connected wind power
+generation unit shown in Fig. 2 is taken as an example to
+illustrate the applicability of GLIM in the component-level
+modeling of renewable energy power systems.                            Fig. 3. GLIM Modeling of the grid-side system.
+                                                                       2) Machine-side system
+                                                                          The machine-side system primarily consists of the
+                                                                       permanent magnet synchronous generator (PMSG) and its
+                                                                       series inductors. Due to the absence of grounding capacitance
+                                                                       at the PMSG outlet, direct application of LIM for modeling is
+Fig. 2. Topology of the grid-connected wind power generation unit..    not feasible. However, GLIM can build a component-level
+                                                                       model of the combination of PMSG and its series inductor, and
+1) Grid-side system
+                                                                       the detailed modeling process is described below.
+   The grid-side system mainly conducts GLIM modeling for
+                                                                       a) Electrical equations
+transmission lines, transformers, loads, and synchronous
+generators.                                                               The voltage and flux linkage equation of PMSG in the dq
+   Firstly, the transmission lines can be directly expressed as a      coordinate system is shown in (5), and the voltage equation of
+combination of two basic topologies of GLIM according to the           the outlet inductor in the abc coordinate system is shown in (6).
+π model. The controlled sources of nodes and branches for              The combination of PMSG and its series inductor is referred to
+transmission lines 

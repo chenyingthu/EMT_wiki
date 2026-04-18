@@ -1,0 +1,242 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 20, NO. 2, APRIL 2005                                                                         925
+
+
+
+
+                       Validation of Frequency-Dependent
+                            Transmission Line Models
+                                               Bjørn Gustavsen, Senior Member, IEEE
+
+
+  Abstract—The accuracy of a transmission line model can be               tion is carried out at a distance to the right of the imaginary
+verified by comparing its response to that by an alternative              axis. This shift gives an advantage over the Fourier transform
+method of indisputable accuracy. This paper shows a procedure                         in that the frequency responses become smoother,
+for validation which is based on the inverse Fourier transform.
+Desired test responses are calculated in the frequency domain             thus permitting usage of an equidistant frequency step and, thus,
+using an admittance representation of the line and its terminal           usage of the highly efficient fast Laplace transform.
+conditions. Time-domain step responses are calculated using the              However, usage of the MFT requires the capability of
+inverse Fourier transform, with semianalytic integration between          calculating frequency responses at complex frequencies
+sample points to permit calculation at arbitrarily large time                             . Realizing that not everyone has this capability
+values. The required number of frequency samples is greatly
+reduced by adaptively calculating the samples while considering           (e.g., those relying on the output from EMTP’s line constants or
+the frequency-domain behavior of the integrand. Responses from            cable constants routine), the present paper will instead present
+arbitrary excitations are calculated by superposition of weighted,        a procedure based on the Fourier transform. The usage of the
+time-delayed step responses. The accuracy of the approach is              Fourier transform now introduces several difficulties because
+validated for an overhead line and a cable system by comparison           poles lying close to the imaginary axis of integration cause
+with responses obtained by a phase-domain line model.
+                                                                          a jagged behavior of the frequency response, thus making
+  Index Terms—Electromagnetic transients, high-speed intercon-            use of equidistant sampling difficult. As a practical remedy,
+nects, power systems, transmission line modeling.                         the paper introduces a procedure for adaptive nonequidistant
+                                                                          sample calculation which strongly reduces the required number
+                         I. INTRODUCTION                                  of samples needed for resolving the frequency response. The
+                                                                          time-domain response is calculated using semianalytical inte-
+
+F     REQUENCY-DEPENDENT transmission line models
+      have, since the early 1970s, been developed for use in
+power system overvoltage studies [1]–[9], and more recently,
+                                                                          gration between sample points. This permits the time response
+                                                                          to be calculated at arbitrary time points, including very long
+                                                                          observation times. It is further shown how to generate fre-
+also for the modeling of high-speed interconnects [10]. These
+                                                                          quency-domain step responses for voltages and currents related
+models have found their use in many general simulation pro-
+                                                                          to arbitrary terminations. Time-domain responses for arbitrary
+grams, such as ATP, EMTP, and EMTDC.
+                                                                          excitations are calculated using superposition. The approach
+   During the development of a new line model, it is necessary to
+                                                                          is demonstrated for an overhead line and for an underground
+perform time-domain tests so as to verify inaccuracies inherent
+                                                                          cable system where the obtained test responses are compared
+to the model, and to reveal bugs in the implementation. The
+                                                                          against results obtained by a highly accurate phase-domain
+challenge of calculating sufficiently accurate test responses is
+                                                                          model (ULM), which has been incorporated in an EMTP-type
+becoming increasingly difficult as the accuracy of the transmis-
+                                                                          simulation program. The same method for computation of
+sion line models themselves keep improving. In principle, test
+                                                                          frequency domain parameters is used for the two approaches
+responses can be calculated using a very accurate transmission
+                                                                          (Fourier transform, ULM).
+line model as a reference (e.g., the universal line model (ULM)
+[7]). However, the ULM is a traveling-wave model just like the                    II. CALCULATION OF FREQUENCY RESPONSES
+other line models and it, therefore, shares many of their proper-
+ties. It is, therefore, safer to use a completely different approach      A. Frequency-Domain Model
+so as to avoid that the reference model produces the same type               With the usual assumption of plane-wave propagation, an
+of errors as the model to be tested.                                        -conductor homogenous transmission line can be described in
+   Some of the earliest work on frequency-dependent transmis-             the frequency domain by
+sion line modeling was based on the Laplace transform with the
+excitations and terminal conditions included in the frequency                                                                          (1)
+domain-solution [11]–[15]. In this approach, which in the pa-
+pers is termed modified Fourier transform (MFT), the integra-                                                                          (2)
+
+                                                                          where and are the                series and shunt admittance ma-
+   Manuscript received June 10, 2003; revised August 7, 2003. Paper no.   trices, respectively. The admittance matrix with respect to the
+TPWRD-00212-2003.                                                         line terminals can be formulated in terms of hyperbolic func-
+   The author is with SINTEF Energy Research, Trondheim N-7465, Norway
+(e-mail: bjorn.gustavsen@sintef.no).                                      tions from the solution of the wave equation [13]. Hyperbolic
+   Digital Object Identifier 10.1109/TPWRD.2004.837676                    functions for matrices are usually not available in programming
+                                                         0885-8977/$20.00 © 2005 IEEE
+926                                                                            IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 20, NO. 2, APRIL 2005
+
+
+
+
+                                                                          Fig. 2. Open-circuit test.
+
+
+Fig. 1. Circuit for validation of three-phase line.
+
+
+languages, so these must be expressed in terms of exponen-
+tial functions. Steps 1–3 below show a robust implementation
+based on diagonalization. Note that the numerator and the de-
+nominator of the diagonal entities          have been scaled by           Fig. 3. Short-circuit test.
+the factor in order to avoid the possibility of overflow at very
+high frequencies). Appendix C shows an alternative formulation
+without diagonalization.
+    1) Diagonalize the matrix product
+
+                                                                    (3)
+
+      2) For each diagonal element                    , calculate
+
+
+                                                                    (4)
+
+                                                                    (5)
+                                                                          Fig. 4. A 132-kV transmission line (25 km).
+   where
+
+                                             length                 (6)   B. Terminal Conditions
+                                                                             A transmission line model should be tested with ideal termi-
+      3) Calculate the admittance matrix as                               nations because this makes the transmission line model the only
+                                                                          source of attenuation and distortion of the responses, thus in-
+                                                                    (7)   creasing the sensitivity of the test with respect to errors in the
+                                                                          line model. It is common practice to do this by an open-circuit
+                                                                          test (Fig. 2) and a short-circuit test (Fig. 3).
+   where                                                                     Assuming usage of 0.01- resistors in the Norton equivalent
+                                                                          of the voltage source, all voltages are calculated as
+                                      diag                          (8)
+                                      diag                          (9)
+                                                                                                                                         (10)
+       is next used for calculating the frequency responses to be
+                                                                             Equation (10) directly gives the frequency responses for the
+used for validation in the time domain. It is proposed to do this
+                                                                          open-circuit test, namely , , and . In the short-circuit test,
+by means of the circuit in Fig. 1, shown for a three-phase case.
+                                                                          the desired currents are calculated from the obtained voltages
+This circuit permits the calculation of frequency responses for a
+                                                                          (e.g., the current flowing into terminal 1 would be calculated as
+large number of terminations, including open-circuit and short-
+                                                                                           while the current flowing into terminal 4 would
+circuit conditions. Voltage sources are represented by a Norton
+                                                                          be calculated as             ).
+equivalent with a small internal resistor (e.g., 0.01 . A voltage
+source of 1 V is thus represented by a 100-A current source in
+parallel with a 0.01- resistor. Short circuits are represented by         C. Frequency-Domain Behavior
+a small resistor (0.01 ).                                                    The behavior of the relevant frequency responses needs to be
+   The circuit in Fig. 1 defines a 6 6 nodal admittance ma-               considered when choosing a procedure for calculating the in-
+trix       in parallel with a vector of six current sources. The          verse Fourier transform. As an example, we consider the 25-km,
+elements of        are assembled by adding admittance contribu-           three-phase line shown in Fig. 4.
+tions from the circuit elements in Fig. 1. The contribution from             Fig. 5 shows the magnitude of the open-circuit voltages ,
+the transmission line is taken into account by adding       in (7)           ,    (Fig. 2) and the short-circuit currents , , (Fig. 3).
+directly to      .                                                        The observed resonance peaks are a result of reflections between
+GUSTAVSEN: VALIDATION OF FREQUENCY-DEPENDENT TRANSMISSION LINE MODELS                                                             927
+
+
+
+                                                                     that a suitable reformulation of (14) for the calculation of the
+                                                                     associated step response is
+
+                                                                                                                                (15)
+
+                                                                     where
+
+                                                                                                                                (16)
+
+                                                                        The purpose of the sigma-function (16) is to smooth out
+                                                                     Gibbs oscillations in        which result due to the truncation
+                                                                     of the integral at         . The Gibbs oscillation has a period
+                                                                     of               while the sigma function effectively replaces
+                                                                     each time sample with the average of           over the window
+                                                                                          [11].
+                                                                        Numerical integration of (15) may require an excessive
+Fig. 5. Open-circuit and short-circuit responses.                    number of samples because the initial transient contains
+                                                                     very-high-frequency components while, at the same time, the
+                                                                     response needs a long time to die out. The combination of a
+the line ends. The dominant peaks are in the open-circuit and
+                                                                     large with a large means that the cosine function in (15) will
+short-circuit tests located at frequencies
+                                                                     get a large number of oscillations in the frequency domain. For
+                                                                     example, at            ms, the integrand of (15) will get 20 000
+                                                             (11)    oscillations between 0 and 200 kHz                       , which
+                                                                     requires at least 400 000 samples to resolve. The resulting
+                                                             (12)
+                                                                     error due to a nonresolved cosine function with linearly spaced
+                                                                     samples causes the time responses to become periodic where
+where       is the quarter-wave resonance frequency
+                                                                     the periods may overlap.
+                                                                        Nagaoka and Ametani [15] overcame this accuracy problem
+                                                                     by semianalytical integration between sample points, assuming
+                                                             (13)
+                                                                     linear variation of the factor which multiplies the exponential
+                                                                     factor in (14). This gives for (15)
+   As the frequency approaches zero, the open-circuit
+voltage of the energized conductor approaches unity while
+those of the nonenergized conductors approach zero. The                                                                         (17)
+short-circuit current of the energized conductors approaches
+                                                          , while
+those of the nonenergized conductors slowly approach zero.
+   In order to resolve the frequency responses with a low number                                                                (18)
+of frequency samples, one should use a logarithmic frequency
+step at very low frequencies, and at higher frequencies, a step      where
+length which is small around the resonance peaks. More can be
+read about this in Section III–B.                                                                                               (19)
+
+                III. INVERSE FOURIER TRANSFORM                         Introducing                     , we get for (18)
+A. Integration Technique
+  The inverse Fourier Transform of a frequency response         is
+defined as                                                                                                                      (20)
+                                                                                                                                (21)
+                                                             (14)
+                                                                     where
+   Equation (14) defines the impulse response of a system with
+frequency response        . It is, in general, necessary to employ                                                              (22)
+a numerical evaluation of (14) because the presence of a trans-
+                                                                                                                                (23)
+mission line leads to a nonanalytical          . Appendix A shows
+928                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 20, NO. 2, APRIL 2005
+
+
+
+   Note that (18) can be computed at any desired time point. This
+has the advantage that dense time samples can be used for the
+initial transient while coarse time samples can be used for the
+tail portion of the response, thus reducing the total number of
+time samples needed for resolving the time response.
+
+B. Selection of Sample Points
+   For (18) to be a good approximation, it is necessary that the
+factor which multiplies          is sufficiently resolved. As was
+shown in Section II–C, a very fine frequency sampling should
+be used at low frequencies, while a frequency-dependent sam-
+pling should be used at higher frequencies so as to resolve the
+resonance peaks.
+   It is, therefore, proposed to divide the considered frequency
+band into a lower band and an upper band by the following rule:       Fig. 6. Calculating the response from an arbitrary excitation u.
+
+                                                              (24)
+
+where      is defined by (13). Logarithmically distributed sam-
+ples are used in the lower band, while the samples for the upper
+band are calculated by an adaptive integration scheme.
+   The upper frequency band is first divided into intervals so that
+each interval contains only one dominant resonance point. The
+following procedure for subdivision considers the effect of the
+propagation velocity on the resonance frequencies.
+   1) Calculate the modal velocities
+
+                                                              (25)
+
+     where      is the th diagonal element of in (3).
+  2) Locate the frequ

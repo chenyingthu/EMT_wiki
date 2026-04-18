@@ -1,0 +1,194 @@
+                                                                                                                                                       1
+
+
+
+
+      An Enhanced Average Value Model of Modular
+            Multilevel Converter for Accurate
+      Representation of Converter Blocking Operation
+           Xuekun Meng1, Student Member, IEEE, Jintao Han1, Student Member, IEEE, Joel Pfannschmidt1,
+            Liwei Wang1, Member, IEEE, Wei Li2, Member, IEEE, Jean Belanger2, Senior Member, IEEE
+               1. The University of British Columbia Okanagan, BC, Canada, liwei.wang@ubc.ca
+               2. OPAL-RT Technologies, QC, Canada, wei.li@opal-rt.com
+    Abstract—Modular Multilevel Converter (MMC) has                         MMC arms are lumped into equivalent arm capacitors. This
+demonstrated significant advantage in harmonic elimination and              simplification adapts the insersion indices from the modulation
+improved converter efficiency due to the use of large number of             controller to predict the equivalent arm capacitances and
+submodules and low switching frequency of the submodules.                   corresponding arm voltages at each simulation time step. Arm
+However, the massive switching events of the Insulated-Gate
+Bipolar Transistors (IGBTs) in the MMC have also introduced
+                                                                            voltage behavior, including arm voltage ripples and circulating
+high computational burden when modelling the MMC in                         current, can be accurately represented with improved
+electromagnetic transient tools. Various research efforts have              simulation efficiency compared to the detailed switching-based
+dedicated to developing the numerically efficient average value             MMC model. However, the use of switching function in the
+models (AVMs) for the MMC. This paper gives an overview of the              AVMs requires converter modulation controllers and may
+existing control signal based AVMs of the MMC and proposes an               increase the complexity of the AVMs for different MMC
+enhanced average value model with arm current initialization                topologies (e.g. full-bridge MMC, clamped-double submodule
+method to compensate for the initial condition issue in the                 MMC [5], and alternate arm converter [6]).
+previously developed AVMs. The proposed approach is evaluated                  A control-signal-based AVM is proposed in [7], where the
+in    a    point-to-point    MMC      HVDC      system     under
+                                                                            switching operation in the submodules and the converter
+Simulink/eMEGAsim environment.
+   Index Terms—Average value model, electromagnetic transient,              modulation are not required. The model uses six controlled
+high voltage direct current system, modular multilevel converter.           voltage sources and a controlled current source to represent the
+                                                                            fundamental frequency behavior of the converter as seen from
+                         I. INTRODUCTION                                    the AC and DC sides of the MMC. The direct application of the
+
+T
+                                                                            reference signals in the AVMs enables simple model structure
+      he development of Modular Multilevel Converter High                   for various MMC topologies. The reference [8] further extends
+      Voltage Direction Current (MMC-HVDC) system enables                   the concept in [7] and simplifies the voltage sources in the upper
+the interconnection between the existing AC power                           and lower arms into a three-phase Thevenin equivalent circuit.
+transmission grids and the remote renewable power plants with               The model is very efficient and allows for straightforward
+low harmonic distortion and reduced converter losses [1]. It                implementation in various EMT-type software packages.
+utilizes a series of individual submodules; each can be inserted            However, the AVMs in [7] and [8] are insufficient to model the
+or bypassed to produce the nearly perfect-sinusoidal waveforms              blocking mode operation of the MMC due to the lack of free-
+at the point of common coupling to the AC grids. However, the               wheeling diode representation. Several improved AVMs are
+modelling the MMC in the Electromagnetic Transient (EMT)                    proposed in [9] using the concept of Blocking Module (BM) to
+type tools is challenging due to the massive switching                      establish the connection between the AC and DC side during
+operations presented in the MMC. The fast and simultaneous                  the converter blocking operations. The AVMs with BM
+switching events have to be modelled using micro-second time                improve the modeling accuracy for the blocking mode
+step to accurately account for the non-linear phenomenon in the             operations, however, increase their implementation complexity
+power electronic components, including the Insulated-Gate                   in EMT-type software packages.
+Bipolar Transistors (IGBTs). The switching-based model can                     This paper proposes an enhanced AVM (EAVM) of the
+provide the most detailed representation of the behavior of                 MMC based on the state-of-the-art control-signal-enabled
+MMC since each converter component is explicitly modelled                   AVMs. The proposed EAVM features easy model
+and solved in a large matrix. However, the model with detailed              implementation and improved modeling accuracy for EMT-
+semiconductor switching representation has also introduced                  type software tools. The proposed EAVM uses controlled
+tremendous computational burden for the dynamic simulation                  current sources for the arm inductors in the BM to initialize the
+of the interconnected AC and HVDC systems. Therefore,                       arm inductor currents at converter blocking instant. The current
+developing a numerically efficient model for the MMC in                     initializing method is used to compensate for the DC current
+EMT-type tools is essential for improving the overall                       discontinuity issue during the transition between normal
+simulation performance of the integrated power grids while                  operation and blocking mode of the AVMs with BM. The
+maintaining the accurate representation of the MMC.                         proposed method is validated using the detailed switching-
+   Switching-function-based Average Value Models (AVMs)                     based model and the previously developed AVMs in a point-
+are proposed in [2]–[4] to simplify the individual switching of             point HVDC system under Simulink/eMEGAsim platform
+IGBTs in the submodules. The submodule capacitors in the                    [10].
+
+ 978-1-7281-1981-6/19/$31.00 ©2019 IEEE
+ Authorized licensed use limited to: UNIVERSITY OF WESTERN ONTARIO. Downloaded on July 27,2020 at 03:09:49 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                                       2
+
+                  II. BASIC OPERATION OF MMC                                 voltages by sorting the submodule capacitor voltages.
+   The three-phase MMC circuit configuration is illustrated in               Additionally, submodule voltage ripples can produce
+Fig. 1a. Each phase includes an upper arm and a lower arm,                   circulating currents in the converter arms in the form of second-
+which is composed of 𝑁𝑁 numbers of submodules. The number                    order harmonic. Circulating current controller [13] can also be
+of submodules depends on both DC-side voltage and the                        developed to suppress the second-order harmonics.
+submodule voltage rating. An arm inductor is used in each arm
+to limit the circulating current and the fault current flowing in
+the converter. The arm resistors are used to represents the on-
+state resistance of the IGBTs.
+
+
+
+
+                                                                             Fig.2 Comparison of actual and reference voltage waveforms. (a) Arm voltage
+                                                                             (b) AC-side voltage.
+
+                                                                                            III. PREVIOUS AND PROPOSED AVMS
+                                                                                Individual IGBT switching in the submodules of MMC can
+Fig.1 MMC circuit configuration: (a) MMC circuit topology; (b) Half-bridge   be ignored which leads to numerically efficient MMC models,
+submodule.                                                                   i.e. AVMs, [7]-[9]. Since the AVMs [7]-[9] use control signals
+   For the half-bridge submodule shown in Fig. 1b, there are                 without IGBT switching of the converter arms, the submodule
+three operating modes: insert, bypass and blocking modes.                    capacitor voltage balancing and converter arm circulating
+Submodule capacitor is inserted when the upper IGBT (T1) is                  current suppression controllers are not required in AVMs. This
+closed, and the lower IGBT (T2) is opened. The submodule                     section introduces several state-of-the-art AVMs of MMC. The
+capacitor is bypassed if T1 is opened and T2 is closed. When                 advantage and disadvantage of each model is discussed. An
+the two gate pulses T1 and T2 are blocked, the submodule                     enhanced AVM is proposed in the section which improves the
+capacitor is connected to a pair of free-wheeling diodes. The                simulation accuracy and simplify model structure compared to
+gate pulses are blocked during converter energizing operation                the available AVMs of MMC.
+or in the occurrence of DC side faults to protect the IGBTs from             A. Standard AVM (SAVM)
+over current failure.                                                          In the standard AVM (SAVM) [7], [8], the dynamic behavior
+   During normal operation, the gating signals for the individual            of the MMC, as seen from the AC and DC terminals can be
+submodules are established by the control system including                   represented by the AC- and DC-side equivalents as shown in
+inner current loop, outer power loop, modulation, submodule                  Fig. 3. The controlled voltage and current sources in SAVM are
+capacitor voltage balancing, and converter arm circulating                   determined from the MMC’s internal current and power control
+current suppression controllers. Converter modulation controls               loops.
+[11], [12] generate switching signals based on the reference
+voltages produced by the converter inner current control loop.
+The stair-case sinusoidal waveform can be created with a
+sufficient number of submodules by inserting or passing the
+individual submodule capacitors in converter arms. Fig. 2
+shows the switching and reference arm voltages and the AC
+voltages produced by an MMC with ten submodules per arm,
+i.e., N = 10 .
+   The submodule capacitors can be charged or discharged
+depending on the insertion status of the submodule capacitors
+and the direction of the arm current. Each submodule is                      Fig.3 Circuit topology for SAVM
+subjected to its own switching signal and can be charged to                    The relation between the AC terminal voltage and the upper
+different voltage levels than others. The difference in                      and lower arm voltages, shown in Fig. 2a, is expressed as [14]
+submodule voltages may cause large voltage ripples for the                                 𝑣𝑣𝑑𝑑𝑑𝑑                                            𝑑𝑑𝑖𝑖𝑢𝑢𝑗𝑗
+                                                                                                     − 𝑣𝑣𝑢𝑢𝑗𝑗 − 𝑅𝑅𝑎𝑎𝑎𝑎𝑎𝑎 𝑖𝑖𝑢𝑢𝑗𝑗 − 𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎               = 𝑣𝑣𝑗𝑗       (1)
+MMC during normal operation and should be precisely                                         2                                                 𝑑𝑑𝑑𝑑
+                                                                                                                                               𝑑𝑑𝑖𝑖𝑙𝑙
+controlled. Voltage balancing controller is proposed in [1],                                    𝑣𝑣
+                                                                                           − 𝑑𝑑𝑑𝑑 + 𝑣𝑣𝑙𝑙𝑗𝑗 + 𝑅𝑅𝑎𝑎𝑎𝑎𝑎𝑎 𝑖𝑖𝑙𝑙𝑗𝑗 + 𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎
+                                                                                                                                                        𝑗𝑗
+                                                                                                                                                             = 𝑣𝑣𝑗𝑗   (2)
+[11]–[14] to reduce the differences among the submodule                                             2                                            𝑑𝑑𝑑𝑑
+
+
+
+
+  Authorized licensed use limited to: UNIVERSITY OF WESTERN ONTARIO. Downloaded on July 27,2020 at 03:09:49 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                                3
+
+where 𝑣𝑣𝑗𝑗 is the per phase (𝑗𝑗 = 𝑎𝑎, 𝑏𝑏, 𝑐𝑐) voltage seen from the AC                         However, the DC fault current was initially discharged from
+side. Adding (1) and (2) gives the state-space equation of the                              the DC capacitor through the DC equivalent impedance,
+                                                                                            2            2
+AC output current 𝑖𝑖𝑗𝑗 as                                                                     𝑅𝑅     and 𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎 . The arm inductors 𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎 in the AIBM, is not
+                                                                                            3 𝑎𝑎𝑎𝑎𝑎𝑎     3
+                        𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎 𝑑𝑑𝑖𝑖𝑗𝑗                            𝑅𝑅𝑎𝑎𝑎𝑎𝑎𝑎
+                                           = 𝑣𝑣𝑐𝑐𝑗𝑗 − 𝑣𝑣𝑗𝑗 −                  𝑖𝑖𝑗𝑗    (3)   initialized (zero current) when the switches S are turned off and
+                            2         𝑑𝑑𝑑𝑑                              2
+                                        −𝑣𝑣𝑢𝑢𝑗𝑗 +𝑣𝑣𝑙𝑙
+                                                     𝑗𝑗
+                                                                                            the switch S1 is turned on. Therefore, the simulated DC current
+                    𝑣𝑣𝑐𝑐𝑗𝑗 =                                   (4)                          by MVAM-AIBM will experience sudden change at the
+                                2
+where 𝑖𝑖𝑗𝑗 is the per-phase current flowing into the AC-side and                            converter blocking instant due to the inconsistency between the
+𝑣𝑣𝑐𝑐𝑐𝑐 is a mid-point virtual output voltage defined in [15]. It                            DC equivalent impedance current and the arm inductor currents
+should be notice that the 𝑣𝑣𝑐𝑐𝑗𝑗 in (3) can be replaced by the                              in the AIBM.
+reference voltage 𝑣𝑣𝑟𝑟𝑟𝑟𝑓𝑓𝑗𝑗 from the outer-loop controller as
+                  𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎 𝑑𝑑𝑖𝑖𝑗𝑗                                  𝑅𝑅
+                                       = 𝑣𝑣𝑟𝑟𝑟𝑟𝑓𝑓𝑗𝑗 − 𝑣𝑣𝑗𝑗 − 𝑎𝑎𝑎𝑎𝑎𝑎 𝑖𝑖𝑗𝑗              (5)
+                        2     𝑑𝑑𝑑𝑑                                      2
+                                                          𝑣𝑣𝑑𝑑𝑑𝑑
+                        𝑣𝑣𝑟𝑟𝑟𝑟𝑟𝑟 = 𝑒𝑒𝑟𝑟𝑟𝑟𝑓𝑓𝑗𝑗                                         (6)
+                                 𝑗𝑗                        2
+where 𝑒𝑒𝑟𝑟𝑟𝑟𝑓𝑓𝑗𝑗 is the per unit value of the reference signals. Based
+on (6), the behavior of MMC as seen from the AC side can be
+represented by a Thevenin equivalent circuit, as illustrated in                             Fig.4 Circuit topology of MAVM-AIBM
+Fig. 3a.
+   The DC-side circuit, shown in Fig. 3b, is derived based on                               C. MAVM-HBM
+the power balance as [7]                                                                       In order to improve the modeling accuracy of the DC pole-
+                                𝑃𝑃𝑎𝑎𝑎𝑎 = 𝑃𝑃𝑑𝑑𝑑𝑑                    (7)                      to-pole fault, the MAVM with Hybrid Blocking Module
+                    ∑𝑗𝑗=𝑎𝑎,𝑏𝑏,𝑐𝑐 𝑣𝑣𝑟𝑟𝑟𝑟𝑓𝑓𝑗𝑗 𝑖𝑖𝑗𝑗 = 𝑣𝑣𝑑𝑑𝑑𝑑 𝑖𝑖𝑑𝑑𝑑𝑑   (8)                      (MAVM-HBM) is proposed in [9] as shown in Fig. 5.
+Substitute (6), the current input can be calculated for the
+controlled current source input at the DC side as [7]
+                        ∑𝑗𝑗=𝑎𝑎,𝑏𝑏,𝑐𝑐 𝑣𝑣𝑟𝑟𝑟𝑟𝑓𝑓 𝑖𝑖𝑗𝑗           1
+                                              𝑗𝑗
+           𝐼𝐼𝑐𝑐𝑐𝑐𝑐𝑐 =                                = ∑𝑗𝑗=𝑎𝑎,𝑏𝑏,𝑐𝑐 𝑒𝑒𝑟𝑟𝑟𝑟𝑓𝑓𝑗𝑗 𝑖𝑖𝑗𝑗   (9)
+                                     𝑣𝑣𝑑𝑑𝑑𝑑                  2
+The DC current is contributed from six arms thus the DC
+                    2             2
+impedances are 𝑅𝑅𝑎𝑎𝑎𝑎𝑎𝑎 and 𝐿𝐿𝑎𝑎𝑎𝑎𝑎𝑎 . The DC side equivalent
+                    3             3
+capacitance is derived using energy conservation principle
+                                                                                            Fig.5 Circuit topology of MAVM-HBM
+𝐶𝐶𝑑𝑑𝑑𝑑 = 6𝐶𝐶/𝑁𝑁 as illustrated in [7].
+    The model can accurately simulate the dynamic behavior of                                  The MAVM employs the HBM to connect the AC and DC
+the MMC during normal operations using the reference signal                                 side circuits. The HBM includes arm inductors, arm resistors,
+and simple circuit structure. During the DC pole-to-pole fault,                             arm equivalent diodes and ideal switches. During normal
+the converter is blocked after the DC fault is detected. The                                operation, all switches S are closed, and HBM is isolated from
+converter blocking operation is modeled by turning off the                                  the AC side due to the reverse blocking of the diodes. The arm
+switch S to disconnect the equivalent DC capacitor and turning                              current is flowing from the DC controlled current source
+on the switch S1 to bypass the controlled DC current source.                                through the switches and three-phase arm impedances.
+However, the SAVM is insufficient to accurately model DC                                       During DC pole to pole fault, both AC and DC sources are
+pole-to-pole fault [9].                                                                     set to zero and bypassed from the circuit. The DC equivalent
+                                                                                            capacitor vcap is discharged through the three-phase arm
+B. MAVM-AIBM                                                                                impedance until the converter is blocked. The switches S are
+   The Modified Average Value Model (MAVM) with Arm                                         opened to represent converter blocking operation. Therefore,
+Impedance Blocking Module (AIBM) is proposed in [9] to                                      the arm inductors have initial DC fault currents at the converter
+improve the modeling accuracy for converter blocking mode                                   blocking instant which represents improvement in modeling
+operations. The AIBM is composed of a six-pulse diode bridge                                accuracy compared to MAVM-AIBM. However, the MAVM-
+and arm impedances. The use of AIBM provides an                                             HBM has relat

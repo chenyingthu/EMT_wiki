@@ -1,0 +1,157 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2860586, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                       Functional Mock-up Interface Based Approach
+                          for Parallel and Multistep Simulation of
+                                Electromagnetic Transients
+                                    M. Cai, Student Member, IEEE, H. Gras, J. Mahseredjian, Fellow, IEEE, E. Rutovic, A. El-Akoum
+
+
+
+               Abstract—This paper presents a new simulation approach                                          Multistep solution is attained by exploiting the property of
+           based on the Functional Mock-up Interface (FMI) standard for                                        circuit latency [11], or through “data-smoothing” at line-bus
+           parallel and multistep simulation of electromagnetic transients                                     interfaces in a network [12]. Although computational speedup
+           (EMTs) in power grids with computationally expensive control                                        has been observed in some cases, the implementation of such
+           systems. The control systems are represented by slave subsystems                                    multistep techniques on large-scale networks requires user
+           which are decoupled in memory from the power network and
+                                                                                                               intervention and remains complex to automate [13].
+           encapsulated in Functional Mock-up Units (FMUs). The
+           simulation modes are either asynchronous or synchronous. In the                                     Furthermore, the interest in multistep solution has extended
+           asynchronous mode, the subsystems are simulated in parallel,                                        into the frequency domain, such as the multirate method for
+           whereas in the synchronous mode the simulation of each                                              solving Frequency-dependent Network Equivalents (FDNEs)
+           subsystem is executed in a sequential multistep environment.                                        proposed in [14]. Apart from the previously mentioned efforts
+           Considerable computation time gains in both modes have been                                         to improve computational speed, some researchers also
+           observed in power system protection studies on large-scale                                          investigated interfacing EMT-type solvers with transient
+           networks with accuracy properly maintained.                                                         stability (TS) programs by exploring parallelism between the
+              Index Terms— Electromagnetic transients, FMI, parallel                                           two types of solvers [15]-[17]. Although such a hybrid
+           simulation, multistep simulation, co-simulation
+                                                                                                               approach can gain from the high efficiency of TS-type solvers,
+                                                                                                               it is again not simple to generalize on interfacing nodes and to
+                                                I. INTRODUCTION                                                control accuracy.
+
+           T    HE simulation of electromagnetic transients (EMT) has
+                become indispensable to utility engineers in a multitude of
+                                                                                                                   This paper proposes a new off-line simulation method based
+                                                                                                               on the co-simulation approach and using the Functional Mock-
+           studies in power systems [1]-[3]. The EMT approach is of                                            up Interface (FMI) standard [18] for parallel and multistep
+           wideband nature and applicable to both slower                                                       EMT simulations with control systems on conventional multi-
+           electromechanical as well as faster electromagnetic transients.                                     core computers. Instead of bridging different solvers, the co-
+           Nonetheless, the ever-growing complexity of modern-day                                              simulation approach adopted in this paper interfaces different
+           power systems, especially those with HVDC interconnections                                          instances of the same solver using decoupling in memory
+           and wind generation [4], considerably increases computational                                       between the power network and control systems.
+           time in EMT studies which require the accurate solution of                                              The co-simulation approach has seen implementation in
+           usually large sets of differential and algebraic equations                                          power system studies [19], [20]. A previous attempt at
+           (DAEs) with a pre-determined time-step.                                                             introducing this approach in power system parallel EMT
+              Over the years, many efforts have been dedicated to                                              simulations was reported in [10], in which the FMI standard
+           improving computational speed in EMT-type simulation                                                was only partially implemented with the adoption of a master-
+           methods, in which parallelization and multistep solution                                            slave co-simulation scheme and parallelization was achieved
+           techniques have drawn a fair amount of interest among                                               through manual decoupling of networks at transmission lines.
+           researchers. The former include approaches using waveform                                           Notwithstanding, the steady-state solution needs to be
+           relaxation [5] and techniques implemented in real-time [6]-[8]                                      obtained at the master-slave interface and stored prior to each
+           as well as off-line [1][9][10] simulation tools. In these                                           co-simulation start. Several steps in [10] are complex to
+           methods, parallelization is achieved by taking advantage of the                                     automate and require user intervention.
+           intrinsic propagation delay at distributed parameter                                                    The new simulation approach presented in this paper
+           transmission line and cable models for natural decoupling of                                        establishes full compatibility between EMTP [1] and the FMI
+           networks while adopting a shared memory computing scheme.                                           standard version 2.0. Also using the master-slave co-
+                                                                                                               simulation scheme, this new approach decouples control
+                                                                                                               systems from the power network and distributes their
+               M. Cai, H. Gras, and J. Mahseredjian are with Polytechnique Montréal,
+           QC, Canada, H3T1J4, (ming.cai@polymtl.ca, henry.gras@polymtl.ca,
+                                                                                                               computations among separate logical processors. It offers two
+           jean.mahseredjian@polymtl.ca).                                                                      simulation modes: the parallel asynchronous mode with a
+               E. Rutovic is with POWERSYS, Les Jardins de l’Entreprise, 13610 Le                              single time-step and the sequential synchronous mode that
+           Puy-Sainte-Réparade, France                                                                         allows different time-steps to be employed on different
+               A. El-Akoum is with Électricité de France (EDF) Lab Paris-Saclay, 7
+           Boulevard Gaspard Monge, 91120 Palaiseau, France
+                                                                                                               decoupled subsystems, which substantially enhances
+
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2860586, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                            2
+
+           simulation      efficiency.     Unlike    the   aforementioned                                      •    an xml file consisting of all exposed variables and other
+           parallelization techniques [5]-[10], this approach achieves                                              static information of the interface (e.g. the name, type and
+           complete memory decoupling between the power network and                                                 number of inputs and outputs);
+           control systems, showing great prospects of higher simulation                                       • the model equations and solvers as the runnable code.
+           scalability. It also differs from hybrid techniques [15]-[17] in                                      In this paper, as stated previously, the master and slaves are
+           its pure EMT nature, EMT accuracy and targeted decoupling                                           solved independently using different instances of the same
+           interface. It presents an advantage over [10] in terms of much                                      software. Fig. 1 illustrates the schema of the FMI standard in
+           higher level of automation and flexibility. The targeted                                            co-simulation implemented in this work with multiple slave
+           applications are for massive use of control diagram blocks in                                       FMUs.
+           power system simulations. Unique advantages are
+           demonstrated for large-scale protection system studies.                                                 III. IMPLEMENTATION OF THE FMI IN AN EMT-TYPE TOOL
+              The presented approach is applicable to any EMT-type
+                                                                                                                 This section presents how the FMI co-simulation approach
+           simulation tool [3].
+                                                                                                               can be implemented in an EMT-type tool. The EMTP [1]
+              This paper starts with the implementation of the FMI
+           standard in EMTP then follows by test cases on realistic                                            software is used for demonstrations.
+           networks to demonstrate the accuracy and numerical                                                  A. Communication mechanism between master and slaves
+           performance advantages of the proposed simulation approach.
+                                                                                                                  The co-simulation form of the FMI standard 2.0 has been
+                                                                                                               fully implemented in this work for control signals (integer,
+                                        II. THE FMI STANDARD                                                   floating-point or Boolean) that can be exchanged by means of
+              The FMI standard is a tool independent interface standard                                        the co-simulation interface. It is worth noting that EMTP uses
+           developed in the context of the European project Modelisar,                                         two separate solvers for the solution of the power and control
+           providing support for standardized data exchange between                                            parts of a network (an iterative sparse matrix (Jacobian) solver
+           dynamic models designed under different simulation                                                  based on the modified augmented nodal analysis for the power
+           environments with the help of xml files and C-code [18]. A                                          part and a Jacobian-based solver for the control part) [1], [2].
+           number of potential advantages prompted the development of                                          For every discrete solution time-point, EMTP first solves the
+           such a standard. Firstly, it obviates the need to convert a                                         power part then the control part.
+           dynamic model developed in a different simulation tool to one                                          As previously mentioned, this new off-line simulation
+           adapted to the host simulation tool as details of such a model,                                     approach also adopts a master-slave co-simulation scheme.
+           usually enclosed in a “blackbox”, are often unknown to the                                          The control systems (slaves) are decoupled from the power
+           user. Secondly, a co-simulation can be easily launched without                                      network and encapsulated into FMUs which contain model
+           having to generate DLL code or using a third-party software.                                        and simulator information. The power network (master) then
+           Thirdly, the exploitation of the modular nature of models and                                       loads these FMUs without prior knowledge of their contents.
+           co-simulation slaves shows great prospects for parallel and                                         As the simulation proceeds, the master communicates with the
+           distributed computation.                                                                            slaves through two layers of DLL files incorporating
+                                                                                                               standardized FMI functions via a co-simulation bus composed
+                                                                                                               of a shared memory zone (buffer) for data exchange, as well
+                                                                                                               as associated synchronization mechanisms created by the
+                                                                                                               master. This concept is illustrated in Fig. 2 in which only two
+                                                                                                               slave subsystems are shown for simplicity.
+
+
+
+
+           Fig. 1 FMI for co-simulation
+
+              The FMI standard comes in two forms: model exchange and
+           co-simulation, with the latter implemented in this work. Co-
+           simulation provides an interface standard for coupling
+           different simulation tools with the adoption of a master-slave
+           co-simulation scheme. In co-simulation, the entire system is
+           decoupled into master and slave subsystems that are solved
+           independently from one another, with the data exchange as
+           well as the synchronization of all slave subsystems controlled
+           by the master only. The slave subsystems in co-simulation are
+           encapsulated in a zip file named the Functional Mock-up Unit                                        Fig. 2 Interfacing three subnetworks (Master, Slave 1 and Slave 2) via DLL
+           (FMU) that contains in general [18]:                                                                files and two co-simulation buses
+
+
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2860586, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                            3
+
+              FMI2_Device_Master defines the functions to interact with                                        for this semaphore to continue with their operation,
+           the EMTP solver, compatible with the FMI standard 2.0                                               representing thus the action of “releasing a semaphore”.
+           functions defined in FMI2_Link_Master. FMI2_Device_Slave                                               A total of three semaphores are employed in the
+           is in charge of interaction between a slave instance and EMTP,                                      initialization and co-simulation stages in both the master and
+           and FMI2_Link_Slave provides auxiliary coordination of                                              slave algorithms, with the names SemInitialization,
+           master-slave data exchange by communicating with functions                                          SemMaster and SemSlave. The first one is used in the
+           defined in FMI2_Link_Master. The contents of the latter two                                         initialization mode, allowing a slave instance to connect to the
+           files are not constrained by the FMI standard. It is noted that a                                   co-simulation bus created by the master. The second one is
+           co-simulation bus is created for each slave instance in the                                         released by the slave to the master after the former finishes
+           simulation, and although a separate set of master DLL files are                                     certain operations. Similarly, the third one is released by the
+           used fo

@@ -1,0 +1,186 @@
+                                                                   Electric Power Systems Research 202 (2022) 107577
+
+
+                                                                         Contents lists available at ScienceDirect
+
+
+                                                             Electric Power Systems Research
+                                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An FPGA based electromagnetic transient analysis of power
+distribution network
+Swati Shukla a, *, Abhishek Agrawal b, Balbir Singh b, Gaurav Trivedi b
+a
+    School of Energy Sciences and Engineering, Indian Institute of Technology Guwahati, India
+b
+    Department of Electronics and Electrical Engineering, Indian Institute of Technology Guwahati, India
+
+
+
+
+A R T I C L E I N F O                                          A B S T R A C T
+
+Keywords:                                                      The electrical power distribution network (PDN) is in the transition phase due to the integration of distributed
+Power distribution network (PDN)                               energy resources (DERs). Therefore, an accurate and efficient modeling and simulation platform is the need of
+Electromagnetic transient (EMT) analysis                       the hour to determine the dynamic behavior of the PDN. The recent computational hardware, such as GPU,
+Field programmable gate array (FPGA)
+                                                               FPGA, etc. enables new simulation paradigm and develop a more realistic platform in the form of system em­
+                                                               ulators. In this paper, an FPGA based electromagnetic transient (EMT) simulation framework for the PDN is
+                                                               presented. Conjugate-gradient (CG) based electrical network solver is implemented in the proposed framework,
+                                                               and a test case is analyzed for Jail substation of Guwahati city, India, to validate the simulation environment. It
+                                                               has been compared with the MATLAB based implementation for verifying its accuracy. The proposed EMT
+                                                               simulator is approximately 12.5 times faster as compared to its MATLAB implementation and exhibits good
+                                                               accuracy as well.
+
+
+
+
+1. Introduction                                                                                      communication imposes additional overhead time [13]. Therefore,
+                                                                                                     several work on the development of FPGA based simulation framework
+    The electrical power distribution network (PDN) is evolving for the                              is presented [14–17].
+effective integration of the distributed generation (DG). In this scenario,                              Another approach, in the progress of FPGA based simulator, i.e., a
+an accurate and efficient modeling and simulation tool is desired to                                 system on chip (SoC) implementation, is presented in [18]. The simu­
+determine the dynamic behavior of the PDN [1]. A typical PDN mainly                                  lator performs a complete solution of the system for each simulation
+consists of a distribution transformer, distribution feeder, and connected                           time step. Prior to this work, the FPGA-based simulator was based on the
+load [2]. The equivalent PDN can be represented by a combination of                                  pre-storing the resulting inverse matrices for all possible combinations
+network elements such as resistor, inductor, capacitor, etc. [2,3]. The                              of the states of the time-variant elements. Pre-storing the possible in­
+new generation high-performance hardware accelerators such as GPU,                                   verse matrices limits the scope of simulation upto a few no of
+FPGAs based simulation framework may be useful for the efficient                                     time-variant power system elements. Most recent FPGA based EMT
+modeling and simulation of the PDN [4,5]. The efficiency of a PDN                                    simulator design approach is presented in [19]. In this work a
+simulation framework is evaluated by the accuracy of the PDN model                                   co-simulation framework, integrating the MATLAB/Simulink based user
+and the performance of solver incorporated in the simulation environ­                                oriented section and hardware oriented (FPGA based) computational
+ment [6]. Considerable efforts are devoted to the development of ac­                                 framework is presented.
+curate PDN models and efficient solvers [7–9].                                                           Exhaustive reflection of the literature review reveals the scope of
+    The Electromagnetic Transient (EMT)Figure 13 simulation is a useful                              further improvement in network matrix formulation and the develop­
+tool for the design, planning, operation, and control of the PDN [6]. The                            ment of an effective solver. The system conductance matrix generated
+EMT simulation framework with FPGA [10,11] and GPU [12] based                                        during the PDN network analysis is sparse, Symmetric Sositive Definite
+hardware accelerator to improve computational performance is intro­                                  (SPD), but ill-conditioned. The conjugate-gradient (CG) based solver is
+duced. The EMT simulation framework with FPGA enables improved                                       an appropriate choice for the SPD matrix [20]. As the condition number
+computational       performance      over    GPUs     as    inter-processor                          of conductance matrix is very high; the preconditioned CG based
+
+
+
+    * Corresponding author.
+      E-mail addresses: swati.shukla@iitg.ac.in (S. Shukla), abhishek.agrawal@iitg.ac.in (A. Agrawal), balbir.singh@iitg.ac.in (B. Singh), trivedi@iitg.ac.in (G. Trivedi).
+
+https://doi.org/10.1016/j.epsr.2021.107577
+Received 30 January 2020; Received in revised form 31 July 2021; Accepted 8 September 2021
+Available online 27 September 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+S. Shukla et al.                                                                                                  Electric Power Systems Research 202 (2022) 107577
+
+
+
+
+                                              Fig. 1. (a) Basic architecture of FPGA. (b) Logic cell diagram.
+
+
+network solver is preferred to improve the convergence.                              FPGA is a programmable VLSI circuit. The underlying architecture of
+   In this paper, the EMT simulation framework for PDN with SoC-                 FPGA consists of an array of the configurable logic block (CLB), I/O
+FPGA board is presented. A detailed discussion on the selection of CG            block, and interconnect switch matrices, as shown in Fig. 1(a). Inter­
+based solver is presented. A preconditioned CG (PCG), based network              nally, the user-defined logic is implemented in FPGA by programming
+matrix solver unit is developed. The proposed solver is developed with           the basic logic-building units of CLB, called a logic cell (Xilinx). A logic
+                                                                                 cell usually contains function generators (4-input Look-up table), flip-
+ • Memory efficient storage format for sparse matrix                             flops, and multiplexers, as shown in Fig. 1(b). A Lookup table (LUT)
+ • Optimized matrix vector multiplication                                        stores the truth table of the function being implemented and provides
+ • Pipelined floating point adder and multiplier                                 the combinational circuit functionality to the logic block. An n-input
+                                                                                 LUT can generate any arbitrary function of at most n-input variables. D-
+    For this implementation, Zedboard, Zynq-7000 ARM/FPGA SoC                    flip flops are used to synchronously register the data with respect to the
+development board, and Vivado programming environment have been                  system clock. Multiplexers serve as the control units for data flow. A grid
+used. The SoC development board provides the integrated software                 of programmable switch matrices overlays the CLBs to provide a
+programmability of a processor with the hardware programmability of              general-purpose interconnect for branching and routing throughout the
+an FPGA into a single device [21]. Therefore, they deliver improved              device. The I/O blocks corresponding to each user-programmable I/O
+integration with reduced power, the smaller board size, and better               pins are responsible for configuring the pin as an input, output, or
+bandwidth communication between the processor and FPGA. Detailed                 bidirectional.
+discussion on the architecture, pipelining, data representation, and                 A typical FPGA design flow begins with the description of user
+network matrix solution has been presented.                                      application using hardware description languages like Verilog, System
+    The rest of the paper is organized as follows: Section 2 presents an         Verilog, or VHDL, generally at register transfer level (RTL). The func­
+overview of SoC FPGA. Section 3 describes the choice of iterative solver.        tional verification and debugging of code are done through behavioural
+Section 4 describes the framework for EMTP type simulation on SoC                simulation. EDA tools like Xilinx Vivado are used for synthesis, imple­
+FPGA. Section 5 presents the implementation and operation of the SoC             mentation, placement, and routing. After these processes are over, a
+FPGA. Result and discussion are presented in Section 6. Finally, the             binary configuration file, called bitstream is generated by the tool.
+paper concludes with Section 7.                                                  Finally, the FPGA is programmed by downloading this generated bit­
+                                                                                 stream file, which then, functions according to the user-defined logic.
+2. Overview of SoC FPGA                                                              A vital characteristic of the FPGA is its intrinsic parallel architecture.
+                                                                                 Contrary to a general-purpose processor (GPP), the hardware logic
+    Xilinx Zynq-7000 series chips are based on SoC FPGA architecture,            blocks of FPGA are not hard-wired, i.e., the user can program the
+which consists of Programmable Logic (FPGA) and Programmable Sys­                hardware, multiple times. The memory blocks of FPGA can be config­
+tem (Processor) integrated on a single chip. Programmable System (PS)            ured as ROM, single port, or Dual-port RAM, with varying sizes of data
+consists of a dual-core ARM Cortex-A9 application processor, capable of          and address buses. This enables the hardware resources to be configured
+running embedded operating systems to support software application               into different blocks, all of which are capable of operating parallelly. On
+modules and high-speed interfaces of the hardware system design. The             the other hand, GPP executes the instructions sequentially and has
+choice of OS depends on system design specifications; however,                   shared memory resources.
+embedded Linux OS is popularly used because it efficiently utilizes
+memory management unit (MMU) of the processor and also provides                  3. Choice of iterative solver
+symmetric multiprocessing (SMP) capabilities to take advantage of
+multiple processors. The OS kernel can support applications developed                The EMTP-type solver performs numerical integration with a step
+in C, C++, Python, and many other programming languages. AXI                     size of Δt to analyze dynamic network equation. A linearized system of
+interconnect ports provide low latency and high throughput data                  equations, i.e. GV = I, are formulated. Here, G ∈ RN×N is a N × N matrix
+transfer between the PS and the Programmable Logic (PL). AXI ports               and N is the number of nodes of the PDN. V ∈ RN is the node voltage
+offer access from the PL to DDR3 RAM and on-chip memory (OCM) in                 vector, and I represents the history-current and the known current
+the PS. PL consists of Artix-7 or Kintex-7 based FPGA chip along with            sources. The selection of an appropriate solver can significantly im­
+optimized Digital Signal Processing (DSP) blocks.                                proves performance of the solver. Traditionally, solution of the linear
+
+
+                                                                             2
+S. Shukla et al.                                                                                                         Electric Power Systems Research 202 (2022) 107577
+
+
+Table 1                                                                                  improved performance over conventional methods to solve the sparse,
+Condition number, sparsity and SPD test for the system admittance matrix (G).            positive-definite, linear systems of equation. It offers scope for the par­
+    No. of nodes             Condition No.             Sparsity             SPD          allelization of the matrix solution over traditional matrix solvers.
+                                                                                             The CG based iterative method is derived from the orthogonal pro­
+        50                      290700                  0.94                yes
+       150                      290700                  0.98                yes          jection to the Krylov-subspace. Several iterative techniques, such as CG,
+       200                      290700                  0.985               yes          PCG, CG square (CGS), and GMRES are known for the solution of the
+       250                      290700                  0.988               yes          linear system of equations.
+       300                      290700                  0.99                yes              A comparative analysis with arbitrary chosen electrical circuit of
+       400                      290700                  0.992               yes
+       500                      297400                  0.994               yes
+                                                                                         Krylov subspace-based methods is performed. All the experiments are
+       1000                     297400                  0.997               yes          performed on a computer with the Intel Xeon ES2609 processor with 16-
+                                                                                         GB RAM. From Fig. 2(a) and (b), it can be observed that GMRES method
+                                                                                         converges in less number of iteration; however, the time of convergence
+system of equations is performed with direct solvers, such as, the LU-                   (ToC) is more than CG, PCG and CGS method. At the same time, CG and
+decomposition. However, in [22] the advantage of iterative solvers                       PCG methods converges with an equal number of iterations, whereas the
+over the LU-decomposition method is described.                                           ToC for PCG is higher. Detailed test results are presented in Table 2. It is
+    There are numerous iterative methods available for the solution of a                 observed that CG based iterative solver performs better than the PCG,
+linear system of equations. The Jacobi and Gauss-Seidel (GS) are well-                   CGS, and GMRES method for the circuits chosen for the analysis.
+known iterative methods used to solve linear systems of equations.
+However, these iterative methods cannot analyze all kinds of linear                      4. Framework for EMTP type simulation on SoC FPGA
+system efficiently as the performance of iterative solver mainly depends
+upon the characteristics of the coefficient matrix. Because of the                       4.1. System architecture of proposed SoC FPGA based EMTP simulator
+complexity of large circuits, sometimes the coefficient matrix can be ill-
+conditioned after formulation. The Table 1, presents condition number,                      The hardware submodules of the EMTP are shown in Fig. 3. The
+sparsity, and SPD test for the system admittance matrix G. It may be                     submodules can be grouped as follows: 1. Network Modelling Unit; 2.
+observed that the system admittance matrix of the network is consis­                     Source Unit; 3. Switch Unit; 4. Matrix Formation Unit; 5. History Current
+tently sparse, SPD, and ill-conditioned. The CG based algorithm has                      Unit; 6. Matrix Solution; 7. Network Solution; and 8. ALU Unit. Data and
+
+
+
+
+                   Fig. 2. (a) Number of iteration, and (b) Time of convergence; of the iterative solvers with respect to increasing number of nodes.
+
+
+Table 2
+Comparative study of different iterative solvers used in solution of EMT simulationa .
+    Nodes          CGb                                   PCGc                                    CGSd                                  GMRESe
+
+                   A            B              C         A             B           C             A            B           C            A             B             C
+     50            36          0.9            528        36           3.3         785            32          4.5         956           31           10.7          1545
+     100           34          1.9           1319        34           3.8         1533           38           6          1730          31           10.9          2260
+     150           56          2.9           1472        56           5.9         1813           62          9.7         2155          47            22           3415
+     200           57         3.28           1902        57           6.6         2273           58          9.8         2484          48           24.5          4050
+     250           58          3.8           2347        58          7.19         2885           65         11.9         3135          48           24.4          4430
+     300           57          4.9           2836        57           7.4         3367           59         11.8         3522          52           29.4          5369
+     400           71           6            4015        71           10          4719           92          21          5463          58           37.7          7276
+     500           78         8.15           5224        78           12          5892           87          24          6754          63            47           9287
+a
+ A= No. of iteration, B= Time of convergence (in milliseconds), C= Total time (in seconds) taken by the iterative solver for the simulation of PDN (for 1 s) b Conjugate
+gradient c Precondition conjugate gradient d Conjugate gradient square e General minimal residual
+
+                                                                                   3
+S. Shukla et al.                                              

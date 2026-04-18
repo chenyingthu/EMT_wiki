@@ -1,0 +1,192 @@
+2046                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 29, NO. 5, OCTOBER 2014
+
+
+
+
+                       Dynamic Average-Value Modeling of
+                        CIGRE HVDC Benchmark System
+                                          IEEE Task Force on Dynamic Average Modeling
+
+  H. Atighechi, S. Chiniforoosh, J. Jatskevich, TF Chair, A. Davoudi, J. A. Martinez, M. O. Faruque, V. Sood,
+                   M. Saeedifard, J. M. Cano, J. Mahseredjian, D. C. Aliprantis, and K. Strunz
+
+
+
+   Abstract—High-voltage direct-current (HVDC) systems play an                       developed dynamic average models are shown to have computa-
+important role in modern energy grids, whereas efficient and ac-                     tional advantages.
+curate models are often needed for system-level studies. Due to the
+                                                                                       Index Terms—Average-value modeling, CIGRE HVDC bench-
+inherent switching in HVDC converters, the detailed switch-level
+                                                                                     mark, electromagnetic transients, inverter, line-commutated con-
+models are computationally expensive for the simulation of
+                                                                                     verter, rectifier.
+large-signal transients and hard to linearize for small-signal
+frequency-domain characterization. In this paper, a dynamic
+average-value model (AVM) of the first CIGRE HVDC bench-
+mark system is developed in a state-variable-based simulator,                                                I. INTRODUCTION
+such as Matlab/Simulink, and nodal-analysis-based electromag-
+
+                                                                                     H
+netic transient program (EMTP), such as PSCAD/EMTDC. The                                     VDC SYSTEMS are frequently employed for long-dis-
+12-pulse converters in the HVDC system are modeled with a set
+                                                                                             tance transmission due to their lower electrical losses.
+of nonlinear algebraic functions that are extracted numerically.
+The results from the average-value models are compared with                          For shorter distances, the higher costs of the power-electronic
+the results of the detailed simulation to verify the accuracy of the                 equipment may still be justified due to other benefits achieved
+AVMs in predicting the large-signal time-domain transients. The                      by HVDC, such as improved system stability and interconnec-
+                                                                                     tion between unsynchronized ac systems.
+                                                                                        Design and analysis of power-electronic-based systems, such
+   Manuscript received August 20, 2012; revised July 31, 2013 and January 13,        as HVDC transmission, rely extensively on modeling and com-
+2014; accepted July 16, 2014. Date of publication August 11, 2014; date of
+                                                                                     puter simulation. The procedures for design and analysis of such
+current version September 19, 2014. Paper no. TPWRD-00872-2012.
+   Task Force on Dynamic Average Modeling is with the Working Group on               complex systems typically involve a large number of time-do-
+Modeling and Analysis of System Transients Using Digital Programs, General           main transient studies as well as analysis in frequency domain
+Systems Subcommittee, T&D Committee, IEEE Power & Energy Society.
+                                                                                     for control purposes.
+   Task Force Members: S. A. Abdulsalam, D. C. Aliprantis, U. Annakkage,
+H. Atighechi, J. Belanger, J. M. Cano, S. Chiniforoosh, A. Davoudi,                     The detailed modeling of HVDC transmission system,
+V. Dinavahi, O. Faruque, S. Filizadeh, D. Goldsworthy, A. Gole, R. Iravani,          wherein the switching of all devices is represented in full
+J. Jatskevich (Chair), R. Jayasinghe, H. Karimi, M. Kuschke, A. St. Leger,
+                                                                                     detail, may be readily accomplished in the state-variable-based
+J. Mahseredjian, J. A. Martinez, N. Nair, L. Naredo, T. Noda, J. N. Paquih,
+J. Peralta, A. Ramirez, A. Rezaei-Zare, M. Rioual, M. Saeedifard, K. Schoder,        (SV-based) [1]–[7] and Electromagnetic Transient (EMT)
+V. Sood, K. Strunz, A. VanDerMeer, X. Wang, A. Yazdani.                              programs (EMTP type) [8]–[12]. Although the efficiency of
+   H. Atighechi, S. Chiniforoosh, and J. Jatskevich are with the Electrical and
+                                                                                     detailed models can be increased (e.g., [13]), the detailed
+Computer Engineering Department, University of British Columbia, Vancouver,
+BC V6T 1Z4 Canada.                                                                   models are generally computationally expensive, and require
+   A. Davoudi is with the Electrical and Computer Engineering Department,            significant simulation time especially for system-level studies.
+University of Texas, Arlington, TX 76011 USA.
+                                                                                     Moreover, due to switching, these models are discontinuous
+   J. A. Martinez is with the Department Eng. Electrica-ETSEIB, Universitat
+Politecnica de Catalunya, Barcelona 08028, Spain.                                    and not suitable for small-signal frequency-domain analysis.
+   M. O. Faruque is with the Center for Advanced Power Systems, Florida State        It is therefore desirable to develop equivalent models that do
+University, Tallahassee, FL 32310 USA.
+                                                                                     not include switching and may be used to predict the system’s
+   V. Sood is with the Faculty of Engineering and Applied Science, University
+of Ontario Institute of Technology, Oshawa, ON L1H 7K4 Canada.                       slower transient behavior and steady-state characteristics.
+   M. Saeedifard is with the Electrical and Computer Engineering Department,            Developing steady-state and dynamic equivalent models
+Purdue University, West Lafayette, IN 47907 USA.
+                                                                                     for HVDC transmission systems has been of great interest in
+   J. M. Cano is with the Universidad de Oviedo, Ingeniería Eléctrica, Gijón
+33204, Spain.                                                                        the power system research community. Steady-state models
+   J. Mahseredjian is with the Ecole Polytechnique, Montreal, QC H3C 3A7             for HVDC systems were first proposed in [14] and further
+Canada.
+                                                                                     improved in [15] and [16]. The effects of harmonics and inter-
+   D. C. Aliprantis is with the Electrical and Computer Engineering Department,
+Iowa State University, Ames, IA 50011 USA.                                           harmonics in steady-state HVDC models have been discussed
+   K. Strunz is with the Technische Universität Berlin, Elektrotechnik und In-       in the literature [17]. The impedance mapping and equivalent
+formatik, Berlin 10587, Germany.
+                                                                                     circuit of HVDC systems have been considered in [18]. More
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       recent improvements have been made in [19] by considering
+   Digital Object Identifier 10.1109/TPWRD.2014.2340870                              the commutation subinterval. The conventional steady-state
+
+                          0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+ATIGHECHI et al.: DYNAMIC AVERAGE-VALUE MODELING OF CIGRE HVDC BENCHMARK SYSTEM                                                   2047
+
+
+
+
+Fig. 1. CIGRE HVDC benchmark system circuit diagram.
+
+
+
+models discussed in [14]–[19] are straightforward to imple-         developed AVMs are verified against a detailed implementa-
+ment. A simplified model [20] considers the dc- and ac-side         tion of the system by means of simulation studies. Due to lim-
+dynamics with some approximations. A dynamic model for              ited space, this paper focuses on the time-domain transients,
+the rectifier side of the hybrid HVDC system can be found in        whereas it is envisioned that a follow-up companion paper will
+[21], where the inverter side is modeled as a voltage or current    present detailed guidelines and examples of using the developed
+source. In order to predict the HVDC system’s stability, the        AVM for the small-signal and frequency-domain analysis of the
+small-signal model has been developed in [22]–[26]. Such lin-       CIGRE benchmark HVDC system.
+earized models are advantageous for controller design, analysis
+of interaction among the subsystems, subsynchronous torsional
+                                                                                    II. SYSTEM DETAILED MODEL
+interaction phenomenon, etc. [25]. These small-signal models
+are typically valid only within a small range about an operating       The CIGRE HVDC benchmark system, first proposed in
+point for which they were established.                              [29], is a monopolar 500 kV, 1000 MW dc link which em-
+   The dynamic average-value models (AVMs) have evolved             ploys 12-pulse converters on the rectifier and inverter sides.
+in order to overcome the challenges due to switching phe-           The detailed modeling of this system in PSCAD/EMTDC
+nomena in power-electronic-based systems. In such models,           and Matlab/Simulink has been presented in [34]. The circuit
+the effects of switching are neglected or “averaged” over           diagram of this system is illustrated in Fig. 1, and the cor-
+a prototypical switching interval. The resulting AVMs are           responding parameters are summarized in Appendix B. The
+continuous and can potentially run orders of magnitude faster       system is composed of two ac sides, each represented by the
+than the original detailed models. Such models are therefore        equivalent supplying/receiving network. The rectifier and in-
+very useful for studying the system-level transients, wherein       verter ac networks are represented by R-L circuits to represent
+the details of switching can be omitted. However, since the         weak grids on each side. In order to absorb the harmonics
+switching details are removed (averaged) in these models, such      generated by the converter as well as providing the converter
+models cannot be used to study the commutation failures or          with reactive power, multiharmonic ac filters are placed on both
+any similar phenomena that are related to the converter valves’     ac sides. The dc subsystem is represented by the T-equivalent
+switching instances. When implemented in SV-based pro-              circuit of the transmission line combined with the smoothing
+grams, the AVMs may be numerically linearized for subsequent        reactors that are connected at both sides in order to reduce the
+small-signal analysis.                                              ripple in dc current.
+   A summary of promising approaches and their application to          The 12-pulse converters are constructed by a series connec-
+modeling and analysis of power systems transients can be found      tion of two 6-pulse converters. At each ac side, (rectifier and
+in recent reports by the IEEE Task Force on Dynamic Average         inverter), the 3-phase transformers with Y- and -connected
+Modeling [27] and [28]. In order to provide a common refer-         secondary windings are employed to produce the desired 30
+ence system for HVDC transmission studies, the CIGRE bench-         shifted voltages (equivalent to 6-phase) that feed the two 6-pulse
+mark HVDC system was proposed in 1985 [29] and has been             converters, respectively, thus resulting in a 12-pulse operation.
+extensively used in many studies [30], [31]. This benchmark         As depicted in Fig. 1, each converter is controlled through the
+system is considered here to demonstrate the dynamic average        respective control module.
+modeling methodology and its advantages. The average-value             In the considered CIGRE HVDC benchmark system, the ac
+models for the rectifier and inverter sides are set forth and de-   network is weak (short-circuit ratio (SCR) of 2.5 at a rated fre-
+veloped based on the parametric approach [32], [33]. To demon-      quency of 50 Hz) [34], which also presents some challenges for
+strate the effectiveness of the methodology in SV-based and         the controls. It should be noted that the (conventional) HVDC
+EMTP-type software packages, the AVMs are implemented and           classic system is normally limited to networks with SCRs of at
+demonstrated in Matlab/Simulink and PSCAD/EMTDC. The                least around 2 [35]. This limitation comes from the voltage and
+2048                                                                         IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 29, NO. 5, OCTOBER 2014
+
+
+
+                                                                            lower limit for this angle is determined based on the protection
+                                                                            constraints to allow enough time for the valves to turn off be-
+                                                                            fore the end of a half-cycle. The -control (PI-3) adjusts the
+                                                                            value of extinction angle. However, the inverter control may
+                                                                            be switched from the -control strategy to the current-control
+                                                                            mode that limits the current to some specified reference value.
+                                                                            The firing angle for the inverter is then established based on the
+                                                                            output of these control modules, and the respective gate signals
+                                                                            are constructed by the pulse generators depicted in Fig. 1.
+
+                                                                                                  III. DYNAMIC AVM
+                                                                               In this paper, the AVM is developed in both Matlab/Simulink
+                                                                            and PSCAD/EMTDC. In order to model a complex system,
+                                                                            such as the CIGRE HVDC benchmark, it is necessary to divide
+                                                                            it up into smaller parts. Hence, the main circuit of HVDC
+                                                                            system is divided into seven subsystems: two line-commutated
+                                                                            converters (rectifier and inverter sides), which are modeled
+                                                                            using the parametric AVM approach; two ac subsystems; two
+                                                                            controller subsystems; and the dc transmission-line subsystem.
+                                                                            For convenience, each subsystem is implemented as a separate
+                                                                            module. These modules are then interconnected to form the
+                                                                            overall HVDC system.
+                                                                               The parametric AVM approach is generally independent of
+                                                                            the simulator platform. Dynamic AVM assumes that all ac and
+Fig. 2. CIGRE HVDC benchmark control subsystem: (a) Rectifier control and
+                                                                            dc variables can be replaced by their fast averages over a proto-
+(b) inverter control.                                                       typical switching interval      as follows:
+
+                                                                                                                                           (1)
+power stability issues between the converters and the ac net-
+works [35]–[37]. To reduce this effect, sometimes a static or
+synchronous compensator might be added to the converter ter-                where         may represent voltage or current. Due to the
+minals, or the capacitor-commutated converter (developed by                 12-pulse operation,                     , where      represents the
+ABB [35]) may also be considered. However, further details on               period of the ac waveform as depicted in Fig. 3. This definition
+this issue are out of the scope for this paper.                             of fast average directly applies to the dc-side variables, but in
+   For the purpose of this paper, in Fig. 1, the power is assumed           order to obtain the fast average of the ac variables, they must be
+to flow from left to right, which determines the rectifier and in-          transferred into a synchronous rotating reference frame. The
+verter sides, respectively. But otherwise, the controllers can re-          switching interval        and primary voltages and currents of
+verse the power flow by appropriately changing the firing an-               the transformer in the rectifier side are illustrated in Fig. 3. As
+gles on each side and changing the ac voltage magnitudes of                 seen in Fig. 3, the transformed ac voltages            and currents
+the two sources. The details of the rectifier and inverter con-                   appear as dc in the      synchronous reference frame and
+trollers are depicted in Fig. 2, and the corresponding param-               have ripple with a period of       .
+eters are summarized in Appendix C. For the rectifier side, a
+proportional-plus-integral (PI) current control (PI-1) is realized          A. Rectifier Dynamic AVM
+with the reference denoted by                 . This reference cur-            The development of an AVM requires relating the ac and
+rent is provided by the inverter controller. At the inverter side,          dc quantities of each rectifier (and inverter). The classical
+the controller is composed of a voltage-dependent current con-              approach is based on a number of simplifying assumptions
+troller (PI-2) and the extinction angle -control, respectively.             (ideal voltage sources, no commutating resistance, only com-
+The reference value for the rectifier controller                 is         mutating inductance, constant dc current, etc.) as presented in
+determined by the inverter controller in order to ensure

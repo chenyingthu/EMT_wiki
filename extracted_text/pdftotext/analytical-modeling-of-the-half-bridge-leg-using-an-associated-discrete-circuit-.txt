@@ -1,0 +1,174 @@
+                   This article has been accepted for publication in IEEE Transactions on Power Electronics. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2026.3677417
+
+                                                                                                                                                                                              1
+IEEE POWER ELECTRONICS REGULAR PAPER/LETTER/CORRESPONDENCE
+
+
+     Analytical Modeling of the Half-Bridge Leg Using
+          an Associated Discrete Circuit Model
+                                        Guolin Lai, Quanming Luo, Member, IEEE, Shufan Dong,
+                                     Zihong Xie, Ting Luo, Jia Li, and Yangfan Chen, Member, IEEE
+
+
+   Abstract— Gallium nitride high electron mobility transistors                                 switching transient analytical model is the piecewise linear
+(GaN HEMTs) have been considered as potential power semicon-                                    model [19], [20], which simplifies the model structure and re-
+ductor devices in modern power electronics owing to their high                                  duces computational complexity, but the exclusion of nonlinear
+switching speed and low conduction loss, which facilitate efficient                              parameters leads to discrepancies between simulation and ex-
+and compact solutions in high-frequency applications. However,
+                                                                                                perimental results, especially under high-frequency operation,
+their fast-switching behavior introduces challenges like volt-
+age/current overshoot and parasitic sensitivity, necessitating accu-                            as the switching transients and associated losses are inade-
+rate modeling for circuit optimization. This paper proposes an as-                              quately represented.
+sociate discrete circuit (ADC) model for half-bridge leg inspired                                  As switching frequencies extend into the multi-MHz range,
+by the fixed-equivalent-admittance methodology in electromag-                                   the influence of parasitic parameters becomes non-negligible in
+netic transient (EMT) simulations. Unlike traditional piece-wise                                GaN-based circuits. To accurately characterize switching be-
+linear state-space models that require switching between different                              havior under high-frequency operation, an analytical model that
+equation sets, the proposed ADC-based analytical model utilizes a                               comprehensively considers PCB parasitic parameters, nonlin-
+unified framework to represent all transient sub-modes, thereby                                 ear junction capacitance, and nonlinear transconductance is pre-
+reducing modeling complexity and significantly improving com-
+                                                                                                sented in [3] and [21]. However, the mutual influence between
+putational efficiency. By incorporating layout parasitic parame-
+ters and nonlinear junction capacitances, the model accurately                                  switching devices is ignored. Moreover, [15]-[18] propose an-
+characterizes both switching transient and steady-state behaviors                               alytical models for a GaN-based synchronous BUCK converter
+across various operating conditions. Simulation and experimental                                to investigate switching behaviors under the influence of dead-
+results validate the model's accuracy, speed, and scalability. The                              time effects and parasitic parameter coupling, as well as the in-
+proposed modeling method can be extended to various devices and                                 teraction between the upper and lower switch. The switching
+topologies, providing a practical framework for high-frequency                                  transients are segmented into distinct modes, with state equa-
+power system design.                                                                            tions established and solved for each, enabling accurate predic-
+                                                                                                tion of transient voltage and current waveforms.
+   Index Terms—GaN HEMTs (gallium nitride high electron mo-
+                                                                                                   However, in practical applications, traditional state space
+bility transistors), associated discrete circuit model, switching an-
+alytical model, computational efficiency.                                                       modeling still faces several major challenges. In state space
+                                                                                                modeling, a power system is modeled as a set of state space
+                              I.    INTRODUCTION                                                equations
+                                                                                                                       x(t ) = Ax(t ) + Bu(t )                  (1)
+T    HE Gallium nitride high electron mobility transistors (GaN
+     HEMTs) have become key devices in modern power elec-
+tronics due to their advantages such as high switching speed,
+                                                                                                Where x(t) denotes as vector of state variables and u(t) is input
+                                                                                                variable vector. Matrices A and B depend on the circuit topol-
+                                                                                                ogy and component parameters. Consequently, during switch-
+low conduction loss, and high breakdown voltage[1]-[4]. These
+                                                                                                ing transitions, the circuit passes through multiple sub-modes,
+features enable efficient and compact designs in applications
+                                                                                                and each mode requires its own A and B matrices. As the num-
+including data center power supplies [5], on-board chargers [6],                                ber of switches and state variables increases, the derivation and
+[7], and PV inverters [8], [9], [10]. However, the very ad-                                     management of these matrices become increasingly complex.
+vantages of GaN HEMTs also introduce critical challenges in                                     Furthermore, when nonlinear parasitic capacitances are consid-
+practical implementations. For instance, the rapid voltage and                                  ered, device parameters vary with voltage and current, so the
+current transitions (dv/dt and di/dt) during turn-on and turn-off                               entries of A and B must be updated at every simulation time-
+can lead to overshoot, ringing, and crosstalk in bridge configu-                                step. This real-time updating significantly raises the computa-
+rations, resulting in increased power losses or even device fail-                               tional burden and slows down the overall simulation.
+ure [11]-[18]. As GaN devices are increasingly adopted in high-                                    What’s more, the initial values of state variables, such as in-
+frequency power systems, accurate modeling of their switching                                   ductor currents and capacitor voltages, are difficult to determine.
+behavior has become essential for circuit design and system op-                                 [18] first estimates the initial state variables using an ideal cir-
+timization.                                                                                     cuit model and then performs periodic iterations by adjusting
+   Compared with physical model and behavioral model, ana-                                      the duty cycle and initial values until the steady state condition
+lytical model strikes a balance between accuracy and efficiency                                 x(0)≈x(T) is satisfied. This approach has several limitations: 1)
+and are widely adopted in system design [3]. The popular                                        the iterative process may fail to converge; 2) the duty cycle is
+
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:02:39 UTC from IEEE Xplore. Restrictions apply.
+                   © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                      but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                   This article has been accepted for publication in IEEE Transactions on Power Electronics. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2026.3677417
+
+                                                                                                                                                                                                        2
+IEEE POWER ELECTRONICS REGULAR PAPER/LETTER/CORRESPONDENCE
+not effectively constrained during the iterations, which can lead                                  In ADC model, basic circuit components, such as inductors
+to deviations from the actual operating conditions; and 3) the                                  and capacitors, are represented with Norton equivalent circuit
+periodic iteration relies on a predefined set of modes and their                                model, as shown in Fig. 1(a). Each Norton model consists of a
+switching sequence, so under different operating conditions                                     fixed equivalent admittance Yeq and a history current source Ih,
+new or unexpected states may arise, causing the iteration to                                    the value of which is determined by the computation results of
+break down.                                                                                     the last step.
+   Different from state space model, in electromagnetic transi-                                    The trapezoidal integration method is employed to discrete
+ent (EMT) simulations of power systems, a fixed-equivalent-                                     components due to its A-stability and second-order accuracy,
+admittance model, also termed as the associated discrete circuit                                and the equivalent admittance and the history current source are
+(ADC) model, is proposed in [22]-[26]. In this framework,                                       expressed as follows.
+components are modeled as a fixed equivalent admittance in                                         For the inductor
+parallel with a history current source. This approach avoids ma-                                                          t
+trix reconstruction and significantly accelerates simulation.                                                    YL =
+                                                                                                                          2L                                 (2)
+However, traditional ADC models are primarily optimized for
+                                                                                                                 I h _ L (n + 1) = −YLVb (n) − I b (n)
+system-level analysis, where switches are simplified as ideal
+devices, thus overlooking the nanosecond-scale dynamic pro-                                          For the capacitor
+cesses and nonlinearities of power devices. In contrast, the                                                                              2C
+                                                                                                                                 YC =
+ADC-based analytical model proposed in this paper extends                                                                                 t                                                            (3)
+this methodology from system-level simulation to circuit-level                                                                   I h _ C (n + 1) = YCVb (n) + I b (n)
+switching transient modeling. By incorporating the effective
+treatment of nonlinear capacitances and mode-switching transi-                                  where Ib(n) and Vb(n) are the current and voltage of the inductor
+tions within the ADC framework, this model is designed to pre-                                  or capacitor branch obtained from the last step calculation result.
+sent a comprehensive and accurate process for both switching                                    Besides, the resistor is represented by an equivalent admittance
+transition and steady-state without compromising computa-                                       and its history current Ih_R =0. Therefore, with a fixed time-step
+tional efficiency, representing a significant advancement by                                    Δt, the equivalent admittance is constant for a linear component.
+bridging the gap between high-speed EMT methodology and                                                                                                                                  Ih
+                                                                                                                     Ib                                                  Ib
+high-fidelity device modeling. The main contributions of this                                                                   or
+paper can be summarized as follows:                                                                                                                                                      Yeq
+   1) With nonlinear capacitances are modeled as linear ca-                                                                       Vb             -
+                                                                                                                +
+
+
+
+        pacitances in parallel with current sources, a unified                                                                                       (a)
+        half-bridge ADC framework is developed in which the
+                                                                                                                                                      Is_Cnon                               Is_Cnon
+        nodal-admittance matrix remains constant throughout all
+        switching modes.                                                                                  IC
+                                                                                                                                         IC IC0                                                 Ih_C0
+   2) Within the unified framework, a detailed analysis of the                                                   Cnon                                                      IC
+        GaN switching process is carried out to identify the sub-                                               VC         -                          C0
+                                                                                                     +
+
+
+
+
+                                                                                                                                                                                         YC0
+        mode divisions and transition boundaries, upon which a                                                                      (b)
+        mode-switching strategy based on history current up-                                    Fig. 1. Discrete ADC model of basic components. (a) linear components. (b)
+        dates is formulated.                                                                    nonlinear capacitor Cnon.
+   3) This work establishes a complete half-bridge analytical
+        model that incorporates the dynamic behaviors of GaN                                                                   3.0                                      Cos s=Cds +Cgd
+                                                                                                                                                                        Ciss =Cgs +Cgd
+        devices under zero-voltage switching (ZVS), incomplete                                                                                                          Cr ss=Cgd
+        zero-voltage switching (inc-ZVS), and hard switching                                                                   2.0                                      Curve fitting
+                                                                                                                      C (nF)
+
+
+
+
+        (HS) conduction scenarios. The model enables simula-
+        tion from zero initial conditions without the need to                                                                  1.0
+        specify initial state variables.
+   4) The proposed model accurately captures both switching                                                                     0
+                                                                                                                                    0       20         40               60          80
+        transients and steady-state waveforms, offers high com-                                                                                      vds (V)
+        putational efficiency for rapid switching-loss evaluation,                              Fig. 2. Nonlinear characteristic of GaN parasitic capacitances.
+        and provides strong scalability for extension to more
+                                                                                                          400                                                  400
+        complex circuits or control strategies.                                                                       25°C datasheet                                       25°C datasheet
+                                                                                                                      Curve fitting                                        Curve fitting
+   In this paper, the ADC models of fundamental components                                                300                                                  300
+                                                                                                                                                     isd (A)
+
+
+
+
+are described in Section II. Then, the complete analytical model
+                                                                                                 id (A)
+
+
+
+
+of GaN-based half-bridge leg and calculation method is dis-                                               200                                                  200
+cussed in detail in Section III and Section IV, respectively. In                                          100                                                  100
+Section V, simulation and experimental results validate the pre-
+cision of the proposed model. Finally, the study is concluded in                                           0                                                    0
+          

@@ -1,0 +1,190 @@
+                                                             Electrical Power and Energy Systems 115 (2020) 105479
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                    Electrical Power and Energy Systems
+                                                        journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+A multi-area Thevenin equivalent based multi-rate co-simulation for control                                                                                           T
+design of practical LCC HVDC system
+Yupeng Lia, Dewu Shua, , Jingwei Hua, Zheng Yana, Yun Zhoua, Haifeng Wangb
+                                        ⁎
+
+a
+  High-Performance Simulation Center, Key Lab of Control and Power Transmission and Conversion, Department of Electrical Engineering, Shanghai Jiaotong University,
+200240 Shanghai, China
+b
+  State Grid Shanghai Municipal Electric Power Company, China
+
+
+
+
+ARTICLE INFO                                               ABSTRACT
+
+Keywords:                                                  The line commutated converter (LCC) based HVDC transmission is often adopted to transmit the large capacity
+Line commutated converter (LCC) based HVDC                 of renewable energy, however, it is threatened by several critical issues, such as, commutation failures (CFs). In
+Multi-rate co-simulation                                   order to reduce CFs and improve the recovery characteristics of the HVDC, improved control and protection
+Multi-Area Thevenin Equivalent (MATE)                      strategies are always desirable. On the other hand, an accurate and efficient electromagnetic transient (EMT)
+Commutation failure
+                                                           simulation method is highly necessary to design the so-called control strategy, where the traditional transient
+Improved control strategy
+                                                           stability and EMT models cannot meet the accuracy and efficiency requirements simultaneously. To resolve these
+                                                           issues, a Multi-Area Thevenin Equivalent (MATE) based multi-rate co-simulation method is proposed, where the
+                                                           accuracy is guaranteed by the proposed MATE based transmission line model (MATE-TLM) and the efficiency is
+                                                           significantly improved by adopting several accelerating techniques, such as, the MATE-TLM and multi-rate co-
+                                                           simulation scheme. Further, a novel improved control strategy based on the concept of virtual impedance is
+                                                           proposed to reduce CFs and to increase the recovery speed of DC system. Simulation results of a practical AC/DC
+                                                           grid by the improved control strategy have well validated the effectiveness of the proposed MATE based multi-
+                                                           rate co-simulation method.
+
+
+
+
+1. Introduction                                                                                  control and protection strategies to reduce CFs and improve the re-
+                                                                                                 covery characteristics of the HVDC.
+    With the increasing penetration of renewable energy, the line                                    Previous research work to reduce the CFs can be summarized in two
+commutated converter (LCC) based HVDC is adopted to increase large                               categories: (1) the criterion to detect CFs: a power component fault de-
+capacity of renewable energy sources. However, several tough issues,                             tection method (PCD) is proposed to determine whether it is an
+such as the commutation failures (CFs), threaten the normal operation                            asymmetric or symmetric fault [7]. Several indicators, such as Multi-
+of the LCC based HVDC. Generally, CF occurs when a converter valve                               Infeed Interaction Factor (MIIF), Effective Short Circuit Ratio (ESCR),
+that is supposed to turn off keeps conducting without transferring its                           etc., are proposed to evaluate the severity of the CFs [8–10]. (2) im-
+current to the next valve according to the firing sequence. CF can                               proved control strategy to reduce CFs: in [11,12], parameters of con-
+trigger temporary reduced transmission power, drop of DC voltage,                                trollers are tuned based on the fuzzy logic technique in order to reduce
+over-current and sometimes longer duration serious transients, etc.                              CFs. However, the complexity of the co-called fuzzy logic will compli-
+These problems will become more severe when the LCC based HVDC is                                cate the overall controllers [13]. Traditionally, the voltage-dependent
+connected to a weak AC system. For example, the China Southern Grid                              current order limit (VDCOL) is adopted to lower the dc current order
+recorded the continuous CFs of Guanyinyan HVDC project. This acci-                               when the dc voltage is dropped. However, this method is not fast en-
+dent caused a reduction of over 3000 MW transmitted power by HVDC                                ough to lower dc current order and how to improve the VDCOL is an on-
+links and it caused the frequency stability issue at the inverter side.                          going research topic. Another choice is the commutation prediction
+According to past experiences, CF should be carefully resolved by im-                            methods [14], which can effectively detect voltage sags due to AC side
+proving the control and protection schemes in order to guarantee the                             ground fault and prevent the potential commutation failure or even
+fault ride-through ability as well as the recovery characteristics after                         continuous commutation failure via increasing the extinction angle in
+faults [1–6]. As a result, it is always required to propose advanced                             advance. However, the increase of extinction angle will increase the
+
+
+    ⁎
+        Corresponding author.
+        E-mail addresses: yupengli@sjtu.edu.cn (Y. Li), shudewu@sjtu.edu.cn (D. Shu), hujingwei@sjtu.edu.cn (J. Hu).
+
+https://doi.org/10.1016/j.ijepes.2019.105479
+Received 11 May 2019; Received in revised form 26 July 2019; Accepted 7 August 2019
+Available online 20 August 2019
+0142-0615/ © 2019 Elsevier Ltd. All rights reserved.
+Y. Li, et al.                                                                                                  Electrical Power and Energy Systems 115 (2020) 105479
+
+
+consumed reactive power of the AC side unexpectedly.
+    Up to now, in order to design the desired control and protection
+strategies and study the interactions between the LCC based AC/DC
+grids, an accurate and efficient electromagnetic transient (EMT) simu-
+lation method is highly necessary. However, in order to simulate the
+fast-switching dynamics of power electronic devices, the time-step of
+the traditional EMT simulation method is always limited under
+20–50 μs. It increase the computational burden dramatically under a
+unanimous and tiny time-step of a traditional EMT program. The
+computational burden is increased due to the following reasons: (1) the
+system scale is dramatically increased by the large-scale AC grids; (2)
+the tiny time-step is restricted by the power electronic devices, such as
+the LCC. Therefore, a multi-rate co-simulation method is a desirable
+solution when simulating large-scale AC/DC systems [15–18]. In other                            Fig. 1. Network partitioning of the whole system.
+words, the entire network is partitioned into the AC and DC systems,
+where the time-steps of AC/DC systems are chosen as ΔT and Δt
+                                                                                   allowed by the traditional EMT models, which results in huge compu-
+(ΔT = nΔt). Several interface models, such as the Thevenin/Norton
+                                                                                   tational burden. In order to improve the simulation efficiency from the
+equivalent circuit [17,19], and the transmission line model [20,21], are
+                                                                                   aspect of network partitioning and coordinated simulation structure,
+proposed to reflect the interactions between AC and DC systems.
+                                                                                   the proposed Multi-Area Thevenin Equivalent (MATE) technique will
+However, even if the multi-rate co-simulation is applied, the simulation
+                                                                                   be used to decouple the whole system into several independent and
+efficiency is still un-satisfactory due to the large scale of AC systems and
+                                                                                   smaller subsystems. At the same time, the interactions between dif-
+their nonlinear and frequency dependent dynamics. Therefore, the
+                                                                                   ferent subsystems are reflected by the so-called and specially designed
+Multi-Area Thevenin Equivalent (MATE) technique is utilized to further
+                                                                                   multi-area Thevenin equivalent circuit, which is illustrated in Fig. 1.
+improve the efficiency. Unfortunately, how to combine the MATE
+technique and the interface model of the multi-rate co-simulation has
+not yet been studied deeply and applied to control design of practical             2.1. Network partitioning by the MATE based transmission line model
+LCC HVDC systems. The previous research [22] discusses the concept of              (MATE-TLM)
+MATE based on two simple subnetworks. Its main limitation was on the
+simplicity of the illustrative simulation circuit, where the AC/DC sys-                In order to simulate the whole system in an accurate and efficient
+tems represented by ideal equivalent circuit are inadequate to inflect             way, the whole system is firstly partitioned into the AC and DC systems,
+the complexity of the large-scale AC/DC systems. Also in practical                 respectively (see Fig. 1). The majority of the AC grids is included in the
+large-scale AC/DC systems, multi subnetworks and boundary nodes are                AC system while the power electronic devices, such as the line com-
+needed to discussed in great details.                                              mutation converter (LCC), are included in the corresponding DC
+    To resolve these issues, a novel improved control strategy based on            system. The proposed network partitioning strategies lie in the fol-
+the concept of virtual impedance is proposed to reduce the probability             lowing two aspects.
+of the CFs and to increase the recovery speed of DC system, especially                 (1) Network partitioning between AC and DC grids
+when connected to weak AC systems. The advantages of the proposed                      Usually, the frequency bands for dynamics of respective AC and DC
+control strategies are well validated by the proposed multi-rate co-si-            grids differ a lot, DC and AC subsystems are suggested to adopt different
+mulation method. The novelty of the proposed multi-area Thevenin                   time-steps. As a consequence, the network partitioning strategy is
+equivalent based multi-rate co-simulation method is summarized as                  adopted to decouple the whole system into different subsystems. The
+follows:                                                                           specially designed interface model is proposed to represent high fre-
+                                                                                   quency interactions between different subsystems. Especially, the net-
+(1) the MATE based transmission line model (MATE-TLM) is proposed                  work partitioning strategies for the proposed method can be realized
+    to reflect the wide frequency band interactions between the LCC                according to the following rules:
+    and the large-scale AC grids;
+(2) the efficiency of the so-called MATE based multi-rate co-simulation            (1) In order to realize the proposed hybrid multi-domain transmission
+    method is significantly improved in two aspects. The efficiency of                 line model (HMD-TLM), the partitioning point can be chosen at the
+    simulating large-scale AC grids is improved by the MATE technique                  long transmission lines, which have large impedances and large
+    and the efficiency of simulating the overall LCC based AC/DC grids                 latency for the traveling waves.
+    is further improved by the multi-rate co-simulation structure.                 (2) Usually, the simulation errors of interface model are larger than
+                                                                                       errors inside each subsystem especially when the selected time-step
+    The rest of the paper is organized as follows: Section 2 details the               is over 50 μs. In order to reduce the impact from errors of interface
+method of multi-rate co-simulation based on the MATE technique;                        model onto the errors of other buses, it is better to choose the
+Section 3 demonstrates the foundation of the virtual resistance based                  partitioning point at the bus with the minimum connected lines.
+improved strategy for the LCC; Section 4 demonstrates the effectiveness            (3) Choose the partitioning point at the weak network coupling point.
+of the proposed simulation method as well as the proposed control                      The network coupling can be evaluated by the power flow, the short
+strategy. Section 5 draws the conclusions.                                             circuit capacity, etc.
+
+2. Multi-Area Thevenin Equivalent (MATE) based multi-rate co-                          (2) Network partitioning inside the AC grids based on the MATE tech-
+simulations                                                                        nique
+                                                                                       In order to further improve the simulation efficiency of the AC
+    As claimed, the computational burden of large-scale AC/DC grids                system, it is separated into N individual subsystems. When analyzing
+has been greatly increased by the following reasons: (1) the increased             the interactions between the AC and DC subsystems, the MATE tech-
+scale due to the large number of components inside the AC grid; (2) the            nique is used where each AC subsystem is represented by a Thevenin
+tiny time step, which is restricted by the fast switching dynamics of              equivalent source, accompanied by the Thevenin equivalent im-
+power electronic devices; (3) an unanimous and tiny time-step is only              pedance. After the solution of these equivalent AC subsystems being
+
+                                                                               2
+Y. Li, et al.                                                                                                                                            Electrical Power and Energy Systems 115 (2020) 105479
+
+
+                                                                                                            u¯ k (t      ), i¯k (t         ) are both obtained by linear interpolations:
+
+                                                                                                              u¯k (t       ) = L {u¯ k [(k          1) T           ], u¯k [(k      2) T       ]}
+                                                                                                                i¯k (t      ) = L {i¯k [(k          1) T           ], i¯k [(k     2) T       ]}           (4)
+
+                                                                                                            where L[.] denotes the linear interpolation operator.
+                                                                                                               On the other hand, the equivalent current at the AC system should
+                                                                                                            be calculated by averaging:
+                                                                                                            I¯k (t       )=      Z 1u¯ n (t         )     i¯n (t       ), t = k T                         (5)
+                              Fig. 2. MATE-TLM interface model.
+                                                                                                            where
+calculated, the voltage and current of each subsystem can be updated                                                            1
+                                                                                                                                     n
+
+by injecting the current source, where its value is equal to the interface                                  u¯ n (t      )= n              un [(k       1) T + i t              ], t = k T
+                                                                                                                                     i=1
+current. The overall dynamic equations of N subsystems are written in                                                                 n
+                                                                                                                                1
+the form of the MATE circuit:                                                                                i¯n (t      )= n              in [(k   1) T + i t              ], t = k T
+                                                                                                                                     i=1                                                                  (6)
+  Y1                    M1         v 1 (t )              ih1 (t       T)
+
+                YN      MN                     =                                                            2.2. Coordinated computational scheme
+                                   vN (t )               ihN (t       T)
+ M1T            MNT     Zb         ib (t )                        0                               (1)
+                                                                                                                 Fig. 3 illustrates the coordinated computational scheme of the
+where Y1,..YN denote the conductance matrix of each subsystem;                                              proposed MATE based multi-rate co-simulations. After the power flow
+v1(t),..vN(t) are the nodal voltages of each subsystem; ih1(t−ΔT), …,                                       is initialized, the whole system is partitioned into the respective AC and
+ihN(t−ΔT) are their historic currents; Zb, ib(t) are the Thevenin im-                                       DC systems, where the AC system will be further separated into N
+pedance and currents of the interface branches. Mi, i = 1,2…N is the                                        subsystems. The interfaces between the AC subsystems and DC system
+correlation vector between the nodal voltage of ith subsystem and each       

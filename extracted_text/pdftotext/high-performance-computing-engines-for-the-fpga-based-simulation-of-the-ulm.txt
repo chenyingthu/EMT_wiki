@@ -1,0 +1,200 @@
+                                                                Electric Power Systems Research 190 (2021) 106716
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+High performance computing engines for the FPGA-based simulation of the                                                                                   T
+ULM
+                                   ⁎
+Tarek Ould-Bachira, ,1, Hossein Chalangarb,1, Keyhan Sheshyekanib, Jean Mahseredjianb
+a
+    Department of Computer Engineering and Software Engineering, Polytechnique Montréal, Montreal, Canada
+b
+    Department of Electrical Engineering, Polytechnique Montréal, Montreal, Canada
+
+
+
+
+A R T I C LE I N FO                                         A B S T R A C T
+
+Keywords:                                                   This paper presents a design methodology for the FPGA-based simulation of the Universal Line Model (ULM).
+FPGA-Based simulation                                       The proposed approach yields a higher computational performance compared to alternative implementations
+Universal line model                                        reported in the literature. Such performance allows the use of the FPGA model in real-time simulation appli-
+Real-time simulation                                        cations or for the acceleration of oﬄine EMT programs. A state-space approach is used to perform the time-
+Travelling-wave fault location
+                                                            domain simulation of the pole-residue form of the rational ﬁtting of the characteristic admittance and propa-
+                                                            gation functions. The paper also discusses the appropriate scheduling of the ULM computations and proper
+                                                            management of the history terms that lead to an optimized hardware utilization, low latency response times, and
+                                                            higher computational performances using ﬂoating-point arithmetic.
+
+
+
+
+1. Introduction                                                                                 implementations of the ULM have been proposed in the literature, but
+                                                                                                fail to reduce the simulation time-step below 1 µs. Recently, an FPGA-
+    The Universal Line Model (ULM) [1] is a wide-band frequency-de-                             based implementation of the ULM for HIL-based testing of TWFLs has
+pendent model for lines and cables. The model includes full frequency                           been proposed in [7]. The line model is based on the second-order
+dependency of the Transmission Line (TL) and cable parameters. The                              realization of TL’s state-space equations[8] and achieves a time-step of
+ULM with its various improvements [2–4] is currently recognized as                              1.42 µs, while sustaining a clock frequency of 175 MHz.
+being the most accurate wide-band model. The ability to run the ULM                                 To achieve a better performance, this work proceeds by increasing
+on FPGA is justiﬁed by various application requirements such as                                 the clock frequency and deepening the pipeline to improving the
+Hardware-in-the-Loop (HIL)-based testing of Travelling Wave Fault                               computational performance. This however comes typically with a la-
+Locators (TWFLs). Modern TWFLs can locate a fault within a tower span                           tency penalty. Hence, a thought-out rescheduling of the ULM equations
+( ± 300 m), but require 1 MHZ sampling rate to achieve such per-                                is proposed to achieve more FLOPS at a lower latency. The real-time
+formance. Real-time simulators can indeed be used for providing a                               simulation of the ULM reported in this work can sustain a 250 MHz
+comprehensive test-bench for protection relays. Such a setup can be                             clock frequency and is shown to achieve a time-step as low as 200 ns,
+beneﬁcial in the sense that it provides ﬂexibility for selecting power                          while oﬀering proper accuracy for HIL-based TWFL testing.
+system parameters as well as fault type and location while allowing the                             The remainder of this paper is organized as follows. The theoretical
+regeneration of real-time signals. Moreover, real-time simulators pro-                          background of the ULM is presented in Section 2. The proposed FPGA-
+vide the possibility of in-situ testing of protection relays. However, for a                    based design methodology for an ULM simulator is discussed in
+HIL setup to function properly as a TWFL testbed, the simulated net-                            Section 3. Section 4 elaborates on the test cases used to assess the
+work necessitates a sub-microsecond time-step as well as accurate fre-                          performance of the FPGA model against EMTP [9] and discusses the
+quency-dependent line models [5].                                                               footprint of the FPGA implementation as well as the computational
+    CPU-based real-time simulation of the ULM have been shown to be                             accuracy resulting from the use of a non-standard ﬂoating-point (FP)
+rather computationally expensive for real-time simulation purposes                              format.
+because of the high ﬁtting order of the lines [6], with simulation time-
+steps in the > 10 µs range. On the other hand, FPGA-based real-time
+
+
+    ⁎
+    Corresponding author.
+    E-mail addresses: tarek.ould-bachir@polymtl.ca (T. Ould-Bachir), hossein.chalangar@polymtl.ca (H. Chalangar),
+keyhan.sheshyekani@polymtl.ca (K. Sheshyekani), jean.mahseredjian@polymtl.ca (J. Mahseredjian).
+  1
+    These authors contributed equally to this work.
+
+https://doi.org/10.1016/j.epsr.2020.106716
+Received 4 October 2019; Received in revised form 19 April 2020; Accepted 2 August 2020
+Available online 08 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+T. Ould-Bachir, et al.                                                                                                              Electric Power Systems Research 190 (2021) 106716
+
+
+                                                                                      x Yj c (t + Δt ) = α jYc x Yj c (t ) + βjYc vk (t )                                        (8)
+
+                                                                                      x iH, j (t + Δt )=   αiH     H             H
+                                                                                                             , j x i, j (t ) + βi, j {irm (t − τi )+
+
+                                                                                                           irm (t − τi + Δt )}                                                   (9)
+                                                                                          The time domain shunt and incident currents at the sending end k
+                                                                                      are then obtained for the next time-point as follows:
+                                                                                                            NY
+                                                                                                          Yc
+                                                                                      ihist
+                                                                                       shk (t + Δt ) = ∑ x j (t + Δt )
+                                                                                                            j=1                                                                (10)
+                                                                                                               i
+                                                                                                           Ng NH
+                                                                                      iik (t + Δt ) = ∑ ∑ x iH, j (t + Δt )
+                                                                                                           i=1 j=1                                                             (11)
+Fig. 1. (a) General view of a TL showing the reﬂected and incident currents in
+                                                                                      and contribute to the total history term as given below:
+its terminals k and m in frequency domain; (b) The Norton equivalents of the TL
+in the time domain.                                                                   ihist                            hist
+                                                                                       k (t + Δt ) = 2iik (t + Δt ) − ishk (t + Δt )                                           (12)
+                                                                                           The closed form expressions for the line parameters GTL, αj, αi,j, βi,j,
+2. Universal line model                                                               and Cj are given in Appendix A.1.
+                                                                                           Propagation time delays τi are not integer multiples of the simula-
+2.1. ULM modelling approach                                                           tion time-step. Hence, a circular buﬀer is employed to store past values
+                                                                                      of the reﬂected current irm and a linear interpolation is used to obtain
+    The aim of this section is to brieﬂy recall the theoretical basis of the          irm (t − τj ) and irm (t − τj + Δt ) .
+ULM. Fig. 1 shows a typical multi-conductor line (or cable) of length l
+with sending end k, receiving end m, characteristic admittance Yc, and                2.2. ULM time domain simulation
+propagation function H. The frequency domain equations of the line are
+solved at each end. The current Ik at end k is given by:                                 The following 6-step algorithm is used to simulate the ULM in time-
+Ik = Ishk − 2Iik                                                           (1)        domain with a ﬁxed time-step Δt.
+
+Ishk = Yc Vk                                                               (2)        1. Solve network equations to obtain the terminal voltages and the
+Iik = HIrm                                                                 (3)           reﬂected currents at each terminal of the line for the present si-
+                                                                                         mulation time-point, i.e. vk(t), vm(t), irk(t), and irm(t);
+where Ik and Vk are the terminal current and voltage at end k, whereas                2. Update the buﬀers storing reﬂected currents using the results from
+Iik is the incident current at node k, and Irm is the reﬂected current from              Step 1);
+node m, as shown in Fig. 1a. Similar equations are obtained for the                   3. For each terminal of the line, update the state vectors xYjc (t + Δt )
+receiving end m by interchanging subscripts k and m.                                     and x iH, j (t + Δt ) using Eqs. (8) and (9) respectively;
+     The time domain simulation of the TL is carried out using the ap-
+                                                                                      4. Compute the shunt history vector ihist    sh (t + Δt ) and the incident cur-
+proach described in [6]. From the equations, the line can be modeled by
+                                                                                         rent vector ii (t + Δt ) at each terminal using Eqs. (10) and (11) re-
+making use of two Norton equivalents at both terminations, as shown in
+                                                                                         spectively;
+Fig. 1b. The Norton equivalent for terminal k yields:                                 5. Compute the total history vectors ihist                   hist
+                                                                                                                                 k (t + Δt ) and im (t + Δt ) for the
+ik (t ) = G TL vk (t ) − ihist
+                          k (t )                                           (4)           next time-point using Eq. (12);
+                                                                                      6. Set t = t + Δt and go to Step 1).
+where GTL is the admittance matrix associated with the transmission
+line (see Appendix A.1). We also have:                                                   This algorithm is used as a foundation for the development of the
+irk (t ) = ik (t ) − iik (t )                                              (5)        proposed FPGA-based ULM simulator shown in Fig. 2.
+
+    The admittance Yc and propagation function H are rationally ﬁtted                 3. ULM hardware architecture
+in the frequency domain, which results in the following pole-residue
+identiﬁcation forms:                                                                  3.1. FPGA-based ULM solver
+               NYc
+                         Rj
+Yc ≃ G0 + ∑                                                                              The FPGA-based simulation of the ULM is presented in Fig. 2a. It is
+                j=1
+                    s − pj                                                 (6)        comprised of two main blocks, a Nodal Solver and a ULM Solver made
+                                                                                      of multiple instances of the ULM Computing Engine. The nodal solver
+        Ng     Ni
+      ⎛ H R i, j ⎞ −sτ                                                                composes network equations using the modiﬁed-augmented nodal
+H≃∑⎜∑                   e i
+            s − pi, j ⎟                                                               analysis (MANA) [9]. To achieve real-time performance, the inverse of
+  i=1 ⎝ j=1           ⎠                                                    (7)
+                                                                                      the MANA matrix is precomputed for all possible switch combinations
+where NYc , Rj and pj are respectively the ﬁtting order, residue matrices             [10]. The two solvers proceed serially, which yields the following for-
+and the poles resulting from the ﬁtting of Yc. Likewise, Ng, NHi , Ri,j, pi,j         mula for the minimum simulation time-step Δtmin :
+denote respectively the number of ﬁtting groups, the ﬁtting order of                                1
+each modal group i (i ∈ {1, 2, …, Ng } ), the residue matrices and the poles          Δtmin =           {ℓNS + ℓULM}
+                                                                                                   fmax                                                                        (13)
+resulting from the ﬁtting of the propagation function H. τi is the
+minimum phase delay associated with each modal group.                                 where fmax is the maximum frequency that the FPGA model can handle,
+    These approximations are evaluated in the time-domain using the                   whereas ℓNS , and ℓULM are the latencies of respectively the nodal and the
+state-space approach discussed in [6]. State vectors xYc and xH are as-               ULM solvers.
+sociated with Yc and H respectively and updated at each simulation                       A closer view of the ULM Computing Engine is given in Fig. 2b. As
+time-point using:                                                                     one can see, it is comprised of two convolutional kernels, one for
+
+                                                                                  2
+T. Ould-Bachir, et al.                                                                                                Electric Power Systems Research 190 (2021) 106716
+
+
+
+
+Fig. 2. (a) Nodal Solver connected to N ULM Computing Engines; (b) High-level
+inside view of an individual ULM Computing Engine.                                  Fig. 3. Detailed view of the convolutional kernels for terminal k: (a) Method 1:
+                                                                                    Direct hardware implementation of Eqs. (8)–(11); (b) Method 2: Rescheduling
+                                                                                    of Eqs. (8)–(11) to reduce latency.
+conducting the convolutions involving Yc (Eqs. (8) and (10)), the other
+for conducting the convolutions involving H (Eqs. (9) and (11)). The
+two modules being executed in parallel, the latency of the ULM Solver                  and (11) involve past terms only. Hence, the datapath latency of
+ℓULM is given by:                                                                      Module H ℓHop could be ignored if the history buﬀer was moved
+            N
+                                                                                       from input to output. An input buﬀer would still be required
+ℓULM = max(ℓiYc , ℓiH)                                                                 nevertheless because Eq. (9) combines terms involving diﬀerent
+           i=1                                                          (14)
+                                                                                       modal delays τi. However, the input buﬀer would be less deep than
+where N is the number of ULM instances, ℓiYc , and ℓiH are the latencies of            the one needed in Method 1. This optimization is shown in Module
+respectively Module Yc and Module H of the ULM Computing Engine                        H of Fig. 3b.
+instance i. These latencies are implementation-speciﬁc.
+                                                                                        Hence, when fully pipelined, Method 2 yields:
+3.2. Low latency ULM computing engine
+                                                                                    ℓYc = ℓ Ydp
+                                                                                             c
+                                                                                                + NY                                                             (17)
+    Fig. 3 presents two alternative methods for implementing the con-
+volutional kernels. Method 1 is shown in Fig. 3a. It is a direct hardware           ℓH = ℓ Hob                                                                   (18)
+implementation of Eqs. (8)–(11). The Matrix-Vector Multiplication                   where ℓ Hob is the latency of the output buﬀer, which is typically a single
+(MVM) and State Update blocks are used to implement Eqs. (8) and (9)                clock cycle.
+in respectively the Yc and H modules of Fig. 3a. When fully pipelined,
+Method 1 yields:                                                                    3.3. Low-latency custom-made ﬂoating-point operators
+ℓYc = ℓ Ydp
+         c
+            + NY                                                        (15)
+                                                                                        All the reported implementations of the FPGA-based ULM Solver of
+                 Ng                                                                 this paper use Method 2. To further decrease the simu

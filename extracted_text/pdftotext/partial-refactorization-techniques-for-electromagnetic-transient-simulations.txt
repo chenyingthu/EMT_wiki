@@ -1,0 +1,209 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 4, AUGUST 2025                                                                                             1795
+
+
+
+
+                      Partial Refactorization Techniques for
+                      Electromagnetic Transient Simulations
+              Boris Bruned , Senior Member, IEEE, Anas Abusalah, Jean Mahseredjian , Life Fellow, IEEE,
+                      Sébastien Dennetière , Member, IEEE, and Omar Saad, Senior Member, IEEE
+
+
+   Abstract—This paper explores partial refactorization techniques                 partial pivoting) can significantly speed up EMT simulations.
+to accelerate the simulation of Electromagnetic Transients (EMTs)                  An important bottleneck is the requirement for repetitive refac-
+in power systems. Direct sparse left-looking LU factorization from                 torization steps to account for switching devices and nonlinear
+the KLU solver is used to solve network equations. The refactoriza-
+tion step can be time-consuming if the factorized matrix varies often              models.
+as the simulation involves power electronics switching or nonlinear                   In KLU, the LU factors are computed by the left-looking
+devices. A path-based partial refactorization technique is proposed                Gilbert-Peierls (G-P) factorization algorithm [8] with partial
+to accelerate the re-computation of LU factors. In the left-looking                pivoting. This paper focuses on the LU factors re-computations
+algorithm, only a subset of columns that belong to the computed                    (refactorization) problem. Originally in KLU, a refactorization
+factorization path are refactorized. In addition, Block Triangular
+Factorization (BTF) is enhanced through partial refactorization,                   is proposed using a G-P algorithm version without pivoting.
+which further accelerates computation through smaller, evolving                    Previous work [6] has enhanced it by offering the possibility
+submatrices. The new techniques are tested on large power grids.                   to switch to full factorization only when the pivot is no longer
+Substantial performance gains are achieved.                                        valid through a pivot validity test. Partial refactorization aims
+   Index Terms—Electromagnetic transient (EMT) simulation,                         to re-compute LU factors in a faster manner considering only
+direct sparse linear solver, left-looking LU factorization, partial                the matrix elements which have changed at each time-point. It
+refactorization, factorization path.                                               avoids performing LU refactorization through all columns in
+                                                                                   the left-looking algorithm. The partial refactorization technique
+                            I. INTRODUCTION                                        applied in [6] exploits the left-looking column-based procedure
+                                                                                   of the factorization algorithm by restarting it from the mini-
+    N the scope of Energy Transition, the circuit-based Electro-
+I   magnetic Transient (EMT) simulation approach is required
+for grid operators [1] to study the stability of grids with massive
+                                                                                   mal index of columns which have changed in the matrix. This
+                                                                                   paper enhances this latter method by exploring the path-based
+                                                                                   refactorization approach. For each changed value in the original
+integration of renewable energy sources. This approach delivers
+                                                                                   matrix, it computes a factorization path. This path is a minimum
+highly accurate computations with detailed models of controls
+                                                                                   sequence of columns which need to be refactorized to update LU
+and power electronics circuits. The challenge is in terms of
+                                                                                   factors. The reunion of all factorization paths proposes a minimal
+numerical performance of EMT computations for large-scale
+                                                                                   column subset which must be proceeded by the left-looking
+grids with numerous inverter-based resources. Sparse-matrix
+                                                                                   refactorization algorithm. This approach has been originally
+based solvers can be used in EMT-type software [2] for efficient
+                                                                                   proposed in [9] to accelerate the solution phase (backward
+solution of large systems of equations based on the companion
+                                                                                   and forward substitutions) when the right member is sparse.
+circuit modeling approach. Direct sparse LU decomposition [3]
+                                                                                   Then, it has been applied in [10] to speed up LU refactorization
+is commonly used to solve such systems. Previous works have
+                                                                                   without pivoting using the Crout factorization algorithm. Recent
+integrated the KLU solver [4], [5] into EMT-type simulators
+                                                                                   research has applied it to parallelize refactorization [11] or
+in off-line [6] and real-time [7] modes. Efficient sparse solver
+                                                                                   perform partial refactorization in real-time EMT simulation [12]
+techniques (fill-in reduction by reordering, parallelization,
+                                                                                   for symmetric LU factors.
+                                                                                      For the first time, a generic formulation of the path-based
+   Received 13 September 2024; revised 3 April 2025; accepted 17 May 2025.
+Date of publication 30 May 2025; date of current version 25 July 2025. Paper
+                                                                                   refactorization technique is proposed, which can be applied
+no. TPWRD-01434-2024. (Corresponding author: Boris Bruned.)                        to unsymmetric LU factors. This paper also uses Block Tri-
+   Boris Bruned and Sébastien Dennetière are with Campus Transfo,                  angular Factorization (BTF) ordering method [13] which has
+RTE, 69330 Jonage, France (e-mail: boris.bruned@rte-France.com; sebastien.
+dennetiere@rte-France.com).
+                                                                                   been previously employed in [6] as a decoupling technique
+   Anas Abusalah is with PGSTech, Montréal, QC H3C3A7, Canada                      for parallelization. This paper speeds up partial refactorization
+(e-mail: anas.abusalah@emtp.com).                                                  by considering only the changed matrices in the left-looking
+   Jean Mahseredjian is with Polytechnique Montreal, Montréal, QC H3C3A7,
+Canada (e-mail: jean.mahseredjian@polymtl.ca).
+                                                                                   algorithm. All implementations have been done in the MKLU
+   Omar Saad is with Hydro-Québec, Montréal, QC H3C3A7, Canada                     solver, a modified version of KLU which includes the previous
+(e-mail: omar.saad@hydro-quebec.com).                                              partial refactorization technique used in EMTP [2]. The new
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3574482.
+                                                                                   partial refactorization techniques are tested on large-scale prac-
+   Digital Object Identifier 10.1109/TPWRD.2025.3574482                            tical power systems.
+
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 12,2026 at 07:21:03 UTC from IEEE Xplore. Restrictions apply.
+1796                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 4, AUGUST 2025
+
+
+
+   The focus of this paper is on fast computation methods which                   Algorithm 1: Factorization With Partial Pivoting.
+can be reused in sequential or parallel mode.                                        L←I
+   This paper is organized as follows. Firstly, in Section II, all                   for k = 1 to n do
+solution steps of sparse linear systems for EMT simulations                            solve Lx = A (:, k)
+are briefly presented. Then, Section III focuses on the partial                        partial pivoting on x
+refactorization techniques, the path-based approach, and the use                       U (1 : k, k) ← x(1 : k)
+of BTF. Finally, the efficiency of each partial refactorization                        L(k : n, k) ← x(k : n)/U (k, k)
+technique is validated on practical power system test cases.                         end for
+
+       II. SOLUTION OF SPARSE LINEAR SYSTEMS IN EMT
+                                                                                  Algorithm 2: Partial Refactorization Without Pivoting.
+                        SIMULATIONS
+                                                                                     L←I
+  Using Modified-Augmented-Nodal Analysis (MANA) for-                                for k ∈ C do
+mulation [2] with companion circuit models, network equations                          solve Lx = A (:, k)
+can be written in a linear form to be solved at each time-point:                       check pivot U (k, k) validity
+                               Ax = b                                    (1)           U (1 : k, k) ← x(1 : k)
+                                                                                       L(k : n, k) ← x(k : n)/U (k, k)
+  In its detailed form (1) becomes:                                                  end for
+                                
+                    Y n Ac      vn    i
+                                    = n                                  (2)
+                    Ad A x      xx    bx
+                                                                                   Partial pivoting may modify the row ordering if diagonal
+   It contains the classic nodal admittance matrix Y n and an                   elements in A are not chosen as pivots. After the factorization,
+augmented section created through the addition of supplemen-                    the final reordered matrix A is defined as follows
+tary equations with the matrices Ac , Ad and Ax . v n is the
+                                                                                                               A = P p A                           (7)
+vector of unknown node voltages and xx represents other types
+of unknowns, such as generic branch currents, ideal switch                      where P p is the row permutation matrix due to partial pivoting.
+currents, or other branch-type equations. The vector in contains
+nodal current injections from current sources, including history                           III. PARTIAL REFACTORIZATION TECHNIQUES
+terms from the discretized companion circuits. The vector bx
+                                                                                A. Principle
+represents known values for the augmented equations. In the
+case of nonlinearities, linearized Norton equivalents [2], [14] are                After the initial factorization, during the simulation, the values
+provided to A and updated at each iteration. This is a Newton                   in A may change due to nonlinear or time-varying devices,
+method where A is the Jacobian matrix.                                          such as switches for power electronics. This is the case, for
+   The matrix A is generally sparse and can be unsymmetric.                     example, for networks with several connected power electron-
+A direct sparse LU factorization method is commonly used to                     ics devices where A is continuously updated to account for
+solve (1). The augmented matrix is factorized as                                repetitive commutations. LU factors must also be numerically
+                                                                                updated through refactorization. All the symbolic analysis is
+                              A = LU                                     (3)    retained, as pivot row permutations (P p ) and sparse patterns of
+  Then, a forward substitution is first performed using                         LU factors are already known. KLU proposes to apply the G-P
+                                                                                algorithm without pivoting on the final reordered matrix A for
+                               L x = b                                  (4)    the refactorization. It has been enhanced in recent work [6] with
+  A backward substitution follows it with                                       pivot validity testing, as shown in the Algorithm 2. This allows
+                                                                                for a return to full factorization when a pivot is no longer valid.
+                              U x = x                                   (5)    This modified version of KLU, MKLU, has been integrated into
+   Prior (3), fill-in reduction techniques are adopted to minimize              the EMT simulation environment of [2].
+the number of extra non-zero values in the LU factorization                        In this algorithm, C is the set of columns from which the
+process. It can be written as follows:                                          refactorization proceeds. In the original version of refactoriza-
+                                                                                tion [4], [5], the Refact method, refactorization is done for all
+                             A = P AQ                                   (6)    columns, stated as
+   Where P the row permutation matrix and Q is the column                                                   C Ref act = [[1, n ]]                     (8)
+permutation matrix. The LU fill-ins of the newly reordered
+                                                                                   In [6], the concept of partial refactorization has been used and
+matrix A aim to be less than the ones of the original matrix
+                                                                                only a subset of columns is processed. The idea is to determine
+A. For circuit-based matrices, Approximate Minimum Degree
+                                                                                the minimum index nchg of columns of A that have been
+(AMD) ordering [15] is commonly used.
+                                                                                updated. Refactorization starts from that column index. For this
+   In direct sparse LU solver, the below left-looking G-P factor-
+                                                                                RefactChg method, we have
+ization algorithm [8] with partial pivoting is used to compute
+the LU factors of (3) on the newly reordered matrix A .                                               C Ref actChg = [[nchg , n ]]                   (9)
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 12,2026 at 07:21:03 UTC from IEEE Xplore. Restrictions apply.
+BRUNED et al.: PARTIAL REFACTORIZATION TECHNIQUES FOR ELECTROMAGNETIC TRANSIENT SIMULATIONS                                                                1797
+
+
+
+
+ Algorithm 3: Solve Lx = b, with b = A (:, k).
+    x←b
+    for j = 1 to k − 1 where U (j, k) = 0 do
+      x(j + 1 : n) ← x(j + 1 : n) − L(j + 1 : n, j)x(j)
+    end for
+
+
+B. Path-Based Partial Refactorization
+   The path-based approach aims to minimize the subset of
+columns that need refactoring in the left-looking algorithm.
+For each changed value in the original matrix, it computes a                    Fig. 1. Left, sparse pattern of a U matrix (non-zeros in gray), right, its graph
+                                                                                representation GU .
+factorization path. A factorization path is the minimum sequence
+of ordered columns that need to be refactorized to update LU
+factors. Its computation involves determining column depen-
+dencies. This approach has been used in [11] to parallelize
+refactorization without pivoting. The same principle can be
+applied to partial refactorization.
+   Column dependencies can be deduced from the Algorithm 3
+below, which details the solution of the triangular system in the
+G-P method without pivoting.
+   It can be noticed that if Ujk = 0 then the computation of factor
+k column depends on the values of the j column. This relation-
+ship can be reformulated using a graph representation approach.
+Let GU = (V U , E U ) be the oriented graph associated with                     Fig. 2. Explored non-zeros (green or blue cells) during the DFS to compute
+the matrix factor U of dimension n. The set of vertices V U                     factorization path from updated column (left, column 1, right column 2).
+has size n, and the set of edges is defined as (i, j) ∈ E U if
+Uij = 0. The graph GU is also referred to as the Elimination                   {6,7,9}. By combining both paths, C Ref actP ath is obtained.
+Graph (EGraph) in [11]. When a column k changes in A ,                        As nchg = 1, C sets for other partial refactorization techniques
+by transitivity, all columns with an index reachable from k in                  can be deduced:
+GU , denoted as ReachGU (k), should be updated during the
+refactorization. As pointed out in [5], reachable vertices are                                    C Ref act = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+identified using a Depth-First Search (DFS) starting from k.
+Thus, the factorization path associated with k can be deduced.                               C Ref actChg = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+                        C k = ReachGU (k)                              (10)                 C Ref actP ath = {4, 6, 7, 8, 10}                             (12)
+
+   Finally, for each column that has been updated in A , set C,                  Since the size of C Ref actP ath is the smallest, refactorization
+all factorization paths are combined to get the set C Ref actP ath              should be faster.
+of columns, which need to be refactorized.                                         To accelerate the DFS, U should be in Compressed Sparse
+                                                                               Row (CSR) format [16], where non-zeros values are readily
+                    C Ref actP ath =       Ck                 (11)              available for each row. In [12], the computation of the factoriza-
+                                           k∈C
+                

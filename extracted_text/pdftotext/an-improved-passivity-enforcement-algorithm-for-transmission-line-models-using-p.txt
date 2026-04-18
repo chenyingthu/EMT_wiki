@@ -1,0 +1,217 @@
+                                                                Electric Power Systems Research 196 (2021) 107255
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An improved passivity enforcement algorithm for transmission line models
+using passive filters
+H.M. Jeewantha De Silva a, *, Mohammad Shafieipour b
+a
+    Manitoba Hydro International, Canada
+b
+    Safe Engineering Services & Technologies ltd., Laval, QC H7L6E8, Canada
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   This paper proposes a simple but effective method based on shunt passive filters to enforce passivity on a fre­
+Electromagnetic transients                                  quency dependent transmission line model for multi-conductor cables and overhead lines. The passivity
+Passivity enforcement                                       enforcement algorithm is applied to a widely-used frequency dependent line model in EMT-type software, the
+Phase domain model
+                                                            Universal Line Model. The passivity violating regions of the transmission line model are identified using the
+Passive filters
+                                                            frequency sweep method. The passive shunt series RLC filters are added to the nodes of the transmission lines to
+                                                            eliminate passivity violations. Examples of multi-conductor underground cable systems are presented to
+                                                            demonstrate the validity of the proposed approach.
+
+
+
+
+1. INTRODUCTION                                                                                 Several passivity enforcement algorithms have been proposed [4–6].
+                                                                                            Some of these methods [4,5] are based on perturbation of the fitted
+    Wideband transmission line models are widely used in electromag­                        parameters and passivity is enforced as a solution to a constrained
+netic transient (EMT) studies such as temporary over-voltages, switch­                      optimization problem. However, the derivation and implementation of
+ing over-voltages, network resonance, lightning over-voltages, etc.                         such algorithms are complicated, as they require many matrix lineari­
+These models accurately consider frequency dependency as well as                            zation and eigenvalue sensitivity calculations. Furthermore, these
+distributed nature of the line parameters for frequencies ranging from                      methods are typically valid for eliminating small passivity violations,
+0 Hz to a few MHz. In this paper, transmission line refers to both                          which are commonly due to approximations in the linearization process.
+overhead lines and cables.                                                                  In addition, with these methods there is no guarantee that the conver­
+    The time domain implementation of a transmission line involves                          gence is always achieved, as it depends on several factors and for large
+several steps, which are summarized as follows. First, the line parame­                     transmission line systems with many conductors, these methods may
+ters such as propagation function and characteristic admittance are                         require significant computation time (e.g. several minutes depending on
+formulated in frequency domain for several frequency samples [1].                           the case).
+Next, by applying the “Vector Fitting” technique, the frequency domain                          Alternatively, passivity can be enforced analytically through
+characteristics are approximated using continuous rational functions [2,                    Hamiltonian matrix [6]. This approach is widely applied to
+3]. Finally, the recursive convolution method is applied to represent the                   admittance-based realization of a frequency dependent component or
+transmission line equations as a standard EMT-type model. This includes                     network equivalent. The work in [7,8] extend this method to trans­
+a shunt conductance and a parallel current source.                                          mission lines. However, they are limited to modal domain models based
+    Transmission lines are passive as a matter of physical reality. How­                    on constant transformation matrices. Note that for underground cables
+ever, due to the errors in approximating frequency domain character­                        and vertically asymmetrical transmission lines, the transformation ma­
+istics using rational functions as well as occasional frequency domain                      trix is frequency dependent. Again, the derivation and the imple­
+approximations, the resulting model may become non-passive [4]. It is                       mentation of this enforcement algorithm is tedious and requires
+observed that a non-passive model may lead to unstable time domain                          significant effort. The computer memory and time requirements for the
+simulations. One of the major challenges of frequency dependent                             algorithm can be significantly high for large transmission line configu­
+transmission line models is to enforce the stability of the time domain                     rations with several conductors/cables.
+simulations.                                                                                    Ref. [9] discusses a filter-based method to enforce passivity for a
+
+
+    * Corresponding author.
+
+https://doi.org/10.1016/j.epsr.2021.107255
+Received 28 November 2020; Received in revised form 20 February 2021; Accepted 7 April 2021
+Available online 30 April 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+H.M. Jeewantha De Silva and M. Shafieipour                                                                              Electric Power Systems Research 196 (2021) 107255
+
+
+two-layer network equivalent. A passivity enforcement method for                     analyzing the eigenvalue characteristics as a function of frequency and
+multi-conductor transmission lines via filters is proposed in [10].                  by taking sufficient number of samples in combination of log and linear
+However, a drawback of this method is that the corrected model elim­                 scales. The frequency range should cover the bandwidth of frequencies
+inates the natural decoupling of the transmission line. In EMT-type                  in time domain simulations [4].
+programs, the natural decoupling of frequency dependent transmission
+line is a significant advantage as it divides the system into small sub­             3. PASSIVITY ENFORCEMENT FOR TRANSMISSION LINES VIA PASSIVE SHUNT FILTERS
+systems, which leads to faster simulations.
+    This paper proposes an improved passivity enforcement algorithm                  3.1. Preliminaries
+using passive filters for transmission line models in EMT-type software.
+An improved quality factor estimation for passive filters is introduced.                 The fundamental concept behind the passivity enforcement by filters
+Compared to [10], an advantage of the proposed method is that the                    is that the eigenvalues of a matrix can be changed by modifying the
+natural de-coupling of the transmission line is also maintained. Addi­               diagonal elements of the matrix. If every diagonal element (Dii) of the
+tionally, the proposed method does not require an iterative procedure to             matrix is increased by a small value (dDii), all eigenvalues are increased
+converge numerically. Rather, it uses successive steps to enforce                    by the same value (dDii).
+passivity at the local level until passivity is enforced globally. This is               Addition of shunt conductance [4] and the accurate earth return
+different from approaches based on linearization, which may lead to                  impedance and admittance formulas [11] can improve passivity condi­
+numerical divergence. It should be noted that in this paper, we use a                tions in frequency domain parameter calculations. However, this may
+widely used wideband transmission line model in an EMT-type program                  not eliminate all violations due to unavoidable error accumulation in the
+[11], namely the Universal Line Model [2] to demonstrate the effec­                  curve-fitting procedure.
+tiveness of the propose technique. However, it is expected that the                      The series RLC filter can be used to enforce passivity [9] and they are
+introduced method can be used with other transmission line models.                   added as shunt elements to the terminals of the transmission line model
+    One possible drawback of the proposed approach is that the accuracy              at both ends as shown in Fig. 1. A shunt RLC branch is relatively
+of the fitted function may be decreased by adding a filter. However, the             straightforward to implement in EMT-Type software using existing
+passivity corrections are limited only to the passivity violating regions.           routines.
+Therefore, the inaccuracy of the rest of the spectrum is insignificant.                  First, passivity-violating regions are identified using a passivity
+Furthermore, if the passivity violations are small, the error is negligible          identification method discussed in Section 2.
+as shown in the examples studied in Section 4.                                           For each frequency-violating band, the transfer function of the filter
+                                                                                     is defined as
+2. PASSIVITY RELATED TO TRANSMISSION LINE AND CABLES
+                                                                                                     Kλ0
+                                                                                     F(w) =          (             )                                                 (4)
+2.1. Definition of passivity
+                                                                                                              ω0
+                                                                                               1 + jQ ωω0 −   ω
+
+
+     The passivity of the transmission line model is guaranteed; if and              where, Q is the quality factor, ω is the angular frequency, λ0 is the
+only if its transfer admittance function, Y(s) is positive real for any given        negative eigenvalue with the largest magnitude in that violating band,
+frequency. The transfer admittance is related to the sending and                     and ω0 is the angular frequency at which the most negative eigenvalue
+receiving-end voltages and currents as                                               occurs. In (4), the factor K > 1.0 ensures that the corrected eigenvalues
+[ ]
+  Ik
+            [ ]                                                                      are positive by at least a pre-determined (small) amount (e.g. K =
+          ̃ Vk                                                             (1)
+  Im
+       =Y
+              Vm                                                                     1.0001). The series resistance, inductance and capacitance values are
+                                                                                     computed as
+    The transfer admittance matrix can also be written in terms of the
+propagation function A(s) and characteristic admittance Yc(s) matrices               R=
+                                                                                           1
+                                                                                                                                                                   (5a)
+(s = jω) [4,10]                                                                           Kλ0
+     [(       ) (
+             2 − 1    2
+                        )   (       )
+                                   2 − 1
+                                                   ]                                      QR
+̃ = (I − A )− 1 I + A Yc ( I − A )− 1 (( − 2A)Yc
+Y                                              )                   (2)               L=                                                                            (5b)
+        I − A2 ( − 2A)Yc     I − A2      I + A2 Yc                                        ω0
+
+  The necessary and sufficient conditions for the transmission line                  C=
+                                                                                           1
+                                                                                                                                                                   (5c)
+model to be passive are [4,10]                                                            RQω0
+
+     ̃
+(a) Y(s)   is analytic ∀s : Re(s) > 0                                                3.2. Improved estimation of the quality factor (Q)
+     ̃ = Y(s
+(b) Y(s)      ̃ ∗)
+                                                                          (3)
+             ̃ T (s∗ ) + Y(s)
+                         ̃
+(c) H(s) = Y                      (Hermitian Matrix)                                    Selecting a proper quality factor for the filter is critical for successful
+    is positive definite
+                                                                                     enforcement of passivity. A small quality factor may lead to an over-
+    The complex poles and residues always appear in conjugate pairs in               passivity compensation and a large quality factor can lead to an
+vector fitting algorithms. Hence, the first two conditions are always                under-passivity compensation. Fig. 2 shows the effect of quality factor
+satisfied. To fulfill the third condition, the eigenvalues of the Hermitian          on the magnitude of series RLC filter transfer function.
+matrix should be positive for every frequency ω.
+
+
+2.2. Passivity identification
+
+    The frequency sweep method is used to identify violating regions. In
+this method, the eigenvalues of the Hermitian matrix is computed for the
+frequency range of interest (e.g. 0.001 Hz to a few MHz) and negative
+eigenvalues are monitored to identify passivity violating regions. A
+potential drawback of this method is that there can be missing negative
+eigenvalues between two frequency samples. This can be avoided by                                      Fig. 1. Transmission line with passive filters.
+
+                                                                                 2
+H.M. Jeewantha De Silva and M. Shafieipour                                                                                    Electric Power Systems Research 196 (2021) 107255
+
+
+
+                                                                                           λU ωL 2
+                                                                                                     < λL < λU                                                           (10)
+                                                                                            ωU 2
+
+                                                                                           where, ωU is the last frequency sample. If the above criteria is not met, λL
+                                                                                           is replaced with (11)
+                                                                                                      ( 2      )
+                                                                                                       ωL
+                                                                                           λL = 0.5λU       + 1                                                   (11)
+                                                                                                          ωU
+                                                                                                          2
+
+
+
+
+                                                                                           3.4. Algorithm
+
+                                                                                               The addition of sufficient shunt conductances to the admittance
+                                                                                           matrix improves the condition of passivity at very low frequencies. For a
+                                                                                           given transmission line model, the passivity violations are first deter­
+                                                                                           mined by evaluating the eigenvalues of the Hermitian matrix (based on
+                                                                                           curve-fitted Yc and A) for a set of frequency samples as discussed in
+             Fig. 2. Filter characteristics with different quality factors Q.              Section 2. For each frequency, the most negative eigenvalue of the
+                                                                                           Hemitian matrix is selected. The passivity violating regions are
+   Reference [2] suggests computing the quality factor based on in­                        accordingly identified based on the most negative eigenvalues in each
+equalities. The quality factor was determined based on the magnitude of                    frequency. For each violating band, the frequency (ω0) at which the most
+the filter admittance function [2]. However, it should be noted that only                  negative eigenvalue occurs, is determined.
+the real part of the filter admittance contributes to the eigenvalues of the                   Starting with the negative eigenvalue with largest magnitude for all
+transfer admittance matrix. Therefore, the quality factor can be evalu­                    violating bands, filters are added one by one until all eigenvalues are
+ated as                                                                                    positive. If the violating band is within the lower and upper bounds of
+       √√ ̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                                                  the frequency samples, the series RLC filters are added to correct the
+              ̅̅̅
+              2− 1                                                                         violation as discussed in Section 3.3. If there are violations at the upper
+Q1 = (                )                                                (6a)
+         ωU       ω0
+                                                                                           or lower frequency samples, a low-pass filter (series RC) or a high-pass
+         ω0 − ωU                                                                           filter (series RL) is added, respectively. Fig. 3 shows the passivity
+                                                                                           enforcement algorithm in a flow chart.
+          √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+            √̅̅̅
+               2− 1
+Q2 = (                 )                                                        (6b)       4. NUMERICAL RESULTS
+           ω0      ωL
+           ωL − ω0
+                                                                        

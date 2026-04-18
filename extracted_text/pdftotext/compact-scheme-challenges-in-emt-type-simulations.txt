@@ -1,0 +1,213 @@
+                                                       Electric Power Systems Research 252 (2026) 112403
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Compact scheme challenges in EMT-Type simulations
+M. Jafari Matehkolaei a,* , B. Bruned b , J. Mahseredjian a, A. Masoom c , I. Kocar a
+a
+  Polytechnique Montreal, Canada
+b
+  RTE, Jonage, France
+c
+  Hydro Quebec Research Institute, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          This paper investigates the potential of using the compact scheme (CS) integration method for Electromagnetic
+Compact scheme                                     Transient simulation of power systems due to its high accuracy. It focuses on the challenges encountered with CS
+Discontinuity treatment                            at discontinuity instants. Initially, the accurate response of the components at discontinuities and the impact of
+Electromagnetic transient simulation
+                                                   iterations at slope changes of nonlinear devices are elaborated. Afterward, the performance of CS at disconti­
+Nonlinearity
+Numerical integration methods
+                                                   nuities is investigated. This work demonstrates that CS produces abnormal results at discontinuity instants.
+Trapezoidal integration                            Consequently, a new method is proposed to overcome these issues. The formulation of network equations dis­
+                                                   cretized with CS in the modified augmented nodal analysis (MANA) framework is then elaborated and compared
+                                                   to sparse Tableau formulations. Case studies are presented to validate the performance of the proposed
+                                                   discontinuity treatment method.
+
+
+
+
+1. Introduction                                                                     role in determining the overall performance of the associated EMT
+                                                                                    simulation [4,6]. Adopting an integration method with high accuracy
+    POWER system operators mostly count on conventional system                      can potentially enhance the simulation speed due to the possibility of
+simulation models, also known as phasor-domain transient (PDT)                      leveraging large simulation time-steps. Therefore, this paper explores
+models, for the reliable operation of their system. PDT models have                 the potential of using compact scheme (CS) [7,8] as an integration
+demonstrated acceptable speed and performance for traditional stability             method for EMT simulations due to its stated higher accuracy compared
+studies. However, these models have a low frequency bandwidth, and                  to the widely used trapezoidal rule (TR). Compact scheme accounts for
+are incapable of maintaining simulation accuracy as the number of                   the first derivative values that can improve simulation accuracy.
+inverter-based resources (IBR) and power electronic converters in­                      Discontinuities refer to switching events and slope changes of
+creases in modern power systems [1]. Conversely, electromagnetic                    nonlinear elements which bring challenges in EMT-type simulation
+transient (EMT) simulation tools are gaining more global attention as               tools. Unlike L-stable methods like Backward Euler (BE), A-stable
+they address the problems associated with PDT models and offer a                    methods (like TR) produce fictitious oscillations at discontinuities,
+comprehensive insight into the details of all the parameters. However,              necessitating additional measures to address this issue. A comprehensive
+EMT simulation tools are normally slower than PDT simulation tools due              analysis of various discontinuity treatment methods is presented in [9].
+to the complexity and nonlinearity of the models involved. Therefore, it                In this paper, the real behavior of parameters at discontinuities is
+is needed to explore new strategies for enhancing the performance of                investigated with their physical equations and compared with the TR, BE
+EMT simulation tools [2,3].                                                         and CS responses. Additionally, the impact of iterations at slope changes
+    Numerical integration methods are the core of every EMT simula­                 of piecewise linear elements, on the accuracy of the simulation results
+tion, utilized to discretize the differential equations associated with the         will be analyzed. It is demonstrated that CS encounters limitations at
+dynamics of the system models [4]. In [5], a brief comparison of some               discontinuity instants and further actions must be adopted. Conse­
+numerical integration methods used for the EMT simulation of power                  quently, a combined CS with BE (CS_BE) method is proposed to solve the
+systems is presented. The performance of numerical integration methods              CS issues at discontinuities. Furthermore, this paper elaborates on the
+in terms of accuracy, stability, and computational burden plays a crucial           procedure for formulating network equations discretized with CS in
+
+
+
+  * Corresponding author.
+    E-mail addresses: mohammad.jafari-matehkolaei@polymtl.ca (M.J. Matehkolaei), boris.bruned@rte-france.com (B. Bruned), jean.mahseredjian@polymtl.ca
+(J. Mahseredjian), masoom.alireza@hydroquebec.com (A. Masoom), ilhan.kocar@polymtl.ca (I. Kocar).
+
+https://doi.org/10.1016/j.epsr.2025.112403
+Received 6 January 2025; Received in revised form 14 March 2025; Accepted 17 October 2025
+Available online 25 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+M.J. Matehkolaei et al.                                                                                              Electric Power Systems Research 252 (2026) 112403
+
+
+Modified-Augmented-Nodal-Analysis (MANA) [6]. Consequently, a
+                                                                                                  Δt
+comparison of simulation performance between MANA and Sparse                       xk+1 = xk +       (fk+1 + fk )                                                 (6)
+                                                                                                  2
+Tableau Approach (STA) usage in [10] is provided. All the test cases are
+coded in Julia programming language to ensure consistent testing                      With TR, the discretized equation of inductor in (2) is:
+benchmarks. The KLU solver [11] is used for solving the linear systems                           Δt
+and the results are validated with EMTP® [6].                                      ik+1 = ik +      (vk+1 + vk )                                                  (7)
+                                                                                                 2L
+    This paper is organized as follows. Section II presents an analysis of
+circuit real behavior at discontinuity instants, along with a comparison               If the inductor current is suddenly forced to zero due to switching
+to the performance of TR, BE and the combined TR and BE methods                    (ik+1 = 0), the voltage of the inductor at the time-point exactly after
+(TR_BE) used at discontinuities. The CS and its formulation in MANA are            opening the switch is calculated as:
+covered in Section III. Section IV presents new approaches for handling                       2L
+CS discontinuity instants. Simulation results of various test cases are            vk+1 = −      i k − vk                                                         (8)
+                                                                                              Δt
+presented in section V, and finally, section VI concludes the paper.
+                                                                                       For the following time-points,ik is zero. Therefore, the voltage of the
+                                                                                   inductor is vk+1 = − vk . At any following time-points, the voltage will be
+2. Analysis of discontinuity instants
+                                                                                   the opposite of the preceding time-point voltage. This shows that TR
+                                                                                   produces numerical oscillations after switching instants, necessitating
+   This section explores the actual behavior of parameters at disconti­
+                                                                                   adoption of a proper discontinuity treatment strategy. Switching to two
+nuities and explains the causes of impulsive outcomes and spikes using
+                                                                                   halved time-step BE at discontinuity instants is a strategy adopted in [6]
+the physical equations of the components. Additionally, the real re­
+                                                                                   that guarantees a correct simulation that is compatible with the true
+sponses at discontinuity are compared with responses attained from TR
+                                                                                   response of ideal elements, except in some particular cases where nu­
+or BE integration methods.
+                                                                                   merical oscillations may still occur at much lower amplitudes [9]. This
+                                                                                   method is called TR_BE in this paper and it is based on [12–14] (also
+2.1. Switching events                                                              called CDA). Some methods propose using interpolation to handle os­
+                                                                                   cillations that occur after discontinuities as presented in [15]. Detailed
+   The response of an ideal inductor over a switching event is investi­            analysis of the performance of different discontinuity treatment
+gated in this section. This analysis can be expanded for the capacitors            methods is presented in [9] and [16].
+and other components described with ordinary differential equations:
+dx                                                                                 3. Slope changes in nonlinear devices
+   = f(x, t)                                                            (1)
+dt
+                                                                                       The Newton’s method entails applying iterations after crossing
+    The differential equation describing an ideal inductor is:
+                                                                                   segment thresholds in piecewise linearized nonlinear devices, to update
+         diL         it − it− Δt                                                   the operating segment. This approach ensures the correct segments are
+vL = L       = L lim                                                    (2)        employed at each simulation time-point. For further analysis, the
+         dt     Δt→0     Δt
+                                                                                   nonlinear characteristic with two piecewise linear segments illustrated
+    From (2), it is evident that if the inductor current is forced to change
+                                                                                   in Fig. 1 is considered. Each segment is characterized with:
+abruptly over a very short period, which could happen due to ideal
+switching conditions, the inductor voltage will exhibit an impulse or              y = αx + y0                                                                    (9)
+spike. The shorter the variation period, the bigger the spike amplitude.
+In other words, a sudden change in the state variable causes the                   where α is the slope and y0 is the intersection of the line with y-axis. If,
+dependent variable to exhibit a spike for components described by dif­             after calculating the results at point B’, a crossing of the segment
+ferential equations. For comparison with ideal cases, the right side of (2)        threshold is detected, the operating segment is updated and the pa­
+is considered. If the inductor current undergoes a sudden change be­               rameters are recalculated with another iteration to reach the correct
+tween time-points t and t − Δt as Δt approaches zero, the voltage will             (sample case, the actual position may vary and even jump several seg­
+exhibit a scaled Dirac delta function (also known as impulse function) in          ments) position, point B. The subsequent time-point, point C, is also
+ideal cases. The Dirac delta function, denoted as δ(t), represents an ideal        simulated on the correct segment and operating point. Therefore, iter­
+spike with an infinite amplitude.                                                  ations are essential to ensure movement along the correct characteristic
+    BE is a first-order method described with:                                     in piecewise nonlinear devices. If iterations are not performed and the
+                                                                                   segment is updated only for the next time-point, the calculated value at
+xk+1 = xk + Δt fk+1                                                     (3)        point B’ becomes invalid, as it does not lie on the actual characteristic of
+                                                                                   the nonlinear element. Moreover, transitioning from point B’ to point C
+where Δt is the simulation time-step, and x is the state variable. Dis­
+cretization of (2) with BE leads to:
+              Δt
+ik+1 = ik +      vk+1                                                   (4)
+              L
+   If the current at the time-point k + 1 is forced to zero, ik+1 = 0, with
+the switch opening, the voltage at the time-point k +1 experiences a
+spike with an amplitude of:
+           L
+vk+1 = −      ik                                                        (5)
+           Δt
+   This spike normally has a high amplitude which is expected since ik is
+divided by a small value of Δt. For all the following time-points, the
+value of ik will be zero (ik = 0) resulting into vk+1 = 0. The BE method
+reproduces the true behavior of an inductor during switching instants,
+producing a voltage spike corresponding to the current variation level.
+   TR has second-order accuracy and is described with:                             Fig. 1. Characteristics of the typical nonlinear device with two slope segments.
+
+                                                                               2
+M.J. Matehkolaei et al.                                                                                                    Electric Power Systems Research 252 (2026) 112403
+
+
+results in non-homogeneous outcomes and introduces numerical issues.
+These concepts are further explored in the simulation section.
+   Slope changes of nonlinear devices can produce spikes when using
+TR, BE or TR_BE integration methods. The number of linearized seg­
+                                                                                                                                                                      (16)
+ments and the simulation time-step are influential factors.
+
+4. Analysis of the CS integration method
+
+4.1. Accuracy analysis
+                                                                                   where Â is the node vs branch incidence matrix and I is the identity
+    In [8], it is proposed to use CS for the EMT simulation of power
+                                                                                   matrix. u, i, and v represent the node voltage, branch current, and
+systems due to its high accuracy and stability. The CS [7] is described
+                                                                                   branch voltage vectors, and consequently, u’, i’, and v’ are their first
+with:
+                                                                                   derivatives, respectively. n is the number of nodes and b is the number of
+                                (          )
+             Δt             Δt 2 dfk+1 dfk                                         branches. KCL equations in the first row of (16) are the core of STA
+xk+1 = xk + (fk+1 + fk ) −            −                            (10)            formulation for computing grid values, stating that the sum of all the
+              2             12    dt    dt
+                                                                                   currents entering a node should be zero:
+   For evaluating the accuracy of CS, its Local Truncation Error (LTE) is
+calculated noticing that the primary terms of CS in (10) are identical to          A
+                                                                                   ̂i=0                                                                               (17)
+those of the TR. Consequently, the full Taylor’s series expansion of the
+                                                                                      Another set of KCL equations exists in the fourth row which is the
+TR is considered:
+                                                                                   core for calculating the first derivatives of currents:
+               (             )
+            Δt dxk+1 dxk         Δt 3 d3 xk Δt 4 d4 xk Δt 5 d5 xk
+xk+1 = xk +           +        −           −          −           + ...            A
+                                                                                   ̂ iʹ = 0                                                                           (18)
+             2    dt      dt     12 dt 3     24 dt 4    80 dt5
+                                                                        (11)          The second row of (16) is a simple KVL relating branch voltages to
+                                                                                   node voltages. The third and sixth rows of (16) express the voltage-
+   By manipulating the Taylor’s series expansion in (12) and combining
+                                                                                   current relations of the elements.
+it with (11), the discretization equation of the CS in (10) can be
+                                                                                      Using CS for discretizing the inductor equation [8]:
+obtained.
+                                                                                                 Δt                Δt 2 ʹ
+               Δt dxk Δt 2 d2 xk Δt 3 d3 xk                                        ik+1 = ik +      (vk+1 + vk ) −     (v k+1 − vʹk ),                                (19)
+xk+1 = xk +          +          +           + ...                      (12)                      2L                12L
+               1! dt   2! dt 2    3! dt3
+     Multiplying the second derivative of the entire equation in (12) by           and discretizing the capacitor equation with CS yields [8]:
+Δt 2 /12 and adding the resulting equation to (11) yields the discret

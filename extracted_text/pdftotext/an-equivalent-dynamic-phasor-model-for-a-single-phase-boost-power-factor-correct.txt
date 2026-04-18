@@ -1,0 +1,217 @@
+                          Received 8 February 2025; revised 29 March 2025; accepted 5 April 2025. Date of publication 14 April 2025;
+                            date of current version 6 June 2025. The review of this article was arranged by Associate Editor Zeng Liu.
+                                                                 Digital Object Identifier 10.1109/OJPEL.2025.3560554
+
+
+
+
+        An Equivalent Dynamic Phasor Model for a
+       Single-Phase Boost Power-Factor-Correction
+                        Converter
+                                        UDOKA C. NWANETO 1,2 (Senior Member, IEEE),
+                                  SEYED ALI SEIF KASHANI 3 (Graduate Student Member, IEEE),
+                                      AND ANDREW M. KNIGHT 3 (Senior Member, IEEE)
+                                     1
+                                         Electrical and Software Engineering Department, University of Calgary, Calgary, AB T2N 1N4, Canada
+                                                 2
+                                                   Department of Electrical Engineering, University of Nigeria, Nsukka 410105, Nigeria
+                                     3
+                                         Electrical and Software Engineering Department, University of Calgary, Calgary, AB T2N 1N4, Canada
+                                    CORRESPONDING AUTHOR: UDOKA C. NWANETO (e-mail: udoka.nwaneto1@alumni.ucalgary.ca)
+            The work of Udoka C. Nwaneto was supported in part by the Natural Sciences and Engineering Research Council of Canada (NSERC) and in part by Alberta
+                                                                                  Innovates.
+
+
+
+
+         ABSTRACT      To mitigate harmonic current flow in distribution systems, single-phase diode-bridge rectifiers
+         (DBRs) are commonly equipped with active power factor correction (PFC) controllers. Achieving high
+         power quality and dynamic performance in PFC controller design demands a precise understanding of PFC
+         converter behavior. While detailed electromagnetic transient (EMT) simulations provide accurate insights,
+         they are time-consuming. To address this, the dynamic phasor (DP) method offers a more efficient modeling
+         approach for power converters. This paper introduces and explores the DP model of a single-phase boost PFC
+         converter, along with guidelines to integrate it with existing simulation platforms. To overcome challenges
+         arising from differing driving frequencies (line frequency for the DBR and switching frequency for the
+         DC-DC converter) in the DP modeling of boost PFC converters, we employ the sign function to transform the
+         dynamic model of the single-phase DBR and boost DC-DC converter into an equivalent single-phase active
+         rectifier model. Subsequently, we convert this equivalent model into a DP model for the single-phase boost
+         PFC converter. Utilizing small-signal analysis, we establish a systematic design procedure for using the pro-
+         posed DP model to tune and optimize PFC controller gains. Simulations conducted in MATLAB/Simulink,
+         along with error calculations, demonstrate a strong correlation between the proposed DP model and the
+         detailed EMT model results, while also highlighting significant numerical simulation advantages of the DP
+         model over the detailed EMT model. Experimental results further validate the practical utility of the proposed
+         DP model in tuning control systems for single-phase boost PFC converters.
+
+         INDEX TERMS AC–DC converter, boost converter, dynamic phasor (DP), power factor correction (PFC),
+         single-phase active rectifier.
+
+
+
+
+I. INTRODUCTION                                                                              computers, and mobile phone chargers, are usually equipped
+IN RECENT times, utilities and regulators have leveraged                                     with power factor correction (PFC) control functionality to
+several standards (e.g., IEC61000-3-2 standard) to impose                                    limit harmonics injection into the grid [3], [4], [5], [6], [7],
+stringent limits on harmonics that can be injected into utility                              [8], [9], [10]. Among several PFC topologies for ac/dc power
+grids [1], [2] in order to reduce grid losses and prevent mal-                               supplies, the boost-type PFC converter is prevalent due to its
+functioning of consumer equipment sensitive to harmonics.                                    low component count, low device stress, and continuous na-
+To adhere to these standards, single-phase ac/dc converters,                                 ture of its input current. In a single-phase boost PFC converter,
+serving as front-end converters in wireless power trans-                                     two converters are used to interface the load to the utility grid.
+fer system and onboard charger of electric vehicles, laptop                                  The first converter is an uncontrolled diode-bridge rectifier
+       © 2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+1002                                                                                                                                                              VOLUME 6, 2025
+(DBR) which converts the input AC voltage to a pulsating           frequency ripple in the load voltage, which is often relied
+DC. The DBR’s output terminals are coupled to a second con-        upon, to size the dc bus capacitor and is also the main metric
+verter; a boost DC-DC converter. Therefore, the input voltage      considered in the trade-off between dynamic performance and
+of the DC-DC converter in a boost-type PFC converter is a          ac-side current quality of the PFC converter [15], is often
+rectified sinusoidal voltage obtained from the DBR. The rec-       neglected in the formulation of conventional average-value
+tified voltage contains even-harmonic components of which          models.
+double-line frequency component is the dominant one. Two              To solve this problem, this paper proposes the use of dy-
+widely-used control methods in boost-type PFC converters           namic phasor (DP) method to develop the average model of a
+are the peak-mode current control and average-current-mode         single-phase boost PFC converter [17], [18], [19], [20], [21],
+(ACM) control [11], with the ACM control being ubiquitous          [22]. The DP method offers a way to overcome the simulation
+in commercial products.                                            inefficiency of detailed EMT time-domain models and the in-
+    To design boost PFC converters that are reliable and com-      accuracy of conventional average models. However, applying
+plaint to total harmonic distortion (THD) limits prescribed        the DP method to model single-phase boost PFC converters
+in standards, accurate modeling and simulation are essential.      is challenging due to the presence of multiple excitation fre-
+Time-domain electromagnetic transient (EMT) simulations in         quencies, as noted in [12]. The authors of [12] proposed a
+commercial EMT simulators such as PSCAD, EMTP, give                2D convolution-based extended generalized average model-
+accurate behavior and harmonic performance of boost-type           ing (EGAM) technique to accurately capture the dynamics
+PFC converters. However, EMT simulators take relatively            of converters with multiple excitation frequencies. However,
+long time to produce accurate results due to a need to use         the EGAM method is relatively complex, as it requires the
+a small simulation step size (e.g., 5 μs). In addition, EMT        inclusion of numerous harmonic terms to achieve acceptable
+models offer little insight required for control system design     accuracy.
+and system-level analyses. Conventionally, the long simu-             To this end, this paper introduces a new and simplified
+lation time imposed by detailed models are overcome by             approach for deriving the average model of a boost PFC con-
+leveraging the average-value modeling technique wherein the        verter. This approach involves shifting the boost inductor’s
+high-frequency components of currents and voltages are ne-         dynamic equation from the dc side to the ac side using the
+glected. However, the dilemma associated with using the            sign function as a transformation mechanism. Transforming
+average modeling technique in boost-type PFC converters            the inductor’s dynamic equation effectively converts the math-
+is the excitation frequency to use in performing the aver-         ematical model of the boost PFC converter into an equivalent
+aging since a boost PFC converter has two main excitation          model of an H-bridge active rectifier. This allows the DP
+frequencies namely (a) the line frequency: dominant in the         method to be readily applied to the equivalent boost PFC con-
+DBR, and (b) the high switching frequency: dominant in the         verter model, enhancing simulation speed. For example, by
+DC-DC converter. The methods widely reported in literature         leveraging the DP method, the dominant second harmonic in
+to overcome this modeling challenge are based on using the         the load voltage and the key dynamics of the rectified current
+timescale of interest to perform averaging. These two av-          can be incorporated into the average model while maintaining
+eraging methods are line period (Tl )-method and switching         a relatively short simulation time. Additionally, by linearizing
+period-(Tsw ) method [13], [14], [15], [16]. In [13], both Tl -    the large-signal DP model and applying reasonable assump-
+and Tsw -averaged boost PFC circuits are proposed and ana-         tions, controllers can be accurately designed within the DP
+lyzed. In developing the Tsw -averaged boost PFC model, it is      domain and subsequently used to tune practical single-phase
+assumed that the inner current loop works ideally to reduce        boost PFC converters.
+computation burden. The Tl -averaged boost PFC converter              The contributions of this paper are summarized as follows.
+model is based on averaging the Tsw -averaged boost PFC               1) An equivalent DP model of a single-phase boost PFC
+model over Tl . The Tl -averaged boost PFC-converter model                converter is developed, which enables the second har-
+is reported to be suitable for static ac and transient analyses.          monic component of the load voltage capacitor and
+Another approach to obtain an average-value model discussed               the boost inductor current dynamics to be analyzed
+extensively in [14] involves three steps: (1) Assume that grid            and visualized without relying on time-consuming EMT
+voltage and grid current are in phase; (2) Compute the average            simulation of a detailed single-phase boost PFC con-
+output voltage of the DBR on the grid voltage period; (3) Ren-            verter model.
+der the complete boost PFC average model to the timescale of          2) A DP-based small-signal model of the single-phase
+the boost DC-DC converter switching period while assuming                 boost PFC converter is derived, and its equiv-
+that the DBR’s output voltage is constant [14]. The described             alence with the conventional state-space average-
+average models are mostly suitable for control design as well             value-model-based small-signal model is highlighted
+as visualizing the average dc voltage and fundamental input               and analyzed. Unlike the conventional average-value
+current. However, one of the demerits of these average models             model-based small-signal model, the DP-based small-
+is that the boost inductor current dynamics, which is neces-              signal model captures harmonics, sub-harmonics and
+sary to evaluate the harmonic performance of PFC converters,              inter-harmonics, encompasses a broader frequency
+are neglected. In addition, the magnitude of the double-line              range, preserves transient harmonic dynamics, and is
+
+
+VOLUME 6, 2025                                                                                                                 1003
+NWANETO ET AL.: EQUIVALENT DYNAMIC PHASOR MODEL FOR A SINGLE-PHASE BOOST POWER-FACTOR-CORRECTION CONVERTER
+
+
+
+
+      inherently suitable for designing harmonic resonant
+      compensators.
+   3) A systematic control design procedure is formulated
+      to show how to calculate control gains using the DP
+      model and how to use the calculated control gains to
+      tune the control systems of detailed switching model
+      and hardware prototype of a single-phase boost PFC
+      converter.
+   4) Guidelines to integrate the proposed DP model of a
+      single-phase boost PFC converter into existing simula-
+      tion platforms (fundamental frequency phasor simulator
+      or EMT simulator) are given.
+   The remainder of this paper is structured as follows:
+Section II introduces the DP modeling method and the con-
+ventional average-value and DP models of a single-phase
+boost PFC converter. Section III explores the use of small-
+signal method to develop transfer functions for control system
+design and uncovers the links/relationships between the DP
+model and the average-value model. Section IV gives the
+simulation results. In Section V, the proposed DP model is
+validated experimentally. Conclusions are drawn up in Sec-
+tion VI. More detailed info is given in Appendix A–E.
+
+II. DP MODEL OF A SINGLE-PHASE BOOST PFC
+CONVERTER
+A. THE DP MODELING METHOD
+The DP method relies on the fact that a quasi-periodic wave-
+form, x(τ ) with a fundamental frequency, f and potential
+high-order harmonics, can be represented in the interval
+τ ∈(t − T, t] using a time-dependent Fourier series given by
+[16], [17], [18], [19], [20], [21], [22]:
+                              ∞
+                              
+                 x (τ ) =          xk (t ) e jkωτ ,        (1)
+                            k=−∞
+
+where ω is the fundamental frequency of x(τ ) in rad/s, and
+T is the sliding window length. Since x(τ ) may be aperiodic,
+xk (t ), which is a complex Fourier coefficient, has varying
+amplitude and it is therefore called the kth DP [16], [17], [18],
+[19], [20], [21], [22]. The kth DP is computed via an averaging
+operation:                                                          FIGURE 1. Single-phase boost PFC converter with a dual-loop linear
+                         ⎡ t                    ⎤                   control scheme: (a) the structure of a detailed model built in
+                                                                   Simulink/Simscape; (b) an average model of Fig. 1(a) suitable for control
+         xk (t ) = 1/T ⎣    x (τ ) e− jkωτ dτ ⎦ = Xk (t ) . (2)   design; (c) an equivalent model used in deriving the proposed DP model.
+
+                        t−T                                         1) AVERAGE-VALUE MODEL OF THE BOOST PFC CONVERTER
+   The kth DP, xk (t ) obtained from (2) is a low-frequency       Fig. 1(a) shows the structure of the detailed model of a single-
+version of the original nearly periodic waveform, x(τ ). Thus,      phase boost PFC converter. To obtain the average-value model
+large step sizes can be used to simulate DP models. More            of the single-phase boost PFC converter, the switching details
+information about the DP method can be found in [16], [17],         of the DBR and the boost converter, in addition to the boost
+[18], [19], [20], [21], [22].                                       PWM stage shown in Fig. 1(a) are not modeled. Instead, the
+                                                                    DBR and the boost dc-dc converter are replaced with their cor-
+B. DP MODEL OF A SINGLE-PHASE BOOST PFC                             responding transformer equivalents as depicted in Fig. 1(b).
+CONVERTER                                                           The DBR’s algebraic equations are:
+To derive the DP model of the single-phase boost PFC con-                                           is = γ i r                            (3a)
+verter, we first explore the conventional average-value model
+to ascertain its suitability to the DP modeling task.                                              vr = γ vs                             (3b)
+
+1004                                                                                                                            VOLUME 6, 2025
+where γ is the switching function, vs = Vs cos ωt, Vs is the       3) OVERCOMING LIMITATIONS OF THE AVERAGE-VALUE
+grid voltage amplitude, and ω is the grid frequency in rad/s.      MODEL
+   The state-space equations of the boost converter are:           To overcome the limitations of using the average-value model
+                                                                   in the DP-based modeling of a single-phase boost PFC con-
+                    dir
+                  Lr    = vr − ir Rr − d  vo              (4a)    verter, the boost inductor’s dynamic equation is shifted from
+                     dt                                            dc side to the ac side via a transformation. Recall that:
+                    dvo
+                 Co     = d  ir − vo/Ro                   (4b)                               is = sgn(vs ).ir                    (7a)
+                    dt
+where d is the duty cycle and d  = 1 − d.                                                    vr = sgn(vs ).vs                    (7b)
+   Two cascaded controllers are used as shown in Fig. 1. It                                    (sgn(vs ))2 = 1                     (8)
+consists of a slower outer dc voltage loop and a faster inner
+current loop.                                                      where sgn(.) represents the standard sign function wherein
+   For the outer voltage control loop, two control loop topolo-    sgn(p) = −1 for p < 0 and 1 for p > 0 [24]. Multiplying
+gies are widely used. The first topology involves using only       (4a) by sgn(vs ), and replacing d  ir term in (4b) with {sgn(vs ).
+a proportional-integral (PI) controller to regulate the output     d  }.{sgn(vs ). ir } while considering (7) results in:
+voltage. Its dynamical model is given by:
+                                                                                           dis
+                                                                                        Lr    = vs − is Rr − mvo                 (9a)
+                         dψ       ∗
+                         dt = vo − vo
+                                                                                            dt
+                    ∗          ∗                            (5)
+                  Ir = K pv (vo − vo ) + ψKiv                                              dvo
+                                                                                        Co     = mis − vo/Ro                      (9b)
+where K pv and Kiv are the proportional and integral gains, ψ                              dt
+is a state variable, vo∗ is the reference output voltage, and      where m = {sgn(vs ).d  } is the signed value of d  (and equiv-
+Ir ∗ is the amplitude of the rectified current setpoint. This      alently, the modulation index). Eq. (9) is equivalent to the
+control strategy is effective in achieving a unity power factor,   state-space average model of a single-phase active rectifier.
+provided that the 2ω ripple in vo remains negligible (owing to     Therefore, by transforming (3)–(4) into (9) using the sign
+a presence of large Co). Otherwise, is will contain high-order   

@@ -1,0 +1,147 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2990968, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                 Development of a Voltage-Dependent Line Model
+                 to Represent the Corona Effect in Electromagnetic
+                                 Transient Program
+                                           Thassio Matias Pereira and Maria Cristina Tavares, Senior Member, IEEE
+
+
+
+               Abstract--This paper describes a new method to represent                                        unrealistic and conservative results [7]. However, since it has
+           single-phase overhead transmission lines (TL) under corona                                          distributed, nonlinear, hysteretic and frequency-dependent
+           effect in electromagnetic transient simulation program. Based on                                    behavior, the representation of corona effect in the
+           Bergeron model and the scheme proposed by Dommel to                                                 electromagnetic transient simulations is not easy to perform.
+           represent transmission lines in Electromagnetic Transients
+                                                                                                                  To the best of the authors’ knowledge, the only way to
+           Programs (EMT), a voltage-dependent line model (VDLM) was
+           developed. This model can be represented through of an
+                                                                                                               represent the corona effect in EMT consists in subdividing the TL
+           equivalent impedance network and easily combined with other                                         into linear sections, and at each junction node is placed a shunt
+           components of the electric power system. To solve the nodal                                         corona branch [8], [9]. Basing on this method, a technique that
+           equations of the network a simple technique is proposed, which is                                   considers the corona branch implicitly was posteriorly proposed,
+           suitable to calculate lightning overvoltages transients and avoids                                  it uses a recursive scheme and represents the line as a nonlinear
+           the necessity of iterative methods, increasing the efficiency of the                                component [10], [11]. Anyway, in these cases the corona is
+           algorithm. The proposed method was implemented in Matlab                                            treated as an external and lumped component, and line parameters
+           software, and the simulation’s results were compared with field                                     are kept invariant. To represent the distributed nature of the
+           measurements to verify the accuracy of the model. Comparisons
+                                                                                                               corona effect different methods were proposed over the years,
+           were also made with the traditional linear Corona Model. A good
+           agreement could be observed between them.
+                                                                                                               which normally use numerical algorithms to solve the telegraph's
+                                                                                                               equations [12], [13] or discretized Maxwell's equations [14], [15].
+              Index Terms-- Corona, Transmission line modeling, lightning                                      However, it should be noted that such methods are not suitable
+           overvoltages.                                                                                       for representation in EMT type programs, since they are not
+                                                                                                               described through Norton equivalents.
+                                             I. INTRODUCTION                                                      In this paper we present a new methodology to represent the
+                                                                                                               corona effect in lightning overvoltages simulations. Basing on
+           A     ccurate knowledge of overvoltages’ magnitude and
+                 waveform is essential to the insulation coordination design
+                 of overhead transmission lines. This information is normally
+                                                                                                               Bergeron line model and the scheme proposed by Dommel to
+                                                                                                               represent single-phase overhead lines in EMT [1], a voltage-
+                                                                                                               dependent line model (VDLM) was developed, which
+           obtained through digital simulations, where the Electromagnetic                                     corresponds to a more general case of the Bergeron model and
+           Transient Programs (EMT-type programs) are widely used due                                          allows the corona effect to be represented directly into the line
+           their versatile to represent several components of an electric                                      model. More specifically, the great difference between the
+           power system.                                                                                       proposed model and the previous models consists in the fact that
+             The basic structure of the EMT was firstly presented by                                           the capacitance per unit of length of the line is treated as a
+           Dommel in 1969 [1]. Nowadays these programs have very robust                                        voltage-dependent parameter, which results in a nonlinear
+           line models capable of representing with good accuracy the                                          representation of the line and reproduces the distributed nature of
+           frequency-dependence of line parameters [2], [3], [4], although                                     the phenomenon. Furthermore, since the VDLM can be
+           the corona effect cannot be represent directly in these line models.                                represented by an equivalent impedance network, it can be
+             The corona effect occurs in an overhead line when the electric                                    implemented as a separate component or as a subroutine in any
+           field in the conductor’s surface exceeds a certain critical value,                                  EMT program, which allows the model to be easily combined
+           causing the ionization of the air and the generation of space                                       with other power system elements.
+           charge in the vicinity of the conductor [5], [6]. This phenomenon                                      The corona model was implemented in Matlab software along
+           acts as a natural attenuator of surges, reducing the magnitude of                                   with an algorithm that automatically makes the spatial
+           the overvoltages and slowing the traveling waves’ propagation                                       discretization of the line, besides it calculates the nodal voltages
+           speed. For this reason, neglecting it on the simulations can lead to                                without using iterative methods, increasing the proposed model
+           _______________                                                                                     efficiency. Furthermore, to investigate its accuracy, comparisons
+              This work was supported by the research agencies CAPES (code-001),
+           CNPq (306351/2017-0) and FAPESP (2018/04174-7; 2017/20010-1).                                       between computed results and two different measurement data
+           (Corresponding author: Thassio M. Pereira).                                                         available in literature were carried out. Additional tests were
+              T. M. Pereira and M. C. Tavares are with School of Electrical and                                made with traditional linear component method (TLCM). Good
+           Computer Engineering, University of Campinas, Campinas, São Paulo 13083-
+           852, Brazil (e-mail: tmatias@dsce.fee.unicamp.br; ctavares@unicamp.br).
+                                                                                                               agreement was obtained for both cases.
+                                                                                                                  This paper is structure as follows. The first part of the document
+                                                                                                               presents a brief review of the classical Bergeron line model.
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                        Authorized licensed use limited to: University of Liverpool. Downloaded on July 04,2020 at 00:28:14 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2990968, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                               2
+
+           The second part describes the structure of the VDLM, the
+                                                                                                                                                 𝑣𝑚 (𝑡)
+           corona model and the computational procedure. The third part                                                           𝑖𝑚,𝑘 (𝑡) =            + 𝐼𝑚 (𝑡 − 𝜏0 )                                   (6)
+           validates the proposed method.                                                                                                         𝑍0
+
+                                                                                                                                                𝑣𝑚 (𝑡 − 𝜏0 )
+                           II. A REVIEW OF BERGERON LINE MODEL                                                          𝐼𝑘 (𝑡 − 𝜏0 ) = −                     − 𝑖𝑚,𝑘 (𝑡 − 𝜏0 )                            (7)
+                                                                                                                                                    𝑍0
+             Consider a lossless single-phase transmission line with
+           constant parameters (CP) and length 𝑙, as shown in Fig. 1.                                                                            𝑣𝑘 (𝑡 − 𝜏0 )
+                                                                                                                        𝐼𝑚 (𝑡 − 𝜏0 ) = −                      − 𝑖𝑘,𝑚 (𝑡 − 𝜏0 )                           (8)
+           According to Bergeron model, the relationship between                                                                                      𝑍0
+           voltage and current at the terminals 𝑘 and 𝑚 can be expressed
+           by (1) and (2).                                                                                                    ik,m (t)                                                   im,k (t)
+             𝑣𝑘 (𝑡) + 𝑍0 ∙ (−𝑖𝑘,𝑚 (𝑡))
+                                                                     (1)                                                +                                                                            +
+                                = 𝑣𝑚 (𝑡 − 𝜏0 ) + 𝑍0 ∙ 𝑖𝑚,𝑘 (𝑡 − 𝜏0 )
+                                                                                                                                                      Ik (t      τ0)
+              𝑣𝑚 (𝑡) + 𝑍0 ∙ (−𝑖𝑚,𝑘 (𝑡))                                                                              vk (t)      Z0                                                     Z0          vm (t)
+                                                                                                   (2)                                                        Im (t    τ0)
+                                         = 𝑣𝑘 (𝑡 − 𝜏0 ) + 𝑍0 ∙ 𝑖𝑘,𝑚 (𝑡 − 𝜏0 )
+                                                                                                                        -                                                                            -
+           Where:
+                                                                                                               Fig. 3. Equivalent impedance network of the lossless Bergeron single-phase
+                                                           𝐿0                                                  line model.
+                                               𝑍0 = √                                              (3)
+                                                           𝐶0                                                     To calculate the currents 𝑖𝑘,𝑚 (𝑡) and 𝑖𝑚,𝑘 (𝑡) it is necessary
+                                                𝑙                                                              to know the voltages at line terminals, 𝑣𝑘 (𝑡) and 𝑣𝑚 (𝑡). These
+                                   𝜏0 =             = √𝐿0 𝐶0 ∙ 𝑙                                   (4)         voltages can be calculated by means of the system nodal
+                                              𝑣𝑝𝑟𝑜𝑝
+                                                                                                               equations, as shown in (9):
+             In above equations, 𝑖𝑘,𝑚 (𝑡) and 𝑖𝑚,𝑘 (𝑡) correspond to the                                                      [𝒀] ∙ [𝒗(𝑡)] = [𝒊(𝑡)] − [𝑰]                   (9)
+           instantaneous currents entering terminals 𝑘 and 𝑚,                                                  Where:
+           respectively; 𝑣𝑘 (𝑡) and 𝑣𝑚 (𝑡) correspond to the instantaneous                                     [𝒀] - Nodal conductance matrix
+           voltages on the terminals 𝑘 and 𝑚, respectively, 𝑍0 is the                                          [𝒗(𝑡)] – Column vector of node voltages at time 𝑡. Some
+           characteristic impedance of the line, 𝜏0 is the travel time (or                                     elements may be known (specified voltage source from datum
+           the time that a signal takes to travel from one terminal to the                                     node), and others are unknown.
+           other), 𝑣𝑝𝑟𝑜𝑝 is the wave propagation speed, 𝐿0 and 𝐶0 are,                                         [𝒊(𝑡)] – Column vector of injected node currents at time 𝑡
+           respectively, the series inductance and the shunt capacitance                                       (specified current sources from datum to node)
+           of the line per unit of length.                                                                     [𝑰] – Known column vector, which is made up from
+             Terminal k ik,m (t)                                             im,k (t) Terminal m               equivalent historical currents sources.
+                                                 Lossless line                                                    Since (9) corresponds to a system of linear equations it can
+                          +                                                         +
+                                                                                                               be easily solved by different methods, which are well-known
+                        vk (t)                                                     vm (t)                      and will not be explained here. More information can be found
+                           -                                                        -                          in [1], [16].
+           Fig. 1. Lossless single-phase line with constant parameters.
+                                                                                                                                 III. VOLTAGE-DEPENDENT LINE MODEL
+              Equations (1) and (2) may be properly understood as
+           follows: a signal that leaves a line terminal reaches the other                                         To represent the corona effect in transmission lines we can
+           end with the same amplitude (lossless line), after a time delay                                     consider that the shunt capacitance and shunt conductance in
+           of 𝜏0 . This concept is shown in Fig. 2.                                                            any point along the line are voltage dependent, which means
+                                   Terminal                     Terminal                                       that the distributed characteristic of this phenomenon should
+            vk(t) + Z0 ik,m (t))                                            vm(t τ0) + Z0 im,k (t τ0))
+                                                                                                               be properly modeled. Thereby, the only way to represent this
+                                                                                                               phenomenon is through spatial discretization.
+                                                                                                                   The appropriate length of each line section when
+                                                                                                               performing the spatial discretization depends on the type of
+                                                      τ0
+                                                                                                               the phenomenon analyzed. By performing the discretization of
+                                                                                                               the line and calculating the shunt capacitance and shunt
+           Fig. 2. Graphical interpretation of the Bergeron’s equations for a lossless
+           single-phase line.                                                                                  conductance based on the voltage at each line section terminal,
+              By means of (1) and (2) we can obtain (5) and (6), which                                         it is assumed that the voltage along the line section is constant.
+           describe the currents at line terminals, 𝑖𝑘,𝑚 (𝑡) and 𝑖𝑚,𝑘 (𝑡).                                     However, this approximation is reasonable only if the travel
+           This pair of

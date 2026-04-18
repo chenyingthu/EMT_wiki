@@ -1,0 +1,212 @@
+Received 18 November 2024, accepted 14 December 2024, date of publication 23 December 2024,
+date of current version 30 December 2024.
+Digital Object Identifier 10.1109/ACCESS.2024.3521284
+
+
+
+
+A Transient Conducted EM Disturbances Source
+Modeling Method for Electromagnetic Launch
+System Based on the Cascaded Multi-Port
+Circuit Model
+BAILIN MOU 1 , QI-FENG LIU 1 , (Member, IEEE), ZHENYA CHEN1,2 , XIAOWEN WU1 ,
+YONGMING LI1 , CHEN HUANG3 , AND HUAI-QING ZHANG 1 , (Member, IEEE)
+1 School of Electrical Engineering, Chongqing University, Chongqing 400044, China
+2 State Grid Zhejiang Hangzhou Power Supply Company, Hangzhou 311499, China
+3 Science and Technology on EMC Laboratory, China Ship Development and Design Centre, Wuhan 430064, China
+
+Corresponding author: Qi-Feng Liu (liuqifeng@cqu.edu.cn)
+This work was supported in part by the Natural Science Foundation of Chongqing, China, under Grant cstc2021ycjh-bgzxm033; and in
+part by the National Natural Science Foundation of China under Grant 52377002.
+
+
+  ABSTRACT Electromagnetic launch (EML) systems with energy storage units in transient operating
+  states are gradually being applied in modern ships, satellite launches, etc., power switching devices with
+  higher voltage and switching frequency, Additionally, innovative topologies are being developed to enhance
+  the electromagnetic performance of the EML systems. This inevitably leads to significant EMI issues.
+  Therefore, this paper proposes a transient conducted EMI source modeling method for EML systems
+  based on a multi-port equivalent circuit cascade model. Initially, a multi-port transient conducted EMI
+  source model for supercapacitors is developed, taking into account the time-varying load characteristics
+  of supercapacitors during charging and transient high-current discharge characteristics during discharging.
+  Subsequently, a multi-port transient conducted EMI source model of the dual three-phase linear motor has
+  been developed utilizing experimental measurement data. Leveraging the port-to-port cascade characteristics
+  of various devices in the EML system, a dual three-phase dc-ac inverter multi-port conducted EMI model
+  with high-frequency parasitic effects has been developed. A system-level modeling method based on the
+  multi-port equivalent circuit cascade transient conducted EMI source modeling method is developed by
+  cascading the multi-port equivalent circuit models of each functional component for the EML system.
+  To evaluate the accuracy of this system-level modeling method, an experimental setup is constructed to
+  assess transient conducted EM disturbances in a low-power EML system. The time-domain simulation
+  results of the transient operating state are compared and analyzed with the actual operating conditions from
+  the voltage, current, and energy perspectives, further validating the accuracy and efficacy of the EML system
+  conducted EMI source modeling method based on a cascade of multi-port equivalent circuit models, as well
+  as the transient conducted EM disturbances time-domain and frequency-domain characteristics.
+
+
+  INDEX TERMS Transient conducted EM disturbances, multi-port equivalent circuit, electromagnetic launch
+  system.
+
+I. INTRODUCTION                                                                                 by pulse power generation equipment to propel the load to a
+Electromagnetic launch systems (EML) are a type of                                              high initial velocity. Essentially, they are energy conversion
+equipment that use electromagnetic force (EMF) generated                                        equipment that converts electrical energy into kinetic energy
+                                                                                                to launch the load [1], [2], [3], [4], [5]. The EML system
+   The associate editor coordinating the review of this manuscript and                          utilizes a supercapacitor energy storage device to achieve
+approving it for publication was Mohamed Kheir               .                                  launch through an instantaneous high-power linear motor.
+                                                  2024 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+VOLUME 12, 2024                                          For more information, see https://creativecommons.org/licenses/by/4.0/                        195085
+                                                       B. Mou et al.: Transient Conducted EM Disturbances Source Modeling Method for EML System
+
+
+
+
+It primarily consists of the energy storage subsystem, the               However, given that EM disturbances signal cross-
+electromagnetic propulsion subsystem, and the control and             propagate between devices, it is critical to analyze and model
+maintenance subsystem. The high-power energy transmission             the mechanisms of conducted EMI from a system perspective.
+from the electrical energy conversion devices in this system          Therefore, Yang et al. investigated the mechanisms of
+increases both the power switching frequency and voltage              EM disturbances interaction between various equipment
+level. Consequently, this can significantly impact the external       in the system [26], developed high-frequency models for
+power supply grid, resulting in serious conducted EMI                 typical equipment and the system, and performed simulation
+problems [5]. Consequently, this impacts the safe and stable          analysis based on the new resonant problems created by
+operation of equipment on the platform.                               EM disturbances paths between devices under different
+   Currently, scholars and research institutions are primarily        operating conditions. Due to the high-current during equip-
+focused on the electromagnetic compatibility (EMC) of EML             ment operation, the current probe may become magnetically
+systems. Their primary focus is on the characteristics of             saturated. To ensure accurate measurement of high-frequency
+wideband electromagnetic radiation through experimental               interference currents in high-current systems, reference [27]
+measurements [6]. This research is carried out through                proposed a flexible current probe that utilizes Rogowski coils
+both experimental measurements [7], [8], [9] and simulation           and passive matching resistors, facilitating the detection of
+modeling methods [10], [11], [12], [13], [14], [15], [16].            time-domain DM and CM currents.
+Considering the need for conducted EM disturbances in                    However, no relevant research findings on the transient
+EML systems, and the electrical energy conversion device              conducted EMI source system-level modeling and simulation
+generates high du/dt and di/dt during the turn-on and                 of EML systems. Due to the inability to accurately model
+turn-off processes, special attention must be paid to its             the EM disturbances behavior of EML, it is challenging to
+EMI characteristics. The EMI sources modeling methods                 establish design constraints and requirements for the optimal
+mainly can be divided into: frequency-domain and time-                design of EMI filters to suppress transient conducted EM
+domain methods. The frequency-domain modeling method is               disturbances. Therefore, it is necessary to establish suitable
+used to establish the equivalent circuit model of differential        modeling for transient conducted EMI source in the EMLs to
+mode (DM) and common mode (CM) interference [17]. This                accurately predict its transient EMI source characteristics.
+method facilitates the direct acquisition of its conducted               This paper is organized as follows: firstly, the multi-port
+EM disturbances spectrum. Therefore, it has been more                 transient conducted EM disturbances models of a superca-
+widely used in the EMC literature. Previously, frequency-             pacitor, the dual three-phase linear motor, and the inverter are
+domain modeling was primarily focused on IGBT modules,                introduced in Section II. An experimental system for transient
+cables, and converter modules in the device [18]. However,            conducted EM disturbances of a low-power electromagnetic
+in practice, it is essential to predict the conducted EMI             launch system is established and the accuracy of the transient
+source generated by the electromagnetic propulsion system             conducted EMI source system-level modeling method based
+as a whole. To address this, an experimental measurement              on multi-port equivalent circuit cascading is verified in
+method for the EMI source was proposed [19], but no                   Section III. A system-level model of transient conducted EMI
+system-level EMI prediction model was established based on            source of a typical EML is established. This model reveals its
+the measurement results.                                              transient EM disturbances characteristics and offers guidance
+   On this basis, to accurately achieve prediction of conducted       for subsequent EM disturbances suppression in Section IV.
+EMI source of electromagnetic devices or systems, and to              Finally, conclusions are given in Section V.
+propose simulation models to support the assessment of
+equipment compliance, several researchers have investigated           II. TRANSIENT CONDUCTED EMI MODELING METHOD
+frequency-domain equivalent circuit model and have pro-               FOR ELECTROMAGNETIC LAUNCH SYSTEMS BASED ON
+posed a two-port network model based on measurement                   CASCADING OF MULTI-PORT EQUIVALENT CIRCUIT
+data [20], a ‘‘black box’’ model [21], a linear equivalent-           MODELS
+Thevenin circuit [22], and direct correlations with various           The EML system, shown in FIGURE 1, consists of a dc-
+distribution parameters [23], which can predict the conducted         dc converter, a supercapacitor energy storage unit, a dual
+EM disturbances characteristics of the system in the fre-             three-phase dc-ac inverter, and a dual three-phase linear
+quency range of 100 kHz to 100 MHz.                                   motor. Because the transient operation mode of the high-
+   Compared with the frequency-domain modeling, the                   power EML differs from the traditional periodic operation
+time-domain method has higher simulation accuracy.                    mode used in the past, it is critical to develop a transient
+Wang et al. [24] established the time-domain circuit model for        conducted EM disturbances model for each device in the
+each component to predict the overall conducted EM distur-            system to predict the EML system’s transient conducted EMI
+bances of the device. Additionally, based on the mechanisms           source characteristics. The flow chart of the electromagnetic
+of conducted EMI source generation in medium-voltage dc               launch system modeling method is shown in FIGURE 2.
+traffic electrification systems, a frequency-dependent time-             Firstly, a multi-port transient conducted EM disturbances
+domain transmission line model was established [25], which            model of the supercapacitor is developed, considering
+effectively improves the simulation accuracy.                         its time-varying load characteristics during charging and
+
+195086                                                                                                                          VOLUME 12, 2024
+B. Mou et al.: Transient Conducted EM Disturbances Source Modeling Method for EML System
+
+
+
+
+                                                                              function as both a charging load and a pulse power supply, it is
+                                                                              essential to develop a transient conducted EM disturbances
+                                                                              model applicable to a multi-port cascade equivalent circuit.
+
+                                                                              1) TRANSIENT EMI MODEL FOR SUPERCAPACITOR
+                                                                              CHARGING STAGE
+
+
+
+
+FIGURE 1. Block diagram of a supercapacitor-powered electromagnetic
+launch system.
+
+
+
+
+                                                                              FIGURE 3. Dc charging characteristic diagram of supercapacitor.
+
+                                                                                 ① The dc charging characteristic curve of a superca-
+                                                                                      pacitor consists of three distinct stages, as shown in
+                                                                                      FIGURE 3. Initially, the sudden increase in terminal
+                                                                                      voltage indicates that the supercapacitor has instan-
+                                                                                      taneous resistance. As time passes, the subsequent
+                                                                                      terminal voltage exhibits an approximately nonlinear
+                                                                                      relationship with time, demonstrating capacitance
+                                                                                      properties. Furthermore, since the du/dt varies over
+                                                                                      time, a combination of time-varying capacitors and
+                                                                                      fixed capacitors to model the nonlinear variation
+                                                                                      characteristics.
+FIGURE 2. The flow chart of the electromagnetic launch system modeling           ② After the charging process ends, a self-recovery phe-
+method.
+                                                                                      nomenon occurs in the terminal voltage, indicating that
+                                                                                      charge redistributes within the supercapacitor. Parallel
+high-current strong discharge characteristics during discharg-                        RC branches with varying time constants are employed
+ing. Following that, a multi-port transient conducted EM                              to interpret the characteristics of charge distribution.
+disturbances model of a dual three-phase linear motor is                         ③ When a supercapacitor is idle for a long time, the volt-
+established using experimental measurement data, followed                             age gradually decreases. Therefore, it’s recommended
+by the construction of a multi-port transient conducted EMI                           to use a higher resistance for equivalence.
+model of a dual three-phase dc-ac inverter while accounting                      In conclusion, considering the nonlinear characteristics
+for parasitic effects. Finally, the cascading of the multi-port               of the supercapacitor port during the charging stage [28],
+equivalent circuit results in a system-level model of the EML                 a model for the time-varying load EM disturbances model
+system’s transient conducted EMI source. The transient EM                     is proposed, and its equivalent circuit model is shown in
+disturbances multi-port equivalent circuit model for each part                FIGURE 4. For more information, please see the author’s
+is as follows.                                                                published work [29], which is not included here due to space
+                                                                              constraints.
+A. MULTIPORT TRANSIENT CONDUCTED EMI MODEL OF                                    The supercapacitor time-varying load EM disturbances
+SUPERCAPACITOR                                                                model consists of three branches: the transient branch, the
+Considering the states of the supercapacitor energy storage                   voltage balance branch, and the self-discharge branch.
+unit in an EML system typically involves two stages. Firstly,                    Among them, the transient branch consists of R0 along
+charging the supercapacitor using a constant current charging                 with Cf 0 and Cf 1 (u), R0 is used to simulate the characteristics
+method. Next, disconnecting the supercapacitor from the                       of the transient voltage jump at the SC terminal during the
+charging system based on operational requirements and using                   initial stage of charging. Cf 0 is a fixed capacitor in the branch,
+the instantaneous high-current and high-power discharge                       while Cf 1 (u) is a variable capacitor. The voltage at the SC
+energy characteristics as a pulse power supply to provide                     terminal is linear, i.e., Cf 1 (u) = ku(t); the voltage balance
+energy for the electromagnetic propulsion subsystem. Con-                     branch is composed of R1 in series with C1 to simulate the
+sequently, when accounting for the supercapacitor’s dual                      voltage re The time constant is much larger than that of the
+
+VOLUME 12, 2024                                                                                                                                 195087
+                                                             B. Mou et al.: Transient Conducted EM Disturbances Source Modeling Method for EML System
+
+
+
+
+                                                                            This model, shown in FIGURE 6, can be used to implement
+                                                                            and characterize transient conducted EMI source modeling in
+                                                                            the EML system.
+
+
+
+
+FIGURE 4. Time-varying load EM disturbances model diagram of
+supercapacitor.
+
+
+instantaneous branch. The self-discharge branch consists of
+Rleak alone, which simulates the static state of SC for a long
+time. The solution procedure for each branch parameter is                   FIGURE 6. Transient conducted EM disturbances model of charging and
+                                                                            discharging of supercapacitor energy storage unit.
+detailed in [29].
+                                                                               K3 represents the supercapacitor as a switching switch
+2) TRANSIENT EMI MODEL FOR SUPERCAPACITOR                                   between the charging load and the pulsed power supply,
+DISCHARGE STAGE                                                             respectively. The first stage of this model is the time-varying
+During the discharge stage, the supercapacitor’s instanta-                  load model, and the second stage is the pulsed power supply
+neous and high-current discharge characteristics generate                   model.
+high-power pulse energy for the electromagnetic propulsion
+subsystem. As a result, in the study of transient EM                        B. MULTI-PORT TRANSIENT EMI MODEL OF THE
+disturbances modeling for the electromagnetic propulsion                    ELECTROMAGNETIC PROPULSION SUBSYSTEMS
+subsystem, the supercapacitor serves as the pulse power                     1) TRANSIENT EM DISTURBANCES MODEL FOR DUAL
+source. The transient conducted EM disturbances m

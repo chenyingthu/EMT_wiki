@@ -1,0 +1,239 @@
+ IEEE Transactions on Power Systems, Vol. 8, No. 2, May 1993                                                                           671
+
+
+
+    TIME D O M A I N M O D E L I N G OF E X T E R N A L S Y S T E M S F O R E L E C T R O M A G N E T I C T R A N S I E N T S
+                                                              PROGRAMS
+
+                                                 Ali Abur and Harinderpal Singh
+                                             Department of Electrical Engineering,
+                                                   Texas A&M University
+                                                College Station, Texas 77843
+
+                             ABSTRACT                                       However, most of the research efforts have concentrated on
+                                                                        the frequency domain methods. The external system is re-
+An external network model to be used in Electromagnetic Tran-           placed by an appropriate network of lumped R, L, and C com-
+sients Programs (EMTPs) is developed based on techniques                ponents whose values are determined in such a way that the
+directly applicable in the time domain. This is in contrast             equivalent network will have approximately the same frequency
+to the currently available models which are derived based on            response as the external system. This is achieved in the fre-
+the frequency domain methods. The model is in form of a                 quency domain via an optimal curve fitting procedure over a
+discrete-time filter which is built from the EMTP simulation            wide range of frequencies [7].
+of the external system’s response to a multisine excitation sig-            In this paper, a time domain equivalencing method will be
+nal. The developed filter is converted into a Norton equivalent         described. The proposed method avoids the frequency domain
+source and integrated into the EMTP model of the study (in-             altogether and generates a discrete-time equivalent by using the
+ternal) system. The proposed model is verified by simulating            response of the external system to a special excitation signal.
+the energization transients on an open-ended transmission line          No explicit network of R, L and C’s is synthesized to replace
+connected to the (external) network in a three phase test sys-          the external system. Instead, a discrete-time Norton equivalent
+tem.                                                                    for the external system is directly obtained and attached to
+Keywords: Network Equivalents, Electromagnetic Tran-                    the study subsystem at the boundary nodes. The proposed
+sients, System Identification, Modeling, Simulations.                   equivalent is easy to obtain and can be readily implemented
+                                                                        in any existing EMTP. In the paper, the proposed external
+                                                                        system modeling approach will be described only for the single
+                        I.   Introduction                               port equivalents. However, the same approach can be extended
+                                                                        to generate multi-port equivalents as well.
+Power system electromagnetic transients can be simulated very
+efficiently using time domain methods [l,2 , 3 , 4 , 5 ] . Such stud-
+ies require very detailed modeling of the system under study.                   11. External System Discrete-Time Model
+Modeling of the entire system in great detail may be prohibitive
+in terms of available computing resources and time. This is es-         Consider the system shown in Figure 1. In this example it is
+pecially true in the case of statistical studies that are conducted     assumed that the full system is divided into two parts:
+to obtain the probability of overvoltages for insulation coordi-
+nation of ah overhead transmission line [6]. In such studies a              1. S t u d y subsystem - is the system of interest for studying
+large number of cases need to be run while the subsystem of                    transients and is modeled in great detail.
+interest remains to be a very small part of the entire system.
+Thus, the use of proper equivalents to reduce the system model              2. External system - is that part of the full system which
+complexity will greatly reduce the overall study time.                         is to be represented by an equivalent. Note that while
+    The conventional power frequency short circuit equiva-                     the signals in the external system are of no interest to
+lents caiinot accurately represent the external network behav-                 the user, those generated at the boundary bus are of vital
+ior when the simulated transients have a broad frequency spec-                 importance. Therefore, it is required that the equivalent
+trum. The need for accurate network equivalents has long been                  produces an accurate response at the boundary, over a
+recognized by various researchers [7, 8, 9, 10, 111.                           broad frequency range, to the signals incoming from the
+                                                                               study system.
+
+92 SM 594-2 PWRS A paper recommended and approved
+by the IEEE Power System Engineering Committee of
+the IEEE Power Engineering Society €or presentation
+at the IEEEIPES 1992 Summer Meeting, Seattle, WA,
+July 12-16, 1992. Manuscript submitted January 21,
+1992; made available €or printing May 13, 1992.
+                                                                        I
+
+
+
+                                                                        1     STUDY
+                                                                            SUBSYSTEM
+                                                                                                1
+                                                                                                I          v
+                                                                                                           I   -1      I
+
+                                                                                                                           EXTERNAL
+                                                                                                                            SYSTEM
+
+
+
+
+                                                                        Fig. 1. External system and the study subsystem connected
+                                                                        at a single port.
+                                                      0885-8950/93$03.00 0 1992 IEEE
+672
+
+    The external system can, in general, be described by a               frequehcy response of a network consisting of distributed pa-
+driving-point admittance function H ( s ) relating the terminal          rameter elements (the external system) is known to exhibit
+voltage and the injected current at the boundary bus, as given           multiple and consecutive series/parallel resonances (poles and
+below:                                                                   zeros) [7, 8, 9, 10, 111, the order p (numbet of lag terms) is
+                                                                         related to the frequency range, or bandwidth, for which the
+                                                                         model is desired to be valid. Once the order p is specified, then
+                                                                         the parameters ak, and gt of the model have to be estimated
+                                                                         and this constitutes the parameter estimation step.
+                                                                             The current samples in Eq. (9) represent the response of
+where:
+                                                                         the external network to the excitation signal applied as a volt-
+           +             + +
+N ( s ) = no n1 s ... np s p
+           +             + +
+D ( s ) = do d l s ... d p S P                                           age source at the boundary of the external system. Since the
+                                                                         objective here is to excite all modes of the external system
+k = scalar gain.                                                         within a selected broad range of frequencies, the choice of an
+The orders of the denominator and the numerator polynomials
+                                                                         appropriate broad-band excitation signal that also minimizes
+are assumed to be the same without loss of generality in the
+                                                                         the measurement time is important. Such an excitation sig-
+properties of a driving-point function [12].
+                                                                         nal must also have a flat amplitude spectrum, low crest factor
+   Replacing the Laplace operator s by f , Eq. (2) can be                and high signal-to-noise ratio, all of which are satisfied by the
+rewritten in time domain as:                                             multisine signal [15]. A brief description of the multisine signal
+                                                                         and its use in the EMTP simulation to generate the external
+                                                                         system response is described in Appendix A.
+                                                                             The model identification is carried out in an iterative man-
+The above pth order linear differential equation can be con-             ner. For an initial choice of the model order p , the model’s
+verted into a linear difference equation by using a numerical            parameters are estimated and the rms error erms of the fitted
+integration method such as the Backward Euler [13]. This can             model is computed. The rms model-fit error ermsis defined as:
+be done by following the procedure given in chapter 13 of the
+EMTP Theory Book [14]. First a set of internal variables are
+defined:
+
+                                                                         where:
+                                                                                   erms =   -4   1
+                                                                                            (N -p)
+                                                                                                        N
+
+                                                                                                      k=p+l
+                                                                                                           (i(ICAt)- ;(kAt))’         (10)
+
+                                                                   (4)
+                                                                         N is the total number of time-steps in the EMTP simulation
+                 dv      d2v       ... -
+                                       dpv-
+                 - = vi,     = v2,
+                                       dtP -                       (5)   of the external system response,
+                 dt                                                      i(ICAt)is the boundary current injection at time step k a t , and
+Then the Backward Euler method is applied to obtain the dif-             ;(IC&) is the estimated boundary current injection at time step
+ference equations:                                                       k A t , using Eq. (9).
+                                                                         If erms is greater than a certain threshold, e , the model order
+                                                                         p is increased and the above procedure is repeated.
+                                                                            The folowing steps outline the system excitation, model
+  Vj+l(i) =         nt[Vj(t) - VJ(t   - At)],3 = 0,1, ‘”, p ; U0 = $7)   identification and parameter estimation procedure:
+
+                                                                           1. Disconaect the study subsystem from the external system.
+where At is the integration time step.
+    The above equations can be used recursively to convert Eq.             2. Turn OFF all the sources in the external system.
+(3) into a difference equation of the following form:                      3. Connect a periodic multisine voltage source for excitation
+                                                                              at the external system’s boundary bus.
+         i(t)   +                      +
+                  uli(t - At) + ... api(t- p A t ) =
+                          +                + +
+                gov(t) g1v(t - At) ... gpv(t - p A t )             (8)    4. Run the EhilTP simulation and compute N samples of the
+                                                                             boundary bus voltage and injected current over a dura-
+No attempt is made to express the coefficients a, and g, in                  tion of T,,, seconds, which is the time-period of the mul-
+terms of d, and n,, since the proposed method allows direct                  tisine excitation signal. This constitutes the time-domain
+estimation of these coefficients, as will be shown later. The                steady-state response of the external system to the peri-
+above discussion merely shows that a difference equation of                  odic multisine excitation signal. The criteria for the choice
+the form given in Eq. (8) can be used to represent the external              of T,,, and At are explained in Appendix A.
+system over a broad frequency range, and its order p can be
+specified by the user.                                                     5. For the current value of model order p, obtain the least
+                                                                              squares estimates for the model parameters uk and gr using
+                                                                              the N samples of i(t)and v ( t ) obtained in step 4 above. A
+111. M o d e l Identification a n d Parameter Estimation                      brief description of the least squares estimation of model
+                                                                              parameters is included in Appendix B.
+The difference equation Eq. (8) can be rewritten in compact
+form as:                                                                   6. Compute the rms error of the model by using Eq. (10). If
+                                                                              erms > e , then increase the model order and go to step 5
+       i(t) =’-
+                     P
+                          aki(t- IC . At) +   xge. e .
+                                               P
+
+
+                                              e=o
+                                                    v(t -   nt)    (9)
+                                                                              to re-estimate the higher-order model’s parameters. The
+                                                                              best minimum-order model is the one identified in the it-
+                                                                              eration within which erms < e is first satisfied. It has been
+                    k=l
+
+Eq. (9) represents the model to be identified. Model identi-                  determined in this study that setting e equal to 1 . 0 6 6
+fication refers to the choice of the model order p . Since the                gives a sufficiently accurate minimum-order model.
+                                                                    B. Multi-Phase Equivalents
+
+
+
+
+            +
+               0
+                   -i(t)
+
+                              1              I
+                                                                    In multi-phase systems, the following matrix equation will re-
+                                                                    place Eq. (11):
+
+                                                                                            +
+                                                                                                 P
+                                                                       I ( t ) = Go. V ( t ) C [ G h V ( t- kAt) - AkI(t - k A t ) ]
+                                                                                                k=l
+                                                                             =    Go.V(t)+H                                           (12)
+                                                                    where:
+                                                                    I T ( t ) = [za(t)zb(t)zc(t). . .], M vector of phase curreqts,
+                                                                                                     .I,
+                                                                    V T ( t )= [v@(t)vb(t)Wc(t). . M vector of phase voltages,
+                                                                    HT = [hahbh,. . .I, M vector of history terms,
+Fig. 2. Single-phase discrete-time Norton equivalent circuit
+                                                                    G;, A , = M x M coefficient matrices, i = 0,1,...,p.
+                                                                    M = number of phases.
+                                                                        Eq. (12) can be greatly simplified if the external system is
+                                                                    assumed to be fully balanced (transposed). In particular, for
+                                                                    a three-phase system this implies that the coefficient matrices
+                                                                    G; and A; are in the form:
+                                                                                                      s m m
+
+
+    BOUNDARY
+      BUS                                                           which can be diagonalized, by using Clarke's transformation
+                                                                    matrix [TI given by:
+
+
+                                                                                                                                      (13)
+Fig. 3. Reduced single-phase system using the discrete-time
+external network equivalent                                         Define the modal currents and voltages:
+
+                                                                                               I = T . Imode                          (14)
+         IV.       M o d e l Implementation i n E M T P                                       I / = T.Vmode                           (15)
+
+
+A . Single-phase Equivalents
+
+Eq. (9) is rearranged below by collecting all the delay terms
+together and denoting them by h (history term):
+
+
+
+
+This is the equation of a discrete-time Norton equivalent cir-
+cuit given in Figure 2. The circuit represents the frequency-
+dependent admittance of the external system, as seen from the
+boundary node, in the time domain.
+    Thus, a single-phase equivalent for the external system can
+be put together by connecting the circuit of Figure 2 in series
+with an appropriate Thevenin voltage source. The phasor value
+of the Thevenin source's voltage can be specified by finding the
+open-circuit steady-state solution for the boundary bus voltage
+using 

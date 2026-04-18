@@ -1,0 +1,203 @@
+IEEE POWER & ENERGY SOCIETY SECTION
+
+
+Received 12 August 2025, accepted 18 September 2025, date of publication 6 October 2025, date of current version 10 October 2025.
+Digital Object Identifier 10.1109/ACCESS.2025.3617222
+
+
+
+
+Electromagnetic Transient Model Reconstruction
+of Generalized Power Transmission Lines Based
+on Time-Synchronized Waveform Measurements
+PABLO GOMEZ , (Senior Member, IEEE)
+Department of Electrical and Computer Engineering, Western Michigan University, Kalamazoo, MI 49008, USA
+e-mail: pablo.gomez@wmich.edu
+With utmost respect and admiration, this article is dedicated to the memory of Prof. Hermann Dommel.
+
+
+
+
+  ABSTRACT Thanks to the novel technology of waveform measurement units (WMUs), it is now possible
+  to record time-synchronized waveforms (synchro-waveforms) at different power system locations. Lever-
+  aging these new opportunities, this paper introduces a method for accurate wideband measurement-based
+  reconstruction of single- and three-phase frequency-dependent transmission line models for electromagnetic
+  transient (EMT) studies. This method also accommodates hybrid (overhead-underground) systems and lon-
+  gitudinal parameter variations (nonuniformities). A 2-port line model is generated across a broad frequency
+  spectrum using WMU terminal recordings and the numerical Laplace transform. For single-phase uniform
+  lines, one transient recording set is sufficient for model reconstruction; this extends to ideally transposed
+  three-phase lines. For single-phase nonuniform and three-phase uniform and nonuniform untransposed
+  lines, a minimum norm least-squares method is applied to solve an overdetermined system from multiple
+  recordings with linearly independent responses. Simulated measurements from ATP (Alternative Transient
+  Program) are used for three test cases: a three-phase balanced uniform line, a single-phase hybrid system,
+  and a three-phase unbalanced nonuniform line. The reconstructed model responses are compared with ATP
+  simulations, confirming the technique’s accuracy and robustness. Furthermore, the impact of practical signal
+  conditions on reconstruction accuracy is analyzed in detail, including noise, resolution, and ratio and phase
+  displacement errors from instrument transformers.
+
+
+  INDEX TERMS Black-box modeling, electromagnetic transients, Laplace transforms, two-port model
+  reconstruction, synchro-waveforms, transmission line modeling, wideband.
+
+
+I. INTRODUCTION                                                                                 neglected by existing models, can reduce the line modeling
+Transmission line modeling for electromagnetic transient                                        accuracy when applied to practical studies, such as environ-
+(EMT) analysis has reached an exceptional level of maturity.                                    mental and weather conditions (e.g., contamination, icing,
+Existing line models are capable of introducing many aspects                                    seasonal variation of ground resistivity, vegetation encroach-
+of their behavior, such as different geometrical and elec-                                      ment); aging effects (e.g., material degradation, corrosion,
+trical configurations with diverse conductors’ dispositions,                                    increased sagging, decrease in connection integrity); mechan-
+distributed nature of their parameters, frequency dependence,                                   ical stresses; system upgrades or modifications; or even
+among other factors [1].                                                                        partial or full damage.
+   Notwithstanding the level of modeling detail currently                                          On the other hand, EMT models of transmission lines
+achievable, several real-world situations that occur over                                       are now deemed necessary to analyze power grids incor-
+the lifespan of a transmission line, and that are generally                                     porating distributed generation (DG), even for studies tra-
+                                                                                                ditionally reliant on phasor models [2]. This shift arises
+   The associate editor coordinating the review of this manuscript and                          from the rapid dynamics of contemporary power elec-
+approving it for publication was Elisabetta Tedeschi            .                               tronic devices employed in the integration of DG, which
+                                                  2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+VOLUME 13, 2025                                          For more information, see https://creativecommons.org/licenses/by/4.0/                        173895
+                                                                    P. Gomez: EMT Model Reconstruction of Generalized Power Transmission Lines
+
+
+
+
+operate across a broad frequency spectrum beyond the nom-               Exploring the opportunities lying ahead with the deploy-
+inal frequency [3]. For example, research indicates that             ment of WMUs, and expanding upon our preliminary work
+incorporating wideband frequency-dependent transmission              that proposed a transmission line parameter estimation
+line parameters can be critical for the accurate prediction of       approach from transient measurements [10], [11], as well as a
+dynamic grid-converter interactions that can trigger transient       similar reconstruction approach applied to power-electronic
+instability [3], [4].                                                converters [23], [24], [25], our present paper aims to con-
+   Considering the aforementioned challenges, a new model-           tribute to the state of the art on transmission line modeling
+ing framework is necessary to complement existing analytical         by establishing a novel and general methodology for the use
+approaches used in commercial software tools to enable the           of WMU-based terminal measurements for the reconstruction
+study of wideband EMT interactions between transmission              of wideband line models. Our methodology can consider
+lines and other components in an accurate, realistic and adap-       single- and three-phase systems, as well as hybrid line-cable
+tive manner.                                                         topologies and systems with arbitrary variation of parameters
+   Efforts have been made to derive transmission line models         along their length.
+and/or their parameters from measurement data rather than               This paper is organized as follows: Section II describes
+relying solely on analytical derivations [5], [6], [7], [8], [9].    the mathematical methodology for transmission line model
+Such efforts have focused primarily on steady-state studies          reconstruction for different line configurations. Section III
+and fault detection, severely limiting their applicability to        shows the application of the proposed methodology in three
+EMT analysis. Recent work from our group has used ter-               different cases with diverse levels of complexity. Section IV
+minal measurements to estimate the parameters of uniform             discusses the effect of practical measurement factors, such
+overhead transmission lines over a wide frequency range              as sampling resolution and signal noise, and describes future
+[10], [11].                                                          steps to be followed for further evaluation and practical
+   On the other hand, measurement-based approaches for               implementation of the proposed methodology. Section V pro-
+frequency-dependent black-box modeling have been pro-                vides concluding remarks of this paper. An Appendix is also
+posed for transformers [12], and more recently for shielded          included for a brief explanation of the numerical Laplace
+cables [13], focused on their use in EMT studies. These con-         transform.
+tributions can have great practical value if expanded to other
+devices and systems, opening the door to continue exploring          II. GENERAL METHODOLOGY
+the use of measurement-based approaches to account for               For the remainder of this section, we assume that
+realistic topological and operating conditions of power grid         WMU-based time domain current and voltage measurements
+components over a wide frequency band.                               are available at the terminals of a transmission system,
+   Nonetheless, measurement-based modeling approaches for            as shown in Fig. 1. It is also assumed that the transmission
+power components and systems are challenging due to                  line 2-port model is linear, which is a very common assump-
+the limited availability of data and the time-misalignment           tion in transmission line modeling, but would preclude the
+between measurements at different locations, among other             application of the proposed method if the measurements are
+factors. First, voltage and current data from power sys-             affected by nonlinear conditions, such as the presence of
+tems are commonly obtained as magnitude and phase angle              corona.
+from phasor measurement units (PMUs), which offer a great
+insight into the presence of power system disturbances for           A. SINGLE-PHASE SYSTEM–SYMMETRICAL 2-PORT
+monitoring, protection and control purposes [14], but do             MODEL
+not provide detailed time-domain information regarding the           To describe the proposed model reconstruction method,
+transient response and frequency content during such events.         we start by establishing the relationship between voltages and
+Second, although PMUs are capable of time synchronization            currents measured at the sending (S) and receiving (R) ter-
+between remote locations using GPS (Global Positioning               minals of a transmission line by means of a Laplace-domain
+System) or PTP (Precision Time Protocol) [15], this was pre-         admittance (nodal) model. For a line with uniform parameters
+viously regarded as unattainable for time domain waveforms.          (i.e., space independent) this can be defined as
+Both of these challenges have been overcome with the advent
+                                                                                                                  
+                                                                                    IS (s)      A(s) B(s)       VS (s)
+of devices capable of recording time synchronized wave-                                     =                            ,       (1)
+                                                                                    IR (s)      B(s) A(s)       VR (s)
+forms (synchro-waveforms) with precise time stamps, known
+                                                                     where s = c + jω is the Laplace (complex) variable; A(s) and
+as waveform measurement units (WMUs) [16]. WMUs are
+                                                                     B(s) are the self and mutual elements of the admittance matrix
+expected to be widely deployed over the next years with
+                                                                     of the line; IS (s), IR (s), VS (s) and VR (s) are terminal (S and
+applications in condition monitoring, protection, situational
+                                                                     R) currents and voltages obtained by applying the numerical
+awareness, asset management, fault detection and location,
+                                                                     Laplace transform (NLT) [26] to the transient (time-domain)
+among others. Some recent works investigating such applica-
+                                                                     measurements iS (t), iR (t), vS (t) and vR (t) as follows:
+tions of WMUs can be found in [17], [18], [19], [20], [21],
+                                                                                           IS,R (s) = NLT iS,R (t) ,
+                                                                                                           
+and [22].                                                                                                                           (2a)
+
+
+173896                                                                                                                         VOLUME 13, 2025
+P. Gomez: EMT Model Reconstruction of Generalized Power Transmission Lines
+
+
+
+
+                    VS,R (s) = NLT vS,R (t) .
+                                  
+                                                                   (2b)        The reconstruction approach in this case starts from a
+                                                                             similar system to (1), but now defined by submatrices and
+Details of the NLT algorithm are included in the Appendix.
+                                                                             subvectors as follows:
+Simple algebraic manipulation of (1) results in its solution for                                               
+A(s) and B(s):                                                                                  IS       AB      VS
+                                                                                                     =                ,             (4)
+                                      −1                                                      IR       BA      VR
+                     VS (s) VR (s)
+                                                 
+           A(s)                              IS (s)
+                 =                                    .      (3)             where IS , IR , VS and VR are Laplace-domain 3 × 1 phase
+           B(s)      VR (s) VS (s)           IR (s)
+                                                                             current and voltage subvectors, obtained by applying the NLT
+                                                                             to the corresponding transient measurements for each phase:
+                                                                                         IS = NLT [iSA (t) iSB (t) iSC (t)]t ,
+                                                                                                   
+                                                                                                                                      (5a)
+                                                                                        IR = NLT [iRA (t) iRB (t) iRC (t)] ,t
+                                                                                                   
+                                                                                                                                      (5b)
+                                                                                        VS = NLT [vSA (t) vSB (t) vSC (t)] ,  t
+                                                                                                   
+                                                                                                                                      (5c)
+                                                                                        VR = NLT [vRA (t) vRB (t) vRC (t)] ,    t
+                                                                                                   
+                                                                                                                                      (5d)
+                                                                             while A and Bare admittance submatrices of size 3 × 3. The
+                                                                             superscript ‘‘t’’ in (5a) to (5d) represents transpose operation
+                                                                             to obtain column vectors. Unless otherwise noted, all quan-
+                                                                             tities in (4) and in the rest of the derivations in this section
+                                                                             are Laplace functions, but the term ‘‘(s)’’ is omitted for the
+FIGURE 1. Schematic representation of the proposed model                     remainder of the section to simplify the notation.
+reconstruction method.
+                                                                                 Assuming ideal transposition, the Clarke transformation
+   Eq. (3) shows that the two-port model of a single-phase                   of phase voltages and currents at the sending and receiving
+line can be fully characterized from its terminal voltage and                nodes is given as follows:
+current relationships as a function of the complex frequency                                     αβ             αβ
+                                                                                               VS = TVS , VR = TVR ,                  (6a,b)
+s. We presented a similar approach in [10] to estimate the                                          αβ         αβ
+frequency dependent parameters of single-phase lines.                                              IS = TIS , IR = TIR ,              (6c,d)
+   The procedure in this subsection assumes that the two-port                where the αβ superscript denotes quantities in the Clarke’s
+model of the line is symmetrical, meaning that the sending                   domain, and T is the Clarke’s transformation matrix. Substi-
+and receiving nodes of the line are indiscernible, i.e., they can            tuting (6a,b) in (4), we obtain the following decoupled system
+be interchanged without any effect [27]. This is applicable to               in Clarke’s domain:
+uniform lines, as well as nonuniform lines with longitudinal                              "
+                                                                                              αβ
+                                                                                                 #                    " αβ #
+symmetry (e.g., symmetrical sagging between two towers).                                     IS         Aαβ Bαβ          VS
+                                                                                              αβ    =
+                                                                                                        B αβ    A αβ      αβ ,           (7)
+Model reconstruction for nonsymmetrical 2-port models is                                     IR                          VR
+treated in Sections II-C and II-E.
+                                                                             where Aαβ and Bαβ are diagonalized matrices given by
+   It is very important to reiterate at this point that, as in [27],
+the term symmetry is used in this paper to identify longitu-                                Aαβ = TAT−1 , Bαβ = TBT−1 .               (8a,b)
+dinal symmetry of the line rather than any kind of lateral
+symmetry of the transmission system (e.g., symmetrical                         Further algebraic manipulation of (7) results in the follow-
+disposition of phases in a tower). The proposed reconstruc-                  ing direct solution for the elements of Aαβ and Bαβ :
+tion procedure does not require any assumption of lateral                               "
+                                                                                            αβ
+                                                                                               # "
+                                                                                                        αβ      αβ
+                                        

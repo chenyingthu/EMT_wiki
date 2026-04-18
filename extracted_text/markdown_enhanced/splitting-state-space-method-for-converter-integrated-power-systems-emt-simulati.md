@@ -1,0 +1,27 @@
+# Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulations
+
+Xiaopeng Fu, Member, IEEE, Wei Wu, Member, IEEE, Peng Li, Senior Member, IEEE, Jean Mahseredjian, Life Fellow, IEEE, Jianzhong Wu, Fellow, IEEE, and Chengshan Wang, Senior Member, IEEE
+
+**Abstract**—As the utilization of power electronic-based components in power systems continues to grow, a comprehensive understanding of their dynamics becomes increasingly important for system design, control and protection analysis. To meet practical needs, the high-fidelity but time-consuming electromagnetic transient (EMT) simulations are often required. To improve the performance of these simulations, a highly efficient splitting state-space method with numerical error control is proposed that reduces the computation workload. The method employs a generic decoupling principle to split the state-space equations of the converter-integrated power system and introduces the exponential splitting formulas of multiple orders accuracy to solve and then compose the splitting state-space equations. The decoupling principle is designed based on separation of time-varying portions of the state matrix, which is realized by locating the smallest subcircuit topology that is switch state-dependent, through automatic switch grouping and switch adjacent state variables (SASV) identification. A family of exponential splitting schemes is employed to accelerate the demanding matrix exponential calculation. The splitting state-space method undergoes comprehensive testing across various cases, including a distribution network with DC load, an LLC resonant converter, a large-scale wind farm, and an MMC circuit. The accuracy of the proposed method is thoroughly evaluated, and its efficiency is validated.
+
+**Index Terms**—Electromagnetic transient, exponential integrator, power converter, splitting method.
+
+Received 21 April 2024; revised 30 September 2024; accepted 16 November 2024. Date of publication 9 December 2024; date of current version 24 January 2025. This work was supported in part by the National Key R&D Program of China under Grant 2023YFC3807000, and in part by the National Natural Science Foundation of China under Grant 52377118. Paper no. TPWRD-00666-2024. (Corresponding author: Wei Wu.)
+
+Xiaopeng Fu, Peng Li, and Chengshan Wang are with the Key Laboratory of Smart Grid of Ministry of Education, Tianjin University, Tianjin 300072, China (e-mail: fuxiaopeng@tju.edu.cn; lip@tju.edu.cn; cswang@tju.edu.cn).
+
+Wei Wu is with Beijing Huairou Laboratory, Beijing 102206, China (e-mail: wuwei1@bise.hrl.ac.cn).
+
+Jean Mahseredjian is with the Department of Electrical Engineering, Polytechnique Montréal, Montréal, Québec H3T 1J4, Canada (e-mail: jeanm@polymtl.ca).
+
+Jianzhong Wu is with the Institute of Energy, School of Engineering, Cardiff University, CF24 3AA Cardiff, U.K. (e-mail: wuj5@cardiff.ac.uk).
+
+Color versions of one or more figures in this article are available at https://doi.org/10.1109/TPWRD.2024.3514294.
+
+Digital Object Identifier 10.1109/TPWRD.2024.3514294
+
+## I. INTRODUCTION
+
+The power systems are becoming increasingly complex due to renewable generation penetration and hybrid ac/dc network interconnections, which lead to widespread utilization of power electronic-based converters [1]. This complexity has a profound impact on the system dynamic performance, and raises the need for accurate time-domain simulation of power system transients [2]. Electromagnetic transient (EMT) simulation programs, which adopt the detailed modeling approach, can provide high-fidelity simulation results at the circuit level. Previously, these programs were mainly used to track the fast EMT phenomenon that is naturally confined to local area, but growing demands from practical studies in longer timespan and larger scale were seen more recently. For example, diverse coupling forms among power electronic converters and traditional electrical equipment are observed to trigger wide-band oscillations [3]. Cross-region interactions are formed between energy plants and load center networks through long distance DC transmission systems [4]. These demands pose new challenges to EMT simulation programs. The ever-increasing advancement of high-switching-frequency (HSF) converters has notably resulted in semiconductor valve switching frequencies reaching hundreds of kilohertz [5], requiring small enough time-steps to capture the switching dynamics. This requirement also arises from the small-time constants associated with the component dynamics and device transients with nonlinear characteristics. The increasing number of converters in the power system and the stringent simulation requirements impose higher demands on the execution time and computing resources required for these simulations.
+
+Various techniques aimed at improving the efficiency of detail-modeled power converter simulations have been developed in earlier studies. Circuit-based decoupling, as one common idea, has been adopted by methods like multirate analysis and parallel computations to accelerate the simulations [6], [7]. Circuit decoupling is conventionally achieved by transmission line propagation delay, while the compensation method can be used to decouple at arbitrary locations where line delays are not available [8]. The state-space nodal method (SSN) is also able to avoid line delay usage by interfacing nodal analysis equations with grouped state-space equations, where the grouping splits

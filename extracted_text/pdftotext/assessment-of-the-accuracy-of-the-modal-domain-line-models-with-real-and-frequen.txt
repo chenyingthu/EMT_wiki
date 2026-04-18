@@ -1,0 +1,187 @@
+                                                              Electric Power Systems Research 234 (2024) 110500
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Assessment of the accuracy of the modal-domain line models with real and
+frequency-independent transformation matrix for electromagnetic transient
+simulation in lines with underbuilt cables
+Lucas A. Rezende a, Naiara Duarte b, Rafael Alipio b, c, *, Alberto De Conti d
+a
+  Graduate Program of Electrical Engineering (PPGEL), Federal Center of Technological Education of Minas Gerais (CEFET-MG), Belo Horizonte, Brazil
+b
+  EMC Laboratory, Swiss Federal Inst. Of Technology (EPFL), Lausanne, Switzerland
+c
+  Department of Electrical Engineering, Federal Center of Technological Education of Minas Gerais (CEFET-MG), Belo Horizonte, Brazil
+d
+  Department of Electrical Engineering, Federal University of Minas Gerais (UFMG), Belo Horizonte, Brazil
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 This paper investigates the potential inaccuracies associated with using a modal-domain model featuring a real
+Transmission line modeling                                and frequency-independent transformation matrix in simulating electromagnetic transients on power overhead
+Electromagnetic transients                                lines equipped with underbuilt wires. Three transmission line configurations are examined: one without
+Transmission lines with underbuilt wires
+                                                          underbuilt wires, one with a single underbuilt wire, and another with two underbuilt wires. Comparisons be­
+Modal-domain models
+Phase-domain models
+                                                          tween the simulated voltages computed using the modal-domain approach and a more accurate phase-domain
+                                                          model as a reference reveal that the modal-domain approach leads to inaccuracies in the simulated voltages.
+                                                          These inaccuracies intensify with an increase in the number of underbuilt wires and the soil resistivity. Differ­
+                                                          ences of up to approximately 24 % in the peak values of the simulated voltages were observed, considering the
+                                                          transmission line geometry analyzed in this study. Based on these findings, it is recommended that for simulating
+                                                          transients in overhead lines with installed underbuilt wires, phase-domain models, such as the Universal Line
+                                                          Model, should be employed.
+
+
+
+
+1. Introduction                                                                                phase conductors.
+                                                                                                   In assessing the lightning performance of TLs, Electromagnetic
+    Lightning remains a significant concern in the operation of overhead                       Transients (EMT) programs are widely used. In most studies dealing
+transmission lines and is the primary cause of outages in transmission                         with the lightning performance of transmission lines (e.g., [6–8]), the
+lines (TLs) with voltage levels up to 500 kV [1]. Typically, to maintain                       line is often modeled using Marti’s model, also known as fdLine model,
+the outage rate of the TL within acceptable levels, power utilities                            which is a modal-domain model based on a real and frequency-
+implement standard methods for improving the lightning performance,                            independent matrix for converting from phase to modal domain quan­
+such as reducing the tower-foot grounding resistance. In regions char­                         tities [9]. However, while this model yields accurate results for TLs with
+acterized by intense lightning activity and unfavorable soil resistivity                       a low degree of conductor asymmetry, it can lead to inaccuracies when
+conditions, special methods are often employed [2]. These methods aim                          analyzing TLs with underbuilt wires. This is because underbuilt wires
+to avoid the need for installing surge arresters in parallel with the line                     introduce asymmetry in the geometric arrangement of the line con­
+insulator strings, which can be an expensive solution. One such method                         ductors, leading to a greater imbalance in the per-unit-length impedance
+is the use of underbuilt ground wires [3–5]. These wires are installed                         and admittance matrices. Although there are models that overcome the
+below the phase conductors on towers, particularly in regions with                             limitations of the fdLine model, such as the Universal Line Model (ULM)
+high-resistivity soils or in those experiencing unusually frequent flash­                      [10], the fdLine model continues to be the most popular for analyzing
+overs. These underbuilt wires mitigate overvoltages across line in­                            line transients in EMT-type programs. This popularity is likely due to
+sulators by diverting a portion of the lightning current to adjacent                           two main reasons. First, the fdLine model provides an accurate solution
+towers and by enhancing the coupling between the shield wires and the                          for transients on both single-circuit and double-circuit overhead
+
+
+
+    * Corresponding author.
+      E-mail address: rafael.alipio@gmail.com (R. Alipio).
+
+https://doi.org/10.1016/j.epsr.2024.110500
+Received 30 January 2024; Received in revised form 14 April 2024; Accepted 8 May 2024
+Available online 13 June 2024
+0378-7796/© 2024 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+L.A. Rezende et al.                                                                                                   Electric Power Systems Research 234 (2024) 110500
+
+
+transmission lines in most practical cases—excluding those with                       resistance of 0.0711 Ω/km per conductor. Additionally, it features two
+underbuilt wires [11]. Second, its numerical stability, which ensures                 3/8′’ EHS shield wires with a radius of 0.457 cm and a DC resistance of
+stable simulations [12].                                                              3.81 Ω/km. The spatial coordinates of the conductors are provided in
+    The main objective of this paper is to investigate the possible inac­             Table I. Assuming a standard 550 m span, the phase conductors have a
+curacies associated with the use of a modal-domain model with a real                  sag of 24.34 m, while the shield wires have a sag of 20.95 m.
+and frequency-independent transformation matrix in the simulation of                      In order to assess the accuracy of using a modal-domain approach
+electromagnetic transients on power overhead lines with the presence of               with a real and frequency-independent transformation matrix to simu­
+underbuilt wires. This paper builds upon the work presented in [13] at                late a TL with underbuilt wires, three configurations are examined: a
+the GROUND & 10th LPE 2023 Conference, expanding upon the previ­                      transmission line without underbuilt wires, one with a single underbuilt
+ously presented results from two main perspectives. First, it extends the             wire, and another with two underbuilt wires. The geometric coordinates
+frequency domain results from [13] to include soils with higher re­                   of the underbuilt wires for these installation scenarios are provided in
+sistivity, which are precisely the scenarios where the use of underbuilt              Table II. It is assumed that the underbuilt wires have the same sag as the
+wires is typically considered, and also incorporates the frequency                    shield wires.
+dependence of the soil electrical parameters [14]. Second, this work
+broadens the scope to the time domain, comparing simulated transient                  3. Calculation of transmission line parameters
+voltages on a line with underbuilt wires using both modal- and
+phase-domain approaches for modeling the transmission line. The pri­                      Fig. 2 illustrates an overhead line with infinitely extending conduc­
+mary contribution of this paper is to demonstrate that the widely-used                tors, denoted as i and j. These conductors are positioned at a uniform
+fdLine model, available in most EMT-type programs, may lead to inac­                  average height [12], with hi and hj representing their respective heights,
+curate estimates of transient overvoltages in TLs with underbuilt wires.              each having a radius r. The surrounding environment consists of two
+These inaccuracies are primarily attributed to the asymmetry introduced               distinct media. Medium 1 corresponds to air, which is characterized by
+by these additional wires.                                                            the vacuum permittivity (ε0 ), permeability (μ0 ), and conductivity (σ0 =
+    This paper is organized as follows. Section 2 presents the simulated               0). Medium 2 represents the ground, which is characterized by the
+transmission line geometry. Section 3 details the formulation used to                 vacuum permeability (μg = μ0 ), permittivity (εg ), and conductivity (σg ).
+calculate the line parameters. In Section 4, we describe the two methods              The propagation constant for each medium is expressed as γ k =
+used to model the transmission line, specifically focusing on the phase-               √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+                                                                                         jωμk (σ k + jωεk ), where k = 0 corresponds to air and k = g corresponds
+domain approach and the modal-domain approach. Results comparing
+                                                                                      to the ground.
+the simulated voltages in a transmission line with one or two underbuilt
+                                                                                          Considering a multi-conductor transmission line (MTL) system that
+wires installed, as computed using both the phase-domain and modal-
+                                                                                      comprises n conductors plus a ground reference conductor, the voltage
+domain approaches, are presented in Sections 5 and 6, covering the
+                                                                                      and current in the frequency domain are governed by the equations [15]
+frequency and time domains, respectively. Finally, Section 7 provides a
+summary of the main findings of the paper.                                            d2
+                                                                                          V(z) = ZYV(z)                                                            (1)
+                                                                                      dz2
+2. Simulated transmission line
+                                                                                      d2
+                                                                                          I(z) = YZI(z)                                                            (2)
+   Fig. 1 depicts the tower design of a typical guyed tower used in                   dz2
+Brazilian 500-kV lines. This tower acts as a benchmark for the line ge­
+                                                                                      where V and I are n × 1 column vectors containing, respectively, the n
+ometry investigated in this paper. It is equipped with four conductors for
+                                                                                      phasor line voltages and currents, and Z and Y are the n × n per-unit-
+each phase, each having an equivalent radius of 3.75 cm and a DC
+                                                                                      length (pul) impedance and admittance matrices, as given respectively
+                                                                                      by (3) and (4).
+                                                                                      Z = Zi + jωL + Zg                                                            (3)
+
+                                                                                      Y = jωC                                                                      (4)
+                                                                                          The internal pul impedance matrix Zi associated with the magnetic
+                                                                                      field within the overhead conductors was calculated using Bessel func­
+                                                                                      tions [16]. The external pul inductance matrix L accounts for the mag­
+                                                                                      netic field outside the line conductors, in air. Zg is the pul ground-return
+                                                                                      impedance matrix, including the effects of the magnetic field pene­
+                                                                                      trating the earth. Lastly, C represents the pul capacitance matrix, ac­
+                                                                                      counting for the electric field outside the line conductors. In (4), the
+                                                                                      ground admittance contribution is omitted, which is generally a valid
+                                                                                      assumption for studies involving overhead lines and lightning [17,18].
+                                                                                          The inductance and capacitance matrices are computed as L = 2μπ0 M
+                                                                                      and C = 2πε0 M− 1 , where the elements of the matrix M are given by:
+
+                                                                                      Table I
+                                                                                      Geometric coordinates of the phase conductors and shield wires, taking as
+                                                                                      reference the tower geometry of Fig. 1.
+                                                                                       Conductor                            x (m)                            y (m)
+
+                                                                                       Phase A                              − 7.5                            37.5
+                                                                                       Phase B                              0                                44.624
+                                                                                       Phase C                              7.5                              37.5
+                                                                                       Shield wire 1                        − 6.3                            51.4
+Fig. 1. Line geometry simulated in this paper, corresponding to a typical guyed
+                                                                                       Shield wire 2                        6.3                              51.4
+tower used in Brazilian 500-kV lines.
+
+                                                                                  2
+L.A. Rezende et al.                                                                                                               Electric Power Systems Research 234 (2024) 110500
+
+
+Table II                                                                                       where 1n denotes the n × n identity matrix, Y c represents the n × n
+Geometric coordinates of the underbuilt wires, considering the assumed instal­
+                                                                                               characteristic admittance and A is the n × n propagation matrix. These
+lation configurations, taking as reference the tower geometry of Fig. 1.
+                                                                                               are determined as follows:
+                                Conductor                     x (m)             y (m)                   √̅̅̅̅̅̅̅
+  Configuration 1               Underbuilt wire               0                 33
+                                                                                               Yc = Z− 1 ZY                                                       (9)
+  Configuration 2               Underbuilt wire 1             − 0.7             33                    ( √̅̅̅̅̅̅̅ )
+                                Underbuilt wire 2             0.7               33             A = exp − l ZY                                                                (10)
+
+                                                                                               where l is the length of the line.
+                                                                                                   The nodal admittance matrix represents a two-port model of a
+                                                                                               transmission line. Derived from the exact solution in the frequency
+                                                                                               domain of the telegrapher’s equations, it describes the relationship be­
+                                                                                               tween voltages and currents at either end of the line for a specified
+                                                                                               frequency, i.e.
+                                                                                               In = Y n V n                                                                  (11)
+
+                                                                                               where V n is the 2n × 1 column vector of the nodal voltage phasors and
+                                                                                               In is the 2n × 1 column vector containing the phasors of the externally
+                                                                                               injected currents. Both V n and In are expressed in phase-domain quan­
+                                                                                               tities.
+                                                                                                    In the phase-domain solution approach, the terminal conditions,
+                                                                                               which include the driving sources and terminal impedances, are readily
+                

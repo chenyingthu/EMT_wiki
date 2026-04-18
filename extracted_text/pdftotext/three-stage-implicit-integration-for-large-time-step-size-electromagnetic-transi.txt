@@ -1,0 +1,219 @@
+                                                                 Electric Power Systems Research 198 (2021) 107356
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Three-stage implicit integration for large time-step size electromagnetic
+transient simulation with shifted frequency-based modeling
+Shilin Gao a, b, *, Ying Chen a, b, Yankan Song a, b, Shaowei Huang a, b
+a
+    Department of Electrical Engineering, Tsinghua University, Beijing 100084, China
+b
+    Sichuan Energy Internet Research Institute, Tsinghua University, Chengdu 610000, China
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    To improve the computational efficiency of electromagnetic transient (EMT) simulation, the shifted frequency
+Electromagnetic transient simulation                         (SF)-based EMT (SFEMT) simulation is proposed in the literature, and large time-step size can be adopted in the
+Numerical integration                                        SFEMT simulation. In the existing SFEMT simulation, the trapezoidal (TR) method is used for numerical inte­
+Large time-step size
+                                                             gration. Sustained oscillations will appear in the simulation due to the use of the TR method. To overcome this
+Runge-Kutta
+Runge–Kutta method
+                                                             problem, this paper applies the three-stage singly diagonally implicit Runge–Kutta (3S-SDIRK) method to the
+SF-based simulation                                          numerical integration of SFEMT simulation. First, the SFEMT modeling is briefly reviewed, and the 3S-SDIRK
+Shifted frequency analysis                                   method is introduced. Then, the numerical integration of SFEMT simulation using 3S-SDIRK is elaborated
+Sustained numerical oscillations                             detailedly, and the merits of the 3S-SDIRK-based simulation are analyzed by comparing with the TR, 2S-DIRK
+3S-SDIRK                                                     and TR-BDF2-based simulations. Numerical results show that the SFEMT simulation using 3S-SDIRK for inte­
+                                                             gration is free from numerical oscillation and is accurate and efficient.
+
+
+
+
+1. Introduction                                                                              Then, the analytic envelope is obtained by shifting the fundamental fre­
+                                                                                             quency of the analytic signal from 50 or 60 Hz to zero [14–16]. According
+    ELECTROMAGNETIC transients program (EMTP)-type simulators                                to the sampling theory, a much larger time-step size can be selected,
+are widely used for studying the transient behavior of power systems in                      resulting in considerable savings in computational time. Many researchers
+the processes of design, operation and control [1–3]. In the simulation of                   followed and continued to work on the SFEMT simulation, further pro­
+ac power transmission and distribution systems with the EMTP-type                            moting the method [17–19].
+simulators, an upper limit of the time-step size is given because a 50                           In the existing works on SFEMT simulation, the trapezoidal (TR)
+Hz or 60 Hz ac carrier is presented [4–6]. Thus, a small time-step is                        method is used for numerical integration, because the TR method is a one-
+needed for electromagnetic transient (EMT) simulation, leading to low                        step integration method with an accuracy of second-order and A-stability.
+computational efficiency. To improve the efficiency, it is necessary to                      However, the TR method will produce sustained numerical oscillation for a
+investigate the EMT simulation algorithm with a large time-step size.                        sudden change of a variable, even if the critical damping adjustment is
+    By using the theory of dynamic phasors, which is rooted in the gener­                    implemented in the simulation [20]. To cope with the numerical oscilla­
+alized averaged modeling of power electronics [7], a large-time-step EMT                     tions, the inherently “oscillation-free” two-stage diagonally implicit Run­
+simulation algorithm for power system was proposed and significantly                         ge–Kutta (2S-DIRK) method [21,22] and TR-BDF2 [23,24] method may be
+accelerated the computation [8, 9]. However, in non-stationary conditions,                   utilized for the numerical integration of SFEMT simulation. The problem is
+the dynamic phasor-based simulation may be inaccurate [10]. Meanwhile,                       that the 2S-DIRK and TR-BDF2-based simulations need much more
+a closely related simulation algorithm, i.e., the shifted frequency-based                    computational time than the TR-based one since they include two stages in
+EMT (SFEMT) simulation algorithm, was proposed in [11–13]. This algo­                        each time-step. Thus, an inherently “oscillation-free” and efficient nu­
+rithm finds a solution to the power system differential equations in the                     merical integration method is preferred for the SFEMT simulation.
+shifted frequency domain. The associated analytic signal of the original real                    To address this, this paper proposes an SFEMT simulation algorithm
+signal is first formulated, which only has a positive frequency spectrum.                    using the three-stage singly DIRK (3S-SDIRK) method for integration. It
+
+
+
+  * Corresponding author at: Department of Electrical Engineering, Tsinghua University, Beijing 100084, China.
+    E-mail addresses: gaosl19@mails.tsinghua.edu.cn (S. Gao), chen_ying@tsinghua.edu.cn (Y. Chen), sykfmlrc@163.com (Y. Song), huangsw@mail.tsinghua.edu.cn
+(S. Huang).
+
+https://doi.org/10.1016/j.epsr.2021.107356
+Received 10 November 2020; Received in revised form 8 February 2021; Accepted 4 May 2021
+Available online 24 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+S. Gao et al.                                                                                                             Electric Power Systems Research 198 (2021) 107356
+
+
+is L-stable and has an accuracy of third-order [25,26]. Thanks to the                      (1) Discretization: In literature, the TR method is widely used for the
+better accuracy, the 3S-SDRIK method can be implemented with a much                            discretization and numerical integration of SFEMT simulation.
+larger step-size compared with the TR, 2S-DIRK and TR-BDF2 methods.                            Discretizing (5) by the TR method, the difference equations are
+In this case, the efficiency of the 3S-SDIRK can be guaranteed. In a word,                     obtained:
+the proposed 3S-SDIRK-based simulation is “oscillation-free” under the
+                                                                                                           huE (n + 1)   huE (n)    2 − jωc h
+premise of guaranteeing high accuracy and efficiency.                                       iE (n + 1) =               +          +          iE (n)                    (6)
+                                                                                                           2L + jωc hL 2L + jωc hL 2 + jωc h
+    The remainder of this paper is organized as follows. Section II re­
+views the SF analysis and the SFEMT modeling of power system dy­
+namics. In Section III, the 3S-SDIRK integration scheme is described.
+Section IV uses the numerical integration for the SFEMT model by
+                                                                                      where h is the time-step size and n is the time-step counter. Similar to the
+using the 3S-SDIRK and its merits are also analyzed detailedly. The
+                                                                                      modeling and discretization of the inductor, the other components in
+inherently “oscillation-free” characteristic, accuracy and efficiency of
+                                                                                      power systems can be modeled and discretized. Once all components of
+the presented algorithm are validated in Section V. Section VI con­
+                                                                                      the test system to be simulated are discretized, a companion circuit
+cludes this paper.
+                                                                                      model can be established and calculated step by step, obtaining the re­
+                                                                                      sults of the SFEMT simulation.
+2. Analytic signal and SFEMT modeling
+                                                                                          However, sustained oscillations will appear in the SFEMT simula­
+                                                                                      tion when a variable is suddenly changed because the TR method is not
+2.1. Analytic signal and SF analysis
+                                                                                      L-stable. The sustained numerical oscillation does not exist in reality
+                                                                                      and influences the accuracy of the simulation. To avoid numerical
+   The basic procedures for analyzing a time signal in the shifted
+                                                                                      oscillation, the L-stable 3S-SDIRK method is used for the numerical
+frequency domain [14–16] are briefly explained in this subsection. In
+                                                                                      integration of SFEMT simulation in this paper. Besides the “oscillation-
+an ac power system, a real signal x(t) (including the voltage and
+                                                                                      free” characteristic, the 3S-SDIRK is more accurate than the TR method
+current) is a bandpass one. Its corresponding analytic signal xS(t) can
+                                                                                      without deteriorating the efficiency. The details of 3S-SDIRK are
+be represented as:
+                                                                                      elaborated as follows.
+xS (t) = x(t) + jH [x(t)]                                                  (1)
+                                                                                      3. 3S-SDIRK method
+where H [.] is the Hilbert transform and can be defined as:
+            ∫                                                                         3.1. Brief review of the 3S-SDIRK method
+           1 ∞ x(τ)
+H [x(t)] =            dτ .                                                 (2)
+           π − ∞t− τ
+                                                                                           Consider a differential equation:
+   It can be found that xS(t) only includes a positive frequency band.                 ′
+                                                                                      y = f (t, y)                                                                     (7)
+To obtain the analytic envelope xE(t) whose frequency spectrum lo­
+cates around the vertical axis, the analytic signal is multiplied by e− jωc t ,       where f is a function of time t and the variable y. The Runge–Kutta
+which is equivalent to shifting the frequency spectrum of the analytic                method is a kind of numerical integration method for solving the dif­
+signal by ωc.                                                                         ferential Eq. (7). The recursion formula of an s-stage Runge–Kutta
+xE (t) = xS (t)e− jωc t                                                    (3)        method is:
+                                                                                      ⎧               ∑
+                                                                                                      s
+                                                                                                             (               )
+where ωc is the shifting frequency, and it is always selected as the                  ⎪
+                                                                                      ⎪
+                                                                                      ⎨ yn+1 = yn + h
+                                                                                      ⎪                  bi f tn + ci h, yki
+fundamental frequency. It is readily found that the frequency spectrum                                     i=1
+                                                                                                                                                                       (8)
+                                                                                                     ∑
+                                                                                                     s      (              )
+xE(t) locates around 0 Hz, which makes it possible to use a larger inte­              ⎪
+                                                                                      ⎪
+                                                                                      ⎪
+                                                                                      ⎩ yki = yn + h   aij f tn + cj h, ykj , 1 ≤ i ≤ s
+gration time-step size.                                                                                    j=1
+
+
+2.2. Modeling of network components based on SF analysis                              where yn is the numerical solutions of y at the nth step. yki and ykj are the
+                                                                                      intermediate values between the nth step and the n+1th step. ci, bi, aij are
+     (1) Models of the Network Components: Based on the SF analysis, the              the coefficients of the Runge–Kutta method, which can be organized in a
+         differential equations of power system components in the time                partitioned form (i.e., the Butcher’s tableau):
+         domain can be transformed into ones in the SF domain. For
+         example, the differential equation of an inductor in the time
+         domain can be represented as:
+           di(t)                                                                                                                                                       (9)
+       L         = u(t)                                                    (4)
+            dt
+
+
+
+where L is the inductance of the inductor. i(t) and u(t) are branch current
+                                                                                        The Butcher’s tableau that arranges the coefficients of the 3S-SDIRK
+and voltage, respectively. Eq. (4) can be transformed into an SF-based
+                                                                                      method is:
+equation according to the frequency shifting transformation in Section
+II-A:
+    diE (t)
+L           + jωc LiE (t) = uE (t)                                         (5)
+      dt                                                                                                                                                             (10)
+
+where iE(t) and uE(t) are the analytic envelopes of the current and
+voltage of the inductor, respectively.
+                                                                                      with
+
+
+                                                                                  2
+S. Gao et al.                                                                                                                 Electric Power Systems Research 198 (2021) 107356
+
+
+a11 = α,
+                                                                                   iE (n + λ) = GL uE (n + λ) + ihist1 (n)                                               (19)
+a21 = (1 − α)/2, a22 = α,
+                        )/= α,
+a31 = b(1 , a32 = b2 , a33
+                                                                       (11)        where iE(n+λ) and uE(n+λ) represent the intermediate values of the in­
+b1 = −( 6α2 − 16α +)/  1 4,
+b2 = 6α2 − 20α + 5 4, b3 = α,                                                      jection current and node voltage at t=tn+c1h, and
+c1 = α, c2 = (1 + α)/2, c3 = 1                                                                    ̃
+                                                                                                  h
+                                                                                   GL =                                                                                  (20)
+                             3       2                                                    L + jωc L̃
+where α is the root of x − 3× +1.5x− 1/6 lying (1/6, 1/2), and it can be                           h
+set as 0.435866521508459 in the simulation.
+    As shown in (10), the 3S-SDIRK scheme consists of three stages. In                              iE (n)
+                                                                                   ihist1 (n) =             .                                                            (21)
+the first stage, the first intermediate value of y (denoted as yn+k1 ) at                         1 + jωc ̃h
+t=tn+c1h is calculated by:                                                             According to (13), the second stage is calculated by:
+               (                 )
+yn+k1 = yn + ̃
+             hf tn + c1 h, yn+k1                                    (12)           iE (n + λ′ ) = GL uE (n + λ′ ) + ihist2 (n)                                           (22)
+
+where ̃ h = αh.                                                                    where iE(n + λ′ ) and uE(n + λ′ ) represent the intermediate values of the
+    The second intermediate value at t=tn+c2h is denoted as yn+k2 , and            injection current and node voltage at t=tn+c2h, and
+the second-stage formula is written as:                                                               1
+                    (                 )                                            ihist2 (n) =               (β11 iE (n) + β12 iE (n + λ)).                             (23)
+yn+k2 = yn1 + ha22 f tn + c2 h, yn+k2                                                             1 + jωc ̃
+                                                                                                          h
+               (                 )                                 (13)
+     = yn1 + ̃
+             hf tn + c2 h, yn+k  2                                                     According to (16), the third stage is calculated by
+
+where                                                                              iE (n + 1) = GL uE (n + 1) + ihist3 (n)                                               (24)
+
+yn1 = β11 yn + β12 yn+k1                                               (14)        where iE(n+1) and uE(n+1) represent the values of the injection current
+                                                                                   and node voltage at t=tn+h, and
+                a21        a21
+β11 = 1 −           , β12 = .                                          (15)
+                

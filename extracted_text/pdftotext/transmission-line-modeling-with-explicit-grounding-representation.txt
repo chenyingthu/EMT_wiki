@@ -1,0 +1,193 @@
+Electric Power Systems Research, 14 (1988) 109 - 119                                                        109
+
+
+
+
+Transmission Line Modeling with Explicit Grounding Representation
+
+G. J. COKKINIDES
+Electrical Engineering Department, University of South Carolina, Columbia, SC (U.S.A.)
+A. P. SAKIS MELIOPOULOS
+School of Electrical Engineering, Georgia Institute of Technology, Atlanta, GA 30332-0250 (U.S.A.)
+(Received September 8, 1987)
+
+
+
+SUMMARY                                                   studies of electromagnetic transients. At
+                                                          present, the EMTP contains several transmis-
+   This paper presents a new model o f an                 sion line models (weight function model,
+overhead transmission line for electromagnetic            Ametani setup, Semlyen setup, Marti model,
+transient computations. The unique feature of             etc.) which can incorporate the frequency
+the model is the explicit representation o f the          dependence of the transmission line param-
+tower grounding configuration and terminal                eters. However, none of these models can
+substation grounds. Other properties o f the              represent the grounding system associated
+model are: (1) accurate frequency dependent               with a transmission line (tower grounding and
+parameter representation from DC to several               substation grounding). Explicit representation
+MHz; (2) explicit modeling o f line asymmetries;          of grounding structures is necessary to predict
+and (3) high numerical efficiency.                        the transient ground potential rise at the
+   The model implementation is based on the               tower and substation grounds during switching
+solution o f the transmission line differential           or lightning surges.
+equations resulting in a set o f step response               This paper describes a unified transmission
+functions, forming a matrix. The step response            line model with the following unique features:
+matrix is utilized in a time domain simulation            (a) explicit representation of transmission line
+o f electric power networks by a linear con-              grounding systems and (b) explicit modeling
+volution scheme. The transmission line model              of line asymmetries. In addition, the model
+is validated with actual system test data. The            accurately represents the frequency depen-
+model is useful for computing the ground                  dence of line parameters and is numerically
+potential rise o f transmission towers due to             efficient.
+lightning or switching surges, insulation stress,
+etc. Typical applications are described in the
+                                                          2. M O D E L   DESCRIPTION
+paper.
+                                                             A n overhead transmission line is viewed as
+                                                          a multiport linear network. The network
+1. I N T R O D U C T I O N
+                                                          terminals are the line conductors at the two
+    Electromagnetic transients in power trans-            ends of the line. Such a system is described
+mission systems, resulting from switching or              with a set of step response functions which
+lightning, play an important role in the overall          form a matrix and which shall be called the
+cost and reliability of the power system. For             line step response matrix (LSRM). In general,
+this reason power line performance has been               the line step response is computed as the
+studied extensively, both analytically and                inverse Fourier transform of its frequency
+experimentally. The present design of trans-              response. The frequency response is derived
+mission lines is based on a wealth of data. For           from the line admittance matrix, defined by
+analysis purposes, many transmission line
+                                                          /(co) = Y(¢o) V(¢o)                                (1)
+models have been developed over the years
+[ 1 - 5 ] . Many of these models have been                where V(ca) and l(co) are vectors containing
+incorporated into the EMTP program [6]                    the voltage and current phasors at the terminals
+which is an excellent analytical tool for                 of the line and co is the angular frequency
+
+0378-7796/88/$3.50                                                 © Elsevier Sequoia/Printed in The Netherlands
+110
+
+
+                               a       j
+                                                                                                              solution of the transmission line partial differ-
+    J                                                                               J
+    J                                                                                j           -------___   ential equations
+    J                          c           j                                             J
+
+
+                                                                                                              ~y2i(t, y) = CL ~ - i ( t , y) + C R ~ i(t, y)
+                                                                                                                                                               (2a)
+                                                                                                                                         a
+                                                                                                              ~y
+                                                                                                                 v(t, y) = Ri(t, y) + L-~ i(t, y)              (2b)
+    \      -_-:          /                     \           -_--       /
+                     /                             \              /                          \      /
+                                                                                                               where v and i are vectors of voltages and cur-
+                                           Remote            Earth
+                                                                                                              rents, respectively, which are functions of
+                                                                                                              time t and one space coordinate y along the
+                                                                                                               line. R, L and C are the resistance, inductance
+                                                                                                              and capacitance matrices in ~2 m -1, H m -1 and
+                             conductor                 ~                  conductor                           F m -1, respectively.
+                             section                                      section
+                                                                                                                  Equation (2) is formulated so that the
+                                                                                                              earth current path is implicitly represented.
+                                                                                                              Thus, for the four-wire line of Fig. 1 these
+             J                                                                                                matrices are 4 × 4. The resistance and induc-
+                                                                                                              tance matrices (R and L) exhibit a strong
+                         -- remoteurlh node
+                                                                                                              frequency dependence. The skin effect in the
+Fig. 1. S c h e m a t i c r e p r e s e n t a t i o n o f a n o v e r h e a d t r a n s -                     conductor and the earth is the cause o f the
+m i s s i o n line.
+                                                                                                              frequency dependence. Carson's t h e o r y [7, 8]
+                                                                                                              gives an exact solution of the electromagnetic
+                                                                                                              field caused by overhead conductors which
+                                                                                                              leads to an accurate computation of the
+(in radians per second). The voltages are                                                                     matrices R, L and C as a function of frequency.
+defined with respect to remote earth.                                                                         Recently, a new method based on the complex
+   In order to compute the line admittance                                                                    depth formula [9] has been introduced and
+matrix Y(¢o) at a given frequency ¢o, the                                                                     is preferred for practical applications. The
+transmission line is subdivided into elementary                                                               method yields a sufficiently accurate evalua-
+blocks. The admittance matrix of each block                                                                   tion of the line matrices R and L over a wide
+is computed separately. Then, using network                                                                   range of frequencies (0 - 10 MHz) [10].
+analysis methods, the individual block matrices                                                                   Equations (2) are transformed into the
+are combined, yielding the entire line admit-                                                                 frequency domain. This yields the set of
+tance matrix. Specifically, an overhead line                                                                  ordinary differential equations
+is subdivided into two types of blocks: the
+tower structure block and the conductor                                                                        d
+                                                                                                              dY 2 I(co, y) = [--w2CL(co) + jcoCR(co)]I(c0, y)
+section block. Consider, for example, the
+four-wire overhead line shown in Fig. 1. The                                                                                                              (3a)
+tower blocks contain the supporting tower                                                                      d
+and grounding structure while each conductor                                                                  dy V(co, y) = JR(co) +jcoL(co)]I(co, y)          (3b)
+block contains a section of the overhead line
+between two consecutive towers. Subse-                                                                           The above equations cannot be solved
+quently, the models of the two blocks are                                                                     analytically since the matrices R, L and C are
+described.                                                                                                    full. A linear transformation is used which is
+                                                                                                              based on eigenvalue analysis and which
+2.1. Overhead conductor model                                                                                 decouples the matrix equations into scalar
+   A conductor section block is represented,                                                                  ones. This transformation permits an analyt-
+in the frequency domain, by an admittance                                                                     ical computation of the conductor section
+matrix, defined by eqn. (1) where the phasor                                                                  admittance matrix at any given frequency.
+vectors/(co) and F(~o) correspond to currents                                                                 The final result is
+and voltages at the ends of the section. The
+computation of the conductor section admit-                                                                   Y(¢o) = [ Y'   Y21                                (4)
+tance matrix is based on the frequency domain                                                                           Y2   Y1
+                                                                                                                                     111
+
+where                                                                                 higher frequencies, more current returns
+Yz = (jcoL + R)-ZWDz w - 1                                                            through the neutral conductor while the
+                                                                                      opposite occurs at lower frequencies. It
+Y2 = (jcoL + R)-IWD2W -1                                                              should be pointed out that the frequency at
+In the above expressions,                            D1 and D2 are                    which this occurs is dependent upon the
+diagonal matrices such that                                                           specific design of the transmission line.
+           Hi 1/2
+                                                                                      2.2. Tower grounding model
+(Da) u - tanh(lHil/2)
+                                                                                         Each t o w e r and its grounding structure are
+                   Hi 1/2                                                             represented b y a step response. It is defined as
+                                                                                      the current flowing into the tower from the
+( D 2 ) u - sinh(iHil/2)
+                                                                                      neutral wire support point when a unit step
+where H~ is the ith eigenvalue of matrix K                                            voltage is applied at the same point.
+(eqn. (5)) and W is a matrix formed with the                                             The step response of the tower and its
+elgenvectors of matrix K:                                                             grounding system can be determined experi-
+                                                                                      mentally [11] or analytically [12 - 14]. When
+K ~ --co2LC + jcoRC                                                         (5)
+                                                                                      computed analytically, finite element analysis
+The matrix K is strongly dependent on                                                 is utilized to solve for the flow o f currents in
+frequency, especially in the low to medium                                            the earth. Then a convolution algorithm is
+frequency range. Figure 2 illustrates the                                             utilized to evaluate the t o w e r and ground step
+variation of the eigenvalues of the matrix K                                          response [ 12 ].
+with frequency for a typical 115 kV three-                                               The tower model has been validated with
+phase four-wire overhead line. N o t e that the                                       data obtained b y Bonneville Power Administra-
+variation is most prominent at low frequencies                                        tion (BPA). The validation of this model is
+(below 10 kHz). The apparent discontinuity                                            reported in ref. 14.
+of the earth and neutral m o d e elgenvalues                                             The admittance of the tower and grounding
+near 91 Hz has been investigated. It has been                                         system at any given frequency is computed
+found that there is no discontinuity b u t                                            from the step response with an appropriate
+rather a crossover of the t w o curves. The                                           Fourier transform.
+crossover occurs because at this frequency
+(91 Hz) the impedance of the neutral conduc-                                          2.3. Generalized admittance matrix
+tor equals the impedance o f the earth path.                                              The admittance matrix of the entire trans-
+At the frequency of 91 Hz, the return current                                         mission line is computed b y combining the
+splits equally b e t w e e n the t w o paths. At                                      individual admittances of the conductor
+                                                                                      section blocks and t o w e r blocks. The pro-
+                                                                                      cedure is based on the well-known nodal
+     10000
+                                                                                      analysis m e t h o d in which block terminal
+                                                                                      voltages and currents are sequentially elimi-
+                                                                                      nated except for the voltages and currents at
+                            neutralconductormode
+                                                                                      the terminals of the line. The final result is
+                                                                                      the generalized admittance matrix of the line
+.~             ~ ~ - -            earthmode
+     2000                                                                             which is a function of frequency and represents
+                                                                                      the effects of parameter frequency depen-
+      1000 -
+                                                                                      dence, tower grounding, and earth currents.
+                                                                                          The admittance matrix of a line consisting
+                                   \                     neutral conductor            of n identical sections is c o m p u t e d b y com-
+                                                       it"        mode                bining n single-section matrices and t o w e r
+       200                                           % phaseconductor                 grounding admittances and by eliminating the
+                                                                    modes             internal nodes. In order to speed up this
+       lOO         I         I           I       I            t        I         |
+                   lO       1oo         IK      IOK          IOOK     IH     1   oM   process, the number of sections is expressed
+                                  Frequency   ( HI )                                  as a sum of powers of t w o (for example,
+Fig. 2. Eigenvalues of a 115 kV overhead transmission                                 a transmission line with 1000 towers will be
+line (line design provided b y courtesy of Georgia                                    analyzed as follows: 1000 = 29 + 2 a + 27 + 26 +
+Pow

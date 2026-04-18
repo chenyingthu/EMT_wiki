@@ -1,0 +1,195 @@
+1052                                                                      IEEE Transactions on Power Delivery, Vol. 14, NO. 3, July 1999
+
+     RATIONAL APPROXIMATION OF FREQUENCY DOMAIN RESPONSES BY VECTOR FllTlNG
+
+                        B j ~ r nGustavsen (M)                                                  Adam Semlyen (LF)
+                       EFI, Trondheim, Norway                                           University of Toronto, Toronto, Canada
+                  Email: bjom.gustavsen@efi.sintef.no                                      Email: semlyen @ ecf.toronto.edu
+
+           -
+ Abstract The paper describes a general methodology for the                     The difficulty in formulating a general fitting methodology has
+ fitting of measured or calculated frequency domain responses with         resulted in many methods which are tailored for particular
+ rational function approximations. This is achieved by replacing a set     problems. For instance, Bode type fitting restricted to real poles
+of Starting poles with an improved set of poles via a scaling              and zeros has been successfully applied to transmission line
+procedure. A previous paper [5] has described the application of the
+method to smooth functions using real starting poles. This paper
+                                                                           modeling based on modal characteristics [3]. Transformer models
+extends the method to functions with a high number of resonance            and network equivalents need complex poles to represent
+peaks by allowing complex starting poles. Fundamentalproperties of         resonance peaks. Such responses have been approximated by fitting
+the method are discussed and details of its practical imptementation       partial fractions to the data in an optimization procedure, with
+are described. The method is demonstrated to be very suitable for          precalculated poles [4].
+fitting network equivalents and transformer responses. The                      An attempt at formulating a general fitting methodology was
+computer code is in the public domain, available from the first            introduced in [ 5 ] . This method-vector fitting-was based on
+author.                                                                    doing the approximation in two stages, both with known poles. The
+                         1 INTRODUCTION                                    first stage was carried out with real poles distributed over the
+                                                                           frequency range bf interest. In addition, an unknown frequency
+     One of the problems encountered in power system transients            dependent scaling parameter was introduced which permitted the
+modeling is the accurate inclusion of frequency dependent effects          scaled function to be accurately fitted with the prescribed poles.
+in a time domain simulation. Such effects arise from eddy currents         From the fitted function a new set of poles were obtained and then
+in conducting materials and sometimes from relaxation phenomena            used in the second stage in the fitting of the unscaled function. This
+in dielectrics. These effects materialize as a frequency domain            procedure was very successful in fitting the smooth functions
+variation in the resistance, inductance and capacitance matrices           occurring in transmission line modeling [5-61. However, later
+used in the formulation of the model. In practice, the frequency           investigations by the authors have shown that the method fails
+dependent responses are obtained via calculations or measurements          when there are many resonance peaks in the response to be fitted.
+as discrete functions of frequency.
+     A linear model of a power system component can in general be              This paper shows that the above mentioned limitations can
+included in a time domain simulation via convolutions between              easily be overcome by using complex starting poles. This result is
+terminal quantities (e.g. node voltages) and impulse responses             demonstrated by numerical examples involving artificially created
+characterizing the dynamics of the model. A full numerical                 frequency responses, a measured transformer response, and a
+convolution is always possible, but this becomes computationally           network equivalent. The paper also provides details on the practical
+inefficient because of the many time steps in a simulation. A much         implementation of vector fitting.
+more efficient implementation is achieved if the frequency domain                     2 VECTOR FITTING BY POLE RELOCATION
+responses are replaced with low order rational function
+approximations, as the convolutions can then be given a recursive              Consider the rational function approximation
+formulation [l]. The ability of finding a good rational function                                          N
+approximation is therefore important in power system modeling.                                   f(s)= x L + d + s h                           (2)
+     In principle, an approximation of a given order can be found by                                      ’-an
+fitting a ratio of two polynomials to the data [2]:                        The residues c, and poles a, are either real quantities or come in
+                                                                           complex conjugate pairs, while d and h are real. The problem at
+                                   +
+                          a, + a,s a2s2+...+aNsN
+                   f(s) = 6, + 6,s + 6,s2+.. .+6,sN                        hand is to estimate all coefficients in (2) so that a least squares
+                                                                           approximation of f ( s ) is obtained over a given frequency interval.
+Equation (1) is nonlinear in terms of the unknown coefficients but         We note that (2) is a nonlinear problem in terms of the unknowns,
+can be rewritten as a linear problem of the type A x = b by                because the unknowns a, appear in the denominator.
+multiplying both sides with the denominator. However, the                      Vector fitting solves the problem (2) sequentially as a linear
+resulting problem is badly scaled and conditioned as the columns in        problem in two stages, both times with known poles.
+A are multiplied with different powers of s. This limits the method
+                                                                           Stage #l :Dole identification
+to approximations of very low order, particularly if the fitting is
+                                                                           Specify a set of starting poles Z, in (2), and multiply f ( s ) with an
+over a wide frequency range.
+                                                                           unknown function ~ ( s ) . In addition we introduce a rational
+                                                                           approximation for ~ ( s .) This gives the augmented problem :
+PE-I94-PWRDQll-1997 A paper recommended and approved by
+the IEEE Transmission and Distribution Committee of the IEEE Power
+Engineering Society for publicationin the IEEE Transactions on P-r
+Delivery. Manuscript submitted July 2,1997; made available for printing
+December 3,1997.
+
+                                                                              Note that in (3) the rational approximation for ~ ( s ) has the
+                                                                           same poles as the approximation for ~ ( sf)(s) . Also, note that the
+
+                                                      0885-8977/99/$10.00 0 1997 IEEE
+                                                                                                                                          1053
+ambiguity in the solution for a@) has been removed by forcing              in (2) by a vector. This will result in all elements of the fitted
+ a(s) to approach unity at very high frequencies.                          vector sharing the same poles. The advantage of using the same
+    Multiplying the second row in (3) with f ( s ) yields the              poles for all elements in a vector is that the time domain
+following relation :                                                       convolutions for the vector become about twice as fast (see the
+                                                                           closure to [51).
+                                                                                                   3 STARTING POLES
+or                                                                         3.1 Sianificance of staftina Doles
+                       (of)&>      = ol,(s)f(s)                     6,     Successful application of vector fitting requires that the linear
+                                                                           problem (6) can be solved with sufficient accuracy. In our
+Equation (4) is linear in its unknowns cn,d,h,Zn.Writing (4) for
+                                                                           experience, difficulties may arise due to poor starting poles in the
+several frequency poiqs gives the overdetermined linear problem
+                                                                           following ways :
+                                 Ax=b                               (6)
+                                                                           1) The linear problem (6) becomes ill-conditioned if the starting
+where the unknowns are in the solution vector x. Equation (6)is               poles are real. This may result in an inaccurate solution.
+solved as a least squares problem. Details about the formulation of
+                                                                           2) A large difference between the starting poles and the correct
+the linear equations is shown in Appendix A.                                  poles may result in large variations in a(s) and o ( s ) f ( s ) .
+    A rational function approximation for f ( s ) can now be readily          Because a least squares approach is used when solving (6), a
+obtained from (4). This becomes evideht if each sum of partial                 poor fitting may result where these functions are small.
+fractions in (4) is written as a fraction :
+                                                                           The first problem is overcome by usage of complex starting poles.
+                                                                           The second problem is overcome by sensible location of the
+                                                                           starting poles, and by using the new poles as starting poles in an
+                                                                           iterative procedure.
+                         n=l                        n=l                    3.2 Recommended DfOCedUre for selectlon of startinu Doles
+From (7) we get
+                                          N&l                              Functions with distinct resonance peaks
+                                                                           The starting poles should be complex conjugate with imaginary
+                                                                           parts p linearly distributed over the frequency range of interest.
+                                                                           Each pair is chosen as follows :
+                                          n=l                                                    a , = - a + j p , an+,=-a-jp               (9)
+    Equation (8) shows that the poles of f ( s ) become equal to the       where
+zeros of a&)!     (Note that the starting poles cancel in the division
+                                                                                                          a=p/100
+process because we use the same starting poles for (afb, and for
+afi,(s)). Thus, by calculating the zeros of of&) we get a good set            This simple procedure produces starting poles with sufficiently
+of poles for fitting the original function f ( s ) . The calculation of    small real parts, thus avoiding the ill-conditioning problem as is
+zeros from the representation by partial fractions (4) is                  explained in section 6.
+straightforward, as shown in Appendix B.
+                                                                           Smooth functions
+     On occasion, some of the new poles may be unstable. This
+                                                                           Use real poles, linearly or logarithmically spaced as function of
+problem is overcome by inverting the sign of their real parts.
+                                                                           frequency, (The ill-conditioning problem associated with real poles
+Stage #2 :residue identification                                           will not lead to an inaccurate fitting when f ( s ) is smooth.)
+In principle we could now calculate the residues for f ( s ) directly
+                                                                                        4 FlmNG NON-SMOOTH FUNCTIONS
+from (8). However, a more accurate result is in general obtained by
+solving the original problem in (2) with the zeros of a(s) as new          4.1 Freauencv resnons8
+poles a,, for f ( s ) . This again gives an overdetermined linear
+problem of form Ax = b where the solution vector x contains the            In what follows we consider an artificially created frequency
+unknowns c n , d and h. It is solved as (A.2) of Appendix A                response of order 18, defined by (2). The assumed poles, residues,
+(without the negative term).                                               constant term and proportional term are given below.
+                                                                           Table 1 Coefficients of frequency response defined by (2)
+General remarks
+                                                                           Poles [Hz]                 Residues [Hz]
+Note that the numerator and denominator of a          , have been          -4500                        -3000
+specified in (7) to be of the same order. This has the implication         -41000                       -83000
+that if the starting poles are correct, then the new poles (zeros of       -100 f j5000                 -5     f j7000
+a,,) become equal to the starting poles (ofi,(s)=l).In practical           -120 f jl5000                -20    f j18000
+applications, this has the consequence that the rational                   -3000 f j35000                6000 rt j45000
+approximation will converge if the new poles are used as starting          -200 f j45000                 40    f j60000
+poles in an iterative procedure.                                           -1500 f j45000                90    f jlO000
+     In (2) an unknown constant term and an unknown proportional           -500 f j70000                 50000 f j80000
+term are included. It is straightforward to modify the method to                   *
+                                                                           -1000 j73000                  1000 f j45000
+                                                                           -2000 f j 9 0 0 0 0          -5000 f 92000
+handle cases were these quantities are known.
+     Vector fitting is equally well suited for fitting vectors as it is    d=O . 2 , h=2E-5
+for scalars (hence its name). It is done by replacing the scalar f ( s )
+1054
+    This response contains 2 real poles and 16 complex poles. Note          Poles                          Residues
+that two complex pairs have poles with identical imaginary parts            -1.03E-02                     3.78E-14
+(45000 Hz) but different real parts. The magnitude of the resulting         -1.50E+04                    -4.233-07
+function is shown in figure 1.
+                                                                            The magnitude of the two corresponding partial fractions have both
+                                                                            a maximum value less than 1E-11. They do in practice not
+                                                                            contribute to the response and may therefore be removed.
+                                                                                 lo5 r                                                       1
+
+
+
+
+        U
+         0          20        40         60         80             100
+                            Frequency [kHz]                                                                                                   1
+             Fig. 1 18th order frequency response f ( s )                                        20        40        60           80        100
+                                                                                                          Frequency [kHz]
+4.2 Fittlna with comDlex Doles
+                                                                                    Fig.2 Rational approximations af,,(s) and (af)fi,(s)
+10 pairs of complex starting poles were linearly distributed over the
+frequency range, as explained in section 3.2. The starting poles are                     I                                                        I
+
+listed below :
+Table 2 Starting poles                                                                   i       -accurate
+-1.00E-02 f jl.OOE+OO             -5.553+02 f j5.55E+04
+-l.llE+02 f j1.11E+04             -6.663+02 f j6.66E+04
+-2.22E+02 f j2.22E+04             -7.773+02 f j7.77E+04
+-3.333+02 f j3.33E+04             -8.883+02 f j8.88E+04                      C
+-4.443+02 f j4.44E+04             -1.00E+03 f jl.OOE+OS
+     Using the starting poles in table 2, the first stage in vector
+                                                                                                            deviation
+fitting was carried out. This produced rational approximations
+of&) and (of)&). The magnitude of the responses is shown in
+figure 2. Also is shown the magnitude of the difference between                        0          20          40           60         80       100
+o&)f(s) and ( O ~ ) ~ , , ( S >which corresponds to the error in (4). The                                   Frequency [kHz]
+difference is seen to be smaller than 1E-10.                                         Fig. 3 Fitted function f ( s ) (20th order approximation)
+     In the second stage in vector fitting, the zeros of csf,,(s)were
+calculated and used as new poles for the fitting of the original                A very attractive feature of the fitting methodology is that it
+function f(s) . Figure 3 shows that the resulting approximationfor          will not fail if one attempts to use a very high order approximation.
+ f(s) is extremely accurate! The root-mean-square (RMS) error               For instance, if one increased the number of linearly spaced
+was found to be 3.8E-12. Table 3 lists the errors of the values             complex starting poles in table 2 from 20 to 40, the RMS-error
+obtained for the individual coefficients in table 1. They are all very      became 1.6E-12.
+small.
+                                                                            4.3 Flttlna wlth real startina Doles
+Table 3 Error in estimate of coefficients in table 1.                       As was pointed out in section 3.2, frequency responses with
+Poles                       Residues                                        resonance peaks should be fitted using complex starting poles.
+ 1E-07                      1E-07                                           However, we now attempt at fitting f ( s ) with 20 real poles,
+-3E-08                      1

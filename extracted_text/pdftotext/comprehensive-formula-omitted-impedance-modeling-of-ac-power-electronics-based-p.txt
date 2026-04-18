@@ -1,0 +1,192 @@
+                                                              Electric Power Systems Research 235 (2024) 110847
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Comprehensive 𝐷𝑄 impedance modeling of AC power-electronics-based
+power systems with frequency-dependent transmission lines
+Julio Hernández-Ramírez a , Juan Segundo-Ramírez a ,∗, Marta Molinas b
+a Autonomous University of San Luis Potosí, Engineering Department, Dr. Manuel Nava No. 8, Zona Universitaria Poniente, San Luis Potosí, 78290, San Luis
+
+Potosí, Mexico
+b
+  Norwegian Institute of Science and Technology, Department of Engineering Cybernetics, Elektro D/B2, D244, Gløshaugen, O. S. Bragstads plass
+2, Trondheim, 7034, Trondheim, Norway
+
+
+
+ARTICLE                INFO                               ABSTRACT
+
+Keywords:                                                 This paper introduces a time–frequency analytic method for the exact identification of wideband DQ impedance
+Converters                                                models oriented to harmonic stability of converter-driven systems with transmission line models with
+Harmonic balance method                                   distributed and frequency-dependent parameters. Wideband models are of great importance in the analysis
+Impedance modeling
+                                                          of harmonic stability over a broad range of frequencies. The transmission line is a crucial component in this
+Nyquist stability criterion
+                                                          regard, but it is not straightforward to incorporate it into the impedance model of AC power-electronics-
+Transmission line
+                                                          based power systems. This has led to the use of lumped parameter models or models based on rational
+                                                          approximations. This article proposes a method to include this important element to the impedance model
+                                                          directly from its frequency domain model. Salient features of the proposed modeling approach include the
+                                                          frequency telegrapher’s equations with distributed and frequency-dependent parameters, exact delay models
+                                                          of PWM, control implementations of power electronics, and an exact steady-state computation using a
+                                                          balance method based on a hybrid time–frequency approach. The proposal avoids time-domain simulations,
+                                                          rational approximations, or the fast Fourier transform. A converter-driven system with transmission lines
+                                                          is used to validate the proposal and the results of the frequency scanning method conducted in OPAL-RT
+                                                          (ARTEMiS/EMTP-RV) and PSCAD/EMTDC support the effectiveness, speed, and accuracy.
+
+
+
+1. Introduction                                                                                wide frequency range [8,9]. Nonetheless, incorporating the wideband
+                                                                                               models of transmission lines along with controlled PEDs is complex
+    The increment of power electronic devices (PEDs) in the electric                           because the whole system would be of infinite dimension, nonlinear,
+networks has brought new challenges in their operation, analysis and                           and modeled in different frameworks. These problems make it difficult
+control [1,2]. Despite the notable performance that PEDs have due to                           to accurately calculate the steady state solution of the system, which is
+the usage of feedback control and fast response, this can also cause                           necessary to obtain the accurate small-signal models used in stability
+stability-related problems [3,4]. In fact, along with the traditional                          studies.
+stability definitions, new ones have been added [5], such as the so-                               There are no previous works dealing with the impedance modeling
+called converter driven-stability that focuses on the slow and fast                            considering the full frequency-dependent transmission line with dis-
+interactions that converter-based systems could present; hence, there
+                                                                                               tributed parameters (TL), along to exact delay models of the PWM, con-
+could be scenarios where both electromechanical and electromagnetic
+                                                                                               trol implementations associated with the PEDs, and the exact steady-
+dynamics must be studied to assess the stability. This contrasts with the
+                                                                                               state computation of nonlinear systems with frequency-dependent and
+traditional conception of power systems dominated by synchronous ma-
+                                                                                               distributed parameters elements, such as the TL. This paper presents
+chines, where phasor-based tools were enough to study low-frequency
+                                                                                               a novel hybrid alternative to determine the impedance models in the
+oscillations [6].
+    In this scenario, electromagnetic transient (EMT) simulations are                          𝐷𝑄 framework of systems with TLs and PEDs. The TLs are repre-
+more appropriate for the comprehensive study of fast oscillations [7].                         sented exactly using their hyperbolic solution in the frequency domain,
+This phenomenon is known as harmonic stability, and is related to the                          whereas the PEDs are modeled in the time domain, maintaining their
+interactions of the PEDs and the passive elements of the network over a                        nonlinear features. This approach first finds the steady-state solution
+
+
+  ∗ Corresponding author.
+     E-mail addresses: jarmonyhr@gmail.com (J. Hernández-Ramírez), juan.segundo@uaslp.mx (J. Segundo-Ramírez), marta.molinas@ntnu.no (M. Molinas).
+
+https://doi.org/10.1016/j.epsr.2024.110847
+Received 16 September 2023; Received in revised form 21 March 2024; Accepted 24 June 2024
+Available online 6 July 2024
+0378-7796/© 2024 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+J. Hernández-Ramírez et al.                                                                                            Electric Power Systems Research 235 (2024) 110847
+
+
+accurately, following the harmonic balance method [10,11]. Then, us-              is used to determine the impedance models in 𝐷𝑄 [26–28]. This
+ing the analytic ABC frequency-domain solution of the TL and the Park             approach could request extensive simulation time, especially on large
+transform, the impedance model in 𝐷𝑄 is obtained based on evaluating              scale, weakly damped, and stiff models. Moreover, more points should
+the system response with a three-phase voltage at different frequencies.          be obtained if a finer fitting is sought (this is extremely important to
+Nonetheless, repetitive time-domain simulations, EMT-type programs,               keep resonance peaks), increasing the time and computational effort.
+and vector fitting techniques are not needed. A power-electronic-based            This approach, based on EMT-type programs, approximates the TL
+power system, with two PEDs and tie-lines modeled using frequency-                model with rational functions within a defined wideband; the de-
+dependent and distributed parameters, is used as the test case to prove           lays in the propagation matrix can be better identified by idempotent
+the effectiveness of our work. The results are compared against those             decomposition [29,30].
+obtained from the frequency scanning method implemented in the                        The complete frequency-dependent model of DC cables or TLs in
+real-time simulator OPAL-RT (ARTEMiS/EMTP-RV), and the offline                    AC has been used to assess the stability in the ABC framework as
+simulator PSCAD/EMTDC. The outcomes validate the proposal showing                 reported in [8,31,32]. However, these works do not explain how the
+that it can retain the high-frequency dynamics of TLs, and that the               steady-state is computed; moreover, the PEDs are modeled with several
+steady state is correctly obtained. This paper is ordered in the following        simplifications in their controls. The DC cable of a VSC-HVDC is mod-
+way: Section 2 presents a review on the previous works oriented                   eled considering a distributed parameter model in [33]. In [34], the
+towards modeling of TLs for electromagnetic transient stability or                equivalent circuit of the TL ends is a PI circuit with admittances given
+harmonic stability, Section 3 details the method used to accurately cal-          in terms of hyperbolic functions but with constant parameters. A long
+culate the steady state of converter-driven nonlinear systems with TLs.           transmission cable in the AC side of an inverter is considered in ABC
+Section 4 details the proposed TL impedance modeling method in 𝐷𝑄                 framework in [35], but this work does not explain how the steady state
+domain. Section 5 presents a test case, comparisons with time-domain              is obtained. Hence, some very relevant gaps in the previous works re-
+simulations using two different commercial EMT-type programs and                  garding impedance modeling of systems including frequency-dependent
+stability analyses. Finally, the conclusions of our contribution are given.       TLs and PEDs are listed below:
+
+                                                                                      • A proper framework should be defined where impedance models
+2. Previous work
+                                                                                        can easily be computed for all the elements under study.
+                                                                                      • A method to compute the steady state of a system with infinite-
+    The power systems small-signal analysis based on state space models
+                                                                                        dimensional models is needed.
+and selective modal analysis [12,13], has been widely used, but it is
+                                                                                      • The TLs should be represented avoiding rational approximations.
+based on a finite-dimensional model that neglects the complete dynam-
+                                                                                      • Repetitive time-domain simulations should be avoided to save
+ics own of the PEDs delay and frequency-dependent TL models. The
+                                                                                        time and reduce the computational burden and simulation errors.
+impedance-based method is an alternative approach to the small-signal
+analysis [14] that has gained acceptance because it can derive small-             The incipient idea of our work was initially presented in [11], fo-
+signal models even when the model and parameters of the system are                cusing on the impedance modeling of one TL subsystem with one
+not explicitly known, but can be identified by measuring voltages and             nonlinear subsystem. However, this paper is a generalization consid-
+currents in terminals of the device under study, rather than obtaining            ering several nonlinear subsystems interacting simultaneously with
+analytical expressions [15–17]. In addition, since this method is in the          several frequency-dependent elements and closed-loop controlled PEDs.
+frequency domain, it is more suitable for naturally incorporating the             Additional in-depth validations in ARTEMiS/EMTP-RV (real-time sim-
+delays and TLs models. In the case of the delay, this can easily be               ulations) and PSCAD (offline simulations) are included here, and the
+considered in any framework (𝐷𝑄, 𝛼𝛽, harmonic, sequence, or ABC)                  stability properties of our impedance method are also confirmed by the
+and whose small-signal model is well-known [18,19].                               Nyquist criterion and time domain simulations.
+    The telegrapher’s equations in the phase domain mathematically
+describe the currents and voltages over time along the TL. In the                 3. Operating point computation
+time domain are a set of two partial differential equations (PDEs)
+with convolutions for each conductor of a multiconductor TL. In the                   The proposed approach to equilibrium point computation is the
+frequency domain, these equations can be analytically solved and their            harmonic balance method (HBM) [10] since its iterative formulation
+solution includes transcendental functions [20]. It is worth mentioning           allows for hybrid modeling, with components modeled in the time and
+that these elements are rarely modeled in 𝐷𝑄, where it might be more              frequency domains. In our proposal, we only use the fundamental fre-
+useful for stability analysis because this framework is commonly used             quency in the iterative process, since we are not considering harmonic
+to describe PEDs because the framework is time invariant, simplifies              components.
+control design, and allows to easily compute the steady state solution                Consider a system as Fig. 1-(a) shows, where there is a linear
+and get the respective linearized system.                                         network interconnecting 𝑛 nonlinear subsystems (possibly including
+    Popular approaches for impedance modeling represent TLs using                 systems with control). The coupling between them is caused by the
+PI circuits in cascade [21] or PI frequency-dependent models [22]                 currents 𝑖𝑘 (𝑡) and the voltages 𝑣𝑘 (𝑡) for 𝑘 = 1, 2, … , 𝑛 in the point of
+through lumped-circuit approximations. These representations permit               interconnection (POI) of each nonlinear subsystem. Electrically, using
+a formulation of state space models (that can also be used to compute             dependent sources, the same effect can be represented as Fig. 1-(b)
+the impedance), applicable in ABC or 𝐷𝑄 frameworks. The steady state              depicts. This artificial split makes it possible to analyze and model
+could be computed either by solving the nonlinear equations using                 each subsystem in the most appropriate domain (time or frequency)
+a Newton–Raphson method or applying a shooting method [23]. A                     according to its characteristics. The HBM works in an iteratively man-
+disadvantage of these approaches is that the dynamics of the TLs are not          ner as follows: initially, the steady-state condition is unknown in all
+entirely captured if low-order approximations are used, so a high-order           subsystems, so a first estimate for 𝑣𝑘 (𝑡) that we call 𝑣𝑘(𝑖) is proposed
+model could be needed. The previous works [24,25] have proposed                   (𝑖 = 0). It is assumed that each nonlinear subsystem in Fig. 1 has a
+impedance models of TLs in the 𝐷𝑄 framework; however, the ap-                     dynamical model that is better written in the time domain as:
+proach also uses lumped-parameter models, truncating the high-order               𝑑𝒙𝑘(𝑖+1)
+dynamics.                                                                                    = 𝒇 𝑘 (𝒙(𝑖+1) , 𝑣𝑘(𝑖) )                                                (1)
+                                                                                    𝑑𝑡               𝑘
+    Another common alternative relies on the usage of EMT-type pro-
+grams and the frequency scanning method (FSM) to compute sparse                      Where 𝒙𝑘(𝑖+1) is the state vector of the 𝑘th nonlinear subsystem that
+points of the response of the subsystems; afterward, a fitting technique          contains the current 𝑖(𝑖+1)
+                                                                                                         𝑘
+                                                                                                              . The equilibrium condition of each nonlinear
+
+                                                                              2
+J. Hernández-Ramírez et al.                                                                                                        Electric Power Systems Research 235 (2024) 110847
+
+
+
+
+                              Fig. 1. Electric network with nonlinear and linear subsystems: (a) original system, (b) equivalent using dependent sources.
+
+
+
+
+subsystem is computed from 𝒇 𝑘 (𝒙(𝑖+1)𝑘
+                                          , 𝑣(𝑖)
+                                             𝑘
+                                                 ) = 0, obtaining the first                    iteration of the steady state, getting the first result (with 𝑖 = 0):
+                    (𝑖+1)
+iteration result, 𝒙𝑘      by means of a root-finding method, such as the
+                                                                                                       ⎡      (1)   ⎤
+Newton–Raphson method. This method is used to compute the steady-                                      ⎢ 𝒙1         ⎥
+state solution of the nonlinear subsystems, taking advantage of the                                    ⎢      (1)   ⎥
+                                                                                                       ⎢   𝒙  2     ⎥
+fact that they are in 𝐷𝑄. For the initial guess of the Newton–Raphson                                  ⎢            ⎥
+method, the nonlinear subsystems are numerically integrated for 6 full                                 ⎢      ⋮     ⎥
+                                                                                                       ⎢      (1)
+                                                                                                                    ⎥
+cycles to allow the initial fast transients to damp out, but at the inter-                             ⎢ 𝒙𝑛         ⎥
+face nodes between the nonlinear part and the linear part, ideal voltage                               ⎢            ⎥
+                                                                                                (1) = ⎢𝑉 (1) (𝑗𝜔 )⎥                                                            (3)
+                                                                                                                  0
+sources of 1 p.u. were used instead of the linear subsystem. We can omit                               ⎢ 1          ⎥
+this numerical integration if we have a good initial guess. Note that                                  ⎢𝑉 (1) (𝑗𝜔 )⎥
+                                                                                                                  0
+                                                                                                       ⎢ 2          ⎥
+the steady state 

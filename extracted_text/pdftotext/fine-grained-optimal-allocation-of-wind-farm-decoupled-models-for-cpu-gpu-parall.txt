@@ -1,0 +1,159 @@
+                    This article has been accepted for publication in IEEE Transactions on Energy Conversion. This is the author's version which has not been fully edited and
+                                               content may change prior to final publication. Citation information: DOI 10.1109/TEC.2026.3669438
+
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 14, NO. 8, AUGUST 2021                                                                                                                            1
+
+
+
+
+  Fine-Grained Optimal Allocation of Wind Farm Decoupled Models
+                                    for CPU-GPU Parallel EMT Simulation
+Tengfei Liu, Yibao Jiang, Member, IEEE, Haoran Zhao, Senior Member, IEEE, Bing Li, Kai Strunz, Fellow, IEEE
+
+
+
+   Abstract—Parallel simulation based on CPU-GPU heteroge-                                       threaded simulators can be categorized into those constructed
+neous hardware, owing to its high speed-up ratio, has emerged as                                 on single-type hardware and those built on heterogeneous
+an effective approach for accelerating electromagnetic transient                                 hardware. The simulators based on single-type hardware,
+(EMT) simulation of wind farms. However, most existing studies
+rely mainly on hardware multi-threading capabilities, with lim-                                  typically consisting of one or more central processing units
+ited quantitative analysis of model–hardware adaptability, result-                               (CPUs), are limited by finite threads [8], [9] and exhibit low
+ing in insufficient exploitation of the complementary advantages                                 parallelism when simulating large-scale wind farms. To en-
+of CPUs and GPUs. To this end, this paper proposes a fine-                                       hance parallel computing, heterogeneous hardware platforms
+grained optimal allocation method (FGOAM) that formulates                                        combining CPUs with graphics processing units (GPUs) or
+the hardware assignment of each subsystem in wind farms
+as a constrained optimization problem for maximal simulation                                     field programmable gate arrays (FPGAs) have been devel-
+efficiency. Firstly, a bottom-up quantification method is developed                              oped with numerous parallel processing units. The FPGA-
+to accurately assess the computational resources and solution                                    based heterogeneous simulators have strong capabilities of
+time of decoupled models by decomposing the computation                                          parallel processing and pipelinable execution [10]. However,
+process into sequential and parallelizable steps. Secondly, a                                    the number of FPGAs in the simulator must scale linearly
+FGOAM for decoupled wind farm models is proposed, for the
+first time, by formulating an integer nonlinear programming                                      with the size of the wind farm [11], [12], leading to high
+(INLP) problem for step-level computation allocation. Finally,                                   implementation costs [13], [14]. In contrast, GPUs enable
+to further improve solution efficiency of FGOAM, an enhanced                                     parallel processing capabilities by significantly increasing the
+FGOAM (E-FGOAM) is derived via integer variable reduction                                        number of computational units compared to FPGAs. A single
+without sacrificing allocation optimality. The accuracy of the                                   GPU can accelerate EMT simulation of large-scale wind farms
+proposed quantification method and the improvement on simula-
+tion efficiency after optimal allocation are validated. Simulation                               with hundreds of wind turbines, offering a practical and cost-
+results demonstrate that the simulation speed is increased by two                                effective solution [15]. Moreover, the compute unified device
+orders of magnitude for a wind farm consisting of 400 turbines.                                  architecture (CUDA) architecture offers greater flexibility and
+                                                                                                 scalability for numerical simulations, avoiding the need for
+   Index Terms—CPU-GPU, electromagnetic transient, optimal                                       time-consuming hardware-specific design in Verilog, as re-
+allocation, parallel simulation, wind farm.                                                      quired by FPGA development. While GPUs offer significant
+                                                                                                 advantages in parallel EMT simulation, their low clock fre-
+                           I. I NTRODUCTION                                                      quency (for consumer desktop GPUs, typically within 3 GHz)
+                                                                                                 results in longer simulation times for small-scale systems
+W       ITH the rapid development of renewable energy, wind
+        power has become a dominant contributor to the grid
+decarbonization [1]. As wind farms are integrated into power
+                                                                                                 compared to simulators relying solely on CPUs [16]. There-
+                                                                                                 fore, combining CPUs and GPUs to construct heterogeneous
+systems at scale, their converter-driven dynamics bring sig-                                     simulation platforms is an effective solution for wind farm
+nificant challenges to grid stability. Electromagnetic transient                                 simulation. However, simply combining CPUs and GPUs is
+(EMT) simulation is essential in capturing fast dynamics and                                     insufficient to fully exploit the high clock frequency of CPUs
+identifying potential issues [2], [3]. However, the growing                                      and the massive parallelism of GPUs. How to properly allocate
+scale of wind farms and the increasing switching frequency                                       the decoupled model to appropriate hardware is also critical
+of wind power converters [4], [5] demands smaller simulation                                     for maximizing the utilization of CPU-GPU heterogeneous
+steps [6], which impose higher efficiency requirements on                                        acceleration capabilities. The optimal allocation of a decoupled
+EMT simulators of wind farms [7].                                                                wind farm model is essentially a problem of optimal load
+   Parallel simulation is widely adopted in current wind farm                                    distribution [17]. To date, researchers in fields such as artificial
+simulators, where a wind farm is decoupled into multiple sub-                                    intelligence, machine learning, edge and cloud computing, and
+systems and simulated using multi-threaded hardware. Multi-                                      signal processing have investigated how to allocate computa-
+                                                                                                 tional loads to appropriate hardware platforms in an efficient
+  This paper was supported by the National Natural Science Foundation of                         manner [9]. However, due to differences in the underlying
+China (grant numbers 52307112).
+  Tengfei Liu, Yibao Jiang, Haoran Zhao and Bing Li are with the                                 problem settings, the corresponding optimization objectives
+School of Electrical Engineering, Shandong University, 250061 Jinan,                             also vary, making these approaches difficult to directly apply
+China. (e-mail: 202420770@mail.sdu.edu.cn, {yjiang, hzhao}@sdu.edu.cn,                           to the simulation of decoupled wind farm models.
+bingli@mail.sdu.edu.cn)
+  Kai Strunz is with the Chair of Sustainable Electric Networks and Sources                         At present, the optimal allocation for decoupled wind farm
+of Energy, Technische Universität Berlin, 10587 Berlin, Germany (e-mail:                        models is typically determined based on simple rules or
+kai.strunz@tu-berlin.de).                                                                        experiments. The rule-based model allocation method usually
+                                                                                                 assigns the control system and the electrical system to CPUs
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:38:45 UTC from IEEE Xplore. Restrictions apply.
+                    © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                       but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                  This article has been accepted for publication in IEEE Transactions on Energy Conversion. This is the author's version which has not been fully edited and
+                                             content may change prior to final publication. Citation information: DOI 10.1109/TEC.2026.3669438
+
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 14, NO. 8, AUGUST 2021                                                                                                                          2
+
+
+
+and GPUs (or FPGAs), respectively [11], [13], [18], [19]. Refs.                                   (3) To address the computational complexity associated with
+[13] and [18] implement turbine model and control system                                       integer programming in the proposed FGOAM, an enhanced
+computations on CPUs, while conducting electrical model                                        FGOAM (E-FGOAM) is developed via integer variable re-
+simulations on GPUs. This division is based on qualitative                                     duction. E-FGOAM performs unified allocation of simula-
+analysis of the computational characteristics of each model                                    tion steps within each subsystem, effectively reducing the
+component. In the experiment-based model allocation method,                                    computational complexity of the allocation process without
+wind farms with varying numbers of wind turbines are repeat-                                   compromising optimality.
+edly tested to either a CPU or a GPU [20]. By comparing                                           The remainder of this paper is organized as follows: Section
+the measured solution time of wind farm on the CPU and                                         II introduces the decoupled models based on the capacitance-
+the GPU, a threshold is identified to decide the appropriate                                   inductance branch decoupling method, along with the architec-
+hardware for simulation. Specifically, the threshold is defined                                tural characteristics of CPUs and GPUs; Section III illustrates
+as a number of wind turbines, beyond which the entire model                                    the bottom-up quantification method for the computational re-
+is simulated on GPUs; otherwise, the simulation is executed                                    source requirements and solution time of the decoupled model;
+on CPUs [20]. Although above methods provides criteria for                                     Section IV develops the formulation of FGOAM by utilizing
+model allocation, their allocation rules are too simplified to                                 the quantified results from Section III, and introduces the
+achieve maximal simulation efficiency, especially with the                                     principle and formulation of E-FGOAM; Section V validates
+increasing scale of wind farms.                                                                the proposed method through a large-scale wind farm case
+   Particularly, current approaches often fall short in leveraging                             study, followed by conclusions drawn in Section VI.
+the full computational potential of CPU-GPU heterogeneous
+platforms, due to the following limitations. i) Case-by-case                                      II. D ECOUPLED W IND FARM M ODELS AND CPU-GPU
+allocation: Some methods require extensive experimentation                                                   H ETEROGENEOUS A RCHITECTURE
+to re-establish the allocation thresholds as turbine types, farm                                 The optimal allocation of wind farm models for CPU-GPU
+layouts, and other configurations change. ii) Coarse-grained                                   heterogeneous architectures highly depends on the model’s
+allocation: Current allocation methods are limited to assigning                                parallelizability and the hardware characteristics. Therefore,
+hardware at the wind turbine level, even though each wind                                      Sections II-A and II-B respectively introduce the fine-grained
+turbine has already been decoupled into component-level                                        decoupling method for the wind farm and the CPU and GPU
+subsystems. iii) Qualitative analysis: The above method lacks                                  hardware architecture.
+a rigorous theoretical derivation for the optimal allocation
+of models. As a result, the derived allocation schemes often                                   A. Decoupled Wind Farm Models
+fail to fully exploit the architectural advantages of the CPU-                                    This paper takes the doubly-fed induction generator (DFIG)
+GPU heterogeneous platform. iv) GPU memory overflow:                                           wind turbine for illustration without loss of generality. In
+Rule-based and experiment-based allocation methods do not                                      addition, the EMT simulation is conducted based on the
+consider the memory constraints of different GPU memory                                        widely used nodal analysis method. To improve the solution
+hierarchies, resulting in potential memory overflow and simu-                                  efficiency of the node analysis method for large-scale wind
+lation termination.                                                                            farms, previous studies propose several decoupled parallel
+   To this end, this paper proposes a fine-grained optimal                                     simulation methods, including the Bergeron transmission line
+allocation method (FGOAM) for decoupled wind farm models                                       method (TLM) [21], compensation method [22], multi-area
+based on the CPU-GPU heterogeneous architecture. The pro-                                      Thévenin equivalent [23], latency insertion method [24], and
+posed method enables optimal adaptation between simulation                                     capacitance-inductance branch decoupling methods [5].
+models and heterogeneous hardware by rigorously formulat-                                         Compared with decoupling approaches such as the TLM, the
+ing, for the first time, a constrained optimization problem                                    compensation method, and the multi-area Thévenin equivalent
+specifically tailored for hardware-model assignment. The main                                  method, the capacitor–inductor branch decoupling method en-
+contributions of this paper are summarized as follows:                                         ables device-level decoupling within wind farms. In addition,
+   (1) For the decoupled wind farm model, a bottom-up method                                   unlike the latency insertion method, the capacitor–inductor
+is proposed to accurately quantify the computational resource                                  branch method does not require the introduction of small
+requirements and solution time by decomposing the subsystem                                    inductors or capacitors, thereby preserving simulation accu-
+computation process into sequential and parallelizable steps.                                  racy under dynamic operating conditions. Therefore, this study
+The quantification results are subsequently integrated into                                    adopts the capacitor–inductor branch decoupling method to
+the model allocation optimization problem to formulate the                                     decouple key components of wind turbines, including the
+corresponding constraints and the objective function.                                          generator, converters, filter, transformer, and collector system.
+   (2) By minimizing solution time as the objective and incor-                                 To balance simulation accuracy and computational efficiency,
+porating hardware resource constraints, the model allocation                                   a semi-implicit integration method is employed for the decou-
+problem is formulated as an integer nonlinear programming                                      pling of the generator, filter, and transformer [25]. Meanwhile,
+(INLP) problem, leading to the development of the FGOAM                                        an explicit integration method is applied to the decoupling
+for the decoupled wind farm model. This approach fully ex-                                     of converters and the collector system. Consequently, the
+ploits the computational resources and architectural advantages                                wind farm is decoupled into 8W +1 subsystems, as shown in
+of CPUs and GPUs, achieving a step-level optimal allocation                                    Fig. 1(b), where W represents the number of wind turbines;
+of each subsystem.                                                                             w denotes the w-th wind turbine. Based on the adopted
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:38:45 UTC from IEEE Xplore. Restrictions apply.
+                  © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                     but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                     This article has been accepted for publication in IEEE Transactions on Energy Conversion. This is the author's version which has not been fully edited and
+                                                     content may change prior to final publication. Citation information: DOI 10.1109/TEC.2026.3669438
+
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 14, NO. 8, AUGUST 2021                                                                                                                             3
+
+
+
+                                                                                                      B. CPU-GPU Heterogeneous Architecture
+
+
+
+
+                                                                                        Transformer
+               RSC          Chopper               GSC                                                    An optimal allocation stra

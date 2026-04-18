@@ -1,0 +1,198 @@
+                                                                 Electric Power Systems Research 189 (2020) 106593
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                            Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Real-time simulation with an industrial DCCB controller in a HVDC grid                                                                                      T
+                a,⁎                          a               a                  b                     b                          b
+P. Rault , S. Dennetière , H. Saad , M. Yazdani , C. Wikström , N. Johannesson
+a
+    Réseau de Transport d'Electricité (RTE), Lyon, France
+b
+    Hitachi-ABB power grids, Ludvika, Sweden
+
+
+
+
+A R T I C LE I N FO                                          A B S T R A C T
+
+Keywords:                                                    DC breakers and their associated control are seen as important lever for the DC grid expansion. In complement to
+HVDC                                                         dynamic studies, as intermediate step towards on-site implementation, factory tests using real control and
+MMC                                                          protection hardware enable to ﬁne tune control sequences, to check the software implementation and then test
+DCCBs                                                        the coordination and interaction between diﬀerent devices connected to the same grid.
+HIL
+                                                                This article presents a hardware-in-the-loop setup for testing industrial DCCB controllers and their inter-
+                                                             operability with converter controllers. A hybrid DCCB model suitable for real-time simulation has been devel-
+                                                             oped and then validated against oﬄine model. Industrial DCCB controller functions are described. A set-up of
+                                                             three-terminal DC grid with physical controllers for one MMC converter station and 12 DCCBs is described. The
+                                                             results of two application cases including cable energization and fault clearance are presented and discussed.
+
+
+
+
+1. Introduction                                                                              literature a lot of attention where put in one of these aspects, for in-
+                                                                                             stance, Wang et al. [4] discusses the fault current limiting, Augustin
+    DC networks are seen as an important solution for increasing re-                         et al. [5] exhibits the pole to ground DC fault characteristics in
+newable generation in the energy mix as they increase the capacity of                        monopolar and bipolar conﬁgurations, while Descloux et al. [6] and
+the transmission system and its ﬂexibility. Currently, point to point                        Johannesson et al. [7] investigate diﬀerent fault detection strategies.
+HVDC links are already common for both onshore and oﬀshore projects,                             In addition, most of the studies dealing with simulation of DC grid
+converter stations are provided by one single manufacturer and in case                       protection raise the attention on the DC system modelling, some general
+of DC fault the whole system trips. However, looking forward, dealing                        recommendations are providing in [8], some other discussed DC
+with DC grid to exchange more energy, two additional aspects have to                         breaker modelling [9]. Descloux [10] justiﬁes the need of frequency
+be considered: the VSC-HVDC multivendor interoperability and hand-                           dependant cable model to get relevant results.
+ling DC faults [1]. Clearing a DC fault in a DC grid is challenging, since                       Some relevant works which include the full chain of protection
+the faulty part must be isolated in a few milliseconds to avoid the whole                    system using oﬄine simulation are available in literature [11]. In real
+DC grid collapsing. Due to recent innovation in DC circuit breaker                           HVDC projects, such EMT oﬄine studies constitute the ﬁrst step, to
+(DCCB) technology, Hybrid HVDC Breaker (HHB) makes isolation of                              perform control tuning and preliminary studies of the upcoming pro-
+faulty parts in a DC grid possible, since this device is able to interrupt                   ject. After such preliminary study, the second step involves real time
+DC current in less than 5 ms with acceptable losses [2]. This kind of                        simulation using Hardware In the Loop (HIL) setup with the physical
+DCCB is a good trade-oﬀ between loss eﬃciency which are too large                            control cubicles. The aim of such HIL simulation are:
+with pure semiconductor based DCCB and speed which are two slow
+with pure mechanical DCCB. Other similar technologies which are                               • to validate and/or correct initial control tuning
+currently at the prototype stage, like VARC circuit breaker [3], should                       • to validate the full process chain of the control and protection cu-
+also be evaluated in the near future.                                                             bicles (i.e. acquisition, processing time, coordination of actions from
+    A fast circuit breaking device is an important aspect of the fault                            independent controllers etc.)
+handling in DC grids but will be useless without eﬃcient detection of                         •   to cover a wider range of dynamic performance that are not possible
+faults with DC protections. In fact, the protection system, is utmost                             to perform in EMT oﬄine study: either due to the long computation
+importance since it must selectively detect the eventual fault and then                           time either due to the simpliﬁcation made in the control system of
+send triggering signal to relevant DCCBs within few milliseconds. In                              the oﬄine model
+
+
+    ⁎
+        Corresponding author.
+        E-mail address: pierre.rault@rte-france.com (P. Rault).
+
+https://doi.org/10.1016/j.epsr.2020.106593
+Received 28 January 2020; Received in revised form 2 July 2020; Accepted 25 July 2020
+Available online 19 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+P. Rault, et al.                                                                                                Electric Power Systems Research 189 (2020) 106593
+
+
+    The aim of this work is to perform a HIL simulation of a three-
+terminal DC grid including DCCBs, which is an essential stage in an
+innovative industrial context. Physical Control and Protection (C&P)
+cubicles for ABB DCCBs and converter station are used in this project.
+High Voltage equipment data and topology come from actual manu-
+facturer design. C&P hardware and software, for converter station and
+DCCB, have been provided by the manufacturer and correspond to their
+latest technology. This set-up was ﬁrst developed to test VSCeHVDC
+multivendor interoperability in the European founded project called
+Best Paths DEMO#2 [12]. More information about this multivendor
+HIL set-up and manufacturers equipment description can be found in
+[13]. To the authors’ best knowledge this ﬁnal setup is one of the most
+detailed platforms ever that has been setup to analyse industrial in-                  Fig. 2. Detailed valve model in EMTP-RV for oﬄine simulation.
+teroperability issues and coordination between HVDC converters and
+DCCB controls. This paper contributes in the description of the test             and accurate DCCB models. The models should be able to represent
+setup for HIL simulation. The objective of the paper is also to illustrate       internal components and control system to enable study of failure
+the behaviour of DCCB in various applications.                                   modes, opening/closing operation limits, repeated operations, exposure
+    This paper is organized as follow: in part 2 the modelling of Hybrid         to operating conditions beyond design limits, and failures in high-level
+HVDC breaker for real time purpose is discussed. In part 3 the em-               protection system. The fault current limiting operation is important for
+bedded functionalities of the Hybrid DCCB control are described. In              grid operators but requires detailed component-level studies in order to
+part 4, the HIL set-up used for the test is described. In part 5, two            understand design trade-oﬀs for DCCBs.
+diﬀerent DCCB applications are illustrated by performing DC cable                    In [9], a hybrid DCCB model is presented. It is suitable for system
+energization and DC fault clearance. Finally, some conclusions are               study of DC grid protection and transient studies involving DC faults. In
+drawn in part 6.                                                                 this paper, the aforementioned model is extended to cope with ABB
+                                                                                 speciﬁc technology: number of cells, varistor data and disconnector as
+2. DCCB modelling for EMT simulation                                             deﬁned in part 3.2 and Table 3.2 of [14]. A detailed valve model has
+                                                                                 been developed to accurately represent switching transients within
+2.1. Hybrid DCCB topology                                                        DCCB. This model takes into account nonlinear characteristics of
+                                                                                 semiconductors and stray inductances/capacitances as described in
+    The hybrid DCCB shown in Fig. 1, consists in Residual Current                Fig. 2.
+Disconnecting Circuit Breaker (RCDCB), an inductor to limit fault cur-               Varistors have been modelled with their V/I curve in order to ac-
+rent rate of rise, an auxiliary branch for normal operation, a main              curately represent their nonlinear characteristic (data are deﬁned in
+branch to extinguish DC current. The auxiliary branch has lower con-             Table 3.1 in [14]). The model has been implemented in EMTP-RV and
+duction losses, it includes an Ultra-Fast Disconnector (UFD) to sustain          has been used as a reference to validate the model developed for real-
+the DC voltage insulation during the current breaking time and the               time simulation.
+Load Commutation Switch (LCS) to make the current commute to the
+main branch. The main branch (MB) is composed by a series of MB cells
+                                                                                 2.3. Detailed model for real-time simulation
+which are a semiconductor bidirectional switch which commutes the
+DC current through their parallel varistor in order to decrease the DC
+                                                                                     The detailed DCCB model developed for oﬄine simulation is pre-
+current. More information about the hybrid DCCBs design and its op-
+                                                                                 sented in the previous section. It is composed of many nonlinear models
+eration can be found in [2].
+                                                                                 (varistor and nonlinear diode/IGBT) and many electrical nodes. This
+                                                                                 section describes optimizations that have been implemented to get a
+2.2. Detailed model for oﬄine simulation                                         detailed DCCB model that is suitable for real-time simulation.
+                                                                                     First, all devices embedded in the DCCB are modelled with resistors
+    Because of complexity of hybrid DCCBs, and the signiﬁcance of DC             and Norton equivalents. IGBT/diodes and disconnectors are modelled
+grid protection, DC grid developers are looking for suﬃciently detailed          with two-value resistors. Semi-conductor arrangement (number of IGBT
+
+
+
+
+                                                                  Fig. 1. Hybrid DCCB.
+
+
+                                                                             2
+P. Rault, et al.                                                                                                Electric Power Systems Research 189 (2020) 106593
+
+
+                                                                                back-up breaker functionality. Several sub sequences are the building
+                                                                                blocks of diﬀerent control functions, and operating sequences. The
+                                                                                block/deblock subsequences of main branch prioritize switching of
+                                                                                individual cell based on the stored energy of corresponding varistor.
+                                                                                And blocking of individual cell is inhibited if corresponding varistor is
+                                                                                overloaded.
+                                                                                   The sequence to open the DCCB is as below:
+
+                                                                                 1 The LCS is blocked.
+                                                                                 2 The UFD is ordered to open when the auxiliary current is low en-
+                                                                                   ough.
+                                                                                 3 Wait for UFD to reach mid position to ensure that it can withstand
+                                                                                   the expected voltage.
+                                                                                 4 The MB cells are blocked.
+                           Fig. 3. DCCB model overview.
+                                                                                   The sequence to close the DCCB is as below:
+in series and in parallel) is used to calculate equivalent resistance of
+each valve. Varistors are modelled with nonlinear resistor (piecewise            1 The RCDCBs, Residual Current Disconnecting Circuit Breaker, are
+nonlinear characteristic). It is assumed that the main branch is com-              ordered to close.
+posed of n cells that have identical characteristics (semiconductors,            2 Receiving the close indication of RCDCB, the MB cells are de-
+valve arrangement, varistor characteristics…). The DCCB model over-                blocked.
+view is presented in Fig. 3.                                                     3 The UFD is ordered to close.
+    The discretized version of this circuit is provided in Fig. 4. Re-           4 Receiving the close indication of UFD, the LCS is deblocked.
+sistances R_Ufd, R_LCS, R_Disc, R_B1..n are the equivalent switching
+devices resistance. They are calculated from command signals. As cells          3.2. Soft start
+are connected in series, the following logic is implemented in order to
+calculate Norton equivalent of varistors: for each cell which valve is              The soft start is a function that is used to energize part of the main
+closed, the varistor is represented by a resistor which resistance cor-         circuit. The function can be used for testing of the insulation of a cable
+responds to the ﬁrst segment of the nonlinear characteristic; for each          or overhead line with reduced voltage. The soft start procedure is
+cell which valve is open, the Norton equivalent is calculated from Imain        simply an individual deblocking of the MB cells with delays in between,
+current and the nonlinear characteristic. The Norton equivalent are             which will slow down the build-up of voltage and reducing the inrush
+calculated based on the methodology presented in [15]. This logic is            current.
+very eﬃcient to limit the calculation time of the DCCB model and to                 During the procedure a switch on to fault protection is active while
+keep the execution time practically independent from the number of              the other protection conﬁgurations are the same as in normal operation.
+cells and number of segments of the varistor (ZnO) nonlinear char-
+acteristic. The same approach is applicable to bi-directional DCCB.
+    To validate the DCCB model implemented for real-time simulation,            3.3. Current limiting functionality
+2 test cases shown in Fig. 5, are illustrated in this section. Simulation
+results obtained with the oﬄine model described in Section 2.2 are                  The current limitation function is normally used in a DC grid when
+compared with the results obtained with the real-time simulation                there is an earth fault and a need of current limitation until the fault is
+model. The diﬀerence between Test case#1 and #2 is the insertion of a           disconnected. The hybrid DCCB can start the current limiting func-
+70 km long DC cable. A frequency dependant cable model [16] is used             tionality for self-protection to avoid damage caused by fault current if
+in Test case#2.                                                                 no breaking order is received from the external control system.
+    DCCB current (Idccb) from oﬄine and real-time simulations are                   When initiating current limitation, the load commutation switch is
+superimposed in Fig. 6. Simulation results match very well. Several             blocked and the UFD is opened, commutating the current to the main
+other test cases have been used to validate the real-time implementa-           branch. Thereafter, tuning oﬀ the MB cell switches (IGBTs or BIGTs),
+tion. Time step for oﬄine and real-time simulation is 30 µs.                    the current is commutated to the MB cell varistors.
+                                                                                    The current limitation continues as long as the fault current persists
+3. DCCB station control functions                                               when the main branch is deblocked. The thermal capacity of the var-
+                                                                                istors allow for a predeﬁned number of successive blockings of the MB
+3.1. DCCB control                                                               cells before the DCCB is opened and the current interrupted.
+
+
+    The control interface of the modular Hybrid DCCB sections allows            3.4. DC chopper controls
+fault breaking, current limitation, normal load current transfer and
+                                                                                    In some topologies such as bipolar conﬁgurations pole to ground
+                                                                                faults in one pole will not generate overvoltage in the healthy pole.
+                                                                                However, this is not the case with a symmetric monopole conﬁguration
+    

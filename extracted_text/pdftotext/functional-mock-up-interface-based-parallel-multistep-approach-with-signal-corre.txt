@@ -1,0 +1,180 @@
+2482                                                                                         IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 34, NO. 3, MAY 2019
+
+
+
+
+ Functional Mock-Up Interface Based Parallel Multistep Approach With Signal
+            Correction for Electromagnetic Transients Simulations
+        Ming Cai, Student Member, IEEE, Jean Mahseredjian , Fellow, IEEE, Ulas Karaagac , Member, IEEE,
+                                Ali El-Akoum, and Xiaopeng Fu , Member, IEEE
+
+   Abstract—This letter presents the latest improvements of a previously
+proposed parallel and multistep approach based on the functional mock-up
+interface standard for the simulation of electromagnetic transients. The im-
+proved approach extends the capacity of the original parallel asynchronous
+mode into accommodating the use of different time-steps in different
+decoupled subsystems. It also introduces a signal correction procedure
+using linear extrapolation in multistep simulations, greatly enhancing
+simulation flexibility, efficiency, and accuracy. Numerical examples are
+provided to demonstrate the computational advantages of the improved
+approach.
+   Index Terms—FMI, electromagnetic transients, parallel simulation, mul-
+tistep simulation.
+
+
+                             I. INTRODUCTION
+
+
+W         ITH the ever-growing popularity of Electromagnetic Transient
+          (EMT) simulation tools [1]–[3] among utility engineers, the
+computing time reduction has become crucially important due to the                   Fig. 1. First synchronization scenario (Δtm a s t e r = Δts l a v e ) between
+constraint from numerical integration time-step as well as high accu-                master and slave in the parallel multistep asynchronous mode.
+racy models. In the meantime, state-of-the-art developments in HVDC
+systems and wind generation [4] have created more and more chal-
+lenging cases for the studies of modern-day power systems, which also                improving simulation flexibility and efficiency. Furthermore, a signal
+prompted computing time reduction to become a hot research topic.                    correction procedure based on linear extrapolation is introduced to
+   Many techniques proposed over the years to improve computation                    achieve higher accuracy in a multistep simulation environment. Test
+speed in EMT-type solvers fall into two categories, which are parallel               cases studied in this letter demonstrate that the newly developed fea-
+and multistep approaches (see references in [5]). Despite certain nu-                tures have markedly upgraded the previously proposed approach [5] in
+merical advantages, the implementation of many of these techniques                   terms of flexibility, efficiency and accuracy.
+is limited by either the network decoupling interface, level of user
+intervention, or flexibility.                                                                II. IMPROVEMENTS ON AN FMI-BASED PARALLEL
+   This letter proposes new developments that further enhance the per-                                 AND MULTISTEP APPROACH
+formance of a previously proposed co-simulation-based parallel and
+multistep approach using the Functional Mock-up Interface (FMI) stan-                A. Parallel Multistep Asynchronous Mode
+dard [6] for EMT simulations with complex control systems [5]. In the
+                                                                                        The synchronization scheme between master and slaves in the im-
+improved approach, the computation capacity of the original parallel
+                                                                                     proved parallel multistep asynchronous mode is divided into three sce-
+asynchronous mode is extended into accommodating the use of differ-
+                                                                                     narios based on the comparison of master and slave time-steps, as are
+ent time-steps in different subsystems decoupled in memory, greatly
+                                                                                     presented in Figs. 1, 2, and 3. The definitions of the terms in these
+                                                                                     figures can be found in [5].
+   Manuscript received December 19, 2018; accepted February 22, 2019. Date              The first scenario (Fig. 1) in which Δtm a s t e r = Δts l a v e was already
+of publication March 4, 2019; date of current version April 17, 2019. This work
+was supported by the NSERC Industrial Chair. Paper no. PESL-00287-2018.
+                                                                                     implemented in [5].
+(Corresponding author: Jean Mahseredjian.)                                              In the second scenario where Δtm a s t e r < Δts l a v e (Fig. 2), after
+   M. Cai and J. Mahseredjian are with Polytechnique Montréal, Mon-                 waiting for the slave to release SemMaster, the master keeps releasing
+treal, QC H3T1J4, Canada (e-mail:, ming.cai@polymtl.ca; jean.mahseredjian            SemMaster to itself if it lags behind the slave to catch up with the latter,
+@polymtl.ca).
+                                                                                     and it releases SemSlave to the slave once it catches up such that both
+   U. Karaagac is with The Hong Kong Polytechnic University, Hong Kong
+(e-mail:,ulas.karaagac@polyu.edu.hk).                                                can execute their subsequent calculations simultaneously.
+   A. El-Akoum is with Électricité de France (EDF) Lab Paris-Saclay, Palaiseau        If Δtm a s t e r > Δts l a v e (third scenario), the master keeps releasing
+91120, France (e-mail:,ali.el-akoum@edf.fr).                                         SemSlave to the slave for it to catch up if it lags behind. Once the
+   X. Fu is with Tianjin University, Tianjin 300072, China (e-mail:, fuxi-           slave catches up, the master releases SemSlave once more and both
+aopeng@tju.edu.cn).
+   Color versions of one or more of the figures in this paper are available online   continue their subsequent calculations in parallel. Such an improved
+at http://ieeexplore.ieee.org.                                                       synchronization mechanism allows multiple time-steps to be employed
+   Digital Object Identifier 10.1109/TPWRS.2019.2902740                              in the parallel asynchronous mode, considerably enhancing simulation
+
+
+                          0885-8950 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 34, NO. 3, MAY 2019                                                                                                                           2483
+
+
+
+                                                                                                                                         TABLE I
+                                                                                                                         TEST CASE CO-SIMULATION MODE SCENARIOS
+
+
+
+
+Fig. 2. Second synchronization scenario (Δtm a s t e r < Δts l a v e ) between
+master and slave in the parallel multistep asynchronous mode.
+
+                                                                                                         Fig. 4.   Test benchmark.
+
+
+
+                                                                                                            Extrapolation on ys l a v e is performed if the master keeps advancing
+                                                                                                         and reading in the same data at t = T as at t = T − Δts l a v e
+                                                                                                         (ys l a v e = ye x t r a p o l [1 : n]) while the slave, having a larger time-step,
+                                                                                                         remains idle (see Fig. 17 in [5]). Otherwise, only the contents of
+                                                                                                         ye x t r a p o l are updated as the slave has advanced one step in time, no
+                                                                                                         extrapolation is hence needed,
+
+                                                                                                                         ye x t r a p o l [n + 1 : 2n] = ye x t r a p o l [1 : n]       (2)
+                                                                                                                                ye x t r a p o l [1 : n] = ys l a v e                   (3)
+
+
+                                                                                                                                III. NUMERICAL EXAMPLES
+                                                                                                            The improvements presented in this letter have been validated in
+                                                                                                         terms of accuracy and simulation efficiency on a practical system
+                                                                                                         benchmark using different scenarios as shown in Table I. In this table
+                                                                                                         the Original Case provides the reference waveforms from the single-
+                                                                                                         core benchmarks without co-simulation. In all cases, a multiphase un-
+Fig. 3. Third synchronization scenario (Δtm a s t e r > Δts l a v e ) between                            balanced load-flow solution is performed to initialize the time-domain
+master and slave in the parallel multistep asynchronous mode.
+                                                                                                         solution where a fault condition is simulated. A numerical integra-
+                                                                                                         tion time-step of 5 µs is used in the electrical network for all shown
+                                                                                                         examples.
+flexibility with the use of single or multiple time-steps in both co-
+simulation modes.                                                                                        A. Accuracy Validation
+                                                                                                            This test validates the accuracy of the newly developed features,
+B. Linear Extrapolation-Based Signal Correction                                                          using the test benchmark presented in Fig. 4, which is a network con-
+   The proposed linear extrapolation-based correction procedure is im-                                   sisting of 3 wind park (WP) feeders connected to a collector grid and an
+plemented for floating-point type signals in the pre-built function getF-                                equivalent network represented by a Thevenin equivalent. The detailed
+MUOutputs (see Figs. 1, 2, and 3) whose main functionality is to read                                    model [4] whose control system contains 2235 blocks, is used for all
+data exported from the slave.                                                                            wind generators. The detailed WP control systems are modeled in FMI
+   Vector y s l a v e of size n (number of floating-point type signals) repre-                           slaves.
+sents floating-point type outputs from the slave at t = T , and an extrap-                                  The results with four wind generators (two in F1, one in F2 and
+olation vector ye x t r a p o l of size 2n is used to sequentially store floating-                       F3 each) for Scenarios 3 and 5 are selected and presented below, in
+point type slave outputs at t = T − Δts l a v e and t = T − 2Δts l a v e ,                               which both scenarios (asynchronous and synchronous) with and with-
+                                                                                                         out signal correction (SC) are compared with the Original Case. The
+                                               n                              n                          simulation interval is 10 s for all cases and a three-phase fault of 0.15 s
+                                                                                      
+           ye x t r a p o l = [ys l a v e , T −Δ t s l a v e , ys l a v e , T −2 Δ t s l a v e ]   (1)   occurs at t = 5s. The average active power from the three feeders and
+2484                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 34, NO. 3, MAY 2019
+
+
+
+
+                                                                                 Fig. 7.   Solution time speedup with respect to the number of slaves.
+Fig. 5.   Average active power from wind park feeder.
+                                                                                    The solution time speedup in comparison to the Original Case with
+                                                                                 respect to the number of slaves is shown in Fig. 7. It is observed that
+                                                                                 substantial solution time speedup can be obtained in all scenarios, but
+                                                                                 the parallel multistep asynchronous mode (Scenarios 2 and 3) renders
+                                                                                 the highest speedup that was not observed in the scenarios of the
+                                                                                 previously developed approach (Scenarios 1, 4, and 5) [5], confirming
+                                                                                 that the newly developed parallel multistep asynchronous mode further
+                                                                                 enhances simulation efficiency.
+
+                                                                                                             IV. CONCLUSION
+                                                                                    This letter presented latest improvements for a previously proposed
+                                                                                 FMI-based parallel and multistep approach for EMT simulations using
+                                                                                 a new parallel multistep asynchronous mode and a linear extrapolation-
+Fig. 6.   Phase-a voltage at the 34.5 kV bus.                                    based signal correction procedure. The newest features have been
+                                                                                 proven via different tests to further enhance efficiency and accuracy
+                                                                                 in power system EMT simulations with computationally expensive
+                                                                                 control systems.
+the phase-a voltage at the 34.5 kV bus, are presented in Figs. 5 and 6
+with clear observation in amplified intervals.
+                                                                                                                  REFERENCES
+   Firstly, it is observed that the newly implemented parallel mul-
+tistep asynchronous mode (Scenario 3) offers comparable accuracy                 [1] J. Mahseredjian, S. Dennetière, L. Dubé, B. Khodabakhchian, and
+with the previously developed sequential multistep synchronous mode                  L. Gérin-Lajoie, “On a new approach for the simulation of transients in
+                                                                                     power systems,” Elect. Power Syst. Res., vol. 77, no. 11, pp. 1514–1520,
+(Scenario 5), demonstrating that this new feature does not affect accu-
+                                                                                     2007.
+racy. Secondly, the accuracy of both modes can be greatly improved               [2] A. Ametani, Numerical Analysis of Power System Transients and Dynamics.
+with the implementation of SC compared with the Original Case.                       London, U.K.: Institution of Engineering and Technology, 2015.
+                                                                                 [3] J. Mahseredjian, V. Dinavahi, and J. A. Martinez, “Simulation tools for
+                                                                                     electromagnetic transients in power systems: Overview and challenges,”
+B. Computation Time Gains                                                            IEEE Trans. Power Del., vol. 24, no. 3, pp. 1657–1669, Jul. 2009.
+   The tests performed in this section demonstrate the numerical per-            [4] U. Karaagac, J. Mahseredjian, L. Cai, and H. Saad, “Offshore wind farm
+                                                                                     modeling accuracy and efficiency in MMC-based multi-terminal HVDC
+formance advantages of the improved approach with parallel multistep                 connection,” IEEE Trans. Power Del., vol. 32, no. 2, pp. 617–627, Apr.
+asynchronous mode on the same test benchmark shown in Fig. 4. A                      2017.
+24-core PC with Intel (R) Xeon (R) E5-2650 v4 processors is used.                [5] M. Cai, H. Gras, J. Mahseredjian, E. Rutovic, and A. El-Akoum, “Func-
+The tests include the Original Case and 5 co-simulation scenarios                    tional mock-up interface-based approach for parallel and multistep simu-
+                                                                                     lation of electromagnetic transients,” IEEE Trans. Power Del., vol. 33, no.
+(Table I). The simulation interval is 2 s for all cases. It is noted that dif-
+                                                                                     6, pp. 2978–2988, Dec. 2018.
+ferent numbers of wind generators (slaves) are used in the three feeders         [6] Modelica Association Project “FMI,” “FMI for model exchange and co-
+to test the performance and scalability of the proposed method.                      simulation - Version 2.0,” 2014.
+

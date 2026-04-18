@@ -1,0 +1,242 @@
+DOI:10.13334/j.0258-8013.pcsee.2012.19.013
+
+
+
+
+                   第 32 卷 第 19 期                            中       国 电 机 工 程 学               报              Vol.32 No.19 Jul.5, 2012
+                   2012 年 7 月 5 日                                   Proceedings of the CSEE                 ©2012 Chin.Soc.for Elec.Eng.   81
+          文章编号：0258-8013 (2012) 19-0081-08                      中图分类号：TM 74              文献标志码：A             学科分类号：470·40
+
+
+
+           电磁–机电暂态混合仿真中机电侧故障的仿真方法
+                                       张怡 1，吴文传 1，张伯明 1，Aniruddha M. Gole2
+               (1．电力系统及发电设备控制和仿真国家重点实验室(清华大学电机系)，北京市 海淀区 100084；
+                                      2．曼尼托巴大学电气与计算机工程系，加拿大 温尼伯 R3T 5V6)
+
+
+                     Simulation Method of Faults on Electromechanical Side in Electromagnetic and
+                                        Electromechanical Hybrid Simulation
+                                       ZHANG Yi1, WU Wenchuan1, ZHANG Boming1, Aniruddha M. Gole2
+               (1. State Key Lab of Control and Simulation of Power Systems and Generation Equipments (Dept. of Electrical Engineering,
+                                                  Tsinghua University), Haidian District, Beijing 100084, China;
+                       2. Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg R3T 5V6, Canada)
+
+
+          ABSTRACT: The frequency dependent network equivalent                       标的 FDNE 切换策略能够保证混合仿真的精度和效率。
+          (FDNE) based electromagnetic and electromechanical hybrid
+                                                                                     关键词：临界电气距离指标；电磁暂态；机电暂态；故障后
+          simulation system can not simulate the faults on the
+                                                                                     的频率相关网络等值；初始化
+          electromechanical network side. Firstly, a hot standby method
+          was proposed to initialize the state variables of the new FDNE             0 引言
+          to decrease the spurious transient during the swap. Secondly, an
+          electrical distance index was proposed to quickly determine the                综合电磁暂态(electromagnetic transient，EMT)
+          necessity of the swap of the FDNE. Thirdly, an electrical                  程序和传统的机电暂态稳定分析(transient stability
+          distance index based FDNE-swapping strategy was proposed to                analysis，TSA)程序的混合仿真不仅可以精确仿真
+          save computational burden. Several systems are used as the
+                                                                                     高 压 直 流 输 电 系 统 (high-voltage direct current ，
+          examples to demonstrate the accuracy and efficiency of the
+          proposed electrical distance index based FDNE-swapping                     HVDC)的电磁暂态特性和非线性元件引起的波形
+          method.                                                                    畸变，还可以用于大规模网络的仿真。
+
+          KEY WORDS: critical electrical distance index;
+                                                                                         文献[1-13]均实现了电磁机电暂态混合仿真，
+          electromagnetic transient; electromechanical transient;                    但是无法考虑混合仿真接口处的谐波和波形畸变
+          frequency dependent network equivalent post fault;                         对电磁侧的影响，同时缺少进行机电侧故障的研
+          initialization                                                             究。文献[14-16]采用频率相关网络等值(frequency
+          摘要：基于频率相关网络等值(frequency dependent network                                  dependent network equivalent，FDNE)来模拟机电暂
+          equivalent，FDNE)的电磁–机电暂态解耦混合仿真系统一般                                         态侧谐波对电磁暂态侧的影响。但是，当机电暂态
+          不能处理机电暂态侧网络的故障。首先提出一种伴随仿真方                                                 侧网络 发生 故障时 ，网 络结构 的变 化直接 导致
+          法来初始化多个 FDNE 的状态，以实现 FDNE 的平稳切换。
+                                                                                     FDNE 的频率响应发生变化，原始的 FDNE 将不再
+          另外，通过大量仿真研究提出一种临界电气距离指标，用于
+          快速鉴别机电暂态侧故障时是否需要在仿真中修改 FDNE。
+                                                                                     适用。若对机电暂态侧每个故障都在仿真过程中重
+          最后，提出一种基于上述临界电气距离指标的 FDNE 切换                                               新用矢量拟合法求取故障后的 FDNE，计算量很大。
+          策略以减小总体计算量。仿真结果表明基于临界电气距离指                                                 因此有必要研究适用于机电暂态侧故障的 FDNE 的
+                                                                                     仿真策略。
+               基金项目：国家 863 高技术基金项目(2011AA05A118)；国家杰出
+          青 年 科 学 基 金 (51025725) ； 新 世 纪 优 秀 人 才 支 持 计 划 项 目
+                                                                                         本文首先提出一种伴随仿真方法来初始化故
+          (NCET-11-0281)。                                                            障后的 FDNE，以减少 FDNE 切换过程中的暂态波
+               The National High Technology Research and Development of China        动。然后根据大量算例分析提出一种快速鉴别机电
+          863 Program (2011AA05A118); Scientific Funds for Outstanding Young
+          Scientists of China (51025725); Project Supported by Program for New
+                                                                                     暂态侧故障对于仿真精度的影响大小的指标。最后
+          Century Excellent Talents in University (NCET-11-0281).                    基于该指标提出一种 FDNE 切换策略：对于影响小
+82                                            中     国   电      机   工   程       学    报                                        第 32 卷
+
+的故障，仍然采用故障前的 FDNE 来仿真机电暂态                                                  由于 FDNE 含 LC 等储能元件，FDNE 的初始
+侧故障；对于影响大的故障，采用故障后的 FDNE                                           化是 FDNE 切换策略中的重要部分，其实质是初始
+和伴随仿真法进行混合仿真。                                                      化式(1)中的状态变量 x。简单地将故障前的 FDNE
+                                                                   切换至故障后的 FDNE 可能会造成电磁暂态侧故障
+1     FDNE 的切换
+                                                                   瞬间出 现较 大的暂 态波 动。这 是因 为故障 后的
+1.1     概述
+                                                                   FDNE 中的状态变量 x 是未知的，若没有经过正常
+       FDNE 代表机电暂态侧网络的频率特性，当机
+                                                                   的初始化，会产生跳变。用故障前瞬间的 x 来初始
+电暂态侧发生故障时，机电暂态侧的频率特性将会                                             化故障后 FDNE 的状态变量 x 也不行，因为这样会
+发生变化，因此故障后的 FDNE 与故障前的 FDNE                                        导致 FDNE 切换时 FDNE 内部状态变量的不准确。
+不一样。                                                                       因此，本文提出一种伴随仿真法来初始化故障
+1.2     用补偿法求取故障后的 FDNE                                            后的 FDNE，以尽可能减少故障瞬间的暂态波动。
+       求取故障前的 FDNE 分为 3 步：求取 FDNE 的                                电网故障发生后一般有故障前、故障后、跳闸、重
+频率采样值；运用矢量拟合法求取用有理函数表示                                             合成功等几个阶段。图 2 介绍了故障前后 FDNE 切
+的 FDNE 矩阵；然后进行无源校正[16]。故障后的                                        换策略的概念，对跳闸、重合闸等阶段，其切换策
+FDNE 的求取与故障前 FDNE 的求取方法类似。唯                                        略的基本概念是一样的。图中 FDNE1 是指故障前
+                                                            [17]
+一不同的是故障后 FDNE 的采样矩阵用补偿法                                            的 FDNE，而 FDNE2 指故障后的 FDNE。故障前后
+来求取，如图 1 所示。                                                       FDNE 的切换步骤如下：
+                                                                                           u2
+                                a
+
+              Ieq        Yeq            −y     Yf                                        A2     A1             B2   B1      电磁侧
+                                                                           I
+                                                                                                                             网络
+                                a'
+                                                                                   FDNE2             u1 = u2        FDNE1
+
+
+              图1    补偿法求取 FDNE 的基本概念
+                                                                                    图2        故障后 FDNE 的初始化方法
+     Fig. 1   Basic concept of the compensation method to
+                                                                       Fig. 2      Initialization method for the FDNE post-fault
+                    obtain FDNE post-fault
+                                                                           1）仿真开始时，故障并没有发生，FDNE1 和
+       求取故障后 FDNE 采样矩阵的方法是：若故障
+                                                                   FDNE2 对应的开关分别接在 A1 和 B1 上。FDNE2
+发生在 aa' 之间(包括母线 aa')，将网络受故障影响
+                                                                   由 FDNE1 端口的电压进行初始化， FDNE1 和
+的元件从原始网络中分离出来。虚线 aa' 是故障端
+                                                                   FDNE2 同时进行计算，但是 FDNE2 并不参与网络
+口，aa' 右边的网络是受故障影响的元件，而 aa'
+                                                                   计算；
+左边的网络是原始网络对应的诺顿等值电路。故障
+                                                                           2）当故障发生时，FDNE1 和 FDNE2 对应的
+前受故障影响的元件对原始网络的贡献是 y，接入
+                                                                   2 个开关分别从 A1、B1 切换到 A2、B2。这样 FDNE2
+−y 相当于从原始网络是把受故障影响的元件移出；
+                                                                   参与电磁机电暂态混合仿真计算，而 FDNE1 则用
+在故障下受故障影响的元件对原始网络的贡献是
+                                                                   FDNE2 端口的电压进行跟踪仿真，不参与电磁机电
+Yf。将 −y 和 Yf 添加到原始的诺顿等值网络中意味
+                                                                   暂态混合仿真的计算。通过这种初始化，可最小程
+着移除了故障元件在非故障情况下的贡献，并且同
+                                                                   度地减小 FDNE 切换过程的暂态波动。
+时添加了故障元件在故障情况下的贡献。
+                                                                           相对于零启动方式，由于需要对故障后的
+1.3     故障后 FDNE 的初始化
+                                                                   FDNE 进行伴随仿真，因此此种初始化方式会增加
+       故障后的 FDNE 矩阵转换为状态空间形式后，
+                                                                   计算量。但是对于两端口的 FDNE，FDNE 的计算
+可表示为
+                                                                   量是混合仿真总计算量的大约 14%，因此是可以接
+                        x = Ax + BU
+                                                           (1)    受的。
+                        I = Cx + DU
+式中：x、I 和 U 的维数都为 N × 1，x 为状态变量，                                    2 临界电气距离指标
+I 为节点注入电流，而 U 为节点电压；矩阵 A、B、                                        2.1     基本概念
+C 和 D 的具体定义参见文献[16]。                                                       机电暂态侧网络比较大，如果对机电暂态侧网
+第 19 期                              张怡等：电磁–机电暂态混合仿真中机电侧故障的仿真方法                                                   83
+
+络每个故障都采用 1.3 节中的方法进行仿真，则仿                                             压、无功功率与相角的关系，可以得到电压变化量
+真的总体效率将会很低。故障位置不同，故障前后                                                与无功功率变化量之间的关系：
+FDNE 频率响应的变化量也会不同，对电磁暂态侧                                                                     ∂U
+                                                                                      ΔU =      ΔQ               (4)
+暂态的影响也是不同的。下文中介绍的误差指标可                                                                       ∂Q
+以用来量化这种“影响”
+          ，即 FDNE 频率响应的变                                                    假设，除了节点 j 以外的其他节点都没有无功
+化量和电磁暂态侧暂态的变化量；下文中介绍的电                                                功率变化，即 ΔQj ≠ 0 和 ΔQj = 0(i, j ∈ {1,2,⋅⋅⋅, N},
+气距离可以用来量化这种“位置”，即故障到电磁                                                i ≠ j)，N 是系统母线数。因此，电气距离可定义为
+暂态侧的距离。从这个角度来说，有 2 个方面需要
+                                                                                       Dij = − lg α ij           (5)
+研究：
+                                                                                      ΔU i = α ij ΔU j           (6)
+       1）故障离电磁暂态侧的电气距离对 FDNE 频
+率响应的变化量的关系。机电暂态侧的故障会改变                                                式中 α ij = (∂U / ∂Q)ij / (∂U / ∂Q)jj。节点 i 电压对节点
+机电暂态侧对应的 FDNE 频率响应曲线，故障位置                                             j 电压的灵敏度可用式(6)来表示。由 Dij 组成的矩阵
+不同对应的频率响应曲线的变化量也不同。                                                   是非对称矩阵。为叙述方便，下文中 2 点间的电气
+       2）故障离电磁暂态侧的电气距离与电磁暂态                                           距离用符号 D 来表示。
+侧暂态的变化量的关系。机电暂态侧网络的故障会                                                2.4   临界电气距离指标的确定
+引起电磁暂态侧暂态发生相应的变化，故障位置不                                                      以下分析方法将会应用在本文的算例部分：
+同对应的电磁暂态变化量也不同。                                                             1）FDNE 频率响应的变化量 ΔEFR 与故障位置
+2.2        误差指标                                                       距离电磁暂态侧的电气距离 D 的关系。
+       本文采用均方根作为误差指标来量化 FDNE 频                                              故障后的 FDNE 用如 1.2 节所述补偿法和网络
+率响应的变化量和电磁暂态侧暂态的变化量：                                                  频率扫描的方法求取，然后用式 (2) 获取误差指标
+                                                                      ΔEFR。求取故障后的 FDNE 需要在机电暂态侧网络
+                   1 n
+            ΔEFR =    | Yri (iΔω ) − Ysi (iΔω ) |2
+                   n i =1
+                                                                (2)   中对应位置设置一个三相短路接地故障。对机电暂
+                                                                      态侧网络中的不同母线，采用相同的计算方法可以
+                      1 n
+            ΔEtrans =    | yri (iΔt ) − ysi (iΔt ) |2
+                      n i =1
+                                                                (3)   获取不同母线故障时的误差指标 ΔEFR。同时，这些
+                                                                      机电暂态侧母线距离电磁暂态侧端口的电气距离 D
+       对于频率响应的变化量来说，式 (2) 中的指标                                        可用式(5)计算出。最后，可得到 ΔEFR 和 D 的关系。
+ΔEFR 是故障前 FDNE 在等频率点的值 Yri 和故障后                                             2）电磁暂态侧暂态的变化量 ΔEtrans 与故障距
+FDNE 在相同频率的值 Ysi。如果节点导纳矩阵是多                                           离电磁暂态侧的电气距离 D 的关系。
+维的(三相耦合系统)，Yri 和 Ysi 则是相应矩阵对角线                                              类似于 1）中的步骤，根据式(3)计算得到不同
+元素的和。                                                                 母线故障时对应的误差指标 ΔEtrans。这样，也可以
+       类似的，在时域过程中，式(3)所示的暂态变化                                         得到 ΔEtrans 和 D 的关系。
+量误差指标 ΔEtrans 则是全模型电磁暂态仿真结果 ysi                                             通过以上分析，即可确认当采用故障前的
+和采用故障后的 FDNE 的电磁机电暂态仿真结果 yri                                          FDNE 进行故障前后的仿真时，仍然可以获得较准
+的均方根。                                                                 确的电磁暂态侧暂态的临界电气距离指标。后面的
+2.3        电气距离                                                       算例分析表明，采用以上面临界电气距离指标的计
+       电气距离用来量化 2 个母线节点之间的距离。                                         算结果是可信的。
+目前有 2 种方法计算电气距离：一种是采用节点间                                              2.5   基于临界电气距离的 FDNE 的切换策略
+                                                         [18]
+的输入阻抗来计算 2 个节点间的电气距离                                        ；另外             当机电暂态侧的故障位置对应的 D 大于临界
+一种采用由潮流雅可比矩阵演化而来的灵敏度矩                                                 电气距离指标时，故障前的 FDNE 能够保证电磁暂
+    [19]
+阵      。由于第 2 种方法更能量化 2 个节点之间电压                                       态侧的计算精度，就不用求取故障后的 FDNE 以减
+的相互影响，因此本文采用第 2 种方法来计算电气                                              小整个仿真系统的计算效率；当机电暂态侧的故障
+距离。                                                                   位置对应的 D 小于临界电气距离指标 Dcr，用故障
+       用快速分解法求取潮流时，忽略有功功率与电                                           前 FDNE 进行仿真会影响电磁暂态侧的计算精度，
+84                                                中   国    电   机   工   程     学                   报                                                                                第 32 卷
+
+                                                                                                               G            G
+则需要重新求取故障后的 FDNE 来替换故障前的                                                                                           30               37
+                                                                                                                                      25          26                 28            29
+FDNE。基于临界电气距离指标的仿真策略如图 3
+                                                                                                           2                                                        27
+所示。                                                                    G                                                    3                    18
+                                                                                                                                                                                   38
+                                                                                                                                                                    17                     G
+                                                                           105
+                       启动混合仿真                                                104                 103                                                                         16 21
+                                                                                                                                                      15
+                    计算机电暂态侧所有                                                                                                                                                      G
+                     母线的电气距离                                                                                                    4             14                             24        36
+                                                                                                                                              13
+                                                                                                                                5                                                      23
+                    机电暂态侧发生故障                                                                                                        6                              19
+                                                                                                                                                      12
+                                                                           110                                              7                    11                 20        22
+                                         是
+                             D < Dcr？                                  G                                                                                 10
+                否                                                           109 108                        8                             31           32 34                  33             35
+                                    计算故障后的 FDNE                                                                                 G                G              G        G             G
+      采用故障前的 FDNE
+                              采用故障后的 FDNE 和伴随仿真法                             图4                    修改后的新英格兰 IEEE 39 节点系统
+                                                                       Fig. 4                    Modified New England IEEE 39-bus system
+                              结束                                   距离分布图如图 5(a)所示。从图中可知：有些母线
+           图3     基于临界电气距离的仿真策略图                                                                  4
+
+       Fig. 3   Critical electrical distance index based                                          3
+                                                                                                                                                            A
+
+                                                                               Dy/pu
+                       strategy flowchart                                                         2
+
+3 算例分析                                                                                            1
+
+                                                                                                  0
+3.1    简介                                                                                              0                1                  2                3                 4
+                                                                                                                                         Dx/pu
+      为了确定临界电气距离指标和测试 FDNE 切换
+                                                                                                               (a) 母线到各端口电气距离分布图
+的精确度，本文采用 39 节点和 118 节点 2 个算例
+          

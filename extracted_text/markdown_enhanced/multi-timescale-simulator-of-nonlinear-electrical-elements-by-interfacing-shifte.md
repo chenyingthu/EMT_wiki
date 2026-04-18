@@ -1,0 +1,30 @@
+Multi-timescale simulator of nonlinear electrical elements by interfacing shifted equivalent phasors and electromagnetic transient simulation
+Zhen Gong, Chengxi Liu *, Liangzhong Yao
+School of Electrical Engineering and Automation, Wuhan University, Wuhan 430072, China
+
+* Corresponding author.
+E-mail address: liuchengxi@whu.edu.cn (C. Liu).
+
+## Abstract
+This paper proposes a multi-timescale transient branch companion model for electrical elements with strong nonlinearity, which is suitable for electromagnetic transient simulation for a wide range of time-scales. A shifted equivalent phasor (SEP) method for signals with wide frequency range is adopted combined with envelope signals and equivalent phasor-shift operator, and a saturable SEP based transformer model is established. A method of piecewise linearization based on Newton-Raphson is used to simulate excitation current under different simulation time step sizes in order to illustrate the overshoot phenomenon of piecewise linearization under large step sizes. Reducing the step size can effectively suppress the overshoot, but simulation efficiency will be sacrificed. This problem can be avoided in SEP model even if large time step is adopted and integrated simulation of both instantaneous and envelope (with larger timescale) waveforms can be efficiently tracked within one simulation run based on the determination of two parameters setting: shifting equivalent phasor and time step size. Finally, the transformer model and voltage source converter (VSC) are established and validated in MATLAB and PSCAD to prove its correctness and efficiency.
+
+## 1. Introduction
+At present, electromagnetic transient (EMT) simulation is the most reliable approach to evaluate the dynamic response of large-scale AC-DC interconnected power grids, for it can accurately characterize the high-frequency dynamic characteristics of the power grids. Unlike transient stability simulation, EMT simulation generally uses instantaneous signals to reflect the dynamic response of various electrical quantities. Therefore, it requires smaller integration steps, however, compromising on its computational efficiency [1].
+
+In EMT simulation, the transformer core is represented by a nonlinear inductor, the piecewise linearization method is widely adopted to emulate the nonlinear elements [2]. Overshoot occurs when using large time step [3]. Reference [3] established an EMT model is to capture the key dynamics of inrush current of fault recovery transformer. Reference [4–7] analyzed the saturation characteristics of transformer by the piecewise linearization technique, but did not consider the overshoot distortion issues.
+
+Alternative methods are proposed to obtain low-frequency components of the original signals, so that a larger time step can be used in the whole or part of the transient simulation process by improving the modeling method. To reduce the additional calculations due to the switching operations, reference [8] proposed an averaging model to improve the efficiency of EMT simulation of power electronic devices. Similar to [8], dynamic vector method was also used for HVDC system [9].
+
+However, its simulation accuracy depended on the choice of dominant frequency and phasor. The above methods can achieve the purpose of improving the efficiency of EMT simulation, but sacrifice the accuracy. Furthermore, an adaptive frequency transient simulation (FAST) method performed the Hilbert transform on the instantaneous signal to construct the corresponding analytical signal, and then performed frequency shift operation on the signal spectrum in the frequency domain [10]. If the shifted frequency was set to the carrier frequency, approximate DC frequency-shifted signal can be obtained so as to facilitate larger time steps and to improve the efficiency, which can still describe the response of the instantaneous values, without losing any frequency component signal.
+
+However, as FAST uses the Hilbert transform to construct the required analytical signal, which is still a type of linear transformation, it is just suitable for linear elements. When performing EMT simulations on non-linear electrical elements, such as power electronic devices, transformers and motors, the fundamental and harmonic signals will be produced simultaneously during the transient process. Obviously, when examining the dynamic responses of nonlinear systems after faults or other disturbances, the nonlinear characteristics of the above elements cannot be ignored, and the corresponding dynamic response for harmonic signals needs to be carefully characterized. At this time, the electrical signal spectrum of interest will no longer be concentrated on the narrow band of the carrier frequency. In addition, the product of two variables is a general form in nonlinear power systems such as electronic converter or product of the inductance and voltage where the real part of analytical signals obtained from Hilbert transform cannot represent the instantaneous waveform of original product quantities.
+
+This paper proposes a multi-timescale transient model for nonlinear electrical elements, which extends traditional shifting-frequency analysis (SFA) to adapt for wide frequency ranges by interfacing a hybrid simulator based on shifted equivalent phasor and electromagnetic transient (EMT) simulator. Equivalent phasor can identify different harmonic components in a model with much wider frequency band than traditional phasor-based method by constructing a dynamic phasor domain evolution of various harmonics of a quasi-periodic signal [11–15]. The new simulator proposed in this paper takes advantage of the dynamic phasor (DP) simulator to characterize various harmonic components of nonlinear elements, combining with the high simulation speed of envelope tracking SFA based method to identify different harmonic components.
+
+**Fig. 1.** Current and voltage conventions for an inductor.
+
+**Fig. 2.** Companion model of flux-controlled nonlinear inductor.
+
+**Fig. 3.** Time scale division of signal.
+
+$G(j)$ $\tau$ $(j)$

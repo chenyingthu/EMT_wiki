@@ -1,0 +1,205 @@
+IEEE Transactions on Power Delivery, Vol. 12, No 1, January 1997                                                                                        489
+
+                 EMTP MODELING OF ELECTROMAGNETIC TRANSIENTS
+                 IN MULTI-MODE COAXIAL CABLES BY FINITE SECTIONS
+                                                                Robert J. Meredith
+                                                          Member IEEE
+                                       New York Power Authority, White Plains, New York 10601
+
+
+Abstract -- This paper introduces a way of modeling electro-                  At least two other complex approaches in the literature
+magnetic propagation in conductive materials, termed the                      claim to overcome some of the cable modeling problems in
+method of finite sections. It addresses the issues of modeling                J. Marti’s approach. L. Marti [3] claims to be able to vary
+frequency-dependent impedances and frequency-dependent                        the modal transform as well as the modal characteristics
+coupling of conductors. Its use is demonstrated by application                with frequency. T. Noda, et a1 [4] claims to be able to work
+to transient modeling of a multi-mode coaxial cable system in
+                                                                              in phase domain, using an “auto-regressive moving average”
+the Electromagnetic Transients Program (EMTP), a situation
+which currently eludes accurate representation.
+                                                                              (ARMA) computational method. Implementation of the L.
+                                                                              Marti approach has been less than universal, perhaps due to
+In addition to its use in modeling coaxial cables, the method is              fundamental technical problems documented in [5]. The T.
+applicable to modeling of overhead lines, pipe-type cables,                   Noda approach is currently being implemented in at least
+transformer cores and walls, lightning arrestors and other
+                                                                              one version of EMTP, but has not been made generally
+situations in which sufficient planar or cylindrical symmetry
+                                                                              available as of this writing.
+exists. The method provides the only accurate EMTP means
+of modeling wave propagation in non-linear resistive and/or                   All three of the above approaches start with steady-state
+inductive Conductors.                                                         impedance scans of the line or cable of interest, which this
+Key Words -- Electromagnetic propagation, EMTP, transients,                   author believes ignores at least two effects in coaxial cables:
+frequency-dependency, non-linear, finite sections, pi sections,               wave reflections at the centers of conductors and at the
+cables.                                                                       sheath/earth transition, as well as propagation delays in
+                                                                              traversing the sheath. The steady-state starting points for
+                     I. INTRODUCTION
+                                                                              the existing methods both fail to recognize the existence of
+EMTP modeling of frequency-dependent resistances and                          transient conductor surface impedances and, when using
+reactances in transformer cores, transmission lines and                       (instantaneous) impedance relationships, erroneously as-
+cables is usually difficult for the typical user to implement,                sume induced voltages at a distance before electromagnetic
+to understand and to verify. An example of this complexity                    waves can propagate through the sheath to those distant
+is the approach of J. Marti [ 11 that has been implemented for                points.
+transmission line and sometimes cable modeling in various
+                                                                              The author has concluded that most of the complexity and
+versions of EMTP [2]. Its underlying principles include
+                                                                              uncertainties of present frequency-dependent modeling
+transformations from phase domain to modal domain,
+                                                                              techniques would be eliminated simply by recognizing and
+frequency-fitted modal attenuation and re-transformation to
+                                                                              modeling wave propagation in the conductors as well as
+phase domain. Unfortunately even this complexity does not
+                                                                              along the dielectrics. He has termed his approach the
+work adequately for most cable systems, whose natural
+                                                                              method of finite sections to reflect its intermediate position
+propagation modes vary dramatically with frequency and
+                                                                              between pi-section modeling and finite elements analysis.
+thus are not amenable to use of J. Marti’s constant transform
+                                                                              Coaxial cable modeling represents one of the simpler
+assumption.
+                                                                              demonstrations of this method.
+                                                                                          11. MODELING WAVE PROPAGATION
+96 SM 4374 PWRD         A paper recommended and approved by the
+IEEE Transmission and Distribution Committee of the IEEE Power                The intrinsic impedance (q) of any medium is:
+Engineering Society for presentation at the 1996 IEEElPES Summer
+                 -
+Meeting, July 28 August 1, 1996, Denver, Colorado. Manuscript
+                                                                              q = /, j w p / (0+ jwe)           ohms                                    (1)
+submitted December 27, 1995: made available for printing June 12,
+1996.                                                                         Here o is the frequency in radiandsecond, p is the magnetic
+                                                                              permeability in Henry/meter, (5 is the conductivity in
+                                                                              mho/meter and E is the permittivity in Farad/meter [6].
+                                                                              The variables p, o and E are analogous to the variables L , G
+                                                                              and C, representing inductance, conductance and capaci-
+
+
+
+
+                                                      0885-8977/97/$10.000 1996 IEEE
+
+               Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:52:37 UTC from IEEE Xplore. Restrictions apply.
+490
+
+tance, respectively, and having identical units. The relation-                                    111. FINITE SECTIONS MODELING
+ship analogous to (1) for the characteristic impedance (2,)                         Finite sections modeling, at its simplest manifestation,
+of a lossy -dielectric transmission line is:                                        represents the integration of accurate conductor modeling in
+2, = /, j o L I (G + jwC) ohms                                                      transmission pi-section modeling. Fig. 3 shows such an
+                                                                                    example. The single frequency series impedance branches
+As a rule, electromagnetic propagation can be modeled by pi                         o f Fig. 1are replaced by the more general representation of
+sections whose series impedance per unit length is expressed                        conductors shown in Fig. 2. Two conductor models are
+by the numerator under the root sign of (2). The denomina-                          required because coaxial cable conductors are not identical.
+tor under the root sign represents the shunt admittance per                         In Fig3 3 the Ld branch represents the inductance of the
+unit length that is to be modeled, generally split into two                         dielectric layer. The Lc and Ls branches pertain to the core
+paths, making the traditional “pi” with the inductance across
+                                                                                    and sheath conductors, respectively. Because Fig. 3 is
+the top. The only additional criterion for pi-section model-
+                                                                                    drawn in the electric domain, rather than the magnetic
+ing is that there be ten or more pi sections per wavelength to                      domain, inductances do not depict actual current paths.
+obtain reasonable accuracy.                                                         However, the G elements do represent leakage paths from
+When (2) is applied to propagation in a dielectric between                          core to sheath at points along the cable and the R elements
+two conductors it only models dielectric losses. To include                         represent current paths at varying depths in the conductors.
+conductor losses (2) is usually modified approximately:                             Those nearest the dielectric represent the surface facing it.
+                                                                                    The most outward represent the center of the core conductor
+Z, = J ( R + jcoL) / (G + jwC)                   ohms                       (3)     and the outer surface of the sheath.
+Here R represents the series resistances of the transmission
+line conductors and L includes the conductor components of
+the line inductance at a desired frequency.
+                                                                                                                                           I
+
+Fig. 1 shows a typical pair of pi sections used to model
+conductor guided propagation in a dielectric medium.
+
+        \
+        N
+        r?,
+                                    “
+                                    \ --
+                                    or?,
+                                                                    N
+                                                                    \
+                                                                                     .
+                                                                                     N
+                                                                                     rp
+                                                                                              N
+                                                                                              \
+                                                                                               RcO      Ld      RsO
+                                                                                                                   0
+                                                                                                                         -L RcO
+                                                                                                                            U
+                                                                                                                                      Ld       RsO 1
+                                                                                                                                                   N
+                                                                                                                                                   \   -.
+                                                                                                                                                       N
+
+
+
+
+Fig. 1.       Two Transmission Line Pi Sections Modeling                            Fig. 3.    Two Transmission Line Pi Sections Modeling
+              Conductor-Guided Propagation in a Dielectric with                                Conductor-Guided Propagation in a Dielectric with
+              Single Frequency Conductor Loss.                                                 Multi-frequency Conductor Loss.
+Propagation inside conductors may also be modeled by pi                                              IV. DEFINING FINITE SECTIONS
+sections. In good conductors C becomes insignificant and G
+dominates the denominator of (2). Consequently the                                  Finite sections subdivide conductors radially to model radial
+(numerator) series element of such a pi section remains an                          wave propagation in the same way pi sections subdivide a
+inductance and the (denominator) shunt elements represent a                         long transmission line longitudinally to model longitudinal
+conductance (G) instead of a capacitance (C). Fig. 2 shows                          wave propagation. A finite section, like the finite element
+pi-section modeling of electromagnetic propagation inside a                         from which its name is derived, is simply a volume of
+conductor, in which conductances are rendered as resis-                             modeled space. It is aligned with and bounded along the
+tances. Although only representing propagation inside a                             three mutually orthogonal directions of the E-field7 the H-
+conductor, Fig. 2 can have broadband frequency validity,                            field and the direction of wave propagation.
+unlike Fig. 1.                                                                      Finite sections are often not uniform in size. Radial layers
+                        - a - -a-            -                                      increase in circumference with radius and may optimally
+                             tfl   mL3       m    nL2 m                             vary in thickness with distance from the surface of the con-
+                             w w         I
+                                             w 12       I
+                                                            w   L                   ductors. For fields in and around conductors of interest the
+                                                                                    user must individually dimension the sections and calculate
+Fig. 2.       Five Pi Sections Modeling Electromagnetic                             the appropriate L, C and R (or G ) for each finite section.
+              Propagation Inside a Conductor.                                       Each finite section can readily represent a different material,
+                                                                                    such as a surface coating or a semiconducting layer.
+                                                                                    Because finite sections can be applied to multiple geome-
+                                                                                    tries the expressions defining parameters are most general
+                                                                                    when defined verbally. The verbal definitions apply to thin
+
+
+
+
+      Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:52:37 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                                49 1
+layers involving either planar or cylindrical wave propa-
+gation. Finite section resistance (R) is defined as:                                                                                                          (9)
+
+     N 2p(length- Along- E )                                                   Dimensioning the thickness of finite sections in the direction
+R=                                        ohms                         (4)
+         (Area- Across- E )                                                    of propagation depends on the required frequency fidelity.
+                                                                               Fidelity is greater at higher frequencies with thinner sec-
+Here p is the electrical resistivity, E is the electric field and              tions. Penetration depth (6) can be used to assess the valid-
+N is an optional scaling factor. The latter could be used, for                 ity of the modeling at any particular frequency. In good
+instance, to refer a transformer-core impedance model to a                     conductors it is:
+winding of N turns. Note that the author calculates shunt
+resistance, rather than conductance, because EMTP data is
+entered as such. For nonlinear modeling, p would be re-
+placed by the ratio of electric field strength (E) to current
+density (a   for points in their ranges. The numerator and                     One penetration depth is 1 4 2 4 wavelength of the frequency
+                                                                               for which 6 is calculated. Table 1 indicates that use of two
+denominator values become those entered to represent non-
+linear resistances in the EMTP.                                                or more finite sections per penetration depth proved rea-
+                                                                               sonably accurate in replicating intrinsic impedance of a
+Finite section inductance (L) is defined as:
+                                                                               good conductor -- the impedance R, + j X, of a one meter
+                                                                               square surface on a planar conductor where:
+L = N2~R~O(Area-Across-H)                 Henries                      (5)
+         (Length-Along- H)
+                                                                                                                     ohms
+Here H is the magnetic field; p, is the permeability of
+vacuum (4x E-7 Henry/meter) and pR is the relative per-                                                     TABLE 1
+meability. For nonlinear representation, the product of the                                     FINITE SECTION MODELING ERRORS
+latter two constants would be replaced by the ratio of the                          Sections/        Sections/       Impedance         Resistance       Reactance
+flux density (I3 in Tesla) to the magnetic field strength (H in                    Pen. Depth       Wavelength        Error %           Error %         Error %
+Amp/meter) for points in their ranges. The numerator would
+express the flux and the denominator would express current                               1.0               6.3              -5.4           t13.8            -29.7
+as required for EMTP entry. For cylindrical H fields, and
+ignoring N , ( 5 ) degenerates to:
+                                                                               I         2.0
+                                                                                                I
+                                                                                                I         12.6
+                                                                                                                 I
+                                                                

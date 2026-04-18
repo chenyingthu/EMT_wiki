@@ -1,0 +1,195 @@
+                                                                      JEPE 287
+
+
+
+
+                                                Electrical Power and Energy Systems 21 (1999) 191–198
+
+
+
+
+    Transmission line model for variable step size simulation algorithms
+                                          S. Henschel*, A.I. Ibrahim, H.W. Dommel
+     Department of Electrical and Computer Engineering, The University of British Columbia, 2356 Main Mall, Vancouver, B.C., Canada V6T 1Z4
+                                                               Accepted 13 August 1998
+
+
+
+Abstract
+   In this paper, we describe a novel modeling approach for transmission lines that overcomes the maximum step size constraint of regular
+line models used in electromagnetic transients programs. The new model allows us to accurately simulate wave propagation phenomena as
+well as low network frequency variations with maximum efficiency, as the simulation step size is no longer restricted to model requirements,
+but can be adjusted according to the current transient state of the network. The model was tested with a CIGRE line energization case study
+which was performed utilizing a variable simulation step size algorithm for a combined study of electromagnetic transients and transient
+stability. 䉷 1998 Elsevier Science Ltd. All rights reserved.
+Keywords: Transmission line modeling; Electromagnetic transients; Transient stability
+
+
+
+1. Introduction                                                                 analysis have been well developed and refined over the
+                                                                                past few decades [1–3]. Yet, a symbiosis of both types of
+   Electromagnetic transients programs (EMTP) and stabi-                        line models is not as straightforward as with other models:
+lity programs are extensively used for a wide range of power                    The quasi-steady state, nominal p-circuit used in stability
+system studies within their respective time frames. In some                     studies is not sufficiently accurate to represent wave propa-
+cases, however, particularly in system restoration studies,                     gation in electromagnetic transients studies. Contrarily, line
+the time frames of both electromagnetic and electromecha-                       models preferred in electromagnetic transients programs,
+nical transients, as well as the steady-state behavior, must be                 such as frequency-dependent or constant parameter line
+investigated. Frequent switching between different types of                     models, require a simulation step size of less or equal to
+simulation programs and their respective models then                            the lowest wave travel time. With this constraint, EMTP line
+becomes inevitable. To make this process user friendly, a                       models are not well suited for stability analysis.
+simulation program is currently being developed at the                             In this paper, a new modeling approach is presented to
+University of British Columbia that aims at a symbiosis of                      overcome the step size constraint for EMTP transmission
+both electromagnetic and electromechanical transients                           line models. The constant parameter line model will be used
+simulations.                                                                    in order to keep the derivations as simple as possible. We
+   While switching between electromagnetic transients                           believe, however, that the method can be applied to the
+models and their equivalents for stability analysis is theore-                  more accurate frequency-dependent line models as well.
+tically possible, it is not always practical, as both model                     The new transmission line model was tested with a line
+types may have a different internal topology. Whenever                          energization case study, conducted by CIGRE in 1971 [4].
+models are exchanged during a simulation, this difference                       The simulation was carried out using the variable step size
+in topology may cause rapid transients which, in turn, can                      algorithm that is presently being developed at the University
+create unrealistic behavior of the simulated network (e.g.                      of British Columbia, and compared to a reference solution
+tripping a protective device). A consistent model for all                       obtained with this university’s EMTP version, MICRO-
+time frames is therefore preferable.                                            TRAN 䉸, using very small time steps.
+   Cable and transmission line models play a special role in
+this regard. Transmission line models for electromagnetic
+transients simulations as well as for transient stability                       2. Lossless line model
+
+  * Corresponding author. Tel.: ⫹ 1-604-669-0594; Fax: ⫹ 1-604-822-                Before considering transmission losses, let us first discuss
+5949; e-mail: sebastih@ece.ubc.ca.                                              the ideal case of lossless transmission lines. Albeit not very
+0142-0615/99/$ - see front matter 䉷 1998 Elsevier Science Ltd. All rights reserved.
+PII: S0142-061 5(98)00042-8
+192                                  S. Henschel et al. / Electrical Power and Energy Systems 21 (1999) 191–198
+
+                                                                             where the history vector is known and can be calculated
+                                                                             from previous current and voltage values as follows:
+                                                                             "         #    "            #"               # "     #
+                                                                                hk t                Gc       vk t ⫺ t       1
+                                                                                         ⫺                                ⫺
+                                                                               h m t         Gc             vm t ⫺ t      1
+                                                                                            "             #
+                                                                                               ık t ⫺ t
+                                                                                                           :                       2
+                                                                                              ım t ⫺ t
+
+                                                                             Eq. (2) shows that the conditions at one end depend on what
+                                                                             happened at the other end at one travel time t earlier. As
+                                                                             long as the simulation time step is less than t, those condi-
+                                                                             tions at the far end at time t ⫺ t will appear at the near end at
+  Fig. 1. Lossless line model using Bergeron’s method for Dt ⱕ tmin .        instant t. This leads to the galvanic separation which is
+                                                                             exploited in the EMTP, as shown in Fig. 1. To maintain
+                                                                             the galvanic separation, it is necessary that
+accurate, this case is particularly interesting since the line
+equations for a distributed line inductance and capacitance                  Dt ⱕ tmin and tmin  minti  for i  1; …; n                 3
+can be solved analytically. The French mathematician Jean
+Le Rond d’Alembert (1717–1783) first described lossless                      where n is the number of modes, i.e., number of phases. This
+wave propagation in one dimension. Early in this century,                    condition does not impose a heavy constraint for simulating
+his equations were applied to wave propagation on transmis-                  electromagnetic transients because the time steps are
+sion lines. The resulting modeling technique is commonly                     usually much smaller than tmin, yet it precludes this model
+known as Bergeron’s method [5].                                              from being useful for stability studies.
+   A derivation of the transmission line model equations and                    Considering the storage requirements for this model, the
+their transformation into the modal domain can be found in                   values of h k t and hm t have to be calculated and stored in
+the appendix. In this section, we will only consider a single                a history memory at each time step, until these values are
+phase line, or to be more general, one mode of a polyphase                   used t times later to make up the history vector. The history
+line. All voltages and currents in the modal domain are                      memory for each mode requires d entries, where
+indicated with superbar notation. In the modal domain,                                 
+each mode is characterized by its wave travel time t and                                 t
+                                                                             d  ceil
+characteristic impedance Rc (purely resistive for lossless                              Dt
+lines). For easier notation we will also make use of its reci-
+                                                                             and ceil is a rounding function to give the nearest integer
+procal value, the characteristic conductance Gc. More details
+                                                                             value that is greater than or equal to the argument.
+on modal transformation, transmission line equations and line
+parameters can be found in the EMTP Theory Book [1].
+   In the following, we will describe a model of a single                    2.2. Linear interpolation for D t ⱖ t
+phase (mode), lossless transmission line for electromagnetic
+transients studies. It is shown that, for this model, the simu-                  The integration method used in the EMTP is the trape-
+lation step size cannot exceed the line’s travel time. There-                zoidal rule of integration. With this, the program assumes
+fore, two extensions are suggested that overcome this                        that a variable changes linearly as a straight line between
+constraint and permit the line to be simulated with larger                   two adjacent points. Therefore, if two solutions x t and
+step sizes, provided the transient state of the network toler-               x t ⫺ Dt were known, they could be linearly interpolated
+ates such an increase.                                                       to yield x t ⫺ t provided that Dt ⱖ t. Here, the variable x
+                                                                             stands for any of the line voltages or currents. The interpo-
+2.1. EMTP model for lossless lines                                           lated value can be used to compute the history vector in (2).
+                                                                             The interpolation formula is
+    The lossless model implemented in the EMTP is based on
+Bergeron’s method. Its equations are derived in the appen-                   x t ⫺ t  ax t ⫹ bx t ⫺ Dt                              4
+dix. Fig. 1 shows the equivalent circuit from which the
+model’s most important property is immediately clear:                        where
+Both terminals (k) and (m) are galvanically separated. The                         Dt ⫺ t                t
+currents into the two terminals (k) and (m) are given by                     a           ;        b
+                                                                                     Dt                  Dt
+"         # "          #"         # "         #
+   ık t      Gc          vk t      hk t
+                                  ⫹                     1                  Thus, by replacing the past values in (2) by application of
+  ım t            Gc    vm t      h m t                                this formula, we obtain a new model for the lossless line. As
+                                    S. Henschel et al. / Electrical Power and Energy Systems 21 (1999) 191–198                         193
+
+                                                                            efficiently described by phasor equations. More recent
+                                                                            approaches preserve the differential nature of the network
+                                                                            and thus represent off-nominal frequency components as
+                                                                            well. Such methods take advantage of complex analytic
+                                                                            signals [6], which can be obtained by three-phase transfor-
+                                                                            mations [7–9].
+                                                                               To connect the previously described line model to such a
+                                                                            solution algorithm, all voltages, currents and history values
+       Fig. 2. Lossless transmission line model for Dt ⱖ tmin .             become complex numbers, but the equations remain the
+                                                                            same. Only v,  i and h are now complex, whereas the
+before, the terms are grouped to give the current injections                matrices remain real.
+"         #         "                #"          # "          #                For the derivation of the line model for large time steps,
+   ık t       Gc    1 ⫹ a2 ⫺2a          vk t       hk t
+                                                 ⫹                         we again use linear interpolation, but only after the nominal
+  ım t      1 ⫺ a2 ⫺2a 1 ⫹ a2          vm t       hm t                frequency v0 has been subtracted from each variable’s rota-
+                                                             5             tion, which is expressed by the factor e⫺jv0 t . This frequency
+                                                                            transform gives us what is known as dynamic or time-vary-
+and a history vector whose values are determined from the                   ing phasors [7]:
+past time step:
+"          #         "         #"              #                            X t  x te⫺jv0 t ;                                      7
+   h k t      bGc    a ⫺1        vk t ⫺ Dt
+             
+  hm t       1 ⫺ a2 ⫺1 a        vm t ⫺ Dt                               X t ⫺ t  x t ⫺ te⫺jv0 t⫺t ;
+                          "              #"                 #
+                 b            a     ⫺1        ık t ⫺ Dt
+             ⫹                                                     6       X t ⫺ Dt  x t ⫺ Dte⫺jv0 t⫺Dt :
+               1 ⫺ a2         ⫺1     a        ım t ⫺ Dt
+                                                                            Now, the dynamic phase X̄(t ⫺ t) is linearly interpolated, as
+We see that the conductance matrix in (5) now also
+                                                                            was previously done with the instantaneous values in (4).
+possesses off-diagonal elements, so that the line equations
+                                                                            After backsubstitution, we have
+can no longer be solved independently for both ends.
+   It should be emphasized that the interpolation formula (4)               x t ⫺ t  px t ⫹ qx t ⫺ Dt                            8
+fails for Dt ⬍ t. Should the chosen simulation time step fall
+below this margin, the program must automatically replace                   where
+the above equations with Eqs. (1) and (2).                                        Dt ⫺ t ⫺jv0 t                       t jv0 Dt⫺t
+   Notice that the line’s history vector requires only values               p          e       ;                q      e        :
+                                                                                    Dt                                Dt
+of the previous time step, so that the history memory for this
+model is extremely short. This low memory requirement,                      These two factors replace a and b in (5) and (6) to give the
+and the increased step sizes possible with this model, both                 line model for large step sizes. Notice that the former real
+contribute greatly to speeding up the simulation after the                  conductance matrix now becomes a complex admittance
+electromagnetic transient oscillations have decayed and                     matrix as p and q are complex values. Hence, we obtain
+slow dynamics dominate.                                                     the current injections
+                                                                            "         #         "                #"          # "         #
+2.3. Complex interpolation for D t ⱖ t
+                                                                               ık t       Gc    1 ⫹ p2 ⫺2p          vk t      hk t
+                                                                                                                             ⫹
+                                                                              ım t      1 ⫺ p2 ⫺2p 1 ⫹ p2          vm t      hm t
+   It was shown how, in theory, the maximum step size
+                                                                                                                                         9
+constraint for transmission line models can be avoided.
+Practically, however, the simulation step size is again                     and the history vector:
+limited because of the solution algorithm used in the                       "          #          "      #"               #
+EMTP: Since the trapezoidal rule assumes a straight line                       h k t      qGc     p ⫺1     vk t ⫺ Dt
+                                                                                         
+between two points of integration, the step size for funda-                   hm t       1 ⫺ p2 ⫺1 p      vm t ⫺ Dt
+mental frequency oscillations must be small enough to                                               "      #"                #
+represent the sinusoid sufficiently well with piecewise linear                                  q     p ⫺1       ık t ⫺ Dt
+segments, thus Dt ⱕ 1 ms in 50 or 60 Hz systems. Yet, for                                  ⫹                                   :       10
+                                                                                             1 ⫺ p2 ⫺1 p        ım t ⫺ Dt
+an efficient simulation of a system’s longtime behavior,
+such as transient stability, it is necessary that the step size             The advantages of this method are similar to those described
+be increased to about 40–60 ms, depending on the dynamic                    before: The memory requirement is only one history vector
+state of the system.                                                        from the immediately preceeding time step, and the simula-
+   Conventional stability programs only allow fundamental                   tion time step can be increased to large and very large simu-
+frequency components in the network, which is then                          lation step sizes, according to the

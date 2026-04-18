@@ -1,0 +1,193 @@
+                                                       Electric Power Systems Research 251 (2026) 112328
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Improving numerical efficiency of frequency dependent transmission line
+models for EMT simulations
+H.M.Jeewantha De Silva *, Yi Zhang
+RTDS Technologies Inc., Winnipeg, MB, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          This paper compares two model order reduction techniques for frequency dependent transmission line models to
+Frequency dependent transmission line model        enhance numerical performance for large cable or overhead line systems. The Modal Truncation and Balanced
+Modal Truncation                                   Truncation methods are applied to reduce the order of propagation matrix. The simulation examples involving
+Balanced Truncation
+                                                   underground cable systems are presented for comparison. Time domain simulation results with linear termi­
+Underground cables
+                                                   nations are presented.
+
+
+
+
+1. Introduction                                                                     and memory in time domain simulations (i.e. to evaluate recursive
+                                                                                    convolution algorithm) and more critically, is prone to passivity viola­
+     THE frequency dependent transmission line models are widely used               tions arising from over-fitting [3–6].
+in electromagnetic transient studies. In these models, frequency                        Wide-area modeling of power systems is a growing trend in countries
+dependent characteristics, such as propagation (A(ω)) or characteristic             such as Australia, UK, and US. One major problem is that the detailed
+admittance (Yc(ω)) functions, are approximated using rational functions             EMT wide-area modeling can significantly slow down simulations. The
+in the frequency domain [1]. Techniques such as Vector-Fitting can be               offshore wind farms connect to onshore grid or substation via under­
+used to obtain such approximations [2,1]. The order of the rational                 ground cables. The multi-circuit cable systems in close proximity are
+function is determined such that the approximation error is below a                 modelled as mutually coupled cables in EMT simulations to accurately
+specified tolerance.                                                                consider the mutual coupling between them.
+     Typically, the A(ω) and Yc(ω) functions can be approximated using                  The computational complexity associated with large transmission
+low order rational functions. The optimal order of approximation for a              line systems, such as multi-circuit cable systems, can significantly
+frequency-dependent function is influenced by its characteristics and               degrade simulation performance. This is especially critical in real time
+desired accuracy. However, in some cases, the order of the A(ω) function            simulations, which can also lead to time step overshoot.
+can be significantly high, particularly for complex cable systems, which                This paper compares two methods to enhance the numerical effi­
+necessitates significant computational effort.                                      ciency of the transmission line models by reducing the order of the A(ω)
+     In popular frequency dependent wideband models, such as the                    function for multi-circuit cable systems. Model order reduction tech­
+Universal Line Model, the rational function approximation (curve-                   niques (MOR) can be used to obtain reduced-order systems while
+fitting) is accomplished in two steps. First, the modal elements of the A           ensuring a small approximation error. Some techniques offer additional
+(ω) matrix (Amodes(ω)) are independently curve-fitted using a common                benefits, such as numerical efficiency, the presence of a priori error
+error tolerance [1]. Next, the elements of the phase A(ω) matrix are                bounds, and ensuring properties like stability and passivity. Modal order
+approximated with a common set of poles (i.e. poles of Amodes(ω) with               reduction is a well-studied subject and applied in many application
+corresponding modal delays). This process is iterated until the desired             areas, including modelling of semiconductor devices and MIMO macro-
+accuracy of the phase function is achieved. For some cable systems, since           models of high-speed VLSI interconnects, etc. MOR methods can be
+a common error tolerance is used to approximate Amodes(ω), some                     classified into two main classes: Krylov-based methods and truncation-
+modes may be overfitted with a higher-order than necessary resulting in             based methods [7–9]. The popular truncation-based methods are
+a higher-order phase A(ω) function.                                                 Modal Truncation (MT) and Balanced Truncation (BT).
+     A higher-order function requires greater computational resources                   The BT reduction was first introduced by Mullis and Roberts (1976)
+
+
+ * Corresponding author.
+   E-mail address: jeewantha3000@gmail.com (H.M.Jeewantha De Silva).
+
+https://doi.org/10.1016/j.epsr.2025.112328
+Received 5 January 2025; Received in revised form 14 March 2025; Accepted 30 September 2025
+Available online 10 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+H.M.Jeewantha De Silva and Y. Zhang                                                                                       Electric Power Systems Research 251 (2026) 112328
+
+
+[10] and later in the systems and control literature by Moore (1981)                    3.1. Modal truncation (MT)
+[11]. In 1984, the Hankel-norm reduction technique was introduced by
+Glover [12]. The BT method is based on the solution of the Lyapunov                         This is one of the oldest MOR techniques. In general, the MT is based
+equation of the dynamic system. The solutions are the reachability and                  on projecting the state space system on the subspace of the pencil λI − A
+the observability gramians. The basis is that the states that are difficult             for some subset of eigenvalues [7–9].
+to reach are simultaneously difficult to observe. Then, the reduced                         The reduced order system is obtained by eliminating the non-
+model is obtained by truncating the states that have this property.                     dominant eigenvalues (eigenvalues with smallest real part). In case of
+    In the MT method, the state-space system is truncated by eliminating                rational functions expressed as residue pole form, for some small enough
+non-dominant eigenvalues after reordering them based on the magni­                      tolerance (tol), the reduced order system represents the condition,
+tude of the eigenvalues of the system matrix A.
+                                                                                        ‖ ck ‖
+    The first method related to Krylov subspaces was introduced in 1990.                       > tol                                                                   (5)
+                                                                                         |ak |
+Some of the popular Krylov-based methods include Asymptotic Wave­
+form Evaluation, the Padé Via Lanczos Method (PVL), the Arnoldi                            Let’s assumed that the first ℓ terms (l ≤ N) satisfy the above condition
+Method, the Passive Reduced-order Interconnect Macromodeling Algo­                      (i.e. the terms with small residue/pole ratios are removed) and hence the
+rithm (PRIMA Method), and the Laguerre Method [7–9].                                    truncated transfer function is,
+                                                                                                        lj
+2. Rational function approximation of propagation function                                              ∑  cjk e− sτj
+                                                                                        fmodelj (s) =                                                                  (6)
+                                                                                                        k=1
+                                                                                                              s − ajk
+    In frequency dependent transmission line models, the A(ω) function
+                                                                                            For a complex pole pair, the condition is,
+is approximated (curve-fitted) in two stages. In the first stage, the modal
+                                                                                        ⃒                    ⃒
+delays of A(ω) matrix are computed. The unwound modes of A(ω) matrix                    ⃒ ck         ck+1 ⃒⃒
+                                                                                        ⃒s − a + s − a ⃒ > tol
+                                                                                        ⃒
+(Amodes(ω)) are curve-fitted using rational functions, as shown in (1),                   k    k   k     k+1
+employing techniques such as Vector Fitting [2]. The order of each mode
+is determined by the common modal error tolerance, ensuring sufficient                  where,
+accuracy for all modes.
+                                                                                        Sk = imag(ak )
+                Nj
+                ∑  cjk e− sτj                                                               Once the rational function approximation is completed, the order of phase
+fmodelj (s) =                                                                (1)
+                k=1
+                      s − ajk                                                           A(ω) function (see Eq. (3)) can be reduced directly by applying the MT
+                                                                                        technique. However, this does not give satisfactory results for the studied
+     Where, fmodelj , Nj , ajk , cjk and τj are jth mode of A(ω) matrix, order of
+                                                                                        examples. Instead, the following procedure is applied to reduce the order after
+the function, pole, residue and modal delay respectively with s = jω. The               the curve-fitting.
+fitting error of Amodes(ω) is,
+
+ε1 =‖ fmodelj (s) − fmodelj (s)actual ‖                                      (2)           (1) Compute residue/pole ratios of each mode (see Eq. (1)) and sort
+                                                                                               them in ascending order
+  In the second step, using modal delays (τjʹs) and poles (aj’s), the el­                  (2) remove corresponding small residue/pole ratio terms in each
+ements of phase A(ω) matrix are approximated as shown in (3)                                   mode below a small tolerance (tol)
+                Nj
+                                                                                           (3) using the remaining modal poles, curve-fit the phase A(ω) matrix
+              M ∑
+              ∑    cjk e− sτj                                                                  again and calculate the error (ε)
+f(s)(p,q) =                                                                  (3)
+                j=1   k=1
+                            s − ajk                                                        (4) if the error is less than the desired tolerance (ε1 ), then iterate (1)
+                                                                                               to (3) with a reduced tolerance (tol = k × tol, k < 1.0).
+  Where, M is the number of modes. The fitting error of phase A(ω)
+matrix is
+                                                                                        3.2. Balanced truncation (BT)
+ε = ‖ f(s)(p,q) − f(s)actual ‖                                               (4)
+
+    If the fitting error of phase A(ω) matrix exceeds the maximum phase                     The BT is one of the well-studied model reduction methods. The
+error specified (εmax ), the first and second steps are repeated with a                 application of BT to frequency dependent transmission line modelling is
+reduced modal error tolerance ε1 = (αε1 , α < 1). This process is                       novel. One advantage of the BT method is that the asymptotic stability of
+continued iteratively until the phase error is within the acceptable limits             the reduced order system is guaranteed. Another advantage is the
+(ε < εmax ) .                                                                           availability of a priori error bounds, which facilitates the determination
+                                                                                        of the appropriate order for the reduced-order model.
+3. Model order reduction of propagation function                                            The application of BT method to a rational function is discussed in
+                                                                                        Appendix A. The state space form (A1a, A1b in Appendix A) of the
+    In general, A(ω) and Yc(ω) functions can be accurately represented                  Amodes(ω) function can be converted into a real block diagonal form
+with low order rational functions. However, in specific cases, particu­                 using a block diagonal transformation matrix S [7–9].
+larly for multi-circuit underground cable systems, the order can become                 A = S− 1 AS                                                                  (7a)
+excessively high.
+    As discussed in section II, each Amodes(ω) function is fitted with a                B = S− 1 B                                                                   (7b)
+common fitting tolerance (ε1 ). It is possible that some of the modes are
+fitted with a higher order transfer function than normally required                     C = CS                                                                       (7c)
+(over-fitting). Higher-order transfer functions can increase the compu­
+tational burden associated with evaluating the recursive convolution                        For a given tolerance (tol), the reduced order dynamic system (rep­
+algorithm and may potentially lead to passivity violations due to                       resenting A,
+                                                                                                  ̃ ̃B, C
+                                                                                                        ̃ matrices) is computed by deleting small Hankel ei­
+overfitting.                                                                            genvalues (σ1 < tol) . Since A
+                                                                                                                     ̃ is a full real matrix, the poles of the reduced
+    This paper discusses two methods to enhance the numerical effi­                     transfer function are found by calculating the eigenvalues of A matrix.
+ciency of the transmission line models by reducing the order of A(ω)                    Finally using the new set of poles of the Amodes(ω) function and the
+function.                                                                               corresponding modal delays, the entries of phase A(ω) matrix are curve-
+
+                                                                                    2
+H.M.Jeewantha De Silva and Y. Zhang                                                                                    Electric Power Systems Research 251 (2026) 112328
+
+
+fitted (see section II). An iterative procedure is designed to gradually          Table 1
+reduce the order until an acceptable level of accuracy is achieved.               Cable data.
+    Since Yc(ω) can be typically approximated with low order transfer              Inner conductor radius                                           22 mm
+function (typically <20 poles), it is not necessary to apply model                 Sheath inner radius                                              39.5 mm
+reduction methods for Yc(ω) function.                                              Sheath outer radius                                              39.95 mm
+                                                                                   Armour inner radius                                              43.45 mm
+                                                                                   Armour outer radius                                              44.1 mm
+4. Simulation example I                                                            Cable outer radius                                               49.3 mm
+                                                                                   Resistivity of conductor                                         6.99e-8 Ohm.m
+    The order reduction techniques on transmission line models are                 Resistivity of sheath                                            5.1667e-8 Ohm.m
+demonstrated with an example case involving a double circuit 30 km 3-              Resistivity of armour                                            8.223e-8 Ohm.m
+                                                                                   Relative permittivity of 1st insulation layer                    3.156
+phase underground cable system (flat configuration) as shown in Fig. 1.
+                                                                                   Relative permittivity of 2nd insulation layer                    2.3
+The summary of the cable data can be found in Table 1. For both                    Relative permittivity of 3rd insulation layer                    2.3
+simulation examples, the per unit length transmission line parameters              Ground resistivity                                               100 Ohm.m
+(e.g. series impedance and shunt admittance) are calculated based on
+[13] and [14]. The frequency dependency of soil parameters such as soil
+resistivity, soil permittivity is neglected. The direct numerical integra­        Table 2
+tion is used to compute earth return impedance [15].                              Time delay and Order of the modal function.
+    As discussed in section II, Universal Line Model (ULM) first calculates
+                                                                                   Delay group              Time delay (ms)              Order of the transfer function
+and approximates Amodes(ω) function as an intermediate step [1]. For
+rational function approximation, the maximum order for Amodes(ω) or                1                        0.240345                     18
+                                                                                   2                        0.296956                     8
+Yc(ω) is limited to 20 and the maximum fitting error for the phase A(ω)            3                        1.191263                     18
+function is 0.5 %.                                                                 4                        1.194583                     18
+    In ULM, the modes with

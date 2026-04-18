@@ -1,0 +1,30 @@
+# Dynamic model reduction of power electronic interfaced generators based on singular perturbation
+
+Lei Wang*, Wenhao Long*
+
+School of Electrical Engineering and Automation, Hefei University of Technology, Hefei 230009, China
+
+* Corresponding authors. E-mail addresses: wanglei223@hfut.edu.cn (L. Wang), 17352913768@163.com (W. Long).
+
+https://doi.org/10.1016/j.epsr.2019.106030
+Received 25 June 2019; Received in revised form 10 August 2019; Accepted 6 September 2019
+Available online 17 September 2019
+
+**Keywords:** Power electronic interfaced generator, Singular perturbation theory, Electromagnetic transient model, Eigenvalue sensitivity, Reduced order error
+
+**ABSTRACT**
+• There is a current trend for development of high-power electronics for power systems. To improve the efficiency of large-scale system simulations, order reduction of power electronic interfaced generator models has become an urgent problem to be addressed for the integration of new energy. In this paper, a battery energy storage system (BESS) is taken as the research object. A detailed grid-connected model is established and the time-scale of the eigenvalue sensitivity partition model is introduced. A multi-time scale model and reduced-order processing based on singular perturbation theory are analyzed, and the error is calculated for reduced-order models. Simulation analysis of the different reduced-order models proposed in this paper shows that these models can achieve a balance between computational efficiency and reduced-order accuracy for transient simulation of power electronic interfaced generator grid-connected systems, and can be adapted for efficient simulation of large-scale new energy grid-connected systems.
+
+## 1. Introduction
+
+A large number of new energy sources are now being connected to the grid in the form of power electronic interfaces, and there is a trend towards an increasing level of high-power electronic development for power systems. This has resulted in a significant increase in the order of nonlinear high-order models used to describe the dynamic behavior of power systems, and increases the time span [1,2], making these models more difficult to solve. Model order reduction can offer an effective solution to address these problems.
+
+Traditional AC power supplies have a clear electromagnetic and electromechanical transient process [3], with mature modeling and reduction methods. The reduction method and the dynamic characteristics before and after reduction have been studied extensively. In some studies [4–6], balance theory is applied before and after order reduction to limit the error and maintain the stability of the system. However, the Lyapunov equation of this method has higher complexity, a longer solution time, and deviates from the steady state values of the original system, which is not conducive to model order reduction of large-scale systems [7]. In Ref. [8], a modal perturbation method is proposed to reduce the order of systems. This method lacks multi-time scale division of systems and does not consider the correlation between individual modalities and eigenvalues. In Ref. [9], a singular perturbation model for power systems with multiple time-scales is established in detail, and reduced-order conditions under different reduced-order modes are proposed. The reduction of a pure AC power system is studied. However, a strict definition of the different time-scales of the model state variables is not given, so this method is less practical for systems with fewer time-scales.
+
+In contrast with traditional AC power supplies based on electromagnetic and electromechanical transient modeling and reduction systems, power electronic interface power supply models mainly involve physical components and control strategies [10–13] and contain a much lower number of feature time-scales. There can be tens or hundreds of state variables in a single power supply model, which is not conducive to large-scale power system safety reliability analysis and stability mechanism research. Therefore, methods to reduce the order of power electronic interfaced generator models are greatly important [14,15].
+
+Homology equivalence theory can be used to homogenize and group power electronic power systems, simplifying the dynamic analysis process. This theory can be applied to reduced-order modeling of large-scale systems where the priority is efficiency. However, the accuracy of the system model parameters has a great influence on the simplified process, and the calculation process is more complicated, therefore the theory has certain limitations in practice [16]. In Ref. [17], a reduced-order small-signal model of a microgrid system that can operate under grid-tied and island conditions is established, and the effect of reducing the order under different conditions is studied. However, there is no consideration of the influence of the system controller control parameters on the reduction effect. In Ref. [18], a quasi-power source is defined and a normalized reduced-order model is derived for three differential algebraic equations under different conditions; however, the reduced-order error is not analyzed. In Ref. [19], a singular perturbation model of an inverter-interfaced distributed generator is studied. However, there is no consideration of the influence of the system controller control parameters on the reduction effect. locked loop output control, and a double-loop control system response. The basic electromagnetic transient models will be analyzed in the following paragraphs.
+
+### 2.1. PLL control and power model
+
+Let $\theta$ be the state variable of the phase-locked loop (PLL), i.e. the locked phase. A $dq$ synchronous rotating coordinate system is used as the selected reference system. The state variable equation of the phase

@@ -1,0 +1,148 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TEC.2019.2936574, IEEE
+                                                                                              Transactions on Energy Conversion
+                                                                                                                                                                                                            1
+
+
+
+
+                       A Multi-rate Co-simulation of Combined
+                     Phasor-Domain and Time-Domain Models for
+                              Large-scale Wind Farms
+          Yupeng Li, Student Member, IEEE, Dewu Shu, Member, IEEE, Fan Shi, Zheng Yan, Yiying Zhu, Nengling
+                                                      Tai
+
+
+
+            Abstract—In the year 2015-2018, there are many sub- and                                           AC grids. Therefore, an efficient and accurate simulation
+         super-synchronous interaction (S2 SI) events, happened in China.                                     method, which can capture detailed electro-magnetic transients
+         However, traditional transient stability models, electro-magnetic                                    of large-scale AC system integrating hundreds of wind turbine
+         transient (EMT) models and hybrid TS and EMT simulation
+         methods fail to capture the desired wide frequency band interac-                                     generators (WTGs) is highly necessary [5].
+         tions between large-scale AC grids and wind farms. To accurately                                         However, it is always a consuming task to simulate the
+         and efficiently capture wide frequency band interactions between                                     large-scale wind farm related AC grids [6]. This is because:
+         AC grids and wind farms, a simulation method which can                                               (1) a significant increase in the number of buses due to the
+         extend the time-step to 500µs and further adopt the multi-rate                                       expanding scale of AC grids and wind farms; (2) a much
+         structure is highly required. For this objective, we propose a
+         multi-rate co-simulation method, in which the target system is                                       smaller time-step (usually as small as 2-50µs) to emulate
+         partitioned into electro-magnetic transient (EMT) and shifted                                        detailed switching dynamic of each wind turbine; (3) the
+         frequency phasor (SFP) subsystems, represented by our proposed                                       time-step of the whole system combining the large-scale AC
+         transformation based SFP models and the traditional EMT                                              grids and wind farms will be limited as a unanimous time-
+         models, respectively. The simulation efficiency of simulating                                        step, which would result in enormous computational burden.
+         large-scale AC grids is significantly improved by adopting a
+         much larger time-step. Further, the multi-rate multi-domain                                          Several system equivalent methods have been proposed to
+         transmission-line model (MD-TLM) and the multi-rate frequency                                        improve the simulation efficiency [7]. For instance, the AC
+         dependent MD-TLM are respectively proposed to reflect wide-                                          grid is simplified as a fixed Thevenin or Norton equivalent
+         band interactions between AC grids and wind farms. Eventually,                                       circuit, where the wind farms are represented as their detailed
+         the multi-rate co-simulation is implemented based on the efficient                                   electro-magnetic transient models [8]. The drawback is that
+         SFP models, network partitioning, and so-called the multi-rate
+         (FD)-MD-TLM. The performance (efficiency and accuracy) of the                                        the electro-mechanical dynamics of AC grids as well as
+         proposed method has been fully validated on a practical system                                       interactions between AC grids and wind farms are totally
+         integrating large AC grids and wind farms.                                                           neglected. On the hand, if the wind farm is represented as
+            Index Terms—multi-rate co-simulation, shifted frequency pha-                                      the aggregate model, i.e., all the wind turbines are simplified
+         sor (SFP) model, multi-domain transmission-line model (MD-                                           as one controlled current source model [9], the controllers of
+         TLM), frequency dependent.                                                                           different wind turbines can not be modelled. More importantly,
+                                                                                                              the inner dynamics of the wind farms aroused by frequency
+                                          I. I NTRODUCTION                                                    dependent components cannot be represented, which is im-
+                                                                                                              portant to capture wide-band frequency interactions between
+         W        ITH the increased integration of wind power, the flex-
+                  ibility and security of power grid face significant chal-
+         lenges. Recently, the sub- synchronous and super-synchronous
+                                                                                                              the AC grid and the wind farm. Several other methods,
+                                                                                                              such as the transient stability and electro-magnetic transient
+                                                                                                              (EMT) hybrid simulations [10]-[12], and multi-rate simulation
+         oscillations aroused by the fixed series compensation (FSC),
+                                                                                                              method [7], dynamic phasor model [13]-[14], etc. have been
+         nearby doubly-fed induction generators (DFIGs) and the large-
+                                                                                                              proposed to accelerate the simulation speed of the large-
+         scale AC grids, has been detected in Texas of USA [1], [2] and
+                                                                                                              scale AC grids incorporating wind farms. However, as the AC
+         Hebei Province of North China [3], resulting in drop-out of
+                                                                                                              grid is represented as their corresponding transient stability
+         numerous wind turbine generators (WTGs) or even damage
+                                                                                                              model by using the hybrid simulation method, the EMT
+         of crowbar circuits. Unlike the traditional shaft related sub-
+                                                                                                              dynamics of the AC grid which are aroused by nonlinear
+         synchronous resonance (SSR) problems [4], such new events
+                                                                                                              dynamics of generators and frequency dependent dynamics of
+         are related to controllers of wind farms, dynamics of adjacent
+                                                                                                              transmission lines cannot be captured. It should be noted that
+            This work was supported by the Science and Technology Project of State                            it is necessary to use EMT model of AC grids if the wide-band
+         Grid (shanghai municipal electric power company) 52097018000D, open                                  frequency interactions are highly interested. Moreover, even if
+         fund of FXB51201901051 (CEPRI), Shanghai Sailing Program 19YF1423500.
+         (Corresponding author: Dewu Shu).                                                                    the traditional multi-rate EMT simulation method is adopted
+            Yupeng Li, Dewu Shu, Fan, Shi, Zheng Yan are with Department of Elec-                             [7], the simulation is still computationally burdensome, as the
+         trical Engineering, Shanghai Jiaotong University, Shanghai, 200240, China.                           time-step is restricted by the small time-step of wind farms.
+         (e-mail: shudewu@sjtu.edu.cn).
+            Yiying Zhu, Yupeng Li is with the State Grid Simulation Center.                                       The reason why we write this paper is actually originated
+                                                                                                              from practical engineering problems.In the year 2015-2018,
+
+
+0885-8969 (c) 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TEC.2019.2936574, IEEE
+                                                                                              Transactions on Energy Conversion
+                                                                                                                                                                                                            2
+
+
+
+         there are many sub- and super-synchronous oscillation events,                                        aspects: (1) the node number of the whole system will be
+         such as in Xinjiang province, and Guyuan Area, which are                                             greatly increased by the scale of the AC grids; (2) many
+         happened in China [15]-[16]. In order to study the mechanism                                         nonlinear and frequency dependent components are contained
+         of the S2 SI event, the first step is to set up the accurate and                                     in the system, which require additional calculations of the
+         efficient simulation model to reproduce the S2 SI event. How-                                        nodal voltage equations. In order to improve the simulation
+         ever, traditional methods, such as eletro-magnetic transient                                         efficiency from the aspect of modelling, the transformation
+         programs, transient stability programs, and even the hybrid                                          based phasor (SFP) models is proposed. The key characteristic
+         EMT and TS simulations, cannot represent wide frequency                                              of the transformation based SFP models is that it allows a
+         interactions between large-scale AC grids and wind farms.                                            larger time-step to simulate the large-scale AC grids while the
+         Therefore, it is highly necessary to propose a new simulation                                        simulation accuracy can still be guaranteed.
+         method, which can extend the time-step of large-scale AC
+         grids to as large as 500µs or more. Second, in order to reflect
+         the wide-band frequency interactions between the wind farm                                           A. Brief Introduction of Transformation based Shifted Fre-
+         and the AC grid, a simulation method under the multi-rate                                            quency Phasor (SFP) Models
+         structure is strongly recommended.                                                                     As established in [17]-[18], the electrical variable in large-
+            To address the above issues, a multi-rate co-simulation                                           scale AC grids (assumed with fundamental frequency ωs ) can
+         method of combined phasor-domain and time-domain models                                              be represented by its SFP form:
+         is proposed. The contributions are threefold:                                                                                    (
+            (1) The SFP models are proposed to resolve the efficiency                                                                              x(t) = x̂(t)e jωs t
+         problem of large-scale AC grids. New shifted frequency phasor                                                                                                                                   (1)
+                                                                                                                                               x̂(t) = xI (t) + jxQ (t)
+         (SFP) models based on the rotational matrix transformation
+         are derived for the components of AC grids. They can use a                                           where x̂(t) is the complex envelope of the time-domain signal
+         much larger time-step and the calculations are fulfilled and                                         x(t), and preserves its low-frequency dynamics. xI (t) and xQ (t)
+         accelerated from the aspect of modeling.                                                             are the real and imaginary parts of x̂(t), respectively.
+            (2) The wide frequency band interface models are proposed                                            Suppose the dynamic equation of a system component is
+         to reflect the desired wide frequency band interactions. The                                         written as dx/dt = f (x,t), its dynamic equation in the SFP
+         desired frequency band can be extended to 1000Hz at the                                              form can be derived as
+         time-step of 500µs. The interface models between SFP and                                                                              d û
+         EMT subsystems are proposed and represented by the multi-                                                                                  = f (û,t) − jωs û                                  (2)
+                                                                                                                                               dt
+         rate multi-domain transmission line model (MD-TLM) and
+         the multi-rate frequency dependent multi-domain transmission                                             Decoupling into real and imaginary parts yields
+         line model (FD-MD-TLM), where the latter can catch the                                                                     d ûxy                        π
+         high-frequency interactions of interfacing. Both multi-rate                                                                       = F(ûxy ,t) + ωs T(−     )ûxy                               (3)
+                                                                                                                                     dt                          2ωs
+         MD-TLM and FD-MD-TLM can produce instantaneous and
+         phasor waveforms simultaneously. Thus, the so-called wide-                                           where
+         band frequency interactions can be captured and reflected                                                             "                               #              "                                 #
+         accurately.                                                                                                               F(ûx ,t)                                      cos ωst        − sin ωst
+                                                                                                              F(ûxy ,t) =                                         , T(t) =
+            (3) The overall multi-rate and multi-domain co-simulation                                                                             F(ûy ,t)                       sin ωst        cos ωst
+         method is constructed to reproduce the desired S2 SI oscillation                                                      h         iT                                                            (4)
+         event. A new multi-rate co-simulation simulation structure is                                           In (3), ûxy = ûx ûy     , where ûx and ûy are the real
+         developed based on SFP models, network partitioning, and                                             and imaginary parts of û(t) in the reference frame after Park
+         multi-rate MD-TLM. Case studies of a practical system have                                           transform.
+         fully demonstrated its effectiveness of the proposed multi-                                             Adopting the trapezoidal integration rule, (3) is discretized
+         rate co-simulation method in simulating large-scale AC grids                                         as:
+         integrating wind farms.
+            The rest of the paper is organized as follows: Section II                                           ûn − ûn−1     fˆn + ωs T(− 2ω
+                                                                                                                                              π
+                                                                                                                                                s
+                                                                                                                                                  )ûn + fˆn−1 + ωs T(− 2ω
+                                                                                                                                                                         π
+                                                                                                                                                                           s
+                                                                                                                                                                             )ûn−1
+                                                                                                                             =
+         introduces the proposed transformation based shifted phasor                                                 ∆t                                  2
+         models (SFP) of AC grids. Section III elaborates the multi-rate                                                                                                           (5)
+         co-simulation combining phasor- and time-domain models.                                              where ûn , fˆn denote the state and the differential term at the
+         Section IV examines the performance of the proposed method                                           nth time-step, respectively. ∆t is the time-step.
+         by simulating a practical AC system 

@@ -1,0 +1,182 @@
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 38, NO. 3, SEPTEMBER 2023                                                                                   2231
+
+
+
+
+ Average-Value Model for Voltage-Source Converters With Direct Interfacing in
+                           EMTP-Type Solution
+                          Seyyedmilad Ebrahimi , Member, IEEE, and Juri Jatskevich , Fellow, IEEE
+
+
+   Abstract—Average-value models (AVMs) of high-frequency
+switching voltage-source converters (VSCs) are indispensable for
+fast/efficient simulation of VSC-based power systems. However, in
+EMT/EMTP-type programs large simulation time-steps cannot be
+utilized with conventional non-iterative interfacings of AVMs due
+to numerical inaccuracy/instability as a result of a one-time-step
+interfacing delay. In this letter, a directly-interfaced AVM has been
+developed for the VSCs which eliminates the interfacing delay and
+allows large time-steps. This is achieved by formulating the AVM
+in the nodal form that is solved simultaneously with the overall
+                                                                                  Fig. 1.   A generic VSC-based ac–dc system.
+network nodal equations. The new proposed model is demonstrated
+to outperform the existing AVMs of VSCs in terms of accuracy at
+fairly large time steps.                                                             In many EMTP-type programs, e.g., PSCAD, the AVMs
+   Index Terms—Average-value model, direct interfacing, HVDC,                     of VSCs can be readily implemented using controlled volt-
+interfacing, nodal, simulation, VSC.                                              age/current sources that are interfaced with external circuits
+                                                                                  [3]. This type of non-iterative interface with the nodal approach
+                                                                                  requires a time-step delay between the external network solution
+                           I. INTRODUCTION                                        and the controlled sources (and is referred to as indirect inter-
+       OLTAGE-SOURCE converters (VSCs) are utilized in a                          facing). This delay can cause numerical inaccuracy/instability
+V      broad range of applications, e.g., HVDC Light systems
+[1], FACTS devices, wind generation, aircraft and vehicle power
+                                                                                  at large time-steps and inevitably limits the advantage of AVMs
+                                                                                  in system-level simulations of VSC-based networks.
+systems, etc. The offline and real-time electromagnetic transient                    Recently, direct interfacing has been developed for AVMs
+(EMT) and EMTP-type programs that are indispensable for                           of the line-commutated converters (i.e., diode or thyristor-
+system studies are now being pushed to their limits. Numerical                    controlled rectifiers) in EMTP-type programs [4]. This letter
+techniques that enable using large time-step sizes for simulations                develops and presents the direct interfacing of the AVMs of
+of VSC-based networks and better utilization of the available                     the widely-utilized VSCs. This is done by formulating the VSC
+simulation hardware are becoming particularly important. Ef-                      AVM equations according to the EMTP non-iterative approach,
+forts are made to allow larger time-steps in offline/real-time                    wherein the discretized conductance matrix and controlled his-
+simulations, e.g., superstep in RTDS NovaCor [2], etc.                            tory terms naturally depend on the previous time-step (thus re-
+   Due to the high-frequency switching, the discrete detailed                     moving any artificial time-step delays). The AVM sub-matrices
+models of the VSCs require small time steps for numerical                         are then incorporated into the overall network nodal equation
+stability/accuracy and are thus not suitable for large-scale simu-                and solved simultaneously with the external networks, allowing
+lations. Alternatively, the average-value models (AVMs) [3] of                    large time-steps, as verified by the presented computer studies.
+VSCs have been utilized for such studies, wherein the details                        It is noted the directly interfaced AVM developed in this
+of switching are neglected (averaged out) to facilitate faster                    letter would be valid for both rectifier and inverter modes of
+simulations by allowing larger time-steps. The AVMs are con-                      operation of the VSCs. Also, the proposed model is based
+tinuous and independent of the switching frequency; and are                       on the analytical AVM [3] (as opposed to [4], which requires
+valid for dynamics only slower than the switching frequency [3]                   numerically-extracted lookup tables).
+beyond which the averaging assumptions that are used in their
+                                                                                     II. FORMULATION AND INTERFACING OF AVMS FOR VSCS
+derivations may no longer be valid.
+                                                                                     For the purpose of this letter, it is assumed that the ac subsys-
+                                                                                  tem connected to the VSC is modeled as a Thévenin equivalent
+   Manuscript received 17 June 2022; revised 22 September 2022; accepted 24       circuit shown in Fig. 1. Therein, the equivalent sources are
+October 2022. Date of publication 7 November 2022; date of current version 22     specified by voltages eabc and angle θs which can be typically
+August 2023. This work was supported by the Natural Science and Engineering
+Research Council (NSERC) of Canada under the Collaborative Research and
+                                                                                  identified by a PLL-type grid synchronization. The VSC outputs
+Development Grant. Paper no. PESL-00167-2022. (Corresponding author: Juri         the ac voltages vabc (with respect to the neutral point of the
+Jatskevich.)                                                                      Thévenin sources) whose fundamental frequency components
+   The authors are with the Electrical and Computer Engineering Department,       are shifted from θs by the angle δ, and their amplitude is specified
+The University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail:        by the modulation index M . The variables M and δ can be either
+ebrahimi@ece.ubc.ca; jurij@ece.ubc.ca).
+   Color versions of one or more figures in this article are available at
+                                                                                  set manually or calculated by the power/current controllers.
+https://doi.org/10.1109/TEC.2022.3220085.                                            To formulate the AVM, the ac variables are transformed to a
+   Digital Object Identifier 10.1109/TEC.2022.3220085                             rotating qd reference frame using Park’s transformation matrix
+                         0885-8969 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:08:04 UTC from IEEE Xplore. Restrictions apply.
+2232                                                                         IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 38, NO. 3, SEPTEMBER 2023
+
+
+
+                                                                                 AVM formulations are written in qd coordinates as
+                                                                                                                    
+                                                                                                     v̄qd       qd,dc īqd
+                                                                                                            = ZVSC         + eqd,dc
+                                                                                                                              h,VSC ,                         (6)
+                                                                                                     v̄dc             īdc
+                                                                                                   qd        T qd  q          T
+                                                                                        eqd,dc
+                                                                                         h,VSC = eh       edc
+                                                                                                           h
+                                                                                                                 , eh = eh edh .                              (7)
+                                                                                   To obtain the impedance matrix Zqd,dcVSC and history terms
+                                                                                  qd,dc
+                                                                                 eh,VSC in (6), the formulations (1)–(5) are rewritten to express
+                                                                                 the voltages in terms of currents as
+                                                                                 ⎧                                          
+Fig. 2. Implementation of the conventional IDI-AVM of VSCs in EMTP-type
+                                                                                 ⎪
+                                                                                 ⎪             1                       3                   2            2
+programs using controlled voltage/current sources at the interface.              ⎪v̄q (t) = M Rx cos (δ)
+                                                                                 ⎪                                       M (īq (t)) + (īd (t)) cos (ϕ)
+                                                                                 ⎪
+                                                                                 ⎪             2                      4
+                                                                                 ⎪
+                                                                                 ⎪
+                                                                                 ⎪
+                                                                                 ⎪
+K(θs )[4]. Next, the average values of the dc variables (i.e., v̄dc              ⎪
+                                                                                 ⎪              + icomp − īdc
+                                                                                 ⎪
+                                                                                 ⎪                                         
+and īdc ) are related to the average values of the transformed ac               ⎨            1                       3                  2            2
+variables (i.e., v̄qd and īqd in qd coordinates, which correspond                 v̄d (t) = M Rx sin (δ)               M (īq (t)) + (īd (t)) cos (ϕ) .
+                                                 1                               ⎪
+                                                                                 ⎪            2                      4
+to the fundamental frequency components vabc         and i1abc in abc            ⎪
+                                                                                 ⎪
+                                                                                 ⎪
+                                                                                 ⎪
+coordinates, respectively).                                                      ⎪
+                                                                                 ⎪              +  i comp  −  ī dc
+                                                                                 ⎪
+                                                                                 ⎪                                                                                
+                                                                                 ⎪
+                                                                                 ⎪                    3
+                                                                                 ⎪
+                                                                                 ⎪                                       2              2
+A. Indirect Interfacing of AVMs                                                    v̄
+                                                                                 ⎩ dc   (t) = R  x      M    ( ī q (t))   +( ī d (t))   cos  (ϕ)+i  comp − ī dc
+                                                                                                      4
+   To implement the AVM [3], the VSC switches are replaced                                                                                                      (8)
+with controlled voltage/current sources, as depicted in Fig. 2.                     After manipulations using trigonometric identities [4], (8) can
+                                               1
+Therein, the interfacing ac voltage sources vabc   can be expressed
+in terms of the dc-side voltage v̄dc as [3]                                      be written in the form of (6) where the impedance matrix Zqd,dc             VSC
+                                 T                                             yields
+             1
+           vabc  = va1 vb1 vc1 = [K(θs )]−1 v̄qd ,                                                                      
+                                                                                   qd,dc          Zqd        Zqd,dc
+                                                                             ZVSC =
+                       v̄       1      cos (δ)                                                 −Zdc,qd −Zdc,dc
+              v̄qd = q = M                        v̄dc .        (1)                 ⎡                                                                              ⎤
+                       v̄d      2      sin (δ)                                          3 2                         3 2                         −1
+                                                                                          M Rx cos2 (δ)                M Rx sin (2δ)                M Rx cos (δ)
+                                                                                    ⎢ 8                           16                             2                 ⎥
+Also, the interfacing dc current source is expressed in terms of                    ⎢3                              3                           −1                 ⎥
+                                                                                    ⎢                                                                              ⎥
+the ac-side currents i1abc (or īqd equivalently) as [3]                          =⎢ M 2 Rx sin (2δ)                  M 2 Rx sin2 (δ)                M Rx sin (δ) ⎥.
+                                                                                    ⎢ 16                            8                             2                ⎥
+                            3                                                     ⎣ 3                              3                                             ⎦
+                   i¯ dc = M cos (ϕ) īqd  ,                                            M Rx cos (δ)                M Rx sin (δ)                   −Rx
+                            4                                                            4                           4
+                     
+                       ī                          T                                                                                                          (9)
+             īqd = q = [K(θs )] i1a i1b i1c ,               (2)
+                       īd                                                       Also, the history terms are calculated as
+                                                                                                           
+where ϕ is the power factor angle of VSC and is calculated as                               1       cos (δ)
+                                                                                   eqd  =     M               v̄ (t − Δt), edc        h = v̄dc (t − Δt). (10)
+                                                                                    h
+                                                                                            2       sin (δ) dc
+                       ϕ = tan−1 (īd /īq ) − δ.                         (3)
+                                                                                    Then, the qd variables in (6) are transformed to the abc
+  The ac currents and the dc voltage are computed by the ac                      coordinates toobtain the terminal
+and dc subsystems, respectively; and their values are used to                                          1
+                                                                                                                             1variables
+                                                                                                                                             of the VSC as
+                                                                                                     vabc           abc,dc iabc              abc,dc
+control the interfacing sources. To improve the dc-side interface                                           = ZVSC                    + eh,VSC .             (11)
+and provide numerical damping, a snubber resistor Rx can be                                          v̄dc                     īdc
+used to establish the dc voltage as [4]                                          In (11), the impedance matrix is formed as
+                                                                                                                                               
+                 v̄dc = Rx i¯ dc + icomp − īdc ,            (4)                                   abc,dc              Zabc          Zabc,dc
+                                                                                                 ZVSC =                                             ,        (12)
+where the source icomp for compensation is computed as                                                               −Zdc,abc −Zdc,dc
+                    icomp (t) = v̄dc (t − Δt)/Rx .                        (5)    where its entries are calculated as (13) shown at the bottom of
+                                                                                 the next page, and
+   In EMTP-type programs, the interfacing output variables at
+                              1
+the current time-step [i.e., vabc (t) and īdc (t) in Fig. 2] are calcu-                    Zabc,dc = [K(θs )]−1 Zqd,dc
+lated based on the values of the input variables from the previous                                                                  
+                                                                                                      −1              cos (θs − δ)
+time-step [i.e., v̄dc (t − Δt) and i1abc (t − Δt)] using (1)–(3).                         

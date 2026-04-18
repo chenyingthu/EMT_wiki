@@ -1,0 +1,168 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2849854, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                Partitioned Fitting and DC Correction for the Simulation of Electromagnetic
+                                   Transients in Transmission Lines/Cables
+                Miguel Cervantes, Student Member, IEEE, Ilhan Kocar, Senior Member, IEEE, Jean Mahseredjian, Fellow, IEEE,
+                                               and Abner Ramirez, Senior Member, IEEE
+
+                Abstract—This letter proposes a two-stage fitting procedure                                    In FDCM, fitting of H is performed by decomposing it into
+           for transmission line/cable functions in which low frequency                                        grouped modal contributions and therefore large ratios are
+           samples are exclusively considered. At the first stage, fitting is                                  avoided. The grouping aims to smooth the contribution of
+           performed for a reduced band by excluding frequencies close to
+           DC. Reducing the fitting range improves the numerical
+                                                                                                               modal functions (eigenvalues of H ) in phase domain.
+           conditioning of the overall system of equations and relieves                                        However, when the FDCM approach is applied to lines, the
+           fitting. The second stage consists of finding a correction term for                                 problem of poor fitting at low frequencies is even more
+           the out-of-band samples close to DC. The procedure, when used                                       emphasized.
+           with the recently introduced frequency-dependent cable model                                             In [3], the fitting procedure in ULM is modified by forcing
+           (FDCM) approach, allows modeling transmission lines and cables                                      the exact DC response of propagation function in the rational
+           with improved fitting precision at low frequencies. Overall, the
+           new approach is called FDM (Frequency Dependent Model) with
+                                                                                                               approximation. Although the DC response becomes precise,
+           DC correction, i.e., FDM/DC. It can be used to complement the                                       the fitted function deviates from zero at high frequencies
+           prevailing Universal Line Model (ULM) in two ways: for                                              contrary to the natural behavior. This requires an additional
+           reducing the integration errors due to unbalanced fitting, and for                                  correction step such as optimization of residues to reduce the
+           improving the precision of DC response. Two examples are                                            incurred high-frequency errors. In [4], a low-frequency
+           provided to demonstrate the utility of the new approach.                                            representation of the line model is maintained by using an
+              Index   Terms—Frequency        dependent     line                                models,
+                                                                                                               additional low-order fitting function to compensate for the
+           electromagnetic transients, HVDC transmission lines.                                                fitting errors at low frequency samples. But the fitting is still
+                                                                                                               performed for a wide range of frequencies, and it is likely to
+                                             I. INTRODUCTION                                                   get large residue/pole ratios in some cases. This may yield to
+                                                                                                               numerical instabilities in time domain.
+           T    HE transient analysis of transmission lines while
+                accurately capturing the DC response has become of
+           special interest with the increasing number of planned and
+                                                                                                                    This letter extends the fitting approach of FDCM to
+                                                                                                               transmission lines by using a two-stage fitting method in
+                                                                                                               which low frequency samples are exclusively considered. In
+           installed HVDC systems [1]. The transmission line models in
+                                                                                                               first step, the fitting is performed by excluding very low
+           the simulation of such systems require covering a wide range
+                                                                                                               frequency samples such as those below 1 Hz. In second step, a
+           of frequencies including those very close to DC.
+                                                                                                               correction function is found for the excluded low frequency
+               The universal line model (ULM) [2] is widely used to
+                                                                                                               samples. The proposed new approach is called FDM/DC, and
+           model lines in HVDC systems so that the model is suitable to
+                                                                                                               it can be also applied to cables or combined with ULM to
+           study different power system phenomena covering a large
+                                                                                                               improve low frequency fitting when necessary.
+           spectrum of frequencies. One practice to adequately capture
+                                                                                                                    Two cases are studied in this letter where the proposed
+           the DC response is to start the frequency range in ULM from a
+                                                                                                               FDM/DC provides accurate DC steady-state values and
+           very low frequency sample in the fitting of transmission line
+                                                                                                               preserves numerical stability where the classic ULM approach
+           functions, i.e., propagation function ( H ) and characteristic
+                                                                                                               becomes inaccurate or unstable.
+           admittance. However, this may stiffen the fitting due to
+           increased range of frequencies, and the calculated DC steady-
+                                                                                                                                            II. FDM/DC APPROACH
+           state line voltage/current values may deviate from the correct
+           solution [3]-[4]. Moreover, it becomes more likely to get                                               The propagation function is fitted as follows (see Fig. 1):
+           residue/pole pairs with large ratios and opposing signs from                                            Step 1. Divide the frequency range: low frequency (LF)
+           different modal groups in the fitting of H , which                                                  section (e.g., 0.001 to 1 Hz) and high frequency (HF) section
+           consequently may engender numerical stability problems in                                           (e.g., 1 Hz to 1 MHz).
+           time domain due to amplified integration errors [5]. Also, in                                            Step 2. Perform fitting at the HF section to obtain H high
+           case of transmission lines, low frequency fitting may not be                                        (poles and residues). Use either the FDCM or ULM approach
+           sufficiently precise. The recently proposed Frequency                                               (See [2], [5] and [6] for implementation details).
+           Dependent Cable Model (FDCM) [5] complements ULM for                                                                        N gr
+                                                                                                                                             Mi       Ri, j       s   
+           cases with numerical problems due to large residue/pole ratios.                                                    H high                          e high i      (1)
+                                                                                                                                            
+                                                                                                                                       i 1  j 1 shigh  pi , j
+                                                                                                                                                                           
+                                                                                                                                                                           
+               M. Cervantes, I. Kocar and J. Mahseredjian are with the Department of                               In (1), Ngr is the number of modal propagation groups, Mi
+           Electrical Engineering, Polytechnique Montreal (Quebec), Canada.(e-mail:                            is the order of the approximation for the ith modal group, pi,j
+           miguel.cervantes-martinez@polymtl.ca, ilhan.kocar@polymtl.ca,
+                                                                                                               represents its jth pole, R i , j corresponds to a matrix of residues,
+           jean.mahseredjian@polymtl.ca).
+               A. Ramirez is with CINVESTAV Campus, Guadalajara 45019, Mexico                                  and τi is the time delay associated with the ith modal group.
+           (e-mail: abner.ramirez@cinvestav.mx).
+
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2849854, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                Step 3. Evaluate the fitted function H high at the LF section.                                                                    Transmission System
+           Then calculate the error of fitting at this section, H low . The                                      Rectifier               27 km            44 km            97 km                Inverter
+                                                                                                                    end                                                                            end
+           error function is calculated as the difference between the                                                                      Line            Cable             Line
+           analytical Hlow , and the fitted Hlow propagation function.
+                                                                                                                                                                              Converter
+                               Hlow  Hlow  H high ( slow )  Hlow  Hlow                           (2)
+                                                                                                                                     Converter
+                Step 4. Obtain a rational function approximation, H low ,                                                          transformer
+           for H low . Since the fitting is performed at very low
+                                                                                                                                                                            AC system
+           frequencies, the impact of time delay is negligible, and an                                                                                                      equivalent
+           arbitrary delay among the propagation delays can be used. The                                       Fig. 2. HVDC test system adopted from [1].
+           smallest delay is used in this paper (labelled as delay 1
+           assuming that delays are sorted).
+                                    M low                                                                                         Line 27 km             Cable 44 km               Line 97 km
+                                            R low, j
+                           H low                       e low 1 
+                                                            s       (3)
+                                          s
+                                     j 1 low  p low , j
+
+               Step 5. Obtain the final fitted function by summing up the                                      Vs         V1 +                     V2 +                     V3 +               1Ω         I4
+           rational approximations: H  H high  H low .
+                The proposed approach allows obtaining more accurate                                           Fig. 3. Circuit configuration of the numerical example.
+           fitting at low frequencies. Partitioning and reduced frequency
+           range helps avoiding pairs with large residue pole ratios with                                           Table II lists the results obtained with the ULM. The
+           the ULM approach.                                                                                   fitting is performed using three different minimum frequency
+                                                                                                               values. As the lower limit of the fitting frequency range
+                                                                                                               approaches 0.001 Hz, the steady-state values seem to get
+                                          H low
+                                                                                                               closer to the ones obtained with FDM/DC. Fig. 4 shows the
+                                                                    H high
+                                  H low                                                                        time-domain waveforms for I4 obtained by using ULM and
+                                          H low                                                               FDM/DC. The upper limit of the fitting frequency range for
+                                                                                                               both models is 1 MHz. The ULM approach shows oscillations
+                                                                        ω
+                             ωmin
+                                      low            high
+                                                                  ωmax
+                                                                                                               and its steady state response is still not accurate when the
+           Fig. 1. Illustration of the FDM/DC approach for one entry of H.                                     lower limit of the fitting frequency range is set to 0.001 Hz.
+
+                                                                                                                                                TABLE II
+                                     III. NUMERICAL EXAMPLES                                                                       TIME-DOMAIN RESULTS OBTAINED BY ULM
+               Consider the two-terminal HVDC transmission system of                                                               Fmax    Fmin    Steady-State values (p.u.)
+           Fig. 2 (with line and cable data from [1]). The system consists                                                         (Hz)    (Hz)        V2              I4
+                                                                                                                                            0.1      0.7783         0.2233
+           of a 27-km aerial line, 44-km cable, and 97-km aerial line
+                                                                                                                                    106    0.01      0.8665         0.3091
+           segments. For the two lines and the cable, H is fitted via the                                                                 0.001      0.8691         0.3242
+           proposed FDM/DC approach. According to the first step of                                                                         0.1      0.8761         0.2523
+           Section II, H is fitted from 1 Hz to either 105 or 106 Hz using                                                          105    0.01      0.8659         0.3083
+           12 poles per group. Then, the error at the LF section is fitted                                                                0.001      0.8663         0.3084
+           using 8 poles from 0.001 Hz to 1 Hz.
+               A unit step voltage is applied to the sending end of the
+           positive conductor (see Fig. 3) while the receiving end is
+           grounded by a resistance of 1 Ω. The negative conductor is left
+           open at both ends. The steady-state magnitudes with the
+           FDM/DC for V2 and I4 in Fig. 3 are shown in Table I. These
+           values are compared against the method of [4], and the exact
+           solution. The simulation time-step is 10 µs. According to
+           Table I, the steady-state value is the same regardless the
+           maximum frequency considered in the fitting of H . The                                              Fig. 4. Time domain results of I4 in Fig. 3, time-step 10 µs.
+           smallest time delay in this system is 89.9 µs.
+                                                                                                                  Next, a 125-km hybrid AC/DC line configuration (see Fig.
+                                            TABLE I
+                           TIME-DOMAIN RESULTS (STEADY-STATE VALUES)                                           5) is used to demonstrate numerical stability performances.
+                                  V2 (p.u.)                   I4 (p.u.)                                        The transient scenario consists of applying a unit step voltage
+              Fmax
+              (Hz

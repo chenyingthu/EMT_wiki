@@ -1,0 +1,153 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2518676, IEEE
+                                                                                                  Transactions on Power Delivery
+
+                                                                                                                                                                                                             1
+
+
+
+
+                      Nonlinear Magnetic Equivalent Circuit Based
+                       Real-time Sen Transformer Electromagnetic
+                      Transient Model on FPGA for HIL Emulation
+                                           Jiadai Liu, Student Member, IEEE, Venkata Dinavahi, Senior Member, IEEE
+
+
+
+              Abstract—Strategic power flow control using a Sen Trans-                                         directions. However, high installation and operation costs have
+           former (ST) can be a robust and cost-effective solution to relieve                                  hitherto prevented the UPFC’s widespread implementation.
+           grid congestion due to increased installation of renewables. The                                    The Sen transformer (ST) proposed in [9], can address the
+           ST consists of a multi-winding transformer and tap changer
+           that can regulate the power flow through a transmission line                                        same objectives but with a lower cost, higher reliability, and
+           by injecting a series connected controllable voltage. This paper                                    efficiency [10]; green however, no ST has been commissioned
+           develops a real-time high-fidelity magnetic equivalent circuit                                      yet in a power system. The ST consists of a single-core three-
+           (MEC) based electromagnetic transient (EMT) model for the                                           limb three-phase transformer and tap changers. The multi-
+           ST on the field programmable gate array (FPGA) for hardware-                                        winding transformer has three primary windings and nine
+           in-the-loop (HIL) applications. This geometry-based model was
+           developed to depict the major flux paths in the transformer core,                                   secondary windings. By setting the tap changers into different
+           and complex nonlinear phenomena such as saturation, hysteresis                                      combinations, the ST can inject a compensation voltage with
+           and eddy currents. The entire real-time ST model and other                                          controllable magnitude and phase angle much same the way
+           power system components are emulated by hardware description                                        like the UPFC, thereby providing an independent active power
+           language (VHDL) employing the 32-bit floating point precision on                                    and reactive power flow control. The concept of the smart pow-
+           the FPGA chip. A fully paralleled and pipelined hardware archi-
+           tecture is developed to achieve an accurate real-time emulation                                     er flow controller (SPFC) was introduced in [11] which offered
+           as well as the lowest latency and smallest hardware resource                                        the ST with the option of either a low-cost electromechanical
+           consumption. The real-time results are validated against 3-D                                        design with mechanical tap changers or a power electronics
+           Finite Element (FE) simulation using JMAGr software.                                                based design using thyristor based tap changers.
+              Index Terms—Electromagnetic transient analysis, Field pro-                                          A detailed electromagnetic transient model of the ST in
+           grammable gate arrays, Finite element methods, Hardware-                                            real-time is necessary to study its impact on the host power
+           in-the-loop emulation, Hysteresis, Magnetic equivalent circuits,                                    system. It would also allow rapid testing and prototyping
+           Parallel algorithms, Parallel processing, Power flow control,                                       of new control algorithms under hardware-in-the-loop (HIL)
+           Pipelining, Real-time systems, Sen Transformer.
+                                                                                                               conditions [12]. A real-time transient ST model was developed
+                                                                                                               on the CPU in [13], and an advanced tap-changing algorithm
+                                            I. I NTRODUCTION                                                   was proposed in [14]; however, this real-time ST model
+              Growing demand by a plethora of sensitive loads, stringent                                       was developed based on a lumped electrical circuit model,
+           reliability constraints, and heightened environmental concerns                                      which ignored the detailed transformer core geometry and
+           that favour greater integration of renewables, have created                                         flux paths in the core. Furthermore, in this model nonlinear
+           perfect conditions for a highly stressed and dyspeptic transmis-                                    core saturation was included using a piece-wise linear approx-
+           sion grid [1], [2]. Congestion of lines under these conditions                                      imation, which is prone to numerical oscillations; complex
+           has become commonplace with increased probability of major                                          behavior such as hysteresis and eddy current transients were
+           outages leading to blackouts. While long-term transmission                                          entirely omitted. The increased computational complexity of
+           planning and expansion still remains the prudent solution,                                          detailed electromagnetic transient ST model makes the CPU an
+           a near term economical alternative might be the strategic                                           unlikely implementation platform for real-time HIL emulation.
+           placement of power flow controllers to relieve transmission                                            This paper proposes a real-time high-fidelity nonlinear mag-
+           bottlenecks [3]–[6]. The unified power flow controller (UPFC)                                       netic equivalent circuit (MEC) based ST electromagnetic tran-
+           [7], [8] is one such solution which consists of a series and a                                      sient (EMT) model on the field programmable gate array (FP-
+           shunt converter that can generate a compensation voltage to                                         GA) for HIL emulation. The MEC approach [15], [16] which
+           insert in series with the transmission line. The compensation                                       is geometry-based is employed to model the multi-winding
+           voltage is fully controllable both in magnitude and phase angle                                     transformer consisting of magnetomotive force (mmf) sources
+           with respect to the line voltage, for independent regulation of                                     and permeance elements. The nonlinear permeance elements
+           the active and reactive power flowing through the line in both                                      necessitate a time-varying transformer nodal admittance matrix
+                                                                                                               which in turn require the entire power system matrix to be
+              This work was supported by the Natural Science and Engineering Research                          updated in every emulation time-step. The hysteresis and eddy
+           Council of Canada (NSERC).                                                                          current behavior are modeled based on Preisach theory [17],
+              The authors are with the Department of Electrical and Computer Engi-
+           neering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada. Email:                           [18] and frequency-dependent equivalent network [19], [21],
+           jiadai@ualberta.ca, dinavahi@ualberta.ca.                                                           respectively. All of these details increase the computational
+
+
+  0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2518676, IEEE
+                                                                                                  Transactions on Power Delivery
+
+                                                                                                                                                                                                                             2
+
+
+
+                                                                         flux in limb A                                                                      Pref
+                                                                         flux in limb B
+                                                                                                                                                                    Calculation of |vST,c|
+
+
+
+
+                                                                                                                                                                                                             Value of Taps
+                      β                                                  flux in limb C    φAB             Magnetic Field         φBC                        Qref
+                vST,cc                                                                                                                                    vST,p     Compensation             Tap-
+                                   vST,pc                           iST,c                                                                                           Voltage |vST,c|        selection
+                                         vST,sa                                                                                                                                      β       Unit
+                      vST,sc                        vST,ca          iST,b                     φa0                           φb0                                         and β
+                                                       β
+                                                                    iST,a vST,pa+                     +
+                                                                                                    vST,pb                         +
+                                                                                                                                 vST,pc
+                                         vST,pa
+                          vST,pb                                                          A                                 B     φc0         C                               Control Unit
+                                                                                                      φlb1
+                                     vST,sb
+                                                                                           φla1                                        φlc1                                                   vr
+                                                                                  -                  -                             -
+                            β   vST,cb                                                                                                        -v
+                                           Phasor Diagram                                  φla2                             b1                   ST,ca
+                                                                                                                                                                                     Pr      Qr
+                                                                                +
+                                                                              vST,ca        a1                                         φlc2    c1
+                     vsa                 Ls                vST,pa                                        φlb2                                            vST,sa         ZTL                            vra
+                                Rs                iST,pa             iST,ca                                                                   -v                                     Rr       Lr
+                                                                                           φla3                             b2                   ST,cb
+                                                                                +                                                                         iST,sa
+                                                                              vST,cb        a2        φlb3                             φlc3    c2                                                      vrb
+                     vsb        Rs       Ls       iST,pb   vST,pb                                                                                        vST,sb         ZTL          Rr       Lr
+                                                                    iST,cb
+                                                                                          φla4                              b3                v- ST,cc
+                                                                                +          a3                                                             iST,sb
+                                                                              vST,cc                  φlb4                         φlc4                                                                vrc
+                     vsc        Rs       Ls       iST,pc vST,pc     iST,cc                                                                        c3     vST,sc         ZTL         Rr        Lr
+
+                                                                                                                Iron Core                                 iST,sc    Transmission
+                      Sending End                                                                        Sen Transformer                                                Line              Receiving End
+
+
+
+           Fig. 1.       Schematic of the ST and its interconnection to the transmission network.
+
+
+
+           burden of the high-fidelity electromagnetic transient model and                                           transmission line, as shown in Fig. 1, the previous sending-
+           put upward pressure on the emulation time-step. The FPGA                                                  end voltage (the ST primary side voltage), vST,p , is modified
+           has previously proven to be an efficacious platform for tran-                                             to a new effective sending-end voltage (the ST secondary side
+           sient simulation of power systems [22]–[25] mainly due to its                                             voltage), vST,s , as can be seen from the top lefthand corner
+           capability of exploiting hardware parallelism and pipelining.                                             of Fig. 1. The number of turns of the secondary windings
+           The real-time hardware emulation results are validated using                                              can be classified into three groups: a1 , b2 and c3 (GP1 ); b1 ,
+           3-D finite element (FE) simulation in JMAGr .                                                             c2 and a3 (GP2 ); and c1 , a2 and b3 (GP3 ). The windings in
+              The remainder of this paper is organized as follows. Section                                           one group have the same tap setting, however, one group may
+           II presents the ST operation background and nonlinear MEC-                                                have a different tap setting from others. The major flux paths
+           based ST model. Section III gives the implementation details                                              consisting of core and leakage fluxes in the yoke and limb are
+           of the hardware emulation. Section IV provides the case                                                   also depicted in Fig. 1.
+           studies and real-time results to validate the emulated MEC-
+           based ST on the FPGA. Finally, Section V presents the                                                     B. Tap-selection Algorithm
+           conclusion.
+                                                                                                                        The Control Unit takes the measurements of the sending
+           II. G EOMETRICAL S EN T RANSFORMER (ST) EMT M ODEL                                                        end voltage, VST,p , and the receiving end voltage, vr , from
+           A. ST Operating Principle                                                                                 the transmission network as well as the required power level,
+                                                                                                                     Pref and Qref as inputs. The calculated compensation voltage
+              The three-phase, three-limb ST circuit schematic and its                                               magnitude vST,c and the phase angle α are further forwarded
+           interconnection to the transmission line is shown in Fig. 1.                                              to the Tap-setting Unit to generate the combinations of the
+           At the sending-end the three-phase transmission line sup-                                                 tap settings for each secondary winding. Further information
+           plies voltages, VST,pa , VST,pb and VST,pc to the ST primary                                              regarding the tap-setting algorithm and its implementation can
+           windings, which are connected in Y and in shunt with the                                                  be found in [14].
+           transmission line. The nine secondary windings: a1 , a2 , and
+           a3 are placed in the first limb; b1 , b2 , and b3 are placed in the
+           second limb; and c1 , c2 and c3 are placed in the third limb.                                             C. High-fidelity Nonlinear Magnetic Equivalent Circuit
+           The three secondary windings which are placed in different                                                (MEC) Based ST Model
+           limbs are connected in series with the transmission line and                                                 T

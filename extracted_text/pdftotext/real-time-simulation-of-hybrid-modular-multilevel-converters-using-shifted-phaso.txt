@@ -1,0 +1,181 @@
+         This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                                10.1109/ACCESS.2018.2884506, IEEE Access
+
+
+
+
+ Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.
+ Digital Object Identifier 10.1109/ACCESS.2017.DOI
+
+
+
+
+ Real-time Simulation of Hybrid Modular
+ Multilevel Converters using Shifted
+ Phasor Models
+ YINGDONG WEI1 , (Member, IEEE), DEWU SHU2 , ( Member, IEEE), XIAORONG XIE2 , (Senior
+ Member, IEEE), VENKATA DINAVAHI3 , ( Senior Member, IEEE), ZHENG YAN1
+ 1
+     State Key Laboratory of Power System, Department of Electrical Engineering, Tsinghua University, Beijing, China
+ 2
+     Department of Electrical Engineering, Shanghai Jiaotong University, Shanghai (e-mail: shudewu@sjtu.edu.cn)
+ 3
+     Department of Electrical and Computer Engineering, University of Alberta, Edmonton, Alberta, Canada T6G2V4
+ Corresponding author: Dewu Shu (e-mail: shudewu@sjtu.edu.cn).
+ This work is partly supported byNational Key RD Program of China (2017YFB0902000), National Natural Science Foundation of China
+ (51737007)), and Science and Technology Project of State Grid (SGXJ0000KXJS1700841).
+
+
+
+
+       ABSTRACT The real-time simulation of modular multilevel converter (MMC) is essential to the evaluation
+       and validation of its control and protection systems. Moreover, the dynamics at both sub-module level and
+       system level are expected from the real-time simulations of MMCs. To achieve this objective, the paper
+       proposes the shifted phasor modelling (SPM) of the MMC by representing each sub-module with a Thevenin
+       equivalent circuit that is derived using shifted phasors with improved accuracy. The efficiency of the SPM
+       is guaranteed by modelling each arm as a switch-dependent Thevenin equivalent circuit. The computational
+       burden remains almost unchanged even when the number of sub-modules increases considerably. The
+       proposed model are materialized using field programmable gate array (FPGA). And thus the real-time
+       simulation of MMC-based DC grids can be realized to capture the dynamics at the system level as well
+       as the sub-module level. The effectiveness of this work has been validated in terms of both accuracy and
+       efficiency on a two-terminal MMC-based low voltage direct current (LVDC) system.
+
+
+       INDEX TERMS DC systems, electromagnetic transient (EMT), field-programmable gate array (FPGA),
+       hardware design, modular multilevel converter (MMC).
+
+
+ I. INTRODUCTION                                                                                         acteristics of the freewheeling diodes are not represented.
+                                                                                                         (ii) Averaged value models or AVM, for instance, i.e., the
+         MC offers a better prospect for cost-effective power
+ M       transmissions [1]-[2]. In practical MMC projects, the
+ real-time simulation on FPGA plays an essential role in the
+                                                                                                         converter-averaged model (CAM) [9]-[10] and the arm-
+                                                                                                         averaged model (AAM) [11]. The CAM separates the whole
+                                                                                                         MMC into ac- and dc- side circuits, or controlled sources.
+ implementation of the control and protection systems [3]-
+                                                                                                         The AAM uses six arms as the basic elements and thus
+ [4]. Since the voltage and current stresses in the circuits and
+                                                                                                         improves the simulation accuracy, especially under dc faults
+ components of MMC are critical for the design of its control
+                                                                                                         or blockings. The above two types of models focus more on
+ and protection strategies, the real-time simulations need to
+                                                                                                         system level dynamics and are mainly adopted in off-line
+ provide the very details of dynamic responses of the system,
+                                                                                                         analyses.
+ including dynamics not only at the system level but also at
+ the sub-module level.
+                                                                                                            For the real-time simulation based on field programmable
+    Recently, different MMC accelerated models have been                                                 gate arrays (FPGAs), both sub-module level and system
+ proposed, which can be categorized into two types: (i) An-                                              level dynamics are required for detailed studies of a MMC-
+ alytical models, such as the continuous-variable dynamic                                                based system. However, the sub-module level modeling of
+ model [5]-[6], and the steady state model [7]-[8], etc. They                                            MMC has always been a challenging task due to the large
+ are accurate and efficient to represent the MMC under steady-                                           number of sub-modules in a single arm [3]-[4]. On the one
+ state conditions or small disturbances. However, these mod-                                             hand, the massive switching components greatly increase the
+ els cannot simulate DC faults because the nonlinear char-                                               number of nodes and the size of the admittance matrix of
+
+ VOLUME 4, 2016                                                                                                                                                                                      1
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2884506, IEEE Access
+
+                                                                                                    Author et al.: Preparation of Papers for IEEE TRANSACTIONS and JOURNALS
+
+
+
+ the system. As a result, it is very hard to model the MMC                                               4) The SPM has been successfully implemented in the
+ with high accuracy and real-time efficiency simultaneously.                                          FPGA-based real-time simulation platform, on which the
+ On the other hand, the real-time simulation of a practical                                           detailed dynamics of hybrid MMCs are emulated accurately
+ AC/DC system would consume huge hardware resources                                                   and efficiently.
+ of FPGAs. Usually some special emulation strategies, for                                                The rest of the paper is organized as follows: Section 2
+ instance, system decomposition and parallelization, should                                           presents the configuration of the target hybrid MMC. Section
+ be delicately designed to make full use of the limited FPGAs.                                        3 details the SPM. In Section 4, the effectiveness of the SPM
+ This also makes it a challenge to model the MMC properly                                             is validated with a practical hybrid-MMC based DC grid.
+ for the real-time simulation.                                                                        Brief conclusions are drawn in Section 5.
+     Previously, several MMC models have been proposed for
+ real-time simulations, such as the CAM in [10], the AAM                                              II. HYBRID MODULAR MULTI-LEVEL CONVERTER
+ in [12]-[15] and the detailed equivalent model (DEM) in                                              Fig. 1 shows the circuit configuration of the three-phase
+ [16]-[18]. However, they mostly focus on the system-level                                            hybrid MMC, where each sub-module in a single arm can
+ dynamics, without a simultaneous consideration of the dy-                                            be either double half-bridge sub-module (DBSM) or cross-
+ namics at the sub-module level. Generally, the responses                                             connected double half-bridge sub-module (CC-DBSM) [1].
+ following DC faults have not been thoroughly investigated                                            The operation states of their switching devices are listed
+ [13]. Moreover, when the sub-module of the DEM transits                                              in Tables 1 and 2, respectively. As can be seen, both the
+ from the on-state to the off-state during the blocking period,                                       DBSM and the CC-DBSM have broader output voltages than
+ numerical problems, i.e., the oscillations of the arm current,                                       the half-bridge and full-bridge sub-modules. During normal
+ would appear [16]. Even worse, the accuracy of the DEM                                               states, DBSM and CC-DBSM can be regarded as double
+ is sensitive to the off-state resistances of switches. In [17],                                      series-connected half-bridge sub-modules. Their output volt-
+ different voltage balanced methods are compared on FPGA                                              ages are the sums of the capacitor voltages of the two inserted
+ in order to reduce the resource utilization and the calculation                                      sub-modules. Another striking advantage of the hybrid MMC
+ burden. It should be noted that all these existing models                                            is that the additional CC-DBSMs in each arm enable the
+ cannot give phasor values and instantaneous values of AC                                             hybrid MMC to own the capability of blocking DC-side
+ quantities at the same time. Therefore, there is an urgent need                                      faults. That is to say, CC-DBSMs in blocking states can help
+ for a MMC model that can provide dynamics at both sub-                                               to limit the fault current by providing the negative voltage in
+ module and system levels.                                                                            the circuit loop.
+     Another issue is that most of existing MMCs adopt the
+ topology with half-bridge or full-bridge sub-modules. But a
+ recent requirement of MMC (as least here in China) is that                                                                                                                            S1       D1
+                                                                                                            +                                                                   Uc1
+ it should have dc-fault blocking and dc-fault ride-through ca-                                                         SM1                SM1                SM1                                +
+                                                                                                                                                                                       S2
+ pabilities. As a result, hybrid MMC configurations with those                                                                                                                                  D2
+                                                                                                                        SMH                SMH                SMH
+ capabilities are undergoing fast development. Thus there is a                                           Vdc/2                                                                         S3       D3
+                                                                                                                                                                                Uc2
+ need for the modelling of such hybrid MMC to investigate its                                                              SM1                SM1                SM1                             _
+                                                                                                                                                                                       S4
+ detailed dynamics through real-time simulations.                                                                       SMF                SMF                SMF
+     In this paper, the real-time shifted phasor modeling (SPM)                                                             Lu                                    Lu
+                                                                                                             _                                 Lu
+ method is proposed to address the above issues. Special em-                                                        Arm
+                                                                                                                                                                                       DBSM
+                                                                                                                            vsa         Arm    vsb         Arm    vsc
+ phases are put on its embedment in the FPGA-based real-time                                                 +       Leg                Leg                Leg
+ simulation of a hybrid MMC configuration with the mixed                                                                    Ld                 Ld                 Ld            S1               S2
+
+                                                                                                                                                                                 D1     _Uc1    D2
+ use of double half-bridge sub-module (DBSM) and cross-                                                                 SM1                 SM1                SM1
+                                                                                                                                                                                           +
+
+ connected double half-bridge sub-module (CC-DBSM). The
+ developed SPM has the following salient features:                                                        Vdc/2         SMH                SMH                SMH                       _
+                                                                                                                                                                                            +
+     1) As derived using the nodal analysis approach, the real-                                                            SM1                SM1                SM1              S5
+                                                                                                                                                                                        Uc2
+                                                                                                                                                                                                S6
+
+ time SPM is much more accurate than the traditional aver-                                                              SMF                                   SMF                 D5            D6
+                                                                                                                                           SMF
+ aged model.                                                                                                _
+                                                                                                                                                                                 CC-DBSM
+     2) It preserves the additional benefit of producing wide
+ frequency band phasor and instantaneous values of AC quan-                                           FIGURE 1. Circuit configuration of the hybrid MMC and its sub-modules.
+ tities simultaneously and thus is suitable for the simulation of
+ system dynamics at both sub-module and system levels..
+     3) With each arm of the SPM represented with a switch-                                           III. REAL-TIME SPM OF THE HYBRID MMCS BASED ON
+ dependent Thevenin equivalent circuit and the capacitor                                              NODAL ANALYSIS APPROACH
+ voltage of each sub-module updated in a parallel way, the                                            A. BRIEF INTRODUCTION OF SHIFTED PHASOR
+ computational burden remains almost unchanged as the num-                                            MODELLING (SPM)
+ ber of sub-modules increases. In this way, the efficiency is                                         In a power system, electrical variables generally have a band-
+ guaranteed.                                                                                          pass characteristic with their frequency band centred around
+ 2                                                                                                                                                                                VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2884506, IEEE Access
+
+ Author et al.: Preparation of Papers for IEEE TRANSACTIONS and JOURNALS
+
+
+
+ TABLE 1. Operating State of DBSM                                                                     B. SPM BASED EQUIVALENT MODEL OF THE
+                                                                                                      CAPACITOR
+           State        S1         S2       S3       S4                Output
+             1           1          0        1        0                 Uc1                           Based on the concept of SPM, the dynamics of the capacitor
+             2           0          1        0        1                 Uc2                           in each sub-module can be expressed by [19]-[21]:
+             3           1          0        0        1             Uc1 + Uc2
+             4           0          1        1        0                  0                                                  dv̂c (t)  1
+                                                                                                                

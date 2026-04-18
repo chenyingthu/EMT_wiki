@@ -1,0 +1,171 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3024236, IEEE
+                                                                                               Transactions on Power Electronics
+                                                                                                                                                                                                             1
+
+
+
+
+          A Harmonic Phasor Domain Co-Simulation Method
+             and New Insight for Harmonic Analysis of
+             Large-scale VSC-MMC based AC/DC Grids
+                 Dewu Shu, Senior Member, IEEE, Huiwen Yang, Student Member, IEEE, Guanghui He, Member, IEEE
+
+
+
+             Abstract—Recently, frequency coupling oscillation events, such                                   failures of control and protection systems of the converters.
+          as harmonic oscillations, sub- and super-synchronous oscillations                                   Consequently, a proper tool that can accurately carry out
+          (S2SO), driven by multiple converters with different switching                                      instantaneous harmonic analysis of steady-state and dynamic
+          frequencies have brought new challenges of AC/DC grid mod-
+          eling, despite the traditional one of improving the accuracy                                        responses is highly desirable to analyze these wide frequency
+          and efficiency. There is an urgent requirement of practical                                         band and harmonic interactions and to emulate these oscilla-
+          engineering projects to produce a modeling method that can                                          tion scenarios.
+          produce instantaneous and harmonic phasor waveforms simul-                                             Despite the electromagnetic stability small signal analysis
+          taneously, dedicated to harmonic interaction analysis of large-                                     method, such as the eigenvalue analysis [6] or the impedance
+          scale ac/dc grids. To realize the above-mentioned targets, the
+          harmonic phasor domain (HPD) modeling of power electronic                                           based method [7]-[8], the time-domain simulation is still the
+          based dc grids is proposed. The HPD modeling is then combined                                       ideal solution to reproduce the oscillation scenarios of large-
+          and coordinated with EMT based ac-grid models based on the                                          scale VSC-MMC based AC/DC grids and reveal the typical
+          proposed HPD transmission line model (HPD-TLM). The overall                                         influencing factors contributing to these oscillation scenarios.
+          HPD co-simulation is realized by the EMT based ac-grid models,                                      This is because: (1) the scale of the AC/DC grids is so
+          HPD based dc-grid models, and HPD-TLM, which is governed by
+          the decoupled and coordinated time sequences. The performance                                       large, such as hundreds or even thousands of node buses are
+          (efficiency and accuracy of instantaneous and harmonic phasor                                       contained in the ac system; (2) it is troublesome work to derive
+          waveforms) for the HPD co-simulations is validated on practical                                     the small signal model for the practical and three level control
+          large-scale VSC-MMC based AC/DC grids in China.                                                     and protection system of the HVDC, including the valve level,
+              Index Terms—voltage source converter(VSC), modular mul-                                         pole level and system level, etc.
+          tilevel converer (MMC), harmonic phasor domain (HPD), co-                                              Up to now, many attempts have been made to improve
+          simulation, interface model                                                                         the simulation accuracy and efficiency, from the aspect of
+                                                                                                              ac-grid modeling, to co-simulation schemes, etc, as given in
+                                           I. I NTRODUCTION                                                   Table I. Typical examples, such as the reduced order equiva-
+                                                                                                              lent model [9], hybrid transient stability (TS)/electromagnetic
+
+          T     HE traditional power grids at the transmission level
+                that are primarily controlled by electrical machines are
+          gradually evolving into power electronic dominated systems,
+                                                                                                              transient (EMT) simulations [10]-[11], and transient stability-
+                                                                                                              dynamic phasor-electromagnetic transient (TS-DP-EMT) hy-
+                                                                                                              brid simulations [12]-[14], etc. are proposed to reduce the
+          driven by the large-scale adoptions of electronic power con-                                        computation burden of the large-scale AC grids. However, for
+          verters for high voltage transmissions, such as the voltage                                         hybrid TS and EMT simulations, wide frequency band and
+          source converter (VSC) and the modular multi-level converter                                        harmonic interactions cannot be captured; and even the TS-
+          (MMC),etc. [1]-[2]. This tremendous transformation paves the                                        DP-EMT hybrid simulations cannot produce wide frequency
+          way towards more reliable, more flexible and more sustainable                                       band/harmonic phasors and instantaneous values simultane-
+          power grids, yet it also produces new challenges to the stability                                   ously. It should be noted that for the studies of electro-
+          issues of power electronic dominated systems. For example,                                          magnetic interactions or the harmonic interactions, the EMT
+          in the recent years, A number of incidents, such as harmonic                                        model is recommended for the AC grid, instead of the transient
+          oscillations [3]-[4], sub- and super-synchronous oscillations                                       stability model. Consequently, to propose a simulation method
+          (S2SO) [5], etc., have been reported, where the undesired                                           that can produce the exact and accurate instantaneous value
+          harmonics will cause the drop of the power transmission, and                                        waveforms and instantaneous harmonic phasor waveform pre-
+                                                                                                              serving the desired electro-magnetic dynamics is a tricky issue
+            This work was supported in part by National Key Research and Devel-
+          opment Program of China (2019YFE0102900), National Natural Science                                  but an urgent requirement for harmonic interaction analysis.
+          Foundation of China under Grant 61674103, Shanghai Sailing Program                                     Furthermore, the wide frequency band couplings driven by
+          19YF1423500, Shanghai Jiao Tong University Scientific and Technological                             multiple high-frequency converters under different switching
+          Innovation Funds. (corresponding author: Guanghui He).
+            Dewu Shu is with the Department of Electrical Engineering, Shanghai Jiao-                         frequencies or harmonics aroused by AC/DC grid interactions
+          tong University, Shanghai, 200240, China. (e-mail: shudewu@sjtu.edu.cn).                            makes the modeling of dc grids a much more challenging
+          Huiwen Yang is with the Department of Electrical Engineering, Hunan                                 work. As detailed in Fig. 1, several time-domain averag-
+          University,Changsha China. Guanghui He is with Department of Electronic
+          Engineering, Shanghai Jiaotong University.                                                          ing techniques, such as the circuit averaging[15]-[16], the
+                                                                                                              state-space averaging [17]-[19], dynamic phasor model [20]-
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: Auckland University of Technology. Downloaded on October 28,2020 at 19:09:06 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3024236, IEEE
+                                                                                               Transactions on Power Electronics
+                                                                                                                                                                                                                                            2
+
+
+
+                                                                                          TABLE I
+                                                     M ODELING AND S IMULATION M ETHODS TO STUDY THE INTERACTIONS BETWEEN AC/DC GRIDS
+
+                    Simulation method                                                Issues can be resolved                                                                          Issues cannot be resolved
+                                                                                               Design of
+             Norton/Thevenin equivalent [9]                                                                                                         No wide frequency band and harmonic interactions can be captured
+                                                                                               the DC grids
+
+                                                                Low-frequency                                                                        No wide frequency band and harmonic interactions can be captured
+              TS-EMT simulations [10][11]
+                                                                dynamic interactions between AC and DC grids
+
+                                                                  Low order                                                                       Cannot produce wide frequency band /harmonic phasors and instantenous
+            TS-DP-EMT simulations[12][13]
+                                                                  harmonic interactions between AC/DC grids                                       values simultaneously
+
+
+
+
+                                                                                     Switch model (AC-DC converter, e.g. VSCs, MMCs)
+
+
+
+
+                                                                                                                                                                                                         Harmonic
+                       Circuit averaging                        State-space averaging                 Dynamic phasor(DP) model                       Shifted phasor (SFP)model                       State-space model
+                                 1   t                                       1   t                                                                                                                                        
+
+
+                                 T t −T                                     T t −T
+                       D(t ) =           S ( )d                 x (t ) =           x( )d              x( ) =  x k (t )e
+                                                                                                                                        jk            u (t ) = uˆ (t )e js t           ( s + jm0 ) X n =  An − m X m +  Bn − mU m
+                                                                                                         
+                                                                                                                      k =−                                                                                 −             −
+                                                                                                         
+                                                                                                                                                         duˆ                                                         
+                                                    Theoretical basis
+                                                                                                                       1 t
+                                                                                                          x k (t ) = T t −T x( )e
+                                                                                                                                      − jk
+                                                                                                                                             d                = F (uˆ , t ) − jS uˆ            Yn =  Cn − m X m +  Dn − mU m
+                                                                                                                                                         dt                                          −              −
+
+
+
+
+                                                                  Thevenin/Norton
+                       Duty cycle based                                                                 State-space based DP                         State-space based SFP
+                                                                 equivalent model of                                                                                                                 Harmonic state space
+                     average model of VSC                                                                       model                                        model
+                                                                       MMC                                                                                                                            modeling of MMC
+                                                                                                                                                      Nodal analysis based
+                                                                               ...
+                                    ...
+
+
+
+
+                                                                                                                        ...
+
+
+
+
+                                                                                                                                                           SFP model
+                       Transient stability                        Switch equivalent                     Nodal analysis based
+                                                                                                                                                      Frequency adaptive
+                        model of MMC                               model of MMC                             DP model                                                                                   Typical applications
+                                                                                                                                                             model
+
+
+          Fig. 1. Modeling to study the interactions between AC/DC grids
+
+
+
+          [21], shifted phasor model [22]-[23], and harmonic state-                                                               produce large-signal dynamics for harmonic analysis after the
+          space (HSS) averaging techniques [24]. are proposed. Typical                                                            occurrence/clearance of the fault?
+          applications of the MMC have been proposed, such as the                                                                    To extend the traditional EMT models into a more advanced
+          transient stability of the MMC[14], preserving only dynamics                                                            one, which is capable of producing instantaneous time-domain
+          of controllers; the detailed equivalent model of the MMC                                                                waveforms and instantaneous harmonic phasor waveforms
+          [17], preserving the system-level dynamics, etc. Previous work                                                          simultaneously, the harmonic phasor domain (HPD) modeling
+          mainly focuses on improving the efficiency so that the aver-                                                            of power electronic based dc grids is proposed. The HPD mod-
+          aged models can be applied for system-level studies, but few of                                                         eling of dc grids is then combined with traditional EMT model
+          them can provide additional and useful information especially                                                           based ac grids by adopting the propose HPD transmission line
+          for the harmonic interaction analysis. Recently, the frequency-                                                         model (HPD-TLM). The salient features of the proposed HPD
+          domain and small-signal based harmonic state-space (HSS)                                                                based co-simulations include:
+          averaging technique is used to derive the impedance model of                                                               (i) generalization of new HPD models based on the concept
+          the converters [25]-[30]. However, the HSS model is only a                                                              of harmonic phasors are derived and further applied for the
+          small-signal model, which must be linearized around steady-                                                             modeling of two-level VSCs and MMCs. The advantages
+          state point. Moreover, the dimension of the update equation                                                             of HPD model are that it can extend the limited time-step
+          of the HSS model rises as the order of the harmonics and the                                                            to a much larger one, such as 500µs while preserving the
+          number of state variables are increased.                                                                                satisfied accuracy;

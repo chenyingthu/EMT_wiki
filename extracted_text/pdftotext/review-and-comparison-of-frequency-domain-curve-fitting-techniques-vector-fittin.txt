@@ -1,0 +1,213 @@
+                                                          Electric Power Systems Research 196 (2021) 107254
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                     Electric Power Systems Research
+                                                        journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Review and comparison of frequency-domain curve-fitting techniques:
+Vector fitting, frequency-partitioning fitting, matrix pencil method and
+loewner matrix☆
+B. Salarieh *, H.M.J. De Silva
+Manitoba Hydro International Ltd, Winnipeg, MB R3P 1A3, Canada
+
+
+
+
+A R T I C L E I N F O                                  A B S T R A C T
+
+Keywords:                                              It is a well-known practice to approximate the frequency-domain response of an electrical component or a
+Frequency dependent network equivalent                 subsystem with rational functions for electromagnetic transient (EMT) simulations of power systems. There are a
+Matrix pencil method                                   variety of curve-fitting methods developed over time that offer different levels of accuracy, speed, and
+Loewner matrix
+                                                       complexity. In some cases, the order of rational function may get very large to meet specified error criteria.
+Vector fitting
+Frequency-partitioning fitting
+                                                       Model order reduction (MOR) methods can be used to decrease the order of the function without a considerable
+Model order reduction                                  deterioration of the approximation error. This paper presents a thorough review and comparison of the most
+                                                       popular curve-fitting methods, namely, the vector fitting (VF) method along with its later developments, the
+                                                       frequency-partitioning fitting (FpF) methods, matrix pencil method (MPM) and loewner matrix (LM) fitting
+                                                       technique. First, the fundamental theories of each one are briefly reviewed. Then, their accuracy and fitting order
+                                                       are compared together through three case studies. Lastly, the application of two different MOR methods to the
+                                                       resulted rational function is investigated.
+
+
+
+
+1. Introduction                                                                         Alternative techniques were proposed later, such as matrix pencil
+                                                                                        method (MPM) [12] and loewner matrix [13]. These techniques have
+     The electromagnetic transient simulation of power systems requires                 advantages such as being non-iterative, and not requiring an initial pole
+accurate modeling of system components, including their wideband                        set. Once the rational function approximation is obtained in the forms of
+frequency characteristics. Once the frequency-domain behavior seen                      poles and residues, there are two postprocessing steps that perturb the
+from the terminals is known, the modeling is based on fitting a rational                model parameters. The first one is due to the passivity requirement of
+function to the frequency-domain characteristics, which can be in the                   rational models to guarantee a stable time-domain simulation [14].
+form of admittance (Y), impedance (Z), or scattering (S) parameters.                    Moreover, the large number of components in a power system requires
+This way, an efficient time-domain simulation is possible using the                     reducing the order of state-space model of the components for an effi­
+recursive convolution [1]. There are several applications for rational                  cient time-domain simulation, while maintaining the accuracy of the
+fitting in time-domain studies, such as wideband modeling of                            original model.
+frequency-dependent       network     equivalents     (FDNE)      [2,3],                    In this paper, following a complete review of VF, FpF, MPM, and LM,
+high-frequency transformer modeling [4], and modeling of transmission                   these techniques are compared together in regard to the fitting order and
+lines [5]. The vector fitting (VF) technique [6], is robust and widely                  accuracy through three case studies. Furthermore, the application of two
+applied in EMT studies. There were enhancements of VF proposed later,                   different MOR methods to the models obtained by these techniques is
+known as relaxed vector fitting (RVF) [7] and modal vector fitting                      investigated. Since non of the mentioned techniques guarantee a stable
+(MVF) [8]. Another approach is the frequency-partitioning fitting (FpF)                 model, the passivity analysis is not covered in this paper.
+[9–11] that overcomes the ill-conditioned equations occurring on
+wideband responses by subdividing the frequency range of interest into
+several partitions and applying rational fitting to each subrange.
+
+
+ ☆
+   Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.
+ * Corresponding author.
+   E-mail addresses: bsalarieh@mhi.ca (B. Salarieh), jeewantha@mhi.ca (H.M.J. De Silva).
+
+https://doi.org/10.1016/j.epsr.2021.107254
+Received 27 November 2020; Received in revised form 21 March 2021; Accepted 7 April 2021
+Available online 18 April 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+B. Salarieh and H.M.J. De Silva                                                                                          Electric Power Systems Research 196 (2021) 107254
+
+
+2. Review of curve-fitting techniques                                               2.1.2. Fast modal vector fitting (FMVF)
+                                                                                         With the application of VF, some properties of a system may be
+    The purpose of curve-fitting techniques is to approximate the fre­              approximated with higher accuracy than others. As an example, when
+quency response of a linear time invariant (LTI) system, F(s) with a                fitting the elements of an admittance matrix Y that has both large and
+rational function of the following form                                             small elements, the elements of higher magnitude are fitted with more
+                                                                                    accuracy than the small elements, depending on the error criterion. The
+          ∑
+          N
+F(s) =
+                  Rn
+                       + D + sE                                          (1)        resulting model does not necessarily provide a good fit for the imped­
+          n=1
+                s − pn                                                              ance Z = Y− 1 matrix. To have an accurate model with arbitrary terminal
+                                                                                    conditions, modal vector fitting (MVF) is introduced, where the focus is
+where s = jω, and N is the number of poles including the real and                   on accurate representation of eigenvalues (modes) instead of matrix
+complex-conjugate poles. Identification of (1) is called rational fitting           elements [8]. Let’s consider a multiport system characterized by its
+and different methods of calculating its parameters are described as                admittance matrix Y. First, we diagonalize this matrix by a trans­
+follows.                                                                            formation matrix T and it is approximated by a rational model Yrat
+
+2.1. Vector fitting (VF)                                                            Y = TΛT− 1 ≅ Yrat .                                                               (6)
+
+    Vector fitting (VF) relies on introducing a set of initial poles [6]. An        For each eigenpair (λi , ti ) we get
+unknown auxiliary function σ (s) is introduced that results in an                   Yrat ti ≅ λi ti                                                                   (7)
+augmented linear problem of the following form
+                        (                                 )                         where i = 1, …, n and n is the number of modes. Combining (7) with VF
+∑N
+      Rn                   ∑N              ̂r n
+           + D + sE =                              +    1     F(s)        (2)       leads to MVF, where for the pole identification step we solve
+n=1
+    s − pn                        n=1 s − p
+                                                n                                                         ((                  ) )
+                        ⏟̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅⏞⏞̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅⏟                       λi              1       ∑N
+                                                                                                                   Rm
+                                  σ (s)                                                   σ (s)ti ≅                     D + sE ti                      (8)
+                                                                                    |λi |           |λi |    m=1
+                                                                                                                 s − am
+which is solved to find the zeros of σ (s). The new poles of F(s) are equal
+to the zeros of σ(s) and are calculated as the eigenvalues of the following         with i = 1,…,n. Finally, the residues are obtained in the same manner as
+matrix                                                                              VF by solving (8) with σ(s) = 1. A fast implementation of MVF was later
+                                                                                    proposed in [16] known as fast modal vector fitting (FMVF) by utilizing
+H = A − bcT                                                              (3)        the symmetry of the input matrix and QR decomposition, as described
+                                                                                    earlier in this paper.
+where A is a diagonal matrix containing the starting poles pn , b is a
+column vector of ones, and cT is a row vector containing the residues ̂r n .
+This procedure, known as the pole identification step, is applied in an             2.2. Frequency-partitioning fitting (FpF)
+iterative manner where the new poles replace the previous ones, and
+converges after a few iterations. Finally, the residues Rn , D and E are                If the partial fraction expansion (1) is written in compact form
+calculated by solving (2) with known poles and σ(s) = 1.                            (assuming D = E = 0), we have
+    In the above procedure, a lot of computation effort is wasted on the
+calculation of residues Rn in the pole identification step, which are               F(s) =
+                                                                                                b0 + b1 s + … + bN− 1 sN− 1
+                                                                                                                                .                                     (9)
+discarded in the later steps [15]. It was shown that applying the QR                         1 + a1 s + … + aN− 1 sN− 1 + aN sN
+decomposition to (2) results in a set of equations that only depend on ̂r n .
+                                                                                    When the frequency range of F(s) becomes wide, the sn terms in the
+This leads to a faster pole identification step. Also in the residue iden­
+                                                                                    least-squares problem take a wide range of values whose ratio exceed
+tification step, the symmetry of F(s) can be utilized to only solve for the
+                                                                                    the machine arithmetic accuracy [17]. This leads to ill-conditioned
+residues of the upper (or lower) triangle of the matrix. These improve­
+                                                                                    overdetermined equations. The ill-conditioning issue happens when
+ments lead to a fast implemenation of VF known as fast vector fitting
+                                                                                    some columns of A are linearly dependent. To overcome the numerical
+(FVF). Two developments of the outlined VF technique were proposed
+                                                                                    ill-conditioning problem, the frequency range of interest is partitioned
+later as follows.
+                                                                                    into several frequency subranges, and rational fitting is applied to each
+                                                                                    section for the pole identification step. Then, the residues are identified
+2.1.1. Fast relaxed vector fitting (FRVF)
+                                                                                    by solving a standard least-squares problem and considering the entire
+   It was realized that the asymptotic requirement of σ(s) approaching
+                                                                                    frequency range [11]. Different methods can be used to divide the entire
+unity at high frequencies, impairs the pole relocation ability of VF and
+                                                                                    frequency range into subranges, and the most common ones are: i)
+makes it dependent on the specification of the initial poles [7]. To
+                                                                                    considering each decade as one subrange (DE), ii) dividing in a way to
+improve the convergence of VF, σ (s) is replaced with
+                                                                                    have a specific number of resonant peaks in each subrange (RP), iii) the
+          ∑
+          N
+                 ̂r n                                                               so-called Binary method, where the frequency range is recursively
+σ (s) =                 +̂
+                         d                                               (4)        divided in two subranges until all subsections reach a specified accuracy
+          n=1
+              s −    pn
+                                                                                    [18]. In all these methods, the boundary between consecutive subranges
+                                                                                    is forced to coincide with the valleys of the frequency response. When
+where ̂  d is a real number and results in addition of one column in the
+                                                                                    the subranges are identified, there are three approaches to perform the
+least-squares problem given by (2). There is also one row added to avoid
+                                                                                    rational fitting as follows.
+the null solution
+   {      (                )}
+     ∑Ns    ∑ N
+                   ̂r n                                                             2.2.1. Method of silveira
+Re                      +̂
+                         d    = Ns                                   (5)                First, one of the above mentioned frequency partitioning approaches
+                 s − pn
+             n=1 k
+                                                                                    is applied to the frequency response. After partitioning the frequency
+     k=1
+
+
+where Ns is the number of frequency samples.                                        range of interest into small sections, Ω1 , Ω2 , ..., ΩM , starting with the first
+                                                                                    partition Ω1 , a constrained ℓ2 minimization is performed on F(sΩ1 ) to
+                                                                                    compute a local approximation L1 (s) [9]. The poles and residues of the
+                                                                                    first local approximation L1 (s) are examined and the unstable poles are
+
+                                                                                2
+B. Salarieh and H.M.J. De Silva                                                                                                Electric Power Systems Research 196 (2021) 107254
+
+
+discarded, resulting in H1 (s) as the stable approximation of the first
+                                                                                       where ̂f (sk , x) is the identified rational function and x is the solution to
+section. At this point, F(s) − H1 (s) contains the higher-frequency error
+                                                                                       (11). The weighting function in iteration step number m is defined as
+information and is fitted in the next step, considering the frequency
+                                                                                                        ⃒
+points of the second section Ω2 . If the stable approximation on the                   w(m) = w(m−   1) ⃒ ( (m− 1) )⃒
+                                                                                                         ek x       ⃒                                            (14)
+second section is H2 (s), then F(s) ≅ H1 (s) + H2 (s) on Ω1 ∪ Ω2 . This
+                                                                                         k      k
+
+
+procedure is repeated until the data in the last frequency section ΩM is
+                                                                                       and at the initial step we have wk = 1. Equation (11) can be written in
+                                                                                                                                (0)
+fitted. Fig. 1 illustrates the FpF method of Silveira.
+                                                                                       the following form after applying the weighting factor
+2.2.2. Method of campello                                                              A(m) x(m) ≅ b(m) .                                                                 (15)
+    In the same way as the FpF method of Silveira, any of the frequency
+partitioning approaches can be used with the method of Campello,                       iv) Column Scaling: A(m) might be badly scaled in (15). The condition
+although the RP approach was used in their work [10]. The proposed                     number of A(m) can be improved by scaling its columns to an Euclidean
+method by Campello et al. consists of two main steps following the                     norm of unity [22]. v) QR Decomposition: In this step, the least squares
+identification of the frequency partitions. The first step is to apply VF to           problem in (15) is solved by applying QR decomposition [23]. vi) Iter­
+the frequency-domain data in each partition to find the poles. Then, the               ation Step Adjustment: the QR decomposition procedure is iterated until
+identified poles are stored and used to calculate the corresponding res­               it converges. At step (m), the best step for updating the solution is
+idues, considering the whole frequency range.                                       

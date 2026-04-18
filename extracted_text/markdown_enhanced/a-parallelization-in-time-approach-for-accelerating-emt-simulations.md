@@ -1,0 +1,27 @@
+## A parallelization-in-time approach for accelerating EMT simulations
+Ming Cai a, Jean Mahseredjian a, *, Ilhan Kocar a, Xiaopeng Fu b, Aboutaleb Haddadi a
+a Polytechnique Montreal, Montreal, QC H3C 3A7, Canada
+b Key Laboratory of Smart Grid of Ministry of Education, Tianjin University, Tianjin, China
+
+**Keywords:** Electromagnetic transients, Equation grouping and reordering, Parallelization-in-time, OpenMP, KLU
+
+**Abstract:** This paper is related to research on parallelization techniques for the simulation of electromagnetic transients (EMTs). It presents a new approach based on a parallel-in-time equation grouping and reordering (PEGR) technique whose original theoretical formulation is modified, extended and generalized from state-space to the modified-augmented-nodal analysis (MANA) formulation method. The highly efficient sparse linear solver KLU is incorporated in the approach for power system network matrix solution. The proposed approach is implemented with OpenMP Multithreading for CPU-based parallelization. Test results show that EMT simulations can be accelerated by exploiting the intrinsic independency of certain solution procedures using the PEGR technique.
+
+## 1. Introduction
+Thanks to its wideband nature, the electromagnetic transient (EMT) solution approach has become an indispensable tool for power system engineers to perform a wide range of studies [1,2]. The EMT-type simulation methods are circuit based and usually require significant computing time to solve large differential and algebraic equation (DAE) systems when compared to phasor domain methods due to higher accuracy and model complexity levels. Numerical integration time-step, on the other hand, can also pose a constraint for simulation efficiency even for smaller networks. All of these have prompted the research on computing time reduction for the simulation of EMTs.
+
+Over the years, many techniques have been proposed to improve the solution speed in EMT-type simulation methods, in which parallelization and multistep solution methods have drawn a fair amount of interest among researchers. The former includes approaches using waveform relaxation [3], and techniques implemented in real-time [4-6] as well as off-line [7-9] simulation tools. In these methods, parallelization is achieved by taking advantage of the propagation delay at distributed parameter transmission line and cable models for natural decoupling of networks. Parallelization can also be realized by identifying intrinsically independent solution procedures using an equation grouping and reordering technique [10]. Multistep solution is attained by exploiting the property of circuit latency [11], or through “data-smoothing” at line-bus interfaces in a network [12]. Although computational speedup has been observed in some cases, the implementation of such multistep techniques on large-scale networks requires user intervention and remains complex to automate. Additionally, a co-simulation-based parallel and multistep approach using the Functional Mock-up Interface standard was proposed in [13].
+
+Other techniques to enhance computational performance in EMT-type solvers include circuit reduction [14], frequency domain fitting [15] and hybrid methods that interface EMT-type solvers with transient stability (TS) programs by exploring parallelism between the two types of solvers [16].
+
+This paper uses an off-line approach based on the parallel-in-time equation grouping and reordering (PEGR) technique for large power system EMT simulations on conventional multi-core computers. This approach automatically groups the network equations at different numbers of solution points, catering to the number of available logical processors on a PC, and recursively applies the PEGR technique (hereinafter labeled as PEGR) on the grouped network equations, thereby significantly reducing the actual number of forward and backward substitution steps in the network equation solution process with the help of multithreading. Special treatment for topological changes and arbitrary numbers of simulation points is also included.
+
+The PEGR was first proposed and theorized in state-space formulation [10]. The approach presented in this paper modifies and extends its original formulation from state-space to the more advantageous modified-augmented-nodal analysis (MANA) formulation method [1]. The highly efficient sparse linear solver KLU [17] is used as the network matrix solver.
+
+* Corresponding author. E-mail addresses: jean.mahseredjian@polymtl.ca (J. Mahseredjian), fuxiaopeng@tju.edu.cn (X. Fu).
+
+## 2. Formulation of the PEGR technique in MANA
+
+**Fig. 1.** Expanded network equations incorporating current history terms into the vector of unknowns, demonstrating interdependency of solutions at two consecutive time-points.
+
+The vectors $x_t$ and $b_t$ denote the expanded vectors of unknown and known variables (vector $b_t$ is now devoid of history terms) at the time-point $t$. It is also noted in Fig. 1 that the upper left part of matrix $D$ is the original MANA coefficient matrix $A$ of the system in (1), the upper right part of $D$ consists of only zeros and the lower right part of $D$ is a negative identity matrix. The expanded network equations with individual in-

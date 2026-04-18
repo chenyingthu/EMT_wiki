@@ -1,0 +1,152 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2517327, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                       Duality Derived Transformer Models for Low-
+                         Frequency Electromagnetic Transients –
+                                Part I: Topological Models
+                      S. Jazebi, S. E. Zirka, M. Lambert, A. Rezaei-Zare, N. Chiesa, Y. Moroz, X. Chen, M. Martinez-Duro,
+                             C. M. Arturi, E. P. Dick, A. Narang, R. A. Walling, J. Mahseredjian, J. A. Martinez, and
+                                                                    F. de León
+           
+               Abstract-- The objective of this two-part paper is to provide                                                                     I. INTRODUCTION
+           clarity to physical concepts used in the field of transformer mod-
+           eling, to dispel common misconceptions regarding numerical in-
+           stabilities, and to present unified modeling techniques for low-
+                                                                                                               T    RANSFORMERS are essential components of the power
+                                                                                                                    system. Computer modeling and simulation of these de-
+                                                                                                               vices are complicated because of the interactions of the elec-
+           frequency transients. The paper focuses on proper modeling of
+           nonlinearities (magnetizing branches), since these components are                                   tric and magnetic fields in a multi-media and non-linear envi-
+           critical to determine the low-frequency behavior. A good low-                                       ronment (typically iron, oil, paper, and copper). Power trans-
+           frequency model should properly represent: normal operation,                                        formers behave differently when subjected to the variety of
+           inrush currents, open and short circuit, out-of-phase synchroniza-                                  excitations that they face during their lifetime. Accurate trans-
+           tion transient of step-up transformers, geomagnetic induced cur-
+           rents, ferroresonance, and harmonics. This Part I of the paper
+                                                                                                               former models compatible with Electromagnetic Transient
+           discusses the derivation of electrical dual models from both the                                    Programs (EMTP-type) are of interest for power system mod-
+           equivalent (magnetic) reluctance networks and the direct applica-                                   elers. Ideally, a transformer model should be built using the
+           tion of the principle of duality. It is shown that different dual                                   capabilities already available in EMTP-type tools.
+           models need to be derived for different transformer geometries                                           The principle of duality is recognized as a physically cor-
+           and the advantages and disadvantages of each method are dis-                                        rect technique to obtain circuital models of power transform-
+           cussed. The paper also compares double-sided versus single-sided
+           dual models, and shows that the double-sided model is a more
+                                                                                                               ers. This technique was first introduced for transformers by
+           general approach. The mathematical equivalency of several leak-                                     Cherry [1] and further developed to include nonlinearities by
+           age models (negative inductance, mutual coupling, and BCTRAN)                                       Slemon [2], [3]. The main advantage of this method is that the
+           is demonstrated for three-winding transformers. It is also shown                                    physical magnetic circuit of an electromagnetic device can be
+           that contrary to common belief a negative inductance is not the                                     converted to its dual electric circuit suitable for simulation in
+           source of numerical oscillations, which are due to the use of non-                                  EMT-type programs, using standard circuit elements. Duality
+           correct topological models for representing the core.
+                                                                                                               models are able to describe the distribution of magnetic flux in
+              Index Terms—Electromagnetic transients, duality models,                                          the core and windings. Therefore, they are capable of provid-
+           low-frequency transients, negative inductance, numerical oscilla-                                   ing useful information of the electromagnetic behavior of all
+           tions, topological models, transformers, transformer modeling.                                      transformer construction elements.
+                                                                                                                    There exist other modeling possibilities to represent the
+                                                                                                               physics of magnetic circuits in time domain simulations: bond
+                S. Jazebi and F. de León, are with the Department of Electrical and Computer
+           Engineering, New York University, Six Metrotech Center, Brooklyn, NY, 11201 (e-mails:               graphs [4], [5], magnetic circuit equations [6], [7], gyrator-
+           jazebi@ieee.org, fdeleon@nyu.edu).                                                                  capacitors [8]-[11], and mutators [12]. Some of these tech-
+                S. E. Zirka and Y. Moroz are with the Department of Physics and Technology,
+           Dnepropetrovsk National University, Ukraine, 49050, Dnepropetrovsk, Gagarina.72 (e-                 niques are difficult to implement in EMTP-type programs. An
+           mail: zirka@email.dp.ua).                                                                           implementation of mutators using commonly available coupled
+               M. Lambert and J. Mahseredjian are with the Department of Electrical Engineering,
+           École Polytechnique de Montréal, Montréal, QC, H3T 1J4, Canada (email:                              R-L branches has been recently proposed [12], which allows
+           mathieu.lambert@polymtl.ca, jean.mahseredjian@polymtl.ca).                                          an easy representation of magnetic circuits, offering an alterna-
+                A. Rezaei-Zare and A. Narang are with Hydro One Networks Inc., 483 Bay St., 13th
+           Floor,    Toronto,     ON,      Canada (emails: Afshin.Rezaei-Zare@HydroOne.com,                    tive to the use of the duality transformation.
+           Arun.NARANG@hydroone.com).                                                                              A unified and generally accepted model for transformers
+                N. Chiesa is with Statoil, NO-7005 Trondheim, Norway (e-mail: nchie@statoil.com).
+                X. Chen is with the Department of Electrical Engineering, Seattle University, 901 12 th        capable of reproducing their behavior under all low-frequency
+           Ave. WA, 98122 (email: xchen@seattleu.edu).                                                         operating conditions does not exist. There is a gamut of duali-
+                M. Martínez-Duró is with Électricité de France R&D, 92141 Clamart, France (email:
+           manuel.martinez@edf.fr).                                                                            ty-derived transformer models [13]-[30]; each one with some
+               C. M. Arturi is with the Department of Electronics, Information and Bioengineering,             (small or large) variation with respect to the others. This two-
+           Politecnico di Milano, Milan 20133, Italy (e-mail: cesaremario.arturi@polimi.it).
+               E. P. Dick is with Kinectrics Inc, 800 Kipling Ave, Toronto, Ontario, M8Z 5G5, Can-             part paper attempts to produce a model capable of reproducing
+           ada (email: epdick@ieee.org).                                                                       all low-frequency transients for transformers. In particular, this
+               R. A. Walling is with Walling Energy Systems Consulting, LLC, 438 Vischer Ferry
+           Road, Clifton Park, NY 12065-1622 (email: rwalling@wesconsult.com).                                 unified model should properly represent: normal operation,
+               J. A. Martinez is with the Departament d’Enginyeria Elèctrica, Universitat Politècnica          inrush currents, short-circuit, out-of-phase synchronization,
+           de Catalunya, 08028 Barcelona, Spain (e-mail: jamv@ieee.org).
+
+
+
+  0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2517327, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             2
+
+           geomagnetic induced currents, ferroresonance, and harmonics.                                        lent magnetic circuit gives the model shown in Fig. 2(b) (ex-
+           It is demonstrated that dual models for transformers with dif-                                      ploiting symmetry to simplify the circuit). The magnetomotive
+           ferent winding geometries or core structures are different.                                         force (mmf) sources are inserted into the magnetic circuit so
+           However, a unified model can be derived for a given trans-                                          that loops surrounding windings integrate the corresponding
+           former that is capable to reproduce all low-frequency transi-                                       mmf, as explained in [32]. Then the electrical equivalent cir-
+           ents. This is demonstrated for a single-phase shell-type trans-                                     cuit is derived from the principle of duality, where reluctances
+           former in the paper.                                                                                become inductances, nodes become loops and loops become
+               The paper discusses two common methods to derive dual                                           nodes, and mmf sources (current-controlled voltage sources)
+           models: (1) the traditional method that converts magnetic cir-                                      become current-controlled current sources. Conventionally, the
+           cuits into electrical circuits, and is called here “reluctance                                      dual electrical models derived from the magnetic circuits are
+           based” after [3]; (2) the method that derives directly electrical                                   equipped with ideal transformers as shown in Fig. 3 [2]. The
+           circuits from the geometry of the iron core, the so-called “di-                                     winding resistances are added to the external terminals of the
+           rect application of the principle of duality” [24].                                                 ideal transformers. Also, a capacitance network may be con-
+               Finally, two leakage models (i.e. negative inductance, mu-                                      nected at the external terminals, if necessary, to take into ac-
+           tual coupling) are introduced and applied to the derivation of                                      count the capacitances to ground and the inter-winding capaci-
+           multi-winding transformer models. They are also compared to                                         tances.
+           BCTRAN model [31]. The differences between the three ap-                                               The hysteretic inductors can be represented with static or
+           proaches are highlighted using a numerical example based on                                         dynamic hysteresis models to represent the core losses. Also,
+           terminal measurements of a four-winding transformer.                                                they can be substituted with non-hysteretic inductors (piece-
+                                                                                                               wise linear approximation) for transient studies where the core
+                        II. DUALITY-BASED TRANSFORMER MODELS                                                   losses are insignificant (see Part II).
+              This section is dedicated to compare two common methods
+           to obtain the topology of dual transformer models.
+           A. Models Derived from the Magnetic Circuit
+              The conventional method to derive dual transformer models
+           is based on the conversion of the reluctance network into an
+           electrical circuit [3]. Reluctance networks are built from the                                                            +                             +
+                                                                                                                                                                   _
+                                                                                                                                     _
+           connection of reluctances corresponding to the path of magnet-                                                                                                                              +
+                                                                                                                                                                                                       _
+           ic flux in the transformer. Field lines in different transformer
+           designs (e.g. shell-type, core-type, welding, and toroidal) are
+           different. Hence, topological models for various geometries                                                         (a)                           (b)                                       (c)
+           are different. A variety of models may result from different                                        Fig. 1. Magnetic flux density simulated in finite elements for different oper-
+           geometries of the core, number of windings, construction of                                         ating conditions. The reluctance network is shown on top of the transformer
+           windings, number of phases, or construction of tank and acces-                                      window: (a) open circuit; (b) normal operation; (c) high saturation. The black
+                                                                                                               and white rectangles represent nonlinear and linear reluctances, respectively.
+           sories. Moreover, a particular transformer has different elec-
+                                                                                                                c 2                                                   c 2
+           tromagnetic behavior under different operating conditions such                                        2                       c1   c1                      2
+           as open circuit, deep saturation, under load, or short circuit.                                                                2     2
+                                                                                                                        Ls                                  Ls
+           Three different flux patterns are shown in Fig. 1 for open cir-                                              2                                    2
+           cuit, normal operation, and high saturation. In Fig. 1 the corre-                                                                   c1
+                                                                                                                       a 2      a1                  a1   a 2
+           sponding reluctance circuits for this shell-type transformer are                                             2           2                 2      2
+           also shown. According to this figure, one may use different
+           topological models for different studies for the same trans-
+           former. However, power system modelers need a unified mod-
+           el that is general to use at least for a given geometry under                                                            (a)                                      (b)
+           different operating conditions. They can build a comprehen-                                         Fig. 2. (a) Flux paths in a shell-type single-phase transformer; (b) equivalent
+           sive model with all possible flux paths if the geometrical data                                     magnetic circuit, after simplifications. The black and white rectangles repre-
+           is provided. However, manufacturers, rarely (if ever) give in-                                      sent the nonlinear and linear reluctances, respectively.
+
+           ternal information about large transformers. Frequently, how-                                                      Rs1                                      Ls                        Rs2
+                                                                                                                                              N1:N                                        N:N2
+           ever, to obtain a very detailed model (reluctance network for
+           all possible flux paths), the complete internal information is                                                                            La1                            La2
+           needed. Therefore, in this paper optimum models with the
+           minimum number of components useful for all low-frequency
+                                                                                                                                                             Lc1              Lc2
+           transients are recommended. For instance, for a shell-type
+           transformer, this can be appreciated by representing the flux
+           paths of Fig. 2(a). Converting these flux paths into an equiva-                                     Fig. 3. Duality derived π model.
+
+
+
+
+  0885-8977 (c) 2015 IEEE. Personal use is per

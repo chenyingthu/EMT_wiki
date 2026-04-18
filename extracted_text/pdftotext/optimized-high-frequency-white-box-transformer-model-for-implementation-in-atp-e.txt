@@ -1,0 +1,177 @@
+                                                                 Electric Power Systems Research 213 (2022) 108709
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Optimized high-frequency white-box transformer model for
+implementation in ATP-EMTP.
+Enrique Esteban Mombello a, *, Guillermo Guidi Venerdini a, Guillermo Andrés Díaz Flórez b
+a
+    CONICET, Universidad Nacional de San Juan, Instituto de Energia Electrica, San Juan, Argentina
+b
+    Universidad de La Salle, Bogota, Colombia
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    Although several high frequency white-box transformer models have been proposed in the literature, the
+Power transformer                                            methodology for their implementation in some programs based on EMTP has not been addressed in detail. This is
+Reduced white-box models                                     true in particular for ATP, for which the representation of large transformer models is particularly problematic.
+Alternative transient program (ATP)
+                                                             This work aims to enable the use of ATP to model detailed transformer equivalent circuits, which would
+Transient overvoltages
+                                                             otherwise be seriously questioned. To establish these circuit models, the following must be taken into account:
+                                                             model reduction, magnetic circuit decoupling, avoid numerical instability, limit and optimize the use of resistors,
+                                                             generate ATP versions capable of processing large models. To this end, three generally valid methodologies are
+                                                             presented to reduce the model without compromising the accuracy of the calculation results and, finally,
+                                                             additional specific methodologies are implemented to reduce and adapt the models in the ATP environment. The
+                                                             application of these methodologies results in six possible variants of reduced models, which were successfully
+                                                             validated through a case study used by CIGRE JWG A2/C4.52 to verify the accuracy of transformer models.
+
+
+
+
+1. Introduction                                                                                      these parameters are determined from the geometry of the windings and
+                                                                                                     iron core and the properties of the materials. Each winding section is
+     Power transformers are very important components of power sys­                                  considered a single inductor, which is magnetically coupled to all other
+tems. They are very costly assets and their replacement in the event of                              sections. The degree of detail of the discretization must be sufficient to
+failure is problematic. The most frequent causes of transformer failures                             achieve adequate results based on the bandwidth of the applied voltage
+are overvoltages coming from the network. The most studied over­                                     waveform. There are models of this type able to represent the frequency
+voltages are those due to lightning strikes, the most representative                                 variation of both inductances and resistances, which is very important in
+example of the so-called Fast Transients (FT), which represent a threat to                           the study of the effects of possible internal resonances in the transformer
+transformers. That is why manufacturers have developed various design                                windings. The models presented in [7,8] are examples of models of this
+strategies over time in order to mitigate the effects of these stresses on                           type. The first one is based on an equivalent circuit and the second on a
+the internal structure of the transformer. In order to study these effects,                          state-space model.
+it is essential to have efficient analysis tools to be able to predetermine                              The most widely used EMT-type programs, such as PSCAD, EMTP-RV
+dangerous stresses. High-frequency white-box models are specially                                    and ATP, have the ability to model power transformers based on
+designed for this purpose and are widely used in the design stage. In-                               equivalent circuits. The drawback of the detailed model proposed in [7]
+depth knowledge of the frequency behavior of the inductive imped­                                    is the extremely large size of the circuit, which cannot be handled by
+ances of the transformer is necessary to determine reliable models.                                  many programs. An alternative to avoid this problem is to use
+These models are based on the discretization of the windings, which are                              state-space models, which also entails the problem that not all programs
+divided into sections.                                                                               support models of this type with the required characteristics. These
+     These sections are represented by discrete circuit elements such as                             latter models generally take the form of terminal (black or gray box)
+self- and mutual inductances, resistances and capacitances [1–5]. All of                             models from white-box state-space models. The introduction of these
+
+
+   Abbreviations: ATP, Alternative Transient Program; EMT, Electromagnetic Transient; EMTP, Electromangnetic Transient Program; FEM, Finite Element Method;
+FEMM, Finite Element Method Magnetics; FFT, Fast Fourier Transform; PSO, Particle Swarm Optimization; FT, Fast Transients; VFT, Very Fast Transients.
+ * Corresponding author.
+   E-mail address: eemombello@unsj.edu.ar (E.E. Mombello).
+
+https://doi.org/10.1016/j.epsr.2022.108709
+Received 6 November 2021; Received in revised form 14 July 2022; Accepted 4 August 2022
+Available online 12 August 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+E.E. Mombello et al.                                                                                                 Electric Power Systems Research 213 (2022) 108709
+
+
+terminal (non-circuital) models in EMT programs is neither simple nor                      a) A specific method for the model [7] is used [22]. Its goal is to
+straightforward. Recently, methodologies have been proposed for the                           reduce the number of necessary auxiliary loops while main­
+use of these models, such as reference [9], which presents a direct                           taining a correct representation of the frequency behavior of
+method by which the model is represented by admittance parameters.                            the impedances.
+Reference [10] shows how to directly include the model [9] in                              b) Optimization of the degree of discretization of the model.
+EMTP-RV, without applying a rational fitting. ATP does not support such                       Valid for all white-box models.
+models. An alternative black-box model with a circuit implementation is                    c) Use of a reduced number of poles for the representation of
+described in [11], which applies to all EMT programs. Although this is a                      impedances.
+circuit model, it is not a white-box model.                                             6. Optimization of the resistive model of the main sections so that no
+    White box models are also used to assess the vulnerability of a                        additional nodes are generated, preserving the accuracy of the
+transformer regarding Very Fast Transients (VFT). In this case the circuit                 results (Sections 7 and 8).
+constants are evaluated on turn-to-turn basis directly from the di­                     7. Application of an uncoupled inductive model as a workaround for
+mensions of transformer winding [12]. To avoid the number of turns or                      the ATP limitation on the number of available coupled branches
+nodes becoming too large, a technique of grouping turns was imple­                         (Sections 7 and 8).
+mented. The cited reference compares time and frequency domain                          8. Application of additional measures in relation to the conse­
+strategies for modeling and analysis of transformer windings at high                       quences of the application of the solution given in 6 for the
+frequencies. While time domain analysis requires several combined                          calculation of transients (Sections 7 and 8).
+strategies to extract the equivalent circuit, frequency domain analysis                 9. Modification of ATP size limits to finally achieve a successful
+involves the cumbersome inverse Fast Fourier Transformation (FFT) to                       implementation of the model (Section 7).
+obtain time-domain results [12]. The authors of [12] add that the model                10. The characteristics of six models suitable for application in ATP
+“can be readily used as a usual circuit element in EMTP analysis. Uti­                     are given (Sections 6 to 8).
+lizing EMTP, particularly ATPDraw, assures a versatile circuit-building”.              11. Application example showing the interaction of the transformer
+    Many authors who have proposed white-box models in the past                            model with network components (Section 7).
+assumed that they are generally applicable to EMT programs. An
+example of this is the case of [13], who states "since the model contains                The merit of the work is to bring together all these elements, within
+only constant parameters, it can be directly interfaced with well-known              which there are some original contributions to the state of the art,
+calculation programs, such as the ATP or EMTP". Although this is                     around the solution of the problem posed. One of the main contributions
+partially true, in the specific case of ATP, the interface is not as simple or       are the specific models mentioned in 10, which are the result of using the
+straightforward when it comes to large white-box models. The objective               combined reduction strategies given in 5, being 5c specific to model [7].
+of this work is to make a contribution in this sense.                                One of these models is used to generate the example mentioned in 11.
+    Due to its circuit formulation, the model presented in [7] is suitable           The specific implementation details and criteria cited in 6 to 9 are also
+for use with the Alternative Transients Program (ATP). However, its                  important contributions as a whole.
+implementation is not straightforward for two main reasons. First, ATP
+does not have a large enough model of magnetically coupled inductive                 2. Characterization of transformer inductive impedances at high
+branches to represent such a large model. This then requires a prior                 frequencies
+uncoupling process to be able to enter the model in the form of uncou­
+pled RLC branches. As the number of branches required is very large                      The system of magnetically coupled impedances can be represented
+when applying this methodology, a recompiled version of the ATP must                 mathematically as a matrix whose elements are complex and frequency-
+then be used, modifying the dimensions of the internal variables. This               dependent. The real parts of these impedances are resistances that in­
+represents a difficulty given the in-depth knowledge necessary to be able            crease continuously with frequency. The imaginary parts are inductive
+to carry out these modifications. These recompiled versions are not                  reactances, which are in turn a function of the inductances, which
+generally available. The number of branches of the model could be in the             decrease with frequency [3]. The earliest representations of inductive
+order of 1 million for the case study transformer if no reduction tech­              components in high-frequency transformer models merely consisted of a
+nique is applied. This indicates that it is strictly necessary to apply              matrix of constant inductances. This type of model has been used in the
+strategies to reduce the size of the model without altering the precision.           past to predetermine impulse voltage stresses due to lightning [14]. At
+Several strategies will be described that have made possible not only the            that time, it was considered that this representation was sufficient
+implementation of the model [7] in ATP but also its optimization so that             because the goal was to determine the maximum voltage at the initial
+its frequency response is adequate throughout the frequency range of                 stage of the phenomenon, which is practically unaffected by the resistive
+interest.                                                                            component or by the dependence of the parameters with frequency. One
+    In the present work, several analyzes and contributions are made in              hypothesis for the validity of the above is that there are no resonances
+relation to the proposed problem, using both general strategies and some             during the transient. However, transients of a more complex type can
+specific ones for the transformer model proposed in [7], which are                   appear in transformers [4,5], exciting internal resonances [6], which has
+detailed below.                                                                      caused many failures. A suitable transformer model to investigate this
+                                                                                     type of phenomenon cannot merely consist of an inductance matrix, but
+    1. The fitting methodology used and the range of validity of the                 must contain a representation of damping, which is vital during reso­
+       parameters calculated with electromagnetic models of the                      nances. In circuit models the damping of the windings is represented by
+       windings are described (Section 2).                                           resistors. Since damping is highly variable with frequency, a represen­
+    2. A new methodology is proposed to estimate an initial set of poles             tation by constant resistors is not suitable. This makes it necessary to use
+       for RL impedance fitting (Section 3).                                         a more complex model, which considers frequency-dependent re­
+    3. Criteria are provided to adequately fit the behavior of the model             sistances. However, it is not possible to conceive a model with physical
+       at very low frequencies (Section 3).                                          meaning based on frequency-dependent resistances and constant in­
+    4. Brief description of the model proposed in [7] is given (Section              ductances since network theory imposes a certain relationship between
+       4).                                                                           the real and imaginary parts of the impedances [15]. This implies that
+    5. Various methodologies for model reduction are proposed (Sec­                  both parts of the impedance must be frequency dependent, since they
+       tion 5).                                                                      are closely related.
+
+
+                                                                                 2
+E.E. Mombello et al.                                                                                                          Electric Power Systems Research 213 (2022) 108709
+
+
+2.1. Analysis of the frequency behavior of inductive impedances                   represented by rational functions. These functions can in turn be
+                                                                                  expressed by a partial fraction expansion in the classical form as
+    Next, the behavior of inductive impedances as a function of fre­
+                                                                                                                 ∑N
+quency will be analyzed. Wilcox et al. [16] investigated this behavior            Zg (s) = R∞ + sL∞ +
+                                                                                                                       Ck
+                                                                                                                                                                           (1)
+and proposed analytical methods for its determination. This reference                                            k=1
+                                                                                                                     s + λk
+shows comparisons of measured and calculated impedances of trans­
+                                                                                     In this expansion the poles ak, which are negative real values, are
+former coils as a function of frequency. Abeywickrama and others [17,
+                                                                                  represented by the positive parameters λk where λk = –ak. In this
+18] also made contributions in relation to the computation of parame­
+                                                                                  expansion, the parameter matrices R∞ and L∞ represent the impedance
+ters of power transformer windings for use in frequency response anal­
+                                                                                  values for very high frequencies, since for that condition the summation
+ysis. The typical behavior shown in the cited references is replicated in
+                                                                                  terms tend to zero. There is another way of representing the same
+the results obtained from electromagnetic field calculations in the
+                                                                                  impedance, but formulated in such a way that the terms outside the
+research carried out in [7]. As an example, the self-inductance and
+                                                                                  summation represent the impedance values at low frequencies. This
+resistance of section 181 of the high-voltage winding of the case study
+                                                                                  expression is as follows
+transformer are shown in Fig. 1 (see description in Section 3.3). It can be
+seen there that the inductance shows a decrease with frequency that is                                             ∑N
+                                                                                                                         Kk
+especially apparent in a certain frequency region, where it drops                 Zg (s) = Rm + sLm − s2                                                                   (2)
+                                                                             

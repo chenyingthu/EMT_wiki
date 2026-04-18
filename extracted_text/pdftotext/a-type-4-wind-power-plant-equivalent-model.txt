@@ -1,0 +1,198 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER SYSTEMS                                                                                                                            1
+
+
+
+
+         A Type-4 Wind Power Plant Equivalent Model
+             for the Analysis of Electromagnetic
+                 Transients in Power Systems
+Dalia N. Hussein, Student Member, IEEE, Mahmoud Matar, Senior Member, IEEE, and Reza Iravani, Fellow, IEEE
+
+
+   Abstract—This paper introduces an accurate and computation-                       resources and imposes formidable run-time for each case study.
+ally efficient reduced-order dynamic equivalent of a Type-4–based                    The former is also a practical limitation for EMT studies in
+wind power plant (WPP) for the analysis of electromagnetic                           a real-time simulation environment. However, considering the
+transients (EMTs) in the power system external to the WPP. The
+proposed model significantly reduces the computational resources
+                                                                                     fact that EMTs propagate in a fairly limited portion of power
+and the simulation run time while preserving the WPP response                        system, the system under study can be virtually divided into two
+fidelity in the desired frequency range, e.g., 0 to 50 kHz. The                      zones. The first zone encompasses that part of the system where
+proposed WPP equivalent model is composed of two parts: 1) a                         the EMTs are investigated, and, consequently, all of the corre-
+frequency-dependent equivalent model which represents the WPP                        sponding components need to be modeled in detail. The second
+passive component in the entire frequency range and 2) a dynamic                     zone covers the rest of the system which has secondary impact
+equivalent model that represents the WPP supervisory control
+and the aggregated low-frequency dynamics of wind-turbine
+                                                                                     on the study zone transients and, thus, can be represented by an
+generator (WTG) units. The latter can be constructed from the: 1)                    equivalent model that reflect its impact on the EMTs of the first
+dynamic generic models; 2) vendor-specific models; or 3) user-de-                    zone in the whole frequency range of interest. This strategy is
+fined models. The proposed model is incorporated as a software                       adopted in this paper, and the WPP forms (since transients are
+module in the PSCAD/EMTDC environment, and its efficiency                            initiated outside the WPP) the second zone and is represented
+and accuracy are verified based on comparing the results with                        by the proposed wide frequency-band WPP equivalent model,
+those of a detailed model.
+                                                                                     connected to the point of common coupling (PCC).
+  Index Terms—Collector system, dynamic equivalent, elec-                               This paper presents a reduced-order, wide-band frequency-
+tromagnetic transients (EMTs), modeling, type-4 wind-turbine                         dependent, dynamic equivalent model of the Type-4 WPP. The
+generator (WTG), vector fitting, wind farms, wind power plants
+(WPPs).
+                                                                                     WPP equivalent model consists of two distinct submodels: 1) a
+                                                                                     static wide-frequency-band equivalent which represents all of
+                                                                                     the WPP components, except the WTG units and their local
+                             I. INTRODUCTION                                         controls and the WPP supervisory control, within the desired
+                                                                                     frequency range, and 2) a dynamic low-frequency model which
+
+H      IGH depth of penetration of wind power and prolifera-
+       tion of wind-turbine generator (WTG) units, clustered as
+wind power plants (WPPs), have invoked significant effort for
+                                                                                     represents dynamics of WPP supervisory control and dynamics
+                                                                                     of the aggregated WTG units and local controls, within the range
+                                                                                     of several hertz about the system nominal frequency.
+development of WPP mathematical models for power system                                 This paper describes the methodology to: 1) develop the
+studies. These models reflect WPP behavior with respect to                           static wide-frequency-band equivalent and dynamic low-fre-
+different types of power-system phenomena and cover a wide                           quency models of a WPP and 2) integrate them as the overall
+range of studies, i.e., from planning to fast electromagnetic                        low-order, wide-frequency-band equivalent model of the WPP.
+transients (EMTs). EMT studies are conducted either within a                         To demonstrate and verify the accuracy and computational
+WPP or in the power system external to the WPP. The latter is                        efficiency of the equivalent model, study test cases based on the
+the focus of this paper.                                                             use of detailed model and the proposed equivalent model of a
+   Analysis of EMTs in a power system inherently necessitates                        WPP, in the PSCAD/EMTDC environment, are conducted and
+the system model to accurately represent the overall system                          the results are compared. The main contribution of this work is
+within the required frequency range. Thus, the brute-force ap-                       the development of the reduced-order, wideband frequency-de-
+proach to modeling a WPP for EMT studies is to represent                             pendent WPP dynamic equivalent model which to the best of
+the collector system and all WTG units based on their detailed                       our knowledge has not been previously introduced in the tech-
+models. Considering the size and complexity of a WPP, this                           nical literature. The main contributions are: 1) integration of the
+approach requires significant software/hardware computational                        two submodels to accurately represent the WPP in the desired
+                                                                                     frequency band and 2) development of a systematic approach
+   Manuscript received July 06, 2012; revised October 02, 2012; accepted             to construct the low-frequency dynamic model, incorporating
+November 02, 2012. Paper no. TPWRS-00781-2012.                                       the WTG controls and the WPP supervisory control.
+   The authors are with the University of Toronto, Toronto, ON Canada.
+M5S 3G4 (e-mail: dalia.hussein@ieee.org; mahmatar@ieee.org; ira-                        The remainder of this paper is organized as follows. Section II
+vani@ecf.utoronto.ca).                                                               presents the general structure of the proposed equivalent model.
+   Color versions of one or more of the figures in this paper are available online   Sections III and IV present the development of the WPP passive
+at http://ieeexplore.ieee.org.
+                                                                                     network equivalent model and the dynamic equivalent model.
+   Digital Object Identifier 10.1109/TPWRS.2012.2227845
+
+                                                                  0885-8950/$31.00 © 2012 IEEE
+         This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS
+
+
+
+
+                                                                                   Fig. 2. Structure of the dynamic low-frequency equivalent model of a type-4
+                                                                                   WTGs-based WPP.
+
+
+
+
+Fig. 1. Proposed WPP dynamic equivalent.
+
+
+
+Section V describes the integration of the passive network
+and the dynamic models to form the overall equivalent model.
+Sections VI and VII describe the test system and the case
+studies, respectively, and Section VIII discusses the results.
+Conclusions are stated in Section IX.
+
+           II. WPP EQUIVALENT MODEL STRUCTURE
+   Fig. 1(a) shows a schematic diagram of a power system which
+also includes a WPP. The WPP is composed of: 1) multiple
+Type-4 (direct drive) WTG units and their local controls; 2) a
+collector system; and 3) the WPP supervisory control. The ob-
+jective of this work is to represent the WPP, with respect to the
+                                                                                   Fig. 3. Supervisory control block structure of the WPP dynamic low-frequency
+PCC, by an equivalent model that can accurately represent the                      equivalent model.
+impact of the WPP on electromagnetic transient phenomena that
+occur in the power system, external to the WPP, e.g., transients
+of the faulted line, Fig. 1(b). The desired WPP equivalent model                         units (and their local controls) within the WPP and the
+must accurately represent:                                                               WPP supervisory controller with respect to the WPP
+  • the WPP dynamic behavior in the desired frequency band-                              external power system. The DLFE model represents the
+      width which also includes the WPP low-frequency dy-                                WPP low-frequency dynamics about the nominal power
+      namics;                                                                            frequency.
+  • the WPP supervisory control system dynamics that govern                        The combined FDNE model and the DLFE model constitutes
+      the power exchange between the WPP and the rest of the                       the net model of the WPP with respect to its host power system
+      system.                                                                      at the PCC [Fig. 1(b)] in the desired wide frequency range.
+   To achieve this objective, the WPP model is mathematically
+represented by the following two segments as symbolically
+shown in Fig. 1.                                                                                         III. FDNE MODEL OF WPP
+  • Passive (Static) frequency-dependent network equivalent                           The FDNE model is obtained from the frequency response
+      (FDNE) model: this represents the response of all pas-                       of the WPP [1] which captures the behavior of the WPP passive
+      sive components of the WPP, i.e., WPP substation trans-                      network, with respect to the PCC, in the desired frequency band-
+      former(s), overhead lines and underground cables of the                      width. The frequency response is deduced by: 1) conducting a
+      collector system, filter and capacitor banks, passive loads,                 frequency scan of the WPP system at the PCC while all Type-4
+      and any other passive component within the WPP. The fre-                     WTG units are open-circuit at the ac-side terminals of the cor-
+      quency bandwidth of the passive equivalent model is de-                      responding converters and 2) representing the frequency scan
+      termined based on the type and the characteristics of the                    results by a rational function [2], [3]. The rational function can
+      EMTs to be investigated external to the WPP, e.g., 0 to                      be represented either directly or based on the companion circuit
+      50 kHz.                                                                      approach, in the time-domain simulation package used to con-
+  • Dynamic low-frequency equivalent (DLFE) model: this                            duct the EMT studies of the power system external to the WPP.
+      represents the dynamic behavior of the aggregated WTG                        Development of the FDNE model includes the following steps.
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+HUSSEIN et al.: TYPE-4 WPP EQUIVALENT MODEL FOR THE ANALYSIS OF ELECTROMAGNETIC TRANSIENTS IN POWER SYSTEMS                                                  3
+
+
+
+
+Fig. 4. Schematic diagram of the modified version of Lake Erie shore WPP as the test system.
+
+
+
+ Step 1) At PCC, disconnect the WPP power circuit from                             model used in this paper is a user-defined model which is an
+          the power system and open-circuit all Type-4 WTG                         enhanced version of the WECC Type-4 generic model [8]–[11].
+          units at the ac sides of their grid-side converters.                     This model represents the dynamics of the WPP active compo-
+ Step 2) Inject a current signal into the WPP. The current                         nents in a range of 0 to the maximum of 20 Hz and intends to
+          signal is the summation of a set of sinusoidal current                   represent low-frequency dynamics of the WPP and the natural
+          components at unity amplitudes, zero phase angles,                       modes of controls. Dynamics of the turbine-generator and the
+          and discrete frequencies that cover a prespecified                       generator-side converter of the Type-4 WTG have secondary
+          frequency bandwidth and prespecified frequency                           impact on the net WPP dynamic behavior at the PCC due to
+          steps. The frequencies of these currents cover the                       the decoupling effect of the WTG back-to-back converter in-
+          desired frequency bandwidth. The frequency band-                         terface [10], [12]–[14]. Consequently, the DLFE model of each
+          width is specified based on the type of EMT studies                      WTG unit can be adequately represented by those of the corre-
+          that the WPP model in intended for, e.g., 0 to 50                        sponding grid-side converter (GSC) unit and its local controls.
+          kHz.                                                                        Fig. 2 shows the structure of the DLFE model of the WPP.
+ Step 3) Deduce the WPP terminal voltage. This voltage rep-                        The measurement module acquires instantaneous three-phase
+          resents the WPP equivalent impedances at the fre-                        PCC voltage and the WPP net current (at the HV-side of WPP
+          quencies of the injected currents.                                       substation transformer) and generates the required signals for
+ Step 4) Decompose the voltage, based on the Fourier anal-                         control and PLL blocks, Fig. 2. The WPP supervisory control
+          ysis, into its components at the frequencies of the                      receives the reference and measured signals and generates the
+          injected current components.                                             reference dq-current components. The GSC and current control
+ Step 5) Fit a rational function of the form                                       represents the dynamics of the aggregated grid-side converters
+                                                                                   and their local controllers. The local controls are decoupled cur-
+                                                                            (1)    rent controller with inner dq current loops [15]. The GSC is rep-
+                                                                                   resented as an ideal controlled current source that injects current
+                                                                                              in the system at the PCC, in response to the current
+             to the deduced results of step 4). In (1), residues ’s                commands            and        which determine real and reactive
+             and poles ’s can be either real or complex numbers                    power demand of the system from the WPP. The PLL provides
+             while and are real and can be obtained based on                       synchronization to the positive-sequence PCC voltages [16].
+             several methods, e.g., the vector fitting method [2],                    The conceptual functions of the WPP supervisory control of
+             [3].                                                                  Fig. 2 include control of active and reactive power components
+ Step 6) Implement (1) in the adopted EMT digital                                  injected by the WPP into the system [13], [17], [18], and im-
+             time-domain simulation package [4]–[6].                               position of the voltage ride-through (VRT) requirements [19],
+   This work adopts the companion circuit approach method [5],                     [20] during transients. Fig. 3 depicts the main building blocks
+[6] for realization of the WPP passive network model as a soft-                    of the WPP supervisory control. The active and reactive cur-
+ware module in the PSCAD/EMTDC simulation environment.                             rent values         and         are determined based on the con-
+                                                                                   trol option that may include: PCC voltage control, power factor
+                    IV. DLFE MODEL OF WPP                                          control, and PCC reactive power control [17]. Both the and
+   Dynamics of the aggregated Type-4 WTG units can be repre-                          controls apply limits over         and         which are deter-
+sented either based on: 1) the generic Type-4 model [7], [8]; 2)                   mined in the current limits block to meet the operational priority
+a vendor-specific model; or 3) a user-defined model. The DLFE                      and requirements [10], [13].
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+4                                                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS
+
+
+
+
+Fig. 5. PCC voltages of the detailed and the equivalent models—Case I.
+
+
+
+   During transients, e.g., faults, that are accompanied with                       150 ms [19]. The supplied reactive current, during ride-through
+voltage fluctuations at the PCC, the grid code requires the WPP                     process, is determined according to the PCC voltage [21].
+to remain in service and ride through the fault [19], [20]. This                    An increase in reactive current/reactive power injected by the
+work adopts the WECC grid code at which the WPP should                              WPP must be coordinated with real current/power injection to
+stay in service and supply the grid wi

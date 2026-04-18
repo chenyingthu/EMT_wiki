@@ -1,0 +1,151 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2875073, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                          Unified High-Speed EMT Equivalent and
+                           Implementation Method of MMCs with
+                                  Single-Port Submodules
+                           Jianzhong Xu, Member, IEEE, Yuchen Zhao, Chengyong Zhao, Senior Member, IEEE, Hui Ding,
+                                                               Member, IEEE
+
+
+           Abstract—This paper proposes a unified high-speed                                                   MMC converters with complicated SM topologies [7]. In
+          electromagnetic transient (EMT) equivalent and implementation                                        addition, renewable energy based large scale MMC-HVDC
+          method for modular multilevel converter (MMC) with arbitrary                                         grids, with multiple MMC converters tend to make the
+          single-port submodule (SM) structures. The proposed method,                                          electromagnetic transient (EMT) simulations far less efficient.
+          interacts with the users by the incidence matrix, branch                                             Besides the off-line simulations, the real time simulations
+          admittance matrix and the column vector of the current sources
+                                                                                                               require EMT equivalent models of emerging user-defined
+          as input, then a nodal admittance matrix is automatically
+          generated for each individual SM and the internal node                                               MMC topologies [8]-[12]. Therefore, there is definite need to
+          information of the SMs are transferred to the interfacing nodes.                                     develop unified algorithms and implementation methods
+          Hence the internal nodes are eliminated without obtaining the                                        general for all the emerging new MMC topologies.
+          complicated analytical solutions, the reduced-order equivalent                                          With respect to the existing EMT equivalent algorithms of
+          circuit of each SM is obtained and all the SMs within each arm are                                   MMCs, although the simplified averaged-value models (AVMs)
+          cascaded into one ultimate Thévenin equivalent. At the end of                                        [13], [14] and the classical continuous model [15] are
+          each time step, the EMT solver updates all the previously                                            time-efficient, the internal capacitor voltage and current
+          eliminated internal node information so that nothing is lost under                                   information are lost, so they do not belong to the detailed
+          steady and transient states. The proposed approach is validated
+                                                                                                               equivalent model (EM) scope of this paper and they are used
+          by EMT models of an enhanced double half-bridge sub-module
+          (D-HBSM) based MMC-HVDC system on PSCAD/EMTDC.                                                       more in system and converter level simulations.
+                                                                                                                  The detailed EMs [16]-[23] can faithfully reproduce the
+             Index Terms—Modular multilevel converter, electromagnetic                                         transient behaviors of the detailed models (DMs). Being the
+          transient (EMT), single-port sub-modules, Norton and Thévenin
+                                                                                                               world’s first, reference [16] proposed the high-speed equivalent
+          equivalents, double half- bridge sub-module (D-HBSM).
+                                                                                                               model of MMC. It started a new research area and both the half-
+                                            I. INTRODUCTION                                                    and full-bridge MMC models developed by the authors in [16]
+                                                                                                               are still used on PSCAD/EMTDC. References [17]-[19]
+          B    ecause of low loss, minimized harmonics and easy
+               scalability, modular multilevel converter (MMC) based
+          high voltage direct current (HVDC) transmission will be the
+                                                                                                               improved the computational efficiency of the models
+                                                                                                               developed in [16] by using different integration methods and
+                                                                                                               simplified linear time complexity sorting algorithms. Although
+          trend of future DC transmission systems [1]-[2]. E.g., the                                           the accelerated model (AM) of MMC in [20] is general to some
+          point-to-point HVDC links in Europe and Zhangbei DC grid in                                          extent, it is essentially an enhanced DM with plenty of
+          China are both under construction and will use the MMC                                               fully-detailed components and thus has a lower EMT
+          topology. The rapid development of DC grids has also brought                                         simulation efficiency in DC grids and real time simulations.
+          a lot of issues such as the DC fault blocking.                                                           Reference [21] proposed an equivalent MMC model with
+              Recently, a variety of new MMC topologies with DC fault                                          specified structure; although its universality is limited, similar
+          blocking capabilities are being considered as alternatives to the                                    implementation method of blocking modes can be used in this
+          high cost of DC circuit breakers[3]-[6]. Some of the newly                                           paper. The EMs proposed in [22]-[23] are similar in principle,
+          proposed MMC topologies may have the capability to balance                                           which represent an MMC arm with a few ideal diodes and
+          the internal capacitor voltages without sorting algorithms.                                          controlled voltage sources. These two models have high
+          These topologies will include both single-port and multi-port                                        efficiency on modeling half-bridge and full-bridge SMs based
+                                                                                                               MMCs and can be used for some other classical SM topologies.
+             This work was supported in part by National Key R&D Program of China                              However, the models in [22]-[23] are hard to extend to SM
+          under grant 2018YFB0904600 and in part by National Natural Science                                   topologies which has two capacitors in each SM and the
+          Foundation of China (51607065).                                                                      capacitors are occasionally paralleled during normal operation.
+             Jianzhong Xu (xujianzhong@ncepu.edu.cn), Yuchen Zhao (zhaoyuchen_
+          1993@163.com) and Chengyong Zhao (chengyongzhao2@163.com) are with                                   However, the research in the paper is more general purpose and
+          the State Key Laboratory of Alternate Electrical Power System with Renewable                         don’t impose any limitations on the single-port SM structures.
+          Energy Sources, North China Electric Power University.                                                  In this paper, the single-port SMs enjoy the feature that the
+             Hui Ding (hui@rtds.com) is with RTDS Technologies Inc., 100-150
+          Innovation Drive Winnipeg, MB, Canada, R3T 2E1.                                                      same arm current flows through the positive terminal and exits
+             Corresponding author: Jianzhong Xu*, xujianzhong@ncepu.edu.cn.
+
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2875073, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+          the negative terminal for all the cascaded SMs within the same                                       EMT modelling procedure of Thévenin (Norton) equivalent
+          arm. This allows one to simply add the Thévenin resistances                                          model. It is exemplified by half-bridge MMC, which includes:
+          and Thévenin voltage sources into a single Thévenin equivalent.                                         (i) represent all the IGBT/Diode switches in each SM by
+          As indicated in [16] and [19], the analytical solutions of each                                      two-value resistances or conductance; (ii) discretize the SM
+          SM equivalent circuits are relatively easy to obtain and thus no                                     capacitor by integration methods such as Trapezoidal Rule (TR)
+          matrix inversion is required during the model calculation.                                           and Backward Euler (BE), then representing the capacitor by a
+          However, this is not the case for MMCs with multiple switches                                        Thévenin (Norton) circuit; (iii) obtain the companion circuit of
+          in each SM where it is not practical to obtain the analytical                                        each SM by (i) and (ii); (iv) calculate the analytical solution of
+          solutions of the Thévenin or Norton circuit parameters as                                            the Thévenin (Norton) circuits of each SM and the capacitor
+          functions of symbolic variables.                                                                     current as functions of the firing pulses and history terms; (v)
+             This paper proposes a unified high-speed EMT equivalent                                           cascade all the equivalent circuits of the SMs to obtain the
+          and implementation model for arbitrary single-port MMCs.                                             ultimate arm Thévenin (Norton) circuits; (vi) update all the SM
+          The modelling approach is essentially derived from the Nested                                        capacitor voltages and currents after each time step calculation
+          Fast and Simultaneous Solution (NFSS) [24], which is an                                              of the EMT solver.
+          enhancement to Dommel’s algorithm. The NFSS algorithm is                                                The above standard procedure can be used to calculate the
+          used to transfer the internal node information of the SMs into                                       equivalent model of any single-port SM based MMCs, and this
+          the interface nodes, and then the reduced-order Thévenin                                             has already been applied to full-bridge MMC as seen in [19].
+          equivalent model of each SM can be obtained without losing                                           However, this is not the case for complicated SM structures
+          any accuracy. The main contributions of this paper are: (i)                                          with multiple switches, such as D-HBSM given in [25].
+          Significantly simplify the calculating of the internal Thévenin                                      Therefore, this paper will deal with two important issues, one is
+          or Norton circuits of the various single-port MMC topologies;                                        the high-speed unified equivalent algorithm for arbitrary
+          (ii) Significantly minimize the effort required from the model                                       single-port MMC, and the other is the unified implementation
+          users when high-speed (or real-time) EMT models of new                                               method on the EMT programs such as PSCAD/EMTDC.
+          MMC topologies are introduced.
+                                                                                                               C. The Companion Circuit of Any Arbitrary Single-port SM
+             The applicability of the proposed approach is validated by
+          modelling and simulation of a double half-bridge SM                                                     Fig. 2 shows a detailed single-port SM circuit with arbitrary
+          (D-HBSM) based MMC-HVDC system.                                                                      internal structures. Without loss of generality, we assume that
+                                                                                                               there are two capacitors in an SM to demonstrate the theory. If
+            II. PROPOSED UNIFIED HIGH-SPEED MODELLING APPROACH                                                 required, the SM count can be larger and the equations can be
+                           FOR SINGLE-PORT MMC                                                                 modified easily. In Fig. 2, the nodes of each single-port SM
+                                                                                                               should be numbered, the nodes which are used to connect the
+          A. The Universal Structure of Single-Terminal MMC                                                    adjacent SMs are defined as interface nodes. They are nodes 1
+             Fig. 1 shows the classical three-phase single-terminal MMC                                        and 2, respectively the positive terminal P and negative
+          topology, in which IARM is the arm current and LS is the arm                                         terminal N, and this is why the circuit in Fig.2 is defined as
+          inductor. The MMC topology is symmetrical in structure and is                                        single-port SM in this paper. The other internal nodes of the SM
+          general for all kinds of single-port SM structures, including                                        can be numbered arbitrarily, e.g. in Fig. 2, assuming the
+          HBSM, FBSM and other new SM topologies [3].                                                          capacitor C1 is connected between nodes i and j, and C2 is
+                                                                                                               connected between nodes p and q.
+                                                                                                 +
+                     IARM                   IARM                       IARM
+                                SM1                     SM1                       SM1                                                                                   SM
+                                SM2                     SM2                       SM2                                                              I1                  i         p
+                                                                                  SMN
+                                                                                                                                         P
+                               SMN                      SMN
+                       LS                       LS                       LS                                                                                    C1                 C2
+                                                                                                                                                   I2
+                 a                                                                                                                       N                             j         q
+                 b
+                 c                                                                                                          Fig. 2 The detailed circuit of an arbitrary single-port SM.
+                     IARM                    IARM                     IARM                                        Following the standard procedure described in sub-section
+                      LS                       LS                        LS                                    II.A, the companion circuit of the SM shown in Fig. 2 can be
+                                SM1                      SM1                      SM1                          generated. The IGBT/Diode switches in Fig. 2 are treated as
+                                                                                                               two-value conductance in a Norton circuit and two-value
+                                SM2                      SM2                      SM2
+                                                                                                               resistances can be used in a Thévenin circuit, this has been
+                               SMN                      SMN                       SMN             -            proved to be effective in handling normal operation of
+                                  Fig. 1 The universal structure of MMC.                                       MMC-HVDC system including steady state and fault transients.
+                                                                                                               The valve blocking in case of severe DC short-circuit fault
+          B. The High-Speed EMT Modelling Procedure of MMCs [16]                                               scenarios will be treated separately considering interpolation
+            Reference [16] provided a classical and standard high-speed                                        issues, which will be discussed in later section.
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2875073, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+             Using the TR or BE integration method, each capacitor can                              

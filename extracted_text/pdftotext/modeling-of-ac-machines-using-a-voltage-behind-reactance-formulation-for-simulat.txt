@@ -1,0 +1,228 @@
+    MODELING OF AC MACHINES USING A
+VOLTAGE-BEHIND-REACTANCE FORMULATION
+  FOR SIMULATION OF ELECTROMAGNETIC
+      TRANSIENTS IN POWER SYSTEMS
+                             by
+
+
+                       LIWEI WANG
+
+
+        B. Eng., Hebei University of Technology, 2001
+             M. Eng., Tianjian University, 2004
+
+
+  A THESIS SUBMITTED IN PARTIAL FULFILMENT OF THE
+          REQUIREMENTS FOR THE DEGREE OF
+
+
+                DOCTOR OF PHILOSOPHY
+
+
+                             in
+
+
+         THE FACULTY OF GRADUATE STUDIES
+
+
+           (Electrical and Computer Engineering)
+
+
+       THE UNIVERSITY OF BRITISH COLUMBIA
+
+                         (Vancouver)
+
+                        February 2010
+
+
+                     © Liwei Wang, 2010
+ABSTRACT
+
+Modeling of electrical machines for power system’s electromagnetic transient programs (EMTP)
+has been an active area of research since the late 1970s. Most machine models are based on the
+qd reference frame. The phase-domain (PD) model was also proposed wherein the direct
+
+interface with the external network is achieved at a price of increased the computational cost.
+
+This thesis focuses on improving the numerical efficiency and accuracy of machine models for
+power systems transient simulation. The modeling approach developed in this thesis is based on
+the so-called voltage-behind-reactance (VBR) formulation. The new VBR models of synchronous
+and induction machines are proposed for EMTP-type solution. It is shown that the proposed VBR
+models significantly improve the overall numerical accuracy and efficiency, compared with the
+traditional qd and PD models, due to the direct machine-network interface and better-scaled
+eigenvalues. The proposed implementations of the new models require as little as 240 flops for
+synchronous and 108 flops for induction machines, per time-step, respectively. This amounts to
+3.75μs and 1.6μs (per time-step) of the CPU time on a modest personal computer and
+
+represents a significant improvement over existing EMTP machine models. Magnetic saturation
+has been incorporated into the VBR models for EMTP-type solution. Computer studies
+demonstrate that the proposed saturable VBR model in addition of being very efficient also
+preserves good numerical accuracy and stability even at very large time step. A new full-order
+VBR induction machine model is also proposed for state-variable simulation languages, wherein
+three practical equivalent circuits have been introduced. Computer studies demonstrate that the
+proposed models achieve a 740% improvement in computational efficiency as compared with the
+traditional coupled-circuit models used in state-variable simulation languages. Finally, an
+approximate VBR induction machine model is proposed for the discretized EMTP solution
+wherein a constant equivalent conductance matrix is achieved. This further improves the
+efficiency of the machine-network solution since it avoids the re-factorization of the network
+conductance matrix at every time step. It is envisioned by the author that due to structural and
+numerical advantages, the proposed VBR models will find wide application in simulation
+packages and tools widely used in the power industry.
+
+
+
+
+                                                                                                  ii
+TABLE OF CONTENTS
+
+
+Abstract ........................................................................................................ ii
+Table of Contents ........................................................................................ iii
+List of Tables ...............................................................................................vii
+List of Figures ............................................................................................viii
+Acknowledgements ...................................................................................xiii
+Co-Authorship Statement .......................................................................... xv
+1 INTRODUCTION ...........................................................................1
+     1.1      The qd Model ..................................................................................................................... 2
+     1.2      The Coupled-Circuit Phase-Domain Model .................................................................... 3
+     1.3      The Voltage-Behind-Reactance Model............................................................................. 5
+     1.4      Summary of Results and Contributions .......................................................................... 6
+     1.5      Thesis Organization........................................................................................................... 8
+     1.6      References........................................................................................................................... 9
+
+2 A VOLTAGE-BEHIND-REACTANCE SYNCHRONOUS MACHINE
+MODEL FOR THE EMTP-TYPE SOLUTION ...................................13
+     2.1      Introduction...................................................................................................................... 13
+     2.2      Synchronous Machine Models ........................................................................................ 15
+           2.2.1         Traditional qd Model........................................................................................... 16
+           2.2.2         Phase-Domain Model........................................................................................... 17
+           2.2.3         Voltage-Behind-Reactance Model ...................................................................... 17
+     2.3      Discrete-Time Model Representations ........................................................................... 19
+           2.3.1         Discrete-Time Phase-Domain Model.................................................................. 20
+           2.3.2         Discrete-Time Voltage-Behind-Reactance Model ............................................. 21
+           2.3.3         Model Complexity................................................................................................ 23
+     2.4      Interface Procedure ......................................................................................................... 24
+     2.5      Computer Studies............................................................................................................. 25
+           2.5.1         Model Verification................................................................................................ 25
+           2.5.2         Numerical Accuracy ............................................................................................ 27
+           2.5.3         Model Efficiency .................................................................................................. 29
+     2.6      Error Analysis .................................................................................................................. 30
+
+                                                                                                                                                  iii
+   2.7     Discussion of Network Solution ...................................................................................... 32
+   2.8     Conclusion ........................................................................................................................ 33
+   2.9     References......................................................................................................................... 34
+
+3 MODELING                        OF             INDUCTION                          MACHINES                           USING                  A
+VOLTAGE-BEHIND-REACTANCE FORMULATION........................37
+   3.1     Introduction...................................................................................................................... 37
+   3.2     Coupled-Circuit Machine Model.................................................................................... 39
+   3.3     QD Machine Model in ARF ............................................................................................ 41
+   3.4     Voltage-Behind-Reactance Models in ARF ................................................................... 42
+         3.4.1        Voltage-Behind-Reactance Model I.................................................................... 42
+         3.4.2        Voltage-Behind-Reactance Model II .................................................................. 46
+         3.4.3        Voltage-Behind-Reactance Model III................................................................. 46
+   3.5     Computer Studies............................................................................................................. 48
+         3.5.1        Variable-Step Method.......................................................................................... 49
+         3.5.2        Fixed-Step Method............................................................................................... 50
+   3.6     Eigensystem Analysis....................................................................................................... 53
+   3.7     Discussion ......................................................................................................................... 55
+   3.8     Conclusion ........................................................................................................................ 59
+   3.9     References......................................................................................................................... 60
+
+4 A VOLTAGE-BEHIND-RREACTANCE INDUCTION MACHINE
+MODEL FOR THE EMTP-TYPE SOLUTION ...................................63
+   4.1     Introduction...................................................................................................................... 63
+   4.2     Machine Models ............................................................................................................... 65
+         4.2.1        Phase-Domain Model........................................................................................... 66
+         4.2.2        Voltage-Behind-Reactance Model ...................................................................... 66
+   4.3     Model Discretization for the EMTP Solution................................................................ 68
+         4.3.1        Discretized Phase-Domain Model....................................................................... 69
+         4.3.2        Discretized Voltage-Behind-Reactance Model .................................................. 70
+         4.3.3        Machine-Network Interface................................................................................ 71
+   4.4     Efficient Implementation and Model Complexity ........................................................ 73
+         4.4.1        Trigonometric Functions ..................................................................................... 74
+         4.4.2        Symmetry of Coefficient Matrices...................................................................... 75
+         4.4.3        Model Complexity................................................................................................ 76
+   4.5     Computer Studies............................................................................................................. 77
+
+
+                                                                                                                                               iv
+          4.5.1        Small Time-Step Study ........................................................................................ 77
+          4.5.2        Large Time-Step Study ........................................................................................ 79
+          4.5.3        Error Analysis ...................................................................................................... 83
+          4.5.4        Choice of Reference Frame and Model Accuracy............................................. 84
+    4.6     Discussion ......................................................................................................................... 87
+    4.7     Conclusion ........................................................................................................................ 88
+    4.8     References......................................................................................................................... 89
+
+5 INCLUDING                                   MAGNETIC                                     SATURATION                                         IN
+VOLTAGE-BEHIND-REACTANCE INDUCTION MACHINE MODEL
+FOR EMTP-TYPE SOLUTION..........................................................92
+    5.1     Introduction...................................................................................................................... 92
+    5.2     Magnetically Linear Machine Models ........................................................................... 93
+          5.2.1        The qd Model ....................................................................................................... 94
+          5.2.2        Voltage-Behind-Reactance Model ...................................................................... 95
+    5.3     Representation of Magnetic Saturation ......................................................................... 96
+    5.4     Voltage-Behind-Reactance Formulation Including Magnetic Saturation .................. 99
+    5.5     Model Implementation in EMTP ................................................................................. 102
+    5.6     Case Studies.................................................................................................................... 105
+          5.6.1        Model Verification for Two-Slope Saturation Curve...................................... 107
+          5.6.2        Model Accuracy for Large Time Step .............................................................. 109
+          5.6.3        Computational Efficiency.................................................................................. 111
+    5.7     Discussion ....................................................................................................................... 112
+          5.7.1        Saturation Representation ................................................................................ 112
+          5.7.2        Comparison with PSCAD ................................................................................. 114
+    5.8     Conclusion ...................................................................................................................... 116
+    5.9     References....................................................................................................................... 117
+
+6 APPROXIMATE VOLTAGE-BEHIND-REACTANCE INDUCTION
+MACHINE MODEL FOR EFFICIENT INTERFACE WITH EMTP
+NETWORK SOLUTION ..................................................................120
+    6.1     Introduction.................................................................................................................... 120
+    6.2     Machine-Network Conductance Matrix ...................................................................... 122
+    6.3     Discretized Machine Models ......................................................................................... 124
+          6.3.1        Discretized Phase-Domain Model..................................................................... 125
+          6.3.2        Discretized Voltage-Behind-Reactance Model ................................................ 126
+
+                                                                                                                                                 v
+    6.4     Approximate Voltage-Behind-Reactance Model......................................................... 128
+          6.4.1        AVBR Model Formulation ................................................................................ 128
+          6.4.2        Approximation Error Bound ............................................................................ 133
+    6.5     Case Studies.................................................................................................................... 135
+          6.5.1        Large Time-Step Study ...................................................................................... 135
+          6.5.2        Model Accuracy.................................................................................................. 139
+          6.5.3        Model Efficiency ................................................................................................ 140
+    6.6     Approximation Accuracy Analysis ............................................................................... 141
+          6.6.1        Effect of Machine Parameters and Rotor Speed............................................. 141
+          6.6.2        Case Studies with Machines of Different Ratings ........................................... 143
+    6.7     Discussion ....................................................................................................................... 148
+          6.7.1        Accuracy and Numerical Stability of the AVBR Model ................................. 148
+          6.7.2        Effect of Short-Circuit Ratio............................................................................. 149
+          6.7.3        Application of the Proposed AVBR Model ...................................................... 150
+    6.8     Conclusion ...................................................................................................................... 151
+    6.9     References....................................................................................................................... 152
+
+7 CONCLUSIONS AND FUTURE WORK....................................154
+    7.1     Scope and Application of the Proposed VBR Models................................................. 154
+    7.2     Summary of Work Accomplished................................................................................. 156
+    7.3     Future Work ................................................................................................................... 158
+    7.4     References....................................................................................................................... 160
+
+APPENDICES .................................................................................163
+
+
+
+
+                                                                                                                                               vi
+LIST OF TABLES
+
+
+Table 2.1 Flops and Trig Functions Count per Time Step................................................................ 24
+Table 2.2 Comparison of CPU Times ................................................................................................. 29
+Table 2.3 Eigenvalues of Machine Models......................................................................................... 32
+Table 3.1 Simulation Efficiency Comparisons................................................................................... 50
+Table 3.2 Eigenvalues of Machine models ......................................................................................... 54
+Table 3.3 Simulation Efficiency Comparisons................................................................................... 57
+Table 3.4 Eigenvalues of Machine Models......................................................................................... 58
+Table 4.1 Comparison of T

@@ -1,0 +1,238 @@
+第 46 卷 第 11 期                                                   电 网 技 术                                                    Vol. 46 No. 11
+ 2022 年 11 月                                                 Power System Technology                                           Nov. 2022
+文章编号：1000-3673（2022）11-4267-10                           中图分类号：TM 721               文献标志码：A               学科代码：470·40
+
+
+
+             一种用于电磁暂态仿真的两电平电压源型
+                   换流器解耦模型
+                              刘刚 1，张春强 1，马嘉昊 1，李蕴红 2，王潇 2，
+                                                    汪燕 1，刘晋 1，姚蜀军 1
+                           （1．华北电力大学电气与电子工程学院，北京市 昌平区 102206；
+                            2．华北电力科学研究院有限责任公司，北京市 西城区 100045）
+
+
+                             Two-level Voltage Source Converter Decoupling Model for
+                                       Electromagnetic Transient Simulation
+                         LIU Gang1, ZHANG Chunqiang1, MA Jiahao1, LI Yunhong2, WANG Xiao2,
+                                        WANG Yan1, LIU Jin1, YAO Shujun1
+  (1. School of Electrical and Electronic Engineering, North China Electric Power University, Changping District, Beijing 102206,
+            China; 2. North China Electric Power Research Institute Co., Ltd., Xicheng District, Beijing 100045, China)
+
+
+ABSTRACT: Due to the time-varying nodal matrix of the                       accuracy and effectiveness of the proposed method is verified by
+electromagnetic transient detailed model of the VSC converter,              the results of simulation examples.
+the simulation efficiency is usually low when simulating a large
+                                                                            KEY WORDS: semi-implicit latency decoupling technology;
+power grid of a large-scale new energy station. To solve this
+                                                                            voltage source converter; electromagnetic transient simulation;
+problem, based on the principle of semi-implicit latency
+                                                                            constant nodal admittance matrix; parallel simulation
+decoupling, a decoupling model with the characteristics of
+uncomplicated decoupled electric circuit, invariable nodal                  摘要：由于电压源型换流器(voltage source converter, VSC)
+admittance matrix and convenient parallel computing is                      电磁暂态详细模型导纳矩阵时变，因此对含大规模新能源场
+proposed. Firstly, according to the state equation of the two-level         站的大电网进行仿真时，仿真效率低下。针对这一问题，该
+VSC converter and with the methods of matrix splitting and                  文基于半隐式延迟解耦原理，提出一种解耦电路简单、导纳
+latency technology, the half-step time latency decoupling models            矩阵恒定、可计及换流器内部特性的解耦模型。首先从 VSC
+of the DC-side capacitor-grounded VSC converter and the                     换流器的状态方程出发，利用矩阵分裂和延迟技术，分别构
+DC-side capacitor-ungrounded VSC converter respectively are                 建直流侧电容接地 VSC 换流器和直流侧电容不接地 VSC 换
+constructed, realizing the decoupling and parallelization of the            流器的半步时延模型，实现交直流侧的解耦；然后利用 VSC
+AC and DC sides. Then using the characteristics of the                      上下桥臂纵向换流互斥导通的特点，简化解耦模型参数计算，
+longitudinal commutation and mutually exclusive conduction of               从而使得系统导纳矩阵恒定，进一步提高计算速度。算例结
+the upper and lower arms of the VSC to simplify the calculation             果表明了所提方法在保持较高精度的同时提升了计算速度。
+of the decoupling model parameters so that the system
+admittance matrix remains constant and further improves the                 关键词：半隐式延迟解耦；电压源型换流器；电磁暂态仿真；
+
+calculation efficiency. In addition, the method in this paper               导纳矩阵恒定；并行仿真
+
+accurately retains the internal information of the converter. The           DOI：10.13335/j.1000-3673.pst.2022.0096
+
+                                                                            0 引言
+    基金项目：国家自然科学基金项目(52077077)；冀北电力科学研究
+院科技项目“含多类型新能源发电设备封装模型的大电网电磁暂态联合                                                  随着新型电力系统概念的提出，新能源发电及并
+仿真技术研究”(KJZ2021029)。
+                                                                            网需求进一步扩大，电力系统将呈现出高比例可再生
+    Project Supported by National Natural Science Foundation of China
+(52077077); Science and Technology Foundation of North China Electric       能源占比和高比例电力电子设备接入的“双高”特
+Power Research Institute Co., Ltd. “Research on Electromagnetic Transient   征[1-4]。电压源型换流器(voltage source converter，
+Co-simulation Technology of Large Power Grid With Multi-type New
+                                                                            VSC)具有控制灵活等优点，因而广泛应用于新能源
+Energy       Power       Generation       Equipment        Encapsulation
+Models ”(KJZ2021029).                                                       发电[5-7]。然而，在含有大量风光储场站的大电网的
+4268            刘刚等：一种用于电磁暂态仿真的两电平电压源型换流器解耦模型                          Vol. 46 No. 11
+
+电磁暂态仿真场景中，由于传统的 VSC 详细模型仿        自适应离散事件驱动(flexible adaptive discrete state，
+真速度慢，如果对每台换流器都使用详细模型，系统          FA-DS)算法，利用状态变量进行解耦，但是其本质
+的仿真速度将大幅降低。以某一省级电网为例，目前          上仍是前向欧拉法，数值精度低，并且解耦后模型的
+区内风电场数量已超过 100 座，开展电网全电磁暂态       导纳矩阵仍然时变，降低了仿真效率。
+仿真 10s 过程耗时超过 3h。
+                因此需要研究高效的 VSC        综上所述，目前对大规模风光储场站进行快速
+                 [8]
+换流器电磁暂态仿真模型 。                    仿真时仍存在如下问题：一是由于传统 VSC 详细模
+       因为导纳矩阵随开关动作的时变特性，VSC 详    型的导纳矩阵时变，导致整个大电网的导纳矩阵也
+细模型很大一部分计算量源于导纳矩阵的 LU 重分         时变，从而影响了整个大电网的仿真效率；二是现
+解，使得仿真速度很慢。针对这一特点，文献[9-10]       有的 VSC 换流器改进模型，为了提高仿真效率，大
+提出一种恒导纳开关模型，但是存在着开关虚拟功           多都忽略了换流器的内部损耗，仿真精度需要提高。
+率损耗较大和参数配置复杂的问题。文献[11-12]提           文献[33]提出半隐式延迟解耦电磁暂态并行仿真
+出基于响应匹配的广义小步长模型降低虚拟损耗，           方法(semi-implicit latency decoupling and paralleling
+但由于存在非状态量突变，在开关动作时仍可能存           technology，SILDP)，对交流大电网进行分网，实
+在一定的数值稳定性问题。此外，这 2 种方法都要         现交流电网的并行计算与交流大电网的提速仿真。
+求亚微秒级的步长，限制了仿真效率的提升。             文献[34]利用该方法建立了模块化多电平变换器
+       针对 VSC 开关频率较高，仿真时不得不采用小   (modular multilevel converter，MMC)通用半隐式延迟
+步长而引起仿真速度较慢的问题，可采用忽略换流           解耦模型。文献[35]将半隐式延迟解耦用在拓扑更为
+器内部特性而只对外特性建模的思路。文献[13-16]       复杂的电力电子变压器的建模仿真中。MMC 的半隐
+提出了两电平 VSC 的平均值模型，文献[17]提出       式延迟解耦模型是对桥臂子模块进行建模，然后将子
+分段平均化方法，可计及文献[13-16]中平均值模        模块的解耦模型接入到各桥臂之中，电力电子变压器
+型所忽略的换流器的纹波。为了平衡仿真的效率            的建模也是对各 H 桥、双有源桥(dual active bridge，
+和精度，文献[18]将分段平均法和广义状态空间平         DAB)模块进行解耦，再将各单元按照拓扑进行连接。
+均法结合，提出分段广义平均模型。除了平均值            这 2 种设备中，由于换流器的交流侧相与相之间不存
+模型外，基于傅里叶变换的建模方法同样可以增            在耦合，可以先利用替代定理建立单相桥臂的解耦模
+大仿真步长，提高仿真速度。文献[19]提出动态/         型，再利用叠加定理得到完整的三相解耦模型。
+扩展谐波域法，文献[20]提出了状态空间平均法，             而两电平 VSC 换流器存在 2 种情况：一种是
+文献[21]提出了广义状态空间平均法，文献[22-26]     直流侧电容接地 VSC 换流器，该拓扑由于不存在
+基于动态相量法，以上 3 种方法建立的 VSC 换流       相间耦合，其半隐式延迟解耦模型的推导过程与
+器模型都是 VSC 换流器的复数域模型；文献[27-28]    MMC 和电力电子变压器(power electronic transformer，
+提出宽频时间尺度变换和多频段时间尺度变换的            PET)类似。另一种是直流侧电容不接地的情况。由
+方法进行仿真提速。这些方法都是基于傅里叶变换           于直流侧电容不接地，交流侧相与相之间通过直流
+的方法。当谐波阶数足够多时，模型精度可以接近           电容耦合，回路中会出现 2 个电感，不满足替代定
+详细模型。但是在实际仿真中，由于系统规模庞大，          理，无法简单地用替代定理按相进行分析，因而也
+计算资源有限，为了保证仿真速度，通常只考虑基           不能类似 MMC 和 PET 那样简单地得到半隐式延迟
+波和少数阶谐波。因而上述方法在实际使用过程            解耦电路，进而无法用于 VSC 换流器的交直流侧
+中，虽均可增大仿真步长，但在含有宽频信号的场           以及 VSC 换流器与系统其他部分的解耦。
+景下，存在较大的截断误差，仿真精度不高。                 本文面向 VSC 换流器的高效仿真，研究半隐式
+       为了提高大规模场景中的仿真速度，对换流器进     延迟解耦法在 VSC 换流器中的应用，重点解决直流
+行解耦，采用并行计算是一个有效途径。文献[29]基        电容不接地情况下半隐式延迟解耦方法的适用问题，
+于延迟插入法，实现了直流侧电容接地 VSC 换流器        以期为含大规模新能源场站的大电网快速仿真提供
+的交直流侧解耦，但文中没有涉及直流侧电容不接地          高效模型。文中，首先对直流侧电容接地与直流侧电
+的情况。文献[30]以单个电感或电容为解耦元件，利        容不接地的 2 种 VSC 拓扑列写状态方程并进行分裂
+用前向欧拉法的显式积分特性，实现交直流侧解耦；          和延迟，得到 2 种不同拓扑 VSC 的半隐式延迟解耦
+但由于前向欧拉法的精度和稳定性都较差，这种解耦          模型。既实现了交直流侧的解耦，降低矩阵计算规模，
+方法不适用于开关频繁动作的场景。文献[31-32]提出      又可实现交直流侧的并行计算。然后，根据 VSC 上、
+第 46 卷 第 11 期                                                        电    网   技   术                                                           4269
+
+下桥臂纵向换流互斥导通的特点，在简化解耦模型参                                                       值电阻等效电路如图 2(b)所示，Ru 和 Rd 分别表示上
+数计算的同时，还使得系统导纳矩阵恒定，开关动作                                                       下桥臂的等值电阻。
+时无需 LU 重分解，进一步提高了计算效率。最后通                                                             以电感电流和电容电压为状态变量，根据替代
+过 2 个算例验证本文方法的准确性和有效性。                                                        定理列写状态方程可得：
+                                                                               diA       Ru Rd           Rd            Ru
+1 两电平 VSC 换流器拓扑                                                                L dt   R  R iA  R  R ud1 + R  R ud2  uA
+                                                                                         u     d       u     d       u     d
+       两电平 VSC 换流器一般分为直流侧电容接地和                                                 dud1         1              1             Rd
+                                                                               C1               ud1           ud2           iA  id1
+不接地 2 种拓扑，见图 1 所示，变量定义见附录 D。                                                       dt     Ru  Rd         Ru  Rd        Ru  Rd
+                                                                               
+                                                                                dud2         1              1              Ru
+                                                                               C2               ud2           ud1            iA  id2
+                                                                                  dt     Ru  Rd        Ru  Rd        Ru  Rd
+                                                                                                     (1)
+                                                                                   正常情况下，上下桥臂开关组互斥导通，令
+                                                                              RsumRu+RdRon+Roff，RmulRuRdRonRoff，由式(1)可得：
+                                                                                   diA 
+                                                                                   L dt 
+                                                                                             Req          ku1     ku2   iA  uA 
+                                                                                   C dud1    k            Geq1
+                                                                                                                             
+                                                                                                                      kic2   ud1    id1  (2)
+                      图 1 2 种 VSC 拓扑                                               1 dt   i1
+                Fig. 1 Diagram of VSC topology                                               ki2         kic1   Geq2  ud2   id2 
+                                                                                  C dud2 
+2 两电平 VSC 的解耦                                                                      2 dt 
+
+       半隐式延迟解耦法对系统的状态空间矩阵进行                                                   式中：ReqRmul/Rsum；Geq1Geq2kic1kic21/Rsum；ku1
+分裂，并分成不同的状态变量组，各变量组之间使用                                                       ki1Rd/Rsum；ku2ki2Ru/Rsum。
+不同的积分方法，各状态变量组的半时步延迟解耦得                                                               根据半隐式延迟解耦法，按电感电流和电容电
+以实现。该方法的原理、特点见附录或文献[33]。下                                                     压对状态变量分组。由于 RsumRon+Roff 趋向于无穷
+面将该方法具体应用于 2 种不同拓扑的 VSC 换流器。                                                  大，因此 Geq1Geq2kic1kic20，ReqRmul/RsumRon，
+2.1        直流侧电容接地的 VSC 解耦                                                    式(2)的分裂形式如式(3)所示。
+       在某个给定的开关组合状态下，直流侧电容接                                                             diA 
+                                                                                        L dt 
+地 VSC 电路满足替代定理和叠加定理，因此可先                                                                          Req 0 0   iA 
+利用替代定理建立单相桥臂的解耦模型，再利用叠                                                                  C dud1    0    0 0   ud1  
+                                                                                        1 dt  
+加定理得到完整的 VSC 三相解耦模型。                                                                             0     0 0  ud2 
+                                                                                       C dud2 
+       图 2(a)为 VSC 单相桥臂拓扑。以 A 相为例，                                                      2 dt 
+uA 和 iA 分别表示交流侧对地的相电压和相电流；ud1                                                                      0     ku1 ku2   iA  uA 
+和 ud2 分别表示直流侧 2 个电容的电压；ic1 和 ic2 表                                                                k
+                                                                                                   i1     0     0   ud1    id1        (3)
+示流过 2 个电容的电流；id1 和 id2 表示直流侧输入                                                                     ki2  0     0  ud2   id2 
+电流；Tu 和 Td 分别表示上下桥臂 IGBT 与二极管构
+                                                                                      根据半隐式延迟解耦法对式(3)进行半步延时，
+成的开关组；开关组采用二值电阻模型，导通时
+                                                                              最终得到单相桥臂的半步时延差分方程。
+Ron0.01，关断时 Roff106。VSC 单相桥臂的二
+                                                                               n + 12 n  12    R           0 0  i n + 2  i n  2 
+                                                                                                                             1         1
+                                   id1                             id1         L(iA  iA )   eq                    A          A  t
+                          C1
+                               +
+                                                         C1
+                                                               +               C (u n +1  u n )    0       0 0  u n +1  u n  
+               Tu                  ud1            Ru                ud1        1 d1         d1                       d1           d1  2
+
+      uA            iA   ic1             uA        iA    ic1
+                                                                                     n +1
+                                                                              C2 (ud2    ud2
+                                                                                              n
+                                                                                                )   0       0 0  u n +1  u n 
+                                                                                                                       d2           d2 
+           L                                  L
+                                                                                                                         uAn 
+                                                                                                ku1 ku2  i n + 2 
+                         ic2   +                         ic2                                                      1
+               Td                                              +                                     0                  1
+                                   ud2            Rd                ud2                                    A 
+                                                                                                      0   u n  t  id1 2  t
+                                                         C2
+                          C2
+                                                                                                 0  k                    n+
+                                                                                                     i1
+                                   id2                             id2
+                                                                                                     ki2 d1         n+ 1 
+                         (a) 拓扑                        (b) 等效电路                                  0    0   u n 
+                                                                                                            d2        id2 2 
+              图 2 电容接地 VSC 单个桥臂的拓扑
+           Fig. 2 Topology of a single bridge arm of a                                                                           (4)
+                   capacitor-grounded VSC                                             与式(4)对应的解耦电路如图 3 所示，变量定义
+4270                               刘刚等：一种用于电磁暂态仿真的两电平电压源型换流器解耦模型                                                    Vol. 46 No. 11
+
+见附录 D。其中：Ueq ku2ud2ku1ud1 ，Jeq1ki1iA ，                           整体列写状态方程可得：
+Jeq2ki2iA。各状态变量的迭代式见附录 A.1。                                         dud R4iA  ud R6iB  ud R2iC  ud
+                            iA
+                                                                     C dt  R  R  R  R  R  R  id
+                                                              id1                  1    4        3     6       5   2
+                        L                              +                          diA       diB       R4           R6
+                                                                    uA  uB  L        L                  ud          ud 
+                             Req                           C1
+                                     n +1/2
+                                   J eqy      Jeq1                                 dt        dt R1  R4          R3  R6
+                   uA                                                             R1 R4          RR
+                               +     n +1
+                                   U eq                                                  iA  3 6 iB
+                            Ueq
+                                                        +
+                                                         C2                     R1  R4         R3  R6
+                                              Jeq2         id2
+                                                                                 diB       di        R6           R2
+                                                                      uB  uC  L      L C                ud          ud  (5)
+                                                                                   d t       dt    R3   R6      R5  R2
+           图 3 电容接地 VSC 单个桥臂的解耦电路
+                                                                                  R3 R6          RR
+      Fig. 3 Decoupling circuit of a single bridge arm of                                 iB  5 2 iC
+                 capacitor-grounded VSC                                         R3  R6         R5  R2
+                                                                                  di        di        R2            R4
+       对交流侧每一相采用相同的方法进行解耦，最后                                         uC  uA  L C  L A                   ud          ud 
+通过叠加定理可得到三相完整解耦电路，
+                 如图4 所示，                                                           dt        dt R5  R2          R1  R4
+                                                                                  R5 R2          RR
+变量定义见附录 D。各受控源系数以及相关变量的                                                                   iC  3 6 iA
+                                                                               R5  R2         R3  R6
+表达式见附录 A.2。
+                                                                        类似的，正常情况下，VSC 每相上下桥臂开关
+                                                                    组互斥导通，令 RsumR1+R4R3+R6R5+R2Ron+Roff；
+                                                       n +1/2       RmulR1R4R3R6R5R2RonRoff。为了直观看出解耦电
+                                                     J eqys
+                                                                    路的具体形式，对状态方程(5)进行整合，可得：
+                                                       n +1
+                                                     U eq
+                                                                        dud R4iA  R6iB 

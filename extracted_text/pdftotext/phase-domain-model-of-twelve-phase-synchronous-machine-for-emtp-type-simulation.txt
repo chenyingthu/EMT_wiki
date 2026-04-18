@@ -1,0 +1,196 @@
+                                                              Electrical Power and Energy Systems 143 (2022) 108459
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                             International Journal of Electrical Power and Energy Systems
+                                                            journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Phase-domain model of twelve-phase synchronous machine for EMTP-type
+simulation
+Shilin Gao a , Zhendong Tan b , Yankan Song b ,∗, Ying Chen a,b , Chen Shen a,b , Zhitong Yu b
+a
+    Department of Electrical Engineering, Tsinghua University, 100084, Beijing, China
+b
+    Sichuan Energy Internet Research Institute, Tsinghua University, 610000, Chengdu, China
+
+
+
+ARTICLE                  INFO                               ABSTRACT
+
+Keywords:                                                   The twelve-phase synchronous machines are widely used for the power supply of integrated power systems on
+CC-PD                                                       board. This paper formulates two phase-domain (PD)-type models of twelve-phase synchronous machines for
+Constant conductance model                                  the simulation of nodal analysis-based electromagnetic transients programs (i.e., EMTP-type simulation). The
+Electromagnetic transient simulation
+                                                            PD model for the twelve-phase machine is first formulated, which avoids the interface error in the qd0 model. It
+EMTP
+                                                            is well-suitable for the implementation in EMTP-type simulators. To further improve the simulation efficiency of
+Integrated power system
+PD
+                                                            a power system with twelve-phase machines, a constant conductance PD (CC-PD) model is proposed, avoiding
+Phase-domain model                                          the re-factorization of the network conductance matrix at every time-step. Test results demonstrate the accuracy
+Twelve-phase synchronous machine                            and efficiency of the two proposed PD-type models for the EMTP-type solution.
+
+
+
+1. Introduction                                                                               machines for EMTP-type simulation is urgent and meaningful for the
+                                                                                              analyses of power systems with twelve-phase synchronous machines.
+    In industrial applications such as aviation, ship and electric vehicle,                       In the EMTP-type simulations, various kinds of three-phase machine
+there are stringent demands for power density, power quality and                              models, such as qd0 [13], voltage-behind-reactance (VBR) [14–16] and
+torque ripple of power supplies, especially integrated power systems on                       phase-domain (PD) [17–19] models have been formulated. In the qd0
+vessels and airplanes [1,2]. In these scenarios, three-phase synchronous                      model, machines are equivalent to predicted current sources when
+machines are difficult to meet the actual demand. In contrast, multi-                         interfaced with the network model, where numerical instability may
+phase machines have high power density, small torque ripple and high                          happen. As alternatives, the VBR and PD models are directly interfaced
+reliability [3,4], and are widely used in the above areas [5]. Among                          with the network solution and are stable even with large time-steps.
+multi-phase machines, the twelve-phase synchronous machine is one                             Following the idea of three-phase synchronous machine modeling, this
+of the most promising machines [6] and has been successfully applied                          paper formulates two PD-type models of the twelve-phase synchronous
+to the power supply of an integrated power system on board [7].                               machine for the EMTP-type solution, which facilitates the EMT anal-
+    For the twelve-phase synchronous machines, the modeling is the
+                                                                                              ysis of integrated power systems with twelve-phase machines. The
+basis of their design, operation and control and has been an active
+                                                                                              continuous-time model for a twelve-phase synchronous machine is first
+topic of research and application. In [8], a continuous twelve-phase
+                                                                                              derived, and the way to obtain the parameters in the phase domain is
+machine model considering magnetic coupling is formulated. In [9], a
+                                                                                              addressed. Based on this, the discretized PD model is derived for the
+continuous state-space model of a twelve-phase machine is established
+                                                                                              EMTP-type solution. Then, to improve the computational efficiency of
+and simulated in MATLAB/Simulink. To analyze the electromagnetic
+                                                                                              EMTP network solution with PD models, a constant conductance PD
+transient (EMT) characteristics of a power system with twelve-phase
+                                                                                              (CC-PD) model is formulated. Furthermore, aiming at improving the
+synchronous machines, the power system with twelve-phase machine
+models should be constructed in the nodal analysis-based EMT pro-                             accuracy of the PD models in large time-step simulation, an embedded
+grams (i.e., EMTP-type programs) [10–12], which are extensively used                          small step algorithm is proposed.
+by power engineers and researchers in industry and academia all over                              The contributions made in this paper are threefold. (1) To the
+the world as standard simulation tools. However, there is currently no                        best of the authors’ knowledge, this is the first time that twelve-phase
+EMT model of twelve-phase machine available in the field of EMTP-                             synchronous machines have been modeled for the EMTP-type solution.
+type simulation. Formulating the models of twelve-phase synchronous                           It fills the gap in EMT simulation for an integrated power system
+
+
+     ∗ Corresponding author.
+       E-mail address: songyankan@cloudpss.net (Y. Song).
+
+https://doi.org/10.1016/j.ijepes.2022.108459
+Received 25 March 2022; Received in revised form 2 June 2022; Accepted 29 June 2022
+Available online 15 July 2022
+0142-0615/© 2022 Elsevier Ltd. All rights reserved.
+S. Gao et al.                                                                            International Journal of Electrical Power and Energy Systems 143 (2022) 108459
+
+
+                                                                               2. Continuous-time model of twelve-phase synchronous machine
+   Nomenclature
+
+    𝝀s , 𝝀r              Stator and rotor flux linkage vectors.                2.1. Continuous-time model of twelve-phase machine
+    𝒆h , 𝒊h              Equivalent history voltage and current
+                                                                                   The stator windings of a twelve-phase synchronous machine consist
+                         sources.
+                                                                               of four groups of three-phase windings, which are separated by an
+    𝒊s , 𝒊r              Stator and rotor current vectors.                     electrical angle of 𝛽 = 𝜋∕12. Each group has its own star point and
+    𝑳𝑖r , 𝑳r𝑖            Inductance matrices between 𝑖th stator                the star points are isolated. Besides, the three-phase windings are
+                         group and rotor windings.                             symmetrically distributed in space, and the electrical angle between the
+    𝑳𝑖𝑗                  Mutual-inductance matrix between 𝑖th and              phases in a winding group is 𝛼 = 𝜋∕3. These can be illustrated by Fig. 1,
+                         𝑗th stator winding groups.                            where the phase electromagnetic force vectors of the stator windings in
+    𝑴 𝑖𝑗
+      s                  Inductance matrix between 𝑖th and 𝑗th                 electrical degrees are presented.
+                         stator winding groups depending on their                  To make the twelve-phase synchronous machine model manageable,
+                         positions.                                            several idealized characteristics are assumed, which are reasonable for
+    𝑴 𝑖𝑗                 Second-order harmonic inductance matrix               system studies:
+      t
+                         between 𝑖th and 𝑗th stator windings.                  (1) The permeance of each portion of the magnetic circuit is constant,
+    𝑹s𝑠 , 𝑹r             Stator and rotor resistance matrices.                     which means that the saturation is neglected.
+    𝑹eq , 𝑮eq            Equivalent resistance and conductance ma-             (2) Effects of hysteresis are negligible.
+                         trices.                                               (3) The resistance of each winding is constant.
+    𝒖s𝑖 , 𝒊s𝑖 , 𝝀s𝑖      Voltage, current and flux linkage vectors of
+                                                                                   According to the structure and the aforementioned assumptions of a
+                         𝑖th (𝑖 = 1 … 4) group of stator windings.
+                                                                               twelve-phase machine, the voltage equation of it in physical variables
+    𝒖s , 𝒖r              Stator and rotor voltage vectors.
+     qd0 qd0                                                                   and abc coordinates can be expressed as:
+    𝒖s , 𝒊s              Voltage and current vectors of stator wind-           [ ] [             ][ ]         [ ]
+                         ings in qd0 coordinates.                               𝒖s     𝑹s𝑠     𝟎   −𝒊s     d 𝝀s
+    [ ]                                                                             =                    +                                        (1)
+                                                                                𝒖r       𝟎    𝑹r    𝒊r     d𝑡 𝝀r
+     𝑳                   Rotor and stator mutual-inductance matrix.
+    [ r𝑖 ]𝑖=1,2,3,4
+     𝑳𝑖r 𝑖=1,2,3,4       Stator and rotor mutual-inductance matrix.            whose expanded form can be represented as [20]:
+    [𝑳𝑖𝑗 ]𝑖,𝑗=1,2,3,4    Stator inductance matrix.                             ⎡𝒖s1 ⎤ ⎡𝑹s         𝟎      𝟎          𝟎      𝟎 ⎤ ⎡−𝒊s1 ⎤       ⎡𝝀s1 ⎤
+     𝑁 +1                                                                      ⎢𝒖 ⎥ ⎢ 𝟎           𝑹s     𝟎          𝟎      𝟎 ⎥ ⎢−𝒊s2 ⎥       ⎢𝝀 ⎥
+    𝜏q q                 Time constant of the added damper wind-               ⎢ s2 ⎥ ⎢                                        ⎥⎢     ⎥ d ⎢ s2 ⎥
+                                                                               ⎢𝒖s3 ⎥ = ⎢ 𝟎                                𝟎 ⎥ ⎢−𝒊s3 ⎥ +                           (2)
+                                                                                                                                         d𝑡 ⎢⎢ s3 ⎥⎥
+                         ing.                                                                     𝟎      𝑹s         𝟎                         𝝀
+                                                                               ⎢𝒖s4 ⎥ ⎢ 𝟎         𝟎      𝟎          𝑹s     𝟎 ⎥ ⎢−𝒊s4 ⎥        𝝀
+    𝜃r                   Rotor position angle.                                 ⎢ ⎥ ⎢                                           ⎥⎢     ⎥      ⎢ s4 ⎥
+                                                                               ⎣ 𝒖r ⎦ ⎣ 𝟎         𝟎      𝟎          𝟎      𝑹 r ⎦ ⎣ 𝒊r ⎦      ⎣ 𝝀r ⎦
+    𝐿critical            Critical leakage inductance for the addi-
+                         tional damper winding.                                where the detailed expressions of the resistance submatrices are given
+    𝑀s , 𝑀t              Amplitudes of the elements in 𝑴 𝑖𝑗      𝑖𝑗            in (A.1) and (A.2) of Appendix A. The flux linkage equation of the
+                                                         s and 𝑴 t ,
+                         respectively.                                         twelve-phase machine can be expressed as:
+                                                                                [ ] [[𝑳 ]                [ ]           ]
+                                                                                                          𝑳𝑖r 𝑖=1,2,3,4 [−𝒊 ]
+    𝑁q , 𝑁d              The number of q-axis and d-axis dampers.                𝝀s       𝑖𝑗 𝑖,𝑗=1,2,3,4                    s
+                                                                                    = [ ]                                                          (3)
+    𝑍q′′ , 𝑍d′′          Equivalent q-axis and d-axis subtransient               𝝀r      𝑳r𝑖                 𝑳rr         𝒊r
+                                                                                                  𝑖=1,2,3,4
+                         impedances.
+                                                                               whose expanded form can be represented as:
+    𝑍aq , 𝑍ad            Equivalent q-axis and d-axis magnetizing
+                         impedances.                                           ⎡𝝀s1 ⎤ ⎡𝑳11         𝑳12        𝑳13        𝑳14   𝑳1r ⎤ ⎡−𝒊s1 ⎤
+                                                                               ⎢𝝀 ⎥ ⎢𝑳             𝑳22        𝑳23        𝑳24   𝑳2r ⎥ ⎢−𝒊s2 ⎥
+    𝑍lf d                Equivalent field winding impedances.                  ⎢ s2 ⎥ ⎢ 21                                         ⎥⎢      ⎥
+     𝑗
+    𝑍lkq     𝑗
+          , 𝑍lkd         Equivalent damper winding impedances.                 ⎢𝝀s3 ⎥ = ⎢𝑳31       𝑳32        𝑳33        𝑳34   𝑳3r ⎥ ⎢−𝒊s3 ⎥                       (4)
+      𝑁 +1
+                                                                               ⎢𝝀s4 ⎥ ⎢𝑳41         𝑳42        𝑳43        𝑳44   𝑳4r ⎥ ⎢−𝒊s4 ⎥
+    𝑍lkqq                Impedance of the added damper winding.                ⎢ ⎥ ⎢                                               ⎥⎢      ⎥
+                                                                               ⎣ 𝝀r ⎦ ⎣ 𝑳r1        𝑳r2        𝑳r3        𝑳r4   𝑳rr ⎦ ⎣ 𝒊r ⎦
+                                                                               where 𝑳𝑖𝑗 (𝑖 = 1, … , 4; 𝑗 = 1, … , 4) consists of three parts and can be
+                                                                               represented as:
+
+with twelve-phase machines and presents a comprehensive example for            𝑳𝑖𝑗 = 𝑳𝑖𝑗
+                                                                                      ls
+                                                                                         + 𝑴 𝑖𝑗   𝑖𝑗
+                                                                                             s + 𝑴t .                                                              (5)
+modeling the twelve-phase machine under the umbrella of EMTP-type                 In (5),   𝑳𝑖𝑗
+                                                                                              represents the leakage mutual-inductance matrix be-
+                                                                                             ls
+solution. (2) The PD and CC-PD models for the twelve-phase machine             tween 𝑖th and 𝑗th stator winding groups. It is not considered in three-
+are formulated. The accuracy and efficiency of the two models with             phase machines but needs to be taken into account in multi-phase
+different time-steps are demonstrated by both theoretical analyses and         machines [21], which can be represented as:
+test results. (3) The proposed two models can be readily used for                    ⎡ 𝑙s(𝑗−𝑖)       𝑙s(𝑗−𝑖+8)      𝑙s(𝑖−𝑗+8) ⎤
+investigating the steady-state and transient characteristics of power          𝑳𝑖𝑗 = ⎢𝑙s(𝑖−𝑗+8)       𝑙s(𝑗−𝑖)       𝑙s(𝑗−𝑖+8) ⎥                                    (6)
+                                                                                ls   ⎢                                        ⎥
+systems with twelve-phase machines. Especially, test results indicate                ⎣𝑙s(𝑗−𝑖+8)      𝑙s(𝑖−𝑗+8)       𝑙s(𝑗−𝑖) ⎦
+that the CC-PD model can be adopted in real-time EMT simulations for
+                                                                               where 𝑙s𝑘 (𝑘 = −11, − 10, … , − 1, 1, … , 11) is the leakage mutual-
+integrated power systems.                                                      inductance between two windings separated by an electrical angle of
+    The remainder of this paper is organized as follows. The continuous-       𝑘 × 𝛽, and 𝑙s0 is the leakage self-inductance of any stator winding.
+time model of a twelve-phase synchronous machine is formulated in              They satisfy (7) due to the symmetry of the spatial locations, which
+Section 2. Section 3 derives the discretized PD model of a twelve-phase        means that some are unnecessary. For example, the leakage mutual-
+synchronous machine for EMTP-type solution. To improve computa-                inductance between windings a1 and a2 is the additive inverse of the
+                                                                               leakage mutual-inductance between windings a1 and b4 .
+tional efficiency, a CC-PD model is presented in Section 4. Section 5           {
+validates the accuracy and efficiency of the two proposed PD-type                 𝑙s𝑘 = −𝑙s(12−𝑘)
+                                                                                                                                                (7)
+models. Conclusions are drawn in Section 6.                                       𝑙s𝑘 = 𝑙s(−𝑘) .
+
+                                                                           2
+S. Gao et al.                                                                                         International Journal of Electrical Power and Energy Systems 143 (2022) 108459
+
+
+                                                                                           with the details of 𝑳qd0 (𝜃) are presented in Appendix C. It can be found
+                                                                                           from (C.4) of Appendix C that the stator inductance parameter set in
+                                                                                           qd0 coordinates is:
+                                                                                            {                           }
+                                                                                              𝐿𝑘qm , 𝐿𝑘dm , 𝐿𝑘qdm , 𝐿𝑘0m , 𝑘 = 0, … , 3                          (11)
+
+                                                                                           where 𝐿𝑘qdm (𝐿𝑘qm , 𝐿𝑘dm , 𝐿𝑘0m ) represents the mutual inductance between
+                                                                                           the q-axis (q-axis, d-axis, 0-axis) and d-axis (q-axis, d-axis, 0-axis) of two
+                                                                                           stator windings separated by an electrical angle of 𝑘×𝛽. The parameters

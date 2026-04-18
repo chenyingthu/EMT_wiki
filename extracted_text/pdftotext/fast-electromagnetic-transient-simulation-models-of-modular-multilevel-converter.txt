@@ -1,0 +1,312 @@
+第 39 卷 第 1 期                                           电 网 技 术                                                Vol. 39 No. 1
+ 2015 年 1 月                                         Power System Technology                                       Jan. 2015
+文章编号：1000-3673（2015）01-0257-07                   中图分类号：TM 721           文献标志码：A            学科代码：470·4051
+
+
+
+        模块化多电平换流器快速电磁暂态仿真模型
+                                    喻锋 1，王西田 1，林卫星 2，解大 1
+        （1．电力传输与功率变换控制教育部重点实验室(上海交通大学)，上海市 闵行区 200240；
+              2．强电磁工程与新技术国家重点实验室(华中科技大学)，湖北省 武汉市 430074）
+
+
+       Fast Electromagnetic Transient Simulation Models of Modular Multilevel Converter
+                                    YU Feng1, WANG Xitian1, LIN Weixing2, XIE Da1
+               (1. Key Laboratory of Control of Power Transmission and Conversion(Shanghai Jiao Tong University),
+                                Ministry of Education, Minhang District, Shanghai 200240, China;
+            2. State Key Laboratory of Advanced Electromagnetic Engineering and Technology(Huazhong University of
+                                Science and Technology), Wuhan 430074, Hubei Province, China)
+
+
+ABSTRACT: To shorten the time expended in electromagnetic         电磁暂态过程的缺陷。为了进一步提高模型的仿真速度，通过
+transient simulation for modular multilevel converter (MMC),      简化 MMC 的电压均衡控制及子模块状态的差异性，建立了数
+two kinds of fast simulation models are proposed. Through         值计算平均值模型。在 PSCAD/EMTDC 上搭建 MMC-HVDC
+analyzing the principle of the sub-module of MMC, it is put       模型，对所提出的快速仿真模型及仿真方法的有效性进行了
+forward to define the bridge arms of MMC as a detailed            验证。
+numerical calculation model, which is composed of a
+                                                                  关键词：模块化多电平换流器；数值计算模型；平均值模型；
+self-defined numerical calculation model and controlled
+                                                                  混合模型仿真方法；电磁暂态仿真
+voltage source; on the basis of this model, a simulation method
+                                                                  DOI：10.13335/j.1000-3673.pst.2015.01.039
+for a hybrid model, which combines electromagnetic transient
+model of independent sub-module with numerical calculation        0 引言
+model for common sub-module, is designed to remedy the
+                                                                       随着电力电子技术发展，模块化多电平换流器
+defect that it is hard for numerical calculation model to
+simulate electromagnetic transient process of sub-module. To      (modular multilevel converter，MMC)以其高度模块
+further improve simulation speed of this model, through           化的结构、具有公共直流母线、便于工程实现的优
+simplifying the voltage balancing control of MMC and the          点 在 高 压 直 流 输 电 (high-voltage direct current ，
+difference among sub-modules an averaged model of numerical       HVDC)方向得到大力推广。采用较多电平数的模块
+calculation is established. An MMC-HVDC model is
+                                                                  化多电平换流器型高压直流输电(MMC-HVDC)可
+constructed on a platform of PSCAD/EMTDC, and the
+effectiveness of the proposed fast numerical calculation models
+                                                                  避免器件直接串联带来的均压问题，对交流电网的
+and hybrid simulation method are verified.                        谐波影响也较小，成为了高压直流输电重点发展方
+                                                                  向[1]。随着 MMC-HVDC 不断向更高的传输功率及
+KEY WORDS：MMC; numerical calculation model; averaged
+model; hybrid model simulation method; electromagnetic            直流电压等级发展，为了改善接入交流系统的波形
+transient simulations                                             质量、减小半导体器件的损耗以及解决器件耐压的
+摘 要 ：针 对 模 块 化 多电 平换流 器 ( m o d u l a r m u l t i l e v e l       限制，都需要提高 MMC 级联子模块数(sub-module，
+converter，MMC)电磁暂态仿真耗时过长的问题，提出了 2                                 SM)[2] 。由西门子公司承建的 MMC-HVDC 工程
+种 MMC 快速仿真模型。通过分析 MMC 子模块原理，提出                                    Trans Bay Cable Project，其额定容量为 200 MW，
+将 MMC 桥臂等效为自定义数值计算模块与受控电压源组                                       单个桥臂串联 200 个子模块，双端系统共有 2 592 个
+合的数值计算详细模型；并在该模型的基础上设计了一种将
+                                                                  子模块[3]。随着级联数的增加，MMC 内部包含的
+独立子模块电磁暂态模型和一般子模块数值计算模型结合
+                                                                  电力电子器件也将相应大幅增加，这无疑将极大降
+的混合模型仿真方法，弥补了数值计算模型难以模拟子模块
+                                                                  低 MMC 电磁暂态仿真计算的速度。MMC-HVDC
+    基金项目：国家自然科学基金项目(51277119)。                                    具有有功无功独立控制、无需无功补偿、潮流翻转
+    Project Supported by National Natural Science Foundation of
+China(51277119)。
+                                                                  无需改变电压极性的优点，使其适于构建多端直流
+258                       喻锋等：模块化多电平换流器快速电磁暂态仿真模型                                                 Vol. 39 No. 1
+
+输电及直流电网[4-6]，而集合多个 MMC 的大型直流                    切，任意时刻保持同时投入的子模块总数为 N，可
+系统的仿真研究对现有模型适用性提出了新的挑                           维持直流电压 Udc 恒定。通过上、下桥臂投入子模
+战。因此设计一种适合大规模 MMC 仿真研究的计                        块个数变化跟踪控制系统解调电压，整个桥臂可等
+算快速、精度高及通用性强的模型具有重要意义。                          效为受控电压源[14]。图 2 为 MMC 中常采用的半 H
+      国内外文献已就 MMC 建模问题开展了大量的                    桥型子模块(half-bridge SM，HBSM)，每个子模块
+研究工作。文献[7]将开关函数和瞬时功率结合，建                        主要由 2 个 IGBT 开关 T1、T2，2 个反并联二极管
+立 MMC 的时域解析数学模型；但该模型不能用于                        D1、D2，及直流储能电容 C 组成。图 2 中 IRM、
+电磁暂态仿真研究。文献[8]将绝缘栅双极型晶体管                        USM、Uc 分别为桥臂电流、子模块端口电压和电容
+(insulated gate bipolar transistor，IGBT)与反并联二   电压，K2 为晶闸管，当直流母线发生双极短路时，
+极管替换为断路器，减少了电力电子器件的数量，                          晶闸管导通，保护 IGBT 及二极管不被短路电流
+一定程度上实现仿真提速；但随着 MMC 电平数的                        损坏[11]。
+                                                                                     相单元
+增加，该方法仿真用时显著增长。文献[9]提出将                                                                           +
+                                                                   SM1        SM1     SM1
+MMC 串联结构分解为独立的子模块及受控电压源
+                                                                   SM2        SM2     SM2
+组合方法(本文统称为分解模型)，在保证仿真精度                               上桥臂
+                                                                                                   Udc/2
+                                                                   SMn        SMn     SMn
+的前提下，仿真速度显著提升；但对于超大规模的
+                                                       A
+MMC，其分解后数目巨大的电力电子器件使其电                                 B                                    Udc    O
+                                                       C
+磁暂态仿真计算仍然需要较长时间。文献[10]将子
+                                                                   SM1        SM1     SM1         Udc/2
+模块中串联半导体器件简化为可变电阻，将 MMC                                下桥臂         SM2        SM2     SM2
+转化为两端口戴维南电路，在保证仿真精度的前提
+                                                                   SMn        SMn     SMn         -
+下极大地提高了 MMC 模型电磁暂态仿真速度；但
+                                                                   图 1 MMC 结构图
+该方法采用封装及复杂的等效使其扩展性及用户
+                                                               Fig. 1 Schematic of MMC
+友好度受到限制，且该方法不能模拟 MMC 子模块
+内部故障的电磁暂态过程。文献[11]在最近电平控                                                      T1
+制(nearest level control，NLC)的基础上建立了 MMC
+                                                                              I RM
+平均值模型，然而该模型简化了子模块电容电压的                                         
+                                                                                       UC
+
+波动规律，一定程度上改变了 MMC 的外特性。文
+                                                             U SM        K2
+献[12-13]对现有 MMC 模型的特性及仿真计算精度                                                  T2
+                                                               
+进行了比较总结，指出基于数值计算的 MMC 模型
+                                                                     图 2 子模块结构图
+具有较高的精度；而现有的平均值模型在电磁暂态
+                                                                   Fig. 2 Schematic of SM
+过程中的精度与传统模型存在一定差距。
+                                                2 数值计算详细模型
+      以上分析表明对于涉及子模块内部电磁暂态
+过程，或者对于多端直流输电等大规模集成系统应                          2.1   数值计算详细模型
+用场合，现有模型仿真处理能力略显不足，为此本                                子模块中电容接入状态 Sc 与 IGBT 导通的关系
+文提出了 MMC 数值计算详细模型及数值计算平均                        可归纳为：1）当 MMC-HVDC 运行于稳态时。T1
+值模型。这 2 种模型都完整地保留了 MMC 电容电                      导通、T2 关断，电容为接入状态，此时 Sc=1；T1
+压的波动及内部的环流特性，即与传统的 MMC 模                        关断、T2 导通，电容为退出状态，此时 S c =0。
+
+型的外特性高度一致。为了能够模拟子模块内部电                          2）当 MMC-HVDC 发生直流线路双极短路且未闭
+                                                锁时。子模块将流过较大的负电流，电容电压迅速
+磁暂态过程，在详细数值计算模型的基础上设计了
+                                                     此时无论 T1 与 T2 处于何种触发状态，
+                                                降低至负值。
+混合模型仿真方法。在 PSCAD/EMTDC 平台上搭
+                                                电容均被 D2 短路，电容为退出状态，Sc=0。
+建了 MMC-HVDC 仿真模型对提出仿真模型及仿真
+                                                  当电容处于接入状态时，子模块输出电容电
+方法的仿真精度和仿真速度进行了验证。
+                                                压；当电容处于退出状态时，子模块输出电压为 0。
+1     MMC 基本原理                                  则子模块端口电压与电容电压的关系可表示为
+      图 1 为 MMC 通用拓扑结构，换流器由 3 个相                     U SM = ScU c + U con , Sc = 1,0 (1)
+单元组成，每相上、下桥臂各有 N 个子模块配合投                        式中 Ucon 为半导体开关器件通态压降。IGBT 和二
+第 39 卷 第 1 期                                             电    网   技   术                                                 259
+
+极管的特性参数可由厂家提供的数据提取及曲线
+拟合得到[15-16]，其特性可表示为
+             U con = R0 I con + U 0                        (2)
+式中：R0 为半导体器件正向导通电阻；U0 为 IGBT
+的擎住电压或者反并联二极管的门槛电压；Icon 为
+流过半导体开关器件的电流。电磁暂态仿真软件
+PSCAD/EMTDC 中的电力电子器件由理想开关、正
+向压降 UFD 及导通时较小阻值的 Ron 或者关断时较
+大阻值的 Roff 模拟。出于对比的需要，将式(2)中 R0
+取半导体材料的导通电阻 Ron ， U0 取其正向压降
+                                                                                    图 3 数值计算详细模型
+UFD，则式(2)表示的导通特性与 PSCAD/EMTDC 中                                       Fig. 3   Schematic of proposed numerical calculation
+的半导体器件一致。                                                                                detailed model
+     IGBT 与二极管的导通情况可根据 IRM 及 Sc 来                                 同，不再重复介绍)，根据以上信号判断电容器接入
+判断：若反并联二极管导通，则式(2)中 R0、U0 选                                       状态，然后将式(4)计算得到的桥臂内 N 个子模块电
+取为二极管特性参数，否则 R0、U0 选取为 IGBT 特                                     容电压集合 Uc[N]反馈给均压控制，并将式(5)计算
+性参数。因此子模块中半导体器件压降 Ucon，随着                                         得到的桥臂电压作为受控电压源的控制输入。
+电力电子器件开关状态及电流方向而改变，可以总                                                    为了能够模拟 MMC 闭锁功能，在模型中增加
+结为                                                                了开关和晶闸管。当 MMC 控制系统检测到直流双
+         Ron,diode  I RM + U FD,diode , I RM > 0 & Sc = 1       极短路故障时，代表电容器组的受控电压源将被开
+        
+         Ron,IGBT  I RM  U FD,IGBT , I RM < 0 & Sc = 1         关从电路中断开，同时触发晶闸管模拟子模块中
+U con =                                                    (3)
+         Ron,IGBT  I RM + U FD,IGBT , I RM > 0 & Sc = 0         K2 的闭锁功能[12]。
+         Ron,diode  I RM  U FD,diode , I RM < 0 & Sc = 0           数值计算模型采用数值计算代替了子模块电
+        
+式中下标 diode 与 IGBT 分别表示 diode 型及 IGBT                              磁暂态仿真，节省了大量仿真计算时间；保留了
+型半导体器件。                                                           MMC 电路主体结构，具有直观性强、建模简单的
+     根据电容器充放电原理，SM 中电容电压 Uc                                       特点；开放了开关控制量输入及电容电压输出，可用
+与 IRM 的关系可表示为式(4)，IRM 实际流向与图 2                                    于桥臂间环流分析、电容均压策略等各方面的研究。
+参考方向相同取正值。                                                        2.2     混合模型仿真方法
+             Sc t +ΔT                                                     基于数值计算 MMC 模型若要模拟子模块内部
+             C t
+        U c (t + T ) = U c (t ) +
+                      I RM ( τ )dτ (4)
+                                                                  的电容器、半导体器件故障等涉及子模块内部拓扑
+式中：C 为子模块的电容值；T、t 分别为仿真步                                         结构的电磁暂态过程，需要针对不同的故障建立复
+长和仿真开始时间。桥臂电容器组输出电压 URM 为                                         杂的数学模型，可行性不强。为此，本文在数值计
+串联于该桥臂的各子模块输出电压之和，可表示为                                            算详细模型的基础上设计了一种可用于研究 MMC
+                   N           N
+          U RM =  U SMj =  (U conj + U c j  Sc j )      (5)    子模块内部电磁暂态过程的混合模型仿真方法。
+                  j =1         j =1                                 MMC 桥臂内子模块可分为 2 类：需要研究内
+式中：Ucj 表示桥臂内第 j 个子模块的电容电压；Scj                                     部故障的特殊子模块和一般子模块。MMC 桥臂可
+表示其子模块接入状态。                                                       分解为独立子模块组与受控电压源的组合，不影响
+     根据以上分析可建立 MMC 桥臂的数值计算详                                       仿真计算的精度[9]，为了能够研究子模块内部的电
+细模型，如图 3 所示。该模型每个桥臂均由数字计                                          磁暂态过程，本文设计一种将独立子模块的电磁暂
+算详细模块(numerical calculation detailed module，                      态模型与数值计算模型相结合的混合仿真方法。对
+NCDM)及受控电压源组成。首先由电压调制策略计                                          于一般子模块，其状态由 NCDM 计算得到；对于
+算投入子模块个数 Non，然后 NCDM 接收均压控制                                       特殊子模块则分别建立其独立子模块模型，通过电
+计算得到桥臂内 N 个子模块的开关指令集合 ST[N]                                       磁暂态仿真软件提供的故障功能模块模拟子模块
+及测量得到的各桥臂电流 IRM(其中图 3 中 IRM 下标                                    内部故 障， 并将独 立子 模块仿 真计 算结果 替换
+up 代表上桥臂、dn 代表下桥臂，A、B、C 分别表                                       NCDM 相应的数据。混合模型的结构如图 4 所示。
+示三相系统中的三相。桥臂电压 URM 的标注方式相                                         具体实现方法如下：
+260                                喻锋等：模块化多电平换流器快速电磁暂态仿真模型                                            Vol. 39 No. 1
+
+                                                        值作为本次仿真计算的初始值 Uc0。则桥臂电容器
+                                                        组输出电压可以表示为
+                                                                U RM = N on  U c_on                             (7)
+                                                            在仿真步长内，导通子模块组储存能量的变化
+                                                        量E 为导通子模块吸收的能量，即
+                                                                    1          2
+                                                                ΔE = N on C (U c_on  U c02 ) (8)
+                                                                    2
+                    图 4 混合桥臂模型                             本步仿真结束时相应的桥臂内存储总能量 E 可
+      Fig. 4   Hybrid numerical calculation arm model
+                                                        以表示为
+      1 ） NCDM 增 加 N 维 外 部 数 据 接 收 端 口
+                                                                        1 N         1
+USM_EX[N]、Uc_EX[N]及外部控制端口 SEX[N]。当桥                                  E = C  U c2j = NCU c02 + ΔE                (9)
+                                                                        2 j =1      2
+臂内第 j 个子模块外部控制端口 SEXj 对应的数值为
+                                                            将桥臂存储能量在所有子模块间平均可得
+1 时，NCDM 的对应子模块端口电压 USM_j 及电容
+电压 Uc_j 由其对应的外部输入数据 USM_EXj 及 Uc_EXj                                   U cavg = U c02 + (2 / CN )ΔE            (10)
+替换，若为 0 则采用 NCDM 内部计算数据。                                式中 Ucavg 为桥臂电容电压储存能量均值，它将作
+      2）可选取桥臂内任意 m 个子模块作为研究对                            为下一步仿真运算电容电压的初值。
+象，m 的取值范围为 1~N，建立其独立子模块组模                                   而对应于直流线路短路且换流器未闭锁，电容
+型，并根据研究需要，由电磁暂态仿真软件提供的                                  电压值降为负值的情形，此时桥臂电容被 D2 短路，
+故障功能模块模拟子模块的故障状态，然后将其仿                                  电容电压不变，桥臂电容器组输出电压为 0，即
+真数据 USM_EXj 及 Uc_EXj 分别接入 NCDM。                                  U cavg = U c0
+                                                                                (11)
+                                                                  U RM = 0
+3 数值计算平均值模型
+                                                          根据以上分析可建立数值计算平均值模型，如
+      数值计算详细模型能够模拟各个子模块的运
+                                                        图 5 所示，其中 R 为桥臂内所有电力电子器件的等
+行状态，可用于电容电压均衡控制策略研究。然而
+                                                        效阻抗，可有 MMC 损耗评估得到[15]。该模型由数
+电压均衡控制算法一般需对子模块电容电压进行
+                                                        字计算平均值模块 (numerical calculation averaged
+排序，大量子模块电容电压的排序及积分计算一定
+                                                        module，NCAM)及受控电压源组成。首先 NCAM
+程度上降低了模型的计算速度。当 MMC 应用于多
+                                                        接收电压调制策略计算得到投入子模块数 Non 及桥
+端直流输电或者直流电网时，该类问题更为严重。
+                                                        臂电流量测信号，然后由式(7)或者式(11)计算得到
+文献[11]提出了一种 MMC 平均值模型，具有极高
+                                                        的桥臂电压作为受控电压源的输入。同样在模型中
+的仿真速度；然而该模型的简化过程一定程度上影
+                                                        增加了开关和晶闸管以模拟 MMC 闭锁功能，其控
+响了 MMC 的外特性，降低了仿真计算的精度[12-13]。
+                                                        制方法与详细模型相同。
+为此，本文在数值计算详细模型的基础上，提出了
+一种在能够不改变 MMC 外特性的平均值模型。该
+模型将子模块状态划分为 2 种：导通状态和退出状
+态。导通状态的子模块在仿真步长内完成充放电过
+程；退出状态的子模块则保持其电压值不变；将调
+制策略计算得到的导通子模块数 Non 与导通电容电
+压的乘积作为桥臂输出电压；最后将导通子模块吸
+收或者放出的能量在所有的子模块间平均，其具体
+                                                                     图 5 数值计算平均值桥臂模型
+的实现方法论述如下：                                                Fig. 5   Schematic of proposed numerical calculation
+      导通状态及退出状态的电容电压分别为 Uc_on、                                           averaged arm model
+
+Uc_off，根据式(4)可得其计算公式为                                       图 6 为数值计算平均值模型电容电压及环流抑
+                          1 ΔT                         制的仿真结果，1 s 时应用文献[17]提出环流抑制技
+          U c_on = U c0 + 0 I RM ( )d
+                          C              (6)           术对 MMC 内部环流进行控制。图 6 中各量分别为
+          U c_off = U c0                              a 相上、下桥臂电容电压及内部三相环流。由图 6
+     其中上一仿真周期最后得到的电容电压平均                                可知，环流抑制策略启动后，环流成分得到有效抑
+第 39 卷 第 1 期                                             电    网   技   术                                                261
+
+                                                                  由图可知在稳态运行条件下，本文提出数值计算详
+                                                                  细模型与数值计算平均值模型都能稳定运行，且其
+                                                                  仿真结果与传统模型基本一致。
+                                                                          图 9 为模拟交流系统经过渡电阻三相接地的暂
+                                                                  态过程的仿真结果。1 s 时 MMC1 侧交流系统侧发
+                                                                  生三相瞬时接地故障，0.1 s 后故障消除，故障侧传
+                                                                  输有功功率、无功功率及电容电压平均值的 3 种模
+          图 6 平均值模型电容电压及环流特性                                      型的仿真结果，如图 9 所示。由对比可知，数值计
+Fig. 6 Simulation results of capacitor voltages and circulating
+                                                                  算详细模型、数值计算平均值模型与传统模型仿真
+      currents using proposed average simulation model
+                                                                  计算结果高度一致，表明本文提出的 2 种模型能够
+制，电容电压的波动幅度也降低了。表明平均值模
+                                                                  对交流故障暂态过程进行精确模拟。
+型能够反映 MMC 电容电压的能量波动及环流特
+性，可用于环流抑制策略研究。后续章节还将对平
+均值模型的仿真计算精度作进一步的验证。
+
+4 模型验证
+      为了验证本文提出 MMC 快速仿真模型的有效
+性，在 PSCAD/EMTDC 仿真平台上搭建了 21 电平
+双端 MMC-HVDC 输电系统，如图 7 所示，其中 Idc、
+                                                                                图 9 交流系统故障暂态对比图
+Udc 分别为直流电流、直流电压。模型控制系统采                                          Fig. 9   Transient state comparison during AC system fault
+用了 dq 解耦的控制方法，由 NLC 计算投入的子模                                               图 10(a)为模拟 1 s 时直流线路双极短路故障且
+块数逼近电压调制波[18]。两端交流系统额定电压均                                         换流器未闭锁时的直流电压、直流电流及 a 相上桥
+为 220 kV，变压器变比为 1:1，直流输电电压为                                       臂电容电压平均值仿真结果。图 10(b)为模拟直流
+200 kV，直流传送容量 600 MW。子模块电容值为                                     线路双极短路且换流器闭锁时的直流电流、a 相电
+3 000 μF，环流电抗器 0.02 H，仿真步长为 20 μs。                                流及 a 相换流器输出电压的仿真结果。1 s 时直流线
+                           I dc
+                                                                  路发生双极经过渡电阻短路，40 μs 后检测到直流
+                                                                  系统故障，K2 闭合换流器闭锁，50 ms 后断开交流
+                                  U dc
+                                                                  系统[19]。由以上对比可知，当直流线路发生双极闭
+                    MMC1                  MMC2
+
+                   图 7 MMC-HVDC 系统结构图
+              Fig. 7 Structure of MMC-HVDC system
+4.1     模型精度校验
+      分别搭建采用相同控制参数的 MMC-HVDC 传
+统模型、数值计算详细模型、数值计算平均值模型。
+对各模型在稳态运行及故障后暂态过程的仿真结
+果进行对比。
+      图 8 为直流系统运行于 600 MW 的额定工况
+下，a 相上桥臂电流及子模块投入个数的仿真结果。
+      模块投入 a相上桥臂
+       个数    电流
+
+
+
+
+                         

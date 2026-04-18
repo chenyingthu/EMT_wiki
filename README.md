@@ -8,11 +8,13 @@
 |------|------|
 | 论文总数 | 699 |
 | 已分析 | 699 (100%) |
+| **深度增强完成** | ✅ 691/699 (98.9%) |
 | 主题页 | 11 |
 | 方法页 | 10 |
 | 模型页 | 10 |
 | 实体页 | 9 |
 | 来源页填充率 | 100% (5/5 章节) |
+| **深度增强章节** | 方法细节/仿真结果/关键公式/验证详情 |
 
 ## 目录结构
 
@@ -42,14 +44,20 @@ wiki/
 | `tools/build_backrefs.py` | 构建分类页的来源论文反向引用 |
 | `tools/extract_metadata.py` | 从 PDF 批量提取元数据 |
 | `tools/ingest_folder.py` | 批量摄入论文文件夹 |
+| `tools/deep_enrich_sources.py` | **Phase 1**: 深度增强论文源页（公式/算法/结果） |
+| `tools/deep_enrich_taxonomy.py` | **Phase 2**: 深度增强分类汇总页 |
 
 ## 构建方式
 
 ```bash
-# 分析所有来源页
-python3 tools/analyze_sources.py
+# Phase 1: 深度增强 699 篇论文源页
+python3 tools/deep_enrich_sources.py --concurrency 8
 
-# 更新分类页反向引用
+# Phase 2: 深度增强 40 个分类汇总页
+python3 tools/deep_enrich_taxonomy.py
+
+# 基础分析（如需要重新生成）
+python3 tools/analyze_sources.py
 python3 tools/build_backrefs.py
 ```
 

@@ -1,0 +1,198 @@
+                                                             Electric Power Systems Research 190 (2021) 106704
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                        journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Spurious power and its elimination in modular multilevel converter models                                                                               T
+                           a,⁎                   b                          c                            a
+Anton Stepanov , Hani Saad , Ulas Karaagac , Jean Mahseredjian
+a
+    Polytechnique Montreal, Montréal, Canada
+b
+    Réseau de Transport d'Electricité, Lyon, France
+c
+    Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong Kong
+
+
+
+
+A R T I C LE I N FO                                       A B S T R A C T
+
+Keywords:                                                 This paper demonstrates the presence of spurious power generation or losses in two commonly used Modular
+Arm equivalent model                                      Multilevel Converter (MMC) models: the Arm Equivalent Model (AEM) and the Average Value Model (AVM).
+Average value model                                       Such power does not represent any physical phenomenon and appears due to numerical eﬀects. It is demon-
+HVDC                                                      strated that spurious power is present when the model equations are not solved simultaneously with the sur-
+Modular multilevel converter
+                                                          rounding electrical circuit equations, which is the case when the AEM and AVM are implemented using control
+Simulation
+                                                          system blocks. Depending on operating conditions and simulation parameters, such power can represent a
+                                                          signiﬁcant part of the total converter station losses or even surpass them, thus making simulation results in-
+                                                          accurate. Several solutions to eliminate the spurious power are proposed for the AEM and AVM. Their eﬀects are
+                                                          demonstrated in steady-state and transient conditions on a point-to-point MMC-HVDC simulation test case.
+
+
+
+
+1. Introduction                                                                            equivalent circuits to represent each converter arm, which considerably
+                                                                                           reduces computational burden [4].
+    Modular Multilevel Converter (MMC) shown in Fig. 1 is a Voltage                            The AEM hides individual SM details and deals with a single
+Source Converter (VSC) topology that has several advantages in com-                        equivalent capacitor in each arm (see Fig. 2). This makes this model
+parison with conventional two- and three-level power electronic con-                       advantageous for a large set of grid studies where the converter beha-
+verters. Increasing the number of sub-modules (SMs) per arm helps                          vior on SM level is disregarded [5]. The AVM combines all six arm
+reduce or eliminate ﬁlters, improve reliability, and easily achieve                        capacitors into one, so only the external behavior of the converter is
+scalability to higher voltages. In addition, MMCs have lower losses,                       represented [4].
+lower switching frequency, lower transient peak voltages on IGBTs, and                         The MMC models can be implemented in diﬀerent ways in an EMT-
+lower switching voltages. During normal operation, the desired AC                          type software: the model equations can be incorporated into the main
+voltage waveform is constructed by inserting or bypassing the appro-                       network equations (MNE) matrix, which eliminates the one-time-step
+priate number of SMs [1].                                                                  delay between the model equations and the MNE. However, the main
+    Due to the increased structural complexity of this type of converter                   drawback is the inaccessibility of model equations to the user.
+compared to the conventional VSCs, a larger set of models is applicable                    Otherwise, the model equations can be implemented using control
+in electromagnetic transient (EMT) simulations, including the detailed                     diagram blocks of the EMT software [6,7]. In this case, the drawback is
+model (DM), the detailed equivalent model (DEM), the arm equivalent                        the one-time-step delay between the solution of control system equa-
+model (AEM), and the average value model (AVM) [2]. The choice of                          tions and the MNE.
+the model depends on the given simulated phenomenon and is usually                             In this paper it will be analytically demonstrated that in the second
+associated with a compromise between required accuracy and tolerable                       approach (models in control blocks), additional spurious power can
+computational burden [3].                                                                  occur, that aﬀects the overall behavior of the circuit and makes the
+    The DM representing nonlinear characteristics of IGBTs and diodes                      simulation results less reliable. Such spurious power has been re-
+oﬀers a very high accuracy. However, this model is the slowest due to                      searched in [8] and [9] but only the AEM has been considered. This
+the signiﬁcant number of nodes and nonlinearities [3,4]. The DEM                           paper extends the spurious power analysis presented in [8] to the AVM,
+simpliﬁes the details of the nonlinear characteristics of power switches                   which is often used with large time-steps so considerable eﬀects of the
+to only two states (ON and OFF) and uses Thevenin or Norton                                spurious power can be expected. Several solutions to remediate the
+
+
+
+    ⁎
+        Corresponding author.
+        E-mail address: anton.stepanov@polymtl.ca (A. Stepanov).
+
+https://doi.org/10.1016/j.epsr.2020.106704
+Received 26 February 2020; Received in revised form 31 July 2020; Accepted 1 August 2020
+Available online 06 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+A. Stepanov, et al.                                                                                                       Electric Power Systems Research 190 (2021) 106704
+
+
+                                                                                  pCtot = iCtot vCtot                                                                  (6)
+                                                                                      The powers in (5) and (6) must be equal, because there is no other
+                                                                                  element that can consume, produce or store energy (as semiconductor
+                                                                                  losses are not considered in this equation). Considering (2), (6) can be
+                                                                                  rewritten as
+                                                                                  pCtot = iarm sarm vCtot                                                              (7)
+                                                                                      When considering (1), (5), and (7) it is clear that parm = pCtot , so no
+                                                                                  spurious power is being generated or consumed irrespective of the
+                                                                                  waveforms of iarm and varm.
+                                                                                      Arm Eqs. (1)–(3) can be implemented in an EMT-type simulation
+                                                                                  software in a form of a control circuit (Fig. 2). Semiconductor con-
+                                                                                  duction losses can be modeled with a constant resistance [1,2]:
+                                                                                  Rarm = RON NSM                                                                       (8)
+                                                                                  where RON is the ON-state resistance of IGBT switches.
+        Fig. 1. Three-phase MMC topology with a coupling transformer.               In this case, conduction losses can be expressed as
+                                                                                                2
+                                                                                  pcond = Rarm iarm                                                                    (9)
+
+
+                                                                                  2.2. Spurious power analysis in arm equivalent model
+
+                                                                                      In EMT-type software codes, it is usual to solve control system
+                                                                                  equations independently from the MNE, which results in a one-time-
+                                                                                  step delay between the two solutions.
+
+                                                                                  2.2.1. Analytical demonstration of spurious power
+                                                                                      The equivalent capacitor Ceq of the AEM can be implemented with
+          Fig. 2. Classical AEM schematic for normal operation mode.              control system blocks [6,7] as shown in Fig. 2. In this case, there is a
+                                                                                  one-time-step (Δt) delay between vref (reference value from the control
+problem are discussed. Proposed solutions are validated on a practical            blocks) and varm (actual voltage):
+test case of a point-to-point MMC-based HVDC transmission system.
+                                                                                  vref (t ) = varm (t + Δt )                                                         (10)
+
+2. AEM spurious power in steady-state                                                 Considering (10), (1) can be rewritten as
+                                                                                  varm (t + Δt ) = vref (t ) = sarm (t ) vCtot (t )                                  (11)
+2.1. Normal operation of arm equivalent model
+                                                                                      Considering (11), (7) is rewritten as
+    Two operation modes are usually discussed when dealing with                   pCtot = iarm vref                                                                  (12)
+MMCs: normal operation and blocked mode. In this paper, normal op-
+eration is of primary interest, because power losses are important in                The diﬀerence between parm and pCtot constitutes spurious power in
+steady-state operation [10].                                                      one arm of the AEM ΔpAEM:
+    Considering an ideal AEM with lossless semiconductor devices, the             ΔpAEM = parm − pCtot                                                               (13)
+basic equations of the model for a given arm during normal operation
+are as follows [2,11] (hereafter, the time-varying signals are denoted                Introducing (5), (10), and (12) into (13):
+with lowercase letters):                                                          ΔpAEM (t ) = −iarm (t )[varm (t + Δt ) − varm (t )]                                (14)
+varm = sarm vCtot                                                       (1)
+                                                                                     Clearly, as varm is not a constant value, the one-time-step delay
+iCtot = sarm iarm                                                       (2)       between control blocks solution and MNE solution causes a diﬀerence
+                                                                                  between parm and pCtot, which results in overall spurious power losses or
+d          i                                                                      generation (if negative value).
+   vCtot = Ctot
+dt         Ceq                                                          (3)
+                                                                                  2.2.2. Steady-state behavior
+Ceq = CSM / NSM                                                         (4)           Assuming that simulation time-step is small, the arm voltage deri-
+                                                                                  vative at a time-point t can be approximated by the ﬁnite diﬀerence:
+where sarm is the arm switching function (i.e. proportion of inserted SMs
+to the total number of SMs in the arm), varm is the arm voltage, vCtot is         d              v (t + Δt ) − varm (t )
+                                                                                     varm (t ) ≈ arm
+the equivalent capacitor voltage, iarm is the arm current, iCtot is the           dt                     Δt                                                          (15)
+equivalent capacitor current, Ceq is the equivalent arm capacitor, CSM is             With this, (14) can be rewritten to simplify steady-state analysis:
+the SM capacitance, and NSM is the number of SMs per arm.
+    If Eqs. (1)–(3) are solved simultaneously at each time-point, the                                     d
+                                                                                  ΔpAEM ≈ −Δt iarm           varm
+                                                                                                          dt                                                         (16)
+solution is perfectly accurate in terms of power balance, as demon-
+strated below. Instantaneous arm power on the power circuit side is                   For high-power MMCs used for HVDC transmissions, it is typical to
+given by:                                                                         have high number of levels and circulating current suppression control
+parm = iarm varm                                                                  [12]. In this case, high-frequency components in arm voltages and
+                                                                        (5)
+                                                                                  currents can be neglected, and only DC and fundamental components
+    Instantaneous power on the equivalent capacitor side becomes:                 will be considered in steady-state operation:
+
+                                                                              2
+A. Stepanov, et al.                                                                                            Electric Power Systems Research 190 (2021) 106704
+
+
+iarm (t ) = I0 + I1 cos(ωt + φi )                                 (17)        2.2.5. Constant spurious power
+                                                                                  The constant term of (21) is the source of power mismatch aﬀecting
+varm (t ) = V0 + V1 cos(ωt + φv )                                 (18)        the whole grid, which is an overall undesirable behavior. The average
+                                                                              value of the spurious power (denoted as Δp0) per arm is given by
+where I0, I1, V0, and V1 are the amplitudes of the DC and the funda-
+mental components of current and voltage respectively, φi and φv are                    V I                π
+                                                                              Δp0 = Δt ω 1 1 cos ⎛φv − φi − ⎞
+the corresponding phase angles, and ω is the grid frequency in rad/s.                    2       ⎝         2⎠                                             (27)
+   Considering (18), the arm voltage derivative becomes
+                                                                                  Depending on the phases of the AC components of arm current and
+d                           π                                                 voltage, Δp0 can be positive as well as negative, i.e. both power loss and
+   varm = ωV1 cos ⎛ωt + φv + ⎞
+dt                ⎝         2⎠                                    (19)        generation can occur. In balanced conditions, Δp0 is the same for all six
+                                                                              arms, so its eﬀects sum up and can be observed outside of the MMC.
+    Combining (16), (17), and (19):
+                                                                              During unbalance, Δp0 can diﬀer among arms.
+                                                     π
+ΔpAEM ≈ Δt [I0 + I1 cos(ωt + φi )] ωV1 cos ⎛ωt + φv − ⎞
+                                           ⎝         2⎠           (20)        3. AVM spurious power in steady-state
+
+   The above equation can be separated into three harmonic terms: DC
+                                                                              3.1. Normal operation of average value model
+component, fundamental component, and double-fundamental-fre-
+quency component:
+                                                                                  The AVM contains two electrical circuits, AC and DC, which are
+             V I                   π                           π              disconnected from each other [2]. The AC (29) and DC (30) side
+ΔpAEM = Δt ω 1 1 cos ⎛φv − φi − ⎞ + 2 Δt ω V1 I0 cos ⎛ωt + φv − ⎞
+               2       ⎝           2⎠                ⎝         2⎠             equations for the normal operation mode are:
+                V1 I1                     π                                   CAVM = 6Ceq                                                                 (28)
+        + Δt ω        cos ⎛2ωt + φv + φi − ⎞
+                 2        ⎝               2⎠                    (21)
+                                                                              vm = sm vAVM                                                                (29)
+    While undesirable, the presence of oscillating terms will not dete-
+riorate steady-state power balance because all the extra-generated            iAVM = ∑ sm im
+power during one half-cycle will be consumed during the other half-                   m                                                                   (30)
+cycle. The constant term, however, is always present and aﬀects the           where CAVM is the DC side AVM capacitor; m = A, B, C is the phase
+converter power balance.                                                      index; sm are the modulation signals provided by the control system
+                                                                              (sm ∈ [−0.5; 0.5]).
+2.2.3. Double-fundamental-frequency spurious power                                When (29) and (30) are solved together simultaneously, which is
+    The double-fundamental-frequency components in (21) for the               the case when the AVM is implemented using three ideal transformers
+lower arms of phases A, B, and C (denoted as Δp2) are found as:          

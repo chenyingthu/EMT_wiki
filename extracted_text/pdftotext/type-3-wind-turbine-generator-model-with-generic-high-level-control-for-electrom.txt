@@ -1,0 +1,209 @@
+                                                       Electric Power Systems Research 251 (2026) 112205
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Type-3 wind turbine generator model with generic high-level control for
+electromagnetic transient simulations
+Anton Stepanov a,* , Hossein Ashourian a , Henry Gras a , Jean Mahseredjian b
+a
+    PGSTech, Montreal, QC, Canada
+b
+    Polytechnique Montreal, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          Electromagnetic transient (EMT) simulations are instrumental in providing researchers and engineers with
+EMT simulation                                     detailed data about the dynamic behavior of power grids, necessary for analysis, planning, and risk mitigation.
+DFIG                                               Such simulation studies become even more relevant with the increased number of inverter-based resources in­
+IBR
+                                                   tegrated into the grid. To achieve reliable simulation results, accurate and accessible models are needed, since
+Modeling
+WECC
+                                                   existing generic models do not always provide accurate transient response, especially during fast transients. This
+Wind turbine                                       paper proposes a model for the type-3 wind turbine generator, otherwise known as doubly-fed induction
+                                                   generator (DFIG), that combines the benefits of the generic wind turbine model developed by the Western
+                                                   Electricity Coordinating Council (WECC), with the extra accuracy of a detailed electrical model for the DFIG.
+                                                   WECC models are widely used by planners in their phasor-domain model databases. The proposed WECC-DFIG
+                                                   model is designed to be used in EMT-type software, and due its inheritance of the high-level control system, it can
+                                                   reuse control settings from an existing WECC model without re-tuning. It improves accuracy during transients,
+                                                   such as balanced and unbalanced faults.
+
+
+
+
+1. Introduction                                                                     by the Western Electricity Coordinating Council, referred to in this paper
+                                                                                    as the WECC model [16,17]. A similar generic model has been developed
+    A considerable proportion of existing and currently installed wind              by the IEC [18,19]. These models are often used by electrical power
+parks are based on type-3 wind turbine generators (WTGs), also called               system planners in phasor-domain simulations. They do not accurately
+doubly-fed induction generators (DFIG) [1–4]. A typical DFIG wind                   represent fast transients, especially during non-nominal operating con­
+turbine system is shown in Fig. 1.                                                  ditions, such as operation under partial load or unbalanced conditions.
+    Significant efforts have been made in the last decades in the devel­            This is due to the fact that the mechanical, electrical and control system
+opment of various inverter-based resources (IBRs), including DFIG wind              representations in these models are greatly simplified. The DFIG model,
+turbine models with various levels of detail and field of applications,             for example, is represented by a full converter. However, they result in
+including protection studies, electromagnetic transient simulations                 faster simulations and have increased ease of use due to the reduced
+(EMT) studies, frequency domain modeling and more [5–9].                            amount of detail, unified design, and well-developed documentation.
+    Specifically in the area of EMT simulations, various WTGs models                Despite initially being proposed for phasor-domain simulations, such
+have been proposed in the literature, focusing on different aspects,                simplified generic models are also used in EMT simulation software
+ranging from the detailed representation of mechanical systems and                  packages [17,20,21].
+associated controls [10,11], numerical efficiency [12,13], to real-time                 To obtain an EMT model of their grid, it is not uncommon for
+modeling and WTG emulators [14,15]. Despite possible simplifica­                    transmission system operators to transpose an existing grid, which may
+tions, such models typically provide a high level of detail at the expense          already contain numerous generic IBR models with project-specific pa­
+of increased computational burden.                                                  rameters, from an RMS simulation software to EMT. However, directly
+    One of the most widely used generic models is the model developed               replacing such IBR models by the default detailed models from the EMT
+
+
+ Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8-12, 2025.
+  * Corresponding author.
+    E-mail addresses: anton.stepanov@emtp.com (A. Stepanov), hossein.ashourian@emtp.com (H. Ashourian), henry@emtp.com (H. Gras), jeanm@polymtl.ca
+(J. Mahseredjian).
+
+https://doi.org/10.1016/j.epsr.2025.112205
+Received 4 January 2025; Received in revised form 11 April 2025; Accepted 4 September 2025
+Available online 16 September 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A. Stepanov et al.                                                                                                 Electric Power Systems Research 251 (2026) 112205
+
+
+
+
+                                                                                                  Fig. 3. GSC control system of a DFIG turbine.
+
+
+
+
+                              Fig. 1. DFIG wind turbine.
+
+
+simulation software libraries can become quite challenging and time-
+consuming. It is due to the fact that they would often have a different
+                                                                                              Fig. 4. Mechanical control system of a DFIG turbine.
+control structure compared to their RMS counterparts, thus requiring re-
+tuning. Implementing manufacturer-specific detailed models may not be
+possible due to the lack of available data or confidentiality issues [9,22].       the DC voltage control and AC voltage boost during disturbances,
+The choice is therefore often made to keep the generic IBR models in the           whereas the RSC is responsible for regulating the active and reactive
+EMT grid, which can lead to reducing the accuracy of simulation results,           powers, voltage, and power factor of the turbine.
+especially in simulation studies involving weak grids and/or unbalanced                It should be noted that the current limiter block in the RSC control
+faults [9].                                                                        system acts on the rotor currents and does not have a direct impact on
+    This paper proposes a DFIG wind turbine model that combines the                the output currents of the installation, contrary to many other IBRs such
+interface and high-level controls of a generic model (such the WECC                as full-converter wind turbines, PVs, etc. This makes it more challenging
+model), and the accuracy of a detailed model. Thus, it can be used                 to develop simplified models that would capture this behavior.
+anywhere the WECC model has been applied to obtain more accurate                       The frequency of the AC voltages generated by the RSC is controlled
+results without re-tuning.                                                         so that under steady state conditions, the combined speed of the rotor
+    The paper is organized as follows: section 2 describes the DFIG wind           plus the rotational speed of the rotor flux vector matches that of the
+turbine and its typical control system as well as the WECC model. Sec­             synchronously rotating stator flux vector fixed by the network fre­
+tion 3 develops the proposed WECC-DFIG model. Simulation results and               quency. Manipulation of the rotor voltage permits to control the
+analysis are given in section 4.                                                   generator operating conditions.
+                                                                                       It should be noted that when multiple turbines are assembled in a
+2. Overview and modeling of DFIG wind turbines                                     wind park, the references for individual turbines come from the park
+                                                                                   controller.
+   This section presents and recalls the details of the DFIG wind turbine,
+describing the existing WECC model for the convenience of readers and              2.2. WECC model overview
+does not contain new developments.
+                                                                                       While the WECC wind turbine model represents the DFIG mechani­
+2.1. DFIG wind turbine and control                                                 cal, electrical and control systems, these systems are greatly simplified.
+                                                                                   For example, the electrical system neglects all machine fluxes and DC
+    A typical DFIG wind turbine, such as shown in Fig. 1, can be repre­            link dynamics. The WECC model contains four main elements [16]:
+sented by a combination of a mechanical, electrical, and control systems.
+The mechanical system includes the blades, the shaft and the rotor of the           • Renewable energy generator controller (REGC).
+DFIG. The electrical system typically consists of the rotor-side and grid-          • Renewable energy electrical controller (REEC).
+side converters (RSC and GSC, respectively), DC link, AC harmonic fil­              • Renewable energy plant controller (REPC).
+ters, crowbar protection and the coupling transformer.                              • Mechanical system and its controllers.
+    The control system of the wind turbine includes the RSC and GSC
+control blocks, shown in Figs. 2 and 3, respectively, as well as the pitch             REGC allows to represent the converter either with controlled cur­
+controller for the angle of the blades, shown in Fig. 4. Typically, the            rent or controlled voltage source (REGC_A and REGC_C, respectively)
+converter control system is cascaded, where the slower outer loop                  [16].
+generates the reference currents for the faster inner loop, which in turn              REEC represents the outer loop of the converter control system. It
+generates the modulation signals that are used to produce the gating               receives the active and reactive power references and calculates the
+commands for the power electronic switches. The GSC is responsible for             reference values of active and reactive currents for REGC. It contains
+                                                                                   extended voltage-dependent current limit tables (VDLp, VDLq), current
+                                                                                   compensation, reactive droop compensation, reactive current injection
+                                                                                   algorithm, model inverter blocking logic, etc. [16].
+                                                                                       REPC monitors conditions at the point of interconnection (POI) and
+                                                                                   sends active and reactive power commands to REEC to achieve the
+                                                                                   desired real and reactive powers, voltage and power factor at the POI
+                                                                                   [16].
+                                                                                       The mechanical system includes the wind turbine generator aero­
+                                                                                   dynamics model (WTGA), drivetrain model (WTGT), pitch controller
+                     Fig. 2. RSC control system of a DFIG turbine.                 model (WTGP) and torque controller model (WTGQ) [16].
+
+                                                                               2
+A. Stepanov et al.                                                                                                   Electric Power Systems Research 251 (2026) 112205
+
+
+    A quadratic equation Eq. 1 describes the WTGA block that defines the
+relation between the output mechanical power and the pitch angle [16,
+23]:
+Pm (t) = Pm (0) − Ka Θ(t)[Θ(t) − Θ0 ]                                     (1)
+
+where Pm is the mechanical power, Θ is the pitch angle, Θ0 is the initial
+pitch angle, and Ka is the aerodynamic gain factor which defines the
+slope dPm /dΘ [16,23].
+    The WTGP block consists of two PI controllers with anti-windup
+limiters and a low-pass filter for the output signal (pitch angle). It is
+shown schematically in Fig. 5, where ωt is the mechanical speed of the                       Fig. 6. Simplified schematic diagram of WECC type-3 model.
+turbine, ωref is the reference speed, Pref is the active power reference, Pord
+is the active power order [16].                                                       Θ0 = 0).
+    The connection of the blocks of the model is shown schematically in                  The initial pitch angle in the proposed model Θ(0) is not equal to Θ0
+Fig. 6 (note that not all signals are shown between blocks) [16]. The                and is calculated to match the actual and available powers and Θ0 as in
+blocks with gray background will be modified in the proposed                         (4) below, which is derived directly from Eq. 3. Only the positive solu­
+WECC-DFIG model in section 3. In Fig. 6, Ipcmd and Iqcmd are the active              tion of Eq. 4 should be considered assuming that Θ ≥ 0 and
+and reactive channel current commands of the REEC, ωg is the generator               Pavailable ≥ Pm .
+speed, Qref is the reactive power reference.                                                         √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+                                                                                                Θ0 + Θ20 − 4 Pm (0)−KPaavailable
+                                                                                     Θ(0) =                                                                (4)
+3. Proposed WECC-DFIG model                                                                                    2
+
+3.1. Mechanical system                                                               3.1.2. WTGP
+                                                                                         In the WTGP block of the default WECC model Fig. 5, two PI con­
+    The mechanical system model represents the aerodynamics of the                   trollers act on a single variable Θ, one of them is responsible for angular
+blades pitch angle and the dynamics of the drivetrain, as well as the                speed control, and the other is for power order. This combination results
+pitch controller similarly to the WECC model, i.e. it is based on the                in an infinite amount of possible history values of the integrals, espe­
+WTGA, WTGT, WTGQ and WTGP modules described in section 2.2 with                      cially in cases where Θ(0) > 0. In the proposed model, the history term
+the following improvements.                                                          of the PI controller responsible for the power order is always initialized
+                                                                                     to zero to avoid any ambiguity, whereas the one for the angular speed is
+3.1.1. WTGA                                                                          initialized to match Θ(0).
+   It can be observed that mechanical power in the WECC model Eq. 1 is
+capped at                                                                            3.2. Electrical system
+                           /
+max{Pm } = Pm (0) + Ka Θ20 4                                      (2)
+                                                                                        The electrical system of the WECC DFIG model contains detailed
+    Depending on the initial value of power Pm (0) and initial pitch angle           models for the generator, transformer (including iron core saturation),
+ Θ0 , this maximum value may be below the nominal power of the WTG.                  AC filters and converters, Fig. 7. The speed of the generator is given by
+Besides, the maximum power Eq. 2 will be obtained at Θ0 /2, whereas it               the WTGT block [16].
+is typically obtained at the minimum value of Θ for the given wind and                  The proposed model allows to represent the GSC and the RSC con­
+turbine speeds within a reasonable operation range [23].                             verters using power semiconductors with nonlinear v-i characteristics or
+    To provide more flexibility for the adjustment of the Pm curve, in the           use the average-value model (AVM) where the converters are repre­
+proposed model the user can set the value of the available mechanical                sented as controlled voltage sources with the references coming from the
+power Pavailable and the Θ0 angle to obtain a desired characteristic of              inner control loop of the control system.
+mechanical power as a function of pitch angle Pm = f(Θ) in the WTGA
+aerodynamics block as shown in Eq. 3:
+                                                                                     3.3. Control system
+Pm = Pavailable − Ka Θ[Θ − Θ0 ]                                           (3)
+                                                                                     3.3.1. Overview
+    This can be useful to model the events where more power is available
+                                                                                        The proposed WECC-DFIG model reuses the plant controller and the
+but it has to be limited (such as wind energy curtailment or operation
+                                                                                     outer control loop from the WECC model (REPC and REEC, respectively)
+under strong winds [24–26]) with more flexibility for the adjustment of
+                                                                                     and the inner current control of a detailed model of DFIG for the RSC
+the Pm curve. Contrary to the original equation, it does not have a hard
+                                                                                     control.
+upper limit of Eq. 2 since it does not directly depend on the initial power
+                                                                                        The control system for the GSC is a generic cascaded control system,
+Pm (0) and maximum power can be obtained at minimum Θ (by setting
+
+
+
+
+          Fig.

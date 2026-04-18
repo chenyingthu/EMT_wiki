@@ -1,0 +1,29 @@
+# Electromagnetic transient modeling and surge analysis of overhead power lines above two-layer earth
+
+A.G. Martins-Britto$^{\text{a}}$, T.A. Papadopoulos$^{\text{b},*}$, A.I. Chrysochos$^{\text{c}}$
+
+$^{\text{a}}$ KU Leuven, division Electa & the Etch Competence Hub of EnergyVille, Genk, Belgium  
+$^{\text{b}}$ School of Electrical & Computer Engineering, Aristotle University of Thessaloniki, 54124, Thessaloniki, Greece  
+$^{\text{c}}$ R&D Department, Hellenic Cables, Maroussi, 15125 Athens, Greece  
+
+**Keywords:** Electromagnetic transients, Equivalent homogeneous earth, LineCableLab, Overhead lines, Propagation characteristics, Two-layered earth
+
+**Abstract:** Accurate modeling of earth conduction effects on line parameters is important for electromagnetic transient (EMT) studies and surge analysis of overhead lines (OHLs). Several earth formulations have been proposed, with their majority presuming earth homogeneous. Rigorous formulations for the earth impedance and admittance terms of two-layered earth structures involve complex integrals which may cause a series of numerical issues. Therefore, equivalent homogeneous earth models (EHEMs) can be considered as satisfactory substitutes. In this article, the impact of different earth modeling approaches is investigated on the EMT modeling of a double-circuit OHL. These include a rigorous two-layered earth formulation, different EHEMs and simplified homogeneous representations. The analysis is performed using the LineCableLab toolbox applying different soil cases and simulation models.
+
+*Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025. This work is supported by the Etch Competence Hub of EnergyVille, financed by the Flemish Government, Belgium.*  
+*Corresponding author.*  
+*E-mail addresses: amauri.martinsbritto@kuleuven.be (A.G. Martins-Britto), thpapad@ece.auth.gr (T.A. Papadopoulos), achrysochos@hellenic-cables.com (A.I. Chrysochos).*
+
+## 1. Introduction
+
+Accurate modeling of transmission line parameters remains fundamental for a variety of electromagnetic transient (EMT) studies and surge analysis, especially in systems involving overhead lines (OHLs) with ground-return paths. The earth parameters (impedance and admittance) directly affect the self- and mutual- components, which in turn influence wave propagation characteristics and power system transient behaviors. Classical approaches, derived from the original Carson’s formulation and subsequently enhanced by Wise and others, assume the earth to be homogeneous and semi-infinite [1–4]. However, this assumption fails to account for the complexities of real soils, which are highly heterogeneous, often represented by horizontally-stratified layers with distinct electrical properties [5–7]. These variations are reported to significantly impact electromagnetic (EM) propagation and transient responses [8–11].
+
+In transmission line design engineering, it is well established that soil resistivity measurement campaigns must be conducted to evaluate the safety levels of grounding systems, including conductors used in tower footings [5,12]. The necessity and practical procedures to perform such measurements are widely recognized across engineering standards and technical literature, ensuring that system designs adhere to best practices for safety and operational reliability.
+
+Furthermore, the impact of multilayered soil characteristics on grounding effectiveness, including the influence of surface and deep layers, is a well-documented aspect of power grounding and low-frequency electromagnetic interference (EMI) studies. The relevance of horizontally stratified soil modeling has been extensively addressed in the literature, particularly in the seminal works of Dawalibi et al. [11, 13–16]. These studies have demonstrated the necessity of accurate soil characterization and numerical modeling techniques for reliable grounding system performance, EMI-related hazard assessments, and precise estimation of line parameters.
+
+Rigorous formulations for earth impedance and/or admittance in multilayered earth models, such as those developed in [9,10,17,18], offer numerical accuracy but may be impractical from the power engineering perspective and prone to numerical instabilities due to the complexity of the integral solutions involved. To overcome these issues, researchers have been dedicating considerable efforts to approximate multilayered soil structures with equivalent homogeneous earth model (EHEM) representations. Tsiamitros introduced the concept by proposing an equivalent resistivity approach for two-layer soils [19], which was later generalized by Martins-Britto for $N$-layer structures [20]. Subsequently, Xue refined these models further by incorporating displacement current effects, improving their accuracy across a wider frequency range and extending computations to line admittances [21].
+
+Despite these advancements and the advantages of the EHEM approach, the practical implications of soil modeling for EMT analysis remain insufficiently explored. In particular, there is a need to evaluate how different formulations – rigorous analytical methods, EHEMs, and simplified homogeneous representations – affect the propagation characteristics and transient behavior of OHLs.
+
+To address this gap, this paper investigates soil modeling approaches for EMT analysis, comparing the rigorous analytical solution for two-layer earth [17,18], the equivalent resistivity approximation of [10,20], the equivalent propagation constant [21], and simplified homogeneous representations using upper and lower layer resistivities. These methods are applied to a double-circuit OHL across different two-layer soil cases, analyzing propag

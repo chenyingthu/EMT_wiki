@@ -1,0 +1,237 @@
+IEEE Transactionson Power Systems,Vol. 3, No. 4, November 1988                                                                                  1633
+
+                                        MULTIPROCESSOR BASED GENERATOR MODULE FOR
+                                           A REAGTIME POWER SYSTEM SIMULATOR
+
+                     Y. KOKAI, Member, IEEE       I. MATORI, Member, IEEE             J. KAWAKAMI, Member, IEEE
+                                              Hitachi Research Laboratory
+                                                 Hitachi, Ltd., Japan
+
+
+Bewords: Multiprocessor, Microcomputer, Power,system,            described. The multiprocessor calculates next-time-
+        Generator, Simulator, Parallel processing, EM"           step variables of the differential equations in
+                                                                 parallel, and the simulation time interval can be made
+                                                                 small enough for the analog simultaneous base. The
+     Abstract - A new geneeator simulation module was            precision of the newly developed simulation module is
+developed for an electrical power system simulator.              evaluated by comparison with the off-line simulation
+This simulator is on an analog simultaneous base.                program EMTP [7].
+Therefore the module has to simulate a generator
+behavior precisely. Furthermore, it is required to be
+able to use the analog simulator as easily as an off-                             CONFIGURATION OF SIMULATOR
+line simulation program.    To meet the requirement, the
+developed generator module adopts a multiprocessor                       Figure 1 shows the configuration of the newly
+consisting of microprocessors and an analog three-phase          developed electrical power system simulator[ 5][ 61.     In
+sinusoidal oscillator.     Any type of generator can be          this simulator, the generator module is composed of a
+easily simulated only by changing the program of the             multiprocessor. The other parts of the simulator such
+microprocessors. However, the accuracy of this module            as transmission line modules or transformer modules are
+depends on the stmulation time interval since this               composed of analog circuits with ohmic loss compensation
+module simulates the behavior of a generator digitally.          circuits: Reverse voltage sources, inserted in series
+To make the simulation time interval small enough for            w i t h the analog modules, cancel the extra ohmic losses.
+the analog simultaneous base, four microprocessors solve         This simulator is easier to handle than conventional all
+differential equations representing the generator                analog-type simulators because the rated voltage and
+dynamics in parallel, and floating point arithmetic is           current are low, i.e. 20 V and 0.2 A. Furthermore, the
+used to avoid numerical errors.     A parallel processing        generator simulation model can be easily modified by
+method for the rpultiprocessor to solve the differential         only changing the program of the multiprocessor. Main
+equations is described. The accuracy of the generator            components of this simulator developed at present are 4
+module is validated by comparisons with the off-line             generator units, 4 AC transmission line units , 4 M:
+simulation program EM" (Electro Magnetic Transients              transmission line units, 12 transformer units, 4 AC/K
+Program).                                                        converter units, filter units and load units.
+                                                                         The generator modules are connected to transmission
+                                                                 line modules through transformer modules and/or circuit
+                                                                 breaker modules. Since a generator module consists of
+                                                                 microprocessors, the initial condition of the simulator
+     Analog simulators have been used to analyze                 can be easily determined:          For example, the host
+phenomena in electrical power systems [ 11 ,[ 21. These          computer calculates the load flow before the simulation
+analog simulators use many operational amplifiers to             to obtain the initial condition, and the microprocessors
+solve differential equations which represent behavior of         set up their initial values of the memory in accordance
+generators included in the power system. These analog            with the data from the host compqter.             The host
+simulation modules are superior to conventional                  computer also controls the operation sequences of the
+miniature generators [ 31 from viewpoints of accuracy and        generator modules, circuit breaker modules, measuring
+compactness. However, they still require much time to            units and so on.
+change and adjust parameters of the modules. This
+disadvantage is not negligible when large numbers of
+generators are simulated.
+     On the other hand, digital computers have been used
+to analyze generator dynamics by off-line simulations
+and they have good flexibility. Then, new generator                       I                        Host c-ter                               1
+modules, which use a digital microprocessor to simulate
+the behavior of a generator, have been developed
+[4][5][6].   As described therein, a precise simulation
+requires a small simulation time interval and high
+                                                                          J                    OC transmission       AC transmission
+                                                                                                                                            1
+                                                                                      +
+precision arithmetic method to solve the differential                                                li e               I ine
+equations.                                                         I                  I r---            --------_---c--------,
+     In this paper, a new technique which uses a
+multiprocessor to lessen the simulation time interval is                               ; CB
+                                                                                       I
+                                                                                       I
+                                                                                       I
+
+
+                                                                                                                                       I
+                                                                                       I                                               I
+                                                                       Genekor         I                                               II
+  88 WM 181-0        A paper recommended and approved               (Mukiprocassor)    I
+                                                                                       I
+                                                                                                Transformer--
+  by the IEEE Power System Engineering Committee of                                                              w                     I
+
+  the IEEE Power Engineering Society for presentation
+  at the IEEE/PES 1988 Winter Meeting, New York,
+  Yew York, January 31 - February 5, 1988. Manuscript
+  submitted August 27, 1987; made available €or
+  printing January 15, 1988.
+                                                                              Fig.1   Configuration of real-time simulator
+                                          0885-8950/88/1100-1633301 .WO1988IEEE
+1634
+
+                GENERATOR SIMULATION MODULE                                           GENERATOR SIMULATION WITH MULTIPROCESSOR
+     Figure 2 shows the configuration of the generator                        Simulation Program of Generator Module
+simulation module [5].    This module generates three-
+phase analog voltages which are applied to the network                                The generator module simulates a generator behavior
+modules. It works as follows: The three-phase voltages                        in accordance with the following equations explained in
+and currents at the generator terminal are measured                           [ 9 ] . A symmetric-rotor case is assumed.
+every simulation time interval and they are converted
+into digital signals through the A/D converter. Based
+on the measured voltages and            currents,    the
+multiprocessor calculates the next-time-step state
+variables of the differential equations which represent
+the generator behavior.   The equations are described in
+the next chapter in detail. The references such as the
+frequency, the phase angle and the internal voltage
+references are changed every simulation time interval,
+and they are sent to the three-phase sinusoidal
+oscillator circuit shown in Figure 3        [8].    This
+oscillator circuit is an analog voltage generator which
+generates three-phase sinusoidal voltages given by,                                                                                   (10)
+
+         Ea"=E"sin( 2 TI ft + 0 )
+         Eb"=E"sin( 2 T ft + F) -2/3 TI )
+         Ec"=E"sin( 2 1~ ft t 0 t 2 / 3 TI )
+
+where f is the frequency reference, 0 is the phase
+angle reference and E" is the internal voltage
+reference. The three-phase sinusoidal oscillator makes                        where Id, Iq = d- and q-axis armature current
+smooth sinusoidal waves every 0.1 ms in accordance with                             Ifd, Ild, Ilq = field, d- and q-axis
+the data stored in the ROM's even though the references                                                 damper current
+from the microprosessors are kept constant during the                               Efd, E'ld, E"q = field voltage, d- and q-axis
+simulation time interval. In order to obtain more                                                       component of E"
+accurate simulation results, however, it is necessary to                            Rfd, Rld, Rlq = field, d- and q-axis
+make the simulation time interval as small as possible                                                  damper registance
+and to use a more precise simulation model.           We                            Xad, Xfd, Xld, Xlq = air gap flux, field,
+developed a new method in which a multiprocessor is used                                                d- and q-axis damper reactance
+to simulate a generator behavior by using a precise                                 X"ad, X"aq = d- and q-axis air gap flux
+simulation model.                                                                                    subtransient reactance
+                                                                                    Qad,$aq = d- and q-axis air gap flux
+                                                                                    $Ed, $ l d , $ Iq = field, d- and q-axis damper flux
+                Clock
+                                                                              Yotion equation:
+
+
+                                                    Analog network
+                                                    a power system
+
+
+
+                                                                              where M = moment of inertia
+                                                                                    WO = rated angular velocity
+                                                                                       = angular velocity
+                                                                                    Tm = mechanical torque
+                                      t                                             Te = electromagnetic torque
+                          Voltage and ciirrent sampling                             6 = phase angle
+                                                                                    Pd = mechnical damping constant
+                    Fig.2     Generator module                                     One example of the control system blocks is shown
+                                                                              in  Figure 4 .   The excitation control system AVR has
+                                                                              three first-order lag blocks and the speed control
+                                                                              system GOV has a first-order lag block.
+                                                                                   The trapezoidal method is used as a solution method
+                                                                              [5]. A dif€erential equation dx/dt=AxtBu is solved by
+
+                                                                                           x(ttAt)=Cx(t)+D[u(t)+u(ttAt)]
+                                                                              where
+                                                                                        x: State vector, U: Input vector
+                                                                                        A,B: Constant coefficient matrix
+                                              I                  U
+                                                                                             1    -1       1
+ E" referenced Register       DtA
+                                                                                       c=(I- --ArA:  ( [ t ,AtAI
+                                    I                                                         2
+                                          I                      I   I
+                                                                                        D= iAt(1- iAtA)-'B
+                                                                                                   2
+                                                                                       I: Unit matrix
+        Fig.3    'Three-phasesinusoidal nscill-tqr              ~ir c i i i
+                                                                                                                         1635
+
+
+
+
+                                                                                                T r i m m e t ric
+                                                                                                 sin, cos
+
+                                                                                                Differential
+                                                                                                 10 per gen.
+                                                                                                 equations
+
+
+     I                                            I                                              Fbating point
+                                                                                                  arithmetic
+                    (a)   AVR block
+
+
+
+
+                                                                                          ; by m set of 8086/8087
+                                                                                          !       Unit:ms            I
+                                                                              YI          L                         -J
+
+
+
+
+          Fig.4   Control system of generator                Fig.5   Flow chart of generator simulation program
+
+
+     The trapezoidal method is a good solution method          As described in reference [4], fixed point
+as for the number of solution steps and the solution      arithmetic is preferable to lessen the simulation time
+stability [lo].                                           interval, but it introduces a problem such as fixed
+                                                          point limit cycle effect. This problem is caused by the
+     Figure 5 shows the program flow chart that should    lack of effective digits of integer type variables.
+be executed in the multiprocessor system of the           The problem becomes serious when simulating a generator
+generator module [5][9]. ' This program consists of the   behavior for a long time to analyze power system
+following six steps.                                      stability. To cope with the problem, we developed a new
+                                                          approach where several processors solve the equations in
+1) Measuring terminal voltages and currents and           parallel by using floating point arithmetic. It is
+    transforming them into those in the d-q axis          expected that the simulation time interval can be made
+    coordinates.                                          smaller by the parallel processing, and that the
+2) Rotor circuit calculation: Currents in d-axis,         numerical errors can be also reduced by using the
+    q-axis and the damper circuits are calculated by      floating point arithmetic.
+    equations (4)-( 11).
+3) AVR calculation: Output of the excitation system       Parallel Processing in Generator Simulation
+    Efd is calculated based on the generator terminal
+    voltage Et.                                                As microprocessors of the multiprocessor system,
+4) Governor calculation: Output of the rotor speed        Intel's 16-bit microprocessor 8086 is adopted and the
+                                                          co-processor 8087 is also used to faciliate the floating
+    deviation of the angular velocity hr, .
+    control system Tm is calculated based on the
+5) Rotor dynamics calculation: The motion equation
+                                                          point arithmetic 1111.    The execution time of the one
+                                                          step of the program in Figure 5 was about 13 ms on the
+    of the rotor is solved by equations (15),(16).        system of one set of the 8086 and 8087. Then, the
+6 ) Internal voltage calculation: Internal voltage        parallel processing method was implemented to reduce the
+    reference E" is calculated by equations (12)-( 14).   execution time to less than 5 ms.
+                                                               To let the microprocessors run in parallel
+     The above steps must be finished within one efficiently, the following approximation was adopted:
+simulation time interval. But the transformation to the Although all equations of the blocks in Figure 5 should
+d-q axis coordinates requires trigonometrical functions be solved simultaneously, some inputs of the blocks can
+such as sin( .) and cos( .). Therefore, it takes a lot of be substituted by previous-time-step values. The reason
+time to execute step 1. The AVR and Governor simulation for this approximation is as follows: When adopting a
+models, carried out in steps 3 and 4, have to be small simulation time interval, the deviation of the
+detailed in the case of long term dynamic simulations. state variables of the differential equations is very
+Therefore, the number of differential equations for one small. Therefore, no big numerical error takes place
+generator is more than ten, and the execution of the even though some previous-time-step variables are used.
+program in Figure 5 may be rather time consuming even if This approximation can be considered reasonable if the
+a 16-bit microprocessor is used.                          solution method     of different equations is the
+     On the other hand, to obtain a precise simulation trapezoidal method [lo].
+result, the simulation time interval must be smaller

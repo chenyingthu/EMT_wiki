@@ -1,0 +1,14 @@
+# Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants in Power System Black Start
+Quan Nguyen, Mallikarjuna R. Vallem, Bharat Vyakaranam, Ahmad Tbaileh, Xinda Ke, Nader Samaan  
+Pacific Northwest National Laboratory, WA
+
+**Abstract**—Power system restoration is an important part of system planning. Power utilities are required to maintain black start capable generators that can energize the transmission system and provide cranking power to non-blackstart capable generators. Traditionally, hydro and diesel units are used as black start capable generators. With the increased penetration of bulk size solar farms, inverter based generation can play an important role in faster and parallel black start thus ensuring system can be brought back into service without the conventional delays that can be expected with limited black start generators. Inverter-based photovoltaic (PV) power plants have advantages that are suitable for black start. This paper proposes the modeling, control, and simulation of a grid-forming inverter-based PV-battery power plant that can be used as a black start unit. The inverter control includes both primary and secondary control loops to imitate the control of a conventional synchronous machine. The proposed approach is verified using a test system modified from the IEEE 9-bus system in the time-domain electromagnetic transient simulation tool PSCAD. The simulation results shows voltage and frequency stability during a multi-step black-start and network energization process.
+
+**Index Terms**—Black start, PV power plant, Grid-forming inverter, Photovoltaic integration, Energy storage.
+
+## I. INTRODUCTION
+how different power control modes can help an inverter-based PV power plant to provides a wide range of ancillary services. A summary of operational benefits and issues for a large-scale PV power plant including power quality, power control, protection, balancing and reliability under different loading conditions are presented in [5].
+
+Considering the advantageous properties such as fast ramping rates, power ratings of several hundreds MW, and ability to coordinate with energy storages (ES), recent large-scale inverter-based PV power plants can be considered as promising BS resources. However, to the best knowledge of the authors, little focus has been given to explore such potential capability of a PV-ES power plant.
+
+A generation system needs several characteristics to be considered as a BS unit and several studies need to be performed to assess them. These studies include power plant modeling, grid-forming inverter control, effective coordination between PV and ES during a black start process, voltage and frequency stability, and sizing of the PV and ES. Note that similar works might exist at distribution voltage level; however, the focus of this paper is on the transmission voltage

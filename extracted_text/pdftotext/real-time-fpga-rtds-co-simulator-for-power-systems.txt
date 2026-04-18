@@ -1,0 +1,142 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/ACCESS.2018.2862893, IEEE Access
+
+                  > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                        1
+
+
+
+
+                                     Real-Time FPGA-RTDS Co-Simulator for
+                                                Power Systems
+                                          Conghuan Yang, Ying Xue, Member, IEEE, Xiao-Ping Zhang, Senior Member, IEEE,
+                                                        Yi Zhang, Senior Member, IEEE, and Yuan Chen
+
+
+                                                                                                                  cause harmonic problems [4] or control interactions [5], and
+                 Abstract—This paper proposes a co-simulation platform using                                       lead to potential overvoltage/overcurrent problems. Real-Time
+              Field-Programmable Gate Array (FPGA) and Real-Time Digital                                           Simulation (RTS) using Electromagnetic Transient (EMT) type
+              Simulator (RTDS) for the simulation of large power systems. It                                       of component models is essential and has been widely used to
+              combines the advantages of high computational power from                                             study these problems [6, 7].
+              FPGA and better modelling flexibility from RTDS together. The
+                                                                                                                       One of the main difficulties for RTS is that significant
+              FPGA therefore acts as an efficient and economical extension to
+              RTDS especially when simulating large AC systems. One of the                                         computational resources are required for the solution of
+              significant advantages of the proposed co-simulator is that it                                       detailed EMT models thereby limiting the size of AC system
+              avoids the potential interface error existing in the conventional                                    that can be accurately simulated [6]. One of the conventional
+              approach of interfacing Transient Stability (TS) program with                                        methods in simulating larger system is to use network
+              Electromagnetic Transient (EMT) programs. Two key aspects of                                         equivalents, which neglects internal dynamics of the equivalent
+              the proposed co-simulator are discussed: 1) the interface design                                     part of the system. To increase the size of system that can be
+              between FPGA and RTDS and 2) the hardware implementation                                             simulated while maintaining simulation accuracy, hybrid
+              and expandability of the platform. Two case studies are presented                                    simulation combining EMT and Transient Stability (TS)
+              to verify the simulation accuracy and capability of the proposed
+                                                                                                                   programs was proposed [8, 9]. This method partitions the whole
+              co-simulator. The first case simulates a two-area four-machine
+              power system with one area simulated in FPGA and the other                                           system into two or more subsystems. The area/areas with power
+              area in RTDS. Comparisons are made with the case where the                                           electronic devices is/are simulated accurately using EMT
+              complete system is simulated in RTDS. The second case simulates                                      programs. The rest of the network is simulated using TS
+              a system of 141 buses in FPGA to demonstrate the simulator’s                                         programs to save computational resources. The accuracy and
+              capability in simulating large power systems.                                                        efficiency of hybrid simulation critically depend on the
+                                                                                                                   interface technique [8]. Therefore most of the previous works
+                Index Terms — Electromagnetic transients, Field-                                                   are focusing on the design of interface between TS and EMT
+              Programmable Gate Array (FPGA), Real-Time Digital Simulator                                          subsystems.
+              (RTDS), power system simulation.                                                                        Conventionally the fundamental frequency equivalent of the
+                                                                                                                   TS subsystem is adopted [10] and both positive-sequence and
+                                                  I. INTRODUCTION                                                  three-sequence equivalent models are used [11-13]. The
+
+              M      ODERN electrical power systems are undergoing
+                     dramatic changes such as:
+                    Increasing amount of renewable energy integration;
+                                                                                                                   drawback of using positive-sequence network is that it will give
+                                                                                                                   inaccurate results for unbalanced conditions [11]. To mitigate
+                                                                                                                   the problem, significant extension of the interface bus was
+                    Increasing level of interconnections between                                                  proposed to maintain the assumption of three-phase balance,
+                        regional/national electrical power systems [1];                                            but simulation efficiency of EMT part is significantly reduced
+                    Increasing applications of power electronic devices in                                        [13]. For three-sequence equivalent model, the representation
+                        existing AC networks [2].                                                                  may not be accurate when the transients at interface buses are
+                 All these changes result in an increase in size and complexity                                    significant [10]. The Frequency-Dependent Network
+              of power systems. In particular the application of power                                             Equivalent (FDNE) was recently proposed in [10] to decrease
+              electronic devices introduces a range of new risks which are                                         the interface error. A number of approaches to obtain the FDNE
+              different in nature to those in traditional AC power systems. For                                    are proposed [14, 15], and different representations of FDNE
+              example they could affect the operation of protection relays [3],                                    are adopted [16]. The main disadvantages of these methods are
+                                                                                                                   the increased computational burden on the EMT simulator and
+                                                                                                                   potential inaccuracy under transient conditions.
+                 C. Yang, Y. Xue and X. P. Zhang are with the Department of Electronic,                               It is understandable that the design of an interface technique
+              Electrical and Systems Engineering, University of Birmingham, Birmingham
+              B15 2TT, U.K. (e-mail: c.yang@bham.ac.uk; y.xue@bham.ac.uk;                                          that is accurate and computationally efficient is difficult, as
+              x.p.zhang@bham.ac.uk).                                                                               these two simulation methods have fundamentally different
+                 Y. Zhang and Y. Chen are with RTDS Technologies Inc., Winnipeg,                                   mathematical models.
+              Manitoba, Canada. (e-mail: yzhang@rtds.com; yuanchen@rtds.com)                                          This paper proposes a real-time FPGA-RTDS co-simulator
+                 .
+
+
+
+
+                                        This work is licensed under a Creative Commons Attribution 3.0 License. For more information, see http://creativecommons.org/licenses/by/3.0/.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/ACCESS.2018.2862893, IEEE Access
+
+                  > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                        2
+
+              using EMT models only, hence avoiding the complexities in                                            A. Power System Components
+              interface design and the potential interface errors exist in hybrid                                    1) Synchronous Generator
+              simulation methods. At the same time, the size of the power                                            The Universal Machine (UM) model [26] for synchronous
+              system that can be simulated is not compromised as a large part                                      generator is adopted. It is a generalized machine model that can
+              of the network can be simulated using FPGA taking advantage                                          be used to represent different types of rotating machines for
+              of its computational power. The rest part of the network of                                          EMT studies. One d-axis damper winding and two q-axis
+              interest is simulated using RTDS taking advantage of its                                             damper windings are modelled for each machine. The dynamic
+              simulation flexibilities.                                                                            equations describing the electrical and mechanical parts of the
+                 It needs to be mentioned that the EMT simulation of large                                         synchronous generator are shown in equation (1) – (3):
+                                                                                                                                                       1 d dq 0
+              AC network has been implemented using FPGA in [17-19].
+              However, the method lacks Graphical User Interface (GUI) for                                                         vdq 0   Ridq 0             u             (1)
+                                                                                                                                                      base dt
+              the manipulation of simulation cases and visualization of
+              results. Also the control systems for synchronous generators                                                                              dq 0  Lidq 0                                       (2)
+              (excitation system and governor system) are not modelled.
+                                                                                                                                                  d r
+              Other works have been focusing on the simulation of power                                                                                 Dr  Te
+                                                                                                                                                Tm  2 H                          (3)
+              electronic devices with small simulation time-step using FPGA                                                                        dt
+              [20, 21]. In those works, FPGA is used to simulate the detailed                                      where vdq0, idq0, λdq0 and u are vectors of stator dq0 voltage and
+              model of Modular Multilevel Converter (MMC). One of the                                              excitation voltage, dq0 winding currents, dq0 flux linkages and
+              difficulties in implementing those methods is to avoid                                               speed voltage terms due to the dq0 transformation. R is the
+              re-synthesize of FPGA (which can take hours) whenever                                                resistance matrix consisting of resistance values of stator, rotor
+              system modification (frequent in simulating power electronic                                         and damper windings. L is a symmetrical matrix consisting of
+              systems) is required. Also the development of a generic model                                        self, mutual and leakage inductances of the machine. Tm, Te, ωr,
+              for power electronic device in FPGA can be complex as many                                           ωbase, D, H are mechanical torque, electrical torque, rotor
+              of the power electronic devices are still evolving with changing                                     angular frequency, rated angular frequency, damping torque
+              topologies, control strategies and modelling approach [22, 23].                                      constant and per unit inertia of rotor. All variables in (1) to (3)
+                 Different from these methods, the proposed method utilizes                                        are in per unit except time, which is in second. The positive
+              FPGA to simulate large AC networks rather than power                                                 direction of stator current is flowing out of the machine.
+              electronic systems, taking advantages of the well-established                                           To facilitate model implementation using FPGA, (1)-(3) are
+              EMT models of AC components [24, 25]. In addition, the                                               discretized according to the rule of trapezoidal integration and is
+              flexibility in system reconfiguration, modelling and control that                                    realized by 6 sub-modules in the actual FPGA hardware
+              are readily available in RTDS can be utilized. The role of                                           implementation as will be shown in yellow blocks in Fig.6 and
+              FPGA therefore is to act as an efficient extension to RTDS in                                        Fig.13. It should be mentioned that the calculations of vdq0 in
+              simulating large-sized AC networks without losing model                                              step 3 and iG in step 5 share the same hardware module as they
+              accuracy and with no interface errors, while the configuration                                       are both performing the transformation between abc and dq0
+              of the system and results visualization are conveniently carried                                     reference frames. The descriptions of these sub-modules and the
+              out using RTDS.                                                                                      parallelism between them are provided in Section IV.
+                 This paper is organized as follows. Section II introduces the                                        2) Transmission Line
+              EMT models of power system components and the modelling                                                 The distributed parameter transmission line model is adopted,
+              of controllers for synchronous machines. Section III introduces                                      which is solved in modal domain before converting back to
+              the architecture of the co-simulator. The design of interface                                        phase domain. The hardware implementation of the model
+              between FPGA and RTDS is discussed. Section IV explains the                                          consists of 2 submodules: phase/modal transformation module
+              hardware implementation of the AC system. Discussion on the                                          and transmission line solver. The transformation module
+              expandability of the model in FPGA is presented. Section V                                           converts all relevant voltages and currents from phase domain
+              shows the results of two simulation case studies to verify the                                       to modal domain for calculation, and converts the results from
+              accuracy and simulation capability of the proposed                                                   modal domain back to phase domain after solution.
+              co-simulator. Section VI discusses the relationship between the                                         3) Passive Elements
+              size of network to be simulated and the hardware resource                                               Trapezoidal rule of integration is utilized to discretize the
+              utilization & minimum simulation time-step. Finally Section                                          dynamic equations for inductors and capacitors. As a result, all
+              VII concludes the paper.                                                                             system inductors and capacitors are represented as the parallel
+                                                                                                                   connection of history current terms and constant impedance
+                      II. EMT MODELS OF POWER SYSTEM COMPONENTS &                                                  [24]. The history currents are directly used by the “Nodal
+                                     CONTROLLERS                                                                   Equation Solver” described later to calculate the system nodal
+                                                                                                                   voltages.
+                To correctly simulate the dynamic behavior of AC power                                                4) Faults
+              systems, it is essential that both the power system components                                          Fault changes the network admittance matrix and system
+              and the control systems for synchronous machines are                                                 equivalent resistance. In the proposed EMT co-simulator, these
+              modelled in detail.                                                                                  matrices are pre-stored and are chosen according to the fault
+
+
+
+                                        This work is licensed under a Creative Commons Attr

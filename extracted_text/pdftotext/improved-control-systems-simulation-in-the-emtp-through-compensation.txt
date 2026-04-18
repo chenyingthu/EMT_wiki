@@ -1,0 +1,217 @@
+1654                                                                          IEEE Transactions on Power Delivery, Vol. 9, No. 3, July 1994
+           IMPROVED CONTROL SYSTEMS SIMULATION IN THE EMTP THROUGH COMPENSATION
+
+                                          S. Lefebvre (Member) and J. Mahseredjian (Member)
+                                                         Hydro-Quebec, IREQ
+                                                    DirectionTechnologie de reseaux
+                                                       Varennes, Quebec, Canada
+
+
+
+ABSTRACT : The control systems, devices and
+phenomena modelled in TACS, and the electric network
+modeled in EMTP are solved separately with
+one-time-step error at the interface. This provides an
+efficient time-step solution, but there can be numerical
+stability and accuracy problems associated with the
+one-time-step error. This paper shows a technique
+which can eliminate the time delay, without having to use
+a simultaneous EMTP and TACS solution.
+Keywords : EMTI? compensation, power electronics
+                                                                                                                                    Ein
+                     1. INTRODUCTION
+    TACS is a section of the EMTP which allows the
+representationof control systems in block-diagram form.                                                                           TACS
+It has been used to model the control of converters,                                                            Tout
+FACTS and static VAR devices, excitation systems of
+synchronous generators, dynamic load characteristics,
+etc. [l -21
+    It is well known that there is a one step time delay
+                                                                            TACS outputs to the EMTP may be in fact one or more
+between TACS and EMTP variables. There are many
+cases where such delay do not cause any trouble: fast                    time steps late because there are internal time delays in
+transients in the network - slow transients in the control               the TACS solution. The internal TAGS time delays can
+system. However, many examples can be created where                      often be minimized or compensated with proper control
+the time delay results either in numerical instability or                modelling. They may affect the accuracy or stability of the
+wrong results. An example of numerical instability is the                TACS solution, but have less impact on the EMTP-TACS
+simulation of the arc behavior in a circuit breaker                      interface stability. The one-time-step error at this
+(resistance simulation through a current injection) , while              interface can have a strong impact on the network
+wrong results will be obtained in some power electronic                  solution. Selecting a smaller step size may sometimes be
+circuits due to the delay of the trigger orders from TACS.               sufficient, but no simple general rule can be given to
+    The information used by EMTP to advance to time t is                 manage time delay errors though. There are even cases
+based on the TACS solution Toutfor+timet -AT, where AT                   where irrespective of the step size, the solution is
+is the step size. Based on the network solution Ei" at time              numerically unstable. This paper then does not
+t, TACS computes its outputs. This is shown in Figure 1.                 concentrateon the internaltime delays in TACS, but rather
+    The concept of separate EMTP and TACS simulation                     on the EMTP-TACS interface one-time-step error.
+is the result of preserving solution efficiency, and as much                 The purpose of this paper is to demonstrate the
+as possible modularity. The TACS solution is                             application of the compensation method to eliminate the
+simultaneous for linear blocks, and sequential for                       one-time-step       error, without having to have a
+nonlinear blocks or functions. The TACS equations are                    simultaneous EMTP-TACS solution. This is an extension
+sparse but unsymmetrical.There are no iterations during                  of the compensation technique used in EMTP for the
+                                                                         solution of true nonlinear elements. [3]
+94 WM 084-4 PWRD A paper recommended and approved
+by the IEEE Transmission and Distribution Committee                                          2. BASIC ALGORITHMS
+of the IEEE Power Engineering Society for presentat-
+ion at the IEEE/PES 1994 Winter Meeting, New York,                        EMTP solution
+New York, January 30       -
+                       February 3, 1994. Manuscript
+submitted July 21, 1993; made available for printing                          The EMTP is a nodal analysis program based on the
+November 29, 1993.                                                        fixed time-step     trapezoidal integration method.
+                                                                          Considering only linear elements, discretized network
+                                                     0885-8977/94/$04.00 Q 1994 IEEE
+
+
+
+
+   Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:22:16 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                             1655
+equations are given byY,V,        = I, - I, ,where Yn is                  and because the TACS matrices are unsymmetrical, a
+the symmetrical nodal admittance matrix, V, is the node                   time-step delay exists between EMTP and TACS,
+to ground voltage vector while I, and 1, represents                       (Figure 1) such that independent solutions can be carried
+respectively node current injections including current
+                                                                          out. The pseudo-nonlinear non iterative TACS solution
+                                                                          has been traditionally          preferred over a TACS
+sources and 'past history' terms. For convenience in
+                                                                          simultaneous nonlinear formulation.
+notation, assume that the impact of known voltage
+                                                                               The    TACS       matrices      are    unsymmetrical,
+sources is merged with the history terms. The symmetric
+                                                                          triangularization yields two distinct upper and lower
+admittance matrix is triangularized, and the time step
+                                                                          matrices. Because there are typically several
+solution is obtained, without iteration, with
+                                                                          nonlinearities in a control system, the TACS solution is not
+foward-backward substitution. When the computation
+of the voltages is completed, then all history terms are                  as simple as triangularization separate of the time-step
+                                                                          loop, and a foward-backward substitution in the
+updated for usage at the next time step.
+                                                                          time-step loop. As in the EMTP, it is necessary to
+    Before the triangularization, it is important to order the
+equations in a way that will minimize the fill-ins.                       distinguish linear components (explicitly declared transfer
+                                                                          functions) from the nonlinearities. Nonlinearities in TACS
+    There are relatively few nonlinear elements in the
+                                                                          context, include supplemental pseudo-FORTRAN
+ network, and the EMTP uses an efficient scheme for their
+                                                                          expressions which may express a linear relationship
+solution that does not penalize the large linear network
+solution. The first manner to handle nonlinear elements is                 between variables.
+                                                                               Before entering the time-step loop, all TACS transfer
+to use pseudo-nonlinearities, i.e. assume one time-step
+                                                                          functions in the s-domain are converted into algebraic
+ delay. This is prone to numerical difficulties. The second
+ manner is to consider true nonlinear elements whose                      difference equations in the time domain through the
+                                                                          trapezoidal rule of integration. These equations can be
+solution is superimposed on the solution of the linear
+                                                                          written as A X = b, where A is nxn and non symmetric, this
+ network. This is known as the compensation method, and
+ requires iterations within the nonlinear elements.                        is shown in Figure 2 (history terms merged on the RHS).
+                                                                           Basically, after a simultaneous solution of the linear
+TACS solution                                                              components is obtained, then, all supplemental devices
+                                                                           are sequentially taken into account in a manner that
+    While the non-control equipment is modeled by                          reduces the internal time delays, without iterations.
+EMTP devices, TACS is used to model the controls on
+these devices, or controlled voltage-current sources. A                                                       XI: unknown
+typical example is valves in power electronic circuits                                                        Xz: known sources or variables
+which can be directly modeled in the EMTP as
+switch-components and incorporated into the Y, matrix.
+The switches close after the anode voltage becomes
+
+
+
+
+                                                                                            R.-B
+larger than the cathode voltage, as soon as a firing signal                                                     After factorization
+is received from TACS. The switches open as soon as the
+current goes through zero from a positive value.
+Re-triangularization is performed whenever there is a
+                                                                                             x2
+topological change in the network.
+    As for the network, the control systems are a mixture                  Figure 2 TACS simultaneous solution of linear
+of linear and nonlinear elements, however the proportion                                 components
+of nonlinear elements in TACS is typically much higher in                     Triangularization of the matrix A is performed once,
+TACS than in EMTP. In order to preserve solution speed,                   then at each time step the unknown variables are found
+the TACS solution is non iterative but introduces internal                by a forward substitution on B, followed by
+TACS time delays to take into account nonlinear                           back-substitution to obtain the state variables X. The
+components of the control circuit. This is a                              back-substitution process is interrupted, as needed, to
+pseudo-nonlinear representation, but not all nonlinear                    update the supplemental variables whenever possible.
+components require individual time delays though. For                     That is, when TACS does the back-substitution to solve
+example series nonlinearities in a loop do not have                       for the output of linear components, then TACS checks
+cumulative internal time delays, but only one, while some                 the link list for outputs driving supplemental variables or
+topologies can be i solved without time delays[4]. If                     devices. If any, then TACS updates the relevant
+                             would be trivial to obtain a                 supplemental variables or devices.
+                            this is not the case in general.                  Ordering techniques completely differ from that of
+Because of the sequencing on nonlinear components,                        EMTP Loops containing only function blocks are not
+
+
+
+
+    Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:22:16 UTC from IEEE Xplore. Restrictions apply.
+1656
+sensitive to the ordering. In fact, if there is at most one                   EMTP                                    TACS
+limiter present,the internalTACS solution is simultaneous.
+In most cases however, the correct ordering of all TACS
+variables, except the sources, is crucial for reducing the
+internal TACS time delays and for getting as accurate
+results as possible without iterations. It is not simply a
+matter of reducing the fill-ins. Ordering is thus used to                  Figure 3 EMTP-TACS internal-external
+minimize the number of internal TACS time delays                                      formulation
+(prioritized over fill-ins in the triangularization), to keep                The matrices F and G represent exact equivalent
+the number of operations in the time-step loop as low as                  models involving only the external variables. To obtain a
+possible and, together with sparsity storage, to reducethe                simultaneous EMTP-TACS solution, first solve for the
+size of the memory for storing the triangularized matrices.               interface variables through the reduced set of equations
+                                                                          involving external variables :
+       3. SIMULTANEOUS EMTP-TACS SOLUTION
+
+                                                                             L             J L J
+    The strategy has always been to solve EMTP and                        where 3 is the identity matrix. Next, perform substitutionto
+TACS separately, and with one-time-step delay, as                         get the remaining internal EMTP and TACS variables.
+introduced in Figure 1. This delay can create numerical                   Then history terms are updated for the next time step. In
+instabilities, as documented in the Applications section.                 general, the external variables will not be solved without
+The internal TACS time delays may also create numerical                   iterations. Since most control systems are nonlinear,
+difficulties, but the focus is not on those.                              implementationis not trivial since the G matrix is in general
+    Solving the models represented in TACS                                a nonlinear function of Ein and lout, and may not be
+simultaneously with the EMTP network is more                              explicitly available. Furthermore, it is not desirable to
+complicated for models of power system components                         impact the TACS ordering linked to the nonlinear TACS
+becausethe TACS matrices are unsymmetricaland there                       components sequencing.
+is a TACS sequential solution of nonlinear components
+which is closely interleaved with the solution of the linear              ComDensation
+elements themselves.                                                          A practical numerical solution technique is obtained
+     Different techniques can eliminate the one-time-                     with the compensation method, and with minimal
+step error.                                                               modificationsto the existing EMTP and TACS algorithms.
+Predictor-corrector [3]                                                   Assume for simplicity, that all TACS interfaces with EMTP
+                                                                          are modelled as equivalent resistance matrices with
+    In solving EMTP for time t, use predicted TACS values                 parallel current sources. Such models do not fit directly
+for time t. Then use the EMTP solution to correct the TACS                into the nodal EMTP equations, rather they are solved by
+output at timet. Repeat until convergence. In principle this              compensationas they are treated as true nonlinearitiesto
+is easy to implement, but the convergence characteristics                 eliminate the one-time-step         error. Although the
+are very dependent on the accuracy of the prediction.                     representation seem to limit the type of interface with the
+Furthermore, the entire EMTP network has to be solved                     EMTe it covers all the existing TACS signals going to
+repeatedly at one time step.                                              EMTP (current source, voltage source, trigger signal) and
+                                                                          take into account nonlinearitiesof the control system. This
+EMTP and TACS eauivalents                                                 technique is efficient and general, and does not limit the
+                                                                          number of interfaces. This is an extension of the existing
+   Assume for simplicity (this restriction is for the sake of             EMTP capability of solving true nonlinear elements. It is
+clarity only), that TACS needs Ei, from the EMTP, and                     fully described in the next section.
+provides the current lout. In the equivalent-approach, the                         4. EMTP-TACS INTERFACE BASED ON
+TACS equations are reduced through partial factorization                                     COMPENSATION
+to a factorized set of internal TACS variables X, and an
+                                                                          Description of comp-ion  techniaue
+external set of variables involving the EMTP voltages Ein
+(X, in Figure 2) and the TACS-generated currents lout.                        In the TACS compensation-based methods, all
+Similarly the EMTP equations are triangularized only in                   interfacevariables can be essentially simulatedas current
+their upper part. This is shown in Figure 3, after                        injections I, which are super-imposed on the linear
+factorization (history terms merged in B,, B, and BJ, with                network after a solution without TACS, or with Tout(t-AT)
+                                                                          has first been found. Figure 4 illustrates the
+ G = [Gll 6 2 1 '
+                                                                          decomposition, where there are P-true nonlinearities in
+
+
+
+
+   Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:22:16 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                            1657
+EMTP between buses k and m (solved by the EMTP                                                                           d",,
+compensatio'n) and the Q-TACS interfaces, between                            dynamic: lii = TWt = Tout(Vij, dt)                             (4)
+busses i and j (solved by the TACS compensation). The                    where Tout refers to the nomenclature of Figure 1. It is
+TACS interfaces are assumed to be of the form V as the                   assumed that all TACS dynamic interfaces can be
+input a

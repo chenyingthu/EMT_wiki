@@ -1,0 +1,213 @@
+                             Received 10 May 2023; revised 21 June 2023; accepted 17 July 2023. Date of publication 20 July 2023;
+                             date of current version 2 August 2023. The review of this article was arranged by Associate Editor Fei Liu.
+                                                                  Digital Object Identifier 10.1109/OJPEL.2023.3297449
+
+
+
+
+                 Real-Time HIL Emulation of DRM With
+                    Machine Learning Accelerated
+                         WBG Device Models
+            SONGYANG ZHANG                        1 (Graduate Student Member, IEEE), TIAN LIANG                                       1,2 (Member, IEEE),
+
+                                                      AND VENKATA DINAVAHI                            1 (Fellow, IEEE)
+                                 1
+                                     Department of Electrical and Computer Engineering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada
+                                                               2
+                                                                 RTDS Technologies Inc., Winnipeg, MB R3T 2E1, Canada
+                                                     CORRESPONDING AUTHOR: TIAN LIANG (e-mail: tliang5@ualberta.ca).
+           This work was supported in part by the Natural Science and Engineering Research Council of Canada (NSERC) through Mitacs Accelerate Program and in part by
+                                                                              RTDS Technologies Inc.
+
+
+
+
+          ABSTRACT The proliferation of artificial intelligence (AI) has opened up new avenues for the modeling
+          of power electronics with ultra-fast transient responses, such as wide-bandgap (WBG) devices. This arti-
+          cle highlights the significance of ultra-fast transient device-level hardware emulation for the DC railway
+          microgrid (DRM) in real-time. To this end, the proposed approach partitions the DRM power system by
+          transmission line method (TLM) and employs gated recurrent unit (GRU) and electromagnetic transient
+          (EMT) modeling techniques for system-level subsystems. Meanwhile, for WBG devices, gallium nitride
+          (GaN) high electron mobility transistors (HEMT) and silicon carbide (SiC) insulated gate bipolar transistors
+          (IGBT) are modeled using a novel physical feature neuron network (PFNN), which offers high flexibility
+          with a variable time-step (as low as 1 ns), thereby improving the accuracy, efficiency and accelerating the
+          emulation on the field-programmable gate array (FPGA). The effectiveness of the proposed approach is
+          confirmed by comparing the emulation results with offline simulation results obtained from PSCAD/EMTDC
+          for system-level and SaberRD for device-level transients. The proposed PFNN approach provides strong
+          versatility, ultra-fast transient emulation capability, and significantly improved accuracy, which bodes well
+          for the future of power electronics device-level emulation.
+
+          INDEX TERMS Artificial intelligence (AI), DC railway microgrid (DRM), field-programmable gate arrays
+          (FPGAs), gallium nitride (GaN), gated recurrent units (GRU), hardware-in-the-loop (HIL), machine learning
+          (ML), power electronics, real-time systems, silicon carbide (SiC), wide-bandgap (WBG).
+
+
+
+
+I. INTRODUCTION                                                                               speed, and low on-state resistance, which make them ideally
+In the era of heightened emphasis on energy conservation and                                  suited for the DRM environment [9], [10]. Therefore, precise
+emission reduction, DC railway microgrid (DRM) [1], [2],                                      modeling of these devices and their intricate interactions with
+[3], [4] is poised to become a cornerstone solution for sustain-                              the DRM is indispensable for realizing optimal performance
+able railway transportation. Among the crucial components of                                  and control.
+DRM, wide-bandgap (WBG) devices [5], [6], including gal-                                         Accurate modeling of power electronic devices is a crucial
+lium nitride (GaN) high electron mobility transistors (HEMT)                                  prerequisite for designing and optimizing power circuits. Tra-
+and silicon carbide (SiC) insulated gate bipolar transistors                                  ditional modeling methods for WBG devices can be divided
+(IGBT), hold a pivotal position in ensuring its efficient op-                                 into two categories: physics-based models and empirical mod-
+eration. GaN HEMT [7] and SiC IGBT [8] have witnessed                                         els [11], [12], [13], [14]. Physics-based nonlinear models
+an upsurge in popularity in recent years, thanks to their su-                                 aim to capture the physical mechanisms and phenomena
+perlative characteristics of high power density, fast switching                               of the devices, such as the channel formation, the current
+
+                  This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+VOLUME 4, 2023                                                                                                                                                          567
+ZHANG ET AL.: REAL-TIME HIL EMULATION OF DRM WITH MACHINE LEARNING ACCELERATED WBG DEVICE MODELS
+
+
+
+
+conduction, the charge distribution, and the temperature ef-
+fects. These models provide a detailed understanding of the
+device operation and performance, but are usually complex
+and computationally intensive. Empirical models, on the other
+hand, rely on fitting mathematical equations to the experi-
+mental data, such as the output characteristics, the transfer
+characteristics, and the switching behavior. These models are
+often simpler and faster, but may lack accuracy and generality.
+A trade-off between complexity and accuracy is often required
+when choosing a suitable modeling method for SiC IGBT
+and GaN HEMT devices for power circuit simulation. As the
+demand for high-performance and energy-efficient power cir-         FIGURE 1. Traditional point-to-point calculation algorithm.
+cuits continues to grow, more advanced modeling techniques
+are required to capture the complex behavior and interactions
+of these WBG devices in power circuits.
+   While there exist numerous offline simulation and solution
+methods for modeling WBG devices, most of these nonlinear           for approximately 10 ns, requires a extremely small time-
+models cannot fulfill the real-time execution requirements          step, making it challenging to implement fixed time-step ML
+of hardware-in-the-loop (HIL) emulation. However, the es-           methods. To address this issue, this article proposes the phys-
+tablishment of a real-time emulation is an emerging and             ical feature neural network (PFNN), which integrates ML
+crucial demand for the control and performance verification         algorithms with interdisciplinary physical-based modeling to
+of transportation systems. To overcome the challenges of            accurately model the transient process of GaN HEMT. The
+real-time emulation with traditional computation methods,           PFNN offers ultra-fast transient emulation capability, and
+utilizing FPGA-based parallel accelerated computation is a          significantly improved accuracy, which is a variable-time-
+highly effective approach [15]. This approach has been widely       step non-linear model distinguished from other traditional
+adopted in real-time system-level microgrids emulation, in-         approaches. Additionally, the PFNN method is not limited
+cluding aircraft power systems [16], and traction systems [17].     to GaN HEMTs, as it can be applied to model device-level
+For real-time device-level modeling, several methods such           devices such as SiC IGBT (excellent versatility).
+as nonlinear behavioral model (NBM) [18] and curve-fitting             This article presents a novel approach for real-time HIL
+models [19] employ FPGA to achieve device-level emu-                emulation of DRM using PFNN accelerated WBG SiC/GaN-
+lation, thereby reflecting the transient of power electronic        based models on the Xilinx Ultrascale+ architecture FPGA
+devices.                                                            hardware platform. The main contributions of this work are
+   With the growing demand for accurate and efficient model-        described in the following sections. Section II introduces
+ing of power electronics devices in HIL applications, machine       the ML method adopted for modeling the SiC and GaN
+learning (ML) methods have emerged as a promising solution.         devices. Section III presents the DRM system and the im-
+Traditional modeling methods for SiC IGBT and GaN HEMT              plementation of its real-time emulation using the proposed
+devices often suffer from high computational complexity, pa-        ML-based models. Section IV demonstrates the effective-
+rameter sensitivity, and a lack of accuracy under dynamic           ness of the proposed approach through real-time emulation
+conditions. In contrast, ML methods offer several advantages        results and verification using experimentally verified soft-
+by leveraging large datasets to learn the underlying relation-      ware, PSCAD/EMTDC for system-level and SaberRD for
+ships between input and output data, leading to more accurate       device-level transients. Finally, Section V concludes the
+and efficient models. For SiC IGBT and GaN HEMT, ML                 article.
+methods can overcome the limitations of traditional modeling
+methods by capturing their nonlinear and time-varying behav-
+ior and predicting their performance under different operating
+conditions. Moreover, ML methods can significantly reduce           II. MACHINE LEARNING MODELING METHODS
+the latency and hardware resource consumption required for          This section introduces the operational models of traditional
+model development and validation, enabling rapid prototyp-          device-level computational models, followed by an overview
+ing and optimization of power electronic systems. Therefore,        of commonly used ML topology types for modeling and com-
+ML methods have become a promising alternative to tradi-            parative analysis among different NNs. Subsequently, a fixed
+tional modeling methods for SiC IGBT and GaN HEMT in                time-step-points neural network (FTPNN) based on fully con-
+HIL applications. Although numerous research papers have            nected artificial NNs (FNNs) is proposed for GaN HEMT and
+utilized neural networks (NNs) for modeling the transient           SiC IGBT modeling. In view of the limitations of FTPNN,
+behavior of IGBT [20], [21], [22], [23], the application of         the PFNN modeling process is further proposed. Finally, a
+ML methods to GaN HEMTs modeling is still underexplored.            comparative discussion is presented on the advantages and
+The ultra-short transient process of GaN HEMT, which lasts          limitations of these modeling methods.
+
+568                                                                                                                               VOLUME 4, 2023
+FIGURE 2. NN topologies: (a) FNN; (b) RNN.                          FIGURE 3. FTPNN-EMT hybrid model: (a) output waveform; (b) parallel
+                                                                    algorithm.
+
+
+
+A. TRADITIONAL EMT CALCULATION MODEL                                previous time-step. When building models with time-series
+Fig. 1 illustrates the conventional device-level IGBT wave-         signal inputs, there may be differences in the data processing
+form calculation process, which is point-to-point in nature:        structure between FNN and classical RNN, which is shown in
+based on the circuit topology and parameters, historical volt-      Fig. 2(b).
+ages and currents are used to calculate the output voltage
+and current for the next time-step from the last computation        C. SIC/GAN FTPNN MODEL
+result. Undoubtedly, this calculation analysis method is highly     Compared with the EMT point-to-point fixed time-step model
+accurate, but for SiC/GaN-based transient waveform changes          that is difficult and inefficient to implement on parallel hard-
+occurring within 1 μs or even 50 ns, this calculation strategy is   ware, using NN to calculate transient waveforms can achieve
+difficult to accomplish from one time-step to the next (usually     highly efficient parallel execution for real-time emulation.
+about 10 μs). Due to the nonlinearity of the elements (the          In previous studies [27], [28], the effectiveness of FTPNN
+internal equivalent capacitance value changes with the change       method was demonstrated using FNN or system-level EMT
+of current and voltage), the circuit parameters in these calcu-     and device-level ML algorithms for IGBT models. The NN
+lation processes are dynamically changing, and the iterative        results of this type of model generally use FNN and minimize
+matrix calculation typically consumes a large amount of com-        the number of layers and neurons as much as possible due
+puting resources and causes significant latency. Moreover, this     to real-time requirements and the need for outputting dozens
+point-to-point fixed time-step calculation method is sequential     of data points, such as using 50 data points to emulate a 1 μs
+and difficult to accelerate through FPGA hardware parallel ar-      waveform with a fixed time-step size of 20 ns or 20 data points
+chitecture. Therefore, for device-level waveforms, traditional      to emulate a 1 μs waveform with a fixed time-step size of
+electromagnetic transient (EMT) calculation methods are in-         50 ns. Fig. 3(a) shows the output waveform of this FTPNN
+efficient to implement real-time parallel execution.                model: the purple dots are generated by the EMT calculation
+                                                                    algorithm, while the orange dots generate a series of data
+B. ML MODELING TOPOLOGY                                             points with a fixed time-step to emulate the transient wave-
+To develop an ML model for power electronics devices, it is         form using FTPNN. Fig. 3(b) shows the parallel computing
+necessary to employ reliable and precise NN topologies, such        process and output of data points for EMT and FTPNN of
+as traditional FNNs, classical recurrent NNs (RNNs) [24],           this model. This model is easy to train and can achieve an
+long short-term memory (LSTM) [25] NNs, gated recurrent             optimal point in terms of hardware resources, accuracy, and
+units (GRU) [26] NNs, and others. For most power electron-          latency, making it an exemplary application of the intersection
+ics ML applications, near-future prediction is more crucial         of power electronics and ML technologies.
+than long sequence prediction or coarse prediction. There-
+fore, complex NNs, which require significant computational          D. SIC/GAN PFNN MODEL
+resources and sub-microsecond real-time execution, are un-          The FTPNN method effectively solves the problem of real-
+acceptable for these applications. In [27], a comparison of         time emulation of IGBT device-level transient waveforms.
+several NN algorithms reveals that FNN and conventional             However, for the ultra-short transient processes of GaN de-
+RNN are the most cost-effective, although LSTM may en-              vices, it is still difficult for the FTPNN method to achieve
+hance accuracy at the expense of larger hardware resources.         small time-steps (less than 20 ns). Moreover, when using
+GRU is a compromise between conventional RNN and LSTM,              small time-steps, the FTPNN method increases latency and
+and is often used as a substitute for RNN in many-step              consumes significant hardware resources due to the large size
+applications or when hardware resources are sufficient. As          of the output matrix caused by the large number of output data
+illustrated in Fig. 2(a), the simplest ML model, the FNN, cal-      points. Therefore, another more efficient method, PFNN, is
+culates data at the current time-step based on the signal at the    proposed in this article to emulate SiC/GaN-based transient
+
+VOLUME 4, 2023                                                                                                                            569
+ZHANG ET AL.: REAL-TIME HIL EMULATION OF DRM WITH MACHINE LEARNING ACCELERATED WBG DEVICE MODELS
+
+
+
+
+FIGURE 4. PFNN-EMT hybrid model: (a) output waveform; (b) parallel
+algorithm.
+
+
+
+
+waveforms. As shown in Fig. 4(a), the PFNN method signif-               FIGURE 5. PFNN modeling: (a) 3-D original current-voltage-time datasets;
+icantly reduces hardware resource consumption by allowing               (b) compressed 3-D voltage-time waveform; (c) 2-D voltage-time
+                                                                        waveform; (d) PFNN training dataset selection; (e) 3-D original
+customizable time-steps while outputting only the critical data         current-time datasets; (f) 2-D current-time waveform.
+points, such as waveform inflection points and waveform peak
+and valley points, based on the model’s physical features (PF).
+The output data points of the PFNN method include not only
+                                                                        TABLE 1. Comparison of Models for Transient Waveforms
+voltage values but also their corresponding time values. By
+reducing the output of irrelevant information, this method can
+greatly reduce the consumption of hardware resources when
+the waveform does not change much. Similarly, the system-
+level data points are calculated using the EMT model, while
+transient data points are calculated in parallel using the PFNN
+method. After obtaining the data points (t1 , v1 ) to (tn , vn ), the
+piecewise linearization method can be used to insert interme-
+diate data points according to the required time-step, as shown
+in Fig. 4(b). This allows for the output of data points with a
+time-step of 10 ns or even 1 ns. Although this data insertion           E. COMPARISON OF DIFFERENT METHODS
+process requires some extra hardware resources, this method             The comparison between models for transient waveforms is
+saves significant computational resources and reduces latency           presented in Table 1, primarily focusing on aspects such as
+compared to the FTPNN method using ML training and output               complexity, execution time, resource consumption, accuracy,
+strategies.                                                             generality, and long-period output capability.
+   Fig. 5 illustrates the modeling and data selection process of           The look-up table (LUT) approach (empirical model) is the
+PFNN. Taking IGBT turn-off transient waveform as an exam-               simplest and most direct, with the advantage of having low
+ple, Fig. 5(a) shows a 3D dataset containing voltage, current,          computation time and properly outputting the data points of
+and time. FTPNN method collects voltage and current data                the transient waveform. The disadvantage of this method is
+at fixed time-steps for training neural networks, while FPNN            that 1) obtaining the data from the LUT or measuring the
+method requires data filtering before training. For instance,           parameters of the model details is complicated, and 2) the
+as shown in Fig. 5(d), the voltage and cu

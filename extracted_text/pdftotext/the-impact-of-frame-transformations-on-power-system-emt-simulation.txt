@@ -1,0 +1,206 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024                                                                                         1319
+
+
+
+
+        The Impact of Frame Transformations on Power
+                  System EMT Simulation
+      Jiahang Li , Student Member, IEEE, Yitong Li , Member, IEEE, and Yunjie Gu , Senior Member, IEEE
+
+
+   Abstract—This article investigates the impact of frame trans-                  the entire simulation, and may be non-converging when the time
+formations on the accuracy of numerical discretization in power                   step is not sufficiently small compared to the timescale of the
+system transient and stability studies. As analysed, frame transfor-              system dynamics. That said, the fix-step method ensures fixed
+mations influence the convergence of the numerical discretization.
+Specifically, for an explicit discretization method (e.g., forward                computation time and therefore is the unique method that can
+Euler method), the stability of the original system is best preserved             be used for real-time simulation [9], [10], [11], [12], [13], [14].
+in the frame where the system eigenvalue is closer to the origin of                  A common technique to improve the convergence of fix-step
+the complex plane, e.g., in the stationary frame for inductors and                method for stiff systems is to use implicit discretization, the
+capacitors, and in the synchronous frame for dq-frame controllers                 most well-known example of which is the trapezoidal method
+of inverters. Simulation results are given to validate the theoretical
+analysis.                                                                         [9], [13], [15], [16]. In the implicit discretization, an algebraic
+                                                                                  function must be solved at each simulation step, which is known
+   Index Terms—Power system stability, electromagnetic                            as the algebraic loop [9], [11], [17]. The algebraic loop can be
+transients, frame transformation, numerical simulation.
+                                                                                  easily solved for a linear system via matrix inversion. For a
+                                                                                  linear time-invariant system, the solution of the algebraic loop
+                           I. INTRODUCTION                                        can be done one-off at the beginning of the simulation and does
+                                                                                  not to be repeated each step [13], [15]. For non-linear systems,
+      UMERICAL simulation is an important tool for power
+N     system transient stability analysis. With the increasing
+penetration of inverter-based resources (IBRs), electromagnetic
+                                                                                  solving an algebraic loop can be rather time consuming and
+                                                                                  therefore may substantially increase the simulation time [9],
+                                                                                  [11], [18]. For such non-linear systems, it is often necessary
+transients (EMTs) are becoming increasingly prominent and
+                                                                                  to insert extra delays to break the algebraic loop, but the extra
+ubiquitous in stability problems [1], [2], [3], [4], [5], [6], [7]. The
+                                                                                  delay may compromise convergence [13], [18], [19].
+resulted largescale (very high dimensional) and stiff (multiple
+                                                                                     While the ongoing efforts of EMT software suppliers (e.g.,
+timescales) model poses a challenge to numerical simulation.
+                                                                                  PSCAD, DigSILENT, Simulink, and OPAL-RT) are largely fo-
+This challenge has been recognised by system operators and
+                                                                                  cused on developing new discretization method for stiff systems
+simulation software suppliers. For example, National Grid, the
+                                                                                  [13], [18], [19], [20], [21], [22], [23], [24], [25], this paper
+major transmission system operator-owner in the U.K., is collab-
+                                                                                  takes a different perspective by investigating the effects of the
+orating with PSCAD to develop a U.K.-wide EMT simulation
+                                                                                  reference frames on the convergence of numerical discretization.
+tool [8].
+                                                                                  We illustrate that, by performing discretization in a proper
+   There are two streams of numerical method for transient
+                                                                                  reference frame (stationary or synchronous), an explicit (e.g.,
+simulation: variable-step method, and fix-step method. The
+                                                                                  forward Euler) method can have comparable convergence to
+variable-step method is more suitable for stiff systems because
+                                                                                  implicit methods for some EMT studies. This may resolve the
+this method adjusts the time step adaptively according to the
+                                                                                  dilemma between convergence and algebraic loops and provide
+minimum timescale in the system dynamics [9], [10], [11].
+                                                                                  a new way for EMT simulation of stiff inverter-based power
+Fix-step method, on the other hand, uses a single time step for
+                                                                                  systems.
+                                                                                     This article is organized as follows: Section II presents a
+                                                                                  quantitative model for the discretization in the synchronous and
+   Manuscript received 22 July 2022; revised 10 December 2022; accepted 19
+January 2023. Date of publication 10 February 2023; date of current version       stationary frames. Section III evaluates the convergence of the
+26 December 2023. Paper no. TPWRS-01076-2022. (Corresponding author:              discretization in different frames. Case studies are shown in
+Yitong Li.)                                                                       Section IV and Section V concludes the article.
+   Jiahang Li is with the Department of Electronic and Electrical Engineering,
+University of Bath, Bath BA2 7AY, U.K. (e-mail: jl3370@bath.ac.uk).
+   Yitong Li is with the School of Electrical Engineering, Xi’an Jiaotong
+University, Xi’an 710049, China (e-mail: yitong.li15@imperial.ac.uk).                   II. DISCRETIZATION WITH FRAME TRANSFORMATION
+   Yunjie Gu is with the Department of Electrical and Electronic Engineer-
+ing, Imperial College London, London SW7 2AZ, U.K. (e-mail: yunjie.                  For power system modelling, three-phase current or voltage
+gu@imperial.ac.uk).                                                               is normally transformed from ac variables in natural stationary
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2023.3242823.                                       frame (also known as αβ frame for two-axis analysis or abc
+   Digital Object Identifier 10.1109/TPWRS.2023.3242823                           frame for three-axis analysis) into dc variables in synchronous
+
+
+                         0885-8950 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:28:10 UTC from IEEE Xplore. Restrictions apply.
+1320                                                                                    IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+
+                                                                                     Fig. 2.   Frame transformation diagram.
+Fig. 1. The sequence of frame transformation and discretization. (a) method
+1: discretization in synchronous frame. (b) method 2: discretization in stationary
+frame. We use x(t) and x[n] to denote continuous and discretised variables. The
+subscripts αβ and dq donate the reference frames of the variables, and the           represented as a complex number
+subscripts 1 and 2 denote the discretization method.
+                                                                                                                xαβ = xα + jxβ
+                                                                                                                 xdq = xd + jxq                         (4)
+frame (also known as dq frame or rotating frame). There are two
+discretization choices in different frames, as follows:                              where j is the imaginary unit. The Park transformation becomes
+   r Method 1 - discretization in synchronous frame: The                             a rather simple expression in complex numbers
+     system variables are transformed from original stationary
+     frame to synchronous frame first, and the discretization                                                    xαβ = ejθ xdq
+     performed in the synchronous frame, as shown in Fig. 1(a).
+                                                                                                                  xdq = e−jθ xαβ                        (5)
+     This method is normally adopted in conventional numerical
+     simulation.                                                                     where θ is the angle difference between dq and αβ frames, as
+   r Method 2 - discretization in stationary frame: The system                       shown in Fig. 2, and θ = ωr t for a constant angular speed ωr .
+     is discretized in stationary frame first, and the discrete
+     variables are transformed into the synchronous frame for                        B. Eigenvalue Mapping
+     consistent frame comparison, as shown in Fig. 1(b).
+                                                                                        Eigenvalue analysis is a useful method to evaluate the con-
+A. Discretization and Frame Transformation                                           vergence of a numerical method. Indeed, eigenvalue is only
+                                                                                     available for linear systems, but such evaluation provides a good
+   The dynamic behaviour of a power system is described by a                         estimation for the convergence of the discretization method for
+set of ordinary differential equations [2]                                           generic systems [27], [16]. For non-linear systems, the eigen-
+                           dx                                                        values can be calculated from the linearised systems along the
+                               = f (x, u)                      (1)
+                            dt                                                       dynamic trajectory [28].
+where x is the state variable and u is the input. At the core                           Based on (3), the eigenvalue mapping from s domain to z
+of numerical simulation is to discretize the ordinary differ-                        domain for the forward Euler method is
+ential equations into difference equations. There are various
+                                                                                                                  λz = 1 + λ s T                        (6)
+discretization methods available and we focus on the forward
+Euler method in this paper [9], [26]. The time-derivative of the                     where λs and λz are the eigenvalues of the differential equa-
+state variable x is estimated by the difference between two simple                   tion and difference equation respectively. The natural mapping
+points                                                                               between s and z domain is given by Laplace transformation
+               x [n + 1] − x [n]
+                                  = f (x [n] , u [n])         (2)                                                    z = esT                            (7)
+                       T
+where T denotes the sample period (time step) of simulation.                         from which yields the natural eigenvalue mappings
+Forward Euler is an explicit method since the next step x[n+1]
+is an explicit function of the previous step x[n] and u[n]. For a                                                λ z = e λs T                           (8)
+linear system, the forward Euler method can be represented in                                                    λs = (ln λz ) /T.                      (9)
+the frequency domain as
+                                                                                        The natural mapping provides an authentic (stability preserv-
+                                z = sT + 1                                    (3)
+                                                                                     ing) relationship between the z and s domains, and it is clear
+where z and s are the operators in Z and Laplace transforms.                         that forward Euler method is essentially a first-order Taylor
+   The frame transformations between the stationary (αβ) and                         approximation of the natural mapping.
+synchronous (dq) are defined by the Park transformation. The                            Now we identify the effect of frame transformations on system
+orthogonal coordinates in both the αβ and dq frame can be                            eigenvalues.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:28:10 UTC from IEEE Xplore. Restrictions apply.
+LI et al.: IMPACT OF FRAME TRANSFORMATIONS ON POWER SYSTEM EMT SIMULATION                                                                               1321
+
+
+
+
+Fig. 3. Eigenvalue mapping of discretization in synchronous frame and discretization in stationary frame in frequency domain. Method 2 is equivalent to the
+discretization in stationary frame directly without additional frame transform. The frame transform in method 2 is added only for consistent comparison with
+method 1 and analysis in Section III.
+
+
+
+   1) Frame Transformation on Differential Equations: For a                                                    TABLE I
+                                                                                      EIGENVALUE MAPPING OF DISCRETIZATION IN SYNCHRONOUS FRAME
+linearised differential equation in synchronous frame                                (METHOD 1) AND DISCRETIZATION IN STATIONARY FRAME (METHOD 2)
+                    dxdq
+                          = Axdq + Budq                                 (10)
+                     dt
+the corresponding stationary frame equation is
+              dxαβ
+                    = (A + jωr )xαβ + Buαβ                              (11)
+               dt
+where we make use of the fact that
+          dxdq             dxαβ
+                = e−jωr t         − jωr e−jωr t xαβ .                   (12)
+            dt               dt
+  The eigenvalue of (9) and (12) is defined by
+                                                                                    An s-domain system is stable if all its eigenvalues are in the
+                           |λs, dq I − A| = 0
+                                                                                 left-half plane, i.e., Re(λs ) ≤ 0. A z-domain system is stable if
+                    |λs, αβ I − (A + jωr I)| = 0.                       (13)     all its eigenvalues (modes) are located inside the unit circle, i.e.,
+                                                                                 |λz | ≤ 1. It is clear from (14) and (19) that the frame transforma-
+where λs, dq and λs, αβ denotes the eigenvalues of different
+                                                                                 tions on the differential and difference equations do not change
+frame in s domain. It follows that the eigenvalue relationship
+                                                                                 their stability by themselves. That said, the transformations do
+in s domain between the stationary and synchronous frames is
+                                                                                 have impacts on the convergence of discretization, to follow.
+                        λs, dq = λs, αβ − jωr                           (14)
+                                                                                                    III. CONVERGENCE EVALUATION
+  2) Frame Transformation on Difference Equations: For
+method 2, we have the forward Euler difference equation in                          Now we have all the ingredients ready to evaluate the con-
+synchronous frame as                                                             vergence of discretization in a synchronous frame (method 1)
+           x[n + 1]dq − x[n]dq                                                   and discretization in a stationary frame (method 2). The chain of
+                                = Ax[n]dq + Bu[n]dq .                   (15)     eigenvalue mapping for the two methods are illustrated in Fig. 3
+                    T                                                            and summarised in Table I.
+   It can be transformed to stationary frame as
+ e−jωr T x[n + 1]αβ − x[n]αβ                                                     A. Analysis in z Domain
+                              = Ax[n]αβ + Bu[n]αβ . (16)
+              T                                                                     Based on Table I and Fig. 3, the relationship between z-domain
+   Taking Z-transform on (15) in synchronous frame and (16)                      eigenvalue and original s-domain eigenvalue can be found as
+in stationary frame, the characteristic equations defining the                                           λz, dq1 = λz, αβ − jωr T
+corresponding eigenvalues are
+                                                                                                         λz, dq2 = e−jωr T λz, αβ                       (20)
+                    |(zdq − 1)I/T − A| = 0                              (17)
+                  −jω T                                                        where λz,αβ is the z-domain eigenvalue obtained from the
+                 (e r zαβ − 1)I/T − A = 0                             (18)
+                                                                                 original s-domain eigenvalue λs,αβ as λz,αβ = 1 + λs,αβ T .
+from which follow the eigenvalue relationship between dq and                        The z-domain eigenvalue trajectory diagram is captured in
+αβ frames in z domain                                                            Fig. 4 with λz, dq1 in red line, λz, dq2 in blue line and λz, αβ
+                                                               

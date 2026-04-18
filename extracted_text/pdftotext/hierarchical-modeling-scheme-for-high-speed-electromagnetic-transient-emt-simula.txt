@@ -1,0 +1,167 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2021.3061421, IEEE
+                                                                                               Transactions on Power Electronics
+
+
+        IEEE POWER ELECTRONICS REGULAR PAPER/LETTER/CORRESPONDENCE
+
+
+                   Hierarchical Modeling Scheme for High-Speed
+                  Electromagnetic Transient (EMT) Simulations of
+                          Power Electronic Transformers
+          Moke Feng, Chenxiang Gao, Jiangping Ding, Hui Ding, Member, IEEE, Jianzhong Xu*, Senior Member, IEEE, and
+                                           Chengyong Zhao*, Senior Member, IEEE
+          1 Abstract- The extensive application of the power electronic
+                                                                                                               series-output-parallel (ISOP). In order to analyze the
+        transformers (PET) in power systems poses a challenge as the                                           characteristics of PET systems, electromagnetic transient
+        accurate and high-speed electromagnetic transient (EMT)                                                (EMT) simulations are necessary [9], [10]. EMT simulation is
+        simulation of PET has been a critical issue. The computational
+        time of the detailed EMT simulation of PET on EMT programs is                                          a tool to analyze the electromagnetic transient and associated
+        unacceptable, due to the large electrical node count,                                                  insulation issues. With EMT simulation software, any network
+        microsecond-range simulation steps, high switching frequency of                                        which consists of interconnections of resistances, inductances,
+        the devices and transformers. This paper proposes a hierarchical                                       capacitances, single and multiphase π-circuits, distributed-
+        modeling scheme for PET. Unlike the existing modeling methods,                                         parameter lines and certain other elements can be solved. [11].
+        the proposed technique recursively decreases the dimension                                             EMT simulation represents and solves differential equations in
+        order of the admittance matrix to obtain the generalized Norton
+        equivalent of each phase leg. The final admittance matrix                                              the time domain. Solutions are calculated based on a fixed
+        overlaid onto the external system admittance matrix has a                                              time step, and its program structure allows for the
+        dimension order of magnitude remarkably smaller than that of                                           representation of control systems, either with or without
+        the unreduced structure. By comparison with a detailed EMT                                             electromagnetic [12].
+        model of a medium-voltage dc (MVDC) system, the performance                                                 Although there are validated commercial EMT
+        of the proposed scheme has been assessed in PSCAD/EMTDC                                                simulation software, like the MATLAB, PLECS, PSIM and
+        under various working conditions. With negligible loss of
+        accuracy, approximately one to two orders of magnitude speedup                                         PSCAD/EMTDC, achieving a fast and accurate simulation of
+        over a straightforward EMT program is achieved.                                                        PETs with numerous PMs is still a great challenge. It is
+                                                                                                               because that in PET systems, the inversion of ultra-high-order
+                                           I. INTRODUCTION                                                     admittance matrix is calculated in each time-step, and
+                                                                                                               microsecond-simulation step is required due to the high
+              Power electronic transformer (PET), also refers to as                                            switching frequency of the power electronic devices and
+        high-frequency isolated modular converter, solid state                                                 transformers. The computational time of the fully detailed
+        transformer (SST), or smart transformer (ST) [1], [2], is a new                                        EMT simulation of PET is unacceptable [13], [14].
+        type of power electronic equipment that incorporates power                                                           MVAC port
+
+        electronic devices and high-frequency transformers [3]-[5].                                                                        A                                                     LVDC port
+
+
+        PET is capable to realize the transformation of multiple
+        voltage levels, electrical isolation, power regulation and
+                                                                                                                                                 B
+                                                                                                                                                                                           Level
+        control, and provide access for renewable energies [6]. These                                                                                                                        1
+
+        advantages make PET become the key link of ac/dc hybrid                                                                                                                              2
+
+        distribution network [7]. A typical cascaded H-bridge-type                                                                                                                           3
+        dual active bridge (CHB-DAB) based PET illustrated in Fig. 1
+        includes three phase legs (PL) each with dozens of cascaded
+                                                                                                                                                                                            M-1
+        connected CHB-DABs, which is also known as power module
+        (PM) [8]. One PM consists of a “level”. Each level is a strict                                                                                                                       M
+
+        two-port circuit, of which the connection pattern is input-
+                                                                                                                                      S1    S3        S5   S7       S9   S10
+                                                                                                                                                                 N:1
+                                                                                                                                                 C1                              C2
+          This work was supported in part by National Key R&D Program of China                                                        S2    S4        S6   S8      S10     S12
+
+        under grant 2018YFB0904600 and in part by National Natural Science
+        Foundation of China (51607065).                                                                                                           CHB-DAB (power module)
+
+          M. Feng, C Gao, J. Ding, J. Xu, and C. Zhao are with the State Key
+        Laboratory of Alternate Electrical Power System with Renewable Energy                                  Fig. 1 Structure of the CHB-DAB based PET
+        Sources, North China Electric Power University (NCEPU).
+          H. Ding is with RTDS Technologies Inc., 100-150 Innovation Drive                                           References [15]-[19] discuss the average models for PET,
+        Winnipeg, MB, Canada, R3T 2E1.                                                                         where the sophisticated system is substantially simplified to
+          Corresponding authors: Jianzhong Xu, email: xujianzhong@ncepu.edu.cn;                                realize acceleration. According to the power equation and the
+        Chengyong Zhao, email: chengyongzhao@ncepu.edu.cn.
+
+
+
+
+ 0885-8993 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+               Authorized licensed use limited to: University of Prince Edward Island. Downloaded on May 25,2021 at 16:50:30 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2021.3061421, IEEE
+                                                                                               Transactions on Power Electronics
+
+
+        IEEE POWER ELECTRONICS REGULAR PAPER/LETTER/CORRESPONDENCE
+
+        half-period current waveform, reference [15] replaces the                                              admittance matrix (4×4) is overlaid onto the external system
+        DAB with a controlled average current source. The switching                                            admittance matrix for fast EMT simulation. All the internal
+        devices, inductors and transformers are eliminated. Reference                                          node voltages and branch currents are recoverable through an
+        [16] proposes an average model which neglects the dynamics                                             inverse procedure.
+        of inductor current. However, this model would miss a special
+        current distortion as it neglects the voltage drop of the                                               II. HIERARCHICAL MODELING SCHEME FOR CHB-DAB BASED
+        switches, which limits the effective range of the model [17].                                                                   PET
+        Reference [18] carries out time domain analysis of the
+        resonant circuit and gives the time domain expression of the                                                  The CHB-DAB based PET as shown in Fig. 1 has a
+        steady-state DAB current. After calculating the average                                                prominent hierarchical structure, i.e., PM, phase leg, and PET
+        current in a period, the averaged equivalent circuit is obtained.                                      system, from bottom to top. The proposed hierarchical
+        This model is not able to simulate the transient process, and                                          modeling scheme is thereby arranged according to the circuit
+        the capacitor voltage fluctuation is ignored. The model in [19]                                        structure, which includes several steps to obtain the
+        also averages the DAB current in a period, and obtains the                                             generalized Norton equivalents of each phase leg with
+        reduced-order average model with RLC circuit and controlled                                            cascaded two-port PMs, as in Fig. 2. Besides, the blocking
+        sources. The common problem of average models is that these                                            state modeling method is introduced as well.
+        methods average the system and ignore the identity of each
+        component, which greatly reduces the accuracy during steady
+        state and makes them impossible to simulate the fault
+        condition.
+              Reference [20] introduces a high-speed modeling method
+        that represents the isolation transformer as back-to-back
+        Norton equivalent circuits. With the loss of single time-step
+        approximation of the history voltages, the circuits connected
+        to primary and secondary windings are equivalent to two
+        decoupled Thevenin and Norton circuits using single-port
+        modeling method proposed in [21]. The analysis shows that                                              Fig. 2 Hierarchical modeling scheme
+        the approximation does not introduce simulation stability
+        issues. The drawback of this method is that the approximation                                          A. Two-port Equivalent transformer model in EMT simulation
+        of port voltages will decrease the accuracy of the model.
+              It should be noted that the existing methodologies more                                                As a fundamental component, isolation transformer plays
+        or less make assumptions or approximations to the                                                      a salient role in electrical isolation, power delivery and voltage
+        mathematical relationship of the circuit. New method that                                              conversion in PM. It links the AC and DC side H-bridge
+        adequately reflect the original circuit characteristics is needed.                                     circuits using a common oscillating magnetic circuit in the
+        Reference [22] proposed a generic modeling approach using                                              form of mutual induction. That is to say, there is no circuit
+        generalized Norton equivalents for arbitrary multiport                                                 connection between primary and secondary windings.
+        submodules in modular multi-level converters (MMC). The                                                However, this feature is disadvantageous to EMT simulations
+        internal nodes are sequentially eliminated until a single                                              since the solution of EMT solver is based on the admittance
+        equivalent circuit is obtained with only 4 external interface                                          matrix of the system, for example, PSCAD/EMTDC, but the
+        nodes in each arm. Note that this approach takes no                                                    magnetic circuit cannot be added to the admittance matrix
+        approximation of the circuit equations, which makes it highly                                          directly. In order to solve this problem, the magnetic circuit is
+        accurate. The node elimination method is capable to be used                                            usually represented by electrical circuit across two windings
+        for reference to arbitrary circuit without electrical isolation. Its                                   with appropriate equivalent algorithms. At the same time, the
+        drawback is the inapplicability for submodules that include                                            relationship between port voltages and currents is supposed to
+        high-frequency AC isolation transformers.                                                              remain unchanged [24]-[26]. These equivalent admittances are
+              This paper aims to overcome the disadvantages of the                                             added to the system matrix for EMT simulation. In general,
+        detailed models, average models and equivalent models.                                                 isolation transformer model is the starting point of PET model.
+        Referring to [22], a hierarchical modeling scheme, which is                                                  A transformer without consideration of copper loss, iron
+        only applicable for EMT simulation, is developed for high-                                             loss and core saturation is shown in Fig. 3(a). Fig. 3(b) is its
+        speed simulation of various types of PETs. The two-port                                                T-type equivalent circuit (EC). In the model, leakage
+        transformer model is applied to obtain the non-approximated                                            inductances of primary and secondary windings are L1 and L2.
+        PM equivalent. Moreover, according to the circuit hierarchy of                                         L2 is referred to the primary circuit as N2L2. The magnetizing
+        PET systems, the proposed scheme first eliminates the internal                                         reactance is Lm. Additionally, auxiliary inductor Le used for
+        nodes of PMs, then combines them into a two-port phase leg                                             proper regulation of power transmission in each PM is
+        equivalent through a recursive procedure. The resulting small                                          included in the transformer model. The reference direction of
+
+
+
+
+ 0885-8993 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+               Authorized licensed use limited to: University of Prince Edward Island. Downloaded on May 25,2021 at 16:50:30 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2021.3061421, IEEE
+                                                                                               Transactions on Power Electronics
+
+
+        IEEE POWER ELECTRONICS REGULAR PAPER/LETTER/CORRESPONDENCE
+
+        primary winding voltage vT1, current iT1, referred secondary-                                                    The derivation in (1)-(4) shows that the transformer
+        side voltage NvT2, current iT2/N are as shown in the figure.                                                model introduced in Fig. 3(c) accurately reflects the original
+        Electrical nodes are numbered from ① to ④. The secondary                                                    electrical characteristics without approximation.
+        winding voltage and current is referred to the primary winding
+        by the ideal transformer.                                                                                   B. Node Elimination Within Each PM
+             Apply KVL to Fig. 3(b), the voltages across the coupled                                                     The large number of the electrical nodes is the primary
+        windings are expressed as:                                                                                  factor that slows down the EMT simulation of PETs. Thus,
+                                                            Lm   diT1 (t )                                      node elimination is essential to establish high-speed models.
+                                                   L +L +L
+                                    vT1 (t )   e 1 m       N   dt                                       (1)
+                                                                                                                    Fig. 4(a) shows the PM circuit. By means of Trapezoidal Rule
+                                   v (t )  =                                                                  integration method, the discretized companion circuit is shown
+                                    T2        

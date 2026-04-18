@@ -1,0 +1,200 @@
+484                                                                                    IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 35, NO. 1, MARCH 2020
+
+
+
+
+        Combining Detailed Equivalent Model With
+         Switching-Function-Based Average Value
+      Model for Fast and Accurate Simulation of MMCs
+                     Xuekun Meng, Student Member, IEEE, Jintao Han , Student Member, IEEE,
+         Joel Pfannschmidt , Student Member, IEEE, Liwei Wang , Member, IEEE, Wei Li , Member, IEEE,
+                        Fei Zhang , Member, IEEE, and Jean Belanger, Senior Member, IEEE
+
+
+   Abstract—Modeling and simulation play a vital role in the design                    bypassed to create nearly perfect sinusoidal voltage waveforms
+and testing of modular multilevel converter (MMC) high voltage                         at the point of common couplings (PCCs). Other benefits of
+direct current (HVDC) systems. Detailed equivalent model (DEM)                         MMC-HVDC are the reduced switching frequency and losses,
+and switching-function-based average value model (SFB-AVM) are
+two major types of accurate and efficient models to represent                          eliminating the use of harmonic filters, independent control of
+the dynamic response of the MMCs. However, the DEM and the                             active and reactive power, and enhancement of the weak AC
+SFB-AVM possess unique benefits depending on the purpose of                            grid connections [3]. By 2018, more than ten projects have been
+the simulation studies. The DEM provides a detailed representa-                        commissioned using MMC-HVDC [4]. It is foreseen that the
+tion of submodule (SM) switching events and individual capacitor                       MMC-HVDC will become the backbone of long distance power
+ripples. The SFB-AVM provides faster simulation speed by using
+arm equivalent capacitance. Combining both models in a universal                       transmission systems in the near future for large-scale renewable
+arm equivalent circuit gives the users the choice of selecting the                     energy integration [5]. However, the existing half-bridge (HB)
+most appropriate modeling method during dynamic simulation.                            MMC technology is vulnerable to DC-side short-circuit faults
+This paper proposes a universal modeling framework combining                           [6], [7]. Therefore, it is crucial for the MMC-HVDC to provide
+the DEM with the SFB-AVM which allows the DEM and the
+                                                                                       DC-side fault blocking ability in practical applications such
+SFB-AVM smoothly switch from one to the other during dynamic
+simulation. The proposed SFB-AVM can accurately represent the                          as overhead-line transmission. To address this issue, recent
+MMCs with different SM types. The proposed models are validated                        research works have focused on developing alternative SM
+in offline and real-time simulation studies which demonstrate the                      topologies, e.g., full-bridge (FB) SM [8], [9], clamped-double
+improved simulation speeds of the proposed SFB-AVM over the                            (CD) SM [10], [11] and mixed half- and full-bridge bridge (MB)
+DEM especially for large numbers of SMs.                                               SM [12], [13] to improve the DC-side fault blocking capability
+   Index Terms—Average value model, electromagnetic transient                          of the MMCs.
+(EMT) simulation, HVDC, modular multilevel converter, real-time                           For dynamic simulation studies, the MMCs are modeled
+simulation, switching function.                                                        in electro-magnetic transient (EMT) type solvers [14] using
+                                                                                       microsecond time steps in order to accurately account for
+                             I. INTRODUCTION
+                                                                                       the fast and massive switching events in the SMs. Detailed
+        ODULAR multilevel converter high voltage direct cur-
+M       rent (MMC-HVDC) technology has been widely used
+for the offshore renewable energy integration and regional AC
+                                                                                       semiconductor-switching-based MMC models can be formu-
+                                                                                       lated for a massive number of the SMs and are solved in a
+                                                                                       large conduction matrix in discrete-time domain. However, each
+grid connections [1], [2]. As an MMC-HVDC integrates a large                           switching operation within a SM will cause re-factorization of
+number of submodules (SMs), each SM can be inserted or                                 the conductance matrix leading to inefficient simulation for the
+                                                                                       MMCs.
+                                                                                          Detailed equivalent models (DEMs) of the MMC are pro-
+   Manuscript received April 7, 2019; revised August 4, 2019; accepted Septem-
+ber 2, 2019. Date of publication October 2, 2019; date of current version              posed in [15]–[19] to reduce the number of electrical nodes
+February 19, 2020. This work was supported by Natural Sciences and Engi-               in a converter arm. The size of the conduction matrix and the
+neering Research Council (NSERC) of Canada. Paper no.-TEC-00398-2019.R1                overall simulation burden of the MMC are significantly reduced.
+(Corresponding author: Liwei Wang.)
+   X. Meng, J. Han, J. Pfannschmidt, and L. Wang are with the School of Engi-          The DEMs proposed in [17]–[19] can represent the converter
+neering, The University of British Columbia Okanagan, Kelowna, V1V 1V7 BC,             blocking mode operation which further improves the simulation
+Canada (e-mail: xuekun.meng@hotmail.com; williamhan1993@gmail.com;                     accuracy and model applicability. In [19], a multi-rate DEM
+joelpfannschmidt@gmail.com; liwei.wang@ubc.ca).
+   W. Li, F. Zhang, and J. Belanger are with the OPAL-RT Technologies, Mon-            is proposed for CPU- and FPGA-based real-time simulation in
+treal H3K 1G6, Quebec, Canada (e-mail: wei.li@opal-rt.com; fei.zhang@opal-             which a converter arm is represented by two anti-parallel diodes
+rt.com; jean.belanger@opal-rt.com).                                                    and controlled voltage sources simulated in CPUs. The con-
+   Color versions of one or more of the figures in this article are available online
+at http://ieeexplore.ieee.org.                                                         trolled voltage sources are calculated from the capacitor voltages
+   Digital Object Identifier 10.1109/TEC.2019.2944352                                  and gating signals of individual SMs simulated in FPGAs.
+
+                           0885-8969 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:44:03 UTC from IEEE Xplore. Restrictions apply.
+MENG et al.: COMBINING DEM WITH SWITCHING-FUNCTION-BASED AVERAGE VALUE MODEL                                                                           485
+
+
+
+   In order to achieve fast simulation speed of the MMCs, aver-
+age value models (AVMs) are developed in [20]–[23]. The AVM
+represents the MMCs using AC- and DC-side Thevenin equiv-
+alent circuits which take values from the converter outer-loop
+controls (e.g., P-Q or Vdc-Q controls) and the inner-loop current
+controls. The AVMs proposed in [22] and [23] can represent
+converter blocking operations such as converter energization
+and a DC-side pole-to-pole fault. These AVMs are suitable for
+large-scale power system studies. However, the converter arm
+dynamics (e.g., arm currents and SM capacitor voltages) are not
+represented in the AVMs leading to less accurate simulations
+compared to the DEM.
+   Switching-function-based (SFB) AVMs are proposed in [21],
+[24], and [25]. The concept of SFB-AVM is to represent the arm
+                                                                                Fig. 1. MMC configuration. (a) Circuit diagram. (b) HBSM. (c) FBSM.
+dynamics of an MMC using the arm equivalent capacitance and                     (d) CDSM.
+the switching or insertion index of the SMs in one arm. The
+assumption of the SFB-AVM is that the capacitor voltages of
+the individual SMs are balanced (or equal). This assumption is
+usually valid due to the voltage balancing control (VBC) and
+the arm circulating current suppression control (CCSC) in an
+MMC. The VBC and CCSC keep the individual SM capacitor
+voltage ripples close to the average capacitor voltage ripple. The
+use of the SFB-AVMs [21], [24], [25] significantly improves
+the simulation efficiency, compared to the DEM. However, the
+SFB-AVMs in [21], [24], [25] focused on the modeling of
+                                                                                Fig. 2. HBSM output voltages based on arm current directions and SM
+HBSM-MMC, whereas a generalized switching-function-based                        operation modes. (a) Inserted. (b) Bypassed. (c) Blocked.
+(GSFB-) AVMs for other SM types are not addressed.
+   This paper proposes a GSFB-AVM for the MMCs with dif-
+ferent SM types, e.g., HB, FB, CD, and MB SMs. The converter
+                                                                                        proposed GSFB-AVM achieves the CPU time of 9.45 µs
+blocking, e.g., converter energization [26], [27], and de-blocking
+                                                                                        for simulating one MMC station with 4800 SMs while the
+operations can be represented by the proposed GSFB-AVM.
+                                                                                        DEM requires 51.59 µs for one MMC station with 480
+There are some cases in which the DEM is more preferable
+                                                                                        SMs. Moreover, the simulation speed of the GSFB-AVM
+than the GSFB-AVM, e.g., in the real-time hardware-in-the-loop
+                                                                                        is independent of the number of SMs in the MMC.
+(HIL) simulation for testing MMC insulated-gate bipolar tran-
+sistors (IGBTs) gating control [28] and the development of new
+MMC modulation and VBC strategies [29], [30]. A combined                                       II. THE PROPOSED GENERALIZED DEM
+model (CM) of the DEM and GSFB-AVM is proposed, which                              The MMC circuit topology is shown in Fig. 1 in which one
+can switch between the DEM and the GSFB-AVM during the                          converter arm or a half phase consists of N number of SMs
+dynamic simulation to deliver high simulation accuracy and ef-                  connected in series. A SM is a two-terminal power electronic
+ficiency. The overall contributions of this paper are summarized                building block including storage capacitors and semiconductor
+as follows:                                                                     switches. Figs. 1(b)−(d) show the typical SM configurations of
+   1) The proposed GSFB-AVM is implemented using a unified                      HB, FB and CD SMs. An HBSM and a FBSM can be used
+       arm equivalent circuit model. It can represent the converter             simultaneously in one converter arm, known as an MBSM for
+       arms with different SMs using controlled voltage sources                 the advantages of DC pole-to-pole fault blocking and reduced
+       calculated from the arm equivalent capacitor voltage and                 semiconductor losses. The output voltage of each SM depends
+       the arm insertion index.                                                 on the semiconductor conduction states. By controlling the
+   2) A combined model of the DEM and the GSFB-AVM                              IGBT gating signals, a SM can operate in inserted, bypassed,
+       is proposed to represent the MMCs with different SM                      or blocked mode.
+       types. The data exchange method between the DEM and                         The on-state characteristics of the semiconductor switches
+       the GSFB-AVM is proposed to enable smooth switching                      (i.e., IGBTs and anti-parallel diodes) can be modeled by
+       between the two models during dynamic simulation.                        piece-wise linear functions [31], [32] using saturation voltages
+   3) The conduction and switching losses of the IGBTs and the                  (VT , VD ) and on-state resistances (RT , RD ). Without loss of
+       diodes in the MMCs with different SM types are accurately                generality, an HBSM is used to illustrate the SM output voltage
+       represented.                                                             as shown in Fig. 2. The SM output voltage, including the SM
+   4) The proposed GSFB-AVM is validated in offline and real-                   capacitor voltage vc and semiconductor on-state voltage drop,
+       time simulations using 2-, 4- and 11-terminal HVDC sys-                  can be determined based on the direction of the arm current
+       tems. The real-time simulation results demonstrate that the              and SM operating mode as illustrated in Fig. 2. The SM output
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:44:03 UTC from IEEE Xplore. Restrictions apply.
+486                                                                               IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 35, NO. 1, MARCH 2020
+
+
+
+                                                                                     The instantaneous conduction losses due to the on-state resis-
+                                                                                  tances, ploss,r , and the saturation voltages, ploss,v , of the IGBTs
+                                                                                  and the diodes can be calculated as
+                                                                                                
+                                                                                                N
+                                                                                                                                                
+                                                                                   ploss,r =          si i2D1 RD + i2D2 RT + s̄i i2D1 RT + i2D2 RD
+                                                                                                i=1
+                                                                                                                                                         (5)
+Fig. 3.   One MMC arm. (a) Cascaded SMs. (b) UAM.
+                                                                                                
+                                                                                                N
+                                                                                   ploss,v =          si (iD1 VD + iD2 VT ) + s̄i (iD1 VT + iD2 VD )
+voltage in the inserted mode is shown in Fig. 2(a). In this case,                               i=1
+
+the upper-leg diode d1 in Fig. 1(b) conducts the positive arm                                                                                            (6)
+current, whereas the upper-leg IGBT t1 in Fig. 1(b) conducts                        In converter blocking mode, all the IGBTs are blocked. The
+the negative arm current. Fig. 2(b) and (c) show the SM output                    SM capacitors in the HBSMs are inserted through the free-
+voltages when the SM is in bypassed and blocked modes. The                        wheeling diodes when the arm current is positive as shown in
+analysis is similar to Fig. 2(a) for the inserted mode and is not                 Fig. 2(c). The SM capacitor voltage under blocking mode is
+discussed in detail due to space limitation.                                      calculated as
+   An MMC arm output voltage can be derived based on the                                                                         1
+summation of the SM output voltages as                                                        vci (t + Δt) = vci (t) + ΔtiD1 (t) i          (7)
+                                                                                                                                CSM
+                                       
+                                       N
+                                                                                      The voltage sources vsp and vsn are expressed as
+                            varm =           vSM
+                                              i
+                                                                           (1)
+                                       i=1                                                             
+                                                                                                       N
+                                                                                                          i                            
+where i indicates the SM index; N is the total number of SMs                                  vsp =       vc (t + Δt) + VD + iD1 (t) RD                  (8)
+                                                                                                       i=1
+in an arm; vSMi
+                  is the SM output voltage. An MMC arm can
+be modeled by unified arm module (UAM) [19] consisting of a                                            
+                                                                                                       N
+
+pair of anti-paralel diodes and two controlled voltage sources                               vsn =           (−VD − iD2 (t) RD )                         (9)
+as shown in Fig. 3. The use of the anti-parallel diodes can                                            i=1
+
+automatically identify the arm current directions so that the arm                    The UAM in Fig. 3 can be used to represent the MMCs
+output voltage varm can be represented using the corresponding                    with other SM types such as FB, CD SMs which leads to the
+diode currents iD1 and iD2 . The arm voltage is modeled by one                    generalized DEM. The derivation of the voltage sources vsp and
+of the two controlled voltage sources (vsp , vsn ) based on the                   vsn for the MMCs with other SM types is very similar to that of
+positive or negative arm current. The calculations of vsp and vsn                 the HBSM-MMC and are not included in the paper.
+are performed using the SM insertion indices, the SM capacitor
+voltages, and the arm current.                                                                        III. THE PROPOSED GSFB-AVM
+   The differential equation of a SM capacitor can be discretized
+                                                                                    The proposed GSFB-AVM represents the dynamic behaviors
+using a numerical integration method. In this paper, the explicit
+                                           

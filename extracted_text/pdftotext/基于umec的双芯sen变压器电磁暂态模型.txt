@@ -1,0 +1,248 @@
+第 45 卷 第 8 期                                                      电 网 技 术                                             Vol. 45 No. 8
+ 2021 年 8 月                                                    Power System Technology                                  Aug. 2021
+文章编号：1000-3673（2021）08-3283-08                             中图分类号：TM 721             文献标志码：A           学科代码：470·40
+
+
+
+        基于 UMEC 的双芯 Sen 变压器电磁暂态模型
+                                                  卜亮，韩松，周超，冯金铃
+                                      （贵州大学 电气工程学院，贵州省 贵阳市 550025）
+
+
+           Electromagnetic Transient Model of Two-core Sen Transformer Based on UMEC
+                                            BU Liang, HAN Song, ZHOU Chao, FENG Jinling
+                   (School of Electrical Engineering, Guizhou University, Guiyang 550025, Guizhou Province, China)
+
+
+ABSTRACT: This paper proposes an electromagnetic transient                   (two-core Sen transformer，TCST)电磁暂态模型。首先，根
+model of the two-core Sen transformer (TCST) based on the                    据 TCST 内部绕组的磁耦合关系，将 TCST 分为串联变和励
+unified magnetic equivalent circuit (UMEC) in order to analyze               磁变两部分，并基于各自的铁芯结构建立了它们的磁等值回
+its electromagnetic characteristics. Firstly, the TCST may be                路；其次，采用 UMEC 原理分别对上述两部分进行电磁暂
+divided into the two parts of the series winding and the exciting            态建模，并由 TCST 内部串–励部分之间的电气连接关系，
+winding so that their magnetic equivalent circuits are                       将该串–励部分结合，继而构建了 TCST 的电磁暂态模型。
+established based on their iron core structures respectively,                最后，借助 MATLAB 和 PSCAD/EMTDC 进行了解析计算
+according to the magnetic coupling relationships among the                   与时域仿真分析，验证了该文所提模型的有效性。通过与现
+internal      windings    of    the   TCST.     Secondly,      with   the    有论文电流电压和功率结果的对比，发现流过 TCST 分接开
+mathematical expressions of the electromagnetic transient                    关的电流约为线路电流的 50%，可有效降低分接开关的制
+models derived by the UMEC method for the two parts                          造成本。同时 TCST 的实际调节步长相比于单芯结构的
+separately, an electromagnetic transient model of the TCST can               ST(single-core Sen transformer，SCST)要小，约为 SCST 的
+be acquired by the combination of the series winding and the                 0.5 倍，使得其控制精度更高。
+exciting winding in the light of their electrical connections in
+                                                                             关键词：Sen 变压器；双芯结构；统一磁路模型；电磁暂态
+the TCST. Finally, with the help of the MATLAB and the
+                                                                             模型；串联电压补偿
+PSCAD/EMTDC,              the   analytical     calculation     and    the
+                                                                             DOI：10.13335/j.1000-3673.pst.2021.0095
+time-domain simulation have been carried out, proving the
+effectiveness of the proposed model. In comparisons with the                 0 引言
+results involving the currents, the voltages and the power flows
+                                                                                  光伏、风能等新能源的大量接入以及电网结构
+in the existing published papers, it is found that the current
+flowing through the tap-changers in the TCST is about 50% of                 的复杂化给电力系统带来了潮流分布不均衡、系统
+the    line    current,    which      can    effectively     reduce   the    运行灵活性以及稳定性下降等问题[1-4]。潮流控制器
+manufacturing cost of the tap-changer. Meanwhile, the actual                 能够改变系统的潮流分布，改善系统的动态运行特
+adjustment step length of the TCST is about 0.5 times smaller                性，在提高电力系统运行的稳定性、可靠性和输电
+than that of the single-core Sen transformer (SCST), which
+                                                                             能力等方面发挥着重要的作用[5-7]。Sen 变压器(Sen
+may lead to more accurate performance in the TCST.
+                                                                             transformer，ST)是一种电磁式潮流控制器，其通过
+KEY WORDS: Sen transformer; two-core structure; unified
+                                                                             控制补偿电压的幅值与相位来实现潮流调节[8]。相
+magnetic equivalent circuit; electromagnetic transient model;
+                                                                             较 于 同 等 容 量 的 统 一 潮 流 控 制 器 (unified power
+series compensating voltage
+                                                                             flow controller，UPFC)，ST 的成本与损耗更低，具
+摘要：为了分析 Sen 变压器(Sen transformer，ST)在双芯结
+                                                                             有良好的应用前景[9-10]。
+构下的电磁特性，该文提出一种基于统一磁路模型(unified
+magnetic equivalent circuit，UMEC)法的双芯 Sen 变压器
+                                                                                  从 ST 的拓扑结构发展角度来看，由于 ST 是通
+                                                                             过控制副边绕组上的机械式分接开关来获取所需
+      基金项目：贵州省普通高等学校科技拔尖人才支持计划(2018036)；                                     补偿电压，其调节属于离散调节，导致其潮流控制
+贵州省科学技术基金(黔科合基础 20191100，2021277)。                                           精度较差、调节速度慢。因此，文献[11-12]提出一
+      Project Supported by Program for Top Science & Technology Talents
+                                                                             种由 ST 与 UPFC 串联组成的混合式潮流控制器，
+in Universities of Guizhou Province (2018036); Guizhou Province Science
+and Technology Fund(20191100, 2021277).                                      其结合了 ST 大容量和高可靠性的优点和 UPFC 快
+3284                    卜亮等：基于 UMEC 的双芯 Sen 变压器电磁暂态模型                                       Vol. 45 No. 8
+
+速响应和控制精度高的优点，但是 ST 和 UPFC 之                  UPFC 的潮流控制效果进行了比较。
+间协调控制较为复杂。文献[13-14]和[15]分别提出
+                                             1 TCST 的结构与原理
+基于副边绕组反相的扩展型 Sen 变压器和采用带有
+反相开关的不对称分布绕组的 ST，有效提高了 ST                          TCST 的结构如图 1 所示，TCST 励磁变原边
+的控制精度，使得 ST 的调节具有更高的灵活性。                     为星形联结，并联接入电气系统送端，副边每相由
+上述文献所研究的 ST 均为单芯结构，单芯结构具                     3 个带有载分接开关的绕组串联而成，构成补偿电
+有结构简单，绕组数少等优点，但是其副边绕组直                       压调节单元，并与串联变相连。其中，绕组 a1、b1、
+接串联接入输电线路，由系统故障所产生的过电流                       c1 组成励磁变副边 A 相输出电压 UEa，绕组 a2、b2、
+和过电压会直接作用于调节绕组和分接开关，可能                       c2 组成励磁变副边 B 相输出电压 UEb，绕组 a3、b3、
+会导致设备损坏，也使得其绝缘成本和加工难度大                       c 3 组成励磁变副边 C 相输出电压 UEc。串联变由
+幅增加[11,16-17]。从变压器的铁芯结构角度来看，双                3 个单相双绕组变压器组成，原边与励磁变副边相
+芯结构能够将调节绕组和分接开关从线路中隔离                        连，副边串联接入电气系统。以 A 相为例，
+开来使其免于系统过电压和过电流的影响，使得分                       UEaUa1+Ub1+Uc1，UEa 经过串联变感应至线路，形
+接开关的绝缘水平和成本大幅降低[17]，在特/超高压                   成串联补偿电压 ΔUA。由于 Ua1、Ub1、Uc1 之间的
+等应用场景中相较于单芯结构有一定优势。这也是                       相角差为 120°，通过调节励磁变副边绕组的抽头
+双芯结构的移相变压器应用于特/超高压电网的潮                       位置，从而改变串联补偿电压 ΔUA，达到调节线
+流调控的原因[18-20]。因此，双芯结构的 ST 或是特/               路潮流的目的。同理，亦可实现 B 相、C 相的潮
+超高压场景下一种潜在应用形式。                              流调节。
+       从 ST 的建模研究角度来看，文献[21]提出由                                    UEa     IEA                   ISA USA
+多个单相理想变压器组合的 ST 模型，其结构简单，                            A             a1            IEa
+                                                                                       Ua      DUA
+                                                              c1                       Ia       ILA ULA
+但是忽略了多绕组耦合效应和铁芯饱和特性。文                                              UEb
+                                                                         b1
+                                                                                                 ISB USB
+献[22]基于 BCTRAN 模型的构建方法提出 ST 的电                                     a2            IEb
+                                                              c2                       Ub      DUB
+磁暂态模型，其考虑了副边绕组的耦合效应以及                         C                    UEc
+                                                                         b2            Ib      ILB ULB
+铁芯饱和特性，但是未考虑铁芯的几何结构和磁                                     B        a3            IEc
+                                                                                                 ISC USC
+                                                              c3          b3
+通路径，而且忽略了涡流效应和磁滞效应。进而                                                    IEB           Uc      DUC
+                                                                                       Ic      ILC ULC
+文献[23]提出了计及涡流效应和磁滞效应的 ST 电                                               IEC
+                                                          励磁变                               串联变
+磁暂态模型，其采用统一磁路模型(unified magnetic
+                                                         图 1 TCST 的基本拓扑结构
+equivalent circuit，UMEC)法对其进行建模，能够有
+                                                      Fig. 1 Basic topology of the TCST
+效分析铁芯结构和磁通路径所带来的影响。为了分
+                                             2 TCST 的电磁暂态模型
+析 ST 内部各个绕组之间的耦合作用，文献[24]基于
+UMEC 提出一种考虑内部多绕组耦合的 ST 电磁解                         由于 TCST 由 2 个铁芯组成，建模分析时，首
+析模型。但是，以上模型的构建都是围绕单芯结构                       先将 TCST 分为串联变和励磁变两部分，分别建立
+的 ST(single-core Sen transformer，SCST)，有关双   其电磁暂态模型。其次，根据其内部电气连接将上
+芯 Sen 变压器(two-core Sen transformer，TCST)的建   述 2 个部分的模型结合，从而得到 TCST 的电磁暂
+模尚未有公开报道。在 PSCAD 中，可通过单芯双                    态模型。
+绕组变压器组合而获得 TCST 的模型，但是由这种                    2.1   TCST 串联变的电磁暂态模型
+方式获得的模型没有考虑 TCST 内部铁芯结构的影                          TCST 的串联变采用三相组式结构，以 A 相为
+响，准确性有所欠缺。                                   例，图 2 为其磁等值回路。其中 NaIa 和 NAILA 分别
+       为此，本文基于 UMEC 建立了一种 TCST 的电            为由串联变一次侧绕组电流 Ia 和二次侧绕组电流
+磁暂态模型，其能够考虑 TCST 内部铁芯结构以及                    ILA 所产生的磁动势，Na 和 NA 分别为串联变一次侧
+相间绕组耦合的影响。同时，为了验证模型的有效                       绕组和二次侧绕组的匝数，Pa 和 Pla 分别为串联变
+性，借助 MATLAB 软件进行了解析计算，并将计                    一次侧绕组的铁芯磁导和漏磁导，PA 和 PlA 分别为
+算结果与 PSCAD/EMTDC 时域仿真结果进行对比，                 串联变二次侧绕组的铁芯磁导和漏磁导，PaA 为铁轭
+表明了所提模型的有效性。此外，分析了 TCST 和                    磁导，a 和la 分别为流过一次侧绕组的磁通和一次
+SCST 在控制精度和内部绕组电流上的差异，并与                     侧绕组的漏磁通，A 和lA 分别为流过二次侧绕组
+第 45 卷 第 8 期                                                            电   网   技   术                                                        3285
+
+             lA     PlA                      Pla    la                          用梯形积分定律离散式(9)可得：
+                                                                                                     Dt
+                                                                                       N MAΦMA (t )  U A (t )+ΦMA, hist (t )
+                                0
+                                                                                                                              (10)
+                    A                        a                                                     2
+       A    +                                                       a
+            -
+
+
+
+
+                                     +
+                                     -
+                           PA                            Pa                                                   Dt
+            NAILA                      NaIa                                     式中MA, hist(t)NMAMA(t-Dt)+ UA(t-Dt)。
+                                                                                                               2
+                                                              aA
+                                 PaA                                              由式(8)和式(10)可得：
+                                                                                   N MAΦMA  N MAQMMA N MA I MA  ZMA I MA (11)
+             图 2 串联变的单相磁等值回路
+                                                                                        将式(11)代入式(10)可得：
+   Fig. 2   Single-phase magnetic equivalent circuit of
+                      series winding                                                         I MA (t )=YMAUA (t )+I MA, hist (t )             (12)
+
+的磁通和二次侧绕组的漏磁通，aA 为铁轭磁通。                                                                     Dt -1                        -1
+                                                                                式中 YMA        Z MA ， I MA, hist (t )  Z MA ΦMA, hist (t ) 。
+                                                                                             2
+    由图 2，其支路磁通与磁动势之间的关系为
+                                                                                        式(12)即为 TCST 串联变 A 相电磁暂态模型，
+                                 )
+         ΦSA = PSA ( NSA ISA - θSA  (1)
+                                                                                同理，可得到串联变 B 相与 C 相的电磁暂态模型。
+式中：SA 为支路磁通矩阵；PSA 为支路磁导矩阵；                                                          I MB (t )  YMBUB (t )  I MB, hist (t ) (13)
+                           为
+NSA 为绕组匝数矩阵；ISA 为绕组电流矩阵； θSA                                                         I MC (t )  YMCUC (t )  I MC, hist (t ) (14)
+支路磁动势矩阵。
+                                                                                        将式(12)(13)(14)联立可得 TCST 串联变电磁暂
+    根据高斯定律，有：
+                                                                                态模型：
+         Φa - ΦaA - Φla  0                                                                     ISu (t )  YSuUSu (t )  ISu, hist (t )      (15)
+                                                                       (2)
+          -ΦA  ΦaA - ΦlA  0                                                  其中，
+    转化成矩阵形式可得：
+                                                                                                ISu (t )   I LA (t ) I LB (t ) I LC (t )
+                             T
+                            ASA ΦSA = 0                                 (3)
+                                                                                                          I a (t ) I b (t ) I c (t ) 
+                                                                                                                                     T
+                                                                                                                                              (16)
+    由图 2 可知，
+           支路磁动势可由节点磁动势表示。
+                                                                                            U Su (t )   DU A (t ) DU B (t ) DU C (t )
+          θa  θa
+          θ   -θ                                                                                   U a (t ) U b (t ) U c (t ) 
+                                                                                                                                     T
+                                                                                                                                              (17)
+           A       A
+
+           θaA  -θa  θA                                             (4)     2.2      TCST 励磁变的电磁暂态模型
+           θ   -θ                                                                    TCST 的励磁变采用三相三柱式结构，图 3 为
+            a1      a
+                 -θA
+           θA1                                                                TCST 励磁变的磁等值回路。NEAIEA、NEBIEB、NECIEC
+    转化成矩阵形式为                                                                    分别为由励磁变一次侧 A、B、C 绕组的电流 IEA、
+                 =ASAθSA
+              θSA                                                       (5)     IEB、IEC 所产生的磁动势，Na1IEa、Nb1IEa、Nc1IEa、
+    联立式(1) (3)(5)可得：                                                            Na2IEb、Nb2IEb、Nc2IEb、Na3IEc、Nb3IEc、Nc3IEc 分别为
+                         ΦSA  QSA NSA ISA                              (6)     由励磁变二次侧 a1、b1、c1、a2、b2、c2、a3、b3、
+式中：QSAE-PSAASA( A PSAASA) A PSA；E 为
+                                T
+                                SA
+                                                    -1    T
+                                                          SA
+                                                                                c3 绕组的电流 IEa、IEb、IEc 所产生的磁动势，EA、
+单位矩阵。                                                                           EB、EC 分别为流过励磁变一次侧绕组的磁通，
+    将式(6)展开写成：                                                                  a1、b1、c1、a2、b2、c2、a3、b3、c3 分
+      ΦMA  QMMA
+              QMNA   N MA I MA                                               别为流过励磁变二次侧各个绕组的磁通，AB 为 A
+      Φ    Q
+              QNNA            (7)
+                                                                                相与 B 相之间的铁轭磁通，BC 为 B 相与 C 相之间
+       NA   NMA        0      
+式中：MA 为由流过绕组的磁通所构成的矩阵；NA                                                      的铁轭磁通，lEA、lEB、lEC 分别为励磁变一次
+为由未流过绕组的磁通所构成的矩阵 ；QMMA 、                                                        侧绕组的漏磁通，la1、lb1、lc1、la2、lb2、lc2、
+QMNA、QNMA、QNNA 为 Q 的子矩阵；NMA 为 22 维                                             la3、lb3、lc3 分别为励磁变二次侧各个绕组的漏
+匝数矩阵；IMA 为 22 维电流矩阵。                                                           磁通，a0、b0、c0 为 A、B、C 三相的零序磁通，
+    由式(7)可得：                                                                    PEA、PEB、PEC 分别为励磁变一次侧绕组的铁芯磁
+           ΦMA  QMMA N MA I MA                                         (8)     导，Pa1、Pb1、Pc1、Pa2、Pb2、Pc2、Pa3、Pb3、Pc3
+  由法拉第电磁感应定律可知：                                                                 分别为励磁变二次侧各个绕组的铁芯磁导，PAB 为
+                          dΦMA                                                  A 相与 B 相之间的铁轭磁导，PBC 为 B 相与 C 相之
+               U A  N MA                                               (9)
+                           dt                                                   间的铁轭磁导，PlEA、PlEB、PlEC 分别为励磁变一次
+式中 U A  U a DU A  。
+                    T
+                                                                                侧绕组的漏磁导，Pla1、Plb1、Plc1、Pla2、Plb2、Plc2、
+3286                                                     卜亮等：基于 UMEC 的双芯 Sen 变压器电磁暂态模型                                                                              Vol. 45 No. 8
+                               PAB AB                              BC
+                   A                              B          PBC                      C                                                          dEMM
+                                                                                                                                      U Eu  N Z               (24)
+            lEA        PEA              lEB          PEB                    lEC            PEC                                                  dt
+            PlEA +  EA                  PlEB          EB                    PlEC            EC          式中：UEu[USA USB                    USC UEa UEb UEc]T；NZ
+                   NEAIEA                         +    NEBIEB                          + N I
+                 -                                -                                    - EC EC
+   a0                            b0                               c0                                    见附录 A2。
+            la1        Pa1              lb1          Pb1                    lc1            Pc1
+                                                                                                             用梯形积分定律离散式(24)可得：
+            Pla1        a1              Plb1          b1                    Plc1            c1
+                   + N I                          + N I                                + N I                                    Dt
+      Pa0
+                   -  a1 Ea
+                                   Pb0
+                                                  - b1 Ea                              -  c1 Ea
+                                                                                                                   N ZEM (t )  U Eu (t )  EM, hist (t )                       (25)
+                                                                    Pc0                                                         2
+            la2        Pa2              lb2          Pb2                    lc2            Pc2
+                                                                                                                           Dt
+            Pla2        a2              Plb2          b2                    Plc2            c2          式中EM, hist(t)  UEu(t-Dt)+N2EM(t-Dt)。
+                   + N I                          + N I                           

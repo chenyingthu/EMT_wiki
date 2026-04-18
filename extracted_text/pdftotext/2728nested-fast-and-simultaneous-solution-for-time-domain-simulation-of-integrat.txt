@@ -1,0 +1,210 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 22, NO. 1, JANUARY 2007                                                                           277
+
+
+
+
+               Nested Fast and Simultaneous Solution
+             for Time-Domain Simulation of Integrative
+                Power-Electric and Electronic Systems
+                                                         Kai Strunz and Eric Carlson
+
+
+
+    Abstract—As power electronics are increasingly used in power-             voltages and currents as shown in [6]. The time step must be
+electric networks, there is an interest in the creation of time-do-           small enough for the prediction to be accurate and to obtain nu-
+main simulation techniques that can model the diversity of the in-            merical stability. Numerical stability can generally be enhanced
+tegrative power-electric and electronic system while achieving high
+accuracy and computational speed. In the proposed method, gen-                by using an iterative scheme such as the compensation method
+eration of electric network equivalents (GENE), this is supported             [7] at the expense of an increased computational burden.
+through the nested structure of the overall simulation process. One              If no disconnections are made, then all couplings of lumped
+or multiple parent simulations, in which the unknown voltages are             elements that exist in reality are retained in the models. This
+calculated using nodal analysis, launch multiple child simulations            offers the possibility of designing a noniterative simultaneous
+concerned with diakoptic subdivisions of the system under study.
+The interfaces for information exchange between parent and child              solution [9] and is consistent with the objectives of this work.
+levels are designed to provide encapsulation. This makes the sub-             The method generation of electric network equivalents (GENE),
+divisions appearing from outside in the form of network branches              proposed here, is centered on a noniterative simultaneous so-
+compatible with the nodal analysis approach. It also facilitates the          lution. It is to provide computational efficiency and accuracy
+use of diverse solution methods for different child simulations, as           while offering the flexibility of using locally diverse solution
+it is shown for the simultaneous solution of equations formulated
+with nodal analysis and state space methods. Computational effi-              methods and retaining compatibility with existing simulation
+ciency is obtained through the coordinated application of sparse-             drivers based on nodal analysis, such as the EMTP. The com-
+matrix methods, piecewise linear approximation of nonlinear char-             putational efficiency envisaged is to be high enough to achieve
+acteristics, and precalculation of operations pertaining to recur-            at least real-time speed for the simulation of the CIGRE HVdc
+ring power-electronic switch statuses. The resulting overall solu-            benchmark system on off-the-shelf PCs.
+tion process is simultaneous, distributed, and suitable for real-time
+simulation. The devised methodology is validated through simula-                 To avoid computationally expensive iterations, nonlinear
+tion of the CIGRE HVdc benchmark model, comprising ac net-                    device characteristics as those of power-electronic switches
+works, twelve-pulse power-electronic converter stations, harmonic             are here modeled through piecewise linear approximation as,
+filters, and dc transmission.                                                 for example, discussed in [10]. For the emulation of switching
+  Index Terms—Algorithms, circuit simulation, cosimulation,                   processes, methods for the fast noniterative simulation of
+diakoptics, electromagnetic transients program (EMTP), HVdc                   switching, as described in [2], [11]–[13], are suitable. These
+transmission, modeling, numerical methods, parallel processing,               methods have already been tested for real-time simulation.
+power electronics, power system simulation, real-time systems,                   To obtain an efficient simultaneous solution, different op-
+sparse-matrix techniques.
+                                                                              tions have been considered. Popular schemes for the efficient
+                                                                              simultaneous solution of a linear equation system            with
+                          I. INTRODUCTION                                     the vector of unknown and dependent variables are based
+                                                                              on the exploitation of the given system topology that is mir-
+                                                                              rored through matrix . The topology of many networks is such
+
+A     N important field of application for the simulators of
+      the Electromagnetic Transients Program (EMTP) type
+[1] is the time-domain study of integrative power-electric and
+                                                                              that the corresponding nodal admittance matrix contains a sig-
+                                                                              nificant number of zero elements. Methods aimed at retaining
+                                                                              this sparsity by reducing the number of nonzero fill-in elements
+electronic systems. Examples of timely interest include simula-               generated in the factorized lower and upper triangular matrices
+tions of storage and compensation systems [2], [3]; distributed               obtained through LU factorization do exist. The minimum de-
+generation (DG) [4], [5]; all-electric ship power systems; and                gree algorithm presented in [14] achieves this while considering
+high-voltage direct current (HVdc) systems [6]–[8]. The in-                   the overall system as a single piece, hereafter referred to as a
+terfacing of the power-electronic converters and networks can                 single-piece method. In conjunction, sparse-matrix structures
+be made through disconnection and prediction of the common                    that only store the nonzero elements are important [15].
+                                                                                 As opposed to a single-piece method, tearing, also known as
+   Manuscript received March 7, 2005; revised September 30, 2005. This work   diakoptics, is a multipiece method that enables a simultaneous
+was supported by the National Science Foundation under Award ECS-0238523.     solution. One possible approach to tearing, the so-called node
+   The authors are with the Department of Electrical Engineering, SESAME      tearing [15], leads to adopt the bordered block diagonal form
+Laboratory, University of Washington, Seattle, WA 98195-2500 USA (e-mail:
+strunz@ee.washington.edu).                                                    as shown in Fig. 1, where symbol indicates a subdivision. It is
+   Digital Object Identifier 10.1109/TPWRD.2006.876657                        an advantage of this formulation that part of the local solutions
+                                                             0885-8977/$20.00 © 2007 IEEE
+278                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 22, NO. 1, JANUARY 2007
+
+
+
+
+Fig. 1. From left to right: partitioned form of A   = b, blocks of A along the
+diagonal.
+
+
+
+corresponding to the       pieces of subdivisions of      may be
+calculated in parallel. Then, the connections between the sub-
+divisions through border matrices       ,    , and      are taken
+into account to get the overall solution. Of particular interest
+is the intersection network equation               , here marked                  Fig. 2. Access to branch admittance matrices corresponding to piecewise linear
+                                                                                  approximation.
+with to signify intersection
+
+
+                                                                                     II. BASICS OF BRANCH AND NETWORK MODELING FOR
+                                                                           (1)
+                                                                                            TIME-DOMAIN TRANSIENTS SIMULATION
+                                                                           (2)
+                                                                                     In order to obtain the network model for time-domain
+The intersection network is an accurate miniature equivalent of                   transients simulation based on nodal analysis, models of the
+the original network. The number of unknowns is so reduced to                     branches that make up the network need to be available. Using
+   , i.e., the unknowns of the intersection network that intercon-                the concept of companion modeling, the branches are described
+nects the subdivisions. These unknowns are therefore incident                     in the following form:
+at the terminals of the subdivisions.
+   Multipiece and single-piece methods can be combined, for                                                                                                 (3)
+example, by first creating the bordered block diagonal form of a
+                                                                                  where        is the nodal admittance matrix of the branch;        is
+matrix and then considering the blocks as single pieces to which
+                                                                                  the vector of the source-dependent nodal current injections that
+the minimum degree algorithm is applied [14].
+                                                                                  are updated at each time step in accordance with changing ini-
+   The nested parent–child simulation method GENE presented
+                                                                                  tial conditions of the difference equations;        is the vector of
+in this work makes use of combined multi and single-piece so-
+                                                                                  the nodal voltages of the branch; and is the vector of the cur-
+lutions as well as sparse-matrix storage structures. In GENE,
+                                                                                  rents flowing into the branch. The derivation of (3) is detailed
+the intersection network, which is dealt with by the parent sim-
+                                                                                  in Appendix A.
+ulation, is not obtained using (1) and (2). Instead, miniature
+                                                                                     Using the piecewise linear approximation of the nonlinear
+equivalents of subdivisions of power-electric network parts and
+                                                                                  characteristic of a power semiconductor valve in [10], two sta-
+power-electronic converters are calculated using Norton’s the-
+                                                                                  tuses corresponding to two distinct companion models distin-
+orem in a first step. The obtained miniature equivalents are then
+                                                                                  guish between conducting and blocking modes. In general,
+interconnected at their terminal nodes to obtain the intersection
+                                                                                  segments of straight lines may be used to approximate a non-
+network. The proposed method is particularly well suited as the
+                                                                                  linear function. Then,       is obtained from a tensor comprising
+basis of techniques for fast and simultaneous simulation of in-
+                                                                                  information for distinct branch companion models. To build
+tegrative power-electric and electronic systems where diverse
+                                                                                  up the network model, the one branch model that corresponds
+behavior is observed.
+                                                                                  to the active status is selected as indicated in Fig. 2. Changes
+   To provide the reader with a relevant background and basis
+                                                                                  of status involve modifications of        and     in (3).
+of comparison, selected foundations of transients simulation
+                                                                                     The network model is obtained through direct construction
+based on nodal analysis are elaborated upon in Section II. In
+                                                                                  [16], also referred to as stamping. First, all branches are concep-
+Section III, the concept of the nested parent–child simulation
+                                                                                  tually removed from the network and then added successively in
+is developed for nodal analysis techniques. The formulation is
+                                                                                  order to add the entries of      to the emerging nodal admittance
+extended in Section IV to show the capability of simultaneous
+                                                                                  matrix in accordance with the network topology. The equation
+cosimulation based on both nodal analysis and state-space
+                                                                                  system for the network model is then partitioned to distinguish
+methods. The application and validation tests in Section V are
+                                                                                  between the voltages that are unknown and dependent and the
+centered on the CIGRE HVdc Benchmark model and show that
+                                                                                  voltages      that are known and given through excitation func-
+accurate simulation at speeds faster than real time is achieved
+                                                                                  tions
+on an off-the-shelf PC. Conclusions are drawn in Section VI.
+In Appendices A and B, the application of the weight-aver-
+aged integration method for the purpose of modeling network                                                                                                 (4)
+branches and discretizing dynamic state equations is explained,
+respectively. In Appendix C, details of the algorithms of the                     where , are, respectively, the source-dependent nodal cur-
+nested parent–child simulation are elaborated upon.                               rent injections into the nodes with unknown and known voltages
+STRUNZ AND CARLSON: NESTED FAST AND SIMULTANEOUS SOLUTION FOR TIME-DOMAIN SIMULATION                                                          279
+
+
+
+and are the currents that flow through the nodes with known
+voltages.
+   Given that there are      unknown voltages, the          ma-
+trix      is factorized into lower and upper triangular matrices
+                  . The unknowns are obtained through the for-
+ward and backward substitution [17] by solving the following
+equation derived from the first row of (4):
+
+                                                                  (5)
+                                                                         Fig. 3. AC network on the inverter side of the CIGRE HVdc benchmark model
+                                                                         represented as a child subdivision.
+
+   III. NODAL-ANALYSIS-BASED SIMULATION WITH GENE
+   While the nested parent–child simulation method GENE sup-
+ports the use of diverse solution methods, its parent simulation
+as the driver of the overall solution process uses nodal analysis.
+In Section III-A, the parent simulation is described. Before the
+child simulations are explained, it needs to be shown how the
+child subdivisions are defined and their miniature equivalents
+are obtained. This is done in Sections III-B and III-C, respec-
+tively. The status indicator and access scheme for precalculation        Fig. 4. Course of actions in parent simulation using GENE.
+and storage at the child simulation level and the child simulation
+process itself are then developed in, respectively, Sections III-D
+and III-E. An analytic evaluation of the improvement in effi-
+ciency provided by the status indicator and access scheme is
+proposed in Section III-F. Details of the developed algorithms
+are discussed in Appendix C.                                             Fig. 5. Information exchange between parent and child simulations.
+
+A. Parent Simulation
+   As mentioned in Section II, the stamping method is widely             step 1. The symbol for intersection is used to stress that the
+used to build up the network model using the given branch                ensemble of all unknown terminal voltages of child subdivisions
+models. At the parent simulation level, however, the stamping            makes up the vector of unknown voltages of the intersection net-
+is applied to entire child subdivisions rather than individual           work. Then, the child simulations are called in step 2. Thus, the
+branches. Prior to the stamping action, child subdivisions, as           parent simulation launches new child simulations, leading to a
+the one shown in Fig. 3, are reduced to miniature equivalents            nested structure. The information exchange between parent and
+where only the terminal nodes at the boundaries of the subdi-                   different child simulations is clarified in Fig. 5. At the be-
+visions remain. As detailed in subsequent Sections III-B and             ginning of step 2, the child simulations receive their respective
+III-C, this is done in order to have the child subdivision appear        terminal voltages as inputs. These terminal nodes are, of course,
+in the format of branch companion models                                 incident at the intersection network and, therefore, known from
+                                                                         step 1. At the end of step 2, the subdivisions return their respec-
+                                                                  (6)    tive miniature equivalents to the parent simulation process.
+                                                                             If any of the returned     has been modified, for example, due
+where         is the nodal admittance matrix of the miniature equiv-     to a change of status of a piecewise linear approximation, then
+alent of the child subdivision;        is the vector of the source-de-   in step 3.1, matrices are reconstructed using stamping in accor-
+pendent nodal current injections into the terminal nodes of the          dance with the updated status of the network. Furthermore, the
+child subdivision;         is the vector of the nodal voltages at the    LU factorization is performed in step 3.2. In step 4, the time-de-
+terminal nodes;        is the vector of the currents flowing into the    pendent excitation sources are advanced. In step 5, the vector of
+child subdivision. Equation (6) is indeed of the same format as          the source-dependent nodal current injections is constructed.
+(3)

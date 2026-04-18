@@ -1,0 +1,25 @@
+## A new distance relaying algorithm based on complex differential equation for symmetrical components
+Eugeniusz Rosotowski a,*, Jan I ykowski a, Bogdan Kasztenny a, Murari Mohan Saha b
+a The Technical University of Wroctaw (I-8), Wyb. Wyspianskiego 27, 50-370 Wroclaw, Poland
+b ABB Network Partner, Vdsterds, Sweden
+Received 8 February 1996; accepted 6 September 1996
+
+### Abstract
+This paper presents a new digital impedance measuring technique for transmission lines that combines symmetrical components and the complex differential equation of an equivalent fault loop circuit. The phase voltages and currents at the relaying point are transformed into symmetrical components using Fourier filters of short window length. Depending on fault type, an appropriate fault loop circuit is formed, signals of which are the appropriate symmetrical components, while a parameter of which is the positive sequence impedance being a geometrical measure of the distance from the relaying point to a fault. The impedance, however, is measured very fast by on-line solving the complex differential equation originated for this fault loop circuit, Consequently, this approach combines frequency domain estimation of symmetrical components (accurate filtration) and time domain measurement of positive sequence impedance (high speed response).
+The presented method suits well the protection of parallel lines against high-resistance faults occurring very close to the far end of a line. A new method is proposed for detecting high-resistance faults and deciding which line out of two parallel lines actually suffers a fault.
+The included EMTP test results demonstrate the efficiency of the proposed relaying algorithm. © 1997 Elsevier Science S.A.
+
+**Keywords:** Digital protection; Symmetrical components; Fault impedance estimation; Line protection
+
+## 1. Introduction
+A digital distance relaying algorithm based upon symmetrical components was introduced two decades ago [1]. This protection method utilizes certain relations between voltages and currents in a three-phase post-fault power system [1,2]: the phase voltages and currents are transformed into symmetrical components by means of digital filtration. Depending on fault type, an appropriate fault loop model is composed from symmetrical components of voltages and currents to that the impedance resulting from the equivalent voltage and current is the positive sequence impedance being a geometrical measure of the distance to a fault. This relaying method, however, is usually implemented in the frequency domain, i.e. phasors of voltage and current symmetrical components are calculated and based on them the apparent impedance is estimated. Consequently, the resulting impedance algorithm cannot be very fast due to the window length of used filters.
+
+Ultra-high speed impedance estimation, in turn, is natural in the time domain methods. This group of algorithms based on the resistive-inductive model of a fault loop circuit, usually neglecting the shunt capacitances, assumes the appropriate voltages and currents as measured and solves the appropriate differential equation with respect to resistance ($R$) and reactance ($X$) of positive sequence. Various approaches to numerical differentiation and solution of the relevant equation originate a number of different relaying methods of this kind [3-5].
+
+As its innovative contribution, this paper merges the gains of those two approaches: symmetrical components are the base for distance relaying and are numerically measured by means of Fourier filters with a short data window providing sufficient voltage and current filtration. Depending on the type of fault, an equivalent fault loop circuit is next composed with complex and instantaneous symmetrical components as signals and positive sequence impedance as a parameter. The resulting differential equation is next solved with respect to $R$ and $X$ in the time domain (Section 2). A single, but complex differential equation is re-written for its real and imaginary parts enabling to find the two sought variables ($R$ and $X$) using the data at a single sampling instance, which further speeds up the impedance estimation.
+
+In the case of parallel transmission lines, a number of problems arises when using distance protection [6] due to mutual coupling, back feed, in-feed, and poor discrimination between faulty and healthy lines, especially in the case of faults near to the far end bus. To overcome these difficulties, the method based on certain comparison between impedances of both lines is proposed in the literature. A more sensitive method
+
+**Fig. 2.** Equivalent sequence circuits of the fault loop.
+
+$$V_{0f}(t) = V_0(t) - R_0 i_0(t) - L_0 \frac{di_0(t)}{dt} - R_{0m} i_{0m}(t) - L_{0m} \frac{di_{0m}(t)}{dt} \quad (1a)$$

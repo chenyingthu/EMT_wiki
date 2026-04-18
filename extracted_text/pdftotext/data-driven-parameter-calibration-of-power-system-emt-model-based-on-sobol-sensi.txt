@@ -1,0 +1,186 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025                                                                                         1037
+
+
+
+
+ Data-Driven Parameter Calibration of Power System
+  EMT Model Based on Sobol Sensitivity Analysis
+           and Gaussian Mixture Model
+        Yuhong Wang , Senior Member, IEEE, Bingjie Zhai , Shilin Gao , Member, IEEE, Yitan Guo,
+Chen Shen , Senior Member, IEEE, Ying Chen , Senior Member, IEEE, Zongsheng Zheng, Senior Member, IEEE,
+                                          and Yankan Song
+
+
+   Abstract—The parameters of power system electromagnetic                        analyses. For the design, operation and control of modern power
+transient (EMT) model have great influences on the accuracy of                    systems, the electromagnetic transient (EMT) simulation is of
+EMT simulation. This paper proposes a data-driven parameter cal-                  great significance. In the EMT simulation of a power system,
+ibration method based on Sobol sensitivity analysis and Gaussian
+mixture model (GMM) to calibrate the parameters of the power                      the parameter is one of the most important factors that influence
+system EMT models. First, the dominant parameters of the power                    the accuracy of simulation results. However, the parameters of
+system EMT model are derived based on the derivative-free Sobol                   the power system will change over time. In order to ensure
+sensitivity analysis method. Then, the GMM that describes the                     that the simulation results accurately characterize the physical
+relationship between the dominant parameters and the EMT simu-                    objects, the parameters have to be adjusted to the changes of the
+lation errors is established and solved. Finally, an improved particle
+swarm optimization algorithm is adopted to optimize the EMT                       parameters of the real-life power systems, which is defined as
+simulation errors and the values of the parameters are obtained                   parameter calibration [1].
+according to the minimum error and the conditional probability                       The commonly-used parameter calibration methods mainly
+invariance of GMM. The test results on four different systems show                include the heuristic algorithm [2], least squares (LS)
+that the proposed method can accurately calibrate all dominant
+                                                                                  method [3], [4], gradient method [5], [6], Kalman filter [7],
+parameters of the EMT models of the various power systems.
+                                                                                  [8], [9], [10], [11], [12] and Bayesian analysis [13], [14], [15],
+   Index Terms—Conditional probability, data-driven, EMT                          etc. The heuristic algorithms are mostly constructed based on
+simulation model, GMM, parameter calibration, posterior                           intuition or experience, which provide a feasible solution to
+distribution.
+                                                                                  the optimization problem. As a kind of heuristic algorithm,
+                                                                                  the particle swarm optimization (PSO) algorithm is used in the
+                            I. INTRODUCTION                                       parameter calibration of battery in [2]. However, the computa-
+         ITH the development of power electronics and renew-                      tional efficiency of this method is very low when the solution
+W        able energies in modern power systems, the dynamic
+characteristics of the power systems are becoming increasingly
+                                                                                  space is high-dimensional. The LS method is widely used in
+                                                                                  various regression problems. Its basic idea is to minimize the
+complex and traditional electromechanical transient simulation                    sum of squares of estimation errors. A robust recursive LS
+is difficult to meet the accuracy requirements of power system                    algorithm is proposed for the parameter identification of the
+                                                                                  Lithium-ion battery model in [3]. In [4], the LS method has also
+                                                                                  been used for the parameter calibration of transmission line.
+   Manuscript received 21 December 2023; revised 7 May 2024; accepted 8 June
+2024. Date of publication 18 June 2024; date of current version 27 December       Nevertheless, the LS method is difficult to solve the parameter
+2024. This work was supported by the National Key R&D Program of China            calibration problem of nonlinear models, and its calculation
+Response-driven intelligent enhanced analysis and control for bulk power sys-     efficiency is very low when the amount of sample data is large.
+tem stability under Grant 2021YFB2400800. Paper no. TPWRS-01997-2023.
+(Corresponding author: Shilin Gao.)                                               The optimization algorithms based on gradient calculations have
+   Yuhong Wang, Bingjie Zhai, Shilin Gao, and Zongsheng Zheng are with the        been proposed for the parameter calibration of synchronous
+College of Electrical Engineering, Sichuan University, Chengdu 610065, China      generators in [5], [6], but the results of this method have the
+(e-mail: yuhongwang@scu.edu.cn; zhaibingjie1@stu.scu.edu.cn; gaoshilin@
+scu.edu.cn; zongshengzheng@scu.edu.cn).                                           risk of the local optima. Kalman filter is widely used for the
+   Yitan Guo is with the State Grid Corporation of China, Beijing 100031, China   parameter calibration of the model with noise [7]. The tradi-
+(e-mail: 276632482@qq.com).                                                       tional Kalman filter method estimates the system state for the
+   Chen Shen and Ying Chen are with the Department of Electrical Engi-
+neering, Tsinghua University, Beijing 100084, China (e-mail: shenchen@mail.       linear system based on the observation. Therefore, the extended
+tsinghua.edu.cn; chen_ying@tsinghua.edu.cn).                                      Kalman filter is developed for the parameter identification of
+   Yankan Song is with the Sichuan Energy Internet Research Institute, Tsinghua   the nonlinear models in [8], [9]. However, this method re-
+University, Chengdu 610042, China (e-mail: songyankan@cloudpss.net).
+   Color versions of one or more figures in this article are available at         mains inapplicable for highly nonlinear models. To address this,
+https://doi.org/10.1109/TPWRS.2024.3416177.                                       a parameter estimation method based on advanced ensemble
+   Digital Object Identifier 10.1109/TPWRS.2024.3416177                           Kalman filter is proposed in [10], which can circumvent the
+
+                         0885-8950 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:55:42 UTC from IEEE Xplore. Restrictions apply.
+1038                                                                                IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+linearization process but has the problem of slow convergence.                  dominant parameters and EMT simulation errors is derived
+A robust generalized maximum-likelihood unscented Kalman                        based on GMM in Section IV. In Section V, the optimization
+filter (UKF) is proposed to address the unknown statistics of the               of errors based on IPSO is introduced. Section VI validates the
+system process and measurement noises when estimating the                       accuracy of the proposed method on various power systems.
+state of the power system in [11]. However, the UKF suffers                     Section VII concludes the paper.
+from the curse of dimensionality, especially when there are
+high degree of nonlinearities in the equations that describe the                     II. PROBLEM STATEMENT AND SOLUTION FRAMEWORK
+state-space model [12]. In contrast to the aforementioned meth-
+ods, the Bayesian analysis-based parameter calibration method                   A. Power System Model and Parameter Calibration
+is to infer unknown parameters by using the prior probability,                     A power system EMT simulation model can be represented
+sample information and Bayesian formula. Owing to the need of                   as:
+sample-based estimation of the likelihood, the Bayesian analysis
+is frequently combined with statistical simulation methods such                                                   y = f (x)                           (1)
+as Markov Chain Monte Carlo [13], [14], [15]. A Bayesian                        with
+analysis approach utilizing a surrogate based on polynomial
+chaos expansion is proposed for the parameter calibration of                                             x = [x1 , x2 , . . . , xm ]T                 (2)
+the power system in [13]. Nevertheless, the surrogate model                     where x and y represent m input parameters and the simula-
+may become unreliable when large parameter errors occur. To                     tion result of the power system EMT model, respectively. f (·)
+address this problem, a Bayesian analysis parameter calibration                 denotes the mapping between x and y.
+method based on adaptive importance sampling is proposed                           The parameter calibration of a power system EMT simulation
+for more accurate results in [15]. However, the performance of                  model is to find a set of parameters that correspond to a given
+the method may diminish when dealing with high-dimensional                      reference result y ∗ (e.g., fault waveform recording). Here mul-
+power systems.                                                                  tiple sets of parameters can be generated and the corresponding
+    To overcome the problems existing in the above methods,                     simulation results can be obtained. Then, the parameters corre-
+this paper proposes a data-driven parameter calibration method                  sponding to the simulation result with the smallest error between
+based on Sobol sensitivity analysis and Gaussian mixture model                  the reference result can be regarded as the best-calibrated param-
+(GMM). It aims to accurately identify and calibrate the domi-                   eters. In this paper, the error between a simulation result and the
+nant parameters of the model using actual fault waveform. The                   reference result can be calculated by:
+dominant parameters selection based on the Sobol method is                                                  
+first proposed. The parameters corresponding to large Sobol                                                     1  ∗
+indexes are regarded as the dominant parameters of the power                                         VF =             (y − y)2                  (3)
+                                                                                                               W
+system EMT model. Second, the relationship between the dom-
+                                                                                where W represents the number of sampling points and y ∗
+inant parameters and the EMT simulation errors is modeled
+                                                                                represents the reference results of the power system EMT model.
+using a GMM. Then, the posterior distributions of the dominant
+                                                                                Therefore, the parameter calibration can be modeled as an opti-
+parameters are computed based on the conditional probability
+                                                                                mization problem. The optimization process is to continuously
+invariance characteristic of GMM and an improved particle
+                                                                                adjust the parameters of the power system EMT model until
+swarm optimization (IPSO) method. Finally, the values of the
+                                                                                the error between the simulation result and the reference result
+dominant parameters are obtained by calculating the mean value
+                                                                                reaches a minimum.
+of the conditional probability of the dominant parameters.
+                                                                                   Considering that the analytical expression of power system
+    The main contributions of this paper are threefold. 1) A dom-
+                                                                                EMT models are hard to obtain and there may be black-box mod-
+inant parameter selection method is proposed based on Sobol
+                                                                                els in the power system EMT simulation models, it is difficult
+global sensitivity analysis. It is derivative-free and adaptable
+                                                                                to derive the accurate parameter set by analytic method. Thus, a
+for various of power systems. 2) The relationship between the
+                                                                                data-driven solution to parameter calibration is meaningful and
+parameters and the EMT simulation errors is modeled as a
+                                                                                is explored in this paper.
+GMM. It has a good accuracy of fitting and can be implemented
+for high-dimensional systems. Besides, the GMM has a char-
+acteristic of conditional probability invariance, which makes it                B. Proposed Solution Framework
+readily to estimate the posterior distributions of the parameters.                 Intuitively, the accurate parameter set of the EMT simulation
+Furthermore, the proposed method is data-driven, which means                    model can be obtained by traversing solution space. However,
+that the precise EMT simulation model structure and the prob-                   the computational burden will be unacceptable. To obtain the
+ability distribution of the parameters are not necessary. 3) The                parameters from the EMT simulation error efficiently, the GMM
+proposed method has versatility and is easy to be adopted on                    and an optimization method can be adopted in the parameter
+various of power system EMT simulation models.                                  calibration. The GMM is used to describe the reverse mapping
+    The remainder of this paper is organized as follows. Section II             from the errors to the parameters based on the idea of random-
+discusses the problem statement and describes the proposed                      ization of parameters in Bayesian analysis [16]. According to
+solution framework. Section III presents the dominant parameter                 the conditional probability invariance of GMM, the posterior
+selection method. The modeling of the relationship between                      distribution of parameters can be directly obtained when the
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:55:42 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: DATA-DRIVEN PARAMETER CALIBRATION OF POWER SYSTEM EMT MODEL BASED ON SOBOL SENSITIVITY ANALYSIS AND GMM                                        1039
+
+
+
+                                                                                 where f0 is a constant, fi is the effect function when xi changes
+                                                                                 independently, fij is the effect function when xi and xj change
+                                                                                 simultaneously, f12···m is the effect function when all parame-
+                                                                                 ters change simultaneously. The functions in (4) are obtained
+                                                                                 from [17]:
+                                                                                        ⎧
+                                                                                        ⎨f0 = E(y)
+                                                                                          fi (xi ) = Ex−i (y |xi ) − f0                        (5)
+                                                                                        ⎩
+                                                                                          fij (xi , xj ) = Ex−i,j (y |xi , xj ) − f0 − fi − fj
+                                                                                 and similarly for higher orders. x−i represents the vector of all
+Fig. 1. Framework of the proposed data-driven parameter calibration method
+for power system EMT model.                                                      variables except xi .
+                                                                                    Since the power system EMT model y = f (x) is square-
+                                                                                 integrable [18], the variance of y can be expressed as follows:
+errors are known. Simultaneously, an optimization method is
+used to find the minimum error for the GMM. To further improve                                            
+                                                                                                          m            
+                                                                                                                       m
+the efficiency, only the dominant parameters can be calibrated.                                V (y) =          Vi +         Vij + · · · + V12···m           (6)
+If all parameters are calibrated, the efficiency of parameter cali-                                       i=1          i<j
+bration will be greatly reduced and the complexity of parameter
+                                                                                 with
+calibration will be increased.                                                              
+   According to the basic idea above, a solution framework                                   Vi = Vxi (Ex−i (y | xi ))
+                                                                                                                                                             (7)
+of power system parameter calibration can be proposed. The                                   Vij = Vxi,j Ex−i,j (y | xi , xj ) − Vi − Vj
+framework of the proposed data-driven parameter calibration
+                                                                                 where Vi and Vij are the variance of the corresponding condi-
+method is illustrated in Fig. 1. Based on the fault recording
+                                                                                 tional expected value.
+waveforms in real power system and the simulation results of the
+                                                                                    Based on the variance expression of the pow

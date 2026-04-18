@@ -1,0 +1,252 @@
+690                                                                      IEEE Transaction$ on Power Delivery. Vol. 9. No. 2, April 1994
+                                 A TRANSFORMER MODEL FOR WINDING FAULT STUDIES
+
+
+
+                   Pauick BASTARD                             Pierre BERTRAND                               Michel MEUNIER
+
+             Electrical Engineering Dpt.                  Protection and Control Dpt.              Electrical Engineering Dpt.
+        ECOLE SUPERIEURE DELECTRICITE                          M ERLIN-C ERIN                 ECOLE SUPERIEURE DELECTRICITE
+                91190 Gif-sur-Yvette                            38000 Grenoble                        91 190 Cif-sur-Yvette
+                       FRANCE                                       FRANCE                                   FRANCE
+
+
+
+
+                         KEY WORDS                                                 I. GENERAL MODELING PRINCIPLES
+Transformer ; Modeling ; Simulation ; Winding faults ; EMTP ;                 The basic model used is the one supplied by the BCTRAN
+Leakage                                                                 routine of the EMTP simulation software.
+                                                                              Based on excitation and short-circuit tests, in positive and
+                                                                        zero sequences, this routine computes two matrices [RI and [L]
+                          ABSTRACT                                      modeling the transformer. In the case of a three-phase
+                                                                        transformer with two windings, these matrices are of order 6 : see
+     This paper deals with a method of modeling intemal faults          figure 1, where Ri and Li are the resistance and the self
+in a power transformer. The method leads to a model which is            inductance of coil i, and Mi, is the mutual inductance between
+entirely compatible with the EMTP software. It enables                  coils i and j. Note that B C T R A N does not take magnetic
+simulation of faults between any turn and the earth or between          asymmetry into account.
+any two turns of the transformer windings. Implementation of
+the proposed method assumes knowledge of how to evaluate the                                                   ,
+leakage factors between the various coils of the transformer. A                                                    R 1 O    0    0    0        0
+very simple method is proposed to evaluate these leakage                                phase I                    O R 2 0       0    0        0
+factors. At last, an experimental validation of the model allows
+the estimation of its accuracy.                                                                                    0    O R 3 0       0        0
+                                                                                                       [RI =
+                                                                                                                   0    0   O R 4 0            0
+
+                       INTRODUCTION                                                     phase I1                   0    0   0    O R 5 0
+
+
+
+
+                                                                           >k
+                                                                                                                   0    0    0   0    0    R6,
+      The development and the validation of algorithms for a
+digital     differential transformer protection require the
+preliminary determination of a power transformer model [SI.                             phaselll
+This model must allow to simulate all the situations which will
+be chosen to study the behaviour of the protection algorithms.                                             f L1 M12 M13 M14 M15
+
+
+
+                                                                                                           I
+In particular, it must allow the simulation of internal faults [4].
+This is the aspect of the model that we shall study in this paper.                                           M21       4, M23 M24 MZ5
+      Study of the algorithms implemented in a transformer                                                   M31 M32        L3   M34 M35 h'
+protection leads us to simulate a large part of the power network,                                 ILI =
+and not only the transformer itself. The upstream circuit with its       rimary secondary                    M41 M42 M43         L4   M45
+lines, cables and grounding system, the power transformer itself,
+current transformers, potential transformers and a part of the
+downstream circuit with its grounding system and loads must be
+taken into account. If the aim is not to finally develop a
+complete simulation software for electrical transients, the
+                                                                              "
+                                                                         igure 1
+                                                                                                             M51 M52 M53 M54
+                                                                                                             M61 M62 M63 M64 M65
+                                                                                                                                          L5       h!
+                                                                                                                                                    I
+
+
+transformer model must absolutely be compatible with a
+commercially available software ensuring the simulation of the                The BcTRAN routine must clearly be considered as an
+"environment" and the computation management. That's why                auxiliary routine of the EMTP itself, and not as a part of the main
+we have develcped a model which is entirely compatible with             program. In point of fact, BCTRAN merely computes the elements
+EMIT.                                                                   of the matrices [RI and [L] and makes a file which can be
+                                                                        directly read by EMTP. This file [R,L] can then be included in
+                                                                        any EMTP input file. The transformer will thus be handled as
+                                                                        mutuallycoupled R,L branches [l] [2].
+93 SM 382-2 PWRD   A paper recommended and approved                           This document does not aim at validating the BCTRAN
+by the IEEE Power System Relaying Committee of the                      routine. All the theoretical details relating to this routine are
+IEEE Power Engineering Society for presentation at                      explained in [3]. Let us therefore assume the accuracy of the 6x6
+the IEEE/PES 1993 Summer Meeting, Vancouver, B.C.,                      matrices.
+Canada, July 18-22, 1993. Manuscript submitted Apr                            The principle used to model a fault between a coil turn and
+27, 1992; made available for printing May 3, 1993.                      the earth or between any two tums is to divide the faulty coil.
+                                                                              Figure 2a shows the diagram enabling study of a turn-to-
+PRINTED IN USA                                                          earth fault and figure 2b shows the diagram enabling study of a
+                                                                        turn-to-turn fault. In the former case, the transformer can be
+                                                                        described with two 7x7 matrices [RI, [L] ; in the latter case, two
+                                                                        8x8 matrices are required.
+                                                     0885-8977/94/$04.00 Q 1993 IEEE
+                                                                                                                                     69 1
+                                                                      1. Consistency
+                                                                            If, when using the 7x7 matrix, coils a and b are supplied in
+                                                                      series without any fault, the same results must be found as when
+                                                                      the 6x6 matrix is used.
+                                                                            Let us thus assume that coils a and b are supplied in series
+                                                                      and that a current i flows through them : see figure 3. All other
+                                                                      coils are on no-load.
+
+
+
+   XJ-
+
+
+
+
+Figure 2a                                           figure 2b
+
+      Our aim in this paper is to describe a method for the
+&termination of these 7x7 or 8x8 matrices using, firstly, the         In this way :
+6x6 matrices [R],[L] computed by BCTRAN and, secondly, the
+leakage factors between the various coils. The main advantage of
+this method lies in the fact that it requires no other test results        and
+than those required by the BCTRAN module to determine the 6x6
+matrices. In point of fact, the various leakage factors can be
+determined from the geometrical data of the transformer and the            These relations lead to the well-known expression of L3 ,
+position of the fault : see section IV.                               considered as two inductances in series :
+      In a first step, we shall assume that the various leakage
+factors are known. These factors will thus be considered as
+parameters.
+
+
+                  II. TURN-TO-EARTHFAULT
+                                                                      La, Mab and I+, are elements of the 7x7 matrix.
+      If coil 3 has to be divided, as shown in figure 2a. the         L3 is an element of the 6x6 matrix.
+position of the fault point is defined by the following data :
+                                                                      2. Leakage
+ na = number of turns of "sub-coil" a                                      Taking into account a leakage factor between coils a and b
+ nb = number of turns of "sub-coil" b                                 is essential since the fault current will largely depend on the
+                                                                      leakage. The leakage factor is :
+     The 7x7 matrix [RI will be determined with the help of the
+following relations :
+                       Ra=%R3
+                          "3     ; Rb=:R3                                                   PI
+                                                                                            oh= 1 --
+
+
+      The main difficulty is to determine the new 7x7 matrix [L],
+as written in the next column.                                        3. Proportionality
+      The elements in italics of this matrix are unknown. The              To determine the three unknowns (La , L b and Mab), we
+other ones are determined by the routine BCTRAN and can thus          must add a third equation to relations (1) and (2) :
+be considered as known data.
+      The first step is to determine the elements relating to the
+faulty coil : L, , I.+ and Mab. This purpose will be achieved,                                           2
+                                                                                             L
+according to three rules : consistency, leakage and
+proportionality.                                                                             G=):(                                   (3)
+
+        f
+            L1    M12 M l a M l b M14 M15 M16
+                                                                      Letusnote: k = % .
+            M21   L2    M 2 a M 2 b M24 M25 M26                                        nb
+
+            M a l Ma2    La     M a b M a 4 M a 5 Ma6                      Relation (3) is approximate. It expresses that k is the
+                                                                      voltage ratio between coils a and b. It is strictly true only if
+[LI =       M b l Mb2 Mba       Lb    M b 4 M b 5 Mb6                 there are no leakage ((Tab = 0). However, it represents an
+                                                                      excellent numerical approximation when (Tab is close to zero
+            M41 M42 M 4 a M 4 b        L4    M45 M46                  and is very widely used.
+            M51 M52 M 5 a M 5 b M54          L5     M56
+                                                                          L3 is given by the 6x6 matrix computed by B C T R A N .
+        ,M61      M62 M 6 a M 6 b M64 M65            L6               k characterizes the fault position along the coil. In this way, if
+692
+we consider Q as a parameter which can be computed, 3
+equations are obtained for 3 unknown quantities : La, L+, and
+Mab. The resolution leads to the following relations :
+
+                                                                        (7) and (11) lead to :
+                                                                  (4)
+
+
+
+                 I    Lb=           L3
+                            k2 + 2kd=+       1
+                                                 1
+                 I                 -     I
+
+
+
+
+                                                                        M3i is given by the 6x6 matrix computed by BCTRAN.
+
+     We have now to determine the mutual inductances between
+the coil a and any other coil i except for b (as well as those
+between the coil b and any other coil i except for a).
+     Generally speaking, the consistency principle leads to :                            UI. TURN-TO-TURNFAULT
+                     M3i = Ma, + Mbi,                             (7)
+
+    A second equation must then be determined enabling Ma,                   Let us consider the turn-to-turn fault shown in figure 2b.
+and Mbi to be computed.
+                                                                             As in part II, the matrix [RI can be easily determined with
+* la case : the coil i is wound onto the same leg as a and b.           the help of the following relations :
+
+     If n, 2 nb. aa, will be determined with a greater accuracy
+than o b i . In these conditions, we set down :
+
+                                                                             The 8x8 matrix [L] to determine is :
+                                                                              I
+
+      We assume that o~ and (33i ,hence E, can be computed.                       L1    M12 M l a M l b M l c M14 M15 M16
+
+                                                                                  M21   L2       M 2 a M 2 b M 2 c M24 M25 M26
+(8) leads to :
+                                                                                  M a l Ma2      La   M a b Mac Ma4 M a 5 M a 6
+                                                                                  M b l Mb2 Mba       Lb    Mbc Mb4 M b 5 M b 6
+                                                                  (9)
+                                                                                  M c l Mc2 Mca Mcb          Lc   Mc4 Mc5 Mc6
+                                                                                  M41 M42 M 4 a M 4 b M 4 c         L4   M45 M46
+    Li, L3 and M3i are given by the 6x6 matrix computed by
+BCTRAN. La is computed by (4).
+                                                                                  M51 M52 M 5 a M 5 b M 5 c M54            L5    M56
+                                                                              ,M61      M62 M 6 a M 6 b M 6 c M64 M65             L6
+(7) leads then to :
+
+                                                                              Let us now come back to the 3 "rules" set out above:
+                                                                        consistency, leakage and proportionality, in order to determine
+                                                                        the parameters relating to the faulty coil : Mab , Mac , Mbc ,L a ,
+                                                                        Lb and Lc.
+* 2"dcase : the coil i is not wound on the same leg as a and b.               Let us assume that the three coils a, b and c are supplied in
+                                                                        series and that a current i flows through them, as shown in
+                                                                        figure 4. All other coils remain on no-load.
+      The magnetic couplings between coils i and a on the one
+hand and i and b on the other hand are extremely bad since the
+third leg represents a leakage reluctance. The leakage factors are
+then very different from zero and it is hard to evaluate them.
+Since the leakage between these coils is channeled by a
+magnetic circuit, the corresponding leakage inductances are of
+the same order of magnitude as the self-inductances and thus,
+they have no effect on the numerical value of the short-circuit;
+currents appearing in case of a turn-to-earth fault. A simple
+proportionality relation is sufficient :
+                                                                                                                                       693
+
+                                                                             The resolution of the above system enables the
+                                                                       construction of a 8x8 matrix consistent with the 6x6 matrix.
+                                                                       This means that if coils a, b and c are supplied in series, the same
+                                                                       simulation results are obtained using the 6x6 or the 8x8 matrix.
+                     i                     0                           In other words, imposing i, = ib = enables the 8x8 matrix to
+                                                                       be reduced to a 6x6 matrix which will be identical to the one
+                                                                       computed by BCTRAN.
+                                                                             What will happen if two of the three "sub-coils" are
+                                                                       grouped together, for example b and c ?
+
+                   figure 4                      I                           As soon as ib = i,, the 8x8 matrix can easily be reduced to a
+                                                                       7x7 matrix. However, nothing enables us to affirm that this
+                                                                       matrix is identical to the one obtained by the method set out for
+                                                                       the study of the turn-to-earth fault. For this to be the case, the
+0 = + a + Qb + +c                                                      relations (16), (17) and (18) must be modified in the above
+  = (hi+ Mat, i +Mac i)+ (I+ i +Mab i + M h i), (ki+ M
+                                                     ,     i +Mbc i)   system, no longer considering leakage factors Gab,           and oac
+                                                                       but od(b+c)O(a+b)/c and o(a+c)b
+                                                                                  1
+
+and Q = L3 i               (L3 : value computed by B ~ R A N )

@@ -1,0 +1,203 @@
+                                                               Electric Power Systems Research 195 (2021) 107156
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Accurate time-domain simulation of power electronic circuits✰
+Willy Nzale a, *, Jean Mahseredjian a, Xiaopeng Fu b, Ilhan Kocar a, Christian Dufour c
+a
+  Polytechnique Montréal, Montréal, QC H3T 1J4, Canada
+b
+  Key Laboratory of Smart Grid of Ministry of Education, Tianjin, China
+c
+  Opal-RT Technologies, Montréal, QC H3K 1G6, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  Modern power electronic circuits contain numerous switches driven by high frequency controllers and can cause
+Accuracy                                                   discontinuities in time-domain simulation methods. This paper presents numerical problems resulting from
+Discontinuity                                              discontinuities when simulating power electronic circuits. Limitations in existing methods are analyzed. Three
+Power electronic circuits
+                                                           new methods are proposed to improve accuracy and computational performance.
+Simulation method
+Time-domain simulation
+
+
+
+
+1. Introduction                                                                            attempt accurate tracking of multiple commutations occurring
+                                                                                           in-between consecutive time points [13].
+    The trapezoidal integration method is commonly used in time-                               As demonstrated in [14], a reliable time-domain simulation algo­
+domain simulation of electromagnetic transients and power electronic                       rithm must incorporate a mechanism to accurately track discontinuities
+circuits [1,2]. It is a one-step implicit A-stable method with second order                and a mechanism to account for instantaneous commutations. This is
+accuracy [3,4] that can perform efficiently and accurately for a wide                      challenging because additional errors may be created, as demonstrated
+range of transient frequencies [4].                                                        in this paper.
+    Trapezoidal (TR) integration causes numerical oscillations at dis­                         It is noteworthy to mention that some numerical integration algo­
+continuities. Discontinuities occur due to switching in power electronics                  rithms [3,15-17] are oscillation-free. The focus of this paper is on the
+circuits or due to nonlinear functions. Several techniques are proposed                    widely (major simulation tools) used trapezoidal integration method.
+in the literature to eliminate such oscillations. One of them consists in                      This paper summarizes numerical issues resulting from discontinu­
+using the L-stable Backward Euler (BE) method to reinitialize TR inte­                     ities in the computation of electromagnetic transients with power elec­
+gration [5]. Another approach consists of switching from trapezoidal                       tronic circuits and proposes alternative solution methods. This paper is
+(TR) integration to BE method for two half time-steps after the discon­                    organized as follows. Section 2 describes the numerical problems. Sec­
+tinuity occurrence [4,6]. This method is implemented in [7]. Numerical                     tion 3 presents existing methods and limitations. Section 4 contributes
+oscillations can be also eliminated using the chatter removal technique                    new methods. Finally, in Section 5, numerical results and practical
+[8]. It consists in performing a half time-step interpolation after crossing               simulation cases are presented.
+a discontinuity. However, as demonstrated in this paper, the existing
+methods are not perfect.                                                                   2. Main issues with discontinuities in time-domain simulation
+    Discontinuities create errors and simulation methods must adapt to
+guarantee accuracy. In fixed time-step simulations, discontinuities may                    2.1. Generalities
+occur between two discrete time points. Interpolation techniques [9,10]
+are applied to fall back to discontinuity instant and to resynchronize                         In time-domain simulation, network components are described by
+with simulation time-mesh. Inaccurate tracking of discontinuities may                      differential equations in the form:
+result in additional errors and even in non-characteristic harmonics for
+                                                                                           ẋ = f (x, t)                                                             (1)
+some power-electronic circuits [11,12]. Interpolation is also used to
+
+
+
+    ✰
+     Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.
+    * Corresponding author.
+      E-mail addresses: willy-arnaud.nzale-mimbe@polymtl.ca, nzal_willy@yahoo.fr (W. Nzale).
+
+https://doi.org/10.1016/j.epsr.2021.107156
+Received 13 November 2020; Received in revised form 19 January 2021; Accepted 8 March 2021
+Available online 13 March 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+W. Nzale et al.                                                                                                                       Electric Power Systems Research 195 (2021) 107156
+
+
+    It is common to solve such equations using, for example, TR and BE
+                                                                                                      Δt                   vt +Δt/2
+integration (discretization) methods with fixed time-stepΔt. The                        itd +Δt/2 =      vt +Δt/2 + itd = − d                                                      (9)
+                                                                                                      2L d                    R
+methods are recalled here:
+                                                                                                    Δt          vt +Δt/2   vt +Δt
+xt+Δt = xt +
+               Δt
+                  [ft+Δt + ft ]                                              (2)        itd +Δt =      vt +Δt − d        =− d                                                    (10)
+               2                                                                                    2L d           R         R
+                                                                                                                  /[              ]
+xt+Δt = xt + Δt ft+Δt                                                        (3)        vtd +Δt = −
+                                                                                                      vtd +Δt/2
+                                                                                                                       −
+                                                                                                                           Δt 1
+                                                                                                                             −                                                   (11)
+                                                                                                          R                2L R
+   Discretization methods allow creating companion models [18] and
+to   formulate     network    equations    using,   for   example,                         It is noticed that itd cannot be zero in this case. When the simulation is
+modified-augmented-nodal-analysis [7]:                                                  pursued with TR from the reached time-point t:
+
+At xt = bt                                                                   (4)        it =
+                                                                                               Δt     Δt
+                                                                                                  vt + vt− Δt + it− Δt = −
+                                                                                                                           vt
+                                                                                                                                                                                 (12)
+                                                                                               2L     2L                   R
+where At is the simulated network Jacobian matrix,xt is the vector of
+                                                                                               Δt     Δt        vt− Δt    vt
+unknowns and bt is the vector of known quantities (includes history                     it =      vt + vt− Δt −        =−                                                        (13)
+                                                                                               2L     2L          R       R
+terms, known sources…). Eq. (4) is solved at each time-point t. Solution
+accuracy can be verified using the local-errore(tk )of a given variable x at                       [
+                                                                                                      1 Δt
+                                                                                                           ]/[
+                                                                                                                 Δt 1
+                                                                                                                      ]
+a given timepoint tk . It is found by calculating the difference between the            vt = vt− Δt −  +       −   −                                                             (14)
+                                                                                                      R 2L       2L R
+numerical value xk and its exact solution x(tk ) retrieved through a
+reference simulation or analytically:                                                        It is apparent that when − 1 /R + Δt /(2L) > 0, the inductance
+                                                                                        voltage shows numerical oscillations with a damping factor (less than
+e(tk ) = xk − x(tk )                                                         (5)        one). This is typically the case for large resistance values. In such case,
+    For a simulation between time-points tstart and tend , the error can be             the actual first order transient can be captured by loweringΔt.When −
+evaluated at every instant tk ∈ [tstart ,tend ]. We quantify the overall error by        1 /R + Δt /(2L) = 0, there will be no numerical oscillations and when −
+the relative rms error (RRE) [3]:                                                        1 /R + Δt /(2L) < 0, it is expected that the voltage will decay due to the
+           √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                                   RL-branch time-constant and there will be no numerical oscillations.
+              1 ∑                                                                       The same conclusions can be drawn from a circuit with a capacitor in
+                    ns
+        1
+erms =                   e(tk )2                                              (6)
+       xrms ns k=1                                                                      series with a resistance. A discontinuity can cause numerical oscillations
+                                                                                        in the capacitor current.
+wherexrms is the rms value of the exact solution waveform and ns is the                      It is seen from (14) that to minimize the amplitude of oscil­
+number of simulation points.                                                            lations,vt− Δt should be minimized. That requires to minimize vtd +Δt/2 in
+   The next section presents numerical problems encountered in time-                    (9). From (9):
+domain simulation due to the occurrence of discontinuities in switch­                                    /[       ]
+                                                                                                            Δt 1
+ing circuits.                                                                           vt +Δt/2 = − itd      +                                                (15)
+                                                                                          d                 2L R
+
+2.2. Numerical oscillations                                                             itd is the current in L before BE is applied. Minimizing itd will minimize
+                                                                                        the amplitude of oscillations. This can be achieved by applying linear
+    In [6], numerical oscillations resulting from TR integration are                    interpolation to detect the instant of zero crossing current for the switch,
+avoided by applying two halved time-step BE integrations after                          or using simultaneous switching at td which gives a zero switch current.
+discontinuity detection. For an inductance L, discretization with TR and
+BE methods gives                                                                        2.3. Event localization
+          Δt        Δt
+it+Δt =      vt+Δt + vt + it                                                 (7)            In fixed time-step computations, when an event such as a disconti­
+          2L        2L
+                                                                                        nuity occurs between two consecutive time-points, interpolation can be
+          Δt                                                                            applied to calculate unknown variables at the discontinuity instant [9].
+it+Δt =      vt+Δt + it                                                      (8)        Interpolation can be linear or quadratic. In the case of linear
+          2L
+                                                                                        interpolation:
+    This technique assumes that the current in L after the discontinuity
+instant becomes exactly zero. This may not be true in some cases and                    xz = (1 − α)xn + αxn+1                                                                   (16)
+small amplitude numerical oscillations may be observed.
+    In the circuit of Fig. 1, the switch SW is opened at time-point td . The            α = (tz − tn ) / (tn+1 − tn )                                                            (17)
+inductance is deenergized, but a current path remains because of the
+resistance in parallel. This causes numerical oscillation in the voltage                wherexn ,xn+1 andxz are respectively the values of a variable x at time-
+across L.                                                                               points tn , tn+1 = tn + Δt and at the discontinuity instant tz ∈ [tn , tn+1 ].
+    At td , the simulation technique switches from TR to BE. The BE                     Quadratic interpolation requires the solutionxn− 1 attn− 1 or the solution xγ
+procedure for the two following time-points gives:                                      at an intermediate point tγ between tn and tn+1 if the numerical method is
+                                                                                        of multi-step type, such as 2S-DIRK [19] or TR-BDF2 [16,17]. Quadratic
+                                                                                        interpolation is presented in [20].
+
+                                                                                        2.4. Re-initialization after a discontinuity
+
+                                                                                             When a hard switching (ideal switch model) occurs attd , there are
+                                                                                        two network solutions at td . The first solution, referred to as the solution
+                                                                                        at td− , is the solution before switching and the second solution, referred
+                                                                                        to as the solution at td+ is the solution right after switching (normally
+                                  Fig. 1. Simple RL circuit.                            obtained by re-initialization). In this case, the history terms in (7) or in
+
+                                                                                    2
+W. Nzale et al.                                                                                                      Electric Power Systems Research 195 (2021) 107156
+
+
+(8) should be values at td+ . Without re-initialization attd , the solution
+obtained attd + Δtwill not be correct. This creates additional errors that
+propagate in subsequent steps. The problem of re-initialization is critical
+with TR integration because history terms are both related to current
+and voltage. With BE integration, the history term for an inductance or a
+capacitance is related to the state variable. Since state variables cannot
+jump, when BE integration is applied, re-initialization is not required for
+state variables. Therefore, switching from TR to BE is an efficient way to
+simultaneously deal with numerical oscillations and re-initialization.
+This technique was firstly introduced in [5] where a single Δt /2-BE
+integration is applied to reinitialize the solution attd+ . Accuracy of this
+technique is however compromised for higher values of Δt. An alter­                         Fig. 3. Simulation timeline for different solution methods.
+native is proposed in [6] and referred to as critical damping adjustment.
+                                                                                    time-steps after ̂t 1 is named TR_BE.
+2.5. Instantaneous commutations                                                           TR_BE can be modified by applying simultaneous switching (SS) at
+                                                                                   ̂t 1 . This method is referred to as TR_BE_SS [7]. TR_BE can also be
+    In time-domain simulation, when a discontinuity occurs at a time-               modified by applying interpolation to bring the simulation back
+pointtd , the network solution at td+ may require instantaneous commu­              tot01 before switching to BE for 2 halved time-steps and finally
+tation.                                                                             resynchronizing with the time-mesh at ̂t 1 . This method is not available
+    In the circuit of Fig. 2 (taken from [14]), the controlled switch SW is         in the literature and is referred to as TR_BE_I.
+initially closed and the ideal diode D is off. The DC voltage is applied                  In [8,9] the procedure from ̂t 1 applied with (4) is as follows:
+across inductance L and the current ramps through L. When SW is
+opened at time-pointtd , D must turn on at the same moment. If D is                 1 node voltages and currents are linearly interpolated tot01 ;
+turned on one step later, the current in L will be zero and will keep this          2 matrixAt in (4) is modified (switch position change) then TR inte­
+value in all subsequent steps. This incorrect 

@@ -1,0 +1,201 @@
+G Model
+EPSR-4005; No. of Pages 7                               ARTICLE IN PRESS
+                                                             Electric Power Systems Research xxx (2014) xxx–xxx
+
+
+
+                                                               Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                  journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Supplementary techniques for 2S-DIRK-based EMT simulations
+T. Noda a,∗ , T. Kikuma b , R. Yonezawa a
+a
+  Electric Power Engineering Research Laboratory, Central Research Institute of Electric Power Industry (CRIEPI), 2-6-1 Nagasaka, Yokosuka, Kanagawa
+240-0196, Japan
+b
+  System Engineering Research Laboratory, Central Research Institute of Electric Power Industry (CRIEPI), 2-11-1 Iwado-kita, Komae, Tokyo 201-8511, Japan
+
+
+
+
+a r t i c l e         i n f o                            a b s t r a c t
+
+Article history:                                        Electromagnetic transient (EMT) simulations are now often used for system studies including power
+Received 15 November 2013                               electronics converters which control voltages and currents using switching devices. The trapezoidal
+Received in revised form 10 April 2014                  method, used in Electro-Magnetic Transients Program (EMTP) for numerical integration, produces “ﬁc-
+Accepted 11 April 2014
+                                                        titious” sustained numerical oscillation, when an inductor current or a capacitor voltage is suddenly
+Available online xxx
+                                                        changed especially by switching. To cope with this problem, the research group of the authors has pro-
+                                                        posed applying the two-stage diagonally implicit Runge–Kutta (2S-DIRK) method which is an inherently
+Keywords:
+                                                        “oscillation-free” numerical integration method. In order to bring out full accuracy of the 2S-DIRK method,
+Numerical integration
+Numerical oscillation
+                                                        supplementary numerical techniques are required for the representation of voltage sources, current
+Switching                                               sources and switches. This paper illustrates these techniques with numerical examples.
+Trapezoidal method                                                                                                         © 2014 Elsevier B.V. All rights reserved.
+2S-DIRK method
+
+
+
+
+1. Introduction                                                                            oscillation, which does not exist in real EMT phenomena, for a sud-
+                                                                                           den change of a variable. This numerical oscillation appears when
+   Electromagnetic transient (EMT) simulations are becoming                                an inductor current or a capacitor voltage is suddenly changed,
+more and more important. Traditional applications of EMT sim-                              and this can be a serious drawback for EMT simulations including
+ulations include studies of overvoltages, inrush currents, abnormal                        switches and highly nonlinear elements. To deal with this prob-
+oscillations, harmonics and relay settings. In addition to these                           lem, critical damping adjustment (CDA) has been proposed and
+traditional applications, EMT simulations are now often used                               implemented in newer versions of EMTP [2,3]. In CDA, the trape-
+for system studies including power electronics converters. Since                           zoidal method is basically used, and only at a moment a sudden
+power-electronics converters control voltages and currents using                           change of a variable is detected the integration method is replaced
+switching devices, waveform-level simulations, in other words,                             by the backward Euler method. In most cases, an acceptable result
+EMT simulations are often essential.                                                       is obtained, since the backward Euler method does not produce
+   For EMT simulations, Electro-Magnetic Transients Program                                sustained numerical oscillation. In practical implementations [3],
+(EMTP) has been used, and now other programs are also used.                                switching events, sudden changes of voltage and current source val-
+The legacy versions of EMTP use the genuine trapezoidal method                             ues, and changes of the operating points of nonlinear components
+for the numerical integration of dynamic circuit elements such as                          represented by piece-wise linear curves are detected to switch the
+inductors and capacitors [1]. The trapezoidal method is a simple                           integration method. However, the detection of a sudden change
+single-step integration method which calculates the solution at the                        of a variable is not always feasible. For instance, a voltage or cur-
+present time step only from values at the previous time step. In                           rent source controlled by a control system can produce a sudden
+spite of its simple formula, the trapezoidal method has a second-                          change due to a limiter operation, but detecting this is quite difﬁ-
+order accuracy and is A-stable. When an integration method is said                         cult. Detecting all types of sudden changes by programming can be
+to be A-stable, it does not diverge for any time step size. However,                       a serious overhead of execution time. Consequently, an inherently
+the trapezoidal method produces “ﬁctitious” sustained numerical                            “oscillation-free” integration method is essential to solve this prob-
+                                                                                           lem. In [4], the research group of the authors has proposed applying
+                                                                                           the two-stage diagonally implicit Runge–Kutta (2S-DIRK) method
+ ∗ Corresponding author. Tel.: +81 7055907052; fax: +81 468563540.                         for the numerical integration of power system EMT simulations.
+     E-mail addresses: takunoda@ieee.org (T. Noda), kikuma@criepi.denken.or.jp             The 2S-DIRK method has a second-order accuracy and is A-stable
+(T. Kikuma), yonezawa@criepi.denken.or.jp (R. Yonezawa).                                   like the trapezoidal method [5,6]. In addition, it is mathematically
+
+http://dx.doi.org/10.1016/j.epsr.2014.04.011
+0378-7796/© 2014 Elsevier B.V. All rights reserved.
+
+
+
+
+  Please cite this article in press as: T. Noda, et al., Supplementary techniques for 2S-DIRK-based EMT simulations, Electr. Power Syst. Res.
+  (2014), http://dx.doi.org/10.1016/j.epsr.2014.04.011
+G Model
+EPSR-4005; No. of Pages 7                              ARTICLE IN PRESS
+2                                                      T. Noda et al. / Electric Power Systems Research xxx (2014) xxx–xxx
+
+
+guaranteed that the 2S-DIRK method does not produce sustained                              The time step used is 1 ms. The calculated result obtained by the
+numerical oscillation, that is, it is an oscillation-free numerical inte-                  2S-DIRK method is shown in Fig. 1(b). A spike voltage is generated
+gration method [5,6].                                                                      when the current is changed stepwise. This is consistent with the
+    In order to bring out full accuracy of the 2S-DIRK method,                             circuit theory. On the other hand, Fig. 1(c) shows the calculated
+supplementary numerical techniques are required for the rep-                               result obtained by CDA. An implementation of CDA failed to detect
+resentation of voltage/current sources and switches. In [4], the                           the stepwise change of the current, and thus sustained numerical
+2S-DIRK formulas of inductors and capacitors for both linear and                           oscillation is produced (a version of EMTP was used for this sim-
+nonlinear cases are derived, and analytical and numerical compar-                          ulation). Of course, this sustained numerical oscillation does not
+isons of the 2S-DIRK method with other integration methods are                             exist in reality. An example of sustained numerical oscillation of a
+presented. However, detailed numerical techniques for the repre-                           capacitor current for which the CDA implementation also fails to
+sentation of voltage/current sources and switches are not shown                            detect a sudden change is shown in [4].
+except those for ideal switches (see Appendix B of [4]). Considering
+this, supplementary numerical techniques for the representation                            3. 2S-DIRK method
+of voltage/current sources and switches with on and off resistances
+are presented in this paper. The voltage value of a voltage source or                      3.1. Review of the 2S-DIRK method
+the current value of a current source used at the ﬁrst stage of the
+2S-DIRK scheme should be appropriately interpolated, when it is                               This section brieﬂy reviews the algorithm of the 2S-DIRK
+activated. A switch with on and off resistances should operate, turn                       (two-stage diagonally implicit Runge–Kutta) method [4–6]. The
+on or turn off, only in the calculation process of the second stage not                    dynamics of inductors and capacitors, including both linear and
+in that of the ﬁrst stage. This paper illustrates these supplementary                      nonlinear cases, can be described by the differential equation
+techniques in detail with numerical examples.
+                                                                                           dy
+                                                                                              = f (t, y),                                                     (1)
+                                                                                           dt
+2. Sustained numerical oscillation
+                                                                                           where t is time and f is function of time and the variable y. In order
+   This section presents a simple example of sustained numeri-                             to carry out an EMT simulation, we have to integrate this equation
+cal oscillation. Fig. 1(a) shows a simple circuit in which a series                        from the previous time step t = tn−1 to the present time step t = tn ,
+RL circuit is excited by a current source [7]. The current through                         for each dynamic component at each time step. Since the 2S-DIRK
+the current source is controlled by a control system. The voltage                          method is a two-stage integration method, it uses the intermedi-
+across the inductor is calculated for the case where the output from                       ate time step at t = t̃n which is in between t = tn−1 and t = tn . The
+the control system is changed stepwise from 0 to 1 at t = 10 ms.                           intermediate time step is given by
+                                                                                                                        1
+                                                                                           t̃n = tn−1 + ah,       a=1− √ ,                                    (2)
+                                                                                                                         2
+
+                                                                                           where h is the time step size used. Here, h̃ = ah is deﬁned and used
+                                                                                           below for simpler notations.
+                                                                                              From the solution y = yn−1 at t = tn−1 , the ﬁrst-stage formula cal-
+                                                                                           culates the intermediate solution y = ỹn at t = t̃n .
+
+                                                                                           ỹn = yn−1 + h̃f (t̃n , ỹn )                                      (3)
+
+                                                                                           Before moving on to the second stage, ỹn is converted to
+
+                                                                                           ỹn−1 = ˛yn−1 + ˇỹn ,                                  (4)
+                                                                                                        √                  √
+                                                                                           where ˛ = − 2 and ˇ = 1 + 2. Then, the second-stage formula
+                                                                                           calculates the solution y = yn at t = tn .
+
+                                                                                           yn = ỹn−1 + h̃f (tn , yn )                                        (5)
+
+                                                                                           It should be noted that both the ﬁrst-stage and the second-stage
+                                                                                           formula, respectively shown in (3) and (5), are in the same form
+                                                                                           as the backward Euler formula. This simpliﬁes the coding of the
+                                                                                           2S-DIRK method, since the code can be written in a way that the
+                                                                                           backward Euler method is applied twice. Another point to note is
+                                                                                           that solving a set of n circuit equations using a general two-stage
+                                                                                           implicit method in which two stages are coupled each other results
+                                                                                           in solving a set of 2n simultaneous equations. The 2S-DIRK method,
+                                                                                           however, is designed so as to decouple the two stages, and thus we
+                                                                                           can sequentially solve two sets of n simultaneous equations. This
+                                                                                           leads to a faster calculation.
+                                                                                               In comparison with the trapezoidal method, the 2S-DIRK
+                                                                                           method has the following points in common. First of all, both meth-
+                                                                                           ods are classiﬁed into the single-step integration scheme, which
+                                                                                           calculates the solution at the present time step only from the solu-
+                                                                                           tion at the previous time step. In terms of accuracy and stability,
+Fig. 1. Calculated results of a sudden change of an inductor current. (a) shows the
+                                                                                           both methods have second-order accuracy and both are A-stable.
+test circuit where the current through an inductor is suddenly changed from 0 A to
+1 A by a current source controlled by a control system. (b) shows the result obtained      The most important different point between the two methods is on
+by the 2S-DIRK method. (c) shows the result obtained by CDA.                               sustained numerical oscillation. It is mathematically guaranteed
+
+
+    Please cite this article in press as: T. Noda, et al., Supplementary techniques for 2S-DIRK-based EMT simulations, Electr. Power Syst. Res.
+    (2014), http://dx.doi.org/10.1016/j.epsr.2014.04.011
+G Model
+EPSR-4005; No. of Pages 7                             ARTICLE IN PRESS
+                                                     T. Noda et al. / Electric Power Systems Research xxx (2014) xxx–xxx                                                      3
+
+
+
+
+                                                                                         Fig. 3. Linear interpolation of the voltage of a voltage source used in the calculation
+                                                                                         of the ﬁrst stage at the moment when it is activated. A step function case is shown.
+
+   Fig. 2. Illustration of the ﬁrst and the second stage of the 2S-DIRK method.
+                                                                                         4. Supplementary techniques
+
+                                                                                         4.1. Representation of voltage and current sources
+that the 2S-DIRK method does not produce sustained numeri-
+cal oscillation, while the trapezoidal method produces it when
+                                                                                             Assume that t = t0 is the time when a voltage source is activated.
+an inductor current or a capacitor voltage is suddenly changed.
+                                                                                         When t < t0 , the voltage source is not activated, and thus its voltage
+Another different point is that the 2S-DIRK method uses two stages
+                                                                                         v remains zero. When t ≥ t0 , the voltage v is deﬁned by the function
+while the trapezoidal method uses a single stage. The 2S-DIRK
+                                                                                         f(t).
+method has to calculate the intermediate solution at t = t̃n in
+                                                                                             If t0 is an exact multiple of the time step h used, the following
+addition thus requiring twice as long computation time as the
+                                                                                         procedure may be appropriate in terms of the principle mentioned
+trapezoidal method. As mentioned above, the 2S-DIRK method is
+                                                                                         in the preceding section. When t < t0 , v is set to zero. At t = t0 , v is
+faster than two-stage non-diagonally implicit methods but slower
+                                                                                         also set to zero. In order to realize a smooth transition from t = t0 to
+than the trapezoidal method due to the additional intermediate
+                                                                                         the next time step at t = t0 + h, the value of v used by the ﬁrst stage
+solution.
+           

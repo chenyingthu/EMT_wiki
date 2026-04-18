@@ -1,0 +1,185 @@
+2674                                                                                          IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 3, MAY 2021
+
+
+
+
+    Flexible Time-Stepping Dynamic Emulation of
+   AC/DC Grid for Faster-Than-SCADA Applications
+        Shiqi Cao , Student Member, IEEE, Ning Lin , Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—Dynamic simulation of the integrated AC/DC grids                           carried out for imminent contingencies. The obtained security
+plays a crucial role in the energy control center. In this work, a faster              indices are delivered to the system operators in the energy control
+than supervisory control and data acquisition (FT-SCADA) emu-                          center. The entire DSA cycle is conducted within 10-30 minutes
+lation based on flexible time-stepping (FTS) algorithm is proposed
+for the energy control center to predict and mitigate the impacts
+                                                                                       to ensure that the operators have sufficient time to take remedial
+after serious disturbances using field-programmable gate arrays                        actions.
+(FPGAs). To gain a high acceleration over SCADA/real-time, the                            Due to the enormous computational burden in DSA systems
+FTS-based dynamic emulation is applied to the AC grid, which                           and the expansion of power system scale, the hardware resources
+is the IEEE 118-bus system where a 9th -order synchronous ma-                          are stretched. For instance, to realize near real-time simulation of
+chine model is adopted. Meanwhile, the electromagnetic transient                       a power transmission system with more than 50,000 nodes and
+(EMT) emulation revealing the exact performance of the DC grid                         3000 generators, the DSA is conducted on the supercomputer
+provides an insight into the impact on its AC counterpart. A power-
+voltage interface is inserted between the AC and DC grids since
+                                                                                       with more than 24,000 CPU cores for power system parallel
+distinct emulation strategies are utilized, and the EMT-dynamic                        simulation [2], which occupies a lot of hardware resources. On
+co-emulation is able to run concurrently on FPGA boards due                            the other hand, the SCADA system collects data from the field
+to their massive parallelism. Three case studies are emulated to                       every 2-5 s [3], this may be sufficient for steady-state tasks such
+demonstrate the efficacy of the proposed algorithm, and a minimum                      as online power flow or state estimation, however, it falls short
+of 101 times faster-than-SCADA/real-time can be achieved. Hence,                       of predicting system stability and conducting online dynamic
+following the occurrence of a disturbance, the FT-SCADA/RT em-                         security assessment. The phasor measurement unit (PMU) tech-
+ulator will generate an optimal solution in advance to maintain the
+stability of the hybrid AC/DC grid. The results of the FTS-based                       nology provides a faster refresh rate (50/60 samples per sec-
+FT-SCADA/RT emulation are validated by the off-line transient                          ond [3]) which is at least two orders of magnitude faster than
+stability simulation tool TSAT of the DSATools suite.                                  SCADA, however, PMUs are expensive and cannot be installed
+                                                                                       on a wide-area to gather system dynamic situational awareness.
+   Index     Terms—AC/DC      grid,   dynamic      simulation,
+                                                                                       Moreover, even if PMUs were widely deployed, communication
+electromagnetic transient, faster-than-SCADA, faster-than-
+real-time, field programmable gate arrays (FPGAs), flexible                            delays to the energy control center would still exist.
+time-step, hardware emulation, parallel processing, predictive                            In a real power system, the distributed and multi-input-multi-
+control, phasor measurement unit.                                                      output (MIMO) wide-area damping controllers are also applied
+                                                                                       to mitigate the inter-area oscillations and reduce the computa-
+                                                                                       tional burden. The MIMO controller of the power system can be
+                             I. INTRODUCTION                                           estimated directly without the need for having a detailed model
+         ODERN power systems are increasingly complex due to                           of the power system. Once the changing dynamics/operating
+M        the interconnection between high voltage direct current
+(HVDC) and renewable energy, which makes the simulating,
+                                                                                       points of the system are captured in the measured data, the
+                                                                                       MIMO model can be used for mode and control loop estima-
+analyzing, and controlling the network difficult. Dynamic se-                          tion. However, the MIMO identification of the power system,
+curity assessment (DSA) is applied in power systems to ensure                          estimation of the control loops, and the design of the discrete
+their stability and security. A complete DSA is composed of five                       linear quadratic regulator (DLQR) are done every 4s [4], and
+stages [1]: measurements, modeling, computing, visualization,                          due to the slow rate of state estimation, MIMO identification
+and control. The real-time measurements are captured by the                            is insufficient for real-time or faster-than-real-time estimation.
+supervisory control and data acquisition (SCADA) for basic                             The PMU based wide-area control of static synchronous com-
+state estimation, and then a detailed time-domain simulation is                        pensator [5], on the other hand, has main restrictions such as
+                                                                                       the communication time-delay and the synchronization issues
+   Manuscript received June 19, 2020; revised September 24, 2020 and Novem-            of wide-area controllers, which make them unsuitable for the
+ber 3, 2020; accepted November 15, 2020. Date of publication November 19,              FT-SCADA/RT emulation. Therefore, an integrated hardware
+2020; date of current version April 19, 2021. This work was supported by the           platform based on FPGAs is established in this work for FT-
+Natural Science and Engineering Research Council of Canada (NSERC). Paper
+no. TPWRS-01013-2020. (Corresponding author: Shiqi Cao.)                               SCADA/RT purpose so as to predict system dynamics faster
+   The authors are with the Department of Electrical and Computer Engi-                and to take preventive control actions for mitigating the impacts
+neering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada (e-mail:             of serious disturbances.
+sc5@ualberta.ca; ning3@ualberta.ca; dinavahi@ualberta.ca).                                To provide fast, accurate, and time-synchronized data for the
+   Color versions of one or more of the figures in this article are available online
+at https://doi.org/10.1109/TPWRS.2020.3038850.                                         complex AC/DC grids, a high-fidelity simulation strategy is also
+   Digital Object Identifier 10.1109/TPWRS.2020.3038850                                needed. Traditional off-line dynamic simulation tools such as
+
+                           0885-8950 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+
+
+       Authorized licensed use limited to: Central Michigan University. Downloaded on May 14,2021 at 14:09:07 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: FLEXIBLE TIME-STEPPING DYNAMIC EMULATION OF AC/DC GRID                                                                                        2675
+
+
+
+PSS/E, and DSATools/TSAT apply fixed time-steps, and so do all                  where x refers to the vector of state variables, and u represents
+commercial real-time simulators, which, as noticed, will require                the bus voltages of a typical power system. The initial conditions
+more hardware resources and prolong the simulation when the                     can be written as:
+system scale becomes larger. A complex matrix solution is
+                                                                                                                x0 = x(t0 ).                               (3)
+inevitable during the transient stability simulation and the admit-
+tance matrix will increase along with the system scale. Although                   Notice that the main challenge of emulating a power transmis-
+the real-time simulation can be reached with the help of the high-              sion system is basically solving a series of differential algebraic
+performance processors [6]-[9] and the parallel algorithms [10]-                equations (DAEs). Due to the non-linear nature of the equa-
+[12], the execution time will increase along with the dimension                 tions, the Newton-Raphson (NR) algorithm is required. The NR
+of the admittance matrix. Some improved numerical methods                       algorithm is essentially an iterative method, which is not ideally
+are thereby put forward for accelerating the simulation, such as                suited for parallel design in FPGAs due to the inherent sequence
+parallel-in-time [13]-[14], and parallel-in-space methods [15]-                 of iterations until convergence. The explicit methods such as
+[17]. Although these methods help to accelerate the operation                   Forward Euler, or 4th -order Runge-Kutta (RK4) are applied in
+speed, the excessive iteration requirement of the parallel-in-time              hardware emulation due to the low resource usage. In a trade-off
+algorithm, as well as the difficulties in the programming of the                between emulation efficiency and the accuracy, RK4 is adopted
+parallel-in-space algorithm limit their widespread application.                 as the solution for calculating the non-linear DAEs, as given
+The variable time-steps (VTS) algorithms are also proposed                      below:
+for speeding up time-domain simulations, however, the varying
+                                                                                       RK1 = dt · f (tn , xn ),                                            (4)
+time-steps of these methods are either doubled or halved during
+                                                                                                                    
+the dynamic simulation [18]-[21], which is inflexible once a                                                  dt RK1
+serious fault occurs.                                                                  RK2 = dt · f tn + , xn +        ,                                   (5)
+                                                                                                              2   2
+   As various equipment have different dynamic responses to                                                         
+time-step, the local equipment based flexible time-stepping for                                               dt RK2
+                                                                                       RK3 = dt · f tn + , xn +        ,                                   (6)
+FT-SCADA/RT emulation is proposed in this paper, which                                                        2   2
+is able to decide a proper time-step for each circuit part.
+                                                                                       RK4 = dt · f (tn + dt, xn + RK3 ),                                  (7)
+The proposed flexible time-stepping algorithm is applied
+on the integrated AC/DC network for FT-SCADA/RT emulation.                                            1
+                                                                                       xn+1 = xn + (RK1 + 2RK2 + 2RK3 + RK4 ), (8)
+The multi-terminal HVDC grids undergoing electromagnetic                                              6
+transient (EMT) simulation are utilized to enhance the stabil-                  where xn refers to the state variables of the synchronous gener-
+ity of the traditional AC transmission system. Various contin-                  ator, dt is the emulation time-step.
+gencies, such as three-phase-to-ground fault, generator outage,
+and sudden load change are emulated to reveal the efficiency
+                                                                                B. Proposed Flexible Time-Stepping Algorithm
+of the proposed local equipment based flexible time-stepping
+algorithm. The FT-SCADA/RT hardware emulation is suitable                          1) Flexible Time-Stepping: As mentioned above, all the
+for a real power control center to predict the system’s stability,              DAEs should be discretized into numerical equations. The local
+as well as to select an optimal control strategy after a serious                truncation error is an estimate of the error introduced in a single
+disturbance occurs.                                                             time-step. Assuming that xn+1 is the calculated state variable,
+   The paper is organized as follows: Section II introduces the                 and x(tn+1 ) refers to the corresponding exact value, the LTE
+proposed flexible time-stepping method. The detailed modeling                   can be expressed in the following equation:
+of the hybrid AC/DC grid including its interface is specified in                                       LT E = x(tn+1 ) − xn+1 .                            (9)
+Section III and Section IV focuses on the hardware design. The
+flexible time-stepping based FT-SCADA/RT emulation results                         Theoretically, LTE exists in both implicit and explicit nu-
+and subsequent analysis are given in Section V. Section VI                      merical integration methods. However, it is difficult to find
+presents the conclusion and future work.                                        the exact value which is x(tn+1 ) in a non-linear system. The
+                                                                                approximate values can be solved by iterative methods or explicit
+        II. FLEXIBLE TIME-STEPPING ALGORITHM FOR                                integration methods using the results of the previous time-step,
+                   DYNAMIC EMULATION                                            which means the exact state variables cannot be obtained directly
+                                                                                in a non-linear system due to the time-varying state equations.
+A. Transient Stability Emulation Methodology                                    Multistep integration approximations have higher precision than
+   A practical power transmission system includes synchronous                   low-order integration methods. The results from the higher-order
+generators, buses, transmission lines, as well as various loads.                integration methods are treated as the exact values, the time-step
+The differential equation (1) describes the dynamic process of                  can be resolved according to the true values. Taking the 5th -order
+the synchronous machines and will be explained in detail in the                 Adams-Bashforth (AB5) for example, the predicted value of the
+following section. And the remaining components contribute to                   next time-step can be expressed as follows:
+the algebraic equations which solve the network in conjunction                             ẋ = F (t, x(t)),                                              (10)
+with stator voltages of the generators.
+                                                                                                         dt
+                            ẋ = f (x, u, t),                            (1)          x̄n+1 = xn +          · (1901Fn − 2774Fn−1
+                                                                                                        720
+                            g(x, u, t) = 0,                              (2)                     + 2616Fn−2 − 1274Fn−3 + 251Fn−4 ),                       (11)
+
+
+
+       Authorized licensed use limited to: Central Michigan University. Downloaded on May 14,2021 at 14:09:07 UTC from IEEE Xplore. Restrictions apply.
+2676                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 3, MAY 2021
+
+
+
+where x̄n+1 is the predicted state variable of the next time-step,
+dt refers to the time-step. As the exact values are solved from
+                                can be obtained as:
+AB5, the adaptive time-step (dt)
+
+              =         6(x̄n+1 − xn+1 ) · dt
+             dt                                .                        (12)
+                    (RK1 + 2RK2 + 2RK3 + RK4 )
+   The principle of LTE-based variable time-stepping algorithm
+is as follows: if the LTE is larger than the predefined threshold
+, which is given in (13), the time-step is decreased to obtain                  Fig. 1. Local equipment based flexible time-stepping for hybrid AC/DC grid
+higher accuracy and vice versa.                                                  emulation: (a) principle of the proposed algorithm, (b) time instant synchroniza-
+                                                                                 tion.
+                                      
+                         x̄n+1 − xn+1 
+                    =                × 100%.
+                                                            (13)
+                              x̄n+1
+                                                                                 the governor system in the synchronous generator has a low sen-
+    According to (13), the calculated adaptive time-step could                   sitivity to time-step variation; in other words, a relatively large
+be extremely small after the occurrence of a disturbance. A                      time-step will not influence the stability of the governor system.
+restriction for the calculated time-steps should be properly de-                 The event-based variable time-stepping method which provides
+signed. In order to maintain the emulation accuracy, the lower                   time-steps ranging from 5-10 ms is employed in the generator
+limit for the proposed flexible time-stepping algorithm is 1 ms.                 control system as shown in Fig. 1(a). To ensure the accuracy of
+The upper limit is equally important because a large time-step                   the mechanical and electrical parts, the flexible time-stepping
+could cause numerical divergence during the transient stability                  strategy should be adopted, which is usually executed in small
+simulation. In this work, the upper limit of time-step is 10 ms,                 time-steps after a disturbance occurs.
+which can guarantee the emulation speed and prevent the sys

@@ -1,0 +1,209 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 24, NO. 2, MAY 2009                                                                                    561
+
+
+
+
+      Frequency-Adaptive Power System Modeling for
+            Multiscale Simulation of Transients
+                                                             Feng Gao and Kai Strunz
+
+
+   Abstract—A multiscale power system modeling methodology for                  transients with a single tool, then the concept of frequency-adap-
+the integrative simulation of electromagnetic and electromechan-                tive simulation of transients (FAST) [10] offers an efficient so-
+ical transients is introduced, implemented and validated. It makes              lution approach. It uses analytic signals to bridge the relative
+use of frequency-adaptive simulation of transients (FAST) in
+which the shift frequency appears as a new parameter in addition                merits of instantaneous and dynamic phasor signals and is dis-
+to the time step size. For fast electromagnetic transients, tracking            tinguished by the introduction of adaptive frequency shifting of
+of instantaneous waveforms as in the Electromagnetic Transients                 the Fourier spectra. If the shift frequency is set to the carrier
+Program (EMTP) is performed. When slower electromechan-                         frequency, then the carrier is eliminated and electromechanical
+ical transients involving power oscillations prevail, the Fourier
+spectra of the waveforms are shifted by typically either 50 or
+                                                                                transients are emulated efficiently as it is for dynamic phasor
+60 Hz to eliminate the ac carrier and enable envelope following                 signals. If the shift frequency is set to zero, then the carrier is
+as in phasor-based simulation. An algorithm for the automatic                   visible and electromagnetic transients are represented based on
+setting of both shift frequency and time step size is proposed.                 instantaneous signals.
+Multiscale models of transformers, synchronous machinery, and                      The fundamental contributions to the multiscale simulation
+transmission lines based on FAST are developed. The line model
+is distinguished in that it bridges both lumped and distributed                 of electromagnetic and electromechanical transients introduced
+parameters to efficiently emulate scale-bridging phenomena                      and described in this work are threefold. First, a library of power
+from steady state to traveling waves. The overall methodology                   system component models for simulating multiscale transients
+is thoroughly validated: first against a staged field test involving            in transformers, transmission lines, and synchronous generators
+transients of line energization and recovery on the network of the
+Bonneville Power Administration (BPA); then through compar-
+                                                                                is developed. Second, an algorithm for the automatic two-di-
+ison with an EMTP-type simulator in modeling diverse transients                 mensional control of both time step size and shift frequency
+on a four-machine two-area power system.                                        is presented to adaptively track electromagnetic and electro-
+   Index Terms—Dynamic phasor, electromagnetic transients,                      mechanical transients, respectively. Third, the value of the mod-
+electromechanical transients, EMTP, frequency adaptive simu-                    eling method is substantiated through case studies. The valida-
+lation of transients, multiscale, power system modeling, power                  tion is based on a comparison with the results of a field test car-
+system simulation, shift frequency.                                             ried out on the network of the Bonneville Power Administration
+                                                                                and through comparison with the performance of an EMTP-type
+                           I. INTRODUCTION                                      simulator.
+                                                                                   In Section II, the state of the art is reviewed to provide the
+
+S     IMULATORS of the electromagnetic transients program
+      (EMTP) type are widely respected for their accuracy in
+emulating electromagnetic transients in power systems [1]–[4].
+                                                                                reader with critical background information. The develop-
+                                                                                ment of the library of multiscale models is elaborated upon
+                                                                                in Section III. The algorithm for the automatic control of the
+The simulation algorithms of the EMTP process real and instan-                  two-dimensional setting of time step size and shift frequency is
+taneous signals to track the natural waveforms of voltages and                  proposed in Section IV. In Section V, the frequency-adaptive
+currents as they occur in reality. The computational efficiency of              modeling is applied and validated. Conclusions are drawn in
+the EMTP-type simulators is reduced when simulating ac volt-                    Section VI.
+ages and currents whose Fourier spectra are concentrated on a
+narrow bandwidth around the carrier frequency, which is typi-                                        II. STATE OF THE ART
+cally either 50 or 60 Hz in power electric networks. The major
+information of interest lies in the disturbances to the envelopes.              A. Analytic Signal Processing
+The latter can be tracked at a much larger time step size com-
+pared with the instantaneous natural waveforms of the ac car-                     Naturally generated signals      are real. A quadrature com-
+riers. This situation is observed in the case of electromechanical              ponent is obtained by applying the Hilbert transform           .
+                                                                                Adding the quadrature component as imaginary part to       , the
+transients. Tools for tracking the envelopes efficiently use sim-
+                                                                                corresponding analytic signal is obtained [11]:
+ulation algorithms that process phasor signals [5]–[9]. If it is
+of interest to study both electromagnetic and electromechanical
+                                                                                                                                               (1)
+
+   Manuscript received May 02, 2008; revised September 29, 2008. Current ver-   The effect of creating an analytic signal from an original signal
+sion published April 22, 2009. Paper no. TPWRS-00331–2008.                          with bandpass characteristic about carrier frequency       is
+   The authors are with the Technische Universität Berlin, Berlin 10587, Ger-
+many (e-mail: kai.strunz@tu-berlin.de).                                         depicted in Fig. 1. While the Fourier spectrum of      extends to
+   Digital Object Identifier 10.1109/TPWRS.2009.2016587                         negative frequencies, this is not the case for the corresponding
+                                                              0885-8950/$25.00 © 2009 IEEE
+562                                                                           IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 24, NO. 2, MAY 2009
+
+
+
+
+Fig. 1. Application of the Hilbert transform.
+                                                                       Fig. 3. Conventions for inductor. Left: original element. Right: fre-
+                                                                       quency-adaptive companion model [10].
+
+
+
+                                                                       or with recursive updating for the history term
+
+Fig. 2. Shifting by the carrier frequency.
+
+
+
+analytic signal     . Therefore, the latter can be shifted by the
+so-called shift frequency :                                               The resulting companion model structure is shown in Fig. 3.
+                                                                       As a special case, the companion model known from EMTP and
+                                                                (2)    the widely used electronic circuit simulator SPICE [14] is ob-
+                                                                       tained for the unshifted case of                as                 .
+If the shift frequency is set equal to the carrier frequency           However, the FAST companion model has a wider range of ap-
+   , then the complex envelope [12] is obtained as shown in            plication. For         , it has also shown to enable the tracking of
+Fig. 2. Since                   , the magnitude is not changed         envelopes of electromechanical transients efficiently [13]. For a
+through the shift operation, i.e.,                    :                capacitor, the companion model is derived in an analogous way.
+
+                                                                (3)       The network model is obtained through direct construction
+                                                                       [14], also referred to as stamping: one by one, the contributions
+As the spectrum               in Fig. 2 shows, the complex enve-       of the companion models are added to the emerging nodal ad-
+lope is a low-pass signal whose maximum frequency is lower             mittance matrix in accordance with the network topology.
+than the one of the original real bandpass signal. In accordance
+with Shannon’s sampling theorem [12], a lower sampling rate
+can be chosen when tracking the complex envelope rather than           C. Accuracy of Frequency-Adaptive Simulation of Transients
+the original bandpass signal.
+                                                                          In [10], the relative error   of the modeled inductance with
+B. Companion Model for Frequency-Adaptive Simulation                   respect to the true inductance is expressed as a function of time
+of Transients                                                          step size , shift frequency , and frequency of the waveform
+                                                                       under study:
+   Using analytic signals, the inductor on the left of Fig. 3 is de-
+scribed by                         . Applying frequency shifting
+to in accordance with (2) yields the following equation where                                                                           (8)
+the differential quotient applies to the shifted signal and
+      [10]:                                                            It was shown in [10] that (8) holds as long as the simulation
+                                                                       parameters and are chosen so that
+                                                                (4)
+                                                                                                                                        (9)
+Applying the trapezoidal method of integration with time step
+                                                                       Equation (8) shows that the error      is zero for        . This is
+size , rearranging and gathering like terms yield the companion
+                                                                       particularly advantageous for voltages and currents with spectra
+model of the inductor [13]:
+                                                                       as those shown on the left of Fig. 1, which are typical of electro-
+                                                                       mechanical transients. The time step size can be made large
+                                                                (5)
+                                                                       when setting           because then the frequencies of the simu-
+                                                                       lated waveforms are close to . For transients in dc networks,
+with
+                                                                                   is chosen.
+                                                                          In EMTP or SPICE, there is no shift frequency available. This
+                                                                (6)
+                                                                       corresponds to always having                  . Consequently,
+                                                                       can only be decreased by reducing . Common phasor-based
+                                                                       simulation corresponds to                or             , but does
+                                                                (7)    not allow for the tracking of traveling waves on transmission
+                                                                       lines.
+GAO AND STRUNZ: FREQUENCY-ADAPTIVE POWER SYSTEM MODELING FOR MULTISCALE SIMULATION OF TRANSIENTS                                                           563
+
+
+
+
+Fig. 4. Shaded stability region of trapezoidal integration method as used in
+FAST.
+
+
+                                                                               Fig. 5. Conventions for single-phase transformer with leakage inductance.
+D. Stability of Numerical Integration in Frequency-Adaptive
+Simulation of Transients
+                                                                               secondary side is depicted in Fig. 5. The general form of the
+   It is a common practice to evaluate the stability of numerical              companion model expressed in matrix form is
+integration with the following test system [15]:
+                                                                                                                                                      (15)
+
+                                                                      (10)     where                                                        is
+                                                                               the vector of transformer terminal currents and
+with condition                so that the test system described                                                        is the vector of trans-
+through (10) is stable and the absolute value of the exact so-                 former terminal voltages. Representing the leakage inductance
+lution decreases monotonically. Using shifted analytic signal                  through (6) for      and (7) for          and considering that
+                       , the test system becomes                                                  ,                      ,                   ,
+                                                                               and                                                    , matrix
+                                                                      (11)         and vector        are obtained as follows:
+
+  Application of trapezoidal integration for analytic signals
+                                                                                                                                                      (16)
+[10] to (11) leads to
+
+                                                                      (12)                                                                            (17)
+
+For numerical stability and a monotonically decreasing absolute                More detailed models can be derived based on simulation needs.
+value of the numerical solution, the following condition must be               Magnetization effects, for example, can be emulated by con-
+met:                                                                           necting an inductance in parallel with the ideal transformer.
+
+                                                                      (13)     B. Frequency-Adaptive Line Model
+                                                                                  In order to achieve the multiscale modeling of electromag-
+which can be simplified to                                                     netic and electromechanical transients, it is a requirement to
+                                                                               have a line model that can represent both traveling wave ef-
+                                                                      (14)     fects at time step sizes on the order of microseconds as well as
+                                                                               slowly changing voltage and current envelopes at much larger
+A graphical interpretation of (14) is given through the shaded                 time step sizes. The existing models for simulating electromag-
+area in Fig. 4. Since the time step size is           and since                netic transients on a single-phase lossless line with length , dis-
+           was already given as a condition for the original test              tributed inductance      and capacitance       as shown in Fig. 6
+system (10), there is no upper limit of beyond which the nu-                   process instantaneous signals and are based on the general so-
+merical integration would become unstable. The trapezoidal in-                 lution by d’Alembert [16]. With the conventions given in Fig. 6,
+tegration method as used in FAST is therefore absolutely stable.               this yields
+
+                                                                                                                                                      (18)
+III. POWER SYSTEM MODELING FOR MULTISCALE TRANSIENTS
+  In the following, a library of multiscale models covering the                                                                                       (19)
+key power system elements including transformers, lines, and
+synchronous machinery is developed.                                            with                  as the characteristic impedance and
+                                                                                         as the propagation time. The latter gives the time the
+A. Frequency-Adaptive Transformer Model                                        traveling waves need to proceed from one end to the other end of
+   As a starting point, a transformer equivalent circuit consisting            the line. From (18), (19) it can be seen that electromagnetic tran-
+of an ideal transformer with turns ratio of primary side to                    sients occurring at one end of the line reach the other end only
+564                                                                            IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 24, NO. 2, MAY 2009
+
+
+
+                                                                                       , and              at instant           , the usage
+                                                                        of linear interpolation is appropriate whenever       is not an in-
+                                                                        teger multiple of time step size . To enable such interpolation at
+                                                                        any time step size, i.e., for         when the switches in Fig. 7
+                                                                        are open and for               when these switches are closed, a
+                                                                        variable is defined as follows:
+
+Fig. 6. Current and voltage conventions for sing

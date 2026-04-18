@@ -1,0 +1,192 @@
+                                         Received 28 December 2023; revised 8 July 2024; accepted 5 August 2024.
+                                         Date of publication 16 August 2024; date of current version 30 August 2024.
+                                                           Digital Object Identifier 10.1109/OAJPE.2024.3444272
+
+
+
+
+            A Semi-Analytical Approach for State-Space
+               Electromagnetic Transient Simulation
+            MIN XIONG 1 (Member, IEEE), KAIYANG HUANG 1 (Graduate Student Member, IEEE),
+          YANG LIU 2 (Member, IEEE), RUI YAO 3 (Senior Member, IEEE), KAI SUN 1 (Fellow, IEEE),
+                                AND FENG QIU 2 (Senior Member, IEEE)
+                      1 Department of Electrical Engineering and Computer Science, University of Tennessee, Knoxville, TN 37996 USA
+                         2 Argonne National Laboratory, Energy Systems and Infrastructure Analysis Division, Lemont, IL 60439 USA
+                                          3 Moonshot Factory, X Development LLC, Mountain View, CA 94043 USA
+
+                                                    CORRESPONDING AUTHOR: K. SUN (kaisun@utk.edu)
+            This work was supported in part by NSF under Grant ECCS-2329924, and in part by the Advanced Grid Modeling Program of U.S. DOE
+                                                     Office of Electricity under Grant DE-OE0000875.
+
+
+
+
+          ABSTRACT       This paper proposes a semi-analytical approach for efficient and accurate electromagnetic
+          transient (EMT) simulation of a power grid. The approach first derives a high-order semi-analytical solution
+          (SAS) of the grid’s state-space EMT model using the differential transformation (DT), and then evaluates the
+          solution over enlarged, variable time steps to significantly accelerate the simulations while maintaining its
+          high accuracy on detailed fast EMT dynamics. The approach also addresses switches during large time steps
+          by using a limit violation detection algorithm with a binary search-enhanced quadratic interpolation. Case
+          studies are conducted on EMT models of the IEEE 39-bus system and large-scale systems to demonstrate the
+          merits of the new simulation approach against traditional numerical methods.
+
+          INDEX TERMS Electromagnetic transient, state-space formulation, semi-analytical-solution, variable time
+          step, limit violation.
+
+
+
+I. INTRODUCTION                                                                          the system enters a nearly balanced, steady-state condition,
+
+A      S POWERFUL tools for power system dynamic
+       and stability analysis, numerical simulations include
+electromechanical transient simulations and electromag-
+                                                                                         such as DQ0 transformation [4], frequency shift [5], [6],
+                                                                                         and dynamic phasor methods [4], [7]. For instance, DQ0
+                                                                                         transformation can transform balanced three-phase instanta-
+netic transient (EMT) simulations. The former adopt a                                    neous variables into DC values for more efficient simulations.
+phasor model for the simulated power system, assum-                                      However, when facing unbalanced conditions or the pres-
+ing a synchronous system frequency and computing only                                    ence of high-order harmonics, the DQ0 transformation and
+positive-sequence values of voltages and currents. The sim-                              frequency shift approaches are inefficient [4]. The dynamic
+ulation time steps are around milliseconds to focus on                                   phasor approach approximates the original waveform by a
+electromechanical dynamics of generators and motors. The                                 certain number of time-varying Fourier series, but it requires
+latter, EMT simulations, compute three-phase instantaneous                               carefully selecting these series to reflect the correct system
+voltages and currents varying at actual frequencies, taking                              behaviors [4], [7]. Considering more series will cause vari-
+into account the fast dynamics caused by the interactions                                ables and equations to grow and thus decrease the simulation
+between the electric fields of capacitors and magnetic fields                            speed [4]. Other approaches adopt phasor-EMT hybrid simu-
+of inductors. Thus, EMT simulations enable a more detailed                               lation to reduce the computational cost for EMT zones [8],
+analysis of fast phenomena such as harmonics, overvoltage,                               [9], [10], and parallel computing to speed up simulations
+short-circuit current, and others. However, EMT simulations                              leveraging CPU, GPU and HPC, respectively in [11], [12],
+suffer from high computational costs due to the tiny time steps                          and [13]. Reference [14] proposes a combined state-space
+in µs [1], [2], [3].                                                                     nodal method that discretizes state-space equations of sub-
+   To accelerate EMT simulations, some approaches focus on                               systems into nodal equations and enables flexible interfacing
+enlarging the time step to reduce the number of steps when                               between subsystems [15], [16]. Yet, the trapezoidal-rule
+                           2024 The Authors. This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 License.
+                                               For more information, see https://creativecommons.org/licenses/by-nc-nd/4.0/
+VOLUME 11, 2024                                                                                                                                     421
+method adopted on a nodal formulation can hardly allow for          binary search and quadratic interpolation with the SAS to
+a variable time step, mainly due to the lack of high order          precisely locate the switching moment at any limit, which
+information for estimating the truncation error [3]. Refer-         has not been fully addressed by previous semi-analytical
+ence [17] investigated EMT simulations using variable time          simulation methods. The high-order SAS derived from the
+steps. However, because the time step is embedded into the          DT allows adjusting the step size immediately when a switch
+network’s conductance matrix, the nodal formulation must            occurs to correct the simulation.
+be determined prior to the time domain simulation and any              The main contributions of this paper include: first, an SAS-
+change in the time step will affect the formulation. As a result,   based EMT simulation approach that can more flexibly
+the time step can hardly vary adaptively during simulations.        choose the solution order and time step during the simu-
+   Compared to the nodal formulation-based approach, this           lation; second, a variable time step simulation strategy for
+paper proposes a new semi-analytical EMT simulation                 more efficient simulation while maintaining a high accuracy;
+approach, which utilizes a high-order semi-analytical solu-         third, an SAS-based dense output mechanism to recon-
+tion (SAS) derived from the system’s state-space model to           struct detailed high-resolution simulation results even with
+vary the time step and improve simulation efficiency while          large time steps; fourth, a binary search-enhanced quadratic
+maintaining high precision.                                         interpolation-based limit detection algorithm to accurately
+   In recent years, the SAS methods have been proposed for          address limit violations during large time steps, which has
+power systems to speed up phasor-based transient stability          not been proposed by existing semi-analytical simulation
+simulations. An SAS is an approximate high-order analytical         approaches for power systems.
+solution for a nonlinear system modeled by ordinary differ-            The rest of this paper is organized as follows. Section II
+ential equations or differential-algebraic equations. It can be     introduces the proposed DT-based semi-analytical EMT sim-
+derived by mathematical methods, including the Adomian              ulation approach and the set of transformation rules for linear
+Decomposition [18], Holomorphic Embedding [19], Differ-             and nonlinear functions. Section III derives the SAS for each
+ential Transformation (DT) [20], and Homotopy Analysis              state-space EMT model. Section IV presents and illustrates
+methods [21], as time-power series or other forms [22], [23].       a multistage simulation strategy incorporating a proposed
+Among these methods, the DT provides a highly accurate              variable time step algorithm, along with the dense output
+approximation of a true solution by using an ultra-high-order       mechanism. Section V proposes the limit violation detection
+SAS in the form of a power series of time and allows deriving       algorithm using a binary search-enhanced quadratic inter-
+the SAS terms from low orders to arbitrary high orders in an        polation. Then, tests on EMT models of the IEEE 39-bus
+efficient, recursive manner [24], [25], [26].                       system with synchronous machines and a modified version
+   This paper, for the first time, proposes a semi-analytical       with IBRs are conducted respectively in section VI and
+approach for EMT simulation of large-scale power grids.             section VII. Validation of the proposed limit violation detec-
+Our preliminary work [27] conducted a proof-of-concept              tion algorithm is presented in section VIII. Case studies on
+study on simulating the EMT model of a small two-area               synthetic large-scale systems are performed in section IX.
+system while the complete approach proposed in this paper           Finally, conclusions and future work are drawn in section X.
+is able to accurately simulate large EMT models by using
+a variable time step and addressing switches during simu-           II. SAS AND DIFFERENTIAL TRANSFORMATION RULES
+lations. Based on EMT state-space equations, the approach           FOR EMT SIMULATIONS
+derives SASs for network components represented by R-L-             An EMT simulation needs to solve an initial value problem
+C circuits, the voltage-behind-reactance (VBR) synchronous          for the power system model. The N -th order SAS for the
+generator model [28], typical generator controllers, and an         initial value problem (1) takes the form (2) [20], [21], [22],
+inverter-based resource (IBR) model. Then, a multistage sim-        [23]:
+ulation strategy is proposed, enabling variable, larger time
+                                                                           dx(t)
+steps for acceptable truncation errors estimated by equation                     = f (x(t), t), x |t=0 = x[0]                      (1)
+imbalance. The proposed approach can automatically adjust                   dt
+                                                                                   X∞                  XN
+the step size for accurate and convergent computations. When                x(t) =          x[k]t k ≈         x[k]t k ,t < Tx      (2)
+                                                                                        k=0                k=0
+the time step is enlarged to improve simulation efficiency and
+results in a low resolution, the SAS can easily reconstruct         where x is a state variable; f is a smooth function; x[0] is
+high-resolution results through its evaluation of variables at      the initial value of x; x[k] indicates coefficients of the SAS
+any internal points in a time step, and this further facilitates    series; k is the order of a series term; N is the highest order of
+accurate detection of limit violations during simulations. For      truncated SAS terms; and Tx is the convergence region. The
+EMT simulation, finding each switching moment due to a              SAS offers a higher-order approximation of the true solution.
+limit violation is important for precise and correct simulation     For a smooth function g(t), its k th -order DT at t = t0 is
+results, but the traditional linear interpolation algorithm for     defined as:
+small-step EMT simulations may become inaccurate at time
+                                                                                                  1 d k g(t)
+                                                                                                            
+steps enlarged by the SAS. This paper proposes a more effi-                             g[k] =                                     (3)
+cient and accurate limit violation detection algorithm using                                     k!     dt k t=t0
+
+422                                                                                                                     VOLUME 11, 2024
+Xiong et al.: Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation
+
+
+
+TABLE 1. Differential transform rules.                                               Proposition 1: For any three smooth matrix functions
+                                                                                   F(t), G(t) and H(t) given in (7) that satisfy F(t)=G(t)H(t) for
+                                                                                   t≥0, the rule in (8) holds for DTs of their matrix elements.
+
+                                                                                               F(t) = [fij (t)] ∈ RN0 ×N2
+                                                                                               G(t) = [gij (t)] ∈ RN0 ×N1
+                                                                                              H(t) = [hij (t)] ∈ RN1 ×N2                           (7)
+                                                                                                        XN1 Xk
+                                                                                              fij [k] =               gin [m]hnj [k − m]           (8)
+                                                                                                           n=1     m=0
+
+                                                                                   where fij (t), gij (t), and hij (t) are the i-th row j-th column
+                                                                                   elements, N0 , N1 , and N2 are positive integers on matrix
+                                                                                   dimensions, and [k], [m], and [k-m] indicate the orders of
+                                                                                   DTs.
+
+                                                                                   III. DT OF STATE-SPACE REPRESENTED EMT MODELS
+                                                                                   This section presents state-space EMT models of power sys-
+                                                                                   tem components along with their SASs derived by the DT.
+
+                                                                                   A. SYNCHRONOUS GENERATOR
+                                                                                   The VBR generator model from [28] is applied in this paper
+                                                                                   for EMT simulation purpose. Eq. (9)-(11) give the VBR
+  From (1)-(3), a differential equation (4) involving smooth                       model of a round rotor generator, comprising the swing
+functions f (t), g(t), and h(t) is transformed into (5) about                      equation (9), the rotor flux equation (10), and the stator phase
+their DTs f [k], g[k] and h[k] (k = 0, 1, . . . , N ) of the k th -                current equation that interfaces with the network (11) [28]:
+order [26], [27]:
+                                                                                       dδ
+   dg(t)                                                                                   = 1ωr
+         = f (t) = g(t)h(t)                                              (4)           dt
+    dt                                                                                 d1ωr       ω0                 1ωr
+    N                              N                                                          =       (pm − pe − D       )                         (9)
+   X                               X                                                     dt      2H                   ω0
+       (k + 1)g[k + 1](t − t0 )k =   f [k](t − t0 )k                                   dλfd            rfd
+   k=0                                      k=0                                              = efd −       (λfd − λad )
+    N                         N X
+                                k
+                                                                                        dt             Llf
+                                                                                       dλ1d        r1d
+   X                          X
+         f [k](t − t0 )k =              (g[m]h[k − m])(t − t0 )k                             =−         (λ1d − λad )
+   k=0                        k=0 m=0                                                   dt        L1dl
+                                          Xk                                           dλ1q        r1q
+    ⇒ (k + 1)g[k + 1] = f [k] =                     g[m]h[k − m]         (5)                 =−         (λ1q − λaq )
+                                              m=0                                       dt        L1ql
+   By calculating DTs in such a recursive manner, the SAS of                           dλ2q        r2q
+any order for (1) can be derived in the form of (2).                                         =−         (λ2q − λaq )                            (10)
+                                                                                        dt        L2ql
+   Some transformation rules for common linear and non-                                diabc        1                                    ′′
+                                                                                                                                       dLabc
+linear functions are given in Table 1 [24], [25], [26], which                                = − ′′ (vabc + Rs iabc − P−1        ′′
+                                                                                                                           park v0dq +       iabc )
+                                                                                        dt        Labc                                  dt
+facilitate efficient, recursive derivation of a high-order SAS.
+   In EMT simulations, the Park transformation (6) and its                                                                                      (11)
+inverse transformation are required to interface variables of a
+                                                                                   In (9), δ, 1ωr , H , D, pm , and pe are the rotor angle, rotor speed
+generator in the DQ0 frame with the three-phase network in
+                                                                                   deviation, inertial constant, damping coefficient, mechanical
+the abc frame. To deal with matrix multipl

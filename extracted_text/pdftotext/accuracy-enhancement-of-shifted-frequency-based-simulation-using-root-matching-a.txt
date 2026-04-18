@@ -1,0 +1,184 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 4, JULY 2023                                                                                            3345
+
+
+
+
+ Accuracy Enhancement of Shifted Frequency-Based
+       Simulation Using Root Matching and
+              Embedded Small-Step
+                Shilin Gao , Student Member, IEEE, Zhendong Tan, Yankan Song, Member, IEEE,
+       Ying Chen , Senior Member, IEEE, Chen Shen , Senior Member, IEEE, and Zhitong Yu, Member, IEEE
+
+
+   Abstract—Electromagnetic transients (EMT) simulation is fun-                   [2], [3]. In the simulation of ac transmission and distribution
+damental in power system design and operation. To improve the                     systems with the EMTP-type simulator, there is an upper limit
+computational efficiency of EMT simulation, the shifted frequency-                of the time-step size because of the ac carrier, which restricts the
+based EMT (SFEMT) simulation with large time-steps has been
+proposed in the literature recently. Nevertheless, the existing                   efficiency improvement of power system EMT simulation [4],
+SFEMT simulation methods with a large time-step have accuracy                     [5], [6].
+issues when there is a sudden change in the power system. In this                    To enlarge the time-step of EMT simulation, a shifted-
+paper, the causes of the poor accuracy of traditional SFEMT simu-                 frequency-based EMT (SFEMT) simulation algorithm was pro-
+lation in sudden-change scenarios are first analyzed. Then, it pro-               posed in [7], [8]. It finds a solution to the power system dif-
+poses a highly accurate SFEMT simulation algorithm based on the
+root matching (RM) and embedded small-step (ESS) techniques.                      ferential equations in the shifted frequency domain. The asso-
+Next, the RM-based SFEMT (RM-SFEMT) models of the power                           ciated analytic signal of the original signal (e.g., voltages and
+system components are derived and the flowchart of RM-SFEMT                       currents) is first derived based on the Hilbert transformation,
+simulation with ESS is presented. Test results on three power                     which only has a positive frequency spectrum. Then, the analytic
+systems of different scales demonstrate the improved accuracy of                  envelope is obtained by shifting the fundamental frequency of
+the proposed SFEMT simulation algorithm.
+                                                                                  the analytic signal from 50 or 60 Hz to zero. According to the
+   Index Terms—Accuracy analysis, electromagnetic transient                       sampling theory, a much larger time-step size can be chosen
+simulation, EMTP, embedded small-step, power system, large                        for the lowpass analytic envelope-based simulation, resulting in
+time-step simulation, root matching, shifted frequency.
+                                                                                  considerable savings in computational time. In [9], the Hilbert
+                                                                                  transformation is replaced by the differential transformation for
+                           I. INTRODUCTION                                        constructing the analytical signal in SFEMT simulation. How-
+         ITH the development of power systems, the quasi-                         ever, the high-frequency components may be enlarged by the
+W        steady-state (QSS) analysis-based transient stability
+program no longer meets the requirements of a modern power
+                                                                                  differential transformation, which may cause accuracy issues.
+                                                                                  Therefore, the Hilbert transformation is still dominantly used
+system in some areas. For instance, severe disturbances in power                  in the SFEMT simulation. As for the application of SFEMT
+systems often involve frequency excursions in addition to volt-                   simulation, the SFEMT models of synchronous machines, in-
+age excursions, where the QSS assumption does not hold. Thus,                     duction machines, transformers, overhead transmission lines and
+in the processes of design, operation and control of modern                       cables were respectively formulated in [10], [11], [12], [13],
+power systems, the electromagnetic transients (EMT) program                       [14], [15], achieving highly efficient EMT simulation of ac
+(abbreviated as EMTP)-type simulator without QSS assump-                          power system components. Regarding renewable energy system
+tions is widely used for studying the power system transients [1],                modeling, [16] and [17] constructed the SFEMT models of
+                                                                                  permanent magnet synchronous wind generator and doubly-
+                                                                                  fed induction generator, and the efficient simulation of wind
+   Manuscript received 24 December 2021; revised 22 April 2022; accepted 11
+September 2022. Date of publication 16 September 2022; date of current version    energy conversion system is made. The above applications of
+22 June 2023. This work was supported by the Natural Science Foundation of        the SFEMT simulation to various power system components
+China under Grants 52007101, 51877115, and 51861135312. Paper no. TPWRS-          demonstrate the effectiveness of SFEMT simulation.
+01963-2021. (Corresponding author: Yankan Song.)
+   Shilin Gao, Ying Chen, and Chen Shen are with the Depart-                         However, the existing SFEMT simulation algorithms will be
+ment of Electrical Engineering, Tsinghua University, Beijing 100084,              confronted with accuracy issues when there is a sudden change
+China (e-mail: gaosl19@mails.tsinghua.edu.cn; chen_ying@tsinghua.edu.cn;          in the power system. By analyses, it is found that there are two
+shenchen@mail.tsinghua.edu.cn).
+   Zhendong Tan, Yankan Song, and Zhitong Yu are with the Sichuan Energy Re-      causes for the accuracy problem in sudden-change scenarios.
+search Internet Institute, Tsinghua University, Chengdu 610213, China (e-mail:    First, when a sudden change happens, the analytic envelope is
+664183185@qq.com; songyankan@cloudpss.net; yuzhitong@cloudpss.net).               not a lowpass signal anymore. There will be some frequency
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3207283.                                       components around the negative fundamental frequency in the
+   Digital Object Identifier 10.1109/TPWRS.2022.3207283                           analytical envelope. For the simulation with the trapezoidal
+
+
+                         0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:42:51 UTC from IEEE Xplore. Restrictions apply.
+3346                                                                                           IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 4, JULY 2023
+
+
+
+
+Fig. 1. Spectra of ac signals with Hilbert transformation and frequency shift-
+ing [8]. (a) Spectrum of the original signal. (b) Spectrum of the analytic signal.   Fig. 2.    Schematic diagram of frequency shifting with low-frequency.
+(c) Spectrum of the analytic envelope.
+
+
+
+(TR) method and large time-step, evident truncation errors will                      be transformed into an analytic envelope signal S(t) by
+emerge when the frequency is large. Second, when a sudden
+change happens, there will be an unbearable loss of integral for                                                  S(t) = s̃(t)e−jωs t                         (2)
+the non-state variable if the time-step is large.
+   Aiming at the two causes of poor accuracy mentioned above,
+this paper proposes a large time-step SFEMT simulation algo-                         where ωs = 2πfs , and fs is the shift frequency. If ωs = ωc , a
+rithm using the root matching (RM) and embedded small-step                           lowpass analytic envelope signal is obtained, where the maxi-
+(ESS) techniques. First, the steps of the RM-based SFEMT                             mum frequency is much lower than that of the original bandpass
+(RM-SFEMT) modeling method are presented and the merits                              signal, as shown in Fig. 1(c). According to the sampling theory,
+of RM-SFEMT simulation are analyzed. Second, the principles                          a much larger time-step can be adopted in the analytic envelope
+and implementation of MET simulation with ESS are derived.                           signal-based simulation (called SFEMT simulation). The main
+Last, the flowchart of the RM-SFEMT simulation with ESS for                          steps of SFEMT simulation are [8]: 1) Transform the differential
+the power system is elaborated detailedly.                                           equations in the time domain into the shifted-frequency (SF) do-
+   The contributions made in this paper are threefold. 1) The                        main ones; 2) Use the numerical integration method to discretize
+formation mechanism of error of large-step SFEMT simula-                             the differential equations in the SF domain into difference equa-
+tion in sudden-change scenarios is theoretically analyzed, re-                       tions; 3) Solve the difference equations step by step according to
+vealing the causes of poor accuracy in these scenarios. 2) An                        EMTP-type solution. In the SFEMT simulation, there is only a
+RM-SFEMT simulation algorithm is proposed. Compared with                             minor truncation error when the system is nearly in steady-state.
+SFMET simulation, it can accurately emulate the frequency                            However, the authors found that errors will be evident in the
+components around both the ac carrier and zero without loss                          SFEMT simulation when a sudden change happens.
+of efficiency. 3) The ESS scheme is proposed and applied to the
+SFEMT simulation, avoiding the loss of integral for the non-state
+variable in large-step simulation, further improving the accuracy                    B. The Causes of Poor Accuracy
+of SFEMT simulation.                                                                    The poor accuracy of SFEMT simulation in sudden-change
+   The remainder of this paper is organized as follows. Section II                   scenarios results from two aspects.
+reviews the SFEMT modeling and simulation and analyzes                                  1) Error Caused by Low-Frequency Components: In the
+the causes of poor accuracy in sudden-change scenarios. In                           cases of sudden changes (e.g., faults), which can be considered
+Sections III and IV, the RM and ESS methods are proposed to                          as a step input, low-frequency components will emerge in the
+solve the two problems that lead to the poor accuracy of SFEMT                       state variables [19], and the accuracy of traditional SFEMT
+simulation, respectively. The RM-SFEMT simulation with ESS                           simulation will be affected. Because the low-frequency com-
+is detailedly elaborated in Section V. Section VI validates the                      ponents will become ones with negative frequency after the
+improved accuracy of the proposed RM-SFEMT simulation with                           frequency shifting, as shown in Fig. 2. In the simulation using
+ESS. Section VII concludes this paper.                                               the TR method for integration, the truncation error will be
+                                                                                     significantly enlarged if the frequencies of the state variables
+                       II. PROBLEM DESCRIPTION                                       increase [7], [20].
+A. Brief Introduction to SFEMT Simulation                                               2) Error Caused by the Loss of Integral for Non-State Vari-
+                                                                                     able: For the EMT simulation, the accuracy will be impaired
+  In an ac power system, the naturally generated bandpass signal                     by the sudden change when the time-step size is large. It can be
+s(t) has both positive and negative frequency spectrums. Its                         analyzed as follows. The dynamic equation of a power system
+associated analytic signal s̃(t) can be obtained based on the                        component can be typically written as:
+Hilbert transformation H[·] and represented as [18]:
+                          s̃(t) = s(t) + jH[s(t)]                             (1)                             ẋ(t) = Ax(t) + Bu(t)                           (3)
+where s̃(t) only has a positive frequency spectrum [7]. The
+spectrums of s(t) and s̃(t) are depicted in Fig. 1(a) and (b),                       where x is the state variable and u is the input (i.e., non-state
+where ωc = 2πfc and fc is the fundamental frequency. s̃(t) can                       variable). A and B are coefficients of them. On the one hand,
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:42:51 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: ACCURACY ENHANCEMENT OF SHIFTED FREQUENCY-BASED SIMULATION USING ROOT MATCHING AND EMBEDDED SMALL-STEP                                       3347
+
+
+
+                                                                                   dc signals or nearly dc signals. Thus, the condition of a unit
+                                                                                   step input is naturally fulfilled. Besides, it is worth noting that
+                                                                                   the sudden changes in power system SFEMT simulation can also
+                                                                                   be regarded as a step input. Thus, the RM method will work well
+                                                                                   in this scenario. Considering this, the RM method is considered
+                                                                                   for the numerical integration of SFEMT simulation.
+Fig. 3.   Schematic diagram of the loss of the integral for non-state variable.
+                                                                                   A. SFEMT Modeling Based on RM Method
+                                                                                      To model the power system components for the SFMET
+the state variable x(t) can be accurately calculated by (4):
+                                                                                   simulation, it is necessary to discretize the continuous model
+                         t
+                                                                                   in the s-plane to obtain a discrete model in the z-plane. In the
+  x(t) = x(t − Δt) +           Ax(τ ) + Bu(τ )dτ                                   following, the numerical integration method RM is adopted for
+                               t−Δt
+                              t                      t                           the discretization of SFEMT models, which can achieve accurate
+          = x(t − Δt) +               Ax(τ )dτ +              Bu(τ )dτ. (4)        matching of zeros and poles from s-plane to z-plane. The six
+                               t−Δt                    t−Δt                        steps followed in the application of the RM technique to SFEMT
+   On the other hand, x(t) can be approximately calculated by                      simulation are:
+(5) in the EMT simulation based on the TR method:                                     1) Step 1: Formulate the differential equations in SF domain
+                                                                                          based on the Hilbert transformation and frequency shift-
+                                      Δt                                                  ing.
+           x(t) = x(t − Δt) +            A (x(t − Δt) + x(t))
+                                      2                                               2) Step 2: Determine the transfer function H(s) in the s-plane
+                         Δt                                                               and the positions of its poles and zeros.
+                     +      B (u(t − Δt) + u(t))                             (5)
+                         2                                                            3) Step 3: Write the transfer function H(z) in the z-plane
+    In normal operational conditions, x(t) in (4) and (5) are                             using the mapping z = e−sΔt with correct positions of
+very close, and we consider x(t) in (5) as an accurate nu-                                the poles and zeros. Also, add an undetermined-constant
+merical solution. However, when u(t) changes suddenly at                                  k to allow adjustment for the final value.
+t0 , an evident difference between the x(t0 ) obtained from (4)                       4) Step 4: Compute the final values of H(s) and H(z) for a
+                                                 t                                       unit step input using the final value theorem. Then, adjust
+and (5) will be seen. This is because that t00−Δt u(τ )dτ and
+Δt
+                                                                                          the constant k to be the correct value according to the
+ 2 (u(t0 − Δt) + u(t0 )) are not approximately equal anymore.                             equality between the two final values. The H(z) is thus
+In contrast, they are pretty different from each other. This can be                       determined.
+illustrated in Fig. 3. The term Δt  2 (u(t    − Δt) + u(t0 )) can be
+                                         t00                                         5) Step 5: Add an extra zero z = −1 to H(z).
+illustrated by part 
+                    1 of Fig. 3, while t −Δt u(τ )dτ is the sum of
+                                          0                                           6) Step 6: Write the resulting discrete time-domain difference
+parts 1 and  2 in Fig. 3. It can be found that part 
+                                                      2 is ignored in                     equation of H(z), and express it in the form of a Norton
+the traditional TR-based simulation. In fact, the loss of integral                        equivalent circuit.
+for the non-state variable happens in all the integration methods                     Taking an R-L series branch as an example, the details of each
+that use the non-state variables at t0 when they are integrating                   step in RM-SFEMT modeling are presented as follows.
+from t0 − Δt to t0 . However, it is ignored in the traditional                        Step 1: The differential equation for R-L series branch is:
+EMTP-type simulation because the error is minor with a small
+time-step size. When Δt is large, it should be considered.                                                                        di(t)
+                                                                                                     

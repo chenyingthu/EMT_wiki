@@ -1,0 +1,212 @@
+                                                            Electric Power Systems Research 198 (2021) 107360
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                      Electric Power Systems Research
+                                                         journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A Comparative Study of Electromagnetic Transient Simulations using
+Companion Circuits, and Descriptor State-space Equations
+Ajinkya Sinkar , Huanfeng Zhao , Bolin Qu , Aniruddha M. Gole
+Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2 Canada
+
+
+
+
+A R T I C L E I N F O                                   A B S T R A C T
+
+Keywords:                                               This paper investigates an alternative method for EMT simulation of power networks, which uses Descriptor
+Companion Circuits (CC)                                 State-space Equations (DSE) to represent the dynamical equations of the circuit. An automated procedure to
+Descriptor State-space Equations (DSE)                  formulate the DSEs directly from the circuit’s netlist is presented. Once formulated, the DSEs can be discretized
+EMT Simulations
+                                                        using the trapezoidal integration method, and subsequently used for EMT simulations. This approach is
+Eigenvalues
+                                                        compared with the widely used Companion Circuit (CC) approach. Advantages and disadvantages of each
+                                                        approach are discussed. Finally, a procedure for interfacing a DSE-based formulation with a CC-based EMT
+                                                        simulator is also presented. This procedure enables interfacing of arbitrary power networks with a commercial
+                                                        CC-based EMT simulation package and can also be used to speed up the simulation using parallel processing.
+
+
+
+
+1. Introduction                                                                             matrix respectively. Once (1) has been formulated, we can use any nu­
+                                                                                            merical integration algorithm (e.g. trapezoidal method) to compute the
+    ELECTROMAGNETIC TRANSIENT (EMT) simulations are widely                                  updated values of the states xS knowing inputs u at every time-step.
+used for analyzing the transient behavior of power networks. There are                          Traditionally, graph theory-based methods have been used for
+many commercial EMT simulation packages available today [1–3]. At its                       formulating the state-space equations of a circuit for EMT simulations
+most basic level, every EMT simulator solves the dynamical equations of                     [4, 7]. But these methods have many intermediate matrix manipula­
+a circuit using a suitable numerical integration method. Most commer­                       tion steps which makes them inefficient (w.r.t time and memory) and
+cial EMT programs use the fixed time-step trapezoidal integration                           thus impractical for EMT simulations of large networks [8, 9].
+method [1–3]. It is well-known that mainly there are two approaches to                          In this paper, we investigate an alternative method to formulate the
+formulate the equations of a given circuit for EMT simulations [4].                         state-space equations of a circuit. It uses Descriptor State-space Equa­
+    The first is the Companion Circuits (CC) approach proposed by                           tions (DSE) which are formulated using MNA. Unlike classical state
+Dommel [5]. In this approach, the differential equations of each                            variables which are always linearly independent, descriptor state vari­
+branch inductor and capacitor are discretized using trapezoidal inte­                       ables can be linearly dependent. This avoids special considerations for
+gration method to get their corresponding companion circuit repre­                          all inductor-current source cutsets or all capacitor-voltage source loops
+sentation. Subsequently, Modified Nodal Analysis (MNA) [6] is used                          which is required in many strict state variable formulations.
+for formulating the equations of the discretized circuit which are then                         Once the DSEs are formulated, they can be discretized using an im­
+solved at every time-step.                                                                  plicit integration method such as the trapezoidal rule and used for EMT
+    Alternatively, the second approach is to formulate the state-space                      simulations. Moreover, the paper shows that a discretized DSE-based
+equations of the circuit in the form given in (1).                                          formulation can also be easily interfaced with a CC-based EMT simu­
+                                                                                            lator without any time-step delay errors. The mathematical equivalence
+ẋS = As xS + Bs u                                                                 (1)
+                                                                                            of discretized DSE-based EMT simulation with CC-based EMT simulation
+   Here, xS is a vector of state variables (typically consists of linearly                  has been already proven in [10].
+independent inductor currents/flux-linkages and capacitor voltages/                             The main advantages of DSE-based formulation are: 1) it can be
+charges [4]), u is the input vector, and As and Bs is the state and input                   done automatically without any large matrix manipulations, and 2)
+
+
+
+ This work was supported by the IRC program of NSERC, Canada
+ Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6-10, 2021.
+   E-mail addresses: ajinkyasinkar@gmail.com (A. Sinkar), huanfengzhao@gmail.com (H. Zhao), qub@myumanitoba.ca (B. Qu), gole@umanitoba.ca (A.M. Gole).
+
+https://doi.org/10.1016/j.epsr.2021.107360
+Received 23 November 2020; Received in revised form 29 April 2021; Accepted 5 May 2021
+Available online 26 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+A. Sinkar et al.                                                                                                    Electric Power Systems Research 198 (2021) 107360
+
+
+gives matrices which are sparse thus making it suitable for large sys­           time-step Δt used for simulation.
+tems. Also, the set of DSEs describing the network immediately allow                 After this, the difference equations of the circuit are directly
+for the application of widely available linear system analysis tools such        formulated using Modified Nodal Analysis (MNA) in the form given in
+as the calculation of system eigenvalues of the real-world network.              (2) and solved at every time-step.
+Although not impossible with CC-based approaches, obtaining such
+                                                                                 G V(t) = J(t)                                                                   (2)
+eigenvalues requires additional post-processing [11] because the
+state-space equations in continuous time-domain are never explicitly             where,
+formulated.                                                                         G: Augmented admittance matrix.
+    This paper begins with a review of the CC-based approach for EMT
+                                                                                        [               ]T
+simulations. Next, a procedure for automatically formulating the equa­           V(t) = vTN (t) iTS (t)
+tions for the DSE-based approach is introduced. Using various test cases,
+the advantages and disadvantages of the CC-based and DSE-based ap­
+                                                                                 vN (t): Node voltages at time t.
+proaches are discussed. A procedure for combining the two approaches
+                                                                                     iS (t): Currents through independent voltage sources at time t.
+in a single simulation is often desirable, particularly when a user wants
+                                                                                          [               ]T
+to interface a custom designed model to a commercial EMT simulator.
+                                                                                 J(t) = iTHS (t) vTS (t)
+Hence, an example of this is also presented.
+    In brief, the paper investigates an alternative method for EMT sim­
+                                                                                 iHS (t): Vector containing history current sources for inductors & capac­
+ulations using Descriptor State-space Equations (DSE) which are readily
+                                                                                 itors, and independent current sources at time t.
+derivable from the circuit’s netlist, and makes the following key
+                                                                                      vS (t): Independent voltage sources at time t.
+contributions:
+                                                                                      Any CC-based EMT simulator uses the following general procedure:
+ 1 It compares the accuracy and speed of the DSE-based approach with
+                                                                                  1 Form the G matrix using the circuit’s netlist.
+   the traditional CC-based approach.
+                                                                                  2 Initialize V(t).
+ 2 It develops an algorithm for interfacing a DSE-based formulation
+                                                                                  3 Advance the solution time t = t + Δt.
+   with a CC-based simulator. This can be used to interface arbitrary
+                                                                                  4 Update J(t) by computing the history current values for each
+   power networks with commercial EMT simulators and is also easily
+                                                                                    inductor and capacitor, and the values of independent voltage and
+   parallelizable.
+                                                                                    current sources.
+ 3 It validates this algorithm by simulating a benchmark system viz.
+                                                                                  5 If switches are present, check if any switch has changed its state and
+   IEEE 39 bus with HVdc converters.
+                                                                                    modify the G matrix accordingly.
+ 4 It demonstrates that computation time savings do accrue from the
+                                                                                  6 Compute V(t) by solving (2).
+   parallelization offered by the proposed interfacing algorithm.
+                                                                                  7 Update the currents iL (t) and iC (t) for each inductor and capacitor
+                                                                                    using the history current values from Step 4 and V(t) from Step 5.
+     This paper only considers lumped circuit elements viz. resistors (R),
+                                                                                  8 Go back to Step 3 if end time not reached.
+inductors (L) and capacitors (C) along with independent current sources
+(JS ) and voltage sources (VS ) while formulating the equations. But this
+                                                                                    The case of other non-linearities such as inductor or transformer
+approach can be easily extended to include other elements or compo­
+                                                                                 saturation can also be accommodated by modelling them with parallel
+nents.
+                                                                                 inductors with switches [12, 13]. As we can see, the CC-based EMT
+                                                                                 simulation approach is highly scalable which is why it is used in the
+2. Formulation of Equations For EMT Simulations
+                                                                                 majority of commercial EMT simulation packages today [1–3].
+2.1. Companion Circuit (CC)-based EMT Simulation
+    This section briefly reviews the widely used CC-based EMT simula­            2.2. Descriptor State-space Equation (DSE)-based EMT Simulation
+tion [5], so that it can later be contrasted with DSE-based EMT simu­
+lation. In a CC-based EMT simulation, each branch inductor and                       In this section, we discuss the DSE-based EMT simulation approach.
+capacitor are transformed to their corresponding companion circuits in           In this approach, the equations of the circuit are formulated using MNA
+discrete time-domain using trapezoidal integration method. The com­              in the continuous time-domain in the form given in (3)1.
+panion circuits are as shown in Fig. 1. They consist of a history current        Eẋ = − Ax + Bu                                                                 (3)
+source (which is a function of the element’s current and voltage in the
+previous time-step) in parallel with a conductance which depends on the              After (3) has been formulated, it is discretized using trapezoidal
+                                                                                 integration method with a time-step Δt. This gives the update equation
+                                                                                 as in (4) which can then be used to carry out EMT simulations studies.
+                                                                                 (         )        ((        )                 (                ))
+                                                                                       AΔt                AΔt               BΔt
+                                                                                   E+        x(t) =   E−        x(t − Δt) +      u(t) + u(t − Δt)   (4)
+                                                                                         2                 2                 2
+                                                                                    Equation (3) is called the Descriptor State-space Equation (DSE)
+                                                                                 where x is the vector of descriptor state variables and u is the input
+                                                                                 vector, both as given in (5).
+                                                                                     [             ]T          [      ]T
+                                                                                 x = vTN iTL iTS      and u = vTS jTS                               (5)
+
+                                                                                 where,
+                                                                                   vN : Node voltages.
+
+
+                                                                                   1
+                                                                                     Note that the matrix E is often singular, so inverting it to get the classical
+              Fig. 1. Companion Circuits for Inductor and Capacitor              state variable form (of (1)) is generally not possible [14]
+
+                                                                             2
+A. Sinkar et al.                                                                                                     Electric Power Systems Research 198 (2021) 107360
+
+
+   iL : Inductor currents.                                                         matrices (C, G, L etc.). The sizes of the different sub-matrices are given
+   iS : Currents through independent voltage sources.                              in Table I. Here, nn is the number of nodes, nl is the number of inductors,
+   vS : Independent voltage sources.                                               nvs is the number of independent voltage sources, and njs is the number
+   jS : Independent current sources.                                               of independent current sources in the circuit.
+   When (3) is expanded using x and u from (5), we get (6).                            The matrix C includes all the capacitors present in the circuit. The
+                           ⎡              ⎤⎡ ⎤                                     general expression for (i, j) entry of C is given by (10), where ci is the sum
+⎡           ⎤ ⎡ ⎤                                    ⎡         ⎤
+  C 0 0            vN          G   AL Avs               0 − Ajs ⎡ ⎤                of all the capacitance between node i and ground while cij is the
+                 ⎢    ⎥    ⎢              ⎥⎢ vN ⎥
+⎢
+⎢
+            ⎥d⎢ ⎥
+            ⎥
+                           ⎢
+                           ⎢
+                                          ⎥⎢ ⎥ ⎢
+                                          ⎥
+                                                               ⎥ vS                capacitance between node i and j. Here both i and j vary from 1 to nn .
+⎢ 0 L 0⎥ ⎢         iL ⎥      − ATL 0    0 ⎥⎢     ⎥ ⎢ 0         ⎥⎢ ⎥
+⎣           ⎦ dt ⎢    ⎥=− ⎢⎢              ⎥ ⎢ iL ⎥ + ⎢
+                                                     ⎣
+                                                            0 ⎥⎣ ⎦
+                                                               ⎦ j                           {      ∑nn
+                 ⎣ ⎦       ⎣              ⎦ ⎣    ⎦                                             ci +      k=1 cik for i = j
+                                                                   S
+  0 0 0            iS        − A T
+                                 vs 0   0     iS       − I  0                      C(i, j) =             k∕
+                                                                                                          =1                                                  (10)
+                                                                                                    − cij for i ∕=j
+                                                                         (6)
+                                                                                      The matrix G includes all the resistors present in the circuit. The
+    Here,
+                                                                                   general expression for (i, j) entry of G is given by (11), where gi is the
+    C: Capacitance matrix
+                                                                                   sum of all the conductance between node i and ground while gij is the
+    L: Diagonal matrix containing inductance values.
+                                                                                   conductance between node i and j. Here both i and j vary from 1 to nn .
+    G: Conductance matrix (corresponding to lumped R’s)
+                                                                                             ⎧       ∑nn
+    AL , Avs , Ajs : Incidence matrix for inductor, independent voltage                      ⎨ gi +      k=1 gik for i = j
+source, and c

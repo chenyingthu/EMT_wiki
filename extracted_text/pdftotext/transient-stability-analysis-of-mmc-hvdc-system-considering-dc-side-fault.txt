@@ -1,0 +1,192 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                        10.1109/TPWRD.2015.2492983, IEEE Transactions on Power Delivery
+
+
+
+
+                Graphics Processing Unit Based Acceleration of
+                    Electromagnetic Transients Simulation
+                               Jayanta K. Debnath, Student Member, IEEE, and Aniruddha M. Gole, Fellow, IEEE,
+                                                 and Wai-Keung Fung, Senior Member, IEEE
+
+
+
+             Abstract—This paper presents a novel approach to speedup                         Structure (NMS). The approach presented in this paper is to
+          EMT simulation, using GPU-based computing. This paper ex-                           speedup EMT simulation using GPU-based computing and is
+          tends earlier published works in the area, by exploiting additional                 a potential alternative to the NMS algorithm.
+          parallelism inside EMT simulation. A 2D-parallel matrix-vector
+          multiplication is used that is faster than previous 1D-methods.                        Our current paper extends our previous work with the im-
+          Also this paper implements a GPU-specific sparsity technique to                     plementation of additional parallelization techniques to further
+          further speed up the simulations, as the available CPU-based                        accelerate the GPU-based EMT simulation. In this paper the
+          sparsity techniques are not suitable for GPUs. Additionally,                        EMT algorithm is explored and algorithmic steps for power
+          as an extension to previous works, this paper demonstrates                          systems with various equipment that may run in parallel are
+          modelling of a power electronic subsystem. The efficacy of
+          the approach is demonstrated using two different scalable test                      identified. In particular, this paper includes the following new
+          systems. A low granularity system, i.e. one with a large cluster                    aspects:
+          of busses connected to others with a few transmission lines is                         • Implementation of matrix-vector multiplication using par-
+          considered, as is also a high granularity where a small cluster                          allel threads deployed in 2D directions.
+          of busses is connected to other clusters thereby requiring more
+                                                                                                 • Implementation of parallel computations for transmission
+          interconnecting transmission lines. Computation times for GPU-
+          based computing are compared with the computation times for                              lines on the GPU and an optimized GPU-based algorithm
+          sequential implementations on the CPU. The paper shows two                               for synchronous generators.
+          surprising differences of GPU simulation in comparison with                            • Implementation of power electronic switching on the
+          CPU simulation. Firstly, the inclusion of sparsity only makes                            GPU platform and investigation of its effect on the
+          minor reductions in the GPU-based simulation time. Secondly
+          excessive granularity, even though it appears to increase the                            performance gain.
+          number of parallel computable subsystems, significantly slows                          • Implementation of sparsity based algorithm on special
+          down the GPU-based simulation.                                                           hardware, such as a GPU with primitive processing cores.
+            Index Terms—EMT simulation, Power systems simulation,                                • Investigation of the effect of test-system granularity on
+          Power system modelling, GPU-computing, CUDA-C program-                                   the performance gain of the simulation, i.e., the tradeoff
+          ming, parallel algorithms.                                                               between performance gains for test systems with a larger
+                                                                                                   subsystem size versus test systems with a smaller sub-
+                                                                                                   system size but having more interconnecting transmission
+                                     I. I NTRODUCTION
+                                                                                                   lines.
+             Electromagnetic transients (EMT) simulation is commonly                             In the sections to follow, this paper discusses GPU-
+          used to study fast transients in power systems such as lightning                    computing and the sequential EMT models of various equip-
+          induced transients, switching transients including transients                       ment in a power system and the parallelization techniques used
+          from power electronic switches, and so on [1], [2], [3]. Many                       to implement them on the GPU platform. It then discusses
+          attempts have been made to speed up EMT simulation, such                            the selection of appropriate test systems. Total computation
+          as: parallel implementation of the EMT algorithm [4], use of                        times for the GPU based simulation of various test cases
+          the multi area Thevenin equivalents (MATE) algorithm [5],                           are presented and compared with the total clock times for
+          multi-processor based parallel EMT simulation [6], etc. These                       sequential (CPU based) simulations. Finally, the performance
+          approaches have improved the performance of EMT simula-                             gains for GPU based simulations of various types of systems
+          tions. The approach presented in this paper, uses Graphics                          are presented.
+          Processing Units (GPUs) [7], [8], as a high performance and
+          potentially cost effective alternative [9], [10], [11], [12] for
+          EMT simulation of large power systems. The authors of this                                         II. OVERVIEW OF GPU- COMPUTING
+          paper first reported GPU-based EMT simulation in 2011 [9]                              GPUs have many primitive processing cores on board and
+          and further developments of the work were reported in [10],                         are capable of performing general purpose computations in
+          [11]. Recently Zhou et al. [13] reported on another approach                        parallel. The GPU accelerates computationally intensive appli-
+          for GPU-based EMT simulation, known as Node Mapping                                 cations by operating in a Single Instruction Multiple Thread
+                                                                                              (SIMT) mode [7], [14], [15]. The SIMT is an extension of the
+            J.K. Debnath and A.M. Gole are with the University of Manitoba, Winnipeg,         commonly known Single Instruction Multiple Data (SIMD)
+          MB, Canada R3T 5V6, Email: Aniruddha.Gole@umanitoba.ca.
+            W.K. Fung is with the Robert Gordon University, Aberdeen, AB10 7GJ,               mode of parallelism [14]. SIMD describes the execution of
+          United Kingdom.                                                                     an instruction on various data, whereas SIMT introduces a
+
+
+                                 0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See
+                                         http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                        10.1109/TPWRD.2015.2492983, IEEE Transactions on Power Delivery
+
+
+
+
+          dynamic way for thread level parallelization of the task on
+          various data [14]. In SIMT mode an instruction is executed
+          with different data in parallel, using multiple threads that
+          run on the identical GPU cores [7], [14], [15]. NVIDIA’s
+          parallel computing architecture is called Compute Unified
+          Device Architecture (CUDA) [7], [16], [14]. CUDA based C
+          programming is used in this work.
+
+                        III. OVERVIEW OF EMT SIMULATION
+             Time domain EMT simulation is carried out using the
+          following commonly known Nodal equation [1], [17], [12],
+          [18]:
+                            [Y ] × [V ] = J − IH               (1)
+          where [Y ] is the nodal admittance matrix of the network,
+          [V ] is the vector of unknown node voltages at instant t, [J] is
+          the vector of injected currents at the network nodes at instant
+          t, and [IH ] is the vector of history currents injected at the
+          nodes.
+             The solution for equation 1 requires the calculation of the
+          inverse of the admittance matrix. This matrix inversion is
+          performed at the start of the simulation or when a circuit
+          breaker or power electronic switch operates and changes the
+          circuit impedances. In this paper, the Gauss-Jordan method
+          for inversion of the admittance matrix is implemented on the                        Fig. 1. Schematic of implementing GPU-based matrix-vector multiplication.
+          CPU [19]. When power electronics subsystems are present, the
+          inverses of the anticipated post-switching configurations are
+          pre-calculated and inserted into the solution when required.
+                                                                                              specific to GPU applications. iv) A sparsity based algorithm
+                 IV. EMT SIMULATION USING GPU- COMPUTING                                      suitable for GPU-based EMT simulation was developed for the
+                                                                                              inverse-admittance matrix to further accelerate the simulation.
+             As mentioned in Section I, many attempts have been made                          v) Finally, the effect of test system granularity on the total
+          to reduce the total clock time for EMT simulation. The                              clock times for simulation was investigated. It is shown that
+          approach presented by Zhou et al. [13], used a special node                         excessive granularity has a negative impact on the overall
+          mapping structure (NMS) to change the admittance matrix into                        performance gain of the simulation using GPU-computing. It
+          a perfect block diagonal matrix. Although this approach has                         should also be noted that the parallelization algorithms used in
+          improved the performance of EMT simulations, there may                              this work are significantly different from the authors’ earlier
+          be room for further acceleration. For example, the splitting                        work [11] (as mentioned earlier). Details of the parallelization
+          of the admittance matrix into smaller subsystems require                            approaches used in this work are presented below:
+          additional book-keeping effort and memory access calls during
+          the simulation. Additionally, this approach introduces more
+          virtual transmission lines into the system, which (as shown                         A. Matrix-Vector Multiplication on the GPU with parallel
+          later), can result in a larger communication volume and also                        threads in 2 − D directions and using shared memory
+          result in an additional computation-burden for the transmission                        Matrix-vector multiplication, which consumes up to 90% of
+          lines themselves.                                                                   the total simulation times [10], is highly parallelizable [10].
+             The principal differences between the approach of this paper                     A traditional one-dimensional matrix-vector multiplication ap-
+          and previous approaches are: i) An equitable distribution of the                    proach, where a single row is multiplied by the entire column,
+          parallel tasks of the multiplication process was implemented,                       was implemented in the authors’ earlier approaches [9], [10],
+          which intrinsically has a smaller communication overhead                            [11]. By further dividing the matrix along the rows into
+          and so does not require any special node mapping structure.                         smaller blocks allows for additional parallelism. This approach
+          Additionally, parallelized matrix-vector multiplication with                        is relatively uncommon on traditional multi-core CPUs as
+          parallel threads deployed in 2D directions is implemented                           the number of cores is much smaller, i.e., in the range of
+          on the GPU-platform, which uses high performance shared                             tens, than those available on a GPU, which in our case
+          memory on the GPU to reduce the memory access bottleneck.                           had 512 cores per GPU. In order to explain the parallelism
+          ii) History currents and generator related computations were                        in matrix-vector multiplication, let us consider a matrix of
+          performed on the GPU in parallel, in a more optimized                               size M × N . The total number of floating point operations
+          way than the authors’ earlier work [11]. iii) Transmission                          required to perform the multiplication of this matrix with the
+          lines, which interconnect subsystems were modeled outside                           vector is M (2N − 1). Now, if the matrix is divided into 4-
+          the admittance matrix framework and used parallelization                            parallel blocks along the rows and 5 parallel blocks along
+
+
+                                 0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See
+                                         http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                        10.1109/TPWRD.2015.2492983, IEEE Transactions on Power Delivery
+
+
+
+
+          the columns (i.e. 2D parallelism), essentially the total number
+          of operations will be reduced to M 4 ( 5 − 1) per block. As
+                                                2∗N
+
+          the computations for all of these 20-blocks will be performed
+          in parallel, total clock time to perform this multiplication
+          will be reduced accordingly. This type of 2D parallelism
+          of matrix-vector multiplication is applied in this paper as
+                                                                                              Fig. 2. Schematic of of the synchronous generator excitation control system
+          opposed to one-dimensional parallelism applied in the authors’                      as used in this work.
+          earlier works [9], [10], [11]. In order to implement parallel
+          thread deployment in 2D directions, appropriate algorithmic
+          changes have been performed in the current paper, as shown
+          schematically in Fig. 1. This figure shows the deployment
+          of parallel blocks along the x and y axis directions during
+          the invocation of the kernel-function (i.e. invocation of a set
+          of parallel tasks on the GPU [14], [15], [20]). In this case,
+          parallel threads are deployed along the rows and columns
+          simultaneously for each block.
+
+          B. History current computations on the GPU
+             History currents in EMT simulations [2], [1] are a function
+          of state variables from the previous time steps. History cur-                       Fig. 3.   Single phase transmission line model (Bergeron’s model) [1], [21].
+          rents from all elements such as capacitors, inductors, coupled
+          circuits (transformers) can be simultaneously computed. In this
+          paper parallelized history current computations are performed                       to the network solution. This approach is identical to that
+          on the GPU. This paper optimizes history current computations                       used in the very widely used commercial programs such as
+          by implementing a regular pattern of the necessary data-                            PSCAD [23] and real time simulators such as RTDS [24].
+          structure for history currents as compared to the authors’
+          earlier work [9], [10], [11]. The kernel-function for history
+                                                                                              D. Current vector updating on the GPU
+          current computations deploys parallel threads for every block
+          and simultaneously performs the history current computations                           This part of the EMT-simulation has the least amount
+          on the GPU.                                                                         of parallelism. Due to low parallelism, these computations
+                                                                                              appears to be suited to being performed on the CPU in a
+                                                                                              sequential manner. However, it was shown in the authors’
+          C. Simulation of Synchronous Generators on the GPU
+                                                                                              earlier work [10] that performing these computations on the
+             In this work electrical generators were modelled using the                       GPU is more efficient as it does not require data transfer
+          method presented in [1], [21], [22]. In this case, the generators                   between the CPU and the GPU. Therefore, in this implementa-
+          are modelled as Norton equivalent circuits having a current                         tion, computations related to the current vector updating, were
+          source in parallel with an equivalent admittance. The generator                     performed on the GPU with only three parallel threads.
+          model takes the terminal voltages as inputs and calculates
+          the currents to be injected back into the network. All the
+          computations related to the generators are performed in the                         E. GPU-based implementation of other Power System Com-
+          dq0 domain. Phase domain to dq0 domain conversions are                              ponents
+          conducted at the interface to the external EMT 

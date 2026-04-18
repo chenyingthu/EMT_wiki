@@ -1,0 +1,30 @@
+## NOVEL DISTANCE PROTECTION ALGORITHM IN FREQUENCY DOMAIN BASED ON PARAMETER IDENTIFICATION
+**J.L. SUONAN**, **Y. ZHONG**, **G.B. SONG**
+
+School of Electrical Engineering, Xi’an Jiaotong University, China Email: suon@263.net  
+School of Electrical Engineering, Xi’an Jiaotong University, China Email: zhongying@stu.xjtu.edu.cn  
+School of Electrical Engineering, Xi’an Jiaotong University, China Email: song.gb@mail.xjtu.edu.cn
+
+**KEYWORDS:** distance protection, overreach action, parameter identification, matrix pencil algorithm, R-L model
+
+**ABSTRACT**  
+In this paper, a novel distance protection algorithm in frequency domain is introduced. Based on the R-L model of transmission lines, this algorithm is derived from the linear equations which are obtained in fault condition network and 0-module network for single-phase-to-earth fault. Considering that transformers usually ground directly in high voltage power systems, a linear equation with three coefficients is deduced based on the inductive 0-sequence system impedance. Theoretical analysis and simulation results prove that the algorithm is accurate when faults happen at the remote terminal and it will get a positive fault distance error when faults happen around the remote terminal. This phenomenon shows that the algorithm effectively prevents overreach action of distance relays. Meanwhile, this algorithm has a high ability of anti-resistance and is expected to form a new distance protection.
+
+## 1 Introduction
+Modern power systems have been increasingly large and complex. Voltage classes and transmission capacities of transmission lines improve and grow continuously that requires distance relays to be more excellent. However, the resistance in fault loop circuits will influence distance relay’s performance greatly, especially for single-phase-to-earth fault.
+
+Conventional distance relays [1, 2] can only solve two variables by using fundamental frequency data in post-fault waveforms. They commonly suppose that currents in fault point and that in measuring point have the same phase. However, this hypothesis will cause great fault distance error when faults happen at the remote terminal with high resistance to ground. Moreover, the computed distance error usually inclines to be negative, which leads distance relay to overreach. Both zero-sequence reactance relay [3, 4] and negative-sequence reactance relay [5] improve the performance of distance relays in some degree. However, the hypothesis of these literatures that the current distribute factor is real does not always stand. This is the essential problem that leads the distance relay to overreach. Other methods, such as method of fault component distance relay [6], method of utilizing travelling wave [7] and method of computing the lowest voltage location along the transmission line [8], are also not able to resolve the overreach problem in essence.
+
+Based on parameter identification, Literature [9] and [10] suggest an accurate fault location algorithm using one terminal data in time domain and in frequency domain, respectively. By taking fault distance, fault resistance, equivalent resistance and inductance of opposite system as unknown variables, a non-linear equation is deduced from the analysis of fault network and fault component network. By solving the non-linear equation, the fault distance is obtained. However, since the equation is non-linear, its solution needs iterative method and has the problem of multiple solutions. Besides, they have low computational efficiency. Therefore, both methods can not be applied to distance protection algorithm.
+
+Referred to the analytical method of literature [9], for single-phase-to-earth fault, a novel distance protection algorithm based on parameter identification of solving linear equations is presented in this paper. The core idea of the algorithm is to assume 0-sequence impedance after fault point was an inductance. Taking fault distance, fault resistance and equivalent inductance of opposite system as unknown variables, a linear equation with three coefficients is introduced from the analysis of fault condition network and 0-module network. Base on the relationship between the three variables and the three coefficients, the fault distance is easily solved. Meanwhile, the solution of the linear equation is unique, avoiding multi-solution problem when solving non-linear equation. To avoid additional error brought by numerical differentiation in time domain, the distance protection algorithm is introduced in frequency domain in this paper. Since accurate fundamental frequency phasors can not be extracted by DFT (Discrete Fourier Transformation) due to the interference of DC offset component in post-fault waveforms, a new frequency extraction method, namely matrix pencil algorithm [11], is introduced in this paper. Not only the fundamental frequency component, but also the DC offset component during the transient period will be accurately extracted, which fits perfectly for the distance protection algorithm proposed in this paper. At last, both theoretical analysis and simulation results prove the distance protection algorithm is accurate when faults happen at the remote terminal and gets a positive fault distance error when faults happen around the remote terminal. The algorithm can effectively prevent overreach phenomenon and is prospected to form a new distance relay.
+
+## 2 Fundamental principle of distance protection algorithm
+### 2.1 Derivation of the distance protection algorithm
+According to the superposition theorem, fault network is composed of load component network and fault component network.
+
+In Figure 1(b), $R_{m0}$, $L_{m0}$, $R_{n0}$ and $L_{n0}$ are source parameters of mode 0. In this paper, suppose 0-sequence impedance after fault point is an inductance, namely $R_{n0} = R_{n0} + (l-p)R'_0$.
+
+According to Figure 1(b) and the hypothesis above, the relationship between $I_{Fa}(s)$ and $I_{m0}(s)$ can be expressed as
+$$I_{Fa}(s) = 3I_{F0}(s) = 3I_{m0}(s) + I_{n0}(s) = 3I_{m0}(s)K_0(s) \quad (2)$$
+$$Z_{m0} + sL_{n0} = Z_{m0} + z_0 p + s(L_{n0} + (l-p)L'_0)$$

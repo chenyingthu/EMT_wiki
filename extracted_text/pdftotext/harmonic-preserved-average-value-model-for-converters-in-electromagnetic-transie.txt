@@ -1,0 +1,199 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026                                                                                             325
+
+
+
+
+     Harmonic-Preserved Average-Value Model for
+   Converters in Electromagnetic Transient Simulation
+              Yang Cao , Graduate Student Member, IEEE, Wei Gu , Senior Member, IEEE,
+ Mingwang Xu , Graduate Student Member, IEEE, Fei Zhang , Member, IEEE, Wei Liu , Senior Member, IEEE,
+                                  and Suhan Zhang , Member, IEEE
+
+
+   Abstract—The increasing utilization of power electronic devices                 system stability has evolved beyond categories of rotor angle,
+has heightened the impact of harmonics in modern power systems.                    frequency, and voltage. It now encompasses the assessment of
+However, compared with detailed models, conventional average-
+                                                                                   “converter-driven stability” and “resonance stability” to account
+value models (AVMs) result in reduced accuracy due to the neglect
+of switching harmonics, making it challenging to meet the accuracy                 for the impacts of fast-responding power electronic devices on
+requirements when focusing on transient responses or harmonic                      electromagnetic transients (EMTs) [3]. The stability of fast inter-
+dynamics. To address this limitation, this paper proposes a system-                active converter drives is mainly affected by power electronics,
+level converter model called the harmonic-preserved AVM (HP-                       and one non-negligible impact of power electronics integration
+AVM). This time-domain-based model integrates AVM computa-
+                                                                                   is the increase of high-order harmonics [4], [5], [6]. Hence, it is
+tion with harmonic component calculation into a unified simulation
+framework, enabling precision comparable to that of switching-                     necessary to develop high-performance simulation models for
+function models (SFMs) for system-level simulation, while avoiding                 EMT studies [7].
+the high computational burden of detailed models. By leveraging                       In EMT simulation, converter modeling stands out as a pri-
+AVMs as the backbone and preserving harmonic details, HP-AVM                       mary focus. Balancing sufficient accuracy and efficiency re-
+achieves both high computational efficiency and accurate harmonic
+                                                                                   mains the key to converter modeling. Presently, commercial sim-
+representation in system-level simulations. Furthermore, HP-AVM
+demonstrates broad applicability across various converter topolo-                  ulation software mainly adopts the two-value-resistor (Ron /Roﬀ )
+gies, including rectifiers, inverters, and choppers. Both simulation               model and the L/C-based associated discrete circuit (ADC)
+and experimental results validate the effectiveness of HP-AVM,                     model to construct converter models. However, the former is
+demonstrating its high accuracy and computational efficiency.                      difficult to extend to high-frequency small-step or large-scale
+  Index Terms—Average-Value Model, Converter Modeling, EMT                         simulations due to its low simulation efficiency, while the latter
+Simulation, Harmonic Calculation, HP-AVM, Stability.                               is limited by the simulation time step and may cause spurious
+                                                                                   harmonic problems [8].
+                                                                                      A desired simulation model should combine sufficient simu-
+                            I. INTRODUCTION
+                                                                                   lation accuracy with high computational efficiency in the target
+      OWER systems have undergone a major transformation
+P     characterized by increased penetration of power electronic
+converter-interfaced technologies [1], [2]. Furthermore, the sub-
+                                                                                   simulation scenario. High accuracy ensures the precise repre-
+                                                                                   sentation of dynamic responses, while high efficiency supports
+                                                                                   fast simulation of high-frequency or large-scale converter-based
+stantial integration of converter-interfaced generation (CIG)                      systems. The average-value model (AVM) technique is widely
+technologies, loads, and transmission devices has led to an                        adopted to help meet these requirements in system-level dy-
+augmented reliance on fast-responding power electronics for the                    namic analysis [9], [10]. Lian et al. [11] and Horiuchi et al.
+dynamic response of the power system. This phenomenon has                          [12] proposed time average methods for EMT simulations.
+resulted in a transformative shift in the dynamic characteristics                  Compared to detailed models, AVMs consume fewer computa-
+of the power system. In this context, the analysis of power                        tional resources and provide sufficient accuracy for large-signal
+                                                                                   time-domain simulations and small-signal frequency-domain
+                                                                                   impedance analysis [13], [14], [15].
+   Received 14 October 2024; revised 15 May 2025 and 24 November 2025;
+                                                                                      The advancement of power electronics technologies and the
+accepted 14 December 2025. Date of publication 16 December 2025; date of           advent of next-generation power semiconductor devices have
+current version 26 January 2026. This work was supported by the Science            led to increasingly stringent accuracy demands for EMT sim-
+and Technology Project of State Grid Corporation, Key Technologies and
+Application of Digital Twin for Distribution Network with High DG Penetra-
+                                                                                   ulations. Despite progress in AVM techniques, the neglect of
+tion under Grant 5400-202255154A-1-1-ZN. Paper no. TPWRD-01564-2024.               harmonic components compared to detailed models continues to
+(Corresponding author: Wei Gu.)                                                    compromise performance in certain scenarios. Bacha et al. [16]
+   Yang Cao, Wei Gu, Mingwang Xu, Fei Zhang, and Suhan Zhang are with the
+School of Electrical Engineering, Southeast University, Nanjing 210096, China
+                                                                                   systematically analyze the discrepancies between average state
+(e-mail: yangcao@seu.edu.cn; wgu@seu.edu.cn; 230228745@seu.edu.cn;                 variables of state-space models (SSMs) and those of state-space
+zhangfei@seu.edu.cn; zhangsh_seu@163.com).                                         AVMs. Moreover, models based on the dynamic phasor method
+   Wei Liu is with the School of Automation, Nanjing University of Science and
+Technology, Nanjing 210094, China (e-mail: wliu@njust.edu.cn).
+                                                                                   [17], [18], [19] and the harmonic state-space method [20],
+   Digital Object Identifier 10.1109/TPWRD.2025.3645046                            [21], [22] have been proposed. Nevertheless, the computational
+
+      1937-4208 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:56:16 UTC from IEEE Xplore. Restrictions apply.
+326                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+
+efficiency of these models exhibits a strong dependence on
+the highest harmonic order considered, and their frequency-
+domain formulations require further adaptation for integration
+with time-domain-related applications such as real-time simu-
+lation and hardware-in-the-loop testing. Recent advancements
+by Ebrahimi et al. [23], [24], [25] have developed multiple
+novel high-precision AVMs for targeted converter topologies
+and transient fault scenarios.
+   To extend these AVM improvements in EMT simulations to
+broader applications, it is valuable to develop a generalized
+time-domain AVM that incorporates all harmonics, providing
+high accuracy across various converter topologies and transient                 Fig. 1.   N-phase bridge converter with a grounded midpoint on the DC side.
+events with low computational overhead [26]. Therefore, in this
+paper, a harmonic-preserved AVM (HP-AVM) for converters is                      computationally intensive, especially in high-frequency or large-
+proposed, offering the following key contributions:                             scale converter systems. Neglecting the simultaneous conduc-
+    r A unified EMT simulation framework of “AVM + harmon-                      tion of switches in the same bridge arm, the state-space equation
+      ics” is proposed, which enables the simultaneous compu-                   of the SFM for converters in Fig. 1 is:
+      tation of AVMs and harmonic components within a single                       
+                                                                                     ẋ = dx/ dt = A · x + b
+      simulation process, alleviating the long-standing trade-off                                                                            (1)
+      between detailed model complexity and AVM accuracy                             A = A0 + N      k=1 (Sup,k · Aup,k + Slow,k · Alow,k )
+      limitations in system-level EMT simulations.                              where x, u, andb denote the state variables, input variables, and
+    r A time-domain-based harmonic model is constructed to
+                                                                                input vector, respectively; A is the state matrix; S {0, 1} is
+      capture dynamics accurately, which considers a wide range                 the switching state; subscripts up and low correspond to the
+      of harmonics and avoids the limitation of the highest har-                upper and lower bridge-arm switches; subscript 0 represents the
+      monic order in frequency-domain-based modeling.                           elements not directly related to the switch, and k {1, 2, …, N}
+    r To facilitate harmonic calculation and enhance the com-
+                                                                                represents the k-th phase bridge arm, with N as the total count of
+      putational efficiency of the HP-AVM, a harmonic-based                     bridge arms. The detailed expression of (1) in Fig. 1 is provided
+      decoupling strategy is proposed, enabling decoupled sim-                  in Appendix A.
+      ulation with high flexibility and numerical stability.                       Throughout this work, the superscript n denotes variables at
+    r To improve the accuracy of AVM, a duty cycle prediction
+                                                                                tn = t0 +nh, where t0 is the initial simulation time and h is
+      strategy based on the half carrier period (HCP) is proposed,              the fixed time step. Taking the converter topology illustrated in
+      which balances the computational overhead and precision,                  Fig. 1 as an example, the switching state S at tn is defined as:
+      typically requiring only one state matrix update per HCP.                                                                         
+   The rest of the paper is organized as follows. Section II                           S n = C n + (1 − C n ) · 1 − S n−1 · I un−1sw < 0
+reviews the basic principles of the switching-function model                                                                   
+                                                                                             + (1 − C n ) · S n−1 · I in−1
+                                                                                                                        sw < 0                 (2)
+(SFM) and AVM. Section III describes the proposed HP-AVM,
+including the simulation framework, decoupling strategy, and                    where usw and isw are the voltage and current across the switches:
+duty cycle prediction strategy. Section IV validates the accuracy                       ⎧ n−1                      n−1           
+                                                                                        ⎪  usw,up = 1 − Sup  n−1
+                                                                                                                    · udc1 − un−1
+and efficiency performance of the HP-AVM through simulation,                            ⎪
+                                                                                        ⎪
+                                                                                                                                 ac
+                                                                                        ⎪
+                                                                                        ⎪                            
+and the experimental verification is given in Section V. Finally,                       ⎨+Slown−1
+                                                                                                   · un−1
+                                                                                                        ac − udc2
+                                                                                                                 n−1
+
+Section VI concludes the paper.                                                                                                              (3)
+                                                                                        ⎪
+                                                                                        ⎪  un−1    = Sup n−1
+                                                                                                             · un−1     − un−1
+                                                                                        ⎪
+                                                                                        ⎪   sw,low                dc1      ac
+                                                                                        ⎪
+                                                                                        ⎩                  n−1            
+                                                                                           + 1 − Slown−1
+                                                                                                           · uac − un−1  dc2
+                         II. PRELIMINARIES
+                                                                                            sw,up = Sup · iL , isw,low = −Slow · iL
+                                                                                           in−1      n−1   n−1 n−1         n−1    n−1
+                                                                                                                                                        (4)
+   Currently, EMT simulations primarily employ the following
+converter models: the Ron /Roﬀ model, SFM, AVM, and L/C-                            II() is the indicator function; C {0, 1} is the control signal:
+based ADC model. To set the stage for the proposed HP-AVM
+                                                                                                 C n = I (unblocked) · H (vm
+                                                                                                                           n
+                                                                                                                             − vcn )                    (5)
+in this study, this section briefly reviews the SFM and AVM.
+                                                                                where H() denotes the Heaviside step function; vm and vc
+                                                                                represent the modulated and carrier signals, respectively.
+A. Switching-Function Model                                                       The term b in (1) is relevant to the network-injected sources,
+                                                                                which are known before each simulation step. For illustration,
+   The SFM, often regarded as the ideal-switch-based represen-
+                                                                                applying the trapezoidal rule (TR) to discretize (1) yields:
+tation, can reflect the switching states of power converters and                  n                                                       
+is widely used as a baseline in system-level EMT simulations                       x = (F )−1 · I + h2 A · xn−1 + (F )−1 · h2 bn + bn−1
+[27], [28], [29]. However, the state matrix changes whenever                       F = I − hA/ 2
+the switching state changes, making SFM-based simulations                                                                                    (6)
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:56:16 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: HARMONIC-PRESERVED AVERAGE-VALUE MODEL FOR CONVERTERS IN ELECTROMAGNETIC TRANSIENT SIMULATION                                              327
+
+
+
+where I denotes the K × K identity matrix; K is the dimension
+of x, which is the total number of inductors and capacitors.
+Since matrix F depends on the switching state, its inverse must
+be recalculated whenever the state changes, which is the main
+source of computational burden in SFM-based EMT simulation.
+
+B. Average-Value Model
+   The AVM is typically established using analytical averaging
+                                                                                                                       (a)
+methods [11], [28], [29]. The core principle involves treating
+the duty cycle, defined as the ratio of on-time to carrier period
+Tc , as a weighting factor. By weighting and averaging the state-
+space equations of the SFM at different switching states, the
+state-space equations of the AVM can be derived as [30]:
+  
+     x̄˙ = dx̄/ dt = Ā · x̄ + b̄
+                                                             (7)
+     Ā = A0 + N     k=1 (Dup,k · Aup,k + Dlow,k · Alow,k )
+                                                                                                                       (b)
+where x̄ represents the average state variables; D is the duty
+cycle, which represents the average switching state:                            Fig. 2. Comparison of EMT simulations based on SFM and HP-AVM: (a)
+                                                                                one-step simulation diagram and (b) overall time consumption.
+                      t+Tc                                

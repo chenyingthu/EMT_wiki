@@ -1,0 +1,218 @@
+                                                       Electric Power Systems Research 252 (2026) 112414
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Time-delay estimation through all-pass functions for ULM line and
+cable models
+S. Loaiza-Elejalde a,†,* , J.L. Naredo a , Martin G. Vega-Grijalva b, O. Ramos-Leaños c ,
+E.S. Bañuelos-Cabral d
+a
+  Cinvestav-Guadalajara, Mexico
+b
+  Intel Corporation, Guadalajara, Mexico
+c
+  IREQ, Varennes, PQ, Canada
+d
+  University of Guadalajara, Mexico
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          Traveling-wave line models, such as the ULM, are widely used in time-domain EMT simulations for power
+All-pass filters                                   systems. These models require the rational approximation of both the characteristic admittance matrix Yc , and
+Electromagnetic transients                         the propagation matrix H. Rational fitting of H is challenging due to the inclusion of a mix of modal delays in all
+Line modeling
+                                                   its elements. These delays must therefore be identified and extracted before proceeding to calculate the rational
+Minimum phase
+Rational fitting
+                                                   approximation. This paper proposes a new iterative method to estimate time delays employing all-pass filters and
+Time delays                                        delay equalizations. Unlike other currently used methods, the one proposed here ensures causality and
+Traveling waves                                    minimum-phase features in the synthesized H model. Three test cases are included: 1) a synthetic transfer
+                                                   function, 2) a system of underground cables, and 3) the EMT response of an aerial line. The obtained results show
+                                                   that the proposed method maintains causality while achieving similar accuracies with fewer iterations compared
+                                                   to a state-of the art method based on rms-error minimization.
+
+
+
+
+1. Introduction                                                                         To enable the application of VF to the fitting of H, Gustavsen and
+                                                                                    Semlyen introduced in 1998 a method to estimate modal delays [4]. This
+    PHASE-DOMAIN line models, such as the Universal Line Model                      method is based on an integral by Bode that relates the minimum phase
+(ULM) [1], are widely used in the time-domain (TD) simulation of                    angle response of the modal propagation functions Hm to its magnitude
+electromagnetic transients (EMT) in power systems. For each trans­                  response [5]. These authors proposed obtaining a representative time
+mission line or cable under study, these models require that the asso­              delay for the entire function Hm by evaluating Bode integral at a single
+ciated matrices, Yc of characteristic admittances and H of propagation              cutoff frequency Ω at which the magnitude of Hm decays to 0.1. How­
+factors, be approximated by rational expressions leading to computa­                ever, it was found later that this may not work well in certain cases and
+tionally efficient TD simulations. While rational fit of Yc is straightfor­         modifications in the cutoff frequency evaluation have been proposed [6,
+ward, the fitting of H presents difficulties due to its elements involving          7]. Nevertheless, the issue of determining a proper value for Ω has
+delay factors associated with the modal velocities of the line or cable.            remained open. Additionally, the magnitude of Hm may not decay to the
+Modal delays must therefore be identified and extracted from matrix H               required value within the frequency range of analysis.
+for a proper rational fit. Vector Fitting (VF) is the adopted methodology               To overcome the previous limitations, it has been proposed to first
+for rational fittings in the ULM [2]. As an alternative, H can be adjusted          obtain an approximation of the delay, possibly using the Bode integral
+rationally without prior knowledge of modal delays by means of the                  method, and then to conduct a search around it for a better value of the
+Bode-diagram method developed for the FDLine model in [3]; never­                   delay. The criterion for comparing time delay estimates is the rms-error
+theless, the rational approximations so obtained tend to be of much                 of the synthesized function. Initially, a half-range search algorithm was
+higher orders than those from VF.                                                   employed [8] and, later, methods based on Golden Section search (GS)
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8-12, 2025.
+    * Corresponding author.
+       E-mail address: sebastian.loaiza@cinvestav.mx (S. Loaiza-Elejalde).
+     †
+       S. Loaiza gratefully acknowledges financial support from Cinvestav.
+
+https://doi.org/10.1016/j.epsr.2025.112414
+Received 7 January 2025; Received in revised form 23 March 2025; Accepted 17 October 2025
+Available online 24 October 2025
+0378-7796/© 2025 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+S. Loaiza-Elejalde et al.                                                                                                         Electric Power Systems Research 252 (2026) 112414
+
+
+                                                                                       function for the ith mode [14]. Hm,i is given in terms of its modal
+                                                                                       attenuation αi and modal phase βi :
+
+                                                                                       Hm,i = e− (αi +jβi )l ,                                                                 (3)
+
+                                                                                       with l being the length of the line. The phase-shift term βi can be
+                                                                                       separated into two components: one corresponding to the minimum
+                                                                                       phase and the other related to the modal delay, which can be obtained
+                                                                                       from the modal velocity [4]. Then, (3) can be rewritten as
+
+                                                                                       Hm,i = e− (αi +jβmin,i )l e− jωτi ;                                                     (4)
+
+             Fig. 1. Traveling waves model of an aerial transmission line.             where the ith modal delay τi has been factored out from Hm,i . After­
+                                                                                       wards, the substitution of (4) in (2) produces an expression where each
+were adopted [7–9]. One issue with minimum rms-error methods is that                   mode is expressed as the product of a minimum phase function and a
+they do not always guarantee the minimum error in the TD transient                     pure delay function:
+responses as it is demonstrated in [10,11]. Another problem with these
+methods is that the delay producing the minimum rms-error can lead to                  Hm,i = Di e− (αi +jβmin,i )l e− jωτi = Hmin,i e− jωτi .                                 (5)
+causality violations, i.e. traveling-wave velocities faster than the speed
+                                                                                           In practice, modes with similar delays are grouped into a single delay
+of light. This is demonstrated here in Section 4.2.
+                                                                                       group [1]; therefore, the approximation of H can be expressed as
+    This paper proposes a time-delay estimation method that guarantees
+                                                                                       follows:
+causality and minimum phase properties in the synthesized models of
+                                                                                                  (N               )
+Hm . It is an iterative method based on the use of all-pass filters to                       ∑ Ng  ∑ H,i
+                                                                                                           Ri,k
+counteract the appearance of positive (non-minimum phase) zeros at Hm                  H ≅                          e− jωτi ;                                 (6)
+                                                                                              i=1   k=1
+                                                                                                         jω − pi,k
+realizations. This method can be considered a continuation and a sub­
+stantial improvement of the research reported in [11,12]. To demon­
+                                                                                       where Ri,k and pi,k are the residue-matrixes and the poles of the rational
+strate its effectiveness, the proposed method is applied in three test                 synthesis, NH,i is the approximation order of the ith modal delay-group
+cases. Its performance and accuracy are compared to those of the Bode
+                                                                                       and Ng is the number of these groups.
+integral and the GS methods. The first test case involves the identifica­
+                                                                                          Note that before computing each set of poles and residues in (6), the
+tion of a constant delay in a synthetic transfer function. Comparisons are
+                                                                                       corresponding modal delays τi must be identified and extracted to
+made and the improvement over its predecessor in [12] is demonstrated.
+                                                                                       ensure that the rational approximations are applied to the minimum-
+The second test case involves delay identification for a system of three
+                                                                                       phase functions Hmin,i in (5).
+underground cables, each with four conducting layers. The third test
+compares the fitting and transient-response errors of an aerial line,
+                                                                                       2.2. Delay estimation with the Bode integral method
+modeled using the time delays being estimated by the Bode integral, the
+GS and the proposed all-pass-filter (APF) methods. To evaluate the line
+                                                                                           Delay estimation with the Bode integral begins with the calculation
+transient responses, these are compared with the one obtained with the
+                                                                                       of the minimum-phase angle of Hm,i at a previously determined cutoff
+Numerical Laplace Transform technique, which is used with 215 samples
+                                                                                       frequency Ωi as follows:
+and a tuned accuracy of 10–8 [13]. The three test cases show that the
+proposed method maintains causality, whereas GS method does not.                                        ∫∞ (   (⃒     ⃒))
+                                                                                                          d log ⃒Hm,i ⃒
+                                                                                                                             (           )
+                                                                                                           1                       |ui |
+These cases also show that the proposed method requires substantially                  φmin,i (Ωi ) =                     log coth         dui ,                               (7)
+                                                                                                      π       d(ui )                2
+fewer iterations than GS with comparable accuracy.                                                             − ∞
+
+
+2. Theory overview                                                                     where
+                                                                                               ( )
+                                                                                                ω
+2.1. Transmission line representation in phase-domain                                  ui = log    .                                                                           (8)
+                                                                                                Ωi
+
+    Fig. 1 shows the traveling-wave representation of a multi-conductor                  Then, the obtained phase-angle is used to find the corresponding
+transmission line where V0 and Vl represent the voltage vectors at the                 modal delay by applying the following formula [4]:
+beginning and end of the line, respectively, while I0 and Il are the cor­
+                                                                                                 l         φmin,i (Ωi )
+responding current vectors. By applying the telegraph-equation solu­                   τi =            +               ,                                                       (9)
+                                                                                              υ(Ωi )          Ωi
+tions, the following expression is obtained for each side of the line,
+Ii = Yc Vi − HIr ;                                                           (1)       where υ(Ωi ) is the velocity of the ith mode evaluated at Ωi .
+
+where subindices i and r denote local-incident and remotely reflected                  2.3. Delay estimation with rms-error minimization
+variables, respectively. For an n-conductor line, Yc and H are frequency-
+dependent matrix functions with n × n elements. These are calculated                      The search for the delays with the lowest fitting error is based on the
+from the series impedance Z and the shunt admittance Y matrixes of the                 implementation of a minimization algorithm to repeatedly fit Hm,i , while
+line, both in per unit of length.                                                      varying τi , until the minimum rms-error is obtained. The most used
+    To obtain the rational approximation of H, it is separated into its                minimization algorithms are those based on the Golden Section search
+modal components as follows:                                                           [7–9]. The frequency range for the search can be based on delays pre­
+      n
+                                                                                       computed with the Bode integral (7), although this is not strictly
+      ∑
+H=           Di Hm,i ;                                                       (2)       necessary [7–15].
+       i=1
+
+
+where Di is the ith idempotent of H and Hm,i is the scalar propagation
+
+
+                                                                                   2
+S. Loaiza-Elejalde et al.                                                                                           Electric Power Systems Research 252 (2026) 112414
+
+
+
+
+                                               Fig. 2. Pseudocode for the proposed delay identification method.
+
+
+2.4. Minimum phase systems and all-pass systems                                     3. Proposed method
+
+    A minimum-phase system is a stable system whose inverse system is                   The method proposed here is iterative and is based on the identifi­
+also stable. Since the rational representation of a stable system has all its       cation and extraction of the all-pass component Hap from a rational
+poles on the left-hand-side of the complex s-plane, for this to be                  synthesis of the original function H, as well as on the assignment of a
+minimum-phase all its zeros must also lie on the left-hand-side of the s-           representative delay to the extracted all-pass component. This delay is
+plane [16]. On the other hand, a system is of all-pass type if its magni­           used as correction term. The process is repeated until the synthesis of H
+tude is 1, which implies that, in its rational form, all its zeros must be an       becomes of the minimum-phase type. Fig. 2 provides the pseudocode for
+exact mirror of its poles in the complex plane [17]. Consequently, an               this process. Although the initial estimate for the time delay does not
+all-pass system cannot be a minimum-phase system and, if it is stable, all          have to be accurate, closer estimates result in faster convergence.
+its zeros must lie on the right-hand-side of the s-plane.
+    Although all-pass systems do not change magnitudes, they certainly              3.1. Representative delay for all-pass functions
+do affect the phase angles; so, they are often used as phase compensation
+systems. Due to these properties, an all-pass system can be decomposed                  Clearly from Fig. 2, the most important step in the estimation process
+into a cascade of first- and second-order all-pass subsystems. In addition,         is the delay correction calculation at line 11. Since there are many delay
+any rational system can be decomposed into the following product                    values that satisfy the minimum-phase condition, this stage is crucial for
+                                                                                    ensuring the method’s final accuracy. The delay correction Δτ can be
+H(jω) = Hmin (jω)Hap (jω),                                              (10)
+                                                                                    estimated by averaging the group delay values of the all-pass function
+                                                                                    and this is the approach used in [11,12]. However, the order of the
+where Hmin (jω) is a minimum phase system and Hap (jω) is an all-pass
+                                                                                    complete all-pass function is expected to be high, leading to consider­
+system [16].
+                                                                                    able phase distortion and consequently a large error in the determina­
+    In summary, on assuming stability any rational function with zeros
+                                                                                    tion of Δτ.
+on the right-hand-side of the s-plane can be compensated with an all-
+                                                                                        To improve the calculation of Δτ, it is proposed here to decompose
+pass function containing these zeros, while the remainder becomes a
+                                                                                    the all-pass function into first- and second-order cascaded filter func­
+minimum-phase functi

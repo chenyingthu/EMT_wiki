@@ -1,0 +1,194 @@
+                                                              Electric Power Systems Research 253 (2026) 112572
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Electromagnetic transient (EMT) and quasi static time series (QSTS)
+Co-simulation for analyzing integration of power electronics based
+generation/power quality improvement solution in secondary distribution
+networks
+                                               a,∗                                      b
+Dhaval Yogeshbhai Raval                           , Saurabh N. Pandya
+a Ph.D. Scholar, Gujarat Technological University, 380005, Chandkheda Ahmedabad, Gujarat, India
+b
+    Vishwakarma Government Engineering College, 380005, Chandkheda Ahmedabad, Gujarat, India
+
+
+
+
+a r t i c l e            i n f o                          a b s t r a c t
+
+Keywords:                                                 This paper presents a novel Co-simulation framework that integrates the Open Distribution System Simulator
+Co-simulation                                             (OpenDSS) – a phasor-domain analysis tool–with an electromagnetic transient (EMT) model developed in MAT-
+Electromagnetic transient (EMT)                           LAB/Simulink. The proposed tool is designed to evaluate the impact of incorporating power electronics (PE)-
+Phasor
+                                                          based generators and power quality improvement devices into large and complex distribution networks, which
+Quasi-static time-series (QSTS)
+Renewable energy
+                                                          is crucial for enabling the transition from conventional power sources to renewable energy (RE) systems. By
+Power quality                                             combining EMT and quasi-static time-series (QSTS) simulations, this approach overcomes the modeling limita-
+Distribution network                                      tions of OpenDSS while reducing the computational complexity associated with full EMT simulations. The paper
+                                                          elaborates on the methodology and theoretical framework used for integrating EMT models with OpenDSS and
+                                                          demonstrates its applicability through multiple case studies based on the IEEE 13-bus test feeder integrated with
+                                                          a photovoltaic (PV) system. The validity of the proposed Co-simulation framework was established by comparing
+                                                          its results with a detailed EMT simulation model implemented in Simulink. The ﬁndings indicate that the Co-
+                                                          simulation framework produces results in close agreement with the full EMT model while achieving a reduction
+                                                          in computational time by approximately 60–70 %. These results conﬁrm that the proposed Co-simulation tool
+                                                          provides an eﬃcient and reliable platform for analyzing power-electronic-integrated distribution systems with
+                                                          high RE penetration.
+
+
+
+1. Introduction                                                                                       Integrating 9RE sources such as solar and wind into the grid, while
+                                                                                                  essential for reducing reliance on fossil fuels, presents signiﬁcant chal-
+    India’s electricity demand has been rising steadily, with per capita                          lenges in maintaining power quality [2]. RE based Distributed Gener-
+consumption reaching 985 kWh in 2023 and total electricity consump-                               ators (DGs) can cause issues such as voltage rise, voltage ﬂuctuations,
+tion growing by 6 % annually since 2020, including a 6.7 % surge in                               and ﬂicker due to their intermittent nature [2,3]. The use of inverters
+2023 to 1407 TWh. This increasing demand, however, has fueled a sharp                             in these systems often introduces harmonics [4–6]. Reverse power ﬂow
+rise in coal and lignite consumption, which has grown at an alarming                              (RPF), a result of power injection at the consumer end, complicates grid
+rate of 11 % per year since 2020, reaching 1.3 Gt in 2023. Power gener-                           operations and protection schemes [7]. Low power factor operation and
+ation and industry are the primary consumers, accounting for 62 % and                             altered fault contributions further strain the network’s stability and re-
+34 %, respectively. While India has committed to reducing its CO2 emis-                           liability [8–10]. Therefore, a thorough and comprehensive study is cru-
+sion intensity of GDP by 45 % by 2030 (compared to 2005 levels) and                               cial to ensure the seamless integration of RE sources into the distribution
+achieving net-zero emissions by 2070, the reliance on coal highlights                             network, addressing these challenges while supporting India’s transition
+the challenge of balancing energy needs with environmental commit-                                to a sustainable energy future.
+ments [1]. To address this, transitioning to RE sources is imperative for                             To study the power quality issues associated with RE integration,
+meeting the growing electricity demand while curbing pollution.                                   EMT simulations are commonly employed due to their ability to analyze
+
+
+    ∗ Corresponding author.
+
+      E-mail address: dhavalraval004@gmail.com, dhaval.raval@atmiyauni.ac.in (D.Y. Raval).
+
+
+
+https://doi.org/10.1016/j.epsr.2025.112572
+Received 8 September 2025; Received in revised form 22 November 2025; Accepted 30 November 2025
+Available online 6 December 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+D.Y. Raval and S.N. Pandya                                                                                        Electric Power Systems Research 253 (2026) 112572
+
+
+detailed dynamics of PE based generators, such as those used in solar and         vide ﬂexibility to modify control algorithms, while full EMT simula-
+wind energy systems [11–16]. EMT simulations are particularly eﬀec-               tions, although accurate, are computationally impractical for simulat-
+tive in studying harmonics, voltage ﬂuctuations, and fault contributions          ing complex distribution networks. These limitations motivate a hy-
+[17–19]. However, these simulations demand extensive computational                brid EMT-QSTS Co-simulation approach, where detailed controller-level
+power [20], when long-duration studies spanning hours or days are re-             EMT models of DERs or Power Quality improvement devices inter-
+quired to accurately capture the intermittent behavior of renewables.             act with a full feeder solved in the QSTS domain. Additionally, MAT-
+As the complexity and size of the network increase, computational de-             LAB/Simulink oﬀers Hardware-in-the-Loop (HIL) capability, enabling
+mands also increases exponentially.                                               real-time testing of converter and controllers, integrated with a realistic
+    Dynamic simulations are used for analyzing the impact of RE gener-            distribution network model using EMT-QSTS Co-simulation framework,
+ation, particularly due to the inherent variability of RE resources. Since        which further strengthen the applicability of proposed method.
+RE generation is inﬂuenced by weather conditions, time of day, and                    Accordingly, the primary objectives of this study are to: (i) develop
+seasonal changes, it introduces signiﬁcant ﬂuctuations in the grid. To            an integrated OpenDSS–Simulink Co-simulation framework that cou-
+address this, QSTS analysis has become a useful tool [21–25]. QSTS                ples QSTS and EMT domains, (ii) validate the proposed framework
+involves performing a series of consecutive power ﬂow solutions to ac-            against a full-system EMT model under diﬀerent operating conditions,
+count for the slow variations in RE generation and load proﬁles. While            and (iii) evaluate its computational eﬃciency and accuracy relative to
+QSTS provides valuable insights into the grid’s response to gradual               standalone EMT simulation.
+changes, it does not capture the transient behavior of the system, such               The Co-simulation approach is validated by modeling and compar-
+as rapid ﬂuctuations or short-term disturbances [26].                             ing the results of a modiﬁed IEEE 13-bus test feeder using both, the
+    Co-simulation has emerged as an eﬀective solution to address some             Co-simulation method and the full-system MATLAB/Simulink model.
+of the challenges in power system simulation, particularly in integrating         Section II provides a detailed explanation of the Simulink-OpenDSS
+RE sources and managing their impact on power quality. Co-simulation              Co-simulation interface. Section III presents the validation of the Co-
+is a term that is interpreted diﬀerently across various ﬁelds of study. In        simulation environment under varying irradiance, changes in reactive
+general, it means simulating interconnected systems together by com-              power, and grid-side fault conditions.
+bining multiple simulators [27]. This approach combines diﬀerent sim-
+ulation tools to leverage their strengths and overcome the limitations of         2. Simulink-OpenDSS Co-simulation interface
+individual methods as demonstrated in existing studies on Co-simulation
+[28–36]. In [28,29], MATLAB script-based algorithms are employed to               2.1. Methodology of the proposed approach
+drive phasor-domain simulations in OpenDSS. This concept is further
+advanced in [30] by developing EMT simulations within the MATLAB                      OpenDSS, an open-source simulator for distribution systems, is se-
+script environment and integrating them with phasor simulations in                lected to model the distribution network for the time series simulation.
+OpenDSS. Similarly, Hariri et al. [31] adopts this approach but imple-            Meanwhile, Simulink is utilized as a versatile simulation platform for
+ments the EMT simulation using Python. Modeling EMT simulations in                simulating the EMT domain components of the system.
+a script-based environment requires detailed mathematical representa-                 OpenDSS features a Component Object Model (COM) interface that
+tions of the EMT domain. The accuracy of the simulation is directly               enables external software to control and modify its functionality [31].
+inﬂuenced by the ﬁdelity of the EMT model used. This paper address                Simulink is a widely used simulation environment with built-in libraries
+these issues by presenting a novel Co-simulation environment that inte-           for various electrical subdomain like power system, power electron-
+grates OpenDSS (Open Distribution System Simulator) and Simulink.                 ics, RE which can communicate with MATLAB script through the in-
+Simulink is chosen for EMT modeling due to its familiarity among                  ternal MATLAB Application Programming Interface (API). MATLAB can
+students, academicians, and researchers, making it a widely preferred             drive and control OpenDSS through the COM interface. Although MAT-
+tool in academic and research. By combining these two powerful tools,             LAB/Simulink itself is not open-source, combining it with OpenDSS al-
+the Co-simulation environment enables a more accurate and compre-                 lows for an eﬀective hybrid simulation tool that oﬀers several advan-
+hensive analysis of distribution networks, capturing both the steady-             tages, including ﬂexibility to analyse both time series and EMT be-
+state and dynamic behavior of large distribution network with high                haviours, comprehensive analysis of system performance across diﬀer-
+penetration of distributed generators.                                            ent time scales, enhanced accuracy by capturing both steady-state and
+    The increasing penetration of RE-based distributed generators has             dynamic phenomena and resource optimization by focusing detailed
+created a pressing need for simulation frameworks that can accurately             EMT simulations only for critical scenarios.
+represent both steady-state and transient phenomena in large distribu-                Fig. 1 shows the methodology of co-simulation. Co-simulation con-
+tion networks without incurring excessive computational costs. Con-               tains 3 parts. Fig. 1(a) represents QSTS simulation in OpenDSS. OpenDSS
+ventional QSTS tools fail to capture high-frequency and do not pro-
+
+
+
+
+                      Fig. 1. Co-simulation approach (a) QSTS simulation in OpenDSS (b) MATLAB Algorithm (c) EMT Simulation in Simulink.
+
+                                                                              2
+ D.Y. Raval and S.N. Pandya                                                                                                       Electric Power Systems Research 253 (2026) 112572
+
+
+ performs time-series simulation by evaluating a power distribution sys-
+ tem’s behaviour over a sequence of time steps, using time-varying in-
+ puts such as load proﬁles. It calculates system conditions like voltage,
+ current, and power ﬂow at each step to analyse the system’s dynamic
+ performance over time. At every time step it sends data to the MATLAB
+ through COM interface.
+     The Thevenin parameter extraction method, detailed in Section. 2.2,
+ is implemented in MATLAB, as shown in Fig. 1(b). This MATLAB script
+ receives data from OpenDSS, extracts the Thevenin equivalent of the
+ distribution network, and transmits it to the EMT simulation. This serves
+                                                                                  Fig. 2. Phasor diagram representing the relationship between the measured
+ as link between QSTS simulation and EMT simulation.
+                                                                                  quantities 𝑉𝐿 and 𝐼𝐿 and the Thevenin equivalent parameters 𝐸th and 𝑍th .
+     The EMT model of the PE based generator, illustrated in Fig. 1(c)
+ utilizes the data from MATLAB to construct the Thevenin equivalent of
+ the distribution network. Within the EMT domain, the PE based genera-            Further expanding:
+ tor synchronizes with the Thevenin equivalent model to facilitate power           2
+                                                                                  𝐸th = 𝑉𝐿2 + 𝐼𝐿2 𝑍th
+                                                                                                   2
+                                                                                                      + 2𝑃n 𝑟th + 2𝑄n 𝑥th                                                      (5)
+ exchange. After each EMT simulation run, information about the power
+ exchange is communicated back to OpenDSS through MATLAB script,                     Under the assumption that the distribution network remains un-
+ enabling the next step of the power ﬂow solution. Below is a description         changed over a short time period and that the thevenin parameters are
+ of step by step execution of co-simulation approach Fig. 3.                      constant within this interval, a dataset comprising 𝑛 samples of volt-
+                                                                                  age and current measurements are considered. Therefore, the equation
+   I Establish the COM interface between MATLAB and OpenDSS.                      becomes:
+  II Solve the initialising power ﬂow in OpenDSS and initialize EMT sim-           2
+                                                                                  𝐸th = 𝑉𝐿2 + 𝐼𝐿2 𝑍th
+                                                                                                   2
+                                                                                                      + 2𝑃𝑛 𝑟th + 2𝑄𝑛 𝑥th                                                      (6)
+     ulation.                                                                                  𝑛          𝑛
+
+ III Deﬁne point of interest in MATLAB.                                           Subtracting subsequent samples yields:
+ IV Update the active power and reactive power values obtained from               (              ) (             )        (         )
+     EMT into OpenDSS.                                                              𝑉𝐿2 − 𝑉𝐿2     + 𝐼𝐿2 − 𝐼𝐿2       2
+                                                                                                                   𝑍th + 2 𝑃𝑛 − 𝑃𝑛−1 𝑟th
+                                                                                       𝑛     𝑛−1       𝑛     𝑛−1
+  V Perform the power ﬂow analysis in OpenDSS.                                           (          )
+                                                                                     + 2 𝑄𝑛 − 𝑄𝑛−1 𝑥th = 0                                                                     (7)
+ VI Retrieve the results from OpenDSS back into MATLAB.
+                                                                                  (                       )    (          (        )  )
+VII Extract the thevenin equivalent parameters from the retrieved data
+                                                                                      𝑉𝐿2  − 𝑉𝐿2    + 𝐼𝐿2 − 𝐼𝐿2     2
+                                                                                                                   𝑍th + 2 𝑃𝑛−1 − 𝑃𝑛−2 𝑟th
+     using MATLAB API.                                                                   𝑛−1    𝑛−2      𝑛−1   𝑛−2
+                                                                                          (           )
+VIII Update thevenin parameters in the EMT simulation.                                 + 2 𝑄𝑛−1 − 𝑄𝑛−2 𝑥th = 0                                                                 (8)
+ IX Run the Electromagnetic Transient (EMT) simulation for a duration
+                                                                                  To eliminate 𝑍th :
+     of 𝑇EMT , using a time step 𝑇𝑠 such that 𝑇𝑠 ≪ 𝑇EMT .
+  X Retrieve necessary data from EMT simulation back into MATLAB.                  𝑉𝐿2 − 𝑉𝐿2                   2(𝑃𝑛 − 𝑃𝑛−1 )𝑟th   2(𝑄𝑛 − 𝑄𝑛−1 )𝑥th     𝐼𝐿2 − 𝐼𝐿2
+                                                                                        𝑛          𝑛−1                                                    𝑛     𝑛−1
+ XI Repeat step IV to X until the total simulation time is reached.                                       +                     +                   =
+                                                                                  𝑉𝐿2        − 𝑉𝐿2            2(𝑃𝑛−1 − 𝑃𝑛−2 )𝑟th 2(𝑄𝑛−1 − 𝑄𝑛−2 )𝑥th   𝐼2 − 𝐼2      𝐿𝑛−1     𝐿𝑛−2
+                                                                                       𝑛−1          𝑛−2
+
+ 2.2. Thevenin equivalent of distribution network                                                                                                             

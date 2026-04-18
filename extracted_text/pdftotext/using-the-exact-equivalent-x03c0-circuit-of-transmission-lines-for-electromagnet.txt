@@ -1,0 +1,188 @@
+Received 19 July 2022, accepted 16 August 2022, date of publication 25 August 2022, date of current version 2 September 2022.
+Digital Object Identifier 10.1109/ACCESS.2022.3201503
+
+
+
+
+Using the Exact Equivalent π-Circuit of
+Transmission Lines for Electromagnetic
+Transient Simulations in the Time Domain
+JUAN P. ROBLES BALESTERO1,2 , JAIMIS SAJID LEON COLQUI                                                3,
+
+AND SÉRGIO KUROKAWA 1 , (Member, IEEE)
+1 Department of Electrical Engineering, São Paulo State University—UNESP, Ilha Solteira 15385-000, Brazil
+2 Department of Electrical Engineering, Federal Institute of São Paulo—IFSP, Votuporanga 15503-110, Brazil
+3 School of Electrical and Computer Engineering, State University of Campinas—UNICAMP, Campinas 13083-852, Brazil
+
+Corresponding author: Juan P. Robles Balestero (juanbalestero@gmail.com)
+This work was supported in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) under Grant 001, and in
+part by the São Paulo Research Foundation (FAPESP) under Grant 2021/06157-5.
+
+
+
+
+  ABSTRACT This work presents a transmission line model for simulating electromagnetic transients directly
+  in the time domain. For this purpose, the exact equivalent π-circuit is used, which represents the line taking
+  into account its distributed and frequency-dependent parameters. The admittances that constitute the exact
+  equivalent π-circuit are approximated by rational functions using the vector fitting technique. Then, for each
+  admittance, an electrical circuit is synthesized, consisting of an association of discrete elements (resistors,
+  inductors, and capacitors) aiming at modeling the transmission line, thus allowing its use in any circuit
+  simulation software and the eventual connection of nonlinear elements. From the simulation results, it is
+  reasonable to state that the proposed model is a feasible representation, which aggregates the same features
+  of the exact equivalent π-circuit directly in the time domain, not only in steady state, but mainly during
+  transients and also without the need for using convolutions, as well as inverse Laplace or Fourier transforms.
+
+
+  INDEX TERMS Electromagnetic transients, transmission line model, time-domain analysis, vector fitting.
+
+
+I. INTRODUCTION                                                                                it performs such a representation without the use of approxi-
+Transmission line (TL) models used in the simulation of                                        mations [2].
+electromagnetic transients have better accuracy when taking                                       In the literature, the exact equivalent π-model is widely
+into account the frequency-dependent effects, that is, when                                    used for the analysis of transients in the frequency domain [3].
+the calculation of the longitudinal parameters of the line                                     However, in [4] it is evident that in the time domain it is only
+is obtained considering the skin effect and soil influence                                     possible to use it in a steady state, whereas the solution is
+on the conductors. Such parameters must be considered as                                       obtained for a single frequency, both at the fundamental and
+distributed along the line length, which make the currents                                     harmonic frequencies. This restriction makes its use unfeasi-
+and voltages to behave like waves and, in such case, they                                      ble for the simulation of electromagnetic transients because
+can be obtained from the solution of the line hyperbolic                                       the line response covers a wide frequency range during this
+equations [1]. Thus, such equations allow considering the                                      such a period [5].
+distributed nature of the line parameters and their dependence                                    In [6], it is shown that when considering short or medium
+on the frequency. The exact equivalent π-circuit of the TL                                     length lines, the exact equivalent π-circuit tends to the so-
+directly represents the line hyperbolic equations and, for this                                called ‘‘nominal π-circuit’’ of the transmission line, which
+reason, the term ‘‘exact’’ is used to name this model because                                  can be implemented using lumped elements (resistors, induc-
+                                                                                               tors, and capacitors), therefore allowing the time-domain
+   The associate editor coordinating the review of this manuscript and                         transient analysis. In this case, for longer lines, a large number
+approving it for publication was Diego Bellan           .                                      of cascaded nominal π-circuits are employed to accurately
+
+                     This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+VOLUME 10, 2022                                                                                                                                                       90847
+                                        J. P. Robles Balestero et al.: Using the Exact Equivalent π-Circuit of TLs for Electromagnetic Transient Simulations
+
+
+
+
+calculate the transient responses, whose frequency ranges are
+on the order of kilohertz. Although this method is attractive
+and easy to implement, its disadvantage is the inclusion of
+erroneous peaks that distort transient responses, especially
+around their peak values, called ‘‘spurious oscillations’’ [7].
+These oscillations are caused by the nominal π-circuit cas-
+cade that represents the TL, but they do not represent the
+real value of the electromagnetic transients. To reduce the
+spurious oscillations, in [8] damping resistances are added in
+parallel with the longitudinal impedance of each section of
+the nominal π-circuit. Later on in [9] and [10], a methodology
+                                                                           FIGURE 1. Single-phase overhead TL in the frequency domain.
+was presented to better adjust the damping resistance values
+in order to reduce the transient response distortion.
+   Since the nominal π-circuit in its original form does not
+take into account the frequency effect, in order to improve the            Bode’s method. In [20], the authors present a proposal to
+accuracy of the results using this model, the authors in [11]              improve the accuracy of the model, replacing Bode’s method
+present a proposal that includes the frequency dependence                  with the vector fitting technique [21]. The ULM circumvents
+on the longitudinal parameters of the line. This procedure is              some limitations of JMarti’s model because the solution is
+performed from the rational approximation of such param-                   directly in the phase domain. This model is also available
+eters that are synthesized by an equivalent electric circuit.              in Electromagnetic Transient (EMT) programs, and recently
+Despite the improvements introduced in this model, it still                in [22] the authors present a technique that allows the imple-
+uses a relevant approximation, as it considers that a small                mentation of ULM in ATP-EMTP. Although they are quite
+line segment is represented by discrete parameters. Therefore,             accurate, both JMarti’s model and ULM depend mainly on
+it does not consider that the line parameters are distributed              the previous calculation of the time delay τ , which is per-
+along its length [12].                                                     formed numerically and can affect the quality of the rational
+   A technique that allows the time-domain transient analysis,             approximation [23].
+using the exact equivalent π-circuit of the TL, is based on                   In this context, this work describes a new transmission
+the frequency-to-time transformation using inverse Laplace                 line model for the simulation of electromagnetic transients
+or Fourier transforms [13]. Currently, the numerical Laplace               represented directly in the time domain. The proposed model
+transform (NLT) method with the implementation described                   constitutes the synthesis of the exact equivalent π-circuit of
+in [14] is the most used scheme because it is highly efficient             the transmission line from an electric circuit composed of
+and accurate. The technique consists of calculating the line               the association of discrete elements (resistors, inductors, and
+voltages and currents in the frequency domain and transform-               capacitors). Thus, one can model the TL under study using
+ing them into the time domain using NLT. Although such a                   typical passive elements and a single π-circuit for any line
+model offers excellent accuracy in obtaining the frequency                 length. This novel model can be used in electromagnetic
+domain transient response, it often prevents the connection                transients simulation software such as ATP, EMTP-RV or
+of nonlinear and time-variable elements, especially in the                 PSCAD. Since it consists only of circuit elements, it can be
+simulation of events that trigger sudden changes in network                implemented in any other electric circuit simulation software.
+configurations, such as faults or circuit breaker switching, for           In summary, the introduced modeling aggregates the ben-
+instance [15]. Some models include nonlinear conditions in                 efits of the exact equivalent π-model, which considers the
+the frequency domain, e.g., the technique based on the super-              distributed and frequency-dependent parameters. The main
+position principle developed in [16]. However, they do not                 advantage of this approach is that it allows the simulations
+cover all the variety of elements that can be connected to the             of electromagnetic transient phenomena directly in the time
+line terminals when compared with the transient simulation                 domain, without requiring the previous calculation of the
+performed directly in the time domain [17].                                travel time τ and, above all, not using the inverse Laplace
+   Several models are developed to obtain the voltages and                 or Fourier transforms.
+currents at the line ends directly in the time domain. Among                  This article is organized as follows. Section II presents the
+them, JMarti’s model [18] and the universal line model                     exact equivalent π-circuit and the expressions for the calcula-
+(ULM) [19] stand out. They are mainly characterized by                     tion of their respective admittances in the frequency domain.
+the rational approximation of the characteristic admittance                The synthesis of the π-circuit by means of circuit elements is
+Yc and the propagation function H . The adjustment of Yc is                presented in Section III. Section IV validates the proposed
+generally simple, but the adjustment of H is more complex,                 model, whereas the simulation results are presented in the
+as it is also requires the association with a time delay τ .               time and frequency domain. A thorough comparison with the
+   JMarti’s model is implemented in Electromagnetic Tran-                  reference model based on the NLT [14]. Finally, Section V
+sient (EMT) programs, such as the ATP-EMTP software,                       presents the conclusions, summarizing the main contributions
+where Yc and H are approximated by rational functions using                and proposals for future works.
+
+90848                                                                                                                                      VOLUME 10, 2022
+J. P. Robles Balestero et al.: Using the Exact Equivalent π -Circuit of TLs for Electromagnetic Transient Simulations
+
+
+
+
+II. EXACT EQUIVALENT π -CIRCUIT OF TLs                                                 respectively.
+For the analysis of electromagnetic transients in the fre-                                                        Yπ (ω)           1
+quency domain, we initially consider the representation of a                                 VA (ω) = (1 +                )VB +         IB              (7)
+                                                                                                                  Yzπ (ω)       Yzπ (ω)
+generic single-phase TL as shown in Figure 1. The sender                                                                       2
+and receiver are represented by A and B, respectively. The                                                               Yπ (ω)             Yπ (ω)
+                                                                                              IA (ω) = (2Yπ (ω) +                )VB + (1 +         )IB (8)
+components IA and IB are the longitudinal currents and the                                                               Yzπ (ω)            Yzπ (ω)
+terminal voltages are VA and VB . Expressions (1) and (2),                               Comparing the coefficients of VB and IB in (1) and (7), one
+known as line hyperbolic equations, describe the behavior of                           can obtain (9) and (10), which correspond to the admittances
+voltage and current at any point of the line, respectively [1].                        Yzπ and Yπ of the equivalent π-circuit shown in Figure 2.
+ VA (ω) = VB (ω) cosh(γ (ω) d) − IB (ω) Zc (ω)sinh(γ (ω) d)                                                                    1
+                                                                                                            Yzπ (ω) =                                   (9)
+                                                          (1)                                                         Zc (ω)sinh(γ (ω)d)
+                   1                                                                                                  cosh(γ (ω)d) − 1
+ IA (ω) = VB (ω)        sinh(γ (ω) d) − IB (ω) cosh(γ (ω) d)                                                 Yπ (ω) =                                 (10)
+                 Zc (ω)                                                                                               Zc (ω)sinh(γ (ω)d)
+                                                          (2)                              This model exactly matches the hyperbolic equations of the
+                                                                                       line for any values assumed by the length and frequency. So,
+The terms Zc (ω) and γ (ω) are the propagation constant and
+                                                                                       a single π-circuit can be used to represent a TL with a generic
+the characteristic impedance, given by (3) and (4), respec-
+                                                                                       length, as its parameters are considered distributed per unit
+tively [18]:
+                             s                                                         length and also take into account the frequency effect. This
+                               Z (ω)                                                   model is widely used in the literature and often referred to as
+                    Zc (ω) =                             (3)                           exact equivalent π-circuit [2], [4]. Another term use to define
+                               Y (ω)
+                             p                                                         it is ‘‘ long π’’, because it represents a long-distance TL using
+                     γ (ω) = Z (ω) Y (ω)                 (4)                           a single π-circuit [24], or simply equivalent π-circuit of the
+                                                                                       TL [25], [26].
+   The variables Z (ω) and Y (ω) are the longitudinal                                      In addition to the explicit frequency dependency in (9)
+impedance and the transverse admittance of the line per unit                           and (10), the longitudinal parameters R(ω) and L(ω) in (5)
+length, respectively, where ω=2πf is the angular frequency                             that are inserted in the calculation of the propagation function
+in [rad/s] and f is the frequency [Hz]. It is observed in (5)                          γ (ω) and the characteristic impedance of the line Zc (ω), are
+and (6) that the longitudinal parameters (R(ω) and L(ω)) are                           also dependent functions frequency. Owing to this two-fold
+represented as a function of (ω), and therefore they take into                         frequency dependence, the exact equivalent π-circuit does
+account the frequency effect, i.e., they consider the skin effect                      not have its direct representation in the time domain [4].
+and soil influence on the conductor.
+
+                        Z (ω) = R(ω) + jωL(ω)                                (5)       III. EXACT EQUIVALENT π -CIRCUIT OF A TL FORMED BY
+                                                                                       CIRCUIT ELEMENTS
+                        Y (ω) = G(ω) + jωC(ω)                                (6)
+                                                                                       The proposed model is obtained from the representation
+   To obtain the new model that represents the TL in the time                          of the TL equivalent π-circuit (from Figure 2) by circuit
+domain, let us consider that the π-circuit in Figure 2 is the                          elements (resistors, inductors, and capacitors). Initially, the
+equivalent circuit of a TL with length d. It is characterized by                       admittance curves Yzπ and Yπ in the frequency domain
+a series admittance Yzπ and a shunt admittance Yπ between                              are approximated by rational functions using the VF algo-
+terminals A and B.                                                                     rithm [21], [27], [28]. To use the algorithm, has considered
+                                                                                       that the generic rational function F(s) (11) can represent the
+                                                                                       admittance Yzπ or the admittance Yπ in the domain [29], [30]
+                                                                                       frequency.
+                                                                                                                   Np         
+                                                                                                                   X      rk
+                                                                                                         F(s) =                  +d +es               (11)
+                                                                                                                        s − pk
+                                                                                                                   k=1
+                                                                                          Parameters rk and pk in (11) correspond to the kth residue
+                                                                                       and kth pole, respectively, whereas the index Np is the num-
+                                                

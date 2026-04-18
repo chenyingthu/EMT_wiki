@@ -1,0 +1,216 @@
+                                                             Electrical Power and Energy Systems 31 (2009) 175–180
+
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                 Electrical Power and Energy Systems
+                                                  journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Hybrid simulation of power systems with SVC dynamic phasor model
+E Zhijun a, D.Z. Fang a,*, K.W. Chan b, S.Q. Yuan a,b
+a
+    Key Laboratory of Power System Simulation and Control of Ministry of Education of China, Tianjin University, 300072 Tianjin, China
+b
+    Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong, China
+
+
+
+a r t i c l e           i n f o                           a b s t r a c t
+
+Article history:                                          A novel hybrid method for simulation of power systems equipped with static var compensators (SVC) is
+Received 16 October 2007                                  suggested in this paper, where dynamic phasor theory is applied for SVC, and traditional electromechan-
+Received in revised form 23 January 2009                  ical transient models are used for ac subsystem. A detailed single-phase dynamic phasor-based SVC
+Accepted 28 January 2009
+                                                          model is derived ﬁrst, and an interface algorithm between the SVC dynamic phasor model and the ac sub-
+                                                          system is proposed next. Test results on the 9-bus and the New England 39-bus test power systems show
+                                                          clearly that the single-phase SVC dynamic phasor model has very good accuracy as compared with its
+Keywords:
+                                                          electromagnetic transient model. The proposed hybrid-model simulation method provides a new
+Dynamic phasors
+Transient stability
+                                                          approach for dynamic simulation of large-scale power systems including SVCs.
+Electromagnetic transients                                                                                                Ó 2009 Elsevier Ltd. All rights reserved.
+Hybrid simulation
+Static var compensator
+
+
+
+
+1. Introduction                                                                              tively larger integration step size (e.g. 0.02 or 0.01 s for a 50-Hz
+                                                                                             ac system) using single-phase network model, and EMTP simula-
+   With the rapid development of modern power systems, ﬂexible                               tion adopts much smaller integration step size (e.g. 50 ls) using
+ac transmission systems (FACTS), a new kind of power electronic                              3-phase circuit model. Hence, the hybrid simulation is faster than
+devices such as static var compensator (SVC), have been widely ap-                           the traditional EMTP simulation of entire networks. Meanwhile it
+plied in the operation and control of power systems. There are                               preserves the advantages of EMTP in the accurate voltage and cur-
+extensively studied mathematical models available for simulating                             rent waveform simulation for the target part of system. In addition,
+the voltage and current waveform relationships during the valve-                             hybrid simulation requires less computer memory resources than
+to-valve switching and discrete control of FACTS devices using                               that the EMTP does. However, the phase discontinuity in TSP
+electromagnetic transient program (EMTP) [1]. However, the EMTP                              equivalent and the effect of dc-offset in EMTP equivalent are the
+is not suitable for large-scale power system dynamic behavior                                main problems which reduce the accuracy of this type of TSP-EMTP
+analysis for its tiny time step and overall CPU time cost. On the                            hybrid simulation [7].
+other hand, transient stability program (TSP) [2,3] can simulate                                Dynamic phasor (DP) model based on the approach of time-
+the transient behavior of large-scale power systems for some dis-                            varying Fourier coefﬁcient series can catch and approximate wave-
+turbance, but cannot provide voltage/current waveform responses                              form response of dynamic nonlinear components of power system
+of highly nonlinear components such as high voltage direct current                           described by EMTP models [8–10]. In recent years, DP modeling
+(HVDC) links and FACTS.                                                                      method has been successfully applied in the simulation and anal-
+   To incorporate the advantages of both TSP and EMTP, hybrid                                ysis of power systems with nonlinear devices. A number of DP
+simulation methods have been developed in [1,4–6]. In hybrid sim-                            models of nonlinear components, such as HVDC [11–12], static
+ulations, power systems are split into TSP and EMTP simulation                               synchronous compensator (STATCOM) [12], thyristor-controlled
+subsystems through interface buses. The EMTP subsystems usually                              series capacitor (TCSC) [13], and uniﬁed power-ﬂow controller
+consist of nonlinear components such as HVDC and/or FACTS de-                                (UPFC) [14], have been studied in the hybrid simulation framework
+vices, while the rest system is considered as the TSP subsystem.                             and have achieved satisfactory results.
+The hybrid methods interactively execute programs of EMTP for                                   A hybrid simulator which combines a new single-phase
+HVDC links and/or FACTS devices, and of TSP for the rest of the                              equivalent DP model of static var compensator (SVC) into the
+power system, alternatively. Usually, TSP simulation utilizes rela-                          conventional TSP computation is presented in this paper. In the
+                                                                                             hybrid simulator, the SVC has been represented by the SVC DP sub-
+    * Corresponding author.                                                                  system. The improvement is that the DP subsystems are simulated
+      E-mail address: dz_fang@yahoo.com.cn (D.Z. Fang).                                      using a new single-phase circuit model with larger integration step
+
+0142-0615/$ - see front matter Ó 2009 Elsevier Ltd. All rights reserved.
+doi:10.1016/j.ijepes.2009.01.002
+176                                                     E Zhijun et al. / Electrical Power and Energy Systems 31 (2009) 175–180
+
+
+
+   Nomenclature
+
+   xðsÞ; yðsÞ time-domain waveform                                                            a           ﬁring angle of TCR
+   X k ðtÞ            kth dynamic phasor of xðsÞ                                              r           conduction angle of TCR
+   dX k                                                                                       Rf          resistor of the ﬁlter RLC circuit
+    dt
+        ðtÞ           differential of kth dynamic phasor
+                                                                                              Lf          inductor of the ﬁlter RLC circuit
+   hdx
+    dt k
+        i ðtÞ         kth dynamic phasor of the differential of xðsÞ                          Cf          capacitor of the ﬁlter RLC circuit
+   C                  capacitor of TCR                                                        V 1 ðtÞ     resistor voltage of ﬁlter circuit
+   L                  inductive of TCR                                                        iðtÞ        resistor current of ﬁlter circuit
+   v                  capacitor voltage of TCR                                                V 2 ðtÞ     capacitor voltage of ﬁlter circuit
+   i                  inductor current of TCR                                                 I_eq;1      current source phasor for Norton equivalent circuit
+   il                 current of TCR                                                          Y eq        equivalent admittance of Norton equivalent circuit
+   s                  switching function of TCR                                               Req         equivalent resistor of Norton equivalent circuit
+   Vk                 kth dynamic phasor of capacitor voltage                                 Leq         equivalent inductor of Norton equivalent circuit
+   Ik                 kth dynamic phasor of inductor current                                  P           real power absorbed by SVC
+   Ilk                kth dynamic phasor of line current                                      Q           reactive power absorbed by SVC
+   Sk                 kth dynamic phasor of switching function
+
+
+size than that utilized in EMTP. Therefore the speed of the new hy-                               Since xðsÞ is a real function on the time interval, i.e. s 2 ðt  T; t,
+brid simulator has been greatly improved than traditional EMTP                                it is easy to see that X k ¼ X k , where, the notation  denotes com-
+hybrid simulator. The new simulator is tested on the 3-generator                              plex conjugate of a complex variable.
+9-bus system and the 10-generater New England test system.
+The accuracy and effectiveness of the new hybrid simulator is val-
+                                                                                              2.2. Dynamic phasor model of SVC
+idated by comparing with the benchmark results obtained by the
+commercial package EMTP development coordination group edi-
+                                                                                                  In a thyristor-based SVC, the thyristor-controlled reactor (TCR)
+tion (DCG/EMTP) under the same system conditions.
+                                                                                              is usually in conjunction with ﬁxed or thyristor-switched capaci-
+                                                                                              tors to provide rapid, continuous control of reactive power over
+2. Dynamic phasor model of SVC                                                                the entire selected lagging-to-leading range. In this paper, three-
+                                                                                              phase SVCs are considered as the DP subsystems to interface with
+2.1. Basic concept of dynamic phasor                                                          an external TSP subsystem as a new implementation of hybrid sim-
+                                                                                              ulation. The SVC usually consists of three delta-connection single-
+   The DP approach, initially called state-space averaging method,                            phase TCRs, a ﬁxed capacitor and a ﬁlter circuit. The DP model for
+is developed based on the theorem of Fourier series with time-                                each component is described as follows.
+varying coefﬁcients. Assume that a time-domain waveform xðsÞ
+can be represented on the time interval s 2 ðt  T; t in Fourier ser-                        2.2.1. Dynamic phasor model of TCR
+ies as follows:                                                                                  The circuit of single-phase TCR is shown in Fig. 1. If the valves of
+             X
+             1                                                                                both thyristor are symmetrically ﬁred in the positive and negative
+xðsÞ ¼               X k ðtÞejkxs s                                                 ð1Þ       half-cycles of their voltage, only odd-order harmonics current
+         k¼1
+                                                                                              would be produced. In addition, the delta-connection of the three
+where, xs ¼ 2p=T, and X k ðtÞ is called dynamic phasor denoting                               single-phase TCRs can prevent the triple-order harmonics from cir-
+complex time-varying coefﬁcients of the Fourier series. Thus, the                             cuiting among the electric power network. Harmonic analysis
+kth dynamic phasor at time t is evaluated by (2).                                             shows that seventh and higher order harmonics has less effect on
+                 Z t                                                                          TCR dynamic characteristics [15]. As a result, in this paper only
+             c
+X k ðtÞ ¼                  xðsÞejkxs s ds ¼ hxik ðtÞ                               ð2Þ       the fundamental and ﬁfth harmonics would be considered in the
+             T       tT
+
+where, c ¼ 1 for k ¼ 0 and c ¼ 2 for k > 0. The following two prop-
+erties are used in developing the SVC DP model.
+Property 1. Differential of the kth dynamic phasor
+                      
+dX k                 dx
+     ðtÞ ¼                ðtÞ  jkxs X k ðtÞ                                        ð3Þ
+ dt                  dt k
+
+Property 2. Product of two dynamic phasors
+  The kth dynamic phasor of the product of two time-domain
+waveform xðsÞ and yðsÞ can be calculated by (4)
+             X
+             1
+hxyik ¼              hxiki hyii                                                    ð4Þ
+             i¼1
+
+Contrarily, time-domain waveform xðsÞ can be computed from its
+dynamic phasors by (5)
+
+xðsÞ ¼ReðX k ðtÞejkx0 s Þ ¼ X k ðtÞejkx0 s þ X ðk1Þ ðtÞejðk1Þx0 s þ   
+         þ X k1 ðtÞejðk1Þx0 s þ X k ðtÞejkx0 s                                    ð5Þ                    Fig. 1. A general scheme diagram of SVC control system.
+                                                         E Zhijun et al. / Electrical Power and Energy Systems 31 (2009) 175–180                                        177
+
+
+dynamic phasor model of TCR. The voltage and current equations                                 the RL circuit. Separating the real and imaginary parts of each side
+of the single-phase circuit of SVC in Fig. 1 are listed in (6)                                 of (16), the DP model of (17) for the RL circuit is deducted, where
+(                                                                                              V1(t) and i(t) are for the voltage and current of the RL circuit,
+     C ddtv ¼ il  i
+                                                                                     ð6Þ       respectively.
+       di
+     L dt ¼ sv
+                                                                                                              diðtÞ
+                                                                                               v 1 ðtÞ ¼ L          þ RiðtÞ                                            ð15Þ
+where, notation s stands for a switch function deﬁned by that s ¼ 1                                            dt
+when the one of two thyristors is fully conducted and s ¼ 0 when
+the thyristors are opened. Considering (2) and (3), the DP model                                dIk
+                                                                                               L     ¼ V 1;k  jkxs LIk  RIk ; k ¼ 1; 5                               ð16Þ
+of SVC in (6) can be derived                                                                    dt
+(                                                                                              8 R
+     C dVdtk ¼ jkxs CV k þ Ilk  Ik                                                           < dIk ¼ 1 ðV R  RIR Þ þ kxs II
+                                                                                     ð7Þ          dt   L     1;k    k          k
+     L dIdtk ¼ jkxs LIk þ hsv ik ;           k ¼ 1; 5                                                                                                                 ð17Þ
+                                                                                               : dIIk 1 I           I          R
+                                                                                                 dt
+                                                                                                     ¼ L ðV 1;k  RIk Þ  kxs Ik ; k ¼ 1; 5
+where, hsv ik is evaluated by (8) if harmonics higher than the 5th or-
+der have been ignored.                                                                         Similarly, the DP model for the capacitor, i.e. (20), can be derived
+                       X                                                                       from (18) and (19), where V2(t) and i(t) are for the voltage and cur-
+hsv ik ¼                        Skl V l                                             ð8Þ       rent of the capacitor, respectively
+                l2f5;1;1;5g
+                                                                                                            dv 2 ðtÞ
+Considering     that   V k ¼ V Rk þ jV k ,
+                                                     I
+                                           Ik ¼ IRk þ jIk ,
+                                                                   I
+                                                            Ilk ¼ IRlk þ jIlk ,
+                                                                                       I       iðtÞ ¼ C                                                                ð18Þ
+            I
+                                                                                                              dt
+      R
+Sk ¼ Sk þ jSk and (8), the TCR DP model can be represented by
+(9)–(12).                                                                                      dV 2;k 1
+                                                                                                     ¼ Ik  jkxs V 2;k                k ¼ 1; 5                         ð19Þ
+       R                                                                                        dt    C
+    dV k                    I     R     R
+C            kx       s CV k ¼ I lk  Ik ;   k ¼ 1; 5                               ð9Þ       8 R
+     dt                                                                                        < dV 2;k ¼ 1 IR þ kxs V I
+                                                                                                    dt        C k             2;k
+        I
+                                                                                                                                                                       ð20Þ
+ dV                                                                                            : dV I2;k
+C k þ kxs CV Rk ¼ IIlk  IIk ;                k ¼ 1; 5                              ð10Þ            dt
+                                                                                                           ¼ C1 IIk  k   x   R
+                                                                                                                          s V 2;k ;       k ¼ 1; 5
+  dt
+      R               X R R                        X R R
+    dIk                                                                                        3. Hybrid simulation of system with SVC DP models
+L        kxs LIIk ¼       ½Sm V n  SIm V In  þ       ½Sm V n þ SIm V In 
+    dt               m¼kn                        m¼nk
+                        X R R                                                                     The DP SVC hybrid s

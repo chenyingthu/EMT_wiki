@@ -1,0 +1,199 @@
+                                                       Electric Power Systems Research 223 (2023) 109585
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Sparse solver application for parallel real-time electromagnetic
+transient simulations✰
+B. Bruned a, *, J. Mahseredjian b, S. Dennetière a, A. Abusalah b, O. Saad c
+a
+  RTE, Jonage, France
+b
+  Polytechnique Montréal, Québec, Canada
+c
+  Hydro-Québec, Varennes, Québec, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          The main purpose of this research is to speed up real-time simulations of electromagnetic transients (EMTs) using
+EMT simulation                                     sparse linear solver techniques. This paper presents the integration of a direct sparse linear solver (KLU) into a
+Real-time                                          real-time software for EMT simulation. This solver is combined with parallelization of network solution. Fill-in
+Hardware-in-the-loop
+                                                   reduction techniques are investigated as well as partial refactorization to speed up computations. The pivoting
+Direct sparse linear solver
+Parallelization
+                                                   technique during refactorization is asserted in terms of simulation stability as compared to existing sparse solver
+Compensation method                                based on code generation without pivoting. Performance and validation are studied on practical power system
+                                                   cases with real-time Hardware-In-the-Loop (HIL) simulation. Substantial performance gains, up to 50%, are
+                                                   obtained using fill-in reduction and partial refactorization. Pivoting is necessary to maintain numerical stability.
+
+
+
+
+1. Introduction                                                                      to improve numerical performance. The nodal formulation of network
+                                                                                     equations involves the solution of sparse linear systems. Sparse LU
+    Energy Transition raises important challenges for grid operators to              decomposition is commonly used to solve such systems in EMT-type
+integrate renewable energy sources [1]. This involves more power                     software. Previous works [4] have studied and integrated an efficient
+electronics equipment in the grid and new interaction problems that                  sparse LU decomposition solver named KLU [11,12], for parallel offline
+must be simulated and studied. The circuit-based electromagnetic                     simulation. A modified version of KLU (MKLU) has been used to benefit
+transient (EMT) simulation approach is currently increasingly used to                from partial refactorization techniques.
+study the integration of renewable energy sources [2]. It is able to                      The first contribution of this paper is to integrate and test MKLU into
+deliver highly accurate computations. Moreover, real-time hardwar­                   the real-time environment HYPERSIM [5], as a replacement of an
+e-in-the-loop (HIL) EMT simulation can be used for accurate simulations              existing legacy sparse solver (GenCode) based on code generation. It is
+with actual controller replicas [1]. The computation time is an impor­               the first time that such a solver is integrated into an industrial real-time
+tant factor for HIL and parallelization of solution method is essential.             simulation environment. The second contribution is to identify the most
+    The traditional line-delay (LD) technique parallelization, is based on           efficient sparse solver techniques to speed up real-time EMT simulation:
+the propagation delay of transmission lines or cables. If this delay is              fill-in reduction, partial refactorization and pivoting strategy. All are
+greater than the numerical integration time-step, the network solution               available in MKLU. Fill-in reduction and partial refactorization are
+can be decoupled without any loss of accuracy. This technique has been               combined for best efficiency. The third contribution is to combine these
+implemented in both offline [3,4] and real-time environments [5].                    sparse solver techniques with parallelization techniques to speed up
+When there is no LD, other techniques have to be implemented. One of                 even more the simulation. Two kinds of parallelization technique are
+such techniques is the compensation method (CM) [6,7]. In recent works               used in this paper, namely LD and CM. The performance of MKLU is
+[8,9] the CM has been programmed and tested in real-time mode with                   compared with GenCode for practical power system cases.
+demonstrated advantages.                                                                  This paper is organized as follows. The integration of MKLU solver is
+    In addition to parallelization, sparse linear solvers [10] can be used           described in Section II. Through each step of the sparse linear solver,
+
+
+
+    ✰
+       Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+    * Corresponding author.
+      E-mail address: boris.bruned@rte-france.com (B. Bruned).
+
+https://doi.org/10.1016/j.epsr.2023.109585
+Received 8 December 2022; Received in revised form 9 February 2023; Accepted 21 June 2023
+Available online 13 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+B. Bruned et al.                                                                                                    Electric Power Systems Research 223 (2023) 109585
+
+
+speed-up techniques are identified (fill-in reduction, partial refactori­         factorized followed by the interface variables between the two graphs.
+zation). In Section III, a detailed comparison is performed between               Graph partitioning algorithms are used, like Metis [19] or Scotch [20].
+MKLU and GenCode on the impact of fill-in reduction, pivoting strategy            Nested Dissection amounts to formulating the solved matrix into a
+and real-time performance for practical power system cases with HIL.              bordered-block-diagonal form.
+
+2. Direct sparse linear solver                                                    2.2. Factorization
+
+   Using classic nodal (modified-augmented-nodal analysis is not                      Factorization is the main element of the resolution of a linear system
+available in HYPERSIM) formulation with companion circuit models,                 and consists in numerically factoring the sparse matrix into the LU form.
+network equations can be written in a linear form to be solved at each            Different strategies can be chosen regarding scaling, pivoting and
+time-point:                                                                       decomposition.
+Y n vn = in                                                            (1)            Scaling can be used to improve matrix conditioning. Scaling does not
+                                                                                  necessarily contribute in terms of accuracy and stability for the simu­
+where Y n is the admittance matrix of the network, vn the vector of node          lation of power systems. Indeed, as an example, switch modelling as
+voltages and in the known vector of current sources that include history          Ropen /Rclose resistors can create a wide range of values in the admittance
+term injections from companion circuit equivalents. For the nonlinear             matrix, in which case scaling can make things worse.
+case, a linearized Norton equivalent [3,13] is provided and updated at                The choice of pivot in the Gaussian elimination, is important for the
+each iteration. The linear system of (1) is generally sparse and Y n is not       stability of factorization. There are three strategies for pivoting. Without
+necessarily symmetric. Traditionally, direct LU sparse decomposition              pivoting the elimination is processed using the matrix diagonal ele­
+[10] is used to solve (1). It is preferred over iterative methods [14] for        ments. This can cause stability issues due to errors caused by large/small
+performance, robustness and predictability. The nodal admittance ma­              values in the matrix. The pivot may become invalid (close to zero) and
+trix is factorized as                                                             make the decomposition unstable.
+                                                                                      With partial pivoting, during factorization, the selected pivot is the
+Y n = Ln U n                                                           (2)        maximum absolute value of the considered column and allows to pre­
+    As well known, a forward substitution is first performed                      vent numerical instabilities. With full pivoting, the pivot is selected
+                                                                                  based on the maximum absolute value considering rows and columns.
+Ln xn = in                                                             (3)            Full pivoting is very rarely used. It is more expensive in terms of
+                                                                                  computing times and does not necessarily provide better stability for
+and followed by backward substitution
+                                                                                  power system matrices. Instead, partial pivoting is preferred. During
+Un vn = xn                                                             (4)        factorization, it is also possible to check if the previously calculated
+                                                                                  pivot is valid. If the pivot is still valid, there is no need to modify it.
+    As Y n is sparse, a sparse matrix format is adopted, using the standard
+                                                                                  Otherwise, a full factorization must be performed.
+Yale format (CSC) [15].
+                                                                                      The type of LU factorization may differ between solvers. Two main
+    Once the sparse matrix has been defined, the sparse linear system
+                                                                                  factorization strategies are used. In the right-looking [21] factorization,
+solution proceeds as follows: symbolic analysis, factorization, and so­
+                                                                                  the matrix is factorized from top left to bottom right. The left-looking
+lution (forward and backward and substitutions). The first two steps will
+                                                                                  approach [11,12] is more advantageous for sparse power system
+be detailed below, along with the integration of the KLU solver into a
+                                                                                  matrices. The matrix is factorized along the columns from left to right.
+real-time environment.
+
+                                                                                  2.3. Partial refactorization
+2.1. Symbolic analysis
+                                                                                       The following changes have been made in [4] to optimize the KLU
+    The symbolic analysis step memorizes the sparse structure of the LU
+                                                                                  solver (MKLU, modified KLU) for EMT simulations and parallelization.
+decomposition for the numerical factorizations. Indeed, the sparse
+                                                                                       The first one is the pivot validity test. If the pivot is no longer valid,
+structure of Y n remains fixed throughout the computation steps.
+                                                                                  the refactorization is stopped and a full factorization is performed. This
+Ordering methods are used during this phase to minimize fill-in. Indeed,
+                                                                                  avoids performing full factorization when the pivot remains valid in
+a permutation of the elements of the matrix is sought to reduce the
+                                                                                  switching networks.
+number of non-zero values in the factorization. The obvious objective is
+                                                                                       The second enhancement is partial refactorization. It is applied only
+to save time during the solution phase. Finding an ordering is to
+                                                                                  on the values of the matrix which have changed. First, fill-in reduction
+compute permutation matrices Pn and Qn such as:
+                                                                                  ordering is applied to Y n . Then, at each time-step, the minimal column
+∼
+                                                                       (5)        index, , where there is a value change in Y n , is computed. Benefiting
+Y n = Pn Y n Qn
+                                                                                  from the left-looking LU decomposition, refactorization is only pro­
+                                               ∼                                  ceeded for columns between nchg and (size of Y n ). This technique is
+where the fill-in of the LU decomposition of Y n is less than Y n .
+                                                                                  named, hereinafter, RefactChg.
+   There are two main families of ordering methods to reduce fill-in
+                                                                                       In order to make nchg as high as possible at each solution time-point,
+[10]: local and global methods. One the most used local methods is
+                                                                                  it is possible to order first the nodes which belong to linear elements and
+the minimum degree [16] ordering. It selects at each stage of Gaussian
+                                                                                  then the ones which come from time-varying elements (switches or
+elimination the node which has a minimum number of neighbors (if the
+                                                                                  nonlinear elements). Eq. (6) below depicts this ordering.
+sparse matrix is seen as a graph). This method has been applied to
+                                                                                          [          ]
+electrical networks and showed its effectiveness in the symmetrical case.                   Yf Yf v
+The approximate minimum degree ordering (AMD) method [17] is an                    Yn =                                                                      (6)
+                                                                                            Y vf Y v
+improvement. Other ordering techniques have been used in solvers like
+COLAMD (Column Approximate Minimum Degree) [18].                                     Where Y f is the fixed part of Y n , Y v contains the time-varying ele­
+   Global methods are based on Nested Dissection [10] which applies               ments of Y n and is determined only for Y v . This technique is named,
+the principle of divide-and-conquer heuristics. The graph associated              hereinafter, RefactVar. It is noticed that it can conflict with the fill-in
+with the sparse matrix is partitioned into sub-graphs. By following the           reduction ordering, since it can break the fill-in optimization. To
+recursive structure of the partition (binary tree), the two sub-graphs are        resolve this conflict between the two ordering approaches (fill-in
+
+                                                                              2
+B. Bruned et al.                                                                                                              Electric Power Systems Research 223 (2023) 109585
+
+
+reduction and partial refactorization), RefactVarOpt method is intro­                   3. Performance and validation analysis
+duced in this paper. It proceeds by creating (6) and then applying fill-in
+reduction only on Y f . The efficiencies of RefactChg and RefactVarOpt                      Two sparse linear solvers are tested in this section: the legacy solver
+are compared below.                                                                     GenCode and MKLU with RefactChg and RefactVarOpt. Table 1 sum­
+    The limitation of partial refactorization used in this section is that all          marizes the characteristics of each solver. The performances are
+columns from nchg to n have to be refactorized although only few of                     compared in terms of fill-in reduction, partial refactorization efficiency,
+them may need it. Possible improvements based on [22,23] are left for                   pivoting and real-time performance on HIL setup. The applied paralle­
+further works.                                                                          lization techniques are listed in Table 2.
+
+2.4. Integration into parallel real-time environment                                    3.1. Fill-in reduction performance
+
+     Two parallelization techniques are considered in real-time mode.                       Fill-in reduction is tested on two large linear distribution networks.
+The first one is delay-based. Network analysis identifies the decoupling                    Case-1 is the Xavier distribution network [8], with 619 nodes. The
+elements which are the power transmission lines (or cables) with                        simulation interval is 1 s with a time-step of 50 μs, for studying a
+propagation delays higher than the numerical integration time-step.                     single-phase-to-ground fault.
+Stublines with artificial delays can be inserted for artificial decoupling                  Case-2 is the GHOST microgrid case from [25] with 663 nodes. The
+when actual lines do not exist. Then, an automatic task mapper assigns                  simulation interval is 90 s with a time-step of 100 μs to simulate a grid
+subnetworks with their control system equations to processor units [24].                fault that provokes an islanded mode.
+Each subnetwork is solved independently using the selected sparse                           For these two networks, the main computation effort is on the so­
+solver.                                                                                 lution part (backward and forward substitution). Very few refactoriza­
+     The second parallelization technique is CM, which has been recently                tions are required for each case. As there are no natural propagation
+tested in real-time [8,9] simulations. It does not create inaccuracies as               delay lines for parallel decoupling, the CM is used to accelerate the
+with stublines and delivers a simultaneous solution for network equa­                   simulation. Table 3 presents the maximum sizes of subnetwork admit­
+tions. The Fig. 1 recalls th

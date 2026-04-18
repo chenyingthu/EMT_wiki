@@ -1,0 +1,189 @@
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 40, NO. 1, MARCH 2025                                                                                       437
+
+
+
+
+           Low-Dimensional Equivalent Models and
+         Multithreading-Based Parallel EMT Simulation
+              Method for Multi-Converter Systems
+                   Mingwang Xu , Graduate Student Member, IEEE, Wei Gu , Senior Member, IEEE,
+                Yang Cao , Graduate Student Member, IEEE, Shuaixian Chen, Fei Zhang , Member, IEEE,
+                                         and Wei Liu, Senior Member, IEEE
+
+
+   Abstract—As the proportion of renewable energy generation in                    of voltage source converters (VSCs) have increased signifi-
+the grid increases, the number of voltage source converters (VSCs)                 cantly, such as large-scale renewable energy power station con-
+has grown significantly. It is therefore of great importance to study              taining multi-VSC [1], [2], [3]. For the design and operation of
+the multi-VSC systems using electromagnetic transient (EMT)
+simulation. This paper presents a novel approach to modeling                       multi-VSC circuits, the simulation demand for it is becoming
+multi-VSC circuits, comprising EMT low-dimensional equivalent                      increasingly prominent. Electromagnetic transient (EMT) sim-
+models and a multithreading-based parallel simulation method.                      ulation plays an indispensable role to study these issues [4].
+The decoupling between the VSC from the AC grid is initially                          However, there are some difficulties in modeling and EMT
+achieved through the adoption of semi-implicit hybrid integration.
+                                                                                   simulation of multi-VSC circuits, which are mainly reflected in
+This is followed by the synthesis of the equivalent circuit for each
+phase, which results in the derivation of low-dimensional equivalent               the following aspects [5]. Firstly, multi-VSC containing large
+models of multi-VSC circuits. In addition, a parallel simulation                   number switching devices often operate in parallel through the
+algorithm for the VSC is proposed, which enables parallel solution                 AC-bus, which brings a high dimensionality and time-varying
+and the update of internal/external node voltages and historical                   nodal admittance matrix. In turn, this leads to their EMT sim-
+current sources. Subsequently, the design and implementation of                    ulation is not efficient, and the trade-off between simulation
+the parallel algorithm is achieved by means of an OpenMP-based
+simulation framework. Furthermore, a physical experimental plat-                   accuracy and efficiency is worthy of further study in this case.
+form is established. The simulation results demonstrate that the                   Thus, an efficient equivalent model needs to be studied; sec-
+proposed model is capable of achieving more than 80 times acceler-                 ondly, the DC side of multi-VSC can be not interconnected,
+ation in serial mode due to the decoupling and low-dimension when                  such as individual PV power units (PVPUs) in a large-scale
+applied in a grid-connected 100-megawatt photovoltaic power sta-                   PVPS. Besides, they can also be connected in parallel on the
+tion (PVPS), and can obtain 2-3 times secondary acceleration in
+parallel mode with almost uncompromising accuracy.                                 DC-side, such as the back-to-back flexible high voltage direct
+                                                                                   current (HVDC) transmission systems, so there is an urgent
+   Index Terms—EMT modeling and parallel simulation, power                         need to study generalized equivalent models that can be adapted
+electronic converters, decoupling, low-dimensional equivalent
+circuits of multi-VSC, OpenMP technology, simulation efficiency.
+                                                                                   to different scenarios; finally, a high-precision and efficiency
+                                                                                   equivalent model that can account for both internal and external
+                                                                                   characteristics of the multi-VSC circuits remains to be studied.
+                            I. INTRODUCTION
+A. Motivation                                                                      B. Literature Review
+          ITH the development of modern power grid and large-                         For the modeling method of converter, the current research
+W         scale renewable energy connected to grid, applications                   mainly includes the modeling of switching device and the
+                                                                                   equivalent modeling of converter. Among them, the switching
+                                                                                   devices in PSCAD/EMTDC and some other platforms adopt
+   Manuscript received 2 January 2024; revised 8 May 2024; accepted 29 June
+2024. Date of publication 4 July 2024; date of current version 21 February 2025.   the Ron /Roﬀ model, but the time-varying admittance matrix will
+This work was supported by the Science and Technology Project of State Grid        restrict its simulation efficiency and is not suitable for research
+Corporation, Key Technologies and Application of Digital Twin for Distribution     occasions with a large number of power electronic switches [6].
+Network with High DG Penetration under Grant 5400-202255154A-1-1-ZN.
+Article no. TEC-00004-2024. (Corresponding author: Wei Gu.)                        The L/C-associated constant admittance model is widely used in
+   Mingwang Xu, Wei Gu, Yang Cao, Shuaixian Chen, and Fei Zhang are with the       real-time simulation platforms such as RT-LAB and RTDS and
+School of Electrical Engineering, Southeast University, Nanjing 210096, China      some real-time simulators based on FPGA [7]. In order to solve
+(e-mail: 230228745@seu.edu.cn; wgu@seu.edu.cn; 230228738@seu.edu.cn;
+220232912@seu.edu.cn; zhangfei@seu.edu.cn).                                        the problem of power loss in the L/C model, a general modeling
+   Wei Liu is with the School of Automation, Nanjing University of Science and     method based on response matching is proposed in [8], which
+Technology, Nanjing 210094, China (e-mail: wliu@njust.edu.cn).                     perform well in real-time simulation. Besides, compensation
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TEC.2024.3422080.                                          current source is proposed to use in [9]. In [10], RTDS developed
+   Digital Object Identifier 10.1109/TEC.2024.3422080                              and launched the universal converter model (UCM). The model
+                         0885-8969 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:07:00 UTC from IEEE Xplore. Restrictions apply.
+438                                                                             IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 40, NO. 1, MARCH 2025
+
+
+
+uses a state space modelling method to solve the two-terminal                   by parallel simulation. According to the semi-implicit delay
+circuits of the converter in strict tandem, eliminating the delay               decoupling algorithm, the decoupling of the AC and DC sides
+problem of the traditional controlled source algorithm.                         of the VSC circuit has been realized in [32], which has high
+   In the aspect of VSC equivalent modeling, the equivalent low-                simulation accuracy, but could not reflect the information of
+order models of modular multilevel converter (MMC) and power                    the internal nodes. Besides, a semi-implicit parallel leapfrog
+electronic transformer (PET) are proposed in [11], [12], [13].                  solver with half-step sampling technique is proposed in [33],
+However, the modeling of multi-VSC is quite different from                      which is similar to the LIM in solving procedure. However, it is
+that due to the different connection ways between module ports.                 evident that none of the aforementioned methodologies provide
+   The traditional average model (AVM) constructs the state                     an explanation for the introduction of half-step delays in the
+equation of VSC by averaging the switching period [14], [15].                   LIM.
+It ignores the switching action and can greatly improve the                        A general high-speed equivalent EMT modeling method of
+simulation efficiency, but its accuracy is not high and it can only             PET and MMC are proposed in [34], [35], respectively. This
+describe the average external characteristics. In order to improve              method originates from the nested fast and simultaneous solution
+the AVM, switching frequency dependent averaged models for                      (NFSS) in [36]. The internal nodes are eliminated by the node
+DC-DC converters are proposed in [16], which can improve                        elimination method (NEM) to obtain the two-port equivalent
+the accuracy of steady-state. Besides, a piecewise average-value                circuit of PET. However, VSC is not a strict two-port network
+model of PWM two-level VSC (2L-VSC) is proposed in [17].                        and the connection mode of the two circuits are quite different.
+A VSC model based on pulse voltage-current source pair is                       Therefore, this method is not suitable for the equivalent model-
+proposed in [18], and the corresponding solution algorithm                      ing of multi-VSC circuits.
+is designed. The presented model is suitable for the systems                       In general, the existing research is still inadequate in the
+with multi-VSC, but the switch is treated as an ideal switch                    following respects:
+and the on-resistance is ignored. In general, the above models                     1) The decoupling method, such as LIM, often requires
+cannot reflect device-level issues and meet the requirements of                       specific prerequisites and lacks generalized decoupling
+high-precision simulation in various scenarios. An FPGA-based                         method.
+partitioning method is proposed in [19] to enable simulation                       2) Equivalent models are not considered according to the
+of multiple VSCs to achieve real-time simulation on FPGAs                             connection ways between multi-VSC, and there is a lack
+without losing accuracy. The method proposed in the literature                        of EMT equivalent models suitable for different scenarios.
+for the converter part is the sub-network method, which solves                     3) The general parallel simulation method suitable for multi-
+the subsystem after the sub-network in parallel. In [20], an                          VSC circuits remains to be investigated.
+admittance-based modelling method of power-electronic-based
+energy conversion systems is presented. This method can reduce
+the number of nodes, but it does not consider the decoupling
+between the voltage source converter (VSC) and the grid, so                     C. Contribution and Organization
+there is still scope for improvement.                                              This paper presents a novel approach to modeling multi-VSC
+   In [21] and [22], a parametric AVM is proposed which can                     circuits, comprising EMT low-dimensional equivalent models
+provide high accuracy, numerical stability and fairly large time-               and a multithreading-based parallel simulation method. The
+steps without decoupling, but the parallelism feature is lost. The              main contributions of this paper are as follows:
+event-driven simulation framework is proposed in [23], [24],                       r The implementation of a semi-implicit hybrid integration
+which is a novel simulation mechanism and has advantages in                          algorithm at the filter enables decoupling between the VSC
+simulation efficiency and hardware resource. In addition, some                       and the grid, thus facilitating parallel solving.
+large-step simulation methods based on shifted frequency are                       r A low-dimensional equivalent circuit of a three-node VSC
+proposed in [25], [26], [27]. However, all of those large time-                      has been derived, as well as the equivalent circuit of a multi-
+steps methods need to be improved in parallelism.                                    VSC for various scenarios.
+   The latency insertion method (LIM) is a semi-implicit frog-                     r A parallel simulation algorithm is proposed as a means
+hopping method of differencing the basic structural units of                         of overcoming the highly serial defect of the NEM for
+additional inductor and additional capacitor to ground, which                        VSC. Furthermore, a parallel simulation framework based
+allows the solution of the branch currents and node voltages to                      on OpenMP has been designed and implemented for multi-
+be decoupled from each other by a half-step delay, thus enabling                     VSC circuits.
+fine-grained parallelism at branch level [28], [29], [30]. Never-                  r In the context of serial solving mode, this paper examines
+theless, the introduction of additional inductor and capacitor                       the acceleration space of decoupling and low-dimension,
+alters the dynamic characteristics of the system, necessitating                      with a view to identifying which of these dominates accel-
+the use of a simulation time-step that is limited to nanoseconds                     eration under different PVPUs.
+or sub-microseconds. This, in turn, has a significant impact                       This paper is organized as follows. Section II illustrates the
+on the overall efficiency of the simulation. A sub-microsecond                  decoupling between VSC and AC-grid based on semi-implicit
+microgrid simulation method is proposed in [31], which can                      hybrid integration. Section III and Section IV elaborate on the
+realize the decoupling of distributed generation system based                   equivalent circuits of VSC and multi-VSC circuit, respectively.
+on the LIM, and the simulation efficiency can be improved                       The parallel framework of low-dimension models is proposed
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:07:00 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: LOW-DIMENSIONAL EQUIVALENT MODELS AND MULTITHREADING-BASED PARALLEL EMT SIMULATION METHOD                                                    439
+
+
+
+in Section V. Section VI discusses the simulation accuracy and
+efficiency. Finally, Section VII presents the conclusion.
+
+  II. DECOUPLING BETWEEN VSC AND AC-GRID BASED ON
+           SEMI-IMPLICIT HYBRID INTEGRATION
+   The operation of multi-VSC in parallel through the AC grid re-
+sults in a time-varying and high-dimensional admittance matrix
+for the overall circuit, which significantly impairs the simulation
+efficiency. In this paper, the multi-VSC system is modeled
+through the concept of decoupling and equivalent modeling.
+
+A. Decoupling Based on Semi-Implicit Hybrid Integration                          Fig. 1.   Topology of multiple 2L-VSCs circuit.
+
+   This paper outlines two purposes of decoupling: firstly, to
+reduce the size of the overall admittance matrix and thereby
+facilitate EMT simulation acceleration; secondly, to facilitate
+the equivalent modeling of each VSC independently, which will
+be illustrated in Section III.
+   The decoupling between VSC and AC-grid at the filter based
+on semi-implicit hybrid integration (trapezoidal and central inte-
+gration) is achieved. Since the principle of half-step time-delay
+                                                                                 Fig. 2.   Schematic diagram of decoupling and parallel computing.
+is not indicated in the LIM, an attempt has been made to
+explain the half-step time-delay between state variables through
+semi-implicit hybrid integration.
+                                                                                   The subsystem is divided into two groups, x1 and x2 , without
+   The state equation for the linear system can be expressed as.
+                                                                                 any loss of generality. The (5) can obtained.
+                      ẋ (t) = Ax (t) + Bu (t)                            (1)                                                                
+                                                                                     xn+1
+                                                                                       1            η 1 xn1        λ1 f 1 x 2
+                                                                                                                             n+1/2
+                                                                                                                                    , u1
+                                                                                                                                        n+1/2
+
+  By splitting the state-matrix A and integrating (1), we can                         n+1/2 =          n−1/2 +                                  (5)
+                                                                                    x2           η 2 x2                  λ2 f2 (xn1 , un2 )
+obtain (2).
+                                                                                In such a scenario, the decoupling between the VSCs and the
+            ẋi (t) dt + D i xi (t) dt                                           AC grid can be achieved, as illustrated in Fig. 1.
+                                                                                  The state equation of L/C at the filter can be expressed as
+                      N
+                                                   
+             =                  Aβ,ij xj (t) dt +        ui (t) dt        (2)
+                                                                                                    di
+                                                                                              Lgm dtgm             0     1      igm   −ugm
+                                                                                                        =                           +                   (6)
+                     j=1,i=j                                                                 Cm dudtCm           −1 0          uCm    iLm
+where N represents the number of subsystems divided by the                          The state equation discretized by trapezoidal and central
+original system; D is the diagonal matrix and Aβ is the non-                     integration at the filter can be expressed as
+diagonal matrix; xi and xj are the state variables corresponding                           ⎧                                               
+                                                                                                               Lgm n        n+ 12     

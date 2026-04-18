@@ -1,0 +1,255 @@
+DOI:10.13334/j.0258-8013.pcsee.2005.16.001
+
+
+
+
+          第 25 卷 第 16 期                                       中 国 电 机 工 程 学 报                                   Vol.25 No.16 Aug. 2005
+           2005 年 8 月                                           Proceedings of the CSEE                         ©2005 Chin.Soc.for Elec.Eng.
+          文章编号：0258-8013（2005）16-0001-07                         中图分类号：TM76             文献标识码：A             学科分类号：470·40
+
+
+
+                   含统一潮流控制器装置的电力系统动态混合
+                         仿真接口算法研究
+                 刘皓明 1，朱浩骏 2，严                                  正 3，戚庆茹 4，李                      扬 1，蔡泽祥 5，倪以信 6
+                     （1. 东南大学电气工程系，江苏省 南京市 210096；2．清华港大深圳电力系统研究所，
+                          广东省 深圳市 518055；3．上海交通大学电气工程系，上海市 徐汇区 200030；
+                                       4．北京国电华北电力工程有限公司，北京市 海淀区 100084；
+                   5．华南理工大学电力学院，广东省 广州市 510640；6．香港大学电机电子工程系，香港）
+
+
+                    STUDY ON INTERFACE ALGORITHM FOR POWER SYSTEM TRANSIENT
+                       STABILITY HYBRID-MODEL SIMULATION WITH UPFC DEVICE
+                      LIU Hao-ming1, ZHU Hao-jun2, YAN Zheng3, QI Qing-ru4, LI Yang1, CAI Ze-xiang5, NI Yi-xin6
+                                      （1．Southeast University, Nanjing 210096, Jiangsu Province, China;
+               2．THU-HKU Shenzhen Power System Research Institute, Shenzhen 518055, Guangdong Province, China;
+                                   3．Shanghai Jiaotong University, Xuhui District, Shanghai 200030, China;
+                             4．North China Power Engineering Co., Ltd, Haidian District, Beijing 100084, China;
+                        5．South China University of Technology, Guangzhou 510640, Guangdong Province, China;
+                                               6．The University of Hong Kong, Hong Kong, China）
+
+
+          ABSTRACT: A new hybrid simulation algorithm of                           asymmetrical faults in interconnect power system including
+          alternative iteration is introduced to handle the interface              FACTS devices.
+          between the UPFC and the power network. Dynamic phasors
+                                                                                   KEY WORDS: Power system; Transient stability; Hybrid
+          method in modeling UPFC is discussed, and then UPFC
+                                                                                   simulation; Interface algorithm; Dynamic phasors; UPFC
+          control system is also analyzed. Terminal voltage control and
+          firing angle control of converter are adopted to keep constant           摘要：提出了一种新的含 UPFC 装置的电力系统动态混合仿
+          the UPFC terminal bus voltage magnitude and the UPFC DC                  真接口算法，算法中对 UPFC 采用动态相量建模，对电力系
+          capacitor voltage respectively in shunt side control, and also           统网络则采用成熟的机电暂态仿真。仿真中 UPFC 并联侧采
+          terminal voltage control and firing angle control of converter           用定交流母线电压控制和定直流电容电压控制，串联侧采用
+          are used to keep constant the real power and reactive power of           定线路潮流控制。文中推导了 UPFC 的动态相量模型，讨论
+          the line in series side control. First results show the                  了与网络机电暂态模型的接口算法。研究分析和算例仿真表
+          approximate precision between dynamic phasors model and                  明：使用动态相量建模可精确地仿真 UPFC 的电磁暂态
+          electromagnetic transient; second results on 2-area system               （EMT）过程，且仿真速度快；文中所提混合仿真方案能
+          show the prop osed UPF C d ynami c model and the                         保证较快的仿真速度和优良的仿真精度，具有较好的收敛
+          UPFC-network interface work very well in system transient                性，且可用于含 UPFC 等 FACTS 装置的系统发生不对称故
+          stability analysis. Moreover, the proposed hybrid simulation             障时的暂态稳定分析。
+          scheme would be efficient in transient stability analysis with
+                                                                                   关键词：电力系统；暂态稳定；混合仿真；接口算法；动态
+               基金项目：国家自然科学基金项目(50337010)；国家重点基础研究                                  相量；统一潮流控制器
+          专项经费项目(2004CB217900)；香港政府大学研究基金资助项目(CityU
+          1/00C)。                                                                  1   引言
+               Project Supported by National Natural Science Foundation of China
+          (50337010)；Project Supported by Special Fund of the National Priority      根据物理模型的不同，电力系统时域仿真可分
+          Basic Research of China (2004CB217900)．                                  为电磁暂态(EMT)仿真和机电暂态仿真 2 种类型。
+
+
+
+
+PDF 文件使用 "pdfFactory Pro" 试用版本创建 www.fineprint.com.cn
+     2                       中 国 电 机 工 程 学 报                                            第 25 卷
+
+     电磁暂态仿真对电机定子绕组及网络 LC 元件采用           献[9]未考虑 UPFC 直流电容器的动态行为；
+                                                               文献[10]
+     微分方程描述，计及了快速电磁暂态过程，可精确             基于单机无穷大系统论述了对 UPFC 的优化控制；
+     地模拟含有 FACTS 或 HVDC 装置的复杂系统中各       文献[11]较详细的讨论了 UPFC 的动态模型，并引
+     种元件(包括电子开关)的快速暂态过程，但计算步            入交替迭代法实现了 UPFC 与系统之间的接口处
+     长小，计算量大，仿真速度慢，且难以适应大系统             理，但文献[9-11]对 UPFC 的讨论均基于基波准稳
+     分析[1]；机电暂态仿真则对电机定子绕组和网络 LC         态模型；文献[12]虽使用动态相量法建立了 UPFC
+     元件采用代数方程描述，忽略了快速电磁暂态过              的动态模型，但未与大规模电力系统接口；文献[13]
+     程，并对 FACTS 和 HVDC 装置的换流部分采用准       使用动态相量法建立了可用于三相不平衡运行的
+     稳态模型，因此不能准确地描述这些电力电子装置             UPFC 动态模型。
+     的快速暂态过程，影响了仿真精度，但能适应大系                 本文提出了一种基于 UPFC 动态相量模型和交
+     统的机电暂态仿真分析且仿真速度快[2]。在某些情           流电力系统机电暂态模型的混合 仿真方案，对
+     况下，单一地使用传统的电磁暂态仿真程序或机电             UPFC 装置的子系统采用基于动态相量模型的仿
+     暂态仿真程序，已难以同时满足现代电力系统仿真             真，对交流电力系统采用传统的机电暂态模型。在
+     对精度、快速性和大系统仿真的要求。对电力电子             导出 UPFC 的动态相量模型的过程中，使用开关函
+     器件采用 EMT 模型、对电力系统其它元件采用机           数表示双换流器桥臂的开关状态[14-15]，进而给出了
+     电暂态模型的混合仿真(Hybrid Simulation)汲取了   UPFC 的控制策略，讨论了混合仿真的接口算法和时
+     两者的优点，协调了精度和速度的矛盾，是一个具             域仿真步骤。最后通过 2 个算例来分别验证动态相
+     有实用意义的发展方向[3-5]。                   量模型的暂态过程仿真的精度和速度以及本文所提
+         随着 FACTS 和 HVDC 等设备在电力系统中的     出的混合仿真算法的有效性。文中所建议的混合仿
+     应用越来越广泛，系统中需要考虑快速动态过程的             真方案可进一步发展用于含 FACTS 装置的电力系统
+     电力电子设备越来越多，混合仿真中若对这些设备             发生不对称故障的暂态稳定分析中，从而为含电力
+     完全采用电磁暂态模型仍会带来较大的计算量，因             电子设备的互联电力系统仿真提供了一种新方法。
+     此，从大规模电力系统分析的需要出发，应当考虑
+     采用介于电磁暂态和机电暂态之间的模型来仿真
+                                        2   UPFC 的动态相量模型
+     电力电子设备，使之和传统的机电暂态仿真模型接             2.1 动态相量的概念
+     口时，既具有良好的工程精度，又具有快速的分析                 动态相量法以时变 Fourier 变换为基础，对于
+     能力，并能适应大系统时域仿真分析。电力电子装             时域中以 T 为周期的函数 x(τ)，在任一区间τ∈(t−T,t]
+     置的动态相量模型正是属于这一类的仿真模型[6-9]，         中，其时变 Fourier 级数可表示为[16]
+                                                                    ∞
+     它基于反映元件动态特性的状态变量对应的时变
+                                                       x(τ ) = ∑ X k (t )e jkω sτ           (1)
+     Fourier 系数，并根据物理问题的特点提取必要的分                               k =−∞
+
+     量以保证精度来模拟电力电子装置的快速动态行              式中 ωs=2π/T；Xk(t)为一系列时变 Fourier 系数，
+     为。由于其不受基波准稳态假设的限制并可方便地             称之为动态相量。
+     考虑电力电子开关元件对 Fourier 变量系数的影响，         不同阶数 k 的 Fourier 系数称为不同的相，其第
+     而且基于动态相量理论导出的一系列建模规则可              k 次系数，或称第 k 阶相量可由式(1)导出为
+                                                                              ∆
+     显著地加快建模和分析的速度，因此，电力电子装                            1 t
+                                             X k (t ) = ∫ x (τ )e − jkω sτ dτ = x k (t ) (2)
+     置采用动态相量模型并和传统机电暂态稳定程序                             T t −T
+     接口，是分析大规模电力系统暂态稳定仿真的一个             这里的相量都为复数表示，并具有以下关系（以基
+     有潜力的途径并且得到了广泛的研究。                  波相量为例）       ：
+                                              x 1 = x 1 + j x 1 = x −1 = ( x −1 + j x −1 )* (3)
+                                                       r        i       *           r   i
+          UPFC 是 FACTS 家族中最有代表性的串、并联
+     复合型电力电子装置之一，它可以用来进行多种控             式中 上标 r 和 i 分别为实部和虚部；“*”表示复
+     制，包括潮流和电压控制，能提高系统的暂态稳定             数共轭。
+     性、抑制系统的低频振荡。目前对含 UPFC 的电力            动态相量具备以下 2 个重要特性：
+     系统动态特性仿真模型的研究正深入进行[9-13]。文           （1）相量微分特性。对于第 k 阶 Fourier 系数，
+
+
+
+
+PDF 文件使用 "pdfFactory Pro" 试用版本创建 www.fineprint.com.cn
+     第 16 期                 刘皓明等： 含统一潮流控制器装置的电力系统动态混合仿真接口算法研究                                                                                            3
+
+     其微分形式应满足                                               见，图中将 i(t)、v(t)简写为 i 和 v。
+                                                                         .                                                                      .
+              d xk       dx                                             Iu1
+                                                                                                                                    − V.pq + Iu2
+                  (t ) =      (t ) − jkω s x k (t )   (4)
+               dt        dt k                                      .
+                                                                   Vs         T1    IE
+                                                                                      . VSC-E                       VSC-B . n2:1
+                                                                                                                          IB
+                                                                                                                                              jXT2 .
+                                                                                                                                                   VR
+                                                                                                                                 T2
+       （2）相量乘积特性。对于 2 个波形 x(t)和 q(t)，                              jXT1
+                                                                                    .                        +               .
+                                                                                   VE         Cdc             Vd            VB
+                                                                                                             −
+     其时域乘积的动态相量可由 2 个变量对应的动态相                                                 1:n1    mE    δE                     δB          mB
+     量卷积而得，即                                                                                          控制器
+
+                          xq k = ∑ x k −i q i         (5)                              参考信号                        测量信号
+
+                                 i                                                   图 1 UPFC 结构简图
+                                                                              Fig. 1 Schematic diagram of UPFC
+        动态相量法基于频率分解的思想，希望仅保留
+                                                                                                    iEdc                iBdc
+                                                                                                             G
+     时变 Fourier 级数中相对较大的系数来近似原始信
+                                                                                       rs                                           rs
+     号，以抓住系统的主要特征。将保留的这些系数对                                                                            idc
+                                                                                            SEa                            SBa
+     应的相量看作系统变量，即可得到系统的动态相量                                                    iEa    vEa                        +                  vBa iBa
+                                                                                            E          Cdc         vdc         B
+                                                                                                                 −
+     模型，且可保留原时域模型的非线性。                                                                      SEa
+                                                                                                ′
+                                                                                                                           SBa
+                                                                                                                               ′
+
+
+         根据电力系统参数的特征和待研究问题的情                                                           rs                                           rs
+     况，在电力电子换流器建模过程中往往保留 Fourier                                                                             H
+     系数中对应的基频分量(ac 侧)和直流分量(dc 侧)，                                                    图 2 UPFC a 相等值电路图
+                                                                  Fig. 2             Equivalent circuit of phase a of UPFC
+     即 1 阶和 0 阶动态相量系数，再和采用传统模型的
+     其他元件接口。动态相量本身可为状态量，分析中                                      图 2 中，S Ea , S E' a 分别为并联侧 a 相 2 个桥臂的
+     计及其动态行为。动态相量建模方法中引入开关函                                 开关函数(开断为 0，闭合为 1)，满足 S Ea + S E' a = 1 。
+     数，特别适用于含晶闸管元件等电力电子设备的建                                 根据图 2 可得并联侧方程为
+     模，比传统的准稳态建模方法优越。                                          vEa = vEaH + vHn =
+                                                                                                                                                         (6)
+       在多相不平衡的系统中，动态相量也可以分相                                                    [(iEa rs + vdc ) ⋅ S Ea + (iEa rs ) ⋅ S E' a ] + vHn
+     建模，以用于三相不对称故障 HVDC 及换相失败等                              式中 n 为三相电力系统中性点、电压参考点。
+     不平衡快速暂态过程的建模。本文主要针对的是三                                   若系统交流侧满足三相平衡，则可推导得
+                                                                           1
+     相平衡系统的建模，由此可推广到三相不平衡状态                                         vHn = − vdc ∑ S Ej (7)
+     的分相建模。                                                                3 j = a,b,c
+     2.2 UPFC 的动态相量模型                                       将式(7)代入式(6)，计及 S Ea + S E' a = 1 ，可得
+         UPFC 由 2 个背靠背电压源换流器（VSC）构                                                           1
+                                                                  vEa = iEa rs + vdc ⋅ S Ea − vdc ∑ S Ej                                                (8a)
+     成，共用直流侧电容，其等效结构电路如图 1 所示。                                                               3 j = a,b,c
+     换流器 1VSC-E 通过变压器 T1 并联接入系统，换                           与此相同，可以列出串联侧方程为
+     流器 2VSC-B 通过变压器 T1 串联接入系统。                                                             1
+                                                                vBa = −iBa rs + vdc ⋅ S Ba − vdc ∑ S Ej                                                 (8b)
+         图 1 中， V 和 V 分别为 UPFC 并联侧和串联
+                      E      B
+                                                                                            3 j =a,b,c
+     侧的交流端口基波电压； IE 和 IB 分别为并联侧和                          此外，直流电容动态方程为
+                                                               dv
+     串联侧的交流端口基波电流。                                          Cdc dc = idc = iEdc − iBdc = ∑ (iEj S Ej − iBj S Bj )                                        (9)
+                                                                dt                       j = a,b,c
+       在下面的模型推导中，假定 UPFC 中的交流与
+     直流参数已标幺化，同时假设：                                         式(7)~(9)中的开关函数 SEj 和 SBj (j=a,b,c)一般情况
+       （1）交流电力网络中的电压电流满足三相平                                 下为周期函数，         其瞬时值与 PWM 的控制策略有关。
+     衡条件，为工频正弦波；                                            用每一个开关周期内 SEj 波形的直流和基波分量对
+       （2）桥臂为理想阀元件，正向漏电流为 0；                                应的瞬时值来代替 SEj，            可导出如下 dEj 来代替式(8)、
+                                                                         [14]
+       （3）各桥臂的参数(电阻、电抗)平衡，且桥臂                               式(9)中的 SEj ：
+     电抗已折算到相应侧变压器参数 XT1 和 XT2 中。                                d Ej = (mE / 2) cos(ω t − δ E − σ j ) + 1/ 2 (10)
+       由于三相平衡，这里仅以 a 相为参考相进行推                               式中      σa=0；σb=2π/3；σc=4π/3；δE 为并联侧换流
+     导，UPFC 的 a 相等值电路如图 2 所示。为简单起                           器触发滞后角，对于串联侧换流器，其触发滞后角
+
+
+
+
+PDF 文件使用 "pdfFactory Pro" 试用版本创建 www.fineprint.com.cn
+     4                                                   中 国 电 机 工 程 学 报                                                                                  第 25 卷
+
+     则为δB。同理可以导出 dBj 表达式代替 SBj。设串、                                  压的控制。本文采用的控制目标是维持 UPFC 交流
+     并联 VSC 元件采用 PWM 调制控制，则有交、直流                                    侧送端母线电压幅值 VS、直流侧电容电压幅值 Vd
+     侧电压关系为                                                         及线路有功潮流 PL、无功潮流 QL 恒定，相应的参
+                            VE = mEVd                              考值为 VSref、Vdref、PLref 和 QLref。
+                                                            (11)
+                            VB = mBVd                                UPFC 并联侧的基本控制策略是通过控制交流
+     式中     mE、mB 分别为并、串联侧换流器调制比。                                   输出电压 V 幅值的大小和相位来控制其输出电流，
+                                                                                           E
+
+          将上述时域方程转化为动态相量方程。在保证                                      实现无功补偿，以支撑母线电压幅值，并通过维持
+     系统一定精度的条件下，本文做如下 3 个假设：                                        电容器电压恒定为串联侧提供所需的有功。本文中
+          （1）交流侧电流只考虑基频分量；                                          UPFC 并联侧定交流电压母线控制和定直流电压控
+          （2）直流电压只考虑直流分量；                                           制可用 1 阶惯性环节近似描述，如图 3 所示。输出
+          （3）对于开关函数，应考虑直流分量和基频量。                                    信号为调制比 mE 和触发角δE，其中δE 为并联侧换
+          由此则可求得 a 相 SEa 对应的 dEa 的 0 阶和 1 阶                         流器输出电压 V 滞后于母线电压 V 的角度，即      E                                         S
+
+     动态相量为                                                                                               θE = θS − δ E                                         (14)
+                        d Ea 0 = 1/ 2                                   将 UPFC 串联侧的串联注入电压 Vpq 分解为与
+                                            jθ
+                         d Ea 1 = ( mE / 4)e E              (12)   端电压 VS 同相的分量 Vq 和正交的分量 Vp ，Vq 和 Vp
+                                               − jθ E              叠加于 Vs 可以调节 Vs 的幅值和相位，从而实现定线
+                         d Ea −1 = ( mE / 4)e
+                                                                    路潮流控制，如图 4 所示。输出信号为调制比 mB 和
+          与此类推，b、c 相的推导与 a 相类同，此处从略。
+                                                                    触发角 δ B ，其中，δ B 为串联侧换流器输出电压 V 滞
+     将式(8)、(9)根据式(1)~(5)转换成动态相量形式，并计                                                                                                                            B
+
+                                                                    后母线电压 VS 的角度，即
+     及式(10)、(12)，再将实部虚部分开，经整理可得
+                                                                                                           θB = θS − δ B                                        (15)
+      V r = I r ⋅r + V
+                                  dc 0 ⋅ (mE / 4)cosθ E                            Vsref                                              Vdref
+         Ea 1     Ea 1    s
+                                                                                   +                                                  +
+      V i = I i ⋅r + V                                                        −                                                  −
+                                  dc 0 ⋅ ( mE / 4)sin θ E
+                                                                                                  K1                                               K2
+                                                                                    ∑                                                  ∑                       δE
+         Ea 1     Ea 1 s                                               Vs
+                                                                                                 1+T1s
+                                                                                                             mE         Vd
+                                                                                                                                                  1+T2s
+      V
+          Ba 1 = − I Ba 1 ⋅ rs + Vdc 0 ⋅ ( mB / 4)cos θ B
+             r          r
+                                                                             (a

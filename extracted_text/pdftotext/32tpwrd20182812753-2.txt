@@ -1,0 +1,150 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2812753, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                  Real-Time Finite-Element Simulation of Electro-
+                   magnetic Transients of Transformer on FPGA
+                                        Peng Liu, Student Member, IEEE, and Venkata Dinavahi, Senior Member, IEEE
+
+
+
+
+              Abstract—The computation of the electromagnetic transients                                       problem to a lumped network. The traditional lumped models
+           in a power transformer with nonlinear material using the finite                                     [1]–[6] used for electromagnetic transient simulation of the
+           element method (FEM) is so dense that traditional nonlinear                                         transformer include the admittance matrix based model and
+           solver employing the Newton-Raphson method can hardly exe-
+           cute in real-time. In this paper, we emulate the finite-element                                     the topology-based magnetic equivalent circuit (MEC) model,
+           computation of electromagnetic transients of a transformer in                                       both of which have been adequately utilized in real-time
+           real-time for the first time. The transmission line modeling (TLM)                                  simulation [7], [8] for modeling various multi-winding trans-
+           method employed in the FEM successfully decoupled the nonlin-                                       formers; nonlinear effects such as hysteresis and eddy current
+           ear elements from the linear network so the nonlinearities could                                    behavior have also been sufficiently represented. Although
+           be solved individually, which is perfect for parallel processing.
+           The parallelism of the TLM-FE solution is sufficiently explored                                     these analytical circuit-oriented models can be calculated fast,
+           and realized on a field-programmable gate array (FPGA) with                                         they suffer from oversimplification and serious information
+           deep data pipelining, and the implementation can execute in real-                                   loss.
+           time and provide detailed field information of the transformer                                         The transmission line modeling method is based on Huy-
+           during the transients. The proposed non-iterative field-circuit                                     gens’s principle and was originally developed by Johns [9]
+           coupling enabled the transformer to interface with external
+           network and comparison with a commercial FEM software                                               to simulate wave propagation. Then the concepts of TLM link
+           proved the accuracy and computational efficiency of the real-                                       and stub were proposed for the analysis of nonlinear networks
+           time FE model.                                                                                      to effectively decouple the nonlinear elements from the linear
+              Index Terms—Electromagnetic transients, field-programmable                                       system [10]–[14]. Later Lobry and Deblecker insightfully
+           gate arrays, field-circuit coupling, finite element method, parallel                                uncovered the analogy between the finite element matrix and
+           processing, power transformer, real-time systems, transmission                                      the nodal admittance matrix of a corresponding equivalent net-
+           line modeling.                                                                                      work and successfully applied the TLM technique to the FEM
+                                                                                                               solution [15]–[17]. The improved computational efficiency and
+                                            I. I NTRODUCTION                                                   accuracy were notably discussed.
+                                                                                                                  Solid foundations have been laid by previous scholars, yet
+              Transformers are essential components in a power deliv-                                          the TLM technique used in FEM can be further explored for
+           ery system. The behavior of the electromagnetic field in a                                          implementation on parallel hardware architectures to achieve
+           transformer is governed by Ampere’s law, and the accurate                                           the most computational efficiency, especially for real-time
+           prediction of the magnetodynamic field is commonly obtained                                         computation. In addition, the TLM-FE models in [15]–[17]
+           from the FEM simulation, a powerful numerical method to                                             are all fed with current sources, and an appropriate field-circuit
+           deal with complex geometries and material nonlinearities.                                           coupling technique is necessary to interface with the external
+              An accurate real-time electromagnetic field-transient sim-                                       network.
+           ulation of a power transformer is of great benefit for the                                             A single TLM iteration is composed of two phases: scatter-
+           design and testing of better control and protection schemes,                                        ing and gathering. In the scattering phase, pulses are injected
+           cost reductions, and energy efficiency improvement. However,                                        from the linear network to each external element. Thus, all
+           as the permeability of the material depends on the magnetic                                         elements are decoupled from the network and the reflected
+           field strength, solving the discretized nonlinear system of field                                   pulses of external elements can be computed individually,
+           equations in space-time requires iterative techniques such as                                       i.e., the scattering phase can be perfectly parallelized. In the
+           the Newton-Raphson algorithm within each simulation time-                                           gathering phase, the reflected pulses return and impact on the
+           step. Thus, a new linear system has to be solved at each                                            linear network. Since the admittance matrix is determined by
+           iteration due to the updated Jacobian matrix, and the dense                                         the impedance of the TLM links and remains unchanged, only
+           computation makes the traditional FEM solver unbearably                                             one inversion is enough in the beginning. Thus, the compu-
+           slow for real-time execution. In the authors’ knowledge, real-                                      tation of the gathering phase includes mainly matrix-vector
+           time simulation is only possible by simplifying the field                                           multiplications with a changing right-hand side vector, which
+                                                                                                               is also perfectly suitable for parallel hardware architectures.
+             This work was supported by the Natural Science and Engineering Research
+           Council of Canada (NSERC).                                                                          In general, multiple TLM iterations are needed due to the
+             P. Liu is sponsored by China Scholarship Council (CSC); Funding No.                               mismatch between the impedance of the TLM link and the
+           201506120058.                                                                                       impedance of the element (linear or nonlinear). To decrease
+             The authors are with the Department of Electrical and Computer Engineer-
+           ing, University of Alberta, Edmonton, AB, Canada. E-mail: pliu3@ualberta.ca                         the number of TLM iterations required within each time-step,
+           dinavahi@ualberta.ca                                                                                the impedances of the TLM links in this work are set to
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2812753, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                                    2
+
+
+
+           the memory steady-state values of the corresponding element                                                                                                                              A1 (x1, y1)
+                                                                                                                                                                                     A2 (x2, y2)
+           instead of using arbitrary values.                                                                                                                                                      Ωe
+              In addition, an indirect non-iterative field-circuit coupling                                           Primary winding
+                                                                                                                          element                                                                  A3 (x3, y3)
+           technique is proposed to handle the external circuit. The
+           self and mutual inductances of the transformer windings are                                              Secondary winding                                                                     N1
+                                                                                                                        element
+           calculated based on the magnetic vector potentials from the FE
+
+
+
+
+                                                                                                                                        Y (m)
+           model, and these coupling coefficients are fed to the external                                           Transformer core
+           circuit, which is then solved independently within each time-                                                element                                                                           N2
+
+           step.
+              In this paper, the parallelism of the TLM-FE solution is                                                 Air element                                                                        N3
+           fully explored to achieve real-time finite-element simulation
+                                                                                                                                                            X (m)
+           of the electromagnetic transients in a 2D single-phase power
+           transformer coupled to external circuits. The real-time sim-                                        Fig. 1. 2-D FE model of a single-phase transformer.
+           ulation is performed on the Virtex UltraScale+TM VCU118
+           FPGA board, and the results are compared with those obtained
+           from commercial FEM software Comsol MultiphysicsTM with                                             where Ae is the magnetic vector potential over element Ωe ,
+           regard to accuracy and computational efficiency.                                                    and W e the weighted function. In Fig. 1, the vertex values of
+              The paper is organized as the following. Section II presents                                     the triangular element Ωe are A1 , A2 , and A3 , and the magnetic
+           the magnetodynamic field equations to be solved for the                                             vector potential over the whole element Ae can be expressed
+           transformer, the TLM solution technique, and the field-circuit                                      with the classical barycentric interpolation:
+           interface. In Section III, the detailed real-time implementation
+                                                                                                                                                Ae = N1 A1 + N2 A2 + N3 A3 ,                                      (3)
+           of the parallelized TLM technique on the FPGA is presented.
+           Section IV provides the real-time simulation results and the                                        where N1 , N2 , and N3 are the shape functions profiled in Fig.
+           comparisons. At last, Section V gives the conclusion.                                               1. The values of these shape functions at any position (x, y)
+                                                                                                               are defined by
+               II. M AGNETODYNAMIC P ROBLEM F ORMULATION FOR                                                                       1
+                                                                                                                                 Ni = (ai + bi x + ci y)(i = 1, 2, 3),      (4)
+                        T RANSFORMER FEM S IMULATION                                                                             2∆e
+           A. FEM Equations                                                                                    where ∆e is the area of the triangular element; ai , bi , and ci
+                                                                                                               are related to the coordinates of the vertices:
+              Consider a 2-D finite element model of a single-phase power
+           transformer shown in Fig.1. When the windings are excited                                                    a1 = x2 y3 − x3 y2 , b1 = y2 − y3 , c1 = x3 − x2 ,
+           by the external circuit, the current density in the windings                                                 a2 = x3 y1 − x1 y3 , b2 = y3 − y1 , c2 = x1 − x3 ,  (5)
+           produces a dynamic magnetic field, which is described by                                                     a3 = x1 y2 − x2 y1 , b3 = y1 − y2 , c3 = x2 − x1 .
+           the magnetic vector potential A. Since the magnetic vector
+           potential A and the impressed current density J only have the z-                                       According to the Galerkin method, the Ae in (2) is substi-
+           components in a 2-D problem, the nonlinear magnetodynamic                                           tuted by (3) and the weighted functions W e are set to N1 , N2 ,
+           problem can be defined by the following diffusion equation:                                         and N3 respectively. Thus, 3 equations with 3 unknown vertex
+                                                                                                               magnetic potential values are obtained after accomplishing the
+                                               ∂A                                                              integral:
+                                                  − Jz ,
+                                          ∇ · (υ∇A) = σ                  (1)
+                                               ∂t                                                                                                                 
+                                                                                                                         b b + c1 c1 b1 b2 + c1 c2 b1 b3 + c1 c3 A1
+           where υ is the field-dependent reluctivity; σ is the conductiv-                                         υe  1 1
+                                                                                                                         b b + c1 c2 b2 b2 + c2 c2 b2 b3 + c2 c3  A2 
+           ity, a constant value for a certain material; Jz is the impressed                                       4∆e 1 2
+                                                                                                                         b1 b3 + c1 c3 b2 b3 + c2 c3 b3 b3 + c3 c3 A3
+           current density, which is only nonzero in the winding zone.                                                                      ∂ A1                     (6)
+              The well-known Galerkin FEM [18] applied to solve the                                                         e  e  2 1 1                 e  e  1
+                                                                                                                          σ ∆                 J ∆
+                                                                                                                                                ∂t
+           magnetodynamic problem includes the following steps: dis-                                                    +         1 2 1  ∂∂tA2  = z 1 .
+                                                                                                                            12                 ∂ A3      3
+           cretize the domain, form elemental equations, assemble the                                                             1 1 2                       1
+                                                                                                                                                ∂t
+           global matrix, and solve the system of equations.
+              Fig.1 shows the discretized domain consisting of triangular                                      Note that the reluctivity υ e , the conductivity σ e and the
+           elements and nodes. For the Galerkin method, the product of                                         current density Jze are constant over one finite element. The
+           the residual and the weighted function is integrated over each                                      distributions of σ e and Jze are given while υ e depends on A1 ,
+           element, and the element equations can be formed by forcing                                         A2 , and A3 . The dependence is not straightforward and could
+           the integral to zero. With natural boundary conditions applied,                                     be quantitatively expressed by introducing the magnetic flux
+           the classical weighted

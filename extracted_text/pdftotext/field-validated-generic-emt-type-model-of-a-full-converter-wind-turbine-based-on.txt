@@ -1,0 +1,178 @@
+2284                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 5, OCTOBER 2018
+
+
+
+
+   Field Validated Generic EMT-Type Model of a Full
+      Converter Wind Turbine Based on a Gearless
+       Externally Excited Synchronous Generator
+       Aramis Schwanka Trevisan , Student Member, IEEE, Amgad A. El-Deib, Member, IEEE, Richard Gagnon,
+                      Jean Mahseredjian , Fellow, IEEE, and Martin Fecteau, Member, IEEE
+
+
+   Abstract—The integration of wind power plants introduces new                                              I. INTRODUCTION
+dynamics into power systems, forcing reconsiderations of how they
+                                                                                            PERATORS of modern power systems have been inte-
+are studied, planned, and operated. High quality models are essen-
+tial to these studies. Manufacturer-specific electromagnetic tran-
+sient (EMT) wind turbine models are usually available only as
+                                                                                     O      grating inverter-based technologies at a fast pace, spurred
+                                                                                     on recently by the integration of wind turbines [1]. The increased
+black-boxes, which hinders analysis and research. To overcome                        complexity and new dynamics added by this new equipment are
+this issue, this paper proposes a generic EMT-type model for a
+specific type-IV wind turbine system, which is validated against
+                                                                                     forcing reconsiderations in the way power systems are studied,
+field measurements from a wind turbine of the same type. More                        planned and operated, thus yielding the need for more advanced
+precisely, it proposes a wind turbine model based on an externally                   modeling and analysis methods.
+excited synchronous generator system connected to a full converter                      As one consequence, the provision of manufacturer-specific
+composed of a six-pulse diode rectifier, a dc–dc boost stage and a                   electromagnetic transient (EMT) models has already become
+two-level voltage source converter. The required control features
+and internal protection schemes are considered and described. Two
+                                                                                     a requirement for the connection of new generating units in
+different fault ride-through control strategies, in line with existing               some grid areas [2]. However, due to confidentiality issues,
+grid codes, are implemented. A corresponding EMT-type hybrid                         these models are often provided as black-boxes, thus hindering
+model representation is also developed based on newly proposed                       the access to internal control systems and hardware parameters
+switched equivalent circuits and average models for the considered                   and, therefore, the use of specific analysis techniques.
+hardware, control, and power electronics stages. It allows for the
+use of larger simulation time steps, hence considerably improving
+                                                                                        To overcome some of these difficulties in specific cases,
+computation times.                                                                   generic transient stability type models (in phasor domain) have
+                                                                                     been proposed for different types of wind turbine systems
+  Index Terms—Full Converter Wind Turbine, Wind Power                                [3]–[6]. Nevertheless, the intrinsic limited frequency bandwidth
+Plants, Power system, Hybrid model, Average model, Switching
+function model, Real-time application, Field measurements.                           consideration of these models, as well as typical assumptions
+                                                                                     for grid model equations in phasor domain, limit the application
+                                                                                     range of such models.
+                                                                                        The present work aims at the development of generic
+                                                                                     EMT-type models. Several types of studies require the use
+                                                                                     of EMT models. The EMT-type models are circuit-based and
+   Manuscript received July 13, 2017; revised October 16, 2017 and April 19,         can represent multiphase systems with accurate transmission
+2018; accepted June 11, 2018. Date of publication June 26, 2018; date of current
+version September 25, 2018. Paper no. TPWRD-00926-2017. (Corresponding               line models, component nonlinearities, real controller blocks
+author: Aramis Schwanka Trevisan.)                                                   with high-bandwidth components, among others. Reference
+   A. S. Trevisan is with the Department of Electrical Engineering, Ecole Poly-      [7] addresses the need for EMT-type simulations to support
+technique de Montreal, Montreal, QC H3T 1J4, Canada and with WRD Wobben
+Research and Development GmbH (ENERCON R&D) in Aurich, D-26607,                      the massive integration of wind power plants. Moreover, it also
+Germany (e-mail:,aramis.schwanka.trevisan@enercon.de).                               suggests a typical list of EMT-type power system studies to be
+   A. A. El-Deib is with the Electrical Power and Machines Department, Faculty       performed in this context.
+of Engineering, Cairo University, Giza 12613, Egypt, on leave to the Univer-
+sity of Science and Technology at Zewail City, Cairo 12588, Egypt (e-mail:,             In the specific case of wind turbine systems, some previ-
+aeldeib@zewailcity.edu.eg).                                                          ous studies have introduced generic EMT models to represent
+   R. Gagnon is with the Hydro-Quebec Research Institute (IREQ), Varennes,           different types of wind turbines. References [8]–[12] proposed
+QC J3X 1S1, Canada (e-mail:,Gagnon.Richard2@ireq.ca).
+   J. Mahseredjian is with the Department of Electrical Engineer-                    detailed models for type-III (doubly-fed induction generator
+ing Ecole Polytechnique, Montreal, QC H3T 1J4, Canada (e-mail:,                      based) wind turbine systems. Valuable insights into specific
+jean.mahseredjian@polymtl.ca).                                                       full converter systems can also be obtained from references
+   M. Fecteau is with the System Studies, Hydro-Quebec TransEnergie,
+Montreal QC H5B 1H7, Canada (e-mail:,Fecteau.Martin@hydro.qc.ca).                    [13]–[17]. Notably, generic EMT-type model representations
+   Color versions of one or more of the figures in this paper are available online   of types II, III and IV wind turbine systems were addressed
+at http://ieeexplore.ieee.org.                                                       in [7], although not to the same level of modeling detail pre-
+   Digital Object Identifier 10.1109/TPWRD.2018.2850848
+                                                                                     sented in this paper. For example, protection systems and Fault
+
+                          0885-8977 © 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+TREVISAN et al.: FIELD VALIDATED GENERIC EMT-TYPE MODEL OF A FULL CONVERTER WIND TURBINE                                                2285
+
+
+
+                                                                       design of the LCL-output filter. Two different FRT strategies are
+                                                                       presented and implemented in Section V. In Section VI, the HM
+                                                                       is developed. Finally, Section VII covers the validation of the
+                                                                       proposed system against specific field measurements performed
+                                                                       at a wind turbine of similar type. All hardware and control pa-
+                                                                       rameters proposed for the generic EMT-type wind turbine model
+                                                                       can be found in the Appendix.
+
+
+                                                                        II. AERODYNAMIC REPRESENTATION, MECHANICAL SYSTEM
+                                                                             AND CONTROL OF THE SYNCHRONOUS MACHINE
+
+Fig. 1.   Wind turbine system to be modelled.                             The aerodynamic model for the turbine of this paper is based
+                                                                       on [22] and uses well-known equations for power extraction
+                                                                       from the wind. An analytical expression is used to represent
+Ride-Through (FRT) strategies were not considered in [7], con-         the power coefficient of the turbine, which is a function of the
+sequently limiting the applicability of these models in the con-       tip-speed ratio and the blade pitch angle.
+text of EMT-type power systems studies.                                   The wind turbine rotor is assumed to be directly coupled (no
+   This paper proposes a generic EMT-type detailed model (DM)          gearbox) to the rotor of the synchronous machine (SM). Further-
+for a specific type-IV wind turbine hardware topology, illus-          more, the blade system and the machine rotor are assumed to lie
+trated in Fig. 1. It focuses on a system based on a directly-          on the same plane, allowing a single-mass type of mechanical
+coupled (gearless) externally-excited synchronous generator,           system representation. Additionally, the three-phase stator sys-
+which is connected to a three-stage full converter system con-         tem of the SM is directly connected to a six-pulse diode bridge
+sisting of a six-pulse diode rectifier, a dc-dc boost converter and    rectifier, as illustrated in Fig. 1.
+an IGBT-based two-level voltage source converter (VSC).                   It is worth mentioning here that, in the context of industrial
+   The wind turbine controller is developed and explained. To          applications of wind turbines, the directly-coupled nature of
+make the model more generic and facilitate usage, the controls         the turbine-generator system yields some specific requirements
+were developed by means of the per-unit system. Hardware               for these components. Some of these affect, for example, the
+and control protection schemes are considered. Additionally, in        electrical and mechanical design of the synchronous machine
+contrast to the aforementioned previous works [8]–[17], two            resulting in the use of a large number of pole pairs and unusual
+FRT control strategies were also implemented in the model,             proportions. As a result, electrical parameters may differ from
+which are in line with existing European and North and South           typical values in other applications.
+American Grid Code requirements ([2], [18]–[21]).                         From a control perspective, different controllers could be
+   Furthermore, an EMT-type hybrid model (HM) is developed             conceived for the electromechanical system described above,
+for the same wind turbine system by combining average-value            depending on the primary objectives, pre-defined control re-
+models (AVM) and switched equivalent circuits for the power            quirements and existing hardware constraints. For the purposes
+electronics stages. The HM allows for much larger simulation           of this work, a maximum power tracking requirement is as-
+time-steps under some acceptable assumptions. As a result,             sumed. This means, given a certain wind speed, the system is
+faster computation times are achieved, making the HM also              expected to extract the maximum power possible from the wind
+suitable for real-time applications.                                   and operate at an optimal condition.
+   Finally, field tests were conducted in a real wind turbine of          Due to the directly-coupled nature of the wind turbine sys-
+similar type to validate the implemented FRT-strategies and to         tem, the optimal SM rotor rotational speed ωr is the one that
+demonstrate that the proposed generic EMT-type model contains          maximizes the turbine mechanical power extraction from wind
+the required level of details to provide sufficiently accurate and     Pm tu r b . In other words, for each wind speed vwind there is an
+adequate performance.                                                  optimal ωr value for the SM. Fig. 2 illustrates this.
+   It is important to note that the model development process             Since a six-pulse diode bridge rectifier is connected to the
+outlined in the next sections aimed at a 2 MW wind turbine             stator side of the SM, this work assumes that the SM excitation
+to match the system against which it has been validated with           is used to control the rotor speed ωr . To reduce controller efforts,
+field measurement data. In the context of power system studies,        the optimal rotor speed reference ωr r ef is first filtered. The
+it may be, however, necessary to use this model to represent a         error between the filtered reference and the measured rotational
+wind farm and not a single unit. To achieve this, an additional        speeds, ωr r ef f ilt and ωr meas respectively, is sent as input to
+parameter corresponding to the number of lumped wind turbine           the excitation controller, which is of proportional integration
+models is made available for the model user. This parameter            (PI)-type with dynamic limitations and anti-windup capability.
+basically explicitly defines the number of equal wind turbines         The upper and lower limiters are used to represent the real
+to be considered in aggregated manner.                                 voltage constraints imposed by the dc-link voltage VD C 1 , to
+   This paper is structured as follows. Section II deals with the      which the buck-converter is connected. A PWM-generator is
+mechanical system representation and its control. Section III          used to convert the controller output into gating signals, which
+addresses the grid-side converter controller. In Section IV, em-       are then applied to the buck-converter to generate the required
+phasis is given to the specific current control type used and to the   SM excitation voltage.
+2286                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 5, OCTOBER 2018
+
+
+
+
+                                                                                  Fig. 4.   Buck and boost-converter controller topologies.
+
+
+                                                                                  surement data. Although the controller development and the
+Fig. 2. Mechanical power vs. rotation speed for different wind speeds (in steps   hardware parameters are made available in the per-unit system,
+of 0.5 m/s). Optimal rotor rotational speeds are also being indicated in red.     changes in the turbine rating resulting from a direct downscaling
+                                                                                  or upscaling of the system parts are prone to yield non-realistic
+                                                                                  components and/or operating conditions. This is mostly due to
+                                                                                  the directly-coupled and variable-speed nature of the turbine-
+                                                                                  generator system. To exemplify one of the possible issues, it
+                                                                                  suffices to observe that larger wind turbines, with larger rotor
+                                                                                  diameters, tend to have lower rotational speeds to reduce me-
+                                                                                  chanical stress. For the wind turbine system considered here,
+                                                                                  depicted in Fig. 1, lower rotational speeds are likely to yield
+                                                                                  some modifications in the turbine-generator system, such as
+                                                                                  different blade profiles and the number of generator pole pairs,
+                                                                                  that are not inherently changed through an upscaling by means
+                                                                                  of a simple definition of new ratings in the per-unit system. For
+                                                                                  the specific case in which larger generating units are needed for
+                                                                                  power system studies, it is advisable to use the model parameter
+Fig. 3. In blue: VD C 1 versus ω r characteristic for maximum power extraction.   discussed in Section I, since it explicitly address a lumped (i.e.,
+In red: approximated function.                                                    aggregated) representation of wind turbine models.
+
+    Additionally, it is important to note that the rectified dc-link
+voltage can be understood as a further degree of freedom for                                     III. GRID-SIDE CONVERTER CONTROL
+the system considered above (synchronous machine connected                           The use of full converter systems offers several advantages
+to a diode rectifier). In that sense, it is further used to help the              [22]–[24]. Its application in wind turbines allows for fast sepa-
+system comply with the maximal power tracking requirements                        rate control of active and reactive currents, among others. Such
+and is used in this work for power losses minimization in the                     capabilities are very valuable when it comes to grid support
+turbine-generator system. In other words, for each ωr there is                    services [25]–[28].
+an optimal combination of excitation voltage VS G f ield and rec-                    In the proposed wind turbine system, the output active and
+tified voltage VD C 1 . For the proposed model, this characteristic               reactive current components of the grid converter are used to
+was extracted through simulation-based scanning and the result                    control the second dc-link voltage VD C 2 and the reactive power
+is illustrated in blue in Fig. 3. It is assumed, as further explained             being injected into the grid, respectively.
+in Section III, that the grid-side converter controls VD C 2 , the                   The active current component is controlled by the dc-link con-
+second 

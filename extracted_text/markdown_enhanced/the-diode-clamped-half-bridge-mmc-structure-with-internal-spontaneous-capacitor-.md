@@ -1,0 +1,25 @@
+# The diode-clamped half-bridge MMC structure with internal spontaneous capacitor voltage parallel-balancing behaviors
+
+**Jianzhong Xu**\*, Moke Feng, Hang Liu, Shuai Li, Xiaoling Xiong, Chengyong Zhao  
+*The State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing, China*  
+\* Corresponding author. E-mail address: xujianzhong@ncepu.edu.cn (J. Xu).
+
+## Keywords
+- Modular multilevel converter (MMC)
+- Diode-clamped converter
+- Capacitor voltage parallel-balancing capability
+- Electromagnetic transient (EMT)
+- Down-scaled prototyping
+
+## Abstract
+In order to significantly reduce the number of voltage sensors and computation boards in the modular multilevel converter (MMC), this paper proposes a diode-clamped half-bridge MMC with full capability of capacitor voltage parallel-balancing. The newer generation of MMC structure can be re-constructed from the traditional half-bridge MMC by integrating one clamped diode and damping resistor into each submodule (SM), and four auxiliary voltage balancing circuits across all three phases. The proposed MMC topology can naturally balance its SM capacitor voltages regardless of modulation and triggering techniques. This is due to the fact that all the SMs in the MMC belong to 6 Spontaneous Capacitor Parallel Behaviors (SCPBs), through which the voltages of SM capacitors are automatically balanced. The inserted SM capacitor is now parallel with the adjacent bypassed SM capacitor. By designing proper RC constant, the adjacent SMs in the proposed MMC will have equal capacitor voltage ripples. Although voltage balancing is naturally guaranteed, in order to average the switching losses, open loop nearest level modulation (NLM) and carrier phase shifted sinusoidal PWM (CPS-SPWM) techniques are used in the proposed MMC. The electromagnetic transient (EMT) simulations on PSCAD/EMTDC and the down-scaled prototyping results will validate the new topology.
+
+## 1. Introduction
+The traditional half-bridge modular multilevel converter (MMC), as shown in Fig. 1, is completely symmetrical in structure and has very good scalability by increasing the number of cascaded submodules (SMs). With the fast development of DC circuit breakers (DCCB), half-bridge MMC is widely used in high-voltage direct-current (HVdc) transmission. It’s also becoming the leading voltage-sourced converter (VSC) topology in large scale dc gird [1–3]. However, the large number of MMC capacitors should be balanced within acceptable voltage ripples to guarantee continuous closed loop operation of MMC-HVdc system [4]. Up to date, most of the MMC-HVdc projects in the world are using the nearest level modulation (NLM) based voltage balancing algorithm. This algorithm requires full ranking of the capacitor voltages in the MMC arm and brings great challenges in the real-time hardware-in-the-loop electromagnetic transient (EMT) simulations [5–9] and prototyping as follows:
+
+- The huge number of high-speed high-accuracy voltage sensors are required in the prototyping to monitor and transmit all the capacitor voltages into the valve based controllers.
+- The high-speed digital signal processing (DSP) boards are required to rank all the capacitor voltages in the physical controller which will increase the investment and bring noticeable time-delay in each control cycle.
+
+To address this issue, one feasible solution is using the enhanced converter topologies with capacitor voltage self-balancing capability. These approaches include [10–16]:
+
+- Ref. [10] proposes a MMC based static synchronous compensator (STATCOM) topology with dc-link voltage self-balancing capability. This topology’s diode-clamped circuit is controllable and allows the adjacent capacitor voltages to be clamped equal and hence less voltage sensors and DSP boards are required. In [10], the IGBTs based H-bridge, diodes based uncontrolled-bridge, ac transformers, and additional voltage balancing control are required to balance the voltages between the top and bottom SM capacitors within each arm. In order to eliminate all these auxiliary circuits the authors proposed an enhanced topology [11]. In the new topology each arm is composed of two parallel-connected SM clusters which provide alternate path for voltage balancing. However, in [11], the current distribution between the paralleled clusters become more complicated and the capacitor voltages are balanced within each arm instead of among all three-phase capacitors. Therefore, the half-bridge MMC with full capability of voltage self-balancing is still required in the capacitors will have the chance to be paralleled. In [14], the authors propose a similar MMC topology with semi-full-bridge SM. It uses less semiconductors than the traditional full-bridge and will reduce the capacitor voltage ripples. This topology’s advantage in DSP, voltage sensors reduction and voltage self-balancing mechanism is very similar

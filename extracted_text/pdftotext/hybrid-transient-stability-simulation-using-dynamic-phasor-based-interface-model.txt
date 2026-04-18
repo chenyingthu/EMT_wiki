@@ -1,0 +1,202 @@
+ Hybrid EMT-TS Simulation Strategies to Study High
+       Bandwidth MMC-Based HVdc Systems
+          Yuan Liu1, Marcelo A. Elizondo1, Suman Debnath2, Jingfan Sun3, Ahmad Tbaileh1, Yuri V. Makarov1,
+                     Qiuhua Huang1, Mallikarjuna R Vallem1, Harold Kirkham1, Nader A. Samaan1
+    1, Pacific Northwest National Laboratory       2, Oak Ridge National Laboratory       3, Georgia Institute of Technology
+         Richland, WA, USA, 99354                     Oak Ridge, TN, USA, 37830               Atlanta, GA, USA, 30332
+          {yuan.liu, marcelo.elizondo, ahmad.tbaileh, yuri.makarov, qiuhua.huang, mallikarjuna.vallem, harold.kirkham,
+                               nader.samaan }@pnnl.gov, debnaths@ornl.gov, jingfan@gatech.edu
+
+ Abstract—Modular multilevel converters (MMCs) are widely                       algorithms of multi-terminal MMC-HVdc systems connecting
+ used in the design of modern high-voltage direct current (HVdc)                Eastern Interconnection (EI), Western Electricity Coordinating
+ transmission system. High-fidelity dynamic models of MMCs-                     Council (WECC), and Electric Reliability Council of Texas
+ based HVdc system require small simulation time step and can                   (ERCOT) [2], [6]. The developed control strategy for the
+ be accurately modeled in electro-magnetic transient (EMT)
+ simulation programs. The EMT program exhibits slow
+                                                                                multi-terminal MMC-HVdc system exhibits up to 51.75%
+ simulation speed and limitation on the size of the model and                   improvement in frequency response with the connection of all
+ brings certain challenges to test the high-fidelity HVdc model in              the three asynchronous power grids in the United States [7].
+ system-level simulations. This paper presents the design and                   However, the test of the developed MMC-HVdc system is
+ implementation of a hybrid simulation framework, which                         performed with the aggregated models for EI, ERCOT and
+ enables the co-simulation of the EMT model of Atlanta-Orlando                  WECC grids based on NERC data [8]. These results represent
+ HVdc line and the transient stability (TS) model of the entire                 preliminary results that require confirmation tests with the full
+ Eastern Interconnection system. This paper also introduces the                 models. The evaluation on the full model requires the setup of
+ implementation of two high-fidelity HVdc line models simulated                 hybrid EMT-TS simulation platform.
+ at different time steps and discusses a dedicated method for
+ sizing the buffer areas on both sides of the HVdc line. The
+                                                                                    Previous research implemented the hybrid simulation
+ simulation results of the two HVdc models with different sizes of              platform to represent a significant portion of the system
+ buffer areas are presented and compared.                                       model in a phasor-domain transient stability (TS) simulation
+                                                                                program and co-simulate that with a detailed electro-magnetic
+ Index Terms— buffer area, electro-magnetic transient, hybrid
+ simulation, HVdc, transient stability                                          transient (EMT) model of a small portion containing voltage-
+                                                                                source converter (VSC) -HVdc [9],[10]. The communication
+                        I.  INTRODUCTION                                        between the TS and EMT programs is built on a software
+     Modern power grid is experiencing a major evolution from                   called E-TRAN Plus [11] that can simultaneously simulate
+ ac to mixed ac-dc transmission systems with decreasing costs                   the detailed model using a micro-second timestep in PSCAD
+ and noticeable economic and technical benefits of dc                           [12], and the rest of the system using a milli-second time-step
+ technologies. Some of the technical benefits of dc                             in PSS/E [13]. The PSS/E portion of the system model in [9]
+ technologies include the abilities to interconnect several                     utilized an 8-machine 31-bus system, which is a limited-size
+ asynchronous grids, to integrate renewable energy                              test system. In addition, the paper by Farsani et al. [9] adopts
+ generations, to support underground transmission, to increase                  an empirical approach to size the buffer area, within which a
+ the power transfer capability over long distances [1], [2], and                number of ac buses on either side of the HVdc line are
+ to supply loads through variable frequency drives (VFDs) [3]                   selected and modeled in PSCAD program.
+ – [5]. The dc technologies are also capable of providing                           This paper presents the development of a co-simulation
+ ancillary services to enhance the economics and reliability of                 framework to integrate the EMT model of an MMC-HVdc
+ power systems and optimize the performance of ac grids [2].                    system and the TS model of the external EI system. The
+     Several national laboratories and their industry partners                  characteristics of the EI system are described in detail. Oak
+ launched a jointly research effort to create models and                        Ridge National Laboratory (ORNL) designed an MMC-HVdc
+ methods to explore and amplify the technical and economic                      model based on hybrid discretization and multi-rate simulation
+ benefits of dc technologies in the future grid of United States                [7]. Two simulation time steps, at 4µs (slow) and 60µs (fast)
+ [1]. This work has developed high-fidelity dynamic models of                   separately, are implemented for the MMC-HVdc model. This
+ modular multilevel converters (MMCs) -based high-voltage                       paper also proposes a specific method for sizing the buffer
+ direct current (HVdc) system [6]. The deliverables also                        areas on both sides of the HVdc line by selecting the ac buses
+ include the development of high-fidelity models and control                    to be modeled in EMT-level simulation program. In this
+
+
+    This paper and the work described were sponsored by the U.S.
+Department of Energy (DOE) Office of Electricity Delivery and Energy
+Reliability (OE) Transformers and Advanced Components (TRAC) under the
+Grid Modernization Laboratory Consortium. The authors would like to thank
+Dr. Kerry Cheung who leads the DOE TRAC program for providing
+continued guidance. The authors would also like to thank the contributions of
+Madhu Chinthavali and Phani Marthi from Oak Ridge National Laboratory.
+    The Pacific Northwest National Laboratory is operated by Battelle for the
+U.S. Department of Energy under contract DE-AC05-76RL01830.
+paper, PSCAD is used as the EMT-level simulation tool and          TABLE I. SUMMARY OF POWER FLOW NETWORK MODEL PARAMETERS
+PSS/E is used as the TS-level simulation program. The                  Model Characteristics                      Quantity
+software E-TRAN Plus is utilized to provide interfacing                Total Generation (GW)                        728
+                                                                          Total Load (GW)                           693
+between PSCAD and PSS/E.
+                                                                   Total Reactive Support (GVAr)                    177
+    The following contributions of this paper are highlighted:            Number of Buses                          78,682
+    • This paper is the first paper that describes the co-               Number of ac lines                        99,331
+       simulation of a high-fidelity HVdc transmission line              Number of dc lines                          68
+       model with realistic EI system while other co-                  Number of Generators                        7,829
+                                                                          Number of Loads                          42,730
+       simulation works only consider using limited-size
+       IEEE standard systems [9].
+    • This paper proposes a VAr injection method to
+       determine the size of buffer areas that are modeled in
+       detailed EMT simulation.
+                 II. SYSTEM-LEVEL MODEL
+    An overlay of HVdc macro grid was proposed by
+Midcontinent Independent System Operator (MISO) with
+multiple technical and economic benefits [14]. The HVdc
+macro grid has a maximum transfer capacity of 14.4 GW
+between the EI and WECC. A version of macro grid is shown
+in Fig. 1 with power flows from the WECC to the EI.
+
+
+
+
+        Figure 1. HVdc macro grid design proposed by MISO [1]
+                                                                                   Figure 2: Circuit diagram of MMC
+    The blue HVdc line highlighted in Fig. 1 is the Atlanta-
+Orlando HVdc line that is modeled in EMT in this study to        B. MMC Control Strategies
+setup the hybrid simulation platform. This HVdc system is            The hierarchical control of MMC consists of: 1) inner
+based on MMCs.                                                   control system to control ac grid currents, dc-link currents,
+    Considering the memory limitations in E-Tran Plus and        circulating currents, and SM capacitor voltages, and 2) outer
+since the HVdc line analyzed in this study is located in EI,     control system to control ac voltage and mean of SM
+WECC part of the model was eliminated and replaced by            capacitor voltages. The inner control system in MMC has
+power injections at the HVdc macro grid terminals. The ac        been explained in [16] and is summarized in Fig. 3. The ac
+interconnection of the EI was modeled by a 2026 Summer-          grid currents, dc-link currents, and circulating currents’
+Peak case, provided by the Multi-regional Modeling Working       control strategy is shown in Fig. 3. The SM capacitor voltage
+Group of the EI Reliability Assessment Group (ERAG-              balancing algorithm is explained in [16] and not repeated here.
+MMWG). The models used in this study are based on                The outer control system consists of controlling ac voltage
+previously developed models in [1]. Key parameters of the        and mean of SM capacitor voltage, as shown in Fig. 4 [17].
+final power flow model are shown in TABLE I. The dynamic
+models of HVdc links except the Atlanta-Orlando line in the
+HVdc macro grid were represented by the CDC6T HVdc
+model [13] in PSS/E.
+     III. PSCAD MODEL OF MMC-BASED HVDC SYSTEM
+A. MMC Models & Simulation Algorithms
+    The circuit diagram of a three-phase MMC is shown in
+Fig. 2. It consists of six arms with 𝑁𝑁 series connected
+submodules (SMs) and an inductor. The basics of operation
+of the MMC is explained in detail in [15].                                     Figure 3: MMC-HVdc arm current control
+                                                                                judgement. The simulation results for the two selections of
+                                                                                buffer areas will be compared in Section V.
+                                                                                              TABLE II. NUMBER OF BUSES IN THE BUFFER AREAS
+                                                                                  Large Buffer Areas         Total Number of      Number of Boundary
+                                                                                 (VAr injection method)           Buses                Buses
+                                                                                 Rectifier-Side (Atlanta)           50                    21
+                                                                                 Inverter-Side (Orlando)            12                    4
+                                                                                   Small Buffer Areas        Total Number of      Number of Boundary
+                                                                                (engineering judgement)           Buses                Buses
+                                                                                 Rectifier-Side (Atlanta)           8                       4
+                                                                                 Inverter-Side (Orlando)            9                       4
+
+                                                                                                  V. SIMULATION RESULTS
+                  Figure 4: MMC outer controller and PLL                            ORNL implemented two PSCAD models of MMC-HVdc
+                 IV. DESIGN OF BUFFER AREAS                                     line simulated at 4µs (slow model) and 60µs (fast model)
+    The hybrid simulation in this paper will be performed                       separately. In this paper, two selections of buffer areas are
+using E-TRAN Plus [11]. The MMC-HVdc system can                                 proposed in TABLE II. A combination of 4 simulation
+perform voltage control functionality. The buffer areas on                      scenarios is formed to investigate the simulation performances
+both rectifier and inverter sides of the HVdc line are identified               of different MMC-HVdc models in different buffer areas. To
+and modeled in PSCAD to simulate voltage behavior of the                        compare with the hybrid simulation models, this paper also
+model parts close to the HVdc terminals and to increase the                     presents the simulation results of PSCAD equivalent models,
+accuracy of hybrid simulation. To obtain the buffer areas, a                    for which the MMC-HVdc line and buffer areas are modeled
+sensitivity-based approach is performed. A reactive power                       in PSCAD, the external system is modeled as equivalent
+injection is placed around the rectifier or inverter bus and the                voltage sources in PSCAD. The simulation scenarios are
+voltage changes are observed on the surrounding buses. A                        summarized in TABLE III.
+voltage deviation criterion is defined to determine buses                                      TABLE III. DEPICTION OF SIMULATION SCENARIOS
+included within the buffer areas. The procedure is illustrated                                        Fast MMC-HVdc            Slow MMC-HVdc
+in Fig. 5 and consists of the following steps:                                  Small Buffer Areas    Case 1                   Case 2
+1. Inject a certain amount of reactive power (∆Q) into an                       Large Buffer Areas    Case 3                   Case 4
+     adjacent bus near rectifier or inverter bus.                               A. Contingencies Applied in PSCAD Portion of the System
+2. Solve power flow to calculate the voltage variations (∆V)                        The simulation lasts for 5 seconds. At t=1.2s, the active
+     of adjacent buses in respect to the reactive power                         power flowing through the HVdc line is ramped up from 0 to
+     injection (∆Q)                                                             500MW. Two contingencies occurring within the buffer areas
+3. Define criteria to rank ∆V and select buses for which the                    are considered when running the PSCAD equivalent model
+     calculated ∆V values lie in the specified range.                           and hybrid simulation model. The first contingency is to trip a
+                                                                                1241 MVAr shunt capacitor close to the rectifier (Atlanta)
+                                                                                side of the HVdc line at t=3s and reconnect it at t=3.25s. The
+                                                                                second contingency is to apply a 3-phase-to-ground fault at
+                                                                                t=4s and clear it at t=4.25s. The voltage, active and reactive
+                                                                                power on rectifier and inverter sides are shown in Figs. 6 – 9.
+
+
+
+
+ Figure 5. Conceptual illustration of buffer areas selected by reactive power
+                 injection and voltage sensitivity method
+    In this paper, a reactive power injection of 1000 MVAr is
+used to generate voltage variations. To include a reasonable
+number of buses, the buses manifesting 1.4% or higher
+voltage variations are considered within the buffer areas. It is
+noted that the E-TRAN Plus will add to the buffer areas with
+several more buses connected to the considered buses through
+ideal branches. The final number of buses are 50 buses in the
+rectifier-side buffer area and 12 buses in the inverter-side
+buffer area. The results are summarized in TABLE II.
+TABLE II also shows the number of buses for a pair of
+smaller buffer areas selected based on engineering                                 Figure 6. Case 1: small buffer area and fast MMC-HVdc model (left:
+                                                                                        PSCAD equivalent model, right: hybrid simulation model)
+    Comparing the left and right three subplots in Figs. 6 – 9,         large buffer areas shown in Figs. 8 and 9. This comparison
+PSCAD-PSS/E co-simulation captures power system                         verifies that the increase in the size of buffer areas improves
+dynamics more accurately than the PSCAD equivalent model.               the stability of the hybrid simulation and accuracy in
+Following the clearance of the fault at t=4.25s, the system is          quantifying the impact of the HVdc control system.
+supposed to experience low-frequency oscillations as
+demonstrated in many system-level simulation studies [3],
+[4], [18]. It can be observed from the reactive power subplots
+in Figs. 6 – 9 that the low-frequency oscillation is captured in
+the results of hybrid simulation model. Because of the
+utilization of ideal voltage sources at all boundary buses, the
+PSCAD equivalent model cannot provide accurate simulation
+results.
+
+
+
+
+                                                                           Figure 9. Case 4: large buffer area and slow MMC-HVdc model (left:
+                                                                                PSCAD equivalent model, right: hybrid simulation model)
+                                                                            Another observation can be drawn from comparing Figs.
+                                                                        7 and 9 with Figs. 6 and 8. The slow MMC-HVdc model,
+                                                                        simulated at 4µs, renders smoother (less noisy) results than
+                                                                        the fast MMC-HVdc model that is simulated at 60µs. The
+                                                                        reason for this observation can be attributed to the slower
+                                                                        sampling assumed in the slow MMC-HVdc model that
+   Figure 7. Case 2: small buffer area and slow MMC-HVdc model (left:   interferes with the control system’s response. This
+        PSCAD equivalent model, right: hybrid simulation model)         phenomenon is more pronounced in the case with the larger
+                                                    

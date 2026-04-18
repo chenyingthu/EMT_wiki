@@ -1,0 +1,189 @@
+                                                               Electric Power Systems Research 223 (2023) 109668
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Passivity enforcement of wideband model through a new and full
+perturbation formulation
+Juan Miguel David Becerra a, Ilhan Kocar b, *, Jean Mahseredjian a
+a
+    Polytechnique Montreal, Canada
+b
+    Department of Electrical Engineering, The Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong Kong
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  Passive component models are necessary to ensure numerical stability in the simulation of electromagnetic
+Electromagnetic transients                                 transients in power systems. However, it is challenging to represent transmission lines and cables with frequency-
+Passivity                                                  dependent wideband models that are accurate, efficient, and passive. This paper proposes a new method for the
+Transmission-line model
+                                                           passivity enforcement of wideband line and cable models. The wideband models rely on pole-residue identifi­
+                                                           cation of characteristic admittance and propagation function in rational forms. In case the resulting models are
+                                                           not passive, the proposed method simultaneously applies perturbation to the residue matrices of characteristic
+                                                           admittance and propagation function. The set of equations related to passivity enforcement through the residues
+                                                           of propagation function in phase domain is complex and presented for the first time in this paper. The proposed
+                                                           approach minimizes the overall perturbation for maintaining passivity as opposed to the existing simplified
+                                                           approaches that rely on the perturbation of the residues of either characteristic admittance or diagonal elements
+                                                           of propagation function. The performance of the method is validated with application cases, and it is shown that
+                                                           it outperforms the existing methods that seek simplification in problem formulation.
+
+
+
+
+1. Introduction                                                                                     Passivity is usually enforced with perturbations [11–15], in case of
+                                                                                                wideband line/cable models through perturbation of residues of the
+    Transient simulators are commonly used in power systems to assess                           rationally fitted line/cable functions. This perturbation should still
+switching and lightning-induced overvoltages, precise short-circuit                             preserve the accuracy of the fitted model. However, the enforcement of
+currents, harmonics, and resonance conditions [1]. In these studies,                            passivity in wideband line/cable models is not straightforward because
+wideband models that consider the frequency dependence of electrical                            the line admittance matrix is a complex function of the propagation
+parameters are needed for higher accuracy. Other than integration and                           function and characteristic admittance. The difficulty arises often
+interpolation errors, non-passivity of wideband models may also lead to                         because of the fitting of the propagation function since it is a multi-delay
+numerically unstable simulations in the time domain [2–5]. Thus,                                matrix function. The characteristic admittance itself is a passive function
+ensuring passivity will facilitate troubleshooting of an unstable                               and its fitting is less stringent. The current methods try to enforce
+time-domain simulation.                                                                         passivity through residue perturbation of either the fitted characteristic
+    To accelerate time-domain simulations, wideband line/cable models                           admittance or the diagonal elements of the fitted propagation function,
+including Universal Line Model (ULM) [6,7], and Frequency Dependent                             but not simultaneously [5,11]. Although the passivity problem is often
+Cable Model (FDCM) [4], rely on the rational fitting of the propagation                         associated with the fitting of propagation function, perturbation of the
+function and characteristic admittance matrices (also known as line/­                           residues of the fitted characteristic admittance as suggested in [11] is
+cable functions). However, fitting processes performed in the complex                           also reported to enforce passivity in some cases. Although this approach
+domain such as vector fitting or the recently proposed more efficient                           gives the impression to be disconnected from the root cause of the
+algorithms [8,9] do not guarantee passive models. A model is deemed                             passivity problem, it can be justified given the fact that the reconstructed
+passive if its line admittance matrix is positive real. It is also known that                   nodal admittance function of a line or cable is a function of its charac­
+passivity violations might stem from theoretical assumptions made to                            teristic admittance.
+compute the line/cable parameters [10].                                                             Another weakness of the existing passivity enforcement techniques is
+
+
+    * Corresponding author.
+      E-mail address: ilhan.kocar@polyu.edu.hk (I. Kocar).
+
+https://doi.org/10.1016/j.epsr.2023.109668
+Received 11 December 2022; Received in revised form 17 April 2023; Accepted 21 June 2023
+Available online 12 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+J.M. David Becerra et al.                                                                                                Electric Power Systems Research 223 (2023) 109668
+
+
+the perturbation of the diagonal elements of the fitted propagation                     3. Passivity enforcement through mixed perturbation
+function and lack of a complete passivity enforcement scheme in full
+phase domain. The procedure of passivity enforcement with the                           3.1. General definition
+perturbation of characteristic admittance residues does not apply to the
+propagation function because the relation between the nodal admittance                     In case a wideband model does not satisfy (1), one can enforce
+and the propagation function is non-linear.                                             passivity by altering parameters of its corresponding YC or HI . Usually,
+    In this paper, a new passivity enforcement method is proposed,                      only residue matrices of YC or HI are perturbed. Furthermore, as a
+which is based on the simultaneous perturbation of the characteristic                   common practice, one desires to perturb as little as possible in order to
+admittance and propagation function in full phase domain. Its mathe­                    preserve the accuracy of the fitted model. Hence, passivity enforcement
+matical foundation allows dealing with nonlinear dependence between                     essentially casts in the form of a minimization problem with a nonlinear
+line admittance and propagation function. The proposed method results                   constraint due to the eigenvalue function. For the proposed method, the
+in faster convergence and reduced perturbations compared to existing                    minimization problem is defined as:
+methods, which either modify the characteristic admittance or the di­                                             2
+agonal elements of the propagation function. The proposed method does                         ⎛ ⎡ T(s1 ) ⎤    ⎞
+not significantly alter the fitted functions and maintains fitting accuracy                   ⎜ ⎢ ⋮ ⎥ R ⎟
+compared to the existing methods. This paper presents for the first time                min⎜   ‖⎣          r ‖⎟
+                                                                                                         ⎦Δ̃  ⎠ s.t.(8)                                               (6)
+                                                                                            R ⎝
+                                                                                        Δr̃       T(sm )
+the set of equations related to passivity enforcement through the resi­
+dues of propagation function in full phase domain.                                                  I             2
+
+    The paper is organized as follows: in Section 2, the concept of
+passivity is briefly revisited to set the base. Section 3 discusses the                        rR is a vector that contains the relative perturbations of the
+                                                                                        where Δ̃
+proposed method. Several numerical examples are presented in Section                    residue matrices of YC and HI, Iis an identity matrix such that Δ̃     rR =
+                                                                                            R                      R
+4 with an elaborate discussion about their results. A discussion about the              IΔ̃r , and T(sm )relates Δ̃
+                                                                                                   ̃              r with the relative perturbations of YC (sm ) and
+implementation aspects of the proposed method is provided in Section 5.                 HI (sm ), as given in Appendix.
+Conclusions are given in Section 6.                                                         Relative perturbations are treated here as the deviation of any given
+                                                                                        matrix or vector element divided by the value of the element itself, and
+2. Passivity of travelling wave-type models                                             they are chosen over their absolute counterparts since they provide
+                                                                                        better accuracy control [17].
+   The passivity of a system represented by its admittance Yn (s) can be                    The frequencies ( s1 ⋯ sm ) are chosen as follows:
+assessed through the following condition [12,16]:
+                                                                                         1 Computing the eigenvalues of Θ(s)with a fine logarithmic sampling
+λi ≥ 0∀λi ∈ λ(Θ(s));             s = jω                                      (1)
+                                                                                           typically at least 100 per decade, in a frequency range that contains
+with λ(⋅) being the eigenvalue function and Θ(s) given by:                                 the fitting frequency range.
+                                                                                         2 The data obtained previously is utilized to determine the number of
+Θ(s) = Yn (s) + YHn (s)                                                      (2)           passive and non-passive frequency bands of the model,nb .
+                                                                                         3 For the desired number of frequency samples md , close tom, each
+where YH n (s) is the Hermitian of Yn (s).                                                 frequency band is logarithmically sampled with the number of
+   In the case of wideband line and cable models,Yn (s) can be generated                   samples mb , given in (7).
+as a function of s from the fitted characteristic admittance and propa­                  4 For each non-passive band, an extra sample is added with the worst
+gation functions:                                                                          passivity violation (lowest eigenvalue) obtained from step one. Thus,
+      ⎡(         )− 1 (         )        (          )− 1       ⎤                           m represents the final number of frequency samples,
+         I − H2I        I + H2I YC    − 2 I − H2I        HI YC                                   {
+Yn =  ⎣      (          )− 1       (         )− 1 (         ) ⎦      (3)                            floor(md /nb ) md /nb > 1
+          − 2 I − H2I        HI YC   I − H2I        I + H2I YC                             mb =                                                              (7)
+                                                                                                          1        md /nb ≤ 1
+   Where I is the identity matrix, and YC and HI denote the fitted
+characteristic admittance and propagation functions with rational
+functions, respectively. We drop (s) from the matrices for the sake of
+                                                                                            Regarding the nonlinear constraint caused by the eigenvalue func­
+simplicity. The rational forms for YC and HI are given as follows:
+                                                                                        tion, it is replaced by a linear approximation because otherwise, it is
+           ∑n
+                 Ri                                                                     likely to hamper the execution speed and convergence of the minimi­
+YC (s) =               +D                                                    (4)        zation problem [11,14]. Thus, we define the minimization problem
+           i=1
+               s −  pi
+                                                                                        constraint as:
+           ∑
+           G              ∑ng
+                                 ̂ i,g                                                  ⎡         ⎤       ⎡           ⎤〉
+                                 R                                                         P(s1 )           λ(Θ(s1 ))
+HI (s) =         e− sτg                                                      (5)
+           g=1            i=1
+                              s −   p i,g
+                                    ̂                                                   ⎣ ⋮ ⎦Δ̃rR + α⎣         ⋮      ⎦ 0                                  (8)
+                                                                                          P(sm )            λ(Θ(sm ))
+where n is the number of poles of YC (s), D is the constant matrix, pi is the
+                                                                                        where αis a constant slightly greater than unity andP(sm )is the matrix
+ith pole whose corresponding matrix of residues is denoted by Ri . Also, G
+                                                                                        that relates the first differential of the eigenvalue function evaluated at
+is the number of modal groups of HI (s), ng is the corresponding number
+of poles of the gth modal group, τg is the time delay associated with the               the frequency sm with the relative perturbation of the residuesΔ̃     rR . The
+                                                                                        first differential is the linear part of the change of a given function due to
+gth modal group, ̂ p i,g and R
+                             ̂ i,g are the ith pole and residue matrix of the gth
+                                                                                                                                         rR are in the Appendix.
+                                                                                        a perturbation [18]. The definition of P, T and Δ̃
+modal group.
+                                                                                        3.2. Variants of the proposed method
+
+                                                                                            The proposed method offers a range of possible variants, and one can
+                                                                                        classify them by considering three aspects: (i) perturbed functions, (ii)
+                                                                                        relative quantities and (iii) residue reduction. The first aspect leads to
+
+                                                                                    2
+J.M. David Becerra et al.                                                                                             Electric Power Systems Research 223 (2023) 109668
+
+
+YC, HI, and simultaneous perturbations by modifying (6), (8) and (A.1)-            enforcing passivity with minimum deviation in YC and HI. The
+(A.3) accordingly. The second one determines if all perturbations in the           remaining variants are presented to demonstrate its performance and
+objective function are referenced to their original value, which requires          the weaknesses of the existing methods.
+simple modifications in (A.12), (A.14), (A.15) and (A.16) in case abso­
+lute perturbations are preferred. The third aspect controls if the per­            4.1. Metrics of efficiency
+turbations on the residues and perturbed functions are minimized
+together by including the Imatrix in (6).                                              The efficiency of each enforcement option (variant) is evaluated by
+    It is important to note that the residue reduction benefits the                considering the following four metrics, (i) success in passivity enforce­
+convergence of (6) strongly, as it will be shown in Section 4.                     ment, (ii) deviations in YC and HI after the enforcement of passivity (iii)
+    On the other hand, some previous works can be classified as sub­               execution time, and (iv) number of iterations.
+variants of our proposed method. For example, the methods presented in                 Regarding the first metric, a failure in passivity enforcement is
+[11] are obtained by perturbing YC or HI without the use of relative               declared if the model is not passive at the end of 21 iterations. This limit
+quantities and residue reduction. In addition, these methods are                   is quite permissive, considering that C-All converged in less than five
+simplified versions since they are based on the perturbation of diagonal           iterations for most cases.
+elements, which is straightforward to include in (6).                                  The induced deviations in YC and HI are measured by applying the
+                                                                                   Feature Selective Validation (FSV) method [22,23] between DC and 100
+3.3. Limitations                                                                   MHz with 100 samples per decade. FSV gives a metric named Global
+                                                                                   Difference Measure (GDM), which yields a low value when the two
+    The existing passivity enforcement techniques for wideband line and            datasets are in excellent agreement, and it can be interpreted 

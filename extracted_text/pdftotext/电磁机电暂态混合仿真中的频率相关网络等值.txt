@@ -1,0 +1,245 @@
+DOI:10.13334/j.0258-8013.pcsee.2012.13.012
+
+
+
+
+                    第 32 卷 第 13 期                           中 国 电 机 工 程 学 报                                  Vol.32 No.13 May 5, 2012
+                    2012 年 5 月 5 日                            Proceedings of the CSEE                       ©2012 Chin.Soc.for Elec.Eng.   61
+          文章编号：0258-8013 (2012) 13-0061-08                      中图分类号：TM 74             文献标志码：A              学科分类号：470·40
+
+
+
+              电磁–机电暂态混合仿真中的频率相关网络等值
+                                       张怡 1，吴文传 1，张伯明 1，Aniruddha M. Gole2
+               (1．电力系统及发电设备控制和仿真国家重点实验室(清华大学电机系)，北京市 海淀区 100084；
+                                      2．曼尼托巴大学电气与计算机工程系，加拿大 温尼伯 R3T 5V6)
+
+
+                                            Frequency Dependent Network Equivalent for
+                                      Electromagnetic and Electromechanical Hybrid Simulation
+                                       ZHANG Yi1, WU Wenchuan1, ZHANG Boming1, Aniruddha M. Gole2
+               (1. State Key Lab of Control and Simulation of Power Systems and Generation Equipments (Dept. of Electrical Engineering,
+                                                  Tsinghua University), Haidian District, Beijing 100084, China;
+                       2. Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg R3T 5V6, Canada)
+
+
+          ABSTRACT: The frequency dependent network equivalent                      说明基于 FDNE 的电磁–机电暂态混合仿真方法的精度及其
+          (FDNE) can represent not only property of the fundamental                 优势。
+          frequency response but also that of the high frequency response
+                                                                                    关键词：电磁暂态；机电暂态；频率相关网络等值；无源性；
+          of the network. Thus, it can accommodate the waveform
+                                                                                    矢量拟合法
+          distortion    at    the    interface    in    electromagnetic   and
+          electromechanical transient hybrid simulation. Firstly, the               0    引言
+          method of acquiring the network frequency response samples
+                                                                                         由于计算量太大，电磁暂态(electromagnetic
+          was presented which was based on simplified models of power
+                                                                                    transient，EMT)仿真不能用于大规模电力系统的仿
+          system elements. Secondly, a revised vector fitting method was
+          used to calculate the FDNE and a perturbation based corrective            真，其中相对不重要的网络部分常常用等值网络来
+          control method was also proposed to guarantee the passivity of            表征。但是，常规的网络等值方法会改变或者丧失
+          the FDNE. Finally, several examples were given to prove the               原始网络的高频特性。频率相关网络等值(frequency
+          accuracy and advantage of the FDNE based hybrid simulation                dependent network equivalent，FDNE)与频率相关，
+          method.
+                                                                                    可以较精确地表示原始网络在各个频率下的频率
+          KEY WORDS: electromagnetic transient; electromechanical                   特性。FDNE 目前已应用于网络等值[1]、谐波[2]、
+          transient; frequency dependent network equivalent; passive;
+                                                                                    传输线模型 [3] 和电磁–机电暂态混合仿真 [4-5] 等研
+          vector fitting
+                                                                                    究中。
+          摘要：频率相关网络等值(frequency dependent network
+                                                                                         在电磁暂态程序与机电暂态稳定分析(transient
+          equivalent，FDNE)不仅可以表示网络的基频响应特性，而
+                                                                                    stability analysis，TSA)程序的混合仿真中，对机电
+          且还可以表示网络的高频响应特性，从而能够应对电磁暂
+                                                                                    暂态侧的等值电路往往采用诺顿(Norton)等值法生
+          态、机电暂态混合仿真中的接口波形畸变问题。基于简化元
+          件模型介绍 FDNE 的频率特性采样值的求取方法；应用矢                                              成。常规诺顿等值电路不能精确表示机电暂态侧的
+          量拟合法将上述频率特性采样值整体拟合成一个 FDNE，并                                              高频响应，因而不能模拟接口处的波形畸变对电磁
+          采用摄动法保证了此 FDNE 的无源性。最后，用多个算例                                              暂态侧直流输电系统产生的影响。Morched 最先讨
+                                                                                    论了用 FDNE 来表示机电暂态侧谐波对电磁暂态侧
+               基金项目：国家 863 高技术基金项目(2011AA05A118)；国家杰出
+          青 年 科 学 基 金 (51025725) ； 新 世 纪 优 秀 人 才 支 持 计 划 项 目
+                                                                                    影响的必要性[4]；Anderson 的研究表明由于 FDNE
+          (NCET-11-0281)。                                                           考虑了机电侧网络的高频频率特性，所以能提高仿
+               The National High Technology Research and Development of China
+                                                                                    真的精度[5]；加拿大 Lin 等人采用矢量拟合法[6]来
+          863 Program (2011AA05A118); Scientific Funds for Outstanding Young
+          Scientists of China (51025725); Project Supported by Program for New
+                                                                                    获取机电暂态侧网络的 FDNE，有效地模拟了高压
+          Century Excellent Talents in University (NCET-11-0281).                   直流输电系统(high-voltage direct current，HVDC)
+62                                                                中 国 电 机 工 程 学 报                                           第 32 卷
+
+换流器母线处谐波对电磁暂态侧的影响，取得了较                                                                    目前常用的办法是用矢量拟合法将 FDNE 矩阵
+                           [7-8]                                       [9-10]
+精确的仿真结果                        ；中国电力科学研究院                                    、清       的每个元素在一系列频率下的采样值拟合成一个
+        [11-12]                                    [13]               [14]
+华大学             、华北电力大学                               、天津大学                 、四川       连续的有理函数。通过矢量拟合法求出的 FDNE 矩
+     [15]                          [16]
+大学          和东南大学                         也对混合仿真进行了不同深                                阵中的每个元素可以表示为一个频域函数：
+度的研究，取得许多很好的成果，但均没有考虑机                                                                                n
+                                                                                                            ci
+                                                                                               y(s )            d  sh       (2)
+电暂态侧谐波对电磁暂态侧的影响。                                                                                     i 1 s  ai
+  本文在文献[7]的基础上，改善适用于电磁–机
+                                                                                      式中：极点 ai 和留数 ci 或是实数，或分别以复数共
+电暂态混合仿真的 FDNE 的求取和应用的方法，包
+                                                                                      轭对出现；d 和 h 为实数；n 为极点个数。FDNE
+括网络频率特性采样值的精细化求取方法、FDNE
+                                                                                      矩阵中不同元素的 ai、ci、d 和 h 是不相同的。矢量
+的整体矢量拟合法和消除 FDNE 无源越界的摄
+                                                                                      拟合法根据 FDNE 频率特性采样值，形成一组超越
+动法。
+                                                                                      方程，运用最小二乘法求取式(2)中的未知参数。
+1    FDNE 简介                                                                          2   FDNE 的求取
+     如图 1 所示，不同频率下，节点导纳矩阵是不                                                           2.1 概述
+同的。网络的频率特性由这些节点导纳矩阵决定。                                                                    本文的 FDNE 用于电磁–机电暂态混合仿真中
+传统的诺顿等值电路中的导纳矩阵是在基频下形                                                                 对机电暂态侧网络的等值。求取 FDNE 矩阵的步骤
+成的，只能表示网络在基频下的频率特性。                                                                   可分为 3 步：1）求取机电暂态侧原始网络的频率
+                                      y11     y12        y1n                         特性采样值；2）根据这些频率特性采样值，运用
+                                     y21      y22  y2 n
+                                                                                     矢量拟合法求取式(2)中的 ai、ci、d 和 h；3）运用
+                                     yn1      yn 2       ynn
+                                                                2000Hz
+                                                                                      摄动校正保证 FDNE 的无源性。
+                                                                                      2.2 频率特性采样值的获取
+                                                                                          本文求取机电暂态侧网络频率特性采样值的
+               y11   y12            y1n
+               y21   y22  y2 n                                                       步骤可分为 4 步。
+                                                  20Hz                                  1）选取频率范围。大规模交直流系统中产生
+               yn1   yn 2  ynn                  10Hz
+                                               1Hz                                   的谐波的频率比较固定。对于 12 脉冲的高压直流
+                     图 1 离散的节点导纳矩阵                                                    输电系统，交流侧的谐波次数一般为 12m1，其中
+            Fig. 1 Discrete node admittance matrices                                  m=1,2,；另外，随着谐波频率的升高，这些频率
+     网络的频率特性是频率的函数，是连续的。但                                                             的谐波所占的分量将会减小。一般而言，选取频率
+是，采用图 1 所示的有限个离散节点导纳矩阵不能                                                              范围为 1~2kHz 即可保证仿真的精度。
+表示连续的频率特性。FDNE 的实质是一个以频率                                                                  2）选取频率采样点。为了保证结果的精确性，
+为函数的节点导纳矩阵，它可以表示频率变化情况                                                                需要选取足够多的频率采样点。本文的做法是，将
+下的节点导纳矩阵。因此，NN 维 FDNE 可以表                                                           步骤 1）中给出的频率范围划分成 N01 个等间距。
+示为一个频域矩阵：                                                                             一般来说，对于频率范围为 1~2kHz，N0 取 500。
+                   y11 ( s )               y12 ( s)  y1N ( s)                          3）计算单个网络元件的幅频特性。为了保证
+                   y ( s)                  y21 ( s )  y2 N ( s )                   矢量拟合法拟合的有理函数能够符合原始网络的
+        Y ( s )   21                                                         (1)
+                                                                                   频率特性，需要保证矢量拟合法所采用的导纳幅值
+                   y (s )                  yN 2 ( s )  yNN ( s) 
+                   N1                                                                (相角)频率特性采样值尽可能接近于原始网络的导
+式中 sj2f，f 为频率。                                                                    纳幅值(相角)频率特性。电力元件的频率特性一般
+     FDNE 矩阵中的每个元素都可以表示连续的频                                                           是非线性的，很难求取其完全精确的频率特性。因
+率特性。在实际应用中，FDNE 中的任一元素都可                                                              此，在求取各元件的频率特性时，应对各元件模型
+以用 RLC 元件组合电路或有理函数来表示。但是，                                                             进行简化。本文的元件模型简化涉及到发电机、负
+                                                                      [2]
+RLC 元件组合电路的形式及其求取方法 都过于                                                               荷、线路和变压器。在频率 f 下，各元件频率特性
+复杂。                                                                                   的求取方法如下(f0 为基频频率)：
+第 13 期                                       张怡等：电磁–机电暂态混合仿真中的频率相关网络等值                                                     63
+
+     ①发电机。由电压源和次暂态阻抗 RgjXg 组                                                    abc
+                                                                            导纳矩阵 YBB   ：
+成的串联电路表示；因此，考虑频率特性的发电机                                                                         abc
+                                                                                             YBB        012 1
+                                                                                                    SYBB  S               (8)
+导纳为
+                                                                            其中
+                                            1
+                       y( f )                                        (3)
+                                                 f                                Sv                      1 1   1
+                                       Rg  jX g                                                            
+                                                 f0                           S       Sv        ,   Sv  1  2
+                                                                                                                        (9)
+                                                                                                 
+     ②负荷。是 ZIP 负荷，先将负荷中的恒电流和                                                                Sv          1   2 
+恒功率分量分别转化为等值阻抗，并和恒阻抗分量                                                      式中120，为复数算子。
+相加得到其基频等值阻抗 RdjXd；因此，考虑频率                                                             abc
+                                                                               将不同频率下的 YBB   作为机电暂态侧网络的
+特性的负荷等值导纳为                                                                  FDNE 频率特性采样值。这个 FDNE 是三相的，可
+                                            1                               以应用到电磁暂态仿真程序中。
+                       y( f )                                        (4)
+                                                 f
+                                       Rd  jX d                            2.3 FDNE 矩阵的整体矢量拟合
+                                                 f0
+                                                                               矢量拟合法实质就是根据 FDNE 频率特性采样
+     ③线路。是型准稳态模型，其基频下的线路                                                 值，形成一组超越方程，运用最小二乘法求取式(2)
+阻抗和充电电纳分别为 RljXl 和 jbc；因此，考虑                                             中的未知参数。文献[7]中的矢量拟合法只是针对单
+频率特性的线路导纳矩阵为                                                                个有理函数进行拟合，在拟合过程中，每个有理函
+                              y  yc              yl                     数对应的极点的值和数目都是不同的。对于式(1)，
+                    y( f )   l                                      (5)
+                               yl             yl  yc                   当 N2 个有理函数的极点不同时，把 FDNE 矩阵中
+式中：yl1 / (RljXlf/ f0)；ycjbcf/ f0。
+                                                                        的 N2 个元素逐个应用到时域仿真，其计算量会急
+     ④变压器。变压器模型如图 2 所示，考虑频率                                                 剧增加，同时其时域实现也不方便。本文采用了新
+特性的变压器导纳矩阵为                                                                 的方法：
+                           1                     exp( j )                    1）先为这 N2 个元素求取一组相同的初始公共
+                                                           
+                            t2                        t                     极点。若采样点数为 N0，则可求取 N0 个 NN 维的
+         y ( f )  yt                                               (6)
+                        exp( j )                  1                     采样值矩阵。将各个采样值矩阵中 N2 个元素值依
+                            t                              
+                                                                            次相加，对于 N0 个采样值矩阵则可得到一个 N01
+式中：yt1 / (RtjXtf/ f0)，而 RtjXt 为变压器的漏
+                                                                         的“采样值向量”。将这个“采样值向量”进行矢
+阻抗；为变压器 i 端与 j 端的相位差，一般为 0、                                              量拟合，可以得到一个如式(2)的有理函数。将这个
+30和30，具体由变压器绕组接法和正负序决定。                                                 有理函数的极点设为原始 FDNE 矩阵的初始公共
+                           t1            RtjXt                        极点。
+         i                                                        j
+                                                                                 2）基于步骤 1）中的初始公共极点，对这个
+                        图 2 变压器电路图                                          FDNE 矩阵中的各个元素逐个进行矢量拟合，以保
+             Fig. 2 Circuit of the transformer
+                                                                            证 FDNE 矩阵各个元素的极点及其个数相同。
+     4）计算网络的频率特性。根据单个网络元件
+                                                                               3）由矢量拟合法可知，当极点未收敛时，矢
+的频率特性，可计算出各个频率下的网络节点导纳
+                                                                            量拟合法结束后可求出一组新极点。可将这组新极
+矩阵，即网络的频率特性在某个频率下的采样值。
+                                                                            点重新作为步骤 2）的初始公共极点，重新进行矢
+本文的 FDNE 是对机电暂态侧网络的等值，因此，
+                                                                            量拟合，直到初始公共节点与算法结束后新极点的
+首先计算机电暂态侧网络的节点导纳矩阵，对其进
+                                                                            差值在一定门槛值内。一般来说，迭代 3~4 次即可
+行高斯消去，得到收缩到边界节点的节点导纳矩阵。
+                                                                            收敛并求得具有公共极点的 FDNE 矩阵。
+                                               1
+                     YBB  YBB  Y Y Y     BE EE EB                   (7)      在矢量拟合的过程中，采取如下实用化处理
+式中：下标 B 表示边界节点；下标 E 表示机电暂态                                                  方法：
+侧网络中的其他节点。根据式(7)可得正负零序节点                                                         1）在实际求取过程中，一般可令 h 为 0。这主
+导纳矩阵 Y        012
+             BB     ，对其进行序相变化，得到三相节点                                        要是因为对实际网络而言，在无限大的频率下，实
+64                                                 中 国 电 机 工 程 学 报                                                      第 32 卷
+
+际网络的节点导纳不可能为无穷大；                                                       式中：u 为原始网络中的节点电压；G(s)为 Y(s)的
+     2）为了保证拟合的有理函数在基频和谐波频                                              实部。但是，矢量拟合法求出的 FDNE 矩阵 Y(s)在
+率下都呈现精确的频率特性，一般在拟合时对基频                                                 某些频率 s 下 P(s)0，即在频率 s 下有可能是有源
+和谐波频率下的采样值设置相对较大的权重。                                                   的，有源的 FDNE 会导致时域仿真发散。为了保证
+     这种方法能够保证 Y(s) 各元素的极点是相同                                           原始网络只吸收能量，即要求 P(s)0，则矩阵 G(s)
+的，只是留数项和常数项不相同，则 NN 维 FDNE                                          必须是正定的，即其所有的特征值必须为正值。
+矩阵 Y(s)可表示为                                                                本文的无源性校正方法不同于文献[7]。文献[7]
+
+                                                                      的无源性校正方法是建立在多次矢量拟合的基础
+                 n
+                      ci11           n
+                                         c12       n
+                                                        c1 N 
+         d11               d12  i  d11 i                      上。即，当 FDNE 在某频率下无源越界时，增加该
+               i1 s  ai         i 1 s  ai   i 1 s  ai 
+                 n
+                      c 21           n
+                                         c 22       n
+                                                        c2 N          频率附近采样点的数目，对该频率附近进行精细拟
+         d21 i d 22  i  d2 N  i                               合，通过反复多次拟合直至 FDNE 达到无源性。相
+Y ( s)        i 1 s  ai        i1 s  ai      i1 s  ai  (10)
+                                                                    对于文献 [7]所提方法，本文的方法直接保证矩阵
+                                                             
+                  n
+                      ciN 1           n
+                                         ciN 2       n
+                                                        ciNN          G(s)正定，可以自动保证 FDNE 的无源性。本文的
+         d N1  s  a d N 2  s  a  d NN  s  a                无源性校正分为 2 个步骤：
+                i1        i        i1       i   i 1     i
+
+
+将式(10)写成传递函数的形式：                                                           1）评估 FDNE 的无源性。本文采用文献[17]
+                                                                       中的奇异测试矩阵来判断式(11)对应的 FDNE 的无
+                 Y ( s )  C ( sE  A) 1 B  D               (11)
+                                                                       源越界。若矩阵 R 出现负特征值，则负特征值的平
+式中 E 为单位矩阵，其维数与矩阵 A 相同。                                                方根j的虚部即是无源越限的频率。
+             A  diag( A1  Ak               AN )                         R  [ A  B ( D  E ) 1 C ][ A  B( D  E ) 1 C ] (13)
+                         1         1                1
+         Ak  diag(                                     )             式中

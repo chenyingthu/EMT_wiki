@@ -1,0 +1,201 @@
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 4, DECEMBER 2021                                                                                    3533
+
+
+
+
+     Average-Value Modeling of Line-Commutated
+    AC–DC Converters With Unbalanced AC Network
+    Seyyedmilad Ebrahimi , Member, IEEE, Navid Amiri , Member, IEEE, and Juri Jatskevich , Fellow, IEEE
+
+
+   Abstract—AC–DC line-commutated converters (LCCs) are                            significantly influence the operation of power system equipment,
+widely utilized in existing and emerging ac–dc power systems. Anal-                e.g., protection relays, controllers, etc., [8]–[10]. The imbalance
+ysis of such systems under balanced and unbalanced conditions is                   in the system may be a result of various phenomena, e.g., internal
+often carried out using electromagnetic transient (EMT) simula-
+tion programs. Therein, the detailed switching models of LCCs                      faults of LCR switches, asymmetric faults on and/or unequal
+are often the computational bottlenecks for system-level studies.                  impedances of the lines/cables, as well as unbalanced loads
+Recently, the parametric average-value models (PAVMs) have been                    and/or sources, etc.
+developed to achieve fast and efficient simulations of switching                      Such studies are conventionally done using electromagnetic
+converters. In this paper, the PAVM methodology is extended to                     transient (EMT) simulation programs, e.g., PSCAD/EMTDC,
+consider operation of LCCs under unbalanced conditions in the
+ac network. This is done in the extended PAVM by formulating                       EMTP-RV, MATLAB/Simulink [11], Simscape Electrical,
+the ac-side harmonics in positive and negative sequences as well as                PLECS [12], as well as real-time simulators such as Typhoon
+the dc-side harmonics (i.e., ripples) with respect to the ac network               HIL, Opal-RT, RTDS, etc. In these programs, the detailed
+imbalance. The new PAVM is validated experimentally and by                         switching models of LCRs are commonly available as standard
+simulations, and is demonstrated to be accurate in reconstructing                  library components which provide high-fidelity and accurate
+the ac and dc waveforms under unbalanced conditions in the ac
+network. Meanwhile, the proposed PAVM is computationally much                      results by computing all the discrete switching and commu-
+faster than its detailed switching model counterpart.                              tations of all individual devices. Such models typically rely
+                                                                                   on accurate handling of discrete switching events, which is
+  Index Terms—AC–DC converter, average-value model, line-
+commutated, parametric, simulations, unbalanced conditions.
+                                                                                   achieved using small time-steps, zero-crossing detection, inter-
+                                                                                   polation [13]–[14], etc., which make these models computation-
+                                                                                   ally expensive. Detailed switching models may quickly become
+                            I. INTRODUCTION                                        computational bottlenecks in systems with multiple converters
+       C–DC power-electronic converters play an enabling role                      and/or when the simulations have to be done many times for
+A      in the development of modern energy systems and their
+integration with conventional power systems. Therein, line-
+                                                                                   optimization of parameters and design of controllers [15]. At
+                                                                                   the same time, many EMT simulators have been pushing to
+commutated rectifiers (LCRs) are often utilized due to their sim-                  expand their computational capabilities by permitting larger
+plicity, reliability, high-power capability, high efficiency and low               time-steps (up to hundreds of microseconds, at least for parts of
+cost. Examples of LCRs applications include (but are not limited                   their systems, e.g., super-step in RTDS [16]) and/or including
+to) classic HVDC systems [1], distributed energy resources                         the dynamic phasor-type average solution techniques with larger
+(DERs) [2], exciters of synchronous generators [3], vehicular                      time-steps [17].
+[4], marine [5], and avionic power systems [6], induction furnace                     As an alternative to the detailed switching models, dynamic
+systems [7], etc. However, LCRs contribute to the harmonics in                     average-value models (AVMs) [3], [6], [17]–[30] have been
+the system.                                                                        developed for LCRs, wherein the individual discrete switching
+   Reliable planning, design and development of such LCR-                          is neglected, and slower non-switching dynamics are captured
+based systems require comprehensive studies and analyses of                        by relating the ac- and dc-side variables through their average-
+the system under normal and unbalanced/faulty conditions. This                     value relationships. This makes the AVMs fast and efficient
+is due to the fact that in addition to the harmonics that result                   for system-level simulations. The AVMs may be classified as
+from the LCR operation, the imbalance of the system can also                       analytical (AAVMs) [3], [6], [17]–[21] and parametric (PAVMs)
+                                                                                   [22]–[30]. The PAVMs have appeared to be very promising for
+   Manuscript received February 11, 2021; revised April 14, 2021; accepted May     their high accuracy and subsequent automatic generation and
+23, 2021. Date of publication May 26, 2021; date of current version November       realization in EMT simulators. Interested reader is referred to
+23, 2021. This work was supported by the Natural Science and Engineering
+Research Council (NSERC) of Canada under the Collaborative Research and            [27, Table I] for a list of state-of-the-art AAVMs and PAVMs
+Development Grant. Paper no. TEC-00161-2021. (Corresponding author: Juri           with details on their features and limitations.
+Jatskevich.)                                                                          In [17]–[18], analytical dynamic phasor models have been
+   The authors are with Electrical and Computer Engineering Department, The
+University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail:             developed in phasor-domain for LCC-HVDC converters under
+ebrahimi@ece.ubc.ca; navida@ece.ubc.ca; jurij@ece.ubc.ca).                         unbalanced system operation (i.e., asymmetrical faults and com-
+   Color versions of one or more figures in this article are available at https:   mutation failure). However, they have the general limitations
+//doi.org/10.1109/TEC.2021.3084124.
+   Digital Object Identifier 10.1109/TEC.2021.3084124                              of AAVMs, i.e., being applicable only to a single operating
+
+                         0885-8969 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:08:46 UTC from IEEE Xplore. Restrictions apply.
+3534                                                                          IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 4, DECEMBER 2021
+
+
+
+
+Fig. 1.   An example generic three-phase ac–dc system consisting of a line-commutated rectifier powered through an unbalanced ac network.
+
+
+mode for which they are derived. In [28]–[29], PAVMs have                         and negative sequence components [31] as
+been developed for LCRs when imbalance occurs due to internal
+faults of switches. However, to the best of authors’ knowledge,                                        eabcs = eabcs,pos + eabcs,neg ,                  (1)
+a PAVM that formulates the unbalanced ac-side harmonics as                        where eabcs is assumed to contain only the fundamental fre-
+well as the oscillatory components of dc-side variables of the                    quency components. Since there is no neutral connection be-
+LCR due to imbalance in the ac network has not been reported                      tween the LCR and the ac subsystem, there is no zero-sequence
+in the literature. This paper proposes such PAVM for the first                    in system of Fig. 1. Assuming θs being the angle of positive
+time, and makes the following contributions:                                      sequence component in phase a of source voltages (or rotor angle
+   r The PAVM methodology is extended to consider the un-                         of the equivalent generator), the positive and negative sequence
+      balanced operations of LCRs due to imbalance in the ac                      components in (1) are expressed as
+      network by formulating the ac-side harmonics in positive                                              ⎡                   ⎤
+      and negative sequences as well as the dc-side harmonics                                                      cos (θs )
+      (i.e., ripples) in the model.                                                        eabcs,pos = Epos ⎣ cos (θs − 2π/3) ⎦ ,              (2)
+   r The harmonic terms are formulated using both dynamic                                                     cos (θs + 2π/3)
+      and algebraic representations, where the latter may be used                                           ⎡                           ⎤
+                                                                                                                   cos (θs + γimb )
+      for computationally cheaper implementation.
+   r The proposed PAVM is validated experimentally as well                                 eabcs,neg = Eneg ⎣ cos (θs + γimb + 2π/3) ⎦ .       (3)
+                                                                                                              cos (θs + γimb − 2π/3)
+      as through extensive simulations in time-domain and
+      impedance prediction in frequency domain; which is                             In (2)–(3), Epos and Eneg are the amplitudes of the positive
+      shown to be capable of reconstructing the ac- and dc-side                   and negative sequence source voltages, respectively. Also, γimb
+      waveforms very accurately under unbalanced ac network                       in (3) is a possible phase displacement of the negative sequence.
+      conditions.                                                                 To quantify the amount of imbalance in the source voltages, an
+   r Using computer simulations, the new extended PAVM is                         amplitude-imbalance factor is defined as
+      demonstrated to be orders of magnitude faster than the                                                       Eneg
+      detailed switching model, which makes this approach at-                                        Aimb =                 × 100[%].                   (4)
+                                                                                                                Epos + Eneg
+      tractive for possible implementation in EMT simulators for
+      efficient studies of large ac–dc systems.                                      Here, Aimb can range anywhere between (0∼100%); where
+                                                                                  Aimb = 0 denotes a balanced three-phase source (Eneg = 0);
+           II. MODELING OF AC AND DC SUBSYSTEMS                                   and Aimb = 100% implies that the source consists of only
+                                                                                  negative sequence voltages (Epos = 0). The definition (4) allows
+   To clearly define the methodology, without loss of generality,                 to consider the full range of balanced and unbalanced conditions.
+a generic three-phase ac–dc system shown in Fig. 1 is considered                     The LCR ac-side terminal voltages vabcs and currents iabcs
+in this paper. The ac subsystem may be a grid (represented                        typically contain harmonics, and considering the unbalanced
+by its Thévenin equivalent) or a network of interconnected ac                     operation can be expressed using their Fourier series as
+generators (represented by a lumped equivalent generator). The                                                                      
+LCR may be composed of either diode or thyristor switches.                                      vabcs =         vabcs,pos
+                                                                                                                  n
+                                                                                                                          + vabcs,neg
+                                                                                                                              n
+                                                                                                                                        ,       (5)
+The dc subsystem may include an RLC filter whose output                                                         n
+feeds a dc network. For compactness of notations, the vectors                                                                     
+of three-phase variables are denoted by lower-case bold letters                                    iabcs =   inabcs,pos + inabcs,neg ,                  (6)
+                                                                                                                n
+as f abcs = [ fas fbs fcs ]T , where f may represent voltage v or
+current i.                                                                        where n is the ac harmonic order. The positive and negative
+                                                                                  sequence voltage and current harmonics in (5)–(6) are
+A. Formulation of the AC Subsystem With Imbalance                                                      ⎡                            ⎤
+                                                                                                             cos nθe + θv,pos
+                                                                                                             
+                                                                                                                          n
+                                                                                                                                  
+                                                                                                    n ⎣
+  To model the imbalance in the ac subsystem of Fig. 1, the                           vabcs,pos
+                                                                                       n
+                                                                                                = Vpos   cos nθe + θv,pos
+                                                                                                                     n
+                                                                                                                           − 2π/3 ⎦ ,    (7)
+equivalent source voltages eabcs are decomposed into positive                                            cos nθe + θv,pos
+                                                                                                                     n
+                                                                                                                           + 2π/3
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:08:46 UTC from IEEE Xplore. Restrictions apply.
+EBRAHIMI et al.: AVERAGE-VALUE MODELING OF LINE-COMMUTATED AC–DC CONVERTERS WITH UNBALANCED AC NETWORK                                                       3535
+
+
+                         ⎡                           ⎤
+                             cos nθe + θv,neg
+                                           n
+                                                    
+                    n ⎣
+    vabcs,neg
+      n
+                = Vneg   cos nθe + θv,neg
+                                      n
+                                             + 2π/3 ⎦ ,                  (8)
+                         cos nθe + θv,neg
+                                      n
+                                             − 2π/3
+                       ⎡                            ⎤
+                             cos nθe + θi,pos
+                             
+                                          n
+                                                   
+                   n ⎣
+     inabcs,pos = Ipos   cos nθe + θi,pos
+                                     n
+                                            − 2π/3 ⎦ ,                   (9)
+                         cos nθe + θi,pos
+                                     n
+                                            + 2π/3
+                       ⎡                            ⎤
+                             cos nθe + θi,neg
+                             
+                                           n
+                                                   
+                   n ⎣
+    inabcs,neg = Ineg    cos nθe + θi,neg
+                                     n
+                                            + 2π/3 ⎦ .                 (10)     Fig. 2. Phasor diagram of the h-order harmonics of the dc-side voltage and
+                                                                                 current with respect to the multiple of the LCR phase a voltage angle in positive
+                         cos nθe + θi,neg
+                                     n
+                                            − 2π/3                               sequence (i.e., hθe ).
+                  n           n
+   In (7)–(8), Vpos    and Vneg   are the amplitudes of the n-th
+                                                                                            h      h
+harmonics of ac voltages in positive and negative sequences,                     where Vdc    and Idc are the amplitudes of the h-th harmonics in
+       n            n                                                                                                                         h
+with θv,pos   and θv,neg  as their phase displacements. Also, in                 the dc-side voltage and current ripples, respectively; with θv,dc
+            n         n
+(9)–(10), Ipos and Ineg  are the amplitudes of the n-th harmonics                       h
+                                                                                 and θi,dc as their corresponding phase displacements as shown
+                                                          n
+of ac currents in positive and negative sequences, with θi,pos and               in Fig. 2. Since harmonics rotate with higher frequency, their
+ n
+θi,neg as their phase displacements, respectively. Also, θe is the               angles in Fig. 2 are shown with respect to the multiple of the
+phase angle of positive sequence fundamental frequency (n =                      rectifier terminal angle (i.e., hθe ).
+1) component in phase a of LCR voltages [which 

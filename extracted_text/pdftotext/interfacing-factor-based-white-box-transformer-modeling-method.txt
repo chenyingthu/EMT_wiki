@@ -1,0 +1,209 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                           1
+
+
+
+
+   Interfacing -Factor Based White-Box Transformer
+   Models With Electromagnetic Transients Programs
+                             Bjørn Gustavsen, Fellow, IEEE, and Álvaro Portillo, Senior Member, IEEE
+
+
+   Abstract—White-box transformer models are used by trans-                          then be used by the manufacturer as input for calculating in-
+former manufacturers during the dielectric design of windings.                       ternal overvoltages using its proprietary (white-box) software.
+The models are often based on constant parameters (RLCG ma-                          That way, modifications can be made to the adjacent power
+trices) with the high-frequency losses accounted for by a scaling
+of the dc resistance ( -Factor). We show an efficient procedure                      system and/or transformer design to reduce the probability of
+for interfacing such models with Electromagnetic Transients                          future failures.
+Program (EMTP)-type circuit simulators via state equations and                          The white-box models can be categorized as lumped circuit
+a Norton equivalent. The approach makes no approximations                            models based on a spatial discretization of the windings, or trav-
+except for the discretization in the time domain. Diagonalization is                 eling wave-type models. The extraction of the model’s parame-
+utilized for achieving high computational efficiency. Proprietary
+information about internal voltages is optionally hidden from the                    ters is, in all cases, based on a detailed description of the trans-
+user. Internal surge arresters are handled by the EMTP circuit                       former’s geometry and material properties which, in practice,
+solver by declaring their connection points as external nodes. The                   are only known to the manufacturer. From this information, the
+model interface includes automated initialization from 50/60-Hz                      model’s parameters are extracted via formulae and/or finite-el-
+initial conditions. The proposed interfacing capability permits                      ement method computations. Several levels of refinement are
+manufacturers to apply their models in complete network simula-
+tions, and to share their models with users.                                         possible, including frequency dependency of the model’s pa-
+                                                                                     rameters as well as the resolution of the spatial discretization.
+  Index Terms—Electromagnetic Transients Program (EMTP),                                In this paper, we demonstrate how to employ the recom-
+simulation, transformer, white-box model.
+                                                                                     mended procedure by A2/C4.39 in practice. We consider the
+                                                                                     case of lumped-parameter white-box models based on constant
+                             I. INTRODUCTION                                         RLCG parameters, commonly applied among manufacturers.
+                                                                                     Damping effects are included in the model by applying a con-
+                                                                                     stant multiplier factor ( -Factor) to all dc resistances. (One may
+
+P     OWER transformers have, in several instances, suf-                             alternatively calculate the resistances at a given, representative
+      fered dielectric failure with overvoltages as a suspected                      frequency.) Based on these matrices, we formulate a model
+cause, even when normal practices for insulation coordination                        in terms of state equations with current injection from ground
+and protection have been followed. CIGRE formed in 2008                              to all nodes as input and internal node voltages and branch
+Working Group (WG) A2/C4.39 “Electrical transient inter-                             voltages as output. Next, we develop a computational approach
+action between transformers and the power system” with the                           for interfacing this model with EMTP-type circuit solvers,
+objective to clarify the underlying reason for such failures and if                  based on convolution and a Norton equivalent. The terminals of
+possible recommend procedures for avoiding their occurrence.                         the Norton equivalent may include transformer internal nodes
+One of the major conclusions from that work is the observation                       for the connection of internal surge arresters. Internal node
+that oscillating overvoltages of relatively low amplitudes that                      voltages and branch currents are made available for monitoring
+impinge the transformer terminals can result in excessive                            as well. Diagonalization is introduced for faster simulations
+overvoltages inside the transformer’s windings by resonance                          and hiding of proprietary information. Automated initialization
+as has also been documented in a number of past studies [1].                         from 50/60-Hz steady initial conditions is introduced, assuming
+The Working Group further recommends that the manufacturer                           the model has sufficiently accurate behavior at that frequency.
+should, by request from the customer, provide a terminal                             We show one procedure for enforcing correct 50/60-Hz model
+equivalent (black-box) model to permit the user to calculate                         behavior for single-phase transformers by introducing the
+the impinging overvoltages at the transformer terminals using                        magnetic core flux path in the inductance matrix. Finally, we
+EMTP-type circuit solvers. The impinging overvoltages can                            show a number of pertinent examples demonstrating the new
+                                                                                     approach to the so-called “Fictitious Transformer” used in the
+                                                                                     studies by CIGRE Working Group A2/C4.39 [2].
+   Manuscript received September 18, 2013; revised February 03, 2014; ac-
+cepted June 19, 2014. Paper no. TPWRD-01070-2013.
+   B. Gustavsen is with SINTEF Energy Research, Trondheim N-7465, Norway
+                                                                                                           II. WHITE-BOX MODELING
+(e-mail: bjorn.gustavsen@sintef.no).
+   Á. Portillo is with WEG Transformers, Blumenau SC 89068-001, Brazil               A. Lumped Parameter Transformer White-Box Models
+(e-mail: acport@adinet.com.uy).
+                                                                                       White-box models are used for analyzing the internal re-
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       sponse of the power transformer to a system voltage transient
+   Digital Object Identifier 10.1109/TPWRD.2014.2332515                              applied to its terminals. In the lumped parameter modeling
+
+                          0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+
+Fig. 1. Inductive branch.
+
+
+
+
+                                                                                    Fig. 3. Equivalent circuit of the transformer in Fig. 2.
+
+
+
+                                                                                    neglected. From these primitive electrical parameters, we
+                                                                                    establish matrices , , , and .
+
+Fig. 2. Example: two-winding transformer.
+                                                                                    C. State Equations
+                                                                                       From the obtained matrices , , , and , we wish to cal-
+                                                                                    culate state equations in terms of node voltages ( nodes) and
+approach, the transformer windings are divided into a cascade                       inductive branch currents ( branches). Equations (1) and (2)
+of geometrical parts and each part is represented by an electrical                  express, respectively, the relation between and (sum of ca-
+branch. The most elementary part that we can consider as a                          pacitive currents flowing out each node), and between and
+branch is one turn. For disk windings, a branch can also repre-                     (sum of conductive currents flowing out each node). The rela-
+sent one disk, a pair of disks, or an arbitrary number of disks in                  tion between inductive branch currents and associated branch
+the winding. For layer windings, each branch can represent a                        voltages is given by (3)
+layer, or a pair of layers, and so on for other different types of
+windings.                                                                                                                                                     (1)
+   Each branch is defined by two nodes and can be represented
+                                                                                                                                                              (2)
+by the equivalent circuit shown in Fig. 1. Elements , , and
+    , respectively, represent the branch series resistance, self in-                                                                                          (3)
+ductance, and series capacitance.
+   To see how the matrices can be established, we consider as                         We define an incidence matrix , dependent on the internal
+an example a two-winding transformer where each winding is                          connections, for relating node voltages with inductive branch
+divided into two equal branches. Fig. 2 shows a diagram of the                      voltages (4), and for relating the inductive branch currents
+transformer, and Fig. 3 shows the equivalent electrical circuit of                  with the sum of all inductive branch currents flowing out of
+the transformer with four branches and six nodes.                                   each of the branch reference nodes (5)
+
+B. Parameter Determination                                                                                                                                    (4)
+   In this paper, the series winding capacitances and shunt ca-                                                                                               (5)
+pacitances between windings, and between windings and core
+or tank, are calculated using detailed geometry of windings and                        At each node, according to Kirchhoff law, we have for the
+insulating material properties (paper, pressboard, insulating                       total current flowing into each node
+liquid, etc.) via analytical formulae such as the ones described
+in [3]–[5]. The self and mutual inductances are calculated using                                                                                              (6)
+the Rabin’s Method [6], [4]. The inductances are modified
+including a common iron core flux to adapt the model to power                       where     is a specified current injection from ground into all
+frequencies (50/60 Hz), as shown in Appendix A. Skin and                            nodes. Inserting (1), (2), and (5) in (6) gives (7a) while com-
+proximity effect losses are included in the model by applying                       bining (3) and (4) gives (7b)
+a constant multiplier factor ( -Factor) to all dc resistances
+[4], giving an approximate representation of the frequency-de-                                                                                               (7a)
+pendent resistances [7]. Core losses and dielectric losses are                                                                                               (7b)
+         This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+GUSTAVSEN AND PORTILLO: INTERFACING -FACTOR BASED WHITE-BOX TRANSFORMER MODELS                                                                                    3
+
+
+
+  Equations (7a) and (7b) are rewritten as state equations
+
+
+
+
+                                                           (8)
+   Short circuits between nodes and the grounding of nodes are                    Fig. 4. Thévenin equivalent (left panel) and Norton equivalent (right panel).
+achieved by a modification of matrices , , and          as de-
+scribed in Appendix B.
+                                                                                                                                                            (12b)
+III. INTERFACING WHITE-BOX MODEL WITH THE EMTP-TYPE
+                    CIRCUIT SOLVER                                                B. Time-Domain Discretization
+   In principle, the detailed RLCG network can be directly im-                      The state equation (12) is solved using trapezoidal integration
+ported into EMTP-type tools. Such an approach is, however,                        by the approach described in [8]
+undesirable for a number of reasons: 1) it will be computation-
+ally cumbersome because of the mutual coupling that exists be-                                                                                              (13a)
+tween all RL branches and 2) it reveals all information about
+                                                                                                                                                            (13b)
+internal overvoltages in the transformer which may be unaccept-
+able for the manufacturer. In the following text, we will develop                 where                                          . These coefficient matrices
+an approach which overcomes all of these obstacles, based on                      are obtained as
+the state equations (8).
+
+A. Node Reordering and Partitioning                                                                                                                         (14a)
+
+   The user of the model will require the ability to connect the
+transformer terminals to an external circuit and, in some cases,                                                                                            (14b)
+to also connect surge arresters between internal points (nodes)
+inside the transformer. All such points define the model’s ex-                      The simultaneous dependency of on                       in (13a) is removed
+ternal terminals. It is convenient to reorder the nodes in (8) so                 by introducing a modified state variable
+that the external     nodes come first and the internal     nodes
+last (                ). Accordingly, only the first    entries of                                                                                           (15)
+   are permitted to be nonzero. The reordering is achieved by
+introducing a (square) reordering matrix                                          which gives for (13a) and (13b)
+
+                                                                           (9)                                                                              (16a)
+                                                                                                                                                            (16b)
+  Each row of    is zero except for a single element which is
+unity. Since is orthogonal,              and we obtain for (8)
+                                                                                  C. Norton Equivalent for External Nodes
+                                                                                     The first   rows of and contain the external node volt-
+                                                                                  ages     and external currents . For the corresponding parti-
+                                                                         (10)     tioning of (16b), we accordingly get
+
+                                                                                                                                                             (17)
+and so
+                                                                                  where contains the first     rows of and           contains the
+                                                                                  first  rows and     columns of       . Equation (17) defines the
+                                                                                  Thévenin equivalent in Fig. 4, left panel, with
+                                                                         (11)
+                                                                                                                                                            (18a)
+   We simplify notation by rewriting (11) on a standard                                                                                                     (18b)
+state-space form (12) where                              ,
+                   .                      is the identity                            To interface with EMTP-type tools, it is convenient to convert
+matrix and the output contains all  node voltages and                             the Thévenin equivalent into a Norton equivalent (Fig. 4, right
+branch currents                                                                   panel), where
+
+                                                                                                                                                            (19a)
+                                                                        (12a)                                                                               (19b)
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+4                                                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+   Thus, we use (16a) to update the state vector and the Norton                                                     TABLE I
+equivalent (19) to interface the model with the circuit simulator.                                         EXECUTIONS IN EACH TIME STEP
+In (16a),     is calculated from the Norton equivalent as
+
+
+                                                                           (20)
+
+  All node voltages (external and internal) as well as the
+branch currents can be observed via the state vector . Using
+(15), 

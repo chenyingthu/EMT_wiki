@@ -1,0 +1,180 @@
+5906                                        IEEE JOURNAL OF EMERGING AND SELECTED TOPICS IN POWER ELECTRONICS, VOL. 9, NO. 5, OCTOBER 2021
+
+
+
+
+             Wave Function and Multiscale Modeling of
+              MMC-HVdc System for Wide-Frequency
+                       Transient Simulation
+ Hua Ye , Member, IEEE, Feng Gao , Member, IEEE, Wei Pei , Member, IEEE, and Li Kong, Member, IEEE
+
+   Abstract— The detailed modeling of power electronic (PE)                    is widely investigated and employed in realistic voltage-
+devices poses challenging problems to an efficient transient                   source converter-based HVdc projects [2], [3], for exam-
+simulation of large-scale PE-dominated power systems. As PE                    ple, the Zhangbei ±500-kV four-terminal MMC-HVdc
+paradigm, a multiscale modeling methodology of the modular
+multilevel converter (MMC) for simulating diverse transients                   grid in China [3]. Practically, any MMC-HVdc system
+from low-frequency oscillations up to high-frequency switching                 requires rigorous and efficient modeling for electromag-
+events in an MMC high-voltage direct current (HVdc) system is                  netic/electromechanical transient studies to guarantee its
+developed, implemented, and validated. The novelty lies in the                 secure and stable operations [4]. The electromagnetic tran-
+creation of a wave propagation function (WPF) that describes                   sients (EMTs) are fast, with time scales from microseconds to
+the MMC submodule (SM) transient behavior, and then, the SM
+Fourier series-based shifted-frequency phasor (SFP) is developed               several seconds, and are caused by, for example, PE switch-
+to accelerate the computation speed of the system-level dynamics.              ing, short-circuits. On the other hand, the electromechanical
+These efforts serve as the basis for multiscale modeling of the                transients are caused, for example, by system-level instabil-
+MMC where a multiple-frequency shifting is achieved. By imple-                 ity problems, whose time scales are from seconds to sev-
+menting a seamless model interface with the control systems, the               eral minutes. The well-known quasi-steady-state models [5]–
+multiscale modeling is applicable to an MMC-HVdc transmission
+system. The multiscale model is validated through case studies                 [8] for electromechanical transient studies do not track PE
+that cover dc fault, MMC internal fault, power oscillations,                   fast-changing snapshots, inherently limited for the usage in
+and wind power fluctuations. The computational accuracy and                    modeling MMC-HVdc systems. This is because, as affected
+efficiency of the model are verified through a comparison of the               by high-frequency PE switching events, power system-level
+results with those from the full electromagnetic transient (EMT)               dynamic studies, such as stability analysis, are currently
+model.
+                                                                               extended to a broader range of frequencies to the EMTs [9],
+  Index Terms— Analytic signal, dynamic phasor (DP), electro-                  i.e., to cover multiple time-scale transients with a wide
+magnetic transients (EMTs), high-voltage direct current (HVdc),                frequency range.
+modular multilevel converter (MMC), multiscale modeling,
+power system modeling, power system simulation, wave prop-                        The EMT program (EMTP) type modeling methodology
+agation.                                                                       is respected for its accurate representation of high-frequency
+                          I. I NTRODUCTION                                     transients and is applied in establishing MMC EMT models.
+                                                                               The MMC submodule (SM) device-level model in [10], for
+M      ODERN electric power systems are characterized by
+       the increasing penetration of power electronic (PE)
+devices due to applications of the PE-interfaced wind and
+                                                                               example, describes electronic circuit physical phenomenon,
+                                                                               while the MMC SM switching-function model (SFM) was
+                                                                               presented in [11] to study the PE switching events. These
+photovoltaic power integrations, flexible alternating current
+                                                                               models use small time-step sizes in the order of microseconds
+transmission system (FACTS), and high-voltage direct cur-
+                                                                               or even nanoseconds. To accelerate the EMT simulation, the
+rent (HVdc) system installations [1]. With more prominent
+                                                                               detailed equivalent model (DEM) based on binary resistors
+PE advancements, the modular multilevel converter (MMC)
+                                                                               was developed in [12] where individual SMs on one arm are
+   Manuscript received July 12, 2020; revised September 22, 2020 and           assembled. The DEM is still inefficient in terms of computa-
+December 4, 2020; accepted December 28, 2020. Date of publication Jan-         tional speed for representing an MMC with a large number of
+uary 21, 2021; date of current version October 1, 2021. This work was          SMs due to the time-varying equivalence [13]. The averaged-
+supported in part by the National Natural Science Foundation of China under
+Grant 51707183 and in part by the Key Front Science Project of the Chinese     value models (AVMs) were addressed to track fundamental
+Academy of Sciences under Grant QYZDY-SSW-JSC025. Recommended for              frequency dynamics [14], [15], but they neglect the switching
+publication by Associate Editor Lennart Harnefors. (Corresponding author:      transients of individual SMs. Therefore, when considering
+Feng Gao.)
+   Hua Ye, Wei Pei, and Li Kong are with the Institute of Electrical           internal SM behavior and giving an efficient representation
+Engineering, Chinese Academy of Sciences, Beijing 100190, China, and also      of large-scale HVdc system, the MMC-HVdc system-level
+with the School of Electronic, Electrical and Communication Engineering,       EMT speed-up simulation, i.e., multiscale transient simulation,
+University of Chinese Academy of Sciences, Beijing 100049, China (e-mail:
+yehua@mail.iee.ac.cn; peiwei@mail.iee.ac.cn; kongli@mail.iee.ac.cn).           needs to be supported by further research.
+   Feng Gao is with the Energy Internet Research Institute, Tsinghua Univer-      To modulate wide-frequency transients aiming at high
+sity, Beijing 100084, China (e-mail: fgao@tsinghua.edu.cn).                    accuracy and efficiency within the same simulation run,
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/JESTPE.2021.3051647.                                   the frequency shifting modeling methodology was proposed
+   Digital Object Identifier 10.1109/JESTPE.2021.3051647                       in [16] and [17]. In the EMTP solution environment, the
+                         This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 License.
+                                        For more information, see https://creativecommons.org/licenses/by-nc-nd/4.0/
+YE et al.: WAVE FUNCTION AND MULTISCALE MODELING OF MMC-HVdc SYSTEM FOR WIDE-FREQUENCY TRANSIENT SIMULATION                       5907
+
+
+
+shifted-frequency analysis (SFA) [17] was addressed to per-                 processed so that the multiscale wide-frequency transient
+form long-term dynamics and large-scale studies. The adap-                  model of an MMC-HVdc system is established.
+tive frequency shifting of Fourier spectra of the transients            4) The simulation accuracy and efficiency of the multiscale
+during the simulation is achieved in [16], which is referred                model are validated through case studies that cover dc-
+to as the frequency-adaptive simulation of transients (FAST).               circuit faults, internal MMC SM faults, and wind power
+The FAST-based multiscale transient models were developed                   fluctuations and are further verified by comparisons of
+in [18] and [19] for wide-frequency alternating current (ac)                the results with those from the EMTP-type simulators.
+components, such as frequency-dependent transmission lines.             The rest of this article is organized as follows. Section II
+However, the frequency-shifting methods above focus on fun-          illustrates the problem of wide-frequency transient modeling in
+damental frequency ac power systems, and thus, multiscale            the MMC. By creating the WPF and Fourier series-based SFP,
+transient modeling of PE-dominated power systems, especially         a multiscale model of the MMC is developed in Section III.
+the MMC-HVdc system, is desirable.                                   Then, in Section IV, the MMC multiscale model is extended
+   In recent years, a lot of effort has been devoted to mul-         to the MMC-HVdc system. In Section V, case studies are
+tiscale modeling of the PE-based devices, such as two-level          performed, and conclusions are drawn in Section VI.
+VSC. In [20] and [21], the multiscale models of two-level
+VSC were implemented where the SFM and AVM are alter-                                II. P ROBLEM I LLUSTRATION
+natively used to modulate the EMTs and electromechani-                  An analytic signal s(t) can be formed by adding to real
+cal transients, respectively. It was found that the transitions      signal s(t) an imaginary part that is equal to the Hilbert
+between both models may lead to unpredicted numerical                transform of s(t): s(t) = s(t) + j H[s(t)] [25]. The underscore
+oscillations, not being directly applied in MMC multiscale           denotes that the analytic signal is complex. The Fourier spectra
+modeling. To present a wider EMT frequency range, the                of bandpass analytic signals can be shifted along the frequency
+shifted-frequency model of the MMC was addressed in [22],            axis by an angular frequency ωs [16] as
+and even the extended-frequency MMC dynamic phasor (DP)                                  S[ s(t) ] = s(t) e−jωs t                 (1)
+model was proposed in [23] to contain full harmonic spec-
+tra for output quantities. The Fourier spectra of all MMC            where ωs = 2π f s and f s is referred to as the shift frequency.
+electrical quantities, including capacitor dc voltages, however,     The physical interpretation of the analytic signals and fre-
+are shifted or transformed so that the simulation time-step          quency shifting is given in Fig. 1. As depicted in Fig. 1(a),
+size is limited in the order of microseconds. In addition, the       the Fourier spectrum of the original bandpass analytic signal
+MMC SMs are often considered to be identical, and the SM             is concentrated on a narrow bandwidth around ac carrier
+transients need to be performed, for example, internal SM            frequency ωc . Then, as shown in Fig. 1(b), it is shifted to
+faults. Therefore, the existing efforts still face challenging       the origin by the shift frequency, i.e., ωs = ωc , so that the
+problems to modulate multiple time-scale transients of the           complex envelope can be obtained. The complex envelope is
+MMC-HVdc system within one and the same simulation run.              a low-pass signal whose maximum frequency is lower than
+   The wide-frequency transient phenomena in PE-dominated            that of the original signal. According to Shannon’s sampling
+power systems created a demand for more general models and           theory, a larger time-step size can, thus, be used for tracking
+more comprehensive studies. In the preliminary work [24],            the envelope waveforms as that in electromechanical transient
+the describing function-based multiscale model for the low-          simulators. If the Fourier spectrum is not concentrated on a
+voltage cascaded H-bridge (CHB) converter was developed,             narrow bandwidth, i.e., | ω − ωc |> ωc , then ωs is set to zero,
+but the function is still piecewise and the influence of dc-         and a small time-step size is used to track natural waveforms
+circuit quantities on the modeling is not considered. This           as that in EMTP-type simulators.
+article provides the reader more generalized methodology.               Using the shift frequency, the methodology FAST in [16]
+To overcome the above limitations, the contributions made in         was established and then applied for modeling the ac com-
+this article are summarized as follows.                              ponents in power systems. The corresponding details can be
+   1) A new wave propagation function (WPF) method is                found in [16], [18], and [19]. However, the Fourier spectra of
+       proposed so that individual PE SM switching transients        the quantities in PE-dominated power systems become more
+       can be efficiently modeled without a compromise of the        complex. During the MMC operation, not only the single-
+       simulation accuracy. By adjusting the WPF parameters,         frequency ac carrier but also multiple-frequency ac carriers
+       a unified MMC SM WPF is constructed in a flexible             exist, as depicted in Fig. 1(c). To facilitate the analysis, only
+       manner to cover different SM topologies and modulation        one phase leg of the MMC topology is presented and may be
+       strategies.                                                   divided into three parts, as shown in Fig. 1(d). The modeling
+   2) The generalized WPF-based Fourier series is proposed to        challenges are discussed as follows.
+       derive the shifted-frequency phasor (SFP) model, and the         1) Part 1 covers the ac system at the MMC ac side. Due
+       Fourier spectra of dc quantities are not shifted, resulting          to a large number of SMs per arm, ac-side quantities
+       in a speed-up simulation of the MMC low-frequency                    (for example, v ac p ) of the MMC under its normal oper-
+       transients.                                                          ation mainly present quasi-periodic sinusoidal wave-
+   3) Multiple-frequency decoupling and shifting of different               forms involved with high-frequency harmonics. When
+       MMC quantities are achieved, and also, the seamless                  analyzing electromechanical transients, such as power-
+       interface model of the HVdc with its controllers is                  angle stability, the high-frequency harmonics of the ac
+5908                                          IEEE JOURNAL OF EMERGING AND SELECTED TOPICS IN POWER ELECTRONICS, VOL. 9, NO. 5, OCTOBER 2021
+
+
+
+
+                                                                                  Fig. 2. Wave function-based equivalent modeling of the MMC SM. (a) Half-
+                                                                                  bridge SM. (b) Description of SM output voltage profile. (c) Waveform of SM
+                                                                                  switching events. (d) SM equivalent model.
+
+Fig. 1. Schematic of an MMC topology and the Fourier spectra of existing           III. M ULTISCALE M ODELING OF THE MMC BASED ON
+analytic signals. (a) Fourier spectrum of ac analytic signal. (b) Fourier spec-    WAVE F UNCTION AND F REQUENCY S HIFTING M ETHODS
+trum of frequency-shifted signal. (c) Fourier spectrum of multiple-frequency
+analytic signal. (d) MMC topology.                                                   The multiscale modeling of the MMC starts by modeling
+      system can be ignored, and then, the Fourier spectrum                       the SM switching events with a traveling wave function.
+      of the ac quantities is shown as that in Fig. 1(a) where                    The WPF-based detailed MMC arm model is derived in
+      only single-frequency carrier is present. If the high-                      Section III-A; then, a frequency shifting modeling of the
+      frequency harmonics or EMT stability [9] is concerned,                      MMC arm is presented in Section III-B. These efforts lead
+      then the time-step size of microseconds is required for                     to a multiscale transient model of the MMC in Section III-C.
+      the simulation.
+  2) Part 2 is the dc system at the MMC dc side. By consid-
+      ering reactor effects at the dc side and dc voltage ripple                  A. Wave Propagation Function-Based MMC SM Modeling
+      ignorable, the Fourier spectrum of dc quantities, such                         Not considering the idea of two-state switch described by
+      as v dcp and v dcn , is shown as that in Fig. 1(b), and no                  the resistors r On and r O f f [10], a new WPF method is proposed
+      ac carrier is observed. The frequency components of dc                      in this article to describe main states of the IGBT/diode pair as
+      quantities are around the origin, and the shifting of the                   affected by its turn-on/off processes and conduction losses. For
+      Fourier spectra is not essential. In fact, however, the dc                  the purpose of illustration, the half-bridge topology of the SM
+      quantities contain not only dc and fundamental but also                     depicted in Fig. 2(a) is adopted as a paradigm. When the
+      higher order harmonics. In this case, EMT simulation is                     switch S1 is turned on and S2 is turned off, or vice versa, the
+      often performed using the time-step size in the order of                    output voltage of the SM, i.e., v smn , can be illustrated with a
+      microseconds.                                                               wave shape profile, as shown in Fig. 2(b). By fitting the wave
+  3) Part 3 covers all SMs with IGBT/diode pairs, arm                             shape with the dashed line, only the rising front of the output
+      inductors, and also ac filters. The Fourier spectra of                      voltage profile may be described in per unit by a ramp with
+      output quantities at the ac side of the SMs, such as                        rise time tr and a unit-step function σ (t) as
+      v usmn and v lsmn , present multiple-frequency carriers at the                                             ⎧
+      dc, fundamental, and harmonic frequencies, as observed                                                     ⎨ t σ (t), if t ≤ t
+                                                                                                                                    r
+      in Fig. 1(c). The maximum frequency of the baseband                                            esn (t) = tr                               (2)
+                                                                                                                 ⎩σ (t),    if t > t
+      quantities at the harmonics is much higher than that                                                                             r
+
+      only at the fundamental frequency. The Fourier spectra
+                                                                                  where tr represents an effect of short IGBT/diode turn-on/off
+      of such wide-frequency quantities can be shifted by the
+                            

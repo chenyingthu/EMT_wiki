@@ -1,0 +1,190 @@
+                                                          Electric Power Systems Research 141 (2016) 147–156
+
+
+
+                                                             Contents lists available at ScienceDirect
+
+
+                                                   Electric Power Systems Research
+                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An automated FPGA real-time simulator for power electronics and
+power systems electromagnetic transient applications
+R. Razzaghi ∗ , M. Mitjans, F. Rachidi, M. Paolone
+École Polytechnique Fédérale de Lausanne, 1015 Lausanne, Switzerland
+
+
+
+
+a r t i c l e        i n f o                           a b s t r a c t
+
+Article history:                                      The paper presents an automated FPGA-based real-time electromagnetic transients simulator for power
+Received 23 February 2016                             electronics and power systems applications. The simulator features an automated procedure enabling its
+Received in revised form 10 June 2016                 straightforward applications to different topologies by avoiding the need of complex FPGA programming.
+Accepted 15 July 2016
+                                                      The proposed solver integrates: (i) the Modiﬁed Augmented Nodal Analysis (MANA) method, (ii) the Fixed
+                                                      Admittance Matrix Nodal Method (FAMNM), (iii) the optimal selection of the switch conductance param-
+Keywords:
+                                                      eter, and (iv) efﬁcient sparse matrix-to-vector multiplier. The simulator is able to accurately reproduce,
+Real-time simulation
+                                                      in real-time, electromagnetic transients taking place in power electronics devices together with electro-
+Electromagnetic transients
+FPGA
+                                                      magnetic waves propagating in transmission lines. The peculiar structure of the MANA-FAMNM solver
+Hardware-in-the-loop                                  enables to reach extremely low integration time steps and avoids the need to redesign the FPGA code. The
+                                                      results of the proposed simulator are validated by dedicated comparisons with off-line EMTP-RV sim-
+                                                      ulations and a hardware-in-the-loop (HIL) test for a three-phase two-level inverter and a three-phase
+                                                      power network.
+                                                                                                                        © 2016 Elsevier B.V. All rights reserved.
+
+
+
+
+1. Introduction                                                                      phenomena such as EMTs in power converters or travelling wave
+                                                                                     transients taking place in transmission lines (e.g., faults and switch-
+    Electromagnetic transient (EMT) real-time simulators (RTSs) are                  ing transients).
+essential tools in power systems and power electronics to design,                        During the past years, the size and computational power of
+analyze and test control processes [1], and to understand dynamics                   FPGAs has been increased dramatically. FPGA-based real-time sim-
+of complex systems and speciﬁc devices. RTSs have been evolving                      ulation has emerged as a leading trend for HIL applications for
+from the so-called Transient Network Analyzer (TNA) to digital RTSs                  the power electronics applications (e.g., Refs. [2–5]). The parallel
+[1]. This last type can make use of hardware based on multi-core                     processing hardwired in FPGAs enables the implementation of spe-
+CPUs, general-purpose processors (GPPS), digital signal processors                   ciﬁc methodologies that dramatically reduce the sequencing of the
+(DSPs) or computer clusters. In general, CPU based RTSs repre-                       operations taking place in CPUs. FPGA-RTSs provide lower sam-
+sent a better option to simulate bulk power networks since they                      pling rate, higher frequency bandwidth and lower I/O latency [6].
+can achieve acceptable simulation time steps (e.g., in the order of                  These characteristics position this type of simulators as better can-
+few tens of microseconds) and model relatively complex systems.                      didates for the accurate real-time simulation of power electronics
+Additionally, existing CPU-based RTSs are typically linked to the                    and limited-size power systems. Indeed, one of the main draw-
+well-established programming environments (e.g., MATLAB Sim-                         backs of the FPGA-RTSs is their difﬁcult programming associated
+PowerSystems (SPS)). However, the achievable integration time                        with the use of Hardware Description Languages (HDL). This low
+steps of CPU-based RTSs have a lower bound associated with the                       level programming limits the scalability of solvers and, as a con-
+partial sequential operations that the CPU architectures need to                     sequence, the representation of complex models. Additionally, any
+deploy. As a consequence, the relatively large simulation time steps                 modiﬁcation in the implemented algorithm/model requires, in gen-
+required by these simulators do not allow to model high frequency                    eral, a time-consuming recompilation of the HDL code. Indeed, long
+                                                                                     ofﬂine validation procedure, together with the long code compiling
+                                                                                     time, complicates the development of sophisticated circuit mod-
+                                                                                     els and controls deployable in this speciﬁc hardware platform. In
+ ∗ Corresponding author. Tel.: +41 21 693 48 15; fax: +41 21 693 46 62.
+    E-mail addresses: reza.razzaghi@epﬂ.ch, r.razzaghi87@gmail.com (R. Razzaghi).
+
+http://dx.doi.org/10.1016/j.epsr.2016.07.022
+0378-7796/© 2016 Elsevier B.V. All rights reserved.
+148                                       R. Razzaghi et al. / Electric Power Systems Research 141 (2016) 147–156
+
+
+this respect, the automation of FPGA-RTSs is a challenging research             2. Circuit analysis and models adopted in the proposed
+topic that has been discussed, for instance, in Ref. [7].                       FPGA-RTS
+    With particular reference to EMT-RTS applications, the real-
+time simulation of electrical circuits requires a topological mapping           2.1. Circuit analysis and numerical integration methods
+of both propagative (transmission lines) and lumped elements of
+the circuit. Their number and interconnection is not known a-priori.                As known, two main types of solution methods are used in cir-
+Therefore, the construction of the problem equations (see Section               cuit analysis: (i) nodal and (ii) state-space ones [1]. Within the
+3) is case-dependent. As a consequence, the number of tasks involv-             context of FPGA-based real-time simulation, nodal analysis (or
+ing FPGA resources such as memories, FIFOs, DSP block, etc. is not              Modiﬁed Augmented Nodal Analysis—MANA) is preferable since
+known a-priori, making the generalization of the code difﬁcult. The             it allows straightforward formulation of the system equations and,
+developed FPGA-RTS should be capable of simulating a given net-                 in particular, it enables the FAMNM approach. We brieﬂy recall the
+work without the need for the a-priori knowledge about that. Of                 MANA formulation [14]:
+course, such a simulation is deployable within the allocation limits                           −1
+of the FPGA resources.                                                          [x]n×1 = [A]n×n × [J]n×1                                          (1)
+    Another challenging issue regarding this type of simulators is              where matrix [A] is formed by the discrete representation of the
+the limitation in the matrix manipulation and the inherent difﬁ-                network elements; [x] is the vector of unknowns including the net-
+culty to represent switching maneuvers. In this respect, the most               work’s node voltages and branch currents; and [J] is a vector of
+straightforward method to represent topology-variable circuits in               the independent sources and current history terms related to the
+FPGA-RTS is the so-called Fixed Admittance Matrix Nodal Method                  network components. For EMT simulation applications, trapezoidal
+(FAMNM) [3]. This method, irrespective of the number of the                     and backward-Euler methods are the most popular numerical inte-
+switches, allows for obtaining a time-invariant nodal admittance                gration methods [15]. In this paper, this latter has been adopted.
+matrix during switching transitions. However, it introduces arti-
+ﬁcial oscillations and errors in the simulation results (e.g., Ref.
+                                                                                2.2. Discrete models of network components
+[8]).
+    It is worth mentioning that, few automated FPGA-RTSs have
+                                                                                1) Lumped elements (R, L, C)
+been proposed to avoid the difﬁculties of the FPGAs programming
+(e.g., Refs. [9,10]). However, the applications of these simulators
+                                                                                    The most common approach for discrete-time representation
+are mainly dedicated to the power electronics HIL simulations.
+                                                                                of the network elements is the one proposed in Ref. [16] where
+Therefore, the above works have not accounted for the possibility
+                                                                                the circuit elements are converted into their Norton equivalent.
+to simulate power networks which include propagative transmis-
+                                                                                The lumped elements (L, C) are represented by an equivalent con-
+sion lines. Furthermore, these industrial RTSs do not take into
+                                                                                ductance in parallel with a current source representing the history
+account the optimal tuning of the discrete-time switch conduc-
+                                                                                values [14,16]. The values for the equivalent conductance and the
+tance values to minimize the errors in the simulation results
+                                                                                history current source are determined by the element type (i.e., R,
+[8].
+                                                                                L, C) together with the adopted numerical integration method [16].
+    Within this context, and to address the above listed challenges,
+this paper proposes an automated FPGA-RTS for both power elec-
+tronics and power systems applications. In particular, this paper               2) Transmission lines
+extends the work presented in Ref. [11] by presenting: (i) a com-
+plete description of the proposed solver integrating the FAMNM                     The so-called Bergeron model [16,17] allows a straightforward
+and propagative transmission line models, (ii) the deﬁnition of the             representation of constant-parameter transmission line models. As
+automated FPGA-RTS and the coupling of the solver with existing                 known, this approach is based on a circuit representation of the
+off-line simulators like the EMTP-RV simulation environment, (iii)              telegraphers’ equations where each line termination is replaced by
+the integration into the solver of the method proposed in Ref. [8] to           means of a lumped impedance in parallel with a controlled cur-
+ﬁnd the optimal value of the conductance in discrete-time switch                rent source. By using the modal analysis, the same approach can
+model, (iv) the deployment of an efﬁcient sparse matrix-to-vector               be extended to the case of multi-conductor lines, in which the
+multiplier, and, (v) the validation of the proposed simulator with              multi-conductor equations are decoupled by using phase-to-modal
+respect to power electronics and power systems case studies using               transformation matrices (e.g. Refs. [16,18]). The use of Bergeron
+off-line simulations and experimental results obtained by means                 model can be also adopted to represent frequency-dependent line
+of dedicated HIL test setup.                                                    models [19] even if in our solver we limit the analysis to constant-
+    Compared to the existing literature in the context of FPGA-RTS              parameter line models.
+for the power electronics and power systems applications (e.g.,
+Refs. [2–4,12,13]) this paper proposes (i) an automated procedure               3) Switches
+to deﬁne the FPGA solver parameters, (ii) high performance FPGA-
+RTS thanks to the parallel implementation of the solver and use of                  For FPGA real-time simulations, the use of detailed switch mod-
+efﬁcient matrix-to-vector multiplier, (iii) systematic validation by            els is prohibitively time consuming. Therefore, behavioral switch
+means of quantitative error assessments using both ofﬂine simula-               models have been proposed [20]. Among them, the simplest ones
+tion results and measurements obtained from an HIL test, and (iv)               are the ideal switch model or the so-called two-valued resistor
+accurate simulation results thanks to the optimal selection of the              model where two different resistors are associated with each state
+switch parameter.                                                               of the switch (Roff , Ron ). However, for such models, the system’s
+    The structure of the paper is as follows. Section 2 provides a              admittance matrix needs to be updated and re-factorized after
+brief overview of the EMT simulation. Section 3 describes the hard-             each switching change, generating major issues to satisfy the FPGA
+ware and the proposed algorithm for the developed FPGA real-time                computational time constraints. On the contrary, the use of the
+simulator. Section 4 illustrates the FPGA solver architecture. Sec-             discrete-time switch model allows deﬁning the so-called FAMNM.
+tion 5 presents the validation of the proposed simulator. Section 6             In this case, the switch is represented by a relatively small induc-
+concludes the paper with ﬁnal remarks.                                          tance when its state is ‘closed’ and by a relatively small capacitance
+                                                                                when its state is ‘open’ (e.g., Refs. [21,22]). As a consequence, the
+                                                     R. Razzaghi et al. / Electric Power Systems Research 141 (2016) 147–156                                149
+
+
+switch is replaced by an equivalent conductance (Gs ) in paral-                            ical connections, values, etc.). Concerning the transmission lines,
+lel with a controlled current source. The main drawback of such                            additional information such as propagation time, length and modal
+representation is that it introduces artiﬁcial circuit elements and,                       characteristic impedance are also extracted.
+consequently, unrealistic oscillations and errors [8,23]. Therefore,
+an optimal tuning of the switch conductance value is needed to                             1) Lumped elements, switches and voltage sources
+guarantee accurate results [8].
+                                                                                              For each lumped element, switch and voltage source, a maxi-
+3. The proposed FPGA-RTS                                                                   mum number of four values are needed in order to properly process
+                                                                                           the Right-Hand-Side (RHS) vector of Eq. (1). Namely, a number
+3.1. Hardware architecture                                                                 specifying the element type, two values specifying its node ter-
+                                                                                           minals, and a forth number referring to its speciﬁc value.
+   The adopted hardware setup is composed of the National Instru-
+ments cRIO-9033, an industrial reconﬁgurable real-time embedded                            2) Transmission lines RHS coefﬁcients
+platform combining an Intel Atom dual-core processor, a Xilinx
+Kintex-7 FPGA (7K160T), and reconﬁgurable I/O modules. This                                    The transmission lines RHS elements are calculated based on a
+embedded system is based on NI Linux Real-Time OS and is pro-                              weighted sum of both the modal voltages and the modal currents of
+grammed by using the NI LabVIEW-FPGA environment.                                          each one of them with respect to the impedance coefﬁcients [18].
+                                                                                           Furthermore, additional variables are necessary for the interpola-
+3.2. Network data pre-processing                                                           tion equations associated with the transmission lines (see Section
+                                                                                           4.1—3 for further explanations). The ﬂowchart of the algorithm
+   The proposed RTS uses EMTP-RV simulation environment as a                               implemented in the pre-processing to read the netlist ﬁles is shown
+GUI to deﬁne the network under study and its parameters.1 Then,                            in Fig. 1.
+the designed circuit is analyzed by this software to generate the
+so-called netlist ﬁle containing all the information about the circuit                     3) Additional variables
+components, their values, and interconnections. The netlist ﬁle is
+then used to extract the relevant information to be passed to the                             Apart from the data described earlier, additional sets of data
+FPGA solver. Since this is an ofﬂine process, it is done by the CPU of                     are determined and transferred to the FPGA solver. These data
+the hardware platform.                                                                     include: desired simulation time step, number of elements in the
+   According to the type of the element indicated in the netlist                           network per element type, switches logic control, an array contain-
+ﬁle, the algorithm extracts the relevant information (e.g., topolog-                       ing the optimal values of Gs for each switch calculated based on the
+                                                                                           optimization problem, and Independent current/voltage sources
+                                                                                           information.
+  1
+    The use of the EMTP-RV to generate the netlist ﬁle passed to the FGPA solver,
+allows a straightforward validation of

@@ -1,0 +1,185 @@
+                                                               Electrical Power and Energy Systems 83 (2016) 7–14
+
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                 Electrical Power and Energy Systems
+                                                  journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Enhanced high-speed electromagnetic transient simulation
+of MMC-MTdc grid
+Jianzhong Xu a,⇑, Hui Ding b, Shengtao Fan b, Aniruddha M. Gole b, Chengyong Zhao a
+a
+    The State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing, China
+b
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, Manitoba, Canada
+
+
+
+a r t i c l e           i n f o                           a b s t r a c t
+
+Article history:                                          This paper introduces a very fast electromagnetic transient (EMT) simulation model for the HVdc
+Received 4 October 2015                                   modular multilevel converter (MMC) that maintains the identity of each switching level, but achieves
+Received in revised form 21 March 2016                    computation speeds comparable to the much simplified averaged-value models (AVMs) when simulating
+Accepted 29 March 2016
+                                                          the multi-terminal dc grid. Speedup is achieved by representing the off state of a MMC sub-module (SM)
+Available online 12 April 2016
+                                                          with ideal zero conductance, and representing the converter with a companion model using the A-stable
+                                                          Backward Euler (BE) method. Often, the user may wish to use the nearest level control (NLC) based volt-
+Keywords:
+                                                          age balancing algorithm. Then additional speedup can be obtained by using an efficient sorting algorithm
+Thévenin equivalent
+Backward Euler (BE) method
+                                                          which is integrated into the Thévenin equivalent circuit. This achieves a linear speedup (i.e. order O(N))
+Modular multilevel converter (MMC)                        with system size. When compared with a fully detailed simulation (no simplifications), the method
+Nearest level control (NLC)                               shows one to two orders of magnitude speed improvement with earlier reported fast MMC models, with
+MMC-MTdc grid                                             negligible loss in accuracy.
+                                                                                                                           Ó 2016 Elsevier Ltd. All rights reserved.
+
+
+
+
+Introduction                                                                                 permitting access to its calculated internal voltages and currents.
+                                                                                             In the second category [9], all the SMs are combined into a single
+   Modular multilevel converter (MMC) based high voltage direct                              equivalent, accessing to internal capacitor voltages and currents
+current (MMC-HVdc) transmission is gaining in popularity as a                                in individual modules is lost and only the external behaviors are
+dc power transmission option with low losses [1–4]. Compared                                 preserved.
+to the conventional 2 and 3-level voltage source converters                                     The model proposed in this paper is of the first category, in that
+(VSC), the MMC topology offers several advantages such as:                                   it maintains the individual identity of SMs and approaches the
+                                                                                             accuracy of fully detailed simulation. However, as it uses idealized
+     Its modular design permits easier scalability to any desired volt-                     representations of the switches (i.e. IGBTs and diodes) and restruc-
+      age level simply by using more sub-modules (SM)                                        turing of the way in which capacitor balancing is simulated. This
+     The output voltage waveform has negligible ripple content                              accelerates the computation speed by an additional 1–2 orders of
+      which eliminates the need for ac filters                                               magnitude over existing high speed first category models and
+     No common dc link capacitor is required                                                hence approaches the speeds possible with the second category
+     It has lower switching losses and hence high efficiency                                models.
+
+    In the future, simulation of large scale multi-terminal dc grid
+with multiple MMCs will be urgently required especially on the                               Background: thévenin equivalent MMC model
+off-line electromagnetic transient (EMT) simulation platforms [5].
+Novel MMC models have been proposed that approach the accu-                                     This section discusses relevant previous work on developing a
+racy of the detailed MMC model, but greatly reduce the computa-                              faster MMC model [8]. Later sections will show how this is
+tional effort. These models can be classified into two categories [6].                       extended to construct the even faster models which are the contri-
+In the first category [7,8], each SM retains its individual identity,                        butions of this paper. The fully detailed MMC model is comprised
+                                                                                             of three phase legs and each leg consists of two phase arms, as
+                                                                                             shown in Fig. 1.
+    ⇑ Corresponding author. Tel.: +86 01061773744.                                              Each phase arm includes N identical SMs and a reactor LS, IARM
+      E-mail address: xujianzhong@ncepu.edu.cn (J. Xu).                                      indicates the arm current. The SM is the basic building block of
+
+http://dx.doi.org/10.1016/j.ijepes.2016.03.062
+0142-0615/Ó 2016 Elsevier Ltd. All rights reserved.
+8                                                                               J. Xu et al. / Electrical Power and Energy Systems 83 (2016) 7–14
+
+
+                                                                                                         +              The Thévenin equivalents of the N SMs in the bridge arm are
+            IARM                            IARM                           IARM                                      then compressed into a single Thévenin equivalent as shown in
+                          SM1                                SM1                          SM1                        the dashed area of Fig. 3.
+                                                                                                                        In normal operation, the ON/OFF states of the SMs are deter-
+                          SM2                                SM2                          SM2
+                                                                                                                     mined by the controllers, VC and TSM in Fig. 3 are the output capac-
+                          SMN                            SMN                              SMN                        itor voltages and input firing pulses of the SMs. The values of the
+                                                                                                                     Thévenin equivalent resistance RARMEQ and the equivalent voltage
+               LS                             LS                                LS
+                                                                                                                     VARMEQ are given by (7) and (8) where VSMEQ_i and RSMEQ_i are the
+        a                                                                                                            Thévenin voltage and resistance of the ith SM as in Fig. 2(c).
+
+        b                                                                                                                           X
+                                                                                                                                    N
+                                                                                                                     RARMEQ ðtÞ ¼     RSMEQ i ðtÞ                                               ð7Þ
+        c                                                                                                                           i¼1
+
+            IARM                            IARM                           IARM                                                               X
+                                                                                                                                              N
+                                                                                                                     V ARMEQ ðt  DTÞ ¼         V SMEQ i ðt  DTÞ                               ð8Þ
+               LS                             LS                                LS                                                            i¼1
+
+                          SM1                                SM1                          SM1
+                                                                                                                     However, this is not the case when the MMC valves are blocked,
+                          SM2                                SM2                          SM2                        which occurs during MMC startup, protective actions, etc. When
+                                                                                                                     all the IGBTs are blocked the arms are only affected by the diodes,
+                          SMN                            SMN                              SMN             -          which determine whether the SMs are bypassed or inserted simul-
+                                                                                                                     taneously, depending on the arm current directions.
+                      Fig. 1. Schematic diagram of three-phase MMC.                                                      In block state, the MMC arm can be modeled using the circuit
+                                                                                                                     shown in Fig. 3 [5], the two diodes D1 and D2 are used to represent
+MMC, as shown in Fig. 2(a). It consists of an insulated gate bipolar
+                                                                                                                     the current direction selection effects. And the breakers BRK_1 and
+transistor (IGBT) half-bridge (IGBTs T1, T2 and diodes D1, D2) and a
+                                                                                                                     BRK_2 are responsible for changing the working modes of MMC
+dc storage capacitor C.
+                                                                                                                     either in normal operation or blocking state. If IARM is positive,
+    Each IGBT switch (i.e. the parallel connection of an IGBT and a
+                                                                                                                     the Thévenin equivalent resistance RARMEQ and voltage VARMEQ are
+diode) in Fig. 2(a) can be treated as two-state resistive devices
+                                                                                                                     used to represent the diodes and capacitors in Fig. 2, which can
+[10]. In Fig. 2(a)–(c), ISM equals to IARM as in Fig. 1.
+                                                                                                                     be respectively obtained from (7) and (8) through assuming all
+    Using the Trapezoidal Rule (TR), a companion circuit is con-
+                                                                                                                     the SMs are inserted. If IARM is negative, the resistance RON_EQ is
+structed as shown in Fig. 2(b). The resistance and voltage source
+                                                                                                                     used to represent the conducting resistance of the diodes in
+values as functions of time are given by (1) and (2). Capacitor
+                                                                                                                     Fig. 2, which can be calculated using (9).
+current IC(t) in Fig. 2 is obtained as (3), in which IARM represents
+the arm current. The superscript ‘‘T” indicates that TR was used                                                     RON EQ ¼ N  RON                                                           ð9Þ
+in the construction of the companion model.
+                                                                                                                        Regarding the equivalent circuit of MMC, no detail is lost in this
+        DT                                                                                                           process, but the overall final representation in the EMT solver is
+RTC ¼                                                                                                          ð1Þ
+        2C                                                                                                           very simple, which leads to a much faster solution. However, even
+V TCEQ ðt  DTÞ ¼ V TC ðt  DTÞ þ RTC IC ðt  DTÞ                                                              ð2Þ   though this approach results in up to two orders of magnitude sav-
+          IARM ðtÞ  R2  V CEQ ðt  DTÞ                                                                             ing in computation time [8], it is still much slower than the less
+IC ðtÞ ¼                                                                                                       ð3Þ   accurate AVMs [9], and hence modeling multi-terminal dc grids
+                  R1 þ R2 þ RC
+                                                                                                                     with several MMCs can still take a long time. The next section dis-
+Using TR, the updated capacitor voltage at time t can be obtained                                                    cusses the principal contributions of this paper, which is an
+from the voltage at time (t  DT) as in (4):                                                                         attempt to further speed up the computation speed by another 1
+V TC ðtÞ ¼ V TC ðt  DTÞ þ DV TC                                                                              ð4aÞ   or 2 orders of magnitude, without significant loss of accuracy.
+
+DV TC ðtÞ ¼ ½IC ðt  DTÞ þ IC ðtÞ  RTC                                                                      ð4bÞ
+Converting Fig. 2(b) into a Thévenin equivalent gives the circuit of                                                                      +
+Fig 2(c), with the equivalent parameters RSMEQ and VSMEQ given by
+(5) and (6).                                                                                                                I ARM
+                                  
+                           R2
+RSMEQ ðtÞ ¼ R2  1                                                                                            ð5Þ
+                      R1 þ R2 þ RC                                                                                        BRK_1               BRK_2
+                                                                                                                                                                       D1
+                        R2
+V SMEQ ðt  DTÞ ¼                  V CEQ ðt  DTÞ                                                             ð6Þ
+                   R1 þ R2 þ RC
+                                                                                                                                                                    IC
+                                                                                                                              D2
+                          IC                                          IC                    +      ISM                                                                             VC(N×1)
+                                                                                                                                                           R ARMEQ
+               T1         D1                                   R1
+                                                                           RC
+              ISM                  +                     ISM                                      RSMEQ                  R ON_ EQ
+                               C       VC                                            VC    VSM                                                                                    T SM(N×1)
+    +                              -               +
+                                                                    VCEQ                         VSMEQ                                                    VARMEQ
+        VSM    T2         D2                           VSM     R2
+
+    -                                              -                                        -
+
+                    (a)                                         (b)                               (c)                                     -
+Fig. 2. Schematic diagram of MMC SM: (a) electric circuit, (b) companion                                             Fig. 3. Thévenin equivalent for a single phase arm of MMC under both normal and
+equivalent circuit (c) SM Thévenin equivalent.                                                                       blocking states.
+                                                   J. Xu et al. / Electrical Power and Energy Systems 83 (2016) 7–14                                                   9
+
+
+Proposed enhanced high-speed MMC model                                                Table 1
+                                                                                      Capacitor voltage increment (Backward Euler Method).
+
+   The internal controller generates the desired instantaneous out-                      Present state at t                                            DV C ðtÞ
+put voltage as per the voltage order and also implements the                             OFF                                                           0
+capacitor balancing algorithm. The paper shows that using the                            ON                                                            IARM ðtÞ  RC
+Backward Euler (BE) method to obtain the companion model with
+an idealized switch representation can provide a speedup as com-
+pared with the traditional TR method. Some of the coding details                      capacitor voltages, and is recommended when the MMC has a very
+when implementing the proposed models in PSCAD/EMTDC are                              large number of SMs. Often the user does not model the detailed
+also provided and discussed for the convenience of the readers.                    

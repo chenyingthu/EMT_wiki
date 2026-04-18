@@ -1,0 +1,144 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             1
+
+
+
+
+               A Multirate EMT Co-simulation of Large AC and
+                         MMC-based MTDC Systems
+                   Dewu Shu, Student Member, IEEE, Xiaorong Xie, Senior Member, IEEE, Qirong Jiang, Member, IEEE
+                                                      Gaopeng Guo, Ke Wang
+
+
+
+              Abstract—This paper proposes a novel multi-rate co-simulation                                    become an important subject. Electromagnetic transient (EMT)
+           method to improve simulation efficiency of large-scale AC plus                                      simulation is widely used for this purpose due to its capability
+           multi-terminal DC (MTDC) grids. In this method, the whole                                           of capturing the detailed dynamics of both converters and large
+           system is partitioned into different AC and MTDC subsystems.
+           They each are simulated with different time-steps according                                         AC systems [3]-[4].
+           to their requirements of accuracy. Unlike existing methods                                             Unfortunately, most established EMT software only allows
+           where simplified models are adopted, the proposed approach                                          users to simulate a large AC and MTDC system with the same
+           fully reserves both the detailed behavior of converters and                                         time step, which is normally as small as several microseconds
+           the nonlinear dynamics of large-scale AC systems. To realize                                        [3]. Such an unanimous small step would result in enormous
+           the coordination between different subsystems, updating and
+           discretization of the interface models are significant to guarantee                                 computational burden. So it is generally insufficient for the
+           the overall numerical accuracy and stability of the co-simulation                                   conventional EMT software to simulate a huge AC system
+           method. Accordingly, the interface models of the partitioned AC                                     integrating MMC-based MTDC transmissions. Several system
+           and DC networks are represented by time-varying Thevenin and                                        equivalent methods have been proposed to improve simulation
+           Norton equivalents. To eliminate the aliasing or time delay errors,                                 efficiency. For instance, in [5], the DC grid is fully represented
+           their parameters are derived using moving-window prediction,
+           stepwise correction and averaging techniques. A numerical oscil-                                    while the AC system is simplified into a fixed Norton or
+           lation suppression algorithm is developed for the discretization of                                 Thevenin equivalent. However, this method is of the obvious
+           the interface model. Thus numerical stability is well guaranteed.                                   drawbacks of decreased accuracy and loss of nonlinear dy-
+           The variables inside each subsystem as well as the interfaces,                                      namics. Even worse, it would sometimes lead to misleading
+           which are derived by augmented network equations (ANEs),                                            results [6]. MMC equivalent models, such as switch-function
+           are calculated simultaneously. The rate ratio of large AC and
+           MTDC systems is determined based on our proposed criterion                                          model [7], Thevenin equivalent model [8], have also been
+           of electromagnetic transient (EMT) simulation accuracy. The                                         adopted for the same purpose. However, even if a simplified
+           effectiveness of the co-simulation method is validated on a                                         equivalent MMC model is used, the simulation would still
+           practical system integrating large AC and modular multilevel                                        be computationally cumbersome due to the huge scale of the
+           converter (MMC) based MTDC grids.                                                                   external system. Therefore, a multirate co-simulation method
+              Index Terms—Interface model, Interface error, Multirate co-                                      is preferable when simulating large AC and MMC-based
+           simulation, MTDC system, Numerical stability.                                                       MTDC systems. In doing so, the entire system is divided
+                                                                                                               into fast subsystems that contain MMC converters and slow
+                                            I. I NTRODUCTION                                                   subsystems including the AC systems. They each are simulated
+                                                                                                               with different time steps instead of an unanimous one. As a
+           M      ODULAR multilevel converters (MMC) have received
+                  wide acceptance in high-voltage direct-current (HVDC)
+           transmission schemes due to its additional benefits include
+                                                                                                               result, computational efficiency can be considerably improved.
+                                                                                                                  However, the modeling, updating and discretizing of the
+           simple realization of redundancy, low losses, and most im-                                          interfaces between different subsystems are key issues to
+           portantly, easy extension to multi-terminal (MTDC) config-                                          guarantee the numerical accuracy and stability of the whole
+           urations [1]. Many MMC-based MTDC transmissions have                                                simulation. Typical multirate methods applied in power sys-
+           been carried out in China in recent years, such as Zhoushan                                         tem EMT simulation include the waveform relaxation (WR)
+           and Nanao Project [2]. Therefore, studying the interaction                                          method [9] and the multi-area Thevenin equivalent (MATE)
+           between MMC-based MTDC systems and AC systems has                                                   method [10]. One typical variation of multirate simulations is
+                                                                                                               the hardware-in-the-loop (HIL) simulation [11], where these
+              This work was supported in part by the Major Program of the National                             methods are particularly designed to improve the accuracy
+           Natural Science Foundation of China (51490683), the National Natural                                and efficiency of power electronic devices. Typical interface
+           Science Foundation of China (51577097), and the Research Project on Key
+           Technologies and Demonstration Application of Flexible Coordinated Control                          methods between subsystems include the ideal transformer
+           of Electromagnetic Loop Network in Metropolitan Power Grid with High Load                           (ITM) method [12], the time-variant first-order approximation
+           Density under Grant GZHKJ 00000101 (Corresponding author: Q. Jiang)                                 (TFA) method [13], the transmission line (TLM) method
+              Dewu Shu , Xiaorong Xie, Qirong Jiang and Gaopeng Guo
+           are with the State Key Lab. of Power System, Department of                                          [14], etc. One problem encountered for the WR method and
+           Electrical Engineering, Tsinghua University, Beijing, 100084, China                                 those methods for HIL simulations are the errors caused by
+           (e-mail:      shudw13@mails.tsinghua.edu.cn,        xiexr@tsinghua.edu.cn,                          sampling (aliasing) or time delays. These errors are generally
+           qrjiang@tsinghua.edu.cn, guogaopeng@mail. tsinghua.edu.cn).
+              Ke Wang is with Guangzhou Power Supply Co. Ltd., Guangzhou, China.                               induced by interface variables, which are updated only on
+                                                                                                               the occasion of re-synchronization that happens at the end
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             2
+
+
+
+           of the largest time step. Since the contribution of the slow                                                II. M ULTIRATE EMT C O - SIMULATION M ETHOD
+           subsystem to the dynamics of the fast subsystem is either                                              The basic idea of the multirate EMT co-simulation method
+           neglected or just taken into account after the longest time                                         is to separate the entire system into an AC subsystem and
+           interval of all subsystems, sampling errors (aliasing errors) and                                   several MTDC subsystems. Once partitioned, different sub-
+           time-delay errors would be introduced. These errors would                                           systems are simulated in parallel to improve the simulation
+           even be exaggerated for subsystems with fast rates [15].                                            efficiency. The MTDC subsystems are simulated with an
+           Specifically, the WR method uses the previous waveforms as                                          identical smaller integration step, while the AC subsystem is
+           the predicted values to calculate the current state for each                                        simulated with a larger integration step. For each subsystem,
+           subsystem. However, it cannot be simply applied in EMT                                              the dynamics of other neighboring subsystems are replaced
+           simulations due to aliasing errors. Moreover, its convergence                                       with those of their interface models, which is represented with
+           depends on the partitioning strategy used and the time intervals                                    time-varying Thevenin or Norton equivalents. The variables of
+           of re-synchronization [16]. As far as the MATE method is                                            the interface models are predicted at an interval corresponding
+           concerned, it solves each subsystem independently and then                                          to the simulation step of each subsystems. And then they are
+           calculates the link currents using Thevenin equivalents. The                                        corrected in a coordinated way when the largest iteration step
+           aliasing errors can be reduced considerably with the linear                                         is finished.
+           interpolation [10]. But only simple electric circuits are tested
+           on MATE. Its performance on practical power systems under
+           large disturbances has not yet fully validated. In [17]-[19], a                                                                                                MTDC
+                                                                                                                                        AC                   ..        subsystem 1
+           state-space nodal (SSN) method is proposed to simulate the                                                                subsystem
+                                                                                                                                                              .
+
+           MMCs in single-rate and multirate simulation environment                                                                                                       MTDC
+           successfully. The SSN method is a two layer method, where                                                                                                   subsystem N
+           each subsystem is derived by state space equations and inter-
+                                                                                                                                                                         v 1f
+           faces are further calculated by the global network equations.                                                                                           1
+                                                                                                                                                                  if            MTDC
+           However, whether each subsystem can be derived by the
+                                                                                                                                   AC
+                                                                                                                                                                  z 1f subsystem 1
+           nodal analysis approach is not given. More importantly, when                                                                                      1 +    1
+           studying the dynamic interactions between MTDC and AC                                                                subsystem
+                                                                                                                                                   ys1      is - u f N
+                                                                                                                                                              ..
+                                                                                                                                                               .
+                                                                                                                                                                        vf
+           grids, the capacitor voltages and arm currents are sensitive to                                                                                                 MTDC
+                                                                                                                                                             i Nf N subsystem    N
+           the AC voltages of converters. Therefore, additional research                                                                                          zf
+                                                                                                                                                 yNs         N +    N
+           is required to improve the accuracy of interfaces. Besides                                                                                       is - u f
+           the issue of accuracy and efficiency, another noticeable point
+           is the numerical stability of the interface model, which is                                         Fig. 1. Network partitioning.
+           vulnerable to numerical oscillation problems aroused by the
+           diverse disturbances [20].
+              In this paper, a new multirate EMT co-simulation method is
+           proposed and implemented in the cross-platform architecture,                                        A. Network Partitioning
+           to analyze the interactions between large AC and MMC-based                                             The process of multirate co-simulation starts with the sep-
+           MTDC systems. Its salient features include:                                                         aration of the whole system into different subsystems. For
+           1) the proposed method is a one-layer method, where the                                             network partitioning, two methods are widely used, namely
+           variables inside each subsystem as well as the interfaces,                                          transmission-line-based partitioning [14] and latency insertion-
+           which are derived by augmented network equations (ANEs),                                            based partitioning [21]. The first method decouples the system
+           are calculated simultaneously;                                                                      at the end of the transmission line using the wave propagation
+           2) the interface models are represented with time-varying                                           delay [14]. So the length of the transmission line should be
+           Thevenin and Norton equivalents so as to effectively eliminate                                      at least 15 to 30 km, corresponding to a time step of 50 µs
+           the errors caused by aliasing and time delay. Where their                                           to 100 µs. However, this is not always satisfied in practice
+           model parameters can be efficiently derived using moving-                                           [22]. The second method adds an artificial delay to separate
+           window prediction, stepwise correction and averaging tech-                                          the system. This probably makes the simulation less accurate
+           niques;                                                                                             or even unstable as the phase drift accumulates [20]-[21]. To
+           3) by incorporating the root-matching algorithm into the                                            address these issues, a different approach is used to partition
+           method for numerical oscillation suppression, the proposed                                          the network more naturally, just by considering the different
+           method as a whole, which can be regarded as a hybrid                                                time scale of large AC and MTDC systems. As shown in Fig.
+           simulation method, is highly efficient and easy to implement.                                  

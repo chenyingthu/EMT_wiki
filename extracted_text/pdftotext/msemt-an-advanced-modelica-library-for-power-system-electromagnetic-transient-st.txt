@@ -1,0 +1,195 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022                                                                                         2453
+
+
+
+
+ MSEMT: An Advanced Modelica Library for Power
+    System Electromagnetic Transient Studies
+               Alireza Masoom , Jean Mahseredjian , Fellow, IEEE, Tarek Ould-Bachir , Member, IEEE,
+                                             and Adrien Guironnet
+
+
+   Abstract—Electromagnetic Transient (EMT) simulation tools                      remain typically inaccessible to users. In such packages, it is
+are typically developed using conventional procedural program-                    also possible to develop/integrate powerful user-defined models
+ming languages. On the other hand, modern high-level and                          either through block diagrams or through high-level languages
+equation-based programming languages, such as Modelica, are
+currently available. Modelica allows formulating models that are                  and external access. User-defined models must typically account
+easy to develop, maintain and understand by expressing what needs                 for underlying software procedures and numerical methods.
+to be computed without stating how it should be computed. This                       In the Simscape Electrical [5] and Simscape Electrical
+paper presents a Modelica-based simulator for electromagnetic                     Specialized Power Systems [6] packages, the block-diagram
+transients. It is demonstrated that this approach offers significant              approach of Simulink is extended to include the state-space
+advantages for developing sophisticated models. Computational
+performance and accuracy are compared to a conventional EMT-                      representation of linear electrical networks with externally con-
+type simulation tool.                                                             nected components, such as nonlinear devices or synchronous
+                                                                                  generators in the block-diagram representation. Although it
+   Index Terms—Declarative modeling, equation-based modeling,
+object-oriented modeling, MSEMT library, modelica, EMT-type
+                                                                                  offers increased accessibility to users for native models, the
+simulation, power system transients.                                              resulting block diagrams do not deliver a high-level modeling
+                                                                                  environment. Some numerical limitations may also result from
+                                                                                  delays between external components and circuit representation.
+                           I. INTRODUCTION                                           Attempts have been also made to develop an EMT-type sim-
+      OWER system simulation is based on component models                         ulation tool [7] using the higher-level MATLAB programming
+P     that can be described mathematically with Ordinary Differ-
+ential Equations (ODEs). The classic approach for the simulation
+                                                                                  language in an open-source-code approach. Although this ap-
+                                                                                  proach elevates the abstraction level, it remains that the models
+of electromagnetic transients uses lumped circuits combined into                  must be programmed using given numerical methods and actual
+a system of equations for formulating electrical network con-                     equations become submerged in detailed codes.
+straints. In EMTP [1], for example, modified-augmented-nodal                         The existing EMT-type software packages deliver advanced
+analysis is used to connect lumped companion-circuits [2] result-                 simulation environments to engineers and can be also inter-
+ing from the conversion of differential equations from models.                    faced with high-level programming environments [8]. Although
+   Existing and widely used EMT software packages (see [3],                       interfacing and co-simulation methods can become powerful,
+[4]) are typically based on computer programming languages                        they typically suffer from numerical delays and simultaneous
+(Fortran, C++ …) for delivering compiled computer code. Such                      solution issues. But such closed-code approaches do not allow
+code allows simulating large-scale and complex power systems                      to provide high-level modeling environments that can be used
+very efficiently by providing to users powerful graphical user                    for the development of advanced models by simply expressing
+interfaces for drawing simulated schematics and entering data.                    model differential equations without consideration of underly-
+Such packages maintain a large set of hard-coded models that                      ing numerical solution methods.
+                                                                                     This paper proposes to explore the Modelica approach for
+                                                                                  delivering a full EMT-type simulation environment with the
+   Manuscript received February 2, 2021; revised July 17, 2021; accepted
+September 3, 2021. Date of publication September 13, 2021; date of current        models expressed directly through high-level equations. The
+version July 25, 2022. This work was supported by NSERC, Hydro-Québec,            choice of Modelica is justified by the following. Modelica [9] is
+RTE, EDF, and OPAL-RT as a part of the industrial chair “Multi time-frame         an object-oriented declarative equation-based non-proprietary
+simulation of transients for large scale power systems.” Paper no. TPWRD-
+00202-2021. (Corresponding author: Alireza Masoom.)                               language, that can conveniently model the dynamic behavior
+   Alireza Masoom and Jean Mahseredjian are with the Department of Electrical     of complex physical systems. In Modelica, models can be de-
+Engineering, Polytechnique Montreal, Montreal QC H3T 1J4, Canada (e-mail:         scribed as Differential-Algebraic Equations (DAE) and block
+alireza.masoom@polymtl.ca; jean.mahseredjian@polymtl.ca).
+   Tarek Ould-Bachir is with the Department of Computer and Software En-          diagrams. The model becomes decoupled from the solver. Mod-
+gineering, Polytechnique Montreal, Montreal QC H3T 1J4, Canada (e-mail:           elica also supports discrete systems as opposed to continuous
+tarek.ould-bachir@polymtl.ca).                                                    systems.
+   Adrien Guironnet is with the R&D Department, Réseau de Transport
+d’Electricité (RTE), Paris, France (e-mail: adrien.guironnet@rte-france.com).        Modelica can be interfaced with traditional software (e.g.,
+   Color versions of one or more figures in this article are available at         MATLAB and C) and to a variety of computing libraries, such
+https://doi.org/10.1109/TPWRD.2021.3111127.                                       as LAPACK [10], KLU [11], etc. as well. Modelica supports
+   Digital Object Identifier 10.1109/TPWRD.2021.3111127
+
+                         0885-8977 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:19:26 UTC from IEEE Xplore. Restrictions apply.
+2454                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022
+
+
+
+dynamic model exchange and co-simulation through the Func-
+tional Mock-up Interface (FMI) standard [8] and can be linked
+to various EMT-type codes.
+   Modelica supports a graphical user interface for both drawing
+network diagrams and visualizing results and simplifies the
+process of building graphical tools such as component symbols,
+component input, documentation, and observing the results.
+   In power system applications, Modelica is frequently used
+for developing phasor time-domain libraries such as ObjectStab
+library [12], iPSL [13], and PowerGrids [14]; all used in voltage
+stability and electromechanical stability analysis. An electrical
+library of Modelica is available [9], but it provides only basic
+models with several limitations and does not allow to perform
+EMT simulations for power systems.
+   Preliminary work on EMTs with Modelica has been carried
+out in [15], [16] for transmission line modeling. The objective
+of this paper is to extend it to a full package named Modelica
+Simulator of Electromagnetic Transients (MSEMT). In this pa-
+per, MSEMT is presented and tested for its abstraction levels,
+accuracy, and performance.
+   The remainder of this paper is organized as follows. In
+Section II, the Modelica solution is introduced. Section III ex-
+plains the implementation of EMT-detailed models in Modelica.
+Simulation results are presented and compared against reference
+results in Section IV. Section V presents the conclusions of the                Fig. 1.   The typical workflow of translation of Modelica model [9].
+paper.
+                                                                                causalization procedure: (1): removing structural singularities
+               II. MODELICA SOLUTION METHODS                                    that need index reduction algorithms such as Pantelides [21];
+A. Execution of Modelica Code                                                   (2): removing algebraic loops, i.e., subsets of coupled equations
+                                                                                (whether linear or non-linear) that must be solved simultane-
+   Fig. 1 shows the typical Modelica workflow from model
+                                                                                ously. In such cases, the solution is found efficiently by the
+to executable simulation code. The procedure might slightly
+                                                                                Tearing algorithm [22], [23] aimed to break algebraic loops into
+change for different Modelica environments.
+                                                                                smaller parts. The generic idea is to select intelligently some
+   Block 1 is the mathematical representation of a model at high-
+                                                                                variables (called tearing variables) and change them to known
+level abstraction. In Block 2, these codes are first flattened as a set
+                                                                                variables. Then the equations (inner equations) are causalized
+of acausal equations and conditional statements. The inherited
+                                                                                with this assumption, and the remaining equations appear as
+classes are collapsed hierarchically. For each sub-component
+                                                                                residue equations. For electrical circuits, the equations describ-
+of a model, one copy of all equations is generated with distin-
+                                                                                ing algebraic loops are quite large, usually nonlinear, and very
+guished identifiers. For example, if our model is composed of
+                                                                                sparse.
+two resistors R1 and R2 whose resistances are 5 Ω and 10 Ω,
+                                                                                   A Modelica model has many trivial equations, being the result
+two equations are generated: v1 = 5 ∗ i1 and v2 = 10 ∗
+                                                                                of connections; thus, an optimization procedure is applied to
+i2. For each connection between two or more nodes, potential
+                                                                                eliminate the trivial equations in Block 4. Finally, C code is
+variables are set to be equal and flow variables are summed
+                                                                                generated and linked to a numeric solver in Blocks 5 and 6
+to zero. As a result, the output of Block 2 is a set of implicit
+                                                                                respectively. Data output and plotting are easily handled through
+DAEs. In Block 3, a structural analysis [17] is carried out on
+                                                                                available Modelica functions through Block 7.
+the equations, then they are sorted in Block Lower Triangular
+                                                                                   Modelica uses acausal modeling, which relies on equation-
+(BLT) form [18]. BLT partitioning reveals the structure of a
+                                                                                based programming on true equations instead of assignment
+problem and decomposes it into sub-problems that can be solved
+                                                                                statements or conventional input/output block diagrams.
+separately and in sequence. In this process, efficient graph
+theory algorithms are used to select states that generate minimal
+algebraic loops. The first step in the structural representation of             B. Integration Methods
+a system is to create a structure Jacobian that describes the de-                  In EMT analysis, the core algorithm is numerical integration.
+pendency of each equation on its variables and their derivatives                A variety of integration methods such as trapezoidal, backward
+(Matching). The aim is to categorize the knowns and unknowns                    Euler, implicit Runge-Kutta, DASSL [24], and IDA [25], [26]
+in each equation. Then, the equations are sorted into blocks using              are currently available in Modelica simulators. The two latter
+Tarjan’s algorithm [19], [20], such that an evaluation sequence                 solvers are based on the backward differentiation formula (BDF)
+is achieved (sorting). Two main jobs are usually required in the                [27] and are widely used in the Modelica simulators such as
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:19:26 UTC from IEEE Xplore. Restrictions apply.
+MASOOM et al.: MSEMT: AN ADVANCED MODELICA LIBRARY FOR POWER SYSTEM ELECTROMAGNETIC TRANSIENT STUDIES                                                    2455
+
+
+
+                                                                                  inductance, can be declared by a restricted class type which
+                                                                                  is useful when a variable contains information that can help the
+                                                                                  modeler to identify it (see Fig. 2(a)). The preliminary part of an
+                                                                                  electrical component is the pin. As demonstrated in Fig. 2(b),
+                                                                                  the pin is programmed by the specific class, connector, and
+                                                                                  defines the variables that are part of the communication inter-
+                                                                                  face. Therefore, it is coded by a non-flow variable, voltage,
+                                                                                  denoted by v, and a flow variable, current, indicated by i.
+                                                                                  Then partial model “OnePort” which represents the generic
+                                                                                  properties of one-port devices is built. The keyword partial
+                                                                                  means that this is not a complete model due to the unequal
+                                                                                  number of variables and equations. The partial model OnePort
+                                                                                  can be reused for modeling all one-port devices, e.g., resistor,
+                                                                                  capacitor, etc. just by recalling it using the keyword extends.
+                                                                                  As illustrated in Fig. 2(c), every one-port device is defined by
+                                                                                  a positive and negative pin denoted by p and n and a set of
+                                                                                  equations. Finally, the inductor model is completed by inserting
+                                                                                  the constructive equation based on Faraday’s law to establish a
+Fig. 2. Implementation of a linear inductor model in Modelica. Arrows show
+the hierarchical order of modeling. (a) Declaration of variables and parameters
+                                                                                  relationship between component non-flow and flow variables.
+of the model. (b) Defining the connector pin. (c) Partial model OnePort.          Now the model can be instantiated (see Fig. 2(d)).
+(d) Modelica code of an inductor. (e) Graphical description of inductor model.
+
+                                                                                  A. Assembling the Models
+OpenModelica [28] and Dymola [29] owing to their stability                           Physical interconnection of components models is carried out
+and accuracy. The solvers yield very good stability due to the                    by the keyword connect in the equation part. Graphically,
+conservative selection method in order and step-size control. In                  it is possible simply to drag and drop the constructed models
+practice, they successfully solve stiff DAEs and ODEs.                            into the simulation page, attribute a name to them, change the
+   The most important feature of DASSL and IDA solvers is that                    parameters, and connect their terminals. Let us assume that the
+besides the ODE mode, they can simulate models in DAE mode.                       positive pin of the resistor (R1) is connected to the negative pin
+In general, the entire equation system of a model is passed to                    of the inductor (L1) graphically through a physical connection.
+the DAE integrator, including all algebraic loops. This decreases                 The following code is entered:
+the amount of work that requires to be performed in the post-                        connect(R1.p, L1.n);
+optimization phase [30].                                                             Modelica automatically translates the above code into two
+   Handling of discontinuities is a major challenge in the in-                    algebraic equations based on the definition of the pin in Fig. 2(b),
+tegration schemes of EMT simulation. OpenModelica uses a                          i.e., equality coupling for no

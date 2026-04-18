@@ -1,0 +1,275 @@
+第 46 卷 第 11 期                                                 电 网 技 术                                                    Vol. 46 No. 11
+ 2022 年 11 月                                               Power System Technology                                           Nov. 2022
+文章编号：1000-3673（2022）11-4403-11                         中图分类号：TM 721              文献标志码：A               学科代码：470·40
+
+
+
+含电池储能的直流配电网振荡抑制有源阻尼控制及
+                                                      参数计算方法
+                         罗华伟 1，王立娜 1，吴昌龙 1，徐志强 1，陈霖华 1，
+                                         龚岸榕 1，李云丰 2，陈星 3，谭鑫 1
+（1．规模化电池储能应用技术湖南省工程研究中心(湖南经研电力设计有限公司)，湖南省 长沙市 410007；
+                            2．长沙理工大学电气与信息工程学院，湖南省 长沙市 410114；
+                        3．国家电投集团湖南娄底新能源有限公司，湖南省 娄底市 417000）
+
+
+         Active Damping Control and Parameter Calculation for Resonance Suppression in
+                                   DC Distribution Network
+                      LUO Huawei1, WANG Lina1, WU Changlong1, XU Zhiqiang1, CHEN Linhua1,
+                              GONG Anrong1, LI Yunfeng2, CHEN Xing3, TAN Xin1
+ (1. Hunan Engineering Research Center of Large-scale Battery Energy Storage Application Technology (Hunan Economic Institute
+                            Electric Power Design Co., Ltd.), Changsha 410007, Hunan Province, China;
+   2. School of Electrical & Information Engineering, Changsha University of Science and Technology, Changsha 410114, Hunan
+               Province, China; 3. SPIC Hunan Loudi New Energy Co., Ltd., Loudi 417000, Hunan Province, China)
+
+
+ABSTRACT: The bidirectional DC-DC converter operating in                  expression of the parameter selection range of the damping
+the buck mode is one of the main factors causing the resonant             controller is presented. Finally, the correctness of the
+instability in the DC distribution network. Firstly, the                  calculation formula is verified by the electromagnetic transient
+impedance model of the three-phase VSC considering the                    simulation.
+dynamic process of the AC system and the one of the
+                                                                          KEY WORDS: DC distribution network; battery energy
+bidirectional DC-DC converter are established in this paper
+                                                                          storage; bidirectional DC-DC converter; resonance stability;
+through a simple case of a DC distribution network. The
+                                                                          damping control; parameters calculation
+influence of the main circuit parameters, the control system
+parameters and the steady-state operation points on their                 摘要：运行于 Buck 模式的双向 DC-DC 变换器是引起直流
+impedance models has been analyzed. The mechanism of the                  配电网发生振荡失稳的主要因素之一。首先，该文通过简单
+resonant instability in the DC distribution network induced by            的直流配电网案例，建立了三相 VSC 考虑交流系统动态过
+the DC network equivalent inductance and the bidirectional                程的阻抗模型和双向 DC-DC 变换器的阻抗模型，分析了主
+DC-DC converter is therefore revealed. Secondly, an active                电路参数、控制系统参数以及稳态运行点对两者阻抗模型的
+damping control strategy of the DC current feedback of the                影响程度与规律，并揭示了直流网络等效电感和双向
+bidirectional DC-DC converter is proposed by considering the              DC-DC 变换器相互作用诱发直流配电网振荡失稳的机理。
+impedance characteristics required for the DC distribution                其次，从直流配电网振荡抑制所需的阻抗特性角度考虑，提
+network resonance suppression. After that, the influence of the           出了一种双向 DC-DC 变换器反馈直流电流的有源阻尼控制
+damping controller parameters on its impedance characteristics            策略，并研究了阻尼控制器参数对其阻抗特性的影响规律。
+is studied. Thirdly, taking the parallel resonance suppression of         再次，以电池储能装置并联谐振抑制和直流网络串联谐振抑
+the battery energy storage device and the series resonance                制为约束条件，解析了阻尼控制器的参数选择范围表达式。
+suppression of the DC network as the two constraints, the                 最后，采用电磁暂态仿真验证所给计算公式的正确性。
+
+                                                                          关键词：直流配电网；电池储能；双向 DC-DC 变换器；谐
+     基金项目：湖南省科技创新重大项目(2020GK1010)；湖南经研电
+力设计有限公司科技项目(基于电池储能的交直流柔性配电网故障运行                                           振稳定性；阻尼控制；参数计算
+关键技术研究)。                                                                  DOI：10.13335/j.1000-3673.pst.2022.0199
+     Project Supported by Science and Technology Innovation Major
+Project of Hunan Province(2020GK1010); Science and Technology Project     0 引言
+of Hunan Economic Institute Electric Power Design Co., Ltd (Research on
+Key Technologies of Fault Operation of AC/DC Flexible Distribution
+                                                                               随着我国提出了“碳达峰、碳中和”发展战略
+Network Based on Battery Energy Storage).
+4404            罗华伟等：含电池储能的直流配电网振荡抑制有源阻尼控制及参数计算方法                                                                            Vol. 46 No. 11
+
+的要求，大力发展风电、光伏等可再生能源成为不                     问题，采用简单的级联结构，分析了负载特性和
+可阻挡的历史趋势[1-3]。在新能源、直流负荷的渗透                 控制器参数对直流微电网的稳定性影响，指出电
+率不断提高的情况下，作为今后电力系统的重要组成                    源的快速控制有利于提升稳定性，而负载的快速
+部分，融合电池储能装置的直流配电网在中小规模可                    控制则会恶化稳定性。文献[24]以直流微电网中各
+再生能源接入与送出以及工业园区供电能力提升方面                    装置的阻抗匹配为目标，提出了 VSC 的串联虚拟
+已经逐渐显示出其独有的优势，具有广阔的发展空间，                   阻抗控制方法，并利用 Middlebrook 稳定判据对串
+当前国内外已有多个直流配电网工程投入运行[4-5]。                 联虚拟阻抗后的系统进行了稳定性分析。上述文献
+      三相电压源换流器(voltage source converter，   在直流配(微)电网建模和稳定控制方面做了非常充
+VSC)和双向 DC-DC 变换器通常作为直流配电网的                足的工作，但均是以系统高阶模型为基础对阻尼控
+功率接口装置[6-7]，前者用于连接交流系统和直流系                 制器参数进行设计，并没有给出相关参数选择范围
+统，后者多用于连接直流网络和其他不同类型的直                     的解析表达式。
+流系统，例如电池储能装置。相比于交流系统来说，                      本文以级联的三相 VSC 和含有双向 DC-DC 变
+含有三相 VSC 和双向 DC-DC 变换器的直流配电网               换器的电池储能装置为案例，在揭示直流配电网振
+是典型的电力电子化系统，具有更加快速的灵活可                     荡失稳机理之后，提出了在双向 DC-DC 变换器中
+控特性以及短路故障电流发展特性[8-10]。为了抑制                 反馈直流电流的有源阻尼控制策略，并对阻尼控制
+短路故障电流的发展与传播以及为保护系统和直                      器参数的选择范围进行了解析计算与验证。
+流开断装置争取更多时间，在各个装置出口配置                      1 直流配电网主电路结构
+一定大小的直流限流电抗器是一种经济可行的方
+                                               本文重点是反馈双向 DC-DC 变换器直流电
+案[5,11]。然而，直流限流电抗器也带来了不利影响，
+                                           流进行有源阻尼控制，为方便参数解析计算，将
+例如与快速控制的双向 DC-DC 变换器相互作用恶
+                                           以图 1 所示的 VSC 和电池储能模型为例开展理论
+化了直流配电网的谐振稳定性，可能诱发振荡失
+                                           研究。图 1(a)中：ugabc 和 igabc 为交流系统等效三相
+稳，威胁直流配电网的可靠与安全运行[12-14]。直流
+                                           电源和电流；usabc 和 isabc 为接入点三相电压和电流；
+配电网谐振振荡的本质是各个装置控制不协调所
+                                           ucabc 为 VSC 交流侧输出的三相电压；udc 和 idc1 为
+产生的瞬时功率振荡现象。若是采用阻抗理论解
+                                           直流侧电压和电流；Ldc1 为 VSC 直流侧出口的直
+释，则是某些个装置的呈现出“负电阻”效应[15]。
+      针对含有电池储能装置的直流配电网谐振稳                  流限流电抗器。图 1(b)中：储能电池用理想电压源
+定性和振荡抑制问题，相关文献从模型构建、机                      Ebe 代替，经过功率双向 DC-DC 变换器与直流配
+理分析、振荡抑制等方面做了大量的理论研究工                      电网连接；Ldc2 为电池储能装置出口的直流限流电
+作 [7,14-20]。文献[16]以全局下垂控制策略为基础，在           抗器；udccb 为支撑电容电压；ilb 为缓冲电感电流；
+考虑 VSC 交直流瞬时功率、系统损耗以及不确定                   idc2 为 DC-DC 变换器的直流电流；滤波电感 Lf 和滤
+性因素之后，建立了系统阻抗模型并采用 2 自由度                   波电容 Cf 平抑双向 DC-DC 变换器产生的高频脉动
+方法设计了鲁棒控制器。文献[18]推导了孤网运行                   电流。储能电池放电时 DC-DC 变换器工作于升压
+模式下含有恒功率负荷的直流微电网小干扰线性                      模式，充电时工作于降压模式；各个元器件的电
+化状态方程，提出了以直流电压和直流电流为状态                     压和电流方向如图 1 所示。系统相关参数如表 1、
+反馈变量的阻尼控制策略。文献[19]提出了直流微                   2 所示。
+                                                                   Lg      us ab c         Zeq                idc1
+电网下垂控制的 DC-DC 变换器阻容输出阻抗设计                               igabc
+                                                                                                                       Ldc1     接入
+                                                                                                         V
+                                                                                is ab c
+方法，给出了电容的选择准则和下垂阻抗设计准                                                                            ucabc   S    udc                直流
+                                                ugabc                                                    C                      线路
+则，能够实现负载可变的情况下的直流电压稳定。                                                  Cs
+                                                                                          Z eq  Req  sLeq
+文献[21]针对直流微电网惯性和阻尼特性等问题，
+提出一种用于直流微电网多端口变换器的类虚拟                                                  (a) VSC及其交流系统简化主电路
+                                                                Ldc2      idc2     Lb i1b Lf i1f
+同步发电机虚拟惯性控制策略，同时实现了下垂、
+虚拟惯性和阻尼特性的功能。文献[22]采用同步电                            接入
+                                                                                 T1
+                                                    直流             udccb                                             udccf
+                                                                                Cb T2                    Cf                      Ebe
+机转子运动方程和电气转矩法建立了直流电压时                               线路
+
+间尺度的动态模型，推导了直流配电网惯量、阻尼                                             (b) 功率双向电池储能简化主电路
+和同步系数的表达式，并分析相关环节对系统稳定                                  图 1 直流配电网系统简化案例
+性的影响。文献[23]针对直流传动应用方面的稳定                   Fig. 1   Simplified case of DC distribution network system
+第 46 卷 第 11 期                                              电     网   技   术                                                                   4405
+
+                       表 1 VSC 主参数                                                         udc
+             Table 1    Main parameters of VSC
+                                                                               Z vsc            C vsc ( sI im  Αvsc ) 1 Bvsc1              (2)
+                                                                                           idc1
+      参数名称         取值及单位               参数名称        取值及单位
+                                                                     式中：Iim 为单位矩阵；idc1 为 VSC 的直流电流。
+   额定直流电压               20kV      交流系统电压              10kV
+                                                                     2.2 电池储能装置建模
+      额定功率             10MW        隔离变阻抗             0.04pu
+      支撑电容                 1mF    交流侧电阻 Req            0
+                                                                         电池储能装置采用的是功率双向 DC-DC 变换
+  直流电抗器 Ldc1           10mH       交流侧电感 Leq           1mH            器连接直流配电网和电池装置本体，电流方向如
+      滤波电容 Cs              5F     电网电感 Lg            1mH
+                                                                     图 1(b)所示。本文以恒电流为例，考虑充放电过程，
+ 外环比例系数 kpdc               0.1   外环积分系数 kidc           2
+  内环比例系数 kpi               200   内环积分系数 kii           4000           开关管 T1 和或 T2 的占空比表达式可统一表述为
+                                                                                      d c  Gibe (I lb*  ilb )sign( I lb* )                  (3)
+                表 2 电池储能装置主参数
+                                                                                *
+   Table 2    Main parameters of battery energy storage              式中：I lb 为缓冲电感电流参考值；ilb 为缓冲电感电
+      参数名称         取值及单位               参数名称        取值及单位             流；缓冲电感电流控制器 Gibe=kpbe+kibe/s，kpbe 和 kibe
+   电池电压 Ebe             10kV       支撑电容 Cb           0.1mF           为比例和积分系数；sign(x)为符号函数，由充放电
+      缓冲电感 Lb              5mH    直流电抗器 Ldc2         10mH
+                                                                     方向决定。当双向 DC-DC 变换器运行于 Boost 模
+      滤波电容 Cf          0.1mF       滤波电感 Lf            2mH
+ 内环比例系数 kpbe            0.005    内环积分系数 kibe           0.1           式时，即参考电流 I*lb≥0 时，sign(I*lb)=1，相反运
+                                                                     行于 Buck 模式时 sign(I*lb)=1。Ebe 为储能电池端
+2 直流配电网理论建模
+                                                                     口直流电压，可推导出 2 种模式下直流端口电压
+2.1    VSC 描述与建模                                                     udccb 的小信号表达式为
+       在 dq 坐标系上，选择电源电流 igd 和 igq、接入                                            udccb  H be1Ebe  H be2 I lb*  Z be idc2                   (4)
+点电压 usd 和 usq 以及 VSC 交流侧电流 isd 和 isq 为状                              式(4)中，Ebe 为储能电池端口直流电压，本文用直
+态变量，即 xac=[igd; igq; usd; usq; isd; isq]T。锁相环采                       流电压源表示，相关表达式如下
+用常规的方式，其传递函数为二阶，其状态变量为
+                                                                                      Gbe1  Gibe Gbe1Gbe5  Gibe Gbe2 Gbe4
+xPLL=[xPLL1; xPLL2]T。VSC 采用单位功率因数的定直                                          H be1 
+                                                                                          1  Gibe Gbe5  Gibe Gbe2 Gbe6
+流电压控制方式，直流电压反馈环节经二阶低通滤
+                                                                             
+波 器 (low pass filter, LPF) 之 后 送 至 控 制 器                                                         Gibe Gbe2
+                                                                              H be2                                                         (5)
+Gudc=kpdc+kidc/s 产生 d 轴参考电流，其中 kpdc 和 kidc                                            1  Gibe Gbe5  Gibe Gbe2 Gbe6
+                                                                             
+分别为比例系数 和积 分 系 数 ； 外 环 状态 变 量为                                               Z           Gbe3 (1  Gibe Gbe5 )
+xol=[xudc; xudcfil1; xudcfil2]T，xudc 为直流电压积分控制器                               be 1  G G  G G G
+                                                                                          ibe be5      ibe be2 be6
+
+的状态变量，xudcfil1 和 xudcfil2 为二阶低通滤波器的状                                         忽略直流线路的压降，则 Gbe1=Ebe0/(UdcNGden1)，
+态变量。电流内环中 d 轴电压和 q 轴电压也经二阶                                           G be2 =(L f L b C f I lb0 s 3 L f C f E be0 s 2 +L b I lb0 s+L f I lb0 sE be0 )/
+LPF 前馈至方程中，电流内环控制器为 Gi=kpi+kii/s，                                    Gden1，Gbe3=(LfLbCfs3 +Lfs+Lbs)/Gden1，Gbe4=1/Gden2，
+其中 kpi 和 kii 分别为比例系数和积分系数；内环状                                        Gbe5=(LfCfUdcNs2 +UdcN)/Gden2，Gbe6=(LfCfEbe0s2+Ebe0)/
+                                                             T
+态变量为 xcl=[xisd; xisq; xusdfil1; xusdfil2; xusqfil1; xusqfil2] ，      (UdcNGden2)，且有
+xisd 和 xisq 为 d 轴和 q 轴电流积分控制器的状态变量，                                            Gden1  Lf Lb Cf Cb s 4  Lb Cb s 2  Lf Cb s 2 
+xusdfil1 与 xusdfil2 和 xusqfil1 与 xusqfil2 为 d 轴和 q 轴前馈                        
+                                                                              
+电压的二阶低通滤波器的状态变量。可得到，VSC                                                       
+                                                                                               2
+                                                                                      ( Lf Cf Ebe0 s 2  Ebe0
+                                                                                                          2         2
+                                                                                                              ) / U dcN                          (6)
+                                                                              
+状态空间模型为                                                                       Gden2  Lf Lb Cf s 3  ( Lf  Lb ) s
+                                                                              
+        dxvsc
+        dt  Αvsc xvsc  Bvsc1idc1  Bvsc2 U dc
+                                                 *
+                                                                             由式(4)—(6)可知，直流电压 udccb 的表达式没
+                                                             (1)
+                                                                     有占空比，只是由电池电压稳态值 Ebe0、电流稳态
+       u  C x
+        dc     vsc vsc                                              值 Ilb0 以及直流配电网电压 UdcN(理论上是 Udc0)表
+                                   T
+式中：xvsc=[xac; xPLL; xol; xcl] ；“Δ”表示相关变量                             示，其中 Ilb0 的方向和大小由其运行模式和功率大
+                       *
+的小信号符号；U dc 为 VSC 直流电压参考值；udc                                        小决定。
+为 VSC 的直流电压。                                                                 假设直流线路的等效电阻和电感为 Rline 和
+       考虑到 VSC 建模不是本文研究重点，关于状                                        Lline，则直流线路的动态方程为
+态变量和矩阵 Avsc、Bvsc1、Bvsc2、Cvsc 的形式不再给                                                        1
+                                                                            idc1                  (udc  udccb )                             (7)
+出。根据式(1)，VSC 直流侧阻抗 Zvsc 的表达式为                                                       Ldceq s  Rdceq
+4406                      罗华伟等：含电池储能的直流配电网振荡抑制有源阻尼控制及参数计算方法                                                  Vol. 46 No. 11
+
+式中：Ldceq=Ldc1+Lline+Ldc2 为直流侧等效电感；Rdceq               述因素对阻抗特性的影响程度，本部分先进行阻抗
+为等效电阻，考虑严重工况可忽略 Rdceq。                                特性分析，之后对直流配电网的稳定性进行分析，
+       此外，从图 1(b)所示的拓扑结构来看，出现了                        揭示发生振荡失稳的机理。
+LCL 型拓扑，因此该拓扑存在一个自然并联谐振                               3.1      VSC 直流侧阻抗特性分析
+点，其谐振(角)频率为                                                   关于稳态运行点对 VSC 直流侧自身阻抗特性
+                                     1                的影响将在后续给出，本小节只给出主电路参数和
+                    f be_res1                  (8)
+                                  2π Lf Cf            控制系统参数对阻抗幅值的影响，如图 3 和图 4 所
+       也存在一个串联谐振点，其谐振(角)频率为                           示，其相位特性是随着频率的逐渐增大而趋近于
+                                1    Lf  Lb          90°且没有出现负阻尼效应频段，因此没有给出。
+                  f be_res2                    (9)
+                                2π   Lf Lb Cf                 20
+
+                                                              15
+       对于并联谐振来说，在自然谐振频率附近的阻                                            电网等效电感
+
+
+
+
+                                                      幅值 /
+                                                                        基本无影响                   滤波电容基
+                                                              10
+抗幅值很大，当频率小于 fbe_res1 时阻抗呈现电感特                                                                    本无影响
+                                                               5
+性，当频率大于 fbe_res1 时阻抗呈现电容特性，容易
+                                                              20
+与直流配电网直流侧的等效电感阻抗相互作用诱                                                                                           Cvsc=0.1mF
+                                                              15
+发谐振振荡。对于串联谐振来说，系统的阻抗非常                                                 换流电抗基
+                                                      幅值 /
+                                                                        本无影响                     Cvsc=5mF
+                                                              10                                     Cvsc=2.5mF
+小，与外部系统具有阻抗幅值交点的概率非常小，                                                                                    Cvsc=1mF
+                                                               5                                                     Cvsc=0.5mF
+发生谐振的风险也就小。
+                                                               0
+                                                                   0   50 100 150 200 250   0   50 100 150 200 250 300
+2.3      模型正确性验证
+                                                                             频率/Hz                    频率/Hz
+       2.1 和 2.2 节建立了 VSC 装置和电池储能装置
+                                                              图 3 主电路参数对 VSC 直流侧阻抗的影响
+的阻抗模型，需要对其正确性进行验证之后才可以                                   Fig. 3 Influence of main circuit parameters on VSC’s
+采用理论模型分析影响因素以及后续相关研究。电                                                  impedance at DC side
+池储能装置在阻抗测量时需要在直流端口并联理
+想电压源，此时支撑电容 Cb 无效，再考虑功率开
+                                                       /
+
+
+
+
+关器件的开关过程，测量的直流电流含有非常大的
+脉冲扰动，在傅里叶分析时影响了精度，对此本文
+不给予验证。根据表 1 所示参数，搭建了 VSC 阻
+                                                       /
+
+
+
+
+抗扫描模型，图 2 绘制了 VSC 在±1pu 功率下的 VSC
+直流侧阻抗理论计算与扫描结果，很显然，扫描值
+几乎完美地与计算值对上，进而说明了本文所建立
+的模型具有非常高的精度。
+                                                          图 4 控制器参数对 VSC 直流侧阻抗幅值的影响
+       

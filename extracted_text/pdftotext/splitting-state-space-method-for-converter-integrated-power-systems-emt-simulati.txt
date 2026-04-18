@@ -1,0 +1,177 @@
+584                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 1, FEBRUARY 2025
+
+
+
+
+                     Splitting State-Space Method for
+                 Converter-Integrated Power Systems EMT
+                                Simulations
+                Xiaopeng Fu , Member, IEEE, Wei Wu , Member, IEEE, Peng Li , Senior Member, IEEE,
+                         Jean Mahseredjian , Life Fellow, IEEE, Jianzhong Wu , Fellow, IEEE,
+                                    and Chengshan Wang , Senior Member, IEEE
+
+
+   Abstract—As the utilization of power electronic-based compo-                                                I. INTRODUCTION
+nents in power systems continues to grow, a comprehensive un-
+                                                                                         HE power systems are becoming increasingly complex
+derstanding of their dynamics becomes increasingly important for
+system design, control and protection analysis. To meet practi-
+cal needs, the high-fidelity but time-consuming electromagnetic
+                                                                                   T     due to renewable generation penetration and hybrid ac/dc
+                                                                                   network interconnections, which lead to widespread utilization
+transient (EMT) simulations are often required. To improve the                     of power electronic-based converters [1]. This complexity has
+performance of these simulations, a highly efficient splitting state-
+space method with numerical error control is proposed that reduces
+                                                                                   a profound impact on the system dynamic performance, and
+the computation workload. The method employs a generic decou-                      raises the need for accurate time-domain simulation of power
+pling principle to split the state-space equations of the converter-               system transients [2]. Electromagnetic transient (EMT) simu-
+integrated power system and introduces the exponential splitting                   lation programs, which adopt the detailed modeling approach,
+formulas of multiple orders accuracy to solve and then compose                     can provide high-fidelity simulation results at the circuit level.
+the splitting state-space equations. The decoupling principle is
+designed based on separation of time-varying portions of the
+                                                                                   Previously, these programs were mainly used to track the fast
+state matrix, which is realized by locating the smallest subcircuit                EMT phenomenon that is naturally confined to local area, but
+topology that is switch state-dependent, through automatic switch                  growing demands from practical studies in longer timespan
+grouping and switch adjacent state variables (SASV) identification.                and larger scale were seen more recently. For example, diverse
+A family of exponential splitting schemes is employed to acceler-                  coupling forms among power electronic converters and tradi-
+ate the demanding matrix exponential calculation. The splitting
+state-space method undergoes comprehensive testing across vari-
+                                                                                   tional electrical equipment are observed to trigger wide-band
+ous cases, including a distribution network with DC load, an LLC                   oscillations [3]. Cross-region interactions are formed between
+resonant converter, a large-scale wind farm, and an MMC circuit.                   energy plants and load center networks through long distance DC
+The accuracy of the proposed method is thoroughly evaluated, and                   transmission systems [4]. These demands pose new challenges
+its efficiency is validated.                                                       to EMT simulation programs. The ever-increasing advancement
+   Index Terms—Electromagnetic transient, exponential integra-                     of high-switching-frequency (HSF) converters has notably re-
+tor, power converter, splitting method.                                            sulted in semiconductor valve switching frequencies reaching
+                                                                                   hundreds of kilohertz [5], requiring small enough time-steps to
+                                                                                   capture the switching dynamics. This requirement also arises
+                                                                                   from the small-time constants associated with the component
+                                                                                   dynamics and device transients with nonlinear characteristics.
+   Received 21 April 2024; revised 30 September 2024; accepted 16 November
+                                                                                   The increasing number of converters in the power system and
+2024. Date of publication 9 December 2024; date of current version 24 January      the stringent simulation requirements impose higher demands on
+2025. This work was supported in part by the National Key R&D Program              the execution time and computing resources required for these
+of China under Grant 2023YFC3807000, and in part by the National Natural
+Science Foundation of China under Grant 52377118. Paper no. TPWRD-00666-
+                                                                                   simulations.
+2024. (Corresponding author: Wei Wu.)                                                 Various techniques aimed at improving the efficiency of
+   Xiaopeng Fu, Peng Li, and Chengshan Wang are with the Key Laboratory of         detail-modeled power converter simulations have been devel-
+Smart Grid of Ministry of Education, Tianjin University, Tianjin 300072, China
+(e-mail: fuxiaopeng@tju.edu.cn; lip@tju.edu.cn; cswang@tju.edu.cn).
+                                                                                   oped in earlier studies. Circuit-based decoupling, as one com-
+   Wei Wu is with Beijing Huairou Laboratory, Beijing 102206, China (e-mail:       mon idea, has been adopted by methods like multirate analysis
+wuwei1@bise.hrl.ac.cn).                                                            and parallel computations to accelerate the simulations [6], [7].
+   Jean Mahseredjian is with the Department of Electrical Engineering,
+Polytechnique Montréal, Montréal, Québec H3T 1J4, Canada (e-mail:
+                                                                                   Circuit decoupling is conventionally achieved by transmission
+jeanm@polymtl.ca).                                                                 line propagation delay, while the compensation method can be
+   Jianzhong Wu is with the Institute of Energy, School of Engineering, Cardiff    used to decouple at arbitrary locations where line delays are not
+University, CF24 3AA Cardiff, U.K. (e-mail: wuj5@cardiff.ac.uk).
+   Color versions of one or more figures in this article are available at
+                                                                                   available [8]. The state-space nodal method (SSN) is also able
+https://doi.org/10.1109/TPWRD.2024.3514294.                                        to avoid line delay usage by interfacing nodal analysis equations
+   Digital Object Identifier 10.1109/TPWRD.2024.3514294                            with grouped state-space equations, where the grouping splits
+
+      0885-8977 © 2024 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:00:29 UTC from IEEE Xplore. Restrictions apply.
+FU et al.: SPLITTING STATE-SPACE METHOD FOR CONVERTER-INTEGRATED POWER SYSTEMS EMT SIMULATIONS                                                         585
+
+
+
+switching events and reduces the computation burden related to                  For the post-switching update of the state-space equations, this
+varying topology matrix calculations [9]. A circuit partitioning                method first identifies the pattern of elements in the state matrix
+method was presented in [10] that applied an explicit formula                   and splits the equations into time-varying and constant parts.
+to selected energy storage elements for power electronic circuit                Then, by incorporating the exponential splitting formulas of
+division and used multirate methods to improve efficiency. In                   multiple orders accuracy, the solutions to the splitting state-space
+[11], a region folding method decoupled the identical structural                equations and their composition are derived to approximate the
+power electronic blocks to pre-calculate their inverse matrices.                solution of the full state-space equations. The integration in
+Further investigations are needed for efficient decoupling meth-                each time-step is accordingly divided into several stages, and
+ods that can be applied to generic power converter topologies.                  the computation of the exponential of the entire time-varying
+   One merit of the decoupling methods is that they alleviate the               state matrix is avoided. The method also considers the accuracy
+explosion of the involved switch on/off state combination num-                  loss induced by the splitting state-space method and provides
+bers by appropriate switch separation into subsystems. Apart                    error control scheme.
+from this, constant admittance matrix or state matrix methods
+to approximate the switching state/model have also drawn at-                    A. Exponential Splitting Formulas
+tention. A buck converter was modeled using a piecewise-linear
+                                                                                   An N -dimensional linear system has the state-space form
+approximation in [12], which separated the nonlinear switch
+property into several subsections and obtained a constant ad-                                      ẋ = Ax + Bu, x (0) = x0 ,                          (1)
+mittance matrix. The associated discrete circuit models were
+developed to maintain constant admittance with different pas-                   where x and u denote the vector of state variables and input
+sive element representations during on/off states [13], and have                variables, A and B are the state and input matrices that represent
+been used for boost/buck inverters, three-level voltage source                  the coefficients of the system, and x0 is the initial value of x. For
+converter (VSC), etc., especially in real-time applications [14],               easier presentation, a convenient technique from [18] is used to
+[15]. The insulated gate bipolar transistor (IGBT) and its parallel             transform this non-autonomous system form into an augmented
+diode were modeled as a voltage-current source pair in [16], and                and autonomous form
+one time-step latency was introduced to achieve an invariant                                                      x̃˙ = Ã x̃,                         (2)
+coefficient matrix. Various modeling techniques for modular
+multilevel converters (MMCs) are presented in [17].                             where the effect of the forcing term u is wrapped into the
+   In contrast to the circuit-based decoupling and constant matrix              augmented state vector x̃, which contains the original x and
+approaches, this paper proposes a splitting state-space method                  auxiliary state variables xu . This technique can be exem-
+with numerical error control scheme. The foundation of the                      plified by transforming a simple system
+                                                                                                                       with constant
+                                                                                                                                      input
+method is a decoupling principle applicable for general converter                                                      Ab             x
+                                                                                c, ẋ = Ax + bc, by defining Ã =            , x̃ =         , and
+topology, which extracts the time-varying part of the state-space                                                       00           xu
+                                                                                           
+equations of the converter-integrated power systems and gen-                               x
+                                                                                x̃ (0) = 0 . The equivalence of (1) and (2) can be easily
+eralizes the matrix structure of this part, hence splitting the                             c
+state-space equations. Consequently, the method mitigates the                   demonstrated and such a transformation is available for different
+computational burden associated with switch operations. On this                 input signal forms. The state transition rule for system (2) is
+basis, the method employs the exponential splitting formulas to                 explicitly expressed with the matrix Ã exponential function as
+adaptively execute the numerical integration of time-varying and
+                                                                                                           x̃ (t) = etÃ x̃ (0) .                      (3)
+constant parts separately. Last but not least, the method provides
+flexible options for solutions of each accuracy order, and uses                    In the following presentation, we use (3) as the fundamental
+a numerical error control scheme to guide this setting, which                   equation describing the system dynamics, and the tilde su-
+helps in balancing the trade-off between simulation accuracy                    perscript is dropped for concise notation. This formulation is
+and efficiency, enhancing the overall performance.                              general, as the forcing term is included in the auxiliary state
+   The remainder of the paper is organized as follows. Section II               variables.
+introduces the splitting state-space method and its numerical                      Numerical integration with the exponential integrators [19]
+error control scheme. Section III demonstrates the decoupling                   involves the computationally intensive matrix exponential func-
+principle with typical converter topologies. Section IV presents                tion with a time complexity of O(N 3 ), which becomes the
+several case studies to examine the performance of the proposed                 efficiency bottleneck in the converter-integrated power systems
+method. Conclusions are drawn in Section V.                                     EMT simulations. The exponential splitting formulas can treat
+                                                                                these matrix operations more easily [20]. The method consists of
+                                                                                three steps, which are decoupling, integration and combination.
+             II. SPLITTING STATE-SPACE METHOD                                   In the first step, the system is decoupled and the state matrix
+  The ordinary differential equations (ODEs) describing                         A is split into two matrices A = A1 + A2 . It is noted that
+converter-integrated power systems are time-varying due to the                  this paper uses italic symbol to denote time-varying vectors and
+switch operations, and the numerical integration of the ODEs can                matrices, to better distinguish those data structs that vary with
+be computationally intensive. The splitting state-space method                  switch states from those that do not. Then, the exponential of
+proposed in this section is aimed to address this challenge.                    A is approximated with splitting formulas as product of matrix
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:00:29 UTC from IEEE Xplore. Restrictions apply.
+586                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 1, FEBRUARY 2025
+
+
+
+                                                                                  to converters are separated by components such as filters and
+                                                                                  lines, and there is no direct connection in between. Therefore,
+                                                                                  the time-varying elements can be managed for each individual
+                                                                                  converter. In addition, the structure helps to streamline the
+                                                                                  decoupling procedure.
+                                                                                     The state matrix splitting of such system is detailed in Fig. 1.
+                                                                                  The state matrix A can be split into a constant splitting matrix
+                                                                                  A1 , and a block-wise variant splitting matrix A2 that depends
+                                                                                  on the switch states s at time t, it is noted as A2 (s(t)) in this
+                                                                                  subsection. Mapping the splitting of the state matrix to real
+                                                                                  circuits, integrations of subcircuits represented by A1 obtain the
+                                                                                  system transients without power conversion through converters,
+                                                                                  on the other hand, integrations of subcircuits represented by
+                                                                                  A2 (s(t)) complement this part of power conversion. Using
+                                                                                  the exponential splitting formulas, the exponential of A1 is
+Fig. 1.   Splitting state matrix for the converter-integrated power systems.
+                                                                                  determined in the beginning of the simulation and remains
+                                                                                  constant, while the exponential of the counterpart A2 (s(t)) is
+                                                                                  approximated in practical calculations once the switch states
+exponentials formed by A1 and A2 . Among them, the first-order
+                                                                                  change, where the approximation is designed match the accuracy
+accurate Trotter formula is [21]
+                                                                                order of the exponential splitting formula. Given that the aim of
+              e

@@ -1,0 +1,27 @@
+# Earth return admittance impact on crossbonded underground cables
+**Antonio P.C. Magalhães** $^a$, **Antonio C.S. Lima** $^{a,*}$, **Maria Teresa Correia de Barros** $^b$  
+$^a$ Federal University of Rio de Janeiro, Brazil  
+$^b$ Instituto Superior Técnico, Universidade de Lisboa, Portugal  
+
+**Keywords:** Electromagnetic transients, Underground cables, Ground return parameters  
+
+**Abstract**  
+Typically, the modeling of underground cables systems for electromagnetic transient simulations is carried out disregarding the effects of the ground return admittance. However, recent studies have presented precise models for the representation of the earth return admittance and demonstrated the importance of considering its effects on transient overvoltages along the cable and at sheaths crossbonding, especially if short minor sections are involved. In this paper, a study on the effects of the ground return admittance when considering an underground cross-bonded cable system is presented for 1 km and 300 m for the minor section length where the effects of earth return admittance are to be more pronounced. The inclusion of the ground-return admittance leads to a higher damping, which indicates that the conventional approach may lead to over conservative results.  
+
+## 1. Introduction  
+The conventional approach for evaluating the transient responses of underground cables does not consider the inclusion of displacement current. For taking account this phenomenon, one needs to include the ground return admittance in the evaluation of the per unit length (pul) parameters. This can be carried out by using a modified expression for ground return impedance when compared with the traditional expressions proposed by Pollaczek [1] and the inclusion of ground return admittance. In the last two decades, the topic of wideband modeling of overhead transmission lines and underground cables considering ground displacement current has received some attention [2-19].  
+
+The evaluation of overvoltages in cable system when sheaths crossbonding is involved has been a topic that remained in the interest of the technical literature [12-18]. Recently, it was shown that intersheath modes circulating between grounding points [18]. Thus, this topology is suitable for the assessment of the impact of including the ground-return admittance in the transient voltage and current profiles of a given cable system using crossbonding.  
+
+To obtain an accurate expression for the ground return impedance and admittance, one may need to consider distinct formulations. Reference [19] proposes expressions for the ground return impedance and admittance based on quasi-TEM (transverse electromagnetic) approximation of a full-wave model for a buried insulated cable [20]. One common challenge found to obtain ground return impedance and admittance is the numerical evaluation of the associated infinite integrals as this approach is the rather time-consuming and Gauss quadrature schemes are needed for the solution of the integrals [5,20]. To overcome this issue in [21] is proposed to use closed-form expressions for ground return admittance. In this reference it was shown that the proposed closed-form for the admittance together with the closed-form expression for ground return impedance proposed in [23] leads to a very accurate formulation with minimal mismatches for frequencies below a few MHz.  
+
+The results in [20] indicate that for shorter underground cables in high resistivity soils, the inclusion of the ground admittance plays a more significant effect. Thus, in this work we propose to investigate the impact of considering a ground return admittance in the transient response of a crossbonded cable configuration. The paper is organized as follows: the mathematical formulation of the pul parameter considering both the ground return impedance and admittance is presented in Section II. Section III shows the results for a given configuration of a crossbonded cable where a comparison between the conventional approach, i.e., neglecting ground displacement currents and the one proposed here is carried. To obtain the time responses a Numerical Laplace Transform (NLT) was applied [24–27]. The main conclusions are drawn in Section IV. The Appendices presents some details on deriving the pul parameters expression and a few results when a lower resistivity soil is considered.  
+
+*This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES), Finance Code 001. It also was partially supported by INERGE (Instituto Nacional de Energia Elétrica), CNPq (Conselho Nacional de Desenvolvimento Científico e Tecnológico), and FAPERJ (Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro). Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.*  
+*Corresponding author. E-mail addresses: acsl@coppe.ufrj.br (A.C.S. Lima), teresa.correiadebarros@tecnico.ulisboa.pt (M.T. Correia de Barros).*  
+
+## 2. Mathematical modeling  
+2.  
+
+## 3. Test cases  
+For the analysis of the transient response consider cable system configuration and cable data depicted in Fig. 1(a). In all tests, a relative ground permittivity of 10 was considered. The crossbonding configuration is presented in Fig. 2(a). A step voltage is applied between sheathes, i.e., between nodes 4 and 6 as shown in Fig. 2. This connection scheme refers to inter-sheath mode excitation as presented in [19] and

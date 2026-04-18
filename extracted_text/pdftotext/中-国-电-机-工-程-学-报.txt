@@ -1,0 +1,241 @@
+         第 42 卷 第 13 期                          中    国 电 机 工 程 学               报               Vol.42 No.13 Jul. 5, 2022
+         2022 年 7 月 5 日                              Proceedings of the CSEE                  ©2022 Chin.Soc.for Elec.Eng. 4775
+DOI：10.13334/j.0258-8013.pcsee.210064 文章编号：0258-8013 (2022) 13-4775-10 中图分类号：TM 74 文献标识码：A
+
+
+
+               半隐式延迟解耦电磁暂态仿真方法(二)：
+               单端口子模块 MMC 通用解耦与快速仿真
+                  姚蜀军，庞博涵，曾子文，许明旺，刘晋*，姚逸凡，吴梦童
+                                            (华北电力大学，北京市 昌平区 102206)
+
+
+  Semi-implicit Latency Decoupling Technology Based Electromagnetic Transient Simulation
+    (Part II): General Decoupling and Fast Simulation for Single-port Sub-module MMC
+              YAO Shujun, PANG Bohan, ZENG Ziwen, XU Mingwang, LIU Jin*, YAO Yifan, WU Mengtong
+                          (North China Electric Power University, Changping District, Beijing 102206, China)
+
+
+ABSTRACT: Due to the large number of modular multilevel                 口子模块状态方程出发，利用矩阵分裂和延迟技术，构建
+converter (MMC) submodules (SM), as well as the complexity              MMC 单端口子模块通用半隐式延迟解耦模型，并应用于半
+and time-varying of the submodule topology, it is difficult to          桥、全桥和双半桥子模块。然后，基于对模型参数的简化，
+balance accuracy and efficiency of the solution. In this paper,         进一步提出适用于任意单端口子模块拓扑的 MMC 通用仿
+the semi-implicit latency decoupling and paralleling                    真框架，并分析模型的特点，给出计算流程，最后通过算例
+technology (SILDP) was applied to the research of MMC                   验证该文方法的准确性和有效性。
+high-efficiency electromagnetic transient simulation modeling.
+                                                                        关键词：模块化多电平换流器；电磁暂态仿真；半隐式延迟
+The obtained model has the characteristics of constant
+                                                                        解耦；导纳矩阵恒定；并行计算
+admittance matrix of conventional topological SMs, simple
+decoupling circuit, high computational efficiency, and general          0 引言
+applicability. Starting from the state equation of MMC
+                                                                           模 块 化 多 电 平 换 流 器 (modular multilevel
+single-port SM, using matrix splitting and latency technology, a
+general semi-implicit delay decoupling model of MMC                     converter，MMC)具有开关损耗低、输出波形谐波
+single-port SM was constructed and applied to half-bridge,              含量少、方便模块化结构设计等优点，在柔性直流
+full-bridge, and double half-bridge SMs. Furthermore, based on          输电和直流电网中正日益得到广泛应用[1-3]。随着直
+the simplification of model parameters, a general decoupling
+and simulation framework for any single-port sub-modular
+                                                                        流电压等级和传输功率的不断提升，MMC 子模块
+MMC was proposed. The characteristics of the model were                 (submodule，SM)的数目快速增长，满足不同场景
+analyzed, and the solution process was presented. The                   需求的新拓扑也不断出现[4-7]。然而，基于详细模型
+simulation results can verify the accuracy and effectiveness of
+                                                                        的电磁暂态仿真在仿真高电平数 MMC 时，一方面，
+the proposed method.
+                                                                        需要采用小步长识别开关动作时刻；另一方面，高
+KEY WORDS: modular multilevel converter (MMC);
+                                                                        电平数导致需要求解超高阶线性方程组。因此，
+electromagnetic transient simulation; semi-implicit latency
+decoupling; constant system conductance matrix; parallel                MMC 详细模型计算量大，仿真速度慢，需要研究
+computing                                                               高效的 MMC 电磁暂态仿真模型。
+摘要：由于模块化多电平换流器子模块数众多及子模块拓扑                                                 文献[1]介绍了 MMC 的平均值模型、开关函数
+的复杂性和时变性，导致仿真精度与效率难以兼顾。该文将                                              模型。平均值模型利用受控源实现交、直流侧的电
+半隐式延迟解耦原理用于模块化多电平换流器(modular                                            气解耦，主要关注 MMC 的外部特性，计算速度快，
+multilevel converter，MMC)高效电磁暂态仿真建模研究，所
+                                                                        但忽略了 MMC 的内部拓扑，无法模拟子模块充放
+得模型具有常规子模块拓扑导纳矩阵恒定、解耦电路简单、
+计算效率高、方法通用性强等特点。该文首先从 MMC 单端                                            电特性，也不能计及开关损耗，精度低，适用范围
+                                                                        有限。开关函数等值模型，忽略了各子模块电容的
+    基金项目：国家自然科学基金项目(52077077)。
+                                                                        特性差别，用一个统一的等值电容和开关函数来等
+    Project Supported by National Natural Science Foundation of China
+(52077077).                                                             值整个桥臂，不能用来分析子模块电容电压均衡算
+4776                                 中   国   电   机   工       程       学       报                                                       第 42 卷
+
+法。文献[8]建立了 MMC 动态相量模型，文献[9]                                      本文首先根据半隐式延迟解耦原理，对单端口
+基于动态相量及函数矩阵实现 MMC 阻抗建模，                              子模块状态方程进行分裂和延迟，建立通用的子模
+文献[10]提出 MMC 多频段–动态相量模型，文                            块解耦模型和桥臂等值模型，并给出应用于半桥
+献[11-12]提出频率偏移法，文献[13]提出 MMC 的                       (half-bridge submodule，HBSM)、全桥(full-bridge
+时间尺度变换模型。这些方法同样忽略 MMC 内部                             submodule，FBSM)以及双半桥(double-half bridge
+特性而只关注外部特性。但在实际应用时，受限于                               submodule，D-HBSM)等不同子模块拓扑时模型参
+计算平台硬件能力，通常只能计及少数阶次谐波或                               数的解析形式。然后，根据开关的关断特点，结合
+假定信号为工频窄带信号，模型精度较低。                                  开关状态的组合，简化解耦模型参数的求取，进而
+       文献[14-15]通过对电路中的单个电容、电感两                      构建单端口子模块 MMC 的通用仿真框架，给出计
+端的电压和流经电流的计算采用一步延时，实现                                算流程，并分析其特点；最后通过算例验证本文方
+复杂电力电子设备不同变换级之间的计算解耦。                                法的准确性和有效性。
+文献[16]采用类似思想，提出基于受控源的 MMC
+                                                     1       MMC 拓扑结构
+提速模型，实现系统与子模块的计算解耦。然而，
+仅对单个元件电气量间的解耦，由于存在开关动作                                           MMC 主电路拓扑及其子模块结构[23]如图 1 所
+时的非状态量突变问题，易引起数值振荡。此外，                               示。O 点为零电位参考点，Larm 为桥臂电抗器，每
+单个元件电气量间的一步时延，本质上是前向欧拉                               个桥臂串联 N 个子模块，C 为子模块电容，urj 为同
+法，因此上述方法还存在仿真精度低，数值稳定性                               一桥臂所有子模块构成的桥臂输出总电压(rp,n，
+差的缺点。                                                分别为上、下桥臂；ja,b,c，表示 abc 三相。下同)，
+       基于戴维南等值和嵌套快速求解，文献[17-19]                      ipj 和 inj 分别为上、下桥臂电流，Uj 和 ij 分别为 MMC
+提出一种 MMC 高效模型的通用建立方法，可适用                             三相交流出口处输出电压和输出电流，Udc 为直流
+于不同子模块拓扑。该方法采用系统和设备分层仿                               电压。
+                                                                       ipa           ipb            ipc               idc
+真策略。在系统级，将换流器进行多端口等值，作
+                                                                         SM1          SM1            SM1
+为整体参与全系统的仿真。在系统级仿真结束并获                                            +
+                                                                 upa
+                                                                              +            +                                    T1    D1
+                                                                         SM2 upb      SM2 upc        SM2
+                                                                                                                                        + uC
+得端口特性后，再进行设备层级的反解以计算换流                                           -       SMN     -    SMN      -     SMN
+                                                                                                                                      C
+                                                                                                                                        -
+                                                                                                                                T2    D2
+器内部特性、更新历史电流源以及新的端口等值参
+                                                                         Larm         Larm           Larm         Udc
+数。然而，对子模块的等值、合并以及反解，其计                                       ic
+                                                                                                                   2            半桥型子模块
+算效率与内部拓扑复杂度紧密相关，当拓扑复杂                                    C                                          Uc
+                                                             ib
+                                                                                                            +
+时，计算效率较低。文献[20-21]针对戴维南等值中                               B                           Ub                         Udc         O
+                                                             ia
+                                                                                                            -
+存在的非状态变量突变问题进行了改进，但仍存在                                   A             Ua
+
+上述方法中的相同问题。
+                                                                         Larm         Larm           Larm
+       文献[22]提出半隐式延迟解耦电磁暂态仿真方
+                                                                                                                  Udc
+                                                                         SM1          SM1            SM1
+法(semi-implicit latency decoupling and paralleling                                                                 2
+                                                                  +            +                +
+                                                                 una     SM2 unb      SM2     unc    SM2
+technology，SILDP)并将其应用于交流电网的分网
+                                                                  -            -                -
+                                                                         SMN          SMN             SMN
+与并行。本文作为半隐式延迟解耦仿真算法系列文
+                                                                       ina           inb            inc
+章的第二篇，将其应用于 MMC 通用高效电磁暂态
+                                                                                 图1        MMC 拓扑结构图
+仿真模型的研究。基于该方法建立的 MMC 解耦模
+                                                                                 Fig. 1      Diagram of MMC
+型，一方面，精度高、数字稳定性好，解耦后常用
+子模块拓扑的导纳矩阵恒定。另一方面，由于是状
+                                                     2 单端口子模块 MMC 通用解耦方法
+态变量之间的解耦，因此当开关动作时，不存在为                                           半隐式延迟解耦法从系统状态空间方程出发，
+消除非状态变量突变引起的数值振荡而切换解耦                                应用矩阵分裂技术，对系统状态变量进行分组，然
+变量积分算法的问题(中心积分切换为后退欧拉)，                              后通过对不同变量组采用不同的积分形式，构建变
+能够始终保持状态变量之间解耦形式的一致性和                                量组之间的半步时延格式，实现状态变量组之间的
+仿真计算的高效性。                                            半隐式解耦。该方法的原理、特性及在交流电网中
+第 13 期         姚蜀军等：半隐式延迟解耦电磁暂态仿真方法(二)：单端口子模块 MMC 通用解耦与快速仿真                                                                               4777
+
+的应用已在文献[22]中给出。基于该方法，下面提                                                                        iarm                     +
+                                                                                                                        UC1
+出一种单端口子模块 MMC 的通用解耦方法，并将                                                                                                 -
+                                                                                                                         +
+                                                                                                                        UC2
+其应用于几种具体类型的子模块(HSBM、FBSM 和                                                                         端口                   -
+D-HBSM)。
+                                                                                                                          +
+2.1   半隐式延迟解耦                                                                                                           UCm
+                                                                                                                          -
+      图 2(a)表示任意单端口子模块的拓扑。iarm 为桥                                                          图3      子模块纯电阻等效电路
+臂电流，等于子模块注入电流，usm 为子模块端口                                                          Fig. 3   SM pure resistance equivalent circuit
+电压。考虑到模型的通用性，假定每个子模块内部                                                      增广节点电压方程 YʹUʹIʹ，如式(2)所示。
+包含 m 个电容 C1,C2,···,Cm，且为便于分析，将桥臂                                                            Y         AC   U   I L 
+                                                                                             AT                                             (2)
+电感均分至每个子模块端口，即：LsmLarm/N。                                                                   C       0   I C  U C 
+
+                                                                            式中：Y 为图 3 子模块等效电路的节点导纳矩阵；
+                                                                            AC 为增广系数矩阵；U 为节点电压列矢量；IC 为电
+                                                                            容等效电压源中的电流矢量；IL 为电感等效电流源
+                                                                            矢量；UC 为电容等效电压源矢量。
+                                                                                3）根据式(2)，由电网络的基本理论[25-26]可求
+                                                                            得式(1)中的相关参数，即：
+                  图2       任意单端口子模块                                                        Geq  ( M GTY 1 M G ) 1
+                   Fig. 2   Single-port SM                                                 
+      对图 2(a)中每个 IGBT//VD 开关组(即一个                                                           Req  M RTY' 1 M R
+                                                                                                                                             (3)
+IGBT 与一个 VD 反并联)采用二值电阻模型(导通时                                                                T                1
+                                                                                                                  0 
+                                                                                            K uC  M K (Y' U  )
+                                                                                                        T
+
+阻值为 Ron0.01，关断时阻值为 Roff 1M)，得                                                                                C 
+到图 2(b)等效电路。                                                                式中：(MG)Nm、(MR)(Nm)1、(MK)(Nm)1 为节点–端
+      对图 2(b)等效电路列写状态方程，可得：                                                 口关联矩阵，MG1,MG2,···,MGm 分别对应 1~m 号等
+                 duC                                                      效电压源的节点–端口关联矢量；N 为子模块等效
+  C           dt   Geq          K i   uC   0                     电路节点数目(不含参考节点)。MRMK，对应子模
+                                                                 (1)
+  
+        Lsm   diarm    K u    Req  iarm  usm 
+                                                                            块输出端口的节点–端口关联矢量。
+                 dt 
+                                                                                假设每个 IGBT 开关组在关断状态时电阻近似
+式中：Cdiag[C1,C2,···,Cm]，为 mm 维对角阵；                                         为无穷大，则有 Geq ≈ 0 (证明见附录 A)，进而式(1)
+                       T
+uC[uC1,uC2,···,uCm] 为 m1 维列矢量；Ku、Ki 分别                                    中子模块内部各电容间可解耦。由此，根据半隐式
+为与电容电压、电感电流相关的系数矩阵。由于                                                       延迟解耦法，对式(1)可得如式(4)所示分裂形式。
+CduC/dt 反映的是关于电流的 KCL 关系，因此 Geq                                                     duC 
+可看作是与电容并联的导纳。类似的，Ldiarm/dt 反                                                        C dt  0             uC 
+                                                                                                       
+映的是关于电压的 KVL 关系，Req 可看作与电感串                                                         L diarm    Req  iarm 
+联的电阻。                                                                               sm dt 
+      HBSM、FBSM 状态方程列写相对简单，但对                                                                        K i   uC   0 
+                                                                                                 K         i   u                      (4)
+于结构复杂的子模块(如 D-HBSM)，因内部包含多                                                                       u          arm   sm 
+个电容，则不易列写。由于子模块在某个确定的开                                                          将式(4)按电容和电感分为两个状态变量组，可
+关组合下是线性电路，满足替代定理和叠加定理，                                                      得到单个子模块半步时延的半隐式差分方程：
+据此可给出一种通用列写方法，适用于任意类型的
+                                                                              C (uCn1  uCn )  0              uCn1  uCn  t
+单端口子模块。                                                                              n1/2  n 1/2     R   n1/2 n1/2  
+      1）将图 2(b)中的端口电感用电流源替代，内部                                                Lsm (iarm  iarm )           iarm  iarm  2
+                                                                                                             eq 
+
+
+电容用电压源替代，可得到替代电路，如图 3 所示。                                                                                      K i   uCn          0 
+                                                                                                    K               n1/2  t  u n  t (5)
+      2）利用改进节点电压法[24-25]列出替代电路的                                                                     u              iarm       sm 
+4778                                                     中    国   电   机   工   程   学      报                                                     第 42 卷
+
+       由式(5)可得电容电压、电感电流的递推格式：                                             电流与子模块电容电压可交替求解并相差半个时
+                             J   n 1/2
+                                          t                              步，如图 6 所示。同一个桥臂的子模块之间串联，
+              n 1               eq, j
+             uCj    uCj
+                      n
+                                              , j  1,, m       (6)
+                                  Cj                                      因此在求得桥臂电流后，可并行求取各子模块电容
+                                                                          电压。
+                     L    R n1/2
+                    ( sm  eq )iarm   U eqn  usm
+                                                n                                                          系统 子模块
+             n 1/2
+            iarm     t   2                                      (7)                                           n
+                            L       R
+                           ( sm  eq )                                                    irj      n+1/2                       uC,rj,i
+                             t      2
+                                                                                                                    n+1
+       子模块的半隐式延迟解耦模型，如图 4 所示。
+                                                                                                     n+3/2                uC,rj,1    uC,rj,N
+                                                                                                                                    ...
+                                                                                         r=p,n
+                                                                                                           t    t   n+2
+                                     uCn                                                 j=a,b,c
+
+
+                                   n 1/2
+                                                                                                图6       并行计算原理示意图
+                                  iarm
+                                                                                Fig. 6    Schematic diagram of parallel computing
+                                                                          2.3     多类型子模块的解耦模型参数
+                      图4     子模块解耦电路                                              根据单端口子模块通用解耦方法，对不同类型
+                 Fig. 4   Decoupling circuit of SM                        子模块，修改相应的 Geq、Req、Ku 和 Ki 表达式，即
+       图 4 中：等值电压源 UeqKuuC，等值电流源                                         可得到其对应的半隐式延迟解耦模型。下面给出
+JeqKiiarm，解耦变量组为电容电压 

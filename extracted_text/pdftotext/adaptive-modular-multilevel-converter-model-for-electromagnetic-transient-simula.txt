@@ -1,0 +1,162 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2993502, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                                 1
+
+
+
+
+                       Adaptive Modular Multilevel Converter Model
+                        for Electromagnetic Transient Simulations
+                        Anton Stepanov, Student Member, IEEE, Jean Mahseredjian, Fellow, IEEE, Ulas Karaagac, Member,
+                                                      IEEE, Hani Saad, Member, IEEE
+
+
+          0F0F0F
+                                                                                                               • The detailed equivalent model (DEM) simplifies IGBT
+             Abstract—This paper proposes an adaptive model of modular                                         switch representation to two-value resistances [5], [7]. All SM
+          multilevel converter (MMC) for electromagnetic transient (EMT)                                       voltages and gating signals are available. It is often
+          simulations. The model is applicable to MMCs with arbitrary
+                                                                                                               implemented independently and is interfaced with the main
+          numbers of half-bridge and full-bridge submodules. The proposed
+          design includes average value model, arm equivalent model, and                                       EMT solver using a two-port Thevenin or Norton equivalent
+          detailed equivalent model. It allows smoothly transitioning from                                     circuit so internal electrical nodes are inaccessible [6].
+          one model to another during time-domain simulations depending                                        • The arm equivalent model (AEM) assumes that all SMs in
+          on the desired accuracy and execution time constraints.                                              each arm are perfectly balanced, so only one equivalent
+             Modifications required in conventional MMC models to                                              capacitor is used to represent the whole arm [8]. Grid studies
+          achieve smooth transitions are presented in the paper.                                               and controller design can be performed with such a model [6].
+          Time-domain initialization methods are developed for each
+          constituting model, including initialization of the appropriate                                      • The average value model (AVM) is composed of two parts,
+          control system blocks. Validity and effectiveness of the proposed                                    AC and DC, disconnected from each other and aggregates SM
+          adaptive model is demonstrated using EMT simulations of                                              capacitors of all arms into a single DC side capacitor. Neither
+          401-level MMC-HVDC system.                                                                           voltage ripple nor circulating current are available but AC and
+                                                                                                               DC currents and voltages in normal balanced operating
+            Index Terms—adaptive model, average value model, arm                                               conditions are sufficiently accurate [5], [9].
+          equivalent, detailed equivalent, High-Voltage Direct Current,
+          model switching, modular multilevel converter, simulation
+                                                                                                                  EMT simulation studies of power systems can provide
+                                                                                                               accurate results over a wide frequency range, especially if small
+                                                                                                               time-steps are used, but high accuracy increases computing
+                                            I. INTRODUCTION
+                                                 0B
+                                                                                                               times. Many methods have been proposed in the literature to
+                                                                                                               accelerate time-domain simulations of MMCs, including
+          M      odular multelivel converters (MMCs) have become the
+                 state-of-the-art technology for HVDC systems. A typical
+          MMC in HVDC applications has six arms of series-connected
+                                                                                                               various improvements to standalone models [8, 10-13].
+                                                                                                                  The method presented in this paper provides acceleration
+                                                                                                               based on the assumption that during time-domain simulations
+          submodules (SMs), each providing one step in the resulting
+                                                                                                               there could be intervals during which the details of converter
+          multilevel AC waveform, Fig. 1. Due to its advantages over
+                                                                                                               internal behavior can be ignored. Initialization and slower
+          conventional two- and three-level converters, including easier
+                                                                                                               electromechanical transients constitute such intervals. It is then
+          scalability to higher voltages, lower harmonic content, better
+                                                                                                               possible and sufficient to model accurately only converter’s
+          reliability, lower switching frequency and voltage [1], [2],
+                                                                                                               external behavior to accelerate computations, which makes the
+          MMCs are used in modern HVDC projects [3], [4].
+                                                                                                               proposed new relaxation method an additional improvement to
+             Different MMC models for electromagnetic transient (EMT)
+                                                                                                               existing acceleration methods.
+          simulations are available in the literature and the choice of the                                                                                                                           iDC
+                                                                                                                        Full-bridge SM
+          model represents a compromise between the necessary                                                                                                           iua          iub          iuc
+          accuracy and computational burden:                                                                                                                            Larm         Larm         Larm
+                                                                                                                                 CSM
+          • The detailed model (DM) includes nonlinear IGBT v-i                                                                                                          SM          SM           SM        vDC
+                                                                                                                                                                  vua          vub          vuc              2
+          characteristics and offers the highest degree of precision in                                                                                                  SM          SM           SM
+          EMT studies [5]. It can be used for validation of simplified                                                                             iPCC
+          models, for SM-level studies, and for internal fault studies [6].                                        Half-bridge SM
+                                                                                                                                                                         SM          SM           SM
+                                                                                                                                                                  va           vb           vc
+                                                                                                                                                  vPCC                   SM          SM           SM        vDC
+                                                                                                                                CSM
+                                                                                                                                                                                                             2
+             A. Stepanov and J. Mahseredjian are with the Department of Electrical                                                                                      Larm         Larm         Larm
+          Engineering, Polytechnique Montréal, Montreal, QC H3T 1J4, Canada (e-mail:                                                                                    ia           ib           ic
+          anton.stepanov@polymtl.ca; jeanm@polymtl.ca).
+             U. Karaagac is with the Department of Electrical Engineering, Hong Kong                           Fig. 1. Typical three-phase MMC topology with a coupling transformer.
+          Polytechnic University, Hung Hom, Kowloon, Hong Kong (e-mail:
+          ulas.karaagac@polyu.edu.hk).                                                                            Not much research is available in the literature on this topic.
+             H. Saad is with the Réseau de Transport d’Electricité, Paris 92932, France
+          (e-mail: hani.saad@rte-france.com).
+                                                                                                               In [14] and [15] it is proposed to switch between the DEM and
+
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                         Authorized licensed use limited to: University of Exeter. Downloaded on June 25,2020 at 12:49:29 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2993502, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                            2
+
+          AEM, but the AVM and its controls are not considered. Neither                                          Outer control + PLL
+                                                                                                                                                          Larm
+          [14] nor [15] pays much attention to the capacitor balancing                                             (always active)
+                                                                                                                     AC           AC
+          block effects on the SM voltages during DEM activation: all                                               iref         iref
+                                                                                                                                                           Arm
+          voltages are considered identical in each arm of the DEM when                                          AVM AEM / DEM n                                 AEM DEM
+                                                                                                                 inner inner control ref CBA              AVM
+          it is activated, which is not always realistic. Besides, [14] only                                    control    + CCSC
+          focuses on half-bridge (HB) SMs and [15] states that in normal                                                    + NLC       Gj       selected
+                                                                                                                      AC
+                                                                                                                    e ref        nref      VSM j model         DEMUX
+          operation of the AEM all types of SMs behave like HB SMs
+          and the possibility of negative insertion of full-bridge (FB) SMs                                      Arm                                             1
+                                                                                                                             AEM         DEM
+                                                                                                                 AVM
+          has not been demonstrated for the AEM in normal operation.
+                                                                                                                        a) System overview             b) Diagram of a single MMC arm
+          Moreover, the effects of capacitor balancing among HB and FB                                         Fig. 2. Proposed adaptive MMC model. White blocks can be deactivated.
+          parts have not been considered for the AEM in [15]. None of                                          Demultiplexer DEMUX allows to send the activation signal “1” to the required
+          the papers discuss automated switching between models.                                               model based on the selected model type.
+              This paper presents an adaptive MMC model that allows                                            A. Control System
+                                                                                                                     6B05
+
+
+
+
+          switching between the AVM, AEM, and DEM versions. It is
+                                                                                                                  The standard cascade control system is considered [9]. The
+          applicable for HB, FB, and hybrid configurations with arbitrary
+                                                                                                               part of the control system that is common to all models is
+          proportions of HB and FB SMs. Two novel AVMs as well as an
+                                                                                                               always kept active. It includes a PLL (Phase-Locked Loop) for
+          automated AVM activation scheme are proposed. Switching
+                                                                                                               grid synchronization and an outer control loop that can control
+          between different control systems is also considered.
+                                                                                                               active and reactive powers, and DC and AC voltage
+          Validation of the proposed adaptive model and evaluation of
+                                                                                                               magnitudes. The outer loop generates the AC side current
+          computational time gains are based on the simulation of                                                           AC
+          realistic test cases. The adaptive model can also be applicable in                                   references iref for the inner control loop (Fig. 2a). Other blocks
+          real-time simulations when the available computational power                                         in the control system are activated and deactivated at runtime
+          is limited and only few converters can be modeled in detail.                                         depending on the selected model.
+              This paper starts in section II with the overview of the                                            The inner control loop for the AVM produces AC side EMF
+                                                                                                                            AC
+          proposed model and implementation details. Section III                                               references eref that are supplied to the model. Also, in this
+          presents methods for switching between the detailed and
+                                                                                                               paper it is supposed that the AVM is used in balanced grid
+          simplified parts of the adaptive model. Section IV shows EMT
+                                                                                                               conditions, so only positive sequence control is considered.
+          simulations of 401-level MMC HVDC systems.
+                                                                                                                 The AEM and DEM can be used during grid unbalance, so
+                                                                                                               inner control also considers negative sequence. With AEM and
+                                    II. ADAPTIVE MMC MODEL
+                                                                                                               DEM, the output of the inner control loop is arm switching
+                                          1B
+
+
+
+
+             The schematic diagram of the proposed adaptive model is                                           function reference sref . Therefore, two different inner control
+          shown in Fig. 2. Activation of any model requires initialization
+          of the appropriate control system blocks and deactivation of                                         blocks are shown in Fig. 2a. Additionally, the AEM and DEM
+          other MMC models. The control system in Fig. 2a is based on                                          require CCSC and NLC that calculates the number nref of SMs
+          the generic cascade control system of [9] and includes                                               to insert at each time-point [9].
+          circulating current suppression control (CCSC), capacitor                                            The DEM requires individual SM-level control and CBA for
+          balancing al

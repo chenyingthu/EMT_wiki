@@ -1,0 +1,178 @@
+                                                               Electric Power Systems Research 251 (2026) 112307
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A Julia-based simulation platform for power system transients
+A. Alsabbagh , M. Naïdjate * , J. Mahseredjian , M.J. Matehkolaei
+Polytechnique Montréal, Department of Electrical Engineering, Montréal-QC, H3T 1J4, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  This paper implements and tests an EMT-type simulator, using Julia, a high-level and high-performance pro­
+Electromagnetic transients                                 gramming language. The designed simulator is compared with EMTP® in terms of accuracy and performance.
+Julia high-performance programming language                Several developments are applied to enhance the performance of the designed Julia simulator. The presented
+Parallelization
+                                                           tests confirm its value for modeling and simulation of electromagnetic transients.
+
+
+
+
+1. Introduction                                                                                    The existing EMT-type simulation tools [2], such as EMTP® [3,4],
+                                                                                               are implemented by compiled codes using compiled programming lan­
+    Power system engineers heavily rely on computer-aided analysis and                         guages, such as C++ and Fortran. While these environments are highly
+simulation tools to conduct in-depth studies of power networks, given                          powerful, they often pose challenges in terms of modifiability and
+the intricate nature of these systems. The power system simulation tools                       accessibility for researchers and developers.
+are typically classified into two main categories: Phasor-Domain (PD)                              High-level programming can substantially decrease the time
+and Electromagnetic Transient (EMT) simulation tools, serving distinct                         required for research and development, all the while enhancing code
+purposes in power system analysis. Traditional tools predominantly                             flexibility and robustness. Several studies in the literature have explored
+relied on PD models (also known as dynamic models), offering sufficient                        the utilization of high-level programming to simulate EMTs in power
+accuracy for classical stability studies. However, as power systems                            systems. Reference [6] used the declarative-based Modelica language to
+integrate more power electronic converters and inverter-based distrib­                         build an EMT simulator. Although Modelica is vastly high-level and
+uted generation, PD models lose precision and reliability. In contrast,                        demonstrates a powerful methodology, it falls short in achieving satis­
+EMT simulation tools provide higher accuracy but are computationally                           factory performance compared to compiled code software. Furthermore,
+slower due to the complexity of handling numerous EMT models. As a                             the solvers in Open-Modelica and Dymola environments are hardcoded,
+result, ongoing research focuses on enhancing the speed and efficiency                         preventing modification or adaptation. Another approach, detailed in
+of EMT simulators to address these limitations.                                                Reference [7] implemented an EMT simulator using m-files in MATLAB,
+    The EMT-type simulators are circuit-oriented and use lumped                                which enables high-level constructs, but delivers poor performance. In
+models, which are mathematically represented by sets of algebraic and                          reference [8], initial efforts were made to develop an EMT-type tool
+differential equations [1,2]. Differential equations undergo discretiza­                       using the Python programming language. This tool suffers from a
+tion using numerical integration techniques to construct the equivalent                        restricted set of components and lacks thorough performance and ac­
+companion model of the elements. Two primary methods exist for                                 curacy comparisons with established simulators. Similarly, in another
+formulating the network equations: state-space-based and                                       study [9] Python was employed for EMT simulation in power systems.
+nodal-analysis-based.      For    large-scale  EMT-type     simulations,                       Nevertheless, the model’s scope remains limited, with transmission lines
+nodal-analysis-based methods (NAM) are favored due to their simplicity                         represented using a basic lumped pi model. Moreover, to mitigate
+and versatility compared to state-space-based methods. Within this                             spurious oscillations generated by the trapezoidal method, artificial
+framework, a particularly efficient nodal-analysis formulation known as                        resistances are introduced in parallel or series with all inductors and
+Modified-Augmented-Nodal-Analysis (MANA) [3–5] is applied in                                   capacitors, adversely impacting simulation accuracy. While Python of­
+EMTP®.                                                                                         fers the flexibility of dynamically typed languages, its interpreted nature
+
+
+
+ Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025
+ * Corresponding author.
+   E-mail addresses: amro.alsabbagh@polymtl.ca (A. Alsabbagh), mohammed.naidjate@polymtl.ca (M. Naïdjate), jean.mahseredjian@polymtl.ca (J. Mahseredjian),
+mohammad.jafari-matehkolaei@polymtl.ca (M.J. Matehkolaei).
+
+https://doi.org/10.1016/j.epsr.2025.112307
+Received 6 January 2025; Received in revised form 12 March 2025; Accepted 30 September 2025
+Available online 3 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A. Alsabbagh et al.                                                                                                   Electric Power Systems Research 251 (2026) 112307
+
+
+can compromise the performance of codes.                                             network topologies [3,4]. MANA formulation has a generic nonsym­
+    Considering the paramount importance of performance in EMT-type                  metric system of equations:
+simulations, it becomes imperative to investigate programming lan­
+                                                                                     Ax = b                                                                         (1)
+guages capable of delivering both high productivity and superior per­
+formance. In this perspective, Julia emerges as a promising candidate for            in which the bold characters represent vectors and matrices, Ais the
+achieving a balance between high-level abstraction and high-                         system coefficient matrix, x is the vector of unknown variables, and b is
+performance computing. Known for its productivity, versatility, and a                the vector of known variables. An extended view of this formulation is
+plethora of features tailored for computational science and numerical                written as:
+analysis, Julia presents as a compelling option for developing EMT                   [        ][ ] [ ]
+simulators [10]. One notable advantage of Julia is its rich ecosystem of               Yn Ac Vn           I
+                                                                                                      = n                                                 (2)
+libraries, including KLU [11], which provides efficient solutions for                  Ar Ad     Ix      Vx
+linear algebra problems commonly encountered in power system
+simulation. Additionally, Julia supports dynamic model exchange and                  where Yn is the classical nodal admittance matrix; Ar, Ac, and Ad are the
+co-simulation through the functional mock-up interface (FMI) [12],                   augmented portions; Vn and Ix are the vectors of unknown nodal volt­
+facilitating the integration of externally designed models into the                  ages and component currents, respectively; In and Vx are the vectors of
+simulation environment.                                                              known nodal currents and component voltages, respectively. It is
+    Several Julia packages have emerged to tackle critical tasks in power            noticed that other types (not necessarily voltages or currents) of un­
+systems [13] or to handle phasor-domain approaches for simulating                    knowns can be directly included in MANA.
+power system electromechanical transients [14]. In [15], two simulation                 Switch equations are explicitly incorporated in the augmented part
+toolboxes of quasi-static phasor (QSP) employing admittance matrix                   of MANA formulation, which allows MANA to model the switch states
+formulation and dynamic dq formulation of reference [16] are presented               without reformulation of the main nodal equations i.e. Yn in (2).
+for the dynamic simulation of power systems. Despite their utility, both             Notably, MANA allows for the direct inclusion of various types of un­
+tools employ phasor-domain-based methodologies, often neglecting                     knowns, not limited to voltages or currents. Its versatility extends to
+details such as harmonics and non-linearities. Furthermore, these                    both steady-state and time-domain solutions [3,4].
+methods are typically limited to simulating positive sequence mode and
+balanced networks. In [17], authors present a Julia package dedicated to
+stability analysis, while [18] focuses on load-flow and optimization                 2.1. Component types and models
+studies. Others like [19] and [20], lack standardized libraries to deal
+with EMT simulations in power systems, and were not compared to                          The currently implemented models in JSEMT are RLC branches,
+reference tools. Table 1 recapitulate various Julia based packages rele­             voltage sources, current sources, ideal transformers, switches, nonlinear
+vant to power systems simulation.                                                    inductors, nonlinear resistors, dependent sources, transmission lines,
+    This article aims to extend the works in the literature by imple­                synchronous machines, and synchronous machine controls. These
+menting an EMT simulator using high-level programming languages.                     components are symbolized as RLC, Vsine, Isine, Trans, SW, Lnon, Rnon,
+The proposed Julia package is named Julia Simulator for Electromag­                  TL, SM and SMC, respectively. Based on these components, nonlinear
+netic Transients (JSEMT). JSEMT results are compared with EMTP®                      transformers and loads are implemented [7]. In JSEMT, all the differ­
+[21] using the IEEE 39-bus network as a test case. To enhance JSEMT’s                ential equations, including RLC elements, non-linear inductor flux [7],
+performance, several techniques are introduced and evaluated sequen­                 synchronous machine equations and control block diagrams [22], un­
+tially. These include the utilization of the KLU library for sparse matrix           dergo discretization using the trapezoidal integration method. For the
+solving, and optimization of the re-factorization process to avoid                   nonlinear inductor, capacitor, and resistor, piecewise linear represen­
+repeating symbolic phases. Additionally, parallelization techniques are              tations (i.e., multiple segments) are used to linearize their functions.
+explored to enhance performance.                                                     Norton’s companion model of each segment is used through an iterative
+                                                                                     Newton solution [4] that guarantees operation on the proper segment to
+2. Formulation of network equations                                                  achieve a simultaneous/accurate solution.
+                                                                                         The transmission lines are frequency-independent distributed
+   The modified-augmented-nodal-analysis (MANA) method is selected                   parameter models. For modeling the losses, the line is separated into two
+to formulate the power network equations due to its ability to be                    equal lossless lines with a halved propagation delay.
+expanded for diverse component models and to handle arbitrary                            The synchronous machine (SM) model is of dq0-type [23]. In the
+                                                                                     utilized model, machine equations are solved in the dq0-domain and
+
+Table 1
+Comparison of Julia packages for electrical engineering and power systems simulation.
+  Package name          ElectricalEngineering   NREL packages    PowerDynamics                   PowerModels    ElectricGrid    Julia-based EMT      JSEMT
+
+  Reference             [13]                    [14,15]          [17]                            [18]           [19]            [20]                 This paper
+  Formulation           phasors                 State-space +    ODE functions + dq-model        Phasors /      State-space     NAM + latency        MANA
+                                                phasor + dq                                      NAM                            insertion
+  Load-flow solver      –                       yes              no                              yes            –               –                    no
+  Steady-state solver   yes                     yes              yes                             yes            yes             –                    yes
+  Parallel computing    no                      –                no                              no             no              CPU-GPU co-          CPU
+                                                                                                                                simulation
+  Numerical             –                       Julia library    DifferentialEquations.jl        –              –               semi-implicit        trapezoidal
+    Integration                                                  package                                                        method
+  Include Switch        no                      –                no                              yes            –               no                   yes
+    model
+  Transmission lines    no                      Π-model          static or dynamic admittance,   Π-model        Π-model         –                    Π-model, CP-
+    model                                                        Π-model                                                                             model
+  Machines with         no                      yes              no                              no             yes             no                   yes
+    governors
+  Dependents sources    no                      no               no                              no             no              no                   yes
+
+
+                                                                                 2
+A. Alsabbagh et al.                                                                                                  Electric Power Systems Research 251 (2026) 112307
+
+
+transferred to the abc frame with Park’s transformation. These equations             constructed in EMTP® software using the Translator module. This
+are then integrated into the main network equation using Norton’s                    module can be configured to translate netlist data from various other
+equivalent circuit. In this method, machine terminal voltages and cur­               EMT-type software programs. The TCD is stored in JLD2 binary file
+rents are calculated based on the predicted speed of the machine.                    format, encapsulating power system information within Julia data
+Consequently, iterations are implemented in synchronous machine cal­                 structures.
+culations to improve [23]. The represented SM controls are the auto­
+matic voltage regulator (AVR) and the governor. Namely, the exciter                  3.4. Solver engine
+ST1, the power system stabilizer PSS1A, and the governor-turbine
+IEEEG1, are modeled as in [24].                                                          The solver engine is the main code of JSEMT. It consists of three
+                                                                                     stages: initialization, solution and visualization. In the first stage, the
+3. Implementation of JSEMT                                                           engine imports the needed libraries to run the simulation. The solution
+                                                                                     stage finds the steady-state solution of the network starting from the
+    The design of JSEMT follows an object-oriented approach, offering                load-flow solution. Currently, the load-flow solution is imported from
+numerous advantages for code development, maintenance, and read­                     EMTP®, but in future versions of JSEMT, it will be internally imple­
+ability. Modern programming concepts such as encapsulation and                       mented. The steady-state solution is obtained through frequency domain
+abstraction mitigate the risk of data corruption and promote a trans­                formulation, utilizing (2). The primary aim of the steady-state solution is
+parent coding methodology. As Julia is the chosen platform for con­                  to initialize network variables, minimizing the natural response time
+structing the simulator, this framework capitalizes on its distinctive               during the start of time-domain simulation. Following the steady-state
+features tailored to enhance EMT-type applications.                                  solution, the time-domain solution is obtained. The visualization
+                                                                                     phase then plots the results within Julia or exports them to external
+3.1. Advantages of Julia programming language                                        tools.
+                                                                                         Parts of the initialization and solution stages of the solver engine in
+    Julia is a free, open-source, high-level, and dynamic programming                Julia syntax are shown in Fig. 1. The implemented functions have
+language. Unlike several mainstream dynamic languages like Python,                   indicative meanings, in which the prefix refers to the procedure run by
+Julia is uniquely crafted to deliver both productivity and high-                     the component mentioned in the suffix. For example, the function
+performance [25]. Essentially, it resolves the "two language problem"
+by offering a high-level coding syntax coupled with fast execution. As a
+just-in-time compiled lang

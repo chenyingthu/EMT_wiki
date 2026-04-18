@@ -1,0 +1,144 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/JESTPE.2018.2886698, IEEE Journal
+                                                                                          of Emerging and Selected Topics in Power Electronics
+              > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                             1
+
+
+
+                         A Dynamic Phasor Model of an MMC with
+                       Extended Frequency Range for EMT Simulations
+                        Janesh Rupasinghe, Student Member, IEEE, Shaahin Filizadeh, Senior Member, IEEE, Liwei Wang,
+                                                               Member IEEE
+
+
+                 Abstract—This paper presents a new dynamic phasor model of a                                       network subsystem that includes an MMC creates a large
+              modular multilevel converter (MMC) with extended frequency                                            number of nodes in its EMT model and correspondingly
+              range for direct interfacing to an electromagnetic transient (EMT)                                    increases the size of the network’s admittance matrix. Such a
+              simulator. The internal dynamics of the MMC are modeled
+                                                                                                                    large matrix needs to be re-formed and inverted for every
+              considering dominant harmonic components of each variable. To
+              model the external dynamics of the converter a novel construct                                        switching instant, which is computationally demanding [7],
+              referred to as a base-frequency dynamic phasor is employed, which                                     [8]. To capture the large number of MMC switching instants
+              allows to capture and model any number of frequency components                                        with adequate accuracy, small time-steps are necessary. This,
+              of external variables without significant increase in computational                                   together with the need for handling excessively large matrices,
+              burden. The proposed model is validated against detailed EMT                                          renders conventional EMT-type simulation of MMCs
+              models by comparing its results for an inverter system, a back-to-
+                                                                                                                    computationally inefficient.
+              back HVDC system, and a 12-bus power system built in
+              PSCAD/EMTDC simulator. Simulation results prove that the new                                             Various modeling and simulation techniques have given rise
+              model is significantly more computationally efficient than existing                                   to several equivalent and averaged models of MMCs to
+              models and is capable of maintaining a high level of accuracy.                                        address the inefficiency of their EMT simulation [7]–[10]. A
+              Experimental verification on a scaled down laboratory setup is also                                   detailed equivalent model based upon a Thévenin equivalent
+              included.                                                                                             of an MMC arm is presented in [7]. Even though this model is
+                                                                                                                    much more efficient than a conventional EMT model, it is still
+                Index Terms—Base-frequency dynamic phasor, modular
+              multilevel converters, electromagnetic transient simulation.
+                                                                                                                    less effective when simulating MMC systems with a large
+                                                                                                                    number of levels and large-scale networks with a number of
+                                                                                                                    MMCs. Models based on arm switching functions proposed in
+                                                I. INTRODUCTION                                                     [9], [10] are fast and useful in system level simulations.
+                                                                                                                    However, these models do not consider the SM behavior;
+              E   LECTROMAGNETIC transient (EMT) simulations play a
+                  vital role in the study of modern power systems for intents
+              such as determination of component ratings and insulation
+                                                                                                                    hence, internal dynamics of the MMC cannot be studied.
+                                                                                                                       Dynamic phasors (DPs) are a widely used modeling method
+                                                                                                                    in power system and HVDC transient simulation applications
+              levels, designing control and protection systems, and
+                                                                                                                    [11]–[13]. They represent the magnitude and phase of time-
+              explaining equipment failures [1], [2]. EMT simulators are
+                                                                                                                    domain signals in the phasor domain as complex-valued
+              designed to represent fast transients over a wide frequency
+                                                                                                                    phasors and provide the flexibility to include or exclude any
+              range with great precision using advanced circuit simulation
+                                                                                                                    number of harmonics in a model. Despite its selectivity, the
+              and numerical integration techniques. The role of EMT-type
+                                                                                                                    original concept of a DP has a major disadvantage in that it
+              simulators has become more prominent with the advancements
+                                                                                                                    becomes inefficient as the number of harmonics to be retained
+              in high-voltage direct current (HVDC) transmission systems,
+                                                                                                                    increases. As a result, most DP-based MMC models available
+              in particular with the rapid growth of voltage-source converter
+                                                                                                                    in literature (e.g., [14] and [15]) consider only the lowest
+              (VSC)-HVDC.
+                                                                                                                    frequency contents of waveforms. Moreover, the model in
+                 Within the context of VSC-HVDC systems, EMT
+                                                                                                                    [15] was not validated against a detailed EMT model. An
+              simulation of modular multi-level converters (MMCs) [3] is
+                                                                                                                    extended-frequency DP-based MMC model is proposed and
+              notably challenging. MMCs are constructed using a large
+                                                                                                                    validated in [16]; however, it shows significant computational
+              number of identical submodules (SMs) that synthesize multi-
+                                                                                                                    burden as the modeled harmonic contents grow. This model
+              level voltage waveforms at the converter terminals [3]–[6]. A
+                                                                                                                    and the ones in [14] and [15] do not have a general form and
+                 This work was supported by the University of Manitoba and Natural                                  are developed for the specific and simplified system in which
+              Sciences and Engineering Research Council (NSERC) of Canada.                                          they were demonstrated. This is a significant shortcoming as it
+                 J. Rupasinghe and S. Filizadeh are with the Department of Electrical and                           disallows their application in arbitrary external networks. It is
+              Computer Engineering of the University of Manitoba, Winnipeg, MB R3T
+              5V6,         Canada       (e-mail:        rupasira@myumanitoba.ca          |                          possible to formulate and solve the converter and network
+              shaahin.filizadeh@umanitoba.ca).                                                                      equations for each harmonic’s dynamic phasor and combine
+                 Liwei Wang is with the School of Engineering, University of British                                the results to obtain the completer response of the system;
+              Columbia-Okanagan,      Kelowna,     BC,     V1V     1V7,    Canada      (e-
+              mail:liwei.wang@ubc.ca).                                                                              however, this approach is computationally expensive and
+                                                                                                                    inefficient, in particular when large networks are considered
+
+
+
+      2168-6777 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/JESTPE.2018.2886698, IEEE Journal
+                                                                                          of Emerging and Selected Topics in Power Electronics
+              > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                                  2
+
+              for which the admittance matrix of each harmonic-frequency                                            techniques that take advantage of the large number of
+              network model will be of large dimensions.                                                            available SMs are developed for MMC applications [17]–[19].
+                 There is a clear gap in existing MMC models, and virtually                                         The nearest level control (NLC) method [17] is a widely used
+              all of them are inherently limited to certain applications. Their                                     low-frequency switching scheme that offers low switching
+              limitations include (i) lack of control of computational burden                                       losses and high output voltage quality. The NLC modulation
+              [7], (ii) inability to adjust the accuracy and harmonic contents                                      method follows a given reference waveform and determines
+              [9], [10], [14], (iii) inapplicability to multi-domain simulations                                    the nearest voltage level n(t) that can be produced by
+              [15], [16], and (iv) inability to embed them directly in an EMT                                       switching the SM capacitors as follows:
+              simulator to interface with the rest of the network [14]–[16].
+                 This paper develops a DP-based model with adjustable
+                                                                                                                                                   n(t )  round vref
+                                                                                                                                                                  u ,l
+                                                                                                                                                                        
+                                                                                                                                                                       / Vc                                       (1)
+                                                                                                                             u ,l
+              accuracy and computational efficiency for EMT simulation of                                           where, v ref  is the upper (u) or lower (l) arm reference voltage
+              networks with embedded MMCs based upon the concept of                                                 and Vc is the nominal capacitor voltage. The reference upper
+              base-frequency dynamic phasors (BFDP). Taking advantage                                               and lower arm voltages are functions of modulation index (m),
+              of the harmonic selectivity of DPs, the new model is capable                                          power angle (δ), and phase angle (θ) of the point of common
+              of yielding any given number of harmonics with high                                                   coupling (PCC) as shown below.
+              computational efficiency. The same model may be used to
+              study the full harmonic spectrum of the MMC outputs (similar                                                                    u
+                                                                                                                                             vref 
+                                                                                                                                                   Vdc
+                                                                                                                                                       1  m sin(   )                                        (2a)
+                                                                                                                                                    2
+              to an EMT model), only the low-frequency contents (similar
+                                                                                                                                                   dc 1  m sin(   ) 
+                                                                                                                                              l    V
+              to a phasor model), or anything in between. It allows the study                                                                vref                                                                 (2b)
+              of both internal and external dynamics accurately. The model                                                                          2
+              is developed for direct embedding in an EMT simulator,                                                The phase angle at the PCC is measured using a phase locked
+              which makes it readily applicable in arbitrary networks. This                                         loop (PLL). Proper phase shifts are applied to phases b and c.
+              paper advances the state-of-the-art by developing a model that                                        Both m and δ are generated by upstream control systems.
+              includes the above-noted features in a format that enables                                                         Idc
+              direct connection to arbitrarily structured external networks;                                           V dc              i au            i bu              i cu             S1              Ic
+              equally important is the model’s computational efficiency,                                                2
+                                                                                                                                       SM1           SM1             SM1
+              which surpasses those of the existing models by a large                                                                                                                    +                 CSM    Vc
+              margin. The properties of the developed model are illustrated                                                            SM2           SM2             SM2                VSM S2
+              in several examples in the paper.                                                                                                                                          -
+                                                                                                                                       SMN           SMN             SMN
+                 Following a brief overview of half-bridge MMCs in Section                                                                                                                             (b)
+                                                                                                                                    L               L               L
+              II, the paper presents the mathematical foundations of a BFDP
+              in Section III. The DP-based MMC model and its interface are                                                          R               R               R
+                                                                                                                                                                                   ia            va
+              shown in Section IV, followed by detailed case studies,                                                                                                              ib            vb
+              experimental verification results, and discussions in Section V.                                                                                                     ic            vc
+                                                                                                                                    R               R               R
+                       II. MMC OPERATION AND SUBMODULE CONTROL
+                                                                                                                                    L               L               L
+                 Fig. 1(a) shows a schematic diagram of a three-phase half-                

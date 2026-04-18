@@ -1,0 +1,188 @@
+                                                                Electric Power Systems Research 252 (2026) 112412
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Reduced-order and simultaneous solution of power and control system
+equations in EMT simulations,✰,✰✰
+Jiaming Wang a , Xiaopeng Fu a,* , Peng Li a , Jean Mahseredjian b
+a
+    State Key Laboratory of Smart Power Distribution Equipment and System, Tianjin University, Tianjin 300072, China
+b
+    Department of Electrical Engineering, Polytechnique Montréal, Montréal, Québec H3T 1J4, Canada
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   The time-step delay between the power and control system solutions in EMT simulation may cause inaccurate
+Electromagnetic transient simulation                        results or even numerical instability in certain scenarios. A simultaneous solution is preferred theoretically, but
+Exponential integrators                                     computationally expensive and not adopted. By utilizing the triangular block structure of the state-space matrices
+Simultaneous solution
+                                                            in converter simulations, this paper achieves reduced-order implementation of simultaneous solution based on
+Sylvester equation
+                                                            exponential integrators. The core mathematical idea is to convert the difficult matrix exponential solution
+                                                            problem of the off-diagonal block into a linear matrix solution process by introducing a Sylvester equation and its
+                                                            linear transformation, when the power and control systems are solved simultaneously with a unified state-space
+                                                            matrix. To address the nonexistence of solution issue of the Sylvester equation due to structure-induced repetitive
+                                                            eigenvalues, the paper proposes a matrix sub-block eigenvalue-shifting technique, that enables a more robust and
+                                                            error-free solution through the excellent properties of matrix exponential. The proposed method effectively
+                                                            decouples the matrix exponential solution during the simultaneous solution. Additionally, synchronized inter­
+                                                            polation on the state variables of the power and control systems is now possible with a unified time-stepping
+                                                            process, improving accuracy for converter simulations. Through illustrative example and analysis, the accu­
+                                                            racy and efficacy of the proposed method are verified.
+
+
+
+
+1. Introduction                                                                                   solving the control system equations are eliminated by using the Jaco­
+                                                                                                  bian matrix-based formulation in [2], and a comparison is made be­
+    Accurate and efficient solution of control system equations is                                tween the full iterative Newton method and its noniterative variant. On
+important for EMT simulations, considering the increasingly complex                               this basis, the reduced rank Jacobin matrix in a fully iterative Newton
+power system dynamics deeply affected by its various new components                               method is realized by combining the specific influence range of the
+and their sophisticated control systems. Control systems usually                                  feedback loops in the control system equations [3,4].
+comprise numerous types of nonlinear blocks and feedback loops, with                                  The external delays exist mainly due to the fact that the power and
+their matrix representation often exhibiting a sparse and asymmetric                              control system equations are solved separately. The information is
+structure. This is significantly different from the symmetric matrix form                         transferred between the two sets of equations through an interface. The
+of power system models. As a result, traditional solution methods for                             power system may transmit voltage and current values to the control
+control systems introduce artificial delays, which are further categorized                        system, while the control system typically transmits control values of the
+into internal and external delays [1]. The internal delays are introduced                         controlled sources and switching signals to the power system. It is the
+in decoupling nonlinear feedback loops, e.g. algebraic loops. Elimi­                              scheme of this information interface that makes it necessary to wait for
+nating the internal delays requires solving the control system equations                          one of them until the required information has been successfully
+simultaneously by iterative methods. This issue has been extensively                              transmitted. At the same time, in order to simplify the calculation pro­
+studied in previous research. For example, the time-step delays in                                cess and increase the efficiency of the simulation, there is no iteration
+
+
+ ✰
+    This work was supported by National Key R&D Program of China under Grant 2023YFC3807000, and National Natural Science Foundation of China under Grant
+52377118.
+   ✰✰
+        Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+ * Corresponding author.
+   E-mail addresses: fuxiaopeng@tju.edu.cn (X. Fu), jeanm@polymtl.ca (J. Mahseredjian).
+
+https://doi.org/10.1016/j.epsr.2025.112412
+Received 7 January 2025; Received in revised form 13 March 2025; Accepted 17 October 2025
+Available online 25 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+J. Wang et al.                                                                                                   Electric Power Systems Research 252 (2026) 112412
+
+
+scheme in the interface process, which results in a one-time-step delay          method, the interpolation of the internal states of the control system
+between the solution of the power and control system. Although this              becomes easier during the switch positioning process. In order to verify
+delay may not be a significant source of errors in most well-behaved             the feasibility of the proposed method, the simulation accuracy and
+cases with small time-steps, the presence of an external delay may               stability tests are carried out for several different examples.
+cause inaccurate results or serious numerical stability problems in
+certain scenarios [5]. Reduced time steps must be used in such occa­             2. Simultaneous solution
+sions. Compared to the treatment of internal delays, there are fewer
+studies addressing the challenges posed by external delays.                          For the switching-controlled systems without controlled sources, the
+    To eliminate the external delays or mitigate the numerical stability         control system directly obtains the required input from the power sys­
+problem, a common approach is to introduce iteration on the interface            tem. And the switching control signal output of the control system does
+variables within the existing solution framework. The time-step delays           not act directly on the state variables of the power system, but indirectly
+between the power and control system can be eliminated or minimized              changes the state matrix by switching the power switch conduction
+by iteratively re-solving the control system equations until convergence         states. Therefore, for such a system, the state matrix is in the form of
+is achieved within a predefined error tolerance or a maximum number of           triangular block matrix when solved simultaneously.
+iterations [6]. Another approach to realize simultaneous solution is to
+construct a unified sparse asymmetric matrix by combining two sets of
+equations. When this approach is implemented in the nodal analysis               2.1. The basic method
+method of EMT simulation, the inconsistency of matrix structures makes
+it necessary to use the relatively complex Newton’s method to solve the              It is assumed that power and control systems are expressed in the
+unified equation during the simultaneous solution [7], which is previ­           following unified state-space equation as follows:
+ously used to solve only the control system equations. This method will           [ ] [              ][ ]
+face a high-dimensional unified matrix equation containing only small              ẋc       A11 A12     xc
+                                                                                         =                                                         (1)
+portions of nonlinear elements, making the computation process an                  ẋe        0 A22      xe
+inefficient one. Interfacing techniques were also proposed, e.g. the nu­
+merical oscillations caused by interface delays were shown to be sup­            where xc is the state variable of the control system; xe is the state var­
+pressed by inserting a low-pass filter composed of a resistor and an             iable of the power system, and A11 , A12 , A22 are the corresponding block
+inductor [8]. The delay functions have also been analyzed using Taylor’s         state matrix respectively. When using exponential integrators for
+series and Laplace transformation for controlled source systems, and a           simulation, it is necessary to solve the matrix exponential of the state
+numerical compensation method was proposed to solve the numerical                matrix. With the increase of matrix dimension, the calculation of matrix
+stability issues [9]. However, the compensation parameters in this               exponential becomes more complicated. Matrix exponential function
+method are dependent on the specific component characteristics and               calculation is a classical numerical analysis topic with many algorithms
+simulation time-step size.                                                       developed. Among them, the scaling and squaring algorithm is widely
+    To obtain more accurate simulation results and eliminate potential           used [11] for dense matrices of small to medium-size. As the dimension
+numerical stability problems, a simultaneous yet efficient solution al­          of the system matrix increases, the memory usage and computational
+gorithm is desirable, which eliminates the artificial delay between the          time of this method increase significantly. Large-scale system state
+power and control systems without notable efficiency deterioration. In           matrix exhibits sparse characteristics, and Krylov subspace algorithm
+the state-space framework of EMT simulation, the use of exponential              can be used in reduced order approximations. This method projects the
+integrators achieves the same A-stability as the trapezoidal method              original problem into a low-dimensional subspace and fully exploit the
+while maintaining explicit solution [10]. One of the key elements of this        sparsity of the matrix, thereby reducing memory requirements and
+method is to obtain the state transition matrix of the differential equa­        enhancing computational efficiency [12].
+tion by using the matrix exponential operator. It is noted that the state             Order reduction is an effective strategy to handle large-scale matrix
+matrix structure and properties of the power and control systems are             exponential calculation. If the state matrix can be decoupled according
+different, and an alternating solution was previously used to calculate          to the presented block form, and the off-diagonal coupling block can be
+the corresponding state transition matrices separately. This paper pro­          expressed efficiently, the key step of solving the matrix exponential can
+poses that for converter simulations, the state transition matrix of the         be simplified. The off-diagonal block represents the interaction between
+whole system can be effectively computed with a reduced-order method,            the control and power systems. The control system state variables can be
+and simultaneous solution is easily realized with a unified state matrix.        expressed using a formula that includes a convolution term.
+Meanwhile, it is also convenient to carry out precise time stepping op­                                     ∫t
+erations such as control system interpolation with the unified model              xc (t) = etA11 xc (t0 ) +    e(t− τ)A11 A12 eτA22 xe (t0 )dτ          (2)
+representation.                                                                                        0
+
+    In converter simulations, the control system influence the power                  In essence, this convolution term is exactly the upper triangular
+system through switching control signals instead of continuous vari­             block of the matrix exponential. In the one-step numerical integration
+ables, and triggers update of the time-varying state matrix of the power         algorithms of EMT simulation, direct computation of the convolution
+system. The power-control interaction is one-directional when conduc­            terms is complicated and involves additional approximations. Therefore,
+tion states of power switches are not altered. Therefore the unified state       it is preferable to explore simplification methods based on the compu­
+matrix will have specific matrix structure and properties. In this paper,        tation of the matrix exponential of the unified state-space matrix.
+the Sylvester equation is introduced to realize the simultaneous solution             For this purpose, the Sylvester equation is introduced. For any
+for the switching-controlled systems (without controlled sources), and           complex matrix A ∈ Cm×m , B ∈ Cn×n , and C ∈ Cm×n , the equation can be
+the existence problem of Sylvester equation solution in EMT simulation           used to find a transformation matrix X that satisfies AX − XB = C. For
+is dealt with. On the basis of obtaining the matrix exponential of the           the upper triangular block matrix shown in (1), the following Sylvester
+power and control system respectively, the simultaneous solution can be          equation is constructed:
+realized by solving only one Sylvester equation and its related trans­
+                                                                                 A11 X − XA22 = A12                                                           (3)
+formation equation, thus eliminating the time-step delays in the tradi­
+tional method and improving the overall solution accuracy and                        On this basis, a combined state variable (xc + Xxe ) is introduced, and
+numerical stability of the system. In addition, since the power and              the time derivative of this combined state variable satisfies the following
+control system constitute a unified state matrix under the proposed              relationship:
+
+                                                                             2
+J. Wang et al.                                                                                                                Electric Power Systems Research 252 (2026) 112412
+
+
+d
+   (xc + Xxe ) = A11 xc + A12 xe + XA22 xe = A11 (xc + Xxe )               (4)        xe (t) = et(A22 +λI− λI) xe (t0 )
+dt
+                                                                                      = e− tλI et(A22 +λI) xe (t0 )                                                        (9)
+     The above equation indicates that the combined state variable is
+                                                                                      = e− tλ x∗e (t)
+solely related to the matrix A11 . Since the lower-left block of the state
+matrix is 0, the state variables of the power system can be directly solved               For the state equation of the control system:
+through numerical integration. Based on this, the analytical solution of
+                                                                                      xc = A11 xc + A12 xe = A11 xc + A12 e− tλ x∗e                                      (10)
+                                                                                      ⋅
+the control system can be derived as follows:
+                          (                )
+ xc (t) = etA11 xc (t0 ) + etA11 X − XetA22 xe (t0 )                     (5)              Let A∗22                      = A12 e . Introduce a state equation
+                                                                                                        = (A22 + λI)andA∗12              − tλ
+
+                                                                                      that has no specific physical significance:
+    The above equation demonstrates that (etA11 X − XetA22 ) corresponds               ⎡ ⎤ [               ][ ]
+to the upper off-diagonal block of the matrix exponential for the unified                        A11 A∗12     xc
+                                                                                       ⎣ xc ⎦ =
+                                                                                          ⋅
+
+state matrix. Although the systems are solved simultaneously, this                                                                                      (11)
+                                                                                         ẋ∗e     0 A∗22      x∗e
+method effectively decouples the calculation of the critical state tran­
+sition matrix. For the diagonal block parts, their matrix exponentials are                The corresponding Sylvester equation can then be constructed as
+required necessarily during the decoupling operation. The most complex                A11 X∗ − X∗ A∗22 = A∗12 . From this, the following equation can be derived:
+part of the upper triangle block is transformed into a simple matrix                                           (                 ∗ )
+linear calculation process through a Sylvester equation. There are                    xc (t) = etA11 xc (t0 ) + etA11 X∗ − X∗ etA22 x∗e (t0 )                (12)
+various algorithms for solving Sylvester equations, each with different
+                                                                                          The analytical solution for the control system state variable has
+computational complexities [13,14]. Nonetheless, compared to original
+                                                                                      already been obtained from the above derivation. Alternatively, by
+matrix exponential computation algorithms that are designed for dense
+                                                                                      letting M∗ = etA11 X∗ − X∗ etA22 , the required term can also be directly
+                                                                                 

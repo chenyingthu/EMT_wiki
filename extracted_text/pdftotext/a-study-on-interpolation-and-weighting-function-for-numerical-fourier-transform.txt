@@ -1,0 +1,219 @@
+                                                               Electric Power Systems Research 195 (2021) 107121
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A study on interpolation and weighting function for numerical
+Fourier transform
+Xi Shi a, *, Akihiro Ametani a, Aniruddha M. Gole a
+a
+    Department of Electrical and Computer Engineering, University of Manitoba, MB R3T 2N2, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  In order to mitigate the Gibbs oscillation, a very simple and effective linear mid-point interpolation method is
+Numerical Fourier transform                                proposed. The relationship between proposed linear mid-point interpolation in time domain and window
+Weighting function                                         function in numerical inverse Fourier transform is also investigated in this paper. It is proved that the linear mid-
+Interpolation                                                                                                                                                           (     )
+Gibbs oscillation                                          point interpolation in time domain is equivalent to the cosine window function defined as Gcos (ω) = cos 2π ωmax ω  ,
+
+                                                           where ωmax is the maximum angular frequency used in the transform. Furthermore, the cosine window function
+                                                           and sinc window function (also known as sigma-factor) show the similar characteristic. A weighting order n,
+                                                           which is originally defined as the power to which the window function is raised, can also be applied to the
+                                                           interpolation method when n is an integer. The nth-time interpolation is equivalent to applying the window
+                                                           function [Gcos (ω) ]n in frequency domain.
+
+
+
+
+1. Introduction                                                                                method. In Section 4, the weighting order is applied to linear mid-point
+                                                                                               interpolation method. In Section 5, the proposed approach is used in the
+    Gibbs phenomenon describes the large overshoot and oscillations of                         switching surge simulation. The findings are concluded and summarized
+the Fourier series at the jump discontinuity, which was first discovered                       in Section 6.
+by Henry Wilbraham in 1848 [1]. It was widely believed the oscillation
+was due to the flaws of the device when re-synthesize the Fourier series.                      2. Gibbs phenomenon and sinc window
+In 1899, Gibbs published a description of the overshoot at the point of
+discontinuity in [2]. In 1906, a mathematical analysis was given by                               To get the time domain response, inverse Fourier transform can be
+Maxime Bocher [3]. It’s found out that the overshoot does not die out                          applied to the frequency domain functions [8, 9],
+with the increase of the Fourier terms, but the span can be shortened,                                       ∫∞
+while the height of the overshoot remains the same.                                                      1
+                                                                                               f (t) =            F(ω)exp(jωt)dω                                            (1)
+    In order to alleviate the oscillation, various methods were used,                                    π
+including Fejér summation [4] or Riesz summation [5],
+                                                                                                             0
+
+sigma-approximation [6], discrete wavelet transform with Haar basis                            where F(jω) is the frequency domain function to be evaluated. When (1)
+functions [7],etc. In this paper, a very simple, easy-to-use, after                            is evaluated numerically, the integration range [0, ∞] must be
+computation method is proposed to effectively mitigate Gibbs                                   substituted by a finite range [0, ωmax ] with sufficiently large ωmax as in
+oscillation.                                                                                   (2).
+    In Section 2, the cause of the Gibbs phenomenon and the sinc win­
+dow approach have been reviewed. In Section 3, the linear mid-point
+                                                                                                             ω
+                                                                                                             ∫max
+                                                                                                         1
+interpolation method is introduced; the proof of the equivalence of the                        f (t) =              F(ω)exp(jωt)d ω                                         (2)
+                                                                                                         π
+linear mid-point interpolation method and cosine window is given; the                                        0
+
+effect on Gibbs oscillation suppression is compared with sinc window                                When the frequency domain function is numerically evaluated, the
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.
+    * Corresponding author.
+      E-mail addresses: shix34@myumanitoba.ca (X. Shi), akihiro.ametani@umanitoba.ca (A. Ametani), aniruddha.gole@umanitoba.ca (A.M. Gole).
+
+https://doi.org/10.1016/j.epsr.2021.107121
+Received 28 November 2020; Accepted 21 February 2021
+Available online 6 March 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+X. Shi et al.                                                                                                            Electric Power Systems Research 195 (2021) 107121
+
+
+integration range is abruptly chopped at a certain frequency ωmax . As a
+result, the original signal F(ω) can be seen to be multiplied by a “brick-
+wall” window function G(ω). From the signal processing view, the
+window function G(ω) can be seen as an ideal low-pass/high-cut filter.
+The window function G(ω) is defined in (3) and is illustrated in Fig. 1.
+            1    0 ≤ ω ≤ ωmax
+G(ω)= {                                                                  (3)
+            0        else
+   This ideal rectangular window function G(ω) in the frequency
+domain corresponds to the sinc function g(t) (also called the "sampling
+function") in the time domain. g(t) is defined in (4) and is illustrated in
+Fig. 2.
+
+g(t) = F − 1 (G(ω))
+                   sin(ωmax t)                                           (4)
+     = (ωmax / π )
+                      ωmax t
+     = (ωmax / π )sinc(ωmax t)
+                                                                                                            Fig. 2. Sinc function in time domain.
+                − 1
+where F           denotes inverse Fourier transform. With fmax =
+ 107 Hz (ωmax = 2π × 107 rad /s), the sinc function in the time domain is
+as shown in Fig. 2.
+    The product in frequency domain F(ω)G(ω) is equal to convolution in
+the time domain f(t) ∗ g(t). The oscillations of the sinc function g(t)
+causes the ripples in the output result. Imagine f(t) is a step function
+which jumps from 0 to 1 at t = 0 s, then the convolution of f(t) ∗ g(t)
+results in the overshoot whose magnitude is thus exactly the integral of
+the (left) tail.
+    Because the ripples are caused by the oscillations of the sinc function
+g(t), and the frequency of the oscillations of sinc function is determined
+by the upper limit of the frequency range during integration, which can
+be seen as equal to fmax as in Fig. 2. If the output time step is equal to or
+larger than 1/fmax , then the ripples may not be observed. The same case
+of a step function is calculated with different time steps, and the results
+are shown in Fig. 3. The upper limit of the integration fmax = 107 Hz, the
+timestep Δt for the blue curve is smaller than 1/fmax while the timestep
+for the red curve is equal to 1/fmax . It’s obvious that if the timestep Δt ≥
+1/fmax , there may be unnecessary to suppress Gibbs oscillation.
+                                                                                                   Fig. 3. Calculated results with different time steps.
+    It’s also noticeable from Fig. 3 that the red curve with a larger
+timestep also loses some accuracy. Therefore, in all transmission line
+simulations in the following sections, the timestep used is no larger than                        ⎧
+                                                                                                       (
+                                                                                                           ω
+                                                                                                              )
+                                               ( )                                                  sin  π
+ 1                                               1
+                                                                                                  ⎪
+                                                                                                  ⎪
+10 of one  cycle of the oscillation, e.g. Δt ≤  10 (1 /fmax ). Then the Gibbs                     ⎨ ( ωmax
+                                                                                                  ⎪
+                                                                                                             ) ,     0 ≤ ω ≤ ωmax
+                                                                                    Gsinc (ω) =             ω                                                         (5)
+oscillation suppression approach is a necessity in the simulation if the                          ⎪
+                                                                                                  ⎪
+                                                                                                  ⎪
+                                                                                                       π
+                                                                                                           ωmax
+                                                                                                  ⎩
+discontinuity is involved.
+                                                                                                           0,             else
+    The well-known method to eliminate Gibbs phenomenon is that F(ω)
+is weighted with a less abrupt window function Gsinc (ω) derived by S. J.               The curve of this Gsinc (ω) window function is shown in Fig. 4. It’s can
+Day, N. Mullineux and J. R. Reed [6] with the following equation. (Note             be seen that the value remains 1 for the most part of the frequency range,
+that this sinc window Gsinc (ω) is in frequency domain, while the sinc              but instead of drops to 0 abruptly at a frequency ωmax , it drops to
+window function g(t) in (4) is in time domain.)                                     0 gradually and smoothly as the frequency approaches ωmax .
+                                                                                        We can see from Fig. 5, after applying a sinc window (which is also
+                                                                                    called σ-approximation [10, 11]), the oscillation is greatly reduced
+                                                                                    compared to the original result.
+                                                                                        This method requires the calculation of Gsinc (ω) at each frequency
+                                                                                    point and also the multiplication of Gsinc (ω) with F(ω) at each frequency
+                                                                                    point. In the next section, a new approach to mitigate the Gibbs oscil­
+                                                                                    lation is proposed which effectively reduces the oscillation and is
+                                                                                    computationally much more efficient. We have labeled it “linear mid-
+                                                                                    point interpolation”.
+
+                                                                                    3. Proposed linear mid-point interpolation method
+
+                                                                                        To reduce the oscillation, a new and more computationally efficient
+                                                                                    method is proposed in this paper. It performs a linear mid-point inter­
+                                                                                    polation after the original calculated result (the one with Gibbs oscil­
+                                                                                    lation) is obtained. With the sinc window, F(ω) must be multiplied by
+                                                                                    Gsinc (ω) at each frequency point and then the product to be integrated as
+                         Fig. 1. Window function G(ω).
+
+                                                                                2
+X. Shi et al.                                                                                                               Electric Power Systems Research 195 (2021) 107121
+
+
+
+
+                                                                                                 Fig. 7. Gcos (ω) and Gsinc (ω) window function with fmax = 107 Hz.
+                 Fig. 4. Gsinc (ω) window function with fmax = 107 Hz.
+
+                                                                                          as T0 = 4f1max .
+                                                                                              Eq. (6) can be rewritten, from a point of view of convolution, in the
+                                                                                          following equation
+                                                                                                    ∫∞
+                                                                                          f (t) =         f (t − τ)g(τ)dτ                                                (7)
+                                                                                                    − ∞
+
+
+                                                                                          where g(t) = 12 (δ(t +T0 ) +δ(t − T0 )) and δ(t) is the Dirac delta function.
+                                                                                              It means f(t) is the convolution of f(t) and g(t); g(t) is one half of the
+                                                                                          sum of two δ(t) functions with a time offset of + T0 and − T0 respectively.
+                                                                                              The convolution of f(t) with δ(t) function in the time domain is equal
+                                                                                          to that F(ω) times 1 in the frequency domain, and the time offset of T0 in
+                                                                                          time domain is equal to that F(ω) times e− jωT0 . Therefore, the time
+                                                                                          domain (7) is equivalent to the frequency domain (8).
+
+                                                                                          F(ω) = 12 (F(ω)e− jωT0 + F(ω)ejωT0 )
+                     Fig. 5. Oscillations damped with sinc method.                                          (
+                                                                                                              π ω
+                                                                                                                     )                                                   (8)
+                                                                                               = F(ω)cos
+                                                                                                              2 ωmax
+in inverse Fourier transform. As an alternative, the proposed “linear
+mid-point interpolation” method can be utilized after the result curve is                    Similar to sinc window method, F(ω) can be seen as F(ω) weighted by
+                                                                                                                                  (       )
+obtained from (2) and this can be done only when researchers feel
+necessary after observing the existence of Gibbs oscillation. This method                 a cosine window function Gcos (ω) = cos 2π ωmax
+                                                                                                                                       ω
+                                                                                                                                            . The cosine window
+is illustrated in Fig. 6. Let’s assume that the samples of the original result            function Gcos (ω) is shown in Fig. 7 as the blue curve, and the sinc window
+with a time-step Δt, at t = t0 , t0 + Δt, t0 + 2Δt, … are f(t0 ), f(t1 ), f(t2 ),…,       function Gsinc (ω) is also in red curve for comparison. Like the sinc win­
+f(tn ), respectively. These are used to calculate the new valuesf(t1 ), f(t2 ),           dow function, the cosine window function remains 1 for the most part of
+…, f(tn ), tk = t0 + kΔt, k = 1,2…n. as in (6).                                           the frequency range and drops to 0 gradually as the frequency ap­
+                                                                                          proaches ωmax . This explains the mechanism of the interpolation method
+         1
+f (ti ) = {f (ti− K ) + f (ti+K )}, K ≤ i ≤ n − K                              (6)        in suppression of oscillation.
+         2
+                                                                                              It is interesting to mention that the linear mid-point interpolation
+                                                                                          method is also used in EMT-type programs to suppress the numerical
+where K = TΔt0 , Δt is the output time step, the time interval T0 is defined
+                                                                                          oscillations (chatter) caused by discontinuities (switching, the action of
+                                                                                          power electronics, etc.), which is usually named as half step interpola­
+                                                                                          tion. The idea of using half step interpol

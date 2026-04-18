@@ -1,0 +1,218 @@
+                                                                                                                                          1
+
+
+
+
+      Use of XML to import SCADA data into EMTP
+                   S. Dennetière, Member, IEEE, A. Parisot, Member, IEEE, E. Milin, A. Dalmau Pons
+
+
+                                                                               This paper presents a solution implemented and tested at
+   Abstract—In the next few years many installations of long                 RTE on real cases to
+EHV AC cables and HVDC links are planned on the French                             • save time building EMTP network models as they
+grid. Prior to these huge system changes various EMT studies
+                                                                                      have already been modeled for load-flow or
+have to be conducted to prevent problems. Some of these
+studies require large scale network models. To limit errors                           transient stability studies,
+when building large networks and to gain time, the French                          • ensure that the models used from load-flow
+TSO RTE has decided to develop an interface between system                            studies to EMTP studies are consistent,
+tools and EMTP. This XML based interface enables SCADA                             • ensure proper management of data when modeling
+data to be automatically imported into an EMTP graphical                              large scale networks,
+user interface. This paper describes the environment developed
+in EMTP-RV, imported data from SCADA to EMTP and                                   • be able to run load-flow, time-domain and
+studies performed with the full models. Simulation speed, data                        frequency scan calculations in the same platform,
+availability and model reduction issues are addressed in this                      • harmonize the visual drawing of the network in
+paper.                                                                                EMTP with other standard representation used in
+                                                                                      network operation and planning.
+   Index Terms— data portability, EMTP, Electromagnetic
+transient studies, large scale networks modeling.
+                                                                                The proposed solution is based on :
+                                                                                     • XML data import from SCADA to EMTP,
+                         I. INTRODUCTION                                             • library of components to create a network model
+                                                                                         in EMTP that looks like standard RTE grid
+T    HE French TSO RTE (Réseau de Transport d'Electricité)
+operates, designs and maintains the largest network in
+                                                                                         representations in system studies.
+                                                                                To the author's best knowledge it is the first time that
+                                                                             such an approach is implemented to get a dynamic link
+Europe, at the center of the European electricity market. To
+                                                                             between classical large scale network simulation tools and
+carry out needed reinforcements in the French grid in a
+                                                                             EMTP type software. Frequency and time domain
+context of dwindling public acceptance for new overhead
+                                                                             simulations on the entire 400 kV French grid have been
+infrastructure, many installations of long EHV cables,
+                                                                             successfully performed. The software used in this paper is
+capacitor banks and HVDC links are planned in the next
+                                                                             EMTP-RV [3]. This choice is related to previous work
+few years. These new components may give rise to unusual
+                                                                             conducted by the authors and also the required user
+electromechanical and electromagnetic phenomena with
+                                                                             interface capabilities. Nevertheless the approach proposed
+potential adverse effects on the existing network. Therefore,
+                                                                             in this paper is independent from the EMTP simulation tool.
+specific studies have to be conducted, from the earlier
+                                                                                Simulation of large scale networks in EMTP has already
+planning to final commissioning stages.
+                                                                             been presented in previous works. The approach proposed
+   The classical approach to conduct studies based on
+                                                                             in [1] does not include data portability between simulation
+simulation tools is to establish a compromise between
+                                                                             tools. Usage of fundamental frequency multi-port network
+precision, computational speed and available data. The
+                                                                             equivalents is another solution presented in [2] to reduce
+ultimate goal is to achieve the most precise calculations with
+                                                                             system size. However, this solution is not optimal because
+all relevant modeling data and within minimal
+                                                                             network equivalents have to be rebuilt for every network
+computational time. Depending on the type of studies the
+                                                                             change (topology, parameters,…).
+power system engineer will therefore use different methods,
+databases and simulation tools, such as load-flow, transient
+stability packages and EMTP software. As a consequence
+                                                                             II.   NEEDS AND REQUIREMENTS FOR LARGE SCALE NETWORK
+there has always been an issue concerning the data                                              MODELING AT RTE
+portability between these tools.
+                                                                                Every installation of new components requires EMTP
+                                                                             studies with a network model of the area. A large scale
+                                                                             network model that represents a specific network topology
+   S. Dennetière and A. Parisot are with RTE – National Center for Grid
+Expertise (Réseau de Transport d'Electricité – 34 rue Henri Regnault 92068
+                                                                             and a load situation is useful to get a relevant starting point
+Paris La Défense Cédex)                                                      of EMTP studies and to get an accurate model of the
+   E. Milin is with RTE – R&D Department (Immeuble Le Colbert, 9 rue         network for frequency scan studies.
+de la Porte de Buc, BP 561, 78005 Versailles)
+   A. Dalmau Pons is with ELIA- Analysis Management (Av de Vilvorde -        A. Starting point of EMTP studies
+Vilvoordelaan, 126 (A.01.21) B - 1000 Bruxelles)
+   Corresponding author e-mail: sebastien.dennetiere@rte-france.com            In the case of time-domain simulation of transient
+                                                                             phenomena a limited part of the network is usually modeled.
+
+  978-1-4577-1002-5/11/$26.00 ©2011 IEEE
+                                                                                                                                     2
+
+A large scale network model coming from a load-flow or a                   voltage and power references), loads and
+transient stability study is useful in order to get a relevant             substation configurations
+starting point for the electromagnetic transient studies.               • network data in real-time: RTE network snapshots
+Load-flow data can be based either on SCADA                                are available every 5 minutes,
+measurements and state estimations or on calculations on                • network data for planning studies,
+planned networks.                                                       • load-flow and short-circuit calculations in the
+B. Network models validity                                                 same platform.
+                                                                    Network data and load-flow results can be exported from
+   Long EHV cable installations can lead to harmonic
+                                                                 the CONVERGENCE platform (see Fig. 1) into an XML
+temporary overvoltages [4]-[5]. The cable-network system
+                                                                 file.
+impedance can present low order harmonic resonances that
+can lead to harmonic resonances at energization of no-load
+power transformers. Based on the network short-circuit
+power at the cable supply bus bar and the charging reactive
+power associated to total capacitance seen at cable supply
+busbar, a preliminary assessment of the risk of resonance
+can be obtained [5]. This simple expression only provides a
+quick estimate of the first resonance frequency. As low
+order harmonic resonance is of particular concern in power
+systems, a more detailed analysis can be carried out for
+assessing the network harmonic impedance.
+   For EHV network modeling, a Joint CIGRE/CIRED WG
+CC02 document [6] recommends to model accurately at
+least the complete primary transmission network.
+Furthermore it is appropriate to consider the loads on the
+secondary transmission network in order to decide whether
+these should be modeled explicitly or as an equivalent
+circuit. If these loads are placed directly on the secondary
+side of the transformer, the damping they cause can be
+overestimated when using simple equivalents.
+   As a consequence to accurately assess the harmonic
+impedance close to new EHV cable installation, it is needed
+to model at least the 400 kV French grid.
+C. Graphical User Interface (GUI) requirements
+   When data of large scale networks are imported in
+EMTP, the next challenge is to handle such a large amount
+of data. Building and maintaining large networks using the
+GUI mouse based functions is not viable. Making data
+changes in many devices, searching for equipments or
+updating models to the type of studies must be achieved
+efficiently.
+   Moreover large networks schematics are already available
+and do not depend on a specific simulation tool. Thus it is
+relevant to display these networks in the same                   Fig. 1. CONVERGENCE platform showing a part of the 400 kV network
+representation as is used in system operation and planning.
+                                                                 B. EMTP-RV graphical user interface
+               III. INTERFACE DESCRIPTION                           The Graphical User Interface of EMTP-RV is named
+                                                                 EMTPWorks. As explained in [3] almost all the aspects of
+A. CONVERGENCE platform
+                                                                 this GUI are scriptable and modifiable by the user. Data
+  Many years ago RTE identified the need of a platform           input is based on web pages. It provides quasi unlimited
+gathering network data and tools for steady-state                capabilities in the development of data forms through
+simulations (load-flow and short-circuit calculations). As of    dynamic HTML and XML programming. Users can create
+now, a first version of this platform has been developed and     their own user interface. Forms, device drawings, simulation
+provides the following features :                                options can be controlled through JavaScript language. The
+       • Description of the entire RTE network from 400          scripting language is JavaScript with EMTPWorks
+           kV to 63 kV: sequence impedances of lines             extensions.
+           (direct    and      zero-sequence),    transformer       To build a network in EMTP that replicates standardized
+           parameters       (impedances,      tap     changer    system representations, a set of service devices has been
+           positions,…), generators (sequence impedance,         developed as presented in Fig. 2. The network in EMTP is
+                                                                                                                                                                                        3
+
+built manually by the user based on these service devices.                                                             COM implementation of the XML Document Object Model
+  Parameters of these devices can be modified through                                                                  (DOM) has been used. The XML DOM provides a
+custom made forms as presented in Fig. 2. Busbar                                                                       navigable set of classes that directly reflect the W3C
+connections are automatically updated on the drawing                                                                   Document Object Model Level 1 specification. This DOM
+depending on data available in data input forms.                                                                       implementation provides JavaScript interfaces and thus can
+                                                                                                                       be used in EMTPWorks.
+                                                                                                                          To illustrate the XML DOM implementation in
+                                                402.24/_-18.9                               397.03/_-23.9              EMTPWorks, the following JavaScript source is provided.
+                                                                                                                       The active power reference of a generator named
+
+
+
+
+                                                                CERGYL72MEZE5
+                                                                       +
+
+
+
+
+                                                                                        +
+
+                                                                                            CERGYL71MEZE5
+                                                                                                                       'PORC2P7' is updated in the EMTP network from the value
+
+
+
+
+                                                                                                            <1369 <9
+                                                                                0> 0>
+                                                                                                                       available in the XML document. XML DOM is activated
+
+                                                MEZE5L74PORC2
+                                            +                                                                          through the JavaScript COM interface. The XML file
+                                                                                                                       exported from the CONVERGENCE platform is read by
+                                                                                                                       EMTPWorks JavaScript functions and converted into a
+                                                                                                                       string format in less than 1s. This string contains the entire
+                                                                                                                       XML document. For example, to locate the power reference
+Fig. 2. Part of the 400 kV network schematic based on specific devices and                                             of a specific generator, it is possible to use path expressions
+transformer feeder form                                                                                                to select nodes in the XML document.
+                                                                                                                       //create the xml Document Object Model
+   These standard devices (for instance an outgoing line                                                               xmldoc = new ActiveXObject("Msxml2.DOMDocument.3.0");
+feeder connected to a 3 busbar substation) are used in
+several places in the drawing. As explained in [1] a                                                                   //EMTPWorks JScript functions to work with files
+                                                                                                                       var myfileXML=SPFile();
+mechanism is available in EMTPWorks for updating all                                                                   myfileXML.fullName='topo_reseau_04012010.xml'
+subcircuit contents by modifying the internal details of only
+one instance. This object oriented mechanism is called                                                                 //Reads the contents of the file and returns a string
+                                                                                                                       //This string contains the entire XML document
+unique type definition. A unique type definition can be
+                                                                                                                       var xmlContent = myfileXML.readText();
+maintained for contents, but mask data can vary
+independently.                                                                                                         //Loads an XML document using the supplied string
+                                                                                                                       xmlDoc.loadXML(xmlContent);
+C. From SCADA data to EMTP GUI
+                                                                                                                       //Locate generator named 'PORC2P7' in XML document and get its
+   As explained in the previous section, the data of the entire
+                                                                                                                       active power reference
+RTE network can be exported into an XML file through the                                                               var XpathPref = "//generator[name=" 'PORC2P7' "]//Pref"
+CONVERGENCE platform. A small part of the XML tree                                                                     var prefValue = xmlDoc.selectNodes(XpathPref);
+view used for data export is presented below.
+                                                                                                                       //Locate generator named 'PORC2P7' on network schematic
+<SUBSTATIONS>                                                                                                          var cct = c

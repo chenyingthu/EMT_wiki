@@ -1,0 +1,182 @@
+174                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+
+  Application of Frequency-Partitioning Fitting to the
+  Phase-Domain Frequency-Dependent Modeling of
+            Overhead Transmission Lines
+                                                          Taku Noda, Senior Member, IEEE
+
+
+   Abstract—This paper shows that a previously proposed                             models are based on the theory of natural modes of propaga-
+linear-system identiﬁcation method based on frequency parti-                        tion [1], [2] for computational efﬁciency. In those modal-do-
+tioning and adaptive weighting can be successfully applied to                       main models [3]–[7], the frequency dependence of character-
+the phase-domain frequency-dependent modeling of overhead
+transmission lines for electromagnetic transient simulations. As                    istic admittances and propagation functions is represented in the
+the framework of the phase-domain modeling, the universal line                      modal domain, and voltages and currents are transformed back
+model is used, and the frequency responses of the characteristic                    and forth between the phase and the modal domain at every time
+admittance and propagation function matrices are realized by                        step using transformation matrices. To carry out this phase and
+linear equivalents obtained by the identiﬁcation method men-
+tioned before, instead of the well-known Vector Fitting method.
+                                                                                    modal transformation in the time domain, transformation ma-
+In this paper, numerical techniques to enhance the identiﬁcation                    trices are approximated by real and constant matrices. Thus,
+method for this phase-domain line modeling application are also                     the modal-domain models are not accurate enough for mod-
+presented. For validation, the proposed approach is applied to                      eling transmission lines whose transformation matrices exhibit
+modeling an existing 500-kV double-circuit transmission line. The                   heavy frequency dependence. To solve this problem, phase-do-
+effectiveness of the numerical techniques for enhancements are
+shown through the modeling process, and transient waveforms                         main models have been proposed [8]–[12]. The calculations of
+obtained by the proposed approach are compared with those by                        the phase-domain models are formulated fully in the phase do-
+the rigorous Laplace transform method and with a ﬁeld-test result.                  main, and the modal transformation itself is avoided. In the
+  Index Terms—Electromagnetic transient analysis, frequency re-
+                                                                                    phase domain, characteristic admittance and propagation func-
+sponse, identiﬁcation, power system modeling, power system sim-                     tion are treated as matrices, whose frequency dependence is re-
+ulation, power transmission lines.                                                  alized by matrix-vector convolutions in time-domain EMT sim-
+                                                                                    ulations. For the matrix-vector convolutions, the frequency re-
+                                                                                    sponses of the two matrices mentioned before have to be rep-
+                            I. INTRODUCTION                                         resented by, in other words, ﬁtted with matrix partial fraction
+                                                                                    expansions (MPFEs) [13, App. A]. The ﬁtting of the charac-
+
+M        ODERN power systems use power-electronics devices                          teristic-admittance matrix is straightforward, and the vector-ﬁt-
+         for dc transmission, back-to-back system interconnec-                      ting (VF) method [14] is directly used to obtain its MPFE rep-
+tion, system stabilization, and other purposes. Since waveform-                     resentation. The ﬁtting of the propagation-function matrix, on
+level calculations are essential to consider switching in power-                    the other hand, is not straightforward. Since its time-domain re-
+electronics devices, studies of power systems, including power-                     sponse includes step-wise changes due to modal traveling-time
+electronics devices, are now often carried out by electromag-                       differences, the form of MPFE is modiﬁed in order to explic-
+netic transient (EMT) simulations. This trend gives further im-                     itly include time-delay terms. This methodology is called the
+portance to EMT simulations in addition to studies of conven-                       universal line model (ULM) [15]. The idea of explicitly in-
+tional phenomena, such as overvoltages, inrush currents, and                        cluding time-delay terms was originally introduced in a -do-
+abnormal oscillations.                                                              main modeling method [10]. In [15], the ULM is combined with
+   Accurate modeling of transmission lines is a key to accurate                     the VF method to identify the modiﬁed MPFE. As an alterna-
+EMT simulations. When a wide range of frequencies is of in-                         tive to the VF method, the author has proposed an MPFE iden-
+terest in an EMT simulation, the frequency dependence of a                          tiﬁcation method based on frequency partitioning and adaptive
+transmission line, that is, the skin effects of wires and ground                    weighting [16], [17]. Since the method is mainly characterized
+soil has to be represented accurately. A variety of line models                     by frequency partitioning, it is called the frequency-partitioning
+has been proposed to represent the frequency dependence. Early                      ﬁtting (FpF) method in this paper. So far, the method has been
+                                                                                    applied to network equivalent modeling.
+                                                                                       This paper shows that the FpF method can be successfully
+   Manuscript received December 04, 2013; revised April 27, 2014; accepted
+June 01, 2014. Date of publication July 01, 2014; date of current version January   applied to the phase-domain frequency-dependent modeling of
+21, 2015.Paper no. TPWRD-01356-2013.                                                overhead transmission lines. For the ﬁtting of a characteristic-
+   The author is with the Electric Power Engineering Research Laboratory, Cen-      admittance matrix, the FpF method is directly used to obtain
+tral Research Institute of Electric Power Industry, Kanagawa 240-0196, Japan
+(e-mail: takunoda@ieee.org).                                                        its MPFE representation. In the same way as the VF method,
+   Digital Object Identiﬁer 10.1109/TPWRD.2014.2329532                              the ULM is combined with the FpF method for the ﬁtting of a
+
+                         0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                             See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+NODA: APPLICATION OF FREQUENCY-PARTITIONING FITTING                                                                                                       175
+
+
+
+propagation-function matrix. Numerical techniques to enhance
+the FpF method for this phase-domain line modeling applica-
+tion are also presented in this paper. For validation, the pro-
+posed FpF-based approach is applied to modeling an existing
+500-kV double-circuit transmission line. The effectiveness of
+the numerical techniques for enhancements is shown through
+the modeling process, and transient waveforms obtained by the
+proposed approach are compared with those by the rigorous
+Laplace transform method [18] and with a ﬁeld-test result [19].
+Results for underground cables will be presented in a separate                   Fig. 1. Equivalent circuit derived by the phase-domain equations.
+paper due to a lack of space.
+
+                 II. PHASE-DOMAIN MODELING                                       C. MPFE
+
+A. Phase-Domain Equations                                                          Once the frequency responses of              and           have
+                                                                                 been calculated, each of them is ﬁtted with an MPFE to perform
+   Consider a transmission line with       wires. We denote the                  matrix-vector convolutions. In the case of        , the following
+voltages and the currents of the conductors at the sending end,                  normal MPFE form is used:
+respectively, by the vectors and and those at the receiving
+end by and . The phase-domain Bergeron-type solution of
+the wave equation of the line is expressed by the following equa-                                                                                         (5)
+tions in the time domain [10]:
+                                                                                 For        , the form of MPFE is modiﬁed to explicitly include
+                                                                        (1a)     time-delay terms as in the following equation, and this method-
+                                                                        (1b)     ology is called the ULM [15]:
+where        is the impulse response of the characteristic-admit-
+tance matrix and the operator denotes a matrix-vector convo-                                                                                              (6)
+lution. The propagation terms      and      are given by
+                                                                                 where                  and      is the traveling time of the th
+                                                                        (2a)     mode. It is assumed that there exist      modes which have dis-
+                                                                        (2b)     tinct traveling times.     is the residue matrix of the th pole
+                                                                                       of the th mode.
+where is the traveling time of the fastest mode among all prop-
+agation modes of the line and         is the impulse response of                 D. Time-Domain Implementation
+the transfer function matrix that is obtained by eliminating the                    Applying a numerical integration algorithm to (5) transforms
+time delay due to from the current propagation function ma-                      the matrix-vector convolutions of         in (1) into recursive for-
+trix [10]. Note that all vectors shown here are column vectors                   mulas. The terms in the recursive formula can be classiﬁed into
+of size and the dimensions of all matrices are by .                              an instantaneous part and a history part. Let us denote the former
+B. Calculation of              and                                               part that relates the instantaneous values of         and      , re-
+                                                                                 spectively, to those of        and        as the constant conduc-
+   To perform the matrix-vector convolutions of          in (1) and              tance matrix        and the latter part by the current source
+      in (2), we ﬁrst have to calculate their frequency responses.               for the sending end and        for the receiving end. Then, (1) is
+The impedance matrix of an overhead line can be calculated                       rewritten as
+using Carson's and Schelkunoff's formula considering the skin
+effects of ground soil and wires. Since the capacitance matrix                                                                                           (7a)
+of an overhead line does not exhibit frequency dependence, the                                                                                           (7b)
+admittance matrix can be calculated by a textbook formula.
+Using and , the frequency-domain counterpart of                   is             where the history current vectors              and       are given by
+calculated by
+                                                                                                                                                         (8a)
+                                                                         (3)                                                                             (8b)
+The frequency-domain counterpart of                  is calculated by
+                                                                                 Equations (7) and (8), which can be readily incorporated into the
+                                                                         (4)     equations of the remaining circuit in an EMT simulation, lead
+                                                                                 to the equivalent circuit shown in Fig. 1.
+where is the length of the line and     denotes the transpose of                    In (2), the matrix-vector convolutions of      do not have to
+matrix . and are calculated at discrete frequency samples,                       be decomposed into their instantaneous and history parts, since
+and then           and         are calculated using (3) and (4),                 their inputs are associated with a time delay of . Using a nu-
+respectively, at the same frequency samples.                                     merical integration algorithm, the recursive formula of (6) is
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+176                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+obtained, and the matrix-vector convolutions are performed just                 sense. If relative-error evaluation is applied to this frequency
+according to the recursive formula. The exponential terms in (6)                response, the denominators for calculating weighting values in
+are simply treated as additional time delays in the time domain.                that almost-zero-magnitude region are almost zero, thus leading
+   For the numerical integration of MPFEs, the trapezoidal                      to quite large weighting values. As a result, the residuals in that
+method has been widely used. Recently, the 2S-DIRK method,                      region are unexpectedly exaggerated.
+which does not involve the problem of ﬁctitious numerical                          To solve this problem, we should clarify what kind of error
+oscillation, was proposed [20].                                                 evaluation is desired for practical simulations. Generally, rela-
+                                                                                tive-error evaluation is desired, since similar accuracy should be
+E. Application of FpF to Phase-Domain Modeling                                  achieved over the entire frequency range. This will give similar
+   Before the VF method was developed, it was common to                         accuracy for any type of simulations. In an almost-zero-magni-
+identify a rational function of             instead of an MPFE.                 tude region, however, we, in practice, do not pay attention to
+Multiplying the denominators to both sides of the rational ap-                  ﬁtting accuracy so long as the response in that region is sufﬁ-
+proximation equations gives a linear least-squares problem. The                 ciently small. To satisfy these requirements, the following hy-
+resulting overdetermined equations are, however, intrinsically                  brid error evaluation is proposed in this paper. First, let     be a
+ill-conditioned, since     terms coming from the rational func-                 small positive constant which is used as the threshold to judge
+tion take a wide range of values which cannot be dealt with                     whether the response is meaningfully large or not. For the sam-
+by machine arithmetic accuracy. The FpF method solves this                      ples whose magnitudes are larger than , relative-error evalu-
+problem [16]. The FpF method divides the frequency range of                     ation is applied. If we write the th sample of the frequency re-
+interest into subsections and performs rational ﬁtting for each                 sponse to be ﬁtted as and the response of the identiﬁed MPFE
+subsection. Since the frequency range of each subsection is lim-                at the same frequency sample as               , relative-error eval-
+ited, the     terms do not take a wide range of values and an                   uation is expressed by
+accurate result is obtained. Then, the poles of each subsection
+are calculated, and the poles from all subsections are gathered                                                                                        (9)
+and considered as the complete set of poles of the entire fre-
+quency response. The poles identiﬁed by the FpF method are                      where is a vector consisting of the coefﬁcients of the MPFE.
+all on the left-hand side of the plane, and they are therefore                  For the samples whose magnitudes are less than or equal to ,
+stable. For the ﬁtting of         , the frequency response of its
+                                                                                the following absolute-error evaluation is applied:
+trace is used to identify the poles as proposed in [16]. For the
+ﬁtting of         , its th mode propagation function             ,
+                                                                                                                                                      (10)
+whose traveling time       has been extracted, is used to identify
+the poles                              in (6), and this process is
+                                                                                Equations (9) and (10) are incorporated into the residue-ma-
+repeated for all modes according to [15]. Thus, all entries of
+                                                                                trix identiﬁcation process proposed in [16]. In this way, mean-
+          share the same set of poles, and the same applies to
+                                                                                ingfully large samples are treated by relative-error evaluation,
+        . With the known poles, their residue matrices are identi-
+                                                                                and almost-zero samples by absolute-error evaluation. Note that
+ﬁed through a linear least-squares problem using the entire fre-
+                                                                                (10) is scaled by     so that the two error evaluation methods
+quency response. Note that        terms are not involved in this
+                                                                                mentioned before are continuously connected to each other.
+least-squares problem. The poles and their identiﬁed residue
+matrices give an MPFE mod

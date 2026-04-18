@@ -1,0 +1,28 @@
+Received 30 July 2024, accepted 12 September 2024, date of publication 16 September 2024, date of current version 30 September 2024.
+Digital Object Identifier 10.1109/ACCESS.2024.3462255
+
+# Electromagnetic Transient Modeling of Asynchronous Machine in Modelica, Accuracy, and Performance Assessment
+**ALIREZA MASOOM**<sup>1</sup>, (Member, IEEE), AND **JEAN MAHSEREDJIAN**<sup>2</sup>, (Life Fellow, IEEE)
+<sup>1</sup> Hydro-Québec Research Institute, Varennes, QC J3X 1S1, Canada
+<sup>2</sup> Department of Electrical Engineering, Polytechnique Montréal, Montreal, QC H3T 1J4, Canada
+
+Corresponding author: Alireza Masoom (masoom.alireza@hydroquebec.com)
+
+This work was supported by NSERC, Hydro-Québec, RTE, EDF, and OPAL-RT as a part of the industrial chair ‘‘Multi Time-Frame Simulation of Transients for Large Scale Power Systems.’’
+
+**ABSTRACT** Classical EMT-type simulators are mostly programmed in procedural languages, e.g. Fortran or C. In these languages, the focus is mainly on the solution methods. Modern languages, such as Modelica, are declarative and primarily focused on modeling and simulation. Modelica offers a much higher abstraction level, which makes the codes more concise and understandable. This paper contributes to the electromagnetic transient modeling and simulation of asynchronous machines in Modelica. In this paper, the modeling of a three-phase squirrel cage (single and double cage) and wound-rotor induction machine in three different reference frames is described and implemented. The accuracy and performance of Modelica models are compared and validated with the classical modeling approach used in the reference software EMTP. It is demonstrated that Modelica-based models with variable-step solvers offer fast and accurate results for time-domain simulations of motor sequential startup cases.
+
+**INDEX TERMS** Asynchronous machine, sequential start-up, Modelica, equation-based modeling, variable-step solver.
+
+## I. INTRODUCTION
+Electromagnetic Transient (EMT) modeling and simulation deal with power electric components and systems in the form of differential equations for the study of a wideband range of phenomena such as switching, lightning, ferroresonance, and electromechanical oscillations [1]. The commonly used EMT-detailed models are implemented either using the block-diagram programming approach, e.g., Simscape Electrical Specialized Power System [2], or using an imperative language such as Fortran and C++ in, for example, EMTP® [3]. The block-diagram approach is at a higher level, and easily accessible, but the modeler must define the flow of information and the sequence of blocks.
+
+Asynchronous machines (ASM) are widely used in power systems in the form of motors or generators in renewable energy sources, such as the Doubly Fed Induction Generator. Modeling of ASMs is principally based on the selectable reference frame. In the classical modeling approach, first, the differential equations of the ASM are discretized using a fixed-step solver, then using the companion circuit, the model is represented through a Norton equivalent (NE) in modified-augmented-nodal analysis (MANA) in [3], for example. The NE is based on a given numerical integration technique, such as commonly used trapezoidal integration, for example. In [3], it is optionally possible to iterate with network equations to achieve higher accuracy. Although such a solution method is fast and suitable for large circuits, it relies on a specific solver and detailed coding of all equations and procedures. Spurious oscillations can be suppressed using a damping resistor in parallel with inductors in the machine model [4]. In the classical approach, the controllers are modeled separately from the main electrical network.
+
+Modelica [5] is an object-oriented declarative language. The modeler’s concentration is on model equations rather than giving a stepwise algorithm on how to achieve the desired goal. In Modelica, a model can be explicitly described by its Differential-Algebraic Equations and block diagrams at a much higher abstraction level and most importantly, it is independent of the underlying solution method. Modelica can be linked to various EMT-type codes through FMI [6], [7]. Modelica supports a graphical user interface (GUI) for designing the model symbol and drawing the network diagram. It simplifies the component connectivity checks, documentation, and observing the results as well. Several integration methods, such as the trapezoidal, backward Euler, DASSL [8], and IDA [9] are currently available in Modelica simulators, e.g. OpenModelica [10] and Dymola [11].
+
+In Modelica, each component is coded by a specialized class model or block (can be used in the block diagram approach). Othe
+
+## II. ASYNCHRONOUS MACHINE THEOROTICAL DESCRPTION
+### A. WOUND ROTOR AND SINGLE SQUIRREL CAGE MACHINES
+A single squirrel cage machine is widely used as a motor in industry and can be represented as a wound-rotor machine in which the terminals are short-circuited. Therefore, the model of the wound-rotor machine will be discussed in this section. Fig. 1 shows the q-axis equivalent circuit of a wound-rotor ASM. The following equations describe the abc to reference frame transformations applied for ASM [21].

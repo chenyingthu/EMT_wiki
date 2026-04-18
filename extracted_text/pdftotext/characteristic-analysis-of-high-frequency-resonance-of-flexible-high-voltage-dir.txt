@@ -1,0 +1,259 @@
+         第 40 卷 第 1 期                           中     国 电 机 工 程 学               报          Vol.40 No.1 Jan. 5, 2020
+         2020 年 1 月 5 日                               Proceedings of the CSEE             ©2020 Chin.Soc.for Elec.Eng.      19
+DOI：10.13334/j.0258-8013.pcsee.190324                文章编号：0258-8013 (2020) 01-0019-11       中图分类号：TM 73
+
+
+
+               柔性直流输电系统高频振荡特性分析及
+                     抑制策略研究
+                                   郭贤珊 1，刘泽洪 1，李云丰 2*，卢亚军 3
+     (1．国家电网有限公司，北京市 西城区 100031；2．国网湖南省电力有限公司经济技术研究院，
+             湖南省 长沙市 410004；3．国网经济技术研究院有限公司，北京市 昌平区 102200)
+
+
+Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current
+                       and Research on Its Damping Control Strategy
+                                    GUO Xianshan1, LIU Zehong1, LI Yunfeng2*, LU Yajun3
+(1. State Grid Corporation of China, Xicheng District, Beijing 100031, China; 2. State Grid Hunan Electric Power Company Limited
+                         Economic & Technical Research Institute, Changsha 410004, Hunan Province, China;
+        3. State Grid Economic and Technological Research Institute CO. LTD., Changping District, Beijing 102200, China)
+
+
+ABSTRACT: Time delay is the inherent feature of                         柔直系统和交流线路等效数学模型。其次，考虑模块化多电
+MMC-based HVDC transmission system which makes the                      平换流器(modular multilevel convert，MMC)内部动态特性、
+output impedance of MMC presented “negative resistance and              锁相环、环流抑制控制器、延时等因素在内，建立 MMC 在
+inductance” characteristics in high frequency ranges. Those             dq 坐标系下的阻抗模型，分析相关环节对柔直高频阻抗特
+characteristics may easily cause high-frequency resonant
+                                                                        性的影响及高频振荡特性。再次，提出高频振荡阻尼控制策
+instability interacting with the capacitance feature of long AC
+                                                                        略，采用 MMC 简化模型分析阻尼控制器参数对阻抗高频特
+lines. Firstly, the equivalent model of MMC and AC lines were
+                                                                        性的影响，并设计保持系统稳定的控制器参数。最后，利用
+derived. Secondly, the impedance model of MMC under dq
+                                                                        电磁暂态仿真模型验证所提策略的有效性及参数设计的正
+coordinate was established considering the factors such as
+                                                                        确性。
+internal dynamic processes of MMC, PLL, circulating current
+suppression controller, time delay, etc. Thirdly, the effect of         关键词：柔性直流输电；模块化多电平换流器；阻抗模型；
+corresponding factors on impedance matrix in high-frequency             高频振荡；阻尼控制；电压前馈
+ranges as well as resonant characteristics was analyzed.
+Fourthly, a damping control strategy was proposed to suppress           0 引言
+the high-frequency resonant instability. Parameters of damping             基于模块化多电平换流器(modular multilevel
+controller to keep the system stable operation have been
+                                                                        converter，MMC)的柔性直流输电技术(flexible high
+designed carefully using the simplified MMC model. Finally,
+the validity of the proposed strategy and the correctness of the
+                                                                        voltage direct current，HVDC)凭借在增压扩容、低
+parameters designing were proofed by the electromagnetic                频谐波、可控特性、弱电网联网及孤岛供电等方面
+transient simulation model.                                             的优越特性得到了快速发展[1-3]。伴随着柔性直流工
+KEY WORDS: flexible high voltage direct current; modular                程 单 个 换 流 站 电 压 和 容 量 等 级 从 最 初 30kV/
+multilevel convert (MMC); impedance model; high-frequency               18MW 到800kV/5000MW 的提升，换流站已经从
+resonance; damping control; voltage feed forward                        35kV 配网接入转变为 500kV 主网接入，其安全稳
+摘要：柔性直流输电系统的链路延时是其固有特性，使柔直                                              定运行对交流大电网的影响逐渐增大[4-6]。
+高频阻抗呈现“负电阻电感”特性，可能与长交流线路的分                                                 随着柔直基础理论深入研究及工程应用出现
+布电容相互作用导致高频振荡失稳现象发生。文章首先建立                                              的问题，科研人员逐步揭示了柔直控制系统相关参
+
+    基金项目：国网湖南省电力有限公司科技项目。
+                                                                        数，例如锁相环(phase-locked loop，PLL)、内外环、
+    Project Supported by the State Grid Hunan Electric Power Company.   环流抑制，对柔直阻抗特性及稳定性的影响[7-10]，
+20                         中   国   电   机   工   程        学   报                                             第 40 卷
+
+                                                                                                      直流侧
+然而上述影响的研究主要集中在低频段，对柔直高                                  等效
+                                                   等效电源 阻抗             交流线路 接入点 换流变
+频段的影响研究少有文献报道。柔直工程在新能源                                                                                 MMC
+
+接入、城市供电、大电网互联等应用方面已经出现
+了次同步振荡、中频振荡和高频振荡现象[11-15]。次                                     图1   柔直系统主电路示意图
+                                                   Fig. 1    Main circuit diagram of HVDC system
+同步振荡的频率范围大致在 10~30Hz 范围；中频振
+荡频率在 250~350Hz；而高频振荡的频率主要出现                达式请参考文献[16]。其中：C 为子模块电容；T
+在 550~2kHz 范围，例如厦门工程直流侧 550Hz 振            为桥臂子模块总数；iarm 为桥臂电流；udc 和 idc 分别
+荡、鲁西工程 1270Hz 以及渝鄂联网工程的 700Hz              直流电压和直流电流；isj 为 j 相电流；icirj 为 j 相环
+和 1.8kHz 附近的高频振荡。高频振荡发生之后，                 流；e*vj 和 u*cirj 为控制系统输出的基波和二倍频电压
+若在一段时间内不能及时消除，柔直换流站将执行                     的参考值；ReqRtRarm/2 和 LeqLtLarm/2 为 MMC
+闭锁逻辑保护相关设备安全[13]。由此产生的功率缺                  交流侧等效电阻和电感；Rt 和 Lt 为换流变的电阻和
+额或盈余对交流主网将产生严重的冲击，因此，研                     漏感；Rarm 和 Larm 为桥臂等效电阻和电感；Cdc_line、
+究柔直高频振荡及其抑制方案对提高工程安全性                      Rdc_line 和 Ldc_line 为直流线路的等效电容、电阻和电
+和可靠性具有重大促进作用。                              感，Es 为对站直流电压。取状态变量 xmmc[udc,
+      当前研究电压源换流器的方法主要基于小信                  uc_dc0,uc_ac1d,uc_ac1q,uc_ac2d,uc_ac2q,idc,idc_line,isd,isq,icird,
+号法，例如状态空间[16-17]和阻抗法[18-21]。大量文献           icirq]T ， 控 制 变 量 为 ummc[Es,usd,usq,e*vd,e*vq,u*cird,
+针对装置并网稳定性问题，建立了单/三相两电平换                    u*cirq, ]T，输出变量 ymmc[isd,isq,icird,icirq]T，则柔直
+                                                    
+
+
+
+
+流器的阻抗模型，并将延时所导致的相位滞后特性                     主电路的状态空间表达式为
+考虑在内，提出了多种解决方案[22-25]。这些方案之                              dxmmc
+                                                                   Αmmc  xmmc  Bmmc  ummc
+所能解决小功率装置并网稳定性问题，主要有 2 个                                 dt                                                      (1)
+                                                         ymmc  Cmmc  xmmc  Dmmc  ummc
+方面的原因：一是接入电网电压较低且线路较短，
+系统阻抗呈现正电阻电感特性；二是并网装置整体                             式(1)所示的状态空间模型适用于电气系统和
+延时相比柔直系统来说更小。柔直工程高频振荡问                     控制系统 dq 坐标系，本文将应用在控制系统 dq 坐
+题发现时间较短，国内外仅有少量文献进行了报                      标系中。为后续研究方便，将式(1)转换为传递函数
+道[12-14]，文献[12]较完整地分析了南网鲁西工程高              形式，则交流侧电流和 MMC 环流的表达式为：
+频振荡现象，提出了在电压前馈环节加入低通滤波                             isdq  M1  ev*dq  M 2  ucir
+                                                                                 *
+                                                                                     dq  M 3  usdq             (2)
+器和公共耦合点(point of common coupling，PCC)              icirdq  M 4  ev*dq  M5  ucirdq  M 6  usdq
+                                                                                   *
+                                                                                                                  (3)
+加装无源滤波器的解决方案，然而该文没有在控制
+                                           其中：
+系统中提出额外的阻尼控制方案。
+      本文针对实际柔直工程出现的高频振荡现象，                               M1  Cmmc_is ( sI mmc  Αmmc )1 Bmmc1
+                                                                                         1
+以 dq 阻抗法为主，从建模、高频振荡特性分析、                                 M 2  Cmmc_is ( sI mmc  Αmmc ) Bmmc2
+阻尼控制及验证等几个方面进行阐述，分析相关环                                                                  1
+                                                         M 3  Cmmc_is ( sI mmc  Αmmc ) Bmmc3
+                                                                                                                 (4)
+节对柔直高频阻抗及振荡特性的影响，提出一种高                                                                      1
+                                                         M 4  Cmmc_icir ( sI mmc  Αmmc ) Bmmc1
+频振荡阻尼控制策略并设计相关参数，为工程应用                                  M  C                             1
+                                                         5      mmc_icir ( sI mmc  Αmmc ) Bmmc2
+提供一种可供选择的潜在解决方案。                                         M 6  Cmmc_icir ( sI mmc  Αmmc ) 1 Bmmc3
+                                                        
+1 柔直数学模型及验证                                式中：Cmmc_is、Cmmc_icir 为 Cmmc 矩阵的第 1 和 2 行、
+      本文所研究的场景如图 1 所示，图中 MMC 经             第 3 和 4 行组成的矩阵；Bmmc1、Bmmc2、Bmmc3 为
+换流变压器接入 PCC 点，并经过一段交流线路之后                  Bmmc 的第 4 和 5 列、第 6 和 7 列以及第 2 和 3 列组
+与等效交流电网互联。                                 成的矩阵；Immc 为 12 阶单位矩阵。
+1.1   柔直本体数学模型                             1.2     柔直控制系统模型
+      关于 MMC 子模块电容电压直流分量、基波分                       1）PLL 模型。
+量、二倍频分量以及 MMC 交直流侧动态方程的表                           为了更加精确化系统模型，本文考虑 PLL 的影
+第1期                                    郭贤珊等：柔性直流输电系统高频振荡特性分析及抑制策略研究                                                                   21
+
+响，以等值电源电气系统 dq 坐标系为参考基准[26]，                                               3）环流抑制控制器模型。
+则可以得到 PLL 的线性化模型为：                                                         环流抑制控制器采用常规的控制模式，在二倍
+                 [  FPLL sin 0 , FPLL cos 0 ] usdq       (5)   频负序 dq 坐标系中实现[16]，其模型可表示为
+                    
+                                     TPLL
+                                                                                           Gcir     20 Larm  cs
+                                                                                ucirdq  
+                                                                                  *,cs
+                                                                                                                 i                 (12)
+                                    kpPLL  s  kiPLL                                       20 Larm
+                                                                                             Gcir  cirdq
+                FPLL ( s )                                     (6)
+                               s 2  kpPLLU s0 s  U s0kiPLL                                          M10
+
+
+式中： 0 为 MMC 接入点相对于等值电源的稳态相
+           
+                                                                      式中：Gcirkpcirkicir/s 为环流抑制控制器；kpcir、kicir
+位差；Us0 为 PCC 点相电压稳态幅值；kpPLL 和 kiPLL                                   为比例和积分系数。经推导，在电气系统 dq 坐标
+为 PLL 的比例与积分系数，进一步可得到电气 dq                                            系下，MMC 输出导纳和阻抗矩阵分别为：
+坐标系中电压到控制系统中的表达为                                                      Ymmc  Tp1-1 ( E22  N1 M8 )1 N 2 (Tp1 Tp2TPLL )  Tp3TPLL (13)
+                    uscsdq  Tp1  usdq  Tp2              (7)                            Z mmc  Ymmc
+                                                                                                        -1
+                                                                                                                                     (14)
+其中：                                                                   式中 E22 为 2 阶单位矩阵，且 N1 和 N2 满足：
+                      cos 0 sin 0                                 N1  M1  M 2 M10 ( E22  M5 M10 ) M 4
+                                                                                                              1
+
+               Tp1    sin  cos                                                                            1
+                                                                                                                             (15)
+                              0        0  22                        N 2  N1 M 7  M 2 M10 ( E22  M5 M10 ) M 6  M 3
+`                                                              (8)
+               T   sq 0
+                        U     cos  0  U sd 0 sin  0 
+                                                                         MMC 线性化模型的正确性作者已经进行了验
+                p2
+                       U sd 0 cos 0  U sq 0 sin 0  21
+                                                                     证，考虑篇幅不再给出，系统主电路参数和控制系
+     控制系统 dq 坐标系中的电流到电气系统 dq 坐                                        统参数如表 1、2 所示。
+标系的反变换为                                                                                 表1      换流站主电路参数
+
+                     isdq  Tp1-1  iscsdq  Tp3           (9)            Tab. 1 Main circuit parameters of station
+                                                                              参数              数值                参数             数值
+式中 TP3[Isq0,Isd0]T。                                                  交流电压/kV              525           额定功率/MW           1250
+     2）内外环控制器模型。                                                          直流电压/kV              840          子模块电容/mF            11
+
+     柔直换流站工程普遍采用双闭环的控制架构，                                               桥臂子模块数/个               500          桥臂阻感/(/mH)       0.1/140
+
+其中外环控制器有多种控制目标，本文在理论建模                                                   换流变阻抗/pu             0.14           换流变变比           525/435
+
+时以有功功率和定无功功率为例进行分析，外环控                                                                表2     MMC 控制器主要参数
+制器输出的线性化数学模型可以表示为                                                           Tab. 2    Main controllers' parameters of MMC
+                                                                              参数              数值                参数             数值
+            *,cs       2           2 P*
+             
+            sdi            P *
+                                      2
+                                          GFil_u uscsd                   交流电压 kp            0.0033          交流电压 ki          0.067
+                     3U s0         3U s0
+                                                              (10)       电流内环 kp              137           电流内环 ki           4124
+            i*,cs     2           2 Q*
+                               Q *
+                                            GFil_u uscsd                环流抑制 kp              100           环流抑制器 ki          2000
+            sq        3U s0         3U s02                                锁相环 kp            0.001           锁相环 ki           0.01
+
+式中：P*、Q*为功率参考值；GFil_u 为交流电压反
+                                                                      2 交流系统模型
+馈环节的低通滤波器，内环控制器为电压和电流前
+                                                                           以渝鄂柔直背靠背联网工程为例，如图 1 所示，
+馈解耦的矢量控制[11]，则内环输出可表示为
+                                                                      交流线路电压等级为 500kV，线路长度为 118km 左
+      ev*,cs
+          dq  M 7  usdq  M8  isdq  M 9  Rref
+                       cs           cs            *
+                                                               (11)
+                                                                      右，采用 4×LGJ-500/45 型号架空线，等效参数约：
+式中：R*ref[P*,Q*]T；M7[Gffw[2P*GFil_uGi/(3U2s0)],              r0.0147/km、l0.8047mH/km、c14.354nF/km。
+0;[2Q GFil_uGi/(3U2s0)],Gffw]；M8[Gi,0Leq;0Leq,
+       *
+                                                                      交流线路的建模根据所研究的目的可分别采用分
+Gi]；M9[2Gi/3Us0,0;0,2Gi/3Us0]。其中，Gikpi                    布参数模型、集中参数模型等[27]。考虑当前实际工
+kii/s 为电流控制器，kpi 与 kii 为比例积分系数，Gffw                                   程高频振荡的频率范围小于 2kHz，经校验，本文
+为前馈电压环节的低通滤波器，直接前馈时取 1，                                               选择 20 个模型(也可选择更多)足可以模拟其特
+无前馈取 0。                                                               性。假设等值阻抗分别用 Rg 和 Lg 模拟，采用 Nnum
+22                                                                              中       国   电   机   工   程                             学       报                                     第 40 卷
+
+个进行模拟，则从在 dq 坐标系下，柔直接入点                                                                          和 qd 阻抗在频率大于 200Hz 以上的高频段幅值很
+往交流系统看进去的等效阻抗可表示为                                                                                   小。另外，在没有延时的情况下，当频率大于 250Hz
+                                              Zsys  ( Zn-1_N_num  0.5Yc )1               (16)    以上时，dd 通道和 qq 通道的阻抗基本与频率呈现
+                                                                                                    线性关系且相位一直小于 90，说明无延时情况下，
+式中阻抗 Zn_N_num 为第 n 个往交流系统看进去的
+                                                                                                    柔直换流站高频基本是电感特性。然而，考虑延时
+等效阻抗。
+                                                                                                    之后，阻抗幅值与频率之间不再是线性关系，相位
+3 柔直阻抗建模及特性分析                                                                                       在某些频段范围内超过 90，从而存在负电阻特性；
+                                                                                                    延时越大，相位超过 90的频率向低频方向移动且
+3.1                    考虑延时的 MMC 导纳模型
+                                                                                                    相位最大值增大，说明系统存在延时之后柔直的输
+         研究柔直系统低频特性时一般不考虑测量、传
+                                                                                                    出阻抗存在具有多个“负电阻电感”特性的高频段。
+输、处理、触发等环节的延时，本文研究柔直系统
+                                                                                                    3.3                   锁相环参数对阻抗矩阵的影响
+的高频特性，需要考虑柔直系统的整个链路延时。
+                                                                                                            图 3 为不同 PLL 参数对阻抗矩阵的影响，其中
+经国内多家厂家提供的试验数据分析可得，柔直系
+                                                                                                    积分系数是比例系数的 10 倍，延时 550s、有功功
+统的链路延时大约在 350~550s 范围。当考虑系统
+                                                                                                    率 0.5pu、无功功率为零。由图可知，PLL 参数影
+链路延时后，相当于在 MMC 控制系统输出中加入
+                                                                                                    响 dd 通道低频段的幅值和相位，当频率大于 150Hz
+了延时环节，用 Gdeexp(Tdes)等效。此时，MMC
+                                                                                                    以后基本没有影响，仍然存在“负电阻电感”特性
+输出导纳矩阵可表示为
+                                                                                                    的频带；PLL 参数也影响 dq 通道和 qd 通道的低频
+                                      Ymmc  Tp1-1 ( E22  Gde N1 M8 )1 N 2 
+                                                                                                    段阻抗特性，高频段影响较小；PLL 参数不仅影响
+                                              (Tp1  Tp2TPLL )  Tp3TPLL                    (17)
+                                                                                                    qq 通道的低频段特性，更影响高频段特性。当 MMC
+         其中 N1 和 N2 满足：                                                                             运行于整流状态时，锁相环参数增大的同时降低了
+      N1  M1  Gde M 2 M10 ( E22  Gde M5 M10 ) 1 M 4                                           qq 通道高频幅值特性，且相位特性逐向正电阻范围
+                                                                                                   变化，有利于提高稳定性。
+      N 2  Gde N1 M 7  M 3  Gde M 2 M10              (18)
+                                 1
+             ( E22  Gde M5 M10 ) M 6
+                                                                                                                                        3
+                                                                                                          相位/() 幅值/k 相位/() 幅值/k
+
+
+
+
+                                                                                                                                         2
+3.2                    延时对阻抗矩阵的影响                                                                                                        1
+                                                                 

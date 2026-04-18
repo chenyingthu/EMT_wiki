@@ -1,0 +1,186 @@
+Received: 5 July 2021     Revised: 6 August 2021        Accepted: 15 August 2021                       IET Generation, Transmission & Distribution
+DOI: 10.1049/gtd2.12282
+
+
+ORIGINAL RESEARCH PAPER
+
+
+
+
+Electromechanical transient modelling and application of modular
+multilevel converter with embedded energy storage
+
+Zheyang Yu                     Zheren Zhang                             Zheng Xu
+
+College of Electric Engineering, Zhejiang University,      Abstract
+Hangzhou, Zhejiang Province, China
+                                                           This paper studies the electromechanical transient modelling techniques of the modified
+                                                           modular multilevel converter (MMC), named active MMC, which is equipped with embed-
+Correspondence
+Zheren Zhang, No. 38 Zheda Road, Hangzhou                  ded energy storage in submodules. Firstly, the mathematical model of the active MMC and
+310027, Zhejiang Province, China.                          its equivalent circuits at the AC and DC sides are established. Then, the control scheme
+Email: 3071001296zhang@zju.edu.cn
+                                                           of active MMC that focus on the cooperation of the MMC converter and the energy stor-
+                                                           age submodules is illustrated. The proposed electromechanical transient model are imple-
+                                                           mented on PSS/E and compared with the electromagnetic transient model on PSCAD in
+                                                           a two terminal active MMC sytem; the results of the active MMC system under AC and DC
+                                                           fault prove the validity of the proposed model. Lastly, stability studies of the practical sys-
+                                                           tem are carried out, and the simulation results prove the improvement by the application
+                                                           of the active MMC on the rotor angle stability and frequency stability.
+
+
+
+1          INTRODUCTION                                                                        LCC-HVDC. However, there exists an active power coupling
+                                                                                               between the AC and the DC sides of the MMC-HVDC, since
+The long geographical distance between the energy base and                                     the MMC-HVDC is incapable of storing energy extensively.
+large load center is a common scenario in a modern power                                       Thus, the power disturbance caused by fault will affect both
+grid, which needs the bulk power transmission over a long dis-                                 the connected AC systems and the MMC-HVDC: (1) The
+tance. For instance, the Chinese power grid takes a west to east                               fault occuring in one AC grid may transmit to another AC grid
+power transmission stratagem to solve the problem that energy                                  through the MMC-HVDC system even though these AC grids
+resources are mainly distributed in the west while the load cen-                               are asynchronous [4]; (2) The fault occurs in MMC-HVDC,
+ters are located in the east. Facing the requirement of carbon                                 such as the DC line fault will certainly influence the connected
+neutralization in China [1], the demand for long-distance bulk                                 AC system [5–7]. To make full use of the grid shock absorber
+power transmission power will keep increasing because of the                                   function of MMC-HVDC, a new MMC-HVDC which achieves
+abundant renewable energy sources in the Western China.                                        a greater degree of AC/DC system decoupling is needed.
+   The high voltage direct current (HVDC) transmission is an                                       Nowadays, the energy storage system has been widely
+effective way to achieve long-distance bulk power transmission                                 concerned for its flexible output power adjustment capability
+due to its high economy and reliability. With the development                                  [8–10]. Due to the modularity and scalability of MMC system,
+of the power electronics technology, the modular multilevel                                    it is a natural idea to integrate energy storage into MMC system.
+converter-based high voltage direct current (MMC-HVDC) has                                     The topology, modelling, modulation and control system of
+been applied in practical projects such as the Wudongde project                                MMC with embedded energy storage have been extensively
+and the Zhangbei project. The MMC-HVDC has shown great                                         studied. The most commonly used topology is a bi-directional
+potential thanks to its superior performance compared with                                     DC-DC converter to integrate the energy storage system (ESS)
+the line-commutated converter-based HVDC (LCC-HVDC)                                            to the MMC submodule (SM) for the purpose of satisfying the
+[2, 3]. The MMC-HVDC is also regarded as the grid shock                                        incompatibility of the voltage of SM capacitor with batteries
+absorber because of its excellent fault ride through capability                                (ultra-capacitors) and avoiding the influence of fluctuation volt-
+and operation characteristics compared with the conventional                                   age of SM capacitor [11–14]. The DC-DC converter is mostly
+
+
+This is an open access article under the terms of the Creative Commons Attribution License, which permits use, distribution and reproduction in any medium, provided the original work is
+properly cited.
+© 2021 The Authors. IET Generation, Transmission & Distribution published by John Wiley & Sons Ltd on behalf of The Institution of Engineering and Technology
+
+
+IET Gener. Transm. Distrib. 2022;16:123–136.                                                                                                     wileyonlinelibrary.com/iet-gtd      123
+                                                                                                                                                17518695, 2022, 1, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/gtd2.12282 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+124                                                                                                                                 YU ET AL.
+
+
+controlled by an internal current controller, together with an         nection of Nsm -cascaded SMs with embedded energy storage
+outer-loop controller [15–17]. Other additional controllers are        and one arm reactor L. The upper and lower arms in the same
+studied in [18–20], such as state-of-charge (SOC) controller,          leg comprise a phase unit. ur j (r = p, n, represents the upper and
+the DC power suppression controller, the harmonic currents             lower arms; j = a, b, c, represents three phases) is the voltage of
+controller etc. The application of MMC with embedded energy            cascade SMs. ir j is the current of each arm. Udc and idc represent
+storage in medium-voltage electric drive as well as direct and         voltage and current of the DC side. LP is the arm reactance, and
+indirect grid interfaces are discussed in [21–23].                     RP is the equivalent resistance indicating the equivalent power
+   Compared with the conventional MMC, the energy storage              losses of the MMC. Bus v is the MMC AC side output point.
+system embedded in the MMC can provide extra power to the              PCC stands for the point of common coupling.
+system. Thus, the MMC with embedded energy storage, which                 The topology of the active MMC has been through full dis-
+is named active MMC due to its active power compensation               cussion [11, 12, 19]. As shown in Figure 1b, a half-bridge SM
+ability, can realize a greater degree decoupling of the AC/DC          is adopted in the topology of the active MMC. Compared with
+system. It can be foreseen that the active MMC is a promis-            the conventional MMC, the SM capacitor is connected with the
+ing technology in future practical projects [24]. However, the         energy storage system by a DC/DC converter in order to match
+application scenarios of the active MMC-HVDC system in the             the voltages of the SM capacitor and the energy storage system.
+transmission network has not been fully studied.                       The topology of the ESS and the DC/DC converter is shown in
+   In the purpose of researching the stability of large AC/DC          Figure 1c. A bi-directional boost DC-DC converter is adopted
+system containing the active MMC-HVDC system, the active               in each ESSM for its low cost and mature control technique [12].
+MMC model suitable for electromechanical transient simula-             The energy storage system is formed by the series and parallel
+tion is necessary. The established simulation models of MMC            connection of energy storage units; the series and parallel num-
+with embedded energy system are mainly electromagnetic tran-           ber is determined by the voltage and the energy requirement of
+sient models which focus on the feasibility and reliability of the     the energy storage system.
+active MMC system. However, there are few researches on the
+electromechanical transient modelling of the active MMC. To
+tackle this issue, the electromechanical transient model of the        2.2        Control scheme of the active MMC
+active MMC is developed, which can be easily extended to multi-
+terminal HVDC (MTDC). The contributions of this paper are              The controller of the active MMC consists of the MMC con-
+summarized as follows:                                                 troller and the EES controller. The MMC controller can include
+                                                                       the inner current controller and the power controller, which is
+1. The electro-mechanical model of the active MMC is derived           the same as with the conventional MMC. The structure of an
+   and developed, where an additional current source on the            MMC with inner current controller is shown in Figure 2.
+   DC side is derived to simulate the dynamic response of the              The power controller consists of the d-axis power controller
+   embedded energy storage system in the active MMC.                   and q-axis power controller according to their control target.
+2. The application scenarios of the active MMC are discussed           The active power controller and reactive power controller are
+   from the aspects of power system transient stability. The           decoupled by adopting the vector control. The d-axis power
+   improvement of the rotor angle stability and the frequency          controller is realized by regulating isdre f of the inner current con-
+   stability is validated by the simulation results of the practical   troller, and the q-axis power controller is realized by regulating
+   systems.                                                            isqre f correspondingly. The target of the d-axis power controller
+                                                                       can be controlling the active power or the DC voltage; the tar-
+   The outline of this paper is as follows: Section 2 intro-           get of the q-axis power controller can be controlling the reac-
+duces the topology and controller of the active MMC. Sec-              tive power or the AC voltage. One target of the d-axis power
+tion 3 describes the electromechanical transient model of the          controller and q-axis power controller is chosen in the mean-
+active MMC. The validation of the proposed model is tested             time. The structure of the power controller is fully described
+by comparison with the detailed equivalent model (DEM) build           in [24].
+in PSCAD/EMTDC in Section 4. In Section 5, the applica-                    The controller of the ESS is composed of the outer controller
+tion scenarios of the active MMC are discussed and the simula-         and the current controller. The control scheme of the embed-
+tion based on practical system proves the stability improvement        ded ESS has already been discussed in [7, 15, 25], where differ-
+brought by the active MMC. The conclusions are given in Sec-           ent control objectives are adopted in specific control schemes
+tion 6.                                                                for different fault types. When the fault occurs at the AC side,
+                                                                       the current of ESS ies is controlled to maintain the voltage of
+                                                                       the DC side as constant, and thus the DC side system will not
+2   TOPOLOGY AND CONTROLLER OF                                         be affected. When the fault occurs at the DC side, the active
+THE ACTIVE MMC                                                         power injecting into the AC system of the MMC convert is con-
+2.1  Topology of the active MMC                                        trolled, and AC power transmission will not be affected. A first-
+                                                                       order inertia link is adopted to equivalent the current controller,
+The structure of the active MMC is shown in Figure 1. The con-         considering the fast-dynamic response speed of the current con-
+verter consists of six arms; each arm is formed by a series con-       troller. The structure of ESS controller is shown in Figure 3.
+17518695, 2022, 1, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/gtd2.12282 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+   125
+
+
+
+
+                                                                                                                                                                                                                                                                                       FIGURE 2 Structure of an MMC with current
+                                                                                                                                                                                                                                                             Structure of active MMC
+
+
+
+
+                                                                                                                                                                                                                                                                                       vector controllers
+                                                                                                                                                                                                                                                             FIGURE 1
+   YU ET AL.
+                                                                                                                                          17518695, 2022, 1, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/gtd2.12282 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+126                                                                                                                           YU ET AL.
+
+
+
+
+FIGURE 3      Structure of the ESS controller
+
+
+
+   After the DC fault, DC circuit breakers (DCCBs) are sup-
+posed to trip the faulted DC line. If some critical DC lines are
+disconnected, some MMCs may not be capable of transmitting          FIGURE 4     Equivalent model of the MMC on the AC side
+the same active power as before the DC fault. On this occa-
+sion, the ESS will be put into service in order to keep the power
+exchange between the active MMC and the AC system. For the
+active MMC whose DC voltage can be regulated by itself or           PSS/E, the Norton equivalent circuit is adopted to descript
+other MMCs, the power control mode of the active MMC can be         electrical components in the algebraic equation of the AC net-
+unchanged; the active power vacancy/surplus should be com-          work. The injecting currents isd and isq are calculated by the
+pensated by the ESS, and the outer controller of ESS regulates      injection power of the MMC converter and the voltage of PCC:
+the active power. For the MMC whose DC voltage cannot be
+maintained, the power control mode of the active MMC should                                             Ps
+be changed into the DC voltage control mode, and the outer                                      isd =                              (1)
+                                                                                                        usd
+controller of ESS regulates the active power, in order to regu-
+late the output active power of the active MMC.                                                         Qs
+                                                                                                isq =                              (2)
+                                                                                                        usq
+
+3       MODELLING OF THE ACTIVE MMC                                    It should be noted that the injecting current expressed in
+                                                                    the rotary coordinate system should be transformed to station-
+The electromechanical transient model of conventional MMC           ary coordinate system coordinating to the network algebraic
+has been fully researched [26–28]. It consists of the AC side       equation.
+model that cooperates to the algebraic equations describing the
+network side and the DC side model that describes the dynamic
+characteristic of the MMC system. The electromechanical tran-       3.2    DC side of active-MMC
+sient model of the active MMC is derived from the conventional      electromechanical transient model
+MMC that is similarly composed of the AC side and the DC side
+models.                                                             In the electromechanical transient model, the DC side of the
+                                                                    MMC system is equivalent to a concentrated capacitance Ceq
+                                                                    with regard to the SM capacitors. The value of Ceq can be calcu-
+3.1    AC side of active-MMC                                        lated as in (3):
+electromechanical transient model
+                                                                                                    6
+                                                                                           Ceq =      C .                          (3)
+Considering the AC voltage and 

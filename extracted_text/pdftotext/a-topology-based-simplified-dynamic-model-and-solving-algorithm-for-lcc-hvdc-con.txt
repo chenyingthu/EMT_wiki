@@ -1,0 +1,197 @@
+                                                             Electrical Power and Energy Systems 173 (2025) 111410
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                          International Journal of Electrical Power and Energy Systems
+                                                           journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+A topology-based simplified dynamic model and solving algorithm for
+LCC-HVDC converters considering commutation failure
+Yangyang He a,* , Nengling Tai a, Jin Xu b, Wenzhuo Liu c, Panjie Lian c , Haizhen Zhang d
+a
+  College of Smart Energy, Shanghai Jiao Tong University, Shanghai 200240, China
+b
+  School of Electrical Engineering, Shanghai Jiao Tong University, Shanghai 200240, China
+c
+  China Electric Power Research Institute, Beijing 100192, China
+d
+  Huadian Electric Power Research Institute CO., Ltd, Hangzhou 310030, China
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  Dynamic modeling of line-commutated converter (LCC) based high-voltage direct current (HVDC) systems faces
+Topology-based                                             a trade-off between computational efficiency and accuracy in capturing commutation failure (CF) behavior.
+Dynamic model                                              Existing electromagnetic transient (EMT) models are highly accurate but computationally intensive, whereas
+Algorithms
+                                                           simplified models often neglect valve-level switching dynamics and CF mechanisms. To overcome these limi­
+HVDC converters
+Commutation failure
+                                                           tations, this paper proposes a topology-based simplified dynamic (TBSD) model for LCC-HVDC converters. The
+                                                           model adopts ideal switch representations to preserve the discrete switching behavior of thyristors, and de­
+                                                           composes the converter circuit into a main network and a valve-level auxiliary network based on topological
+                                                           states. Then, a structure-stable solving algorithm is developed to maintain consistent matrix dimensions across
+                                                           different switching configurations. Furthermore, an adaptive time-step control strategy is introduced, which
+                                                           dynamically adjusts the simulation step based on the rate of change in DC current, achieving both computational
+                                                           acceleration during steady-state and high-resolution tracking during transients. The proposed model and solution
+                                                           method are implemented in the PSModel simulation platform and validated against PSCAD/EMTDC under
+                                                           steady-state and fault conditions. Simulation results confirm that the TBSD model accurately captures commu­
+                                                           tation failure dynamics while significantly improving computational efficiency.
+
+
+                                                                                            after turn-off resulting in CF. This leads to a sharp drop in DC voltage, a
+                                                                                            surge in current, and reduced power transfer, which poses a significant
+1. Introduction
+                                                                                            threat to system stability. In interconnected or multi-terminal systems,
+                                                                                            CF can propagate across the network, further exacerbating disturbances
+    The line-commutated converter (LCC) based high-voltage direct
+                                                                                            and complicating recovery [5].
+current (HVDC) system has become a critical component in long-
+                                                                                                To evaluate and simulate LCC-HVDC system dynamics under such
+distance and high-capacity power transmission, particularly within
+                                                                                            conditions, various modeling approaches have been proposed. Quasi-
+AC/DC hybrid grids. Its mature technology, low cost, and high-power
+                                                                                            steady-state (QSS) models express the characteristics of the converter
+transfer capability make it the preferred choice in large-scale inter-
+                                                                                            in a steady-state equation and offer computational efficiency [6–8].
+regional energy delivery. However, the reliance of LCC-HVDC systems
+                                                                                            Dynamic phasor models [9–11], based on time-varying Fourier series,
+on the strength and stability of the AC network introduces inherent
+                                                                                            provide frequency-domain insights but simplify commutation dynamics
+vulnerability—most notably, the phenomenon of commutation failure
+                                                                                            by assuming linear current transitions and neglecting delayed valve
+(CF) [1–3].
+                                                                                            characteristics. Switch-function-based models [12–15] improve preci­
+    Commutation failure (CF) is an inherent phenomenon in LCC-HVDC
+                                                                                            sion but either neglect commutation dynamics or rely on QSS-derived
+systems due to their reliance on the AC-side voltage for successful
+                                                                                            overlap angles that cannot resolve time-dependent valve switching. In
+commutation [4]. During AC faults, the reduction in voltage amplitude
+                                                                                            [13], a spectral model incorporating the commutation overlap angle was
+and distortion of zero-crossing may lead to insufficient commutation
+                                                                                            proposed using 3-D Fourier series, and its influence on the rectifier-side
+margin, preventing the valve from turning off as expected. In some
+                                                                                            impedance was analysed via harmonic linearization. The study
+cases, the valve may even be re-triggered by a forward voltage shortly
+
+
+    * Corresponding author.
+      E-mail address: michael-yang@sjtu.edu.cn (Y. He).
+
+https://doi.org/10.1016/j.ijepes.2025.111410
+Received 26 June 2025; Received in revised form 21 August 2025; Accepted 16 November 2025
+Available online 21 November 2025
+0142-0615/© 2025 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+Y. He et al.                                                                                International Journal of Electrical Power and Energy Systems 173 (2025) 111410
+
+
+
+    Nomenclature                                                                 Δt          Simulation time step
+                                                                                 ivt         Valve current
+    Ron        On-state resistance of the valve                                  uLr         Voltage across transformer leakage inductance
+    Roff       Off-state resistance of the valve                                 iLr         Current through transformer leakage inductance
+    Lr         Equivalent leakage inductance of the transformer                  uVT         Valve voltage
+    Zsc%       Short-circuit impedance percentage of the transformer             rd          Resistance of the DC line
+    Vbase      Base voltage of the transformer                                   udr         DC voltage at the rectifier side
+    Sbase      Base apparent power of the transformer                            udrx        The series connection point voltage of two six-pulse
+    f          System frequency                                                              converters on the rectifier side
+    ua         Phase-A voltage at AC side of the converter                       udi         DC voltage at the inverter side
+    ub         Phase-B voltage at AC side of the converter                       udix        The series connection point voltage of two six-pulse
+    uc         Phase-C voltage at AC side of the converter                                   converters on the inverter side
+    un         Neutral point voltage of the AC system                            Δtm         Minimum simulation time step
+    Ld         Inductance of the DC smoothing reactor                            Rhigh       The high thresholds of id change rate
+    id         DC current through the system                                     Rlow        The low thresholds of id change rate
+    ud1        Positive terminal DC voltage at converter output                  Nmin        Minimum steps before switching
+    ud2        Negative terminal DC voltage at converter output                  MRE         Mean relative error in model verification
+
+
+
+demonstrated that commutation effects significantly impact system                3) The proposed model and algorithm are implemented by PSModel
+stability, as validated through generalized Nyquist criterion analysis.             and validated through comparison with PSCAD/EMTDC simulations
+Further developments have introduced harmonic state-space (HSS)                     under both steady-state and fault conditions, demonstrating high
+modelling frameworks [16–20] to address multi-frequency coupling in                 accuracy and significant reduction in computation time.
+LCC systems. In [16], a multiple switch-function-based HSS model was
+developed, explicitly considering variations in commutation angle and                The rest of the paper is organized as follows. Section 2 presents the
+harmonic interactions. Reference [17] proposed a unified HSS model               topology-based simplified dynamic (TBSD) model of the LCC-HVDC
+applicable to both symmetrical and asymmetrical conditions. By solving           system, including valve-level ideal switch representation and network
+valve-level firing and commutation end times based on topology                   partitioning. Section 3 introduces the structure-stable solving algorithm
+switching theory, the model captured complex harmonic coupling re­               and details various conduction scenarios. Section 4 extends the TBSD
+lationships and system-wide multi-frequency interactions. Electromag­            model to 12-pulse converter systems and presents the corresponding
+netic transient (EMT) models, such as those implemented in PSCAD/                solution framework. Section 5 provides case studies under different
+EMTDC, accurately describe converter behavior during CF events but               operating conditions and fault scenarios to validate the accuracy and
+incur heavy computational cost, especially when applied to large sys­            performance of the proposed model. Section 6 draws the conclusion.
+tems or real-time simulations [21–23]. Therefore, the development of a
+modelling framework that preserves switching topology, accommodates              2. Topology-based simplified dynamic model of LCC
+nonlinear commutation behaviour, and remains computationally effi­
+cient is essential for advancing the analysis, control, and protection of             In nodal-based modelling of LCC-HVDC systems, converter valves are
+modern LCC-HVDC systems.                                                         often represented using a two-value resistance approach—assigning a
+    This paper proposes a topology-based simplified dynamic (TBSD)               small equivalent resistance (Ron) in the on-state and a large resistance
+model of the LCC-HVDC converter, which explicitly accounts for valve-            (Roff) in the off-state. While this method enables accurate description of
+level switching behavior and allows for accurate characterization of             switching behaviour, it also leads to frequent changes in the system
+commutation failure within a reduced-complexity framework. The                   admittance matrix. As the number of switching elements increases with
+model uses ideal switch representation for thyristors and constructs a           system scale, repeated inversion of large, time-varying matrices imposes
+state matrix to determine the converter topology at each time step.              significant computational burden [24].
+Based on the switching state, the electrical network is partitioned into a            To address this challenge, simplification of the converter-side elec­
+main circuit network and a valve-level auxiliary network, which are              trical topology is proposed as a means to enhance computational effi­
+solved sequentially with consistent matrix structures. This approach             ciency. Specifically, the two-value resistance model is replaced with an
+ensures that the topological changes associated with commutation fail­           ideal switch representation, where the valve exhibits zero resistance
+ure are naturally embedded into the solution process. Furthermore, an            when conducting and infinite resistance when turned off. Under this
+adaptive time-step control algorithm is integrated into the solver. The          representation, each switch no longer requires a dedicated network node
+algorithm dynamically adjusts the simulation step size by monitoring             in both states, effectively reducing the overall size and complexity of the
+the rate of change of DC current. It adopts larger steps during steady-          electrical network.
+state conditions and switches to smaller steps under rapid transients                 In addition, the transformer model is simplified by neglecting the
+or faults. This strategy improves computational efficiency while pre­            magnetizing branch, while retaining the leakage reactance, which plays
+serving simulation accuracy.                                                     a dominant role in commutation dynamics. The leakage reactance used
+    The main contributions of this paper are summarized as follows:              in the simplified transformer model is derived from the short-circuit
+                                                                                 impedance percentage provided in typical transformer specifications.
+1) A simplified dynamic model of LCC-HVDC converters is developed                It is calculated as:
+   based on topology analysis that explicitly captures valve switching
+                                                                                         Zsc % Vbase
+                                                                                                2
+                                                                                                       1
+   behavior and commutation failure phenomena.                                   Lr =         ×      ×                                                                (1)
+                                                                                         100 Sbase 2πf
+2) A structure-stable solving algorithm is proposed, which decomposes
+   the network based on valve switching status, maintaining consis­
+                                                                                 where Zsc% is the transformer’s short-circuit impedance, Vbase is the base
+   tency in matrix dimensions and improving computational efficiency.
+                                                                                 voltage, Sbase is the transformer rated power, and f is the system
+
+
+                                                                             2
+Y. He et al.                                                                                 International Journal of Electrical Power and Energy Systems 173 (2025) 111410
+
+
+frequency.                                                                       while the others are off. The positive current direction is defined as the
+    This simplification has minimal impact on accuracy during transient          AC system pointing to the DC system.
+simulations but significantly streamlines network formulation.                       ua, ub, uc represents the instantaneous value of three-phase AC
+    An illustrative example of this approach is shown in Fig. 1, where the       voltage, un represents the reference electric potential of the AC system,
+simplified structure of a six-pulse commutation system is presented.             Lr represents the equivalent inductance of the transformer, Ld represents
+Fig. 1(a) depicts the topological state where valves 1, 5, and 6 are             the inductance of the smoothing reactor, id is the direct current, ud1, ud2
+conducting, while valves 2, 3, and 4 are turned off. The corresponding           represents the positive and negative voltages of the DC output. The loop
+equivalent circuit using ideal switches is shown in Fig. 1(b). Compared          equation can be written as follows:
+to the conventional model, which requires five network nodes for this
+                                                                                       did
+bridge configuration, the proposed simplification reduces this to just           2Lr       + ud1 − ud2 = ua − uc                                                       (2)
+                                                                                       dt
+two nodes. This demonstrates a substantial reduction in network
+dimensionality and highlights the structural efficiency gained through              Since ua and uc are instantaneous values, numerical integration is
+the topology-based modelling strategy.                                           used to evaluate the circuit. Using the trapezoidal rule as an example,
+                                                                                 the discretized form is:
+3. Solving algorithm of TBSD model of LCC-HVDC                                                        Δt di(n) di(n + 1)
+                                                                                 i(n + 1) = i(n) +      (     +         )                                              (3)
+                                                                                                      2 dt         dt
+    The use of ideal switches in modeling converter valves introduces
+challenges in solving electrical networks due to frequent changes in             where i(n) represents the current of the nth simulation step, i(n + 1)
+circuit topology. If traditional solution procedures are followed—such as        represents the current of the (n + 1)th step, and Δt represents the
+those used in conventional EMT frameworks—each unique valve                      simulation step size. Substituting into the loop equation yields:
+switching combination necessitates reconstruction of the network ma­
+                                  

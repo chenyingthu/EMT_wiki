@@ -1,0 +1,29 @@
+## Inaccuracies due to the frequency warping in simulation of electrical systems using combined state–space nodal analysis✩
+A.A. Kida $^{a,b,*}$, A.C.S. Lima $^{c}$, F.A. Moreira $^{b}$, J.R. Martí $^{d}$, J. Tarazona $^{d}$
+
+$^{a}$ Federal Institute of Bahia, Jacobina, BA, Brazil  
+$^{b}$ Federal University of Bahia, Salvador, BA, Brazil  
+$^{c}$ Federal University of Rio de Janeiro, COPPE/UFRJ, Rio de Janeiro, Brazil  
+$^{d}$ University of British Columbia, Vancouver, BC, Canada  
+
+**Keywords:** Transient simulation, Frequency warping, Combined state–space nodal method, Trapezoidal integration rule, Recursive convolutions
+
+**Abstract:** The simulation of electromagnetic transients may suffer from inaccuracies due to a phenomenon known as frequency warping (FW). This paper presents an analysis of the effects of FW on the accuracy of digital simulations, demonstrating that the use of the trapezoidal integration rule (TR), commonly employed in many electromagnetic transients simulators, is the root cause of such inaccuracies. Although FW is considered a major problem in digital signal processing, it is often overlooked when simulating electrical transients. The analysis is carried out in a fourth-order RLC circuit, from which the analytic solution is derived. The circuit is solved using the combined state–space nodal method, considering the TR or recursive convolutions as solution methods for the state–space representation. It was observed that the FW caused a change in the natural oscillation frequency of the system, causing a pulsating behavior of absolute error. The accumulation of errors over time can result in deteriorated solutions when either the time steps are not sufficiently small or the simulation runs for a long enough duration. This paper emphasizes the significance of accounting for the FW phenomenon in digital simulations that rely on integration methods, such as the TR.
+
+* This research was supported in part by Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) under Grant 001, Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq) under grants 404068/2020-0, 400851/2021-0, Fundação de Amparo à Pesquisa do Estado de Minas Gerais (FAPEMIG) under grant APQ-03609-17 and Instituto Nacional de Energia Elétrica (INERGE).
+* Corresponding author at: Federal Institute of Bahia, Jacobina, BA, Brazil.
+E-mail addresses: alexandre.kida@ifba.edu.br (A.A. Kida), acsl@dee.ufrj.br (A.C.S. Lima), moreiraf@ufba.br (F.A. Moreira), jrms@ece.ubc.ca (J.R. Martí), jotarazona@gmail.com (J. Tarazona).
+https://doi.org/10.1016/j.epsr.2023.109657
+Received 11 December 2022; Received in revised form 9 March 2023; Accepted 21 June 2023
+Available online 13 July 2023
+
+## 1. Introduction
+The development of the Electromagnetic Transients (EMT) type of programs started around 50 years ago initially as the EMTP [1] and later as a ‘‘family’’ of programs such as PSCAD, MicroTran, ATP and others. These simulators obtain the solution in the discrete-time domain by transforming differential equations representing the dynamics of the network into algebraic equations using a numerical integration method. However, the basic modeling proposals from [1] are still used in several EMT-type programs, like the trapezoidal integration rule (TR) and the method of characteristics, for the propagation of traveling waves in transmission lines.
+
+The TR is a linear multistep method with A-stability property [2], without risk of numerical instability, although it can lead to numerical bounded oscillations around the expected solution [3]. Numerical integration methods like the TR can introduce a non-linear mapping of the frequency axis, resulting in a type of numerical error known as frequency warping (FW) that can alter the frequency response of the system [4]. This frequency distortion causes a deviation in the observed values of inductances ($L$) and capacitances ($C$) [5]. The FW is often taken into account in speech recognition [6,7], digital filter design [4,8], phase-locked loops analysis [9,10] and oscillator circuit analysis [11,12].
+
+The dynamics of a system can also be modeled using state–space equations (SSE). This is the common approach in programs such as Simulink and Modelica [13]. This approach can also include Frequency Dependent Network Equivalent (FDNE) for wideband modeling of overhead lines [14–16] and underground cables [14,15,17] in phase coordinates. The SSE can be implemented with a pole-residue model [15], which leads to efficient recursive expressions implemented using TR or the so-called recursive convolutions (RC) [18]. More recently, Ref. [19] presented a methodology for combining SSE and nodal or modified nodal analysis.
+
+The analysis of the inaccuracies resulting from FW is relevant due to its potential impact on the system response. FW can occur in resonant phenomena, such as ferroresonance, where changes in the discretized $L$ and $C$ values can alter the natural frequency of oscillation. Another relevant situation is the scenario whenever power electronic converters are considered, such as in wind and photovoltaic generation for example, as the overall system inertia decreases, leading to low and high-frequency oscillations with poor damping [20]. This issue can affect simulation accuracy since the FW is frequency-dependent and the global truncation error (GTE) accumulates over time. Even small errors that occur early in a process can compound over time, leading to significant deviations from the correct solution. The local truncation error (LTE) estimator often overlooks this issue [11]. Furthermore, another impact of the FW is on network equivalents, potentially leading to inaccuracies in the system behavior at certain frequencies.
+
+The investigation of the consequences of the FW in the simulation of electrical transients has been scarce in the specialized literature.

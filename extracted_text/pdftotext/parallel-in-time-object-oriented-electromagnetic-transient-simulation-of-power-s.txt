@@ -1,0 +1,194 @@
+                          Received 29 April 2020; revised 30 June 2020; accepted 25 July 2020. Date of publication 29 July 2020;
+                                                          date of current version 10 August 2020.
+                                                            Digital Object Identifier 10.1109/OAJPE.2020.3012636
+
+
+
+
+                      Parallel-in-Time Object-Oriented
+                   Electromagnetic Transient Simulation
+                             of Power Systems
+                                       TIANSHI CHENG (Graduate Student Member, IEEE),
+                                         TONG DUAN (Graduate Student Member, IEEE),
+                                            AND VENKATA DINAVAHI (Fellow, IEEE)
+                       Department of Electrical and Computer Engineering, University of Alberta, Edmonton, AB T6G 2V4, Canada
+                                               CORRESPONDING AUTHOR: T. CHENG (tcheng1@ualberta.ca)
+                        This work was supported by the Natural Science and Engineering Research Council of Canada (NSERC).
+
+
+
+
+         ABSTRACT        Parallel-in-time methods are emerging to accelerate the solution of time-consuming problems
+         in different research fields. However, the complexity of power system component models brings challenges to
+         realize the parallel-in-time power system electromagnetic transient (EMT) simulation, including the traveling
+         wave transmission lines. This paper proposes a system-level parallel-in-time EMT simulation method based
+         on traditional nodal analysis and the Parareal algorithm. A new interpretation scheme is proposed to solve the
+         transmission line convergence problem. To integrate different kinds of traditional EMT models, a component-
+         based EMT system solver architecture is proposed to address the increasing model complexity. An object-
+         oriented C++ implementation is proposed to realize the parallel-in-time Parareal algorithm based on the
+         proposed architecture. The results on the IEEE-118 test system show 2.30x speed-up compared to the
+         sequential algorithm under the same accuracy with 6 CPU threads, and a high parallel efficiency around 40%.
+         The performance comparison of various IEEE test cases shows that the system’s time-domain characteristics
+         determine the speed-up of Parareal algorithm, and the delays in transmission lines significantly affect the
+         performance of parallel-in-time power system EMT simulations.
+
+         INDEX TERMS         Electromagnetic transient analysis, multi-core processors, object-oriented programming,
+         parallel-in-time, parallel processing, power system simulation.
+
+
+NOMENCLATURE                                                                              in the time domain such as voltage disturbances, surges,
+ DAE      Differential-Algebraic Equation                                                 faults, and other transient behaviors in the power system,
+ DDE      Delay Differential Equation                                                     is essential for modern power system design and analysis
+ EMT      Electromagnetic Transient                                                       [1]. The simulation often requires detailed models with high
+ ODE      Ordinary Differential Equation                                                  computation complexity to accommodate large-scale power
+ F        Fine Solution Operator                                                          systems. The algorithms of mainstream EMT tools are highly
+ G        Coarse Solution Operator                                                        optimized using sparse matrix methods and fine-tuned power
+ Uk       System State Vector of k-th Iteration                                           system models, but the performance is bound by the sequen-
+ W        System of Equations                                                             tial programming based on the central processing unit (CPU).
+ 1t       Coarse-Grid Time-Step                                                           To get through the bottleneck, parallel computing became
+ δt       Fine-Grid Time-Step                                                             a popular option to speed up large-scale EMT simulation.
+ n        n-th Discrete Simulation Time-Step                                              By partitioning a large system into smaller parts, the rate
+ τ        Propagation Delay of Transmission Line                                          of parallelism and the speed of convergence increased for
+                                                                                          nonlinear systems [2]. Both direct and iterative spatial domain
+I. INTRODUCTION                                                                           decomposition were proposed to partition the system. Based
+                                                                                          on these domain decomposition methods, various paral-
+T     HE electromagnetic transient (EMT) program, which
+      simulates the temporary electromagnetic phenomena                                   lel EMT off-line or real-time programs were implemented
+               This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+296                                                                                                                                                             VOLUME 7, 2020
+Cheng et al.: Parallel-in-Time Object-Oriented Electromagnetic Transient Simulation of Power Systems
+
+
+
+on different multi-core CPU, many-core graphic process-                           research, the proposed simulation program has the following
+ing unit (GPU), field programmable gate array (FPGA),                             advantages and features:
+and multiprocessor systems-on-chip (MPSoCs) archi-                                   1) Based on highly abstracted component class, the sys-
+tectures [3]–[5]. However, few works were done on                                        tem architecture is flexible and extensible to integrate
+EMT simulation based on the parallel-in-time domain                                      different kinds of traditional EMT models of power
+decomposition.                                                                           system equipment into the parallel-in-time algorithm
+   Parallel-in-time algorithms have a long history of 50 years                           and maintain all the advantages from nodal analysis;
+[6], which are now widely used in many research fields to                            2) Initial support for delay differential equations. With the
+solve time-consuming simulation problems [7], [8]. In elec-                              modified interpolation strategy, the convergence speed
+trical engineering, parallel-in-time methods to solve power                              increases so that transmission line models are able to
+system dynamic problems were proposed in the 1990s [9].                                  work with the Parareal;
+After 1998, there had been few works on the parallel-in-time                         3) Reusing solver workers and workspace to reduce mem-
+simulation until the recent 5 years. The Parareal algorithm,                             ory usage and decrease the overhead caused by object
+which solves the initial value problems iteratively using two                            allocation in the Parareal iterations.
+ordinary differential equation (ODE) integration methods,                         The paper is organized as follows: Section II describes the
+has become one of the most widely studied parallel-in-time                        basics of the Parareal algorithm and implementations of EMT
+integration methods for its ability to solve both linear and                      models, including the proposed modifications to transmission
+nonlinear problems [6]. In 2016, [10] implemented a sequen-                       lines; Section III introduces the Parareal EMT simulation
+tial program based on Parareal to solve the semi-explicit                         algorithm implemented upon the component-based circuit
+differential-algebraic equations (DAEs) system of power                           solver architecture; Section IV presents the case study and
+dynamic simulation problem and analyses the efficiency                            efficiency analysis; Section V is the conclusion.
+on theory. Reference [11] used the multi-grid reduction in
+time (MGRIT) method, which is a general form of Parareal,                          II. PARALLEL-IN-TIME MODELING
+to solve a small 2-generator system in the full-implicit DAE                      There are different kinds of iterative and direct parallel-in-
+form. Reference [12] utilized Parareal to solve partial differ-                   time methods, but only some of the iterative methods can
+ential equations of eddy current problems for finite element                      solve nonlinear ODE problems. Parareal algorithm, which
+analysis (FEA). However, for EMT simulation, only a few                           can be derived as a multi-grid method to solve ODE problems.
+research works about the parallel-in-time simulation of a                         However, it can be proved that the Parareal algorithm is not
+single specific EMT model can be found. Reference [13]                            limited to the solution of ODE problems, and thus is suitable
+proposed a parallel-in-time algorithm that solves a simple                        for parallel-in-time EMT simulation.
+average model of modular multilevel converter based on the
+Parareal iteration. The lack of research in EMT simulation
+                                                                                   A. PARAREAL ALGORITHM
+is mainly due to: (1) Traditional time-domain simulation of
+                                                                                  This algorithm decomposes the simulation time [t0 , tend ] into
+electric circuits is based on nodal-analysis, which often yields
+                                                                                  N smaller sub intervals Ik = [Tj−1 , Tj ], where start-time
+a DAE with an index equal to or greater than one [14].
+                                                                                  T0 = t0 , and end-time TN = tend . At every time point Tj ,
+The implicit DAE system can only be solved by backward
+                                                                                  the system has a unique solution for its state variables U j
+differentiation formulas (BDF), and many kinds of ODE-only
+                                                                                  produced by a fine solution operator F(Tj , Tj−1 , U j−1 ). So,
+parallel-in-time methods cannot be used. Although there
+                                                                                  for N time intervals, following nonlinear equations can be
+are some works can convert DAE to state-space forms
+                                                                                  established:
+[15], it dramatically increases the matrix size compared to
+                                                                                                 U 1 − F T1 , T0 , U 0 ) = 0,
+                                                                                               
+nodal analysis; (2) Although Parareal can solve nonlinear                                      
+                                                                                               
+DAEs according to aforementioned research works, tradi-                                        U 2 − F T2 , T1 , U 1 ) = 0,
+                                                                                               
+                                                                                               
+tional EMT model implementations often have a fixed-step                             W (U) := .                                               (1)
+                                                                                                 ..
+assumption, which needs adaptions to be used in Parareal;
+                                                                                               
+                                                                                               
+                                                                                               
+                                                                                                  U N −1 − F(TN −1 , TN −2 , U N −2 ) = 0,
+                                                                                               
+(3) In power systems, the most important components are
+                                                                                               
+transmission lines. In EMT simulation they are modeled with
+traveling wave models like the Bergeron line model, which                         where U 0 is determined as the known initial value.
+brings delay differential equations (DDEs) to the system [16].                      The system (1) can be solved by Newton’s method. For
+The dependency of past states creates additional convergence                      every U j ∈ U = {U 1 , U 2 , . . . , U n−1 }, only two entries are
+problems. No DDE was considered by previous parallel-in-                          nonzero. The individual update formula for each U j is given
+time research works.                                                              by
+   To address the aforementioned issues, this paper proposes a                      (k)                   (k−1) 
+                                                                                  U j = F Tj , Tj−1 , U j−1
+component-based system-level parallel-in-time power system
+                                                                                            ∂F                 (k−1)     (k)      (k−1) 
+EMT simulation algorithm based on the Parareal, which is                                 +       Tj , Tj−1 , U j−1     U j−1 − U j−1             (2)
+implemented on the multi-core CPU with object-oriented                                      ∂U
+C++ programming. Compared to other parallel-in-time                               where k represents the iteration number.
+
+VOLUME 7, 2020                                                                                                                                  297
+                                                                        stops changing, the fine-grid solutions are equal to the ones
+                                                                        sequentially computed by the fine operator.
+
+                                                                        B. COMPONENTS MODELS
+                                                                        Normally, the nodal equations of a circuit have a DAE-index
+                                                                        greater than zero [14], which means only implicit ODE meth-
+                                                                        ods can solve the equations. To solve the the circuit with the
+                                                                        nodal analysis method, the general form of linear circuit DAE
+                                                                        discretized by Trapezoidal Rule can be reinterpreted as
+
+                                                                                                            n+1 ,
+                                                                                           Y vn+1 = sn+1 − ihist                     (6)
+                                                                                              n+1 = g(xn , vn ),
+                                                                                             ihist                                   (7)
+                                                                                                       n+1 , vn+1 ),
+                                                                                             xn+1 = h(ihist                          (8)
+                                                                        where Y is the admittance matrix, v is node voltage vector;
+                                                                        sn+1 is the source injection; ihist
+                                                                                                        n+1 is the equivalent current
+                                                                        injections determined by (7); x is historical terms vector for
+FIGURE 1. Progression of steps in the Parareal algorithm:
+                 (0)                 (0)
+                                                                        components. The x and v form up the global system state vec-
+(a) Initialize U j which equals to Gj ; (b) Produce fine-grid           tor U = {v, x}. The nonlinear circuit has a varying Y matrix
+                            (k)      (k)    (k)         (k−1)
+solution Fjk ; (c) Refine U j with U j = Gj + Fjk − Gj        .         and additional current injections when the Newton-Raphson
+                                                                        method is applied to linearize it at each time-step.
+                                                                           The equations are formed from different components in
+  The ∂∂U
+        F
+          item in (2) can be approximated by                            the power system. Most components in EMT simulation are
+                                                                        treated as an equivalent conductance in parallel with a current
+∂F                (k−1)                                                 source, which is convenient for nodal analysis. However,
+   (Tj , Tj−1 , U j−1 )
+∂U                                                                      the behavior of these components differs very much from
+                             (k)                     (k−1)
+             F(Tj , Tj−1 , U j−1 ) − F(Tj , Tj−1 , U j−1 )              each other. It is more convenient to integrate their states on
+          ≈                   (k)     (k−1)
+                                                           .      (3)   their local space, and the only common states they share are
+                           U j−1 − U j−1                                the node voltages.
+   Notice that (3) is differentiated by index k not j since it is
+the derivative of U. To parallelize the computation, this item          1) INDUCTOR/CAPACITOR MODELS
+is approximated by a cheaper method G in sequential, which              These components can be discretized by Trapezoidal method
+can produce a close approximation to F, giving                          in the general form [18]:
+                           (k)                     (k)
+           F(Tj , Tj−1 , U j−1 ) ≈ G(Tj , Tj−1 , U j−1 ),                                  in+1 = Geq vn+1 + ihist
+                                                                                                              n+1
+                         (k−1)                     (k−1)
+         F(Tj , Tj−1 , U j−1 ) ≈ G(Tj , Tj−1 , U j−1 ).           (4)                       n+1 = in + Geq vn .
+                                                                                           ihist                                     (9)
+                                                                        where
+Substituting 

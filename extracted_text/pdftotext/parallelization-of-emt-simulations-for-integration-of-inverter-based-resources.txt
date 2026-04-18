@@ -1,0 +1,220 @@
+                                                         Electric Power Systems Research 223 (2023) 109641
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                       journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Parallelization of EMT simulations for integration of
+inverter-based resources
+M. Ouafi a, J. Mahseredjian b, J. Peralta c, H. Gras d, S. Dennetière a, *, B. Bruned a
+a
+  RTE, Jonage, France
+b
+  Polytechnique Montréal
+c
+  Chilean ISO
+d
+  PGSTech, Montreal
+
+
+
+
+A R T I C L E I N F O                                 A B S T R A C T
+
+Keywords:                                             This paper presents a co-simulation tool to link multiple instances of an electromagnetic transient (EMT)
+Electromagnetic Transient                             simulation tool for parallel and fast computations. The tool exploits the propagation delays of transmission lines
+Co-simulation                                         and cables to create network decoupling into several smaller sub-networks. These sub-networks are solved in
+Parallel computations
+                                                      parallel without approximations. A multi-rate option is also incorporated, in which the sub-networks can use
+multi-rate
+FMI
+                                                      different numerical integration time-steps. The Functional Mock-up Interface (FMI) is used for creating the co-
+IBR                                                   simulation interface between multiple instances according to a master-slave communication scheme and the
+                                                      data sharing method is implemented using low-level synchronization primitives called semaphores. The in­
+                                                      terfaces between each subnetwork are automatically initialized for time-domain simulations using load-flow
+                                                      results.
+
+
+
+
+I. Introduction                                                                        approach presented in [4] uses TLM delays for parallelizing network
+                                                                                       equations only, while maintaining control system solutions in sequential
+    The study of modern large electrical networks requires the modeling                mode. A co-simulation type approach is applied in [5] for exchanging
+of massive numbers of inverter-based resources (IBRs), such as wind                    network models through the cloud for simulating renewable energy
+turbines and photovoltaics. The focus of this paper is on the detailed                 sources.
+circuit-based electromagnetic transient (EMT) modeling and simulation                      It is also possible to cut networks at arbitrary locations when TLMs
+of power grids with renewable energy sources. Such accurate simula­                    are not available, by using the compensation method [6,7] or state-space
+tions are computationally intensive and require research for accelerated               nodal analysis [8]. Such decoupling requires code changes in related
+solutions with maintained accuracy. The reliability of simulation results              EMT solvers, which is not the purpose of this paper.
+is of paramount importance, since simulation tools are used in various                     In this paper, the purpose is to apply and test TLM based decoupling
+analysis stages required for integrating renewable energy sources. These               for solving in parallel complete subnetworks using the Functional Mock-
+stages have impact on construction costs, operation, reliability and                   up Interface (FMI) standard [9]. The target is to accelerate the compu­
+maintenance of power grids.                                                            tations of clusters (subnetworks) of wind and photovoltaic parks inte­
+    An important challenge with EMT simulations is the computation                     grated into large scale power grids. The subnetworks can be executed on
+time with power electronics components used in renewable energy                        separate cores with their network and control system equations. The
+sources. It constitutes a barrier to the massive establishment of EMT-                 co-simulation approach is applied to execute the computational tasks of
+type simulation tools in the power system industry. Several solutions                  subnetworks in parallel. In the co-simulation approach each EMT-type
+have been proposed in the past for fast parallel computations. Well                    software instance executes its subnetwork on a separate core and
+established real-time and off-line applications [1–4] are capable to                   shares history information at each time-point, through the decoupling
+simulate in parallel, using the most common decoupling method, which                   TLMs. One or more decoupling TLMs can be used. The FMI standard is
+is based on the exploitation of natural propagation delays in trans­                   implemented for establishing the co-simulation and the communication
+mission line (or cable) models (TLMs). The matrix solver-based                         process is developed with low-level synchronization primitives, called
+
+
+    * Corresponding author
+      E-mail address: sebastien.dennetiere@rte-international.com (S. Dennetière).
+
+https://doi.org/10.1016/j.epsr.2023.109641
+Received 10 December 2022; Received in revised form 29 March 2023; Accepted 21 June 2023
+Available online 5 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+M. Ouafi et al.                                                                                                  Electric Power Systems Research 223 (2023) 109641
+
+
+semaphores.
+    The presented approach is implemented in EMTP® [10], but in fact it                                Master                 Master
+can be also directly implemented in any other EMT-type simulation tool.                                Device                 Device
+Its main advantage resides in the fact that it does not require any
+modification in the actual EMT-type software code by using only DLL
+interfacing. Which is a distinctive contribution against other existing                                Master                 Master
+solutions.                                                                                             Link                   Link
+    This work is based on initial research conducted in [11–13], by
+adding several improvements in actual implementation. The improve­
+ments include a new double-buffer (second co-simulation bus) scheme                                    Buﬀer 1               Buﬀer 1
+that guarantees data integrity during communications, simplified code
+                                                                                                       Buﬀer 2               Buﬀer 2
+structure for better efficiency, and a new multi-rate capability. Various
+other coding improvements have been used to accelerate computations
+and to generalize the proposed scheme. The complete FMI imple­
+                                                                                                        Slave                  Slave
+mentation has been automated to allow the automatic parallelization of
+                                                                                                        Link                   Link
+selected subnetworks.
+    It is the first time that the proposed (FMI based) parallelization
+approach is tested on such large network cases with massive integration
+of IBRs. There are several distinctive features in this paper. Large net­
+                                                                                                       Slave                  Slave
+works with several aggregated wind and solar parks are simulated. A
+                                                                                                       Device                 Device
+detailed wind park with manufacturer model DLLs is also simulated and
+demonstrates new capabilities for such studies. The existing Chilian grid
+                                                                                                    Subnetwork             Subnetwork
+with massive integration of IBRs is simulated with the proposed
+approach and demonstrates new benchmarking. All simulations are
+                                                                                Fig. 1. Co-simulation with two sub-networks (Slaves), in parallel with
+automatically started and initialized from a load-flow solution. An             the Master.
+iterative solver is used with parallelization for accurate computations
+with nonlinear models, such as IBR converter IGBTs. The applied IBR
+                                                                                3. Two Slave Link DLLs are used to communicate data on the two
+models include automatic initialization from load-flow solution, which
+                                                                                   subnetwork sides.
+significantly reduces computing times. Initialization is a key factor for
+                                                                                4. Two Slave Device DLLs are used for transmission line right-side
+achieving fast computations by minimizing simulation time during
+                                                                                   circuits.
+initialization.
+    The presented demonstrations deliver new benchmarks and
+                                                                                    DLL templates are used to automatically generate all DLLs without
+contribute to knowledge on FMI based co-simulation performance for
+                                                                                user intervention. The programmed FMI packaging for starting separate
+practical cases with IBRs.
+                                                                                software instances is also automatic. The implementation of Fig. 1 is
+    This paper starts by presenting the co-simulation (parallelization)
+                                                                                software agnostic, which means that it can be easily adapted to other
+approach in Section II. It is then followed by the presentation of test
+                                                                                EMT-type software by changing the software calling procedures. In the
+results in Section III.
+                                                                                current version the subnetworks are selected manually from the
+                                                                                graphical user interface. Since the target for this research is the fast
+II. Parallel co-simulation using FMI and semaphores
+                                                                                simulation of wind and photovoltaic parks (renewable energy sources,
+                                                                                IBRs), it is also possible to automatically send all such tagged models
+    This paper is based on a parallel co-simulation environment using the
+                                                                                onto separate processors. Each model is contained in a subnetwork
+Functional Mock-up Interface (FMI) standard [9]. In this standard, it is
+                                                                                (Slave subnetwork) with its own electrical circuits and control system
+possible to interface two or more simulation tools in a co-simulation
+                                                                                blocks, and interfaced with the main grid (Master) through a delay-
+environment using a master-slave communication method. This paper
+                                                                                based TLM. Such TLMs are available by default in typical power sys­
+shows that in an EMT-type tool it is possible to implement such
+                                                                                tems, but if there is no line (or cable), then it is possible to automatically
+co-simulation using external DLLs (dynamic link libraries) and without
+                                                                                insert a stubline (single time-step delayed artificial line). In most cases,
+any intervention into the software engine (code). Two or more EMT-type
+                                                                                such a stubline does not cause significant errors.
+software instances can communicate to solve large and decoupled
+                                                                                    The communication scheme with a subnetwork (Slave) is presented
+networks.
+                                                                                in Fig. 2. The co-simulation method is implemented with low-level
+    The new global architecture used in this paper is presented in Fig. 1
+                                                                                synchronization primitives called semaphores [11–13]. They are used
+for the parallel solution of two subnetworks separated by one or more
+                                                                                to solve concurrency problems where data is shared between multiple
+delay-based TLMs. This paper uses an asynchronous communication
+                                                                                threads or processes during read/write operations on shared variables.
+scheme only. The delay-based TLMs create a bridge with subnetworks
+                                                                                Synchronization with semaphores is achieved with predefined functions
+using left hand-side and right hand-side decoupled circuits. Each TLM
+                                                                                Release and Wait, which can be used by any process or thread. Both
+has left and right Norton equivalents in which the current sources
+                                                                                master and slave instances manage one semaphore.
+represent delay-based history terms.
+                                                                                    At t=0 the computations can start from the load-flow (steady-state)
+    There is a total of 8 DLLs for the sample case of two subnetworks
+                                                                                solution. The multiphase unbalanced load-flow solution is performed on
+(blue and green blocks):
+                                                                                the complete system without separation. Then it is automatically dis­
+                                                                                patched to the Master (main grid) and all subnetworks for automatic
+1. Two Master Device DLLs, one for each subnetwork, contain the
+                                                                                initialization. Automatic initialization is applied also in the IBRs with
+   transmission line(s) left-side circuits.
+                                                                                their control systems.
+2. Two Master Link DLLs are used to communicate data with sema­
+                                                                                    The master completes its current time-point and then passively waits
+   phores to the two subnetwork instances. In simple words it is related
+                                                                                for the Slave semaphore to be released. When the Slave instance com­
+   to sending data through memory buffers. Two buffers are used in this
+                                                                                pletes its current time-point, it releases its semaphore. Data is exchanged
+   paper for avoiding data collision problems.
+                                                                                through shared memory buffers (co-simulation buses). Asynchronous
+
+
+                                                                            2
+M. Ouafi et al.                                                                                                   Electric Power Systems Research 223 (2023) 109641
+
+
+                                                                                   A. Test case Network-1
+
+                                                                                      The first test case Network-1 shown in Fig. 3 is based on a realistic
+                                                                                   power system case (see [14]) for studying transients with integrated
+                                                                                   wind farms. Such a setup is also suitable for performing electrome­
+                                                                                   chanical transient analysis in addition to electromagnetic transients. The
+                                                                                   network contents are:
+
+                                                                                   1. Aggregated wind parks (WPs): 2 full-converter (FC) and 2 DFIG. Each
+                                                                                      wind park is of 300 MVA. One of them (see (inside the red rectangle
+                                                                                      in Fig. 3), named WP_DFIG1, is modeled with a detailed converter
+                                                                                      including nonlinear IGBTs and requires a time-step Δt = 10 μs. The
+                                                                                      others have an average-value model converter and can be accurately
+                                                                                      simulated with Δt = 50 μs.
+                                                                                   2. Transmission lines: 58 lines using the constant parameter model.
+                                                                                   3. Synchronous generators: 25 with governor and exciter controls, with
+                                                                                      saturation date when available.
+                                                                                   4. Transformers: 37, three-phase, with nonlinear magnetization
+           Fig. 2. Communication scheme between Master and Slaves                     branches.
+                                                                                   5. Loads: 105
+communication requires double buffering (in this paper) in order to                6. Total number of nodes: 791. The size of the solved modified-
+guarantee data integrity. By alternating writing and reading in the                   augmented-nodal analysis (MANA) matrix is 1244 × 1244.
+buffers at each time-point, it is ensured that data is indeed transmitted          7. Control diagram blocks: 8016.
+before being overwritten by a new write. The buffered information is on
+TLM history.
+    Other methods are available to lock memory access and prevent two
+instances from writing to the same memory location simultaneously, but
+this means adding a s

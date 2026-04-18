@@ -1,0 +1,215 @@
+                                                       Electric Power Systems Research 211 (2022) 108304
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                     journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Electromagnetic modeling of inductors in EMT-type software by three
+circuit-based methods
+Sadegh Rahimi Pordanjani a, *, Jean Mahseredjian a, Mohammed Naïdjate b,
+Nicolas Bracikowski b, Mircea Fratila c, Afshin Rezaei-Zare d
+a
+  Polytechnique Montréal, Montreal, Canada
+b
+  University of Nantes, Nantes, France
+c
+  EDF-R&D, ERMES Department, Paris, France
+d
+  York University, Toronto, Canada
+
+
+
+
+A R T I C L E I N F O                               A B S T R A C T
+
+Keywords:                                           Three distributed circuit-based approaches based on Hopkinson analogy, Buntenbach analogy and duality
+Electromagnetic transients                          principle are proposed in this paper to provide a detailed electromagnetic model of an inductor. The proposed
+Inductor modeling                                   approaches can provide several important aspects of finite element method (FEM), such as detailed geometrical
+Magnetic circuits
+                                                    representation and incorporation of magnetic saturation. In comparison to FEM, which has numerous obstacles
+Duality
+                                                    in studying a magnetic device in a large network, the proposed approaches can be implemented in electro­
+                                                    magnetic transient (EMT)-type software and thus can simulate the magnetic devices in a large network. The three
+                                                    circuit-based methods are first compared to each other, and then a 2-D finite-element method is used to validate
+                                                    them.
+
+
+
+
+1. Introduction                                                                     components on the magnetic device, which is not possible with direct
+                                                                                    methods. However, since indirect methods require numerous iterations
+    Magnetic devices including inductors, transformers, and electric                between the field and circuit equations, they take a long time to compute
+machines are key components in the power system. However, they are                  and also have numerical delays. Both coupling-based systems can be
+challenging to model due to the nonlinear behavior of magnetic core                 extremely accurate, but they have significant drawbacks when it comes
+materials and the complex geometries. These devices are usually                     to implementation, such as long computation times and a variety of
+modeled using circuit simulators and field solvers.                                 numerical problems. Additionally, when studying the magnetic devices
+    FEM [1] can represent magnetic devices in great detail, taking into             in power systems, analysts prefer circuit-based models that are
+account nonlinear behavior as well as geometrical complexities. How­                compatible with circuit simulation software like EMT-type tools. How­
+ever, because they lack power system components like transmission                   ever, as discussed below, existing circuit-based techniques are not as
+lines and circuit breakers, they can’t be used to examine a magnetic                accurate as FEM.
+device in a large network. To deal with this challenge, field solvers and               Circuit simulation software currently uses lumped models, which
+circuit-based solutions can be coupled. Two common ways are used to                 have a limited number of circuit components to account for the flux
+provide the coupling: direct and indirect [2]. The direct method solves             paths of magnetic devices. These models have the advantage of being
+both the field and circuit equations simultaneously (as an example, see             computationally efficient, and they are sufficiently accurate for some
+[3]). This method, however, is not appropriate for large power networks             analyses when full representation of magnetic flux paths and internal
+because it lacks sufficient power component models. The indirect                    behaviors are not required. In these models, the equivalent components
+technique solves field and circuit equations separately while keeping               corresponding to the magnetic flux paths are estimated using analytical
+them connected via coupling coefficients (see [4] as an example).                   formulas by considering design data as input. These analytical formulas
+Because indirect methods use circuit simulators, they are able to                   are nearly accurate in representing flux paths in the core, but not in
+consider the influence of large networks with various types of power                representing the flux paths in the air, which are difficult to define. Thus,
+
+
+
+    * Corresponding author.
+      E-mail address: sadegh.rahimi-pordanjani@polymtl.ca (S.R. Pordanjani).
+
+https://doi.org/10.1016/j.epsr.2022.108304
+Received 30 September 2021; Received in revised form 17 April 2022; Accepted 2 July 2022
+Available online 11 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+S.R. Pordanjani et al.                                                                                               Electric Power Systems Research 211 (2022) 108304
+
+
+they are incapable of accurately accounting for leakage fluxes between             accurately represents leakage inductances (short-circuit impedances)
+winding turns or fluxes that flow outside the core during saturation or            and saturation. However, in order to make the model capable of rep­
+fringing fluxes in cases with air gaps. Two general approaches have been           resenting a wide range of frequency transients, including high-frequency
+used in the literature to increase the accuracy in portraying flux paths.          ones, additional parameters such as eddy current losses, iron core losses,
+First, some studies have improved the analytical formulas by estimating            and capacitive coupling can be incorporated into the model, which will
+the overall picture of flux paths and even defining new elements for               be discussed in more detail in later publications.
+more detailed consideration of fluxes. For example, in [5], the magnetic              In this paper, we present a general methodology that, starting from
+equivalent circuit (MEC) has been improved to account for fringing and             the geometry mesh, allows obtaining the equivalent circuits for all three
+leakage fluxes. While these studies have improved accuracy, they are not           HBD-circuits. An inductor with and without air-gap is used as case of
+general and are based on assumptions that are only valid in specific               study. This paper explains how to build all circuits using already
+situations. Second, in some magnetic device modeling approaches, test              available elements in EMTP. The obtained results are compared to each
+data is used to estimate the components. Topological transformer                   other, and they are validated with a FEM solver [16].
+models [6, 7] are one type of such models, in which the leakage in­
+ductances are estimated using short-circuit test data. However, access­            2. Methodology
+ing test data for devices with multiple windings is difficult and such data
+is not usable for specific studies, such as internal winding faults.                   In this section, a single-phase shell-type inductor is investigated. It is
+    The lumped circuit-based models derive the equivalent circuits based           supposed that the inductor is connected to a voltage source Uin through a
+on three different approaches: Hopkinson analogy [8], Buntenbach                   resistance Rin . The schematic of the studied inductor is presented in
+analogy [9], and the duality principle [10] named hereinafter,                     Fig. 1. The inductor has been subdivided into 18 identical cells where
+HBD-circuits. The Hopkinson analogy, often known as the                            each cell is represented using an equivalent circuit. In this study, the flux
+reluctance-resistance analogy, is the oldest and most widely used                  paths were only assumed in the horizontal and vertical axes.
+approach. However, in some cases, this method has limitations, and the
+Buntenbach analogy and duality principle are favored. For example, the
+                                                                                   2.1. Electromagnetic modeling by Hopkinson analogy
+duality principle, which employs more standard electric elements to
+implement magnetic devices, is the method of choice in topological
+                                                                                       The oldest circuit-based approach is the Hopkinson analogy. In this
+transformer models [6, 7] used in EMT-type software. Also, the Bun­
+                                                                                   circuit analogy, reluctances, magnetomotive forces, and magnetic fluxes
+tenbach analogy, or permeance-capacitance analogy, has lately been
+                                                                                   are represented by resistors, controlled voltage sources, and currents,
+utilized to model magnetic devices in power electronic circuits [11, 12].
+                                                                                   respectively [15, 16]. As can be seen in Fig. 1, the circuits of the Hop­
+    This paper proposes a distributed form of circuit-based methods for
+                                                                                   kinson cells are composed of reluctances and magnetomotive force
+detailed modeling of magnetic devices. Our approach uses meshing in a
+                                                                                   sources. In this circuit the flux paths are represented by the reluctances
+way that it discretizes space into electric/magnetic circuits. This paper is
+                                                                                   which are derived by analytical formula. To derive the values of mag­
+trying to bridge the gap between the circuit-based techniques and FEM.
+                                                                                   netomotive force sources, Ampere’s law and the boundary conditions
+In fact, the proposed models, like FEM, can give a full geometrical
+                                                                                   are applied. The Neumann boundary condition [17], is imposed at the
+representation of magnetic flux paths, including leakage and fringing
+                                                                                   external sides of the inductor. The Neumann boundary condition can be
+flux paths, as well as modeling non-homogeneous materials with mag­
+                                                                                   fulfilled by eliminating the reluctances perpendicular to the exterior
+netic saturation. Because each HBD-circuit has its own set of advantages
+                                                                                   sides of the inductor. In Fig. 1, dashed blue reluctances are used to show
+and disadvantages, the proposed distributed method is developed using
+                                                                                   eliminated reluctances. To apply Ampere’s law, the values of magne­
+all three approaches. In [13], a distributed model based on the Hop­
+                                                                                   tomotive force sources are chosen in a way that the sum of them in a
+kinson analogy was proposed to model transformers. The approach
+                                                                                   closed loop should be equal with the ampere-turn passing through it (the
+proposed in [13] enables the distribution of magnetomotive and elec­
+                                                                                   total enclosed current for the loop). For instance, for the green loop
+tromotive force sources, which results in the distribution of magnetic
+                                                                                   shown in Fig. 1(a), which encloses three turns of the winding, the sum of
+flux across the device and also the distribution of voltage along the
+                                                                                   the magnetomotive forces is three times the current, which is equal to
+windings. They accomplished this by adding two additional virtual
+                                                                                   the ampere-turns passing through it. To take the coupling between the
+circuits, which necessitated the definition of new elements in EMT-type
+                                                                                   electric circuit and the magnetic circuit into account, Faraday’s law
+software. The addition of new elements to EMT-type software and the
+                                                                                   should be applied in distributed form. Fig. 1(b) demonstrates the sche­
+complexity of the model proposed in [13] are two obstacles that may
+                                                                                   matic diagram for illustrating the total magnetic fluxes enclosed by each
+discourage power system analysts from utilizing them. However, the
+                                                                                   turn. From Fig. 1(a) and (b), and based on Faraday’s law, the voltages
+approach described in our study does not need the establishment of
+                                                                                   induced in each turn are given by
+virtual circuits or the definition of new elements in EMT-type software
+                                                                                                                                 ⎡ ⎤
+tools, and can be implemented using already available elements. Addi­                                                              ϕ1
+tionally, in [13], the distributed model was implemented solely using              ⎡      ⎤        ⎡
+                                                                                                                                 ⎢ ⎥
+                                                                                                                                ⎤⎢ ϕ2 ⎥
+the Hopkinson analogy, not the Buntenbach analogy or duality princi­                 EAB             0 0 0 0 0 1 1 0 ⎢           ⎢ ϕ3 ⎥
+                                                                                                                                       ⎥
+                                                                                   ⎢ ECD ⎥       d ⎢ 0 1 1 0 0 0 0 0 ⎥⎢ ϕ4 ⎥
+ple; and in order to derive the Buntenbach and duality models from [13],           ⎢      ⎥        ⎢                            ⎥⎢ ⎥                       (1)
+                                                                                   ⎣ EEF ⎦ = − dt ⎣ 0 0 0 0 1 1 1 1 ⎦⎢ ϕ5 ⎥
+new virtual circuits and elements must be defined, which not only                                                                ⎢ ⎥
+                                                                                                                                 ⎢     ⎥
+                                                                                     EGH             1 1 1 1 0 0 0 0 ⎢ ϕ6 ⎥
+complicates the models, but also contradicts the reason for the emer­                                                            ⎣ϕ ⎦
+gence of those rules. For instance, as explained in this paper, power
+                                                                                                                                     7
+                                                                                                                                   ϕ8
+system analysts chose duality because it allowed for the coupling of the
+magnetic and electric components of the model using ideal transformers             where EAB , ECD , EEF and EGH are the induced voltages in the turns AB, CD,
+without the need for additional complex elements. In this paper, it is             EF, and GH, respectively. Moreover ϕ1 , ϕ2 , ϕ3 ,…, ϕ8 are the magnetic
+demonstrated that all three of the proposed models can be implemented              fluxes for the magnetomotive forces displayed in Fig. 1(a). The total
+in EMT-type software using already available elements, similar to the              induced voltage Etot is found from the sum of loop voltages
+work done in [14] where the lumped HBD-circuits were implemented in
+EMTP [15]. This allows to study the internal behavior of a magnetic                Etot = −
+                                                                                              d
+                                                                                                (ϕ + 2ϕ2 + 2ϕ3 + ϕ4 + ϕ5 + 2ϕ6 + 2ϕ7 + ϕ8 )                       (2)
+device in a large network. Finally, the approach presented in this paper                      dt 1
+can be used to model the majority of low- and mid-frequency transients                 Finally, by considering the relations and laws mentioned above, the
+associated with magnetic devices (transformers and inductors), as it               interface between the magnetic and electric circuits is derived as
+
+                                                                               2
+S.R. Pordanjani et al.                                                                                                 Electric Power Systems Research 211 (2022) 108304
+
+
+
+
+                   Fig. 1. (a) Distributed magnetic circuit with magnetomotive forces, (b) schematic of inductor winding turns and external circuit.
+
+
+illustrated in Fig. 2. The magnetic and electric circuits have been shown
+in black and blue, respectively. It is obvious that the sum of electro­
+motive force sources distributed in the electric circuit is equal to Etot . The
+resistance Rtot is equal to the sum of winding resistance Rw and external
+circuit resistance Rin . The current-controlled voltage sources have been
+applied to provide coupling between the magnetic and electric circuits.
+Each pair of current-controlled voltage sources in the equivalent circuit
+of Fig. 2, is a specific type of mutator element: Type-2 L-R mutator [18].
+The schematic of the Type-2 L-R mutator is illustrated in Fig. 3(a). Two                         Fig. 3. (a) Type-2 L-R mutator, (b) Type-1 L-C mutator.
+coupled series R-L branches can be used to implement this type of
+mutator in EMT-type programs [14]. The values of self and mutual re­
+sistances and inductances associated with the two branches, are speci­
+fied as follows:
+
+
+
+
+                                                    Fig. 2. Distributed inductor model using Hopkinson analogy.
+
+                                                                                   3
+S.R. Pordanjani et al.                                                                                                   Electric Power Systems Research 211 (2022) 108304
+
+[        ]       [           ][    ]   [     ]  [ ]
+    v1               0   0  

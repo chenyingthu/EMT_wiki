@@ -1,0 +1,179 @@
+                                                                Electric Power Systems Research 201 (2021) 107566
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Analytical model building for Type-3 wind farm subsynchronous
+oscillation analysis
+Lingling Fan *, 1, Zhixin Miao 1
+Dept. of Electrical Engineering, University of South Florida, Tampa FL 33620
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   Many real-world scenarios confirmed insights developed based on the dq-frame nonlinear analytical model for
+Type-3 wind                                                 doubly-fed induction generator (DFIG)-based type-3 wind subsynchronous resonance (SSR) study by the authors
+Phase-locked-loop                                           in 2010. A few real-world observations do not align with the simulation results from that model. In real-world
+Subsynchronous resonances
+                                                            scenarios, when a type-3 wind farm is radially connected to a series compensated line, even at a low compen­
+Dynamic modeling
+                                                            sation level, SSR occurs. This phenomenon has not been replicated by the nonlinear analytical model. In this
+                                                            paper, we revisited the analytical model by including phase-locked-loop (PLL). A modular modeling approach is
+                                                            presented in this paper. The inputs and outputs of each subsystem and the interconnections among subsystems
+                                                            are identified first. The overall system is then developed with all blocks integrated. The analytical model is
+                                                            capable of dealing with various transmission topologies, providing both large-signal time-domain simulation
+                                                            results and small-signal analysis. The new analytical model can successfully replicate the aforementioned phe­
+                                                            nomena and provide insights of type-3 wind SSR phenomena. The accompanying software package will be posted
+                                                            in the public domain.
+
+
+                                                                                            interaction is not the issue. [2] has modeled the shaft system as a
+                                                                                            two-mass system. Based on the particular parameters of wind turbines,
+1. Introduction                                                                             the torsional modes have low frequencies, e.g., 1.8 Hz [5]. To have
+                                                                                            torsional interactions, the LC resonant frequency in the electric network
+1.1. Type-3 wind farm SSR events and lessons learnt                                         should be more than 50 Hz for a 60 Hz ac system, which is not realistic.
+                                                                                            In most cases, every line has 50% series compensation level. The net
+    The first type-3 wind farm SSR occurred in 2007 in Minnesota. This                      compensation level for an equivalent circuit is much less than 50%. In
+type of events occurred later in Texas (2009), China (2012-2013), and                       real-world, wind farm SSR frequencies in currents are observed as 9-13
+Texas (2017). The phenomena have caused great interest to the industry                      Hz (2007, Minnesota), 20-30 Hz (2009, Texas), 6-8 Hz (2012-2013,
+and an IEE PES task force wind SSO has been formed. The task force                          China), and 20-30 Hz (2017, Texas).
+report on real-world events and industry screening practice was pub­
+lished in PES resource center in July 2020 [1].
+    The analytical state-space model developed in 2010 for type-3 wind                      1.2. DQ-frame analytical modeling approach versus the other modeling
+connected to a series compensated transmission line [2] has successfully                    approaches
+identified the following facts: (i) SSR is not related to torsional inter­
+action, rather related to doubly fed induction generators (DFIGs)’ elec­                        The nonlinear analytical state-space model in [2] is built in
+tromagnetic circuits and converter controls; (ii) operating at lower wind                   dq-frames and all state variables assume constant values at steady state.
+speed may make SSR worse; and (iii) reducing the gain of rotor side                         This feature makes obtaining small-signal models at various operating
+converter (RSC) current control is better for SSR stability. The above                      conditions through numerical perturbation possible.
+three points have been validated by real-world type-3 wind SSR (in                              The other most popular modeling approaches are (i) nonlinear
+north China) event data analysis [3,4].                                                     modeling based on stationary reference frame and (ii) frequency-domain
+    It is recognized first in [2] and also by the industry that torsional                   or Laplace-domain impedance modeling approach. In the first category,
+
+
+ * Corresponding author.
+   E-mail addresses: linglingfan@usf.edu (L. Fan), zmiao@usf.edu (Z. Miao).
+ 1
+   Senior Member, IEEE
+
+https://doi.org/10.1016/j.epsr.2021.107566
+Received 1 September 2020; Received in revised form 14 August 2021; Accepted 29 August 2021
+Available online 8 September 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+L. Fan and Z. Miao                                                                                                  Electric Power Systems Research 201 (2021) 107566
+
+
+                                                                                    dq-frame modeling is to represent every block in a unified dq-frame.
+   Nomenclature                                                                     Take the case of DFIG, it is well known that both the stator and the rotor
+                                                                                    should be modeled in the same reference frame. For that reason, the
+   dqg , dqPLL The two dq-frames: one based on the grid voltage, the                rotor circuit model in its nature reference frame (the rotor) needs to be
+                other based on PLL.                                                 first converted to the stator dq-frame. Due to its enticing feature,
+   is , ir , ig DFIG’s instantaneous stator current, rotor current and              dq-frame based modeling technique has been adopted by DIgSILENT, as
+                grid-side converter current.                                        shown in the 2007 report [12].
+   R1 , L1 , C1 The resistance, inductance, and capacitance of a series
+                compensated line.                                                   1.3. Motivation to revisit the model
+   R2 , L2      The resistance, inductance of a non-compensated line.
+   Rg , Lg      The grid-side converter (GSC) filter’s resistance and                   There are a few real-world observations not agreeing with the
+                inductance.                                                         simulation results from the dq-frame model developed in [2]. Analysis
+   vPCC ,vc ,v∞ ,i1 ,i2 AC network instantaneous voltage at the point of            based on the model developed in [2] indicates that SSR will happen
+                common coupling (PCC), series capacitor voltage, grid               when series compensation reaches at certain level. The case studies in
+                voltage, RLC circuit current, and the RL circuit current.           [2] show that SSR happens at 75% compensation level, while at 50%
+   VDC          DFIG’s dc-link voltage.                                             compensation level, the oscillation mode has adequate damping. In
+   Tm , Tem DFIG’s mechanical torque and electromagnetic torque.                    real-world scenarios, SSR occurs as long as a type-3 wind farm is radially
+   VPLL , θ     The PCC bus voltage magnitude and angle measured by                 connected to a series compensated line according to [4,13]. In the SSR
+                the PLL.                                                            incidents occurring in north China in 2013, the equivalent compensation
+   in , iw      The total current going to the transmission line and the            level of the line is less than 10% [4] and the frequency of SSR oscillations
+                total current from the wind farm.                                   is about 8 Hz. This phenomenon has not been replicated by the analyt­
+   In , Iw      The above two currents in complex form in the grid                  ical model.
+                dq-frame.                                                               The reason of the discrepancy is that the dq-frame model in [2] does
+   Ig , I r     The GSC current and the rotor-side converter (RSC)                  not consider PLL dynamics. It is later known by the grid industry that
+                current in complex form in the grid dq-frame.                       PLL plays an important role in weak grid stability of inverter-based re­
+    ′       ′                                                                       sources. For example, in 2019, WECC indicated that PLL was added in
+   Ig , I r       The GSC current and the RSC current in complex form in            the second generation of renewable energy models for positive-sequence
+                  the PLL dq-frame.                                                 simulation [14].
+   V PCC , V g , V r The PCC voltage, GSC voltage and RSC voltage in                    Indeed, in FACTS and HVDC research conducted in 2000s, PLL dy­
+                  complex form in the grid dq-frame.                                namics have already been included in linear state-space model building,
+        ′       ′
+   Vg , Vr              The GSC voltage and the RSC voltage in complex form         e.g., [15,16].
+                        in the PLL dq-frame.                                            In the authors’ research on type-4 wind modeling for weak grid
+   Pr , Pg              Instantaneous power generated by the RSC and the GSC.       analysis [17,18], PLL dynamics are modeled in dq-frame models. PLL
+   Qs                   Reactive power measured at the stator side of a DFIG        has shown to influence stability margin and oscillation frequency.
+                        with a direction from the machine to the grid.              Indeed, a quick search of the literature indicates that PLL has not been
+   igd , igq , i∗gd , i∗gq GSC’s exporting current in the PLL dq-frame and          included in majority of the type-3 wind turbine models for SSR studies,
+                      their orders.                                                 e.g., [9,19–21]. The exceptions are the research carried out in [10,11]
+   ird ,irq ,i∗rd ,i∗rq RSC’s exporting current in the PLL dq-frame and their       on impedance of type-3 wind and research in [8,22] on type-3 wind farm
+                      orders.                                                       SSR and damping control design. Research in [10] indicates that
+                                                                                    including PLL dynamics changes the impedance Bode plots. Both [10,
+                                                                                    11] adopt impedance-based linear modeling approach. Both [8,22]
+                                                                                    adopt MATLAB/SimScape for abc-frame EMT simulation where PLL is
+models presented in electromagnetic transient simulation (EMT) pack­                included. [22] also presents eigenvalue analysis. However, it does not
+ages, e.g., PSCAD, EMTP, MATLAB/SimScape, are all based on station­                 include the details of the dq-frame models which the authors developed
+ary reference frame. Take the example of the Wind Farm - DFIG Average               to generate eigenvalue plots. Hence, it is difficult to comprehend if PLL
+Model in MATLAB/SimScape contributed by Richard Gagnon [6] and a                    dynamic is modeled.
+recent paper on type-4 wind turbine modeling [7], three-phase instan­                   In addition, in real-world planning, it has also been found that more
+taneous currents and voltages of ac circuits are treated as state variables.        wind farms online can cause the system more vulnerable to SSR. How­
+The DFIG average model is adopted in [8] by the authors to replicate                ever, in certain occasions, a system with more wind turbines is stable
+three 2017 Texas wind SSR events.                                                   while less number of wind turbines has SSR issue [23]. This phenome­
+    In the second category, impedance or admittance modeling                        non needs further investigation. Finally, analysis conducted in [2,24] is
+approach, e.g., [9–11], is essentially a modular linear modeling                    limited to a wind farm connected to a radial RLC line. Real-world SSR
+approach. Each component is modeled as a linear system, e.g., circuit,              assessment usually deals with various transmission topologies.
+PLL. The linear modeling blocks are then assembled together to have a                   The aforementioned concerns require a more accurate dq-frame
+system model. This approach has been popularly adopted in power                     model by including PLL dynamics and a scalable modeling framework
+electronic converter modeling, analysis, and control.                               design. It has to be noted that including PLL dynamics is not a trivial
+    EMT models in stationary frame are for time-domain simulation.                  task. For a DFIG, if the ac circuits are all modeled in a dq-frame (grid
+Direct Jacobian linearlization through numerical perturbation is not                frame), there exist two other frames that the RSC control is based upon
+possible. Impedance or admittance models are for small-signal analysis              and the GSC control is based upon. Both frames are dependent on the
+only. The models are not suitable for large-signal simulation or analysis.          angle output from the PLL. Thus, a challenge in modeling is to accurately
+In addition, modal analysis based on impedance model can only reflect               reflect the PLL angle in various dq-frame conversion.
+participation factor to every node. It is not granulate enough to examine
+each state variable’s participation on an oscillation mode.                         1.4. Contributions and paper structure
+    Thus, it is obvious that dq-frame models are capable of not only
+large-signal analysis but also small-signal analysis. A major challenge of            The first contribution of this paper is offering an accurate dq-frame
+                                                                                    model for type-3 wind farm subsynchronous oscillation replication and
+
+                                                                                2
+L. Fan and Z. Miao                                                                                                          Electric Power Systems Research 201 (2021) 107566
+
+
+analysis and a scalable modeling framework.                                      that used in the classic machine textbook [25].
+    The second contribution is offering the readers a critical model                 While the circuit models, e.g., transmission network, GSC filter and
+building technique. In our opinion, the most critical technique of model         DFIG, are based on the grid frame, the wind converter controls are based
+building is not coding differential equations, rather defining the inter­        on a dq-frame aligned to the PCC voltage. The angle of the PCC voltage is
+connecting relationship of modular blocks. A highlight of this paper is          obtained from PLL. Hence, the RSC and GSC are all based on the PLL
+the modeling block diagram (see Fig. 2). Each block will have input and          frame or the converter frame. To ignore the PLL dynamics in the
+output identified with its internal differential equation defined. The           modeling process, we may treat the PLL frame and the dq-frame either as
+overall system is built upon all the blocks with correct interconnections        the same or shifted by a constant angle which is the phase angle dif­
+specified. This type of block diagrams can be easily implemented in              ference between the steady-state PCC voltage and the dq-frame.
+MATLAB/Simulink.
+    We revisited the analytical model built in [2] and refined the dy­           2.1. Transmission network dynamics
+namic model by including PLL and various transmission system topol­
+ogies. The key modeling challenge of utilizing a unified dq-frame is                 The transmission network block has the PCC voltage as the input and
+tackled in this paper by adopting two dq-frames and making conversions           the output is the sum of currents flowing on two lines.
+between the two frames. The analytical model is state-space based and                The dynamic model in abc-frame for the RLC circuit and the RL
+suitable for linearization. The model building procedure is reflected in a       circuit is expressed as follows.
+modeling block diagram consisting of eight blocks. The modular
+                                                                                               di1                             dvc
+modeling approach adopted in this paper can greatly shorten the model            R1 i1 + L1        + vc     = vPCC − v∞ , C1       = i1
+                                                                                               dt                               dt
+developing time and can be used for modeling other dynamic systems.
+The new analytical model can successfully replicate the aforementioned                              di2
+                                                                                         R2 i2 + L2         = vPCC − v∞
+phenomena. In addition, the MATLAB/Simulink package will be shared                                  dt
+with the research community and posted in Github.                                In the grid dq-frame, the dynamic model of the transmission network is
+    The dynamic model is presented in Section 2. The initialization              expressed as follows.
+procedure for the dynamic model to have a flat run is presented in
+Section 3. Applications are presented in Section 4 to examine the                     dI 1
+                                                                                 L1          = V PCC − V c − R1 I 1 − jωL1 I 1 − V∞
+analytical model’s capability in providing eigenvalue-based analysis                  dt
+related to type-3 wind in weak grids and type-3 wind with a series                    dV c
+                                                                                             = I 1 − jωC1 V c                                                            (1)
+compensated network. Secti

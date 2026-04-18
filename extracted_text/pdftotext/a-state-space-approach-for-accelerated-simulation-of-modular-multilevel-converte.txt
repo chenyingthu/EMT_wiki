@@ -1,0 +1,212 @@
+                                                                Electric Power Systems Research 252 (2026) 112413
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A state-space approach for accelerated simulation of modular
+multilevel converters
+Jinli Zhao a , Manjiang Li a , Xiaopeng Fu a,* , Peng Li a , Jean Mahseredjian b
+a
+    State Key Laboratory of Smart Power Distribution Equipment and System, Tianjin University, Tianjin 300072, China
+b
+    Department of Electrical Engineering, Poly-technique Montréal, Montréal, Québec H3T 1J4, Canada
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   Modular multilevel converter (MMC) based high-voltage direct current (HVDC) transmission technology has
+Modular multilevel converter (MMC)                          been widely applied in practical engineering. With the continuous increase in transmission voltage and capacity,
+State-space                                                 a growing number of MMC submodules (SMs) is utilized. To meet the demands for fast electromagnetic transient
+Electromagnetic transient (EMT) simulation
+                                                            (EMT) simulation of large-scale power electronic systems, this paper proposes a simulation acceleration approach
+Acceleration model
+                                                            based on the state-space framework and applies it to MMCs. By grouping SMs according to switching state
+                                                            combinations and introducing auxiliary state variables, the dimension of the state matrix is significantly reduced,
+                                                            thereby accelerating numerical integration. Leveraging the characteristics of state variable grouping, an efficient
+                                                            capacitor voltage balancing algorithm is proposed. Finally, the accuracy and effectiveness of the proposed model
+                                                            are validated through simulation case studies.
+
+
+
+
+1. Introduction                                                                                   devices operating at high frequency seriously affects the simulation
+                                                                                                  speed, posing a great challenge for EMT simulation [6,7]. To address the
+    With the increasing capacity of renewable energy integration,                                 issue of slow EMT simulation of high-level MMCs in practical power
+transmission, and consumption, power systems are exhibiting a pro­                                system studies, it is essential to develop an improved simulation
+nounced trend of high renewable energy penetration and high propor­                               approach for MMC–HVDC systems.
+tion of power electronics. The fast dynamic response characteristics and                              For EMT simulation, there are mainly two algorithm frame­
+the large scale of the system present new challenges and urgent demands                           works—state-space analysis and nodal analysis. Most existing acceler­
+for improvements in simulation technology. In recent years, accelerating                          ation models of MMC were proposed in the nodal analysis framework. In
+the simulation of large-scale power electronic systems has become a                               [8], the MMC Thevenin equivalent model is introduced that balances
+research focus [1–3].                                                                             simulation accuracy and speed while retaining the internal information
+    Aligned with the trend of high penetration of power electronic de­                            of each SM. This approach is now widely used in practice. Further
+vices, the primary challenge for electromagnetic transient (EMT)                                  optimized equivalent models were recently proposed in [9] and [10] to
+simulation is modeling the diverse range of power electronic equipment.                           improve simulation speed. Thevenin equivalent models were also
+Modular multilevel converter (MMC) based high-voltage direct current                              implemented for variant of converter topologies, e.g. hybrid MMC
+(HVDC) transmission offers flexible control and low harmonic content,                             composed of both half-bridge and full-bridge SMs [11], and cascaded
+making it a key technology for transporting large-scale renewable en­                             power electronic devices [12], improving simulation efficiency by
+ergy. With rapid development of MMC–HVDC transmission technolo­                                   eliminating internal nodes.
+gies, transmission voltage and capacity continue to rise. Typically,                                  The nodal analysis framework is efficient in model construction, but
+MMCs need to reach hundreds of levels to meet the requirements of                                 its discretization formula effectively hard-codes the simulation step and
+practical engineering, and each submodule (SM) contains multiple                                  integration scheme, which limits its flexibility in some scenarios. In
+power electronic switches [4,5]. The large number of power electronic                             contrast, the state-space analysis framework is advantageous in that the
+
+
+
+    This work was supported by the National Natural Science Foundation of China under Grant 52377118.
+      Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    * Corresponding author.
+      E-mail addresses: fuxiaopeng@tju.edu.cn (X. Fu), jeanm@polymtl.ca (J. Mahseredjian).
+
+https://doi.org/10.1016/j.epsr.2025.112413
+Received 7 January 2025; Received in revised form 1 April 2025; Accepted 17 October 2025
+Available online 28 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+J. Zhao et al.                                                                                                   Electric Power Systems Research 252 (2026) 112413
+
+
+numerical method and simulation model are relatively independent,
+allowing for flexible adaption for suitable numerical integration algo­
+rithm and simulation parameters [7,13]. Several equivalent models of
+MMC were proposed in this framework. A generic state-space model of
+MMC with full current and all capacitor dynamics was derived in [14],
+which was a switching function model, but its simulation time increases
+significantly with the number of MMC levels. By grouping identical
+MMC SMs, the model in [15] requires only one calculation for the same
+type of SMs. Since no circuit simplification is performed, its accuracy
+matches that of the original model. But its efficiency depends on the
+equivalent approach used. Another MMC state-space acceleration model
+was proposed in [16], which assumes balanced capacitor voltage,
+limiting its applicability. To the best of authors’ knowledge, while the
+Thevenin equivalent approach for MMC in nodal analysis is well
+recognized, a comparably efficient yet general approach within the
+state-space framework remains lacking. This work addresses this gap by
+proposing a novel method that improves simulation speed and accu­
+rately preserves individual SM information, without sacrificing flexi­
+bility of state-space analysis.
+    The core idea of the proposed method is to group SMs based on the
+combination of switching states, and define low-order surrogate state
+variables that represent different groups and participate system-level
+                                                                                                        Fig. 1. The topology of MMC.
+solution of reduced matrix dimension. A dedicated mechanism is care­
+fully designed for accurate back-mapping to the full states, ensuring no
+added accuracy loss even in combination with high-order integration
+schemes like the exponential integrator [13]. In addition, efficient
+capacitor voltage balancing algorithm is proposed based on properties of
+the established state variable groups. The proposed method exhibits
+logarithmic growth in computation time with respect to MMC levels,
+making it suitable for EMT simulation of large-scale MMC–HVDC
+transmission systems. Since many large-scale power electronic systems
+share similar modular structure with MMC, the proposed simulation
+acceleration approach can be generalized to broader applications.
+    The remainder of the paper is organized as follows. Section II briefly
+reviews the topology of MMC and its SMs. Section III develops the                                      Fig. 2. The topology of HBSM.
+accelerated state-space model for MMC under both normal operation
+and blocked modes. Section IV presents the capacitor voltage balancing            are theoretically more complex. The Thevenin equivalent approach
+algorithm based on state variable grouping. Section V demonstrates the            cannot be applied in the state-space framework.
+accuracy and efficiency of the proposed method. Section VI draws                     If each SM capacitor is treated as a state variable, the state-space
+conclusions.                                                                      equation matrices will be high dimensional, making it difficult to
+                                                                                  solve efficiently. Thus, it is necessary to investigate a reduced order
+2. Topology of MMC and SM                                                         modeling method suitable for this framework.
+
+    The topology of MMC is shown in Fig. 1. It consists of three phase
+units, each comprising an upper arm and a lower arm. Each arm is                  3.1. Normal operation state
+composed of N SMs connected in series with an arm inductor L. At any
+time, half of the SMs in each phase unit are inserted to maintain a                   For power systems with three-phase MMCs, we assume the following
+constant DC voltage. Desired three-phase AC voltage is achieved by                state-space equation form for the power network.
+controlling the number of SMs inserted in the upper and lower arms.               {
+                                                                                     ẋ = Ae x + Bev vM + Beu u
+    The MMC commonly uses half-bridge SMs (HBSMs), as shown in                                                                                     (1)
+Fig. 2. It is composed of two insulated gate bipolar transistors (IGBTs),                     iM = Ce x
+two diodes, and an energy storage capacitor C. In the detailed equivalent
+                                                                                  where x is the power network state vector, M is the total number of MMC
+model of MMC, variable resistors Ron and Roff are used to represent the
+                                                                                  arms, vM is the input vector containing port voltage of all arms and is
+switch group formed by the IGBT and the anti-parallel diode [17]. This
+                                                                                  M-dimensional, u contains other external input to the network, iM is the
+paper adopts this simplified piecewise linear approach. All SMs referred
+                                                                                  output vector containing currents of all arms, also M-dimensional, and
+to in this paper are HBSMs.
+                                                                                  Ae , Bev , Beu , and Ce are coefficient matrices. For systems containing
+                                                                                  nonlinear components, their piecewise linear representation makes
+3. State-Space MMC simulation acceleration model
+                                                                                  these matrices time-variant.
+                                                                                       For an MMC SM on arm k, its state equation is as follows:
+    The MMC Thevenin equivalent model in nodal analysis is derived by
+                                                                                  {
+circuit laws on the static circuit of MMC arms formed by companion
+                                                                                    v̇ C = Asm vC + Bsm ik vsm = Csm vC + Dsm ik                       (2)
+circuits of LC elements, which is in turn results of branch-level dis­
+cretization of the nodal analysis. On the other hand, no static circuit or
+simple theoretic tool are readily available in the state-space analysis, as       where Asm , Bsm , Csm , and Dsm are coefficients that change with the
+it uses differential or differential-algebraic equations to represent the         switching state of the SM. When the SM is inserted, the coefficients take
+system as a dynamic one, the equivalence and order reduction of which             a subscript p and the following form:
+
+                                                                              2
+J. Zhao et al.                                                                                                                   Electric Power Systems Research 252 (2026) 112413
+
+                               ⎡                 ⎤
+[             ]                    1     Roff                                            Table 1
+    Ap   Bp             1      ⎢− C                                                      SM Blocked Operating State.
+                  =            ⎣          C ⎥    ⎦                            (3)
+    Cp   Dp         Ron + Roff
+                                 Roff   Ron Roff                                          Condition                                        D1          D2          SM State
+
+                                                                                          ik (t) > 0 andvsm (t − Δt) > vC (t − Δt)         1           0           Inserted
+   When the SM is bypassed, the coefficients take a subscript q and are:                  ik (t) < 0 andvsm (t − Δt) < 0                   0           1           Bypassed
+                        ⎡              ⎤                                                  Else                                             0           0           Open circuit
+[
+  Aq Bq
+         ]                  1  Ron
+                 1      ⎢− C
+           =            ⎣       C ⎥    ⎦                             (4)
+  Cq D q     Ron + Roff                                                                  Table 1 shows the blocked operating state of the SMs and their corre­
+                          Ron Ron Roff
+                                                                                         sponding judgment conditions.
+     For an arm containing N SMs, the same current flows through all SMs                     As shown in Table 1, in the blocked mode, there are three operating
+in the arm, and the physical ordering of SMs does not influence the                      states: inserted, bypassed, and open circuit. The grouping method used
+external behavior of the arm. Therefore, SMs in identical switching state                in normal state is not applicable in the blocked mode. However, all SMs
+can be conceptually regrouped, partitioning the SMs within each arm                      in the same arm share the same state, meaning that the three groups will
+into two groups: the inserted SM group and the bypassed SM group, as                     not appear simultaneously. Therefore, the two state variables for each
+shown in Fig. 3. Since SMs in the same group have identical state-space                  arm in the normal state can still be retained. The open-circuit group can
+equation coefficients, a virtual state variable is introduced for each                   be treated as a bypassed group, and only the coefficients of the state
+group as the sum of capacitor voltages within the group. The virtual                     equations need to be modified during the calculation. The open-circuit
+state-space equations are derived by summing up those of all SMs within                  coefficients can be derived as follows:
+the group and are shown to have simple form.                                              ⎡          ⎤
+                                                                                                           ⎡              ⎤
+     For arm k, suppose there are αk SMs in the inserted group. The new                     Aq Bq
+                                                                                             ’     ’            1     1
+                                                                                                     ⎦ = 1 ⎢ Roff C C ⎥
+                                                                                                           ⎢−             ⎥
+state variables for the inserted group, Pk , and the bypassed group, Qk ,
+                                                                                          ⎣                                                                    (7)
+                                                                                            Cq Dq
+                                                                                             ’     ’     2 ⎣              ⎦
+has the following state-space equation, where vk is the port voltage of                                       1      Roff
+arm k, and an element of vM :
+⎧                                                                                            In the blocked mode, switching actions could occur between integer
+⎨                                                                                        time step nodes. It is necessary to perform interpolation on the switching
+   Ṗ = Ap Pk + αk Bp ik Q̇ k = Aq Qk + (N − αk )Bq ik vk = Cp Pk + Cq Qk + NDp ik       moments and state variables to capture the accurate dynamics. Fig. 4
+⎩ k
+                                                                                         illustrates the process of linear interpolation, where wi (t) represents the
+                                                                              (5)        switching condition obtained from Table 1. If a zero-crossing of wi (t) is
+                                                                                         observed within the time step [t, t + Δt], the actual switching time
+By combining the state-space equations for all arms with (1) and elim­                   moment is estimated by:
+inating the intermediate variables, the overall state-space equation for
+the power system is derived:                                                             tZC = t + ρΔt,      ρ=
+                                                                                                                           |wi (t)|
+                                                                                                                                                                              (8)
+ ⎡ ⎤ ⎡                                    ⎤⎡ ⎤ ⎡          ⎤                                                       |wi (t)| + |wi (t + Δt)|
+   Ṗ      Ap IM    0         Bp EP Ce       P         0
+ ⎢ ⎥ ⎢
+ ⎢ Q̇ ⎥ = ⎢ 0
+                  

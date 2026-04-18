@@ -1,0 +1,163 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.3017084, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                         Interface Displacement and Dynamic Phasor
+                        Mapping Equivalence Based Hybrid Simulation
+                                  for HVAC/DC Power Grids
+                          Yanan Zhu, Student Member, IEEE, Shuqing Zhang, Member, IEEE, Siqi Yu, Yingdong Wei, Jinfeng
+                                                        Zhang, Jianbing Xu, Jingsen Zhou
+
+
+                                                                                                               attention in recent years [5, 6]. It can efficiently accommodate
+                Abstract—In the electromagnetic transient (EMT) and transient                                  extra-large power grids and offer an approach for detailed
+             stability (TS) hybrid simulation, the entire power system is                                      observation of a partial network during one test [5, 6].
+             artificially split into two sub-grids, and sub-grids interact with                                   In the hybrid simulation, an entire power grid is split into two
+             each other via an interface. Thus interface distortions emerge,                                   sub-grids, and two sub-grids are modeled and simulated by the
+             including latency and errors. The influence of interface latency is
+             quantitated based on a demo circuit containing delayed
+                                                                                                               EMT and the TS simulations. They are correlated as a whole by
+             interaction. Moreover, the principles of improving hybrid                                         an interface. The two types of simulations are fundamentally
+             simulation interface accuracy are concluded. Inspired by the                                      different in modeling, bandwidth, equation types, variable
+             principles, a novel interface displacement (ID) and dynamic                                       forms, and solving methods as well as time-steps. Therefore, a
+             phasor mapping equivalence (DP-ME) interface scheme is                                            substantial research effort has been undertaken to improve the
+             proposed. The scheme makes sub-grids at opposite sides of an                                      interface and remove the interface errors.
+             interface loosely coupled and avoids interface variable form                                         Generally, the interface errors fall into three categories, and
+             conversion by applying two techniques. 1) Displacement of the                                     relevant research is summarized below.
+             partition interface from the converter buses to the control loops                                    1) Loss of high-frequency characteristics when passing
+             and interior of the EMT sub-grid to utilize the built-in inertias. 2)
+             Construction of the DP-ME model to calculate the injected power
+                                                                                                               boundary conditions from the TS side to the EMT side by
+             from EMT to TS sub-grid. Tests based on designed cases and an                                     fundamental frequency equivalent Thevenin/Norton model.
+             actual HVAC/DC power grid give credibility to the proposed ID &                                   One effective solution is overlaying the frequency-dependent
+             DP-ME scheme in comparison with full electromagnetic                                              network equivalence onto the fundamental-frequency model [7,
+             simulation.                                                                                       8].
+                                                                                                                  2) Latency induced by artificially splitting and interfacing the
+                Index Terms—electromagnetic and electromechanical, hybrid                                      originally-coupled system. In the traditional hybrid simulation,
+             simulation, interface latency, mapping equivalent model                                           subsystems interact by converting and exchanging AC
+                                                                                                               electrical quantities at the interface. Under the parallel
+                                              I. INTRODUCTION                                                  interaction protocol, interface latency is inevitably induced by
+                Because of advantages in long-distance large-capacity                                          the exchange procedure. To mitigate the impact of latency,
+             transmission, HVDC transmission systems have been widely                                          previous studies have started from improving interaction
+             used in modern power systems. With the concentration of the                                       protocols at the expense of complicating the data exchange
+             HVDC terminals in heavy-load districts and large amounts of                                       process and increasing the computation and communication
+             generators connected through converters, electromechanical                                        burdens [9-12]. Based on the relaxation and latency insertion
+             processes all through the entire power grid intertwine with fast                                  method, the study [13-15] treated the integrated circuit as two
+             transients of switching circuits and fast control dynamics [1, 2],                                loosely coupled subsystems and solved them via alternating
+             which has profound effects on the system stability patterns and                                   iteration. Nevertheless, it is hard to find a loosely coupled
+             evolving processes. An urgent demand emerges for accurate                                         interface in actual power grids. The study [7, 16] have
+             and efficient simulation of such power grids [3, 4].                                              employed a few hundred microseconds as a solving step for TS
+                Electromagnetic transient (EMT) simulation and transient                                       simulation and interface, to decouple the EMT and TS sub-grids
+             stability (TS) simulations have been widely applied to the                                        through transmission lines and eliminate the influence of
+             analysis of power grids and power electronics. However,                                           interface latency. However, the computational burden increases
+             neither of them are sufficient for efficient simulation of large                                  due to the necessary iterations. Although this solution cannot
+             HVAC/DC power grids. EMT simulation focuses on detailed                                           decouple the subsystems when the time-step is at the
+             and fast transients in circuits and grids but is time-consuming                                   millisecond level, it offers a new approach to reducing the
+             and inapplicable to large power grids. TS simulation focuses on                                   influence of interface latency.
+             system stabilities but ignores detailed and fast characteristics.                                    3) Latency and errors caused by form conversion of electric
+             To overcome the weaknesses of conventional EMT and TS                                             interface variables. For TS and EMT subsystems, the forms of
+             simulations, a hybrid simulation method interfacing and                                           their variables are different. When instantaneous waveforms of
+             combining both simulation types emerged and attracted                                             EMT variables are transformed into phasor forms by the FFT
+
+
+             This work was supported by National Key R&D Program of China (2018YFB0905105), and Science and Technology Project of State Grid Corporation of China
+             (Research on Key Technologies of Joint Real-Time Hardware-in-Loop Simulation for AC/DC System Protection Test and Verification)
+
+
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                    Authorized licensed use limited to: Cornell University Library. Downloaded on August 22,2020 at 04:22:25 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.3017084, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                                                                                                                                                                                                          2
+
+             based method, a latency of one fundamental frequency cycle is                                     characteristic equations are solved with the help of the Lambert
+             induced. Besides, conversion error tends to appear when the                                       W function.
+             instantaneous waveform is disturbed during the conversion
+             procedure [6]. The least-squares fitting method can avoid the
+             type conversion latency, but it cannot effectively deal with the
+             waveform fitting with the DC component [17]. The study [18]
+             proposed that relocating the interface deep into the TS
+             subsystem can reduce waveform distortion and conversion error.
+             However, form conversion is inevitable through this method, so
+             the latency caused by form conversion remains unsolved in
+             traditional hybrid simulation schemes.
+                Aiming at the challenges from the latter two error categories,
+             this paper gives a quantitative analysis and proposes a novel
+             EMT/TS hybrid simulation scheme, which is based on interface
+             displacement (ID) and dynamic phasor mapping equivalence
+             (DP-ME) techniques. The remainder of this study is organized
+             as follows. Section II quantitates the interface distortions and
+                                                                                                                               Fig. 1 A demo system for EMT-TS hybrid simulation
+             concludes the influence rules of interface latency on simulation
+             accuracy. Inspired by the rules, Section III proposes the ID &                                       The TS subsystem generally consists of an AC system with a
+             DP-ME based hybrid simulation scheme. Then, Section IV                                            large number of conventional power supplies. It can be
+             describes the scheme in three cases and thoroughly tests and                                      represented by a voltage source with internal impedance, where
+             validates the proposed scheme. Finally, conclusions and                                           u is the internal potential, and R1 and L are the resistance and
+             perspectives are presented in Section V.                                                          inductance, respectively. The EMT subsystem generally
+                                                                                                               consists of the DC power converter, etc., which can be
+                        II. ERROR MECHANISM IN HYBRID SIMULATION                                               equivalent to a controllable current source, where i is the output
+                A. Mechanism analysis on latency                                                               of the current source, and R2 is the internal resistance. The
+                                                                                                               equivalent models of both subsystems mentioned above are
+                The latency in hybrid simulation comes from two aspects. 1)
+                                                                                                               widely used in hybrid simulation schemes interfacing at the
+             Interface latency. Non-iterative interaction protocols, e.g.,
+                                                                                                               converter buses. So this simplified demo system is
+             parallel ones, are widely used due to its balance of efficiency
+                                                                                                               representative. The response time constant in the control system
+             and accuracy, but they always introduce one time-step delay                                       is much larger than that of primary circuits. So the controllable
+             between the two subsystems. 2) Latency from interface variable                                    current source output can be considered as constant during the
+             form conversion. EMT simulation is based on instantaneous                                         electromagnetic transient process of the circuit. Further, the
+             waveforms, while in the TS simulation, electric variables are                                     system shown in Fig. 1(a) is linearized to a linear system, as
+             expressed using fundamental frequency phasors. When                                               shown in Fig. 1(b). The dynamic equation of the system is:
+             converting waveforms to fundamental frequency phasors, a                                                            u( s)   R1  sL  R2  i ( s ) （1）
+             time window (Fourier transformation, curve fitting, et al.) or a
+             low-pass filter is applied to produce phasor estimates. These                                         The system eigenvalue is:
+                                                                                                                                                  R1  R2
+             procedures bring delays to the interface.                                                                                          0        （2）
+                Previous studies pointed out that latency under non-iterative                                                                         L
+             interaction protocol is a leading reason that affects the interface                                  As shown in Fig. 1(c), considering the latency induced by the
+             stability [10]. Under severe disturbances, latency can lead to                                    primary network partition and interface variable form
+             response deviation or even convergence failure. Therefore,                                        conversion, the total latency across the interface is . The
+             reducing the latency induced by network partitioning or                                           system characteristic equation of the system in hybrid
+             variable form conversion is the key to further improving the                                      simulation with latency is:
+             performance of the hybrid simulation [3].                                                                    u ( s)   R1  sL   i( s)  R2  i( s)  e s
+                                                                                                                                                                            （3）
+                Although studies pointed out that latency based errors had a
+             significant influence on the hybrid simulation accuracy, neither                                     The analytical solution of first-order differential equations
+                                                                                                               with delay can be written in terms of Lambert W function [22].
+             quantitative analysis nor instructive rules on how latency
+                                                                                                               Then, the eigenvalues of the system expressed by equation (3)
+             influenced hybrid simulation were reported. Because the
+                                                                                                               are obtained by:
+             characteristic equation of a system with time-delay is
+                                                                                                                               R 1   e R1 / L             R1 1
+                                                                                                                                                            W  z  （4）
+             transcendental, it is difficult to get the eigenvalue directly.                                              1  W  
+             Approximation or transformation is usually applied to represent                                                    L   L / R2                  L 
+             the transcendental terms in the time-delay equation. such as                                         Among them, the Lambert W function 𝑊 𝑧 (z<0) is an
+             Pade Approximation [19], Rekasius transform [20], Lambert W                                       implicit function of z. When 𝑧      𝑒 , 𝑊 𝑧 has and only has
+             function [21], etc.                                                                               two real solution branches 𝑊 𝑧 and 𝑊 𝑧 , as shown in Fig.
+                To quantitatively analyze the effect of latency on interface                                   2. When 𝑧       𝑒 , the Lambert W function gives the values of
+             accuracy and stability, authors condense and abstract the hybrid                                  the other plural solution branches.
+             simulation object into a circuit, as shown in Fig. 1(a). The
+
+
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                    Authorized licensed use limited to: Cornell University Library. Downloaded on August 22,2020 at 04:22:25 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.3017084, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                                                                       

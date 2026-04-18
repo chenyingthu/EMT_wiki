@@ -1,0 +1,238 @@
+                                    4’
+                        “4,
+
+
+IEEE Transactions on Power Systems, Vol. 3, No. 2, May 1988                                                                             799
+
+                 M O D E L L I N G O F C I R C U I T ERECSKERS I N T H E
+
+                    ELECTROMAGNETIC                      TRANSIENTS               PROGRAM
+
+
+
+                                  V I PHANIRAJ                        A,G,PHADKE
+                            Student Member, I E E E                   Fellow, I E E E
+
+                    V i r g i n i a Polytechnic I n s t i t u t e and S t a t e U n i v e r s i t y
+
+
+
+
+   ABSTRACT - The recent publication of experimental and                 Since a large proportion of all power system transients are
+   theoretical results from verified arc models has made pos-           initiated by circuit breaker operations, the need to repre-
+   sible the implementation and testing of a dynamic circuit            sent breakers accurately in EMTP has long been recog-
+   breaker model in the Electromagnetic Transients Program              nized [3]. Until now, the approximations used for
+   (EMTP). An estimator was developed to obtain model                   modelling circuit breakers included voltage or current
+   parameters from test data. Results from this are given,              controlled switches, and predetermined time-dependent or
+   and it’s data requirements specified. To illustrate an ap-           nonlinear resistances. These are adequate for cases such
+   plication of the model not previously possible with the ex-          as Transient Recovery Voltage (TRV) calculation, but are
+   isting capabilities of EMTP, simulations of load current             not suitable for many other applications. In particular,
+   interruption in a multi-terminal HVDC system were per-               phenomena such as thermal and dielectric failure cannot
+   formed. Results from these are included, along with a                be modelled. A more realistic model would perform these
+   discussion of the effects of system and model parameter              and other functions, and find application in the following
+   variation on the interruption process.                               types of studies:
+                        INTRODUCTION                                    Circuit Breaker Testing : With the increase in short-
+                                                                        circuit capacity of power systems and the consequent rise
+    The Electromagnetic Transients Program (EMTP) is an                 in interrupting capabilities, direct testing of breakers is
+    extensively used tool for the analysis and simulation of            becoming more difficult because of the high short-circuit
+    power system transients [1,2]. It contains a large number           capacity test source requirement. Though synthetic test-
+    of independent modules, each modelling a different com-             ing is commonly used, an accurate EMTP model could be
+    psnent such as a transformer, a synchronous machine or              used to simulate a direct test, and supplement the syn-
+    a transmission line. Inductances and capacitances are re-           thetic tests.
+    presented by an equivalent circuit consisting of resistances
+    in parallel with current sources. These equivalent circuits         Interruption of Small Inductive Currents : This situation
+    are obtained by the application of the trapezoidal rule of          , which arises often in transformer and reactor switching,
+    integration [I]. Through this transformation, the nodal             may lead to current chopping and multiple restrikes which
+    admittance matrix [Y] becomes real and symmetric, and               in turn cause dangerous overvoltages. The model could be
+    the differential equations for capacitances and                     used to identify such problems, and determine the nature
+    inductances become algebraic equations. Thus the gov-               of corrective action, such as the ratings of a surge arrester
+    erning equation of the system is :                                  to be connected.
+                        [U.e(r) = i(r) - [I]                    (1)      The need for a better model having been established, the
+    where e([)and i(r) are column vectors of the node voltages          next task was to choose appropriate models to fulfill the
+    and injected currents, and [I] is the known vector of               requirements. The main criteria used for selection were :
+    equivalent current sources representing the system history.              1.    Availability of Model Parameters and Test Re-
+    Eq. (1) is to be solved repeatedly as the simulation
+    progresses, and therefore in order to enhance the program                     sults.
+    speed, the [Y] matrix is factored and stored in the L-U                  2.   Numerical Simplicity and Robustness.
+    form. This technique requires that the [Y] matrix remain
+    constant, making it difficult to simulate switches,                      3.   Range of Applications.
+    saturable devices and elements whose impedance is time-
+    varying, such as circuit breakers. The effect of switching          Based on these factors, three models were chosen, and
+    operations however can be pre-computed and the resulting            these are discussed in the next section.
+    modifications made directly to the L-U factors.
+                                                                                              ARC MODELS
+                                                                        The three models chosen for implementation were, (1) the
+                                                                        modified Mayr or Avdonin model [4] ; (2) the Urbanek
+                                                                        model [4] ; and (3) the Kopplin model [5].
+                                                                        Avdonin Model :
+                                                                         The Avdonin model equation is :
+    This papa was sponsored by the IEEE Power EnSineering Society
+ for presentation at the IEEE Power Industry Computer Applica-                               1-a         rl-a-p
+ tion Conference, Montreal, Canada, May 18-21,1987. Manuscript                       d r - r      --.i.v
+ was published in the 1987 PICA Conjerence Record.                                   dt      A             A.B
+
+                                                0885-8950/88/0500-0799$01 .WO1988 IEEE
+c
+
+
+
+
+    800
+
+     where v,i and r are the arc voltage, current and resistance      stage proccdurc. At first, the nonlinear element is
+     respectively, and and A, B, a and p are the breaker model        open-cii cuited and the rcsponsc of the nctwork calculated,
+     parameters. This model is a derivative of the Mayr model         specifically the open-circuit voltage V, and the Thevenin
+     with the time constant 0 replaced by A.ra and the power          impcdance Z,heY.   If the nonlinearity can be characterized
+     constant P replaced by Brp. This model has been testcd at        by the equation :
+     Hydro-Quebec, and publiqhcd results arc availablc [4] for
+     validation of the EMTP simulations. The model is capable                                   Vn =AI,)                        (5)
+     of representing arc interruption and thermal failure, and        then the actual value of I, can be evaluated from
+     has been used for modelling current chopping. It cannot
+     simulate diclectric breakdown or multiple restrikes, but                             v,, - Zthev.zn =AI,>                  (6)
+     has the advantages of being computationally simple and
+     robust.                                                          where for multiple nonlinearities,V, and I, are column
+                                                                      vectors and Z,hevan impedance matrix. Having calculated
+     Urbanek Model :                                                  I, , usually by an iterative procedure, the final network
+                                                                      solution is obtained by superimposing the response due to
+     This model can be described by the differential equation         I, upon the open-circuit response.
+                                                                       The use of this method constrains the types of networks
+                                                                      that can be simulated, chiefly in that two nonlinear ele-
+     where g is the arc conductance, V the arc voltage for large      ments cannot be electrically adjacent. This restriction can
+     currents, ( the breakdown voltage of the cold arc channel        be overcome by the use of stub lines, with short travel
+     and the other variables arc as dcfined previously. This          times, but this artifice complicates and distorts the system
+     model is the most complex of the three, and can represent        modelling. It could be removed by solving all nonlinear
+     arc interruption and both thermal and dielectric failure.        equations of the form of (6) simultaneously, but this
+     In addition to these, it can model current chopping and          would be computationally difficult, and would require the
+     re-ignition. An estimation program to determine the              interfacing of all modules that use the compensation
+     model parameters has been written [6], and test results are      method (such as synchronous machines and circuit break-
+     available [4].                                                   ers) in a common segment of the program. EMTP is not
+                                                                      structured to allow this at present, and the breaker model
+     Kopplin Model :                                                  interface developed here cannot be connected directly to
+                                                                      othcr nonlinear elements.
+     This equation, which was used in EMTP to model gener-
+     ator circuit breakers is described by :                            The iterative procedure used to solve Eq. (6) is of the
+                                                                      predictor-corrector form. Since near an a.c current zero
+                                                               (4)    the current decreases practically linearly, this slope can be
+                                                                      used to provide an initial guess for the current at the next
+     where          r(g) = k,. (g +0.0005)o.25                 and    time-step. The slope is evaluated by a recursive moving-
+     P(g) = k ( g + 0.0005)0.6, k and k, being model param-           average equation, and is continuously updated. The first
+     eters. TI& model is also d e h e d from the Mayr model,          guess therefore is :
+     and can be used with larger time-steps than the Avdsnin                          I(t + At) = l ( t ) + At.-d l             (7)
+     or Urbanek models. It simulates thermal breakdown, and                                                     dt
+     test results are available [5]. The next section describes the
+     incorporation of these arc equations into a complete model       and the initial arc voltage estimate is
+     for a circuit breaker.                                                            V(t + At) = I(t + At).r(t)               (8)
+          MODEL IMPLEMENTATION AND TESTING                            The rate of change of resistance (drldt), can be found from
+                                                                      the appropriate arc equation, and therefore an estimate
+     Implementation                                                   made of the arc resistance by the trapezoidal rule
+     The arc equations described above can be used only dur-                    r(t + At) = r(t) + 0.5(--,
+                                                                                                        dr      + -drp ) A t    (9)
+     ing a short interval commencing about 100 microseconds                                             dt
+     before the current zero, while the overall interruption          where (drldt), is the rate of change saved from the previ-
+     process may take a few periods at fundamental frequency.         ous time-step. The estimate for the current is then cor-
+     Therefore a complete model had to be developed, of which         rected by the equation
+     the arc model would be a crucial component.
+      The first major change in breaker status during opening
+     occurs when the contacts part, when the arc voltage starts
+     to build up and the arc resistance increases. It is known
+     from experimental evidence that the arc voltage rises until      and a convergence'check made by comparing the two arc
+     a certain value, and then remains steady until just before       voltage estimates
+     the current zero, at a value that depends on the inter-
+     rupting medium used. Therefore, in EMTP, the initial
+     stages of the opening are modelled by a constant arc volt-       and
+     age until the inception of the arc instability period, with
+     the voltage determined by any of the equations described                          V2 = r(t + At) .I(t + At)               (12)
+     previously. This procedure is fairly realistic, and provides
+     suitable initial values for the arc equations and minimizes      If they agree to within a specified tolerance, the iteration
+     the numerical problems due to a sudden voltage change.           is over , otherwise the process returns to Eq. (8) with an
+                                                                      updated estimate for the current from Eq. (IO). It was
+      The breaker is interfaced to EMTP as a nonlinear com-           found that 3 or 4 iterations were generally sufficient, and
+     ponent by the compensation method [3], using a three-            convergence problems were rare.
+                                                                                                                                                    801
+
+
+ Once the arc resistance and current have been deter-
+mined, the routine is ready to return them to the main
+program for processing. The last stage is to evaluate the
+breaker status for the next time-step , which is necessary
+only in the arcing regime. There are three possibilities : ( I )
+The interruption succeeded ;(2) that it failed :or (3) there
+was no change and the arc calculations should be contin-
+ued. A decision is made by the following criteria, and the
+appropriate flag set for future use. The criterion for de-
+claring the interruption to be a success is that either the
+arc resistance should exceed IO’OR or that the rate of
+change of resistance should be greater than 1018R/second.
+In real interruptions, when failure occurs, the arc resist-
+ance becomes zero, but in a numerical simulation it usu-
+ally overshoots and becomes negative. This would cause
+computational difficulties in EMTP, and therefore the in-
+terruption is deemed to have failed when the rate of
+change of resistance starts to decrease. This hypothesis
+was tested by conducting many simulations, and in no
+case was the interruption successful after a decrease in the
+rate of change of arc resistance following the current zero.
+
+Testing
+  Two basic test circuits were used, Circuit 1 for the                    Circ     .      Rd                       Ld         microF       nanoF
+                                                                                                                                             ‘od
+Avdonin and Urbanek models and Circuit 2 for the                                         ohms                      mH           ‘d
+Kopplin model. These circuits and the results from tests                      A          67,38            6,90                 1,066        0,O
+thereof are taken from [4] and [SI respectively, and are
+shown in Figures 1 and 2. The component values for Cir-                       B          60.34               6.90              1,037        22.66
+cuit 1 are given in Table 1 and the arc model parameters
+in Table 2.
+                                                                              c          62#77               6.90              1,029        44.26
+
+
+                                                                                  TABLE 1:            C i r c u i t 1 Component Ualues
+               Ld
+
+                                                                      I                  fiUDONIN                               I       URBANEK     I
+                                                                                       AIR             OIL              SF6
+                                                                          A         6,E-6             6.E-6             1-3E-6          P = 3,OE4
+                                                                          B         1.6E7             1.OE8             1.OE6           v = 8000.
+                                                                          a(       -0,ZO     ~   ~~
+                                                                                                      -0.15
+                                                                                                             ~~~
+                                                                                                                        -0,15       e = 2,E-6
+                                                                      I R I - 0 . 5 0 T - 0 . 6 0 I -0-26I % = 46.E4
+             F i g u r e 1:    Teot C i r c u i t 1
+                                                                                   TABLE 2: ARC HODEL PARAMETERS
+
+
+
+
+                l-C           4.14       4.14       5.59           5.61        8.70          8.67            3.61        3.60
+
+
+
+
+              TABLE 3: Comparison o f Benchmark ( Reference 4 1 and EMTP R e o u l t r                                              1
+802
+
+                    325 p H
+
+
+
+
+                    Figure 2 :        Test C i r c u i t 2
+                                                                                                       60                         I20
+                                                                            F i g u r e 6: Kopplin Model Arc Voltage
+                                                                            X : Micromecondo        ;       Y: U o l t s
+
+
+
+
+            0            30               60        90
+       F i g u r e 3: Avdonin Model Arc Uoltage
+                   X: Time i n Microsecond@.
+                                                                         F i g u r e 8 : Kopplin Model Post-Arc Current
+                   Y : Uoltage i n K i l o v o l t s .
+                                                                         X: Microsecond@           I         Y: Ihrperss
+                                                                        The input is assumed to consist of N regular samples of
+                                                                       the arc voltage and current, at known instants of time.
+                                                                       These are transformed to values of arc resistance, and
+                                                                       used as input to a least-squares curve fitting routine which
+                                                                       produces the best polynomial r(t) fitting the points sup-
+                                                                       plied

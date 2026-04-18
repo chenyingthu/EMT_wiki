@@ -1,0 +1,30 @@
+# Retinal Area Detector From Scanning Laser Ophthalmoscope (SLO) Images for Diagnosing Retinal Diseases
+**Muhammad Salman Haleem, Liangxiu Han, Jano van Hemert, Baihua Li, and Alan Fleming**
+
+**Abstract**—Scanning laser ophthalmoscopes (SLOs) can be used for early detection of retinal diseases. With the advent of latest screening technology, the advantage of using SLO is its wide field of view, which can image a large part of the retina for better diagnosis of the retinal diseases. On the other hand, during the imaging process, artefacts such as eyelashes and eyelids are also imaged along with the retinal area. This brings a big challenge on how to exclude these artefacts. In this paper, we propose a novel approach to automatically extract out true retinal area from an SLO image based on image processing and machine learning approaches. To reduce the complexity of image processing tasks and provide a convenient primitive image pattern, we have grouped pixels into different regions based on the regional size and compactness, called superpixels. The framework then calculates image based features reflecting textural and structural information and classifies between retinal area and artefacts. The experimental evaluation results have shown good performance with an overall accuracy of 92%.
+
+**Index Terms**—Feature selection, retinal artefacts extraction, retinal image analysis, scanning laser ophthalmoscope (SLO).
+
+*Manuscript received March 26, 2014; revised July 7, 2014; accepted August 17, 2014. Date of publication August 26, 2014; date of current version July 23, 2015. This work was supported by EPSRC-DHPA funded Project “Automatic Detection of Features in Retinal Imaging to Improve Diagnosis of Eye Diseases” and Optos plc.*
+
+*M. S. Haleem, L. Han, and B. Li are with the School of Computing, Mathematics and Digital Technology, Manchester Metropolitan University, Manchester M1 5GD, U.K. (e-mail: muhammad.s.haleem2@stu.mmu.ac.uk; l.han@mmu.ac.uk; b.li@mmu.ac.uk).*
+
+*J. van Hemert and A. Fleming are with Optos plc, Dunfermline KY11 8GR, U.K. (e-mail: jvanhemert@optos.com; afleming@optos.com).*
+
+## I. INTRODUCTION
+Early detection and treatment of retinal eye diseases is critical to avoid preventable vision loss. Conventionally, retinal disease identification techniques are based on manual observations. Optometrists and ophthalmologists often rely on image operations such as change of contrast and zooming to interpret these images and diagnose results based on their own experience and domain knowledge. These diagnostic techniques are time consuming. Automated analysis of retinal images has the potential to reduce the time, which clinicians need to look at the images, which can expect more patients to be screened and more consistent diagnoses can be given in a time efficient manner [1].
+
+The 2-D retinal scans obtained from imaging instruments [e.g., fundus camera, scanning laser ophthalmoscope (SLO)] may contain structures other than the retinal area; collectively regarded as artefacts. Exclusion of artefacts is important as a preprocessing step before automated detection of features of retinal diseases. In a retinal scan, extraneous objects such as the eyelashes, eyelids, and dust on optical surfaces may appear bright and in focus. Therefore, automatic segmentation of these artefacts from an imaged retina is not a trivial task. The purpose of performing this study is to develop a method that can exclude artefacts from retinal scans so as to improve automatic detection of disease features from the retinal scans.
+
+To the best of our knowledge, there is no existing work related to differentiation between the true retinal area and the artefacts for retinal area detection in an SLO image. The SLO manufactured by Optos [2] produces images of the retina with a width of up to $200^\circ$ (measured from the centre of the eye). This compares to $45^\circ - 60^\circ$ achievable in a single fundus photograph. Examples of retinal imaging using fundus camera and SLO are shown in Fig. 1. Due to the wide field of view (FOV) of SLO images, structures such as eyelashes and eyelids are also imaged along with the retina. If these structures are removed, this will not only facilitate the effective analysis of retinal area, but also enable to register multiview images into a montage, resulting in a completely visible retina for disease diagnosis.
+
+**Fig. 1.** Example of (a) a fundus image and (b) an SLO image annotated with true retinal area and ONH.
+
+In this study, we have constructed a novel framework for the extraction of retinal area in SLO images. The three main steps for constructing our framework include:
+1. Determination of features that can be used to distinguish between the retinal area and the artefacts;
+2. Selection of features which are most relevant to the classification;
+3. Construction of the classifier which can classify out the retinal area from SLO images.
+
+For differentiating between the retinal area and the artefacts, we have determined different image-based features which reflect grayscale, textural, and structural information at multiple resolutions. Then, we have selected the features among the large feature set, which are relevant to the classification. The feature selection process improves the classifier performance in terms of computational time. Finally, we have constructed the classifier for discriminating between the retinal area and the artefacts. Our prototype has achieved average classification accuracy of 92%.
+
+analysis, histogram analysis, sharpness, etc., [1], [11], [12]. Dias et al. [13] determined four different classifiers using four types of features. They were analyzed for the retinal area including colour, focus, contrast, and illumination. The output of these classifiers were concatenated for quality classification. For classification, the class

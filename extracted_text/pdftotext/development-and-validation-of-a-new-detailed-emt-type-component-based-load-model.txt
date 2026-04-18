@@ -1,0 +1,208 @@
+                                                              Electric Power Systems Research 197 (2021) 107290
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Development and validation of a new detailed EMT-type component-based
+load model✰
+M. Torabi Milani a, *, B. Khodabakhchian b, J. Mahseredjian a, K. Sheshyekani a
+a
+    Polytechnique Montreal, Montreal, QC H3C 3A7, Canada
+b
+    Hydro-Quebec, Montreal, QC H5B 1H7, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  Load modeling is one of the most important parts in power system simulation. This paper describes the efforts to
+Component-based                                            develop a detailed EMT-type component-based load model. The aim of this new model is to capture the accurate
+EMTP simulation                                            behavior of loads in commercial and residential sectors. The developed model is validated and refined against
+Load modeling
+                                                           field data which were recorded by Hydro-Quebec during voltage sag events. The simulations are performed using
+                                                           the time-domain simulation tool EMTP.
+
+
+
+
+1. Introduction                                                                            component-based approach. In the former, load characteristics are
+                                                                                           derived based on measurements performed in the actual power system.
+   LOAD modeling is one of the most important areas in power system                        In the latter however, a load model is constructed from the models of the
+modeling. Previous research has reported discrepancies between the                         individual load components. Examples of measurement-based approach
+recorded and simulated system responses as a result of employing                           are available in [9,10]. Component-based approach has been reported in
+incorrect load models. Examples are several unsuccessful attempts to                       [11,12,13] to develop aggregated household, industrial and
+reproduce the behavior observed in the Swedish blackout in 1983 [1],                       residential-commercial loads respectively.
+the Tokyo network collapse of 1987 [2] and the Western Systems                                 Although the importance of load modeling is generally recognized
+Coordinating Council (WSCC) blackout in 1996 [3]. Accordingly, ac­                         and different load modeling efforts have been documented in existing
+curate analysis of power systems requires accurate load models.                            literature, little has been done to develop detailed composite load
+   Load models can be divided into two basic groups, being static and                      models. Such models provide a more accurate representation of the re­
+dynamic. Static models describe the load characteristics with respect to                   ality of aggregated loads, as they recognize the diversity in end-use
+voltage and frequency variations assuming no machine dynamics.                             characteristics (e.g., different types of motors and lighting sources).
+Existing static models such as exponential load model, polynomial load                     The research papers available on detailed composite load models are
+model (ZIP) and linear load model are described in [4,5]. Various                          [13,14]. The latest development in this field belongs to the composite
+existing dynamic load models including exponential dynamic load                            load model (CMLD) in PSSE [14]. This model is an aggregation of
+model and dynamic models of induction motor have been presented in                         three-phase and single-phase induction motors, power electronics and
+[4]. Composite load models can represent the structure of a given load as                  static loads. However, it suffers from inaccuracy in modeling power
+a combination of static and dynamic load components. The most com­                         electronics and single-phase motors; power electronics are grouped as
+mon composite load model is the combination of an induction motor                          constant power loads which is a simplistic assumption. The single-phase
+model and a static load. In [6,7], the static part is represented with a                   motor is approximated by a “performance model” using algebraic
+conductance and a susceptance in parallel. A ZIP model has been used in                    equations to represent the motor power consumption in terms of ter­
+[5] and [8] to represent the static component.                                             minal voltage.
+   To represent aggregated loads at power system buses, two most                               This paper presents a new detailed component-based load model
+widely used methodologies exist; the measurement-based and the                             based on electromagnetic transient (EMT) computations. The aim of this
+
+
+
+  Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.
+    ✰
+
+ * Corresponding author.
+    E-mail addresses: maryam.torabi@polymtl.ca (M. Torabi Milani), khodabakhchian.bahram@hydroquebec.com (B. Khodabakhchian), jean.mahseredjian@
+polymtl.ca (J. Mahseredjian), keyhan.sheshyekani@polymtl.ca (K. Sheshyekani).
+
+https://doi.org/10.1016/j.epsr.2021.107290
+Received 12 November 2020; Received in revised form 14 March 2021; Accepted 14 April 2021
+Available online 30 April 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+M. Torabi Milani et al.                                                                                                    Electric Power Systems Research 197 (2021) 107290
+
+
+model is to approach the real load behavior under disturbances, e.g.,
+voltage variations. The new model not only captures the diversity in
+end-use applications, but also includes modern elements such as vari­
+able speed drives and energy efficient lighting sources. To the author’s
+best knowledge, such a comprehensive EMT-type load model has not
+been previously presented in the literature. The developed model is used
+to simulate load behavior in voltage variation events, and its perfor­
+mance is validated against field data recorded by Hydro-Quebec. Results
+of the validation studies reveal the capability of the proposed model in
+reproducing the measured dynamic behavior of loads during and after a
+                                                                                                                 Fig. 2. SMPS circuit topology.
+disturbance. Obtaining such results is not possible by employing tradi­
+tional load models, especially static ones which are the current practice
+in most dynamic studies [4]. Moreover, in this paper, measured data is                      Table 1
+also used to derive relevant characteristics of the modelled loads (e.g.,                   Equivalent resistance of Smps and cfl.
+connection or reconnection pattern of motor loads during and following
+                                                                                              Component                              Req
+voltage sags) which are subsequently exploited in the development and
+practice of the proposed model. This combination of                                           SMPS                                             v2dc
+                                                                                                                                     Req =
+measurement-based and component-based approaches is another tech­                                                                             Prated
+                                                                                              CFL                                    Req,charging = 11vdc + 0.021v2dc + 1300
+nical contribution of this work; not only it provides a more realistic                                                               Req,discharging = 23.7vdc + 274
+representation of load characteristics, but also offers some insight into
+general considerations when modeling similar types of loads.
+    This paper is organized as follows. Section II describes the new load                 Fig. 2 and the equivalent resistance is defined in Table 1 based on the
+model and elaborates its different components. Validation of the                          charging or discharging state of the capacitor [15].
+developed model in two load sectors namely commercial and residential                         Light emitting diodes (LEDs) are represented by a linear model
+is presented in section III using the field recordings provided by Hydro-                 consisting of a threshold voltage in series with a dynamic resistance
+Quebec.                                                                                   (Vthr =2.7 V, Rd = 0.3 Ω). A driver circuit is employed to regulate LED
+                                                                                          currents and provide a stable lighting output [16]. Fig. 3 presents a
+2. The component-based load model                                                         driver circuit consisting of a front-end rectifier (ideal models are utilized
+                                                                                          for diodes), dc link capacitor and a fly-back dc-dc converter which is
+    The new load model is developed in a component-based aggregation                      used to supply 30 W LED modules. Cdc is 0.036 pu (reactance).
+procedure, as depicted in the schematic of Fig. 1. The model is sub­                          Elevators and compressors are modeled as three-phase induction
+divided into several components which represent electrical devices                        motors (IM) with constant torque mechanical load characteristics. To
+found within end-use applications. The circuit-based model of each                        reasonably model the motor loads, realistic parameters should be used.
+component is built in EMTP (when required, the component models are                       The corresponding per-unit parameters are taken from [14].
+adopted from previous research in the literature). Component models                           Fans and pumps are modeled as three-phase induction motors with
+are developed using per-unit parameters which allows the aggregation                      quadratic torque load characteristics. The per-unit parameter related to
+of individual loads according to their percentage contribution in the                     this category is taken from [14].
+total demand. Those individual models are then aggregated to form the                         Variable frequency drives for three-phase induction motors are
+complete load at the distribution bus. An aggregation procedure with                      implemented using a pulse-width-modulation (PWM) controlled voltage
+such high level of details has not been found in the existing literature.                 source inverter (VSI) and vector control (field-oriented control)
+The component models are elaborated as follows.                                           technique.
+    Incandescent lamps (Incand), heaters and water heating elements are                       Refrigerator/freezers (REFR), dishwashers (DW) and cloth washers
+modeled as voltage dependent and constant resistance loads,                               (CW) are modeled as single-phase induction motors driving quadratic
+respectively.                                                                             torque loads. Cloth dryers (DRYR) are modeled as 30% single-phase
+    Switch mode power supply loads (SMPS) i.e., TVs and PCs are                           induction motor and 70% resistive element. This type of motor has
+modeled as shown in Fig. 2 [15]. The equivalent resistance is presented                   quadratic torque load characteristics. More details on the characteristics
+in Table 1. The typical per-unit value of Cdc is 0.036 pu (reactance) [15].               of single-phase motors are given in section III. B.
+    Compact fluorescent lamps (CFL) are represented by the circuit of                         Fig. 1 is developed in EMTP using subcircuits. This is a hierarchical
+                                                                                          way of representation which provides high-level access to subcircuit
+                                                                                          contents using masks and scripts. In the top-level mask, the following
+                                                                                          parameters are specified as user-defined values: voltage level of the
+                                                                                          distribution bus, total power demand, percentage contribution of indi­
+                                                                                          vidual load components, and proportion of motor loads controlled with
+                                                                                          variable speed drives. The individual component models which are
+                                                                                          placed inside the subcircuit are aggregated based on their percentage
+
+
+
+
+Fig. 1. Structure         of   the   aggregated   load   model   using   component-
+based technique.                                                                                              Fig. 3. LED driver circuit topology.
+
+                                                                                      2
+M. Torabi Milani et al.                                                                                                 Electric Power Systems Research 197 (2021) 107290
+
+
+contribution specified in the mask. The aim of this scripted subcircuit is        Table 2
+to provide a generic and flexible load representation which offers the            Commercial Load Composition.
+possibility of being used in any network and any load sector (i.e., resi­          Component              Composition             Component               Composition
+dential, commercial and small industrial).
+                                                                                   Compressor             8%                      CFL                     20%
+                                                                                   Pump                   10%                     Incandescent            0%
+3. Validation of the developed load model                                          Fan                    20%                     LED                     20%
+                                                                                   Elevator               0%                      SMPS                    15%
+                                                                                   1φ Motor               5%                      Cooking                 2%
+   In this section, three case studies are presented which validate the
+developed model in commercial and residential load sectors. Results of
+the case studies are further discussed at the end of this section.
+
+
+3.1. Commercial load
+
+     In the commercial sector, a recorded event at a shopping mall in
+Montreal is reproduced by using the developed model. The recorded
+voltage waveforms resulted from a disturbance that lasted for 0.296 s
+and provoked following voltage drops on the three phases: 67.9%
+voltage drop on phase a, 64% voltage drop on phase b and 62.8% voltage
+drop on phase c of a 12.47 kV system (see Fig. 4, solid lines). An adjusted
+ideal voltage source is used to reproduce the recorded instantaneous
+voltages (see Fig. 4, dotted lines). The event is simulated by applying the
+voltage source to the developed model of the shopping mall as explained
+in section II.
+     This shopping mall had a 1.52 MW pre-fault load. Load composition
+is strongly dependent on the geographic location, time, and also tem­
+perature. Since no information is available on the composition of this
+load, first some assumptions are made based on the typical usage of a
+commercial center at the time of the event, 11:46 September 29th, 2020.
+Next, further adjustments are made in the load composition to match the
+simulation results with the measured signals as closely as possible. The          Fig. 5. Three-phase currents; simulation (dotted) vs measurement (solid)
+considered composition which provides the best match to the recordings            related to the commercial load case study.
+is listed in Table 2.
+     Fig. 5 presents the comparison between simulated results and
+                                                                                  levels around 45–55% of nominal voltage in about 1–3 cycles [14]. In
+recorded data for three-phase currents. Active and reactive power de­
+                                                                                  this case study, all motor loads are tripped during simulation of the
+mands comparisons are presented in Fig. 6.
+                                                                                  voltage sag. The low currents observed during the fault are attributed to
+     Analyzing the measured signals yields the following points which are
+                                                                                  this loss of load. When voltage recovers to about 65% of the nominal
+applied in the simulations. The best agreement is achieved between the
+                                                                                  value, motor contactor will reclose within few cycles [14]. Reconnection
+simulated and recorded currents in terms of harmonic contents by
+                                                                                  of 70% of motors 20 ms after voltage recovery provides the best match to
+making all motors to be directly connected. Voltage sag may induce loss
+                                                                                  the recorded currents. The observed inrush current (see Fig. 5 near 3.3 s)
+of load in the system. Contactors of motor loads drop out at voltage
+                                                                                  at the time of voltage recovery is due to reconnection of motors. It
+                                                                                  should be noted that dropping of motors during voltage sag and their
+                                                                                  reconnection after voltage recovery cannot be generalized and depends
+                                                                                  on the controls and protection parameters associated to each motor load.
+                                                                                      As noticed, the simulation results are sufficiently accurate when
+                                                                                  compared against measurements, but it is always difficult to match
+                                                                                  reactive power more accurately.
+
+                                                                                  3.2. Residential load
+
+     

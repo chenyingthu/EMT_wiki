@@ -1,0 +1,209 @@
+                                                           Electrical Power and Energy Systems 162 (2024) 110297
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                          International Journal of Electrical Power and Energy Systems
+                                                          journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Efficient electromagnetic transient simulation for DFIG-based wind farms
+using fine-grained network partitioning✩
+Jiale Yu, Haoran Zhao ∗, Yibao Jiang ∗, Bing Li, Linghan Meng, Futao Yang
+School of Electrical Engineering, Shandong University, Jinan, 250061, China
+
+
+
+ARTICLE               INFO                                ABSTRACT
+
+Keywords:                                                 Electromagnetic transient (EMT) simulation plays a critical role in understanding the dynamic behavior
+Large-scale wind farm                                     and fast transients involved in wind farms (WFs). However, as WFs continue to develop on a large scale,
+Doubly fed induction generator based wind                 the increasing number of wind turbines and network nodes poses significant challenges for efficient EMT
+turbine
+                                                          simulation of WFs. To address this issue, we propose a fine-grained network decoupling method for doubly-fed
+Electromagnetic transient
+                                                          induction generator (DFIG) based WFs. This paper first establishes the decoupling algorithm for core electrical
+Parallel computing
+Fine-grained network partitioning
+                                                          equipment of DFIG-based WFs. By employing device-level fine-grained decoupling, the dimensionality of the
+                                                          admittance matrix for WF is effectively reduced, significantly decreasing the computational load. Additionally,
+                                                          this paper establishes a scalable computational framework by integrating multi-threaded parallel computation
+                                                          into the simulation process, which enhances efficiency further. The proposed method is compared with
+                                                          detailed models in Matlab/Simulink to verify efficiency and accuracy. Simulation results demonstrate that
+                                                          this method significantly improves simulation efficiency, achieving a two-order-of-magnitude speedup with 50
+                                                          wind turbines, and it maintains high simulation accuracy, with a maximum relative error of 1.68%.
+
+
+
+1. Introduction                                                                               For the dynamic equivalence methods of WFs, existing research
+                                                                                          mainly includes two categories [10,11]: model order reduction methods
+    With the increasing global energy demand and worsening envi-                          and equivalence methods. Model order reduction methods utilize tech-
+ronmental issues, the large-scale grid integration of wind power has                      niques such as singular value decomposition [12] and Krylov subspace
+become inevitable [1]. Doubly fed induction generator (DFIG) based                        methods [13] to obtain simplified models for WFs. Equivalence meth-
+wind turbines, with advantages such as low cost and high regulation                       ods, on the other hand, represent the WFs as one or several equivalent
+flexibility [2], have been widely used in onshore and offshore wind                       wind turbines [14]. These dynamic equivalence methods significantly
+farms (WFs). In order to accurately reveal the high-frequency dynamic                     improve the simulation efficiency [15]. However, they cannot cover
+characteristics of DFIG-based WFs, electromagnetic transient (EMT)                        all operating conditions of WFs or reflect the internal states of the
+simulation is necessary [3]. Establishing highly efficient EMT simu-                      wind turbines, which limits the simulation accuracy and applicability
+lation methods is crucial for renewable energy integration and stable                     of these models [16].
+system operation [4].                                                                         Considering that dynamic equivalence methods cannot reflect inter-
+    However, WFs continue to develop on a large scale, resulting in                       nal states, some studies have proposed the node elimination methods.
+increasingly complex topologies and a rising number of nodes [5].
+                                                                                          These methods achieve lossless internal node elimination of wind tur-
+EMT simulation of WFs based on detailed model encounters chal-
+                                                                                          bines based on nested fast and simultaneous solution method (NFSS)
+lenges such as high computational complexity, high matrix dimen-
+                                                                                          or Thévenin/Norton equivalent principles [17], and can obtain inter-
+sionality, and small simulation time step [6]. These challenges make
+                                                                                          nal information through inversion techniques [18], thereby improving
+it difficult to meet the efficiency requirements for scientific research
+                                                                                          simulation efficiency while maintaining high accuracy [19]. However,
+and practical engineering applications. Currently, research on efficient
+                                                                                          the derivation processes for these methods are relatively complex.
+EMT simulation methods for large-scale WFs can be categorized into
+                                                                                          When the topology changes, re-derivation is necessitated, which is
+three main types: dynamic equivalence methods [7], node elimination
+                                                                                          time-consuming and reduces the flexibility of the approach [20].
+methods [8], and network parallelization methods [9].
+
+
+ ✩ This work was supported by the National Natural Science Foundation of China (grant number 52307112) and the Shandong Provincial Natural Science
+Foundation, China (grant number ZR2023QE204).
+  ∗ Corresponding authors.
+    E-mail addresses: hzhao@sdu.edu.cn (H. Zhao), yjiang@sdu.edu.cn (Y. Jiang).
+
+https://doi.org/10.1016/j.ijepes.2024.110297
+Received 9 June 2024; Received in revised form 23 August 2024; Accepted 6 October 2024
+Available online 16 October 2024
+0142-0615/© 2024 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+J. Yu et al.                                                                             International Journal of Electrical Power and Energy Systems 162 (2024) 110297
+
+
+     Distinct from the node elimination method, the network paral-
+lelization methods emphasize dividing the detailed model of WFs into
+multiple independently solvable subsystems. Subsequently, the states of
+each subsystem can be obtained in parallel [21]. In light of the rapid
+advancements in parallel computing devices and the current constraints
+on serial computation efficiency, these methods are gradually emerging
+as a current academic focus [22]. Ref. [23] introduces the decou-
+pling method based on the Bergeron transmission line model (TLM).
+However, TLM necessitates the presence of long transmission lines
+with propagation delays exceeding the simulation time step, thereby
+limiting its flexibility. Additionally, Ref. [24–26] respectively propose
+the state space nodal method, multi-area Thévenin equivalent method,
+and compensation method. However, these methods exhibit the 𝑂(𝑛3 )
+relationship between the number of subsystems and the computation
+complexity of interconnection variables, which restricts their appli-
+cation to coarse-grained partitioning. Consequently, each subsystem
+still contains an excessive number of nodes, which poses difficulties in
+further simulation acceleration. Ref. [27] developed a fine-grained de-
+coupling method for permanent magnet synchronous generator (PMSG)
+based WFs using the semi-implicit decoupling method. Nevertheless,
+the modeling and solving processes for the generator and converter are
+complex, leaving room for further optimization. Furthermore, the intro-
+duction of the half-step delay complicates the timing design. Ref. [22]                      Fig. 1. Topology of large-scale DFIG-based wind farm.
+proposed a decoupling method for PMSG-based WFs using the latency
+insertion method. However, the introduction of small inductors and
+capacitors alters the system’s dynamic characteristics, requiring sim-
+ulation time steps at the nanosecond or sub-microsecond level, which
+significantly limits simulation efficiency.
+     To address the aforementioned issues, and considering the lack
+of research on fine-grained network partitioning for DFIG-based WFs,
+this paper proposes a novel fine-grained network partitioning method.
+Compared to previous methods, the main contributions of this paper
+are as follows:
+     (1) Fully EMT high-efficiency simulation models for the core equip-
+ment are established. They overcome the limitations of dynamic equiv-                     Fig. 2. T-type equivalent circuit of single-phase transformer.
+alence models that cannot reflect the internal states of wind turbines.
+Additionally, they avoid the frequent matrix inversions in DFIG and
+converter, significantly enhancing the computational efficiency of the
+                                                                                transmits it to the grid via step-up transformers and long-distance
+core equipment.                                                                 transmission lines. The topology of a large-scale WF is shown in Fig. 1.
+     (2) A device-level fine-grained network partitioning method for               In this section, the basic modeling methods for core electrical equip-
+DFIG-based WFs is proposed. This method addresses the problem of                ment of WFs and the fundamental EMT simulation methods of WFs will
+excessive nodes in subsystems, and it overcomes the limitations of              be introduced.
+existing fine-grained network partitioning methods that require sub-
+microsecond or nanosecond simulation time steps, significantly reduc-           2.1. Basic modeling methods for core electrical equipment of WFs
+ing the computational load.
+     (3) A scalable parallel simulation framework based on the OpenMP               A wind farm contains numerous complex electrical equipment, in-
+programming model is proposed. This framework features a simple                 cluding DFIGs, transformers, back-to-back converters, filters, and trans-
+computational process and strong scalability, which ensures high sim-           mission lines. This section introduces the basic mathematical models
+ulation efficiency as the scale of the wind farm increases.                     used for each equipment before decoupling, as detailed below.
+     The remainder of this article is structured as follows: Section 2              The mathematical model of the DFIG includes the voltage balance
+introduces the fundamental modeling and simulation theory of WFs.               equation, flux linkage equation, electromagnetic torque equation, and
+Section 3 details the device-level fine-grained decoupling method for           rotor motion equation [28]. When in an arbitrary rotating dq0 co-
+core electrical equipment. Section 4 describes the device-level fine-           ordinate system, the mathematical model of the DFIG is detailed in
+grained decoupling method for DFIG-based WFs. Section 5 presents                Appendix A.1.
+the parallel implementation scheme for large-scale WFs based on fine-               Transformers are typically modeled utilizing a T-type equivalent
+grained decoupling. Section 6 verifies the accuracy and efficiency of           circuit. For example, the topology of a single-phase transformer is
+the proposed model. Finally, Section 7 draws conclusions.                       illustrated in Fig. 2, which includes an ideal transformer with a turns
+                                                                                ratio of 𝑘 ∶ 1. In this model, 𝑢T1 and 𝑖T1 represent the primary side
+2. Fundamental modeling and simulation theory of WF                             voltage and current, 𝑢T2 and 𝑖T2 represent the secondary side voltage
+                                                                                and current. The winding resistance and leakage reactance are all
+    The electrical system of a WF consists of two parts: wind turbines          referred to the secondary side.
+and the collection system. Wind turbines convert wind energy into                   Converters in WFs typically utilize two-level voltage source con-
+kinetic energy in the rotor, which is subsequently transformed into             verters (VSCs). This paper employs a switch function method for VSC
+alternating current (AC) power and fed into the collection system.              modeling, which is detailed in Appendix A.2. This model can accurately
+The collection system aggregates the generated electrical energy and            capture the external characteristics of two-level VSCs and reflect their
+
+                                                                            2
+J. Yu et al.                                                                                  International Journal of Electrical Power and Energy Systems 162 (2024) 110297
+
+
+internal switching states. Additionally, unlike 𝑅on /𝑅of f models, the
+switch function model maintains a constant nodal admittance ma-
+trix regardless of the converters’ switching states. This reduces the
+computation load of WFs.
+    Additionally, filters are modeled using a T-type LCL equivalent
+circuit, while transmission lines are modeled using a lumped parameter
+line model. Considering these models are widely utilized, further details
+will not be elaborated here.                                                                        Fig. 3. Inductance branch and its transient model.
+
+
+2.2. Fundamental EMT simulation methods of WF                                      Table 1
+                                                                                   Coefficients for various branch types.
+
+    The basic EMT simulation methods in power systems can be catego-                Type                     𝐺eq                        𝐴1                            𝐴2
+                                                                                                              1
+rized into nodal analysis method and state space analysis method [29].              𝑅                         𝑅
+                                                                                                                                        0                             0
+Compared to the state space analysis method, the nodal analysis                     𝐿                         𝛼 𝛥𝑡
+                                                                                                               𝐿
+                                                                                                                                        1                             1−𝛼
+                                                                                                                                                                       𝛼
+method offers a more straightforward solution process. Therefore, this              𝐶                          𝐶                         1−𝛼
+                                                                                                                                                                      −1
+                                                                                                              𝛼 𝛥𝑡                         𝛼
+paper employs the nodal analysis method as the foundation for EMT                                                𝛼 𝛥𝑡                    (1−𝛼)𝑅𝛥𝑡+𝐿                   1−𝛼
+                                                                                    𝑅𝐿                        𝐿+𝛼 𝑅𝛥𝑡                       𝐿+𝛼 𝑅𝛥𝑡                    𝛼
+simulations. The simulation steps are divided into the following two                                              𝐶                      (1−𝛼)𝛥𝑡+𝐶 𝑅
+                                                                                    𝑅𝐶                                                                                −1
+stages:                                                                                                       𝐶 𝑅+𝛼 𝛥𝑡                      𝐶 𝑅+𝛼 𝛥𝑡
+
+
+
+
+2.2.1. Discretization of the dynamic equations of basic circuit elements
+    As noted in Section 2.1, basic circuit elements(L, C, R) and power             3. Device-level fine-grained decoupling method for core electrical
+sources can be used to model the transformers, converters, and other               equipment
+equipment in WF. Subsequently, by connecting the equipment models
+based on WF topology, the circuit models of WF can be established.                     Section 2 introduced the fundamental methods for modeling and
+However, the L, C, RL, and RC branches in this model cannot be directly            simulation of WFs. However, if these basic methods are directly applied
+used for EMT simulation. Before conducting the EMT simulation of WF,               to the EMT simulation of WFs, the modified nodal voltage equations
+it is necessary to discretize the dynamic equations of these branches              can reach dimensions of nearly a thousand for a WF with just ten wind
+using numerical integration methods at each time step, thus making                 turbines, making efficient simulation challenging. To address the above
+them equivalent to a historical current source in parallel with an                 issues, this section establishes the decoupling methods and equivalent
+equivalent conductance [30,31].                                                    circuits for core electrical equipment based on the characteristics of
+    Taking the inductance branch as an example, the process of dis-                different equipment.
+cretization is introduced below. The dynamic equation of the induc-
+tance branch is shown in (1). After applying the weighted numerical                3.1. Decoupling method and equivalent circuit for DFIG
+integration method, its discretized equation is obtained, as shown in
+(2). By transposing and simplifying, Eq. (3) is derived.                           3.1.1. Decoupling method for T-type LLL branch
+                             d𝑖 (𝑡)                                                   Considering that the T-type LLL branch is the main component of
+𝑢𝑘𝑚 (𝑡) = 𝑢𝑘 (𝑡) − 𝑢𝑚 (𝑡) = 𝐿 𝑘𝑚                                         (1)
+                               d𝑡                                                  the circuits for the DFIG and transformer, the decoupling method for
+                             𝛥𝑡                𝛥𝑡                                  the T-type LLL branch is introduced first. The circuit diagram for this
+𝑖𝑘𝑚 (𝑡) − 𝑖𝑘𝑚 

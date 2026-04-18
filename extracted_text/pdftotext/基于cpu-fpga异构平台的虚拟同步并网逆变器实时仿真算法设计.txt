@@ -1,0 +1,299 @@
+第 48 卷 第 14 期                                         电力系统保护与控制                                                             Vol.48 No.14
+2020 年 7 月 16 日                                  Power System Protection and Control                                        Jul. 16, 2020
+
+DOI: 10.19783/j.cnki.pspc.190989
+
+
+
+             基于 CPU-FPGA 异构平台的虚拟同步并网逆变器
+                                                实时仿真算法设计
+                                            吴 盼，汪可友，徐 晋，李国杰
+                         (电力传输与功率变换控制教育部重点实验室(上海交通大学)，上海 200240)
+
+
+     摘要：随着电力系统中电力电子器件的广泛应用，对于小步长( ≤ 2 μs)电磁暂态实时仿真的需求逐渐增加。此时，
+     单独依靠 CPU 已难以满足其要求，转而结合现场可编程门阵列(Field Programmable Gate Array, FPGA)来实现是一
+     大趋势。搭建了适用于虚拟同步并网逆变器系统实时仿真的 CPU-FPGA 异构计算平台。其中，FPGA 电路部分采
+     用优化 EMTP (Electro-Magnetic Transient Program)流程实现，综合利用恒导纳开关建模、支路拆分并行处理及矩阵
+     化流程计算来优化仿真实时性能。CPU 控制部分采用虚拟同步控制，并设计了与 FPGA 异步通信的数据交互接口。
+     最后，针对该并网逆变器系统进行小步长实时仿真，与 Simulink 离线仿真结果相对比，同时分析平台实时性能与
+     FPGA 上资源消耗，验证了基于所提平台实现虚拟同步并网逆变器系统实时仿真的准确性与有效性。
+     关键词：并网逆变器系统；实时仿真；虚拟同步控制；电磁暂态仿真算法；现场可编程门阵列
+
+       Real-time simulation algorithm design of a virtual synchronous grid-connected inverter system
+                              based on a CPU-FPGA heterogeneous platform
+                                             WU Pan, WANG Keyou, XU Jin, LI Guojie
+                     (Key Laboratory of Control of Power Transmission and Conversion, Ministry of Education
+                                      (Shanghai Jiao Tong University), Shanghai 200240, China)
+
+     Abstract: With the wide application of power electronic devices in power systems, the demand for small time-step (≤ 2μs)
+     electromagnetic transient real-time simulation increases. While a CPU is unable to meet the demand alone, there is a trend to
+     complement it with a Field Programmable Gate Array (FPGA). A CPU-FPGA heterogeneous computing platform available
+     for real-time simulation of virtual synchronous grid-connected inverter system is built. Within it, the circuit part on the FPGA
+     is implemented with an optimized Electro-Magnetic Transient Program (EMTP) algorithm. Constant admittance switch
+     modeling, branch division with parallel processing and high efficiency matrix operation are used to improve real-time
+     performance. The control part on the CPU adopts virtual synchronization control and designs a data interaction interface for
+     asynchronous communication with the FPGA. A small step real-time simulation of the grid-connected inverter system is
+     conducted and compared with the results of a Simulink offline simulation. At the same time, the real-time performance of the
+     platform and resource consumption on FPGA is analyzed. All results above can verify the accuracy and effectiveness of a
+     real-time simulation of the virtual synchronous grid-connected inverter system based on the proposed platform.
+          This work is supported by National Natural Science Foundation of China (No. 51877133).
+     Key words: grid-connected inverter system; real-time simulation; virtual synchronization control; electromagnetic transient
+     simulation algorithm; field programmable gate array
+
+
+                                                                        真分析有助于保障系统安全稳定运行[1]。随着新能
+0 引言
+                                                                        源和分布式发电技术的快速发展，以逆变器为代表
+     对电力系统动态过程做准确、详细、快速的仿                                               的电力电子设备已深入到电力系统各方面[2-3]，其保
+                                                                        护控制系统也越来越复杂。此时，电磁暂态小步长
+基金项目：国家自然科学基金项目资助(51877133)                                             实时仿真凭借计算效率高、精度好、交互性强等特
+- 86 -                             电力系统保护与控制
+
+点[4]，能适应电力电子器件的快速动态[5]，逐渐得
+                                            1     基于 NI-PXI 的 CPU-FPGA 异构计算平台
+到广泛研究与应用。针对虚拟同步并网逆变器开展
+控制与故障特性仿真研究，可为研制相关控制与保                          离 线 的 电 磁 暂 态 仿 真 软 件 ， 如 Simulink 、
+护装置提供参考，降低试验成本。                             PSCAD 等，一般运行在通用计算机 CPU 上，其模
+      离线电磁暂态仿真和传统实时仿真大多基于通                  型和算法设计通常无需考虑底层硬件实现。相比之
+用计算机或高性能计算机，以多核 CPU 为主要计算                   下，小步长实时仿真出于仿真速度的需要，其模型
+单元。随着高频动作电力电子开关的引入，离线仿                      和算法往往需要结合硬件计算平台的特点进行设
+真尚可采用插值算法重新计算开关动作的精确时                       计。 CPU 和 FPGA 两种计算单元的对比，     如表 1 所示。
+刻 [6-8]，而实时仿真中插值算法较难实现，只能采用                                 表 1 CPU 和 FPGA 架构对比
+更小的仿真步长，给 CPU 带来极大的计算负担。                         Table 1 Framework contrast between CPU and FPGA
+      当前，以 RTDS、RT-LAB 为代表的商业化实时                平台        架构特点              优缺点           适用场合
+仿真软件已在电力领域获得了广泛应用[9-10]，且开                             通用型设计，兼顾计        可处理复杂逻辑，         上层控制和
+                                                CPU
+始采用 FPGA 实现电力电子器件的小步长实时仿                               算与控制，串行架构          计算效率一般          调度处理
+
+真。相比 CPU，FPGA 具有计算能力强、高并行度、                            可编程逻辑，计算能        运算效率高，不适
+                                                FPGA                                    并行高速运算
+深度流水线等优势，更适合电磁暂态小步长实时仿                                 力强，并行架构            用复杂流程
+真的实现。围绕基于 FPGA 的实时仿真实现，国内
+外已有相关研究。文献[11-12]提出了适用于 FPGA                    可见，FPGA 适合处理算法流程简单、运算量
+的伴随离散电路(Associated Discrete Circuit, ADC)   大、对运算速率要求高的计算任务；而 CPU 则适合
+开关模型，该模型具备开关动作前后导纳矩阵不变                      处理算法流程复杂、运算量不大、对运算速率要求
+的特点，有助于改善 EMTP 算法的实时性能。文献                   不高的计算任务。本文研究虚拟同步并网逆变器系
+[13-14]采用小步长 ADC 开关模型，开发了基于                 统的实时仿真，其中包含逆变器在内的拓扑电路仿
+FPGA 的实时仿真器；国内研究则关注故障保护[15]、                真需要小步长的高速运算，而上层逆变器控制环节
+分布式发电[16-17]、有源配网[18]等多场景应用，并构              流程复杂，但无需很高的处理速率，兼有上述两种
+建有 FPGA-RTDS[19]、多 FPGA 并行[18,20]等架构。       计算任务，所以考虑设计一种 CPU+FPGA 异构计
+然而，基于 FPGA 的电力电子实时仿真仍存在以下                   算的实时仿真平台。
+问题：1) 传统 ADC 开关模型在高频开关动作下，                      美国国家仪器公司(National Instruments, NI)开
+存在显著开关虚拟损耗，严重影响仿真精度；2) 传                    发的 PXI 系统，是一种集成 PXIe 总线、嵌入式 CPU
+统 EMTP 算法串行程度高，难以发挥 FPGA 高度并                控制器和可扩展 FPGA 模块的自动化平台，灵活性
+行的天然优势；3) 由于电力电子设备控制系统的多                    和可扩展性好、可靠性高。基于该 NI-PXI 平台，可
+样性和复杂度，在 FPGA 上同时实现电路与控制系                   搭建适用于虚拟同步并网逆变器系统实时仿真的
+统的小步长实时仿真，将极大地限制仿真规模。                       CPU-FPGA 异构计算平台，如图 1 所示。
+      考虑到虚拟同步并网逆变器系统中虚拟同步控                      图 1 中并网逆变器采用文献[21-23]所述虚拟同
+                                            步发电机控制，采集逆变器出口电流 ioabc 及滤波后
+制环节的复杂性与慢动态，本文将系统控制部分与
+                                            电压 uabc、电流 iabc 作为控制输入，结合即时功率指
+电路部分拆开分别以大、小步长进行仿真，并基于
+                                            令 Pref、Qref，在 dq 坐标系下进行解耦控制，输出
+NI-PXI 系统搭建了一种 CPU-FPGA 异构计算平台
+                                            逆变器所需 PWM 调制波 mpwm。
+用于上述系统的实时仿真实现。其中，针对现存问
+                                                所搭建的基于 NI-PXI 的 CPU-FPGA 实时仿真
+题，FPGA 电路部分采用了优化 EMTP 流程实现，
+                                            平台由上位机、PXI 机箱组件和相关外设硬件组成。
+利用广义 ADC 开关建模、支路拆分并行处理及矩                    图 1 中，机箱 CPU 控制器(NI PXIe-8135)运行控制
+阵化流程计算来优化仿真实时性能；CPU 控制部分                    部分，仿真步长取为 100 μs；机箱 FPGA 模块(NI
+采用虚拟同步控制，并设计了基于 PXIe 总线的数                   PXIe-7975R，Kintex-7 XC7K410T)基于优化 EMTP
+据交互接口与 FPGA 进行异步通信。最后，针对该                   算法进行小步长电气拓扑仿真，仿真步长为 1 μs，
+并网逆变器系统进行算例分析，与 Simulink 离线仿                以满足精度与实时性要求；上位机人机界面与 CPU
+真相对比，同时分析平台实时性能与 FPGA 上资源                   控制器进行观测量和控制指令交互，时间尺度设为
+消耗，验证了基于本平台实现虚拟同步并网逆变器                      500 μs，满足观测需求；外设硬件经 FPGA IO 模块
+系统实时仿真的准确性与有效性。                             进行实时波形观测及闭环控制(可选)。
+                      吴 盼，等         基于 CPU-FPGA 异构平台的虚拟同步并网逆变器实时仿真算法设计                                                         - 87 -
+
+
+
+
+                                 图 1 适用于虚拟同步并网逆变器系统实时仿真的 CPU-FPGA 异构平台
+      Fig. 1 CPU-FPGA heterogeneous platform for real-time simulation of virtual synchronous grid-connected inverter system
+
+      各组件具体说明如表 2 所示。                                              影响仿真效率；
+               表 2 实时仿真平台各部分介绍                                         2) 算法串行度高，各环节计算需要大量循环遍
+     Table 2 Introduction to real-time simulation platform         历等串行操作，计算时间长；
+         组成部分           时间尺度/μs              承担功能                      3) FPGA 上多采用定点数据类型，为兼顾不同
+                                      设置仿真参数，主导仿真                  支路类型的数据长度，传统算法往往会牺牲部分仿
+    上位机     人机界面           500
+                                          进程，波形监测
+                                                                   真精度或是增加计算量，降低效率。
+             控制器                       运行大步长控制部分，
+                            100                                        图 2 中：Vb、Ib 为支路电压、电流向量；Yb 为
+              CPU                        生成 PWM 调制波
+                                                                   支路自导纳向量；Ih 为支路历史电流向量；Is 为外
+    PXI 机   FPGA 模                     运行小步长电气拓扑部
+     箱         块
+                             1
+                                        分，采集电气观测量
+                                                                   接电源(电流源等效)输入向量；Iinj 为节点注入电流
+                                      连接外设硬件，支撑必要
+                                                                   向量；Vn 为节点电压向量；Y 为拓扑网络导纳矩阵。
+             硬件 IO          —
+                                            的输入输出                      受以上因素影响，传统 EMTP 流程难以满足小
+    外设硬件(示波器、外                          实时波形输出观测或                  步长实时仿真要求，     需要针对 FPGA 进行流程优化。
+                            —
+      置闭环控制器)                              外接闭环控制                  2.1 适用于 FPGA 的优化 EMTP 流程
+                                                                       本文开关建模考虑采用广义 ADC(G-ADC)开
+2     基于 FPGA 的优化 EMTP 算法实现
+                                                                   关模型[24-25]。此时开关历史电流计算如下。
+  传统适用于 CPU 架构的 EMTP 算法高度串行
+                                                                                          onYSWVb,i  I b,i , Si  on
+化，对开关动作简单处理为二值电阻 Ron/Roff 等效，                                                    I h,i                                         (1)
+其大致流程如图 2 所示。                                                                             YSWVb,i  off I b,i , Si  off
+                                                                   式中：i 为该开关支路的支路编号；Ih,i、Vb,i、Ib,i、
+                                                                   Si、YSW 分别为其支路历史电流、支路电压、支路电
+                                                                   流、开关状态及固定导纳；αon、βoff 为待定的最优
+                                                                   广义开关模型参数。
+                                                                       基于该模型，开关动作前后其支路导纳维持不
+                                                                   变，从而无需更改系统网络导纳矩阵，使计算量大
+                                                                   大降低。同时，根据文献[24-25]，在满足相应暂、
+                图 2 传统 EMTP 算法示意图
+                                                                   稳态特性约束及系统稳定的前提下，可确定最优阻
+      Fig. 2 Flow diagram of traditional EMTP algorithm
+                                                                   尼 αon、βoff 参数，如式(2)。再配合历史电流源重新
+  上述流程若直接移植到 FPGA 上，具有如下几                                          初始化(HCRI)算法，有助于开关动作暂态过程中开
+点缺陷：                                                               关支路电压、电流的快速稳定，并减少初始过冲误
+  1) 每次开关动作都需更新网络导纳矩阵，严重                                           差与开关虚拟损耗，可提高仿真精度。
+- 88 -                                                 电力系统保护与控制
+
+
+                      on  (1  2)
+                                                       (2)
+                        off  (1  2)
+    另外，按支路类型做拆分并行计算。以计算支
+路历史电流 Ih 环节为例，如图 3(左)所示，在传统
+EMTP 算法中，通过遍历支路来串行地计算各支路
+历史电流。然而，注意到拓扑一旦确定(编号固定)，
+各支路的类型也即确定，那么完全可以在开始仿真                                                     图 4 矩阵化计算效果示意图
+之前就将所有支路按类型进行拆分，后续计算即按                                                Fig. 4 Effect diagram of matrix operation
+类型各自独立计算。此时，各部分支路类型一致，
+                                                                 综合上述流程优化处理，可设计完整的优化
+计算方式一致，便可以做批量计算，如图 3(右)所示。
+                                                              EMTP 算法流程，如图 5 所示。
+图中，将支路按电阻 R、电感 L、电容 C、开关 SW
+和电源 SC 等进行拆分，最终得到各支路类型对应
+的 Ih 分量集合{Ih}。
+
+
+
+
+                图 3 支路拆分效果示意图
+         Fig. 3 Effect diagram after branch division
+                                                                         图 5 优化 EMTP 算法流程示意图
+  基于支路类型拆分并行处理，可以明显提升算                                             Fig. 5 Optimized EMTP algorithm flow diagram
+法的并行度，改善实时性能。同时，采用支路拆分
+                                                              2.2 初始化计算
+处理还能解决前述定点数据类型问题，各支路类型
+                                                                  如前所述，一旦仿真拓扑确定，系统导纳矩阵
+分量可分别选用合适的数据长度，从而能减少计算
+                                                              及关联矩阵等可唯一确定且仿真中不会改变。那么
+资源消耗和计算时间，优化定时。
+                                                              可以在实时仿真前通过离线初始化计算来求得这些
+  上述支路拆分后各部分的批量计算均为向量运
+                                                              参量，再作为固定参数输入参与后续实时仿真，以
+算。事实上，可将整个流程都优化为矩阵(向量)运
+                                                              减少实时仿真环节的计算量，节约资源与时间。
+算以提升计算效率。以计算节点注入电流 Iinj 环节
+                                                                  系统导纳矩阵 Y，可经由输入拓扑的节点、支
+为例，如图 4(左)所示，传统 EMTP 算法通过遍历
+                                                              路数据计算得到，同时需计算逆矩阵 Y 1 并提取出
+各支路历史电流(外接电源注入电流)，累加得到各
+                                                              各支路类型自导纳向量集合{Yb}。
+节点注入电流，其中 n1,i、n2,i 为支路 i 的首末端节
+                                                                  考虑以行为节点、列为支路的关联矩阵，用于
+点编号。本质上，由支路电流计算节点注入电流反
+                                                              节点注入电流 Iinj 的计算，只与 L、C、SW、SC 支
+应的是网络中节点与支路的连接关系，也即关联矩
+                                                              路有关，则该四种子关联矩阵以电感支路关联矩阵
+阵。那么，根据已知的拓扑结构预先得出网络关联
+                                                              为例，定义如下。
+矩阵 M，再与 Ih 进行矩阵运算，即能快速得到节点
+                                                                                 anb,L,11    anb,L,1N L 
+注入电流 Iinj，如图 4(右)所示。                                                                                       
+  同时，为配合前级 Ih 环节的支路拆分并行运算，                                            Anb,L                              (3)
+                                                                                a                          
+这里关联矩阵也需按支路拆分。此时，原始规模的                                                           nb,L,Nn 1  anb,L,Nn N L 
+矩阵运算拆成了若干较小规模矩阵运算的并行处                                                         1, 节点 i 为支路 j 的首端点
+理，进一步提升了算法并行度与仿真效率。另外，                                                       
+                                                                  anb,L,ij  0, 节点 i 不为支路 j 的端点              (4)
+结合支路拆分并行处理，还能避免各计算环节中无                                                       1, 节点 i 为支路 j 的末端点
+关支路的冗余计算。                                                                    
+                  吴 盼，等        基于 CPU-FPGA 异构平台的虚拟同步并网逆变器实时仿真算法设计                                                         - 89 -
+
+式中：Nn 为总的节点数；NL 为电感支路数；Anb,L                                应相乘，结果为同样大小的向量。
+为计算 Iinj 时的 L 支路关联矩阵，其余 C、SW、SC                               2) 计算节点注入电流 Iinj，与 L、C、SW、SC
+支路关联矩阵 Anb,C、Anb,SW、Anb,SC 可类似式(3)、式                        支路有关。
+(4)定义。                                                              I inj,L  Anb,L I h,L ; I inj,C  Anb,C I h,C
+    另外，以行为支路、列为节点的关联矩阵则用                                           
+                                                                    I inj,SW  Αnb,SW I h,SW ; I inj,SC   Anb,SC I s     (7)
+于支路电压 Vb 的计算，且只与 R、L、C、SW 支路                                       
+有关。事实上，两类关联矩阵紧密联系，以电感支                                              I inj  I inj,L  I inj,C  I inj,SW  I inj,SC
+路关联矩阵为例，有如下定义。                                                   3) 计算节点电压 Vn
+             Abn,L  ( Anb,L )T   (5)                                    Vn  Y 1 I inj                                   (8)
+式中：Abn,L 为计算 Vb 时的 L 支路关联矩阵，其余 R、                             4) 更新支路电压{Vb}，与 R、L、C、SW 支路
+C、SW 支路关联矩阵 Abn,R、Abn,C、Abn,SW 可结合式                         有关。
+(3)—式(5)类似定义。
+                                                                  Vb,R  Abn,RVn ; Vb,L  Abn,LVn
+    完成以上初始化计算，所得拓扑相关参量作为                                                                              (9)
+                                                                   Vb,C  Abn,CVn ; Vb,SW  Abn,SWVn
+后续 EMTP 实时仿真主循环参数输入。
+2.3 实时仿真主循环                                                   5) 更新支路电流{Ib}，与 R、L、C、SW 支路
+    优化 EMTP 算法流程主循环中各计算环节均采                                 有关。
+用矩阵(向量)运算，以高度并行计算保证仿真实时                                            I b,R  Yb,R  Vb,R ; I b,L  Yb,L  Vb,L  I h,L
+性能。具体的全矩阵化运算流程如下(其中{Ih}、                                          
+                                                                   I b,C  Yb,C  Vb,C  I h,C                            (10)
+{Vb}、{Ib}、{Yb}均为各类型支路对应向量的集合)。                                    
+    1) 计算各支路历史电流{Ih}，与 L、C、SW 支                                    I b,SW  Yb,SW  Vb,SW  I h,SW
+路有关。                                                          6) 返回 1)，执行下一步仿真循环，直至结束。
+    I h,L  I b,L ; I h,C  Yb,C  Vb,C                     基于以上流程，最终可在 FPGA 上实现小步长
+                                                          电磁暂态实时仿真。
+     I h,SW   on YSWVb,SW  I b,SW   SSW    (6)
+                                                           3    基于 CPU 的控制系统与接口设计
+              (YSWVb,SW +  off I b,SW )  SSW
+式中：Ih,L 为支路历史电流向量集{Ih}中电感支路对                                    如前所述，所建 CPU-FPGA 异构计算平台中，
+应的分量，其他如 Vb,C、Ib,SW 等均为类似含义，下                               PXI 机箱 CPU 控制器中运行系统仿真的控制部分，
+同，不再一一指明； SSW 、 S SW 为开关支路开关状                              即针对并网逆变器的虚拟同步发电机控制模块，同
+态向量和其按位取反向量，运算中均换算为“1/0”                                    时作为数据调度处理中心，兼顾与上位机 PC 和机
+数值向量；向量乘法“○”定义为向量元素一一对                                      箱 FPGA 的数据交互，其主循环如图 6 所示。
+
+
+
+
+                                            图 6 CPU 上控制系统框图
+                                   Fig. 6 Block diagram of control system on CPU
+- 90 -                                                  电力系统保护与控制
+
+      图 6 中，虚拟同步发电机控制模块接收逆变器                                         图 7 中：t 为某仿真时刻；tc、te 分别为 CPU
+出口电流 ioabc 及滤波后电压 uabc、电流 iabc 作为控制                              控制部分与 FPGA 电路部分仿真步长。电气系统从
+输入，结合上位机参考值指令，在 dq 坐标系下进行                                        t 到 t+tc 间的多个仿真步内，均采用 t 时刻的控制
+解耦控制，输出 PWM 调制波 mpwm 到 FPGA 控制逆                                  系统输出作为计算输入，而控制系统同样直接采用
+变器开关。整体控制策略为双层控制，其中外层为                                           t 时刻的电气系统输出量(之前最后一个仿真步结果)
+功率控制，包括虚拟同步有功调节和无功下垂调节，                                          作为控制输入，后续 t 到 t+ tc 时刻内双方求解过程
+分别如式(11)、式(12)所示；内层 PI 控制包括虚拟                                    独立进行，且均在各自的一个仿真步长内完成，保
+阻抗环节和电压电流控制环。                                                    证仿真实时性。
+   1
+    T [ K p (ref   )  Pref  Pout  K d (  0 )]        4     仿真分析
+        a                                                (11)
+   =                                                           基于所建 CPU-FPGA 异构计算平台，对图 1 中
+  
+                                                                 的虚拟同步并网逆变器系统进行实时仿真分析。相
+式中：ω、δ 分别为逆变器虚拟转子角速度、功角；
+                                                                 应拓扑参数与控制参数见表 3。
+Pref、ωref 分别为上层有功、角速度参考值；Ta 为虚
+                                                                                   表 3 实时仿真参数设置
+拟惯性时间常数；Kp 为有功下垂控制系数；Kd 为阻
+                                                                           Table 3 Real-time simulation parameters
+尼系数；Pout 为逆变器输出有功；ω0 为同步角速度。
+                                                                        拓扑参数            数值          控制参数             数值/p.u.
+              V *  Vref  K q (Qref  Qout )             (12)        电压基准值 Vn/V         380    虚拟惯性时间常数 Ta             2
+            *
+式中： V 为后续内层控制的电压参考值；Vref 为上                                          功率基准值 Sn /kVA       65        阻尼系数 Kd             100
+层端口电压参考值；Qref、Qout 分别为上层无功参考                                          频率基准值 fn /Hz       50     有功下垂控制系数 Kp            100
+
+值和逆变器输出无功；Kq 为无功下垂控制系数。                                                直流电压 Vdc/V        750    无功下垂控制系数 Kq             3
+
+    

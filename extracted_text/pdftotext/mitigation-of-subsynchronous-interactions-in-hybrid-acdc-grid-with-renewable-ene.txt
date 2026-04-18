@@ -1,0 +1,199 @@
+670                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 1, JANUARY 2021
+
+
+
+
+ Mitigation of Subsynchronous Interactions in Hybrid
+     AC/DC Grid With Renewable Energy Using
+     Faster-Than-Real-Time Dynamic Simulation
+        Shiqi Cao , Student Member, IEEE, Ning Lin , Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—Transmission line capacity enhancement by series                           such an interactive network any unexpected contingency in a
+compensation is commonly used in power systems, which conse-                           small region will soon spread to other areas via various paths
+quently faces potential subsynchronous interaction (SSI). In this                      while during the process its severity may also increase.
+work, faster-than-real-time (FTRT) simulation based on the field-
+programmable gate arrays is proposed to mitigate the disastrous                           Widely adopted for boosting the transmission capacity of a
+SSI in a hybrid AC/DC grid integrated with wind farms. Dynamic                         line, capacitive series compensation induces the potential risk
+simulation is applied to the AC system to gain a high speedup                          of subsynchronous interaction (SSI) which is one of the most
+over real-time, and a detailed multi-mass model is specifically                        severe security issues that the power system may encounter [3],
+introduced to the synchronous generator to show the electrical-
+                                                                                       which makes its expansion with multi-terminal HVDC trans-
+mechanical interaction. Meanwhile, the DC grid undergoes elec-
+tromagnetic transient simulation to reflect the impact of power                        mission system and wind farms leading into a hybrid grid more
+converters’ control on the overall grid, and consequently, the EMT-                    vulnerable. The SSI, which is largely defined as the interaction
+dynamic co-simulation running concurrently due to FPGA’s hard-                         between the series compensator and turbine generator, have 3
+ware parallelism is formed. As the two simulations are inherently                      major categories [4], i.e., the induction generator effect (IGE),
+distinct, a power-voltage interface is adopted to separate them
+                                                                                       the torsional interaction (TI), and the torsional amplification
+which enables their coexistence in one program. It shows that fol-
+lowing the detection of a contingency, the FTRT hardware platform                      (TA) which generally refers to the immediate oscillations in
+can generate an optimum solution with precisely quantified power                       the shaft torque following large disturbances, such as faults or
+flow changes in advance to keep the hybrid AC/DC grid stable. The                      switching operations. This phenomenon could linger for a long
+FTRT efficacy is proven by a number of cases where the accuracy                        period of time in a series-compensated system, and it may cause
+is validated by offline simulation tool Matlab/Simulink.
+                                                                                       disconnection of the generators and damages to the shaft [4], [5].
+   Index Terms—AC/DC grid, dynamic simulation, faster than real                        Therefore, TA mitigation becomes imperative once it appears to
+time, field-programmable gate array (FPGA), parallel processing,                       avoid a deeper negative impact on the AC/DC grid.
+power system stability, real-time systems, synchronous generator,                         In transient stability analysis, the time-steps of traditional
+subsynchronous interaction.
+                                                                                       simulation tools such as PSS/e, and DSATools/TSAT range from
+                                                                                       1 ms to 10 ms [6], [7]. However, the CPU-based simulation is
+                             I. INTRODUCTION                                           implemented sequentially and therefore turns out to be time-
+                                                                                       consuming [8]. On the other hand, the available FPGAs’ large
+      HE high-voltage direct current (HVDC) has seen a signifi-
+T     cant inroads into modern power systems, for purposes such
+as economic long-distance electricity transmission, the connec-
+                                                                                       hardware resource capacity allows parallel processing of various
+                                                                                       components [9], [10]. As a result, it shortens the process for
+                                                                                       finding the whole network solution by optimizing the hardware
+tion of different grids with distinct frequencies, and renewable
+                                                                                       latency, which is why it is the ideal platform for the co-simulation
+energy integration where a few DC stations are routinely linked
+                                                                                       to attain faster-than-real-time. As a precautionary measure, the
+by transmission lines to enable flexible power flow [1]. The
+                                                                                       FTRT simulation is able to mitigate the SSI once it happens
+formation of a complex network of the hybrid AC/DC grid as
+                                                                                       following the occurrence of a serious contingency like three-
+a result of the integration of intermittent renewable energies
+                                                                                       phase fault or a sudden load change [11]–[14], since it is actively
+such as the wind farm makes it more challenging to maintain
+                                                                                       involved in reproducing the phenomenon and then learning in
+a stable power system operating safely [2], considering that in
+                                                                                       advance the system’s responses under various scenarios to find
+                                                                                       a proper strategy, or to predict how much active power should
+   Manuscript received December 10, 2019; revised February 26, 2020; accepted
+March 29, 2020. Date of publication April 2, 2020; date of current version             be injected into or extracted from the AC grid by regulating the
+January 6, 2021. This work was supported by the Natural Science and Engineer-          HVDC grid, as well as how long should the process last before
+ing Research Council of Canada (NSERC). Paper no. TPWRS-01852-2019.                    real actions take place in the actual system.
+(Corresponding author: Ning Lin.)
+   The authors are with the Department of Electrical and Computer Engi-                   In this work, a detailed multi-mass turbine-shaft-generator
+neering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada (e-mail:             model compulsory to produce the torsional amplification
+sc5@ualberta.ca; ning3@ualberta.ca; dinavahi@ualberta.ca).                             is developed for transient stability analysis in the dynamic
+   Color versions of one or more of the figures in this article are available online
+at http://ieeexplore.ieee.org.                                                         simulation, which tolerates a much larger time-step, making
+   Digital Object Identifier 10.1109/TPWRS.2020.2984732                                faster-than-real-time (FTRT) simulation a promising solution
+                           0885-8950 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:02:14 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: MITIGATION OF SUBSYNCHRONOUS INTERACTIONS IN HYBRID AC/DC GRID WITH RENEWABLE ENERGY                                                        671
+
+
+
+to contain the SSI. Meanwhile, the multi-terminal HVDC
+grid being able to enhance the stability of the traditional
+AC transmission and distribution system is also specifically
+modeled. The coexistence of both the AC and DC grids
+interacting with renewable energy prompts the adoption of
+the electromagnetic transient (EMT) simulation – which is
+an effective approach to study the complicated phenomenon
+occurring in the HVDC grid in the time-domain – and
+consequently the joint dynamic-EMT co-simulation.                               Fig. 1.   Five-Mass torsional shaft system.
+   The paper is expanded as follows: Section II introduces and
+background of transient stability simulation and the multi-mass-
+shaft steam-turbine-governor model. The detailed modeling of                    the q-axis, given as
+the hybrid AC/DC grid is specified in Section III. Section IV
+demonstrates the hardware design of the co-simulation on                                        ψ̇f d (t) = ωR · [ef d (t) − Rf d if d (t)],            (6)
+FPGA. The FTRT simulation results and subsequent analysis
+are given in Section V. Section VI presents the conclusion and                                   ψ̇1d (t) = −ωR · R1d i1d (t),                          (7)
+prospective work.
+                                                                                                 ψ̇1q (t) = −ωR · R1q i1q (t),                          (8)
+II. TORSIONAL INTERACTIONS AND MULTI-MASS TORSIONAL                                              ψ̇2q (t) = −ωR · R2q i2q (t),                          (9)
+         SHAFT SYNCHRONOUS MACHINE MODEL
+                                                                                  3) Excitation System: The excitation system contains an
+A. Formulation of Transient Stability Problem
+                                                                                AVR and PSS.
+   The traditional dynamic simulation of a power system is es-                                            1
+sentially solving the differential-algebraic equations (DAEs) of                               v̇1 (t) =     · [vt (t) − v1 (t)],                      (10)
+                                                                                                         TR
+synchronous generators and the network. The detailed modeling
+of synchronous machines’s differential equations is conducted in                               v̇2 (t) = Kstab · Δω(t)˙ − 1 v2 (t),                    (11)
+the d-q reference frame following Park’s Transformation, while                                                               Tω
+the remaining components including transformers, transmission                                            1
+lines, and various loads are represented by algebraic equa-                                    v̇3 (t) =    · [T1 v̇2 (t) + v2 (t) − v3 (t)].          (12)
+                                                                                                         T2
+tions. A general set of dynamic simulation equations is given
+below [8], [15]:                                                                In (4)–(12), Tm (t), Te (t), ef d (t), if d (t), i1d (t), i1q (t), i2q (t)
+                                                                                contribute to the input vector u, the remaining variables such
+                              ẋ(t) = f (x(t), u(t)),                    (1)    as ωR , H, D, Rf d , R1d , R1q , R2q , TR , Tω , T1 , T2 , and Kstab
+                                                                                are actually constant parameters of generators and the excitation
+                 g(x(t), V(t)) = 0,                                      (2)
+                                                                                system, which can be found in [5].
+                                x0 = x(t0 ).                             (3)
+                                                                                B. Multi-Mass Torsional Shaft Model
+where x and u are vectors of the state variables and the input,
+respectively. V is the bus voltage vector denoted by VD + j · VQ                   Although the detailed electrical circuits and the mechanical
+in common D-Q reference frame. (3) refers to the initial con-                   equations of a synchronous generator are given above, in reality,
+ditions of the state variables, which can be calculated from                    the mechanical part is driven by a steam turbine in conjunction
+power flow analysis. The accuracy of the time-domain tran-                      with a governor system. In this paper, we apply a five-mass
+sient stability analysis is highly dependent on the DAEs of                     torsional shaft system composed of the four-mass-turbine shaft
+synchronous generators and their control systems. Therefore,                    connecting with the generator rotating shaft to the dynamic
+other than the mechanical, electrical circuit equations of all                  simulation, as shown in Fig. 1, where δn means the relative rotor
+synchronous generators, (1) contains the power system stabi-                    angle of each turbine, and specifically, δ1 is the generator rotor
+lizer (PSS) and automatic voltage regulator (AVR), resulting in                 angle. K45 presents the stiffness coefficient between M ass5
+9m-dimensional differential equations, where m presents the                     and M ass4, so as to K34 , K23 , and K12 . Dn and Hn refer to
+total number of synchronous machines. For a single 9th -order                   the damping factor and inertia constant of each torsional shaft,
+synchronous generator, its details are illustrated below.                       respectively.
+   1) Rotor Mechanical Equations:                                                  Therefore, the set of mechanical equations for the multi-mass
+                                                                                torsional shaft model can be written as [16]:
+             ˙ = ωR · Δω(t),
+            δ(t)                                                         (4)
+                                                                                                              δ˙1 = ωR · Δω1 ,                         (13)
+           ˙ = 1 [Tm (t) − Te (t) − D · Δω(t)],
+         Δω(t)                                                           (5)
+               2H                                                                          ˙1=     1
+                                                                                          Δω          [K12 (δ2 − δ1 ) − Te − D1 · Δω1 ],               (14)
+                                                                                                  2H1
+   2) Electrical Circuit Equations: The electrical circuit in-
+cludes 2 windings on the d-axis and 2 damping windings on                                                    δ˙n = ωR · Δωn ,                          (15)
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:02:14 UTC from IEEE Xplore. Restrictions apply.
+672                                                                                   IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 1, JANUARY 2021
+
+
+
+                                                                                                                 TABLE I
+                                                                                            TORSIONAL OSCILLATION FREQUENCIES AND FFT ANALYSIS
+
+
+
+
+Fig. 2.   IEEE First Benchmark Test System.
+
+
+                                   ˙n=
+                                  Δω
+  [Tn + Knn+1 (δn+1 − δn ) − Kn−1
+                              n
+                                  (δn − δn−1 ) − Dn Δωn ]
+                                                          ,
+                            2Hn                                                   eigenvalues can be obtained, along with the FFT analysis results,
+                                                      (16)
+                                                                                  as listed in Table I.
+                             δ˙5 = ωR · Δω5 ,                            (17)        The results of FFT analysis come from a three-phase to
+                                                                                  ground fault at the high voltage side of the transformer, as
+           ˙5=    1                                                               shown in Fig. 2. As mentioned above, a disturbance in a series
+          Δω         [T5 − K45 (δ5 − δ4 ) − D5 · Δω5 ],                  (18)
+                 2H1                                                              compensated transmission system may excite transient power
+where the subscript n in (15) and (16) refers to M ass2-4, and                    oscillations at subsynchronous frequencies which are mainly
+variables with subscript 1 constitute the mechanical functions                    dependent on the degree of line compensation, e.g., 55% in this
+of the generator shaft. T1 , T5 , and Tn are the mechanical torque                FBM. As Table I shows, the subsynchronous resonance after the
+of each steam turbine. Therefore, the five masses Turbine-                        three-phase fault is 36 Hz from FFT analysis which is almost
+Generator (T-G) shaft has five modes of torsional oscillation                     the same as one of the natural frequencies (35.9691 Hz) from
+frequencies that typically range from 10 to 35 Hz.                                eigenvalue analysis.
+
+C. Torsional Interaction                                                                          III. HYBRID AC/DC GRID MODELING
+   In a typical power transmission system which includes se-
+                                                                                  A. Numerical Method for AC System Simulation
+ries compensation on transmission lines, torsional interactions
+among each turbine shaft may arise when system faults and                            Traditional dynamic simulation of a single-mass synchronous
+sudden load changes occur. Following a disturbance, the tran-                     generator model contains 9th order differential equations, which
+sient power oscillation may emerge. If the resonance frequency                    can be solved by Newton-Raphson or other iterative methods.
+corresponds to one of the torsional oscillation frequencies, the                  However, a higher order differential equations may lead to more
+electrical power may interact with the T-G shaft, resulting in                    iterations in every single time-step; Furthermore, the iterative
+subsynchronous resonance [13]. Take the IEEE First Benchmark                      method is entirely sequential which is time consuming in FTRT
+Model (FBM) in Fig. 2 for example, we can calculate the                           emulation. Since the multi-mass torsional shaft model includes
+torsional oscillation frequencies by eigenvalues and verify them                  17 state variables, the iterative methods are inappropriate for
+from FFT analysis. Fig. 2 shows the topology of FB

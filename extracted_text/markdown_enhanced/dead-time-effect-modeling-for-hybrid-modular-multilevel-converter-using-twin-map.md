@@ -1,0 +1,26 @@
+# Dead-time effect modeling for hybrid modular multilevel converter using twin mapping
+
+Moke Feng a,*, Jianzhong Xu b, Wenxia Sima a, Ming Yang a, Hang Jing b, Keying Pan b
+
+a State Key Laboratory of Power Transmission Equipment Technology, Chongqing University, Chongqing 400044, China
+b State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing 102206, China
+
+* Corresponding author. E-mail address: fengmoke@cqu.edu.cn (M. Feng).
+
+**Keywords:** Electromagnetic transient (EMT) modeling, Dead-time, Hybrid MMC, Twin mapping, Thevenin equivalent
+
+**Abstract:** Dead-time control is essential for modular multilevel converters (MMCs), but it negatively impacts MMC performance. To support the development of control strategies to mitigate the adverse effects of dead-time, electromagnetic transient (EMT) simulations are crucial for analyzing MMCs’ dead-time behavior and developing strategies to mitigate these effects. However, simulating the impact of dead-time in high-level MMCs remains a challenge. The complex modular cascaded circuit significantly slows simulation speed, while the freewheeling conduction of submodule diodes during dead-time disrupts the integrity of submodules in each bridge-arm. This makes it difficult to represent the circuit as a unified Thevenin equivalent for simplification. To address the issue, the dead-time effect is modeled using a diode-H-bridge in this paper. Submodules are categorized into those affected by the dead-time effect and those not. This paper also proposes the capacitor state mapping approach, referred to as “twin mapping method”, to restore the submodules’ behavior during and outside the dead-time, eliminating the isolation of submodules and enabling the application of the Thevenin equivalent theorem. Finally, a Thevenin equivalent model (EM) is developed and compared with a detailed model (DM) and state-space model (SSM). PSCAD/EMTDC simulations demonstrate that the proposed EM effectively captures dead-time spikes and notches while significantly accelerating simulation speed.
+
+## 1. Introduction
+
+Modular multilevel converter (MMC) is a high-efficiency AC-DC power conversion equipment, characterized by its low harmonic content in output voltage, minimal current distortion, and reduced switching losses [1–3]. MMC greatly enhances the stability and reliability of the system, which is crucial for renewable energy power systems [4,5]. It has been extensively applied in the flexible high voltage direct current (HVDC) transmission projects and is progressively utilized in large-capacity aggregation and distribution systems such as offshore wind power and large-scale photovoltaic plants [6–8].
+
+The hybrid MMC [9,10] stands out as it integrates half-bridge submodules (HBSMs) and full-bridge submodules (FBSMs) in a balanced ratio, harnessing the strengths of both MMC configurations [11–13]. As depicted in Fig. 1, the hybrid MMC features a three-phase, six-bridge-arm configuration, with each arm comprising a series of interconnected FBSMs and HBSMs. This design endows the hybrid MMC with the ability to handle DC fault current interruption and zero-voltage crossing, making it a promising candidate for a wide range of applications.
+
+In hybrid MMC, insulated gate bipolar transistors (IGBTs) and diodes are required to turn on and off at specific time. If one IGBT in an H-bridge is not fully turned off before the other turns on, a short-circuit may occur between the positive and negative terminals of the submodule capacitor. This can result in capacitor burnout and potentially cause a cascading fault, damaging the converter. Generally, on switch state change, both IGBTs on the same side of the H-bridge are turned off simultaneously to avoid short circuits. This all-off period is called the dead-time.
+
+Submodules’ uncertainty in the switching actions can cause dead-time signals to randomly elevate or reduce the output voltage of the bridge-arm, significantly affecting the operation of the MMC. Dead-time increases circulating harmonic currents by preventing switching actions, which distorts the output current waveform [14]. It amplifies common-mode voltage and current, posing risks to power electronic devices [15]. Additionally, dead-time influences capacitor voltages, reducing system efficiency and stability. Increased thermal losses from AC current paths affect component cooling and longevity. The output voltage experiences added fluctuations, slightly reducing output power [16–18]. These effects must be alleviated to ensure optimal MMC performance.
+
+**Fig. 1.** Topology of hybrid MMC.
+
+Ref [19] highlights that dead-time effects can be mitigated through techniques such as dead-time compensation [20,21], minimization [22,23], and dead-time elimination (DTE) [24,25]. These methods have effect in reducing the effect of dead-time in low-level converters [26–28]. Nevertheless, the dead-time effect still cannot be completely

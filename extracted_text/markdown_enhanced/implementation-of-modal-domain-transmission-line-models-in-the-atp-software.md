@@ -1,0 +1,31 @@
+# Implementation of Modal Domain Transmission Line Models in the ATP Software
+
+**JAIMIS SAJID LEON COLQUI**<sup>1</sup>, **LUIS CARLOS TIMANÁ ERASO**<sup>2</sup>, **PABLO TORREZ CABALLERO**<sup>1,3</sup>, **JOSÉ PISSOLATO FILHO**<sup>1</sup>, (Senior Member, IEEE), AND **SÉRGIO KUROKAWA**<sup>4</sup>, (Member, IEEE)
+
+<sup>1</sup> School of Electrical and Computer Engineering, State University of Campinas—UNICAMP, Campinas 13083-852, Brazil
+<sup>2</sup> Department of Electronic and Telecommunications Engineering, Catholic University of Colombia, Bogotá 110231, Colombia
+<sup>3</sup> Centro de Pesquisa e Desenvolvimento em Telecomunicações—CPQD, Campinas 13086-902, Brazil
+<sup>4</sup> Department of Electrical Engineering, São Paulo State University—UNESP, Ilha Solteira 15385-000, Brazil
+
+**Corresponding author:** Jaimis Sajid Leon Colqui (jaimis.leon@unesp.br)
+
+This work was supported in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior—Brazil (CAPES)—Finance Code 001, in part by the São Paulo Research Foundation (FAPESP) under Grant 2021/06157-5, and in part by the Centro de Pesquisa e Desenvolvimento em Telecomunicações (CPQD).
+
+**ABSTRACT** Electromagnetic Transients Program make extensive use of transmission line models for the simulation of electromagnetic transients. This paper proposes a circuit representation of the modal transformation, more specifically Clarke’s matrix. The arrangement of ideal transformers we propose allows modal transformation to be directly implemented in software such as Alternative Transient Program - Electromagnetic Transients Program. We combined the proposed circuit with single-phase transmission line models that consider frequency independent and frequency dependent parameters to represent transposed three-phase transmission lines. The main advantage of the proposed approach is that it allows the implementation of new transmission line models without depending on models provided in applications. To show this capability, we included the frequency dependence of soil parameters in the simulations. Results show that the proposed model is accurate both in the frequency domain and in the time domain.
+
+**INDEX TERMS** Transmission line model, Clarke transformation matrix, electromagnetic transients, EMT-type programs.
+
+## I. INTRODUCTION
+Transmission line (TL) modeling had been widely studied in the last decades for fault detection [1], analysis of electromagnetic transients in the frequency domain [2], fault prevention [3], medicine [4], and other applications. Several TL models had been developed and implemented in software for the simulation of electromagnetic transients such as Alternative Transient Program - Electromagnetic Transients Program (ATP-EMTP), Power Systems Computer Aided Design (PSCAD), Electromagnetic Transients Program - Restructured Version (EMTP-RV), and others. The ATP-EMTP, the PSCAD, and the EMTP-RV are specialized software for the simulation of transient phenomena of electromagnetic and electromechanical nature in power systems. They include specialized libraries containing state-of-the-art models that represent power electronics, transmission lines, transformers, mechanical equipment, and many other devices. The user may employ these models to perform time-domain simulations of power system networks. The software usually connects these models in the nodal admittance matrix of the circuit and solves it in the time domain [5].
+
+TL models implemented in the ATP-EMTP software have their phase domain equations embedded in the nodal equations of the entire circuit. These equations implicitly contain the equations of each propagation mode and the modal transformation matrix used to decouple the TL in its modes [5]. One way to represent transposed and non-transposed TLs with vertical symmetry in the ATP software is to independently draw each mode and use an interface to transform voltages and currents from the phase domain to the mode domain [6], [7].
+
+One way to achieve this transformation is using ideal transformers. The polarity and turns ratio of each transformer is associated with the components of the modal transformation matrix. Clarke’s matrix decouples a perfectly transposed TL into its exact modes. The circuit representation of Clarke’s matrix had been previously proposed in [7]. However, in [7], the polarity of one of the transformers is reversed, two phases are switched, and the equations provided do not match the circuit representation. The authors presented the frequency domain representation of modes $\alpha$, $\beta$, and $0$ using this model in [8] and applied it to double-circuit and DC lines in [9]. However, in all three papers, no time domain validation of the proposed circuit had been provided.
+
+Power systems are designed to work close to balanced conditions. For this purpose, in practice, transmission lines are usually transposed at substations [10]. Considering that transmission lines are usually transposed, we capitalize on the fact that Clarke’s matrix is real and constant and use it to decompose three-phase transmission lines into their exact modes directly in the simulations. In this paper, we pro
+
+## II. REPRESENTATION OF A PERFECTLY TRANSPOSED TL IN THE MODE DOMAIN
+The multiconductor transmission line theory complies with the Baum-Liu-Tesche equation formalism because it describes voltages and currents based on the observable voltages and currents along the line [14]. For instance, in [15], the Baum-Liu-Tesche equation formalism was included in the CRIPTE (Calcul sur Réseaux des Interactions Perturbatrices en Topologie Electromagnétique/Calculation for Networks of Interference Interactions in Electromagnetic Topology) software. The CRIPTE software performs a frequency analysis of MTLs in the frequency domain in the presence of different types of sources such as voltage sources, current sources, and electromagnetic fields.
+
+The longitudinal impedance matrix and transversal admittance matrix of a transposed TL that has its ground wires embedded using Kron’s reduction [16] are, respectively, given by
+$$ \begin{bmatrix} \end{bmatrix} \quad \begin{bmatrix} \end{bmatrix} $$

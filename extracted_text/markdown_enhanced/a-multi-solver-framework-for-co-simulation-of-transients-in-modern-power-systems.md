@@ -1,0 +1,30 @@
+# A multi-solver framework for co-simulation of transients in modern power systems
+
+Janesh Rupasinghe a, Shaahin Filizadeh b, *, Dharshana Muthumuni c, Ramin Parvari b  
+a RTDS Technologies, Winnipeg, MB R3T 2E1, Canada  
+b Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 5V6, Canada  
+c Manitoba Hydro International, Winnipeg, MB R3P 1A3, Canada  
+
+**Keywords:** Co-simulation, Dynamic phasors, Electromagnetic transient simulation, Multi-rate simulation, Transient stability
+
+**Abstract:** This paper develops a novel multi-rate, multi-solver co-simulation framework combining dynamic phasors, transient stability, base-frequency dynamic phasors for frequency-adaptive simulation of transients, and electromagnetic transient (EMT) models. This framework subdivides a given power network into several types of subsystems based on the connected devices, required accuracy in representing dynamic details, electrical distance from perturbations, and the intended purpose of the study; as such, the paper describes methods and guidelines to simulate each subsystem using the most appropriate solver and time-step size to maximize simulation efficiency and accuracy. It also addresses the tasks of multiple interfacing and solver interactions that are essential in coupling different solvers. The proposed framework is built around an industrial-grade EMT simulator, to which other solvers are interfaced, enabling access to a variety of power system models and distinct features. The accuracy and efficiency of the framework are demonstrated through co-simulations carried out on a modified version of the 118-bus network, which includes an MMC-HVDC system.
+
+☆ This work was supported by MITACS, Manitoba HVDC Research Center, the University of Manitoba, Canada, and the Natural Sciences and Engineering Research Council (NSERC) of Canada.  
+☆☆ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.  
+* Corresponding author. E-mail addresses: janesh@rtds.com (J. Rupasinghe), shaahin.filizadeh@umanitoba.ca (S. Filizadeh), dharshana@mhi.ca (D. Muthumuni), parvarir@myumanitoba.ca (R. Parvari).
+
+## 1. Introduction
+
+Transients in modern power systems differ markedly in terms of frequency content and time scale, leading to a wide range of impacts on the system. Disturbance occurring at a particular location of the network often causes dissimilar dynamic responses in different network segments. The close electrical vicinity of the disturbance experiences a great amount of fast electromagnetic transients (EMT) while the rest of the network experiences far less or no noticeable dynamics depending on the electrical distance from the disturbance. In addition to transients caused by temporary events such as faults or control actions, there may be regions of the network that experience fast dynamics continually, such as the ones created by high-frequency power electronic systems that generate fast dynamics even during normal operation.
+
+Among the tools used for power system transient simulations, the transient stability (TS) solvers focus on steady-state and low-frequency events; therefore, they allow large simulation time-steps (ms) and offer better computational efficiency. The EMT solvers are recognized for greater accuracy; they require small simulation time-steps (μs) that render them computationally prohibitive for simulating very large networks. Due to converter-tied resources and HVDC systems, and hence the reduced inertia, modern power systems are expected to contain a much richer spectrum of harmonics, and are more susceptible to far-reaching transients. The limitations these aspects imposed on traditional solvers have led to co-simulators, which aptly employ proper solvers for different network segments to maintain simulation accuracy and efficiency [1]. As the demand mounts, alternative solution methods such as dynamic phasors (DPs) [2,3] and frequency-adaptive simulation of transients (FAST) [4] have been devised. DPs have sparked much interest as they allow to retain a considerable amount of waveform dynamics without compromising the computational benefits given by conventional phasors. The FAST method switches between an EMT solution with a small time-step and a DP solution with a large time-step by observing the network status. Challenges such as continuously occurring fast events and non-linear phenomena pose difficulties for both DP- and FAST-based methods to operate as standalone simulators.
+
+Despite recent advances in EMT-TS co-simulation platforms [5–8], problems such as interaction delays, inaccuracies, and numerical instabilities, on the one hand, and the rapid rise of fast-acting systems, on the other hand, have necessitated further development of alternative solvers such as DP-EMT co-simulators [9,10] to improve the frequency bandwidth of simulations. Works in [11,12] show that co-simulation of EMT and TS solvers, with an intermediate DP layer, offers greatly enhanced accuracy. According to the findings in [13], co-simulation using FAST and EMT solvers yields a sophisticated multi-rate platform with unique benefits such as multi-modal operations, enhanced transient accuracy, and the abil
+
+## 2.1. Subsystems types
+
+The proposed framework relies on EMT models to provide the highest level of accuracy; thus, the study areas that require high levels of accuracy are implemented in an EMT simulator. The rest of the network is segmented into several types of subsystems as follows:
+
+### 2.1.1. EMT subsystem type 1
+
+This is the area that undergoes continuous and high-frequency transients. This subsystem may include non-linear devices, power electronic systems, or other high-frequency device. Therefore, this subsystem needs to be solved using an adequately small simulation time-step

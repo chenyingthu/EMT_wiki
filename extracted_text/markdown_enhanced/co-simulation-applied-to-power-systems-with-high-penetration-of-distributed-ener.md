@@ -1,0 +1,26 @@
+**Co-simulation applied to power systems with high penetration of distributed energy resources**
+Igor Borges de Oliveira Chagas ∗, Marcelo Aroca Tomim
+Department of Electrical Energy, Federal University of Juiz de Fora (UFJF), MG, Brazil
+
+**Keywords:** Co-simulation, Power systems simulation, Functional mock-up interface
+
+**Abstract:** Although co-simulation in power systems has not been widely explored yet, it has been shown to be a powerful tool for dynamic studies, especially with the growth of the insertion of distributed energy resources in electrical networks. In this work, a form of co-simulation based on fictitious transmission lines was proposed. Results show that the co-simulation scenarios coherently reproduce results of a complete system using two co-simulation packages. Computational timings are also reduced. Co-simulation interfacing OpenModelica-generated code and OpenDSS is also discussed.
+
+## 1. Introduction
+Over the past two decades, power systems have been undergoing major changes in their topology, due to new generation and consumption needs, that required the connection of new sources of generation and loads. Generation connected at distribution systems level and based on mostly renewable sources usually known as Distributed Energy Resources (DERs), started being harvested at such a rapid rate that concerns have arisen with respect to their impact on the operation of modern electrical systems.
+
+In this context, there is a need for more advanced power systems analysis tools. One of the reasons is that DERs interconnection with a power system can be quite heterogeneous, requiring specific modeling and computing techniques. The second is that simulations of such systems can be quite complex and very time-consuming, not to mention their intermittent characteristic, which may require even stochastic approaches for their proper evaluation. Thus, co-simulation appears as an alternative to evaluate power systems highly penetrated by DERs.
+
+Thus, the co-simulation strategy allows complex and heterogeneous systems to be divided into smaller subsystems, whose modeling and solution can be implemented on the most appropriate platforms.
+
+As one advantage, co-simulation allows integrating subsystems that can even be modeled in different domains (e.g., time and frequency domain). Another advantage would be the reduced computational time when compared to the simulation of a given system using a single tool.
+
+Based on the aforementioned advantages, co-simulation techniques allow the integration of models through the standardized FMI interface, Functional Mock-up Interface. This interface ensures coupling compatibility among heterogeneous systems. Subsystems generated in compliance with the FMI interface are encapsulated within a Functional Mock-up Unit (FMU) [1,2].
+
+In [1], the potential of using co-simulation was demonstrated in the simulation of a wind farm collector system with 50 generators of 10 [MW] each. The simulations became possible within the context of co-simulation, given the natural partition of the system into smaller and simpler parts, which simultaneously favors the precision of the calculations as well as the reduction of computational time for the simulations. Furthermore, the subsystems were processed as FMUs interconnected by means of fictitious transmission lines. This strategy is independent of electrical frequency and is based on traveling wave theory. Communication between subsystems occurs through the exchange of only historical terms computed at the interconnection nodes.
+
+In [3] a co-simulation tool is presented, which combines a simulation tool for transmission systems through single-phase equivalents, with electromagnetic transients (EMT) study programs, for the evaluation of the dynamic behavior of transmission systems with high penetration of electronic-based devices. A similar technique can be found in [4] with two solar photo-voltaic generation plants modeled according to EMT paradigm in two different instances of Matlab. These models communicate with the distribution system modeled in OpenDSS [5]. Results showed reduced computational time for co-simulation when compared to simulation in a single EMT simulation environment.
+
+Co-simulation between transmission and distribution systems has also been shown to be a promising technique. In this case, the systems can be simulated on different computational platforms, with their more efficient solution techniques, which now exchange data with each other in a cyclical way.
+
+In [6], a form of co-simulation for dynamic studies is presented, where a transmission system, with dynamically modeled generators, is connected to distribution systems penetrated by inverter-based distributed generations, also dynamically represented. The study showed that stability can be better assessed by co-simulation, rather than evaluated by co-simulation, rather than evaluated • Co-Simulation (CS): a standard interface for coupling a system model to simulation tools in a co-simulation environment is provided. Data exchange between subsystems is restricted to discrete communication points. In the time between communication points, subsystems are solved independently of each other by their individual solvers. Co-simulation subsystems are internally represented by state variables $\mathbf{x}(t)$ that

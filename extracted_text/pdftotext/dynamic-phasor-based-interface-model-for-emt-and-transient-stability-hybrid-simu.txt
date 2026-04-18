@@ -1,0 +1,154 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2766269, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             1
+
+
+
+
+                Dynamic Phasor Based Interface Model for EMT
+                  and Transient Stability Hybrid Simulations
+           Dewu Shu, Student Member, IEEE, Xiaorong Xie, Senior Member, IEEE, Venkata Dinavahi, Senior Member, IEEE,
+                                 Chunpeng Zhang, Xiaohui Ye, Qirong Jiang, Member, IEEE
+
+
+
+              Abstract—Electromagnetic transient (EMT) and transient sta-                                      large time-step TS program and local detailed power electronic
+           bility hybrid simulations are predominantly used to analyze the                                     systems are simulated with small time-step EMT programs.
+           interactions between HVDC systems and the AC grids. However,                                           Previous studies of hybrid simulations mainly focused on
+           the dynamics of the converters will be greatly affected by the
+           waveforms of adjacent AC systems. Waveform distortion as well                                       improving the accuracy of the interface model as well as
+           as time delay caused by interfacing can significantly increase                                      the overall efficiency [6]-[11]. Particularly, the waveforms of
+           interface errors, resulting in the decrease of the overall accuracy                                 adjacent AC systems have a great impact on the dynamic
+           of the simulations. To solve such problems, a dynamic phasor                                        characteristics of the HVDC converter, especially if the ef-
+           based interface model (DPIM) is proposed in this paper to im-                                       fective short circuit ratio (ESCR) is lower than 2.5. When
+           prove the accuracy of interfaces, especially when the fault occurs
+           near the converters. In doing so, the whole system is partitioned                                   the fault nears the interface bus of the converter, the de-
+           into three parts: the transient stability (TS) subsystem, the EMT                                   creased accuracy of the interface model will reduce the overall
+           subsystem, and the DPIM. During each iteration, the interfaces                                      simulation accuracy greatly. Moreover, one interaction step
+           between the TS subsystem and DPIM are represented by their                                          delay exist for the calculations of parameters of the interface
+           Norton equivalents at the fundamental frequency and Thevenin                                        model. Therefore, developing the interface model is the key
+           equivalents in the dynamic phasor form. Similarly, the interfaces
+           between DPIM and EMT subsystems are represented by their                                            to improving the overall simulation accuracy of the hybrid
+           three phase Norton equivalents and Thevenin equivalents in                                          simulations. Norton/Thevenin equivalents in the time-domain
+           dynamic phasors, respectively. The effectiveness concerning the                                     are generally adopted as the interface model between TS and
+           accuracy and the efficiency of the proposed method is validated                                     EMT subsystems, where the interface line is represented as the
+           by simulating a practical HVDC Project.                                                             PI-section branch [6]-[7]. In [6], the influence of frequency
+              Index Terms—Dynamic phasors, electromagnetic transient                                           on the parameters of interfaces are taken into account to
+           (EMT), HVDC, hybrid simulation, interface model, transient                                          improve the accuracy of interfaces in the EMT subsystems.
+           stability.                                                                                          One method to improve the accuracy of the interface model
+                                                                                                               in the EMT subsystem is the frequency dependent network
+                                            I. I NTRODUCTION                                                   equivalent (FDNE) method [8]-[9]. However, its drawback lies
+                                                                                                               in the relatively low computational efficiency and spurious
+
+           L     INE commutated converter (LCC) based HVDC system
+                 is often adopted for transmission of large-scale renewable
+           energy, such as the Qinghai-Tibet HVDC project in China [1]-
+                                                                                                               transients during a switching operation of a new FDNE model.
+                                                                                                               In [11], the waveform distortion problems of EMT subsystems
+                                                                                                               are mitigated by extending the interface buses far into the
+           [4]. In order to analyze the interactions between HVDC and                                          AC grids in order to comply with the three-phase balanced
+           AC systems accurately and efficiently, the EMT and TS hybrid                                        assumption. However, the simulation accuracy of this method
+           simulations is often used [5]-[9]. For hybrid simulations, the                                      is still unsatisfactory and the efficiency was severely curtailed.
+           power system is first partitioned into one TS subsystem,                                            When the fault occurs near the converter, it is very important
+           different EMT subsystems and the interface model according                                          to improve the accuracy of the interface model in the TS
+           to different levels of detail. And the interface model is used to                                   subsystem, i.e., the Norton equivalents [12]. Typical tech-
+           reflect the interactions between them. The hybrid simulations                                       niques include the curve-fitting technique and the FFT/DFT
+           can satisfy both the accuracy requirements of detailed power                                        technique [6], [8]. For the curve-fitting technique, data in
+           electronic devices and the efficiency requirements of large-                                        multiple cycles are processed. Therefore, a large amount of
+           scale power systems, as the power grids are simulated with a                                        computation affects the efficiency of this technique and the
+                                                                                                               obtained parameters lack physical interpretations. Similarly,
+              This work was supported in part by the Major Program of the National                             for the FFT/DFT technique, all the samples during the last
+           Natural Science Foundation of China (51490683), and the Research Project
+           on Key Technologies and Demonstration Application of Flexible Coordinated                           cycle should be calculated. The problems of the errors induced
+           Control of Electromagnetic Loop Network in Metropolitan Power Grid with                             by the sampling delays and the large amount of computation
+           High Load Density under Grant GZHKJ 00000101.                                                       still exist.
+              Dewu Shu, Xiaorong Xie, Qirong Jiang are with the State Key Lab.
+           of Power System, Department of Electrical Engineering, Tsinghua Uni-                                   To resolve the above-mentioned problems, a novel dynamic
+           versity, Beijing, 100084, China (e-mail: shudw13@mails.tsinghua.edu.cn,                             phasor based interface model (DPIM) is proposed to improve
+           xiexr@tsinghua.edu.cn, qrjiang@tsinghua.edu.cn).                                                    the accuracy of interfaces when simulating large-scale AC/DC
+              Venkata Dinavahi is with Department of Electrical and Computer Engineer-
+           ing, University of Alberta (e-mail: dinavahi@ualberta.ca).                                          systems. The DPIM has the following important features:
+                                                                                                                  i) The principle of DPIM is to use transmission lines
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2766269, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             2
+
+
+
+           as interfaces, by modeling their dynamic responses using
+           dynamic phasors.                                                                                              Transmission line
+                                                                                                                     im(t)                   in(t)            iˆm  k                    iˆn k
+              ii) By using the dynamic phasors, the DPIM can improve the                                                     +         +                +                    R   L                  +
+           accuracy and reduce the computation of the interface model                                                  vm(t)         vn(t)              vˆm k          C           C        vˆn k
+           in the TS subsystem.                                                                                         m-             -n                _                                          _
+
+              iii) The interface model of the EMT subsystem, with its
+                                                                                                                                                                                         Dynamic phasors
+           instantaneous values represented by dynamic phasors, can be
+           efficiently updated with the proposed DPIM. Moreover, the
+                                                                                                               Fig. 1. Dynamic phasor based interface model (DPIM).
+           errors caused by the sampling delays are effectively mitigated.
+
+              The rest of the paper is organized as follows: Section II                                           For simplicity, time variable t is omitted hereafter. And (4)
+           demonstrates the proposed DPIM, including the mathematical                                          is rewritten in the real and imaginary part separately as
+           model and its comparisons with the traditional method in                                                   "      # "                 #"        #      "      #
+                                                                                                                    d x bR,k            A    kωI x   bR,k          vbR,k
+           accuracy and efficiency. In Section III, the proposed hybrid                                                       =                              +B            , and (5)
+           simulation method is illustrated, including its architecture,                                            dt xbI,k        −kωI      A      xbI,k          v
+                                                                                                                                                                    bI,k
+           the interface models between TS/EMT subsystem and DPIM,                                                              " #
+                                                                                                                                 biR,k
+                                                                                                                                             "      #      "      #
+           and its overall computational scheme. Section IV verifies the                                                                      xbR,k          v
+                                                                                                                                                             bR,k
+                                                                                                                                          =C          +D            ,            (6)
+                                                                                                                                  biI,k        x             v
+           effectiveness of the proposed method through the simulation                                                                         bI,k          bI,k
+           of a practical HVDC system. Section V concludes this paper.
+                                                                                                               where x bR,k = Re(bxk ), xbI,k = Im(b xk ), v
+                                                                                                                                                           bR,k , v
+                                                                                                                                                                  bI,k , biR,k , biI,k
+                                                                                                               are the real and imaginary part of the voltage and the current,
+                              II. P ROPOSED I NTERFACE M ODELS                                                 respectively.
+           A. Dynamic Phasor Concept                                                                              The kth dynamic phasors of voltage and current are calcu-
+              The concept of dynamic phasor comes from the time-                                               lated after solving (5) as follows
+                                                                                                                                 
+           varying Fourier series. The signal x(τ), τ ∈ (t − T,t] with                                                           v bk = v
+                                                                                                                                         bR,k + jb
+                                                                                                                                                 vI,k ,
+           the period T is expressed in the form of time-varying Fourier                                                                                                          (7)
+                                                                                                                                 bi = bi + jbi .
+           series [13]-[15], i.e.,                                                                                                   k    R,k    I,k
+                                    ∞
+                        x(τ) = ∑ x
+                        
+                                         bk (t)e jkωτ ,                                                       B. Dynamic Phasor based Interface Models
+                                   k=−∞
+                                       Rt                            (1)                                          In previous studies, the dynamic phasor technique is widely
+                        x
+                        
+                         bk (t) = T1      x(τ)e− jkωτ dτ,                                                     used for the quasi steady state model of power electronic
+                                                 t−τ
+                                                                                                               devices to improve the simulation efficiency [16]-[19], but
+           where ω = 2π/T , x̂k (t) is the kth dynamic phasor of x(τ).                                         has not been applied for hybrid simulations. As the technique
+           When the time window with the period of T moves along the                                           derived by dynamic phasors can not only provide the instan-
+           time axes, the dynamic phasors are changed with the time t.                                         taneous values, but also steady-state phasor values, it is more
+              Two important features, i.e., the product feature and the                                        suitable to derive the interface model for hybrid simulations.
+           differential feature of the dynamic phasor, are given as                                               Generally, in the simulation of TS subsystems, the fre-
+                                                                                                              quency concerned equals to or less than 50Hz [5]. Moreover,
+                          (xy)
+                              c k = ∑x     bk−i ybi ,                                                          all the transmission lines in the TS subsystem are modeled
+                                         i                          (2)
+                          d            dx                                                                     by the lump parameter circuits, i.e., PI circuit model [8].
+                             dt x k = (
+                                      d    )
+                                        dt k −   jkω  x k .
+                                                                                                               Therefore, the impact from the TS subsystem on the EMT
+                                b                     b
+              Based on (1)-(2), the corresponding dynamic phasor models                                        subsystems will include only the electro-mechanical dynamics,
+           of power system components can be derived. For a component                                          and the PI-section model is accurate enough to capture the
+           modelled with its algebraic differential equation                                                   interested electro-mechanical dynamics. Correspondingly, the
+                                       

@@ -1,0 +1,26 @@
+Received 27 March 2019; revised 27 July 2019; accepted 10 September 2019. Date of publication 11 November 2019; date of current version 2 January 2020.
+Digital Object Identifier 10.1109/OAJPE.2019.2952776
+
+# Accelerated Sparse Matrix-Based Computation of Electromagnetic Transients
+A. ABUSALAH$^1$, (Member, IEEE), O. SAAD$^2$, (Member, IEEE), J. MAHSEREDJIAN$^1$, (Fellow, IEEE), U. KARAAGAC$^3$, (Member, IEEE), AND I. KOCAR$^1$, (Member, IEEE)
+$^1$ Polytechnique Montréal, Campus Université de Montréal, Montréal, QC H3T 1J4, Canada
+$^2$ IREQ, Hydro-Québec, Varennes, QC J3X 1S1, Canada
+$^3$ Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong
+
+**CORRESPONDING AUTHOR:** J. Mahseredjian (jeanm@polymtl.ca)
+This work was supported by the NSERC Industrial Research Chair, Hydro-Quebec, RTE, EDF, Opal-RT, and InnovEE.
+
+**ABSTRACT** This paper is related to research on parallelization methods for the simulation of electromagnetic transients (EMTs). It presents an automatic parallelization approach based on the solution of sparse matrices resulting from the formulation of network equations. Modified-augmented-nodal analysis is used to formulate network equations. The selected sparse matrix solver is parallelized and adapted to improve performance by pivot validity testing and partial refactorization. Refactorization is needed when dealing with varying topology networks and nonlinear models. The EMT solver employs a fully iterative method for nonlinear functions. Conventional computer CPU-based parallelization is achieved and does not require any user intervention for given arbitrary network topologies. The presented approach is tested on real networks with complex models, including nonlinearities and power-electronics converters for wind generator applications.
+
+**INDEX TERMS** Electromagnetic transients, modified-augmented-nodal-analysis, KLU, sparse matrix solver, parallelization.
+
+## I. INTRODUCTION
+THE computing time reduction for the simulation of electromagnetic transients [1], [2] (EMTs) is a crucial research topic. The EMT-type [2] simulation methods are circuit based and can use very accurate models for an extended frequency range of power system phenomena. This qualifies them as being of wideband type. In fact the EMT approach is applicable to both slower electromechanical transients and much faster electromagnetic transients. The computation of electromechanical transients can be achieved with EMT-type solvers for very large networks [3] and requires significant computing time when compared to phasor-domain approaches, but even for smaller networks, the computing time can become a key factor due to numerical integration time-step constraints or model complexity level. More and more challenging simulation cases are created for studying modern power systems, those include, for example, HVDC systems [4] and wind generation [4].
+
+There are several techniques for improving computational performance in EMT-type solvers. Such techniques include improvements in model performance using, for example, average-value models [5] for power-electronics based systems or circuit reduction [6]. Network reduction can be also achieved using frequency domain fitting [7] or through dynamic equivalents [8]. Other approaches include usage of multiple time-steps [9], waveform relaxation [10] and combinations of different methods [11].
+
+Although for some models the numerical performance improvements can be generalized, the above methods cannot be applied automatically and require user intervention and various other manual modifications. A more direct path towards computational speed improvement in EMT-type numerical methods is through efficient sparse matrix solvers and parallelization. The latter has been initiated in real-time simulation tools [12]–[14] and followed also in off-line [2], [15], [16] applications. The network tearing approach for parallelization is based on the exact separation created by distributed parameter transmission line/cable models. Other methods [17], [18] can be applied for cutting networks at arbitrary locations.
+
+An important problem in network solution parallelization methods, such as [16], [17], is that user intervention is required for setting the network separation locations. In [18] the derivation of bordered-block-diagonal matrices (diakoptics) allows to cut networks without using transmission line delays. But such methods are demonstrated for linear and fixed topology networks that do not require time consuming matrix updating and refactorizations. Moreover, large network test cases are created by replicating a given small network a few hundred times. Such idealistic situations do not occur for actual real power grids.
+
+This paper targets off-line simulation methods and presents CPU-based parallelization for conventional multi-core computers using a sparse matrix solver, named KLU [19], [20]. Such a solver has been already applied for circuit simulation problems [20]–[23], including the simulation of electromagnetic transients in [22], [23]. This paper contributes several

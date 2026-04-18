@@ -1,0 +1,211 @@
+2096                                                                               IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 34, NO. 4, DECEMBER 2019
+
+
+
+
+       Modeling of a Modular Multilevel Converter With
+        Embedded Energy Storage for Electromagnetic
+                    Transient Simulations
+                      Nuwan Herath , Student Member, IEEE, Shaahin Filizadeh , Senior Member, IEEE,
+                                  and Mohammad Sedigh Toulabi , Senior Member, IEEE
+
+
+   Abstract—This paper proposes a detailed equivalent model for
+electromagnetic transient simulation of a modular multilevel con-
+verter with embedded battery energy storage in its submodules.
+The model offers an accuracy identical to that of a detailed switch-
+ing model (DSM), while it markedly reduces the computational
+complexity of simulations. This is achieved by modeling each mul-
+tivalve as a Thevenin equivalent considering the full dynamics of
+each constituent submodule, which results in a significant reduction
+                                                                                       Fig. 1.   Conventional BESS.
+in the number of switchable nodes in the converter model and
+hence the dimensions of the system’s admittance matrix. The paper
+presents the mathematical development of the model and validates
+it against detailed switching models through several case studies.
+Experimental results from a scaled-down laboratory setup are also
+presented for further verification.
+   Index Terms—Battery energy storage system (BESS), detailed
+equivalent model (DEM), electromagnetic transients (EMT) simu-
+lation, modular multilevel converter (MMC).
+
+
+                             I. INTRODUCTION
+      ATTERY energy storage systems (BESS) have attracted a
+B     great deal of interest in the context of modern power sys-
+tems, particularly in conjunction with the increasing penetration
+of renewables [1], [2]. Conventional BESS topologies comprise
+battery banks made with long strings of batteries, which are then
+connected in parallel. A DC-DC converter boosts up the battery
+bank voltage and maintains the common DC link voltage. Power
+conversion between the DC and AC sides is achieved using two-
+or three-level voltage source converters (VSC) [3] as shown
+in Fig. 1. This configuration does not provide high reliability                        Fig. 2.   MMC structure.
+(due to its non-modular nature) and does not readily facilitate
+usage of battery units that may be of different chemistries or at
+                                                                                       different stages of life-cycle. Additionally, the grid-side two- or
+                                                                                       three-level VSC exhibits high losses and harmonic contents.
+   Manuscript received March 20, 2019; revised June 28, 2019; accepted August
+22, 2019. Date of publication August 25, 2019; date of current version November           An alternative BESS topology, based upon a modular mul-
+21, 2019. This work was supported in part by Natural Sciences and Engineering          tilevel converter (MMC) [4] is shown in Fig. 2. The converter
+Research Council (NSERC) of Canada, in part by Manitoba Hydro, in part                 consists of specialized sub-modules connected in series (SMs) in
+by the MITACS Accelerate Internship Program, and in part by the University
+of Manitoba. Paper no. TEC-00257-2019. (Corresponding author: Shaahin                  each converter arm (Fig. 3). Each SM consists of a small battery
+Filizadeh.)                                                                            unit that is interfaced to the submodule capacitor using a bi-
+   N. Herath and S. Filizadeh are with the Department of Electrical and Computer       directional DC-DC converter [5]–[7]. The submodule capacitor
+Engineering, University of Manitoba, Winnipeg, MB R3T 5V6, Canada (e-mail:
+heratnmh@myumanitoba.ca; shaahin.filizadeh@umanitoba.ca).                              may be inserted into or bypassed from the conduction path using
+   M. S. Toulabi is with the Fiat Chrysler Automobiles (FCA) US LLC, Auburn            the controlled switches Q3 and Q4. This topology benefits from
+Hills, MI 48326 USA (e-mail: toulabi@ieee.org).                                        the well-known qualities of an MMC including lower harmonics
+   Color versions of one or more of the figures in this article are available online
+at http://ieeexplore.ieee.org.                                                         and losses, and integrates battery units for improved reliability
+   Digital Object Identifier 10.1109/TEC.2019.2937761                                  via modularity.
+                           0885-8969 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                               See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:56:42 UTC from IEEE Xplore. Restrictions apply.
+HERATH et al.: MODELING OF MODULAR MULTILEVEL CONVERTER WITH EMBEDDED ENERGY STORAGE                                                                         2097
+
+
+
+
+                                                                                  Fig. 4.   Direct controllers (a) AC power controller (b) AC voltage controller.
+
+Fig. 3.   Topology of a SM with battery energy storage.
+
+
+
+   In this topology, each DC-DC converter can be used to control
+its SM capacitor voltage as well as the power flow to and from the
+SM battery [5], [6]. The work in [8] shows that dynamic power
+flow control can be achieved within this converter’s branches.
+Capabilities of an MMC with both regular SMs and SMs with
+energy storage are investigated in [7].
+   Significant hurdles exist on the way of computer simulation
+of an MMC with embedded energy storage using an electromag-
+netic transient (EMT) simulator. In EMT simulations the electri-
+                                                                                  Fig. 5.   NLC firing pulse generation.
+cal circuit is represented as a network of admittances and current
+sources that represent each circuit element, and solved for node
+voltages at each time step. This process requires re-inversion of
+the network’s admittance matrix every time a switching event                      waveform (Vref (t)) with a modulation index (m) and a phase
+occurs [9]. The topological complexity and the large number                       difference (δ) relative to the point of common coupling (PCC)
+of switching elements of an MMC with energy storage makes                         is generated using the outputs of a power (PAC ) and an AC
+the admittance matrix large; high frequency operation of the                      voltage (vS ) controller as shown in Fig. 4. PAC,ref and vS,ref are
+DC-DC converters causes the admittance matrix to change very                      the active power and AC voltage references. Direct (as shown)
+frequently. Therefore, EMT simulation of an MMC with energy                       or decoupled controls may be used. The SMs may be inserted
+storage SMs involves large admittance matrices that have to                       or bypassed within a multivalve using different techniques de-
+be reinverted at a high frequency, thereby causing a massive                      pending on Vref (t) [12]. Fig. 5 shows the firing pulse generation
+computational burden.                                                             scheme for the multivalve using nearest level control (NLC) [13].
+   In this paper a detailed equivalent model (DEM) for an MMC                     In Fig. 5 IMV is the current entering the multivalve and φPCC is
+multivalve with embedded energy storage is developed. A de-                       the phase angle at PCC. The sorting method described in [14] is
+tailed equivalent model [10] is a computationally affordable re-                  used for rotating submodule capacitors for voltage regulation.
+placement for a conventional detailed switching model (DSM),
+which is normally built by using individual switching elements                    B. Operation of the Submodule DC-DC Converters
+to create SM circuits that are then replicated to create the entire                  A DC-DC converter interconnects each battery unit to the SM
+converter’s model. With a DEM the number of electrical nodes                      capacitor. Normally the battery operates at a lower voltage than
+is reduced greatly without loss of accuracy. In a DEM each                        the SM capacitor; therefore, to discharge the battery, the DC-DC
+multivalve is modeled as a Thevenin equivalent with a unique                      converter operates as a boost converter while for charging it
+time-varying Thevenin voltage and Thevenin resistance. This                       operates as a buck converter. The DC-DC converter essentially
+paper further presents the converter operation, model develop-                    controls the SM capacitor voltage (vC ). A standard control
+ment, and model validation against detailed EMT simulations, as                   diagram for a submodule DC-DC converter in boost mode is
+well as against an experimental prototype setup. The developed                    shown in Fig. 6, in which the outer-loop voltage controller is
+model is shown to retain simulation accuracy identical to that                    augmented with an internal current controller. Limits are applied
+of a detailed switching model while reducing the computational                    to the current controller to maintain the current drawn from the
+intensity of the simulation by several orders of magnitude.                       battery within pre-specified safe operating limits. The current
+                                                                                  reference in Fig. 6 has an additional PSM,ref /vBAT term, where
+          II. OVERVIEW OF THE CONVERTER’S OPERATION                               PSM,ref is the DC power required from the DC-DC converter
+  A brief overview of the operation and control of an MMC                         and vBAT is the battery voltage. This term enables the controller
+with embedded storage is provided in this section. Additional                     to control the individual discharge power levels of the DC-DC
+details may be found in [11].                                                     converters.
+
+A. AC-Side Operation and Control                                                  C. State-of-Charge (SOC) Balancing Controllers
+   Consider the MMC’s operation in the real-power and ac                             For batteries distributed among SMs, care must be exercised
+terminal voltage (PV) control mode. A sinusoidal reference                        to discharge the batteries equally. To achieve this, SOC balancing
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:56:42 UTC from IEEE Xplore. Restrictions apply.
+2098                                                                          IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 34, NO. 4, DECEMBER 2019
+
+
+
+                                                                                  switching action, thus requiring re-inversion, which is computa-
+                                                                                  tionally expensive for large matrices and when inversion occurs
+                                                                                  frequently.
+
+                                                                                                                 YV = J                                 (1)
+                                                                                                                    V = Y−1 J                           (2)
+
+                                                                                     Even with a moderate number of submodules with embedded
+                                                                                  DC-DC converters, an energy storage MMC contributes a large
+                                                                                  number of switchable nodes to the admittance matrix of the
+                                                                                  circuit. The high switching frequency of DC-DC converters
+Fig. 6.   Submodule DC-DC converter voltage controller.                           (typically in the kHz range) causes frequent changes in the circuit
+                                                                                  topology and hence in the admittance matrix.
+                                                                                     To remedy this, the size of the admittance matrix may be
+                                                                                  reduced using a Thevenin equivalent to represent the entire mul-
+                                                                                  tivalve without losing any information compared with a detailed
+                                                                                  switching formulation. The result is a detailed equivalent model
+                                                                                  with high accuracy and much reduced computational intensity.
+                                                                                  The development of this detailed equivalent mode is described
+Fig. 7.   DC power suppression controller.                                        next.
+
+                                                                                  A. Development of the DEM of the Multivalve With
+controllers based upon the method described in [6] are deployed.                  Embedded Storage
+Firstly, the average SOC of the batteries in each arm is calculated.
+                                                                                     Consider the SM with embedded energy storage shown in
+The average SOC of each phase and that of the entire MMC
+                                                                                  Fig. 3. The SM inductor and capacitor are replaced with their
+are then calculated. The phase SOC-balancing controller aims
+                                                                                  respective discretized companion models based upon Dommel’s
+to match the phase SOC to the average SOC of the MMC by
+                                                                                  approach [9] and trapezoidal integration method as shown in (3)
+changing the power command to each phase. The arm SOC-
+                                                                                  and (4).
+balancing controller then matches the arm SOC to the respective
+average phase SOC. Finally, a SM-level SOC controller matches                                      vC (t) = RC .iC (t) + VC,EQ (t − Δt)                 (3)
+the SM SOC to the average arm SOC.
+                                                                                                   vL (t) = RL .iL (t) + VL,EQ (t − Δt)                 (4)
+D. DC Power Suppression Controller
+                                                                                  where
+  In a standalone BESS where no independent DC network
+                                                                                            Δt                                  Δt
+supports the DC voltage (UDC ) of the MMC, a DC power                              RC =        , VC,EQ (t − Δt) = vC (t − Δt) +    iC (t − Δt)
+suppression controller is used to ensure that no net power is                               2C                                  2C
+                                                                                                                                            (5)
+exchanged with the DC side during steady state operation. Fig. 7
+shows this controller. It works by changing the SM capacitor                                2L                                  2L
+                                                                                   RL =        , VL,EQ (t − Δt) = −vL (t − Δt)−    iL (t − Δt)
+voltage reference (vC,REF ) around its nominal value (vC,nom )                              Δt                                  Δt
+until power exchange with the DC link is eliminated.                                                                                        (6)
+
+                                                                                     In (3)–(6), vC (t), iC (t), vL (t), iL (t), and Δt denote the capacitor
+       III. MODELING THE MMC WITH EMBEDDED STORAGE
+                                                                                  voltage, capacitor current, inductor voltage, inductor current,
+   MMC-based battery energy storage systems are mostly appli-                     and the simulation time-step, respectively. An equivalent circuit
+cable to low- and medium-voltage systems, wherein the number                      of the SM in Fig. 3 is shown in Fig. 8 using the companion models
+of SMs in a multivalve is as not as large as in an HVDC                           of circuit elements. In this figure, resistances R1–4 represent the
+application. Nonetheless, the complexity of EMT simulation of                     switches, and the battery is modeled as a simple voltage source
+this type of MMC is not negligible. EMT simulation programs                       behind a resistance, although this battery model may be easily
+normally use an admittance matrix formulation (nodal analysis                     replaced with other models if desired.
+and variations thereof) as shown in (1), where Y is the circuit’s                    A Thevenin equivalent model can now be derived for the
+admittance matrix, V is the node voltages vector, and J is                        entire SM. Thevenin resistance is determined by calculating
+the current injections vector that comprises intrinsic sources                    the equivalent resistance viewed from the SM terminals with
+and history current terms arising from companion component                        all the internal voltage sources short circuited. The Thevenin
+models [9]. Node voltages are obtained using (2). In general,                     voltage source is found by calculating the voltage across the
+the admittance matrix is a function of time and varies with every                 SM terminal (vSM ) when iSM = 0 (open circuited SM). These
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:56:42 UTC from IEEE Xplore. Restrictions apply.
+HERATH et al.: MODELING OF MODULAR MULTILEVEL CONVERTER WITH EMBEDDED ENERGY STORAGE                                                                     2099
+
+
+
+                                                                                  voltage, respectively.
+                                                                                                                         
+                                                                                                                         N
+                                                                                                         vMV,thev =            vSM,thev,i                (10)
+                                                                                                                         i=1
+
+                                                                                                                         
+                                                                                          

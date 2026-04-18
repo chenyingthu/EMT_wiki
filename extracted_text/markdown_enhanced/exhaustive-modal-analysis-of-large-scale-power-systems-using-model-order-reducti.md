@@ -1,0 +1,26 @@
+# Exhaustive modal analysis of large-scale power systems using model order reduction
+
+M. Kouki$^a$, B. Marinescu$^{a,*}$, F. Xavier$^b$
+
+$^a$ Ecole Centrale Nantes-LS2N-CNRS, Nantes, France  
+$^b$ RTE-R&D, Paris LA DEFENSE CEDEX, France  
+
+* Corresponding author. E-mail addresses: Mohamed.Kouki@ec-nantes.fr (M. Kouki), Bogdan.Marinescu@ec-nantes.fr (B. Marinescu), florent.xavier@rte-france.com (F. Xavier).
+
+**Keywords:** Modal analysis, Coupling modes, Large-scale power systems, Model order reduction, Balanced truncation
+
+**Abstract:** This paper presents an efficient modal analysis methodology that computes all modes of any given large-scale power system in exhaustive manner using the model order reduction techniques. For this, a reduced order model is generated using the Balanced Truncation (BT) method for which the controllability and observability gramians are approximated using the low-rank Cholesky factors. This leads to a rapid identification of classes of coupled dynamic devices of the original system. Next, approximated oscillatory modes are computed for each class. Finally, the exact values of the oscillatory modes of the overall power system are determined by iterative computations (the Modified Arnoldi method) initialized to the approximated modes found at the first step. The proposed methodology is able to put into evidence all coupling modes of any given large-scale power system (containing power electronics or any other specific dynamic devices). No a priori knowledge about the pattern of oscillations is needed. The accuracy and efficiency of the proposed methodology are thoroughly validated on several power systems with different orders, including a large scale model of the interconnected European power system.
+
+## 1. Introduction
+
+Power systems are in a radical change from electromechanical systems to power electronics based systems due to a massive penetration of renewable energies connected to the network via power electronic devices. Also, the immense size of actual power systems yields to linear mathematical models with very high dimensions which complicates further analysis. Hence, modal analysis of large scale systems becomes numerically fastidious.
+
+Small-signal stability studies based on modal analysis are important to ensure global system stability [1,2]. Modal analysis of large-scale power systems is a challenging task, especially when an exhaustive computation of oscillatory modes is required. In fact, exhaustive modal analysis should be able to put into evidence all oscillatory modes of the system, i.e, inter-area and electrical coupling modes, as discussed in our previous works [3,4].
+
+To this end, several approaches have been developed and discussed in literature. Most of them are unable to be exhaustive and provide only a selective modal analysis [5,6]. Moreover, they were developed based on the hypothesis that the modes of interest are mainly due to large synchronous machines. This is no longer the case now and in future because of the presence of renewable energy sources and power electronics. To overcome these limitations, a new approach was discussed and developed in [4]. It was validated on several power systems including the large-scale model of the European power system [7]. The new approach provides an analytic and systematic way to compute all the coupling modes (inter-area, electrical, . . . ) of any given power system (conventional systems and systems with large penetration of power electronics) by aggregating dynamic devices which swing together into coupling class. It is able to quantify the interaction between the conventional generators, between the converters and conventional generators, and between the converters, in order to put into evidence all coupling modes.
+
+It mainly consists in three steps. First, the quantification phase in which the interaction degree between the different dynamic devices of the power system is quantified. More specifically, for each device, the other devices that are coupled with it are determined and this leads to a partition into classes of coupled dynamic devices. Next, for each class, an approximation of its coupling modes is performed using a selective modal analysis method. Finally, a full analysis should be done in order to precisely compute the characteristics of all oscillatory modes such as their frequencies, damping ratios, modes shapes, and participation factors. This methodology outperforms the classic modal analysis methods and it is efficient especially in large scale cases.
+
+However, the complexity and hence the computational time of the proposed methodology can be reduced to facilitate engineering studies. For this, in this paper, the model order reduction (MOR) techniques will be integrated to the first step (the quantification phase) of the proposed approach. In fact, an accurate reduced order model facilitates the quantification of the multi-input/multi-output interactions especially for large scale, which is the case of the European power system. This leads to a rapid and accurate identification of classes of coupled dynamic devices-independently to the system’s order and to the dynamic device type.
+
+Quantification of the in

@@ -1,0 +1,21 @@
+# Partitioned Fitting and DC Correction for the Simulation of Electromagnetic Transients in Transmission Lines/Cables
+Miguel Cervantes, Student Member, IEEE, Ilhan Kocar, Senior Member, IEEE, Jean Mahseredjian, Fellow, IEEE, and Abner Ramirez, Senior Member, IEEE
+
+**Abstract**—This letter proposes a two-stage fitting procedure for transmission line/cable functions in which low frequency samples are exclusively considered. At the first stage, fitting is performed for a reduced band by excluding frequencies close to DC. Reducing the fitting range improves the numerical conditioning of the overall system of equations and relieves fitting. The second stage consists of finding a correction term for the out-of-band samples close to DC. The procedure, when used with the recently introduced frequency-dependent cable model (FDCM) approach, allows modeling transmission lines and cables with improved fitting precision at low frequencies. Overall, the new approach is called FDM (Frequency Dependent Model) with DC correction, i.e., FDM/DC. It can be used to complement the prevailing Universal Line Model (ULM) in two ways: for reducing the integration errors due to unbalanced fitting, and for improving the precision of DC response. Two examples are provided to demonstrate the utility of the new approach.
+
+**Index Terms**—Frequency dependent line models, electromagnetic transients, HVDC transmission lines.
+
+## I. INTRODUCTION
+THE transient analysis of transmission lines while accurately capturing the DC response has become of special interest with the increasing number of planned and installed HVDC systems [1]. The transmission line models in the simulation of such systems require covering a wide range of frequencies including those very close to DC.
+
+The universal line model (ULM) [2] is widely used to model lines in HVDC systems so that the model is suitable to study different power system phenomena covering a large spectrum of frequencies. One practice to adequately capture the DC response is to start the frequency range in ULM from a very low frequency sample in the fitting of transmission line functions, i.e., propagation function ($H$) and characteristic admittance. However, this may stiffen the fitting due to increased range of frequencies, and the calculated DC steady-state line voltage/current values may deviate from the correct solution [3]-[4]. Moreover, it becomes more likely to get
+
+In FDCM, fitting of $H$ is performed by decomposing it into grouped modal contributions and therefore large ratios are avoided. The grouping aims to smooth the contribution of modal functions (eigenvalues of $H$) in phase domain. However, when the FDCM approach is applied to lines, the problem of poor fitting at low frequencies is even more emphasized.
+
+In [3], the fitting procedure in ULM is modified by forcing the exact DC response of propagation function in the rational approximation. Although the DC response becomes precise, the fitted function deviates from zero at high frequencies contrary to the natural behavior. This requires an additional correction step such as optimization of residues to reduce the incurred high-frequency errors. In [4], a low-frequency representation of the line model is maintained by using an additional low-order fitting function to compensate for the fitting errors at low frequency samples. But the fitting is still performed for a wide range of frequencies, and it is likely to get large residue/pole ratios in some cases. This may yield to numerical instabilities in time domain.
+
+This letter extends the fitting approach of FDCM to transmission lines by using a two-stage fitting method in which low frequency samples are exclusively considered. In first step, the fitting is performed by excluding very low frequency samples such as those below 1 Hz. In second step, a correction function is found for the excluded low frequency samples. The proposed new approach is called FDM/DC, and it can be also applied to cables or combined with ULM to improve low frequency fitting when necessary.
+
+Two cases are studied in this letter where the proposed FDM/DC provides accurate DC steady-state values and preserves numerical stability where the classic ULM approach becomes inaccurate or unstable.
+
+## II. FDM/DC APPROACH

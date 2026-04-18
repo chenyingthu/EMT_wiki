@@ -1,0 +1,198 @@
+                                                              Electric Power Systems Research 220 (2023) 109313
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Unified MANA-based load-flow for multi-frequency hybrid AC/DC
+multi-microgrids
+Nasim Rashidirad a, *, Jean Mahseredjian b, Ilhan Kocar c, U. Karaagac c
+a
+  Hydro-Quebec/IREQ, Varennes, QC, Canada
+b
+  Polytechnique Montréal, Montréal, H3T 1J4, QC Canada
+c
+  Hong Kong Polytechnic University, Hong Kong
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  In islanded hybrid AC/DC multi-microgrids (MMGs), interconnected AC microgrids (ACMGs) can operate with
+Coordinated droop controller                               their own frequency and power sharing strategy. Hence, to formulate the load-flow problem of multi-frequency
+Load-flow                                                  islanded MMGs, conventional single-frequency load-flow approaches are not applicable. To this aim, in this
+MANA formulation
+                                                           paper a novel unified load-flow framework for AC/DC hybrid MMGs, is proposed. The principles of the proposed
+Multi-frequency
+Multi-microgrid
+                                                           method are based on the modified augmented nodal analysis (MANA) formulation, which can be utilized for an
+                                                           arbitrary number of interconnected multiphase MGs. Then, an unbalanced MMG, which includes two ACMGs,
+                                                           one DC MG (DCMG), and two interlink converters (ICs), is used to verify the validity of the proposed MANA-
+                                                           based formulation.
+
+
+
+
+1. Introduction                                                                           converters. The aim of this paper is on fundamental frequency load-flow
+                                                                                          solutions of MMGs, that are essential for the initialization [9] of the
+    DIRECT integration of renewables, due to their intermittent nature,                   simulation of electromagnetic transients. Once the fast load-flow solu­
+can raise several problems in reliability, power quality and energy ef­                   tion is found, the operational conditions are established, and it can be
+ficiency of power grids. MGs can be considered as a solution [1,2]. The                   used to start the time-domain simulations and support various other
+most basic duty of MGs is to maintain the economic balance of supply                      initialization methods (see [10] and its references, and [11]) for con­
+and demand by energy management systems. However, due to the un­                          verters, controls and nonlinearities, to force the fastest establishment of
+certainties in supply and demand sides, the balancing task becomes                        full harmonic steady-state conditions.
+challenging [3]. An interesting solution is based on the integration of                       The currently existing load-flow studies of MMGs can be divided into
+MGs to create multi-microgrid (MMGs), which can address the un­                           two groups. The first group is for MGs connected to the main grid as a
+certainties, optimize power sharing, and improve system resiliency                        cluster [12], in which there is not any challenge in the load-flow solu­
+[3–5]. In fact, MMGs, due to their high number of MGs, are able to                        tion. The second group is for AC/DC hybrid MGs (HMGs) [13], in which
+satisfy their power demand by their own distributed generators (DGs)                      there is only one islanded AC subgrid, and hence only one frequency is
+[5]. They are also able to exhibit high self-healing features, in presence                considered as a load-flow variable. In the case of MMGs, each islanded
+of faults or outages [6]. To best integrate multiple MGs, understanding                   AC MG, can have its own frequency and power sharing strategy, and
+the benefits, needs, and challenges of networking the MGs is an                           depending on the operation modes of interlinking converters ICs, there
+important topic of research and development [7,8].                                        is coupling among their load-flow variables. Hence, proposing MMG
+    Load-flow solutions are used to find the steady-state conditions of                   load-flow solutions, which can model multiple interconnected islanded
+MMGs for design, control, and operation needs. It is possible to find                     MGs, is an important contribution. For HMGs, there are two approaches
+fundamental frequency and harmonic steady-state solutions. The                            for load-flow solutions: sequential and unified. For the sequential ap­
+fundamental frequency load-flow solution using frequency domain                           proaches [14], the load-flow solutions of all HMG subsystems, including
+equations is a fast approach for establishing the initial network condi­                  ICs, AC and DC subgrids are found separately, and then additional loops
+tions with various constraints related to conventional generators and                     are utilized to achieve convergence. Hence, their implementation is
+
+
+
+    * Corresponding author.
+      E-mail address: rashidirad.nasim@hydroquebec.com (N. Rashidirad).
+
+https://doi.org/10.1016/j.epsr.2023.109313
+Received 11 December 2022; Received in revised form 22 February 2023; Accepted 7 March 2023
+Available online 24 March 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+N. Rashidirad et al.                                                                                               Electric Power Systems Research 220 (2023) 109313
+
+
+complicated for MMGs, which have a high number of subsystems. While                another subsystem.
+in unified approaches [15], the entire system is modeled and solved
+simultaneously. Hence, the system formulation is of great importance to            2.1. ACMG formulation
+decrease computational complexity. To the best of our knowledge, so
+far, for interconnected islanded MMGs, no specific load-flow solution                  Each ACMG has its own MANA-based nodal and component con­
+has been proposed in the literature. To fill this research gap, in this            straints [16–19]. For ACMG nodal constraints, the AC-side currents of
+paper, a unified multiphase load-flow solution, which is based on                  ICs need to be considered. Hence, the corresponding Jacobian terms are
+modified augmented nodal analysis (MANA) formulation [16–19] is                    included in JACMG and JACMG− IC , which respectively represent derivative
+presented for multi-frequency islanded MMGs. MANA modeling is                      terms of AC constraints, with respect to ΔXACMG and ΔXIC . The ACMG
+component-based, and each component has its own variables and con­                 variables are defined as:
+straints. Hence, it is conceptually much simpler to assemble MANA                              ⎡       ⎤
+                                                                                                 ΔVni
+equations as compared to traditional mismatch equations. Moreover,                             ⎢ ΔILi ⎥
+MANA formulation can directly account for circuit-based models such as                         ⎢       ⎥
+                                                                                   ΔXACMGi = ⎢ ⎢ ΔIGi ⎥
+                                                                                                       ⎥                                                 (3)
+switches and transformers, which is another significant advantage.                             ⎣ ΔEG ⎦
+    It can in fact easily include arbitrary and complex models of lines/
+                                                                                                     i
+                                                                                                 Δωi
+cables, rotating machines and else. It can be directly used for the
+initialization of transients [9,18]. The principles of MANA-based                  where for ACMGi , ΔVni , ΔILi , ΔIGi , ΔEGi and Δωi are AC nodal voltages,
+load-flow solutions of islanded MGs, have been presented in [19].                  currents of AC loads, currents of AC generators, internal voltages of AC
+These principles are based on adding frequency as a new load-flow                  generators and frequency, respectively. It is noted that each islanded
+variable, and adding new droop-controlled constraints of grid-forming              ACMG, has its own frequency variable. Hence, MMGs with multiple
+DGs to the MANA-based Jacobian matrix. However, in [19], only one                  islanded ACMGs are supposed to be considered as multi-frequency
+MG has been considered, and networking the MGs to create MMGs, has                 power systems. The Jacobian matrix JACMGi for block i is given by:
+not been considered. In MMGs case, there is a network of AC and DC                          ⎡                                  ⎤
+MGs, which are interconnected through ICs. Hence, each AC MG would                            Yni AILi AIGi       0       0
+                                                                                            ⎢ CLi D Li    0       0     A      ⎥
+have its own frequency considered as a load-flow variable. However,                JACMGi = ⎢
+                                                                                            ⎣ CGi
+                                                                                                                          Lω i ⎥
+                                                                                                                                                          (4)
+                                                                                                    0    D Gi     0     AGωi ⎦
+due to the presence of ICs, load-flow variables of MGs, would not be
+                                                                                              Y Gi  0    BGi YGEi         0
+independent, and need to be solved as a unified load-flow problem. This
+increased complexity adds new challenges. The focus of this paper is on            where, the first-row elements represent the AC nodal constraints.
+MANA-based load-flow solution of MMGs and demonstration of new                     Assuming exponential and frequency dependent load models, their
+capabilities. The paper also contributes a new MMG test system.                    nonlinear power constraints are included in the second row of JACMGi .
+    The proposed unified MANA-based load-flow solution of MMGs in                  Constraints of different operation modes of generators are included in
+this paper, can model multiple interconnected islanded MGs. It is                  the third row of JACMGi . Internal-voltage constraints of AC generators are
+multiphase and can be utilized for unbalanced MMGs. It can be used                 included in the fourth row. The above coefficient sub-matrices are self-
+directly for the initialization of transients. It contributes an algorithm         explanatory (see also [16–19]) and include nodal equations with nodal
+with reduced number of iterations. It is shown that due to the presence            admittance matrix Yni interconnected to load (AILi ) and generator cur­
+of ICs, there is coupling among load-flow variables of the directly and            rents (AIGi ). The remaining coefficient sub-matrices present the con­
+even indirectly connected MGs. It is shown that the number of ICs, can             straints related to loads and generators.
+affect coupling among load-flow variables of different MGs.
+    This paper is organized as follows. Section 2 presents the proposed            2.2. DCMG formulation
+formulation and explains how to create the MMG Jacobian matrix with
+its sub-Jacobians. Operation modes of ICs and DGs are discussed in                     As above, each DCMG has its own MANA-based nodal and compo­
+Section 3. Numerical results and comparisons are presented in Section 4.
+                                                                                   nent constraints. For DCMG nodal constraints, the DC-side currents of
+                                                                                   ICs need to be considered. Hence, their corresponding Jacobian terms
+2. Proposed formulation
+                                                                                   are included in JDCMG and JDCMG− IC , which respectively represent de­
+                                                                                   rivative terms of DC constraints, with respect to ΔXDCMG and ΔXIC . The
+    The proposed MANA formulation of MMGs, is presented as:
+                                                                                   DCMG variables are:
+JMMG ΔXMMG = − fMMG                                                     (1)                    ⎡      ⎤
+                                                                                                 ΔVnj
+                                                                                               ⎢ ΔILj ⎥
+where JMMG is the Jacobian matrix of MMG, ΔXMMG includes all load-                 ΔXDCMGj = ⎢        ⎥
+                                                                                               ⎣ ΔIGj ⎦                                                 (5)
+flow variables of MMGs, and fMMG is the vector of MANA functions (to                             ΔEGj
+be minimized) for MMG. Each MMG is divided into three types of sub­
+systems: ACMGs, DCMGs, and the ICs, and each of them has its own                   where for DCMGj , ΔVnj , ΔILj , ΔIGj and ΔEGj are DC nodal voltages,
+load-flow variables and mismatch equations. Hence, (1) can be                      currents of DC loads, currents of DC converters, and internal voltages of
+expanded as:                                                                       DC converters, respectively. The sub-Jacobian JDCMGj represents the
+⎡                               ⎤⎡        ⎤ ⎡          ⎤
+    JACMG        0    JACMG− IC    ΔXACMG        fACMG                             derivative terms of DCMG constraints. Hence, for block j:
+⎣      0      JDCMG   JDCMG− IC ⎦⎣ ΔXDCMG = fDCMG ⎦
+                                          ⎦    ⎣                 (2)                        ⎡                                ⎤
+                                                                                               Yn,dcj AIL,dcj AIG,dcj  0
+  JIC− ACMG JIC− DCMG    JIC        ΔXIC           fIC                                      ⎢ CL,dcj DL,dcj     0      0 ⎥
+                                                                                   JDCMGj = ⎢
+                                                                                            ⎣ CG,dcj
+                                                                                                                             ⎥                           (6)
+                                                                                                        0     DG,dcj   0 ⎦
+where ΔXACMG , ΔXDCMG and ΔXIC include load-flow variables for                                YG,dcj    0     BG,dcj YGE,dcj
+ACMGs, DCMGs and ICs, respectively. fACMG , fDCMG , and fIC represent the
+minimized functions of ACMGs, DCMGs and ICs, respectively. As seen in              where, the first-row elements, represent DC nodal constraints. Assuming
+(2), JMMG is composed of several block-diagonal sub-Jacobians: JACMG ,             exponential load models, their nonlinear power constraints are included
+JDCMG and JIC . These are the Jacobians of assembled subsystems. The               in the second row of JDCMGj . The constraints of different operation modes
+JACMG− IC , JDCMG− IC , JIC− ACMG and JIC− DCMG , are non-diagonal sub-Jaco­       of DC converters are included in the third row of JDCMGj . Internal-voltage
+bians, which represent Jacobian terms of one subsystem, with respect to
+                                                                                   constraints of DC converters are included in the fourth row. The coef
+
+                                                                               2
+N. Rashidirad et al.                                                                                                   Electric Power Systems Research 220 (2023) 109313
+
+
+ficient submatrices of (6) are self-explanatory (see also [16]).                                ⎡                              ⎤
+                                                                                                  CICk,i   0   0   0   AICωk,i
+                                                                                 JICk − ACMGi = ⎣ YICk,i   0   0   0     0 ⎦                                      (11)
+2.3. IC formulation                                                                                 0      0   0   0     0
+
+    ICs, due to their AC-side and DC-side currents, play a role in both          where, the first-row elements, including CICk,i and AICωk,i represent deri­
+nodal constraints of ACMGs and DCMGs, which are interconnected                   vation of constraints of different operations modes of ICk , with respect to
+through them. Hence, their corresponding Jacobian terms are included             ΔVni and Δωi , and the second-row element YICk,i represents derivation of
+in JACMG− IC and JDCMG− IC . The remaining of IC constraints, depending on       AC-side internal-voltage constraint of ICs with respect to ΔVni . As seen,
+IC operation modes, are affected by their own variables and the vari­            the third row has no non-zero elements, since there is no dependency
+ables of their neighboring ACMG and DCMG. The IC variables are pre­              among DC-side constraints of ICs and ACMGs variables.
+sented as:
+         ⎡          ⎤
+            ΔIICk                                                                2.7. JIC− DCMG sub-Jacobian
+         ⎢ ΔEICk ⎥
+ΔXICk = ⎢           ⎥
+         ⎣ ΔIIC,dck ⎦                                                  (7)
+                                                                                       This sub-Jacobian represents derivative terms of IC constraints, with
+           ΔEIC,dck                                                              respect to DCMG variables. Hence, the related block of each inter­
+                                                                                 connected ICk and DCMGj , is represented by:
+where for ICk, ΔIICk and ΔEICk are AC-side currents and internal-voltages,
+                                                                                                ⎡                 ⎤
+and ΔIIC,dck and ΔEIC,dck are DC-side currents and internal-voltages.                             CIC,dck,j 0 0 0
+    The JICk for block k is given by:                                            JICk − DCMGj = ⎣    0      0 0 0 ⎦                                     (12)
+       ⎡                           ⎤                                                              GIC,dck,j 0 0 0
+         DICk    0    DIC,dck   0
+JICk = ⎣ BICk YICk      0       0 ⎦                                    (8)       where, the first-row element, CIC,dck,j r

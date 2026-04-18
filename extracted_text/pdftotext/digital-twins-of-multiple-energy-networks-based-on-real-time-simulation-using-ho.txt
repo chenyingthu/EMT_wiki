@@ -1,0 +1,200 @@
+                                                              Electrical Power and Energy Systems 154 (2023) 109419
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                             International Journal of Electrical Power and Energy Systems
+                                                            journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Digital twins of multiple energy networks based on real-time simulation
+using holomorphic embedding method, Part I: Mechanism-driven modeling✩
+Xiaoli Huang a , Hang Tian a ,∗, Haoran Zhao a , Haoran Li a , Mengxue Wang a , Xu Huang b
+a
+    School of Electrical Engineering, Shandong University, Jinan, 250061, China
+b
+    State Grid Tianjin Electric Power Company, Tianjin, 300010, China
+
+
+
+ARTICLE                  INFO                                ABSTRACT
+
+Keywords:                                                    Digital twins can provide system operators with a new way to design, operate, and maintain highly-
+Digital twins                                                interconnected multiple energy networks (MEN) by integrating interdisciplinary models using the co-simulation
+Holomorphic embedding                                        technique and implementing faster-than-real-time simulation enabled by powerful modern computing facilities.
+Multiple energy networks
+                                                             This series of papers presents digital twins of MEN capable of real-time simulation facilitated by the
+Mechanism-driven model
+                                                             holomorphic embedding method. As Part I of this series of papers, mechanism-driven modeling is concentrated
+Real-time simulation
+                                                             to guarantee that high-resolution solutions are computationally accessible. A holomorphic embedding-based
+                                                             model (HEM) for MEN is proposed, which uses time-dependent holomorphic functions to depict the time-
+                                                             varying dynamics of gas and heat flows. A convergence radius model (CRM) is proposed to obtain the essential
+                                                             convergence information of HEM, thereby improving its computational performance to match the real-time
+                                                             requirement. Finally, the effectiveness of the proposed method is validated in a medium-sized study case. The
+                                                             results show that the proposed method offers a significant computational benefit with competent precision
+                                                             when compared to standard differential methods, laying the groundwork for the realization of MEN’s digital
+                                                             twins.
+
+
+
+1. Introduction                                                                              achieve such synchronization, the digital model needs to be solved
+                                                                                             at least in real-time with adequate accuracy, which can be accom-
+    Multiple energy networks (MEN), where different energy flows are                         plished via real-time simulation. Furthermore, if the output can be
+interconnected and coordinated to release potential flexibility, have                        provided at a much smaller time ahead of real-time, the digital twins
+received increasing attention in recent years due to their potential                         are considered useful for deriving control or scheduling decisions [9].
+for more efficient energy utilization and lower carbon emission [1].
+                                                                                             Faster-than-real-time performance is continually pursued in the power
+However, the synergistic coordination among multiple energy and the
+                                                                                             system for activities involving transient stability analysis [10], decision
+complex dynamic processes involved make the design, optimization,
+                                                                                             support system-aided simulation [11], electromagnetic transient simu-
+and operation of MEN challenging [2]. Digital twins were first pre-
+sented by Dr. Michael Grieves in 2002 [3]. Digital twins refer to                            lation [12], and so on. Despite its widespread use in power systems,
+a virtual representation of a physical object that can be utilized to                        faster-than-real-time simulation is presently not practical in MEN owing
+conduct simulations, investigate performance concerns, and produce                           to the high computational cost of solving partial differential equa-
+potential modifications, all with the purpose of creating insightful in-                     tions involving various energies with desired precision. The research
+formation that can later be applied to the initial physical object [4]. In                   objective of this series of papers is to utilize mechanism-driven and
+recent years, Digital twins have been implemented on different energy                        data-driven approaches to develop digital twins of MEN capable of per-
+infrastructures, such as microgrids [5], polymer electrolyte membrane                        forming the real-time simulation. In Part I of this series of papers, the
+electrolyzer [6], smart cities [7], etc. It can offer valuable experi-                       real-time simulation capability of digital twins will be mathematically
+mental verification and optimized solutions for MEN development and                          implemented by mechanism-driven modeling.
+operation, thereby improving its economic efficiency and reliability.                            Accuracy and computing speed are two major concerns in real-
+    In the digital twins of MEN, the synchronization between the digital
+                                                                                             izing real-time simulation of MEN. Dynamic behaviors of MEN are
+replica and the physical counterpart should be guaranteed [8]. To
+
+
+ ✩ This work was supported by the National Key Research and Development Program of China (grant number 2018YFA0702200) and the National Natural
+Science Foundation of China (grant number 62192753).
+  ∗ Corresponding author.
+     E-mail address: 201820424@mail.sdu.edu.cn (H. Tian).
+
+https://doi.org/10.1016/j.ijepes.2023.109419
+Received 18 April 2023; Received in revised form 25 June 2023; Accepted 3 August 2023
+Available online 18 August 2023
+0142-0615/© 2023 Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).
+X. Huang et al.                                                                            International Journal of Electrical Power and Energy Systems 154 (2023) 109419
+
+
+generally described by partial differential equations (PDEs) [13–15].              (2) A CRM is proposed to obtain the critical convergence information
+Currently, the classic numerical methods for solving PDEs include the                  of HEM. On this basis, a simplified CRM is proposed, which
+finite difference method, the finite volume method, and the finite                     can efficiently determine the radius of convergence and thereby
+element method [16–19], all of which provide discrete PDEs’ solutions                  strengthen the HEM’s computational performance to meet the
+via spatio-temporal discretization. Unfortunately, discretization in both              real-time standard.
+spatial and temporal dimensions yields a large number of mesh points,
+                                                                                   (3) A co-simulation framework is proposed to enable efficient collab-
+which results in a high computing cost and limits its application in
+                                                                                       oration across different energy networks’ HEMs and CRMs.
+real-time simulation. Aiming to find efficient solutions to PDEs of
+MEN, more advanced methods are developed, which can be catego-                        The remainder of this article is structured as follows. Section 2
+rized as frequency-domain transformation methods and holomorphic                  introduces the architecture of the digital twins of MEN. Section 3
+embedding methods.                                                                presents a mechanism-driven model based on holomorphic embedding.
+    Combined with the circuit theory, the frequency-domain transfor-              In Section 4, a model for calculating the radius of convergence for
+mation method converts differential equations into algebraic equations            HEM is introduced, and a co-simulation framework is given. Simulation
+in the frequency-domain or complex frequency-domain to realize the                results are illustrated and analyzed in Section 5. Finally, conclusions are
+fast calculation of linear differential equations [20–26]. In [20,21], gen-       drawn in Section 6.
+eralized phasor models are presented to transform the linearized time-
+domain models into frequency-domain models. However, the selection                2. Architecture of the digital twins of MEN
+of frequency components may introduce truncation errors. In [22,23],
+the heat transfer dynamic characteristics based on the entropy index                  It is the top priority to identify the meaning of a twin and which
+are obtained using thermo-electric analogy and Laplace transformation.            version is being used in this paper at present. A digital twin is generally
+In [24,25], the frequency-domain models of gas and heating networks               a representation of a process or system that has been supplemented
+are obtained via Laplace transformation. To avoid the difficulty in cal-          by (real-time) data. The representation itself may range from a simple
+culating its inverse transformation, the largest time constant is utilized        sketch of the system to a dynamic differential simulation model, de-
+to approximate the pipeline’s lumped parameter model, which may                   pending on how much model fidelity and execution speed are required
+lead to a significant computation error. To summarize, even though the            by the aimed application. In this paper, the expected application of
+fast calculation of linear differential equations can be realized by the          the proposed digital twins is to describe the dynamic behaviors of
+above methods, the linearization may introduce errors, which limits its           MEN, exposing abnormal behavior such as fault, therefore providing
+accuracy in some circumstances.                                                   preventive or corrective control to maintain the system’s security before
+    The holomorphic embedding-based model (HEM), which can ef-                    or after any security incidents are met. Therefore, models with high
+fectively deal with non-linearity, has been widely employed in both               fidelity are required since phenomena of heat and gas dynamics are
+                                                                                  needed to be covered in the description of MEN. Besides, the twins
+steady-state and dynamic simulation of power systems to perform
+                                                                                  are expected to provide their output within a time that is equal to or
+efficient calculations with improved convergence and competent ac-
+                                                                                  smaller than the intended operational time step so that they can be used
+curacy [27–30]. In [27], HEM for induction motor is proposed and
+                                                                                  to derive control decisions or enable hardware-in-the-loop (HIL) tests.
+applied for voltage stability analysis. In [28], the dynamic simulation of
+                                                                                  Due to these requirements, the digital twins of MEN must be capable
+a power system under fault was realized based on HEM. Furthermore,
+                                                                                  of performing real-time simulations based on dynamic MEN models
+in the scope of MEN, a dynamic energy flow study of integrated gas
+                                                                                  described by differential equations. The architecture of the desired
+and electrical systems is completed utilizing HEM [31]. Nevertheless,
+                                                                                  digital twins is illustrated in Fig. 1.
+the convergence radius of HEM has a considerable influence on its
+                                                                                      The proposed digital twin architecture consists of a Digital twins
+performance in accuracy and efficiency [32,33], determining whether it            block, a Physical system block and an Application block. While the Physical
+is capable of performing the real-time simulation. In [31], the conver-           system block represents the actual physical networks and their associ-
+gence radius is obtained by judging the mismatch between HEM and                  ated equipment, both the Application block and the Digital twins block
+the ordinary differential equations (ODEs) model at predefined time               obtain measurement data perceived from the Physical system block.
+steps. However, since the avoidance of numerical divergence cannot be             Besides, the real-time simulation results generated by the Digital twins
+guaranteed by the judging approach, inaccuracies may occur at some                block will be delivered to the Application block for further analysis,
+random steps and be carried through the entire operation. In [28], the            generating control decisions to be applied upon the Physical system
+convergence radius of HEM is explored through the dichotomy method.               block.
+Although this method can preserve the accuracy of HEM, periodically                   In the measurement database, multiple storage forms, including
+validating whether the solution is in the convergence radius reduces              real-time database (RTDB), structured query language (SQL) database,
+computational performance.                                                        and non-SQL database, are employed to meet different storage needs.
+    Given that advanced model fidelity and execution speed are re-                The RTDB enables quick access to real-time measurements during
+quired for digital twins of MEN to fully exploit its potential to deal            the simulation but has a limited capacity, whereas SQL and non-SQL
+with demanding applications, this series of works is devoted to devel-            databases provide great capacity and long-term storage of historical
+oping digital twins of MEN based on real-time simulation using the                data, training data, and lumped parameters but have a slower access
+holomorphic embedding method. In this paper (Part I), the HEM of                  rate.
+MEN and the convergence radius model (CRM) are proposed to enable                     This series of papers mainly focus on the designing of the four
+the real-time simulation computationally. The following are the three             core functional modules in the Digital twins block. In Part I of the
+main contributions of this paper:                                                 series of papers, two mechanism-driven modules, i.e., the Holomorphic
+                                                                                  embedding-based model (HEM) and the Convergence radius model
+ (1) A HEM of MEN that accommodates electricity, gas, and heat                    (CRM) are proposed, serving as the fundamental mathematical model
+     is proposed. It specifically meets the demand for a tractable                which determines the model depth and timing of the entire digital
+     dynamic model that suits the heating network, considering main-              twins. The other two data-driven modules and relative connections,
+     stream regulation modes, including the quality regulation mode               which are currently inactivated in Fig. 1, will be later introduced in
+     (constant flow and variable temperature) and the quantity regu-              Part II. More detailed derivations of HEM and CRM will be given in
+     lation mode (variable flow and constant temperature).                        Sections 3 and 4, respectively.
+
+                                                                              2
+X. Huang et al.                                                                                International Journal of Electrical Power and Energy Systems 154 (2023) 109419
+
+
+
+
+                                                       Fig. 1. Architecture of the digital twins of MEN.
+
+
+3. Holomorphic embedding-based model of MEN
+
+    The idea of constructing the HEM of MEN is to transform the PDEs
+into ODEs and then reconstruct the ODEs by holomorphic function.
+The following are the HEMs of the heating network, gas network, and
+electrical network.
+
+3.1. Heating network
+
+3.1.1. Mechanism model
+   In the heating network, the one-dimensional flow process of water
+in pipes is described by the material-balance equation (1) and mo-                                     Fig. 2. Spatial discrete diagram of heating network.
+
+mentum equation (2). The thermodynamic process is described by the
+energy conservation equation (3).
+𝜕𝜌h 𝜕𝜌h 𝑣h                                                                             As shown in Fig. 2, the pipe of length 𝐿 can be divided into 𝑁
+    +      =0                                                           (1)        segments using the spatial discretization method. Then, the partial
+ 𝜕𝑡   𝜕𝑥
+                                                                                   differential terms 𝑝h and 𝑇h with respect to distance 𝑥 can be integrated
+                  2            2
+𝜕𝜌h 𝑣h 𝜕𝜌h 𝑣h 𝜕𝑝h 𝜆h 𝜌h 𝑣h                                                         using the trapezoidal rule. Therefore, the original PDEs (4) to (6) can
+      +      +    +        + 𝜌h 𝑔 sin 𝜃 = 0                             (2)
+  𝜕𝑡    𝜕𝑥     𝜕𝑥   2𝐷h                                                            be transformed into ODEs with only respect to time 𝑡.
+        𝜕𝑇h              𝜕𝑇      (       )
+𝑐p 𝜌h 𝐴h    + 𝑐p 𝜌h 𝑣h 𝐴h h + 𝜇h 𝑇h − 𝑇e = 0                           (3)          out
+                                                                                   𝑀h,𝑎    in
+                                                                                        = 𝑀h,𝑎 = 𝑀h,𝑎                                                                    (7)
+         𝜕𝑡              𝜕𝑥
+where 𝜌h , 𝑣h , 𝑝h and 𝑐p are the density, velocity, pressure and specific                       (            )
+                                                                                   d𝑀h,𝑎
+heat capacity of water, respectively; 𝜆h , 𝐷h , 𝜃h and 𝜇h are the friction                 = 𝛼h,𝑎 𝑝in
+                                                                                                   h,𝑎
+                                                                           

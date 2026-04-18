@@ -1,0 +1,214 @@
+                                                     Electrical Power and Energy Systems 116 (2020) 105546
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                              Electrical Power and Energy Systems
+                                                 journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Grounding grids in electro-magnetic transient simulations with frequency-                                                                          T
+dependent equivalent circuit
+Alessandro Manunza
+                                   ⁎
+
+Electrical Engineer, M2EC, Italy
+
+
+
+
+ARTICLE INFO                                        ABSTRACT
+
+Keywords:                                           The frequency behaviour of a grounding grid cannot be neglected in insulation coordination studies. This paper
+Grounding grids                                     proposes a new approach, which consists of calculating the frequency behaviour of a grounding grid by means of
+Fast transients                                     a software which implements the electromagnetic theory, building a two-port component, whose internal ad-
+ATP-EMTP                                            mittances are defined as rational functions in the Laplace domain, and finally using this two-port component for
+Frequency-dependent equivalent circuit
+                                                    time-domain fast transient simulations.
+
+
+
+
+1. Introduction                                                                         theory and with the least neglects possible.
+                                                                                     • Hybrid Approach, which applies the electromagnetic theory to ob-
+    The behaviour of a grounding grid at power frequencies is well-                     tain an equivalent circuit.
+known, while the behaviour during a fast transient is much more
+complicated because it requires the knowledge of the physics of a                       The transmission line approach is a suitable for the considered
+grounding grid in a wide frequency range. Probably for this reason,                 frequency range and it allows the simulation of even the non-linear
+grounding grids of Overhead Line (OHL) towers are usually simulated                 phenomenon of soil ionization, but it could be difficult to apply to large
+by resistors, whose resistances are measured or calculated at power                 grounding grids [4,7,11,13,14].
+frequency. However, this simple model is not adequate to simulate the                   The electromagnetic approach allows the construction of a complete
+physical phenomena during high frequency transients, like those re-                 model, but is difficult to interface with software programs for the si-
+lated to lightning. Furthermore, the grounding grids of substations are             mulation of power systems subject to fast transients.
+usually neglected and their components are connected to the ideal                       The hybrid approach can implement most of the advantages of the
+ground node, which is the zero-potential node, or they are represented              electromagnetic approach but permits building a model that can be
+by a resistor, whose resistance is calculated at power frequency. This              integrated      inside    software      for    transient      simulations
+could be a vague simplification because, from the physical point of                 [3,5,9,12,15,16,17].
+view, each grounding grid conductor is coupled with any other con-                      After neglecting the breakdown phenomena of the soil ionisation
+ductor by resistive, inductive and capacitive phenomena as well as with             and the mutual coupling between underground and above-ground
+all the soil. This means that part of the voltage wave injected in the              structures, this paper proposes a new hybrid approach, which consists
+grounding grid can travel along these buried conductors, while another              of three steps:
+part is dispersed into the ground. Consequently, different conductors of
+the grounding grid have different potentials and their impedances are                1. Use of software, named XGSLab [18], to calculate the frequency
+frequency-dependent.                                                                    behaviour of a grounding grid;
+    In order to simulate grounding grids, technical literature reports               2. Building a two-port component, whose internal admittances are
+several studies that can be grouped in three main categories:                           defined as rational functions in the Laplace domain;
+                                                                                     3. Finally, the two-port component is used in software, named ATP-
+ • The Network Approach, based circuit theory methods, including                        EMTP [1], for time-domain fast transient simulations.
+      distributed parameters typically used for transmission line model-
+      ling.                                                                            The proposed method is similar to the one described in [17]. The
+ •    The Electromagnetic Approach is based on the electromagnetic                  main difference lies in how the grounding grid is modelled in ATP-
+
+
+  ⁎
+      Address: Manunza Alessandro, Via Copernico n°5, 09060 Settimo San Pietro (CA), Italy.
+      E-mail address: m2ec@manunza.com.
+
+https://doi.org/10.1016/j.ijepes.2019.105546
+Received 12 April 2019; Received in revised form 11 July 2019; Accepted 10 September 2019
+Available online 18 September 2019
+0142-0615/ © 2019 Elsevier Ltd. All rights reserved.
+A. Manunza                                                                                                     Electrical Power and Energy Systems 116 (2020) 105546
+
+
+             I1                                                  I2
+                                       Z2                                              Transformer                                           Surge Arrester
+
+
+   V1                    Z1                            Z3       V2
+
+
+
+
+                         Fig. 1. Equivalent circuit.
+
+
+EMTP: the authors of [17] represented the grounding grid by means of
+two branches in parallel. Each branch is composed by a rational func-
+tion in the Laplace domain and a voltage source controlled by an al-
+gorithm written in language MODELS. This language is interpreted                                       Fig. 3. Substation grounding grid.
+during the simulation and consequently is time consuming. The
+grounding grid model proposed in this paper is composed by a simple               deemed sufficient to model it as a two-port component: port 1 corre-
+passive network of components, which are directly implemented inside              sponds to the point of connection of the surge arrester, while port 2 is
+ATP-EMTP. The proposed approach is more straightforward and less                  the point of connection of the transformer. The chosen internal model
+time consuming and can be applied to any kind of soil model and any               for this two-port component is a PI circuit, composed by Z1(ω), Z2(ω)
+shape of grounding grid.                                                          and Z3(ω), shown in Fig. 1. Z1(ω) and Z3(ω) allow the simulation of the
+                                                                                  current dispersed into the ground in correspondence of the surge ar-
+2. High frequency model                                                           rester and the transformer, while Z2(ω) allows the modelling of the
+                                                                                  wave propagation between these two points.
+    In an HV substation, usually an incoming voltage surge (VA) is                    In order to determine Z1(ω), Z2(ω) and Z3(ω), it is necessary to
+partially diverted to ground by surge arresters. While part of the voltage        undertake two (calculated or measured) short-circuit tests at different
+wave (VB) travels through the grounding grid, the remainder (VC)                  frequencies.
+continues to travel through phase conductors to the most delicate cir-                Test (a): short circuit at port 2. Given V2a = 0, it is possible to write
+cuit component: the transformer, which is usually characterised by the            V1a = Z2 I2a and V1a = Z1 (I1a − I2a). Consequently, the following
+highest surge impedance. The wave VB enters the grounding grid where              equations can be written Z2 = V1a/I2a and Z1 = V1a/(I1a − I2a).
+the surge arrester is grounded and travels through the grounding                      Test (b): short circuit at port 1. Given V1b = 0, it is possible to write
+electrode where it is also partially dispersed into the ground. This              V2b = −Z2 I1b and V2b = Z3 (−I2b + I1b). Consequently, the following
+dispersion causes a rise of the potential of the soil and of the electrode        equations can be written Z2 = −V2b/I1b and Z3 = V2b/(I1b−I2b).
+conductors. The higher the frequency is, the greater the amount of the                In this paper four different frequency values per decade have been
+current dispersed near the entry point. Nevertheless, the point of the            considered up to 2 MHz, starting from 20 Hz. The calculation results
+grounding grid where the transformer is grounded is affected by a po-             consist of a matrix of impedance amplitudes and phase angles for each
+tential rise due to the wave travelling in the grounding grid. Definitely a       impedance. These impedance matrices can be converted into ad-
+grounding grid, affected by a voltage wave, cannot be considered as               mittance matrices and then into rational transfer functions by applying
+equipotential, much less its potential is zero.                                   the ARMA algorithm [14]. The three rational transfer functions can be
+    Building a high frequency model of each element of a grounding                associated to three ATP-EMTP components named “Kizilcay F-depen-
+grid, including all the possible mutual coupling, is extremely onerous            dent Branch” [8]. These components Y1(ω), Y2(ω) and Y3(ω) are to be
+and, in our opinion, not necessary for practical applications. It is              properly connected to obtain the desired PI equivalent.
+
+
+
+
+                                                              29m
+
+                                       Transformer                            Surge Arrester
+
+
+
+
+                                                               Fig. 2. Substation side view.
+
+
+                                                                              2
+A. Manunza                                                                                                             Electrical Power and Energy Systems 116 (2020) 105546
+
+
+Table 1
+Results of test (a): short circuit at transformer location.
+  f (Hz)           |V1| (V)             ∠V1 (°)        |I1| (A)   ∠I1 (°)    |I2| (A)        ∠I2 (°)       |Z2| (Ω)            ∠Z2 (°)         |Z1| (Ω)           ∠Z1 (°)
+
+  20               3.18E−03             50.031         1          0          0.999           −0.067        3.18E−03            50.098          2.06E+00           0.614
+  50               6.41E−03             71.123         1          0          0.999           −0.167        6.41E−03            71.29           2.08E+ 00          0.152
+  70               8.74E−03             76.075         1          0          0.999           −0.234        8.75E−03            76.309          2.08E+ 00          −0.043
+  100              1.23E−02             79.883         1          0          0.999           −0.334        1.23E−02            80.217          2.08E+00           −0.211
+  200              2.43E−02             84.188         1          0          0.999           −0.667        2.43E−02            84.855          2.08E+00           −0.566
+  500              6.02E−02             85.922         1          0          0.998           −1.663        6.03E−02            87.585          2.07E+00           0.699
+  700              8.39E−02             85.764         1          0          0.998           −2.323        8.41E−02            88.087          2.07E+00           −0.248
+  1000             1.19E−01             85.173         1          0          0.996           −3.307        1.20E−01            88.48           2.07E+00           0.798
+  2000             2.34E−01             82.651         1          0          0.99            −6.536        2.37E−01            89.187          2.06E+00           0.948
+  5000             5.55E−01             75.213         1          0          0.955           −15.744       5.81E−01            90.957          2.04E+00           2.537
+  7000             7.43E−01             70.809         1          0          0.921           −21.393       8.07E−01            92.202          2.04E+00           3.788
+  10,000           9.87E−01             65.159         1          0          0.861           −29.002       1.15E+00            94.161          2.04E+00           5.768
+  2.00E+04         1.53E+00             53.43          1          0          0.657           −47.227       2.33E+00            100.657         2.08E+00           12.381
+  5.00E+04         2.28E+00             45.839         1          0          0.336           −68.198       6.78E+00            114.037         2.45E+00           26.220
+  7.00E+04         2.64E+00             45.89          1          0          0.25            −73.234       1.06E+01            119.124         2.75E+00           31.424
+  1.00E+05         3.14E+00             46.546         1          0          0.18            −77.235       1.74E+01            123.781         3.21E+00           36.185
+  2.00E+05         4.53E+00             46.95          1          0          0.093           −81.734       4.87E+01            128.684         4.57E+00           41.621
+  5.00E+05         7.15E+00             45.617         1          0          0.044           −84.816       1.63E+02            130.433         7.17E+00           43.098
+  7.00E+05         8.36E+00             45.81          1          0          0.035           −89.723       2.39E+02            135.533         8.36E+00           43.805
+  1.00E+06         9.89E+00             46.719         1          0          0.028           −99.341       3.53E+02            146.06          9.84E+00           45.144
+  2.00E+06         1.43E+01             49.774         1          0          0.018           −136.26       7.93E+02            186.031         1.41E+01           49.070
+
+
+
+Table 2
+Results of test (b): short circuit at surge arrester location.
+  f (Hz)           |V2| (V)             ∠V2 (°)        |I1| (A)   ∠I1 (°)       |I2| (A)        ∠I2 (°)     |Z2| (Ω)            ∠Z2 (°)         |Z3| (Ω)          ∠Z3 (°)
+
+  20               3.18E−03             50.008         0.999      −0.089        1               0           3.18E−03            50.097          1.72E+00          −7.162
+  50               6.41E−03             71.068         0.999      −0.222        1               0           6.41E−03            71.29           1.60E+00          −4.342
+  70               8.74E−03             75.999         0.999      −0.31         1               0           8.75E−03            76.309          1.59E+00          −3.369
+  100              1.23E−02             79.775         0.999      −0.442        1               0           1.23E−02            80.217          1.58E+00          −2.614
+  200              2.43E−02             83.973         0.998      −0.882        1               0           2.43E−02            84.855          1.57E+00          1.824
+  500              6.01E−02             85.398         0.997      −2.188        1               0           6.03E−02            87.586          1.57E+00          0.990
+  700              8.38E−02             85.04          0.996      −3.048        1               0           8.41E−02            88.088          1.57E+00          0.872
+  1000             1.19E−01             84.162         0.993      −4.321        1               0           1.20E−01            88.483          1.57E+00          1.641
+  2000             2.32E−01             80.794         0.978      −8.398        1               0           2.37E−01            89.192          1.58E+00          3.607
+  5000             5.25E−01             72.113         0.904      −18.857       1               0           5.80E−01            90.97           1.61E+00          8.431
+  7000             6.82E−01             67.949         0.845      −24.27        1               0           8.07E−01            92.219          1.64E+00          11.425
+  10,000           8.72E−01             63.777         0.76       −30.406       1               0           1.15E+00            94.183          1.69E+00          15.627
+  2.00E+04         1.32E+00             59.384         0.566      −41.313       1               0           2.33E+00            100.697         1.92E+00          26.361
+  5.00E+04         2.34E+00             60.732         0.345      −53.377       1               0           6.78E+00            114.109         2.78E+00          41.511
+  7.00E+04         2.96E+00             61.195         0.28       −58.016       1               0           1.06E+01            119.211         3.35E+00          45.614
+  1.00E+05         3.82E+00             60.961         0.219      −62.924       1               0           1.75E+01            123.885         4.15E+00          48.740
+  2.00E+05         6.21E+00             58.477         0.128      −70.351       1               0           4.85E+01            128.828         6.44E+00          51.297
+  5.00E+05         1.11E+01             52.616         0.067      −78.033       1               0           1.65E+02            130.649         1.12E+01          48.813
+  7.00E+05         1.34E+01             50.304         0.056      −85.471       1               0           2.39E+02            135.775         1.34E+01          47.095
+  1.00E+06         1.62E+01             47.984         0.045      −98.331       1               0           3.59E+02            146.315         1.60E+01          45.451
+  2.00E+06         2.27E+01             44.44          0.029      −141.788      1               0           7.82E+02            186.228         2.22E+01          43.435
+
+
+
+                                            Y2                                          method, the correctness of the equivalent model and the consequence
+                                        F(s|z)                                          on insulation coordination studies.
+                                                                                            Fig. 2 shows the side view of the substation, where the positions of
+                                                                                        the three-phase surge arrester and of the transformer are indicated. The
+                              F(s|z)
+
+
+
+
+                                                  F(s|z)
+
+
+
+
+                                       Y1                  Y3                           distance between them is about 29 m.
+                                                                                            Fig. 3 shows the grounding grid and where the surge arrester and
+                                                                                        the transformer are connected.
+             Fig. 4. Equivalent circuit as represented in ATPDraw.
+
+                                                                                        3.1. Modelling of the electrode in XGSLab
+    The proposed two-port component does not ta

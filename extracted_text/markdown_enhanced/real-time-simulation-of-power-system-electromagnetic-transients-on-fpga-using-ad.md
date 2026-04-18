@@ -1,0 +1,28 @@
+# Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precision Calculations
+
+**Xin Ma**, **Conghuan Yang**, **Xiao-Ping Zhang**, Fellow, IEEE, **Ying Xue**, Senior Member, IEEE, and **Jianing Li**, Member, IEEE
+
+**Abstract**—The massive integration of renewable energy sources and power electronics into the power grid leads to the strong need of real-time Electromagnetic Transients (EMT) simulation of power system using field-programmable gate array (FPGA) platform due to its high efficiency and superior performance. FPGA based EMT simulations – A key for Digital Twin were mainly based on Single-Precision calculations, but ignored potential accumulation displacement. To address this problem, this paper proposes full Double-Precision and Mixed-Precision Floating-Point schemes to achieve optimal balance between numerical accuracy and computational resource cost in FPGA-based EMT simulation even for long duration simulations. Furthermore, adjustable pipeline, address dynamic access and sequence controller techniques for solving high fanout and long datapath hardware implementation are developed to optimize resource usage and timing constraints for all schemes. For non-rotating components, full Double-Precision and full Single-Precision both shows excellent convergence. For rotating components, extra Single-Precision iteration method and Mixed-Precision calculations are compared for Synchronous Machines (SG) with strong nonlinearity, and it is found that only full Double-Precision could avoid phase shift problem. Based on component-level sensitivity analysis, proposed system-level Mixed-Precision scheme is able to achieve close accuracy to that of full Double-Precision scheme and additional average 20% resource reduction for Kundur’s system.
+
+**Index Terms**—Electromagnetic Transients simulations, Real-time simulations, Field Programmable Gate Arrays (FPGA), Digital Twin, Synchronous Machines, Data format classification, Single precision Floating-Point calculations, Double precision Floating-Point calculations, Mixed precision Floating-Point calculations.
+
+*Manuscript received 6 March 2022; revised 3 July 2022; accepted 8 August 2022. Date of publication 17 August 2022; date of current version 22 June 2023. Paper no. TPWRS-00324-2022. (Corresponding author: Xiao-Ping Zhang.)*
+
+Xin Ma, Conghuan Yang, and Xiao-Ping Zhang are with the Department of Electronic, Electrical and Systems Engineering, School of Engineering, University of Birmingham, B15 2TT Birmingham, U.K. (e-mail: xxm924@student.bham.ac.uk; conghuanyang@foxmail.com; x.p.zhang@bham.ac.uk).
+
+Ying Xue is with the Department of Electronic, Electrical and Systems Engineering, School of Engineering, University of Birmingham, B15 2TT Birmingham, U.K., and also with the School of Electric Power Engineering, South China University of Technology, Guangzhou, China (e-mail: dr.yingxue@foxmail.com).
+
+Jianing Li is with the Department of Electronic, Electrical and Systems Engineering, School of Engineering, University of Birmingham, B15 2TT Birmingham, U.K., and also with the WSP U.K., The Mailbox, B1 1RQ Birmingham, U.K. (e-mail: jianing.li@ieee.org).
+
+Color versions of one or more figures in this article are available at https://doi.org/10.1109/TPWRS.2022.3199181.
+
+Digital Object Identifier 10.1109/TPWRS.2022.3199181
+
+## I. INTRODUCTION
+
+With the massive integration of renewable energy sources and power electronics into power grids [1], [2], Power System Electromagnetic Transients simulations tool has become one of the essential analysis tools for the testing and validation of design, control and protection of power systems. This also brings the strong needs of real-time Simulation of Power System Electromagnetic Transients (EMT) on FPGA platform due to its efficiency and performance [3]. In the past, FPGA based EMT simulations are mainly based on Single-Precision calculations [4], [5]. With Single-Precision Floating-Point scheme, EMT simulations were firstly implemented on a simple FPGA board based on parallel logic [5]. Then real-time modular multilevel converter (MMC) high-voltage direct current (HVDC) model was implemented on FPGA [6]. In addition, a fast fault detection and classification in transmission lines by FPGA was introduced in [7].
+
+On the other hand, Double-Precision Floating-Point scheme has been widely adopted by off-line EMT simulation software packages for instance, PSCAD, EMTP and MATLAB. For FPGA based EMT simulations, now there is an emerging demand for long duration simulation for complex power system transients, which could last for tens of seconds or even longer [8], [9], [10]. It would be useful to investigate the accuracy and performance of EMT simulations using Double-Precision Floating-Point scheme. It can be anticipated that more computational resources will be needed when using Double-Precision Floating-Point scheme than that using Single-Precision Floating-Point scheme. Therefore, it would be attractive to study whether a mixed Single-Precision/ Double-Precision scheme is feasible to have a good balance between accuracy and required computation resources. Motivated by the above, this paper proposes full Double-Precision and Mixed-Precision schemes for FPGA-based real-time EMT simulations and the main contributions of this paper are summarized as follows:
+
+1. The limitations of Single-Precision Floating-Point calculations on FPGA for nonlinear rotating machines have been analyzed in detail. Detailed error analysis shows how the error is accumulated over time when using Single-Precision Floating-Point calculations.
+2. Along with the existing Single-Precision Floating-Point calculation scheme, two new schemes, namely Double-

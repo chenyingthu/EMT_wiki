@@ -1,0 +1,244 @@
+        第 45 卷 第 12 期                          中    国 电 机 工 程 学                 报              Vol.45 No.12 Jun. 20, 2025
+        2025 年 6 月 20 日                             Proceedings of the CSEE                    ©2025 Chin.Soc.for Elec.Eng. 4811
+DOI：10.13334/j.0258-8013.pcsee.232746 文章编号：0258-8013 (2025) 12-4811-11 中图分类号：TM 743 文献标识码：A
+
+
+
+                                适用于高频电力电子电路的
+                                分数步长电磁暂态仿真方法
+          吴盼 1，徐晋 1*，汪可友 1，李子润 2，李国杰 1，周建其 3，王宏韬 3
+(1．电力传输与功率变换控制教育部重点实验室(上海交通大学)，上海市 闵行区 200240；2．国家电网公
+司华北分部，北京市 西城区 100053；3．国网浙江省电力有限公司嘉兴供电公司，浙江省 嘉兴市 314001)
+
+
+       The Fractional Time-step Electromagnetic Transient Simulation Method Suitable for
+                           High-frequency Power Electronic Circuits
+             WU Pan1, XU Jin1*, WANG Keyou1, LI Zirun2, LI Guojie1, ZHOU Jianqi3, WANG Hongtao3
+   (1. Key Laboratory of Control of Power Transmission and Conversion, Ministry of Education (Shanghai Jiao Tong University),
+      Minhang District, Shanghai 200240, China; 2. North China Branch of State Grid Corporation of China, Xicheng District,
+          Beijing 100053, China; 3. State Grid Jiaxing Power Supply Company, Jiaxing 314001, Zhejiang Province, China)
+
+
+ABSTRACT: In recent years, high-frequency power electronic             effectively improve the simulation precision of high-frequency
+circuits, represented by power electronic transformer, has             power electronic circuits and support the larger time-step
+attracted wide attention, and the dual active bridge part usually      simulation with enough accuracy, which is helpful to accelerate
+owns the switching frequency as high as tens of kHz. For               the offline simulation and improve the real-time simulation
+electromagnetic transient simulation of high-frequency power           performance.
+electronic circuits, while adopting the constant admittance
+                                                                       KEY WORDS: high-frequency power electronic circuits;
+switch model is helpful to simplify the computation, there are
+                                                                       electromagnetic transient simulation; constant admittance
+still challenges to the simulation precision and efficiency. One
+                                                                       switch model; small-step synthesis; fractional time-step
+is that the switch virtual loss brought by constant admittance
+                                                                       simulation method
+switch model under high frequency switching actions seriously
+influences the simulation precision, while the other is that the       摘要：近年来，以电力电子变压器为典型代表的高频电力电
+required quite small simulation time-step will increase                子电路受到广泛关注，其中双有源桥结构的开关频率往往达
+computing burden and affect the simulation efficiency. To cope         数十 kHz。针对高频电力电子电路的电磁暂态仿真，采用恒
+with this, the paper proposes a fractional time-step simulation        导纳开关模型有助于降低计算量，但仍面临仿真精度和效率
+method (FTSSM), which adopts the improved highly-paralleled            上的双重挑战：一是恒导纳开关模型在高频开关动作下的虚
+electromagnetic transient program (EMTP) algorithm for                 拟损耗严重影响仿真精度；二是仿真所要求纳秒级仿真步长
+discretization modeling, and the simulation calculation is             将加重计算负担而影响仿真效率。为此，该文提出分数步长
+implemented as the iteration of a series of small step synthesis       电磁暂态仿真方法，基于改进的高并行电磁暂态仿真程序算
+calculation process with different fractional time-steps. Here,        法进行离散化建模，并将仿真计算分解为一系列不同分数步
+the small step synthesis (SSS) with the idea of “modeling with         长下的小步合成计算过程的叠加，其中小步合成采用“小步
+                                                                       建模，大步计算”思想可降低虚拟损耗，而分数步长则用于
+small time-step while calculating with big time-step” can
+                                                                       准确定位开关动作时刻，以支持较大步长下精确仿真。算例
+reduce the virtual loss, and the fractional time-steps are
+                                                                       分析表明，所提方法可有效提升高频电力电子电路的仿真精
+designed to exactly locate the switching actions so as to
+                                                                       度，且能在保证准确性的同时支持其大步长仿真，从而实现
+support the accurate simulation with larger time-step.
+                                                                       离线仿真加速，还有助于提升实时仿真性能。
+Simulation results analysis shows that the proposed method can
+                                                                       关键词：高频电力电子电路；电磁暂态仿真；恒导纳开关模
+     基金项目：国家重点研发计划项目(2022YFE0105200)；国网浙江                              型；小步合成；分数步仿真方法
+省电力有限公司科技项目(5211JX230004)。
+     National Key R&D Program of China (2022YFE0105200); Science       0 引言
+and Technology Project of State Grid Zhejiang Electric Power Company
+(5211JX230004).                                                             “双碳”目标下，随着以新能源为主体的新型
+4812                        中     国   电   机   工   程   学   报                       第 45 卷
+
+电力系统的建设推进，现代电力系统中已包含微电                        技术[14]优化开关动作后的初始状态等，均有助于降
+网[1]、可再生能源发电[2]、电动汽车[3]等的大量接入，                低开关虚拟损耗，提升高频系统仿真精度，但仍没
+“双高”特征日益显著，对电网的灵活可控性、安                        有解决小步长限制的问题。仿真效率方面，相关大
+全稳定性等方面提出了更高要求。在此背景下，适                        步长及变步长仿真研究也有开展。其中文献[15]建
+用于新型电力系统的电磁暂态仿真技术的重要性                         立了考虑高频开关分量的动态相量模型；文献[16]
+愈发凸显，其可在保证安全性的前提下大大降低电                        提出基于时频变换的多尺度建模，可根据仿真场景
+力系统试验难度与成本，可广泛应用于电力系统运                        切换频移模型并修改仿真步长，两者均能支撑较大
+行模拟、能量管理等控制系统的调试与测试，相应                        步长仿真，但难以精确反映开关级动态。为此立足
+的实时仿真技术在电力电子设备的研发测试、硬件                        于开关，文献[17]提出基于线性插值的考虑多重开
+                      [4]
+在环控制验证等方面也得到应用 。                              关动作的变步长仿真算法，可提高较大步长仿真的
+       近年来，高频电力电子设备已在现代电力系统                   精度和数值稳定性，但因存在插值回退过程不适用
+的电能变换及传输等方面得以应用，相应的电磁暂                        于实时仿真。而同样针对开关动作的离散状态事件
+态仿真研究亟待开展。恒导纳开关模型 常用于电      [5]
+                                              驱动仿真方法[18-19]，其提出基于状态离散的多时间
+力电子设备电磁暂态仿真，其用等效导纳相同的                         尺度混杂模型，配合开关事件驱动进行开关模型和
+L/C 元件来表示开关闭合/断开状态，从而避免了系                     仿真步长的自适应选择，从而能显著提升仿真效
+统导纳矩阵的频繁更新，有助于降低仿真计算量。                        率，已应用于国内 DSIM 仿真软件。
+然而当应用于高频电力电子电路电磁暂态仿真时，                                此外，相关研究也在电力电子变压器中高频变
+仍面临着 2 个技术瓶颈：一是开关动作后的开关电                      换器的建模仿真方面做了大量工作 [20-22] ，其中文
+压/电流的暂态过程与理想开关有很大不同，会带来                       献[20]建立了双有源桥的半隐式延迟解耦模型以及
+额外的虚拟功率损耗，且随开关频率升高而大幅增                        级联系统等值解耦电路，可实现系统快速仿真；文
+加，严重影响仿真准确性[6]；二是高频开关动作下，                     献[21-22]分别针对不同的级联型电力电子变压器
+恒导纳模型一般需要采用纳秒级步长来保证仿真                         结构，采用广义戴维南/诺顿等效端口子模块模型对
+精度，这一方面增加了总的计算量，使离线仿真耗                        系统进行降维等效，实现仿真加速同时保证仿真精
+
+时增加，另一方面也会增加单位现实时间的计算                         度。上述方法均能有效提升仿真效率，但本质上却
+
+量，从而使得实时仿真的实时性更难满足。作为高                        是对电力电子变压器做了等效简化而回避了高频
+                                              开关动态，难以用于开关层面的动态特性仿真研
+频电力电子电路的典型代表，电力电子变压器凭借
+                                              究。综上，针对高频电力电子电路的电磁暂态仿真，
+体积小、质量轻、可提供中低压可控交直流端口等
+                                              目前仍缺少较为成熟的仿真方法能同时解决上述
+优点[7-8]受到广泛关注，是交直流混合配电架构的关
+                                              仿真精度和效率的瓶颈问题。
+键装置，可极大提升电力系统电能传输及控制灵活
+                                                      为此，本文以电力电子变压器系统为例，在采
+性。电力电子变压器通常采用包含前级整流模块、
+                                              用恒导纳开关模型情况下，提出了适用于高频电力
+中间级 DC-DC 隔离变换模块以及后级逆变模块的
+                                              电子电路的分数步长电磁暂态仿真方法，能兼顾仿
+多级隔离型结构[9]，以实现能量传输灵活控制，并
+                                              真精度与仿真效率进行高效电磁暂态仿真。具体
+降低控制耦合复杂度。而为了保证功率密度，中间
+                                              地 ， 以 紧 凑 型 电 磁 暂 态 仿 真 算 法 框 架 (compact
+级如采用双有源桥(dual active bridge，DAB)结构，
+                                              electromagnetic transient program，C-EMTP)为基础，
+其开关频率往往高达几十 kHz[10-11]，高频下开关虚
+                                              利 用 不 同 分 数 步 长 下 的 小 步 合 成 (small-step
+拟损耗影响仿真精度、小步长限制影响仿真效率这
+                                              synthesis，SSS)计算来完成仿真迭代，从而在降低
+两个瓶颈问题尤为显著，给针对电力电子变压器的
+                                              虚拟损耗、保证仿真精度的前提下，能支持大步长
+电磁暂态仿真提出了巨大挑战。
+                                              的仿真，进而提升仿真效率，同时有助于改善实时
+       面对上述瓶颈问题，在仿真精度方面，目前已
+                                              仿真性能。
+有研究成果可用于改善开关虚拟损耗，包括设置最
+优 L/C 模型参数[12]、使用响应匹配恒导纳模型[13]                1 典型高频电力电子电路
+以保证开关模型的最优阻尼特性，或是应用初始化                                本文考虑如图 1 所示的高频电力电子电路。
+第 12 期                                 吴盼等：适用于高频电力电子电路的分数步长电磁暂态仿真方法                                                                                                 4813
+
+            前级(整流)                                                            中间级(变压隔离)                                                         后级(逆变)
+                                          S1                S3                                   Q1            Q3
+                  VSC1                                                                     n:1                                     VSC2
+ Us    Ls                         C1    +                                      L       R                                   + C                       Lf1        Lf2
+                                       Udc1         + −                                               +
+                                                                                                          Ut2             Udc2 2
+                                                     Ut1                                                     −             −
+                                        − S2             S4                                      Q2          Q4                                                Cf     RL
+      采集
+      电压                                                                                                                                            采集电
+      电流                                                                                                                                            压电流
+                                                                                    50 kHz
+                                               高频                                  开关频率
+                                               锯齿                                  +                                                                           预设
+      PLL         SPWM                         载波                                  −                                                     SPWM
+                                                                                                                                                               相角
+                                                D        +                                                 S2，S3
+                                                    −                                        ∧
+                                                             +           +         −                       S1，S4
+  abc→dq          dq→abc                                                           +                                                  dq→abc         abc→dq
+                                                1                    +
+                                                                 +                                                                                              电压
+       Udc1                                                                        +                                                                            设定值
+                                                                                   −                       Q1，Q4
+ 电压外环             电流内环                                  0                                    ∧                                       电流内环           电压外环
+  控制               控制                                                                                      Q2，Q3
+                                                                         +         −                                                  控制             控制
+                                                        1            +             +
+                                                                 +
+
+                                           图1           高频电力电子电路(以电力电子变压器系统为例)
+         Fig. 1    High-frequency power electronic circuit (taking power electronic transformer system as an example)
+1.1   拓扑结构                                                                                   流母线电压的控制方式，如图 2 所示。
+      图 1 系统包含前级、中间级、后级三部分，分                                                                                                                0.5
+                                                                                                       U*dc2                       k                       D
+别实现整流、变压隔离及逆变功能，如表 1 所示。                                                                                        +
+                                                                                                                              kpD + iD
+                                                                                                                      −             s
+                     表1      系统各部分说明                                                                           Udc2                             0
+
+      Table 1     Description of each part in the system                                                              图2     DAB 模块控制框图
+ 环节                功能描述                        开关频率/kHz                      控制模式                     Fig. 2        Control block diagram of DAB block
+             整流：依托交流电网维持
+ 前级                                                  5                       UdcQ 控制                  图 2 中，以输出侧直流母线电压 Udc2 为控制目
+              输入侧直流母线电压
+         变压隔离：进行两侧直流母线
+                                                                                             标，与参考值比较，经 PI 环节(kpD，kiD 为增益、积
+中间级                                                  50                  单移相控制
+         电压变换，同时具备隔离功能                                                                       分系数)后得到移相比 D，并限幅处理。
+         逆变：依托输出侧直流母线为
+ 后级                                                  5                       VF 控制           2 分数步方法基本思想
+                  交流负载供电
+
+      图 1 中：Us 为交流电网电压；Udc1、Udc2 分别                                                                   如前所述，恒导纳开关模型分别用很小的 L/C
+
+为中间级 DAB 模块两侧直流母线电压；Ut1、Ut2                                                                  元件来表示开关闭合/断开状态，主要是保证两者离
+
+分别为中间级内高频变压器两端开关电压；R、RL                                                                      散化后的支路导纳一致，从而避免修改系统导纳矩
+
+分别为中间级内电阻、后级负载电阻；Ls、L、Lf1、                                                                   阵。然而不同于理想开关，这里电感、电容本身都
+
+Lf2 分别为前级网侧电感、中间级内电感及后级滤波                                                                    是储能元件，当发生开关状态切换时，L/C 元件的
+
+电感；C1、C2、Cf 分别为中间级两侧直流母线稳压                                                                   互换会损失各自原本积累的那部分能量，也即开关
+
+电容、后级滤波电容；VSC1、VSC2 均为三相全控                                                                   虚拟损耗，可近似计算为
+
+变流桥；n 为中间级高频变压器变比。                                                                                         1          1         1 ∆t 2 1
+                                                                                                 Eloss ≈     Lsw I 2 + CswU 2 =       I + ∆tYswU 2 (1)
+1.2   控制原理                                                                                                 2          2         2 Ysw    2
+      图 1 系统中前级整流、后级逆变分别采用典型                                                                 式中：Lsw、Csw、Ysw 分别为等效的小电感、小电容
+UdcQ 控制、VF 控制，以维持直流母线电压 Udc1 恒                                                               及恒支路导纳；I、U 为相应开关支路电流、电压。
+定及负载电压恒定。                                                                                             可见，开关虚拟损耗随仿真步长增大而越显
+      中间级 DAB 模块采用典型单移相(single phase                                                         著。另一方面，随开关频率提升，开关动作次数增
+                           [23]
+shift，SPS)控制方式                。具体调制方式如图 1 所示，                                                加，开关虚拟损耗也会愈加累计[6]。因此，针对高
+其中两侧 H 桥电路同一桥臂的开关脉冲信号互补，                                                                     频电力电子电路的电磁暂态仿真，为尽量降低开关
+不同桥臂对角位置的开关脉冲信号相同，所用调制                                                                       虚拟损耗，保证数十 kHz 开关频率下的仿真结果精
+载波信号为对应开关频率的锯齿波，输入 D 为两侧                                                                     度，往往要求仿真步长小至 ns 级。
+H 桥的移相比，经控制环节得到，采用定输出侧直                                                                               如图 3 所示，采用 ns 级步长进行仿真，可以保
+4814                                              中       国   电   机   工   程      学     报                                                    第 45 卷
+
+证高仿真精度，但计算负担大；而采用 μs 级步长                                              度化阶数参数 Nq、Nf 来分别衡量量化步长的精细程
+进行仿真，虽然计算负担小，但仿真精度难以保证，                                               度、分数步长的分辨率精度。
+一方面是大步长下开关的虚拟损耗增加，另一方面                                                        下面结合图 4 作进一步说明。图中以单位步长
+则是大步长下仿真数据点密度不够，从而难以精确                                                为基准，取 Nq = 7，此时量化步长足够小，可以保
+定位开关动作。为此，可提出分数步长仿真方法                                                 证单步仿真计算的准确性，但同时也会带来巨大计
+(fractional time-step simulation method，FTSSM)，其                      算量。取 Nf = 3，此时包括单位步长共有 4 级分数
+具备步长自适应特点，可在没有开关动作时，以 μs                                              步长，那么结合小步合成，可以将原极小步长下单
+级单位步长仿真，提升整体效率；而发生开关动作                                                步计算合成为各级分数步长下单步计算，并且仍保
+时，则通过若干个分数步长组合，使得开关动作时                                                证精度。那么，对于开关动作分隔开的任意仿真时
+刻尽可能落在离散的仿真时刻上，此时开关动作附                                                间段，可以用上述 4 级分数步长的组合来表示，相
+近为 ns 级小步长仿真，从而保证精度。                                                  应的仿真过程也将是各级分数步长下单步计算的
+                                                                      组合。图中具体构造原理，将在下一节说明。
+          高频开                                                                                         单位步长取 ∆tu = 1 μs
+          关电路
+                                开关                                                    取 Nq = 7                              取 Nf = 3
+
+
+
+
+                                                                                                                                                  小步合成
+                                电压                                                                                  ∆tu = 1 μs
+                                                                              电路离散化建模                               X(t + ∆tu) = F0(X(t))
+                         ns 级                      μs 级                                                             ∆t1/2 = 0.5 μs
+                        步长仿真                      步长仿真                        ∆tq = ∆tu /27 < 10 ns                 X(t + ∆t1/2) = F1(X(t))
+                                                                              X(t + ∆tq) = F(X(t))                  ∆t1/4 = 0.25 μs
+                                                                                                                    X(t + ∆t1/4) = F2(X(t))
+        如何提升效率同时                          如何解决精度和                               极小步长高精度                             ∆t1/(2^3) = 0.125 μs
+         保证精度？                           开关准确定位问题？                               单步计算                               X(t + ∆t1/(2^3)) = F3(X(t))
+            FTSSM                       分数步长定位开关
+                                        动作，保证精度                                               由开关动作决定的任意仿真时间段
+           大步长                                                                                  表示为分数步长的组合
+           提升效率
+                                                                                    组合关系映射                                     分数步长仿真
+                                                                               T = C(∆tu, ∆t1/2, ∆t1/4, ∆t1/(2^3))
+                        图3    不同步长仿真效果                                         X(t + T) = C(F0(X(t)), F1(X(t)), F2(X(t)), F3(X(t)))
+

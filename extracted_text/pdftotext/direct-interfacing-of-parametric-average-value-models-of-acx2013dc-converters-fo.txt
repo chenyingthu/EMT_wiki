@@ -1,0 +1,188 @@
+2408                                                                         IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 37, NO. 4, DECEMBER 2022
+
+
+
+
+         Direct Interfacing of Parametric Average-Value
+            Models of AC–DC Converters for Nodal
+                     Analysis-Based Solution
+                          Seyyedmilad Ebrahimi , Member, IEEE, Hamid Atighechi, Member, IEEE,
+                        Sina Chiniforoosh , Senior Member, IEEE, and Juri Jatskevich , Fellow, IEEE
+
+
+   Abstract—AC–DC converters are widely used in many power-                      HIL, etc.) or nodal-analysis-based electromagnetic transient
+electronic-based systems. There is an increasing need to simulate                programs (EMTP, e.g., EMTP-RV, PSCAD, RTDS, etc.). The
+such systems using larger time-steps in offline and/or real-time elec-           SVB- and EMTP-type programs have their own merits and
+tromagnetic transient (EMT or EMTP) simulators. The so-called
+parametric average-value models (PAVMs) have been developed to                   solve the network differently; however, the vendors of both
+allow larger time-steps and provide fast simulations. However, the               are trying to enhance their engines and allow simulations at
+application of PAVMs in nodal-analysis-based EMTP programs                       large time-steps to accommodate studies of larger power systems
+typically requires a one-time-step delay between the interfacing                 using given simulator hardware. Examples include, but are not
+sources and the network solution (i.e., indirect interfacing), causing           limited to, Opal-RT’s ePHASORSIM [8], superstep in RTDS
+inaccuracy and numerical instability at medium-to-large time-
+steps. This paper presents a direct interfacing method for PAVMs                 NovaCor [9], etc.
+of line-commutated rectifiers (LCRs). The proposed method lin-                      The detailed switching models of ac–dc converters have
+earizes the PAVM interfacing equations and incorporates the re-                  always been simulation bottlenecks for large-scale systems.
+spective sub-matrices and history terms into the network nodal                   Although being easy to implement and highly accurate, they
+equations, which eliminates the need for a time-step delay. Sim-                 require special handling of discrete switching events, e.g., using
+ulation studies verify the effectiveness of the proposed method in
+EMTP-type solution wherein very good accuracy and numerical                      zero-crossing detection, interpolation, etc., [10]–[12], which
+stability is achieved at fairly large time-steps, which has not been             imposes a computational burden, limiting the size of the power
+previously possible with conventional methods.                                   system and the number of switches that can be simulated.
+   Index Terms—Ac–dc converters, average-value model, direct
+                                                                                    To address this issue for system-level studies, dynamic phasor
+interfacing, discretization, EMTP simulation, nodal analysis.                    models [13]–[14] as well as average-value models (AVMs)
+                                                                                 [15]–[26] have been developed for ac–dc converters, where the
+                           I. INTRODUCTION                                       individual switching is neglected. Therefore, the AVMs become
+                                                                                 independent of switching events and can adopt larger time-steps.
+      OWER-ELECTRONIC ac–dc converters play a vital role
+P     in integrating modern energy resources with conventional
+power systems. More specifically, the line-commutated convert-
+                                                                                 Analytically derived AVMs (AAVMs) [15]–[18] are valid only
+                                                                                 in the specific mode of operation for which the formulations
+                                                                                 are derived. However, the parametric AVMs (PAVMs) [19]–[26]
+ers (LCCs) and rectifiers (LCRs) composed of diodes or thyristor
+                                                                                 have proven accurate over a wide range of operating conditions
+switches have been widely used in classic HVDC systems [1],
+                                                                                 of the LCR. An interested reader is referred to [25, Table I]
+wind generation systems [2], exciters of synchronous genera-
+                                                                                 for a comparison between different state-of-the-art AAVMs and
+tors [3], vehicular, marine and aircraft power systems [4]–[6],
+                                                                                 PAVMs.
+melting induction furnaces [7], etc.
+                                                                                    In both SVB and EMTP-type programs, the AVMs are typ-
+   Analysis of such power systems heavily relies on simulation
+                                                                                 ically interfaced with external networks using controlled volt-
+studies that are conducted offline and/or real-time in either state-
+                                                                                 age/current sources [26]. Some SVB packages are able to solve
+variable-based programs (SVB, e.g., PLECS, RT-Lab, Typhoon
+                                                                                 the external networks simultaneously with the AVMs. How-
+   Manuscript received 16 October 2021; revised 17 February 2022; accepted 6     ever, in EMTP-type simulators, the discretization is done at
+May 2022. Date of publication 23 May 2022; date of current version 30 Novem-     the component level (based on the nodal approach), which,
+ber 2022. This work was supported by the Natural Science and Engineering         when implemented without iterations, requires a one-time-step
+Research Council of Canada under the Collaborative Research and Development
+Grant. Paper no. TEC-01128-2021. (Corresponding author: Juri Jatskevich.)        delay between the interfacing sources of the AVMs (in most
+   Seyyedmilad Ebrahimi, Sina Chiniforoosh, and Juri Jatskevich are with the     EMTP programs, e.g., [9], [11]). The method of incorporating a
+Electrical and Computer Engineering Department, The University of British        time-step delay is often referred to as indirect interfacing [17],
+Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail: ebrahimi@ece.ubc.ca;
+sinach@ece.ubc.ca; jurij@ece.ubc.ca).                                            [20]–[21]. Consequently, with this method, to maintain the ac-
+   Hamid Atighechi is with the Powerex Corp., Vancouver, BC V6C 2X8, Canada      curacy and avoid numerical instability, the simulation time-step
+(e-mail: h.atighechi@gmail.com).                                                 size should be fairly small. This limits the advantage of AVMs
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TEC.2022.3177131.                                        in EMTP simulations and defies one of the original purposes of
+   Digital Object Identifier 10.1109/TEC.2022.3177131                            developing AVMs (which is to allow using larger time-steps for
+                        0885-8969 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:28:59 UTC from IEEE Xplore. Restrictions apply.
+EBRAHIMI et al.: DIRECT INTERFACING OF PARAMETRIC AVERAGE-VALUE MODELS                                                                                   2409
+
+
+
+
+Fig. 1.   A simplified diagram of generic three-phase ac–dc system consisting of a 6-pulse thyristor-controlled line-commutated rectifier.
+
+
+
+system-level studies). Some packages have adopted the MANA                        phase a voltage and current can be expressed using their Fourier
+(Modified-Augmented-Nodal-Analysis) method (e.g., [27]) to                        series as
+eliminate the time-step delay. However, it requires iterations and                     ∞                             ∞
+                                                                                                                      
+is therefore not suitable for real-time EMT programs.                             va =      V n cos (nθe +θvn ), ia =   I n cos (nθe +θin ),   (2)
+   A direct interfacing technique has been presented in [18] for                        n=1                                  n=1
+the AAVMs of diode rectifier systems to avoid the time-step                        with similar expressions for phases b and c by replacing θe with
+delay when interfacing with external networks. However, the                        (θe ∓ 2π/3). Here, n is the harmonic order, V n and I n are the
+model in [18] has the general limitations of analytical models                     amplitudes of the n-th harmonic of ac voltages and currents with
+and is valid only for CCM-1 [28] operating mode.                                   θvn and θin as their phase angles, respectively. For consistency
+   In this paper, a direct interfacing method is proposed for the                  with [25], the fundamental component of the LCR phase a
+PAVMs of controlled/uncontrolled LCR systems. This is done                         voltage is considered as reference (i.e., θv1 = 0). Also, θe is the
+by linearizing the nonlinear equations of the PAVM and incor-                      angle of the fundamental frequency component of phase a of the
+porating the resulting sub-matrices and history terms into the                     LCR ac voltages (i.e., va1 ), expressed as
+network nodal equation. This eliminates the time-step delay and                                            
+allows a simultaneous and non-iterative solution of the external                                     θe = ωe dt, ωe = 2πfe ,                       (3)
+network together with the PAVM, thus making it suitable for
+real-time EMT programs. It is demonstrated the proposed direct                     where fe and ωe are the frequency of the ac subsystem in Hz
+interfacing of PAVMs permits fairly large time-steps (up to                        and rad/s. Also, in the rectification mode of operation, θe lags
+1000∼2000 µs) without compromising accuracy and numerical                          the angle of the equivalent source voltages θs by the angle δ , as
+stability. To the best of the authors’ knowledge, this has not been                shown in Fig. 2, expressed as
+possible with the previously established methods of interfacing
+                                                                                                                  δ = θs − θe .                           (4)
+AVMs.
+                                                                                     The dc terminal variables of LCR also contain oscillatory
+           II. PARAMETRIC AVERAGE-VALUE MODELING                                   components (i.e., ripples), which can be expressed as
+   To focus on the proposed methodology, a simplified generic                                       vdc = v̄dc + ṽdc , idc = īdc + ĩdc ,               (5)
+ac–dc system is considered as shown in Fig. 1. Here, the ac                        where v̄dc and īdc are the average values of the dc voltage and
+subsystem may consist of an arbitrary ac network, e.g., an ac grid                 current, with ṽdc and ĩdc as their ripples, respectively.
+including generators, transmission lines, loads, etc., which is                      In the PAVM [19], the average values of the LCR dc-side
+represented by its Thévenin equivalent circuit. The dc subsystem                   variables (i.e., v̄dc and īdc ) are related to the fundamental compo-
+may be composed of an arbitrary dc network supplied through                        nents of ac-side variables (i.e., vabc 1
+                                                                                                                              and i1abc ), using the so-called
+a low-pass dc filter. The ac–dc power electronic converter may                     parametric functions. For this purpose, the average values of
+also be a line-commutated rectifier (LCR) circuit composed of                      dc-side variables are obtained using fast averaging as
+semiconductor switches that can be either uncontrolled (i.e.,                                                   
+diodes) or controlled (i.e., thyristors).                                                                    1 t                             1
+                                                                                                  x̄ (t) =              x (t)dτ, T =                       (6)
+   For the purpose of modeling in this paper, it is assumed that                                            T t−T                           6fe
+the Thévenin equivalent source voltages are balanced and purely                    where x denotes the variable and x̄ is its average value. To obtain
+sinusoidal, and can be expressed as                                                the fundamental components of ac-side variables of the LCR,
+                               ⎡                 ⎤                                 first, the ac terminal variables vabcs and iabcs are transformed to
+                      √               cos (θs )
+             eabc = 2Erms ⎣ cos (θs − 2π/3) ⎦ ,                (1)                 the synchronously rotating converter reference frame qde using
+                                 cos (θs + 2π/3)                                   the Park’s transformation [15] as
+                                                                                                  vqd
+                                                                                                   e
+                                                                                                      = K(θe )vabc ,         ieqd = K(θe )iabc .          (7)
+where Erms is the rms value of the phase voltages, and θs is the
+angle of the three-phase equivalent voltages.                                         Here, K is the transformation matrix defined in (A1), pre-
+   Due to the discrete and nonlinear operation of the LCR, its                     sented in Appendix A. In the synchronous reference frame qde ,
+terminal voltages/currents contain harmonics. For example, the                     the variables vqd
+                                                                                                  e
+                                                                                                     and ieqd are composed of dc average-values
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:28:59 UTC from IEEE Xplore. Restrictions apply.
+2410                                                                         IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 37, NO. 4, DECEMBER 2022
+
+
+
+
+                                                                                 Fig. 3. Indirect interfacing of the PAVM of LCRs with external ac and dc
+Fig. 2. Phasor representation of fundamental components of ac variables of       subsystems using controlled voltage/current sources.
+the LCR in synchronously rotating source and converter qd reference frames.
+
+
+                                                                                 A. Indirect Interfacing Method
+                                                    1
+(corresponding to the fundamental components vabc       and i1abc ,
+                                                                                    Once the parametric functions are established, in the indi-
+respectively) as well as some oscillatory components (corre-
+                                                                                 rect interfacing method of PAVMs [26], the discrete switching
+sponding to the sum of all harmonics of vabcs and iabcs ).
+                                                                                 models are replaced with continuous controlled voltage/current
+Consequently, to capture the fundamental components of ac
+                                                                                 sources to interface with external ac and dc subsystems, as
+variables in abc coordinates, the average values of the variables
+                                                                                 illustrated in Fig. 3. Therein, the ac and dc currents of the LCR
+in qde coordinates are obtained by applying averaging (6) to (7),
+                                                                                 (i.e., i1abc and īdc ) and its firing angle (if thyristors are used) are
+yielding                                                                                                                                               1
+                                                                                 the inputs to the PAVM; while the ac and dc voltages (i.e., vabc
+                v̄qe = V 1 ,     v̄de = 0.                                (8)    and v̄dc ) are the interfacing outputs.
+                                                                                    First, using the inputs and v̄dc calculated from the previous
+                īeq = I 1 cos (ϕ) ,     īed = I 1 sin (ϕ) ,             (9)    time-step, the dynamic impedance is calculated based on (13)
+where ϕ is equal to (θv1 − θi1 ), i.e., the power factor angle of the            and used (along with firing angle in case of thyristor switches)
+LCR. The phasor diagrams of the fundamental components of ac                     to compute the value of parametric functions. Then, using the
+variables in the converter qde and source qds reference frames                   input ac currents and the computed parametric functions, the
+are shown in Fig. 2, where the latter uses the source angle θs for               intermediate dc current i¯ dc is calculated based on (10) as
+                                                                                                                             
+transformations in (7).                                                                                     i¯ dc = wi (·) īsqd  .               (14)
+   To relate the amplitude of the fundamental component of
+ac-side currents to the average value of the dc-side current, a                  The compensating current source icomp (used to eliminate the
+parametric function is defined as                                                steady-state error due to snubber Rx [26]) is calculated as
+                                          īdc                                                                          v̄dc (t − Δt)
+                               wi (·) = 
+                                         e .
+                                                                       (10)                             icomp (t) =                  ,                (15)
+                                        īqd                                                                                Rx
+                                                                                 using the dc voltage at the previous time-step. Subsequently, the
+Similarly, the amplitude 

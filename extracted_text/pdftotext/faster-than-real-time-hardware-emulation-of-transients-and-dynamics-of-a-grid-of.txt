@@ -1,0 +1,184 @@
+                                         Received 15 May 2022; revised 5 September 2022; accepted 25 October 2022.
+                                         Date of publication 26 October 2022; date of current version 12 January 2023.
+                                                             Digital Object Identifier 10.1109/OAJPE.2022.3217601
+
+
+
+
+           Faster-Than-Real-Time Hardware Emulation
+                of Transients and Dynamics of a
+                       Grid of Microgrids
+                    SHIQI CAO              (Graduate Student Member, IEEE), NING LIN (Member, IEEE),
+                                               AND VENKATA DINAVAHI (Fellow, IEEE)
+                        Department of Electrical and Computer Engineering, University of Alberta, Edmonton, AB T6G 2V4, Canada
+                                                     CORRESPONDING AUTHOR: S. CAO (sc5@ualberta.ca)
+                         This work was supported by the Natural Sciences and Engineering Research Council of Canada (NSERC).
+
+
+
+
+         ABSTRACT       Enhanced environmental standards are leading to an increasing proportion of microgrids
+         (MGs) being integrated with renewable energy resources in modern power systems, which brings new
+         challenges to simulate such a complex system. In this work, comprehensive modeling of a grid of microgrids
+         for faster-than-real-time (FTRT) emulation is proposed, which can be utilized in the energy control center
+         for contingencies analysis and dynamic security assessment. Electromagnetic transient (EMT) modeling is
+         applied to the microgrid in order to reflect the detailed device processes of the converter and renewable energy
+         sources, while the AC grid utilizes the transient stability modeling to reduce the computational burden and
+         obtain a high acceleration value over real-time execution. Consequently, a dynamic power injection interface
+         is proposed for the coexistence of the two simulation types. The reconfigurability and parallelism of the
+         field-programmable gate arrays (FPGAs) enable the whole system to be executed in FTRT mode with 51 times
+         acceleration over real-time. Meanwhile, three case studies are emulated and the results are validated by the
+         off-line simulation tool Matlab/Simulink R .
+         INDEX TERMS        Battery energy storage system, doubly fed induction generator, dynamic simulation, elec-
+         tromagnetic transients, faster-than-real-time, field programmable gate arrays, hardware emulation, hardware-
+         in-the-loop simulation, microgrids, parallel processing, photovoltaic array, predictive control, real-time
+         systems, transient stability simulation, wind turbine.
+
+
+
+I. INTRODUCTION                                                                               To deal with the complexity caused by the integration of
+
+T    HE penetration of microgrids (MGs) with renewable
+     energy resources has been increasing in the power sys-
+tem to alleviate the energy crisis and environmental issues [1].
+                                                                                           MGs, a variety of models and control strategies have been
+                                                                                           developed and investigated in the literature. Most of the
+                                                                                           existing microgrid technologies focus on one specific aspect,
+The traditional centralized structure of the power systems is                              such as energy management, control methods [4], [5], [6],
+not efficient to meet the growing electricity demand due to                                [7], optimal power flow [8], or protection schemes [9], [10].
+the power loss in the transmission network [2]. Therefore,                                 Meanwhile, some simulation models for analyzing the micro-
+modern power systems are experiencing a shift from central-                                grids are also investigated, e.g., the detailed and simplified
+ized generation to distributed generation [3]. The distributed                             models for the energy storage system (ESS) in MGs are
+generation with multiple MGs integrated may bring new                                      presented in [11] and [12]. Although significant progress has
+challenges including designing, operating, and coordinating                                been made, these research results lack hardware support and
+the complex system. Considering that in such an integrated                                 the simulation models mentioned above are hard to realize
+network a small disturbance may spread to other areas and                                  in real-time, which is insufficient for modern energy control
+cause severe damage to the whole system, it further increases                              center that requires taking remedial actions immediately after
+the complexity of controlling the microgrid cluster.                                       a disturbance. Furthermore, it falls short of revealing the
+
+
+                This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+36                                                                                                                                                               VOLUME 10, 2023
+Cao et al.: Faster-Than-Real-Time Hardware Emulation of Transients and Dynamics of a Grid of Microgrids
+
+
+
+impact of multiple MGs on the AC grid with which they are                           Recently, the FPGA-based platform has caught a lot of
+integrated.                                                                      attention due to its strong computation capability. The FPGA
+   While there is still further research needed related to                       is capable of performing high-speed real-time simulations
+real-time simulation of the MGs, significant progress has                        with time-steps in the sub-microsecond range [32], [33],
+been made in the literature which can be categorized into                        [29], however, a single FPGA board is limited by its finite
+four aspects: 1) the design and modeling of MG compo-                            amount of logical resources to perform parallel computations
+nents to achieve real-time simulation [13], [14], [15], [16],                    in solving a large-scale system. As presented in [34], a large
+[17], [18], [19], [20]; 2) the utilization of existing com-                      system is deployed on a single FPGA board by utilizing
+mercial real-time simulators [21], [22], [23], [24]; 3) the                      parallel computation method, and the real-time simulation
+development of real-time virtual test bed for MGs [25],                          can be achieved. However, the steady-state estimation is taken
+[26], [27]; 4) novel computational approaches for distribution                   into consideration in [34], which only provides a single state
+grids [29], [30]. Real-time simulation prefers the models                        power estimation. The emulation of modern power grids
+with lower computational burden, and therefore, the rela-                        requires each circuit component to be modeled in detail to
+tively simpler models or equivalent dynamic models have                          properly reflect the dynamic processed and performance of
+been developed. Machine learning (ML) based models have                          the system. Nevertheless, low latency and hardware resource
+also been investigated to selectively model and simulate                         occupation are also critical for industrial practice. In this
+MG components [15], [16], which significantly reduced the                        work, comprehensive modeling of microgrids for faster-than-
+hardware consumption; however, the ML-based models may                           real-time (FTRT) emulation on multiple FPGA boards is
+ignore some dynamics of the MG components to obtain a                            proposed, which can not only provide real-time HIL simu-
+higher simulation speed. Thus, these modeling approaches                         lation services for testing local MG control and protection
+still require further research to meet the requirements of                       functions, but also enable the energy control center with
+modern power systems for dynamic security assessment.                            effective strategies to improve the stability and security of
+Commercial real-time simulators are usually executed on                          the larger grid. It is quite challenging, even for real-time HIL
+high-performance processors or supercomputers to realize                         simulation, to model and emulate a microgrid cluster.
+the high-speed simulation for microgrids [35], which are able                       Compared with the available commercial real-time simu-
+to conduct the simulation of MG components in real-time.                         lation tools, the FPGA-based FTRT emulation has following
+Although their accuracy and efficiency can be guaranteed due                     advantages: firstly, both the FPGAs and RT tools are able to
+to the high processing frequency, the cost of the computing                      realize the HIL emulation, however, the FPGAs can achieve
+equipment is the main factor that limits their widespread                        the FTRT emulation with the help of a creative solution
+application. Meanwhile, the hardware-in-the-loop (HIL) sim-                      algorithm, and efficient parallel implementation, which is
+ulation is also utilized in modern power systems and has                         much faster than the RT tools. Secondly, the capability and
+also been applied to investigating microgrids [26], [36].                        scalability of the FPGA-based FTRT platform are better than
+The hardware resources of the existing simulators restricts                      currently available commercial RT simulators. Take the case
+the scale of MG or MG clusters. Only a relatively small                          study in [32] (which was done with RTDS Technologies Inc.,
+scale microgrid is tested and neither power dispatch nor                         Winnipeg, Canada) for example, the 141-bus system with
+interactions among grid components are investigated in the                       38 generators is simulated using RTDS and 4 PB5 racks
+above papers. Virtual testbeds for cyber and physical data                       were needed [32]. To reduce the hardware resource cost, only
+acquisition have caught a lot of attention in MG simulation,                     5 buses and 2 generators are simulated on RTDS, while the
+which can also coordinate with other unconventional mod-                         rest of the system parts are simulated on FPGA boards. The
+eling methods to realize real-time simulation [27]. Due to                       cost and the hardware resource occupation of an FPGA-based
+their flexibility and scalability, virtual testbeds are conve-                   platform are much lower than the RT simulators if the sys-
+nient to reconfigure and adapt to various systems without                        tem scale becomes larger. Due to its accelerated mode of
+depending on specialized hardware; however, they have lim-                       execution, an FTRT emulator can conduct traditional control
+ited real-time simulation capabilities, especially in applica-                   center functions such as dynamic state estimation, power
+tions that require deterministic, low-latency feedback loops                     flow, and contingency analysis much faster to predict the
+for real hardware [27]. The lack of efficient physical inter-                    system condition in response to adverse events. It can then run
+faces is also another one of their drawbacks. Furthermore,                       multiple scenarios in parallel to devise and recommend viable
+some novel approaches were also proposed for real-time                           solutions to dynamically restore the voltages and frequencies
+simulation of MGs. Commonly, EMT simulation method                               to nominal values.
+is adopted for detailed representation of MG components                             For a realistic power system, the role of the FTRT emula-
+described by non-linear differential algebraic equations. Par-                   tion might be more prominent, as it is able to collect real-time
+allel solution approaches were therefore put forward to                          data from the field and provide an optimal solution without
+gain a high-speed execution. These methods usually require                       cutting off the fault area. FTRT emulation improves the grid
+sufficient hardware resources for parallel processing, and                       stability by predicting the grid performance, which is beyond
+multiple FPGA boards are utilized to realize real-time                           the capability of real-time (RT) simulation tools [37]. Further-
+simulation [30], [31].                                                           more, the FPGAs require lower cost and power consumption
+
+VOLUME 10, 2023                                                                                                                               37
+                                                                   where the variables with the subscription ref are the ref-
+                                                                   erence values, G denotes the solar irradiance, αT refers to
+                                                                   the temperature coefficient, VT is the thermal voltage, and
+                                                                   T represents the absolute temperature. Meanwhile, I0 is the
+                                                                   diode saturation current.
+                                                                      In a practical PV array, a large amount of PV panels
+                                                                   are arranged in an array to provide sufficient energy. The
+                                                                   topology of a typical PV array with Np parallel strings and
+                                                                   each of them containing Ns series panels is given in Fig. 1 (c).
+                                                                   The equivalent circuit is still available in a PV array, where
+                                                                   the (1) can be expanded as
+FIGURE 1. Configuration of a PV array model.                                                        Vpv (t)+Ns Np−1 Rs Ipv (t)
+                                                                            Ipv = Np iirr − Np I0 (e         Ns VT               − 1)
+compared with RT tools, enabling them to be of service
+                                                                                    Ipv (t)Rs + Np Ns−1 Vpv (t)
+in dynamic security assessment (DSA). With the help of                            −                             .                           (4)
+creative solution algorithm and efficient parallel implemen-                                      Rp
+tation, FTRT emulation provides sufficient time for DSA to            The non-linear nature of the anti-parallel diode makes the
+take remedial actions [38].                                        emulation of the solar cell complex. To reduce the compu-
+   Apart from the hardware, the solution strategy also has         tational burden as well as shrink the emulation time. The
+a significant impact on emulation efficiency. To reflect the       equivalent circuit in Fig. 1 (c) can be further simplified by
+detailed operating conditions of the components in MGs, the        Norton’s Theorem, resulting in a two-node circuit as given in
+electromagnetic transient (EMT) simulation is adopted, while       Fig. 1 (d), where
+transient stability simulation is applied to the host system to
+reduce the hardware resource utilization. Due to the various                                   Np (Gdio + Gp )
+                                                                              GPVarray =                             ,                      (5)
+simulation types, a dynamic voltage injection interface strat-                            Ns (Gdio Rs + Rs Gp ) + Ns
+egy for hardware emulation with less data communication                                     Np (iirr − IDeq )
+                                                                               JPVarray =                       ,                           (6)
+is also proposed, which significantly reduces the hardware                                Gdio Rs + Rs Gp + 1
+resource utilization and accelerates the hardware emulation.
+                                                                   where Gp refers to the conductance of the parallel resistor, the
+   The rest of this paper is expanded as follows: Section II
+                                                                   Gdio and IDeq are given as follows:
+introduces the detailed modeling of the components in a
+typical microgrid. The interface strategy of the integrated AC                                                  vdio (t)
+
+system and microgrids is specified in Section III. Section IV                              ∂idio   I0 · e VT
+                                                                                   Gdio =        =             ,                            (7)
+demonstrates the hardware design of proposed FTRT emula-                                  ∂vdio         VT
+tion on FPGAs. The validation of EMT-dynamic emulation                             IDeq = idio − Gdio · vdio .                              (8)
+results of MG cluster and case studies for power dispatch is
+                                                                      The operation of a microgrid under the islanded mode
+given in Section V. Section VI presents the conclusion and
+                                                                   requires energy storage system to balance the generation
+future work.
+                                                                   and demand as well as regulate the grid voltage. A battery
+                                                                   energy storage system (BESS) is applied in each microgrid,
+II. DETAILED EMT MODELING OF MICROGRID
+                                                                   which contains a battery system, and a DC/AC converter.
+COMPONENTS
+                                                                   To emulate the non-linear part of the battery system, the
+A. PHOTOVOLTAIC (PV) AND BATTERY ENERGY
+                                                                   EMT simulation is applied for calculating BESS. The battery
+STORAGE SYSTEM (BESS) EMT MODEL
+                                                                   is modeled [11] as an ideal controllable voltage source in
+Fig. 1 (a) provides the equivalent circuit representation of a     series with an equivalent internal resistance Rbatt , as given
+solar cell, which consists of an irradiance-dependent current      in Fig. 2 (a). The open-circuit voltage of the battery Voc can
+source, an anti-parallel diode, shunt resistor (Rp ), and series   be represented based on the actual battery charge (it) by a
+resistor (Rs ) [39]. The output current of the single solar cell   non-linear equation expressed as follows.
+can be expressed based on Kirchhoff’s Current Law as:

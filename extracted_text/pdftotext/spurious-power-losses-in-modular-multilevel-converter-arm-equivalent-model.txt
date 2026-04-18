@@ -1,0 +1,148 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2019.2911052, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                                 1
+
+
+
+
+                         Spurious Power Losses in Modular Multilevel
+                               Converter Arm Equivalent Model
+                        Anton Stepanov, Student Member, IEEE, Hani Saad, Member, IEEE, Ulas Karaagac, Member, IEEE,
+                                                      Jean Mahseredjian, Fellow, IEEE
+
+
+                                                                                                               with a compromise between required accuracy and tolerable
+             Abstract—This paper demonstrates the presence of spurious                                         computational burden [5].
+          power losses or generation in the Arm Equivalent Model (AEM)                                            The models that include SM level details (DM and DEM)
+          of Modular Multilevel Converters. Such power losses can occur if                                     require relatively large simulation times when compared to the
+          model equations are not solved simultaneously with surrounding
+          power circuit equations, which is the case when the AEM is
+                                                                                                               simplified counterparts due to increased complexity and
+          implemented using control system blocks in an electromagnetic                                        smaller time-step usage (in the order of several μs or less) that
+          transient simulation software. Depending on operating conditions                                     is needed to achieve high accuracy [6]. The AEM represents
+          and simulation parameters, these additional losses can represent                                     all individual SMs as a single equivalent circuit (see Fig. 2),
+          a significant part of the total converter station losses or even                                     which makes this model advantageous for a large set of grid
+          surpass them, thus making simulation results inaccurate.                                             studies where the converter behavior on SM level is
+             Analytical demonstration of the losses is presented, and several
+                                                                                                               disregarded [7], [8]. Therefore, larger time-steps can be used
+          models that eliminate the losses are proposed. Based on
+          simulation studies, only the variable resistance model and                                           (tens of μs) [6], [9].
+          equivalent voltage source model can give accurate simulation                                            The AEM can be implemented in different ways in an
+          results without significantly increasing simulation time and                                         EMT-type software. The model equations can be incorporated
+          generating or consuming spurious power.                                                              into the main network equations (MNE), in which case the
+                                                                                                               model equations can be solved simultaneously with the
+            Index Terms—arm equivalent model, high-voltage direct                                              network. However, the main drawback is the inaccessibility of
+          current, losses, modeling, modular multilevel converter
+                                                                                                               model equations to the user. Otherwise, the model equations
+                                                                                                               can be implemented using control diagram blocks of the EMT
+                                                                                                               software [10], [11]. In this case, the drawback is the one-time-
+                                            I. INTRODUCTION
+                                                                                                               step delay between the solution of control blocks and MNE in
+
+          T   he Modular Multilevel Converter (MMC) shown in Fig. 1
+              is a Voltage Source Converter (VSC) topology that has
+          several advantages in comparison with conventional two- and
+                                                                                                               EMT-type software.
+                                                                                                                  In this article it will be demonstrated that in the second
+                                                                                                               approach (model in control blocks), additional spurious power
+          three-level power electronic converters. Increasing the number                                       losses can occur, that can affect the overall behavior of the
+          of sub-modules (SMs) per arm helps to reduce or even                                                 circuit and make the simulation results less accurate. Similar
+          eliminate filters, improve reliability and easily achieve                                            phenomenon of additional losses has been reported in [12] for
+          scalability to higher voltages. In addition, MMCs have lower                                         AVM but no detailed explanations have been provided.
+          losses, switching frequency, transient peak voltages and                                             Therefore, analytical formulation of such losses for AEM is
+          switching voltages [1], [2]. During normal operation, the                                            presented in this paper and solutions to remediate the problem
+          desired AC voltage waveform is constructed by inserting or                                           are discussed. Proposed solutions are validated on a practical
+          bypassing the appropriate number of SMs [3].                                                         test case of an MMC-based HVDC transmission.
+             Due to the increased structural complexity of this type of                                                                                                                               IDC
+          converter compared to the conventional VSCs, a larger set of                                                                    Thevenin
+                                                                                                                                         equivalent          varm iua               iub         iuc
+          models is applicable in electromagnetic transient (EMT)                                                                                          iarm
+                                                                                                                                             circuit                     SM          SM         SM
+          simulations, including detailed model (DM), detailed                                                                                              Rarm                                            VDC
+          equivalent model (DEM), arm equivalent model (AEM) and                                                                                                         SM          SM         SM           2
+          average value model (AVM) [4]. The choice of the model                                                     Half-bridge SM                                     Larm       Larm        Larm
+          depends on the given simulated phenomenon and is associated                                                                                IAC
+
+                                                                                                                                  CSM
+             A. Stepanov and J. Mahseredjian are with the Department of Electrical                                                                                      Larm       Larm        Larm
+          Engineering, Polytechnique Montréal, Montreal, QC H3T 1J4, Canada (email:                                                                VAC
+                                                                                                                                                                         SM          SM         SM
+          anton.stepanov@polymtl.ca; jeanm@polymtl.ca).                                                                                                                                                     VDC
+             H. Saad is with the Réseau de Transport d’Electricité, Paris 92932, France                                                                                                                      2
+                                                                                                                                                                         SM         SM          SM
+          (e-mail: hani.saad@rte-france.com).
+             U. Karaagac is with the Department of Electrical Engineering, Hong Kong                                                                                     ia         ib          i c
+          Polytechnic University, Hung Hom, Kowloon, Hong Kong (e-mail:
+                                                                                                               Fig. 1. Three-phase MMC topology with a coupling transformer.
+          ulas.karaagac@polyu.edu.hk).
+
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2019.2911052, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                                                2
+
+             This paper starts in section II with the presentation of main                                     Instantaneous conduction losses are then expressed as
+          equations of the AEM. Section III demonstrates analytical                                                               PCOND ( t ) = iarm
+                                                                                                                                                 2
+                                                                                                                                                     (t ) Rarm                                                             (9)
+          derivation of spurious losses in steady-state. Solutions to
+          eliminate spurious losses are proposed in section IV. The                                                                                                                                      Rarm
+                                                                                                                                     s
+          solutions are compared in steady-state and transient conditions                                                                                                                              v
+                                                                                                                                               iCtot                     vCtot            vref       + arm
+          using EMT simulations of 401-level MMC-HVDC system in                                                                                           1
+                                                                                                                                                         Ceq                                         -
+          section V.
+                                                                                                                                                                                                 i arm
+
+                II. NORMAL OPERATION OF ARM EQUIVALENT MODEL
+                                                                                                               Fig. 2. Classical AEM 1 for normal operation mode.
+             Two operational modes are usually discussed when dealing
+          with MMCs: normal operation and blocked mode. In this                                                B. Classical AEM 2
+          paper, normal operation is of primary interest, because power                                           Another possible implementation of classical AEM from
+          losses are important in steady-state operation [13].                                                 [4], [15] is shown in Fig. 3. Compared to the classical AEM 1,
+             To evaluate spurious power, let us consider an ideal AEM,                                         there is an additional time-step delay between iref and
+          i.e. lossless semiconductor devices (no switching or
+                                                                                                               capacitor current iCtot introduced by the controlled current
+          conducting losses). The basic equations of the model for a
+          given arm during normal operation are as follows [4], [14]:                                          source. The capacitor is implemented as part of power circuit.
+                                          varm ( t ) = s (t ) vCtot (t )                             (1)
+                                                                                                               Conduction losses (8) can also be included.
+
+                                           iCtot ( t ) = s ( t ) iarm (t )                                                       s          Rarm          s                                                               Rarm
+                                                                                                     (2)              iCtot                                                      i Ctot
+                                            d                i (t )                                             Ceq                       +
+                                                                                                                                            varm
+                                                                                                                                                                 i ref                      Ceq          vCtot   vref   +
+                                                                                                                                                                                                                          varm
+                                               vCtot ( t ) = Ctot                                    (3)                                  -
+                                                                                                                                                                                                    V                   -
+                                            dt                Ceq
+                                                                                                                                                                                                                          iarm
+                                              Ceq = CSM / N SM                                       (4)                                   i arm
+
+          where s is the arm switching function, varm is the arm                                                       a) overview                       b) detailed diagram
+                                                                                                               Fig. 3. Classical AEM 2 (constant capacitor) for normal operation mode.
+          voltage, vCtot is the equivalent capacitor voltage, iarm is the
+          arm current, iCtot is the equivalent capacitor current, Ceq is the                                                  III. SPURIOUS LOSSES OF AEM IN STEADY-STATE
+          equivalent capacitor, CSM is the SM capacitance and N SM is                                            In EMT-type software codes it is usual to solve control
+                                                                                                               system equations independently from MNE, which results in a
+          the number of SMs per arm.
+                                                                                                               one-time-step delay between the two solutions. As it will be
+             If equations (1)–(3) are solved simultaneously at each time-
+                                                                                                               demonstrated, this can result in spurious losses P , which is
+          point, the solution is perfectly accurate, as demonstrated
+          below. Instantaneous arm power on the power circuit side is                                          defined as the difference between Parm ( t ) and PCtot ( t ) :
+          given by:                                                                                                                                P (t ) = Parm (t ) − PCtot (t )                                      (10)
+                                         Parm ( t ) = iarm ( t ) varm (t )                           (5)
+          Instantaneous power on the equivalent capacitor side becomes:                                        A. Origin of Losses
+                                        PCtot ( t ) = iCtot (t ) vCtot ( t )                         (6)
+                                                                                                               1) Classical AEM 1
+                                                                                                                  In EMT-type software implementation of classical AEM 1
+            The powers in (5) and (6) must be equal, because there is no                                       shown in Fig. 2, there is a one-time-step ( t ) delay between
+          other element that can consume, produce or store energy (as                                          vref (reference value from the control blocks), and varm
+          semiconductor losses are not considered in this equation).
+          Considering (2), (6) can be rewritten as                                                             (actual voltage):
+                                     PCtot ( t ) = iarm ( t ) s ( t ) vCtot ( t )                    (7)                                               vre

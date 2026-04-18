@@ -1,0 +1,167 @@
+                    This article has been accepted for publication in IEEE Transactions on Power Delivery. This is the author's version which has not been fully edited and
+                                               content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2026.3656907
+
+                                                                                                                                                                                               1
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE-CLICK HERE TO EDIT) <
+
+
+       Multirate EMT Simulation of Power Electronic
+      Transformers With High-Precision Firing Signals
+                                 Huize Wang1, Jianzhong Xu1*, Senior Member, IEEE, and Moke Feng2
+
+
+    Abstract—The electromagnetic transient (EMT) simulation of                                   subject. Electromagnetic transient (EMT) simulation is widely
+power electronic transformers (PETs) encounters significant                                      adopted for this purpose due to its capability to characterize
+computational challenges due to the high switching frequency                                     detailed dynamics of power electronic apparatus with
+nature imposing small simulation time step. This paper proposes
+a multirate simulation method incorporating high-precision
+                                                                                                 microsecond-level temporal resolution [2].
+firing signals, which enhances the simulation efficiency of PETs                                    However, EMT software requires a substantial amount of
+by reducing the number of numerical operations within specified                                  computational time to simulate PETs [3], [4]. To satisfy the
+simulation durations. Unlike the existing methods that utilize                                   requirements of high voltage and large capacity, PETs are
+simplified models with unanimous simulation time step, the                                       often comprised of multiple power units (PUs) connected in
+proposed approach leverages the inherent frequency disparities                                   various configurations. A typical cascaded H-bridge-type dual
+in multi-level conversion circuits of PETs to partition the entire
+system into distinct subsystems. They each are simulated with
+                                                                                                 active bridge (CHB-DAB) based PET [5] illustrated in Fig. 1
+different time steps optimized for their specific frequencies and                                includes three phases configured in an input-series-output-
+precision requirements. To achieve the coordination between                                      parallel (ISOP) pattern. The cascading configuration of CHB
+subsystems with different rates while ensuring simulation                                        provides significant enhancement of equivalent switching
+stability, a simulation data transmission method for different                                   frequency, though its actual switching frequency is typically in
+subsystems and an interleaved equivalence multirate interaction                                  the range of hundreds of Hertz. In contrast, to minimize the
+algorithm are developed. By formulating the currents on both
+sides of the high frequency transformer as state variables, which
+                                                                                                 physical dimensions and manufacturing costs of apparatus, the
+are derived by modified nodal analysis (MNA), high-precision                                     DAB section containing high frequency transformers
+firing signals are introduced achieving significant time step                                    generally functions at kilohertz-level. The high switching
+enlargement in high frequency subsystem. The performance of                                      frequency requires a sufficiently small time step to accurately
+the proposed method is validated through comparative studies                                     capture the switching transients and ensure the simulation
+with traditional single rate (TSR) EMT simulations under                                         accuracy, ultimately leading to a huge computational burden.
+various operating conditions.
+                                                                                                                                                                                LVDC port
+Index Terms—cascaded H-bridge-type dual active bridge (DAB),                                                                            A Phase
+electromagnetic transient (EMT) simulation, multi-rate                                                                  Iac
+simulation, power electronic transformer (PET).
+                                                                                                                                             B Phase
+
+
+                         I. INTRODUCTION
+
+
+P         OWER electronic transformers (PETs) have garnered                                                   HVAC port
+       significant interest in modern power systems owing to
+       their superior capabilities in efficient and flexible                                           HVDC port
+energy conversion with the large scale integration of
+distributed energy resources and renewable energy sources
+into power grids [1]. Many projects utilizing power electronic
+transformers as energy routing devices have been constructed                                           Power Unit
+in China in recent years, such as Xiaoertai Flexible Substation                                         S1      S3              S5      S7                             S9     S11
+in Zhangbei and Tongli Integrated Energy Town in Suzhou.
+Therefore, the research into primary circuit parameters and
+                                                                                                                         C1                                                          C2
+control system design of PETs has become an important
+                                                                                                         S2      S4             S6      S8                            S10     S12
+
+   This work was supported by the National Natural Science Foundation of
+China under Grant 52277094. (Corresponding author: Jianzhong Xu.)
+   Huize Wang and Jianzhong Xu are now with the State Key Laboratory of                          Fig. 1. Structure of the CHB-DAB-based PET.
+Alternate Electrical Power System with Renewable Energy Sources, North Ch
+ina Electric Power University, Beijing 102206, China (email: wanghuize@nce                          Several equivalent models from the perspective of single
+pu.edu.cn; xujianzhong@ncepu.edu.cn).                                                            rate have been proposed to enhance simulation efficiency. For
+   Moke Feng is now with the State Key Laboratory of Power Transmission
+Equipment Technology, Chongqing University, Chongqing, 400044, China                             instance, in [6], by analyzing the power flow equations and
+(email: fengmoke@cqu.edu.cn)                                                                     inductance current waveforms, an average-value model of
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:33:24 UTC from IEEE Xplore. Restrictions apply.
+                    © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                       but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                   This article has been accepted for publication in IEEE Transactions on Power Delivery. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2026.3656907
+
+                                                                                                                                                                                              2
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE-CLICK HERE TO EDIT) <
+
+PETs is achieved. By neglecting the excitation inductance and                                      1) Simulation data is transmitted at the interconnection node
+resistance currents within PETs while representing the input                                    between the CHB and DAB subsystems in the form of multi-
+and output currents with averaged quantities, the reduced-                                      port Norton equivalent and current source equivalent. Through
+order model [7] was established. However, a significant                                         different transmission methods, the partitioning of the PET is
+drawback of these average-value models is that they reduce                                      achieved, and the frequent reconstruction of the CHB
+the simulation accuracy and cannot reflect the high frequency                                   admittance matrix is avoided.
+transient characteristics. Therefore, an accurate equivalent                                       2) The proposed multirate interaction framework is closely
+modeling approach is proposed in [8], which introduces a time                                   related to the subsystem equivalent methods. By reasonably
+step delay and equivalently represents the PETs as two single-                                  designing the timing of equivalence and data transmission for
+port circuits, significantly improving simulation speed while                                   each subsystem, it avoids the time step delay caused by
+minimizing accuracy loss. In [9], a hierarchical modeling                                       current source equivalence and extends multirate simulation
+scheme for PETs is proposed, recursively reducing the                                           from the system level to the device level.
+dimension of the node admittance matrix (NAM) to improve                                           3) A DAB model capable of accepting high-precision firing
+simulation efficiency. Parallel computing techniques have                                       signals is proposed. By using the MNA, the unified solution of
+been further applied in [10], [11] to enhance the simulation                                    the AC and DC sides is realized. It is organically integrated
+efficiency of PETs. Nevertheless, all the existing equivalent                                   with the proposed multirate simulation method, which
+models constrained to single time step within the framework                                     expands the time step of the fast subsystem and further
+of established EMT software do not take advantage of the                                        improves the simulation efficiency.
+inherent frequency disparities in PETs to reduce the number of                                     The rest of this paper is organized as follows: Taking the
+numerical operations by using multirate techniques.                                             CHB-DAB based PET as an example, Section II presents a
+   Multirate simulation can be achieved through various                                         multirate EMT method which includes the partition scheme of
+methods, such as the ideal transformer method [12],                                             PET, the simulation data transmission method for subsystems
+transmission line method [13], latency insertion method (LIM)                                   of PETs with different rates, and an interaction algorithm.
+[14], multi-area Thevenin equivalent (MATE) method [15],                                        Section III discusses an integrated method for high-precision
+etc. The LIM is used to combine nodal analysis and state-                                       firing signals in PETs simulation. Subsequently, Section IV
+space solvers, permitting distinct subsystems to be solved with                                 validates this method through comprehensive comparisons
+different time steps [14]. In [16], [17], multirate simulation                                  with the traditional single rate (TSR) EMT simulation. Brief
+based on the MATE method is proposed. Through                                                   conclusions are finally given in Section V.
+accumulation and interpolation of the history source across all
+subsystems, simulation data interaction errors are significantly                                            II. MULTIRATE EMT SIMULATION METHOD FOR
+mitigated. Ref. [18] proposes a time-variant Thevenin/Norton                                                           CHB-DAB BASED PET
+equivalent modeling method to construct interface models and                                       The fundamental idea of the multirate EMT simulation for
+utilizes the root-matching algorithm to suppress numerical                                      CHB-DAB based PET is to separate the PETs system into a
+oscillations. This enables a multirate co-simulation of large                                   subsystem comprising CHB and a subsystem comprising
+AC and multi-terminal DC power grids. However, these                                            DAB, based on different switching frequencies. Simulation
+studies only achieve coarse-grained partitioning at system                                      data is transferred between subsystems via methods based on
+level, failing to realize intra-device multirate simulation for                                 multi-port Norton equivalent and current source equivalent at
+power electronic apparatus. While [19] achieved multirate                                       the interconnection nodes of the subsystems. Moreover, a
+simulation of power electronic converters by modifying the                                      well-designed data interaction process is established to enable
+discretization of energy storage element, the explicit                                          the interaction of the simulation data between the two
+integration stability domain is limited, requiring a sufficiently                               subsystems, thus completing the multirate simulation of PETs
+small simulation time step to ensure numerical stability [20].                                  without time delay.
+Therefore, additional research is needed on multirate
+simulation for power electronic apparatus, such as PETs.                                        A. CHB-DAB Based PET Partitioning
+   This paper proposes a multirate EMT simulation method                                           PETs are usually composed of multi-level conversion
+suitable for PETs, which partitions the PETs into fast and slow                                 circuits to achieve flexible energy transformation. Taking a
+subsystems and simulates them with different time steps. The                                    typical CHB-DAB based PET shown in Fig. 1 as an example,
+high-precision firing signals are introduced to further increase                                its PU consists of two-level circuits. CHB, composed of
+the time step of the fast subsystem by formulating the currents                                 IGBT/anti-paralleled diode switches S1, S2, S3, S4, utilizes a
+on both sides of the high frequency transformer as state                                        cascaded voltage division topology to connect to the AC grid
+variables, which are derived by modified nodal analysis                                         for AC/DC conversion. DAB, which is used to complete
+(MNA). By reducing the number of numerical computations                                         DC/DC conversion, comprises switches S5-S12, capacitors C1,
+within a given simulation time, the proposed method enhances                                    C2 and a high-frequency isolation transformer.
+simulation efficiency and extends multirate applications from                                      CHB often employs carrier phase-shifted sinusoidal pulse
+system level to device level.                                                                   width modulation (CPS-SPWM) to enhance its equivalent
+   The main contributions of this paper are outlined below:                                     switching frequency, with the actual switching frequency at a
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:33:24 UTC from IEEE Xplore. Restrictions apply.
+                   © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                      but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                   This article has been accepted for publication in IEEE Transactions on Power Delivery. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2026.3656907
+
+                                                                                                                                                                                                 3
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE-CLICK HERE TO EDIT) <
+
+relatively low level, typically several hundred hertz. DAB                                                          R1             L1          L2           R2                      iT2(t)
+commonly utilizes phase-shift control to adjust power flow                                                                                                              Ideal
+                                                                                                                          iT1(t)                    iT2(t) / k
+between the two sides of the transformer [5]. The switching                                                                                                             trans-
+                                                                                                     vT1(t)                             Lm                k vT2(t)     former           vT2(t)
+frequency of DAB is often set at a high frequency of several
+                                                                                                                                                                         k :1
+thousand hertz. To satisfy the Nyquist sampling theorem, a
+smaller time step simulation is often required for DAB.                                                                                           (a)
+Conversely, the lower switching frequency of CHB allows a                                                                                       -GT12
+                                                                                                                       iT1(t)                                              iT2(t)
+larger time step, yet conventional single rate approaches only
+adopt a unanimous small step to both levels, resulting in                                                                                        GT12
+computational resource redundancy.                                      

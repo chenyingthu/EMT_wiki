@@ -1,0 +1,187 @@
+         Received 25 August 2025; revised 8 December 2025; accepted 25 January 2026. Date of publication 30 January 2026; date of current version
+                                                                  11 February 2026.
+                                                               Digital Object Identifier 10.1109/OAJPE.2026.3659790
+
+
+
+
+               GPU Parallel-Rate Exponential Integrator
+              Algorithm for Efficient Simulation of Power
+                         Electronic Systems
+                                            JARED PAULL1 (Graduate Student Member, IEEE),
+                                      1
+        WALID HATAHET                     (Graduate Student Member, IEEE), LIWEI WANG 1 (Senior Member, IEEE),
+                                                     AND WEI LI 2 (Member, IEEE)
+                              1
+                                  School of Engineering, University of British Columbia Okanagan, Kelowna, BC V1V 1V7, Canada
+                                                    2
+                                                      OPAL-RT Technologies, Montréal, QC H3K 1G6, Canada
+                                                    CORRESPONDING AUTHOR: L. WANG (liwei.wang@ubc.ca)
+                         This work was supported by the Natural Sciences and Engineering Research Council (NSERC) of Canada.
+
+
+
+
+          ABSTRACT        Electromagnetic transient (EMT) simulation of power electronic converters is critical for
+          analysis, design, and fast control prototyping of power and energy systems. This paper proposes a multi-
+          granular GPU parallel-rate exponential integrator (EI) algorithm for fast offline EMT simulation of power
+          electronic systems. The proposed parallel-rate EI algorithm utilizes the massively parallel GPU architecture
+          to compute multiple discretization steps in parallel. The matrix-vector computations of the EI algorithm
+          within each time step are also parallelized. Additionally, a novel GPU-based framework is proposed for
+          numerically efficient precomputation of matrix exponentials before a simulation loop starts. The high degree
+          of parallelism leads to large simulation speedups compared to single-thread CPU implementations. The
+          discretization technique of high-order EI algorithm is absolutely stable with no numerical ringing and can
+          achieve accurate differential equation discretization with large time-step sizes. The proposed parallel-rate
+          EI solver is further applied to detect passive/diode switching events accurately. Two case studies are used
+          to demonstrate the accuracy and efficiency of the parallel-rate EI algorithm. Two additional case studies
+          showcase the benefit of the proposed parallel precomputation technique for matrix exponentials.
+          INDEX TERMS      Electromagnetic transients (EMT), exponential integrator (EI), graphics processing
+          unit (GPU), multi-granular parallel simulation, phi-function precomputation, power electronic converter
+          simulation.
+
+
+I. INTRODUCTION                                                                             prior art techniques have been proposed for transient sim-
+
+F     AST power converter dynamics introduced by semi-
+      conductor switching, control system interaction, and
+short-circuit faults require detailed electromagnetic transient
+                                                                                            ulations of power electronic converters on various parallel
+                                                                                            computing hardware architectures such as multithread CPU,
+                                                                                            field programmable gate arrays (FPGA), and graphics pro-
+(EMT) modeling and simulations [1]. Therefore, numer-                                       cessing units (GPU). Multithread CPU implementation was
+ically accurate and efficient EMT simulation is vital for                                   successfully applied to large-scale power system EMT sim-
+analysis, design, and rapid control prototyping of power                                    ulation in [2]. However, a multithread CPU has a limited
+electronic systems. The increase in size and complexity of                                  number of hardware processing units, i.e., cores available
+power electronic converters impose new challenges when                                      for parallel computation. The multithread CPU typically
+developing accurate and efficient EMT algorithms to better                                  enables block-level or coarse-grained parallelism, whereas
+utilize advanced parallel computing hardware platforms.                                     fine mathematical operations such as matrix multiplications
+   Nowadays, EMT modeling and simulation have expanded                                      often remain sequential or poorly parallelized. FPGAs are
+beyond the traditional single-thread central processing unit                                programmable parallel hardware that can be efficiently
+(CPU)-based implementation environment. A plethora of                                       interfaced with external circuits, making them popular for
+
+                                          © 2026 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+                                                    For more information, see https://creativecommons.org/licenses/by/4.0/
+VOLUME 13, 2026                                                                                                                                     121
+digital real-time simulators performing hardware-in-the-loop      not offer parallel-rate EMT simulation, which needs to
+(HIL) experiments [3], [4]. However, the circuit scale of         generate simulation output points with multiple time steps in
+the EMT simulation on an FPGA is limited by both cost             parallel.
+and complexity of implementation [5]. GPUs are massively             In the literature, the GPU has mainly been used to
+parallel computing hardware that accelerates simulations          compute the discretized system at each time step sequen-
+using a single-instruction multiple-thread (SIMT) mode.           tially. Parallel time-stepping computation was proposed
+SIMT allows a single instruction to be executed concurrently      in [20], where segments of the simulation are computed
+a cross multiple threads within a grouping, enabling fine-        on the GPU in parallel. However, both the coarse-
+grained parallelism such as parallel matrix operations [6].       operator and precise-operator steps are ultimately computed
+Unlike FPGAs, which are used in specialized applications,         sequentially. Additional speed-up is expected when com-
+GPUs are commonly found in modern computers for graph-            puting multiple integration time-steps in parallel, with
+ics processing. As a result, GPUs are relatively inexpensive      each step itself internally parallelized. In this way, the
+and have a mature development framework for custom                GPU can achieve simultaneous coarse- and fine-grained
+parallel computing applications.                                  parallelism. This multi-granular parallelism is only feasi-
+   GPU hardware was first used to conduct power flow              ble if the integration algorithm can accurately discretize
+analysis on large-scale power systems in [7]. Later on, a         the differential equation systems using large time-step
+CPU-GPU EMT co-simulation was proposed in [8], which              sizes.
+utilizes a GPU for matrix operations and a CPU for the               Trapezoidal rule (TR) and backward Euler (BE) methods
+remainder of the simulation. As a result, significant data        are widely used numerical integration techniques. How-
+need to be exchanged between the CPU and the GPU on a             ever, TR produces fictitious numerical oscillations over
+slow PCIe interface. Subsequent research works successfully       discontinuous switching events while BE has low numerical
+implemented EMT simulation on a GPU entirely to avoid             accuracy as a first-order method. In [23], a hybrid TR-BE
+costly CPU-GPU communication latency [9], [10], [11].             solver was presented that used the second-order accuracy
+However, these techniques implement sequential tasks, such        of TR during continuous system operation and applied BE
+as controls on the GPU. GPUs are not optimized for sequen-        over discontinuous switching events to eliminate numerical
+tial tasks and therefore perform them significantly slower        oscillations. Exponential integrator (EI) is an alternative to
+than CPUs. In [12] and [13], this issue is mitigated using        the prior art low-order numerical integration techniques.
+a thread-oriented system transformation and a layered GPU         Within the literature, the EI is typically applied to time-
+processing technique. More recently, novel CPU-GPU EMT            domain simulation of very-large-scale-integration (VLSI)
+algorithms have found great success when the data transfer        [24], [25], [26], [27], [28], or small sequential fixed step-
+is kept to a minimum, and the algorithm is strategically          size simulation of power electronic converters [11], [15],
+divided between CPU and GPU [14], [15], [16], [17], [18],         [29], [30]. In [31], a CPU-based large step-size EI algorithm
+[19], [20].                                                       is proposed for average value model (AVM) simulation of
+   All prior art GPU-based EMT simulation works have a            power converter systems with a variety of time constants.
+common theme: they are only efficient for large-scale power       The EI solver uses intermediate results of Padé approxi-
+and power electronic systems [8], [9], [10], [11], [12], [13],    mation with scaling-and-squaring to efficiently compute the
+[14], [15], [16], [17], [18], [19], [20], [21], [22]. For small   dense output points between two time-steps [32]. In [33],
+power and energy systems, traditional GPU-based simula-           the method is extended to the simulation of switching power
+tions are slower than CPU-based ones, as indicated by the         electronic converters. The methods in [31] and [33] present
+time-cost model proposed in [10]. GPUs suffer from higher         strong efficiency improvements. However, the EI solvers
+latency and weaker compute units than CPUs. As a result,          [31] and [33] are time-driven instead of discrete-switching-
+many GPU computation units should execute in parallel             event-driven (DSED). The time-driven solvers use fixed
+before the efficiency rivals a single CPU thread. Further-        time-steps which are smaller than the time steps enabled
+more, most prior art GPU-based EMT research works focus           in the DSED simulation framework. Moreover, the dense
+on nodal-analysis-based approaches [8], [9], [10], [12], [13],    output formulae in [31] and [33] were implemented for
+[14], [16], [17], [18], [19], [20], [21], [22]. These EMT         sequential computation instead of parallel-rate computation
+nodal-analysis implementations employ low-order differen-         in GPU. In [34], a DSED EI solver is presented for
+tial equation discretization schemes such as Trapezoidal          simulation of power electronic systems where the system-
+Rule and backward Euler method. Therefore, their numerical        states are only computed at discontinuous switching events.
+accuracy degrades rapidly for large integration time-step         In [35] and [36], the EI solver is extended for real-time
+sizes. In [11] and [15], switch-level state-space models          simulation and large-scale converter systems using network
+were proposed for GPU-based EMT simulation of power               decoupling technique. Although the EI solvers [34], [35],
+electronic converters. The ordinary differential equation sys-    [36] are shown to be highly efficient for a variety of power
+tem was discretized using parallel exponential integrator         electronic systems, the DSED simulation framework in
+(EI) algorithm. However, the EI solvers in [11], [15] do          sequential CPU implementation may not accurately capture
+
+122                                                                                                                VOLUME 13, 2026
+Paull et al.: GPU Parallel-Rate EI Algorithm for Efficient Simulation
+
+
+
+fast system transients and switching ripples between two                A. VARIABLE-STEP-SIZE
+switching events.                                                       VARIABLE-FORCING-FUNCTION-TERM EXPONENTIAL
+   This paper proposes a new multi-granular GPU-based                   INTEGRATOR ALGORITHM
+parallel-rate power electronic converter EMT simulation                 At any point in time, a piecewise linear power electronic
+using the EI algorithm. The key contributions of this paper             system is governed by the system’s inductive and capacitive
+are summarized as follows.                                              circuit elements. By selecting inductor currents and capaci-
+   1) A parallel-rate EI solver is proposed, which utilizes             tor voltages as system state variables, the system equations
+      precomputation of high-order matrix exponentials to               are derived from each state variable’s differential equation,
+      achieve considerable speedup of simulation efficiency.            i.e., vL = L didtL and iC = C dvdtC for inductors and capacitors,
+      Compared to small fixed time-step EMT solvers,                    respectively. These differential equations form the basis for
+      the proposed EI solver computes multiple integration              the system’s state-space representation as
+      time-steps in parallel with one another. The proposed                              ẋ (t) = A (t) x (t) + B (t) u (t)                      (1a)
+      EI algorithm is a high-order numerical integration                                 y (t) = C (t) x (t) + D (t) u (t)                       (1b)
+      solver with L-stability, which is desirable for the
+      simulation of stiff and non-stiff power electronic                where, for a system with n independent system states and
+      systems.                                                          m system inputs, x is a n × 1 vector containing the system
+   2) A GPU-based EMT simulation framework is pro-                      states, i.e., inductor currents and capacitor voltages; u is
+      posed, where the GPU computing platform enables                   a m × 1 vector containing the system inputs, i.e., AC or
+      parallel-rate simulation output points between two                DC input sources; and A (t) , B (t) , C (t) , D (t) are matrices
+      switching events and parallel matrix calculations of              encapsulating the circuit topology and are dependent on
+      the EI solution within each parallel-rate output point.           the switching configuration at time t. Equation (1) can be
+      The controllers of the power electronic converters                generated automatically using well-known approaches from
+      are also implemented on the GPU to minimize data                  the literature [37], [38], [39], [40], [41].
+      transfer between CPU and GPU engines.                                Equation (1a) is an initial value problem of an ordinary
+   3) Passive switching event detection of naturally commu-             differential equation, which can be solved in discrete-time
+      tated switches, such as diodes, is performed using the            using the EI as
+      dense parallel-rate output points from the proposed EI                                        Z tk +h
+      solver. The GPU computing platform afford ultra-fine                        xk+1 = eAk h xk +         eAk (tk +h−τ) Bk u (τ) dτ, (2)
+                                                                                                        tk
+      parallel-rate integration step-sizes to find the voltage
+      or current zero crossing points which eliminates the              where the subscript-index k corresponds to a discrete time
+      iterative solution of zero crossing points of the passive         instant, i.e., xk = x (tk ); h is the discretization time-step
+      switching devices.                                                size; and the subscript-index k + 1 corresponds to the next
+   4) Numerically efficient matrix exponential precomputa-              discretization time instant. The EI improves on conventional
+      tion algorithm is proposed for the EI solver, where the           low-order discretization methods such as TR or BE by
+      calculation of a matrix exponential is achieved by a              capturing the fast dynamics via the high-order exponential in
+      single matrix multiplication of previously calculated             (2) and eliminating numerical oscillations. Therefore, the EI
+      matrix exponentials. The proposed precomputation                  is known to be unconditionally stable, free from numerical
+      technique drastically reduces the computation load                ringing, and highly accurate [35].
+      of matrix exponentials and is suitable for parallel                  To compute (2), the forcing-function integral can be
+      hardware platforms, such as multithread CPU, FPGA,                analytically substituted using ϕ-functions as
+      and GPU.                                                                                         ∞
+                                                                                                       X                          d( j−1) uk
+                                                                                 xk+1 = eAk h xk +            ϕ j (Ak h) h j Bk              ,    (3)
+II. EXPONENTIAL INTEGRATOR DISCRETIZATION                                                                                          dt( j−1)
+                                                                                                        j=1
+ALGORITHM AND STEP-SIZE SELECTION SCHEME
+                                                                        where the ϕ-terms are traditionally calculated using either a
+In this section, the variable-step-size variable-forcing-
+                                                                        recursive formula (4) or a Taylor series expansion (5):
+function-term EI-based discretization technique is intro-
+duced, alongside the step-size selection scheme. First, the                                                             1
+                                                                                 ϕ j (Ak h) = Ak hϕ j+1 (Ak h) +           ,      ϕ0 = eAk h      (4)
+formulation and stability properties of EI is introduced for                                                            j!
+EMT simulation. Next, the variable-step-size discrete-state                                     r
+                                                                                                X (Ak h)n
+event-driven (DSED) framework is discussed to facilitate                         ϕ j (Ak h) =                     ,                               (5)
+                                                                                                      ( j + n)!
+precise computation of switching instants. This section                                         n=0
+
+continues to lay out the challenges with the conventional               where r is the order of the Taylor series approximation. Both
+DSED EMT algorithm and explain why a parallel-rate                      (

@@ -1,0 +1,267 @@
+      第 44 卷 第 16 期                          中     国 电 机 工 程 学               报                Vol.44 No.16 Aug. 20, 2024
+ 6656 2024 年 8 月 20 日                              Proceedings of the CSEE                    ©2024 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.230508 文章编号：0258-8013 (2024) 16-6656-11 中图分类号：TM 85 文献标识码：A
+
+
+
+                   基于 POD-αATS 的油浸变压器
+                  瞬态温升降阶自适应变步长计算方法
+                             刘刚 1，郝世缘 1，胡万君 1，刘云鹏 1，李琳 2
+            (1．河北省输变电设备安全防御重点实验室(华北电力大学)，河北省 保定市 071003；
+                  2．新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206)
+
+
+ Adaptive Variable Step Size Calculation Method for Transient Temperature Rise and Fall of
+                      Oil Immersed Transformer Based on POD-αATS
+                             LIU Gang1, HAO Shiyuan1, HU Wanjun1, LIU Yunpeng 1, LI Lin2
+ (1. Hebei Provincial Key Laboratory of Power Transmission Equipment Security Defense (North China Electric Power University),
+  Baoding 071003, Hebei Province, China; 2. State Key Laboratory of Alternate Electrical Power System with Renewable Energy
+                    Sources (North China Electric Power University), Changping District, Beijing 102206, China)
+
+
+ABSTRACT: In response to the problem of low efficiency in           efficiency, and certain engineering practicality of the algorithm
+calculating transient temperature rise of oil immersed power        proposed in this paper.
+transformers, this paper proposes POD-αATS reduced order
+                                                                    KEY WORDS: αATS variable step size algorithm; proper
+adaptive variable step size transient calculation method. First,
+                                                                    orthogonal decomposition (POD) order reduction method;
+the article briefly derives the finite element discrete equation    transient flow thermal coupling problem; fast calculation
+for calculating the transient temperature rise of transformer       method; temperature rise experiment
+windings. Next, the proper orthogonal decomposition (POD)
+order reduction algorithm is adopted to improve the problems        摘要：针对油浸式电力变压器瞬态温升计算效率过低的问
+
+of excessive number of conditions and equation orders in            题 ， 该 文 提 出 本 征 正 交 分 解 -αATS(proper orthogonal
+traditional transient calculations. Meanwhile, for the time step    decomposition- adaptive time stepping based on α factor，
+selection problem in transient calculations, this paper proposes    POD-αATS)降阶自适应变步长瞬态计算方法。首先，推导
+a method suitable for nonlinear problems α ATS (adaptive time       变压器绕组瞬态温升计算的有限元离散方程；其次，采用
+stepping based on α factor, αATS) variable step size strategy.      POD 降阶算法改善传统瞬态计算中存在的条件数过大及方
+Then, in order to verify the effectiveness of the method, this      程阶数过高的问题；同时对于瞬态计算中的时间步长选择问
+paper establishes a two-dimensional eight zone numerical            题，提出适用于非线性问题的αATS 变步长策略；然后，为
+calculation model based on the basic structure of the 110 kV        验证方法的有效性，基于 110 kV 油浸式电力变压器绕组的
+oil-immersed power transformer winding, and compares the            基本结构建立二维八分区数值计算模型，同时将计算结果与
+calculation results with the temperature rise experimental          基于 110 kV 绕组的温升实验结果进行对比。数值计算及实
+results based on the 110 kV winding. The numerical calculation      验结果表明，所提算法与全阶定步长算法在流场和温度场中
+and experimental results show that the accuracy of the              的精度几乎相同，且流场计算效率提升约 45 倍，温度场计
+proposed algorithm is almost the same as that of the full order     算效率提升约 38 倍，计算速度得到显著提高。这一点在温
+fixed step algorithm in the flow field and temperature field, the   升实验中同样得到验证，说明该文所提算法的准确性、高效
+efficiency of flow field calculation is improved by about 45        性及一定的工程实用性。
+times, and the efficiency of temperature field calculation is
+                                                                    关键词：αATS 变步长算法；本征正交分解降阶方法；瞬态
+improved by about 38 times, significantly improving the
+                                                                    流热耦合问题；快速计算方法；温升实验
+calculation speed. This has also been verified in temperature
+rise experiments, which fully demonstrates the accuracy,            0 引言
+
+    基金项目：国家重点研发计划项目(2021YFB2401700)。                                      随着人工智能、大数据等现代计算机技术的不
+    National Key R&D Program of China (2021YFB2401700).             断发展，大型电力设备的数字化监测和管理已逐渐
+第 16 期                   刘刚等：基于 POD-αATS 的油浸变压器瞬态温升降阶自适应变步长计算方法                                                   6657
+
+成为当下电网建设的趋势。作为电力系统中重要的                                           在其他工程领域，目前较为常用的为基于传统
+一次设备，油浸式电力变压器的稳定运行对电网的                                       截断误差的变步长策略[18-19]，该方法在线性问题中
+安全意义重大，温升热点作为变压器设计和运维关                                       的效率及精度较为可观，但对于非线性问题，该方
+注的重要指标之一，其分布和变化规律也是广大设                                       法的计算速度、准确度及步长变化的合理性均需进
+计和运维人员关注的重点。                                                 一步提高[20]。且将传统变步长方法应用于有限元方
+    数值分析法作为获取油浸式电力变压器温升                                      程中时，由于刚度矩阵阶数较高且病态的特性，有
+                                                    [1-3]
+及热点的主要手段之一，其一般采用有限元                                     及有   时还会出现计算不稳定的情况。
+         [4-5]
+限体积法         。其中，有限元法及其改良方法在处理                                   因此，基于上述问题及目前已有的方案，本文
+边界条件时复杂程度较有限体积法低且易于编程                                        提出了 POD-αATS 降阶自适应变步长瞬态计算方
+                   [6]
+实现。刘成远等 采用有限元法对变压器绕组内的                                       法，如图 1 所示。
+油流和温度进行计算，将得到的计算结果与实验进                                                      存在问题                  解决方案
+
+行比较，取得较为满意的结果；李建勋等基于有限
+                                                                    ①方程阶数        单步计算
+                                                                                          降阶    POD降阶
+元法针对磁场、流体场-温度场的多场耦合问题展开                                             较高条件         过慢计算
+                                                                                                 算法
+                                                                     数较大          不稳定
+仿真计算，结果表明，所得结果与流体力学的理论                                                                                   POD-
+                                                                                                         α ATS
+                                   [7]
+相符合，证明有限元模型的有效性 。同时，最小                                              ②固定步长 时步过多或
+                                                                                         变步长
+                                                                                                αaATS变
+             [8]             [9]
+二乘有限元 及迎风有限元 等基于传统伽辽金有                                              选择不当   精度较低                 步长策略
+
+限元方法的改良方案近年来也逐渐应用于绕组温
+                                                                           图1     POD-αATS 方法示意图
+升的计算当中。刘刚等[10-11]应用混合有限元法分别                                             Fig. 1 POD-αATS method diagram
+解决油浸式电力变压器稳态及瞬态温升问题，研究
+                                                                 首先，本文采用有限元方法推导油浸式电力变
+表明，该方法能够在保证计算精度的条件下解决传
+                                                             压器瞬态温升计算的控制方程，分析传统瞬态计算
+统伽辽金有限元法存在的数值振荡问题。但是由于
+                                                             中的效率瓶颈；针对固定时步选择不当导致的时步
+非线性材料属性、非周期边界条件等影响，加之实
+                                                             过多或精度较低的问题，提出适用于非线性问题的
+际模型尺寸一般较大，绕组的瞬态温升计算一般较
+                                                             αATS(adaptive time stepping based on α factor)变步
+慢，且当涉及快速的时间响应和场的急剧变化时，
+                                                             长策略，并应用于油浸式电力变压器绕组的流-热耦
+除非时间步长选择得很小，否则很难确定响应峰
+                                                             合温升计算中；其次，采用 POD 降阶算法解决传
+值；小的时间步长也意味着需要大量的时间步数，
+                                                             统瞬态计算中存在的条件数过大及方程阶数过高
+这就使得计算的整体效率偏低；较大规模的实际模
+                                                             的问题来降低单步计算时间；同时，基于 110 kV 油
+型还会使得求解的离散方程组阶数偏高，导致产生
+                                                             浸式电力变压器的基本结构建立二维八分区分匝
+难以接受的步进计算成本。
+                                                             绕组数值计算模型，在此基础上验证了 POD-αATS
+    因此，为了提高绕组瞬态温升的计算效率，需
+                                                             算法的有效性及高效性；最后，建立绕组的温升实
+要从两方面进行考量：针对单步求解时间过长的问
+                                                             验平台进行实验验证，说明该算法在工程实际中的
+题，目前已有如基于人工神经网络[12]、支持向量机
+                                                             应用价值。
+回归[13]等代理模型方法，以及基于动态模态分解[14]、
+本 征 正 交 分 解 (proper orthogonal decomposition ，               1 基于 POD-αATS 降阶变步长瞬态温升计
+POD)[15]等降阶计算方法，可以较大幅度地降低瞬                                   算原理
+态求解过程中的步进时间。其中，由于降阶算法特                                           根据文献[8]，油浸式电力变压器绕组温升计算
+别是 POD 算法能够结合物理场控制方程实现快速                                     是一个流固耦合传热过程，其控制方程为：
+计算，具有较强的物理意义，近年来在油浸式变压                                                               ∇ ⋅U = 0                       (1)
+                                         [11, 16]
+器绕组的温升计算中得到了广泛应用                                。然而，                    ∂U
+                                                                    ρ       + ( ρU ⋅ ∇)U = −∇p + η∇ 2U + f          (2)
+降阶算法仅提高了单步求解效率，若瞬态求解过程                                                   ∂t
+需要大量时间步数，则仍然无法有效减少整体计算                                                     ∂T
+                                                                    ρC p      + ∇ ⋅ ( ρ C pUT ) − ∇ ⋅ k ∇T = ST     (3)
+时间，针对该问题可以通过自适应变步长方法进行                                                     ∂t
+改善[17]。                                                      式中：U 为油流的速度矢量，m/s；ρ为流体密度，
+6658                                           中   国   电   机   工   程    学          报                                              第 44 卷
+
+kg/m3；p 为流体内部压强，Pa；η 为流体动力粘度，                                                1
+                                                                                                 ( )
+                                                                                   2
+                                                                               Δt n X n  (8)
+N·s/m2；T 为温度场的温度，K；f 为外力密度矢量，                                                2
+不考虑重力项时，可以取 0；Cp 为定压比热容，J                                              基于绝对误差的传统变步长方法判断依据过
+
+/(kg·K)；ST 为单位体积的产热，W/m3；k 为导热系                                于单一，无法合理判断复杂问题在瞬态过程中的变
+
+数， W/(m·K) 。式 (1) 、 (2) 为流场控制方程；式 (3)                          化趋势，本文采用绝对-相对误差混合判据：
+
+为温度场控制方程；                                                                           max i (ein+1 − ε R X n+1 − ε A ) < 0                (9)
+       将式(1)—(3)进行有限元离散，可得如下一般形
+                                                               式中：en+1 表示第 n+1 时步的截断误差；i 表示有限
+  [10-11]
+式       ：
+                                                               元节点标号；εR 表示相对误差；εA 表示绝对误差。
+         KX n+1 = LX n + B (4)
+                                                               可见当 Xn+1 较大时，εR 占误差判断的主导地位；Xn+1
+式中：K、L 均为有限元刚度矩阵；X 为解向量；B
+                                                               较小时，εA 则决定步长的变化，由此即可针对复杂
+为右端项矩阵；n 为时步数。
+                                                               的瞬态变化工程进行合理的步长调整。若满足该判
+       该方程在实际模型中一般规模较大，从而使
+                                                               据，则下一时步将被调整为
+得计算时间过慢，因此本文提出 POD-αATS 降阶
+                                                                                                               n +1
+自适应变步长瞬态算法，可提高整体计算效率。                                                   n +1
+                                                                                                         ε R X node + εA
+                                                                       Δt          = Δt × min( S
+                                                                                        n
+                                                                                                                               , rmax ) (10)
+1.1    αATS 变步长方法原理                                                     1                                  n +1
+                                                                                                      max(enode , Z EPS )
+       传统的变步长算法以每时步的截断误差作为
+                                                                       若不满足，则说明该步步长变化不合理即失败
+步长变化的依据，用泰勒展开的方式推导出其截断
+                                                               时步，需要调整该步步长进行回退计算：
+误差 Rn，然后用 3~4 时间步的结果拟合 Rn 中导数
+                                                                                                            n +1
+                                                                                                      ε R X node, k + εA
+值[17]，假设各时步的允许截断误差为 Rp，则下一时                                            Δt   n +1
+                                                                                   = Δt × max( S
+                                                                                        n
+                                                                                                                               , rmin ) (11)
+                                                                            k +1        k                  n +1
+步步长为                                                                                                  max(enode , Z EPS )
+                                                                                                           n×1
+                     tn+1 = Ctn 3 R p / Rn             (5)             对于非线性项 F(xk)∈R                            ，通过奇异值分解选
+                                                               取一组正交基 U，使其可以表示为
+式中 tn+1 及 tn 分别表示第 n+1 及第 n 时间步的步长。
+但该方法仅使用绝对误差作为时步判据，不适合复                                                             F ( x k ) = Uc,   U ∈ R n×d , c ∈ R d ×1            (12)
+杂问题的变步长过程；另一方面，在采用此方法计                                         式中：k 为回退计算的次数；node 为满足判定条件
+算大规模问题时，有限元刚度阵的条件数一般很                                          的节点标号；S 为保守系数(0.8~0.9)；ZEPS 为机器零
+大，计算稳定性较差，容易造成计算误差过大甚至                                         近似，其作用在于防止截断误差过小时导致的步长
+计算不收敛的情况，同时在非线性问题中该方法的                                         过大而出现计算不稳定的情况，rmax 及 rmin 为步长
+变步长效果不佳              [17,20]
+                           。                                   限制因子(rmax 通常设置为 4；rmin 通常设置为 0.8)。
+  为改善传统截断误差变步长方法的缺陷，本文                                                 该方法虽然在截断误差的计算和判断上优于
+提出采用αATS 法进行步长调整。该方法将基于泰                                       传统变步长方法，但对于非线性问题，仍然缺乏针
+勒展开的一阶精度及二阶精度解的差值作为误差                                          对性的判断方法。本文在 ATS 的基础上引入α因子，
+判别依据，并结合α因子判断瞬态问题的收敛速度，                                        该方法通过计算瞬态过程中的收敛速度判断物理
+使其能够更好适用于非线性问题。                                                场的非线性变化程度，并以此作为非线性问题的判
+  假设当前时步的计算结果是 Xn，则根据泰勒展                                       断依据，相较于当前已有的经验性判据[21]，该方法
+开公式可得的下一时刻的估计值为                                                的普适性较强，能够更好应用于各类非线性问题。
+         X1n+1 ≈ X n + Δt n X n+1 (6)                          非线性问题的收敛速度可由下式求得[22]：
+       该估计值为一阶精度的估计值，在泰勒展开的
+                                                                                                             || un − un−1 ||
+基础上可将其扩展至二阶精度：                                                                     α = max α n = max                                   (13)
+                                                                                                     n     || un−1 − un−2 ||
+                    1
+     X 2n +1 ≈ X n + Δt n ( X n + X n +1 )             (7)
+                    2                                          式中 un 为第 n 时步的计算结果。由式(13)可知，其
+  那么每一时步的截断误差可表示为                                              本质为前一时间步与后一时间步 u 的变化率比值，
+                                      1 n n +1                 当α大于 1 时，说明下一时间步计算结果的变化相
+        e n +1 ≈ X 2n +1 − X1n +1 =     Δt X − X n ≈
+                                      2                        较于上一时间步大，那么步长应减少；反之，则步
+第 16 期                     刘刚等：基于 POD-αATS 的油浸变压器瞬态温升降阶自适应变步长计算方法                                                                                  6659
+
+长应增大。将式(13)作为修正因子加入 ATS 中进行                                           由其最大及最小奇异值的比值决定，而从 POD 的
+步长调整，则引入修正因子后的步长调整策略为                                                 原理可见，该方法能够使原矩阵的最小奇异值最大
+ ■                                    n+1                             化，有限元刚度阵的条件数较全阶系统得到了大幅
+                                ε R X node  +ε A
+ |Δt n+1 = α ref ⋅Δt n ×min( S                     , rmax ),          度降低，而较低的条件数使降阶方程的数值稳定性
+ |  1
+             α                       n+1
+                               max(enode , YMZA )
+ |                                                                    提高，更加适用于大规模计算当中。
+ | max i (ein+1 −ε R X n+1 −ε A ) < 0
+ |                                                                          综上，引入本征正交分解后的αATS 变步长方
+ ■                                                            (14)
+ |          α
+                                       n+1
+                                ε R X node +ε A                       法，实现了对步长快速准确的调整，保证计算精度
+ |Δtkn++11 = ref ⋅Δtkn ×max( S                      , rmin ),
+ |           α                        n+1
+                               max(enode   , YMZA )                   的同时大大提高了计算速度，且对于非线性问题具
+ |              n+1        n+1                                        有良好的适应性。该方法流程如图 3 所示。
+ |■ max i (ei −ε R X −ε A ) > 0
+                                                                                                                开始
+式中αref 为收敛的参考速率。可知，在计算获得α因
+子之后，仅需设置一个收敛参考速率αref 即可对步                                                                       对n个固定时间步长进行计算
+长进行调整，算法的精确程度对经验性依赖较低。
+αATS 变步长方法能有效减少瞬态计算步数，提高                                                                    基于奇异值分解原理，得到POD降阶
+                                                                                            正交基，建立改善条件数的降阶模型
+计算效率，但对于大规模问题，由于有限元方程的
+阶数过高且条件数过大，其单步计算效率仍得不到                                                                                  采用时间步长 Δt n
+                                                                                                        计算得到结果Xn
+有效提高，因此本文引入 POD 法进行改善。
+1.2    POD 方法原理                                                                                           计算截断误差
+                                                                                                         en+1及收敛因子 α
+      本征正交分解方法的原理如图 2 所示。
+          X                U              Σ           VT
+                                                                            Δt n = Δt n+1                                                否   失败时步
+奇异                                                                                               max i (ein+1 − ε R X n+1 − ε A ) < 0?
+                                                                                                                                             得到Δtkn+1
+值分                =              ×                ×            选
+ 解                                                             取                                                     是
+                                                               主
+                                                                                                             得到Δt1n+1
+          X               U′             Σ′                    要
+                                                      V T′
+                                                               模
+本征                                                                                          否
+                                                               态                                           | X n+1 − X n |ε ?
+正交                ≈              ×                ×
+分解                                                                                                                   是
+                                                                                                                结束
+                      正交基矩阵                   系数矩阵
+                          系数矩阵
+                      图2       POD 方法原理                                                     图3       POD-αATS 方法流程图
+               Fig. 2 POD method prin

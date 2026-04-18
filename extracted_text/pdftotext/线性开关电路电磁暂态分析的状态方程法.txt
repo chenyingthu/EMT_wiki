@@ -1,0 +1,244 @@
+       第 36 卷 第 22 期                          中     国 电 机 工 程 学                 报           Vol.36 No.22 Nov. 20, 2016
+ 6028 2016 年 11 月 20 日                              Proceedings of the CSEE                 ©2016 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.151858              文章编号：0258-8013 (2016) 22-6028-10          中图分类号：TM 74
+
+
+
+            线性开关电路电磁暂态分析的状态方程法
+                                    纪锋，魏晓光，吴学光，刘杰，许韦华
+               (先进输电技术国家重点实验室(全球能源互联网研究院)，北京市 昌平区 102200)
+
+
+   State Space Method to Analyze the Electromagnetic Transient of Linear Switching Circuit
+                               JI Feng, WEI Xiaoguang, WU Xueguang, LIU Jie, XU Weihua
+          (State Key Laboratory of Advanced Tranmission Techonology(Global Energy Interconnection Research Institute),
+                                               Changping District, Beijing 102200, China)
+
+
+ABSTRACT: A novel state equation method which took nodal              0 引言
+potentials as the state variables was proposed to solve the
+electromagnetic transient of linear circuit or even with switches.            电磁暂态分析是电力系统仿真的重要组成部
+Based on energy conservation principle instead of graph theory,       分，是了解电力系统暂态复杂行为的重要手段。当
+the equations formed much faster than the classical method,           前 以 节 点 分 析 法 为 基 础 的 (the electromagnetic
+which took the current of inductor and voltage of capacitor as
+                                                                      transients program，EMTP)类算法在电力系统电磁
+the state variables. For the circuit topology changing caused by
+switches action, only the switching branch’s information need
+                                                                      暂态仿真中被广泛使用。节点分析法的核心思想是
+to be updated to the state equations, instead of decomposition        将电感、电容等动态元件等效变换为电流源与电阻
+and re-writing of the state equations. The numeric oscillation at     的并联，从而在每一个特定的时间点上将电路等效
+the switching time was eliminated by one-step backward                为电阻网络，通过构建电路的电导矩阵来进行求解
+difference method, and the second order numeric accuracy was          [1-2]
+                                                                          。目前流行的 EMTP，PSCAD/EMTDC 等电力
+ensured by trapezoidal method in the linear time. Compared
+with the classic nodal analysis method, the method proposed by        系统电磁暂态分析软件，以及 RTDS 等硬件仿真平
+this paper has a much better stability and flexibility. It is more    台都是基于节点分析法。
+suitable for the large-scale switching circuit simulation. Finally,           节点分析法是在计算机发展的初期，为了分析
+the numerical stability and flexibility of this method was            交流系统中的电磁暂态问题而建立的电路分析方
+demonstrated by a bridge circuit.
+                                                                      法，并没有特别关注开关状态的切换特性。随着电
+KEY WORDS: electromagnetic transient; linear circuit;                 力电子技术的发展，系统中的开关数量大幅增加，
+switching; state equation; trapezoidal method; backward
+                                                                      使用节点分析法分析开关电路时，存在的主要问题
+difference method; numerical oscillation; numerical precision
+                                                                      是在开关动作时刻出现强烈的数值振荡，虽然各个
+摘要：针对线性电路以及包含理想开关的线性电路中的电磁
+                                                                      软件均采用一定的数值技术来消除振荡，但仍然要
+暂态分析问题，提出了一种全新的以节点电位为状态变量的
+                                                                      求采用非常小的步长来保证足够的计算精度。诚然
+状态方程法。基于能量守恒原理而非图论理论，方法列写电
+路方程的速度远远优于传统的使用电感电流和电容电压作                                             节点分析法并不强制要求采用定步长[1]，但为了避
+为状态量的状态方程法，并通过一个病态电路展示了方法的                                            免步长变化时重新离散电容和电感等动态元件，目
+便捷性。针对开关动作引起的电路拓扑变化，仅需要对特定                                            前所有的基于节点分析法的分析软件都是采用定
+的支路信息进行修改，而不必重新列写整个电路方程。由于                                            步长来计算的。近年来，国际上对电路仿真的研究
+使用了单步后差法消除了开关时刻的数值振荡，而在线性时
+                                                                      工作大多集中在通过简化电路模型[3-5]或使用具有
+间段内仍然使用梯形法来保证二阶数值精度，这使得文中方
+法与传统的节点分析法相比具有更好的稳定性和灵活性，更
+                                                                      并行计算能力的硬件加速[6-7]来提高仿真效率，却少
+适合于大规模开关电路的仿真分析。以一个桥式电路为例，                                            有对于电路理论本身和基础算法的研究。
+展示了方法的数值精度和稳定性。                                                               状态方程法最早应用于控制系统分析，20 世纪
+关键词：电磁暂态；线性电路；开关；状态方程；梯形法；                                            60 年代以来被广泛应用到电路网络分析中[8]。电路
+后差法；数值振荡；数值精度                                                         的状态方程是描述电路网络系统模型的动态方程，
+第 22 期                          纪锋等：线性开关电路电磁暂态分析的状态方程法                                                                            6029
+
+                                                                                                                          I S = U S / RS
+可以构成电路网络分析的基础。状态变量是一组独
+                                                            ϕi                                       ϕj
+立的动态变量，状态方程就是用状态变量表达的一                                              I                     RS
+                                                                                                          ϕi                         ϕj
+组独立的一阶微分方程[9-10]。具有标准形式的状态                                  i
+                                                                        -   US    +
+                                                                                                      j
+                                                                                                          i          RS               j
+
+方程可以使用各种成熟的数值计算程序进行求解，                                                            (a) 电压源                      (b) 等效诺顿电流源
+                                 [9]
+唯一的问题是通常不能直接得到 。一般来说，中                                                            图1     电压源的诺顿等效电路
+等规模以上的电路网络，必须借助网络图论的知                                      Fig. 1           Equivalent Norton circuit of the voltage source
+识[11-12]，通过复杂的拓扑分析得到[9-13]。通常认为，                         点电位列向量 ϕ = [ϕ0 ,ϕ1 ,", ϕn ]T 作为待解状态量。
+电路网络的状态方程编列过于复杂，有时甚至不可                                           对于任意一个连接在 i 号节点与 j 号节点之间，
+能形成通常所要求的标准形式。20 世纪 90 年代有                               电阻为 R 的支路来讲，其耗散功率可以表示为：
+学者提出了一种自动生成状态方程的方法[14]，苏黎                                        PR = R −1U 2 = (ϕ i − ϕ j ) R −1 (ϕi − ϕ j ) =
+世工学院的两位学者也基于自动生成状态方程的                                                             ⎡1⎤             ⎡ϕi ⎤
+                                                                        [ϕi ϕ j ] ⎢ ⎥ R −1 [1 −1] ⎢ ⎥ = [ϕi ϕ j ] ⋅
+技术编写了基于状态方程法的 PLECS 软件[15]。计                                                      ⎣ −1⎦           ⎣ϕ j ⎦
+算机自动生成状态方程的方法在求解中等规模电                                                   ⎡ R −1 − R −1 ⎤ ⎡ ϕi ⎤
+路网络问题时，是方便有效的。而对于大规模电路                                                  ⎢ −1      −1 ⎥ ⎢ϕ ⎥
+                                                                                               = ϕ T K rϕ                                 (2)
+                                                                        ⎣− R    R ⎦⎣ j⎦
+网络的求解，在列写方程的速度和效率上则没有优
+                                                         式中：系数矩阵 Kr 是 n+1 阶的方阵，除 K r (i, i ) = R −1 ，
+势[16]。更为甚者，当电路中包含大量开关元件时，
+                                                         K r (i, j ) = − R −1 ，K r ( j, i ) = − R −1 ，K r ( j, j ) = R −1 以外，
+每一次开关状态切换都会导致电路拓扑发生改变，
+                                                         Kr 中的其他元素均为零。
+都需要重新列写状态方程。理论上讲，含有 N 个开
+                                                               因此，电路中所有电阻的耗散能量可以表示为
+      最多需要列写 2N 组可能的状态方程。
+关的电路网络，
+  电路理论与基础算法是电磁暂态仿真的灵魂。                                                                  ER = ∫ (ϕ T K Rϕ )dt                              (3)
+本文使用节点电位为状态变量，基于能量守恒原理                                   式中 K R = ∑ K r 。
+构建了电路的状态方程，并将这种状态方程法应用                                                        R
+
+于开关电路的分析，同时给出了严格的数学证明。                                           需要注意的是，系数矩阵 KR 中不仅包含了所
+                                                         有电阻支路信息，同时包含了所有理想电压源的等
+1 能量守恒原理构建状态方程
+                                                         效内阻信息。
+        首先，构造一个泛函：由电阻、电容、电感和                                     同样地，可以推导出电路中所有电容的储能为
+电源构成的电路系统中，系统能量 Π 定义为所有电                                                   1
+                                                                       EC = ϕ T K Cϕ (4)
+容储能 EC，所有电感储能 EL，所有电阻耗散能量                                                  2
+ER，以及所有电流源吸收的能量 EI 之和(定义电流                               式中 K C = ∑ K c 。
+源吸收能量时，EI>0；电流源发出能量时，EI<0)。                                                   C
+
+          Π = EC + E L + E R + E I (1)                           对于任意一个连接在 i 号节点与 j 号节点之间，
+           1                 1                           电容为 C 的支路来讲，其系数矩阵 Kc 中，除
+式中： EC = ∑ CU 2 ； EL = ∑ LI 2 ，考虑到线性
+         C 2               L 2                           K c (i , i ) = C ， K c (i , j ) = − C ， K c ( j , i ) = − C ， K c ( j ,
+电感中 I = L−1 ∫ Udt ，电感储能也可以表示为 EL =                        j ) = C 以外，其他元素均为零。
+    1                                                            电路中所有电感的储能可以表示为
+∑2 L−1(∫Udt)2 ；ER =∫ (∑R−1U 2 )dt ；EI = ∫ (∑UI s )dt ，                                     1
+L                     R                   Is
+                                                                                       EL = ( ∫ ϕ dt )T K L ∫ ϕ dt                        (5)
+U 为支路电压；I 为支路电流；Is 为电流源的输出                                                                 2
+电流。                                                      式中 K L = ∑ K l 。
+                                                                              L
+        本文中，所有的电阻伴随电压源都等效变换为
+诺顿电流源，如图 1 所示。如果是理想电压源，则                                         对于任意一个连接在 i 号节点与 j 号节点之间，
+令其内阻 Rs 趋于零。这样式(1)中的 ER 和 EI 就已经                         电感为 L 的支路来讲，其系数矩阵 K l 中，除
+包含了电压源吸收的能量。                                             K l (i, i ) = L−1 ， K l (i, j ) = − L−1 ， K l ( j, i ) = − L−1 ，
+    定义电路中各个节点的电位为 ϕi ( i = 0,1, 2,",                     K l ( j, j ) = L−1 以外，其他元素均为零。
+n )，(其中 0 号节点为参考地电位节点)，构成的节                                      图 2 所示电流源支路吸收的功率可以表示为：
+6030                                                       中    国   电   机   工     程         学   报                                                     第 36 卷
+
+             ϕi                          IS                ϕj                     ⎡ ϕ ⎤
+                                                                                x=⎢          ⎥ ；Ψ = ∫ ϕ dt ； E 为单位对角矩阵。
+             i                                             j                      ⎣⎢ ∫ ϕ dt ⎦⎥
+                            -   US   +
+                                                                                      使用计算机程序列写状态方程的关键是如何
+                           图2     电流源支路
+                                                                            获得电容系数矩阵 KC，电阻系数矩阵 KR 和电感系
+                  Fig. 2    Current source branch
+                                                                            数矩阵 KL。附录 A 给出了获得系数矩阵的伪代码，
+        PIs = UI s = [ϕi ϕ j ][ I s − I s ]T = ϕ T I s               (6)
+                                                                            由于没有使用任何图论的概念和理论，这段伪代码
+式中：Is 是一个 n+1 阶的列向量，除 Is(i)=Is 和 Is(j)=−Is                                  的执行效率非常高，适合于大规模电路的状态方程
+外(规定流出节点的方向是电流的正方向)，                                                        列写。
+其他元素均为零。
+                                                                            2 算例 1
+       因此，电路中所有电流源吸收能量可以表
+示为                                                                                    下面通过图 3 所示的线性电路来说明如何建立
+
+            EI = ∫ (ϕ T IS )dt ，其中 IS = ∑ I s                        (7)    状态方程。
+                                                      Is                                                                               1H
+
+                                                                                                 1F
+式中：IS 包含了电路中所有电流源以及理想电压源                                                                    ①             ②
+                                                                                                              0.5F
+                                                                                                                         ③             ④
+                                                                                                                                                       ⑤
+的诺顿等效电流源信息。                                                                                                                  2H                  2H
+                                                                                                                                                       2sin(ω t )
+                                                                                     ﹢
+       将式(3)—(5)和(7)代入式(1)中，就得到了矩阵                                              2sin(ωt )                     2F                  1Ω
+形式表示的系统能量，如式(8)。                                                                      -
+            1           1
+         Π = ϕ T K Cϕ + ( ∫ ϕ T dt ) K L ∫ ϕ dt +                                                     0
+
+            2           2                                                                        图3       算例 1 电路(电源频率 1Hz)
+            ∫ (ϕ K Rϕ )dt + ∫ ϕ ISdt
+                T              T
+                                                                     (8)           Fig. 3       1st example circuit (power frequency is 1Hz)
+
+       将式(8)左右两端同时对时间 t 进行微分运算，                                                       图 3 的电路拓扑在计算机中可以存储为表 1 所
+得到系统能量增加速率 P = ∂Π / ∂t ，如式(9)。                                              述格式，对表 1 中的各支路执行附录 A 中的代码，
+                  d                                                         就可以得到电容系数矩阵 KC，电阻系数矩阵 KR，
+   P =ϕ T K C        ϕ + ϕ T K L ( ∫ ϕ dt ) + φ T K R ϕ + ϕ T I S    (9)    电感系数矩阵 KL，以及电流源向量 IS，如式(12)—
+                  dt
+       根据能量守恒原理，孤立系统的能量随时间 t                                                (15)。再将式(12)—(15)都代入到式(11)中，即可得
+的增加量始终为零，即 P = ∂Π / ∂t = 0 。因而对于任                                           到算例 1 的状态方程。
+意一种可能存在的节点电位分布 ϕ 来讲，都存在                                                                           ⎡1   −1   0                     0       0⎤
+                                                                                                  ⎢ −1 3.5 −0.5                   0       0⎥
+式(10)成立。                                                                                          ⎢                                          ⎥
+         d                                                                                  K C = ⎢ 0 −0.5 3.5                    0       0⎥               (12)
+      K C ϕ + K L ∫ ϕ dt + K Rϕ + IS = 0 (10)                                                     ⎢0    0   0                     0       0⎥
+         dt                                                                                       ⎢0
+                                                                                                  ⎣     0   0                     0       0 ⎥⎦
+   式(10)就是系统的动态微分方程，是一个包括
+n+1 个方程的方程组。考虑到 0 号节点是电路中的                                                                              ⎡106         0   0    0    0⎤
+                                                                                                        ⎢ 0          0   0    0    0⎥
+参考地电位，可以消去一个方程。具体做法是消去                                                                           K R = ⎢⎢ 0          0   0    0    0⎥
+                                                                                                                                      ⎥                    (13)
+向量ϕ和 IS 中的 0 号元素，以及系数矩阵 KC，KL，                                                                          ⎢ 0          0   0    0    0⎥
+KR 中的第 0 行和第 0 列。最终得到由 n 个方程构成                                                                          ⎢⎣ 0         0   0    0    1 ⎥⎦
+的系统方程组。                                                                                           ⎡0          0  0   0    0 ⎤
+       式(10)中包含电位向量ϕ的 3 种状态(1 阶导数、                                                                ⎢0          0  0   0    0 ⎥
+0 阶导数以及−1 阶导数(或 1 重积分))是一个二阶方                                                               K L = ⎢0          0 1.5 −0.5 −1 ⎥                              (14)
+                                                                                                  ⎢                          ⎥
+                                                                                                  ⎢0          0 −0.5 1   −0.5⎥
+程，使用计算机对其进行迭代求解并不方便。因此                                                                            ⎢⎣0         0 −1 −0.5 1.5 ⎥⎦
+需要做一个变量代换[17]，形成式(11)所示的一阶状
+                                                                                                            ⎡ −2 sin(ωt ) × 106 ⎤
+态方程组。                                                                                                       ⎢                   ⎥
+                                                                                                                     0
+                       K1dx /dt = − K 2 x + R                       (11)                              IS = ⎢⎢        0
+                                                                                                                                ⎥
+                                                                                                                                ⎥                          (15)
+        ⎡K 0 ⎤       ⎡K                          KL ⎤      ⎡− I ⎤                                           ⎢        0          ⎥
+式中：K1 = ⎢ C ⎥ ；K 2 = ⎢ R                              ；R = ⎢ S ⎥ ；                                          ⎢⎣ −2sin(ωt ) ⎥⎦
+        ⎣ 0 E ⎦      ⎣− E                        0 ⎥⎦      ⎣ 0 ⎦
+第 22 期                                     纪锋等：线性开关电路电磁暂态分析的状态方程法                                                                                  6031
+                                                                                        1.5
+                     表1       算例 1 的支路信息
+      Tab. 1      1st example circuit’s branch information                              1.0
+
+
+
+
+                                                                          节点 4 的电位/V
+  支路编号               i          j        Value        描述                                0.5
+
+        (1)         1           2          1F          C                                0.0
+        (2)         0           2          2F          C
+                                                                                       −0.5
+        (3)         2           3         0.5F         C
+                                                                                       −1.0
+        (4)         3           4          2H          L
+                                                                                       −0.5
+        (5)         3           5          1H          L                                      0        1      2         3    4        5        6
+        (6)         4           5          2H          L                                                               t/s
+        (7)         4           0          1Ω          R                                                   图 4 计算结果
+        (8)         0           5       2sin(ωt)A    电流源                                               Fig. 4 Simulate results
+        (9)         0           1       2sin(ωt)V    电压源            看出两个计算结果的误差基本一致，都表现出了二
+
+      由于图 3 电路中包含了纯电容与电压源回路和                                        阶数值精度。
+
+纯电感与电流源割集而被称为“病态网络”或“非                                                           算例 1 中，节点分析法中的未知量是 5 个，而
+常态网络”[13]，通过传统方法获得状态方程十分困                                           本文方法要求解的未知量却有 10 个。然而考虑到
+
+难，有时甚至无法获得状态方程，详见参考文献[9]                                            式(11)中系数矩阵 K1 和 K2 的稀疏性，尤其是矩阵
+
+中的例 3-1。由于本文使用了能量守恒原理而非图                                            的下半部分全部由单位矩阵和零矩阵构成，当使用
+
+论理论，不存在网络是否病态的困扰。理论上讲，          

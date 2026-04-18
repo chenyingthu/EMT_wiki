@@ -1,0 +1,203 @@
+CSEE JOURNAL OF POWER AND ENERGY SYSTEMS, VOL. 11, NO. 3, MAY 2025                                                                               1199
+
+
+
+
+    Simplified EMT Model of Multiple-active-bridge
+       Based Power Electronic Transformer with
+               Integrated Energy Storage
+         Jianzhong Xu, Senior Member, IEEE, Conghui Zheng, Wanying Xu, Moke Feng, Chengyong Zhao,
+                            Senior Member, IEEE, and Gen Li, Senior Member, IEEE
+
+
+
+   Abstract—Due to the advanced features of multidirectional                  caded H-bridge (CHB), etc. [7]. MAB reduces the number of
+power transfer and fast smoothing of the power fluctuation                    high-frequency transformers within the PMs, avoids redundant
+in renewable energy systems, the multiple-active-bridge based                 intermediate power conversion links, and realizes direct power
+power-electronic-transformer (MAB-PET) with integrated energy
+storage units is becoming popular. However, the accurate elec-                transfer and control among multiple ports. Hence, the MAB-
+tromagnetic transient simulation of the MAB-PETs is extremely                 PET has been utilized in practical distribution networks [8].
+time-consuming due to the large number of circuit nodes and                      The electromagnetic transient (EMT) simulation of MAB-
+small time-step. This paper proposes a simplified EMT modeling                PET is an instrumental technology that assesses the dynamic
+approach for the MAB-PETs by employing the generalized state-                 characteristics of power systems prior to their implementation
+space averaging method. First, the switching function method and
+Dommel algorithm are used to build the equivalent model of each               in the system [9]. However, the high-speed and accurate EMT
+power module. Further, the PET equivalent model is presented in               simulation of PETs, especially for the energy storage-based
+a multi-port PM polymerization mode. The system is simplified                 MAB-PET, encounters a lot of difficulties.
+by applying Fourier Decomposition to its state functions by ignor-               Compared with classical modular multilevel converters
+ing high-order harmonics. Finally, a four-port equivalent voltage             (MMCs), of which the simulation theories have already been
+source circuit is obtained. The proposed simplified equivalent
+model is compared with the detailed model in PSCAD/EMTDC.                     mature [10], the equivalent modeling of PETs still has a long
+Simulation results show the proposed approach has excellent                   way to go because each PM of PETs contains the high-
+accuracy and is 2–3 orders of magnitude faster than the DM.                   frequency link (HFL), complex internal structures and a large
+                                                                              number of circuit nodes. Moreover, the simulation time-step of
+   Index Terms—Energy storage sub-module (ESS), generalized                   PET is much smaller than MMC, which makes the simulation
+state average method, multiple-active-bridge (MAB), simplified
+                                                                              efficiency of PET much lower [11].
+electromagnetic transient (EMT) simulation.
+                                                                                 To accelerate the simulation speed of PETs, several mod-
+                                                                              eling methods have been proposed: the averaged-value model
+                                                                              (AVM), the dynamic phasor model, and the Thevenin’s equiv-
+                                                                              alent model [12]. The AVM replaces the actual value with the
+                         I. I NTRODUCTION
+                                                                              average value over the switching period and therefore can only
+
+T     HE intermittent and random characteristics of distributed
+      renewable energy bring challenges to the security and
+stability of the power system [1], [2]. Energy storage can be an
+                                                                              consider the fundamental frequency and DC components [13]–
+                                                                              [15]. It sacrifices accuracy for better simulation efficiency. The
+                                                                              dynamic phasor model can consider all DC, fundamental and
+effective solution to address the challenges [3], [4]. Recently,              harmonic components. It is compatible with a larger simulation
+the power electronic transformer (PET) with integrated energy                 time step up to several hundred microseconds. Compared with
+storage has been gaining wide attention because it can achieve                AVM, the dynamic phasor model has higher accuracy but
+both flexible power transfer and energy storage and therefore                 lower efficiency [16], [17]. The Thevenin equivalent model
+is able to smooth power fluctuations [5], [6].                                retains all internal and external electrical information of the
+   There are various kinds of PET power modules (PMs): sin-                   detailed model (DM) and can speed up the simulation sig-
+gle active bridge (SAB), dual active bridge (DAB), multiple-                  nificantly. [18]–[21] accelerates the modeling of DAB and
+active-bridge (MAB), quadruple active bridge (QAB), cas-                      CHB-based PETs by circuit preprocessing, internal node elim-
+  Manuscript received November 18, 2022; revised January 21, 2023; ac-        ination, and HFL decoupling. However, with the increase of
+cepted March 3, 2023. Date of online publication February 14, 2024; date of   the PET voltages and power ratings, the complexity of PET
+current version March 18, 2024. This work is supported by Beijing Natural     topology increases. It is difficult to simplify the equivalent
+Science Foundation under grant 3222059.
+  J. Z. Xu, C. H. Zheng, W. Y. Xu, and C. Y. Zhao are with the State          model by preprocessing, internal node elimination, and high-
+Key Laboratory of Alternate Electrical Power System with Renewable Energy     frequency chain decoupling. Therefore, the efficiency of the
+Sources, North China Electric Power University, Beijing, China.               Thevenin equivalent models will become worse.
+  G. Li (corresponding author, email: genli@dtu.dk) is with the Electric
+Energy Section, Department of Engineering Technology, Technical University       The power system is demanding multi-time-scale regulation
+of Denmark (DTU), 2750 Ballerup, Denmark.                                     of the energy resources; the grid-connected energy storage
+  DOI: 10.17775/CSEEJPES.2022.08160                                           system gradually transforms from single energy storage to
+      2096-0042 © 2022 CSEE. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).
+1200                                                                  CSEE JOURNAL OF POWER AND ENERGY SYSTEMS, VOL. 11, NO. 3, MAY 2025
+
+
+
+hybrid energy storage [22]. This makes the control of the                     3) The ESS model is constructed by the binary resistance
+energy storage system more complex and further increases                   method and the Dommel method. To meet the requirements
+the difficulty of simulation [23]. Therefore, it is of great               of hybrid energy storage, the interface of the energy storage
+engineering importance to establish an equivalent model with               is reserved.
+energy storage interfaces that is suitable for both single and                4) Compared to the previous work, the proposed SEM is
+hybrid energy storage.                                                     more suitable for the simulation of large-scale AC-DC hybrid
+   To further accelerate the simulation speed of the existing              grids containing multiple PETs with ESSs due to the small
+equivalent models with minimum loss of accuracy, this paper                modeling difficulty and higher simulation speed.
+proposes a simplified EMT equivalent model of MAB-PET
+with an energy storage sub-module (ESS). The accuracy and                  II. T OPOLOGY, C ONTROL AND M ODELING OF MAB-PET
+speed of the simplified equivalent model (SEM) are analyzed                A. Topology of MAB-PET
+and verified using the MAB-PET model used in the Chongli
+                                                                              The studied MAB-PET has an input-series-output-parallel
+distribution network in Hebei, China. The proposed approach
+                                                                           (ISOP) structure, as shown in Fig. 1. Each PM contains CHB,
+is also applicable to SAB, DAB, QAB, CHB-DAB, CHB-                         MAB, and ESS. MAB and CHB achieve the three-phase
+MAB, and other topologies. The innovation includes four                    AC/DC conversion with high-power density [24]. The ESS
+points:                                                                    is connected to the LVDC port to improve the power quality.
+   1) The SEM is constructed by the generalized state-space                In the topology, electric energy is transferred from the MVAC
+averaging method, which uses Fourier Decomposition and is                  side to the LVDC side through four conversion steps: AC/DC,
+suitable for the PM with m input ports and 1 output port (“m-              DC/AC, AC/AC (high-frequency isolation transformer), and
+to-1” MAB). This method avoids internal node elimination                   AC/DC.
+HFL decoupling and greatly reduces the difficulty of modeling.
+   2) Using the switching function method to build an electrical           B. Control of MAB-PET
+variable bridge between the AC and DC ports of the CHB,                      The control strategy of CHB adopts voltage and current
+which eliminates the switching process of devices. Complex                 double closed-loop control with carrier phase-shift sinusoidal
+matrix operations can be avoided to reduce the overall com-                pulse width modulation (CPS-SPWM). The outer voltage
+putational burden.                                                         control regulates the average of MAB input capacitor voltages
+
+                                                       MVAC
+                                                                                                                LVDC
+
+                                 G                            DC/AC   AC/AC        AC/DC         ESS
+                                                     AC/DC
+
+
+
+
+                                                              DC/AC   AC/AC        AC/DC         ESS
+                                                     AC/DC
+
+
+
+
+                                                              DC/AC   AC/AC        AC/DC         ESS
+                                                     AC/DC
+
+
+                                                                                                 PM
+
+                                                              DC/AC   AC/AC        AC/DC         ESS
+                                                     AC/DC
+
+
+                      CHB                       MAB                                                              ESS
+
+
+                                                                                                  iLLi2
+                                     i1          iLH                                                                              +
+                                                                                           S9      S11             SE1
+                                                S5      S7            uH      uL                         +         Le
+                            S1    S3                                                                     U                   UC4
+                     uA+         UC1+                                                                    − C4
+                       −                                                                   S10     S12             SE2
+                                    −           S6      S8                                                               SC Bat
+                            S2    S4                                                                                              −
+
+
+
+
+Fig. 1.   Topology of the MAB-PET and its PM structure.
+XU et al.: SIMPLIFIED EMT MODEL OF MULTIPLE-ACTIVE-BRIDGE BASED POWER ELECTRONIC TRANSFORMER WITH INTEGRATED ENERGY STORAGE                                                                            1201
+
+
+
+                                                               usd                                                                  Modeling                                      Method
+               +                          isdref                                 +   usdref   dq    usaref
+  uCaveref                      PI                            PI                −
+               −                                   +                             −
+    uCave                                           −                                                                          CHB average model                     switching function method
+                                   isd                        ωLeq
+                                                                                                    usbref
+
+                                   isq                        ωLeq                                                            ESS Thevenin model                            Dommel method
+                                                                                                    uscref
+                                                    −                           +
+                                                   +                            −
+                                          isqref              PI                     usqref                                                                              generalized state-space
+                                                                                +                                           MAB system-level model
+                                                               usq                                                                                                         averaging method
+                                                                                              abc
+
+Fig. 2.      CHB control block diagram.                                                                                             PM SEM
+
+
+uC1 , uC2 , and uC3 (uCave in Fig. 2). The inner current control                                                               SEM of ISOP type                      multi-port PM cascade mode
+receives orders from the outer voltage control for the current                                                                   MAB-PET
+control. The SPWM control signals of the CHB are generated
+                                                                                                             Fig. 5.        Procedures of the modeling.
+by comparing the triangle wave with the modulated waves
+usaref , usbref , and uscref .                                                                                                                     i1   iLH                          i1    iLH
+   The ESS control system is also a double closed-loop control                                                                S1                        S5          S1       S3            S5
+system, which is composed of the inner current control and                                                              +     iH
+                                                                                                                                                +               +   iH
+                                                                                                                                                                                     +
+                                                                                                                       uN                      uC1 C1          uN                   uC1 C1
+the outer power control. The difference between the SOC                                                                 −             S4                        −
+                                                                                                                                                −                                    − S6
+reference (SOCref ) and SOC average (SOCave ) is used to
+generate the active power reference Pbatref . Then, by changing
+the duty cycle d of the DC/DC converter, the active power                                                                                          i1   iLH                          i1    iLH
+                                                                                                                                         S3             S5          S1       S3            S5
+control of the ESS side converter is realized. The control signal                                                             iH                                    iH
+                                                                                                                        +                       +               +                    +
+of each ESS is generated by comparing the triangle wave with                                                           uN                      uC1 C1          uN                   uC1 C1
+d; the ESS control block diagram is shown in Fig. 3.                                                                    −     S2                − S6            −                    − S6
+
+
+                        +       Pbatref                        ibatref                          d
+          SOCref                                         PI                             PI                                                         i1   iLH                          i1    iLH
+                        −                  +                              +
+       SOCave                               −                              −                                                  S1                        S5                                 S5
+                                      Pbat                               ibat                                                 iH                                    iH
+                                                                                                                        +                       +               +                    +
+                                                                                                                       uN                      uC1 C1          uN                   uC1 C1
+Fig. 3.      ESS control block diagram.                                                                                 −                S4     − S6            −   S2       S4      − S6
+
+   The main objective of MAB is to stabilize the LVDC voltage                                                                                      i1   iLH                          i1    iLH
+uC4 . The difference between the voltage reference uC4ref and                                                                                           S5                                 S5

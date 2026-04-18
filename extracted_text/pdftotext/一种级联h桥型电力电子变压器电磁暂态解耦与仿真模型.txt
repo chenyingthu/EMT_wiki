@@ -1,0 +1,253 @@
+第 47 卷 第 6 期                                                   电 网 技 术                                                   Vol. 47 No. 6
+ 2023 年 6 月                                                 Power System Technology                                         Jun. 2023
+文章编号：1000-3673（2023）06-2503-09                            中图分类号：TM 41           文献标志码：A            学科代码：470·40
+
+
+
+     一种级联                                桥型电力电子变压器电磁暂态解耦
+                                           与仿真模型
+             许明旺 1，马嘉昊 1，李蕴红 2，王潇 2，姚蜀军 1，汪燕 1，韩民晓 1
+                           （1．华北电力大学电气与电子工程学院，北京市 昌平区 102206；
+                             2．华北电力科学研究院有限责任公司，北京市 西城区 100045）
+
+
+        Electromagnetic Transient Decoupling and Simulation Model of Cascaded H-bridge
+                                 Power Electronic Transformer
+      XU Mingwang1, MA Jiahao1, LI Yunhong2, WANG Xiao2, YAO Shujun1, WANG Yan1, HAN Minxiao1
+                      (1. School of Electrical and Electronic Engineering, North China Electric Power University,
+                                               Changping District, Beijing 102206, China;
+                  2. North China Electric Power Research Institute Co., Ltd., Xicheng District, Beijing 100045, China)
+
+
+ABSTRACT: The detailed electromagnetic transient model of                  仿真步长小、速度慢的问题。基于半隐式延迟解耦电磁暂态
+the power electronic transformer (PET) has the problems of                 仿真方法，该文将其应用于级联 H 桥型电力电子变压器的
+high matrix dimension, small simulation step and slow speed.               电磁暂态快速仿真研究中，提出一种解耦电路简单、导纳矩
+Based on the semi-implicit delay decoupling electromagnetic                阵恒定、易于并行、仿真效率高的解耦和快速仿真方法。该
+transient simulation, this paper applies it to the electromagnetic         文首先从状态方程出发，利用矩阵分裂和延迟技术，建立双
+transient fast simulation research of the cascaded H-bridge                有源桥的半隐式延迟解耦模型；然后给出外端口及级联 H
+power electronic transformer (CHB-PET), and proposes a                     桥采用不同串、并联组合时的等值解耦电路，实现了各变换
+decoupling and fast simulation with simple decoupling circuit,             级以及不同模块间的细粒度解耦，给出了计算流程，并分析
+constant admittance matrix, and easy parallel and high                     了方法的特点。最后，通过算例验证了该文方法的准确性和
+simulation efficiency. In this paper, first, based on the state            有效性。
+equation, a semi-implicit delay decoupling model of dual active            关键词：电磁暂态仿真；半隐式延迟解耦；级联 H 桥型电
+bridge (DAB) was established by using the matrix splitting and             力电子变压器；细粒度解耦；并行计算
+the delay technique. Then, the equivalent decoupling value path            DOI：10.13335/j.1000-3673.pst.2022.0448
+was given when the outer port and the cascaded H-bridge
+adopted different series and parallel combinations. The                    0 引言
+fine-grained decoupling of each transformation stage and                       随着电力系统的日益电力电子化，电力电子变
+between different modules were realized. The calculation flow
+                                                                           压器(power electronic transformer，PET)成为新能源
+was given, and the characteristics of the method were analyzed.
+                                                                           并网和直流电网中实现电压等级变换及功率路由
+Finally, an example is given to verify the accuracy and
+                                                                           的一种重要设备[1-3]。高功率、大容量场景中，通常
+effectiveness of the proposed method.
+                                                                           采用隔离型 PET，其以双有源桥(dual active bridge，
+KEY      WORDS:         electromagnetic       transient    simulation;
+                                                                           DAB)为中间级，可实现功率大小和方向的灵活调
+semi-implicit delay decoupling; cascaded H-bridge power
+                                                                           控[4]。DAB 单元外接级联 H 桥(cascaded H-bridge，
+electronic    transformer;    fine-grained        decoupling;   parallel
+computing
+                                                                           CHB)后，外部端口通过串并联组合可构成多模块级
+                                                                           联的级联 H 桥型 PET (cascaded H-bridge PET，
+摘要：电力电子变压器电磁暂态详细模型存在矩阵维数高、
+                                                                           CHB-PET)[5-6]。一般来说，高功率 PET 的模块众多、
+                                                                           拓扑复杂、开关频率高，电磁暂态仿真面临着规模
+    基金项目：国家自然科学基金项目(52077077)；冀北电力科学研究
+院科技项目(KJZ2021029)。                                                         大、矩阵维数高、仿真速度慢等诸多挑战。
+    Project Supported by National Natural Science Foundation of China          文献[7-9]主要针对 CHB-PET 的 PET 控制策略
+(52077077); Science and Technology Foundation of North China Electric
+                                                                           进行研究，其仿真采用传统的详细模型，由于高频
+Power Research Institute Co., Ltd.(KJZ2021029).
+2504              许明旺等：一种级联 H 桥型电力电子变压器电磁暂态解耦与仿真模型                                     Vol. 47 No. 6
+
+变压器的影响，只能选取较小的仿真步长，仿真速                      耦(电容电压和电感电流)，因此当开关动作时，不
+度缓慢。                                        存在为消除非状态变量突变引起的数值振荡而切
+       文献[10]基于平均值模型对 DAB 单元进行暂             换解耦变量积分算法的问题(中心积分切换为后退
+态情况下的仿真研究。文献[11]针对双有源桥谐振                    欧拉)，因而能够始终保持解耦形式的一致性和计算
+变换器提出一种平均值模型，即通过 RL 组合支路                    的可并行性。
+对变压器进行等效，再将直流电流一个周期内的值                            本文根据半隐式延迟解耦方法的原理，首先，
+用平均电流等效。文献[12]应用平均值模型对单台                    从 DAB 的状态方程出发，利用矩阵分裂和延迟技
+PET 的稳态情况进行仿真验证，并且和开关模型进                    术，建立 PET 的半隐式解耦模型；然后，给出外
+行了对比。总体来说，平均值模型只关注变换器的                      端口及级联 H 桥采用不同串、并联组合方式时的
+外特性而忽略内部动作，仿真精度不高，无法计及                      等值解耦电路，实现各变换级以及不同模块间的
+设备的内部特性。                                    细粒度解耦，给出了计算流程，并分析了方法的
+       文献[13-14]针对 PET 提出一种提速模型。通过          特点。最后，通过算例验证了本文方法的准确性
+将高频链变压器的原、副边进行一步约等，实现高、                     和有效性。
+低压侧解耦，进而通过嵌套快速求解法消去内部节
+                                            1 级联 H 桥型 PET 拓扑
+点，最终得到高、低压解耦的双端口等值电路。文
+献[15]提出一种基于节点导纳方程预处理的输入串                          根据电压等级与功能的不同，PET 的功率模
+联输出并联(input series output parallel，ISOP)型   块连接方式多样，图 1 为常用的一种级联 H 桥型
+DAB 变换器双端口解耦等效模型，原理与上述方                     PET 三相拓扑，由 DAB 模块和端口电路构成，
+法相同。一方面，一步约等即为一步延时的前向                       图中 Ua、Ub、Uc 分别为三相电源电压，L11 为桥
+欧拉，限制了仿真精度和步长的提高；另一方面，                      臂电感。
+PET 外部电气量反解其内部电路更新历史电流源
+的过程，会由于内部电路拓扑复杂而极大影响计
+算效率。此外，将该方法拓展到多有源桥(multi
+active bridge，MAB)或者具有类似文献[16]复杂拓
+扑的中间级场景时，解耦方法需要重新设计，通
+用性不佳。
+       文献[17]针对 PET 细模型仿真效率低下的问
+题，提出利用级间电容解耦的方法，将复杂的拓扑
+划分为多个子网络，再采取戴维南等效方法实现多
+模块拓扑的节点降维。该方法中的电容元件电压和
+                                                            图 1 ISOP 型 PET 连接图
+电流间的一步延时解耦，实质上是显式前向欧拉                             Fig. 1   Connection diagram of ISOP type PET
+法，其精度和稳定性均有限。此外，由于电容电流
+                                            2 级联 H 桥型 PET 解耦
+是非状态变量，当开关动作时，存在着非状态量突
+变。为了消除由此可能引起的数值振荡，需要在                             半隐式延迟解耦方法从系统的状态方程出发，
+开关动作时将显式前向欧拉法切换为隐式的后退                       通过矩阵分裂，利用中心积分与梯形积分的近似等
+欧拉法，从而失去解耦特性，进而无法提高仿真                       效性，实现基于状态变量之间的半步延时解耦，既
+速度。                                         有隐式积分方法的高精度和数值稳定性，又有显式
+       文献[18]中提出一种具有普适性的半隐式延迟               积分的并行性。半隐式延迟解耦方法的原理和特点
+解耦方法用于电磁暂态仿真。本文将该方法应用于                      分析详见文献[18]，本文不做详细介绍。下面将该
+PET 电磁暂态快速仿真的研究。基于该方法，一方                    方法应用于 CHB-PET 的解耦。
+面，可实现 PET 各级电路和子模块间的细粒度解耦                   2.1   DAB 模块的解耦
+与并行仿真。另一方面，解耦后的系统导纳矩阵恒                            DAB 是常见的中间级模块，如图 2(a)所示，图
+定，可消除因开关高频动作引起的导纳矩阵频繁                       中 i1、i2 分别为端口注入电流，uC1、uC2 分别为端口
+下、上(lower and upper，LU)三角矩阵重分解而带            电容电压，iT1、iT2 分别为变压器绕组电流，uT1、
+来的巨大计算量。此外，由于是状态变量之间的解                      uT2 分别为变压器绕组电压，Tij、Dij (i1,2, j1,2,3,4)
+第 47 卷 第 6 期                                                                   电         网   技   术                                                              2505
+
+分别为开关管及其反并联二极管。将每个绝缘栅双                                                                               对 电 容 C1 、 C2 ， 根 据 基 尔 霍 夫 电 流 定 律
+极型晶体管(insulated gate bipolar transistor，IGBT)                                                (Kirchhoff current laws，KCL)可得：
+及与其反并联的二极管看成一个开关组，每个开关                                                                                duC1          2          R14  R12
+                                                                                                     C1 dt  R  R uC1  R  R iT1  i1
+组采用二值电阻模型(Ron/Roff)，可得图 2(b)，图中                                                                                  11    12        11    12
+                                                                                                                                                                 (3)
+Rij (i1,2, j1,2,3,4)分别等效电阻。正常工作时，根                                                                 C  d u         2           R    R
+                                                                                                            C2
+                                                                                                                          uC 2  24      22
+                                                                                                                                             iT2  i2
+据 H 桥的控制方式[19]，桥臂上、下开关组按互补方                                                                           2 dt     R11  R12        R11  R12
+式导通和关断，桥臂电阻有如下关系，即：                                                                                  由式(2)和(3)得到 DAB 模块整体状态方程，
+   R11  R12  R13  R14  R21  R22                                                       即：
+  
+               R23  R24  Ron  Roff                                               (1)         C1                  duC1 / dt 
+  R R  R R  R R  R R  R R                                                                                        du / dt 
+   11 12      13 14    21 22     23 24 on off
+                                                                                                       C2             C2        
+         i1                                                                  i2                             L11 L12  diT1 / dt 
+                                                                                                                                
+        +                                                                     +                             L21 L22  diT2 / dt 
+                 T11          T13                    T21        T23
+                                                                                                      Geq1     0      ki1        0  uC1   i1 
+                                                  N:1 iT2                                             0                          ki2  uC 2  i2 
+                          D11          D13                    D21      D23
+
+                                                                                                             Geq2      0
+                                      iT1                                                                                                                    (4)
+                                            vT1                                                        ku1            Req1       0  iT1   0 
+  uC1
+
+
+
+
+         C1                                            vT2                   C2                                  0
+                                                                                   uC2
+
+
+
+
+                                                                                                                                         
+                                                                                                      0       ku2      0       Req2  iT2   0 
+                 T12          T14                    T22        T24
+
+        - i1              D12          D14                    D22      D24   i2 -
+                                                                                             式中：kuj(j1,2)为受控电压源的系数；kij(j1,2)为受
+                                                                                             控电流源的系数；Geqi(i1,2)为等效电导；Reqi(i1,2)
+                                       (a) DAB模块拓扑
+            i1    i1n                                                         i2             为等效电阻。
+        +               iR1          iR3                                      +                         L11 L12   L1  Lm            Lm / N 
+                  R11          R13                           R21 R23                              LT                                         2
+                                                  N:1 iT2                                               L21 L22   Lm / N L2  Lm / N 
+                                     iT1                                                               R  R14            R  R24
+                                                                                                 ki1  12        , ki2  22
+  uC1
+
+
+
+
+                                                                                                                                       ,
+                                                                                   uC2
+
+
+
+
+         C1                                 vT1        vT2             C2
+                                                                                                       R11  R12           R11  R12
+                                                                                                 
+                  R12          R14                           R22 R24
+                                                                                                 k  R11  R13 , k  R21  R23 ,
+        - i1                                                                 i2 -                 u1 R  R           u2
+                                                                                                                             R11  R12
+                                                                                                         11   12
+
+                                                                                                                     2                        2 R11 R12
+                                                                                                 Geq1  Geq2  R  R , Req1  Req2  R  R
+                                    (b) DAB模块二值电阻电路
+
+                              图 2 DAB 电路拓扑                                                                        11    12                     11     12
+
+                        Fig. 2 Topology of DAB circuit                                               根据半隐式延迟解耦法，将式(4)进行矩阵分裂
+            图 2 中忽略了变压器损耗，定义 L1、L2 分别为                                                       可得：
+高频变压器高、低压侧绕组的电感，Lm 为励磁电感，                                                                            C1                    duC1 / dt 
+N 为变压器原边线圈匝数。按图中所示同名端，根                                                                                     C2              du / dt 
+                                                                                                                            C2            
+据基尔霍夫电压定律(Kirchhoff voltage laws，KVL)                                                                            L11 L12  diT1 / dt 
+可得：                                                                                                                                       
+                                                                                                                 L21 L22  diT2 / dt 
+                             diT1       d       iT2
+                   vT1   L1 dt  Lm dt (iT1  N )                                                      Geq1                                  uC1 
+                                                                                                                   Geq2                          
+                               R13         R11                                                                                                   uC 2  
+                           (                     )uC1                                                                      Req1                iT1 
+                            R13  R14 R11  R12
+                                                                                                                                                 
+                                                                                                                                         Req2  iT2 
+                             R R         R R
+                           ( 13 14  11 12 )iT1
+                            R13  R14 R11  R12                                                                      ki1         uC1   i1 
+                  
+                                                                                    (2)                                    ki2  uC 2  i2 
+                  v   Lm d (i  iT2 )  L diT2                                                                                                              (5)
+                   T2       N dt
+                                    T1
+                                         N
+                                                2
+                                                   dt                                                      ku1                    iT1   0 
+                                                                                                                                   
+                          (
+                                R21
+                                       
+                                            R23
+                                                   )uC 2                                                       ku 2              iT2   0 
+                            R21  R22 R23  R24
+                                                                                                    为进一步简化模型，将关断电阻 Roff 看作无穷
+                             R R          R R
+                           ( 21 22  23 24 )iT2                                              大，则 Geq1Geq2≈0，Req1Req2≈2Ron。此时，式(5)
+                           R21  R22 R23  R24
+                                                                                             半步时延的半隐式差分方程为
+2506                                            许明旺等：一种级联 H 桥型电力电子变压器电磁暂态解耦与仿真模型                                                                     Vol. 47 No. 6
+
+            C1 (uCn 11/ 2  uCn 11/ 2 )                                                              diSM 
+                  n 1/ 2      n 1/ 2                                                       L      dt    Req  ku  iSM  uSM 
+           C2 (uC 2  uC 2 )                                                                                                        
+                                                                                                  C   duC   ki       Geq   uC   i1 
+                                                                                                                                                     (8)
+   L11 (iT1
+           n 1
+                 iT1
+                   n
+                       )  L12 (iT2 n 1      n 
+                                            iT2 )                                            
+          n 1                      n 1
+                                                                                                        dt 
+   L21 (iT1  iT1 )  L22 (iT2  iT2 ) 
+                   n                          n
+
+                                                                                               根据式(1)和式(7)，状态矩阵中各元素为
+        0                                      uCn 11/ 2  uCn 11/ 2                                 2 R1R2

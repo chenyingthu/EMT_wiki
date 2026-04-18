@@ -1,0 +1,162 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2018.2885240, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             1
+
+
+
+
+             Development and Applicability of Online Passivity
+              Enforced Wide-Band Multi-Port Equivalents For
+                       Hybrid Transient Simulation
+                                          Abilash Thakallapelli, Student Member, IEEE, Sudipta Ghosh, Member, IEEE,
+                                                      and Sukumar Kamalasadan, Senior Member, IEEE
+
+
+
+              Abstract—This paper presents a method for developing sin-                                                                         I. I NTRODUCTION
+           gle and multi-port Frequency Dependent Network Equivalent
+           (FDNE) based on a passivity enforced online recursive least
+           squares (RLS) identification algorithm which identifies the input
+           admittance matrix in z-domain. Further, with the proposed archi-
+                                                                                                               R     EAL-TIME EMT simulation requires detailed modeling
+                                                                                                                     of transmission systems to understand the effect of
+                                                                                                               transients and harmonics arising due to varying operating con-
+           tecture, a real-time hybrid model of the reduced power system
+           is developed that integrate Transient Stability Analysis (TSA)                                      ditions and disturbances in power grid. Effect of power elec-
+           and FDNE. Main advantages of the proposed architecture are,                                         tronic components associated with renewable energy sources
+           it identifies the FDNE even with unknown network parameters                                         on the power grid and performance of different controllers can
+           in the frequency range of interest, and yet can be implemented                                      be analyzed using EMT simulations [1]. Typically, integration
+           directly due to discrete formulation while maintaining desired
+           accuracy, stability and passivity conditions. The accuracy and                                      time step of EMT simulation is in microseconds (µs). This
+           characteristics of the proposed method are verified by imple-                                       makes modeling of a large transmission system for EMT
+           menting on two-area, IEEE 39 and 68 bus power system models.                                        studies impractical as detail modeling increases complexity
+             Index Terms—Electromagnetic Transient (EMT) Simulation,                                           and computational burden. One solution is to model the
+           Transient Stability Analysis, Frequency Dependent Network                                           transmission system as TSA type with larger integration time
+           Equivalent, Recursive Least Square Identification (RLS), Aggre-                                     as TSA simulations can run faster than EMT. However, in TSA
+           gated Generator Model (AGG).                                                                        type, due to large integration time, high-frequency transients
+                                             N OMENCLATURE                                                     following a disturbance in the system are not preserved making
+                                                                                                               this approach not very accurate [2].
+               EMT Model          The study and external ar-
+                                                                                                                  Another approach is to model large transmission network as
+                                  eas are modeled as EMT type
+                                                                                                               frequency dependent reduced order systems that can represent
+                                  (Original model).
+                                                                                                               the power grid under any operating condition. One way to
+               EMT+TSA            The external area is modeled
+                                                                                                               reduce large power grid is to model part of the grid which is of
+                                  as TSA type equivalent with
+                                                                                                               interest (study area) in detail and the remainder of the system
+                                  only network aggregation.
+                                                                                                               (external area) by an efficient equivalent such as FDNE [3].
+               EMT+TSA(AGG)       The external area is modeled
+                                                                                                               In this process, initially, the network is divided into study and
+                                  as TSA type with both network
+                                                                                                               external area based on the coherency grouping of generators
+                                  and generator aggregation.
+                                                                                                               such that all coherent generators are present in the external
+               EMT+FDNE           The external area is modeled
+                                                                                                               area [4]. The boundary between the study and external area is
+                                  as FDNE type generated using
+                                                                                                               divided considering the fact that interconnecting points should
+                                  the proposed algorithm.
+                                                                                                               have the least minimum number of ports. Generally, in TSA
+               EMT+FDNE (VF)      The external area is modeled
+                                                                                                               type equivalent, the network admittance is evaluated only at
+                                  as FDNE using the Vector Fit-
+                                                                                                               the fundamental frequency, hence this representation ignores
+                                  ting (VF) from literature.
+                                                                                                               high-frequency oscillations. The high-frequency behavior of
+               EMT+FDNE+TSA       The external area is modeled
+                                                                                                               the external area can be preserved by using FDNE [5], how-
+                                  as a combination of FDNE and
+                                                                                                               ever, FDNE ignores electromechanical oscillations. In order
+                                  TSA type with only network
+                                                                                                               to cover both electromechanical and high-frequency behavior,
+                                  aggregation.
+                                                                                                               the external area should be modeled as a combination of TSA
+               EMT+FDNE+TSA (AGG) The external area is modeled
+                                                                                                               equivalent and FDNE.
+                                  as a combination of FDNE and
+                                                                                                                  FDNEs are generally formulated as frequency-dependent
+                                  TSA type with both network
+                                                                                                               black-box terminal equivalents based on rational functions.
+                                  and generator aggregation.
+                                                                                                               In [6], FDNE is formulated using modal vector fitting (VF)
+              A. Thakallapelli, S. Ghosh, and S. Kamalasadan (corresponding author), are                       method and in [7] passivity of the rational function is enforced
+           with the Power, Energy and Intelligent Systems Laboratory, Energy Produc-                           using mode revealing algorithm. The authors in [8], used VF
+           tion Infrastructure Center (EPIC) and Department of Electrical Engineering,
+           University of North Carolina at Charlotte, Charlotte, NC 28223 USA (e-mail:                         method to generate FDNE combined with TSA component
+           athakall@uncc.edu, sghosh9@uncc.edu, skamalas@uncc.edu).                                            for real-time simulation and, in [9] this method was improved
+
+
+  0885-8950 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2018.2885240, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             2
+
+
+
+           by including generator coherency. Further, the applicability of                                     whereas distant machines show relatively damped oscillatory
+           these models for large power system real-time simulation is                                         behavior. This physical property is known as coherency and
+           studied in [10]. Formulation of FDNE using time domain VF                                           group of machines with similar responses are termed coherent
+           and simulated time domain response evaluations are performed                                        generators. In our work, the generators are coherently grouped
+           in [3], and in [11], authors compared different rational ap-                                        based on a localness index. Further, power system model order
+           proximation methods for simulated time domain responses. A                                          reduction is performed by dividing the original system into a
+           rational approximation approach for formulating FDNE based                                          study area and an external area. The proposed method further
+           on matrix pencil method is proposed in [12] where as [13]                                           divides the external area into two parts. The first one is a
+           proposed a method for electromechanical and electromagnetic                                         low-frequency equivalent (TSA) and the second one is high-
+           transient analysis using FDNE.                                                                      frequency equivalent (FDNE). The reduced order modeling of
+              However, state-of-the-art algorithms formulate FDNE with                                         power system involves the following steps:
+           continuous domain transfer function which makes it very
+                                                                                                               A. Aggregation of External Area for TSA type modeling and
+           complex to implement these algorithms in the real-time simu-
+                                                                                                               Real-time Integration
+           lator (EMT based). Also, in many of these methods FDNE
+           formulation is dependent on the availability of admittance                                            For retaining the electromechanical behavior of the system
+           data over a wide range of frequency which is not always                                             under consideration, aggregated TSA model is used. Fig. 1
+           possible. Further, off-line calculation of admittance over a                                        shows the flowchart for TSA type modeling.
+           wide frequency range, and storing and retrieving of the data                                               Original Model
+           for curve fitting is tedious and time consuming. For example, if                                        Coherency Based                                       Power System
+           the frequency range of interest is from 0 to 5000 Hz with a step                                      Classification of Study                                    Model
+                                                                                                                   and External Area
+           size of 0.1 Hz, one should construct 50001 admittance matrices                                                                                                 Coherency
+                                                                                                                 External Area Network                                     grouping
+           at each frequency sample which is extremely complex to                                                Aggregation (Eqn. 2-3)
+           compute. This complexity increases with sample size, number                                                                                                 Study
+
+
+
+
+                                                                                                                                                    Text
+                                                                                                                                                                                   External
+                                                                                                                    External Area                                      Area                          TSA
+           of ports, and size of network under consideration.                                                   Generator Aggregation
+                                                                                                                                                                                     Area
+
+              This paper introduces a novel method for formulating                                                 Interfacing TSA with                                           Boundary
+                                                                                                                                                                                                    Fig. 2
+           FDNEs based on online RLS identification. In this method,                                                real-time Simulator                                             Bus
+                                                                                                                         (Eqn. 4-6)
+           the external area is energized with constant voltage source
+           at the boundary buses after all the voltage sources and                                                Validating the model
+
+           current sources in the network are short-circuited and open
+                                                                                                               Fig. 1. The conceptual and functional flowchart for TSA type modeling
+           circuited respectively. Subsequently, by tracking input voltage
+           and output current, FDNE is formulated. The proposed method                                            1) Coherency Based Classification of Study and External
+           simplifies FDNE formulation as it is independent of the                                             Area: For coherency grouping of the power system under
+           availability of network parameters over a wide frequency range                                      study, initially the small signal stability study of the power
+           and its formulation is in discrete domain directly. Also the                                        grid model is performed and the generator electromechanical
+           computational burden is reduced by using Kron’s node elim-                                          modes of oscillation are evaluated. Further, based on participa-
+           ination method in the external area network. The advantages                                         tion factors of all the generators, a localness index is calculated
+           of the proposed architecture are:                                                                   as follows:                      n
+                                                                                                                                               X
+              • FDNE formulation is independent of the availability of                                                              Lindex,i =     (1 − Pki )n                 (1)
+                 network parameters over a wide frequency range.                                                                                                   k=1
+              • The architecture formulates FDNE in discrete domain,
+                                                                                                               where n is a number of synchronous generators connected in
+                 which reduces complexity in interfacing FDNE with the                                         the system and, Pki is the normalized participation factor of
+                 real-time simulator.                                                                          the k th machine in the ith mode. For example, Table. I shows
+              • The architecture formulates coherency based network
+                                                                                                               the coherency grouping of generators for IEEE 39 bus system
+                 equivalents of complex networks with less computational                                     

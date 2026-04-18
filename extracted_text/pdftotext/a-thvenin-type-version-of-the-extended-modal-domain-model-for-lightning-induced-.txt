@@ -1,0 +1,183 @@
+154                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 1, FEBRUARY 2023
+
+
+
+
+             A Thévenin-Type Version of the Extended
+            Modal-Domain Model for Lightning-Induced
+                      Voltage Calculations
+                                    Osis E. S. Leal         and Alberto De Conti , Senior Member, IEEE
+
+
+    Abstract—In this paper, a new procedure is proposed for de-
+termining the external current sources required for evaluating
+lightning-induced voltages on overhead lines with the extended-
+modal domain (EMD) model. Unlike the original model, in which
+the calculation of the inducing current sources depends on the
+fitting of the characteristic admittance of the line, in the proposed
+procedure this calculation is performed using the characteristic                  Fig. 1. Lossy multiconductor transmission line with current sources repre-
+impedance of the line. This significantly simplifies the use of the               senting the effect of external EM fields.
+EMD model because now all parameters can be readily obtained
+from the built-in fitting tool that is usually available in electro-
+magnetic transient programs to derive the parameters of Marti’s                   named j 0 (t) and j  (t), are calculated either in the phase domain
+transmission line model. The validity of the proposed procedure is                or in the modal domain depending on the line model they are
+demonstrated through examples that indicate its accuracy in the                   coupled to.
+calculation of lightning-induced voltages on overhead distribution                   The calculation of j 0 (t) and j  (t) depends on the incident
+lines terminated with different types of loads, including transform-
+ers and surge arresters, and multiple grounding points.
+                                                                                  lightning EM fields. It also depends on the representation of
+                                                                                  the characteristic admittance and propagation function of the
+   Index     Terms—Lightning-induced                voltages,       overhead      line as sums of rational terms [8], for which a fitting tool is
+distribution lines, EMT-type programs.                                            required. Although in principle any fitting technique could be
+                                                                                  used (see, e.g., [12]), the current source calculation is simplified
+                            I. INTRODUCTION
+                                                                                  if the fitting is entirely performed within the EMT simulation
+      IGHTNING-INDUCED voltage calculations on power
+L     distribution networks with complex topologies are more
+easily performed within the framework of electromagnetic tran-
+                                                                                  tool because the user no longer needs to implement a computer
+                                                                                  code to calculate and fit the line parameters. The problem is
+                                                                                  that Marti’s transmission line model [11] available in the Alter-
+sient (EMT) simulation programs [1]–[9], which have an ex-                        native Transients Program (ATP) [13], in the Electromagnetic
+pansible library of power system components that can be effi-                     Transients Program (EMTP) [14] and in the Power Systems
+ciently connected for the simulation of transient phenomena.                      Computer Aided Design (PSCAD) [15] is not based on the fitting
+Recently, two methodologies were proposed in [8] and [9]                          of the characteristic admittance Yc , but on its reciprocal, the char-
+for performing lightning-induced voltage calculations using the                   acteristic impedance Z c = Y−1    c . Consequently, the calculation
+universal line model (ULM) [10] and Marti’s transmission line                     of the current sources shown in Fig. 1 using the built-in fitting
+model [11], which are available in most EMT-like programs. In                     tools available in these simulation platforms is impaired because
+these methodologies, a pair of current sources connected at the                   the poles and residues of Yc are not readily available.
+ends of the line is used to fully describe the effect of the incident                The main contribution of this paper is to propose an original
+electromagnetic (EM) fields, as shown in Fig. 1. These sources,                   procedure for the calculation of j 0 (t) and j  (t) that depends
+                                                                                  solely on the fitting of Z c . This greatly simplifies the calculation
+   Manuscript received 7 December 2021; revised 13 April 2022; accepted 30        of lightning induced voltages using Marti’s model in EMT-like
+May 2022. Date of publication 10 June 2022; date of current version 24 January
+2023. This work was supported in part by the National Council for Scientific      tools with the extended modal domain model (EMD) [8], [9],
+and Technological Development (CNPq) under Grant 306006/2019-7 and in part        because the independent calculation and fitting of Yc is no longer
+by the State of Minas Gerais Research Foundation (FAPEMIG) under Grant            required. In addition, the new procedure enables the calculation
+TEC-PPM-00280-17. Paper no. TPWRD-01815-2021. (Corresponding author:
+Osis E. S. Leal.)                                                                 of j 0 (t) and j  (t) using the poles and residues provided by the
+   Osis E. S. Leal is with the Department of Electrical Engineering, Federal      built-in fitting tools available in such platforms, which avoids
+University of Technology – Paraná (UTFPR), Pato Branco 85503-390, Brazil          the need of the user to write a dedicated code for performing
+(e-mail: osisleal@utfpr.edu.br).
+   Alberto De Conti is with the Department of Electrical Engineering, Universi-   such task.
+dade Federal de Minas Gerais, Belo Horizonte, MG 31270-901, Brazil (e-mail:          This paper is organized as follows. Section II presents
+conti@cpdee.ufmg.br).                                                             the problem characterization. Section III introduces the pro-
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2022.3181445.                                       posed solution method. Results and analysis are presented in
+   Digital Object Identifier 10.1109/TPWRD.2022.3181445                           Section IV, followed by conclusions in Section V.
+                         0885-8977 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:01:50 UTC from IEEE Xplore. Restrictions apply.
+LEAL AND CONTI: THÉVENIN-TYPE VERSION OF THE EXTENDED MODAL-DOMAIN MODEL FOR LIGHTNING-INDUCED                                                          155
+
+
+
+                                                                                 in EMT programs. For dealing with the convolutions in (2),
+                                                                                 Yc is fitted in the frequency domain using the vector fitting
+                                                                                 technique [16], and a recursive algorithm is used [8], [9]. In the
+                                                                                 following, a novel technique is proposed to determine j 0 (t) and
+                                                                                 j  (t) from the poles and residues of Z c , which can be readily
+                                                                                 obtained from the built-in fitting tool that is usually linked to
+                                                                                 Marti’s model in EMT simulation tools.
+Fig. 2. Frequency-domain equivalent circuit of a lossy transmission line
+without the effect of incident EM fields.
+                                                                                                  III. PROPOSED SOLUTION METHOD
+                                                                                    The voltage drop E 0 across the characteristic impedance Z c
+                                                                                 shown in Fig. 3 can be calculated as E 0 = Z c I 0 . By defining
+                                                                                 E 0 = (tTI )−1 E 0,m and I 0 = tI I 0,m [17], where tI is a real and
+                                                                                 constant transformation matrix calculated at frequency f0 [18]
+                                                                                 the modal voltage drop E 0,m = Z c,m I 0,m is obtained, where
+                                                                                 Z c,m = tTI Z c tI [19]. Although tI is generally complex and
+                                                                                 frequency dependent [17], assuming it real and constant follow-
+Fig. 3. Lossy transmission line circuit excited by incident EM fields repre-
+sented by external voltage sources.                                              ing the procedure in [18], [20] has been proven to be sufficiently
+                                                                                 accurate for the simulation of transients on most overhead line
+                                                                                 configurations with both Marti’s model [11] and its extension to
+                 II. PROBLEM CHARACTERIZATION                                    simulate lightning-induced voltages, the EMD model [8], [21].
+   Fig. 2 shows the equivalent circuit obtained by solving tele-                 This means that in practice Z c,m can be treated as a diagonal
+grapher’s equations in the frequency domain considering a                        matrix without significant errors.
+transmission line with length  with the method of charac-                          In the time domain, E 0,m reads
+teristics [8]. In this circuit, V̄ 0 and Ī 0 are the voltage and                                     e0,m (t) = z c,m (t) ∗ i0,m (t),                  (3)
+current vectors at the sending end, V̄  and Ī  are the voltage
+and current vectors at the receiving end, B̄ 0 = H(V̄  + Z c Ī  )             where e0,m (t) and i0,m (t) are the time-domain equivalents of
+and B  = H(V̄ 0 + Z c Ī 0 ) are voltage sources √   representing               E 0,m and I 0,m , respectively, and z c,m (t) is the inverse Laplace
+the interaction between the line ends, √   Z c = Y −1 Y Z is the                 transform of Z c,m . From the rational fitting of Z c,m , the i-th
+characteristic impedance, and H = e− Y Z is the propagation                     element of z c,m (t) can be written as
+function of the line, which depend on the series impedance Z and                                                            Np
+                                                                                                                            
+                                                                                                                              i
+
+shunt admittance Y per unit length. All the vectors are of size                                    i,i
+                                                                                                  zc,m (t) = k0i δ(t) +
+                                                                                                                                           i
+                                                                                                                                   kni ean t u(t),      (4)
+nf × 1, while the matrices are of size nf × nf , where nf is the                                                            n=1
+number of conductors. In [8] and [9] it is shown how to extend
+                                                                                 where ain is the n-th real or complex pole associated with the
+the circuit of Fig. 2 to calculate lightning-induced voltages. For
+                                                                                 i-th mode of Z c,m , kni is the corresponding residue, k0i is a real
+such, the influence of the incident EM fields is represented by
+                                                                                 number that represents the asymptotic behavior of the modal
+independent voltage sources connected externally to the line
+                                                                                 characteristic impedance as the frequency approaches infinity,
+model, as shown in Fig. 3 [8], [9]. These sources, named Ū 0
+                                                                                 and Npi is the number of poles required to fit the i-th mode. By
+and Ū  , are calculated as [8]
+                                                                                 representing each element of z c,m (t) as in (4), the convolution
+                          Ū 0 = U 0 − H Ū  ,                                  in (3) can be solved recursively as [8], [22]
+                          Ū  = U  − H Ū 0 .                           (1)                  e0,m (t) = r c i0,m (t) + eh0,m (t − Δt) ,               (5)
+
+where U 0 and U  represent the effect of the incident EM fields.                where r c is a diagonal resistance matrix with each element given
+Further details regarding the calculation of U 0 and U  are given               by
+in [8], [9].                                                                                                                Np i
+                                                                                                                            
+   By using a source transformation, Ū 0 and Ū  can be written as                                        rci,i = k0i +          qni ,                (6)
+equivalent current sources J 0 = Yc Ū 0 and J  = Yc Ū  , which                                                          n=1
+are expressed in the time domain as
+                                                                                 and eh0,m (t) is a column vector containing in each line the
+                        j 0 (t) = y c (t) ∗ ū0 (t),                             history terms of the i-th mode, given by
+                                                                                                                          ⎡ i ⎤
+                        j  (t) = y c (t) ∗ ū (t),                                                  Npi                   Np
+                                                                          (2)                                              
+                                                                                        eih0,m (t) =      pin ei,n  (t) + ⎣    qni ⎦ ii0,m (t), (7)
+                                                                                                               H0,m
+where j 0 (t), j  (t), ū0 (t), ū (t), and y c (t) are the time-domain                                n=1                          n=1
+equivalents of J 0 , J  , Ū 0 , Ū  and Yc , respectively, and ‘∗’ is
+the convolution integral.                                                                ei,n         i i,n
+                                                                                          H0,m (t) = pn eH0,m (t − Δt)
+   In [8], equation (2) was used to incorporate the effect of                                                                       
+incident EM fields in Marti’s model and the ULM available                                            + qni ii0,m (t) + ii0,m (t − Δt) ,                 (8)
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:01:50 UTC from IEEE Xplore. Restrictions apply.
+156                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 1, FEBRUARY 2023
+
+
+
+                                                                                 at the opposite side of the line) to calculate lightning-induced
+                                                                                 voltages unless a modification is performed on the inducing
+                                                                                 sources calculated with (11b). This is explained as follows.
+                                                                                    First, instead of using (3) to calculate e0,m (t) as previously
+                                                                                 considered, the derivation above is repeated by calculating the
+                                                                                 modal voltage drop using the following equation
+                                                                                       e0,m (t) = z c,m (t) ∗ i0,m (t) + z c,m (t) ∗ j̄ 0,m (t),       (12)
+Fig. 4. Time-domain representation of the lossy transmission line model of
+Fig. 3 in the modal domain.                                                      which, from the outset, compensates for the effect of the induc-
+                                                                                 ing current sources in the Norton-type equivalent circuit. Solving
+                                                                                 both convolutions in (12) as in (3), the following equation is
+                                                                                 obtained
+                                                                                                                          
+                                                                                      e0,m (t) = r c i0,m (t) + j̄ 0,m (t)
+                                                                                                         + eh0,m (t − Δt) + eu0,m (t − Δt) ,           (13)
+                                                                                 where eu0,m (t − Δt) is a nf × 1 vector containing the history
+Fig. 5. Lossy transmission line model represented as a Norton-type equivalent    terms of j̄ 0,m (t). Each line of (13) is calculated as
+circuit with external independent current sources in the modal domain.
+                                                                                                                          ⎡ i ⎤
+                                                                                                      Npi                   Np
+                                                                                                                           
+                                                                                     eu0,m (t) =
+                                                                                      i                    i  i,n
+                                                                                                          pn eU 0,m (t) + ⎣    qni ⎦ j̄0,m
+                                              

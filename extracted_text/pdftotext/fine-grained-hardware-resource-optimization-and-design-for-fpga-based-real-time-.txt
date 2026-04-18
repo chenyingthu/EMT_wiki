@@ -1,0 +1,202 @@
+                                                               Electrical Power and Energy Systems 169 (2025) 110754
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                            International Journal of Electrical Power and Energy Systems
+                                                             journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Fine-grained hardware resource optimization and design for FPGA-based
+real-time simulation of large-scale renewable energy generations
+Yanfei Li a , Zhiying Wang a,* , Xiaopeng Fu a , Peng Li a , Ligang Zhao b , Xiaoshan Wu b
+a
+    Key Laboratory of Smart Grid of Ministry of Education, Tianjin University, Tianjin 300072, China
+b
+    China Southern Power Grid Electric Power Research Institute, Guangzhou 510663, China
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    Real-time simulation of renewable energy generations (REGs) is essential for the development and testing of
+Real-time simulation                                         centralized scheduling controllers, inverter controllers and edge computing devices. The rapid expansion of
+Renewable energy generation                                  renewable energy has brought tremendous computational challenges to the real-time simulation of REGs,
+Field-programmable gate array
+                                                             particularly control system solutions. This study proposes a fine-grained hardware resource optimization and
+Hardware resource optimization
+Automatic hardware description language
+                                                             design method for real-time simulation of REG control system based on field-programmable gate array (FPGA). A
+generation                                                   hardware resource demand model is built at the arithmetic operation level. The minimum solution time and
+                                                             hardware resource constraints are considered. A detailed hardware design and automatic hardware description
+                                                             language generation method are proposed to rapidly generate the functional hardware modules for the REG
+                                                             control system solution. Real-time simulations of two REG systems integrated with 15 detailed modeling
+                                                             photovoltaic (PV) arrays and 15 wind turbines (WTs) have been conducted on a single FPGA, respectively. The
+                                                             simulation time-step of the PV-REG system is 9 μs and the time-step for the WT-REG system is 10 μs. Compared
+                                                             with the traditional hardware design, the hardware resource utilization has been reduced by 30% approximately.
+                                                             The relative error is less than 0.5% in contrast with the commercial off-line transient simulation software
+                                                             PSCAD/EMTDC.
+
+
+                                                                                                   hundreds or even thousands of nodes [11]. Real-time EMT simulations
+1. Introduction                                                                                    for such large-scale systems are time-consuming and computationally
+                                                                                                   demanding. On the other hand, the high-frequency power electronic
+    The large-scale integration of renewable energy generations (REGs)                             converters in REG systems require mandatory time-steps typically
+into a regional distribution grid changes the system topology and                                  ranging from a few to dozens of microseconds [12,13]. Under the strict
+operation mode [1,2]. The integration of such REGs introduces various                              real-time constraint, the accurate solution for large-scale REGs further
+renewable energy generators, high-frequency power electronics and                                  increases the computational burden on the underlying hardware.
+controllers, thereby rendering system dynamic characteristics more                                     In the real-time EMT simulation of REGs, system elements can be
+complex [3,4]. Electromagnetic transient (EMT) simulations are                                     categorized into electrical and control elements [14]. The modeling and
+required to capture the fast transients in microseconds and reproduce                              solving of these two categories of elements are conducted separately in
+the transient behavior of REGs with high fidelity [5,6]. Real-time EMT                             the electrical and control systems. Considering the strong nonlinear
+simulations facilitate hardware-in-the-loop tests and rapid system                                 characteristics inherent in renewable energy generation equipment,
+characteristic analysis of physical devices in REG systems, particularly                           such as photovoltaic (PV) arrays and wind turbine generators (WTGs), it
+the renewable energy power generation equipment and converter con­                                 is preferable to model and simulate them in the more flexible control
+trollers [7,8]. A high-performance real-time simulator is required for                             system [15]. Massive renewable energy generation equipment, grid-tied
+evaluating various physical devices in different scenarios [9,10].                                 converter controllers and system-level controllers complicate the con­
+    The rapid expansion of REGs has resulted in tremendous computa­                                trol system, and consequently, scale up the simulations [16]. In partic­
+tional challenges to the real-time EMT simulation. An REG system                                   ular, in the simulation of REGs, the control system outperforms the
+comprises hundreds of renewable energy power generation equipment,                                 electrical system at the simulation scale and consumes more hardware
+converters and controllers. This yields a simulation system with                                   resources [17]. The efficient control system solution has become a
+
+
+    * Corresponding author.
+      E-mail address: zy_wang@tju.edu.cn (Z. Wang).
+
+https://doi.org/10.1016/j.ijepes.2025.110754
+Received 6 October 2024; Received in revised form 7 April 2025; Accepted 9 May 2025
+Available online 22 May 2025
+0142-0615/© 2025 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC license (http://creativecommons.org/licenses/by-
+nc/4.0/).
+Y. Li et al.                                                                                   International Journal of Electrical Power and Energy Systems 169 (2025) 110754
+
+
+
+    Nomenclature                                                                                arithmetic unit
+                                                                                     STA
+                                                                                    tl,i        Start time of the input data for the ith floating-point
+    Indices                                                                                     arithmetic operation of the lth type of floating-point
+    m, l       Indices of the type of the floating-point arithmetic units                       arithmetic unit
+               from 1 to NAU                                                        Tmin        Total clock cycles consumed by the control system solution
+    i          Index of the lth type of floating-point arithmetic operation         nPD         Total amount of the lth type of floating-point arithmetic
+                                                                                     t,l
+               from 1 to Nl
+                                                                                                units occupied at the t th clock cycle
+    j          Index of the mth type of floating-point arithmetic operation
+                                                                                    dm,j,l,i    Data latency between the jth floating-point arithmetic
+               from 1 to Nm
+    u, v, w    Indices of the Floyd-Warshall algorithm matrix ranks from                        operation of the mth type of floating-point arithmetic unit
+               1 to NFW                                                                         and the ith floating-point arithmetic operation of the lth
+    t          Index of the clock cycles from 1 to T                                            type of floating-point arithmetic unit
+                                                                                    δPD
+                                                                                     t,l,i      Flag indicating if the input data of the ith floating-point
+    Variables
+                                                                                                arithmetic operation of the lth type of floating-point
+    R              Total ALM and BMB hardware resources consumed by the
+                                                                                                arithmetic unit is entered at the tth clock cycle
+                   REG control system solution
+    RALM , RBMB ALM and BMB hardware resources consumed by the REG                  δSTA
+                                                                                     t,l,i      Flag indicating if the data input of the ith floating-point
+                   control system solution, respectively                                        arithmetic operation of the lth type of floating-point
+    γMUX
+     ALM  , γ FIFO
+              ALM ALM hardware resources consumed by the multiplexers                           arithmetic unit begins at the t th clock cycle
+                   and data buffering FIFOs, respectively                            END
+                                                                                    tl,i        End time of the input data for the ith floating-point
+    nAU
+     m , nl
+            AU
+                   Total amount of the ith and jth type of floating-point                       arithmetic operation of the lth type of floating-point
+                   arithmetic units, respectively                                               arithmetic unit
+    γAU        AU
+     i,ALM , γ j,BMB ALM and BMB hardware resources consumed by the i
+                                                                          th
+                                                                                    δEND
+                                                                                     t,l,i      Flag indicating if the data input of the ith floating-point
+                    th
+               and j types of floating-point arithmetic units, respectively                     arithmetic operation of the lth type of floating-point
+    γFIFO
+     BMB       BMB hardware resources consumed by the data buffering                            arithmetic unit ends at the t th clock cycle
+               FIFOs
+    δFIFO      Flag indicating if data buffering is enabled between the jth         Parameters
+     m,j,l,i
+                                                                                    NAU         Total amount of the floating-point arithmetic unit types
+                  floating-point arithmetic operation of the mth type of
+                                                                                    Nl , N m    Total amount of the lth and mth type of floating-point
+                  floating-point arithmetic unit and the ith floating-point
+                                                                                                arithmetic operations, respectively
+                  arithmetic operation of the lth type of floating-point            AFIFO , BFIFO The fixed ALM and BMB hardware resource
+                  arithmetic unit                                                               consumption of a data buffering FIFO, respectively
+    DFW           Distance matrix                                                   AMUX        The fixed ALM hardware resource consumption of a
+    RFW           Routing matrix                                                                multiplexer
+    duv , duw , dwv Elements in row u and column v, row u and column w,
+                                                                                    ninm        Total amount of the inputs for the mth type of floating-point
+                  row w and column v of the distance matrix DFW ,
+                                                                                                arithmetic unit
+                  respectively
+                                                                                    NFW         The dimension of the distance matrix DFW and the routing
+    ruv , ruw , rwv Elements in row u and column v, row u and column w,
+                                                                                                matrix RFW
+                  row w and column v of the routing matrix RFW , respectively         LAT
+                                                                                    tm          Computation output latency of the mth type of floating-
+    δAU           Flag  indicating if the result of the jth floating-point
+     m,j,l,i                                                                                    point arithmetic unit
+               arithmetic operation of the mth type of floating-point               tlLAT       Computation output latency of the lth type of floating-point
+               arithmetic unit is the input of the ith floating-point                           arithmetic unit
+               arithmetic operation of the lth type of floating-point               wALM , wBMB The weight coefficient for the ALM and BMB hardware
+               arithmetic unit                                                                  resource consumption, respectively
+     STA
+    tm,j       Start time of the input data for the jth floating-point              nss         Total amount of the REG control subsystems
+               arithmetic operation of the mth type of floating-point               M           A sufficiently large number for linearizing the constraint
+
+
+
+
+critical issue for the real-time simulation of REGs.                                simulators provide generic solutions for REGs and other power systems
+    Processing hardware is another aspect that limits the real-time EMT             [22,23]. For large-scale REGs, the acceleration of the calculation of
+simulation efficiency of REGs. Existing simulators are typically sup­               control systems is expected to improve the real-time simulation
+ported by high-performance CPUs or multiprocessors. In [18], the real-              efficiency.
+time simulation of a grid-connected PV system with six arrays was                       Compared to CPU-based simulation tools, simulators based on field-
+conducted on a 4-core-CPU-based real-time simulator to verify the                   programmable gate arrays (FPGAs) offer prominent advantages in spa­
+inverter controllers in the hardware-in-the-loop test. In [19], the real-           tial–temporal parallel computation [24,25]. Owing to the large number
+time simulation of a wind farm with 30 averaged-value modeled                       of parallel computing units, distributed storage resources and deep
+WTGs was realized using a PC-cluster-based real-time simulator. In [20],            pipelined computation capabilities inherent in FPGA, the real-time
+a PC-cluster-based real-time simulator was used to obtain the detailed              simulation for complex power systems is feasible [26]. In most exist­
+transient behaviors of a grid-connected wind farm including 10 WTGs                 ing FPGA-based simulators, the control system is modeled and solved
+with a time-step of 50 μs. In [21], an offshore wind farm comprising 25             using specific hardware blocks that are manually built according to the
+averaged-value and five detailed switching models of WTGs was simu­                 input–output relationships between the control elements [27]. Parallel
+lated using a CPU-based real-time simulator. In the CPU-based real-time             computing for the control system has been primarily implemented based
+simulators, the underlying computations are processed in serial. The                on the experience of the researchers [28]. However, the potential
+
+                                                                                2
+Y. Li et al.                                                                             International Journal of Electrical Power and Energy Systems 169 (2025) 110754
+
+
+parallel computing relationships among the underlying mathematical              floating-point arithmetic operation and specified floating-point arith­
+operations have not been fully exploited, resulting in the inefficient          metic unit for each floating-point arithmetic operation. The hardware
+utilization of computational resources [29]. In addition, the manual            resource optimization process for the FPGA-based real-time simulation
+building of hardware blocks is time consuming and difficult, particularly       of REGs is illustrated in Fig. 1.
+for REG systems with large-scale and complex control systems. The
+hardware redesign is required for a new target system. Automatic
+                                                                                2.1. Hardware resource demand model
+hardware module generation using optimized parallel hardware re­
+sources is essential to simplify the design process and improve simula­
+                                                                                    In the FPGA-based real-time simulation of REGs, the control system
+tion efficiency.
+                                                                                solution is obtained using dedicated hardware resources, that is, the
+    This study proposes a fine-grained hardware resource optimization
+                                                                                computation and storage units. These are indicated by adaptive logic
+and design method for the FPGA-based real-time simulation of large-
+                                                                                modules (ALMs) and block memory bits (BMBs) on FPGA. Thus, the
+scale REG control systems. According to the control element types and
+                                                                                numbers of ALMs and BMBs are employed as indicators to quantify the
+topology connections of the REG control system, the hardware resource
+                                                                                computation and storage resource demands. The ALMs are consumed by
+demand model is established. The Floyd-Warshall algorithm is used to
+                                                                                first-in-first-out (FIFO), multiplexers and floating-point arithmetic units
+calculate the shortest solution time as the solution time constraint. The
+                                                                                such as adders and multipliers. The BMBs a

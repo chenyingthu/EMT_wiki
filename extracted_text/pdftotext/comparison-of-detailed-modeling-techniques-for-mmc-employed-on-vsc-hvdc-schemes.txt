@@ -1,0 +1,192 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 2, APRIL 2015                                                                                            579
+
+
+
+
+     Comparison of Detailed Modeling Techniques for
+       MMC Employed on VSC-HVDC Schemes
+ Antony Beddard, Student Member, IEEE, Mike Barnes, Senior Member, IEEE, and Robin Preece, Member, IEEE
+
+
+   Abstract—Modular multilevel converters (MMC) are presently                          Modelling MMCs in electromagnetic transient simulation
+the converter topology of choice for voltage-source converter                       (EMT) programs presents a signiﬁcant challenge in comparison
+high-voltage direct-current (VSC-HVDC) transmission schemes                         to modeling a two- or three-level VSC. The stack of series
+due to their very high efﬁciency. These converters are complex,
+yet fast and detailed electromagnetic transients simulation models                  connected IGBT's in each arm of a two- or three-level VSC is
+are necessary for the research and development of these transmis-                   switched at the same time. This simultaneous switching action
+sion schemes. Excellent work has been done in this area, though                     enables the stack of IGBTs to be modeled as a single IGBT for
+little objective comparison of the models proposed has yet been                     many studies. The MMC topology, however, does not contain
+undertaken. This paper compares for the ﬁrst time, the three                        stacks of series-connected IGBT's which have identical ﬁring
+leading techniques for producing detailed MMC VSC-HVDC
+models in terms of their accuracy and simulation speed for sev-                     signals and, therefore, comparable simpliﬁcation in the model
+eral typical simulation cases. In addition, an improved model is                    cannot be made.
+proposed which further improves the computational efﬁciency of                         The converter employed on the Trans Bay Cable Project is
+one method. This paper concludes by presenting evidence-based                       an MMC with approximately 201 levels. A traditional detailed
+recommendations for which detailed models are most suitable for                     model (TDM) of this converter would require more than 2400
+which particular studies.
+                                                                                    IGBTs with antiparallel diodes and more than 1200 capacitors
+  Index Terms—Accelerated model, electromagnetic-transient                          to be built and electrically connected in the simulation package's
+(EMT) simulation, HVDC transmission, modular multilevel con-                        graphical user interface, resulting in a large admittance matrix.
+verter (MMC), voltage-source converter (VSC).
+                                                                                    The admittance matrix must be inverted each switching cycle,
+                                                                                    for which MMCs can have hundreds of times per fundamental
+                                                                                    cycle which is extremely computationally intensive. This makes
+                            I. INTRODUCTION
+                                                                                    modeling MMCs for HVDC schemes using traditional mod-
+                                                                                    eling techniques impracticable.
+                                                                                       To address this problem, an efﬁcient model was proposed by
+T     HE DEMAND for voltage-source converter (VSC) high-
+      voltage direct-current (HVDC) transmission schemes has
+grown signiﬁcantly in recent years. This growth is primarily
+                                                                                    Udana and Gole in [2], which is referred to as the detailed equiv-
+                                                                                    alent model (DEM) in this paper. In [2], the DEM was shown
+                                                                                    to signiﬁcantly reduce the simulation time in comparison with a
+due to the improvements in the voltage and power ratings of
+                                                                                    TDM without compromising accuracy. A drawback of the DEM
+insulated-gate bipolar transistors (IGBTs) and a number of new
+                                                                                    is that the individual converter components are invisible to the
+VSC-HVDC applications, such as the connection of large off-
+                                                                                    user. This makes the model unsuitable for studies which require
+shore windfarms.
+                                                                                    access to the individual converter components and it makes it
+   Since its inception in 1997 and until 2010, all VSC-HVDC
+                                                                                    difﬁcult to reconﬁgure the converter submodule for different
+schemes employed two- or three-level VSCs [1]. In 2010, the
+                                                                                    topologies. Only one other publication has compared the DEM
+Trans Bay Cable Project became the ﬁrst VSC-HVDC scheme
+                                                                                    with the TDM, which was performed in EMTP-RV [3].
+to use modular multilevel converter (MMC) technology.
+                                                                                       A new model, referred to as the accelerated model (AM) was
+The MMC has numerous beneﬁts in comparison to two- or
+                                                                                    proposed by Xu et al. in [4]. This model was found to offer
+three-level VSCs; chief among these is reduced converter
+                                                                                    greater computational efﬁciency than a TDM without compro-
+losses. Today, the three largest HVDC manufacturers offer a
+                                                                                    mising accuracy and it gives the user access to the individual
+VSC-HVDC solution which is based on multilevel converter
+                                                                                    converter components. In [4], an attempt was made to com-
+technology.
+                                                                                    pare the AM simulation time with the DEM simulation time
+                                                                                    data from [2]; however, a full and objective comparison could
+                                                                                    not be completed because the models were built by different re-
+   Manuscript received August 12, 2013; revised December 14, 2013 and March
+12, 2014; accepted April 29, 2014. Date of publication June 09, 2014; date of       searchers on different computers.
+current version March 20, 2015. This work was supported by the Engineering             The objective of this paper is to perform a much needed inde-
+and Physical Sciences Research Council (EPSRC) under Grant EP/H018662/1-
+                                                                                    pendent comparison of the TDM, DEM, and AM models which
+Supergen ‘Wind Energy Technologies’. Paper no. TPWRD-00903-2013.
+   The authors are with the School of Electrical and Electronic Engineering,        will enable the reader to make a more informed decision when
+University of Manchester, Manchester M13 9PL, U.K. (e-mail: antony.                 selecting which type of detailed MMC model to use and to
+beddard@postgrad.manchester.ac.uk; mike.barnes@manchester.ac.uk).
+                                                                                    have a greater degree of conﬁdence in the MMC models' per-
+   Color versions of one or more of the ﬁgures in this paper are available online
+at http://ieeexplore.ieee.org.                                                      formance. In this paper, the TDM, DEM, and AM models are
+   Digital Object Identiﬁer 10.1109/TPWRD.2014.2325065                              built in the same software on the same computer and compared
+
+     0885-8977 © 2014 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/
+        redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+580                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 2, APRIL 2015
+
+
+
+                                                                         Equation (5) shows that the converter phase voltages are ef-
+                                                                      fectively controlled by varying the upper and lower arm volt-
+                                                                      ages. Each converter arm contains a number of SMs: . The
+                                                                      SM capacitor voltage can be described by (6), assuming the SM
+                                                                      capacitance is sufﬁciently large enough to neglect ripple voltage
+                                                                      and that the capacitor voltages are well balanced
+
+                                                                                                                                      (6)
+
+                                                                         The voltage produced by a converter arm is equal to the
+Fig. 1. Three-phase MMC.                                              number of SMs in the arm which are turned on, multiplied
+                                                                      by the submodule capacitor voltage as given by (7) and (8).
+                                                                      Through appropriate control of the SMs, the output voltage
+in terms of their accuracy and simulation speed. This enables a       magnitude and phase can be controlled independently. The
+fair comparison between the DEM and the AM and it provides            number of voltage levels that an MMC can produce at its output
+the ﬁrst independent veriﬁcation for the AM against the TDM,          is equal to the number of SMs in a single arm plus one
+and the DEM against the TDM in PSCAD. Having completed
+this veriﬁcation, this paper also highlights potential limitations                                                                    (7)
+of the AM and proposes an enhanced accelerated model (EAM)                                                                            (8)
+with improved simulation speed.
+
+                     II. MMC VSC-HVDC                                         III. DETAILED MMC MODELING TECHNIQUES
+   The basic structure of an MMC is shown in Fig. 1. Each leg           This section describes three detailed modelling techniques
+of the converter consists of two converter arms which contain a       which represent the converter's IGBTs and diodes using a simple
+number of submodules, SMs, and a reactor             , connected in   two-state resistance.
+series. The SM contains a two-level half-bridge converter with
+                                                                      A. Traditional Detailed Model
+two IGBT's and a parallel capacitor. The SM is also equipped
+with a bypass switch to remove the SM from the circuit in the            In a traditional detailed MMC model, each SM's IGBTs,
+event that an IGBT fails and a thyristor to protect the lower         diodes, and capacitors are built in the simulation package
+diode from overcurrent in the case of a dc-side fault. The by-        graphical user interface, and electrical connections are made
+pass switch and thyristor are, however, typically omitted from        between the SMs in each arm as shown in Fig. 1. This is the
+steady-state and transient studies.                                   standard way of building a detailed MMC model and, hence, is
+   The SM terminal voltage          is effectively equal to the SM    why this type of model is referred to as the traditional detailed
+capacitor voltage     when the upper IGBT is switched-on and          model (TDM). This method of modeling is intuitive and gives
+the lower IGBT is switched-off; the capacitor will charge or          the user access to the individual components in each SM;
+discharge depending upon the arm current direction. With the          however, for MMCs with a large number of SMs, this method
+upper IGBT switched off, and the lower IGBT switched on, the          is very computationally inefﬁcient.
+SM capacitor is bypassed and, hence,            is effectively 0 V.   B. Detailed Equivalent Model
+Each arm in the converter, therefore, acts like a controllable
+voltage source with the smallest voltage change being equal to           The DEM uses the method of nested fast and simultaneous
+the SM capacitor voltage.                                             solution (NFSS) [5]. The NFSS approach partitions the net-
+   With reference to Fig. 1, the following equation for the phase     work into small subnetworks, and solves the admittance ma-
+a converter voltage can be derived:                                   trix for each network separately [2]. Although this increases the
+                                                                      number of steps to the solution, the size of admittance matrices
+                                                               (1)    is smaller, which can lead to reduced simulation time. A sum-
+                                                                      mary of the DEM is presented in the Appendix; however, fur-
+                                                               (2)    ther information can be found in [2]. The DEM employed in this
+                                                                      comparison was obtained directly from PSCAD.
+   The converter arm currents consist of three main components
+as given by (3) and (4). The circulating current      is due to the   C. Accelerated Model
+unequal dc voltages generated by the three converter legs. Sub-          The accelerated model (AM) was proposed by Xu et al. in
+stituting (3) and (4) into (1) and (2), then summing the resulting    [4]. In many respects, the AM is a hybrid between the TDM
+equations gives                                                       and the DEM. The user is able to access the SM components,
+                                                                      as they can with the TDM, but the converter arm is modeled as
+                                                               (3)    a controllable voltage source, which is similar to the DEM. An
+                                                                      overview of the AM is presented here; the reader is referred to
+                                                               (4)    [4] for further information.
+                                                                         In the AM, the series-connected SMs are removed from each
+                                                               (5)    converter arm, separated and driven by a current source with
+BEDDARD et al.: COMPARISON OF DETAILED MODELLING TECHNIQUES                                                                           581
+
+
+
+
+                                                                    Fig. 3. Basic simulation model structure.
+
+
+
+                                                                    A. Model Structure
+                                                                       This model is similar in scope to [2] and [4] but represents
+                                                                    a subsection of the network rather than just the converter used
+                                                                    in [4]. This gives a more realistic timing comparison since one
+                                                                    would not normally just be simulating the converter in typ-
+                                                                    ical power system studies. The basic structure of the simulation
+                                                                    model and the key parameters are shown in Fig. 3.
+                                                                       Developing a TDM for an MMC with hundreds of SMs, such
+                                                                    as a commercial installation, would result in lengthy simulation
+                                                                    times. A 31-level MMC was selected for this model since it pro-
+                                                                    duces acceptable harmonic performance (
+                                                                    at the PCC) [6] with a nearest level controller (NLC) without un-
+                                                                    necessarily increasing the simulation time and yet still providing
+                                                                    a sufﬁcient converter complexity to provide a fair test. The key
+                                                                    factor which determines the required number of SMs in com-
+                                                                    mercial HVDC installations is the dc voltage and the maximum
+                                                                    permissible voltage stress per IGBT, rather than the harmonic
+                                                                    content of the output waveform. Therefore, more levels would
+Fig. 2. Implementation steps for the accelerated model.
+                                                                    be used in commercial installations.
+                                                                       The selection of the SM capacitance value is a tradeoff be-
+                                                                    tween the capacitance ripple voltage and the size of the capac-
+a value equal to the arm current         . A controllable voltage   itor. The SM capacitance was calculated to give a ripple voltage
+source is installed in place of the SMs as shown in Fig. 2, where   of 10%.
+the value of the controllable voltage source is given by               The arm reactors have two main functions. The ﬁrst func-
+                                                                    tion is to suppress the circulating currents between the legs of
+                                                                    the converter, which exist because the dc voltages generated by
+                                                              (9)
+                                                                    each converter leg are not exactly equal. The second function of
+                                                                    the arm reactor is to limit the fault current rate of rise to within
+   The AM reduces the size of the main network admittance           acceptable levels. According to [7], the Siemens HVDC Plus
+matrix by solving the admittance matrix for each SM separately.     MMC arm reactors limit the f

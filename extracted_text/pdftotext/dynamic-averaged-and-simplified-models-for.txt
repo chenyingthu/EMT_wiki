@@ -1,0 +1,195 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                           1
+
+
+
+
+          Dynamic Averaged and Simplified Models for
+           MMC-Based HVDC Transmission Systems
+                  Working Group on Modeling and Analysis of Systems Transients Using Digital Programs, General Systems
+                 Subcommittee, T&D Committee, IEEE Power & Energy Society, Task Force on Dynamic Average Modeling
+
+
+  H. Saad, J. Peralta, S. Dennetière, J. Mahseredjian, J. Jatskevich, J. A. Martinez, A. Davoudi, M. Saeedifard,
+                                 V. Sood, X. Wang, J. Cano, and Ali Mehrizi-Sani
+
+
+   Abstract—Voltage-source converter (VSC) technologies are                          of VSC–HVDC systems include interconnections of asyn-
+rapidly evolving and increasing the range of applications in a                       chronous systems, grid integration of offshore wind farms,
+variety of fields within the power industry. Existing two- and                       electrification of remote islands and oil and gas stations, and
+three-level VSC technologies are being superseded by the new
+modular multilevel converter (MMC) technology for HVDC                               multiterminal dc grids [3]–[5]. VSC-HVDC systems can inde-
+applications. The computational burden caused by detailed mod-                       pendently control active and reactive powers by maintaining
+eling of MMC–HVDC systems in electromagnetic transient-type                          stable voltage and frequency [6] which enables the supply of
+(EMT-type) programs complicates the simulation of transients                         very weak grids and even passive networks [7]. Various VSC
+when such systems are integrated into large networks. This paper                     topologies, including the conventional two-level, multilevel
+develops and compares different types of models for efficient and
+accurate representation of MMC–HVDC systems. The results                             diode-clamped and floating capacitor multilevel converters,
+show that the use of a specific type of model will depend on the                     have been proposed and reported in [8] and [9]. However,
+conducted analysis and required accuracy.                                            due to the complexity of controls and practical limitations,
+  Index Terms—Average-value model (AVM), electromag-
+                                                                                     the VSC–HVDC system installations have been limited to the
+netic–transients (EMT)-type programs, high-voltage direct-cur-                       two-level and three-level diode-clamped converters. Recently,
+rent (HVDC) transmission, modular multilevel converter (MMC),                        the development of the modular multilevel converter (MMC)
+voltage-source converter (VSC).                                                      technology with series-connected half-bridge modules, has
+                                                                                     overcome the limitations of other multilevel converter topolo-
+                                                                                     gies for HVDC applications [10], [11]. MMC topologies enable
+                             I. INTRODUCTION                                         using a lower switching frequency for reducing converter
+                                                                                     losses. In addition, filter requirements are eliminated by using
+                                                                                     a significant number of levels per phase. Scalability to higher
+
+T     HE development of controllable semiconductor switches
+      and voltage-source converter (VSC) technologies is
+rapidly expanding the fields of applications of high-voltage
+                                                                                     voltages is easily achieved and reliability is improved by in-
+                                                                                     creasing the number of submodules (SMs) per multivalve arm
+                                                                                     [12].
+direct current (HVDC) and flexible ac transmission systems                              The high number of power switches in the MMC introduces
+(FACTS) in power systems. VSC-based HVDC systems present                             important challenges when modeling this converter topology
+several advantages in comparison with traditional line-com-                          in electromagnetic-transient-type (EMT-type) simulation tools.
+mutated converter (LCC)-based HVDC transmission [1].                                 Detailed MMC models include the representation of thousands
+VSC–HVDC technology combines an insulated-gate bipolar                               of IGBT switches and must use small numerical integration
+tansistor (IGBT)-based VSC with dc transmission lines to                             timesteps to accurately represent fast and multiple simulta-
+transfer power up to 1000 MW [2]. The potential applications                         neous switching events. The computational burden introduced
+                                                                                     by such models drives the need to develop reduced-order
+   Manuscript received September 26, 2012; accepted February 23, 2013. Paper         models capable of accurately replicating the behavioral re-
+no. TPWRD-01015-2012.
+                                                                                     sponse of switches, converters, and controls through simplified
+   The authors are Contributing Members of the IEEE Task Force on Dynamic
+Average Modeling.                                                                    functions and controlled sources [13], [14].
+   Task Force on Dynamic Average Modeling is with the Working Group on                  The average value models (AVMs) approximate system dy-
+Modeling and Analysis of Systems Transients Using Digital Programs, General
+                                                                                     namics by neglecting switching details. The AVMs require sig-
+Systems Subcommittee, T&D Committee, IEEE Power & Energy Society.
+   Taskforce Members: S. A. Abdulsalam, D. Aliprantis, U. Annakkage, H.              nificantly less computational resources and can use larger in-
+Atighechi, J. Belanger, J. M. Cano, S. Chiniforoosh, A. Davoudi, V. Dinavahi,        tegration time steps, leading to much faster computations [15].
+O. Faruque, S. Filizadeh, D. Goldsworthy, A. Gole, R. Iravani, J. Jatskevich (TF
+                                                                                     AVMs have been initially developed for power-electronic con-
+chair), R. Jayasinghe, H. Karimi, M. Kuschke, A. St. Leger, J. Mahseredjian,
+J. Martinez, N. Nair, L. Naredo, T. Noda, J. N. Paquih, J. Peralta, A. Ramirez,      verters [16] and since then, this concept has been applied to
+A. Rezaei-Zare, M. Rioual, M. Saeedifard, K. Schoder, V. Sood, K. Strunz, A.         modeling many systems, including wind generation [17], [18].
+VanDerMeer, X. Wang, A. Yazdani.
+                                                                                     Applications to HVDC transmission, including two- and three-
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       level VSC technologies, are presented in [16] and [19]–[21].
+   Digital Object Identifier 10.1109/TPWRD.2013.2251912                              Reference [22] presents a comparison of detailed and averaged
+
+                                                                  0885-8977/$31.00 © 2013 IEEE
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+
+                                                                                    Fig. 2. Detailed diagram of a half-bridge submodule.
+
+
+
+
+Fig. 1. Typical MMC topology for the three-phase converter.
+
+
+
+models for a 401-level MMC-HVDC system integrated into a
+large ac system. A phasor-domain MMC-AVM is presented in                            Fig. 3. Control hierarchy for the VSC–MMC station.
+[23]. Other modeling approaches applicable to MMC have been
+presented in [24] and [25].
+   The contribution of this paper is the comparison of dynamic
+                                                                                    harmonic circulating currents of each phase [27]. A top level
+performance for different types of MMC models. This paper
+                                                                                    view of the control structure is presented in Fig. 3.
+provides guidelines for dynamic average modeling and com-
+pares the dynamic behavior and computational performance
+                                                                                    A. Upper Level Control: VSC Control
+for a practical MMC-based HVDC point-to-point transmission
+system.                                                                                The VSC-MMC model presented in this paper uses the clas-
+                                                                                    sical vector control strategy that calculates a voltage time area
+                         II. MMC TOPOLOGY                                           across transformer and arm inductances which is required to
+                                                                                    change the current from present value to the reference value
+   Fig. 1 shows the three-phase MMC topology considered here.                       [28]. The      -frame current orders to the controller are calcu-
+The MMC modeled in this paper has 400 submodules (SMs)                              lated from preset active or dc voltage and reactive powers. The
+per arm (800 SMs per phase) and its parameters are provided                         inner controller permits controlling the converter ac voltage.
+in [22]. Each SM has a basic topology as depicted in Fig. 2,                        The active and reactive currents in the        -frame can be in-
+which includes a capacitor         and two IGBT valves (S1 and                      dependently controlled via a proportional-integral (PI) control
+S2). At any instant during normal operation, only one of the two                    [6]. The reactive power control includes an ac voltage over-
+switches (S1 or S2) is closed. As a result, when the switch S1 is                   ride block intended to maintain the ac voltage within acceptable
+closed (S2 is open), the voltage of the th SM is          and when                  limits.
+the switch S2 is closed (S1 is open), the SM voltage is zero. The
+arm reactor          helps controlling and balancing circulating                    B. Lower Level Control: MMC Control
+currents in the phase arms and also limiting fault currents [12].
+Depending on the IGBT technology used in such a converter,                              Voltage unbalances between the arm phases of the MMC in-
+the high-speed bypass switch K1 (Fig. 2) is required to increase                    troduce circulating currents containing a second harmonic com-
+safety and reliability in case of SM , and the thyristor K2 (Fig. 2)                ponent which not only distorts the arm currents, but also in-
+is fired to protect the IGBTs against high fault currents [10].                     creases the ripple of SM voltages. Circulating currents can be
+                                                                                    eliminated by using an active control over the ac voltage ref-
+                                                                                    erence            [29] or by adding a parallel capacitor (resonant
+                   III. HVDC CONTROL SYSTEM
+                                                                                    filter) between the mid-points of the upper and lower arm induc-
+  Since the MMC topology is of VSC type [26], it uses                               tances on each phase [30]. The proposed MMC model uses the
+an upper level control including an inner controller and an                         circulating current suppression control (CCSC) [29]. As demon-
+outer controller (VSC Control). However, the MMC topology                           strated in [22], this control eliminates the second harmonic com-
+requires additional controllers in order to stabilize internal                      ponent of the circulating current significantly reducing the dc
+variables (MMC Control): SM capacitor voltages and second                           voltage ripple on SM capacitors.
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+SAAD et al.: DYNAMIC AVERAGED AND SIMPLIFIED MODELS FOR MMC-BASED HVDC TRANSMISSION SYSTEMS                                                                     3
+
+
+
+
+                                                                                    Fig. 5. Submodule with simplified IGBT models.
+Fig. 4. (a) Representation of a nonlinear IGBT valve. (b) Diode     - character-
+istic.
+
+                                                                                       This model type [22] offers several advantages due to its
+   Various modulation techniques have been developed for                            increased accuracy in the modeling of IGBTs. It replicates
+MMC topologies: phase-disposition PWM (PD-PWM) [31],                                the nonlinear behavior of switching events (through diodes)
+phase-shifted carrier PWM (PS-PWM) [32], improved selective                         allowing to account for conduction losses. It also allows simu-
+harmonic elimination–PWM (SHE-PWM) [10], space-vector                               lating specific conditions, such as blocked states (g1 and g2 are
+modulation (SVPWM) [11] and model predictive control [33].                          off), SM details, converter startup procedures and internal con-
+As the number of MMC levels increases, PWM and SHE                                  verter faults. The introduction of thousands of components (i.e.,
+techniques become cumbersome. Therefore, more efficient                             4800 ideal switches and 9600 non-ideal diodes for 401-level
+staircase-type methods, such as the nearest level control (NLC)                     MMC) causes a high computational effort [22] and, therefore,
+technique, have been proposed in [34], [35]. The models devel-                      except for specific cases mentioned before, this modeling
+oped in this paper use the NLC technique [34].                                      approach should be mainly used as an accuracy reference for
+   The capacitor voltages of all SMs must be balanced during                        validating and tuning simplified MMC models.
+normal operation. The voltage         (Fig. 2) must be monitored
+and the capacitors switched (on/off) based on a balancing con-                      C. Type 3: Simplified IGBT-Based Model
+trol system [31], [36]. The balancing control algorithm (BCA)                         This model is based on the assumption that the IGBT device
+[31] requires measurements of all capacitor voltages at every                       and its anti-parallel diode act as a bidirectional switch repre-
+time point, in order to sort them before selecting the upper and                    sented by a two-state resistance:       (small conductive value)
+lower SM being switched on. The number of SMs is determined                         and        (large open-circuit value). Thus, in Fig. 5 (simplified
+from two time-dependent switching functions            and      .                   version of Fig. 2),     and     values depend on gating signals,
+The sum                 is constant. To improve the efficiency of                   current direction and capacitor voltage.
+the BCA algorithm, a trigger control activates the BCA only
+when        or       change [22].                                                   D. Type 4: Detailed Equivalent-Circuit-Based Model
+                                                                                       This modeling approach is based on the Type 3 IGBT model
+                           IV. MMC MODELS                                           presented in Fig. 5. A simple circuit reduction is performed by
+                                                                                    eliminating internal intermediate nodes and creating a Thevenin
+   Different types of MMC models exist in the literature. Six
+                                                                                    equivalent for each arm of the converter [24], [25]. The equiva-
+common types of MMC models are briefly presented in this sec-
+                                                                                    lent circuit usage allows reducing the number of operations and
+tion.
+                                                                                    improving computational performance.
+                                                                                       The derivation of the Thevenin equivalent is briefly ex-
+A. Type 1: Full Physics-Based Models
+                                                                                    plained as follows. With the trapezoidal integration rule, each
+   Partial differential equations can be used to develop a lumped                   SM capacitor is replaced by an equivalent voltage history
+circuit model for the IGBT. In [37], a complex IGBT subcircuit                      source               in series with a resistance               .
+is proposed and compared against a finite element model.                            The resistance is found from the discretization of the capacitor
+These complex models can accurately represent switching                             and      is the numerical integration time-step.
+losses, however they require extremely small time steps                                The th SM equation is given by
+(nanoseconds) since the switching event occurs over a very
+short time period. Although Type 1 models may offer great                                                                                                     (1)
+accuracy, such models are not usually used for power system
+simulations due to excessive computing time requirements.                           where
+
+B. Type 2: Detailed Nonlinear IGBT-Based Model                                                                                                                (2)
+   In this approach the IGBT valves are modeled using an ideal
+controlled switch, two non-ideal (series and anti-parallel) diodes                                                                                            (3)
+and a snubber circuit, as shown in Fig. 4. The non-ideal diodes
+are modeled with nonlinear resistances using the classical -                        The Thevenin resistance        is time-dependent, since the re-
+curve of a diode. The nonlinear characteristic can be adjusted                      sistances     and

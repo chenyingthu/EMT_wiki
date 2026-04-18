@@ -1,0 +1,177 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025                                                                                           3017
+
+
+
+
+  Stability Assessment of Multi-Rate Electromagnetic
+                 Transient Simulations
+           Ajinkya Sinkar , Member, IEEE, Kaustav Dey , Member, IEEE, Huanfeng Zhao , Member, IEEE,
+                                    and Aniruddha M. Gole , Life Fellow, IEEE
+
+
+   Abstract—Multi-rate Electromagnetic Transient (EMT) simu-
+lations use smaller time-steps for parts of the network requiring
+greater accuracy, and larger time-steps for the rest of the network.
+This paper presents an analytical approach for evaluating the
+stability of multi-rate EMT simulations of linear time-invariant
+(LTI) networks. It is shown that their resulting discrete time sys-
+tem is inherently time-periodic. Leveraging this characteristic, a
+sampled-data time-invariant representation of the simulated net-
+work is derived. The overall simulation’s numerical stability can
+then be assessed through eigenvalue analysis. The paper shows
+that contrary to popular belief, a multi-rate EMT simulation                       Fig. 1.   General structure of multi-rate EMT simulations.
+may become unstable even if the well-known A-stable trapezoidal
+rule is used. The proposed approach is validated with example                      can be used for the remaining subnetworks [2]. Time-steps for
+simulations.
+                                                                                   each subnetwork are selected based on their individual time
+   Index Terms—Electromagnetic transient (EMT) simulations,                        response characteristics [3]. This can be done: (i) based on the
+linear time invariant (LTI) systems, multi-rate simulations,                       time constants obtained from eigenvalue analysis for the original
+stability assessment.                                                              network [8], or (ii) by experience if the nature of the dynamics
+                                                                                   to be simulated is known [8], or (iii) by using a more thorough
+                            I. INTRODUCTION                                        analysis of accuracy based on the methodology proposed in [9].
+                                                                                   Fig. 1 depicts a dual-rate case where a large time-step ΔT is
+      RADITIONALLY, Electromagnetic Transient (EMT)                                used for the slow subnetwork while a small time-step Δt is
+T     simulations have used a single fixed time-step for dis-
+cretizing the dynamical equations of all the components in a
+                                                                                   used for the fast subnetwork. The slow subnetwork remains dor-
+                                                                                   mant while the fast subnetwork’s simulation proceeds. Hence,
+network [1]. However, this can lead to the simulations becoming                    the solutions for both these subnetworks must be reconciled
+computationally intensive as this time-step, which is selected to                  every time their simulation time-grids mutually coincide. While
+capture the fastest transients in a network, is also used for solving              “down-sampling” (i.e., transferring the fast subnetwork’s results
+relatively slower portions of the network [2]. A computationally                   to the slow subnetwork), many approaches are possible. For
+efficient alternative to this proposed in the literature is to use the             example, one may average the values of the fast subnetwork’s
+multi-rate simulation approach [2], [3], [4], [5], [6], [7].                       interface variables [6] or simply take the last computed value
+   The power network can usually be divided into multiple sub-                     of fast subnetwork’s interface variables [3]. Similarly, while
+networks, with smaller time-steps applied only to those subnet-                    “up-sampling” (i.e., transferring the slow subnetwork’s results
+works where higher precision is needed, while larger time-steps                    to the fast subnetwork), many approaches are possible. For ex-
+                                                                                   ample, one may freeze the slow subnetwork’s interface variables
+   Received 29 October 2024; revised 15 March 2025 and 31 May 2025; accepted       [3] or use interpolation for assigning values to the intermediate
+12 July 2025. Date of publication 18 July 2025; date of current version 24         small time-step instants [2], [6], or use extrapolation [7]. Note
+November 2025. This work was supported in part by the IRC Program of               that up-sampling and down-sampling approaches can impact
+NSERC, Canada and in part by Mitacs Elevate Program, Canada under Grant
+IT40444. Paper no. TPWRD-01639-2024. (Corresponding author: Ajinkya                the accuracy of the simulation i.e., up-sampling may cause
+Sinkar.)                                                                           error accumulation in long-term simulations whereas down-
+   Ajinkya Sinkar and Aniruddha M. Gole are with the Department of Electrical      sampling may fail to accurately capture the dynamics emanating
+and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2,
+Canada (e-mail: sinkara@myumanitoba.ca; gole@umanitoba.ca).                        from the fast subnetwork. Hence, such approaches must be se-
+   Kaustav Dey was with the Department of Electrical and Computer Engi-            lected prudently while implementing multi-rate EMT simulation
+neering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada. He is now           programs.
+with the Department of Electrical Engineering, Indian Institute of Technology
+Kharagpur, Kharagpur 721302, India (e-mail: kaustav@ee.iitkgp.ac.in).                 Several multi-rate simulation methods have been proposed
+   Huanfeng Zhao is with Nayak Corporation, Hamilton, NJ 08619 USA (e-mail:        in the literature - these include iterative [4], [5] as well as
+huanfengzhao@gmail.com).                                                           non-iterative approaches [2], [6], [7]. The former type uses
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3590630.                                        iterations when reconciling the solution for the entire network
+   Digital Object Identifier 10.1109/TPWRD.2025.3590630                            while the latter type uses direct methods that avoid iterations.
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:10:29 UTC from IEEE Xplore. Restrictions apply.
+3018                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+Non-iterative methods have deterministic execution times and
+hence are usually the preferred choice [10].
+   Reference [2] presented one of the first non-iterative ap-
+proaches for multi-rate EMT simulations. It uses a frequency-
+dependent transmission line as the interface point for
+partitioning a network into fast and slow subnetworks. Alterna-
+tively, in [6], an extension of the Multi Area Thevenin Equivalent               Fig. 2.   General timeline of multi-rate EMT simulations.
+(MATE) concept [11] is proposed for carrying out multi-rate
+EMT simulations. Unlike [2], it does not require a transmission
+line at the partitioning point. Another approach in [7] uses a                   external inputs) can be inferred from the exponential stability of
+modification of the Latency Insertion Method (LIM) [12] for                      its autonomous counterpart (i.e., the same system but with zero
+carrying out multi-rate EMT simulations.                                         inputs). Hence, we will only consider autonomous LTI networks
+   Most of the existing literature [2], [6], [7], [9] on non-iterative           while developing our stability assessment approach in this paper.
+multi-rate EMT simulation methods has primarily focused on
+demonstrating two things: (i) the accuracy of their respective ap-               A. State-Space Model of an Autonomous Linear Systems
+proaches, and (ii) the enhancement of computational efficiency
+accrued from using their approach. Reference [10] attempts                         The continuous time-domain state-space equation for an au-
+to address the issue of numerical stability; however, it uses a                  tonomous linear system is as in (1).
+linearized system for the stability assessment which is inherently                                                 ẋ = Ax                             (1)
+an approximation.
+   In this paper, we develop a rigorous analytical approach for                     By using any numerical integration method with a time-step
+assessing the stability of non-iterative multi-rate EMT simu-                    Δt, the state vector in the present time-step (x(t + Δt)) can be
+lations of linear time-invariant (LTI) networks. For this, we                    related to the state vector in the previous time-step (x(t)) using
+leverage the inherent discrete time-domain periodicity exhibited                 a linear transformation as in (2).
+by such simulations. The proposed approach is used to assess                                               x (t + Δt) = Gx (t)                         (2)
+the stability of a practical multi-rate EMT simulation method
+(i.e., the MATE-based method proposed in [6]). Test cases are                    For example, with the trapezoidal rule:
+presented in Section VI to validate the proposed approach.                                       G = (I − AΔt/2)−1 (I + AΔt/2)
+Principal contributions of this paper are:
+   1) It demonstrates that, contrary to popular belief [8], [13],                B. Periodicity in Multi-Rate EMT Simulations of LTI Networks
+        a multi-rate EMT simulation can produce unstable re-
+        sults even for stable continuous-time LTI networks even                     Fig. 2 shows a typical timeline of a multi-rate simulation.
+        if the well-known A-stable trapezoidal rule is used for                  Here, ΔT is the large time-step (used in the slow subnetwork)
+        discretization in each subnetwork (Section VI).                          whereas Δt is the small time-step (used in the fast subnetwork).
+   2) It develops an analytical approach for obtaining sampled-                  In this paper, ΔT is assumed to be an integer multiple of Δt,
+        data time-invariant representation for multi-rate EMT sim-               i.e., ΔT = N Δt where N is a positive integer greater than 1.
+        ulations of LTI networks. For this, it uses the well-known               The following general steps are followed in each ΔT interval in
+        ‘lifting’ technique [14] and leverages the inherent period-              any multi-rate simulation method:
+        icity exhibited by such simulations in the discrete-time                    1) At every intermediate Δt instant within a ΔT interval
+        domain. The time-invariant representation can then be                           (indicated by dashed arrows in Fig. 2), only the fast sub-
+        used for assessing the numerical stability of the overall                       network is solved; slow subnetwork remains latent. This
+        simulation via eigenvalue analysis (Sections II, IV, and                        means only fast subnetwork’s states are updated while
+        V).                                                                             slow subnetwork’s states are held constant.
+   It should be noted that the multi-rate EMT simulation method                         ➢ At these instants, the slow subnetwork’s contribution
+of [6] is used in this paper merely to exemplify the effectiveness                         to the fast subnetwork’s states is accounted for using
+of our proposed stability assessment approach. The approach                                up-sampling (e.g., freezing the slow subnetwork’s con-
+itself is entirely general and can be extended to any arbitrary                            tribution [3] or using interpolation [2], [6] or using
+non-iterative multi-rate simulation algorithm.                                             extrapolation [7]).
+                                                                                    2) At every time instant that is an integer multiple of ΔT
+                                                                                        (indicated by solid arrows in Fig. 2), both fast and slow
+       II. MATHEMATICAL FRAMEWORK FOR THE PROPOSED                                      subnetworks are solved. This means the states of both fast
+               STABILITY ASSESSMENT METHOD                                              and slow subnetworks are updated.
+  In this section, we will discuss the mathematical framework                           ➢ At these instants, the fast subnetwork’s contribution
+used for developing our proposed approach for the stability                                to the slow subnetwork’s states is accounted for using
+assessment of the multi-rate EMT simulations of LTI networks.                              down-sampling (e.g., using the fast subnetwork’s last
+Reference [15] has proved that the Bounded Input Bounded Out-                              available value [3] or averaging the fast subnetwork’s
+put stability of any non-autonomous LTI system (i.e., ones with                            contribution over the previous ΔT interval [6]).
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:10:29 UTC from IEEE Xplore. Restrictions apply.
+SINKAR et al.: STABILITY ASSESSMENT OF MULTI-RATE ELECTROMAGNETIC TRANSIENT SIMULATIONS                                                                           3019
+
+
+
+                                                                                   C. Efficiently Obtaining a Time-Invariant Representation for a
+                                                                                   Periodically Varying Discrete Time System
+                                                                                      For a periodically varying discrete-time system (such as the
+                                                                                   one in Fig. 3), it is possible to obtain a time-invariant represen-
+                                                                                   tation by applying the ‘lifting’ technique [14]. In this technique,
+Fig. 3.   Periodic nature of multi-rate EMT simulations of LTI networks.           a lifting operator L : v → V L is defined where v is a vector
+                                                                                   sampled at the regular sampling rate (Δt in case of Fig. 3)
+                                                                                   whereas V L consists of a collection of N consecutive samples
+                                                                                   of v (sampled at t, (t + Δt), . . . (t + (N − 1)Δt)). Applying
+  Consider the first ΔT interval [t, t + ΔT ) in Fig. 2 with a                     ‘lifting’ to the state vector x for the periodically varying system
+known initial condition x(t). In the fashion of (2), the interme-                  of Fig. 3 yields a vector X L as in (5).
+diate states at every Δt instant can be written as in (3).                                                    ⎡                        ⎤
+                                                                                                                         x (t)
+          x (t + Δt) = G0 x (t)                                                                               ⎢       x (t + Δt)       ⎥
+                                                                                                              ⎢                        ⎥
+                                                                                                   X L (t) = ⎢             ..          ⎥            (5)
+          x (t + 2Δt) = G1 x (t + Δt)                                                                         ⎣             .          ⎦
+                                                                                                                      x (t + (N − 1) Δt)
+                       ..
+                        .                                                             Using the ‘lifted’ state vector X L in (5) and the difference
+          x (t + (N − 1) Δt) = GN −2 x (t + (N − 2) Δt)                            equations in (3), we can obtain a time-invariant representation as
+                                                                                   in (6) for the periodically varying discrete-time system of Fig. 3.
+          x (t + ΔT) = GN −1 x (t + (N − 1) Δt)                             (3)    In (6), the matrices M L and H L are as given in (7) where, I
+                                                                                   and 0 are appropriately sized identity and zero matrices, and
+   In (3), the discrete-time matrices G0 , G1 , … GN −1 are                        G0 , G1 , … GN −1 are matrices from (3).
+typically distinct from each other [10] even though the original
+network is LTI in the continuous time-domain.1 This happens                             M L X L (t + ΔT ) = H L X L (t)                                            (6)
+because of the selective updating of the fast and slow states                                               ⎡                             ⎤
+                                                                                                              I
+within a ΔT interval as well as the use of up- and down-sampling                                            ⎢ 0                           ⎥
+methods in the discrete time-domain. However, if the original                                               ⎢                             ⎥
+                                                                                                     ML = ⎢          ..                   ⎥;
+network is LTI in the continuous time-domain, it remains un-                                                ⎣           .                 ⎦
+changed throughout the entire simulation (i.e., no switching).                                                                           0
+Because of this, we can say that the equations used for updating                                                     ⎡                                  ⎤
+the states in the first ΔT interval of the simulation will be appli-                                                                              GN −1
+                                                                                                                ⎢                     GN −2        −I ⎥
+cable for every subsequent ΔT interval i.e., [t + ΔT, t + 2ΔT )                                                 ⎢                                       ⎥
+                                                                                                           HL = ⎢                 .       .             ⎥          (7)
+and so on. Thus, as illustrated in Fig. 3, the G0 , G1 , … GN −1                         

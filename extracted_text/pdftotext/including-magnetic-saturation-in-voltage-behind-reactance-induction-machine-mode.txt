@@ -1,0 +1,219 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 25, NO. 2, MAY 2010                                                                                             975
+
+
+
+
+             Including Magnetic Saturation in Voltage-
+            Behind-Reactance Induction Machine Model
+                      for EMTP-Type Solution
+                          Liwei Wang, Student Member, IEEE, and Juri Jatskevich, Senior Member, IEEE
+
+
+
+   Abstract—A voltage-behind-reactance (VBR) machine model                              The electro-magnetic transient programs (EMTP) [14] are
+has been recently proposed for the electro-magnetic transient                        often used for studying power systems transients, wherein the
+programs (EMTP)-type simulation programs. The VBR model                              classical full-order machine models are typically considered
+greatly improves numerical accuracy and efficiency compared
+with the traditional       and phase-domain (PD) models. This                        sufficient [15], [16]. In the EMTP community, the magnetic sat-
+paper extends the previous research and presents an approach                         uration phenomena have also been included in various machine
+to include magnetic saturation into the VBR induction machine                        models [17]–[21] and software packages [22]–[25]. Examples
+model. The presented method takes into account the      axes static                  of saturable models include the ATP’s universal machine model
+and dynamic cross saturation, whereas the nonlinear magnetic                         [17] and MicroTran model Type 50 [18]. Other commonly-used
+characteristic is represented using a piecewise-linear method that
+is suitable for the EMTP solution approach. Case studies verify                      EMTP software packages such as PSCAD/EMTDC [22] and
+the new saturable VBR model and show that it has improved                            EMTP-RV [24] also include saturable models of induction
+numerical stability and accuracy even at large time steps.                           machine.
+                                                                                        These programs typically use built-in       models and permit
+  Index Terms—Electro-magnetic transient programs (EMTP),                            saturation of the main magnetizing flux and sometimes even
+induction machine, magnetic saturation, piecewise-linear approx-
+imation, voltage-behind-reactance model.                                             leakage fluxes. In EMTP, the nonlinear magnetic saturation
+                                                                                     characteristic is often represented using a piecewise-linear
+                                                                                     approximation. Based upon this approach, a very efficient
+                                                                                     non-iterative solution of the machine-network equations may
+                             I. INTRODUCTION                                         be achieved.
+                                                                                        The model formulations commonly used with the EMTP
+                                                                                     solution approach include the [26]–[28] or the phase-domain
+                                                                                     (PD) [29], [30] models. Recently, the so-called voltage-be-
+        EPRESENTING magnetic saturation in induction ma-
+R       chine models greatly improves the modeling accuracy for
+both steady states and transients. Depending on the modeling
+                                                                                     hind-reactance (VBR) models have been proposed in [31]–[34].
+                                                                                     The VBR models provide many desirable properties, e.g., direct
+                                                                                     model interface with the external network, greatly improved
+fidelity and applications, various models and approaches have                        numerical accuracy and simulation efficiency. Interested reader
+been proposed to represent the machine magnetic saturation.                          will find discussions and studies revealing the properties of
+To depict very fine geometrical/structural details and material                      VBR models in [31]–[35] and the references therein. Inspired
+characteristics, finite element (FE) models [1] and magnetic                         by advantageous properties of the magnetically linear induction
+equivalent circuit (MEC) models [2], [3] are often used. For                         machine VBR model [34], this paper is focused on formulating
+system studies, numerous induction machine models have been                          a saturable VBR model for the EMTP-type solution. Here, we
+proposed to represent main magnetizing flux path saturation                          extend the previous work and make the following contributions.
+[4]–[7], leakage flux path saturation [8], [9], the deep-bar effects                   • The proposed approach is derived to include the            axes
+[10], [11], etc. Higher-order      models capable of predicting                            static and dynamic cross-saturation phenomenon based on
+the magnetic saturation and machine-inverter interaction at                                the saturation of the main magnetizing flux, which is typi-
+high switching frequency have been proposed in [12] and [13].                              cally adequate for most power systems studies with induc-
+                                                                                           tion machines. If required, the saturation can be readily ex-
+                                                                                           tended to include the leakage flux if such refinement is nec-
+   Manuscript received September 10, 2008; revised June 24, 2009. First
+published November 24, 2009; current version published April 21, 2010. This
+                                                                                           essary.
+work was supported in part by the Natural Sciences and Engineering Research            • The piecewise-linear approach is utilized to include the
+Council (NSERC) of Canada under the Discovery Grant, and in part by the                    magnetic saturation characteristic into the VBR model.
+Educational Grant from British Columbia Transmission Corporation and BC
+Hydro. Paper no. TPWRS-00744-2008.
+                                                                                           However, the method can include arbitrary number of
+   The authors are with the Department of Electrical and Computer Engineering,             piecewise-linear segments as to approach the smooth
+University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail: li-                 saturation characteristic with any desirable accuracy.
+weiw@ece.ubc.ca; jurij@ece.ubc.ca).                                                    • The new model is compared with several established
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                             models to verify its correctness and demonstrate its nu-
+   Digital Object Identifier 10.1109/TPWRS.2009.2032659                                    merical advantages such as accuracy and CPU time.
+                                                                  0885-8950/$26.00 © 2009 IEEE
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:19:58 UTC from IEEE Xplore. Restrictions apply.
+976                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 25, NO. 2, MAY 2010
+
+
+
+         II. MAGNETICALLY LINEAR MACHINE MODELS                                  B. Voltage-Behind-Reactance Model
+  To facilitate the derivation of the new model and for the                         As shown in [32], several VBR formulations may be de-
+purpose of completeness, the magnetically linear     and VBR                     rived for the induction machine resulting in slightly different
+models are briefly reviewed in this section. The mechanical                          -branches to represent the required configuration of the
+subsystem for all models is represented by the following:                        stator winding. Without loss of generality, the second VBR
+                                                                                 formulation (see [32, Section IV-B]) is utilized in the paper
+                                                                                 where the resulting    -branches have magnetic coupling only.
+                                                                         (1)     The corresponding stator voltage equation is given as
+                                                                         (2)
+                                                                                                                                                       (18)
+Here, operator            ; the rotor position and speed are de-
+noted by and , respectively; the number of magnetic poles                        where
+is ; and the rotor inertia is . The developed electromagnetic
+torque and the mechanical load torque are denoted by         and                                                                                       (19)
+    , respectively. The electromagnetic torque      is expressed
+directly in terms of mutual flux linkages and stator currents as                 and
+
+
+
+                                                                         (3)                                                                           (20)
+
+
+A. The      Model                                                                Here, the entries of inductance matrix (20) are defined as
+
+  The voltage equations of the    induction machine model in
+arbitrary reference frame (ARF) are represented as [15]                                                                                                (21)
+                                                                                                                                                       (22)
+                                                                         (4)                                                                           (23)
+                                                                         (5)
+                                                                         (6)                                                                           (24)
+                                                                         (7)
+                                                                         (8)     The so-called subtransient voltages                 in (18) are defined as
+                                                                                 follows:
+                                                                         (9)
+
+where is the reference frame speed.                                                                                                                    (25)
+   The flux linkage equations of the stator and rotor windings
+                                                                                 where
+are expressed as
+
+
+                                                                        (10)                                                                           (26)
+                                                                        (11)
+                                                                        (12)     and
+                                                                        (13)
+                                                                        (14)
+                                                                                                                                                       (27)
+                                                                        (15)
+
+where                                                                                                                                                  (28)
+
+                                                                                    The rotor state equations are expressed in terms of rotor flux
+                                                                        (16)     linkages and stator currents as
+                                                                        (17)
+
+where       is the unsaturated magnetizing inductance or the                                                                                           (29)
+steady-state saturated magnetizing inductance obtained from
+the equivalent air-gap line (i.e.,           ).                                                                                                        (30)
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:19:58 UTC from IEEE Xplore. Restrictions apply.
+WANG AND JATSKEVICH: INCLUDING MAGNETIC SATURATION                                                                                                      977
+
+
+
+where
+
+
+
+
+                                                                       (31)
+
+                                                                       (32)
+
+
+                                                                                Fig. 1. Piecewise-linear representation of magnetic saturation.
+
+
+        III. REPRESENTATION OF MAGNETIC SATURATION
+                                                                                Calculating the partial derivative of (33) with respect to the mag-
+   For the purpose of this paper, the magnetic saturations of main              netizing current , the so-called dynamic inductance [6] or in-
+flux path and leakage flux path are treated independently. This                 cremental inductance [12] is obtained as
+is a common practice for modeling saturation of induction ma-
+chines in both state variable approach [6], [7] and EMTP ap-
+proach [17], [18], [22]–[24]. For simplicity and without loss of                                                                                       (34)
+generality, only the main flux saturation is discussed here and
+represented in the VBR model. The stator and rotor leakage                      The partial differential equation (34) is then discretized into the
+flux saturation can be easily included using the same general                   difference equation using a numerical integration rule as
+approach described in the paper.
+   For state variable modeling languages, the flux correction
+methods [5], [8], [15], and the generalized flux space vector
+method [6], [7] are often utilized to represent the saturation of                                                                                      (35)
+the main flux. In the first method, the classical model is used
+with the stator and rotor flux linkages as the state variables.                   For the EMTP solution, the nonlinear magnetizing inductance
+Magnetic saturation is taken into account by correcting the main                  in (34) may be well approximated by       within a very small
+flux of the otherwise magnetically linear model. In the second                  range       as shown in Fig. 1. The saturation function (33) is
+method, the generalized flux space vector and the magnetizing                   then represented by the following linear characteristic as
+current space vector are defined as linear combinations of the
+machine flux linkages or currents [6], [7]. To complete the sat-
+urable model, a saturation-dependent equivalent inductance                                                                                             (36)
+or its reciprocal         is derived in terms of the selected state
+variables.                                                                      where       is the residual flux.
+   However, in the nodal analysis (or modified nodal analysis)                     Induction machines usually have round isotropic rotor.
+languages such as EMTP, the magnetic saturation is usually im-                  Therefore, the main flux linkage vector      is assumed to be
+plemented using a piecewise-linear representation of the non-                   aligned with the magnetizing current vector       as shown in
+linear magnetic characteristic [19], [21]–[24]. The advantages                  Fig. 2. The flux linkages         and   are the projections of
+of such approach include the following: 1) the simplicity and                   the main flux linkage     onto the and axes, respectively, as
+structure of the magnetically linear machine model is partly                    shown in Fig. 3. These projections may be expressed in terms
+preserved; 2) the iterative solution of saturation function with                of incremental magnetizing inductances and residual fluxes as
+the machine-network equations can be avoided; 3) the piece-                     follows:
+wise-linear saturated magnetizing inductances, the nodal con-
+ductance matrix (the G matrix), and many other coefficient ma-
+trices in the discretized machine equations may be pre-calcu-
+lated outside of the main time-step loop which may further im-                                                                                         (37)
+prove the simulation efficiency.
+   The saturation may be represented by nonlinear functions                                                                                            (38)
+such as high order polynomials [29] or arctangent functions [36]
+that may be fitted into the measured saturation data. Here, the                 where
+main flux saturation is represented by a nonlinear monotonic
+function in terms of the total magnetizing current       as
+
+                                                                                                                                                       (39)
+                                                                       (33)                                                                            (40)
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:19:58 UTC from IEEE Xplore. Restrictions apply.
+978                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 25, NO. 2, MAY 2010
+
+
+
+                                                                                  where
+
+
+
+                                                                                                                                                        (45)
+
+                                                                                  Substituting (43) and (44) into (10) and (11), respectively, the
+                                                                                  stator flux linkages are expressed as
+
+
+
+                                                                                                                                                        (46)
+                                                                                                                                                        (47)
+Fig. 2. Main magnetizing flux in isotropic round-rotor induction machine.
+                                                                                  where
+
+
+                                                                    

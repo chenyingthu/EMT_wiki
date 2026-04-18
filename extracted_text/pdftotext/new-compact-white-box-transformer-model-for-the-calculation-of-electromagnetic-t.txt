@@ -1,0 +1,207 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022                                                                                         2921
+
+
+
+
+New Compact White-Box Transformer Model for the
+    Calculation of Electromagnetic Transients
+                                                Enrique E. Mombello , Senior Member, IEEE
+
+
+   Abstract—In a recent work, a successful power transformer                      linear lumped-element model of this type was presented in [1].
+white-box model for the calculation of electromagnetic transients                 The transformer windings are subdivided into a certain number
+has been presented. Although this model gives very satisfactory                   of sections that are represented by circuit elements such as
+results, when applied to large transformers it requires a large
+number of auxiliary loops to model the damping. This can be                       their self- and mutual inductances, resistances and capacitances.
+problematic as it not only requires more computational effort, but                These parameters are determined from the geometry of the
+the size of the input data may even preclude its use with ATP-EMTP                windings and core and the material properties.
+and perhaps with other EMTP-based software that have limitations                     The model presented in [1], which is the state-space version
+in this regard. In this work a new reduced model which enables its                of the circuit model presented in [4], allows the damping char-
+use with ATP-EMTP is presented. This model requires a much                        acteristics of the transformer windings to be fully represented
+smaller number of circuit components than the original model,
+which allows the data size and simulation time to be substantially                by using auxiliary loops magnetically coupled with the winding
+reduced without practically affecting the calculation results. This               sections and whose purpose is to represent eddy currents in the
+has been achieved through the reduction of the rank of the sub-                   metallic parts of the active part of the transformer. This strategy
+matrices that characterize the inductive coupling between the main                is very effective since it simulates the physical phenomena that
+winding sections and the auxiliary loops used to model the damping.               take place in the structure of the transformer and the results have
+The new model has been validated by making comparisons of the                     been very satisfactory. However, the mathematical model as it
+frequency responses calculated using the new compact model with
+the ones calculated with the original model developed for the case                has been formulated up to now requires the use of a large number
+study used by the CIGRE JWG A2/C4.52 to test the accuracy of                      of auxiliary loops that increase its size considerably in the case
+various types of transformer models.                                              of modelling large transformers. If the number of transformer
+                                                                                  sections to be modeled is large, a large number of auxiliary loops
+  Index Terms—Transformers, white-box models,                          model
+reduction, power system transients, damping modeling.                             will be required, which represents a drawback since, on the one
+                                                                                  hand, it requires a greater calculation effort and, on the other
+                                                                                  hand, it may even prevent its use with certain programs that
+                           I. INTRODUCTION                                        have limitations in the number of circuit elements that can be
+                                                                                  processed.
+      OWER transformers must be designed to withstand surges
+P     coming from the power system. As detailed in [1], the main
+cause of transformer failures reported in the last two decades are
+                                                                                     To give an idea of the dimension of this problem, the case
+                                                                                  study to be analyzed in this work can be taken as an example.
+                                                                                  The transformer has been discretized in this case using n =
+the so-called electrical disturbances. Faults that have no clear
+                                                                                  213 sections, which does not seem to be a large number. This
+explanation have often been observed. One possible explanation
+                                                                                  would be the dimension of the inductance matrix for a constant
+for these failures is that they are due to resonant phenomena.
+                                                                                  inductance model. If on the other hand one wants to model the
+The analysis of this type of phenomena, for which the damping
+                                                                                  frequency behavior of each inductance by the model presented
+of the model is of crucial importance [2], [3], requires the use
+                                                                                  in [4] using a partial fraction expansion with N = 5 poles for
+of detailed high frequency transformer models to evaluate the
+                                                                                  each inductance using auxiliary inductive loops in the equivalent
+dielectric stresses in different possible scenarios. In recent years,
+                                                                                  circuit, the expanded inductance matrix dimension becomes
+there has been an increasing amount of literature on resonance
+                                                                                  n(N+1) = 1278. Entering such a matrix as input data in any
+behavior of power transformers and strategies to develop suitable
+                                                                                  EMTP-based program is at least highly inconvenient if not
+high frequency transformer models [4]–[14], including book
+                                                                                  infeasible for commercially available software versions. The
+chapters that give a comprehensive treatment of the state of the
+                                                                                  Alternative Transient Program (ATP), for example, does not
+art [15]–[17]. The most suitable model for this type of analysis is
+                                                                                  allow entering an inductance matrix of order greater than 40.
+the white-box model, as it is the most complete and detailed. A
+                                                                                  This could be solved by using a decoupled model of the winding
+                                                                                  section system, represented only by RLC-type branches (L in
+   Manuscript received June 11, 2021; revised August 18, 2021 and September       this case). The drawback would be the large number of inductive
+27, 2021; accepted October 5, 2021. Date of publication October 11, 2021; date    branches generated, which for the mentioned case study would
+of current version July 25, 2022. Paper no. TPWRD-00859-2021.
+   The author is with CONICET, Universidad Nacional de San Juan, San Juan
+                                                                                  be 817281. This number of branches is huge and cannot be
+J5400ARL, Argentina (e-mail: eemombello@unsj.edu.ar).                             entered as input data in ATP since the maximum number of
+   Color versions of one or more figures in this article are available at         circuit components is limited. Consequently, it is necessary to
+https://doi.org/10.1109/TPWRD.2021.3119272.                                       have a reduced size white-box model suitable for use with ATP,
+   Digital Object Identifier 10.1109/TPWRD.2021.3119272
+
+                         0885-8977 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:36:10 UTC from IEEE Xplore. Restrictions apply.
+2922                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022
+
+
+
+such as the one presented in this work. This reduced model will
+also facilitate its application with other EMTP-based software.
+   The mathematical formulation of the inductive part of the
+state-space model presented in [1] as well as the one used
+for the circuit model [4] is based on the representation of the
+frequency behavior of the impedance matrix of the transformer
+through a partial fraction expansion. The basic impedance data
+to obtain the frequency behavior of the windings is obtained
+from quasi-stationary field calculations of the active part of
+the transformer using the Finite Element Method (FEM). The
+mathematical expression of the expansion is then obtained by
+applying Vector Fitting (VF) to these impedance values. The first
+part of the expansion contains a matrix representing the direct
+current behavior of the inductive impedances followed by a sum
+of N terms containing residue matrices Kk (k = 1, …,N) where N
+is the number of poles of the partial fraction expansion (see (6)).             Fig. 1. Equivalent circuit for representing frequency-dependent inductances
+                                                                                and eddy current losses.
+Each of these Kk matrices has a fixed dimension n × n, where n is
+the number of winding sections that have been used to discretize
+the transformer windings to be modeled. These matrices contain                  a significant reduction in the size of the original model without
+valuable information on the frequency behavior of the self- and                 practically affecting the calculation results.
+mutual inductances and the damping of the transformer sections.
+This expansion is compatible with the equivalent inductive-
+                                                                                            II. THE TRANSFORMER WHITE-BOX MODEL
+resistive circuit proposed in [4] to model the damping of the
+winding of n inductive sections using auxiliary loops that are                     The model presented in this work is an optimization of the
+magnetically coupled with the winding sections. These auxiliary                 models presented in [1] and [4]. Fig. 1 shows a simplified circuit
+loops are organized in N groups of n coils each. While the number               representation of the model. This equivalent circuit contains
+of auxiliary loop groups must be equal to the number of poles,                  auxiliary inductances representing the frequency-dependent
+the number of loops in each group is not fixed. In the original                 behavior of the windings and uses only constant RLMCG
+version of the model, its robustness was mainly sought and it was               elements. The equations of the magnetic part of the model are
+not evident at first glance that the number of n auxiliary coils                given below [1]
+per group could be excessive in the case of large transformers.                                                        
+                                                                                                  um          Z m sM        im
+This number of loops per group arises naturally from the fact                                           =                                      (1)
+                                                                                                  ua         sMT Z a        ia
+that each of the n winding sections is going to be represented
+with N poles, which leads us to think that N auxiliary loops are                                         Z m = Rm + sLm                                (2)
+needed to represent each winding section. If N auxiliary loops
+are required for each winding section, the necessary number of                                            Z a = Ra + sLa                               (3)
+auxiliary loops will be n × N.                                                     Zm , Rm and Lm are the impedance, resistance and inductance
+   The matrices Kk do not appear in the model explicitly, but                   matrices of the branches representing the different winding
+rather it uses matrices Mk that are the result of their factor-                 sections, or main branches; Za , Ra and La are the impedance,
+ization. The procedure to calculate a full-rank factorization in                resistance and inductance matrices of the auxiliary branches for
+an adequate way was one of the new results presented in [1]                     modeling the frequency dependence of the main branches; im ,
+and [4]. Since the auxiliary loops are organized in N groups                    ia are the current vectors of the main and auxiliary branches
+of n coils each, the factorization was formulated so that the                   respectively and um , ua are the voltage vectors of the main and
+resulting Mk matrices have the same dimension as the original                   auxiliary branches respectively.
+inductance matrix (see (15)), i.e., n × n, which also indicates                    As it can be seen in Fig. 1, the auxiliary loops are short-
+that these matrices have rank n. It has been noted later that                   circuited so that the voltages of the auxiliary branches are zero
+this can lead to an excessive size of the model in certain cases.               (ua = 0). Substituting this condition in (1) yields:
+Fortunately, there is the possibility of applying a factorization to
+the matrices Kk making use of low-rank matrices by means of the                                                um = Z g im                             (4)
+Singular Value Decomposition (SVD) [18], [19], [20], so that the                where
+important information is preserved and redundant or irrelevant
+information is eliminated. This optimized factorization leads to                                      Zg = Zm − s2 M Za −1 MT                          (5)
+a significant reduction in the number of auxiliary loops used
+                                                                                   Zg is the branch impedance matrix seen from the terminals of
+which entails also a significant reduction in the size of the
+                                                                                the main winding sections. The subscript g applies to magnitudes
+inductance matrix of the system. The matrices of the state-space
+                                                                                of the magnetic model.
+model are also significantly reduced. The model presented in
+                                                                                   The matrix Zg is calculated in practice for a set of frequencies
+this work guarantees that the number of auxiliary loops to be
+                                                                                by means of quasi-stationary magnetic field calculations using
+used is sufficient to preserve the relevant information, achieving
+                                                                                FEM. Then the VF algorithm is used to fit these frequency
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:36:10 UTC from IEEE Xplore. Restrictions apply.
+MOMBELLO: NEW COMPACT WHITE-BOX TRANSFORMER MODEL FOR THE CALCULATION OF ELECTROMAGNETIC TRANSIENTS                                                       2923
+
+
+
+responses using rational approximation functions. Thus, an ex-
+pansion of Zg is obtained, which can be expressed in the form [4]
+                                   N
+                                        Kk
+                   Zg = Zm − s2                               (6)
+                                       s + λk
+                                        k=1
+  Comparison between (5) and (6) gives
+                               N
+                                      Kk
+               M Za −1 MT :=                                             (7)
+                                    s + λk
+                                        k=1
+where : = means “equal by definition”.
+   The organization of the auxiliary circuits by defining a group
+of auxiliary loops for each pole yields
+                                N
+                              2
+                Zg = Zm − s         Mk Z−1ak Mk
+                                                T
+                                                               (8)
+                                    k=1
+where                                                                           Fig. 2.   Structure of the inductance matrix of the complete inductive model.
+                                                  
+                 M = M1 · · · Mk · · · MN                    (8a)
+   It is assumed here that the auxiliary circuits only have mag-                algorithm as proposed in [1] and [4]. Once the Mk matrices are
+netic couplings with the main winding sections, but do not                      determined, they become part of the model together with the rest
+have couplings between each other, therefore both Za and its                    of the matrices [1]. The detailed representation of the magnetic
+sub-matrices Zak are diagonal matrices, hence                                   model matrices in (1) is given below
+                                                                                                   ⎡                          ⎤
+             −1                 1                                                                      L m M1 M2 . . . MN
+            Zak = diag                                                                               ⎢ MT La1 0 . . . 0 ⎥
+                          Rak + sLak                                                                 ⎢ 1T                       ⎥
+                                                                                             L=⎢   ⎢ M2 0 La2 . . . 0 ⎥
+                                                                                                                                ⎥             (16)
+                     1             1             1                                                   ⎣ ... ... ... ... ... ⎦
+                =         diag           =             L−1    (9)
+                  s + λk          Lak       s + λk ak                                                  MTN 0 0 . . . LaN
+where                                                                                                ⎡                            ⎤
+                      Rak                                                                              Rm 0         0 ... 0
+                λk =                k = 1, . . . , N        (10)                                     ⎢ 0 Ra1 0 . . . 0 ⎥
+                      Lak                                                                            ⎢                            ⎥
+        

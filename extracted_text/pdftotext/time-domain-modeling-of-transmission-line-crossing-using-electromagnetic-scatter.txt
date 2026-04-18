@@ -1,0 +1,219 @@
+1020                                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 35, NO. 2, APRIL 2020
+
+
+
+
+      Time-Domain Modeling of Transmission Line
+    Crossing Using Electromagnetic Scattering Theory
+                 Manuja Gunawardana , Student Member, IEEE, and Behzad Kordi , Senior Member, IEEE
+
+
+   Abstract—Classical multiconductor transmission line (MTL)
+theory, which is employed in electromagnetic transient (EMT)
+simulators, is built on the assumptions that the wire structure is
+infinitely long and has a uniform cross-section. Therefore, non-
+uniformities which occur in physical power systems, such as trans-
+mission line crossings, are not represented in classical MTL models.
+A new transmission line model has been developed to calculate
+space varying per unit length (PUL) parameter matrices near a
+conductor crossing using electromagnetic scattering theory. The
+proposed scattered field transmission line (SFTL) model has been
+implemented for lossless, frequency-independent conductors, that
+cross each other at a variable crossing angle. A single dimensional
+finite difference time domain (1D-FDTD) algorithm has been used
+to obtain the time-domain solution at each simulation time-step.
+Obtained results have been compared with those from a three
+dimensional (3D) full-wave electromagnetic solver.
+  Index Terms—Transmission line theory, scattering theory,
+non-uniform lines.
+
+                             I. INTRODUCTION                                           Fig. 1. An illustration of electromagnetic interference from a power line
+                                                                                       crossing another power line.
+      RANSMISSION lines play a vital role in a power system
+T     by transmitting electrical energy over large distances. In
+addition to the power frequency voltage, transient over-voltages
+                                                                                       power transmission lines, MTL models are also used to analyze
+produced by various causes including switching operations,
+                                                                                       a wide variety of structures ranging from transformer winding to
+lightning strikes, and short circuit faults, also travel along
+                                                                                       interconnects of an electronic chip [5]–[7]. However, since the
+transmission lines [1]. These transients can cause damage to
+                                                                                       TEM mode is only valid for a system of infinitely long, uniform
+power system components and result in massive repair and
+                                                                                       conductors [4], classical MTL theory cannot be used to model
+replacement costs. Transients travelling in power lines can also
+                                                                                       non-uniformities in wire structures [8].
+induce electromagnetic interference on other power lines and
+                                                                                          One such non-uniformity that appears commonly in power
+communication lines in close proximity [2], [3]. Therefore, it is
+                                                                                       systems, but is not accurately incorporated in current EMT
+essential to accurately model a transmission network in order to
+                                                                                       simulators, is the the coupling between crossing transmission
+understand the transient behaviour of a power system.
+                                                                                       lines or a power line and a communication line. A schematic
+   The widely used method to include transmission lines in
+                                                                                       of the problem is shown in Fig. 1. With further expansion of
+power system electromagnetic transient (EMT) type simulation
+                                                                                       transmission networks, more such crossings get added to the
+models is to use multiconductor transmission line (MTL) theory
+                                                                                       network. Although, the most accurate method to model these
+based on the solution of Telegrapher’s equations and transverse
+                                                                                       situations is to use full-wave electromagnetic techniques [9],
+electromagnetic (TEM) mode of propagation [4]. Apart from
+                                                                                       [10], most of them are in the frequency domain and are com-
+                                                                                       putationally expensive. As such, they may not be very suitable
+   Manuscript received March 27, 2019; revised June 11, 2019; accepted July            for incorporation in power system simulation tools. Therefore a
+27, 2019. Date of publication August 9, 2019; date of current version March 24,        computationally efficient, enhanced model is required.
+2020. This work was supported in part by the Natural Sciences and Engineering
+Research Council (NSERC) of Canada, in part by Manitoba Graduate Scholar-                 Kami et al. [11] have introduced a frequency-domain model
+ship (MGS), and in part by the University of Manitoba Graduate Fellowship              for crossing conductors based on transmission line equations
+(UMGF). Paper no. TPWRD-00335-2019. (Corresponding author: Behzad                      with external field excitation. Ametani et al. [12] have mod-
+Kordi.)
+   The authors are with the Department of Electrical and Computer Engi-                elled two non-parallel conductors in free space by cascading
+neering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada (e-mail:                 multiple parallel sections with increasing gap distances. The
+gunawams@myumanitoba.ca; behzad.kordi@umanitoba.ca).                                   impedance and admittance of each section have been calculated
+   Color versions of one or more of the figures in this article are available online
+at http://ieeexplore.ieee.org.                                                         using Carson-Pollaczek’s impedance and space admittance [13],
+   Digital Object Identifier 10.1109/TPWRD.2019.2934099                                [14] formulae which assume the conductors are infinitely long.
+                           0885-8977 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:17:55 UTC from IEEE Xplore. Restrictions apply.
+GUNAWARDANA AND KORDI: TIME-DOMAIN MODELING OF TRANSMISSION LINE CROSSING USING EM SCATTERING THEORY                                                             1021
+
+
+
+As discussed in [12], segmenting the inclined wire changes its
+length and affects its traveling time if not addressed properly.
+The connections between sections have also been found to be
+causing unwanted oscillations due to reflections. In [15]–[17],
+a space-varying impedance for lines of finite length has been
+calculated, which has been used in a 3D finite difference time
+domain (FDTD) solver [18] to study non-parallel conductors and
+single inclined conductors above ground. In [19], [20] high fre-
+quency, transmission-line-like equations have been developed
+for finite-length and bent conductors using electromagnetic scat-
+tering theory. However, due to the high frequency assumption,
+                                                                                 Fig. 2. A schematic of cylindrical conductors crossing each other with a
+these equations do not have a closed form and therefore are                      crossing angle of α.
+solved in the frequency domain using iterative methods. Here
+high frequencies are where the transverse dimensions of the line
+are comparable with the minimum significant wavelength of the                    we can write
+exciting electromagnetic field [21].                                                                        i
+                                                                                                       μ
+   In this paper, we have developed an enhanced transmission                            Azi (zi ) =               g (zi , zi  ) Ii (zi  )dzi 
+line model, which is referred to as scattered field transmission                                      4π    0
+line (SFTL) model, for lossless, frequency independent, crossing                                                          j
+                                                                                                                   μ
+transmission lines, with the crossing angle as the variable, using                                    + cos α                      g (zi , zj , α) Ij (zj )dzj   (2b)
+                                                                                                                  4π         0
+the electromagnetic scattering theory. The scattering equations
+are simplified into a closed-form based on the geometrical and                   and,
+frequency characteristics of typical power transmission lines.                                                     i
+                                                                                                       1
+The developed model has been implemented using a 1D-FDTD                                     Φ(zi ) =                        g (zi , zi  ) ρi (zi  )dzi 
+algorithm [4], [8], [22], which is computationally efficient and                                      4πε            0
+                                                                                                                      j
+can be included in a power system simulator. The results ob-                                                     μ
+tained from the developed model have been compared with those                                              +                     g (zi , zj , α) ρj (zj )dzj .   (2c)
+                                                                                                                4π       0
+from a 3D, full-wave, finite element solver.1
+                                                                                    In (2) i and j are the lengths of conductors i and j. Ii and
+       II. ELECTROMAGNETIC SCATTERING MODEL FOR                                  Ij are the currents and ρi and ρj are the electric charge densities
+               TRANSMISSION LINE CROSSING                                        at a field point on the surface of the wires i and j, respectively.
+                                                                                 The function g is the Green’s function related to a scattered field
+  Uniform transmission line models in power system simulators                    generated by a straight, cylindrical, current carrying conductor,
+use classical MTL equations given by                                             which can be obtained using the method of images [23] as
+                                            
+            ∂ V (z, t)       ∂ L 0 V (z, t)                                      elaborated in (A.1a) and (A.1b), in the Appendix. It is a common
+                         =−                        .      (1)                    practice in scattering problems to select source points to be on
+           ∂z I(z, t)        ∂t 0 C I(z, t)
+                                                                                 the wire axis and observation points to be on the wire surface or
+In (1) the PUL inductance (L) and capacitance (C) matrices are                   further in order to avoid singularity in the Green’s function [24].
+constant in space owing to the assumption that the wire structure                   Assuming that the scattered electric field lies on the transverse
+is uniform and infinitely long. Therefore, the classical models                  plain to z direction and that there are no incident fields yields
+are unable to simulate non-uniformities such as crossings of                     [21]
+conductors. The approach proposed in this paper is to model
+the wires using the scattering equations and simplify them to a                                                      aˆz · E s = 0.                               (3)
+transmission-line-like form based on geometry and frequency
+                                                                                 Using (3), (2a) can be rewritten as
+relations.
+                                                                                                                  dΦ
+                                                                                                                      = −jωAzi .                                  (4)
+A. Derivation of Electromagnetic Field Equations for                                                              dzi
+Crossing Conductors                                                              Under the thin-wire approximation, it can be assumed that the
+  For a wire structure as shown in Fig. 2, under the thin wire                   direction of the current is only along the z axis which gives
+approximation [20], the scattered electric field E s at an obser-
+                                                                                                                  Ax = Ay = 0.                                    (5)
+vation point on conductor i can be represented using the vector
+and scalar potentials as explained in [8] (pp. 25–27)                            Since the scattered voltage is defined as [21],
+                            s
+                         E = −jωA − ∇Φ                                  (2a)                                       hi
+                                                                                                      V (zi ) = −      Exs dx                                     (6)
+where, A and Φ are the magnetic vector potential and electric                                                                       0
+scalar potential, respectively. For the geometry shown in Fig. 2                 (5) and (2a) can be used to rewrite (6) as,
+  1 RF module of Comsol Multiphysics.                                                                             V (zi ) = Φ(zi ).                               (7)
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:17:55 UTC from IEEE Xplore. Restrictions apply.
+1022                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 35, NO. 2, APRIL 2020
+
+
+
+Substituting (7) in (4) gives,
+                      dV (zi )
+                                = −jωAzi .                                (8)
+                        dzi
+Using (2b) and (8) a transmission line like expression can be
+obtained as
+                       i                                
+ dV (zi )          μ                                      
+          = −jω            g (zi , zi  ) Ii (zi  )dzi  
+   dzi            4π 0                                      xi =hi
+                              j                                  
+                    μ                                              
+             − jω      cos α       g (zi , zj , α) Ij (zj )dzj             .
+                   4π          0                                     xi =hi
+                                                                          (9)
+Similarly, the electric charge density ρ can be expressed in
+conductor current by applying the continuity equation as [21]
+                                        1 dI(zi )
+                        ρi (zi ) = −              .                     (10)     Fig. 3.   Proposed space discretization of SFTL model for FDTD implementa-
+                                       jω dzi                                    tion.
+
+Equation (10) can be substituted into (2c) and re-arranged to
+obtain a second transmission-line-like expression as
+                    i                                   
+               1                        1 dI(zi  )       
+ V (zi ) = −            g (zi , zi  )              dzi  
+              4πε 0                    jω dzi               xi =hi
+                    j                                     
+               1                          1 dI(zj )         
+            −           g (zi , zj , α)              dzj            . (11)
+              4πε 0                      jω dzj               xi =hi
+
+The integral terms in (9) and (11) do not have analytical solutions
+and therefore need to be simplified before (9) and (11) can be
+implemented using FDTD.
+                                                                                 Fig. 4.   Finite length structure used for the comparison with full-wave theory.
+B. Closed-Form Equations Based on Structural Dimensions
+and Frequency
+                                                                                 and,
+   For the case of power transmission lines where the maximum                                                                                      
+cross-sectional dimension of the structure h is very small com-                                     1               dIi (zi )             dIj (zj )
+                                                                                     V (zj ) = −          ξji (zj )           + ξjj (zj )             .
+pared to the minimum wavelength of interest (i.e., h  λ), the                                   jω4πε                dzi                   dzj
+integral terms in (9) and (11) can be simplified as [21]                                                                                            (14b)
+                            −jβRs                                               After rearranging, (13) and (14) can be expressed in a matrix
+                             e          e−jβRi
+      g(z, z )I(z )dz =                  −            I(z  )dz                 form as
+                                   Rs         Ri                                                                                          
+                                                                                   d V (z, jω)                 L(z) 0          V (z, jω)
+                                 1      1                                                             = −jω                                           (15)
+                         ≃          −       dz  I(z)          (12)                  dz I(z, jω)                    0 C(z) I(z, jω)
+                                Rs     Ri
+                                                                                 where L and C are the matrices consisting the ξ terms. Since
+where, Rs and Ri are respectively, the distances from the current                L and C are frequency independent, (15) can be converted into
+element and the image current element at z  to point z. The                     time-domain conveniently as,
+simplified integral in (12) has a closed-form solution (see the                                                                
+Appendix) that allows us to write (9) and (11) as                                      ∂ V (z, t)        ∂ L(z) 0          V (z, t)
+                              

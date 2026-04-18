@@ -1,0 +1,222 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 6, DECEMBER 2023                                                                                      4213
+
+
+
+
+       Portal Analysis Approach Used for the Efficient
+       Electromagnetic Transient (EMT) Simulation of
+                 Power Electronic Systems
+           Chenxiang Gao , Jin Xu , Keyou Wang , Member, IEEE, Pan Wu , Zirun Li , Jianqi Zhou ,
+                                   and Ryuichi Yokoyama, Life Fellow, IEEE
+
+
+   Abstract—Efficient electromagnetic transient (EMT) simulation                 [3]. The utilization of high-frequency switching techniques and
+is crucial for addressing the challenges associated with the mod-                fast control strategies in PE devices has led to transient processes
+ularity, cascading, and complex topologies of power electronics                  with time scales ranging from microseconds to seconds. Con-
+(PE) systems. This article introduces a novel portal analysis (PA)
+approach that adopts a unique “port-component” view, leveraging                  sequently, accurately capturing the dynamic phenomena neces-
+the characteristics of “ports”. Different from the classic nodal                 sitates detailed electromagnetic transient (EMT) simulation [4],
+analysis (NA) method, the networks and the components are de-                    [5], [6]. However, in high voltage and large capacity scenarios,
+scribed based on the portal voltage equations with lower orders.                 various power converters with modular, cascading, and complex
+Furthermore, a port tearing method is introduced to partition                    topologies come into play. Examples of such converters include
+the circuit, resulting in a block-bordered-diagonal (BBD) matrix
+and a small number of boundary variables in the extended port                    widely used modular multilevel converters (MMCs) [7] and
+equation. The parallel processing of the network solution is im-                 power electronic transformers (PETs) [8], [9]. Performing EMT
+plemented by utilizing the BBD forms and the band features. To                   simulations of these networks using commercial software like
+validate the effectiveness of the proposed PA approach in capturing              PSCAD/EMTDC often requires a simulation time step at the
+dynamics, a down-scale dual active bridge (DAB) prototype is con-                microsecond level and the inversion of a high-order time-varying
+structed. Additionally, a simulated microgrid comprising cascaded
+H-bridge-type-DAB (CHB-DAB), solar photovoltaic (PV), and en-                    node admittance matrix [10], [11]. Unfortunately, this combina-
+ergy storage system (ESS) is used to furtherly verify the accuracy               tion results in unacceptably long computing times.
+and efficiency. The results demonstrate that compared with the                      Efficient EMT simulation technologies and algorithms for the
+NA-based methods, the proposed models exhibit high precision                     PE systems attract widespread attention in recent years. These
+under various transient conditions, with maximum relative errors                 developments can be categorized as follows:
+of less than 2%. Moreover, they achieve a remarkable acceleration
+of one to two orders of magnitude.                                                  1) Circuit equivalent algorithms: These algorithms draw in-
+                                                                                        spiration from generalized Thevenin equivalent methods.
+   Index Terms—Power electronic system, electromagnetic                                 By eliminating internal nodes, such as those in MMCs and
+transient (EMT) simulation, portal analysis, port tearing approach,
+parallel processing.
+                                                                                        PETs [12], [13], [14], accelerated models are obtained.
+                                                                                        While these models exhibit high efficiency, they require
+                          I. INTRODUCTION                                               complicated manual programming efforts and lack appli-
+                                                                                        cability to changing topologies.
+         ITH the remarkable increase of the renewable energy
+W        integration, the proportion and scales of the power elec-
+tronic (PE) equipment are experiencing an upward trend [1], [2],
+                                                                                    2) Partitioning technologies: Circuit partitioning methods
+                                                                                        divide the large-scale network into smaller subsystems
+                                                                                        based on the natural or artificial latencies. Examples
+                                                                                        include the Transmission-line model (TLM) [15], the
+   Manuscript received 24 February 2023; revised 2 July 2023; accepted 11
+August 2023. Date of publication 15 August 2023; date of current version
+                                                                                        latency insertion method (LIM) [16], [17], and the
+22 November 2023. This work was supported in part by the National Key                   controlled-source decoupling models [18], [19]. However,
+R&D Program of China under Grant 2022YFE0105200 and in part by State                    these methods may introduce numerical instability and
+Grid Zhejiang Electric Power Company Science and Technology Program
+under Grant 5211JX230004. Paper no. TPWRD-00228-2023. (Corresponding
+                                                                                        compromise accuracy. Numerical partitioning methods,
+authors: Keyou Wang.)                                                                   such as multi-area Thevenin equivalent (MATE) [20] and
+   Chenxiang Gao, Jin Xu, Keyou Wang, Pan Wu, and Zirun Li are with                     nodal-splitting approach [21], [22], directly transform the
+the Key Laboratory of Control of Power Transmission and Conversion, Min-
+istry of Education, Shanghai Jiao Tong University, Shanghai 200240, China
+                                                                                        admittance matrices into block-bordered-diagonal (BBD)
+(e-mail: gaocx_22@sjtu.edu.cn; xujin20506@sjtu.edu.cn; wangkeyou@sjtu.                  forms through branch tearing or zero-admittance tearing.
+edu.cn; panghuwu@sjtu.edu.cn; lzr9602@sjtu.edu.cn).                                     These methods are generally more flexible and accurate
+   Jianqi Zhou is with the State Grid Jiaxing Power Supply Company, Jiaxing
+314000, China (e-mail: zhoucity@vip.sina.com).
+                                                                                        than the circuit partitioning methods, but their efficiency
+   Ryuichi Yokoyama is with the Waseda University, Tokyo 169-8555, Japan                is influenced by the number of boundary variables.
+(e-mail: yokoyama-ryuichi@waseda.jp).                                               3) Sparsity technologies: The node admittance matrices are
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2023.3305035.
+                                                                                        highly sparse and diagonally dominant. Thus, sparse LU
+   Digital Object Identifier 10.1109/TPWRD.2023.3305035                                 factorization algorithms, such as the Minimum Degree
+                        0885-8977 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 12,2026 at 07:18:04 UTC from IEEE Xplore. Restrictions apply.
+4214                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 6, DECEMBER 2023
+
+
+
+
+                                                                                 Fig. 2.   Topology of two-port circuit.
+
+
+                                                                                 “port” characteristics. Compared with the NA method, the PA
+                                                                                 algorithm effectively reduces the matrix order and improves
+                                                                                 efficiency without sacrificing accuracy. Additionally, the parti-
+                                                                                 tioning and sparse technologies, previously proposed for the NA
+                                                                                 method, have been further modified and seamlessly integrated
+                                                                                 with the PA to further accelerate the simulation. The main
+                                                                                 theoretical contributions of the PA algorithm are outlined below:
+                                                                                    1) A novel “port-component” view is adopted to represent the
+                                                                                        basic circuit units and the networks. It avoids redundant
+                                                                                        calculations stemming from the “port” characteristics and
+                                                                                        eliminates the need for updating information on numerous
+Fig. 1. Schematic of the “port” in the power electronic systems: (a) Ports of
+                                                                                        branches. Furthermore, a flexible “stamp” feature has
+the converters; (b) ports of the circuit components.                                    been introduced to facilitate seamless modifications to the
+                                                                                        circuit, enabling adaptable changes in system topologies.
+                                                                                    2) The portal tearing approach is employed to establish
+       (MD) [23], Minimum Fill-in (MF) [24] and KLU algo-
+                                                                                        the extended portal equation. By introducing only a few
+       rithm [25], are employed to expedite the solution of alge-
+                                                                                        boundary variables, including the currents of serial ports
+       braic equations Although these methods are more complex
+                                                                                        and the voltages of parallel ports, the simulation efficiency
+       than straightforward approaches, they significantly reduce
+                                                                                        is enhanced without compromising accuracy.
+       computing time and storage requirements [26], [27].
+                                                                                    3) Leveraging the BBD structure of portal matrices, parallel
+   However, all these algorithms mentioned above are based on
+                                                                                        processing techniques are implemented to accelerate the
+the nodal analysis (NA) method, which overlooks the “port”
+                                                                                        network solution for the portal equation.
+characteristic in the PE system. An illustrative example of
+                                                                                    This article is organized as follows. Section II provides a
+a PE system incorporating renewable energy generation and
+                                                                                 portal description of the entire network and basic components.
+integration is depicted in Fig. 1(a). The permanent-magnet
+                                                                                 Section III presents the establishment of the extended portal
+synchronous generators (PMSG), the doubly fed induction gen-
+                                                                                 equation using the port tearing methods. Section IV outlines
+erators (DFIG), the solar photovoltaic (PV), and the energy
+                                                                                 the parallel solving process of the portal equation. Section V
+storage system (ESS) are integrated by the DC/DC converters
+                                                                                 demonstrate the accuracy and efficiency of the proposed method
+and the voltage source converters (VSC) [5], [28]. Additionally,
+                                                                                 through hardware experiments and simulations. Finally, conclu-
+power flows are transformed using PET, the line-commutated
+                                                                                 sions are drawn in Section VI.
+converter-based HVDC (LCC-HVDC) [29], the MMC-HVDC,
+and the unified power flow controller (UPFC) [30]. The “port”
+                                                                                      II. DESCRIPTION OF THE NETWORKS AND COMPONENTS
+characteristic, which refers to a pair of terminals enabling a
+                                                                                           BASED ON THE PORTAL ANALYSIS APPROACH
+single flow and across which there is a single voltage exists
+(the three-phase interfaces are considered as a generalized three-                  Firstly, the advantages of the portal equation are demonstrated
+order ports), is prevalent at the interfaces of different converters             by comparing it with the nodal equation. Subsequently, the de-
+and basic circuit components, as indicated by the pink rectangle                 scription of the networks based on the PA methods is introduced.
+in Fig. 1. This characteristic leads to redundant computations and               This approach involves classifying and representing different
+storage of the NA-based EMT solutions, which is extensively                      components using a uniform portal equation. The contributions
+discussed in Section II-A.                                                       of these components to the overall system are represented using
+   Furthermore, the components shown in Fig. 1(b) typically                      component “stamps”.
+consist of multiple branches, with examples like the four-
+wingding transformer model contains 28 branches [31]. In                         A. Comparison of the Portal Equation and Nodal Equation
+the system-level simulation, the external characteristics of the
+                                                                                    Without loss of generality, a two-port circuit shown in Fig. 2
+components hold more significance than the internal branch
+                                                                                 is discussed as an example.
+information. Hence, efficiency can be enhanced by minimizing
+                                                                                    The nodal voltage equation and port equation based on the
+the unnecessary updates of voltages and currents within the
+                                                                                 Y parameters (also known as admittance parameters or short-
+internal branches during each simulation loop.
+                                                                                 circuit parameters) are expressed as [32]
+   In this article, a portal analysis (PA) algorithm is proposed
+to realize efficient EMT simulation for the PE system with                                                   Y N v N = iN + j N ,                      (1)
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 12,2026 at 07:18:04 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: PORTAL ANALYSIS APPROACH USED FOR THE EFFICIENT EMT SIMULATION OF POWER ELECTRONIC SYSTEMS                                                   4215
+
+
+
+
+Fig. 3.   Description of the network in different algorithms.
+
+
+                           Y P v P = iP + j P ,                            (2)
+where the subscripts “N” and “P” denote the nodal and portal
+equations, respectively. The vector j represents the equivalent
+current sources (CS), which includes the history current sources
+from numerical integration, independent CS, and current sources
+of independent voltage sources (VS).
+   The circuit in Fig. 2 consists of 4 nodes and 2 ports, the nodal
+equation is of 4th order, while the portal equation is of 2nd order.
+According to the port characteristics, the relationships between
+vN and vP , iN and iP can be expressed as
+                   ⎧
+                   ⎪
+                   ⎪ M · vN = vP
+                   ⎨ T
+                     M ·   iP = iN                                              Fig. 4. Uniform description of different components: (a) Single-port compo-
+                                                                 (3)
+                   ⎪
+                   ⎪         1 −1 0 0                                             nents; (b) multi-port components.
+                   ⎩M =
+                             0 0 1 −1
+where M is the port-node incidence matrix comprising elements                        The proposed PA algorithm introduces a “port-component”
+of 1, 0, and −1.                                                                  view to replace the traditional “node-branch” concept, as de-
+   Hence, YN and jN can be obtained from YP and jP by com-                        picted in the red box of Fig. 3. And the nodes are weakened to the
+bining (1)–(3),                                                                   elements of the ports. Unlike the NA method, the PA algorithm
+ ⎧                                                                                incorporates single-port components (SP-Cs) and multi-port
+ ⎪
+ ⎪  Y = M T · Y P · M                    ⎤
+ ⎪ N⎡
+ ⎪                                                                                components (MP-Cs). As a result, the “From Port” and “To Port”
+ ⎪
+ ⎪                  1 −1               1 −1
+ ⎪
+       ⎢yP11 · −1 1         yP12 ·
+ ⎨                                                                                of the MP-Cs may contain more than one element, and the “To
+                                      −1 1 ⎥
+    =⎢ ⎣                                 ⎥          . (4)                     Port” of the SP-Cs is designated as -1.
+ ⎪
+ ⎪                  1 −1               1 −1 ⎦
+ ⎪
+ ⎪       y     ·            y     ·
+ ⎪
+ ⎪
+           P21
+                   −1 1       P22
+                                      −1 1
+ ⎪
+ ⎩                                             T                            C. Description of the Components
+    j N = M · j P = jP1 · 1 −1 · jP2 · 1 −1
+               T
+
+                                                                                     Using numerical integration based on the Dommel method
+   In which, yp11 , yp12 , yp21 , and yp22 are the elements of YP ,

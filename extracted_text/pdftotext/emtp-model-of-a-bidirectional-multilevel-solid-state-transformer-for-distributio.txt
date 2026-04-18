@@ -1,0 +1,233 @@
+                                                                                                                                                    1
+
+
+
+
+     EMTP Model of a Bidirectional Multilevel Solid
+     State Transformer for Distribution System Studies
+                              Francisco González, and Jacinto Martin-Arnedo, Salvador Alepuz, and
+                                           Juan A. Martinez, Senior Member, IEEE
+
+                                                                                 verify the validity of the proposed model and confirm the
+Abstract—This paper presents a model for a MV/LV                                 enhanced behavior of the SST in comparison to the
+bidirectional solid state transformer (SST) for distribution system              conventional transformer. Main conclusions and future
+studies. A multilevel converter configuration is used in the MV                  development are discussed in Section IV.
+side for voltage and current harmonic reduction. The model has
+been implemented in the ATP version of the EMTP. Several case
+studies have been carried out in order to evaluate the behavior of                   II. SOLID STATE TRANSFORMER CONFIGURATION AND
+the SST model under different operating conditions and test the                                    SWITCHING STRATEGIES
+impact on the power quality.
+                                                                                 A. System description
+   Index Terms—Bidirectional power electronics converter,                            The bidirectional SST includes three parts: a high-voltage
+distribution system, dual active bridge converter, EMTP,
+                                                                                 stage, an isolation stage, and a low-voltage stage [7]. Fig. 1
+modeling, multilevel topology, power quality, pulse width
+modulation (PWM), solid state transformer.                                       shows the configuration.
+                                                                                     The input voltage at power frequency is first converted
+                              I. INTRODUCTION                                    into dc voltage by the HV-side three-phase pulse width
+                                                                                 modulated (PWM) Neutral Point Clamped (NPC) converter
+T   HE conventional iron-and-copper transformer has been,
+    and still is, the traditional link between end-users and the
+    distribution network. However, the solid state-transformer
+                                                                                 [8] working as rectifier, see Fig. 1a.
+                                                                                     The isolation stage is implemented by means of a dual
+                                                                                 active bridge dc-dc converter, see Fig 1b. This stage consists
+(SST) is foreseen as a potential replacement of the
+                                                                                 of three series-connected subsystems: A dc-to-staircase
+conventional transformer and a fundamental component of the
+                                                                                 voltage waveform, a high-frequency transformer and a square
+future smart grid. Compared to the conventional transformer,
+                                                                                 wave-to-dc converter.
+the SST offers reduced size and weight, and significant
+                                                                                     The HV-side converter shown in Fig. 1b has been
+enhancements in power quality performance [1]-[3].
+                                                                                 implemented with two three-level NPC legs in an H-bridge,
+    A realistic configuration for the MV side of the SST,
+                                                                                 similar to an inverter [4], which converts the HV dc voltage
+assuming Si-based technologies are used, must consider
+                                                                                 into a high-frequency five-level staircase voltage waveform
+multilevel converters [4], some of them based on a modular
+                                                                                 applied to the primary of the high-frequency transformer [9].
+structure [5].
+                                                                                     In the secondary side, the H-bridge has a conventional
+    A MV/LV SST model using a three-level converter for its
+                                                                                 square wave voltage waveform with 50% duty cycle,
+MV side converter is presented here. The goal is to develop a
+                                                                                 converting the transformed high-frequency square voltage
+custom-made SST model for EMTP (ElectroMagnetic
+                                                                                 waveform into a LV dc voltage by the LV-side converter.
+Transient Program) implementation [6]. The approach
+                                                                                     Finally, the LV-side three-phase PWM dc/ac converter
+followed in this work is to obtain an encapsulated model that
+                                                                                 shown in Fig. 1c works as inverter and provides the output
+could be easily used in distribution system studies for which
+                                                                                 power-frequency ac waveform to LV loads.
+an EMTP-like tool was applied. This model will be the base
+                                                                                     When the power flow comes from the secondary side, in
+for a future modular structure; see for instance [5].
+                                                                                 case it operates in generation mode, the transformer behavior
+    The document is organized as follows. The configuration
+                                                                                 is similar to that described above. Basically, input and output
+of the proposed bidirectional SST and the switching strategies
+                                                                                 stages swap functions, so the converters, the respective
+are presented in Section II. The transformer model has been
+                                                                                 switching strategies and control methods must be properly
+implemented in the ATP version of the EMTP. Section III
+                                                                                 designed to work under bidirectional power flow conditions.
+presents the system used in this work for testing the behavior
+of the bidirectional SST, and several simulation results that                    B. Switching strategies and control description
+                                                                                     A simple but very effective strategy, the voltage oriented
+   Francisco González is with the Dept. of Electrical Engineering, Universitat
+Rovira i Virgili, Tarragona, Spain.
+                                                                                 control (VOC), with feedforward of the negative-sequence
+   Jacinto Martin-Arnedo is with Estabanell Energia, Granollers, Spain.          grid voltage [10] has been applied in this work for the NPC
+   Salvador Alepuz is with the Mataró School of Engineering (Tecnocampus         converter shown in Fig. 1a). A sequence separation method is
+Mataró-Maresme), Mataró, Spain.                                                  applied to the grid voltages. The positive-sequence grid
+   Juan A. Martinez is with the Departament d’Enginyeria Elèctrica,
+Universitat Politècnica de Catalunya, Barcelona, Spain.                          voltage is used to obtain the grid angle for synchronization
+
+ 978-1-4673-8040-9/15/$31.00
+        Authorized licensed use limited to:©2015
+                                           Tsinghua IEEE
+                                                    University. Downloaded on April 10,2026 at 03:52:31 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                       2
+
+purposes by means of phase-locked loop (PLL) [11]. The                           voltage at the secondary side. Power flows towards the
+negative-sequence grid voltage is fed-forward to the switching                   distribution network when the voltage at the secondary side
+strategy to be generated at the converter terminals. Therefore,                  leads the voltage at the primary side. The absolute value of
+no negative sequence voltage is seen by the inductive filter                     this reference phase-shift angle ϕ is limited to π/2
+and only positive-sequence currents flow between the grid and                    irrespectively of the sense in which power flows. The analysis
+the converter, even in presence of asymmetrical grid                             of the shape for the five level staircase voltage waveform
+disturbances. This control scheme ensures unity power factor                     generated by the HV-side bridge [9] is beyond the scope of
+condition at the input terminal in an average sense, and no                      this work.
+ripple in the input active power.                                                    The low-voltage side front-end converter includes a fourth
+    DC-link neutral point voltage balance is achieved by                         leg for neutral currents, an inductor for filtering currents and a
+means of a virtual space vector modulation (SVM) switching                       capacitor bank for filtering voltages. According to the
+strategy and a tailored voltage balancing control [12], used in                  configuration shown in Fig. 1c, the LV-side converter may be
+the NPC converter. With this approach, there is no need to                       connected to load and/or generation, and it is responsible for
+include in the model some information about the dc-link                          controlling the voltage (waveform and value) seen by load/
+neutral point.                                                                   generation. In addition, the three-phase four-wire converter
+    The amount and direction of the active power flow                            allows connecting single- and three-phase loads and/or
+between primary and secondary is mainly regulated by the                         generators.
+phase-shift ϕ (angle between transformer input and output                            A PWM switching strategy [13] has been used in the LV-
+voltages generated by the dual active bridges) [9]. This power                   side converter. The main task of LV-side converter controllers
+flow is limited mainly by the transformer inductance. The dc-                    is to achieve positive-sequence capacitor voltages (i.e., to have
+dc converter makes the power flow to go towards the end-user                     balanced voltages at capacitor terminals) with stable frequency
+side when voltage at the primary side of the transformer leads                   and voltage, independently of the load/generation and the
+
+
+
+
+            a) High-voltage side configuration and control                                       b) Isolation stage configuration and control
+
+
+
+
+c) Low-voltage side configuration and control
+Fig. 1. Bidirectional SST implementation and control strategies.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:52:31 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                       3
+
+
+
+
+                                                                                                                 2.61
+                                                                                                                  km
+                                                                                                                 1.15
+                                                                                                                  km
+                                                      1.18
+                                                       km
+
+
+
+
+                                                                                                 1.38
+
+
+
+
+                                                                                                                 3.68
+                                                                                                  km
+
+
+
+
+                                                                                                                  km
+                                                      3.24
+                                                       km
+
+
+
+
+                                                                                                                                              1.57
+                                                                                                                                               km
+                                                                                                 11.23
+                                                                        6.23
+
+
+
+
+                                                                                                  km
+                                                                         km
+                                      1.78
+                                       km
+
+
+
+
+Fig. 2. Diagram of the test system.
+
+balanced/unbalanced currents. Each positive-, negative- and                      does not show loads and all line sections have the same per
+zero-sequence has its respective controller. Negative- and                       unit length parameters. The figure also shows the node to
+zero-sequence capacitor voltage references are set to zero to                    which the SST is connected and the fault location considered
+cancel these components at the filter capacitor terminals at all                 in one case study. The SST model has been implemented in
+time, even in presence of unbalanced load/generation currents.                   ATP and encapsulated as custom-made model; users do only
+The positive sequence voltage controller regulates the filter                    have to connect MV and LV terminals to the distribution
+capacitor voltages.                                                              system model and specify SST parameters, as in Table I.
+                                                                                 B. Case Studies
+     III. TESTING THE PERFORMANCE OF THE SST MODEL
+                                                                                   (i)   Some case studies have been carried out to illustrate
+A. Test System                                                                           the performance of the new SST model. The main
+    Rated values of primary and secondary SST voltages are                               results are analyzed below. Figs. 3 through 6 show
+respectively 25 kV and 400 V. Table I presents the main                                  some plots from the case studied in this work. A load
+parameters used in this study. The high-frequency transformer                            unbalance at the secondary side of the SST is caused by
+is represented as an ideal transformer in series with its short-                         an increase of the impedance in one branch of the load
+circuit impedance (whose values in Table I are referred to its                           during a short interval. Fig. 3 shows that secondary
+secondary side). The test system model developed for this                                current unbalance is barely propagated to primary
+work is a 50 Hz small overhead distribution system. The                                  currents, becoming stable once the load is balanced
+configuration, per unit length parameters and line section                               again. On the other hand, voltages at both sides remain
+lengths are shown in Fig. 2; see [14]. Notice that the figure                            constant.
+                                                                                   (ii) A power flow reversal is caused by the presence of
+                              TABLE I
+                        SST MAIN PARAMETERS.
+                                                                                         both load and generation at the secondary side. Fig. 4
+                                                                                         shows that the load initially exceeds the generation, but
+   Parameter                                              Value                          during a short period this situation is reversed. This
+   Primary side filter resistance (R1)                  0.5 Ω                            case illustrates one of the main advantages of the SST,
+   Primary side filter inductance (L1)                  200 mH                           its capability to quickly reverse the power flow.
+   DC link capacitance (Cdc11, Cdc12)                   5000 μF                    (iii) A voltage sag at the primary side is caused by a short-
+   DC link capacitance (Cdc2)                           2200 μF                          circuit in the MV network (see Fig. 2). The simulation
+   Secondary side filter resistance (R2)                1Ω                               results related to this case (see Fig. 5) prove clearly that
+   Secondary side filter inductance (L2)                6 mH                             the voltage unbalance that occurs in the primary side of
+   Secondary side filter capacitance (C2)               470 μF                           the SST is not propagated to the secondary side, where
+   Neutral resistance (Rn)                              0.5 Ω                            the phase voltages and currents remain constant and
+   Neutral inductance (Ln)                              1 mH                             balanced.
+   Rectifier/Inverter switching frequency               10 kHz
+                                                                                   (iv) The secondary overcurrent is firstly caused by an
+   Transformer operating frequency                      1 kHz
+                                                                                         increase of the current in all three phases during a short
+   Transformer short-circuit resistance                 0.1 Ω
+                                                                                         interval, followed by a sudden decrease of the current
+   Transformer leakage inductance                       1 mH
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:52:31 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                        4
+
+       below its initial steady-state value, see Fig. 6. The
+       secondary overcurrents do not provoke any secondary
+       voltage drop, and the disturbance is seen from the
+       primary side as a load increase. This can be easily
+       understood from analyzing se

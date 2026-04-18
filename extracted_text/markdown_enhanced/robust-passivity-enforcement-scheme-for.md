@@ -1,0 +1,29 @@
+# Robust Passivity Enforcement Scheme for Time-Domain Simulation of Multi-Conductor Transmission Lines and Cables
+
+H. M. Jeewantha De Silva, Member, IEEE, Ani M. Gole, Member, IEEE, John E. Nordstrom, and L. M. Wedepohl
+
+**Abstract**—This paper proposes an algorithm to enforce passivity on the time-domain simulation model for a multi-conductor cable or transmission line. The model is first reformulated in a form which reduces the severity of passivity violations. The frequency sweep method is then used to identify any remaining passivity violating regions of the model’s frequency response. These small passivity violations are then removed using a linear constrained least squares algorithm to perturb the diagonal elements of propagation matrix. The passivity enforcement algorithm is applied to the Universal Line Model (ULM), a widely used robust phase domain formulation implemented in many commercial electromagnetic transients simulation programs. Two examples of multi-conductor underground cable systems, one for ac and the other for HVDC transmission are presented to demonstrate the proposed approach.
+
+**Index Terms**—Constrained least squares, electromagnetic transients, passivity, phase domain model, rational function approximation.
+
+*Manuscript received July 17, 2008; revised April 10, 2009. First published December 11, 2009; current version published March 24, 2010. This work was supported in part by the Industrial Research Chair (IRC) program of the Natural Sciences and Engineering Research Council (NSERC) of Canada and by the Manitoba HVDC Research Centre (MHVDCRC). Paper No. TPWRD-00561-2008.*
+
+H. M. J. De Silva, A. M. Gole, and L. M. Wedepohl (Fellow EIC) are with the Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T5V6, Canada (e-mail: jeewanth@ee.umanitoba.ca; gole@ee.umanitoba.ca; wedepohl@shaw.ca).
+
+J. Nordstrom is with the Manitoba HVDC Research Centre Inc., Winnipeg, MB R3J3W1, Canada (e-mail: johnn@hvdc.ca).
+
+Digital Object Identifier 10.1109/TPWRD.2009.2035916
+
+## I. INTRODUCTION
+
+TIME-DOMAIN simulation models for overhead transmission lines and underground cables, which take into account the frequency dependent nature of line parameters are required in a wide range of studies such as analysis of ac switching transients and HVDC transmission system transients. In general, the frequency domain expressions for the line or cable parameters are complicated and are not in a form readily simulated in the time domain. In order to establish a time-domain implementation, the line’s characteristic admittance matrix elements are first approximated (curve-fitted) by rational transfer functions. The same is done for the elements of the propagation matrix, except that the fitting now includes a transportation lag in addition to the transfer function. Once expressed in rational function form, the model becomes implementable in the time domain [1], [12] and can be used to investigate transients on transmission lines with arbitrary (including nonlinear) terminations.
+
+The physical transmission line by necessity must always be passive, i.e., regardless of its terminations, the line itself cannot generate active power at any frequency. However one of the major problems with the above modeling method is that the resultant curve-fitted model of the (passive) transmission line cannot be guaranteed to always be passive. Depending on its terminating connections, a non-passive transmission line model may lead to incorrect, unstable simulations.
+
+To compensate for this error, it is necessary to modify the parameters of the curve-fitted transmission line model with a passivity correction algorithm. In general, passivity correction algorithms based on nonlinear optimization can be computationally expensive [8]. Alternatively, algorithms can be formulated as a linear constrained least square problem [5]–[7], [9]. However the above methods can only be successfully applied, if the passivity violations are very small.
+
+The development of a passivity enforcement method for delay based multi-conductor transmission line models is an ongoing research topic and recent advancements can be found in [10], [11], and [13]. The above methods assume that the passivity violations are small and are applicable to modal-domain transmission line formulations (i.e., those that use constant transformation matrices for converting between the phase and modal domains). These models are often adequate for vertically symmetrical overhead transmission lines, where the assumption of constancy of the transformation matrix is fairly accurate but they are not so effective for asymmetrical overhead transmission line configurations and arbitrary cable arrangements, where these matrices show a high amount of frequency dependence.
+
+This paper proposes a new algorithm to ensure passivity in a nonpassive transmission line model. Unlike earlier approaches [11], [13] the proposed method is not restricted to constant transformation matrix-based models, but can be applied to any phase domain model. This method first reformulates the form of the transmission line’s admittance and propagation functions to be fitted using the modified functional form method [4]. With this approach, passivity violations are shown to be less likely, and when present they are small. Next, any such remaining passivity violations are removed using least-square fitting in order to introduce corrective perturbations to the elements of the characteristic admittance and propagation matrices.
+
+The above passivity enforcement algorithm is used to develop passive time-domain models of cables and transmission lines in the PSCAD/EMTDC software. The approach is demonstrated

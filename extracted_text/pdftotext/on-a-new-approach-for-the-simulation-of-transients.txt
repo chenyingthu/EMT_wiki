@@ -1,0 +1,186 @@
+                                                Electric Power Systems Research 77 (2007) 1514–1520
+
+
+
+
+                           On a new approach for the simulation of transients
+                                         in power systems夽
+                                          J. Mahseredjian a,∗ , S. Dennetière b , L. Dubé c ,
+                                             B. Khodabakhchian d , L. Gérin-Lajoie e
+                                                           a École Polytechnique de Montréal, Canada
+                                                            b Électricité de France, Clamart, France
+                                                              c DEI Technology, Montréal, Canada
+                                                d TransÉnergie Technologies, Hydro-Québec, Montréal, Canada
+                                                              e Hydro-Québec, Montréal, Canada
+
+                                                                Available online 10 October 2006
+
+
+Abstract
+  This paper presents a new simulation tool named EMTP-RV. EMTP-RV is a completely new program with a new graphical user interface and
+a new computational engine. The simulation uses a new matrix formulation for computing load-flow, steady state and time-domain solutions.
+Theoretical advantages are emphasized and demonstrated through practical examples. An open-architecture graphical user interface (GUI) is
+developed to maximize flexibility and allow creating and maintaining complex designs.
+© 2006 Elsevier B.V. All rights reserved.
+
+Keywords: Simulation tools; Numerical methods; EMTP
+
+
+
+1. Introduction                                                                    ity to incorporate ungrounded voltage sources. This has been
+                                                                                   corrected in [3] by using modified-nodal analysis, which incor-
+   Since its initial concept presented in 1969 [1] the basic EMTP                  porates an extra row for the voltage source equation and an extra
+type simulation approach remained unchanged. It is used in var-                    column for the voltage source current which becomes listed in
+ious commercial (DCG-EMTP Version 3, EMTP-V3 [2]) and                              the vector of unknowns.
+non-commercial packages. The main system of symmetric equa-                            The assumption of admittance model existence for every
+tions used in [1] is given by                                                      component is a significant limitation. An ideal transformer
+                                                                                   model, for example, does not have admittance matrix formula-
+Yv = i                                                                     (1)     tion. This can be partially avoided by adding losses, but can then
+                                                                                   cause ill-conditioning problems. Other limitations are found in
+This is referred to in the literature as the standard nodal analy-                 the representation of ideal switches. An ideal switch has pure
+sis formulation. It assumes that all network components can be                     zero resistance when closed and becomes infinity when opened.
+given an admittance matrix model. Matrix Y is the admittance                       This is a fundamental principle in such a model to avoid super-
+matrix, v the vector of unknown voltages and i is the vector                       fluous natural frequencies and matrix conditioning problems.
+of current sources combined with history current sources for                       That is why system (1) is a variable rank system where closing
+the trapezoidal integration method. Since v also includes known                    a switch eliminates a matrix column and the corresponding row.
+voltage sources, Eq. (1) is actually implemented taking only                       The disadvantage of such manipulations is the computational
+a submatrix Yn of Y for finding n unknown voltages. One of                         effort, especially when the number of switches and switching
+the important disadvantages of this formulation is the inabil-                     frequency become high.
+                                                                                       The EMTP-V3 code was written using the legacy Fortran-77
+ 夽 Presented at the International Conference on Power Systems Transients
+                                                                                   language and related methods. Such codes have significant limi-
+                                                                                   tations in automatic memory management, in code organization
+(IPST’05) in Montreal, Canada on 19–23 June 2005. Paper No. IPST05-139.
+  ∗ Corresponding author.                                                          and interfacing with external programs. Modern computing lan-
+    E-mail address: jean.mahseredjian@polymtl.ca (J. Mahseredjian).                guages and methods provide much more powerful and efficient
+
+0378-7796/$ – see front matter © 2006 Elsevier B.V. All rights reserved.
+doi:10.1016/j.epsr.2006.08.027
+                                      J. Mahseredjian et al. / Electric Power Systems Research 77 (2007) 1514–1520                          1515
+
+                                                                              This is an augmented formulation which is keeping only the
+                                                                              Yn part from Eq. (1). Although submatrices are identified due to
+                                                                              their typical contents and for symbolic explanations given below,
+                                                                              Eq. (2) can be viewed as a generic Ax = b system. Matrix A is not
+                                                                              necessarily symmetric which provides another advantage over
+                                                                              Eq. (1) for some device models.
+                                                                                  For a voltage source connected between two nodes k and m,
+                                                                              the source equation is given by: vk − vm = vb km . It is directly
+                                                                              inserted into the main system by placing a 1 and a −1 in columns
+                                                                              k and m, respectively, of Vr . The source voltage is vb km . The
+                  Fig. 1. EMTP-RV main architecture.
+                                                                              source current condition is accounted by transposition in the
+                                                                              submatrix Vc . If the source is disconnected, then only its diag-
+environments for software development while providing crucial                 onal cell in Vd is set to 1 and vb km = 0. A similar approach
+advantages in code evolution and maintenance.                                 is used for entering other models. An ideal transformer with
+    Another major aspect in the simulation of transients is the               secondary nodes k–m, primary nodes i–j and a transformation
+graphical user interface (GUI). It constitutes the first and the              ratio g is modeled with the equation: vk − vm − gvi + gvj = 0.
+main facet directly apparent to the user. It also represents a tech-          This equation is again directly accommodated in the submatrix
+nological barrier into the design and simulation of more complex              Dr with the equivalent row transposition appearing in Dc . Ideal
+cases. Although several GUI programming approaches are pre-                   switches are included straightforwardly using submatrices S.
+sented in the literature [4,5], the innovation path in this field             When a switch (between nodes k–m) is closed: vk − vm = 0.
+is towards increased level of automation, open-architecture and               When the same switch is open, its current becomes 0 by setting
+advanced visualization.                                                       the corresponding diagonal cell in Sd to 1. The solved system is
+    This paper presents a new simulation tool named EMTP-                     now of fixed rank and quickly reformulated at each switch sta-
+RV with a new graphical user interface EMTPWorks. It super-                   tus change. Adding a resistance and a fixed voltage drop (diode
+sedes EMTP-V3 and presents several improvements in computa-                   effect) to the switch, is achieved using vk − vm − Rikm = vdc .
+tional engine, graphical user interface and software development              This equation goes into Sr , Sd and sb .
+aspects. Although there are commercial aspects in any industrial                  A system similar to (2) was initially proposed in [6]. The
+grade software development, this presentation is kept at the tech-            system above provides further generalization and introduces new
+nical contribution level.                                                     non-zero submatrix possibilities.
+    EMTP-RV has been written from scratch without any reverse-
+engineering or code recuperation from old EMTP-V3. It consti-                 2.1. Nonlinear functions
+tutes a historical moment in the complex evolution of EMTP
+type software.                                                                   It can be proven that if nonlinear device equations are lin-
+                                                                              earized at each solution time-point, matrix A becomes the Jaco-
+2. New formulation
+                                                                              bian matrix of the Newton solution. This approach provides a
+    The development of EMTP-RV is based on the conception                     true-nonlinear solution to all nonlinear devices. It eliminates the
+of a computational core for the solution of its system of equa-               less precise pseudo-nonlinear devices and all topological restric-
+tions. The main architecture is shown in Fig. 1. The core has a               tions (see [7]) encountered in the compensation method used
+solution step controller (organizer) which is responsible for all             in [2]. Machine models are also classified as nonlinear func-
+data input and communication tasks. It schedules various task                 tions and solved through the same iterative solver for obtaining
+calls to the simulated network devices (models and options).                  a simultaneous solution with all nonlinear devices and in any
+These are request signals received by device codes organized                  topological configuration. Further details on this approach will
+into encapsulated modules with device objects holding data and                become available in a separate paper.
+methods. Devices may respond back by participating into var-
+ious requests. Participation is optional since devices may have               2.2. Control system equations
+different equations and needs.
+    The key aspect in this architecture is the ability to easily                 Improvements in the solution of control system equations are
+accommodate device equations into the main system of network                  presented in a separate paper [8]. Numerical delays that existed
+equations. A new system of modified-augmented-nodal analysis                  in [2] between control blocks due to nonlinear feedback loops,
+is proposed to eliminate various classical nodal or modified-                 are eliminated using a Jacobian matrix formulation.
+nodal analysis limitations:
+⎡                          ⎤⎡ ⎤ ⎡ ⎤                                           2.3. Steady-state solution
+   Yn Vc        Dc     Sc       vn        in
+⎢V                         ⎥ ⎢     ⎥   ⎢     ⎥                                    The main purpose of a steady-state solution in EMTP is to
+⎢ r Vd DVD SVS ⎥ ⎢ iV ⎥ ⎢ vb ⎥
+⎢                          ⎥⎢ ⎥ = ⎢ ⎥                        (2)              initialize the network state variables for minimizing the natu-
+⎣ Dr DDV Dd SDS ⎦ ⎣ iD ⎦ ⎣ db ⎦
+                                                                              ral response at startup in time-domain. The formulation method
+  Sr    SSV     SSD     Sd       iS           sb                              is the same as in Eq. (2), only now all variables become com-
+1516                                J. Mahseredjian et al. / Electric Power Systems Research 77 (2007) 1514–1520
+
+plex and devices must provide steady-state equivalents for each
+frequency in the generic harmonic steady-state solution.
+
+2.4. Load-ﬂow solution
+
+   The steady-state solution can provide acceptable operating
+conditions (power-flow) when initialized from a load-flow solu-
+                                                                                                    Fig. 2. Automatic redrawing.
+tion. The augmented matrix concept is expanded to include
+load-flow constraint equations and the solved nonlinear func-
+tion becomes:                                                               4. New graphical user interface
+             
+   A     AI      x                                                             The innovations in this field are in the development of an
+                       =F=0                                 (3)
+  LLA Ld        xLF                                                        open architecture and generic circuit oriented interface with
+                                                                            extended single-line-diagram handling capability. Signals (not
+The matrix A is the linear network matrix (left-hand side matrix
+                                                                            nodes), devices and connectivity pins are the constitutive ele-
+in Eq. (2)), AI is a connectivity matrix for accounting for load-
+                                                                            ments. EMTPWorks is designed for manipulating extremely
+flow devices, LLA and Ld provide load-flow device constraint
+                                                                            large networks.
+equations. The unknowns are the standard network variables
+                                   T                                            Almost all aspects of the GUI named EMTPWorks are
+x = [ vn iV iD iS ] and the load-flow device cur-                      scriptable and modifiable by the user. The scripting language
+rents I and internal voltages E:                                            is JavaScript with EMTPWorks extensions. Connectivity with
+xLF = [ IL IPQ IPV ISL EPQ EPV ESL ]
+                                                                     T      other languages and ActiveX usage is readily available. Data
+                                                                            input is based on web pages. Each device has a local web address.
+Above subscripts are: L for loads, PQ for PQ control sources,               This approach also allows data exchange and device addressing
+PV for PV control and SL for slack bus.                                     through the Internet. It also provides quasi-unlimited capabili-
+   Eq. (3) presents a new approach for multiphase load-flow                 ties in the development of data forms through dynamic HTML
+solution. It is different from earlier presentations [9] by means of        programming. The fact that device data and symbol methods
+a concatenation of load-flow equations with the readily available           are not hard-coded provides users with maximum flexibility for
+network equations. It can inherently accommodate all EMTP                   creating customized devices.
+device models and provide the most precise initialization. Non-                 EMTPWorks is an object-oriented program written in C/C++
+classical load-flow devices, such as frequency-dependent trans-             and based on Microsoft Foundation Class library. Each network
+mission lines, become automatically included. There is no need              device is an object with attributes. Attributes are available to the
+to perform separate and cumbersome Jacobian derivations [9]                 user and used for entering data and methods. Device attributes
+for network models, but only for load-flow device constraint                are the customization entry point. Other objects, such as device
+equations.                                                                  pins and signals are given attribute specification menus. This is
+                                                                            an open-architecture approach.
+3. Implementation                                                               Scripting is extended to drawing using EMTPWorks methods
+                                                                            (extensions) added to JavaScript. Drawings can be automati-
+    The EMTP-RV design is object-oriented. Such a design has                cally updated through scripts for reflecting data changes. This
+several benefits in program development and maintenance. Mod-               is demonstrated in Fig. 2 for the ideal transformer unit when
+ern programming concepts, such as data hiding and encapsu-                  updating the number of secondary windings and winding data.
+lation, eliminate data corruption problems caused by device                     In addition to scriptable drawing, a Symbol Editor is available
+models and allow establishing a clear programming approach                  for complete customization. The example of Fig. 3 [11] makes
+by gathering all model data and methods through a single object             the substation drawing appear as the actual substation using the
+and module. Model code legibility is dramatically increased                 Symbol Editor and subcircuits. An assembly of devices can be
+in comparison with old Fortran-77 coding used in EMTP-V3                    placed into a subcircuit with programmable masking. Subcir-
+while improving computational speed. Although the core of the               cuits can contain subcircuits. This is a hierarchical approach
+code is programmed using Fortran-95 (new object oriented lan-               with unlimited number of levels. In EMTPWorks subcircuits
+guage, see [10]) for achieving best computational speed, mixed              are created automatically from user selections on the screen and
+language programming is allowed specially for establishing con-             pin interfaces.
+nections with external functions and the graphical user interface.              Hierarchical designs allow visualizing study cases at a higher
+Another major benefit over EMTP-V3 is case-tailored and auto-               level. In the wind park study of Fig. 4, the details of the wind
+matic memory allocation. It is a key issue in the software’s ability        generator control circuits, the wind generator model, the wind
+to solve extremely large cases and/or usage of very small time-             effect representation, the static compensator (Statcom) and the
+steps with transmission line models.                                        load are hidden in subcircuits to provide a high level visualiza-
+    Modern programming methods and tools can significantly                  tion to the actual simulation. These are multilevel subcircuits
+alleviate the software development process and contribute to the            with masks for allowing 

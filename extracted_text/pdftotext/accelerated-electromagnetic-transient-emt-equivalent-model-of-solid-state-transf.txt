@@ -1,0 +1,196 @@
+IEEE JOURNAL OF EMERGING AND SELECTED TOPICS IN POWER ELECTRONICS, VOL. 10, NO. 4, AUGUST 2022                                                          3721
+
+
+
+
+         Accelerated Electromagnetic Transient (EMT)
+         Equivalent Model of Solid-State Transformer
+    Chenxiang Gao , Student Member, IEEE, Moke Feng , Graduate Student Member, IEEE, Jiangping Ding,
+           Hang Zhang , Jianzhong Xu , Senior Member, IEEE, Chengyong Zhao, Senior Member, IEEE,
+                                  Zixin Li , Senior Member, IEEE, and Gen Li , Member, IEEE
+
+
+
+
+   Abstract— Accurate and efficient electromagnetic transient
+(EMT) simulation of various types of solid-state transform-
+ers (SSTs) is extremely time-consuming due to the complex
+module structure, flexible topology connections, large number of
+electrical nodes, and simulation time steps limited in the range
+of microseconds. Therefore, it is urgent to develop the EMT
+equivalent modeling and fast simulation of SSTs for system-level
+studies. Taking the modular multilevel converter (MMC)-based
+SST as an example, this article proposes an accelerated EMT
+model, which focuses on the equivalence of the dual-active-bridge
+(DAB)-based high-frequency link (HFL) in the SST. Compared
+with the existing algorithms, two critical factors of the proposed
+method that contribute the most to the efficiency improvement
+are the preprocessing of the nodal admittance equation and
+the conversion of the short-circuit admittance parameters. The
+proposed model is verified in PSCAD/EMTDC by comparing
+it with the detailed EMT model. The results show that the
+accelerated model is one-to-two orders of magnitude faster than
+the detailed model without sacrificing accuracy. The experiment
+validation also confirms the validity of the proposed model.
+  Index Terms— Accelerated equivalent model (EM), electro-                        Fig. 1.   MMC-based SST. (a) Converter structure. (b) DAB PM structure.
+magnetic transient (EMT) simulation, parameter conversion,
+preprocessing, solid-state transformer (SST).                                     power module (PM) structures of SSTs. Specifically, cascaded
+                                                                                  H-bridge (CHB) and modular multilevel converter (MMC)
+                          I. I NTRODUCTION                                        can be deployed in the medium-voltage (MV) side as ac/dc
+                                                                                  converters, while dual active bridge (DAB), multiple active
+S   OLID-STATE transformer (SST), which is able to realize
+    the transformation of multiple voltage levels and integra-
+tion of various energy sources, can play an important role
+                                                                                  bridge (MAB), and single active bridge (SAB) can be used
+                                                                                  in the low-voltage (LV) side as dc/dc converters [6]–[11].
+in achieving a low-carbon smart grid [1]–[5]. To meet the                         Moreover, multiple connection configurations of the PMs
+needs of different application scenarios, there are various                       have been proposed to address the dilemma of increasing the
+                                                                                  converter capacity and reducing the device rating [12], [13],
+  Manuscript received 19 March 2021; revised 27 May 2021; accepted 27 June        such as the input-series-output-parallel (ISOP), input-series-
+2021. Date of publication 2 July 2021; date of current version 2 August 2022.
+This article was presented at the 4th International Conference on HVDC,           output-series (ISOS), input-parallel-output-parallel (IPOP),
+Xi’an, China, 2020. Recommended for publication by Associate Editor Levy          and input-parallel-output-series (IPOS).
+F. Costa. (Corresponding authors: Jianzhong Xu; Zixin Li.)                           Combining the advantages of MMCs and the ISOP con-
+  Chenxiang Gao, Moke Feng, Jianzhong Xu, and Chengyong Zhao are
+with the State Key Laboratory of Alternate Electrical Power System with           figuration, a typical MMC-based SST is presented in [14],
+Renewable Energy Sources, North China Electric Power University (NCEPU),          as shown in Fig. 1(a). Its high-frequency link (HFL) is based
+Beijing 102206, China (e-mail: xujianzhong@ncepu.edu.cn).                         on the DAB PM shown in Fig. 1(b). The large number
+  Jiangping Ding is with Guangzhou Power Supply Bureau Company Ltd.,
+Guangzhou, Guangdong 510620, China.                                               of submodules (SMs) leads to a high order of admittance
+  Hang Zhang and Zixin Li are with the Key Laboratory of Power Electronics        matrix in the electromagnetic transient (EMT) simulation
+and Electric Drive, Institute of Electrical Engineering, Chinese Academy of       using fully detailed models (DMs), which requires the sim-
+Sciences, Beijing 100190, China, and also with the University of Chinese
+Academy of Sciences, Beijing 10049, China (e-mail: lzx@mail.iee.ac.cn).           ulation time steps to be in the range of microseconds due
+  Gen Li is with the School of Engineering, Cardiff University, Cardiff CF24      to the power electronic switches and high-frequency isolation
+3AA, U.K.                                                                         transformers [15], [16]. Hence, both MMC and HFL face
+  Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/JESTPE.2021.3094278.                                      very urgent needs for EMT equivalent modeling and fast
+  Digital Object Identifier 10.1109/JESTPE.2021.3094278                           simulation.
+                       2168-6777 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                     See https://www.ieee.org/publications/rights/index.html for more information.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:44:26 UTC from IEEE Xplore. Restrictions apply.
+3722                                          IEEE JOURNAL OF EMERGING AND SELECTED TOPICS IN POWER ELECTRONICS, VOL. 10, NO. 4, AUGUST 2022
+
+
+
+                                                                                                                     TABLE I
+                                                                                   T YPE OF PARAMETERS FOR D IFFERENT C ONNECTION C ONFIGURATIONS
+
+
+
+
+Fig. 2.   Two-port PM topology.
+
+   Recently, the research on the accelerated equivalent mod-
+els (EMs) of MMCs has been relatively mature [17]–[20].
+Specifically, the EMs in [19] and [20] create a single-port or
+multiport Norton equivalent circuit by recursively eliminating                     as listed in the first column of Table I. Among them, the short-
+internal nodes. Their modeling methods show good accelera-                         circuit admittance parameters are closely related to the node
+tion and accuracy without losing the information of internal                       admittance matrix of the system and can be converted to the
+nodes. However, these methods are designed for MMCs and,                           other three types.
+therefore, cannot be directly applied to the HFL because the                          Taking the hybrid parameters as an example, the PM port
+topologies and connection configurations of PMs are more                           equation can be written as follows:
+                                                                                                                                         
+complicated in HFLs.                                                                            v IN        h h            i IN         v
+                                                                                                       = 11 12 ·                   + IN_OC
+   To bridge the research gap of developing acceleration mod-                                  i OUT        h 21 h 22     v OUT        i OUT_SC
+els for HFLs, efforts have been made in the open literature. The                                                                    
+                                                                                                                  i IN         v IN_OC
+accelerated equivalent mathematical model for the SAB PM                                                H·             +                         (1)
+                                                                                                                 v OUT        i OUT_SC
+has been established in [21], which is based on the accurate
+mode division and complex high-order integration algorithm.                        where h 11 , h 12 , h 21 , and h 22 are the hybrid parameters, H is the
+Zhao et al. [22] and Ouyang et al. [23] proposed average mod-                      hybrid parameter matrix, and v IN and i OUT are the independent
+els for SSTs, which can highly improve the simulation speed.                       sources.
+However, these models sacrifice the capability of describing                           It is known that all PMs connected in the ISOP configuration
+the transient behaviors inside PMs.                                                share the common input-port current i IN and output-port volt-
+   In the newly reported high-speed equivalent modeling algo-                      age v OUT . Hence, the port equation of the HFL can be obtained
+rithm of CHB-based SST [24], the HFL is represented by a                           as (2), by directly summing the corresponding parameters in
+two single-port circuit through eliminating the internal nodes                     the hybrid parameter port equations of all PMs
+and discretizing the isolation transformer into two-port Norton                               N              N                     N                 
+                                                                                      v IN
+                                                                                         tot
+                                                                                                      i=1 v IN
+                                                                                                              i                 i IN             i=1 v IN_OC
+                                                                                                                                                        i
+circuits. The EM shows good performances in the aspects                                       = N i              =       Hi ·             + N i
+of efficiency, accuracy, and scalability. However, it needs to
+                                                                                       tot
+                                                                                     i OUT           i=1 i OUT
+                                                                                                                                v OUT            i=1 i OUT_SC
+                                                                                                                     i=1
+conduct the approximation of circuit equations, which may                                                                                 
+                                                                                                 h tot_11 h tot_12        i IN         v IN_OC
+                                                                                                                                         tot
+result in additional errors. Moreover, there are still several                                                       ·          + tot                      (2)
+matrix inversion operations in the calculation process of each                                   h tot_21 h tot_22       v OUT        i OUT_SC
+time step, and therefore, the equivalent algorithm still has room
+                                                                                   where N is the number of PMs and v IN              tot           tot
+                                                                                                                                            and i OUT    are the
+for further speedup.
+                                                                                   input-port voltage and output-port current of the converter,
+   This article proposes an accelerated EMT equivalent mod-
+                                                                                   respectively.
+eling method focusing on the HFL. The developed models are
+                                                                                      However, it is not easy to directly obtain the hybrid para-
+compared against DMs and experimental results. Very high
+                                                                                   meters of SST PMs. Fortunately, the hybrid parameters can be
+accuracy along with a speedup of 2–3 orders of magnitude
+                                                                                   converted by (3) using the short-circuit admittance parameters,
+can be achieved.
+                                                                                   which are defined in (4)
+                                                                                                         ⎡ 1                y12        ⎤
+       II. P ROPOSED ACCELERATED M ODELING M ETHOD                                                                    −                             
+                                                                                               v IN      ⎢ y11              y          ⎥        i IN
+   Different from the single-port SMs such as half-bridge                                              = ⎣y y y − y y ⎦·      11
+                                                                                              i OUT         21    11 22          12 21         v OUT
+(HB) and full-bridge (FB) in MMCs, there are at least two                                                  y11            y11
+ports in the SST PMs. Meanwhile, the connection configu-                                                  ⎡                      ⎤
+                                                                                                                  1
+rations of SST PMs are varied, which includes four typical                                                             j S1
+                                                                                                          ⎢                      ⎥
+connections, i.e., ISOP, ISOS, IPOS, IPOP, and their nested                                              +⎣ y21 y11              ⎦                           (3)
+                                                                                                                  j S1 − j S2
+forms [12], [13].                                                                                            y11
+   The topology of the two-port PM is shown in Fig. 2, where                                                                   
+                                                                                                i IN      y11 y12           v IN          j
+the subscripts “IN” and “OUT” represent the input and output                                           =              ·             + S1
+                                                                                              i OUT       y21 y22         v OUT           j S2
+ports, respectively.                                                                                                  
+                                                                                                               v IN            j
+   Due to the isolated transformer, the two-port characteristics,                                      Y·               + S1                                (4)
+                                                                                                              v OUT            j S2
+i.e., i 1 + i 2 = 0 and i 3 + i 4 = 0, are satisfied in mathe-
+matics [20]. For such isolated networks, four types of port                        where y11 and y22 represent the input admittance of the
+parameters are defined in [24] to describe the relationship                        two ports, y12 and y21 represent transfer admittances, and
+between the currents and voltages of the input and output ports,                   Y is the short-circuit admittance matrix, and j S1 and j S2
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:44:26 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: ACCELERATED EMT EM OF SST                                                                                                                    3723
+
+
+
+                                                                                      Step 4: Form the equivalent circuit of HFL using the short-
+                                                                                   circuit admittance parameters. Then, the EMT solver is used
+                                                                                   to solve the full network combined with the external circuit.
+                                                                                      A portion of this method has been presented in [26],
+                                                                                   which is significantly improved in this article. In addition,
+                                                                                   the equivalent modeling method of the blocking mode can
+Fig. 3. Two-port equivalent circuit using short-circuit admittance parameters.
+                                                                                   be effectively solved by calling the subfunction of the diode
+                                                                                   model from the EMT solver [24], which is out of the scope
+                                                                                   of this article.
+
+                                                                                               III. O BTAIN THE P ORT E QUATION OF
+                                                                                                       THE P OWER M ODULE
+                                                                                      In this section, a method is proposed to obtain the port
+                                                                                   equation of SST PMs using short-circuit admittance parame-
+                                                                                   ters. Different from the equivalent modeling method in [24],
+                                                                                   the preprocessing of the nodal admittance equation is used to
+                                                                                   minimize the algebraic operations. Here, the study focuses on
+                                                                                   the DAB PM, but this method is also applicable to other types
+                                                                                   of SST PMs, as discussed in Section IV.
+
+                                                                                   A. Relationship Between the Nodal Admittance Equation
+                                                            

@@ -1,0 +1,206 @@
+                                                                   Electric Power Systems Research 203 (2022) 107672
+
+
+                                                                         Contents lists available at ScienceDirect
+
+
+                                                             Electric Power Systems Research
+                                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Expanding the measuring range via S-parameters in a EHV voltage
+transformer modelling for reliable GIS VFT simulations
+Gustavo H.C. Oliveira *, a, Lucas P.R.K. Ihlenfeld a, Lucas F.M. Rodrigues a, Angélica C.O. Rocha b,
+Diogo J.D.E. Santo c
+a
+    Department of Electrical Engineering, Federal University of Paraná (UFPR), Brazil
+b
+    ATG, Brazil
+c
+    Jirau Energia, Brazil
+
+
+
+
+A R T I C L E I N F O                                          A B S T R A C T
+
+Keywords:                                                      The customary approach to modelling voltage transformers (VT) at gas insulate substations (GIS) subject to Very
+Extra high voltage equipment                                   Fast Transients Overvoltages (VFTOs) consists of using a capacitive element. However, this simplistic approach is
+Frequency-domain measurement                                   unable to reproduce characteristic resonances and predict how transients propagate to the VT’s secondary
+Gas insulated substation
+                                                               winding. Multiport black-box passive rational models built upon frequency-domain measurements are instru­
+Rational models
+                                                               mental to overcome these challenges. The adoption of S-Parameters is an alternative to black-box approaches
+S-parameters
+Very fast transient overvoltages                               based on Y-Parameters so as to consistently expand the measurement frequency range which is required to
+Voltage transformer                                            accurately capture the dynamics involved in VFTO phenomena up to 50 MHz at GIS facilities. We validate our
+                                                               results using an strategy that entails measuring, modeling and simulation upon a multiport extra-high voltage
+                                                               (EHV) VT. The proposed approach using S-Parameters leads to increased accuracy compared with the customary
+                                                               approaches using Y-Parameters or capacitive elements.
+                                                                  We build two models estimated upon distinct frequency ranges to highlight the importance of extending the
+                                                               measurements into the MHz range so that time-domain simulations better reproduce VFTO characteristics. The
+                                                               black-box VT model thus obtained is incorporated into an actual 500 kV GIS model for transient simulations
+                                                               enabling the analysis of transient propagation between primary and secondary windings.
+
+
+
+
+1. Introduction                                                                                 signals with very short rise times (1 to 50 MHz) and tail with lower (30
+                                                                                                to 300 kHz) frequency content [1,9]. Classification for transients in
+    Gas-insulated substations (GIS) have grown in number around the                             electric power systems [9] prescribes the VFTO frequency range from
+globe in the last decades owing to several advantages over the tradi­                           100 kHz to 50 MHz, and associate it with transients originating from
+tional air-insulated counter-part, these advantages include smaller space                       disconnector switching and faults at GIS. As they propagate through the
+requirements, higher safety levels, simpler maintenance and commis­                             GIS, these transients can damage high-voltage equipment [10,11]. As far
+sioning, et cetera. The growing number of both planned and operational                          as Instrument Transformers are concerned, according to the standard
+GIS brings such issues to the forefront of research on power systems.                           [12], immunity tests are recommended whenever frequency compo­
+Conversely, GIS are more susceptible to Very Fast Transient Over­                               nents beyond 1 MHz exist so that their impact on control circuits be
+voltages (VFTO), as a consequence of its intrinsic physical properties                          properly assessed.
+[1–3].                                                                                              Reliable VFTO simulations at GIS require therefore models endowed
+    As demonstrated in the literature, GIS are prone to VFTO during                             with wide-band capabilities. In transient simulations, Voltage Trans­
+disconnector or circuit-breaker operations, see [1,2,4–8]. Essentially,                         formers are traditionally described as a simple one-port capacitive
+several restrikes appear as a circuit-breaker operates in switching action                      element [1,9] which is a simplistic description incapable of reproducing
+to either establish or interrupt the current flow. These high frequency                         all resonances that fully characterize the actual equipment.
+strikes constitute the root cause of VFTO at GIS.                                                   On the other hand, multiport black-box rational models extracted
+    In essence, VFTO are electromagnetic transients characterized by                            over a wide frequency band [13–18], come as an appropriate alternative
+
+
+    * Corresponding author.
+      E-mail address: gustavo.oliveira@ufpr.br (G.H.C. Oliveira).
+
+https://doi.org/10.1016/j.epsr.2021.107672
+Received 3 September 2021; Accepted 5 November 2021
+Available online 17 November 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+G.H.C. Oliveira et al.                                                                                               Electric Power Systems Research 203 (2022) 107672
+
+
+to improve the modelling process in so long as the system’s dynamic              better reproduce VFTO characteristics.
+behaviour as well as its interaction with surrounding substation be                  The second gap is addressed by incorporating the estimated multi­
+accurately modelled for transient overvoltages simulations.                      port EHV VT model into an actual 500 kV GIS model for transient sim­
+     Besides, it is also known that the transformer ratio is frequency-          ulations so that the transient propagation from primary to secondary is
+dependent. Therefore, this dynamics can be understood and correctly              accounted for and both can be simulated and analyzed. This transient
+simulated provided a reliable wide-band model be available. Still                propagation from one winding to another cannot be accounted for using
+comparing with a single one-port capacitive model for VTs, the ability to        the traditional capacitive model.
+describe transient overvoltages in both transformer windings requires a              The paper is structured into 6 Sections. This introductory Section 2
+multiport approach, thus permitting the analysis of the impact over­             sets out the notation whereas Section 3 introduces the proposed meth­
+voltages have on circuit protection/control and its associated digital           odology that is applied to an actual EHV-VT equipment in Section 3.1. In
+apparatus. Some accounts in the literature suggest that control circuits         Section 4, a black-box model is derived and validated. In Section 5, two
+experience voltage surges as a consequence of steep-front waves being            black-box models are obtained with distinct measurement ranges for
+transferred through either Voltage or Current transformers within the            comparison. The subsequent Section 6 furnishes an application whereby
+GIS [19–21].                                                                     a wide-band EHV-VT model is used to illustrate the advantages of the
+     Multiport black-box rational models assume a model structure whose          proposed methodology in an actual GIS facility. Conclusions and dis­
+parameters can be estimated upon measured input/output data. In                  cussions are in Section 7.
+power system applications, the admittance or Y-Parameters [22] are
+traditionally used as measured data. However, they are highly depen­             2. Network parameters and models
+dent on short-circuits at the accessible terminals and ensuring exact
+short-circuit conditions is not a trivial for frequencies in the MHz range           A linear electrical network possessing n-terminals may be charac­
+as a direct consequence of the inherent stray capacitive couplings. Be­          terized by sets of network parameters that relate linearly currents and
+sides, measuring admittance parameters requires the use of current               voltages at the accessible terminals of the network. According to Carlin
+transducers that inevitably introduce an insertion impedance which               [30], there is no single network characterization that is always best, but
+needs to be further compensated, see for instance [23]. Such intrinsic           rather that a variety of choices exist to fit specific types of problems.
+aspects of admittance parameters may ultimately lead to undue inac­                  While Y-Parameters establish a linear relation between input volt­
+curacies at very high frequencies.                                               ages to output currents in the frequency domain, S-Parameters are more
+     The literature contains many papers describing the application of Y-        general and determine a linear relation between power waves which are
+Parameter measurements and black-box modelling approach to power                 themselves linear combinations of the voltages and currents at the ter­
+systems HV equipments, mostly on power transformers [13–15,24,25].               minals [31,32]. Equations that relates incident and reflected waves to
+However, a common feature of these approaches is that they hardly                form the S-Parameters can be found in [30]. The latter characterization
+achieve a few MHz. For instance, reference [25] sets its celing frequency        exists for every physical passive network whereas the former does not
+at 500 kHz whereas references [14,15] achieve as far as 1 MHz. Other             necessarily so, see [30,33].
+instances include a 2 MHz maximum reported in [24] as well as 10 MHz                 In Eq. (1), we denote both admittance and scattering parameters by Y
+in [26].                                                                         (s) and S(s), respectively. In the frequency domain, the linear relations
+     Scattering Parameters (S-Parameters) can serve as a natural alter­          established by these network parameters are as follows:
+native to Y-Parameters to consistently improve the measurement fre­
+                                                                                 I(s)= Y(s)V(s)                                                                 (1a)
+quency range as they do not require current transducers or short-circuit
+terminations thus ensuring measurements with increased accuracy over
+                                                                                 b(s) = S(s) a(s)                                                               (1b)
+the MHz range.
+     Theoretical and experimental aspects of S-Parameters are mature                 where the first voltage V(s) and I(s) current vectors whereas the
+issues in engineering particularly when it comes to RF applications,             second relates incident a(s) and reflected power waves b(s) vectors. In
+however they are incipient when considering the power systems setting,           the high-frequency realm of transient simulations linear n-terminal de­
+specially in black-box modelling for multi-port high-voltage power-              vices and networks can be characterized as Y(s) and S(s)-Parameters
+systems equipment. In the scarce literature we can mention the                   [14] [27], each admitting a particular state-space realization of the form
+following: a 2-port, 150-m four-conductor industrial cable on [27], a            {A, B, C, D} whose parameter matrices have conformable dimensions.
+2-port 110 kV inductive VT on [28]. Moreover, the extraction of wave                 Such state-space realizations can be readily obtained using iterative
+propagation properties of a 5-m, 12 kV crosslinked polyethylene cable            rational approximation methods such as [34,35] which extract the pa­
+by using S-Parameters is also studied on [29].                                   rameters while minimizing the unconstrained error relative to the
+     By browsing this reduced literature we identified a few gaps, namely:       measured data. For instance, to approximate a measured scattering
+(a) addressing the challenges pertaining to measurement, modelling and           matrix, the following optimization problem should be solved:
+validation of multiport Extra-High Voltage (EHV) power system equip­
+                                                                                            ∑
+                                                                                            K
+ments in the VFT range (up to 50 MHz) using S-Parameters; (b) applying           minimize                     ̃ k ) ‖2 ,
+                                                                                                  ‖ S(jwk ) − S(jw                                                (2)
+                                                                                                                     2
+black-box model to analyze how VFTOs originated at the primary circuit            A,B,C,D
+                                                                                            k=1
+may propagate to GIS secondary circuits.
+     This paper presents addresses the first gap by the application of           whereby S(jwk ) and ̃S(jwk ) respectively denote the model and measured
+black-box modelling to a 3-port EHV GIS Voltage Transformer. This                scattering matrices at the kth frequency point. These identification al­
+raises several issues such as: (i) the adoption of S-Parameters instead of       gorithms estimate the parameter matrices using rational functions in an
+Y-Parameters as a technique to consistently expand the measurements              iterative manner, based on a weighted least-squares objective, in addi­
+into the MHz range; (ii) to revisit a merge technique with simplified            tion to some desired weighting scheme.
+white/grey-box models to improve the data at low frequencies where                   As already stressed, these algorithms yield causal, stable and mini­
+the VT’s high-voltage terminal has an intrinsic high input impedance;            mal realizations by construction. The realization must also be passive
+(iii) to compare and validate the estimated passive model using actual           and reciprocal, which can be achieved using [16,36–38].
+time-domain measurements of the VT’s trans characteristic response
+from high to low terminals; (iv) to compare two models estimed upon              3. S-parameters measurements of a EHV GIS voltage transformer
+distinct frequency ranges to highlight the importance of extending the
+measurements into the MHz range so that time-domain simulations                     Choosing between different network characterizations is often
+
+                                                                             2
+G.H.C. Oliveira et al.                                                                                              Electric Power Systems Research 203 (2022) 107672
+
+
+dictated by both theoretical and pragmatic considerations. In theory,
+certain characterizations is defined for certain circuit terminations being
+employed. In practice, specifically in a measurement context, some
+desired quantities can only be accurately measured up to a certain fre­
+quency limit, depending also on both the available instrumentation and
+physical phenomena.
+    The weakness of Y-Parameters resides in the measurement setup as a
+consequence of short-circuits terminations at high-frequencies and the
+requirement of using current transducers that inevitably introduce an
+insertion impedance which needs to be further compensated. This
+amounts to higher accuracy measurements over high-frequency ranges.
+The way S-Parameters are defined avoids such measurement problems
+as they use power waves and impedances at the terminations which can
+be measured very accurately up to very high-frequency ranges.
+    S-Parameters can be measured using a Vector Network Analyser
+(VNA) with appropriate cable compensations in accordance with
+[39–41]. The basic procedure for measuring S-Parameters of a 3-port
+Device Under Test (DUT) using a 2-port VNA is illustrated in the
+Fig. 1. The VNA’s P1 and P2 ports are connected to the corresponding
+DUT’s ports via shield cables (50 Ω characteristic impedance) whereas
+the DUT’s remaining port is terminated with 50 Ω impedance (reference
+impedance Z0 ). The setup displayed in Fig. 1 correspond to the mea­
+surement of the following elements of the S matrix: S11 , S22 , S12 and S21 ,
+where Sij stands for element (i, j) of S. The remaining elements can be
+obtained in a similar manner by considering the other port combina­                                Fig. 2. Basic measurement set-up in the field.
+tions. In Fig. 2, the setup is visualized with emphasis on the terminal
+connections.
+    One approach to simulate electromagnetic transients (EMT) using S-
+parameters is to enter them directly into a simulator, e.g. PSCAD.
+However, some relevant EMT programs such as ATP or EMTP do not
+accept them directly as input, i.e., they do not allow the direct inte­
+gration of n-terminal linear network blocks characterized by S-Param­
+eters. Alternatively, it is customary for these computer packages to go
+thought Y-Parameters to build black-box models on EMT simulations.
+    Since S-Parameters can be readily converted into Y-Parameters, this
+paper follows the path of combining the increased accuracy achieved
+with S-Parameters measurements and the ubiquity of Y-Parameters. The
+measured frequency-domain data undergoes a sequence of three distinct
+steps: (i) data-acquisition directly in terms of S-Parameters, (ii) con­
+version from S to Y-Parameters and (iii) model derivation upon the
+converted Y-Parameters for the subsequent EMT simulation. In a
+nutshell, we adopt S-Parameters to get improved Y-Parameters. These
+steps are described in the sequence in the context of an actual EHV VT.
+                                                                                                  Fig. 3. GIS and the three single-phase EHV-VT.
+
+
+3.1. Case study - Part 1: measurement data for a GIS EHV VT                         for subsequent VFT simulations.
+                                                                                                                √̅̅̅
+                                                                                        The high-voltage (525 3 kV) terminal is labelled Terminal 1
+    The single-phase EHV VT part of a GIS is illustrated in Fig. 3. The             whereas the low voltage (67.4 V) terminals are labelled Termina

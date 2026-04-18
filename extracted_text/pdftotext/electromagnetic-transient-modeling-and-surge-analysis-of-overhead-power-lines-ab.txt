@@ -1,0 +1,208 @@
+                                                                Electric Power Systems Research 250 (2026) 112142
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Electromagnetic transient modeling and surge analysis of overhead power
+lines above two-layer earthI
+A.G. Martins-Britto a , T.A. Papadopoulos b                                  ,∗, A.I. Chrysochos c
+a
+  KU Leuven, division Electa & the Etch Competence Hub of EnergyVille, Genk, Belgium
+b
+  School of Electrical & Computer Engineering, Aristotle University of Thessaloniki, 54124, Thessaloniki, Greece
+c
+  R&D Department, Hellenic Cables, Maroussi, 15125 Athens, Greece
+
+
+
+ARTICLE                INFO                                 ABSTRACT
+
+Keywords:                                                   Accurate modeling of earth conduction effects on line parameters is important for electromagnetic transient
+Electromagnetic transients                                  (EMT) studies and surge analysis of overhead lines (OHLs). Several earth formulations have been proposed,
+Equivalent homogeneous earth                                with their majority presuming earth homogeneous. Rigorous formulations for the earth impedance and
+LineCableLab
+                                                            admittance terms of two-layered earth structures involve complex integrals which may cause a series of
+Overhead lines
+                                                            numerical issues. Therefore, equivalent homogeneous earth models (EHEMs) can be considered as satisfactory
+Propagation characteristics
+Two-layered earth
+                                                            substitutes. In this article, the impact of different earth modeling approaches is investigated on the EMT
+                                                            modeling of a double-circuit OHL. These include a rigorous two-layered earth formulation, different EHEMs and
+                                                            simplified homogeneous representations. The analysis is performed using the LineCableLab toolbox applying
+                                                            different soil cases and simulation models.
+
+
+
+1. Introduction                                                                                   standards and technical literature, ensuring that system designs adhere
+                                                                                                  to best practices for safety and operational reliability.
+    Accurate modeling of transmission line parameters remains funda-                                  Furthermore, the impact of multilayered soil characteristics on
+mental for a variety of electromagnetic transient (EMT) studies and                               grounding effectiveness, including the influence of surface and deep
+surge analysis, especially in systems involving overhead lines (OHLs)                             layers, is a well-documented aspect of power grounding and low-
+with ground-return paths. The earth parameters (impedance and admit-                              frequency electromagnetic interference (EMI) studies. The relevance of
+tance) directly affect the self- and mutual- components, which in turn                            horizontally stratified soil modeling has been extensively addressed in
+influence wave propagation characteristics and power system transient                             the literature, particularly in the seminal works of Dawalibi et al. [11,
+behaviors. Classical approaches, derived from the original Carson’s                               13–16]. These studies have demonstrated the necessity of accurate
+formulation and subsequently enhanced by Wise and others, assume                                  soil characterization and numerical modeling techniques for reliable
+the earth to be homogeneous and semi-infinite [1–4]. However, this                                grounding system performance, EMI-related hazard assessments, and
+assumption fails to account for the complexities of real soils, which                             precise estimation of line parameters.
+are highly heterogeneous, often represented by horizontally-stratified                                Rigorous formulations for earth impedance and/or admittance in
+layers with distinct electrical properties [5–7]. These variations are                            multilayered earth models, such as those developed in [9,10,17,18],
+reported to significantly impact electromagnetic (EM) propagation and                             offer numerical accuracy but may be impractical from the power en-
+transient responses [8–11].                                                                       gineering perspective and prone to numerical instabilities due to the
+    In transmission line design engineering, it is well established that                          complexity of the integral solutions involved. To overcome these issues,
+soil resistivity measurement campaigns must be conducted to evalu-                                researchers have been dedicating considerable efforts to approximate
+ate the safety levels of grounding systems, including conductors used                             multilayered soil structures with equivalent homogeneous earth model
+in tower footings [5,12]. The necessity and practical procedures to                               (EHEM) representations. Tsiamitros introduced the concept by propos-
+perform such measurements are widely recognized across engineering                                ing an equivalent resistivity approach for two-layer soils [19], which
+
+
+
+ I Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025. This work is supported
+by the Etch Competence Hub of EnergyVille, financed by the Flemish Government, Belgium.
+  ∗ Corresponding author.
+     E-mail addresses: amauri.martinsbritto@kuleuven.be (A.G. Martins-Britto), thpapad@ece.auth.gr (T.A. Papadopoulos), achrysochos@hellenic-cables.com
+(A.I. Chrysochos).
+
+https://doi.org/10.1016/j.epsr.2025.112142
+Received 24 December 2024; Received in revised form 20 February 2025; Accepted 14 August 2025
+Available online 27 August 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A.G. Martins-Britto et al.                                                                                                     Electric Power Systems Research 250 (2026) 112142
+
+
+was later generalized by Martins-Britto for 𝑁-layer structures [20].
+Subsequently, Xue refined these models further by incorporating dis-
+placement current effects, improving their accuracy across a wider
+frequency range and extending computations to line admittances [21].
+    Despite these advancements and the advantages of the EHEM ap-
+proach, the practical implications of soil modeling for EMT analysis
+remain insufficiently explored. In particular, there is a need to evalu-
+ate how different formulations – rigorous analytical methods, EHEMs,
+and simplified homogeneous representations – affect the propagation
+characteristics and transient behavior of OHLs.
+    To address this gap, this paper investigates soil modeling
+approaches for EMT analysis, comparing the rigorous analytical so-
+lution for two-layer earth [17,18], the equivalent resistivity approx-
+imation of [10,20], the equivalent propagation constant [21], and
+simplified homogeneous representations using upper and lower layer
+resistivities. These methods are applied to a double-circuit OHL across
+different two-layer soil cases, analyzing propagation characteristics
+and surge responses via numerical frequency-domain (FD) [22] and                                   Fig. 1. Overhead conductors above a two-layer earth.
+phase-based time-domain (TD) methods [23].
+    To support these evaluations, a complete MATLAB open-source tool-
+box is introduced — LineCableLab [24], for calculating line parameters,              𝜀0 , 𝜇0 , 𝜎0 are the permittivity, permeability and conductivity of air,
+modal propagation characteristics, FD and TD simulations, while also                 respectively. The upper layer of finite-thickness, 𝑑, is described by
+being compatible with the ATPDraw, i.e., the graphical preprocessor                  𝜀1 = 𝜀𝑟1 𝜀0 , 𝜇1 = 𝜇𝑟1 𝜇0 , 𝜎1 = 1∕𝜌1 , and the bottom semi-infinite earth
+of the Alternative Transients Program (ATP) [25], and the Electromag-                layer by the corresponding EM properties, 𝜀2 = 𝜀𝑟2 𝜀0 , 𝜇2 = 𝜇𝑟2 𝜇0 and
+netic Transients Program (EMTP) [26]. This work combines theoretical                 𝜎2 = 1∕𝜌2 . The self-parameters of conductor 𝑖 are derived by replacing
+evaluations with real-world case studies and practical software, offering            ℎ𝑗 with ℎ𝑖 and 𝑦𝑖𝑗 with the conductor outer radius.
+methodological insights and tools for advancing EMT analysis of OHLs                      Assuming that the two earth layers have identical EM properties,
+over layered soils.                                                                  i.e., 𝜀𝑟1 = 𝜀𝑟2 , 𝜇𝑟1 = 𝜇𝑟2 , 𝜌1 = 𝜌2 , expressions (2) and (4) reduce to Wise’s
+                                                                                     formulas [3,4], respectively, for the homogeneous earth case described
+2. Earth impedance and admittance parameters                                         by:
+                                                                                              𝑗𝜔𝜇0 ∞ 𝜇 𝑒−(ℎ𝑖 +ℎ𝑗 )𝑎0
+                                                                                                      1
+2.1. Two-layer and homogeneous earth formulations                                    𝑀𝑖𝑗 =                           cos(𝑦𝑖𝑗 𝜆)𝑑𝜆,                                          (9)
+                                                                                               𝜋 ∫0 𝑎1 𝜇0 + 𝑎0 𝜇1
+                                                                                                                        𝜇
+    Considering two conductors located at heights ℎ𝑖 and ℎ𝑗 , respec-                                  ∞      (𝑎0 + 𝑎1 𝜇1 )𝑒−(ℎ𝑖 +ℎ𝑗 )𝑎0
+                                                                                               1                         0
+tively, as shown in Fig. 1, the influence of the two-layer stratified earth          𝑄𝑖𝑗 =                                                  cos(𝑦𝑖𝑗 𝜆)𝑑𝜆.                 (10)
+                                                                                              𝜋𝜀0 ∫0                 𝜇      𝛾2       𝜇
+on their per-unit-length parameters is represented by means of the self-                                    (𝑎0 + 𝑎1 𝜇0 )(𝑎0 12 + 𝑎1 𝜇1 )
+                                                                                                                      1     𝛾 0       0
+and mutual impedance and admittance terms of the earth. These can
+be assembled in matrices 𝐙𝐠 and 𝐘𝐠 = 𝑗𝜔𝐏−1   𝐠 , where 𝐏𝐠 is the potential           2.2. Equivalent homogeneous earth approximation
+coefficient matrix. The off-diagonal terms of 𝐙𝐠 , i.e., the mutual earth
+impedance (𝑍𝑔𝑖𝑗 ), and of 𝐏𝐠 , i.e., mutual potential coefficient (𝑃𝑔𝑖𝑗 ), are
+                                                                                         Evidently, the calculation of the semi-infinite integrals in (1) - (4)
+given in the general form of (1)–(4) [17,18]:
+                                                                                     involves rather complex terms. An alternative approach to account
+      𝑗𝜔𝜇0 𝐷𝑖𝑗         𝑗𝜔𝜇0                                                          for the influence of the two-layer earth on OHLs is by means of the
+𝑍𝑔𝑖𝑗 =      ln       +      𝑀𝑖𝑗 ,                                         (1)
+        2𝜋      𝑑𝑖𝑗      𝜋                                                           EHEM approach. In this context, the calculation of the two-layer earth
+   with                                                                              impedance and potential coefficient of (1) and (3) reduces to that of
+         ∞          (     )   (     )                                                (9) and (10), respectively, assuming that 𝜇1 = 𝜇0 and replacing 𝛾1 with
+𝑀𝑖𝑗 =      𝐹 (𝜆)𝑒−𝜆 ℎ𝑖 +ℎ𝑗 cos 𝑦𝑖𝑗 𝜆 𝑑𝜆,                                  (2)        the equivalent propagation constant, 𝛾𝑒𝑞 , defined as [21]:
+      ∫0
+
+         1     𝐷𝑖𝑗    1                                                                       𝛾 + 𝛾𝑒2 − (𝛾𝑒1 − 𝛾𝑒2 )𝑒−2𝑑𝛾𝑒1
+𝑃𝑔𝑖𝑗 =      ln     +    𝑄 ,                                               (3)        𝛾𝑒𝑞 = 𝛾𝑒1 𝑒1                             ,                                           (11)
+       2𝜋𝜀0    𝑑𝑖𝑗   𝜋𝜀0 𝑖𝑗                                                                   𝛾𝑒1 + 𝛾𝑒2 + (𝛾𝑒1 − 𝛾𝑒2 )𝑒−2𝑑𝛾𝑒1
+    with                                                                             where
+           ∞                   (
+                             −𝜆 ℎ𝑖 +ℎ𝑗
+                                       )      (     )                                     √
+𝑄𝑖𝑗 =     [𝐹 (𝜆) + 𝐺(𝜆)]𝑒                  cos 𝑦𝑖𝑗 𝜆 𝑑𝜆.                  (4)        𝛾𝑒1 = 𝛾12 − 𝛾02 ,                                                                    (12)
+      ∫0
+    Functions 𝐹 (𝜆) and 𝐺(𝜆) are defined as:                                                 √
+       𝐴                                                                             𝛾𝑒2 =    𝛾22 − 𝛾02 .                                                                 (13)
+𝐹 (𝜆) = 1                                                                 (5)
+       𝐴2                                                                               Furthermore, if the influence of earth permittivity is disregarded,
+        𝐴 𝐴 𝐴 − 𝐴6                                                                   the equivalent earth resistivity, 𝜎𝑒𝑞 , is derived [19,20]:
+𝐺(𝜆) = 𝜆 3 4 5     .                                                      (6)
+           𝐴7 𝐴8                                                                              √     √       √      √        √
+                                                                                               𝜎1 + 𝜎2 − ( 𝜎1 − 𝜎2 )𝑒−2𝑑 𝜋𝑓 𝜇1 𝜎1
+Terms 𝐴1 − 𝐴8 are given in detail in the Appendix with:                              𝜎𝑒𝑞 = 𝜎1 √     √       √      √        √       .                   (14)
+    √                                                                                          𝜎1 + 𝜎2 + ( 𝜎1 − 𝜎2 )𝑒−2𝑑 𝜋𝑓 𝜇1 𝜎1
+𝑎𝑚 = 𝜆2 + 𝛾𝑚2 − 𝛾02                                                       (7)            For completeness, it is noted that the equivalent conductivity may
+                                                                                     be also extracted directly from (11), along with the equivalent permit-
+       √
+𝛾𝑚 =    𝑗𝜔𝜇𝑚 (𝜎𝑚 + 𝑗𝜔𝜀𝑚 )                                                 (8)        tivity:
+                                                                                             { 2 }
+where indices 𝑚, 𝑛 take values of 0, 1, 2 related to air, the upper and                         𝛾𝑒𝑞
+                                                                                     𝜎𝑒𝑞 = ℑ           ,                                                (15)
+the bottom earth layer, respectively, and 𝜔 = 2𝜋𝑓 . The EM properties                           𝜔𝜇0
+
+                                                                                 2
+A.G. Martins-Britto et al.                                                                                     Electric Power Systems Research 250 (2026) 112142
+
+
+
+
+                                  Fig. 2. Case data tab.                                                  Fig. 4. SimTool tab.
+
+
+
+                                                                                3.1. Frequency-domain modeling
+
+
+                                                                                    The FD approach is considered as reference for evaluation and
+                                                                                testing of transmission line simulation models. In fact, FD models
+                                                                                simulate the transmission line by calculating the line characteristics
+                                                                                over a frequency range, and transform the frequency spectrum into a
+                                                                                time response using time-frequency transformations.
+                                                                                    Currently, the Laplace transform-based model of [22] is directly
+                                                                                implemented in the LineCableLab toolbox and can be parameterized
+                                                                                via the ‘‘SimTool’’ tab (see Fig. 4). In this model, a high precision in-
+                                                                                terpolation routine for the formulation of the nodal admittance matrix
+                                                                                is combined with the utilization of a flexible sampling scheme. These
+                                                                                features provide high accuracy and great computational efficiency in
+                              Fig. 3. Line computations tab.                    any type of EMT simulation [27].
+
+
+                                                                                3.2. Wideband/universal line modeling
+          {     2
+                      }
+              −𝛾𝑒𝑞
+𝜀𝑒𝑞 = ℜ                   ,                                         (16)
+              𝜔2 𝜇0                                                                 The wideband (WB) or universal line model (ULM) is a TD model
+                                                                                that accounts for full frequency dependency of OHL and cable system
+where ℑ and ℜ denote the imaginary and real part operators, re-
+                                                                                phase-based parameters [23]. In terms of the WB/ULM modeling ap-
+spectively. The practical relevance of decomposing (11) into (15) and
+(16) lies in the possibility to further extend the applicability of EHEM,       proach, the propagation and characteristic admittance functions are
+enabling its integration into virtually any formulation or software             initially sampled for a frequency range. In the next step the phase
+applicable to overhead conductors and not only Wise’s equations. Note           quantities are fitted directly using complex poles and zeros in their
+that hereinafter, the EHEM of (11) is notated as ‘‘EHEM (𝛾𝑒𝑞 )’’, and the       rational-function approximation form by means of the vector fitting
+EHEM of (14) as ‘‘EHEM (𝜎𝑒𝑞 )’’.                                                algorithm [28].
+                                                                                    The WB/ULM has been continuously improving since its original
+3. LineCableLab toolbox                                                         development in 1999. Recent advancements suggest that the time
+                                                                                delays of the propagation function must be concurrently computed

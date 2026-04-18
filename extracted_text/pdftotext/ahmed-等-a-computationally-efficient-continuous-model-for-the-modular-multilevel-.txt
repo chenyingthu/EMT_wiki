@@ -1,0 +1,178 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                        10.1109/JESTPE.2014.2332041, IEEE Journal of Emerging and Selected Topics in Power Electronics
+
+
+
+
+                 A Computationally Efficient Continuous Model
+                     for the Modular Multilevel Converter
+                 Noman Ahmed, Student Member, IEEE, Lennart Ängquist, Member, IEEE, Staffan Norrga, Member, IEEE,
+               Antonios Antonopoulos, Student Member, IEEE, Lennart Harnefors, Senior Member, IEEE, and Hans-Peter Nee,
+                                                        Senior Member, IEEE
+
+            Abstract—Simulation models of the modular multilevel
+         converter (MMC) play a very important role for studying the                                                   iu     +       SM 1                            S1
+         dynamic performance. Detailed modeling of the MMC in                                                                                         C
+         electromagnetic transient (EMT) simulation programs is                                                              vcu                                      S2
+         cumbersome, as it requires high computational effort and
+                                                                                                                               -     SM N
+         simulation time. Several averaged or continuous models proposed                               vd    +
+         in the literature lack the capability to describe the blocked state.                                -
+                                                                                                       2
+         This paper presents a continuous model which is capable of                                                                          R
+         accurately simulating the blocked state. This feature is very
+         important for accurate simulation of faults. The model is                                                                           L
+         generally applicable, although it is particularly useful in high-                                                                       is
+                                                                                                                       vs          ac
+         voltage dc (HVDC) applications.                                                                         -             +
+
+                                                                                                                                             L
+            Index Terms—Blocking, continuous model, electromagnetic
+         transient (EMT) programs, high-voltage dc (HVDC)                                                                                                 Phase Leg
+                                                                                                                                             R
+         transmission, modular multilevel converter (MMC), voltage-                                    vd    +
+         source converter (VSC).                                                                             -
+                                                                                                       2                      +       SM 1                Arm
+
+                                      I. INTRODUCTION                                                                        vcl
+
+            Voltage-source-converter (VSC)-based high-voltage dc                                                               -     SM N
+                                                                                                                      il
+         (HVDC) transmission systems is today an established
+         technology [1], [2]. Conventional two-level or three-level
+         VSCs have the drawback of high switching losses due to a                               Fig. 1. Equivalent circuit for one phase leg of the MMC.
+         high switching frequency [3], [4]. The modular multilevel
+         converter (MMC) allows the reduction of the switching                                it will be bypassed (keeping its voltage) when the arm current
+         frequency down toward the fundamental frequency, whereas                             is negative. The arm inductance L is needed to limit fault and
+         the harmonic content of the output voltage is still kept low                         parasitic currents [11]. The arm resistance R, models the
+         owing to a large number of levels. Other benefits are high                           losses.
+         scalability due to modular design and no requirement for a                              Depending on the purpose, MMC modeling in
+         common dc-link capacitor [5]–[9]. The first MMC-based                                electromagnetic transient (EMT) simulation programs can be
+         HVDC link, the Trans Bay Cable project, was commissioned                             done with different degrees of detail. For stress investigations
+         already in 2010. In the near future, it is most likely that HVDC                     in critical components of the converter during faults inside or
+         transmission systems to be built will employ the MMC (or                             immediately outside the converter, it is important to follow the
+         variants thereof) [10].                                                              behavior of each individual submodule, or even a certain
+            A schematic diagram of one phase leg of a three-phase                             switch, during a transient. In such studies, a detailed model of
+         MMC is shown in Fig. 1. Each phase leg consists of an upper                          the MMC must be employed, in which even it might be
+         and a lower arm, each constituted by N series-connected                              necessary to represent the parasitic inductances and
+         submodules. Each submodule acts as a controllable voltage                            capacitances inside the submodules. In contrast, for studies
+         source which consists of a half-bridge circuit with a dc storage                     investigating power-system behavior, whole MMCs may
+         capacitor. During normal operation, at any instant only one of                       appear as adjustable voltage sources.
+         the two switches in the submodule is ON. When the switch S1                             An MMC used for HVDC transmission might have several
+         is ON, the submodule is said to be inserted and the output                           hundreds of submodules per arm. Hence, detailed simulation
+         voltage of the submodule is the same as the voltage across the                       models of MMCs need to represent hundreds or even
+         capacitor. On the other hand, when the switch S2 is ON, the                          thousands of switching elements, resulting in high
+         submodule is said to be bypassed and the voltage across the                          computational effort and simulation time. To overcome this,
+         submodule is zero. When both S1 and S2 are OFF, the                                  averaged or continuous simulation models, which provide
+         submodule becomes blocked and current is only conducted                              similar dynamic behavior from a system perspective as the
+         through freewheeling diodes. Accordingly the capacitor will be                       detailed simulation models, are beneficial. Reference [12]
+         inserted (and charged) when the arm current is positive, while                       proposes a simplified model of the MMC, but unfortunately
+
+
+
+                                 2168-6777 (c) 2013 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See
+                                         http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                        10.1109/JESTPE.2014.2332041, IEEE Journal of Emerging and Selected Topics in Power Electronics
+
+
+
+
+         provides details neither for the proposed model nor for the                          inductance and an internal voltage source. The internal voltage
+         detailed model used for the validation. Several averaged or                          source represents the submodule capacitor chain in the arm of
+         reduced-order simulation models of MMCs have been                                    the MMC. The source voltage represents the instantaneous
+         proposed in the literature [13]–[15]. However, these models                          voltage inserted by the submodules in the arm.
+         lack the capability to represent blocked-mode operation. Being                          To develop a continuous state model of an MMC, let C be
+         able to do so is necessary for accurately simulating start-up                        the capacitance of each submodule and N is the number of
+         and operation during fault conditions. Reference [16] presents                       submodules per arm, then the arm capacitance will be
+         both detailed and averaged models of a 401-level MMC. The                                                     Carm = C N .                       (1)
+         detailed model in [16] has the ability to accurately represent                                                                                    Σ
+         the blocked mode, but the computational time required for                            The total available capacitor voltage, vc , due to the arm
+         high numbers of submodules is very high [17].                                        current, where the upper and lower arm currents are denoted
+            Unlike the models presented in cited papers, this paper                           by iu and il, respectively, is given by
+         proposes a continuous simulation model of the MMC which is
+         capable of representing blocked-mode operation in a                                                                        Nnu ,l t
+                                                                                                                                           ∫ i dt.
+                                                                                                                             Σ
+         computationally efficient way. The performance of the                                                              vc =                   u ,l                    (2)
+         proposed simulation model is validated by comparison to a                                                                    C    to
+         component-based detailed MMC simulation model in PSCAD.                              Then the voltage inserted by the arm, vc, is given by
+         It is also verified experimentally using a three-phase 10-kVA                                                                             Σ
+         MMC prototype.                                                                                                          vc = nu ,l vc .                           (3)
+            This paper is organized as follows. Section II presents the                       Considering the direction of the arm currents shown in Fig. 1,
+         modeling details of the proposed continuous model. The                               the output phase current, is, and the circulating current, ic, are
+         simulated test circuit for the comparison of the detailed and the                    given by
+         continuous model is discussed in Section III. Simulation                                                        is= iu − il                         (4)
+         results are presented in Section IV. The experimental
+                                                                                                                              i +i
+                                                                                                                         ic = u l .
+         verification of the proposed model is shown in Section V.                                                                                          (5)
+         Section VI shows the computational performance of the                                                                    2
+         proposed model and in Section VII conclusions are drawn.                             The upper and lower arm currents, in terms of the output phase
+                                                                                              current and the circulating current, then can be expressed as
+            II. MODELING OF THE MODULAR MULTILEVEL CONVERTER                                                                   is
+                                                                                                                          i=
+                                                                                                                           u       + ic                     (6)
+         A. Continuous Model                                                                                                   2
+            The internal control for the MMC provides six insertion                                                            i
+         indices nu,l, governing each arm in the converter [18], where                                                  il = − s + ic .                     (7)
+                                                                                                                                2
+         subscripts u and l respectively indicate upper and lower arm
+         and where explicit phase notation for simplicity is avoided.                         The total available capacitor voltage for each arm will be
+         These are defined as the instantaneous ratio between the
+         number of inserted submodules and the total number of                                                                                 t
+                                                                                                                                   N nu
+                                                                                                                                            ∫ i dt
+         submodules in the arm. The inserted voltage in an arm depends                                                        Σ
+                                                                                                                             vcu =                     u                   (8)
+         on its insertion index, which controls the “instantaneous”                                                                   C t
+                                                                                                                                               o
+         (averaged) portion of inserted submodules in the respective
+                                                                                                                                           t
+         arm.                                                                                                                       N nl
+                                                                                                                                           ∫ i dt.
+                                                                                                                              Σ
+            Control of the total capacitor voltage and its uniform                                                          vcl =                  l                       (9)
+                                                                                                                                      C t
+         distribution among the submodules in an arm is extremely                                                                           o
+
+         important and quite challenging as well. Thus, detailed
+         modeling of the operation of the MMC is quite complex and                            From Fig. 1, the expression for output phase voltage can be
+         requires representation of all the individual submodule                              written as
+         capacitor voltages. Therefore, in a simulation program, a large                                            v           di          Σ
+         number of nodes are required and the model will contain a                                             vs = d − Riu − L u − nu vcu              (10)
+                                                                                                                     2           dt
+         high number of states. Consequently, the simulation becomes
+         time-consuming and produces an immense amount of output                                                      v           di        Σ
+                                                                                                              vs = − d + Ril + L l + nl vcl .           (11)
+         data. For power-system studies, the MMC can be represented                                                    2          dt
+         as a component with adequate dynamics in the millisecond                             Subtracting (11) from (10) and using the definition for ic, we
+         time scale. There is no need for information on the submodule                        get
+         level and continuous simulations models can be used to obtain                                                    di       Σ        Σ
+         short simulation times.                                                                          vd − 2 Ric − 2 L c − nu vcu − nl vcl =
+                                                                                                                                               0.       (12)
+            The proposed continuous model is based on the idealized                                                       dt
+         arm model of the MMC implemented as a branch in PSCAD.
+         The branch is characterized by the arm resistance, the arm
+
+
+
+                                 2168-6777 (c) 2013 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See
+                                         http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                        10.1109/JESTPE.2014.2332041, IEEE Journal of Emerging and Selected Topics in Power Electronics
+
+
+
+
+                             vd
+                             nu
+                             nl
+                             is                  ½
+
+                                        1                  +                                                     Σ
+                                                                                                                vcu                   +
+                                                 ic       +                                                                       −
+                                         L
+                                      1+ s
+                            

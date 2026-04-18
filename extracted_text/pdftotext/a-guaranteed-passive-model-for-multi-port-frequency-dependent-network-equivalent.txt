@@ -1,0 +1,198 @@
+                                                               Electric Power Systems Research 197 (2021) 107248
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A guaranteed passive model for multi-port frequency dependent network
+equivalents using network synthesis approach
+Meysam Ahmadi a, *, Shengtao Fan a, Aniruddha M. Gole a, H. M. Jeewantha De Silva b
+a
+    Power Systems Research Group, Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB, R3T 5V6, Canada
+b
+    Manitoba Hydro International, Winnipeg, MB, Canada, R3P 1A3
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  Frequency Dependent Network Equivalent (FDNE) models are used in both real-time and offline Electromagnetic
+Brune synthesis                                            Transient (EMT) simulation tools to capture the behavior of a large external network, thus eliminating the need
+Tellegen synthesis                                         to simulate the entire network in full detail. An important requirement for the FDNE is that it be passive to
+Electromagnetic transient simulation
+                                                           guarantee stability. In this work, a new approach based on Brune’s and Tellegen’s network realization methods is
+Frequency dependent network equivalents
+Passive network realization
+                                                           proposed for constructing FDNEs. This approach inherently guarantees the passivity of the realized network.
+                                                           Tellegen’s method is adapted and automated so it can be applied directly to the tabulated data of the impedance
+                                                           as a function of frequency. The feasibility of the proposed technique is validated through example case studies.
+
+
+
+
+1. Introduction                                                                                considering series and parallel resonances in the network response scan.
+                                                                                               Que Do also introduced an iterative pole-removal procedure for the
+    Apopular approach for simplifying the complexity of an Electro­                            synthesis of one-port network equivalent impedances using series or
+magnetic Transient (EMT) simulation is to model the study network of                           parallel connections of selected RLC modular circuits [5,6]. Watson and
+greater interest, which typically includes non-linear power system ele­                        Arrillaga in [7] have optimized Hingorani’s method of equivalent RLC
+ments, e.g. HVDC converters, lightning arrestors, transformers with                            branches for harmonic analysis using multi-variable optimization
+inrush currents etc., in full detail [1–8]. The remainder or “external”                        methods. Morched extended the approach to multi-port FDNEs for EMT
+network is assumed to be linear and represented by a simpler Frequency                         programs using shunt RLC branches whose elements are being calcu­
+Dependent Network Equivalent (FDNE). The term FDNE was first                                   lated through an optimization process [1]. The aforementioned network
+applied to this approach by Morched et al. [1]. An important require­                          realization-based methods used pre-specified RLC structures, thus were
+ment for the FDNE is that it displays an accurate response of the external                     proper for a low order fitting of just a few resonance peaks and suitable
+network and still preserves the passivity of the network at all                                for early computers. Today, with much higher-powered computers, the
+frequencies.                                                                                   significantly improved fitting becomes possible and in fact, is
+    Time-domain modeling of a frequency-dependent network was                                  demanded.
+initially done in the 1970s by Hingorani and Burbery [2] by fitting the                            Later mathematical approaches to fit the frequency-dependent re­
+scanned points from a frequency response plot of the original external                         sponses were introduced. A π-type network is used in [10] to realize a
+network with several parallel RLC branches, whose combined imped­                              low order equivalent network for an admittance matrix Y(jω) those el­
+ance matches the driving point impedance frequency response of the                             ements are first fitted by rational functions using a non-constraint
+external circuit. Concurrently, Clerici represented frequency-dependent                        optimization program. In [8] a high-frequency transformer model and
+Thevenin equivalent impedance of the network with simple type-I Foster                         in [1] a reduced-order model of a multi-port frequency-dependent
+realization [9] in order to do a switching surge study [3]. A wideband                         network is generated by first approximating the FDNE by means of
+frequency model of such a network equivalent was introduced by                                 rational functions and then realize it in the form of an RLC network
+Morched and Brandwajn in [4] using RLC parallel branches and                                   which could be directly used in EMTP.
+
+
+
+ This work was supported through the IRC Program of the Natural Sciences and Engineering Research Council (NSERC) of Canada.Paper submitted to the Inter­
+national Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.
+ * Corresponding author.
+    E-mail address: ahmadim3@myumanitoba.ca (M. Ahmadi).
+
+https://doi.org/10.1016/j.epsr.2021.107248
+Received 28 November 2020; Received in revised form 27 February 2021; Accepted 7 April 2021
+Available online 4 May 2021
+0378-7796/Crown Copyright © 2021 Published by Elsevier B.V. All rights reserved.
+M. Ahmadi et al.                                                                                                        Electric Power Systems Research 197 (2021) 107248
+
+
+    Marti in [11], used Bode’s procedure [12] to model                              matrix Z(s). These steps are explained below for an n-port network [30].
+frequency-dependent characteristic impedance of a transmission line in
+the time domain by approximating the tabular function with zeros and                2.1. Step 1- Removing the imaginary axis matrix of poles
+poles at proper frequencies and form a rational function and then real­
+izing it using Foster I networks.                                                       If one or more of the elements of the impedance matrix Z(s) has a
+    Later, the powerful Vector Fitting (VF) approach was introduced by              pole at a certain frequency, it is considered as the pole of the whole
+Gustavsen and Semlyen as a mathematical approach to curve-fit the                   matrix and should be removed in the form of a series network. Let the
+frequency responses utilizing rational functions [13–19]. The rational              constant matrices K∞p, K0p and Kjp represent the residues of the poles at
+function also can be modelled in EMT tools employing recursive                      frequencies s = ∞, s = 0 and s = ωjp respectively as indicated in (9).
+convolution [20] or RLC branches [21].
+                                                                                                           np
+    VF has been widely used in modern transient simulation tools. The                                K0p ∑           2s
+                                                                                    Z(s) = K∞p s +      +      Kjp 2        + Z1 (s)                                 (1)
+original VF does not guarantee the passivity of the resulted function. The                            s   jp=1
+                                                                                                                  s  + ω2jp
+fitted function representing a passive network should not generate en­
+ergy at any frequency. However, with earlier VF and other mathematical                  If K∞p, K0p or Kjp is a rank-1 matrix, the pole represents a series
+approaches [22], passivity cannot be always guaranteed. Therefore,                  impedance with one branch and n-1 ideal transformers [30] as shown in
+further development was conducted to enforce passivity. Despite this,               Fig. 1. Otherwise, the residue matrix should be reduced to a sum of
+passivity enforcement can occasionally result in accuracy loss and                  rank-one matrices. These poles are realized by Lsr, Csr, Cjp and Ljp in
+non-convergence [22–25].                                                            connection with transformers with turns ratio of tm          m       m
+                                                                                                                                            ∞p, t0p and tjp as given
+
+    The frequency domain matrix pencil method is another mathemat­                  in (2);
+                                                                                                      ⃒
+ical approach to fit the FDNEs which also does not guarantee the                                      ⃒ L = K 11
+                                                                                                      ⃒ sr     ∞p
+passivity and needs further step to enforce the possible violation of                Pole at Infinity ⃒ m              /
+                                                                                                      ⃒ t∞p = K∞p 1m K∞p 11 m=2,3,...
+passivity [26].                                                                                       ⃒       /
+                                                                                                      ⃒ C = 1 K 11
+    FDNEs can further lower the complexity and accelerate the simula­                                 ⃒ sr         0p
+tion if the fitting is limited only to the frequency range of interest. This
+                                                                                     Pole at Zero     ⃒ m             /
+                                                                                                      ⃒ t0p = K0p 1m K0p 11 m=2,3,...                             (2)
+idea is used in real-time digital simulators (rtds), where it is usually                              ⃒       /(         )
+                                                                                                      ⃒ C = 1 2K and L = 1 C ω2
+                                                                                                                                      /(       )
+sufficient to have an accurate representation up to a few kHz [25]. In               Poles at ωjp
+                                                                                                      ⃒ jp
+                                                                                                      ⃒
+                                                                                                                      jp      jp         jp jp
+                                                                                                      ⃒ m
+addition, FDNEs are sometimes used in hybrid transient simulations in                                                /
+                                                                                                      ⃒ tjp = Kjp 1m Kjp 11 m=2,3,...
+combination with a Transient Stability Analysis (TSA) program [27].
+This requires wideband frequency modeling of the external network
+                                                                                    2.2. Step 2- Removing Imaginary axis matrix of zeros
+[28].
+    In this paper, a network realization-based approach is used, which is
+                                                                                        If |Z1(s)| = 0 at a certain frequency implies that there is a zero at that
+based on Brune’s and Tellegen’s methods [29–31]. In their original
+                                                                                    frequency. As was done with the scaler function z(s) in section II.B, the
+form, these methods required the impedance terms to be given as
+                                                                                    zeros of matrix Z1(s) are similarly removed in form of poles of Y1(s) (i.e.,
+rational polynomials of the Laplace variable “s”. However, in most
+                                                                                    Z1(s)− 1) and realized as a shunt network given in (3).
+power system applications, a closed-form expression in ‘s’ domain is not
+possible and the impedance is given in tabulated form as a function of                                 K0z ∑  nz
+                                                                                                                       2s
+frequency. The proposed approach adapts Brune/Tellegen synthesis to                 Y1 (s) = K∞z s +      +      Kjz 2       + Y2 (s)                                (3)
+                                                                                                        s           s + ω2jz
+realize a passive FDNE directly from the tabulated frequency response.
+                                                                                                            jz=1
+
+The resulting form is an RLCM network, and so inherently ensures                        Similar to pole removal, the relation between the residue and
+passivity. This dispenses with any need for further mathematical                    network elements (shunt capacitance Csh, turns ratio tm           m       m
+                                                                                                                                                 ∞z, t0z and tjz ,
+passivity enforcement as with Vector Fitting. The method is repetitive,             shunt inductance Lsh and the series LC branch Ljz and Cjz) can be found as
+with four steps in each round of repetition, which makes the procedure              in (4):
+easy to program for computer implementation. This approach was                                         ⃒
+                                                                                                       ⃒ C = K 11
+originally explored only for single-port networks, where the realized                                  ⃒ sh
+                                                                                     Pole at Infinity ⃒ m
+                                                                                                                ∞z
+                                                                                                                         /
+impedance is a scalar, using Brune synthesis [32]. However, most real­                                 ⃒ t∞z = K∞z 1m K∞z 11 m=2,3,...
+                                                                                                      ⃒
+istic power systems are multi-port (even a three-phase system with                                    ⃒ L = 1/K 11
+                                                                                                      ⃒ sh          0z
+coupling between phases is actually a 3-port system), the FDNE becomes               Pole at Zero ⃒ m                  /
+                                                                                                      ⃒ t0z = K0z 1m K0z 11 m=2,3,...                        (4)
+a matrix instead of a scalar, for which Ahmadi and Gole method used in                                ⃒       /(                      /(       )
+                                                                                                      ⃒ L = 1 2K ) and C = 1 L ω2
+[32] is no longer applicable. The generalization to multi-port networks                               ⃒ jz             jz      jz        jz jz
+                                                                                                      ⃒
+is achieved by the use of Tellegen’s synthesis [30,31].                              Poles at ωjz     ⃒ m            /
+                                                                                                      ⃒ tjz = Kjz 1m Kjz 11 m=2,3,...
+
+2. Tellegen’s extension on multiport networks
+                                                                                    2.3. Step 3- Removing the minimum real part
+   The impedance of a passive multi-port network is represented by a
+Positive Real (PR) matrix Z(s). Contrariwise, a matrix Z(s) can be real­               Steps 1 and 2 are repeated until there are no more poles or zeros in
+ized if it is a Positive Real (PR) matrix. A matrix Z(s) is PR if and only if       the matrix Z2(s). Considering the real part of Z2(jω), i.e., A(ω) =
+[10];                                                                               ℜ{Z2(jω)}, the minimum resistance Rmin is then defined by (13) in which
+                                                                                    Δ11(ω) is the (1,1) minor of A(ω);
+ • All the coefficients of Z(s) are real when ‘s’ is real.
+                                                                                                                            |A(ω)|
+ • All the coefficients of Z(s) are analytic in the right-half ‘s’ plane.           Rmin = min{Λ(ω)}           ,   Λ(ω) =                                            (5)
+                                                                                                                            Δ11 (ω)
+ • Poles on the jω axis are simple and their matrix of residues is a
+   positive semi-definite matrix.                                                      Let at s = ω0 be the frequency at which the minimum resistance
+ • The real part of Z(jω), ℜ{Z(jω)}, is positive semi-definite for all ω.           occurs. Then by removing the resistance Rmin from Z2(jω), a zero is
+                                                                                    created at ω0 in ℜ{Z3(jω)}. This means |ℜ{Z3(jω0)}| = 0 or the real part
+   Using steps similar to Ahmadi and Gole Method explained in [32],                 of matrix Z3(jω) will become rank deficient at ω0.
+Tellegen proposed a multiport network represented by an impedance                      The resistance Rmin is only realized at port one of the network as
+
+                                                                                2
+M. Ahmadi et al.                                                                                                              Electric Power Systems Research 197 (2021) 107248
+
+
+
+
+                          Fig. 1. The entire possible network that could be realized in the four steps of the Tellegen’s realization method.
+
+
+shown in Fig. 1. Therefore, the function Z3(jω) can be written by (6):                     ⎡     ⎤
+                    ⎡               ⎤                                                        1
+                      Rmin 0 ⋯ 0                                                           ⎢ ⎥
+                                                                                           ⎢ t2 ⎥
+                    ⎢ 0    0 ⋯ ⋮⎥                   

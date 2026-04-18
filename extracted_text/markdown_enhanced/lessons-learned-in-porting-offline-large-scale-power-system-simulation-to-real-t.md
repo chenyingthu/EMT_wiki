@@ -1,0 +1,28 @@
+# Lessons learned in porting offline large-scale power system simulation to real-time for wide-area monitoring, protection and control
+
+**P. Le-Huy** *, E. Lemieux, F. Guay  
+*Power System Simulation Group, IREQ, Hydro-Québec’s Research Center, 1800 boul. Lionel-Boulet, Varennes, Québec J3X 1S1, Canada*
+
+## Abstract
+At Hydro-Québec, power system studies are mainly done with offline electromagnetic transient simulation tools and real-time simulation is typically reserved for hardware-in-the-loop studies related to HVDC and compensation system commissioning. However, there is a growing internal need to pursue large-scale power studies incorporating physical systems to explore wide-area monitoring, protection, and control strategies: large power systems must then be ported from offline software to the real-time environment. The current paper presents lessons learned over the years about the offline to real-time porting process. As Hydro-Québec is involved in simulation tool development, software-related issues and challenges are presented and discussed. Details are then provided regarding the porting process of a large-scale power system required for wide-area control explorations. Prior to waveform comparison and performance assessment, modeling details and required modifications on the original simulation schematic are presented. In closing, electromagnetic transient modeling best practices and tricks to facilitate porting offline simulations to real-time are reported here to help users increase the efficiency and performance of their offline simulations and prepare them for real-time operation.
+
+**Keywords:** Electromagnetic transient, Offline, Real-time, Simulation, User experience, Wide-area monitoring, protection and control
+
+## 1. Introduction
+The power system study group at Hydro-Québec (HQ) works mainly with offline electromagnetic transient (EMT) simulation tools to execute various types of analysis in order to identify, investigate, and solve challenges related to power system apparatus, control and protection. Among the various investigations, some eventually require the use of real-time (RT) hardware-in-the-loop (HIL) simulations to incorporate the behavior of real control or protection systems to get more realistic results. For example, control interaction studies with the actual control systems in HIL simulations involve far fewer hypotheses, which increases confidence that results could be observed on the real power system and that the study conclusions are meaningful.
+
+Historically, when porting such offline simulations (EMTP [1]) to HQ’s RT simulation tool (HYPERSIM [2]), significant time and effort were required as both environments were quite different, and no export/import capabilities with automatic place and route were available. So, such offline to RT porting implied that all electrical and control components had to be instantiated in the RT tools, properly parametrized, and connected. Signal checks and system validation were then done to verify proper behavior. Sometimes, certain offline components did not have direct RT equivalents and had to be built or synthesized from basic blocks or hand coded in a user-code model (UCM). Furthermore, additional steps had to be taken in certain situations to respect RT constraints and simulators’ capabilities, all with minimal, if any, alteration to the simulation results.
+
+For small- to medium-scale power systems without complex internal controls, this translation from offline to RT tools was tedious but still manageable. However, for large-scale power systems with several complex internal control systems, the task became herculean: it required a lot of time and a team of simulation experts to capture all the intricate details of the offline simulation and reproduce them in the RT environment [3].
+
+Such porting activities were soon deemed as too expensive, yet they remained essential in several projects or studies. So development efforts were deployed to facilitate and accelerate this activity. In the case presented in this paper, the purpose of the conversion is to co-simulate the EMT part with a telecommunication simulator and control and protection equipment to further explore the link between these domains and the impact they have on each other’s performance [4].
+
+This paper aims to share the lessons learned during the porting of large-scale power systems used for wide-area monitoring, protection, and control (WAMPAC) RT simulations with other entities to facilitate their own large-scale conversion endeavors. Hopefully, the information provided in this paper will help users to enhance their in-house methods or optimize their conversion scripts when using commercial tools such as the RTDS import tool [5]. Very little information concerning this tool capabilities and limitations is publicly available and no large-scale power system conversions with this tool were found in the literature.
+
+---
+*Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12-15, 2023*  
+\* Corresponding author. E-mail address: le-huy.philippe@ireq.ca (P. Le-Huy).  
+https://doi.org/10.1016/j.epsr.2023.109663  
+Received 10 December 2022; Received in revised form 30 March 2023; Accepted 21 June 2023  
+Available online 29 June 2023  
+0378-7796/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).

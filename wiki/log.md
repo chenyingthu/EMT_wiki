@@ -2,6 +2,24 @@
 
 > 追加式记录，永不修改。每条以 `## [日期] 类型 | 标题` 开头。
 
+## [2026-04-17] deep-enrichment | Source Pages 深度增强（进行中）
+- 工具: tools/deep_enrich_sources.py
+- 方法: PDF全文提取(pdftotext) + LLM深度分析(qwen3.6-plus) → 提取公式、算法、仿真结果
+- 并发数: 3 线程，HTTP超时 180s
+- 当前进度: 320/699 完成 (45.8%)，9 篇独特失败（1篇PDF空文本，8篇JSON解析超时）
+- 新增内容: 方法细节(LaTeX公式)、算法步骤、关键参数、仿真结果表格、量化发现、验证详情
+- 样本验证: 2169-3536-c-2018 (6个公式, 5步算法, 8个参数), 2728modeling (3个公式, 5步算法)
+
+## [2026-04-17] pdf-conversion | 批量 LLM 增强 PDF 转 Markdown（pdftotext + qwen3.6-plus）
+- 工具: tools/batch_pdf_to_markdown_parallel.py
+- 方法: pdftotext 快速提取 + LLM 转换为含 LaTeX 公式的 Clean Markdown
+- 并发数: 8 线程并行
+- 结果: 697/699 成功 (99.7%)，失败 2 篇
+- 耗时: 193.2 分钟 (~3.2 小时)
+- 输出: extracted_text/markdown_enhanced/ (5.7MB, 697 个 .md 文件)
+- 失败文件: empirical-model-of-a-current-limiting-fuse-using-emtp.md, frequency-domain-simulation-of-electromagnetic-transients-using-variable.md
+- 质量验证: Markdown 格式正确，LaTeX 公式 ($...$, $$...$$) 完整，中英文论文均支持
+
 ## [2026-04-14] verify | 最终验证与补全
 - 验证所有 699 篇来源页均已摄入（100%）
 - 验证所有 699 篇来源页核心贡献已填充（100%）
@@ -345,3 +363,12 @@
 - 耗时：145.1 分钟（约 66 秒/篇）
 - 失败文件：saturation-in-transient-and-stability-phenomena-for-cylindrical-13&14.md, 模块化多电平换流器的高效电磁暂态仿真方法研究.md
 - 质量验证：抽样检查显示核心贡献 2-4 项，主要发现 2-4 项，方法/模型/主题 wikilink 正确
+
+## [2026-04-16] pdftotext | 批量提取 699 篇 PDF 文本（pdftotext）
+- 问题发现：MinerU API 服务未运行，MinerU CLI 处理速度慢（>10 分钟/PDF）
+- 编写 tools/batch_pdftotext.py：使用 poppler-utils pdftotext 快速提取文本
+- 提取结果：698/699 成功（99.9%），失败 1 篇
+- 失败文件：a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener.md（PDF 可能损坏或加密）
+- 耗时：1.2 分钟（约 0.1 秒/PDF）
+- 输出目录：extracted_text/pdftotext/ (16MB, 698 个.txt 文件)
+- 用途：LLM 深度分析、知识挖掘、后续学习资源

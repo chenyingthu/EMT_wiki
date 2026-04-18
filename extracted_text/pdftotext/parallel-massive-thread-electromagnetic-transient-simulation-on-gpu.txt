@@ -1,0 +1,207 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 29, NO. 3, JUNE 2014                                                                                           1045
+
+
+
+
+                  Parallel Massive-Thread Electromagnetic
+                        Transient Simulation on GPU
+                       Zhiyin Zhou, Student Member, IEEE, and Venkata Dinavahi, Senior Member, IEEE
+
+
+   Abstract—The electromagnetic transient (EMT) simulation of a                      is not uncommon to simulate in detail systems containing
+large-scale power system consumes so much computational power                        hundreds of buses using such tools. Nevertheless, the common
+that parallel programming techniques are urgently needed in this                     characteristic of the aforementioned EMT simulation tools is
+area. For example, realistic-sized power systems include thousands
+of buses, generators, and transmission lines. Massive-thread com-                    that they are single-thread sequential programs designed to run
+puting is one of the key developments that can increase the EMT                      efficiently on single-core CPUs based on the x86 processor
+computational capabilities substantially when the processing unit                    architecture. Throughout the 1990s and 2000s, the CPU clock
+has enough hardware cores. Compared to the traditional CPU,                          speed steadily increased and memory costs decreased, fueling
+the graphic-processing unit (GPU) has many more cores with dis-                      a sustained increase in the speed of these programs. But now
+tributed memory which can offer higher data throughput. This
+paper proposes a massive-thread EMT program (MT-EMTP) and                            with the clock speed saturated around 3 GHz due to chip
+develops massive-thread parallel modules for linear passive ele-                     power dissipation and fabrication constraints, the computer
+ments, the universal line model, and the universal machine model                     industry has transitioned to multicore CPU and many-core
+for offline EMT simulation. An efficient node-mapping structure is                   GPU hardware architectures, which require multithread par-
+proposed to transform the original power system admittance ma-                       allel programming. Executing a single-thread EMT program
+trix into a block-node diagonal sparse format to exploit the mas-
+sive-thread parallel GPU architecture. The developed MT-EMTP                         on a multicore architecture is inefficient because the code is
+program has been tested on large-scale power systems of up to 2458                   executed on a single core, one instruction after another in
+three-phase buses with detailed component modeling. The simula-                      a homogeneous fashion, unable to exploit the full resource
+tion results and execution times are compared with mainstream                        of the underlying hardware. The overall performance of the
+commercial software, EMTP-RV, to show the improvement in per-                        code can be severely degraded especially when simulating
+formance with equivalent accuracy.
+                                                                                     large-scale systems with high data throughput requirements. A
+  Index Terms—Electromagnetic transient analysis, graphics                           multithread parallel code can provide substantial gain in speed
+processors, massive-thread, parallel algorithms, parallel pro-
+                                                                                     and throughput over a single-thread sequential code on the
+gramming, power system simulation.
+                                                                                     multicore architecture. Even on single-core processor systems,
+                                                                                     multiple threads can add palpable performance improvement
+                             I. INTRODUCTION                                         in some applications. What this means for the EMT program
+                                                                                     is that the system component models and the EMT algorithm
+
+T      HE USE of electromagnetic transient (EMT) simulation                          need to be reformulated to be executed in parallel on multiple
+       tools is no longer restricted to specialized studies that                     cores. Since data independence is the key requirement for
+focus on analyzing the propagation of EM transients. Due to                          efficient parallel programming, the serial component models
+their versatility and breadth of modeling capability, offline EMT                    and network data structure have to be transformed to meet
+simulation tools, such as EMTP-RV [1], PSCAD/EMTDC [2],                              this requirement. Although the focus of this paper is offline
+Alternative Transients Program (ATP) [3] etc., are routinely                         EMT simulation, it is worth mentioning that real-time EMT
+used in the planning, design, and operation of power systems, to                     simulation tools are available, such as RSCAD and Hypersim,
+study dynamic phenomena over a wide frequency range—from                             etc., which can also run offline simulations on multicore CPUs.
+steady-state studies, such as load flow and harmonic anal-                           However, these tools do require specialized expensive hardware
+ysis, to high-frequency studies, such as restrike overvoltages                       to run real-time EMT simulation.
+in gas-insulated substations [4]. Along with modeling and                               In this paper, we propose a GPU-based parallel mas-
+application diversity, the size of the power system simulated                        sive-thread EMT simulation program (MT-EMTP). The GPU
+by EMT tools has grown concomitantly [5]. These days, it                             [6]–[8] has native parallel many-core processing units and
+                                                                                     high-performance floating-point number processors. To cir-
+                                                                                     cumvent understanding the cumbersome assembly language
+   Manuscript received August 16, 2012; revised May 08, 2013, July 12,
+2013, and October 22, 2013; accepted December 23, 2013. Date of publi-               of GPU, compute unified device architecture (CUDA) [9],
+cation February 17, 2014; date of current version May 20, 2014. This work            a general-purpose parallel computing environment, was in-
+is supported by the Natural Science and Engineering Research Council of              troduced by NVIDIA to offer an efficient C-like language to
+Canada (NSERC). Paper no. TPWRD-00863-2012.
+   The authors are with the Department of Electrical and Computer Engi-              develop an application. Researchers have already begun to
+neering, University of Alberta, Edmonton, AB T6G 2V4 Canada (e-mail:                 exploit GPUs for power system applications [10]–[18], such
+zhiyin@ualberta.ca; dinavahi@ualberta.ca).                                           as data visualization, load-flow computations, electromagnetic
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       transient, and transient stability simulations. The objective of
+   Digital Object Identifier 10.1109/TPWRD.2013.2297119                              this paper is to develop massive-thread parallel modules for
+
+                          0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 03:22:13 UTC from IEEE Xplore. Restrictions apply.
+1046                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 29, NO. 3, JUNE 2014
+
+
+
+
+                                                                                    Fig. 2. CUDA abstraction.
+Fig. 1. GPU hardware architecture: 1) data transmission between host and de-
+vice, 2) data dispatched to/from many cores, and 3) control instruction dispatch.
+
+                                                                                    memories, that is, path 1 and path 2 in Fig. 1 are the main
+                                                                                    bottlenecks of the architecture. As explained later, the proposed
+three ubiquitous and computationally demanding system com-
+                                                                                    massive-thread parallel EMT modules are designed to mini-
+ponents for EMT simulation: linear passive elements (LPE),
+                                                                                    mize the use of these paths in order to maximize computational
+the universal line model (ULM), and the universal machine
+                                                                                    efficiency.
+model (UMM). A new efficient node mapping structure (NMS)
+                                                                                        CUDA is the programming tool used to implement the par-
+is proposed to reorder the original power system bus numbers
+                                                                                    allel program without dealing with the GPU assembly language.
+using the block-node adjustment (BNA) method to obtain a
+                                                                                    The details of the GPU hardware are taken care of by CUDA’s
+block diagonal pattern for the system admittance matrix that
+                                                                                    mapping and abstraction, as shown in Fig. 2. A CUDA program
+is ideally suited for the GPU-based massive-thread parallel
+                                                                                    (kernel) separates the hardware resources into two parts: CPU
+architecture. The performance of the developed parallel EMT
+                                                                                    side as the host, on which the serial parts of the program run,
+program was evaluated for accuracy, computational efficiency,
+                                                                                    and the GPU side as the device, on which the parallel parts of
+and scalability by using several large-scale test power systems,
+                                                                                    the program run.
+and compared with the EMTP-RV software program.
+                                                                                        In the CUDA thread hierarchy, Grid, Block, and Thread map
+   This paper is organized as follows: Section II describes the
+                                                                                    to GPU, SM, and Core, respectively. However, the user need
+key features of the GPU and CUDA, which enable the design of
+                                                                                    not be concerned with the actual number of GPUs, SMs, and
+the parallel component models and the proposed data structure
+                                                                                    Cores since the number of abstracted threads are automatically
+used in the EMT simulation. Section III gives the details of the
+                                                                                    assigned to the physical cores in parallel or serial fashion.
+parallel massive-thread component models. Section IV explains
+                                                                                    Therefore, even if the GPU used has fewer cores than what
+the NMS using the BNA method and the sparse linear network
+                                                                                    the CUDA program requires, the programmer can still claim
+solution. Then, the experimental results for various large-scale
+                                                                                    the number of threads needed. The developed parallel EMT
+test systems are shown and compared with EMTP-RV. Finally,
+                                                                                    program can adapt to various CUDA-supported GPUs with a
+Section V gives the conclusion.
+                                                                                    varying number of cores without change. A group of threads
+                                                                                    makes up a block, and a group of blocks makes up a grid.
+       II. GPU ARCHITECTURE AND CUDA ABSTRACTION                                    All threads inside a grid execute the same instruction simul-
+   Since the most advanced concept, the Fermi architecture                          taneously with multiple data input, which requires complete
+(shown in Fig. 1) [6] of the GPU from NVIDIA, is chosen for                         data independence and unified processing flow in the kernel.
+developing the parallel massive-thread modules for EMT sim-                         This is known as the single instruction multiple data (SIMD)
+ulation, it consists of several streaming multiprocessors (SMs).                    format. On the other hand, the single-instruction multiple thread
+Each SM is.populated with many compute cores which share                            (SIMT) enables the program with thread-level parallel code for
+the registers, caches, and dedicated memory inside the SM.                          independent, scalar threads [9], thereby allowing the GPU to
+Since the GPU is designed to work as a coprocessor, all data                        handle multiple branches and operations in a single instruction.
+and instructions come from the CPU via the PCIe interface.                          The developed parallel EMT component modules and the
+   In order to make every core in the GPU work efficiently,                         sparse linear solver utilize the SIMD and SIMT concepts.
+enough data must be fed to catch up to the instruction cycles;                          In the CUDA memory hierarchy, each thread has its own reg-
+without data input, the cores can only remain idle, thus reducing                   ister and local memory. Threads of the device cannot access the
+computing speed. Since the GPU has far more (hundreds) cores                        host memory directly due to it being on the CPU side. Thus,
+than the CPU, the data bandwidth requirement is increased                           all data that are processed by the GPU have to be first copied
+tremendously. However, the system main memory and the                               into the global memory of the device. Since the global memory
+video memory cannot offer that ideal bandwidth; therefore,                          (video memory) is not on-chip though it is onboard, accessing
+specific memory access routes have to be followed to reach                          it is relatively inefficient. Shared memory, which is much faster
+the optimal speed. The data-transmission paths between the                          than global memory, is offered for each block, which can be
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 03:22:13 UTC from IEEE Xplore. Restrictions apply.
+ZHOU AND DINAVAHI: PARALLEL MASSIVE-THREAD ELECTROMAGNETIC TRANSIENT SIMULATION ON GPU                                                                 1047
+
+
+
+accessed by all threads in the block. Thus, using this limited re-
+source (48 kB/block) wisely can effectively optimize the perfor-
+mance of the program. The advanced Fermi architecture (com-
+pute capability 2.0 and above) offers a data cache which re-
+quires a well-organized data input to maximize access speed.
+In the global and shared memories, a memory address normally
+can only be accessed once in an instruction cycle, especially for
+write operation. Therefore, simultaneous multiple and random
+memory access should be avoided in the CUDA kernel because
+not all threads can guarantee that their memory access is safe.
+Furthermore, unlike the previous GPU generations, the Fermi
+architecture enables the execution of multiple kernels simulta-                  Fig. 3. Unified linear passive element lumped model.
+neously for increased efficiency.
+   Thus, these are the aforementioned considerations of the GPU
+architecture and CUDA that the design of the data structure and
+parallel modules for massive-thread EMT simulation is based
+on.
+
+
+   III. PARALLEL MASSIVE-THREAD COMPONENT MODELS
+
+
+A. Linear Passive Elements
+
+   1) Model Formulation: Linear passive elements (LPEs),
+such as resistance, inductance, capacitance, switches, and                       Fig. 4. Massive-thread parallel unified LPE module.
+their combinations, are represented by a discrete-time lumped
+model [19]. As mentioned in Section II, since all threads in a
+kernel run the same instruction concurrently, a unified model
+is required for all LPEs in the system. Using the trapezoidal
+rule of integration, any LPE combination can be modeled as a
+discrete Norton equivalent circuit, comprised of an equivalent
+conductance and a history current source. In the unified model,
+every LPE has an R, L, or C character. An arbitrary LPE
+                                                                                 Fig. 5. Kernel operation flow in the unified LPE module.
+   shown in Fig. 3(a) can be represented as an R, L, and C
+Thévenin equivalent circuit as shown in Fig. 3(b), where          is
+the equivalent resistance of R,        is the equivalent resistance
+of C,       is the equivalent resistance of L,        is the capaci-             where       and are integers. The operation flow of the LPE
+tive history voltage, and        is the inductive history voltage.               kernel is shown in Fig. 5.
+Depending on the LPE character, constant flag coefficients can
+be defined, for example,        and      for the L or C character.               Algorithm III.1: ULPE_Kernel
+Source transformation results in the unified Norton equivalent
+circuit are shown in Fig. 3(c), where        is the total equivalent                Assign        blocks
+conductance and       is the history current source of the unified                  Assign       threads per block
+model [21]. The LPE current          is given as
+                                                                                    Config Shared Memory
+                                                                         (1)
+                                                                                    Shared Memory             Global Memory
+   With the unified LPE lumped model, all linear elements can
+                                                                                    Task1
+be processed in the same kernel.
+   2) Massive-Thread Parallel Implementation: Fig. 4 shows
+the designed parallel module for unified LPE computation. For
+each LPE, a CUDA thread is assigned to execute the computa-                         Task2
+tion based on the SIMT format. When the number of LPEs
+exceeds the limitations of thread per block , they will be di-
+vided into groups assigned to multiple blocks                                       

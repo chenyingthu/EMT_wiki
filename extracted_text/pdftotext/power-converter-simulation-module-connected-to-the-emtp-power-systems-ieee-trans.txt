@@ -1,0 +1,187 @@
+IEEE Transactions on Power Systems, VoI.6, No.2, May 1991
+                                                                                                                                               501
+                      POWER CONVERTER SIMULATION MODULE CONNECTED TO THE EMTP
+
+
+               Jean Mahseredjian    Serge Lefebvre                                                  Dinkar Mukhedkar
+          Institut de Recherche d’Hydro-Quebec (IREQ)                                          Ecole Polytechnique de Montreal
+                1800 montee Ste-Julie, Varennes                                                 P. 0. Box 6079, Montreal
+                     Quebec, Canada J3X 1S1                                                         Quebec, Canada
+
+
+
+
+ ABSTRACT : Presently the EMTP models converter valves as                       The steady increase of power converter simulation needs, within
+ ideal switches in parallel with dampers designed to damp                      the widely used and validated EMTP, justifies research for better
+ numerical oscillations introduced by the commutations. The                    and more efficient models.
+ converter network is modelled through branches with the                        An alternate and more efficient approach to converter simulation
+ appropriate TACS control circuits. It is assembled as any other               is to create a separate and dedicated program module. The
+ EMTP network, without explicit topology recognition. A more                   module described in this paper is simultaneously interfaced with
+ efficient method, both in terms of solution and initialization, is            the EMTP, and uses its own solution method, more appropriate
+ based on a separately programmed module dedicated to power                    to the nonlinear varying topology converter network
+ converter simulation and exploiting analytical knowledge. This                representation. Analytical knowledge of the converter circuit
+ paper presents the solution method used in such a module and                  operation is used to derive initial simulation conditions. The usual
+ its interface with the EMTP.                                                  naturally commutated six-pulse bridge converter is the test circuit
+ Keywords : Digital simulation, EMTP, power converter                          for the module design, but the formulation is general and
+                                                                               simulation of other converter networks is not excluded.
+                       1. INTRODUCTION
+   The EMTP (Electromagnetic transients program) [l]  is a nodal
+ analysis program based on the fixed time-step trapezoidal                                      2. THE CONVERTER MODULE
+ integration method. Discretized network equations are given by                  Figure 1 is a single line diagram showing the structure of the
+  Yn V, = In where Y, is the nodal admittance matrix, V, is                    general converter module (CM) connected to the EMTP. The
+ the node to ground voltage vector and I, represents node current              EMTP sees the converter as two sets of nonlinear elements, one
+ injections including current sources for the integration history              set for the ac network and another set for the dc network, and
+ terms. The EMTP models power converter valves as ideal                        it calculates a Thevenin equivalent behind each nonlinear element
+ switches. Analog grid control schemes are simulated through the               node. At each simulation time-point, the nonlinear element
+ program’s TACS (Transient analysis of control systems) module.                currents, found in the CM, are used to calculate the values of
+ The complete converter network with control circuits is modelled              all EMTP network node voltages, by applying the
+ through data cards and it is assembled as any other electrical                post-compensation method [2] [3], Figure 2 shows the EMTP
+ network, without explicit recognition of the device. Initialization           network equivalents connected to the naturally commutated
+ through a phasor solution cannot be achieved. To accommodate                  six-pulse converter. The ac network Thevenin resistances Rs
+ the time-varying topology created by the operation of the                     may be coupled. Any ac and dc networks can be assembled in
+ switches, the matrix Y, is rebuilt and re-triangularized completely           the EMTP, but they are modelled as in Fig. 2 for the converter
+ whenever switch positions change. Partial re-triangularization                simulation.
+ confined to nodes connected to switches, is also possible, but                  The converter transformer is included in the CM network
+ it becomes less efficient for a large number of switches such as              (Fig. 2). This choice eliminates ill-conditioning of the unloaded
+ in a converter network. With the fixed integration time-step,                 transformer nodal admittance matrix of the EMTP, and in addition
+ landing on breakpoints created by converter topological changes,              permits simultaneous representation of saturation nonlinearities.
+ i.e. valve commutations, is not possible. Numerical oscillations,             The transformer is assembled from separate two-winding
+ due to the trapezoidal integration method, following current                  quadripoles, to admit modeling of any given transformer
+ discontinuities in inductive converter transformer branches, are              configuration. The configuration shown in Fig. 2 is for a grounded
+ alleviated by artificial damper circuits connected in parallel with           wye-wye transformer. Each quadripole is composed of an ideal
+ converter valves.                                                             two-winding transformer where each winding is in series with a
+                                                                               leakage impedance (example : Rla and L,,                for primary
+90 SM L5L-9 PWRS      A paper recommended and approved                         winding, phase a ) ,         A    nonlinear     current      source
+by t h e IEEE Power System Engineering Committee of t h e
+IEEE Power Engineering S o c i e t y f o r p r e s e n t a t i o n a t t h e
+                                                                               IA =      IAb       is used to model saturation.
+IEEE/PES 1990 summer Meeting, Minneapolis, Minnesota,                           The CM has its own simulated digital control scheme [4]-[6],
+J u l y 15-19, 1990. Manuscript submitted January 26, ’ 9 9 0 ; but is also capable of receiving separate control signals from
+made a v a i l a b l e f o r p r i n t i n g May 1 , 1990.
+                                                                               TACS (simulated analog controls in the EMTP).
+                                                                                The CM can handle rectifying device (valve) characteristics
+                                                                               ranging from ideal :
+502
+- an off-state device having negligible reverse leakage current                    system state variables, U is the vector of independent sources
+  and represented by an open circuit,                                              and F is the vector of output variables. Subscript k denotes
+- an on-state device exhibiting negligible forward voltage drop                    network states : k = 1 , 2, . . . , k m a x . Two classes of solution
+  and represented by an ideal short-circuit;                                       methods can be found in the literature.
+to general : the device is modelled as a nonlinear                                   The first class is based on a varying topology approach.
+voltage-current function.                                                          Semiconductor devices are modeled as ideal switches and each
+                                                                                   converter mode is represented by corresponding state variables
+
+                 I    CONVERTER MODULE                                             in vector Xk and state matrices Ak and Bk. A topologically
+                                                                                   time-varying algorithm selects the appropriate state matrices
+                                                                                   from an initially calculated [7] set or by internal generation
+                                                                                   [8]-[lo] based on graph theory.
+                                        I
+                                                                                     The second class of methods is based on a constant topology
+                        Converter network                                          [ l l ] [12] approach. All switching devices are replaced by binary
+                                                                                   impedances according to their operation state : high impedance
+  EMTP AC                                                                          is off and' low impedance is on. State variables are fixed
+  NETWORK                                                                          ( Xk = X k = 1,2,. . . , k,,,  ) and matrices Ak and Bk have fixed
+                                            t       d
+                                                                                   dimensions but state dependent coefficients.
+                                                \                                    Previously described varying topology and consfant topology
+                       A-               -       \                 -                methods cannot be used for modelling converter valves as
+                                                        Nonlinear element
+                                                                                   general nonlinear elements, since they only apply to ideal
+   Figure 1 The converter module interfaced with the                               switches or binary impedances. The general nonlinear branch
+                        EMTP                                                       representation of linear networks, is considered next.
+                                                                                   The comDensation method for nonlinear branches
+          r--------------------------
+ EMTP acl                                                               IEMTP dc     This method models nonlinear branches as nonlinear current
+  network1            CONVERTER NETWORK                                 lnetwork   sources [3] and it is applied in the nodal analysis based EMTP.
+   equiv. I                                                             lequiv.
+   -1    I
+          I                                         I       1
+                                                                v',     p
+                                                                        1
+                                                                                   As already mentioned, the compensation method is used to
+                                                                                   connect the converter network to the EMTP. The following is
+                                                                      T I          relevant to the CM network modeling itself. A nodal formulation
+                                                                                   transforms equations (1) and (2) into a strictly algebraic set of
+                                                                                   discretized linear network equations :
+                                                                                           Yn Vn = In                                            (3)
+                                                                                   This expression can be expanded 111 into :
+
+
+
+                                                                                           L
+
+                                                                                   to calculate unknown linear network voltages Vn, , Vn, being
+                                                                                   known, by forward backward substitution in :
+                                                                                           ~ 1 vn,
+                                                                                                1  = LT: In, - L,: ~ 1 vn,
+                                                                                                                        2                (5)
+                                                                                   Subscript 1 stands for n unknown node voltages and subscript
+                                                                                   2 for s nodes connected to known voltage sources, U11 and
+                                                                                    LII (Y11 = LII U11 ) are upper and lower triangular matrices,
+                                                                                   respectively. Nonlinear branches are modelled as nonlinear
+                                                                                   current sources I++ with the corresponding voltage vector V+.
+                                                                                   The final unknown node voltages V;,            are calculated by
+                                                                                   superposing linear and nonlinear current source contributions :
+                                                                                         Vk, = Vn,      +
+                                                                                                       Vn$,                         (6)
+                                                                                   The voltage equations involve the node incidence matrix
+                                                                                   An# = [An$,   An++,]' ( a u = 1 if current of branch j is leaving
+                                                                                   node i , au = - 1 if current of branch j is entering node i and
+      3. THE NETWORK MODEL : CHOICE OF SOLUTION                                    aji = 0 if branch j is not connected to node i ) for nonlinear
+                          TECHNIQUES                                               branches :
+ Ignoring saturation, the CM network may be described by the
+                                                                                           V++ = A&+, [ Vn, + Vn4, ] + A;++~Vn2                  (7)
+following linear set of equations :
+                                                                                           Vih   = A&$, Vn, $. A&&     vn,                       (8)
+        &(t)   = Ak Xk(t) + Bk u(t)                                         (11
+        h ( t ) = Ck &(t) + Dk u(t)                                         (2)           ~ 1 Vn++,
+                                                                                                1   = -L;; An++, I++                    (9)
+In this well known representation, the vector X is the set of                      With subscript th standing for Thevenin, these are used to
+                                                                                                                                                             503
+
+
+
+          v$ = Vth + Ai$, z$ 1,                                  (11)
+                                                                          Variables are defined according to Fig. 3, V is for port voltages
+          v$ = Vth + Zth I$                               (12)
+Equation (IO) follows from (9) and equation (12) is the same as           and i for port currents. For capacitive and inductive branches
+(11) with :                                                               in discrete circuit models, independent current sources for history
+                                                                          terms are extracted as ports. Nonlinear branches are extracted
+         Zth = Ai@, z,                             (13)
+                                                                          as voltage or current ports [15]. Considering that all nonlinear
+ Z, is n x m, where there are n unknown voltages and m
+                                                                          branches are described by a single nonlinear function @ , voltage
+nonlinear branches.
+                                                                          port currents are voltage dependent (function @") and current
+  Vectors I4 and V$ can be related by any of the nonlinear
+                                                                          port voltages are current dependent (function Bi ) , equation (16)
+function Qi :
+                                                                          becomes         :
+
+
+
+        14 = @v( v,                                         (15)
+The equation for interfacing the nonlinear branches with the linear
+                                                                          [@'(Vv
+                                                                           @i( li )    '1 [I;;;[]:
+                                                                                           -                             =   [   Hva
+                                                                                                                                 Hia
+
+                                                                          This equation must be solved for mi unknown voltages Vv and
+                                                                                                                                           Hvb][;:]
+                                                                                                                                           Hib
+                                                                                                                                                           (17)
+
+
+network is given by combining equations (14) and (12) or (15)             m 2 unknown currents ii,      with m = ml                    +
+                                                                                                                           m 2 , the number of
+and (12), according to the selected nonlinear function @i or Qv .         nonlinear branches.
+This equation must be solved at each simulation time-point to              If equation (16) is rewritten for the case of only nonlinear current
+complete (post-compensa tion) the solution of linear network              ports :
+node voltages by combining (10) and (6).                                                                                                 (18)
+                                                                                   v i = Hii ii f [ Hi, H i b ] [ V a ib]l
+  When all valves in Fig. 2 are replaced by nonlinear current
+                                                                          This is equivalent to equation (12) of the compensation method
+sources, the matrix Zth becomes singular, in fact Zth = 0 , thus
+                                                                          with :
+equation (12) cannot be solved. This is due to the unavoidable
+presence of a valve current source in the converter's topological                     Vth = [ 

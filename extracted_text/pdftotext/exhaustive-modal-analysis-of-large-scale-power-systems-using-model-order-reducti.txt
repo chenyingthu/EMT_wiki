@@ -1,0 +1,185 @@
+                                                       Electric Power Systems Research 212 (2022) 108541
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Exhaustive modal analysis of large-scale power systems using model order
+reduction
+M. Kouki a , B. Marinescu a ,∗, F. Xavier b
+a Ecole Centrale Nantes-LS2N-CNRS, Nantes, France
+b
+    RTE-R&D, Paris LA DEFENSE CEDEX, France
+
+
+
+ARTICLE               INFO                          ABSTRACT
+
+Keywords:                                           This paper presents an efficient modal analysis methodology that computes all modes of any given large-scale
+Modal analysis                                      power system in exhaustive manner using the model order reduction techniques. For this, a reduced order
+Coupling modes                                      model is generated using the Balanced Truncation (BT) method for which the controllability and observability
+Large-scale power systems
+                                                    gramians are approximated using the low-rank Cholesky factors. This leads to a rapid identification of classes
+Model order reduction
+                                                    of coupled dynamic devices of the original system. Next, approximated oscillatory modes are computed for
+Balanced truncation
+                                                    each class. Finally, the exact values of the oscillatory modes of the overall power system are determined by
+                                                    iterative computations (the Modified Arnoldi method) initialized to the approximated modes found at the first
+                                                    step. The proposed methodology is able to put into evidence all coupling modes of any given large-scale power
+                                                    system (containing power electronics or any other specific dynamic devices). No a priori knowledge about the
+                                                    pattern of oscillations is needed. The accuracy and efficiency of the proposed methodology are thoroughly
+                                                    validated on several power systems with different orders, including a large scale model of the interconnected
+                                                    European power system.
+
+
+
+1. Introduction                                                                     electronics. To overcome these limitations, a new approach was dis-
+                                                                                    cussed and developed in [4]. It was validated on several power systems
+    Power systems are in a radical change from electromechanical sys-               including the large-scale model of the European power system [7]. The
+tems to power electronics based systems due to a massive penetration                new approach provides an analytic and systematic way to compute
+of renewable energies connected to the network via power electronic                 all the coupling modes (inter-area, electrical, . . . ) of any given power
+devices. Also, the immense size of actual power systems yields to linear            system (conventional systems and systems with large penetration of
+mathematical models with very high dimensions which complicates                     power electronics) by aggregating dynamic devices which swing to-
+further analysis. Hence, modal analysis of large scale systems becomes              gether into coupling class. It is able to quantify the interaction between
+numerically fastidious.                                                             the conventional generators, between the converters and conventional
+    Small-signal stability studies based on modal analysis are important            generators, and between the converters, in order to put into evidence
+to ensure global system stability [1,2]. Modal analysis of large-scale              all coupling modes.
+power systems is a challenging task, especially when an exhaustive                      It mainly consists in three steps. First, the quantification phase in
+computation of oscillatory modes is required. In fact, exhaustive modal             which the interaction degree between the different dynamic devices
+analysis should be able to put into evidence all oscillatory modes of               of the power system is quantified. More specifically, for each device,
+the system, i.e, inter-area and electrical coupling modes, as discussed             the other devices that are coupled with it are determined and this
+in our previous works [3,4].                                                        leads to a partition into classes of coupled dynamic devices. Next, for
+    To this end, several approaches have been developed and discussed               each class, an approximation of its coupling modes is performed using
+in literature. Most of them are unable to be exhaustive and provide                 a selective modal analysis method. Finally, a full analysis should be
+only a selective modal analysis [5,6]. Moreover, they were developed                done in order to precisely compute the characteristics of all oscillatory
+based on the hypothesis that the modes of interest are mainly due to                modes such as their frequencies, damping ratios, modes shapes, and
+large synchronous machines. This is no longer the case now and in                   participation factors. This methodology outperforms the classic modal
+future because of the presence of renewable energy sources and power                analysis methods and it is efficient especially in large scale cases.
+
+
+    ∗ Corresponding author.
+       E-mail addresses: Mohamed.Kouki@ec-nantes.fr (M. Kouki), Bogdan.Marinescu@ec-nantes.fr (B. Marinescu), florent.xavier@rte-france.com (F. Xavier).
+
+https://doi.org/10.1016/j.epsr.2022.108541
+Received 2 October 2021; Received in revised form 15 April 2022; Accepted 2 July 2022
+Available online 28 July 2022
+0378-7796/© 2022 Published by Elsevier B.V.
+M. Kouki et al.                                                                                                       Electric Power Systems Research 212 (2022) 108541
+
+
+However, the complexity and hence the computational time of the                          • new power systems: can be considered as unknown systems because
+proposed methodology can be reduced to facilitate engineering studies.                     no prior knowledge about the structure and the shape of their
+For this, in this paper, the model order reduction (MOR) techniques will                   oscillations is available
+be integrated to the first step (the quantification phase) of the proposed               • large-scale power systems: their models have a large number of
+approach. In fact, an accurate reduced order model facilitates the                         states due to the size of the interconnected zones and of the detail
+quantification of the multi-input/multi-output interactions especially                     need to model the dynamic devices
+for large scale, which is the case of the European power system. This leads              • systems with high penetration of power electronics: in the last decade,
+to a rapid and accurate identification of classes of coupled dynamic                       the integration of Power Park Modules (PPMs) for renewable
+devices-independently to the system’s order and to the dynamic device                      energy sources is in the full evolution. They present new types
+type.                                                                                      of electrical coupling modes which involve power converters.
+    Quantification of the interaction between the different dynamic
+devices of a given power system consists of computing the modal con-                     As a consequence, the exhaustive modal analysis (eigenvalues,
+trollability and observability, which are related to the energy needed               eigenvectors, modes shapes, . . . ) is numerically fastidious and even
+for the control and observation of the states of the system, i.e., to the            impossible with classical methods. Indeed, in most cases, these methods
+transfer from inputs to states and from states to outputs. In order to ob-           fail to systematically and automatically scan unknown or new large-
+tain the same results, but with a reduced complexity and computation                 scale grids to find all coupling modes without a prior knowledge
+time, order reduction techniques will be used.                                       (like frequencies, path of oscillations, . . . ). In addition, most of these
+    For this, several order reduction techniques have been studied and               methods are selective (and not exhaustive) and only compute elec-
+used to substitute large-scale systems by reduced ones (low-dimensional              tromechanical modes where the large classic synchronous thermal
+systems) while maintaining the same input–output behavior of original                plants are involved.
+systems (e.g. Krylov methods [8], SVD-based methods [9,10], . . . ),                     The methodology introduced in [3,4,11] overcomes these limita-
+among which the Balanced Truncation (BT) will be used here for                       tions. Its main part consists in grouping the dynamic devices of whole
+its robustness and efficiency in the elimination of the states that are              system in classes of interaction. The time and computation burden
+difficult to reach and/or to observe. Indeed, with such order reduction,             of this part are very important since the whole model of the system
+the most important input–output dynamic behaviors are preserved and                  should be considered. Intuitively, the identification of the coupling
+they correspond to the most coupled devices of the original power                    classes of any given power system can be done by exciting, one by
+system. BT is based on gramians which will be used in the quantifica-                one, each dynamic device with a well chosen temporal signal, and by
+tion phase along with other input/output interaction indices, like the               analyzing the correlation degree between the output responses of all
+relative sensitivity indices.                                                        dynamic devices [3]. However, in the case of large scale power systems
+    This improves the first step of the aforementioned new modal analy-              this technique is numerically expensive and even impossible in many
+sis method. This step of classes computation is the one which needs the              cases. For this, an analytic quantification of the interactions between the
+most time and computational effort. The accuracy and efficiency are                  inputs/outputs of all dynamic devices was used in [4,11].
+validated by comparison with the old full computation of the classes                     Both techniques (analytic and intuitive quantification), are based
+on several power systems among which the large scale interconnected                  on the transfer between the inputs and outputs of the analyzed power
+European power system [7].                                                           system. The chosen inputs are the ones which excite one or several
+    This paper is organized as follows. Section 2 provides the problem               coupling modes, and the outputs are the variables of distant devices
+formulation. Section 3 presents the modal analysis of large scale power
+                                                                                     with important responses in such cases. This means that the considered
+system through model order reduction along with application cases.
+                                                                                     coupling modes are controllable by the chosen inputs and observable
+Section 4 concludes this work.
+                                                                                     from the chosen outputs. For this, the suitable inputs for the inter-area
+                                                                                     modes are the references of the voltage regulators 𝑉𝑟𝑒𝑓 and the outputs
+2. Problem formulation
+                                                                                     are the speed 𝛺 of each synchronous machine. For the cases of electrical
+                                                                                     coupling modes associated to the PPMs, the most significant transfer is
+    Mathematical modeling of power systems leads to the following set
+                                                                                     between the reference of the voltage regulators and the power (reactive
+of Differential–Algebraic Equations (DAE)
+{.                                                                                   and active) injected to the grid.
+   𝑥= 𝐺(𝑥, 𝑧)                                                                            Mathematically, the above definition of the coupling classes cor-
+                                                                  (1)
+   0 = 𝐻(𝑥, 𝑧),                                                                      responds to a Multi-Input-Multi-Output (MIMO) view of the power
+where 𝑥 ∈ R𝑛 is the vector of differential variables and 𝑧 ∈ R𝑞 the vector           system. For that, starting from (2) the MIMO power system can be
+of algebraic variables.                                                              described using the following state–space form,
+    Linearization of (1) around an equilibrium point (𝑥0 , 𝑧0 ) leads to              {.
+                                                                                        𝑥= 𝐴𝑥 + 𝐵𝑢
+{.                                                                                                                                                            (5)
+   𝑥= 𝐺𝑥 𝑥 + 𝐺𝑧 𝑧                                                                       𝑦 = 𝐶𝑥,
+                                                                       (2)
+   0 = 𝐻𝑥 𝑥 + 𝐻𝑧 𝑧,                                                                  where 𝑢 ∈ R𝑚 and 𝑦 ∈ R𝑞 are, respectively, the input and output vectors
+If the algebraic variables are eliminated from (2), the following state              as defined above. 𝐴 ∈ R𝑛∗𝑛 , 𝐵 ∈ R𝑛∗𝑚 and 𝐶 ∈ R𝑞∗𝑚 are the system
+matrix is obtained                                                                   matrices.
+                                                                                         Notice that the identification of coupling classes for large-scale
+𝐴 = 𝐺𝑥 − 𝐺𝑧 𝐻𝑧−1 𝐻𝑥 .                                                     (3)
+                                                                                     systems is possible with above mentioned analytic method, but with
+The oscillatory modes of the system are among the complex conjugate                  an important complexity and computational time. In order to more
+eigenvalues of A:                                                                    directly obtain the same results, order reduction techniques were used
+                                                                                     in the work presented here.
+𝜆𝑖 = 𝜎𝑖 ± 𝑗𝑤𝑖 .                                                           (4)
+                                                                                         The model order reduction technique used in the phase of the
+    Using the information associated to these eigenvalues (frequencies,              coupling classes identification should be able to preserve the transfer
+damping ratio, eigenvectors, . . . ), a full classification/analysis of oscil-       behavior between the inputs and outputs of interest in the sense that
+latory modes can be done. Thus, both electromechanical and electrical                the significant coupling behavior between the inputs and the outputs
+modes, called coupling modes in the sequel, can be analyzed. This full               should be detected.
+modal analysis is possible for small and classical systems. However, it is               It is shown in Fig. 1 for a chosen test case which will be detailed
+a challenging task in all other cases, at least for the following reasons:           in the next section that these transfer are well reproduced with the
+
+                                                                                 2
+M. Kouki et al.                                                                                                             Electric Power Systems Research 212 (2022) 108541
+
+
+
+
+Fig. 1. Time domain step responses for the full (order 1011) Spain–France power system (Fig. 2) and reduced one (order 200), for input at GARO-BA (𝑉𝑟𝑒𝑓 1 -generator 1) and
+outputs at GARO-BA (𝛺1 -generator 1), at COFRENT (𝛺9 -generator 9), at GOLF52 (𝛺15 -generator 15) and at BRAUD (𝛺21 -generator 21).
+
+
+                                                                                            • Compute the gramian matrices 𝑃 and 𝑄 as solutions of the
+                                                                                              following Lyapunov equations
+                                                                                              {
+                                                                                                𝐴𝑃 + 𝑃 𝐴𝑇 + 𝐵𝐵 𝑇 = 0,
+                                                                                                                                                   (6)
+                                                                                                𝐴𝑇 𝑄 + 𝑄𝐴 + 𝐶 𝑇 𝐶 = 0.
+
+                                                                                            • Compute the Cholesky factors of 𝑃 and 𝑄
+                                                                                              {
+                                                                                                𝑃 = 𝑈 𝑈 𝑇 , 𝑤ℎ𝑒𝑟𝑒 𝑈 𝑖𝑠 𝑎𝑛 𝑢𝑝𝑝𝑒𝑟 𝑚𝑎𝑡𝑟𝑖𝑥,
+                                                                                                                                                                         (7)
+                                                                                                𝑄 = 𝐿𝐿𝑇 , 𝑤ℎ𝑒𝑟𝑒 𝐿 𝑖𝑠 𝑎 𝑙𝑜𝑤𝑒𝑟 𝑚𝑎𝑡𝑟𝑖𝑥.
+
+                                                                                            • Compute the singular values of 𝑈 𝑇 𝐿 and balance them into large
+                                                                                              and small values
+                                                                                                                               [         ][ ]
+                  Fig. 2. Spain–France interconnected power system.                                𝑇           𝑇
+                                                                                                                   [         ] 𝛴1      0    𝑌1𝑇
+                                                                                              𝑠𝑣𝑑(𝑈 𝐿) = 𝑊 𝛴𝑌 = 𝑊1 𝑊2                                      (8)
+                                                                                                                                  0   𝛴2    𝑌2𝑇
+                                                                                              where 𝑊1 and 𝑌1 are consist of the first 𝑘 columns of 𝑊 and 𝑌 ,
+reduced model in compar

@@ -1,0 +1,194 @@
+IET Generation, Transmission & Distribution
+
+Research Article
+
+
+
+Compacting and partitioning-based simulation                                                                     ISSN 1751-8687
+                                                                                                                 Received on 23rd March 2015
+                                                                                                                 Revised on 6th July 2015
+solution for frequency-dependent network                                                                         Accepted on 2nd August 2015
+                                                                                                                 doi: 10.1049/iet-gtd.2015.0368
+equivalents in real-time digital simulator                                                                       www.ietdl.org
+
+
+Yizhong Hu, Wenchuan Wu ✉, Boming Zhang
+Department of Electrical Engineering, Tsinghua University, Beijing, People’s Republic of China
+✉ E-mail: wuwench@tsinghua.edu.cn
+
+Abstract: Rational models of frequency-dependent network equivalents (FDNEs) have been used in real-time digital
+simulator (RTDS) for power-system simulation. However, this can lead to a computational burden issue; the application
+of FDNEs may result in a loss of real-time simulation features because the computational cost of the FDNE component
+exceeds the limits of RTDS. The authors describe a solution that combines compacting and partitioning of the FDNEs,
+whereby the former reduces the redundancy in the mathematical model and the latter allows us to exploit parallel
+computer architectures. Then they describe the results of numerical simulations that demonstrate the effectiveness of
+the approach. Moreover, the proposed simulation solution is not limited to the applications of FDNEs in RTDS, it solves
+a set of subsistent computational issues when apply rational models in real-time electromagnetic transients programs
+tools.
+
+
+
+
+Nomenclature                                                           several industrial grade real-time EMTP tools [10] such as
+                                                                       HYPERSIM [11], RT-LAB [12] and real-time digital simulator
+EMTP        electromagnetic transient program                          (RTDS) [13].
+FDNE        frequency dependent network equivalent                        RTDS, as with other real-time EMTP tools, is based on parallel
+RTDS        real-time digital simulator                                computer architectures, so the required resources scale
+Y (s)       rational model of FDNE (matrix)                            approximately linearly with the size of the problem [14]. In this
+y(s)        element of Y (s)                                           respect, it is appropriate to use FDNEs to represent the parts of a
+ai          poles in rational model                                    system that need not be modelled in detail to simulate large
+ci          residues in rational model                                 systems in real time [6–8]. However, compressing some part of a
+d           constant term in rational model                            system to an FDNE model may lead to local overload of the
+h           one-degree term in rational model                          computational resources. Speciﬁcally, although the size of an
+N           number of FDNE ports                                       FDNE model is signiﬁcantly less than that of the original network,
+n           number of poles                                            the latter can be handled by parallel computing, whereas the
+P           number of network ports                                    former can only utilise limited computational resources since it is
+O           computational cost                                         modelled on an individual processor. Therefore, when the
+Δt          time step of simulation                                    computational cost is particularly high, it may not be possible to
+Geq, Ihis   equivalent admittance matrix and historical current in     simulate an FDNE component in real time.
+            EMTP simulation                                               This issue has not been discussed in any detail, however, because
+                                                                       only small-scale FDNEs with relatively few ports and poles have
+                                                                       been studied [6–8]. (It will be shown in Section 3 that the
+                                                                       computational cost of FDNEs is directly related to the number of
+1      Introduction                                                    ports and poles.) This is a critical issue for real-time simulation
+                                                                       using FDNEs: if the application of FDNEs results in the loss of
+Frequency-dependent network equivalents (FDNEs) are applied in         real-time simulation capacity, then the most important attribute of
+electromagnetic transients programs (EMTP) tools for power             FDNEs will be lost. In this paper, we discussed two techniques to
+system simulation, since they can reduce the scale of the system       tackle the issue of FDNEs for real-time application. The ﬁrst is
+while keep the frequency characteristics of the original network.      compacting, which decreases the calculation time by reducing the
+FDNEs were ﬁrstly proposed in the form of simple RLC modules,          redundancy of the mathematical model. The second is partitioning,
+whose parameters are tuned to match the network’s frequency            which separates the FDNE into several modules so as to utilise
+response [1, 2]. This kind of model seems to be complex and            more computing resources in a parallel platform. The effectiveness
+inﬂexible by now. With the development of rational modelling [3]       of the approach is demonstrated using numerical tests.
+and ﬁtting method [4], the rational model of FDNEs [5] has                It should be noted that, although this paper mainly presents the
+become popular. In [6–9], some examples of implementing FDNE           solution of accelerating FDNE simulation in RTDS, the idea can
+rational models in EMTP tools are shown.                               also be used for the applications of other rational models in other
+   EMTP tools are classiﬁed into two main categories: off-line and     real-time EMTP tools.
+real time [10]. The main difference is that real-time EMTP tools
+are able to conduct real-time simulation, i.e. generating results in
+synchronism with a real-time clock. Such tools can be interfaced       2      Basics of RTDS
+with physical devices via power ampliﬁers, therefore having
+signiﬁcant advantages in the study and testing of high-voltage         Most EMTP tools are based on the 1969 work of Dommel [15], so is
+direct current (HVDC) and ﬂexible alternating-current transmission     the RTDS. All components can be represented as an equivalent
+system control, excitation control, and relays. Currently, there are   admittance Geq, as well as the historical current Ihis, using the
+
+
+                                                                           IET Gener. Transm. Distrib., 2015, Vol. 9, Iss. 16, pp. 2526–2533
+2526                                                                               & The Institution of Engineering and Technology 2015
+                                                                                                                                                  17518695, 2015, 16, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/iet-gtd.2015.0368 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+                                                                         where I is a vector of injected currents, U is a vector of node
+                                                                         voltages, and x is a vector of state variables.
+                                                                           Using (4), the equivalent admittance and historical current can be
+                                                                         derived using the trapezium rule for integration [8], i.e.
+
+                                                                                                I(t) = I his + G eq U(t);                   (5)
+
+                                                                         and
+
+                                                                                        Geq = C l + D,
+                                                                                                                                            (6)
+Fig. 1 Schematic diagram of each time step in RTDS                                       I his = C ax(t − Dt) + C lU(t − Dt),
+
+                                                                         where
+trapezoidal rule of integration. Thus, during each time step, Geq and
+Ihis for each component can be independently calculated, depending                                          −1
+on the current state of the system. The state of the system in the                                     Dt        Dt
+                                                                                          a= E−           A    E+ A ,
+following time step can be obtained by solving a linear equation.                                      2         2
+Further details can be found in [15].                                                                                                       (7)
+                                                                                                     −1
+   Real-time simulation can be achieved mainly based on the fact that                        Dt   Dt
+                                                                                          l=    E− A    B,
+procedures used to calculate Geq and Ihis for each component are                             2    2
+independent, allowing the implementation of parallel computation
+as shown in Fig. 1. It should be noted that the solution for the         and Δt is the time step for integration.
+network can be obtained only after obtaining Geq and Ihis for all           Considering the fact that Geq is constant, only I his needs to be
+components. If the time for computation Δt1 is less than the             calculated continuously. The computational cost of preparing the
+simulated time step Δt, the system can be simulated in real time         components of the FDNE I his for each step in the iteration step of
+(see [13] for further details). When this cannot be satisﬁed (i.e. it    the EMTP simulation (assessed in terms of the number of
+takes too long to calculate a certain complex component such as a        ﬂoating-point multiplications) is
+rational model of FDNE), the real-time simulation capacity is lost.
+                                                                                               O = 2nN 2 + N 2 + 2nN .                      (8)
+3     Basics of FDNEs
+                                                                         A derivation is given in Appendix 1. Note that the FDNE model is
+3.1   Rational model of FDNEs                                            three-phase so N = 3P; P is the number of the network ports.
+                                                                            Based on our experience as users of RTDS using processors based
+A rational model of FDNEs [5] can be expressed as                        on giga processor cards (GPCs) [8], when the time step is 50 µs
+                                                                         (which is common in EMTPs), FDNE components with N = 6 and
+                     ⎡
+                       y11 (s)    y12 (s)   · · · y1N (s)
+                                                          ⎤              n = 40 are close to the limit of real-time simulation. In previous
+                     ⎢ y21 (s)    y21 (s)   · · · y2N (s) ⎥              reports of FDNEs in RTDS [6–8], the number of the poles in
+             Y (s) = ⎢ .
+                     ⎢                                    ⎥
+                                                            ,      (1)   rational models n was not clearly established, and the number of
+                     ⎣ ..            ..     ..       .. ⎥
+                                      .         .     . ⎦                network ports P was always one or two. There is clearly a
+                       yN 1 (s)   yN2 (s)   · · · yNN (s)                problem with local overload of the computational cost caused by
+                                                                         the FDNE component when implementing FDNE rational models
+                                                                         in RTDS; however, this has yet to be reported in detail.
+where N is the number of ports, s = j 2 π f , and f is the frequency.
+Each element y(s) can be expressed as
+
+                              n
+                                    ci                                   4     Solutions to accelerate FDNE simulations
+                     y(s) =               + d + sh,                (2)
+                              i=1
+                                  s −  ai                                4.1     Compacting
+
+where ai are poles, ci are residues, d is a constant, and h is a         The ﬁrst part of the acceleration solution described here is
+one-degree term, all of which are unknown coefﬁcients, and n is          compacting. The original idea comes from [20], which proposes a
+the number of poles.                                                     robust approach that uses vector ﬁtting to fulﬁl the system
+   In practice, all elements share the poles and the one-degree term h   identiﬁcation.
+is zero [6–9]. This model can be appropriately solved using vector          The coefﬁcient matrices A, B, C, and D can have different forms
+ﬁtting [4, 16, 17], and passivity can be guaranteed [18, 19].            and formats [20]. An example with N = 3 and n = 4 is illustrated in
+                                                                         Fig. 2. (Further details are given in Appendix 2.) With the original
+                                                                         format (i.e. Format 1 shown in Fig. 2a), the poles are repeated N
+3.2   Realisation in EMTP and computational cost                         times in A, resulting in redundancy of state variables; hence, the
+                                                                         matrices can be rearranged, resulting in the new format (Format 2
+Equation (1) can be written as a transfer function, i.e.                 shown in Fig. 2b). The model can be compacted when some
+                                                                         residue matrix Rk (shown in Fig. 2b) is not full rank, and a
+                    Y (s) = C(sE − A)−1 B + D,                     (3)   physically more correct state equation can be obtained [20].
+                                                                            If the rank of Rk is r (see Appendix 3), then according to singular
+where E is the identity matrix. The forms of the coefﬁcient matrices     value decomposition (SVD), Rk can be decomposed as
+A, B, C, and D can be found in [5]. The state equations can then be
+established in the time domain, i.e.                                                                Rk = USV T ,                            (9)
+
+                              ẋ = Ax + BU                               where Σ = diag(σ1, σ2, …, σr) is the singular value, U = (u1, u2, …,
+                                           ,                       (4)
+                              I = Cx + DU                                ur) and V = (v1, v2, …, vr) are the left and right singular vectors,
+
+
+IET Gener. Transm. Distrib., 2015, Vol. 9, Iss. 16, pp. 2526–2533
+& The Institution of Engineering and Technology 2015                                                                                     2527
+                                                                                                                                                      17518695, 2015, 16, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/iet-gtd.2015.0368 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+                                                                             Fig. 4 Schematic diagram showing FDNE partitioning
+
+
+                                                                             and this process of compacting one residue matrix Rk decreases the
+                                                                             FDNE component’s computational cost by
+
+                                                                                                  Oreduce = 2N 2 + 2N − 4rN .                  (16)
+
+                                                                             It is important to note that, there are total n residue matrices in an
+                                                                             FDNE rational model, i.e. R1 , R2 , …, Rk , …, Rn . The rank of all
+                                                                             residue matrices should be checked and those with a rank of less
+                                                                             than N + 1/2 should be compacted.
+Fig. 2
+a Forms of the coefﬁcient matrices A, B, and C in original format
+                                                                             4.2     Partitioning
+b Forms of the coefﬁcient matrices A, B, and C in rearranged format
+                                                                             As described in Section 4, one of the major issues is that an FDNE is
+                                                                             modelled as a single component. FDNE compacting does not
+                                                                             address this issue, and this limits the improvements in
+respectively. Then, the initial Rk , Ak , and Bk can be replaced by
+                                                                             computational efﬁciency.
+                                                                                A single FDNE model can be partitioned into several parts for the
+                                   R′k = US,                          (10)   following two reasons. First, physically, an FDNE is an admittance,
+                                                                           and so adding admittances corresponds to parallel connections.
+                     A′k = diag ak ak · · · ak (1 × r) ,              (11)   Second, mathematically, the rational model of an FDNE is the
+                                                                             sum of fractional functions, and so it can be easily separated.
+                                                                                Here, we take the example of an FDNE model partitioned into two
+                                   B′k = V T ,                        (12)   components. The elements can be separated as follows
+
+to fulﬁl the compacting as illustrated in 

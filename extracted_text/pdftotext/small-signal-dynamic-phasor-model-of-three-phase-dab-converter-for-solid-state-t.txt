@@ -1,0 +1,147 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2817878, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+                      Hybrid Average Modeling of Three-Phase Dual
+                      Active Bridge Converters for Stability Analysis
+                               Maxime Berger, Student Member, IEEE, Ilhan Kocar, Senior Member, IEEE, Handy Fortin-
+                                            Blanchette, Member, IEEE, and Carl Lavertu, Member, IEEE
+
+
+                                                                                                              converter provides many advantages over the 1p-DAB which
+               Abstract— The three-phase dual active bridge (3p-DAB)                                           is why it is favored in modern flexible dc-grids [9][10][12].
+           converter is widely addressed in emerging power systems                                             Due to its three-phase structure, the 3p-DAB (Fig. 1) also
+           applications such as solid-state transformer (SST), and dc
+                                                                                                               allows using different winding connections (Y-Y, Y-∆, and
+           microgrids. Its successful integration requires accurate modeling
+           of its small-signal characteristics. Due to its dc-ac-dc structure,                                 ∆-∆). It is demonstrated in [13] that the Y-∆ transformer offers
+           the DAB converter brings many challenges in small-signal                                            better performance in terms of stress on switches, transformer
+           modeling. The state-space averaging (SSA) has been the first                                        utilization, and filter capacitor requirements.
+           proposed methodology to approximate the control-to-output, and                                          The integration of power electronics in ac- and dc-grids
+           line-to-output transfer functions of the 3p-DAB. However, as
+           shown in this paper, SSA is not precise for the stability analysis
+                                                                                                               brings new challenges in terms of power system control and
+           of 3p-DAB converters. A generalized state-space averaging                                           stability [14]-[16]. For this reason, this paper focuses on the
+           (GSSA) model based on the dynamic phasor concept is developed                                       development of accurate models of the 3p-DAB converter for
+           in this paper for the Y-∆ 3p-DAB. A hybrid SSA and GSSA                                             stability analysis in dc-grid applications. Small- and large-
+           model representation is then proposed for the evaluation of all                                     signal analyses are widely used for stability assessment of
+           the converter transfer functions. The developed models are
+           validated with detailed time-domain switch-level simulations in                                     power electronics-based systems [17]. Converter open-loop
+           an electromagnetic transient type (EMT-type) program. They are                                      small-signal characteristics are generally defined by a set of
+           also used for the accelerated stability prediction in an EMT-type                                   standard transfer functions: the control-to-output transfer
+           program.                                                                                            function Gvd(s), line-to-output transfer function Gvg(s),
+                                                                                                               driving point ZD(s) and null driving point ZN(s) input
+              Index Terms— Distributed resources, bidirectional converters,
+                                                                                                               impedances, and output impedance Zo(s). For the stability
+           dc-dc conversion, dual active bridge, state-space averaging,
+           generalized averaging, dynamic phasor, Electromagnetic                                              analysis of multiple converters interacting with other network
+           Transients Program                                                                                  components, it is also required to determine the closed loop
+                                                                                                               small-signal characteristics of the converter such as the loop
+                                                                                                               gain T(s), and closed-loop input and output impedances [18].
+                                             I. INTRODUCTION
+
+           D     ual active bridge (DAB) isolated bidirectional dc-dc
+                 converters are widely considered as the central element in
+                                                                                                                Grid #1
+                                                                                                                                       Input Bridge
+                                                                                                                                                                            d
+                                                                                                                                                                                                           Output Bridge
+
+                                                                                                                                                                                                                             io
+                                                                                                                                                                                                                                   Grid #2
+
+
+
+           current and next-generation high-frequency-link power                                                                  ii       S1       S3       S5                                                                             iR
+                                                                                                                                                                  iA LA    M : 1 ia                       S1’        S3’   S5’
+           conversion systems [1]. Due to their high flexibility, DAB                                                                  A
+                                                                                                                                                                  iB LB
+                                                                                                                                                                                                      a
+                                                                                                                                                                                 ib                                               vo        R
+           converters are proposed to be employed in many recent                                                     vi                         B                                                                 b        Co
+                                                                                                                                  Ci                              iC LC          ic                                                         iload
+                                                                                                                                                         C                                                                 c
+           conversion applications such as distributed resources                                                                           S2       S4       S6                                           S2’        S4’   S6’
+           interface [2], uninterruptible power supply (UPS) systems [3],
+                                                                                                                                                N                  Y-D : M =m 3                                  n
+           automotive [4], railway transportation [5], solid-state
+           transformers (SSTs) in distribution networks [6], airborne                                                                                                       (a)
+
+           wind turbines [7], and flexible load emulators [8].                                                                                                                                                                    îload
+              The DAB has been first proposed in [9] and [10]. The
+                                                                                                                                                                                                                                  Z o (s)
+           transformer voltage ratio is used to match the nominal voltage
+                                                                                                                                                                                               v̂i              G vg (s)
+           level between the two grids. Voltage control is performed by                                                                                                                p
+                                                                                                                                           Controller        6-step modulator          6
+           controlling the duty cycle of the primary and secondary                                             v̂ oref                                                                                                                           v̂ o
+                                                                                                                                                                                d̂ '           -     d̂                            +-
+           bridges, and/or the phase-shift between the two bridges [11].                                                  +
+                                                                                                                              -
+                                                                                                                                            Gc (s)                Gm (s)                   +                    G vd (s)           +
+
+           Both single-phase (1p-DAB) and three-phase (3p-DAB)
+           topologies have been proposed in the literature. The 3p-DAB                                                                                                      Filter
+
+                                                                                                                                                                           Gf (s)
+              Maxime Berger, and Ilhan Kocar are with Polytechnique Montreal, QC.
+           Handy Fortin-Blanchette is with Ecole de Technologie Superieure, Montreal,                                                                (b)
+           QC. Carl Lavertu is with Bombardier Transportation, St-Bruno-de-                                    Fig. 1. Three-phase dual-active-bridge (3p-DAB) (a) General architecture
+           Montarville, QC. (maxime.berger@polytml.ca, ilhan.kocar@polymtl.ca,                                 (b) Output voltage regulation small-signal block diagram (forward operation)
+           handy.fortin-blanchette@etsmtl.ca, carl.lavertu@rail.bombardier.com)
+
+
+
+  0885-8977 (c) 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2018.2817878, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+              Detailed switch-level simulation in time-domain tools is a                                       the most commonly used control method for the 3p-DAB. The
+           recognized methodology to extract small-signal characteristics                                      phase-shift d between the two bridges is defined as in [13],
+           of power electronics converters [17]. However, it does not                                          and is used to regulate the output voltage vo.
+           provide analytical expressions for the prediction of converter                                          For the sake of simplicity and due to space constraints, only
+           behavior. The prediction of instability conditions can also                                         unidirectional forward operation (0° ≤ d ≤ 90°) is considered
+           require extensive simulations.                                                                      in this paper. A similar procedure can be applied for reverse
+              The most commonly used technique to derive the analytical                                        operation (-90° ≤ d ≤ 0°). In forward operation, active power
+           small-signal model of dc-dc converters is the state-space                                           is transferred from the input bridge to the output bridge. The
+           averaging (SSA) method [19][20]. It is based on two main                                            open-loop transfer functions are defined as,
+           assumptions: 1) the ac variations are small, and 2) the control
+                                                                                                                                                             v̂ o (s )
+           cross-over frequency fφm is much smaller than the switching                                                                       G vd (s ) =                                                (1)
+                                                                                                                                                              ˆd(s )
+           frequency fs. It leads to a dc-averaged model of the converter.                                                                                               v̂i (s )= 0
+              Due to the high-frequency ac-link in DAB converter, SSA
+           has limitations in deriving an accurate small-signal                                                                                              v̂ o (s )
+                                                                                                                                             G vg (s ) =                                                (2)
+           model [21][22]. SSA has been first applied to approximate the                                                                                     v̂ i (s ) ˆ
+                                                                                                                                                                          d (s )= 0
+           control-to-output Gvd(s), and line-to-output Gvg(s) transfer
+           functions of the Y-Y 3p-DAB [23]. There is currently no                                                                                                   v̂ i (s )
+           resource in the literature to evaluate the driving point ZD(s)                                                               Z in (s )=Z D (s ) =                                            (3)
+                                                                                                                                                                     îi (s ) ˆ
+           and the null driving point ZN(s) input impedances for the 3p-                                                                                                         d (s )= 0
+
+           DAB converter with SSA. These two transfer functions are
+           necessary for the application of Middlebrook’s extra element                                                                                      v̂i (s )
+                                                                                                                                              Z N (s ) =                                                (4)
+           theorem for the stability prediction of dc-dc converters [24].                                                                                    îi (s )
+                                                                                                                                                                         v̂ o (s )=0
+              To overcome the limitations of SSA for the DAB converter,
+           generalized state-space averaging (GSSA) models [25] have                                                                                     v̂o (s )
+           been developed in [22], [26] and [27]. These models are not                                                                Z o (s ) = -                                                      (5)
+                                                                                                                                                       îload (s )
+           extended to the derivation of the converter input and output                                                                                              v̂i (s )=0, ˆd(s )=0
+           impedances. The derivation of the open-loop null driving point                                      where d is the control phase-shift, vo is the output voltage, vi
+           input impedance ZN(s) is particularly challenging for the DAB                                       is the input voltage, ii the input current, and iload is a
+           converter modeled with GSSA. The methodology presented in                                           perturbation in the load current as defined in Fig. 1.
+           [21] is the first attempt to derive both ZD(s) and ZN(s) for a                                           Note here that, for the general case of the time-domain
+           1p-DAB converter modeled with GSSA. The methodology                                                 variable x(t ) , its small-signal frequency-domain notation is
+           used, requires determining the closed-loop input impedance                                           x̂ (s ). Small-letters are used for time- and frequency-domain
+           with a dummy controller Gc(s) before extracting ZN(s) by                                            variables. Capital letters will be used in the next sections for
+           analytically removing the controller from the set of equations.                                     steady-state values.
+           The application of this methodology to 3p-DAB converters
+           modeled with GSSA is neither shown nor trivial.                                                                        III. STATE-SPA

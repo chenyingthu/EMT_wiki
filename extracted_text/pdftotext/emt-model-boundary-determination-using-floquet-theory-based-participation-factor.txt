@@ -1,0 +1,172 @@
+                    This article has been accepted for publication in IEEE Transactions on Power Systems. This is the author's version which has not been fully edited and
+                                               content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2026.3674489
+
+
+                                                                                                                                                                                               1
+
+
+
+
+                EMT Model Boundary Determination Using
+                Floquet Theory-based Participation Factors
+                   Mahsa Sajjadi, Member, IEEE, Kai Sun, Fellow, IEEE, and Deepak Ramasubramanian,
+                                                 Senior Member, IEEE
+
+
+                                                                                                 the fault in the EMT zone, as discussed in [1]-[6]. While this
+    Abstract—To accelerate electromagnetic transient (EMT)                                       method is simple, it lacks precision and a solid theoretical
+simulations for power systems with inverter-based resources                                      foundation. Another strategy, presented in [7], involves detailed
+(IBRs), this paper proposes a new approach for determining the                                   modeling of HVDC converters using EMT while representing
+EMT model boundary using Floquet theory-based participation
+                                                                                                 the AC network with a phasor model to capture the complex
+factors (PFs). The approach can significantly reduce the
+computational burden of EMT simulation to focus on a localized                                   dynamics and rapid transients of HVDC systems accurately.
+area whose components highly participate in the dynamics of                                      This approach is simple, but it ignores the dynamic interaction
+interest such as sub-synchronous oscillations (SSOs), while the rest                             between HVDC converters and AC network. In [8], it is
+of the grid is represented using a simple Norton equivalent.                                     recommended to include buses with significant harmonic
+Floquet theory enables the calculation of participation factors over                             distortion in the EMT zone, considering the system
+a single cycle of the system in an EMT model, where the vector
+                                                                                                 configuration and the disturbance being analyzed. This
+field exhibits periodic behavior around the synchronous
+frequency. A data-driven method is also proposed for estimating                                  harmonic distortion criterion provides good accuracy in case of
+participation factors directly from the system’s responses. The                                  high distortion in the system; however, it cannot capture low-
+proposed EMT model boundary determination approach is first                                      frequency dynamic issues. The approach in [9] uses voltage
+demonstrated on a two-area system and then validated on a 39-bus                                 drops as a criterion for selecting buses to include in the EMT
+system with multiple IBRs.                                                                       zone. A voltage drop is easy to measure and monitor, though
+                                                                                                 this approach is heavily influenced by the specific fault, and it
+   Index Terms-- Electromagnetic transient, EMT, Floquet
+theory, inverter-based resource, IBR, participation factor, power
+                                                                                                 lacks depth in dynamic system interaction. Lastly, [10]
+system simulation, sub-synchronous oscillation.                                                  suggests applying EMT models to regions with a low short-
+                                                                                                 circuit ratio (SCR), a widely used method which focuses on
+                            I. INTRODUCTION                                                      critical areas prone to instability, However, it is primarily
+                                                                                                 relevant when converters are present in the system and does not
+      OWER systems with high penetration of inverter-based
+P    resources (IBRs) face new challenges in dynamic analysis,
+     especially during phenomena such as sub-synchronous
+                                                                                                 capture the critical parts of the network, such as key buses or
+                                                                                                 branches that influence system dynamics.
+                                                                                                     Each approach for EMT zone boundary determination suits
+oscillations (SSOs), ride-through dynamics, and converter-
+                                                                                                 specific system properties and simulation objectives. The
+induced stability issues. The electromagnetic transient (EMT)
+                                                                                                 components involved, the type of possible disturbances, and the
+simulation offers the detailed time-domain analysis needed to
+                                                                                                 intended trade-off between computational efficiency and
+capture the fast and complex dynamics associated with IBRs.
+                                                                                                 simulation detail all influence the choice of approach.
+However, EMT simulations are computationally intensive,
+                                                                                                     To add new insights into existing EMT boundary
+especially when applied to large-scale power systems. This
+                                                                                                 determination methods, particularly when capturing specific
+makes it impractical to simulate the entire system using EMT
+                                                                                                 dynamic phenomena or an SSO mode is of interest, this paper
+models, leading to the need for boundary determination
+                                                                                                 presents a novel participation factor-based EMT boundary
+strategies that combine EMT modeling for critical zones with
+                                                                                                 determination method using Floquet theory to identify and
+simplified models for less critical parts of the system. There
+                                                                                                 include critical elements—such as IBRs, generators,
+have been numerous studies on hybrid EMT-phasor simulation,
+                                                                                                 transmission lines, and other network components—within the
+with most approaches using a predetermined EMT zone and
+                                                                                                 EMT zone. Unlike hybrid EMT-phasor simulations, the
+mainly focusing on improving data exchange between the EMT
+                                                                                                 proposed approach employs an EMT zone connected to a
+and phasor domains while enhancing the accuracy of hybrid
+                                                                                                 Norton equivalent, offering a simpler yet effective
+simulations compared to full EMT simulations. Relatively few
+                                                                                                 representation that preserves the dynamics of interest.
+studies have addressed EMT boundary determination. One
+                                                                                                     The participation factor (PF) quantifies the relative two-way
+common method in literature is to intuitively include areas near
+                                                                                                 participation of an oscillation mode in a state variable of the
+
+   This work was supported in part by NSF grant ECCS-2329924 and in part
+by EPRI under the agreement No. 10017471.
+   M. Sajjadi and K. Sun are with the Department of EECS, University of
+Tennessee, Knoxville, TN (Emails: msajjad1@vols.utk.edu, kaisun@utk.edu).
+   D. Ramasubramanian is with the Electric Power Research Institute, Palo
+Alto, CA. (Email: dramasubramanian@epri.com)
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:51:49 UTC from IEEE Xplore. Restrictions apply.
+                    © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                       but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                  This article has been accepted for publication in IEEE Transactions on Power Systems. This is the author's version which has not been fully edited and
+                                             content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2026.3674489
+
+
+                                                                                                                                                                                             2
+
+system model and of the state variable in the oscillation mode.                                proposed boundary determination method, the simulation
+It has been extensively used in electrical power systems and                                   results from the full EMT model are compared with those from
+other fields as a powerful index for stability analysis [11],                                  the reduced EMT-zone simulation, where only the critical zone
+model reduction [12]-[14], controller and sensor placement                                     is modeled in EMT, and the remainder of the system is replaced
+[15], [16] and EMT boundary determination [17]. Unlike                                         with a multi-port Norton equivalent. The multi-port Norton
+phasor-based models, which are based on a fixed equilibrium                                    equivalent offers a practical and widely used approach for
+point and assume linear time-invariant (LTI) behaviors, EMT                                    modeling the external system in EMT simulations. Compared
+models operate around a near steady-state periodic trajectory                                  to phasor-based models in hybrid simulations, the multi-port
+where system variables exhibit continuous oscillations due to                                  Norton equivalent is simpler and more efficient, as it is derived
+fast system dynamics. As a result, the system matrix in EMT                                    once under steady-state conditions and reused across fault
+modeling is time-varying and periodic, requiring a more general                                scenarios without requiring time-step updates. By including
+analytical framework. To accurately capture these dynamics,                                    mutual coupling among boundary buses, it offers a
+this paper employs Floquet theory, a powerful tool for the                                     straightforward yet sufficiently accurate representation of the
+small-signal analysis of systems with periodic coefficients [18],                              external network. While similar equivalents exist in the
+[19]. References [20]-[23] apply stability and small-signal                                    literature, its integration here contributes to the boundary
+analysis techniques for linear time-periodic (LTP) systems                                     determination framework.
+within the context of power system applications.
+     For LTP systems—such as a linearized EMT model—                                               This paper has the following main contributions. First, a
+Floquet theory enables the computation of eigenvalues and PFs                                  novel PF-based EMT model boundary determination method is
+by solving the system over a single period. In the case of power                               developed based on Floquet theory to identify highly
+systems operating at 60 Hz, this corresponds to a window of                                    participating IBRs in SSO modes, as well as branches and buses
+just 1/60 seconds, offering a substantial reduction in the                                     contributing to higher-frequency harmonics. In the Floquet
+computational burden compared to that for a full EMT                                           analysis of EMT simulations, modal information and PFs for
+simulation. Importantly, an LTP system has an infinite number                                  SSOs are extracted by analyzing the system’s ordinary
+of harmonics associated with integer multiples of the                                          differential equation (ODE) model over a single 60 Hz cycle.
+fundamental frequency. The proposed Floquet-based PF                                           This allows Floquet analysis to identify modal behaviors
+approach captures this behavior by identifying not only the                                    without requiring a long simulation time. Second, a criterion is
+IBRs and synchronous generators most involved in SSO modes,                                    proposed to retain only the critical harmonics that dominate the
+but also the bus voltages and branch currents that contribute                                  system's response. Third, a data-driven approach is given for
+significantly to higher-frequency harmonics.                                                   obtaining PFs using Floquet theory, requiring the system
+    In contrast, phasor-domain PFs, including those based on                                   responses only for a single cycle of the system. Fourth, this
+0dq transformation, are derived under the assumption of                                        paper establishes a mathematical connection between PFs in
+operation around a single frequency and fixed equilibrium                                      LTI and LTP systems, demonstrating that LTI PFs (e.g. phasor-
+point. While effective for modal analysis on phasor-based                                      based PFs) represent a special case corresponding to the
+models, these approaches are inherently limited in EMT                                         harmonic-zero component in the Floquet-based PF framework.
+applications. Traditional phasor-based PFs are typically limited                               The validation studies on the modified Kundur’s two-area
+to the internal states of generators or IBRs and do not extend to                              system and IEEE 39-bus system demonstrate that the proposed
+buses or branches, making them insufficient for identifying                                    PF-based EMT model boundary determination method can
+critical coupling paths or high-frequency contributors in                                      accurately capture important dynamics while improving
+systems with complex EMT dynamics. Moreover, as shown in                                       computational efficiency.
+this paper, phasor-based PFs can be interpreted to correspond                                      The structure of this paper is as follows. Section II presents
+only to the harmonic-zero component in the context of Floquet                                  the proposed EMT boundary determination framework, which
+theory, thus failing to represent higher-order harmonics and                                   includes EMT model linearization, Floquet theory analysis, a
+time-varying dynamics—key features of EMT dynamics. These                                      discussion on participation factors in Floquet theory connecting
+limitations become especially significant in systems with high                                 LTI and LTP systems, validation of the linearized model,
+IBR penetration, where fast control loops and wide spectral                                    criteria for harmonic selection, a data-driven extension, and the
+content dominate. Moreover, the 0dq transformation may                                         use of a multi-port Norton equivalent. Section III provides
+locally yield a fixed equilibrium for well-synchronized                                        simulation results for the Floquet-theory-based EMT boundary
+components, but its effectiveness depends on a strong and                                      determination method, applied to a two-area system with a
+coherent phase reference, which may not exist in electrically                                  single SSO mode and the IEEE 39-bus system with four SSO
+remote parts of the system.                                                                    modes. Several case studies are considered, including different
+                                                                                               fault locations, various PF thresholds, multi-mode scenarios,
+   The proposed method extracts modal information directly                                     and a comparison with the SCR-based approach for EMT
+from the EMT domain and extends PF analysis to include buses                                   boundary selection. Conclusions are drawn in Section VI.
+and branches, enabling the identification of dynamic elements
+and critical coupling interfaces, offering an advancement over
+traditional phasor-based approaches. After applying the
+
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:51:49 UTC from IEEE Xplore. Restrictions apply.
+                  © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                     but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                   This article has been accepted for publication in IEEE Transactions on Power Systems. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2026.3674489
+
+
+                                                                                                                                                                                              3
+
+   II. PROPOSED BOUNDARY DETERMINATION FRAMEWORK                                                network of the EMT model.
+    This section presents the proposed EMT boundary                                                There are three groups of state variables when deriving the
+determination framework for analyzing EMT simulation  

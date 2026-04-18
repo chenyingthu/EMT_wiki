@@ -1,0 +1,310 @@
+第 44 卷 第 4 期                                                 电 网 技 术                                                  Vol. 44 No. 4
+ 2020 年 4 月                                               Power System Technology                                        Apr. 2020
+文章编号：1000-3673（2020）04-1203-08                         中图分类号：TM 721               文献标志码：A           学科代码：470·40
+
+
+
+                    含大量电磁直流模型的机电–电磁暂态
+                        混合仿真技术研究
+                         陈绪江 1，张星 1，田芳 1，张怡 2，金一丁 2，周孝信 1
+       （1．电网安全与节能国家重点实验室(中国电力科学研究院有限公司)，北京市 海淀区 100192；
+                                    2．国家电力调度控制中心，北京市 西城区 100031）
+
+
+  Electromechanical-electromagnetic Hybrid Simulation Technology With Large Number of
+                             Electromagnetic HVDC Models
+                   CHEN Xujiang1, ZHANG Xing1, TIAN Fang1, ZHANG Yi2, JIN Yiding2, ZHOU Xiaoxin1
+           (1. State Key Laboratory of Power Grid Safety and Energy Conservation (China Electric Power Research Institute),
+                                               Haidian District, Beijing 100192, China;
+                      2. National Power Dispatching and Control Center, Xicheng District, Beijing 100031, China)
+
+
+ABSTRACT : With the rapid development of UHVDC and the
+               1                                                          transmission;   HVDC   electromagnetic   model;   operating
+step-by-step improvement of its transmission capacity, China's            condition adjustment
+power grid has the characteristics of “Strong HVDC and weak
+                                                                          摘要：伴随特高压直流的飞速发展和其输电容量阶跃式提
+AC system”. The coupling between the transmitting and
+                                                                          升，我国电网呈现出“强直弱交”的特点。送受端、交直流、
+receiving ends, AC and HVDC, and multiple HVDCs is getting
+                                                                          多直流之间耦合日趋紧密，电网运行特性日趋复杂。在大规
+closer and closer so that the operating characteristics of the
+                                                                          模交直流电网的仿真分析中，直流输电系统需要采用电磁暂
+power grid are becoming increasingly complex. In the
+                                                                          态仿真以获得准确动态特性，其余交流电网采用机电暂态仿
+simulation analysis of large-scale AC-DC power grids, the
+                                                                          真以提高仿真效率。然而，含多条直流电磁暂态模型的混合
+HVDC obtains accurate dynamic characteristics and the AC
+                                                                          仿真在数据建立、方式调整及平稳启动方面存在困难，制约
+grids can improve its simulation efficiency via electromagnetic
+                                                                          了大规模电网分析的工作效率和仿真精度。提供了通过直流
+transient simulation. However, the hybrid simulation with
+                                                                          标准化建模和数据映射拼接实现混合仿真数据自动建立的
+multiple    HVDC        electromagnetic    transient    models     has
+                                                                          解决方案，提高了建模效率；提供了直流输电电磁模型运行
+difficulties in data establishment, mode adjustment and smooth
+                                                                          方式自动调整、混合仿真接口电压箝位平稳启动的方法，使
+start, which restricts the working efficiency and simulation
+                                                                          混合仿真能在 0.6s 的仿真过程内达到稳态。所提方法提高
+accuracy of large-scale power grid analysis. In this paper, a
+                                                                          了大规模交直流电网机电–电磁混合仿真分析的工作效率和
+solution is presented for automatic establishment of hybrid
+                                                                          仿真精度。
+simulation data through HVDC standardization modeling and
+data mapping splicing, which greatly improves the modeling                关键词：大规模交直流电网；机电–电磁暂态混合仿真；特
+efficiency. And a method is provided for automatically                    高压直流输电；直流输电电磁模型；运行工况调整
+adjusting the operation mode of the HVDC electromagnetic                  DOI：10.13335/j.1000-3673.pst.2018.1810
+model and the smooth start of the hybrid simulation so that the
+hybrid simulation can reach steady state within the simulation
+                                                                          0 引言
+process of 0.6s. The method proposed in this paper improves                    能源与负荷需求之间的反向分布是中国的基
+the    working       efficiency   and   simulation     accuracy     of
+                                                                          本国情之一，也是电力系统规划和运行中应该考虑
+electromechanical-electromagnetic.
+                                                                          的重要因素[1]。高压直流输电已成为我国区域间最
+KEY        WORDS:         large-scale     AC-DC        power      grid;   常见的电力传输方式，它将西部的可再生能源传输
+electromechanical-electromagnetic hybrid simulation; UHVDC                到东部满足负荷需求。伴随特高压直流快速发展和
+                                                                          输电规模阶跃式提升，“强直弱交”矛盾突出，送
+      基金项目：国家重点研发计划资助项目(2018YFB0904500)。
+                                                                          受端、交直流、多直流之间耦合日趋紧密，电网运
+      Project Supported by National Key Research and Development
+Program of China (2018YFB0904500).                                        行特性发生了深刻变化。由于高压直流输电并不总
+1204                 陈绪江等：含大量电磁直流模型的机电–电磁暂态混合仿真技术研究              Vol. 44 No. 4
+
+是可靠，整个电力系统的稳定性受到威胁。                           真稳态建立的情况仿真人员设定钳位电源切除时
+       对于送端电网，高压直流输电的换相失败等暂                   间。这种混合仿真启动方法，可以避免启动阶段潮
+态过程对西北地区风电场的运行产生了影响，已实                        流不平衡对整个大电网的冲击与相互影响，但在大
+             [2-4]
+际发生了一些事故             。如文献[3]提供的一个案例           批量的计算方式扫描计算中，每个任务都进行一次
+分析，虽然是受端交流电网发生了故障，但引发了                        初始化，浪费了大量的时间和计算资源。
+HVDC 的换相失败或闭锁，进而引发送端电网瞬态                        由于电磁直流模型建模复杂，运行工况人工调
+过电压振荡并导致风机部分脱网，此后无功过剩进                        整工作量大，难以从稳态直接启动，这些问题制约
+一步推高电压，导致风机脱网越发严重。对于直流                        了含大量电磁直流模型的机电–电磁暂态混合仿真
+多馈入的受端电网，发生交流系统故障可能造成多                        在大批量方式计算校核以及在线分析中的应用。本
+回直流同时换相失败，实际系统中也多次发生交流                        文将就含大量电磁直流模型的机电–电磁暂态混合
+                                   [5-8]
+故障造成多回直流同时换相失败的事故                      ，随着直   批量式仿真分析面临的建模工作效率、电磁直流模
+流接入规模的增大，需滚动校核多直流同时换相失                        型初始工况调整及混合仿真平稳启动方面的问题
+                          [9]
+败对受端电网安全稳定性的影响 。                              提出有效可行的技术方法。
+       机电暂态仿真程序所采用的直流模型均是准
+                                              1 技术框架
+稳态模型，可以对直流双极闭锁等严重故障进行模
+拟计算[10-11]，但对于研究交流系统不对称故障对直                     由于电磁直流模型建模复杂，运行工况人工调
+流换相过程的影响、直流控制系统对系统稳定性的                        整工作量大，难以从稳态直接启动，这些问题制约
+影响等问题时，难以给出合理的结果                [12]
+                                   ，因此现有      了含大量电磁直流模型的机电–电磁暂态混合仿真
+以机电暂态为主导的大电网仿真难以准确描述直                         在大批量方式计算校核以及在线分析中的应用。为
+流系统快速暂态特性，导致电网运行分析精确度不                        了解决上一瓶颈问题，本文提出了根据潮流数据和
+够，难以满足交直流大电网分析的要求，在模拟直                        指定分网方案的机电–电磁暂态混合仿真数据自动
+流换相失败、励磁涌流等非基波、非线性特性时也                        建立和电磁直流模型自动初始化和混合仿真平稳
+可能存在较大误差。电磁暂态仿真模拟精度高，选                        启动的技术框架，如图 1 所示。
+用合适的模型能够准确模拟换相失败等直流的动                           含大量电磁直流模型的机电–电磁暂态混合仿
+态过程，但其模型复杂、计算规模有限，难以成为                        真建模及仿真计算的具体步骤为：
+大电网运行仿真分析的主要研究手段。                               1）面向实际直流工程分别建立电磁直流标准
+       近年来，机电–电磁混合仿真在大电网分析中                   化模型作为模型库，并建立电磁直流模型库与方式
+得到越来越多的应用，通过将直流输电及其周边区                        计算数据或在线数据中直流元件的映射关系。
+域采用电磁暂态建模、其他交流电网采用机电暂态                          2）根据混合仿真分网预案确定电磁暂态仿真
+建模，能够实现更加精细化的电网仿真，兼顾仿真                        的直流工程范围并从电磁直流模型库中调取仿真
+精度和仿真规模，已成为国网和南网运行方式计算                        模型，实现电磁暂态仿真数据拼接。
+的重要工具。                                          3）程序自动定义机电–电磁暂态混合仿真接
+       在国调方式计算等混合仿真应用场景中，交直                   口，自动添加接口平稳启动的临时箝位电源。
+流混联电网一般先进行方式调整和潮流计算，然后                          4）采用本文描述的初始化方法，基于潮流数
+人工建立各回直流的电磁暂态模型，再人工定义电                        据对电磁直流模型进行运行状态的初始化。
+磁侧直流模型与机电侧大电网之间的混合仿真接                           5）混合仿真启动进行到稳态，切除箝位电源，
+口，以实现混合仿真。在混合仿真数据产生以后，                        保存运行点，套用预设的故障集，启动交直流大电
+还需要根据在线潮流将电磁侧各回直流模型的运                         网的机电–电磁暂态混合仿真计算，输出仿真结果。
+行方式调整到合理的位置，以保证其稳定运行状态
+                                              2 电磁直流模型
+与当前的在线潮流数据保持一致。这个运行方式调
+整的过程需要大量的人工参与，占用较大的工作                           在交直流大电网的机电–电磁暂态混合仿真
+量。交直流电网每一个新的运行方式的混合仿真建                        中，电磁暂态直流模型的一次设备模型结构和参数
+模及仿真过程都包含大量的人工干预。                             要与实际工程保持一致。为了兼顾仿真效率，控制
+       混合仿真启动阶段，原有方法一般会在接口位                   保护环节一般采用简化建模的方式，要保留与交直
+置加钳位电源支持直流逐步加入稳态，根据混合仿                        流系统相互影响密切相关的控制和保护环节，去掉
+第 44 卷 第 4 期                                              电    网   技   术                                                                      1205
+
+                    潮流数据
+                    潮流数据 据数流潮                                      流功率、直流电压、直流电流等运行方式指令。为
+                 (方式计算结果、
+                 （方式计算结果、
+                      、果结算计式方（
+                   在线数据等)
+                  在线数据等）
+                       ）等据数线在
+                                                                   了保证大电网仿真的效率，本文采用的直流控制保
+                                                                   护模型采用简化建模，模型结构如图 3 所示[15]。
+          实际
+           实际                                      际实                      图 3 中：Pref 为直流输送功率的参考值，MW；
+          直流
+           直流       混合仿真作业生成
+                     混合仿真作业生成                      流直
+           合 混      成生业作真仿合混                       混合
+          工程
+           工程
+           真 仿
+                                                   程工
+                                                   仿真
+                                                                   Uac 为换流变原边交流电压测量值，kA；Io 为直流
+          电磁
+           电磁         接口定义                         磁电
+           网分         接口定义
+                         义定口接                      分网
+          暂态
+           暂态                                      态暂              电流的指令值，kA；Ud 为直流电压的测量值，kV；
+           案方
+          标准                                       方案
+           标准           电磁模型拼接
+                        接电磁模型拼接
+                         拼型模磁电                     准标
+           案
+          化模
+           化模
+             预                                     预案
+                                                   模化
+                                                                   Id 为直流电流的测量值，kA；α 为整流侧触发角的
+          型库
+           型库                  模型筛选
+                               模型筛选
+                               选筛型模                库型              指令值，(°)；γref 为逆变侧关断角的参考值，(°)；Imargi
+                                        直流模型
+                                                                   为整流侧与逆变侧的直流电流裕度，kA。
+         仿真故障
+                     批量式故障仿真
+
+
+
+
+         仿真故障               障故真仿
+          集设置               置设集                                        整流侧控制
+          集设置
+              型模流直磁电 电磁直流模型
+              化始初动自   自动初始化
+                     自动初始化                                                                                                         重启动控制
+                                                                             交流系统                                       
+                                        分网并行
+
+
+
+
+                                                                                        Uac
+                                                                                                                                      Ud
+                                                                                                      整流侧最小
+                                                                                                      触发角控制
+                        ST...ST...ST
+                         TS...TS...TS
+                         ST...ST...ST                                                                                              电压控制
+
+
+                   3EMT1
+                    TME
+                   EMT1         2EMT2
+                                 TME
+                                EMT2      EMT3
+                                        1EMT3
+                                          TME
+                                                                                            Io       低压
+                                                                              Pref     主控                             电流控制
+                                                                                                     限流
+                     TEMT4
+                   nEMT4
+                       ME    TEMT5
+                            5EMT5
+                               ME    TEMTn
+                                   4EMTn
+                                       ME                                                                    Id
+        果结真仿            台平 并行计算平台
+                            算计行并                  仿真结果                                                             电压恢复控制
+                           并行计算平台                 仿真结果                                               Ud
+  图1 含                                          含 1图
+图 1 含大量电磁直流模型的机电–电磁混合仿真技术框架                                                                                                        逆变侧控制
+   Fig. 1 Electromechanical-electromagnetic hybrid
+simulation technology framework with a large number of                      重启动控制
+             electromagnetic HVDC models                                                                                             交流系统
+                                                                                                                             Uac
+冗余以及和大电网仿真关系不大的保护环节。                                                             Ud
+                                                                                                      γref
+    直流一次系统电磁模型应与实际工程接线结                                                                                                 换相失败
+                                                                             电压控制                    关断角控制
+                                                                                                                         预测
+构和元件参数保持一致，特高压直流输电单极一次
+                                                                                                              Imargin
+系统的电磁暂态模型结构如图 2 所示[13-14]。交流
+                                                                                                              低压            Io
+滤波器模型要考虑投切，换流变压器模型要考虑抽                                                                电流控制
+                                                                                                            限流
+                                                                                                                                 主控    Pref
+                                                                                                       Id
+头调节的功能，建议考虑饱和特性，直流线路和接                                                                电压恢复控制
+地极推荐采用频率相关线路模型或 T 型线路模型                                                                                           Ud
+
+模拟。                                                                     图 3 特高压直流输电控制系统数学模型的组成
+  本文介绍的技术框架可以兼容直流控制保护                                                  Fig. 3 Composition of the mathematical model of
+的简化模型、UD 搭建的详细模型以及厂家封装模                                                             UHVDC controller
+
+型，要求模型要能够接受直流单双极运行方式、直                                             3 混合仿真作业快速建立
+                 平波电           直流输 平波电
+                 抗器            电线路 抗器                                  一个完整的机电–电磁暂态混合仿真作业由 3 部
+          换流变                                  换流变
+          压器                                   压器                  分构成，包括机电暂态中的大电网数据、电磁暂态
+
+                                 直流滤
+                                                                   仿真中的局部电网数据和混合仿真接口数据。以往
+                  直流滤
+                   波器            波器                                的建模方式，是由仿真人员采用混合仿真程序的图
+ 交流网侧             六脉冲             六脉冲                  交流网侧
+                  换流器             换流器                              形界面程序，分别在机电暂态程序中完成网络分
+          换流变                                    换流变
+          压器                                     压器                割、在电磁暂态程序中建立起局部电网数据，再配
+                                                                   置混合仿真接口实现 2 个程序及数据的闭环，存在
+                                                                   复杂的人工过程。而混合仿真应用到交直流大电网
+ 交流滤波器           接地极线路            接地极线路                交流滤波器
+                                                                   的大批量仿真尤其是应用到在线仿真时，人工建模
+图 2 特高压直流输电单极一次系统的电磁暂态模型结构
+                                                                   的方案就不够现实。在线应用时，一般在线动态安
+ Fig. 2 Electromagnetic transient model structure of
+        UHVDC single-pole primary system                           全预警程序会按照一定的策略自动选取一定范围
+1206                        陈绪江等：含大量电磁直流模型的机电–电磁暂态混合仿真技术研究                                          Vol. 44 No. 4
+
+的直流输电工程用电磁暂态建模并实现交直流电                                   为已知一次系统参数。直流内部其他状态变量可经
+网的极点–电磁暂态混合仿真，以对重点关注的安                                  过如下步骤确定：
+全预警信息进行精细化校核，需要在数分钟之内完                                        1） U d 、 I d 分别为直流电压和电流，当没有对
+成建模和仿真计算。因此有必要将混合仿真作业的                                  应潮流信息输入时，整流侧直流电压 U dr 可取为直
+建立过程自动化。                                                流系统额定电压(区分全压或半压运行)，直流电流
+       本文中，混合仿真作业自动快速建立依赖于事                             取为 I d  Ps / ( NU dr ) ，其中 N 为当前直流运行极数。
+先构建完成的各回直流输电标准化电磁暂态模型                                   逆变侧直流电压取为 U di  U dr  I d Rd ，其中 Rd 为直
+库，配置好潮流、暂稳数据中直流模型与电磁直流                                  流线路电阻。
+模型及数据的映射关系，根据输入的电磁暂态建模                                        2） n 为换流变变比，需要计算得出。高压直流
+范围，自动从电磁暂态模型库中调用各回直流工程                                  输电换流器计入换相过程的直流电压算式[17]为
+及各电网元件数据并实现拼接，然后自动配置混合                                                     3BX C
+                                                               V0  (U d        I d ) / cos  (1)
+仿真接口信息。                                                                      π
+                                                        式中：  在整流侧为触发角，一般直流稳定运行时
+4 电磁直流模型快速初始化
+                                                        可指定为 15°，在逆变侧为关断角，直流稳定运行
+       电磁直流模型的初始化依赖于直流工程的内                              时可指定为 17°； X C 为换相电抗，可取为换流变的
+部潮流，直流输电工程内部潮流与其电磁模型状态                                  漏抗 X T ； B 为单极在运六脉冲换流器的个数，全
+的关系的关系如表 1 所示。                                          压运行时，±500 kV 直流一般为 2，±1000 kV 直流
+  表 1 直流输电工程内部潮流与电磁模型状态的关系                              一般为 4。
+  Tab. 1 Relationship between internal power flow and
+         electromagnetic model state in HVDC
+                                                              换流变变比 n 可按式(2)求取：
+                                                                                  3 2 BU s
+        内部潮流信息                   电磁直流模型状态
+                                                                             n                                (2)
+                单双极运行           六脉冲换流器闭锁状态                                          πV0
+ 运行状态           全压/半压运行      六脉冲换流闭锁及旁通开关状态
+                                                              3） Qf 为换流站交流滤波器的无功补偿容量，
+                金属/大地回线         回线状态切换开关状态
+        直流传输功率                                          需要计算得出。
+                                   直流电流考值
+            直流电流                                          换相角  可以根据式(3)得出
+            直流电压                  直流电压参考值
+            换流变变比                 换流变抽头位置
+                                                                 arccos(cos( )  2nX T I d / U s )        (3)
+       换流站无功消耗                 交流滤波器投切开关状态              式中  在整流侧为触发角，在逆变侧为关断角，()。
+        逆变侧关断角                   逆变侧关断角参考值
+                                                          进一步的，直流功率因数 tan  可以根据式(4)
+       潮流计算或在线抓取方式获得的电网运行方                              求出，其中  在整流侧为触发角，在逆变侧为关
+式数据中，直流工程的运行方式数据可能是完备的                                  断角。
+潮流数据，也可能只是简单的功率传输数据。因此

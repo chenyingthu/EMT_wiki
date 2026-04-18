@@ -1,0 +1,188 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 3, JUNE 2015                                                                                           1057
+
+
+
+
+         Advanced Hybrid Transient Stability and EMT
+             Simulation for VSC-HVDC Systems
+            Arjen A. van der Meer, Madeleine Gibescu, Mart A. M. M. van der Meijden, Member, IEEE,
+                       Wil L. Kling, Senior Member, IEEE, and Jan A. Ferreira, Fellow, IEEE
+
+
+   Abstract—This paper deals with advanced hybrid transient                                                    I. INTRODUCTION
+stability and electromagnetic-transient (EMT) simulation of
+combined ac/dc power systems containing large amounts of
+renewable energy sources interfaced through voltage-source
+converter–high-voltage direct current (VSC-HVDC). The con-
+cerning transient stability studies require the dynamic phenomena
+                                                                                    P      RESENTLY, transmission system operators are chal-
+                                                                                           lenged to integrate increasing numbers of converter-in-
+                                                                                    terfaced transmission schemes, including voltage-sourced
+of interest to be included with adequate detail and reasonable                      converter high-voltage dc (VSC-HVDC) [1], [2]. Their ben-
+simulation speed. Hybrid simulation offers this functionality, and                  eﬁcial controllability enables interconnection of weak and/or
+this contribution focuses on its application to (multiterminal)
+VSC-HVDC systems. Existing numerical interfacing methods                            asynchronous grids, eventually in multiterminal dc (MTDC)
+have been evaluated and improved for averaged VSC modeling.                         networks. In Western Europe, for instance, VSC-based MTDC
+These innovations include: 1) ac system equivalent impedance                        (VSC-MTDC) transmission is under consideration to reinforce
+refactorization after faults; 2) amended interaction protocols                      grids, interconnect countries, and integrate offshore wind
+for improved Thévenin equivalent source updating inside the                         powerplants [3].
+EMT-type simulation; and 3) a special new interaction protocol
+for improved phasor determination during faults. The improve-
+                                                                                       Transient stability assessment is key in the corresponding
+ments introduced in this contribution lead to more accurate                         grid integration analysis. The nonlinear and sometimes discon-
+ac/VSC-HVDC transient stability assessment compared to con-                         tinuous behavior of high-capacity MTDC schemes may impair
+ventional interfacing techniques.                                                   transient stability. This requires the physical phenomena that
+   Index Terms—Hybrid simulation, multiterminal, transient sta-                     contributes to instability (e.g., dc-side EMTs) to be modeled
+bility, voltage-source converter–high-voltage direct current (VSC-                  correctly [4]. The time constants of these transients are small,
+HVDC).                                                                              and corresponding dc-side modeling does not ﬁt into common
+                                                                                    stability-type simulations. In general, stability-type simula-
+                                                                                    tions cannot systematically handle combined ac/dc networks
+                             NOMENCLATURE
+                                                                                    [5]. Presently, VSC-MTDC structures can be included in sta-
+ EMT            Electromagnetic transient.                                          bility-type simulations only by decreasing the step size [6].
+                                                                                       On the other hand, the current state of the art in computa-
+ ES,DS          External system, detailed system.                                   tional power allows modeling of large networks in high detail
+ QSS            Quasistationary simulation.                                         by (quasi) real-time EMT-type and stability-type simulations.
+ ZOH            Zero-order hold.                                                    However, EMT-type simulation requires sophisticated line,
+ FOH                                                                                cable, and equipment data that are necessary to produce a
+                First-order hold.
+                                                                                    realistic EMT representation of the power system. These are
+ IP             Interaction protocol.                                               often not available, neither are real-time simulation facilities.
+                Rectangular window length.                                          Grid studies will thus often be restricted to ofﬂine EMT or
+                Number of EMT steps per stability time-step.                        stability-type simulation on stand-alone computers.
+                                                                                       Hybrid simulations offer an alternative as these allow inter-
+                                                                                    facing EMT-type simulations with stability-type simulations.
+                                                                                    Being ﬁrst developed in [7] by sequentially executing a sta-
+   Manuscript received November 04, 2013; revised June 18, 2014; accepted
+December 10, 2014. Date of publication December 22, 2014; date of current           bility-type and an EMT-type simulation during faults, hybrid
+version May 20, 2015. This research was ﬁnancially supported by Agentschap          methods were mainly used to study the integration of line-com-
+NL, an agency of the Dutch Ministry of Economic Affairs, under the project          mutated converter (LCC) HVDCs. This simulation concept has
+North Sea Transnational Grid (NSTG). NSTG is a joint project of Delft Univer-
+sity of Technology and the Energy Research Centre of the Netherlands. Paper
+                                                                                    been improved over the past decades [8]. In [9], the interface
+no. TPWRD-01251-2013.                                                               between both types of simulation was generalized to not only
+   A. A. van der Meer, M. Gibescu, M. A. M. M. van der Meijden, and                 contain LCC-HVDC links, but also larger network segments.
+J. A. Ferreira are with the Department of Electrical Engineering, Mathematics,
+and Computer Science, Delft University of Technology, Delft 2628 CD, the
+                                                                                    Later publications showed numerous accuracy improvements
+Netherlands (e-mail: a.a.vanderMeer@tudelft.nl).                                    [10]–[13], and addressed computational aspects as well as the
+   W. L. Kling is with the Department of Electrical Engineering, Eindhoven          inclusion into existing tools [14]. However, generalized mod-
+University of Technology, Eindhoven 5612 AZ, the Netherlands.
+   Color versions of one or more of the ﬁgures in this paper are available online
+                                                                                    eling of VSC-MTDC in stability-type simulations by hybrid
+at http://ieeexplore.ieee.org.                                                      methods has not yet been reported in the literature, while it is key
+   Digital Object Identiﬁer 10.1109/TPWRD.2014.2384499                              for assessing future combined ac/dc transmission expansions.
+
+                         0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                             See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:43:40 UTC from IEEE Xplore. Restrictions apply.
+1058                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 3, JUNE 2015
+
+
+
+                                                                                  three-phase voltages; and 4) dc faults remain outside the scope
+                                                                                  of the analysis. Hence, the interaction between ac and dc is fully
+                                                                                  dictated by the VSC control scheme, allowing VSCs to be rep-
+                                                                                  resented by time-varying sinusoidal voltage sources.
+
+                                                                                  A. VSC Model
+                                                                                    Fig. 1 gives an overview of the VSC grid interface and control
+                                                                                  scheme, which is based on [15]. The interaction between ac and
+                                                                                  dc is provided by the power balance, i.e.,
+
+                                                                                                                                                        (1)
+
+                                                                                  with       being the plus to minus pole direct voltage,              as
+                                                                                  the VSC terminal active power delivery, and              as the power
+Fig. 1. Grid interface of the VSC model and its vector control scheme.            absorbed by the braking resistor in case it is triggered for fault-
+                                                                                  ride through (FRT) purposes. The dynamics at the ac side of the
+                                                                                  VSC are fully determined by the applied control method (vector
+                                                                                  control). It consists of a cascaded control scheme containing
+                                                                                  a phase-locked loop (PLL); an inner current controller (ICC);
+                                                                                  two outer controllers that regulate active and reactive current,
+                                                                                  respectively; and limiting schemes that ensure safe operation.
+Fig. 2. Block diagram of d-q–z phase-locked loop (PLL) model of the VSC.             The VSC control scheme converts all network quantities to
+                                                                                  the VSC per-unit system and transforms these to the – ref-
+                                                                                  erence frame. Analogous to the Park transformation, the VSC
+   This paper contributes knowledge on the modeling of VSC-                       uses the angle displacement             , which is the transformation
+MTDC systems into stability-type simulations by hybrid tech-                      angle provided by the PLL scheme given in Fig. 2. The PLL
+niques, especially focusing on the implementation into the nu-                    regulates       (            ) to zero, enabling independent con-
+merical solution scheme. Existing techniques are implemented                      trol of active (i.e.,                      ) and reactive power (i.e.,
+and improved to enhance the accuracy and applicablity of the                                          ). Hence, when locked, the VSC acts as a con-
+method. In this respect, particularly innovative are the Thévenin                 trolled current source by using           and     as control variables
+impedance and source updating method, the combination of ex-                      to regulate                           .
+isting interaction protocols, and the introduction of a new in-                      While the PLL and ICC are relatively fast, the current refer-
+teraction protocol during disturbances in the ac system. Sev-                     ences       and       are set by two outer controllers with a lower
+eral variants of interfacing techniques are compared, analyzed,
+                                                                                  bandwidth. In this paper,         is used to regulate by using
+and improved to extract recommendations for the best param-
+                                                                                  as a controllable variable, while the point-of-common-coupling
+eter and protocol combination. The simulation results show that
+                                                                                  (PCC) voltage amplitude is controlled by            . The set points of
+the proposed modeling improvements allow more accurate tran-
+                                                                                  both proportional-integral controllers are dictated by the FRT
+sient stability simulation of combined ac/VSC-MTdc transmis-
+                                                                                  regulator, which is described in the next section.
+sion schemes compared to conventional alternatives for tran-
+sient stability modeling.
+   The approach throughout this paper is as follows: ﬁrst, VSC                    B. Fault Ride Through Behavior
+modeling is explained. Then, the applied simulation method                           A vulnerable aspect of VSC-HVDC transmission is the non-
+and the newly developed interfacing techniques or VSC-MTDC                        linear and sometimes discontinuous behavior in case any oper-
+will be described. This paper continues with testing the im-                      ating limits are violated. In such situations, usually during faults
+proved techniques ﬁrst on a small network, then applies and                       on either side of the VSC, both equipment-speciﬁc and general
+compares several combinations of these techniques on a VSC-                       protection schemes aim to bring the VSCs back into the prefault
+MTDC system with offshore wind.                                                   operation state safely. Though the implementation of this pro-
+                                                                                  tection depends on the power-electronic interface of the speciﬁc
+                          II. VSC MODELING                                        VSC and, thus, may differ per vendor, four commonly found
+                                                                                  protection mechanisms are assumed here:
+   VSC-MTDC modeling for transient stability requires a cor-                         • ac-side overcurrent limiting;
+rect representation of the relevant electromagnetic phenomena                        • reactive current boosting during faults;
+in the dc grid. A detailed topological representation of power-                      • modulation index limiting;
+electronic interfaces is not strictly necessary under the following                  • fault ride through during ac faults.
+assumptions: 1) the direct voltage is higher than the ac-side                        These protection measures are implemented by the FRT reg-
+voltage under normal and disturbed conditions; 2) the harmonic                    ulator as a state machine, which acts on the submodels pointed
+distortion is negligible; 3) all VSCs modulate a balanced set of                  to by dashed arrows in Fig. 1. It comprises three states: Normal,
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:43:40 UTC from IEEE Xplore. Restrictions apply.
+VAN DER MEER et al.: ADVANCED HYBRID TRANSIENT STABILITY AND EMT SIMULATION FOR VSC-HVDC SYSTEMS                                                             1059
+
+
+
+                           TABLE I
+          FRT REGULATOR STATE MACHINE IMPLEMENTATION
+
+
+
+
+                             TABLE II
+                  FRT REGULATOR STATE TRANSITIONS
+                                                                                 Fig. 3. Overview of deﬁnitions used for interfacing techniques.
+
+
+
+
+FRT, and post-FRT. The main features, transition conditions,
+and actions can be found in Tables I and II.
+
+       III. INTERFACING TECHNIQUES FOR VSC–MTDC                                  Fig. 4. Equivalent source representation per interface location: (a) the detailed
+                                                                                 system and (b) the external system.
+A. Classification of Hybrid Simulations
+   The aim of hybrid power system simulations is to study in-
+teractions between detailed and simpliﬁed network (or device)                       The detailed system (DS) comprises the parts of the network
+models with the device-level accuracy offered by EMT-type                        that require detailed modeling, traditionally aiming at device de-
+simulations, while retaining the reasonable execution times of                   sign, ﬁlter design, and choice of equipment rating. A typical
+stability-type simulations. Associated modeling, conversion                      ﬁxed time step-size (         ) in the    range is applied, elimi-
+steps, and computational implementation determine the per-                       nating the necessity to carry out an iterative solution scheme.
+formance of the entire simulation in terms of accuracy and                       Implementation can be achieved by EMT-type simulation or
+execution speed.                                                                 by embedding dedicated inner integration loops in the stability-
+   An overview of the corresponding interfacing techniques ap-                   type simulation.
+plicable to VSC-MTDC as well as details on the applied sen-                         The introduced VSC-MTdc modeling, notably its FRT be-
+sitivities and proposed amendments are provided in the coming                    havior, puts emphasis on a correct representation of phenomena
+sections. The terminology introduced in [8] has been adopted as                  relevant to (transient) stability, which gives rise to inclusion of
+closely as possible and is depicted in Fig. 3.                                   the VSC model into the detailed system simulations.
+                                                                                    This contribution assumes a ﬁxed time step size in the ex-
+B. External System (ES) and Detailed System (DS)                                 ternal and detailed system simulations.
+   The external system (ES) is the ac network contained in the
+                                                                                 C. Equivalent System Representations
+stability-type simulation, and is, in case of transient stability as-
+sessment, commonly the largest part of the system under study.                      Since the network modeling of stability-type and EMT-type
+Traditionally, a ﬁxed time step-size     for numerical integration               simu

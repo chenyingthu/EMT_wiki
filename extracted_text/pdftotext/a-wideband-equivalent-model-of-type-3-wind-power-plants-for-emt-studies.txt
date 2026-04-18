@@ -1,0 +1,192 @@
+2322                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+
+         A Wideband Equivalent Model of Type-3 Wind
+                Power Plants for EMT Studies
+       Dalia N. Hussein, Member, IEEE, Mahmoud Matar, Senior Member, IEEE, and Reza Iravani, Fellow, IEEE
+
+
+   Abstract—This paper presents the development and validation of                    appropriate models to analyze their response to the wide range
+an accurate and computationally efficient wideband reduced-order                     of phenomena in the power system. For EMT studies, the full-
+dynamic equivalent model for the Type-3-based wind power plant                       order models based on differential equations of the components
+(WPP). The proposed Type-3 WPP equivalent model reproduces
+the dynamic behavior of the WPP in response to an electromag-                        of the WPP are used for time-domain simulation which require
+netic transient in the host power system and is composed of two                      a small integration time-step. The small integration time-step
+parts: 1) a static frequency-dependent network equivalent model                      and the large number of differential equations due to the com-
+which represents the response of all passive components of the WPP                   plex configuration of the doubly-fed asynchronous generator
+in a wideband frequency range, and 2) a dynamic low-frequency                        (DFAG)1 and the large number of DFAG units within the WPP
+equivalent model that represents the aggregated dynamic model of
+the doubly-fed asynchronous generator (which is also referred to                     result in a significant computational burden and prohibitively
+as doubly-fed induction generator) wind turbine generators, their                    prolong the simulation time.
+local controls, and the WPP supervisory control. The proposed                           This paper presents a novel wideband dynamic equivalent
+model significantly reduces the hardware/software computational                      model that overcomes the aforementioned limitation. The pro-
+burden and the computation time, as compared to the WPP detailed
+                                                                                     posed equivalent model is simple yet accurate in modeling the
+models, without compromising the accuracy of the simulation re-
+sults. The proposed model is incorporated as a software module                       electromagnetic transients (EMTs) behavior of the Type-3 based
+in the PSCAD/EMTDC environment and its computational effi-                           WPP to EMTs in the host power system, external to the WPP,
+ciency and accuracy are verified based on comparing the results                      within a wide frequency range. The salient features of the pro-
+with those of a detailed model.                                                      posed equivalent model are:
+   Index Terms—Collector system, doubly-fed asynchronous gen-                           1) It represents the dynamic behavior of the WPP compo-
+erator, dynamic equivalent, electromagnetic transients, modeling,                          nents including: (i) the WPP collector network and pas-
+type-3 WTG, vector fitting, wind power plants.                                             sive components, (ii) the WPP supervisory control, and
+                                                                                           (iii) WTGs and their local controls.
+                           NOMENCLATURE
+                                                                                        2) It is computationally efficient, i.e., significantly reduces
+WPP        Wind power plant.
+                                                                                           the hardware/software computational burden as compared
+FDNE       Frequency-dependent network equivalent.
+                                                                                           to the WPP detailed model.
+DLFE       Dynamic low-frequency equivalent.
+                                                                                        3) It accurately mimics the terminal response of the WPP
+DFAG       Doubly-fed asynchronous generator.
+                                                                                           with respect to the power system EMTs over a wideband
+WTG        Wind turbine generator.
+                                                                                           of the frequency spectrum.
+EMT        Electromagnetic transient.
+                                                                                        4) It represents the fault-ride through behavior of the WPP
+RSC        Rotor-side converter.
+                                                                                           which is a mandatory requirement of the grid codes.
+GSC        Grid-side converter.
+                                                                                        5) It is suitable for real-time simulation based on practically
+PCC        Point of common coupling.
+                                                                                           available computational resources.
+PLL        Phase-locked loop.
+                                                                                        This paper introduces the proposed equivalent model and
+FRT        Fault-ride through.
+                                                                                     its implementation in the time-domain simulation platform
+DVR        Dynamic voltage restorer.
+                                                                                     (PSCAD/EMTDC) for off-line EMT analysis. The paper also
+VSC        Voltage-sourced converter.
+                                                                                     validates the accuracy of the proposed equivalent model with
+VF         Vector fitting.
+                                                                                     respect to a detailed model of a benchmark system of a Type-3
+                                                                                     based WPP.
+                             I. INTRODUCTION
+                                                                                        The remainder of this paper is organized as follows.
+          ITH the wide use and increased capacity of the Type-3
+W         wind power plants (WPPs), it is necessary to develop
+                                                                                     Section II describes the DFAG unit as the building block of
+                                                                                     the Type-3 WPP. Section III presents the general structure
+                                                                                     of the proposed equivalent model. Section IV presents the
+   Manuscript received May 31, 2015; revised January 21, 2016; accepted March
+18, 2016. Date of publication April 6, 2016; date of current version September
+                                                                                     structure of the DLFE. Sections V–VII present the modules
+21, 2016. Paper no. TPWRD-00655-2015.                                                of the DLFE, i.e., the equivalent model of the wind turbines,
+   D. N. Hussein and R. Iravani are with the University of Toronto, Toronto, ON      the WPP supervisory control, and the equivalent model of the
+Canada (e-mail: dalia.hussein@ieee.org; iravani@ecf.utoronto.ca).
+   M. Matar is with the Centre for Applied Power Electronics, the University
+                                                                                     generators and their converters systems. The accuracy of the
+of Toronto, Toronto, ON, Canada, and also with Ain Shams University, Cairo,
+Egypt (e-mail: mahmatar@ieee.org).                                                     1 Although a Type-3 machine is commonly referred to as DFIG, however, it
+   Color versions of one or more of the figures in this paper are available online   has to be noted that Type-3 machine is not an induction machine, but rather
+at http://ieeexplore.ieee.org.                                                       an asynchronous machine in which rotor and stator winding are excited by AC
+   Digital Object Identifier 10.1109/TPWRD.2016.2551287                              sources at different frequencies.
+                          0885-8977 © 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+           Authorized licensed See
+                               use http://www.ieee.org/publications
+                                   limited to: Tsinghua University. Downloaded  on April 10,2026 at 01:41:50 UTC
+                                                                      standards/publications/rights/index.html forfrom
+                                                                                                                    moreIEEE  Xplore. Restrictions apply.
+                                                                                                                          information.
+HUSSEIN et al.: WIDEBAND EQUIVALENT MODEL OF TYPE-3 WIND POWER PLANTS FOR EMT STUDIES                                                                  2323
+
+
+
+
+Fig. 1. Schematic Diagram of the Doubly-Fed Asynchronous Generator
+(DFAG) Unit, Grid-Side Converter (GSC), Rotor-Side Converter (RSC).
+
+
+
+developed model is demonstrated through several case studies,                   Fig. 2.   Structure of the Wide-band Equivalent Model of a Type-3 WTGs-based
+using the PSCAD/EMTDC in Sections VIII and IX. Discussion                       WPP.
+of the study results and the conclusions are in Sections X and
+XI, respectively.
+                                                                                   1) A frequency-dependent network equivalent (FDNE)
+                         II. BACKGROUND                                               model [8] that represents the frequency response of the
+   The DFAG-based WTG, Fig. 1 is widely used in the existing                          passive components within the WPP, e.g., the collector
+WPPs [1] where each DFAG unit is connected to the collector                           network, transformers, passive loads, and capacitor banks
+network directly through its stator while its rotor is interfaced                     over the desired frequency spectrum. The Vector Fitting
+to the network through a back-to-back converter system, Fig. 1.                       (VF) technique [8] is used to fit the frequency response to
+The converter system allows independent control of the active                         a rational function representation of the form
+power delivery and the reactive power exchange with the grid.                                                        
+                                                                                                                     n
+                                                                                                                           ci
+The rotor-side converter (RSC) often controls the stator power                                         ff it (s) =               + d + sh               (1)
+                                                                                                                         s −  ai
+flow based on a smaller percentage of power injected into the                                                        i=1
+rotor circuit; therefore, the back-to-back converter is typically                      where residues ci and poles ai are either real or com-
+rated to 30–40% of the machine rated power. The reduced size                           plex numbers while d and h are real. The fitting process
+of the converter translates to a reduced cost of both the converter                    estimates the parameters of (1) such that a least square
+and its filter. In addition, it reduces converter losses, compared                     approximation of ff it (s) is obtained over the frequency
+to a full rated converter [2], [3].                                                    range of interest.
+   There are various control schemes for a DFAG-based WTG                              The VF technique solves the nonlinear problem of (1) se-
+in a WPP [4]. The equivalent model of this paper is based                              quentially in two stages. Based on an initial set of poles,
+on the DFAG detailed model of Appendix A where the RSC                                 each stage is mathematically formulated as a linear prob-
+controls the generator torque and the stator reactive power flow                       lem with a known set of poles [8]. To interface the FDNE
+and the grid-side converter (GSC) controls the DC-link voltage                         with the electrical network model, the companion cir-
+and the reactive current at the machine terminal. The GSC and                          cuit approach is adopted [9]–[11]. Based on the bilinear
+RSC controls utilize decoupled current-controllers with inner                          transformation each of the rational functions of (1) is rep-
+dq current control loops. The detailed model is also used as a                         resented by a conductance and a current source whose
+benchmark to validate the accuracy of the developed equivalent                         value depends on the circuit solution from the previous
+model. It has to be noted that the proposed model can readily                          time-step.
+accommodate other control strategies as well.                                      2) A dynamic low frequency equivalent (DLFE) model that
+   The DFAG-based WPP is required to meet the fault-ride-                              represents the aggregated dynamic model of the DFAG-
+through (FRT) requirements [1], [5]–[7]. This paper adopts a                           WTGs, their local controls, and the WPP supervisory con-
+dynamic voltage restoration mechanism [6], [7] to assist in                            trol, typically, in a frequency range of 0 up to 20 Hz.
+boosting the unit terminal voltage during transients and thus                          The DLFE is interfaced to the electrical network model
+enable the DFAG unit and the WPP to provide ride-through                               through a three-phase current-controlled current source.
+capability.                                                                        The combined FDNE model and the DLFE model constitute
+                                                                                the net model of the WPP with respect to its host power system at
+     III. DYNAMIC EQUIVALENT MODEL OF TYPE-3 WPP
+                                                                                the PCC in the desired wide frequency range. As demonstrated in
+   Unlike the detailed WPP model which explicitly models each                   [12], neither the FDNE model nor the DLFE model individually
+of the individual components of a WPP, i.e., the WTG units and                  can accurately represent the WPP. Both the FDNE model and
+their power electronic converters, local controllers, the collec-               the DLFE model have to be jointly used to provide an accurate
+tor network, and the WPP supervisory controller, the proposed                   model of the WPP.
+equivalent emulates the collective terminal behavior of the WPP                    It has to be noted that the proposed model is not a valid
+at the PCC using a reduced-order wideband model. The pro-                       representation if the disturbance is within the WPP. The
+posed equivalent model consists of two main parts, Fig. 2:                      main assumption in the development and applications of the
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+2324                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+
+Fig. 3.    Dynamic Low-Frequency Equivalent of Type-3 WPP.
+                                                                                   Fig. 4.   Wind Turbine Equivalent Model.
+
+proposed model is that the imposed disturbances are outside
+of the WPP and thus the configuration of the WPP remains
+unchanged. Therefore, the FDNE accurately represents the col-                      fault ride-through subsequent to transients [15], [16]. The gener-
+lector system and passive components of the WTG units. The                         ators and converters equivalent block represents the dynamics of
+FDNE only represents linear components.                                            the aggregated machines, converters, and their local controllers.
+   The second part of the proposed equivalent model represents                     This block injects currents into the system at the PCC, in re-
+the WTG units, the WTG unit controls, and the supervisory con-                     sponse to the current references generated by the supervisory
+trol of the WPP. Any of these three entities is subject to math-                   control. The following sections elaborate on the details of each
+ematical/physical nonlinearities. However, these nonlinearities                    block.
+are included in the DLFE part of the model.
+                                                                                               V. EQUIVALENT MODEL OF WIND TURBINES
+          IV. STRUCTURE OF THE DYNAMIC LOW-FREQUENCY
+                                                                                      This model is an equivalent of the WPP wind turbines rotating
+               EQUIVALENT MODEL OF THE TYPE-3 WPP
+                                                                                   mechanical system. This model provides transformation of the
+   The DLFE model of the Type-3 based WPP, Fig. 3, repre-                          wind energy into mechanical power and the aggregated dynamic
+sents the dynamics of the aggregated WTG units and the natural                     behavior of the drive-trains and is composed of two main parts,
+modes of controls. Based on the DFAG structure and its compo-                      Fig. 4:
+nents, described in Appendix A, the DLFE of Fig. 3 is proposed.                       1) The aerodynamic-equivalent model that determines the
+The DLFE constitutes a complete equivalent of the DFAG-based                             mechanical power harnessed from the wind based on the
+WPP low-frequency dynamics.                                                              wind speed and the power coefficient (Cp ).
+   The measurement block represents the functions of the mea-                         2) The drive-train model that determines the equivalent
+suring devices of the WPP. It acquires instantaneous three-phase                         generator and turbine angular speeds ωreq and ωteq
+PCC voltage and the WPP net current (at the HV-side of WPP                               respectively.
+substation transformer) and generates the required signals for                        The following subsections elaborate on the components of
+control and phase-locked loop (PLL) blocks. The PLL pro-                           the wind turbines equivalent model.
+vides synchronization to the positive-sequence PCC voltages.
+The wind turbines equivalent block represents the dynamics of
+the aggregated wind turbines. It determines the WPP equivalent                     A. Aerodynamic Equivalent Model
+mechanical power tha

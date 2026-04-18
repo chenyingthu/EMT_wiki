@@ -1,0 +1,201 @@
+                                                                Electric Power Systems Research 220 (2023) 109295
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Wideband model based on constant transformation matrix and rational
+Krylov fitting
+Emmanuel Francois a, Ilhan Kocar b, *, Jean Mahseredjian a
+a
+    Department of Electrical Engineering, Polytechnique Montreal, Montreal, H3T 1J4, QC Canada
+b
+    Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong SAR
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   This paper analyzes the use of fitting techniques based on partial fraction expansions in the fitting of modal
+Electromagnetic transients                                  transmission line functions and the assumption of constant and real transformation matrix (constant T) in the
+Line constants                                              transformation of modal functions into phase domain. The focus is on the fitting of the propagation function due
+Cable constants
+                                                            to its complexity compared to the characteristic admittance function. It is demonstrated for the first time that
+Rational Krylov approximation
+Universal line model (ULM)
+                                                            using a constant T can intrinsically violate the passivity of the transmission line system depending on the choice
+Wideband model (WB)                                         of frequency point for assigning the constant T. Consequently, the final rational model violates passivity at
+                                                            certain frequency intervals. Second contribution is the evaluation of the fitting performance with a new solution
+                                                            strategy based on the recently introduced rational Krylov fitting (RKF). The case studies suggest that RKF results
+                                                            in accurate and less order models compared to the vector fitting (VF) algorithm which is the de facto method in
+                                                            electromagnetic transient-type models. Finally, the fitting accuracy of the legacy constant T model based on Bode
+                                                            fitting is presented in the phase frame giving a clear picture of its poor fitting performance compared to modern
+                                                            methods and explaining its inaccuracies in the time domain.
+
+
+
+
+1. Introduction                                                                                       This paper integrates the option of using a constant transformation
+                                                                                                 matrix (constant T) in the fitting of line functions, particularly H, into
+    The wideband (WB) line model in this paper refers to the imple­                              the WB model. Once the eigenvalues of line functions are computed and
+mentation of the Universal Line Model (ULM) [1] and Frequency                                    fitted to rational functions, they are simply transformed into the phase
+Dependent Cable Model (FDCM) [2]. These models identify frequency                                domain using a real and constant transformation matrix. This approach
+dependent transmission line functions, i.e., propagation H and charac­                           is like the approach used in the legendary frequency dependent (FD) line
+teristic admittance Yc functions, in the phase domain using a common                             model [7,8] but differs in three ways from the perspective of imple­
+format of rational functions in the complex domain. Although the final                           mentation: 1) The fitting techniques employed perform fitting in the
+model is in the phase domain, the internal steps in the parametric                               complex domain using partial fraction expansions (PFEs). 2) The time
+identification of the models include some computations in the modal                              domain implementation uses the numerically robust time domain solver
+domain which basically refers to the eigenvalues of H and Yc . For the                           of the WB model. 3) It is possible to fit Yc directly in the phase domain
+implementation of the WB model in the time domain, the rational ap­                              and investigate whether this has an impact on the accuracy of transient
+proximations of line functions are converted into discrete state space                           waveforms.
+forms using the exact solution assuming that the input is piecewise                                   The main advantage of the constant T wideband model (CTWB) is
+linear [3]. Two step interpolation [4] to minimize the magnification of                          that it can handle transmission lines with large number of conductors
+integration errors [5] is applied and the option of DC correction is                             since the propagation modes are decoupled. It is important to note that
+available to help improving the accuracy and numerical stability of the                          the time domain code of the WB model can also be adjusted to perform
+model in some cases [6]. The original implementation of the ULM model                            discrete computations in the modal domain and apply the real trans­
+used trapezoidal method for the discretization of state space forms [1].                         formation matrix afterwards to find the phase domain voltages and
+This is still the case for legendary line models [8].                                            currents very efficiently, i.e., with a smaller number of recursive con
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+    * Corresponding author.
+      E-mail address: ilhan.kocar@polyu.edu.hk (I. Kocar).
+
+https://doi.org/10.1016/j.epsr.2023.109295
+Received 10 December 2022; Received in revised form 26 February 2023; Accepted 6 March 2023
+Available online 16 March 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+E. Francois et al.                                                                                                         Electric Power Systems Research 220 (2023) 109295
+
+
+volutions. This is numerically equivalent to apply constant T in the
+frequency domain and perform time domain convolutions in the phase
+domain. On the other hand, this paper is an investigative paper in the
+use of different fitting techniques and integration methods when the
+constant T option is adopted. The presented implementation is a quick
+method for these purposes allowing also understanding the impact of
+using constant T in the fitting of Yc .
+    An important finding disclosed in this paper is the observation that
+applying a constant T can change H in the phase domain in such a way
+that the intrinsic passivity of the system can be lost at certain frequency
+intervals. That is, the nodal admittance matrix of a line generated using
+H and Yc can have negative eigenvalues at certain frequency samples.
+                                                                                                     Fig. 1. Multi-conductor line segment of length L.
+This, on the other hand, depends on the frequency sample used to assign
+the constant T. In other words, not all the constant T choices will result
+in passivity violations.                                                           fundamental equations of current and voltage phasors at each end of the
+    This paper investigates the precision of the classical FD model which          transmission line can be related as follows:
+employs Bode fitting to fit the eigenvalues of H and characteristic                I0 − Yc V0 = − H(IL + Yc VL )                                                        (2)
+impedance Zc . Bode fitting results in large number of zeros and poles
+compared to recent fitting techniques such as Vector Fitting (VF) [9], the         IL − Yc VL = − H(I0 + Yc V0 )                                                        (3)
+de facto fitting algorithm used in recent line, transformer, and network
+equivalent models developed for electromagnetic transient (EMT)                        The characteristic admittance matrix Yc is given by:
+studies.                                                                           Yc = ΓZ− 1                                                                           (4)
+    The use of VF in FD model is proposed in [10], but the focus is on
+numerical implementation and it is overlooked that VF can create a                           √̅̅̅̅̅̅̅
+                                                                                   with Γ = YZ and Y, Z are N × N coupled matrices per unit length
+model with passivity violations since the reconstructed H and Yc with a            representing frequency dependent shunt admittance and series imped­
+constant transformation matrix may no longer correspond to a passive               ance matrices respectively.
+system. In VF, residues and poles are fitted simultaneously in the phase              The propagation matrix H is given by:
+domain without any constraint on the location of zeros of the eventual
+partial fraction expansion (PFE).                                                  H = e− ΓL                                                                            (5)
+    Another contribution of the paper is the use of recently proposed
+                                                                                       Note that (2) and (3) are in the frequency domain, and the time
+Rational Krylov Fitting (RKF) [11–15] in constant T models for the first
+                                                                                   domain version results in computationally intensive convolutions. On
+time. VF is a robust and computationally straightforward to apply
+                                                                                   the other hand, if they are represented with rational forms, efficient
+technique. The implementation of RKF is more complex but results in
+                                                                                   discrete state space forms can be obtained in the time domain.
+remarkably less poles according to the test cases presented in this work.
+                                                                                       The first step in the identification of H is to apply modal decompo­
+The improvement is more noticeable compared to the ULM [16] and
+                                                                                   sition:
+FDCM [17] applications of RKF. We also demonstrate a case where the
+classic FD presents inaccuracies whereas the CTWB doesn’t. The fitting             H = THm T− 1                                                                         (6)
+performance of the classic FD is also shown in the phase domain to make
+rigorous and fair comparisons with the WB model and to clearly                     where T is a frequency dependent matrix of eigenvectors of the YZ
+demonstrate the main source of the possible inaccuracies of FD.                    product and Hm is the modal propagation function consisting of eigen­
+                                                                                   values of H. It is a diagonal matrix expressed in the following form
+2. Presentation of the CTWB                                                                  [                  ]
+                                                                                   Hm = diag eλ1 , eλ2 , ⋯, eλN                                         (7)
+
+     In this section, the adjustment of the WB model’s frequency domain                                             √̅̅̅̅̅̅̅
+                                                                                   where λi are the eigenvalues of − YZ L and Hi = eλi are the eigenvalues
+fitting procedure to enable the option of constant T in the fitting of H is
+                                                                                   of H also called modal propagation functions or modes. Then each mode
+shown through basic line equations. The focus is on H because of the
+                                                                                   is fitted with RKF or VF and expressed in the following form:
+fitting complexity due to the existence of several modes with different
+time delay constants in a multiconductor system.                                          ∑
+                                                                                          Mi
+                                                                                                   rk
+     For Yc the fitting is performed in the phase domain with a common
+                                                                                   ̂i =
+                                                                                   H                      e(− sτi ) ≅ Hi                                                (8)
+                                                                                               s −   pi,k
+set of poles for all entries. Constant-T option is only applied to see its
+                                                                                           k=1
+
+
+impact on the precision of transient waveforms. The final form of Yc as a          where Mi is the number of poles of the rational function for the i–th
+function of the complex angular frequency s is given as follows                    mode, τi is the time delay tweaked to reduce error [2] and pi,k is k–th pole
+               ∑
+               M                                                                   of the i–th mode with rk being its residue.
+                         1
+Yc ≅ R0 +                    Ri                                         (1)            The next step is to determine a constant T (Tconst ) in order to map the
+                      s − qi
+                i=1
+                                                                                   fitted modal propagation matrix back in the phase domain using the
+                                                                                   following expression
+where R0 is a constant matrix corresponding to Yc when s→∞, M is the
+fitting order, qi represents the ith pole and Ri is the corresponding matrix                                  1
+                                                                                   Hfit = Tconst Hmodefit T−const                                                       (9)
+of residues.
+                                                                                   where
+2.1. CTWB model                                                                                     ̂ 1, H
+                                                                                   Hmodefit = diag[ H    ̂ 2 , ..., H
+                                                                                                                    ̂ N]                                              (10)
+
+   Fig. 1 illustrates a transmission line of length L with N parallel                  The real constant transformation matrix Tconst is chosen to be the real
+conductors. I0 = I0r − I0i and IL = ILr − ILi are the vectors of injected          part of the matrix Ti among all the frequency dependent transformation
+currents, V0 and VL are node voltages at line ends x = 0 and x = L.                matrices Ti , i = 1, ..., Nω with i ∈ {1, 2, ...Nω } and Nω being the number
+Subscripts i and r stand for incident and reflected, respectively. The             of frequency samples used in the modal decomposition of H. The index i
+
+                                                                               2
+E. Francois et al.                                                                                                         Electric Power Systems Research 220 (2023) 109295
+
+
+can be manually set or chosen to give the smallest error of the expression           Table 1
+                                                                                     Case-1, conductor data.
+e = ‖ H − Tconst Hmodefit Tconst ‖2                                       (11)
+                                                                                       Conductor Data
+   Considering the application of the line model in switching transients,
+                                                                                       Ground wire radius                                                4.75 mm
+EMT users typically pick Tconst at around 1000 Hz. This is the default                 Ground wire DC resistance                                         3.75 Ohm/km
+value in this paper unless otherwise stated. Note that Ti is rotated to                Bundle radius                                                     230.09 mm
+minimize the imaginary part.                                                           Angle (deg)                                                       0◦
+                                                                                       Conductor radius                                                  15.29 mm
+                                                                                       Conductor DC resistance                                           0.0701 Ohm/km
+2.2. FD model review
+
+    As mentioned, the classical FD line model employs Bode fitting to fit            three-conductor bundle.
+H and Zc in the modal domain. The magnitude of the eigenvalues is                         This case is a preliminary case used to demonstrate the fitting pre­
+fitted using real zeros and poles on the left hand side of the complex               cisions and order of CTWB obtained with VF and RKF. A time domain
+plane. The phase of the final fit is expected to match the fitted function           switching study is also demonstrated to show the precision in generating
+assuming that it is a minimum phase shift function (MPS), and the phase-             voltage waveforms.
+magnitude characteristics depends on the magnitude characteristics and                    In Table 2, the model order of H is the sum of the order of the fit for
+vice versa. In other words, one can reconstruct the phase of an MPS                  each mode for CTWB obtained with VF or RKF. The results show that,
+function by just knowing its magnitude characteristics and vice versa.               RKFIT provides a model with a smaller number of poles. The WB results
+    In the case of an H mode, an exponential time delay term e(− sτ) should          are provided for reference. Note that, in the WB model, all the poles
+also be considered in the model to account for the excessive phase shift/            contribute to each entry in the phase domain, therefore a high precision
+lag of the mode. When the exponential delay term is used to compensate               fit is obtained while the total number of poles used is less. However, due
+the phase shift of the mode, the remaining part is considered to be an               to the phase domain computations, the number of residues in the time
+MPS function. Note that, the exponential delay term does not change the              domain wi

@@ -1,0 +1,213 @@
+                                                        Electric Power Systems Research 197 (2021) 107317
+
+
+                                                             Contents lists available at ScienceDirect
+
+
+                                                   Electric Power Systems Research
+                                                     journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Parallel computation of power system EMTs through Polyphase-QMF
+filter banks
+J.R. Zuluaga a, *, J.L. Naredo a, L.J. Castañón a, M. Vega b, O. Ramos-Leaños c
+a
+  Cinvestav Guadalajara, Mexico
+b
+  Universidad Autónoma de Guadalajara, Mexico
+c
+  Centre de Recherché de Hydro Québec, Canada
+
+
+
+
+A R T I C L E I N F O                                A B S T R A C T
+
+Keywords:                                            The analysis of electromagnetic transients in power systems often requires intensive computations. Various
+Electromagnetic transients                           methods have been proposed to reduce execution times and computational costs. A new technique is proposed
+Numerical laplace transform                          here in which the system model is synthesized in the Laplace domain and is simulated in the time domain
+Parallel processing
+                                                     through long convolutions. The nodal matrix of the system under analysis is reduced by Kron’s method to leave
+Real-time
+Faster than real time
+                                                     only the nodes related to observations and to changes in explicit form. State vectors derived from the reduced
+Polyphase QMF filter banks                           matrix are convolved with auxiliary signals to simulate transient events and the convolutions are performed in
+FPGAs                                                parallel by an algorithm based on polyphase QMF filter-banks. The proposed technique is applied in the simu­
+                                                     lation of a transient on a 17-bus network. The obtained results are compared with those from PSCAD / EMTDC
+                                                     and from the conventional Laplace Transform. Finally, the suitability of this technique for parallel processing is
+                                                     demonstrated by a basic implementation on an FPGA.
+
+
+
+
+1. Introduction                                                                       to provide the required time decoupling. It is then clear that one does not
+                                                                                      have the control over the size of the decoupled subnetworks and that the
+    The analysis and the simulation of electromagnetic transients (EMT)               computational loads of the parallel processes can be unbalanced. As for
+in power systems often demand lengthy and intensive computations.                     the use of network equivalents and simplified models, these are usually
+These tasks usually are carried out through sequential time-domain                    represented by rational functions that are prone to passivity-violation
+techniques based mostly in emtp techniques [1,2]. Certain transient                   problems [11–16]. Finally, varying time-step and multi-rate tech­
+studies could require hundreds of simulations consisting in variations of             niques are promising; however, their effective application to the analysis
+the same network and the same phenomena; this is the case at statistical              and simulation of EMTs in power systems is still at an early stage of
+studies in insulation coordination [3,4]. The aim of this paper is to                 development [12–15].
+introduce a methodology to reduce computational times and costs in the                    To avoid the previous shortcomings, a new technique is proposed
+simulation of EMTs, especially at statistical EMT studies.                            here that combines parallel processing, multi-rate techniques and
+    Various strategies have been previously developed to reduce the                   reduction of computational complexity. This technique is based on the
+computational times and costs of these tasks [5]. Three of them are                   premise that transient events can be effectively represented by switch
+identified next. A first strategy consists in dividing a large network into           operations. The network under study is first represented by its nodal
+time-decoupled subnetworks that can be computed simultaneously with                   matrix in the Laplace-domain [2,17]. This nodal matrix is then reduced
+parallel processors [6–8]. A second strategy consists in using network                by Kron’s method [18], leaving in explicit form only the nodes of in­
+equivalents or simplified models for those subnetworks outside the area               terest; that is, the ones presenting changes due to transients, as well as
+of interest of a transient study [9–11]. A third strategy is to apply                 those related to observation variables. The reduced nodal form is next
+multi-rate techniques for handling slow transient events with larger                  modified according to state changes and inverted to produce reduced
+integration time-steps than for faster events [14].                                   Zred matrices, the columns of each of these matrixes that are involved in
+    One problem with the time-decoupling strategy is that this relies on              a switching event are combined into a single one Z (p) characterizing the
+the presence of long lines or of two-port elements with the proper delays
+
+
+    * Corresponding author.
+      E-mail address: jrzuluagad@iteso.mx (J.R. Zuluaga).
+
+https://doi.org/10.1016/j.epsr.2021.107317
+Received 26 November 2020; Received in revised form 18 April 2021; Accepted 23 April 2021
+Available online 8 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+J.R. Zuluaga et al.                                                                                                       Electric Power Systems Research 197 (2021) 107317
+
+
+network response to the switch operation. The elements of Z (p) are               and
+transformed afterwards to discrete time-domain and switch effects are
+determined by long convolutions between the Z (p) transformed ele­
+                                                                                                    − 1
+                                                                                  ZSS = − Zred Y12 Y22                                                                 (9)
+ments and waveforms from auxiliary sources representing the switch                    Note in (5) that the voltage response V1 consists of two parts. The
+operation. Finally, the global response of the network under study to a           first one is the steady state response VSS and the second one is a transient
+sequence of transient events is obtained by repeatedly applying super­            disturbance VTR due to a switch operation. Usually, the elements of I2
+position [19].                                                                    are alternating current (AC) pure sinusoids at the nominal frequency ω0
+    The major computational burden of the technique being proposed                = 100π or 120π rad/s; the components of ZSS are thus constants evalu­
+here is the execution of the convolutions involved in each transient              ated at ω0. In the case that the initial steady state is a harmonic state, ZSS
+event. Nevertheless, these convolutions are carried out effectively with a        must be calculated at each harmonic frequency kω0, with k = 2, 3, …,
+parallel-processing algorithm based on the structure of a bank of poly­           etc., and VSS is obtained by superposing the responses of the harmonics.
+phase Quadrature-Mirror Filters (QMF) [20–23].                                        At the beginning of a study, in the steady state, vector I1 in (7) is zero
+    The main contribution of this paper is thus the introduction of the           and, consequently, VTR is also zero. From this point on, the occurrence of
+previously described methodology that reduces substantially the                   a transient is simulated by switches being represented by current in­
+computational times and costs of EMT simulations often required by                jections at the corresponding nodes. A further consideration for the
+statistical studies. The proposed methodology provides full flexibility to        methodology being presented here is that nonlinear elements are
+apply multi-rate and highly paralleled processes so to attain simulation          incorporated into the simulations through piecewise-linear representa­
+speeds hundreds of times faster than real-time. An additional feature of          tions. This can be done as described in references [19] and [24] and it
+the proposed methodology is that, by not requiring the use of rational            should be noted that piecewise-linear models involve operating
+approximations, it is free from passivity problems. Finally, it should be         switches.
+pointed out that, at its present state of development, this methodology
+may not be appropriate for long-term simulations (i.e., longer than 1 s),         2. Switch representation
+as well as for dealing with detailed representations of power electronic
+devices.                                                                             Fig. 1a depicts an open switch at nodes k and l of a network and vkl(t)
+                                                                                  denotes the voltage difference between its poles. Switch closing can be
+1.1. Network representation                                                       simulated by connecting a voltage source vclose(t) that neutralizes vkl(t),
+                                                                                  see Fig. 1b:
+    Consider an N− node network represented in nodal form:
+                                                                                  vclose (t) = − vk,l (t)u(t − tclose )                                              (10)
+I = Ybus V                                                             (1)
+                                                                                  where u(t) is the unit step function and tclose is the switch closing time
+where Ybus is the corresponding N × N admittance matrix, V is the vector          [19]. For nodal analysis it is convenient to convert the voltage source at
+of nodal voltages and I is the vector of currents being injected into the         Fig. 1b into its Norton equivalent as in Fig. 1c, with
+nodes. It is assumed here that the elements of Ybus, V and I are in the
+Laplace domain; i.e., these are functions of the complex variable s = c +         iclose (t) = vclose (t)/Rsw                                                        (11)
+jω with its real part “c” representing a damping constant and the
+                                                                                  and
+imaginary part “jω” corresponding to frequency [2,17].
+     Electric power networks tend to be very large with a number of nodes         Gsw = 1/Rsw                                                                        (12)
+in the order of the thousands [3,4]. The direct solution of (1) can thus be
+impractical and often requires very long computational times. It is thus               In the case of an ideal switch, the inclusion of GSW will introduce an
+proposed to partition Ybus of (1) as follows:                                     error; this, however, can be minimized by choosing a sufficiently large
+[ ] [              ][ ]                                                           value for GSW; for instance, GSW = 106 S.
+  I1       Y11 Y12 V1                                                                  Fig. 2a depicts a closed switch between the nodes k and l of a network
+       =                  ,                                             (2)
+  I2       Y21 Y22 V2                                                             and ikl(t) represents its current. Switch opening is simulated by injecting
+                                                                                  a current iopen(t) at nodes k and l that neutralizes ikl(t) (see Fig. 2b):
+where sub-matrix Y11 involves only the nodes that present changes due                                    (          )
+to transients (i.e., switching operations), as well as the ones related to        iopen (t) = − ik,l (t)u t − topen                                        (13)
+observed signals. The order N1 × N1 of matrix Y11 should thus be much
+smaller than that of Ybus [3,4]. On the other hand, Y22 includes all the          where topen is the switch opening time.
+nodes whose voltages are not required explicitly. On applying Kron´s                   The two auxiliary currents, iclose(t) and iopen(t), are brought into the
+reduction to (2) [18]:                                                            Laplace domain:
+                                                                                               {          }
+                    − 1
+I1 = Yred V1 + Y12 Y22  I2                                             (3)        Iopen (s) = L iopen (t)                                                  (14)
+
+with                                                                              and
+      [           − 1
+Yred = Y11 − Y12 Y22
+                         ]
+                      Y21 .                                            (4)        Iclose (s) = L {iclose (t)}                                                        (15)
+
+    It follows from (3) that:                                                     where L {} represents the Laplace transform. Lower-case letters repre
+
+V1 = VSS + VTR                                                         (5)
+
+with
+VSS = ZSS I2 ,                                                         (6)
+
+VTR = Zred I1                                                          (7)
+
+                                                                                  Fig. 1. (a) Closing switch. (b) Closing representation with an auxiliary voltage
+Zred = [Yred ]− 1                                                      (8)
+                                                                                  source (c) Closing switch representation with auxiliary current source.
+
+                                                                              2
+J.R. Zuluaga et al.                                                                                                           Electric Power Systems Research 197 (2021) 107317
+
+
+
+                                                                                                                                                                         (21)
+                                                                                      (0)
+                                                                                     V1 = VSS
+
+                                                                                     and
+
+                                                                                        V1(p) = Z (p) ISW
+                                                                                                       (p)
+                                                                                                           + V1(p− 1) , with p = 1, 2, .., P                             (22)
+                                                                                        After applying the inverse Laplace transform to (21) and (22) the
+Fig. 2. (a) Closed switch (b) Simulating switch opening with an auxiliary            base expressions take the following time domain form:
+current source.
+                                                                                                                                                                         (23)
+                                                                                      (0)
+                                                                                     v1 = vSS
+sent time domain quantities, while upper-case letters represent their
+                                                                                     and
+corresponding Laplace domain counterparts. As opposed to the standard
+method for evaluating EMTs with the Numerical Laplace Transform                      v(p)   (p)
+                                                                                                ∗ i(p)   (p− 1)
+                                                                                                                                                                         (24)
+                                                                                      1 = z        SW + v1      , with p = 1, 2, .., P
+(NLT) [2,17], the technique being proposed here does not require the
+Direct Laplace Transform. Its appearance in (14) and (15) is merely                  where ‘‘∗’’ represents convolution; z(p) , v1 , and isw are the inverse
+                                                                                                                                               (p)      (p)
+symbolic.
+                                                                                     transforms of Z              , V1 and Isw , respectively. Note that (24) represents
+                                                                                                            (p)      (p)    (p)
+
+
+3. Simulating a sequence of transient events                                         N1 scalar equations of the form:
+
+                                                                                     v(p)    (p)  (p)   (p− 1)
+                                                                                      1,k = zk ∗ iSW + v1,k                                                              (25)
+    Operation of the above switch model modifies Zred (8). Nevertheless,
+this is a simple process, as one has to apply the corresponding changes to                  As base expressions (23)–(25) are implemented numerically in
+a maximum of four elements of Y11 in (4), as well as to invert the new               discrete time, the z(p)
+                                                                                                         k terms are obtained at a preprocessing stage by
+low-order Yred matrix to obtain the Zred matrix in turn. Therefore, a
+                                                (p)
+                                                                                     applying the Inverse Numerical Laplace Transform (INLT) [16,19] to the
+sequence of P switch operations can be described as follows:                         Z k terms at (20). The INLT requires to establish the maximum fre­
+                                                                                        (p)
+
+                                                                                     quency ωmax (or bandwidth) of the transient phenomenon being
+V1(0) = Vss ,                                                            (16)
+                                                                                     considered, as well as the simulation time Tmax . Other parameters being
+                                                                                     needed for the INLT are [2,17]:
+V1(p) = Zred I1 + V1(p− 1) ,
+         (p) (p)
+                               with p = 1, 2, 3, …, P,                   (17)
+                                                                                     Nt = ωmax × Tmax /2π,                                           

@@ -1,0 +1,13 @@
+# Neural Electromagnetic Transients Program
+Yifan Zhou, Member, IEEE, and Peng Zhang, Senior Member, IEEE
+
+**Abstract**—This paper devises a neural electromagnetic transients program (NeuEMTP), an unsupervised, physics-informed learning approach to numerical-integration-free EMTP solutions. The main contributions lie in: (1) a learning-based NeuEMTP architecture to simultaneously generate the electromagnetic states at all desired time steps, making the step-by-step integration unnecessary; (2) an unsupervised, physics-informed training procedure to realize the NeuEMTP functionality without requiring any EMTP trajectories beforehand; (3) an EMTP-oriented-neural-network (EMTPNet) accompanied with a novel activation function Act mix to enable efficient extrapolations of diverse oscillation modes under arbitrary frequencies. Case studies systematically verify that NeuEMTP generates high-fidelity EMTP trajectories without involving any numerical integration before or during the training process, and is promising to achieve faster-than-real-time EMTP simulations on the off-the-shelf computers.
+
+**Index Terms**—Electromagnetic transients program (EMTP), deep learning, physics-informed deep learning, trapezoidal rule, data-driven computing.
+
+## I. INTRODUCTION
+ELECTROMAGNETIC transients program (EMTP), an indispensable tool for modern power systems, is known for its formidably daunting computational complexity. The molecular dynamics. A few studies also investigated the potential of PINN in power system analytics, such as steady-state analysis [5] and electro-mechanical dynamics analysis [6].
+
+This paper tackles the EMTP obstacle by leveraging the physics-informed learning philosophy. Two major challenges are to be addressed: (i) how to properly embed the trapezoidal discretization-based EMTP formulation into the machine learning architecture; (ii) how to accurately imitate the highly-oscillating electromagnetic waveforms by a neural network. Our key innovation is a Neural EMTP (NeuEMTP) approach, which integrates an EMTP-oriented-neural-network (EMTPNet) and an EMTP-physics-law-informed training process to enable ultra-efficient, high-fidelity, and unsupervised EMTP computation. The contributions of this work include:
+- A learning-based EMTP architecture is designed, which generates the electromagnetic transients at all time steps simultaneously via a single forward propagation of EMTPNet.
+- An EMTP-physics-law-informed and unsupervised training procedure is established, which completely removes the hard requirements to have massive EMTP trajectories as training

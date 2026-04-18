@@ -1,0 +1,157 @@
+                    This article has been accepted for publication in IEEE Transactions on Energy Conversion. This is the author's version which has not been fully edited and
+                                               content may change prior to final publication. Citation information: DOI 10.1109/TEC.2026.3658726
+
+JOURNAL OF LATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021                                                                                                                                      1
+
+
+
+
+  Nuclear-Powered Hybrid Energy System for Clean
+    Hydrogen Production: Time-Step-Optimized
+   Real-Time Multi-Domain Hardware Emulation
+      Weiran Chen, Member, IEEE, Xinyu Zhao, Student Member, IEEE, and Venkata Dinavahi, Fellow, IEEE.
+
+
+
+   Abstract—Increasing global emphasis on decarbonization and                                        FH2ci , FH2co                 Cathode inlet/outlet hydrogen flow rate
+the proliferation of renewable energy, energy storage, and nuclear                                                                 (mol/s).
+power is driving a surge of research interest into integrated                                        FH2 Oai , FH2 Oao             Anode inlet/outlet water flow rate
+sustainable energy modeling, simulation, operation and control.
+Traditional electromagnetic transient (EMT) methods typically                                                                      (mol/s).
+discretize electrical networks using the trapezoidal rule. When                                      FH2 Oci , FH2 Oco             Cathode inlet/outlet water flow rate
+coupled with the ordinary differential equations (ODEs) of other                                                                   (mol/s).
+physical domains, however, the absolute stability region of the                                      FH 2 O d                      Diffusive water molar flow rate (mol/s).
+numerical integration scheme can shift, and discrepancies in time                                    FH2 Oeod                      Electro-osmotic water flux (mol/s).
+constants across subsystems further complicate integration of
+disparate models. While the demand for integrating EMT with                                          FO2ai , FO2ao                 Anode oxygen flow rate (mol/s).
+multi-domain co-simulations is increasing, existing commercial                                       Fia , Fic                     Water vapor activity at anode/cathode.
+EMT simulation tools either lack support for multi-domain                                            H2g , O2g                     Cathode hydrogen/oxygen gas flow rate
+physical coupling or are not specifically optimized for such                                                                       (mol/s).
+hybrid simulations. To address this gap, this paper proposes a                                       Iin                           Input current (A).
+robust multiscale time-step estimation (RMTE) framework that
+enables real-time co-simulation of EMT networks and multi-                                           Iloss                         Energy loss (W).
+domain subsystems. The framework includes a fast, efficient, and                                     i                             Current density (A/cm2 ).
+adaptive approach for selecting the optimal maximum time-step                                        i0                            Exchange current density (A/cm2 ).
+across heterogeneous physical domains. The proposed method is                                        kao , kco                     Flow coefficients for anode/cathode
+validated through a case study involving small modular reactors                                                                    pipes.
+(SMRs), wind farm, photovoltaics (PV) and low-temperature
+proton exchange membrane (PEM) electrolysis for clean hydro-                                         MH2 O                         Molar mass of water (g/mol).
+gen production. Real-time hardware co-emulation is achieved                                          Mm,dry                        Molar mass of dry membrane (g/mol).
+on a field-programmable gate array (FPGA)-based platform.                                            MH2                           Molar mass of hydrogen gas (g/mol).
+The results demonstrate significant improvements in simulation                                       n                             Number of cells.
+efficiency and execution time.                                                                       n(t)                          Prompt neutron density (1/cm3 ).
+   Index Terms—Clean hydrogen, electromagnetic transients                                            nd                            Electro-osmotic drag coefficient.
+(EMT), field-programmable gate array (FPGA), hardware em-                                            NH 2                          Net hydrogen production rate (mol/s).
+ulation, low-temperature electrolysis (LTE), multi-domain co-                                        NH2 Oa , NH2 Oc               Net water change rate (mol/s).
+simulation, nuclear-renewable hybrid energy systems (N-RHES),
+photovoltaics (PV), proton exchange membrane (PEM), real-time                                        NO 2                          Net oxygen production rate (mol/s).
+systems, small modular reactor (SMR), wind farm.                                                     Pa , Pc                       Channel pressures (Pa).
+                                                                                                     Pao , Pco                     Outlet pressures (Pa).
+                            N OMENCLATURE                                                            PH2 , PO2                     Partial pressures (Pa).
+                                                                                                     PH 2 O a                      Water partial pressure at anode (Pa).
+  AE                       Electrolyzer active area (cm2 ).                                          Pb                            Hydrogen tank pressure (Pa).
+  aH2 O                    Water activity.                                                           Pbi                           Initial hydrogen tank pressure (Pa).
+  C                        Constant.                                                                 R                             Ideal gas constant (J/mol·K).
+  Cwa , Cwc                Water concentration in anode/cathode                                      Rel.ohm                       Membrane resistance (Ω·cm2 ).
+                           (mol/cm3 ).                                                               Tel                           Electrolyzer temperature (K).
+  Ci (t)                   Delayed neutron density (1/cm3 ).                                         Tb                            Hydrogen tank temperature (K).
+  Dω                       Water diffusion coefficient (cm2 /s).                                     tm                            Membrane thickness (cm).
+  E                        Open-circuit voltage (V).                                                 Va , Vc                       Channel volumes (cm3 ).
+  E0                       Standard electromotive force (V).                                         Vh                            Hydrogen tank volume (L).
+  F                        Faraday constant (C/mol).                                                 Vel                           Electrolysis voltage (V).
+  This work was supported in part by the Alberta Innovates, Mitacs, and                              Vel.act                       Activation overpotential (V).
+Natural Science and Engineering Research Council of Canada (NSERC).                                  Vel.ohm                       Ohmic overpotential (V).
+(Corresponding author: Weiran Chen.) W. Chen, X. Zhao, and V. Dinavahi are                           yH2 , yO2                     Outlet molar fractions.
+with the Department of Electrical and Computer Engineering, University of
+Alberta, Edmonton, Alberta T6G 2V4, Canada (e-mail: weiran4@ualberta.ca;                             z                             Compression factor.
+xzhao22@ualberta.ca; dinavahi@ualberta.ca).                                                          ρ(t)                          Core reactivity.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 03:02:49 UTC from IEEE Xplore. Restrictions apply.
+                    © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                       but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                   This article has been accepted for publication in IEEE Transactions on Energy Conversion. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TEC.2026.3658726
+
+JOURNAL OF LATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021                                                                                                                                     2
+
+
+
+  ρm,dry                  Density of dry membrane (g/cm3 ).                                     ingly expanded their capabilities to support multi-domain co-
+  λi                      Decay constant (1/s).                                                 simulation. For instance, a hardware-in-the-loop (HIL) simu-
+  λa , λc                 Membrane water content.                                               lation platform was launched for battery management systems
+  λm                      Membrane water content.                                               (BMS) [15]. Component libraries for mechanical and thermal
+  µF                      Electrolysis efficiency.                                              modeling were introduced, and the functionality to include
+  σm                      Membrane conductivity (S/cm).                                         thermal simulation of semiconductor devices was extended
+  α, ᾱ                   Charge-transfer coefficients.                                         [16]. For more complex modeling scenarios—particularly
+  βi                      Delayed neutron fraction.                                             when using the aforementioned EMT tools—such as nuclear
+  Λ                       Prompt neutron lifetime (s).                                          power plants or PEM electrolysis-based hydrogen production,
+  ∆Gf                     Gibbs free energy change (J/mol).                                     system representations often rely on standard mathematical
+  ωn , ωr , ωbw           Natural, resonant, and bandwidth fre-                                 libraries for constructing domain-specific models [17], [18].
+                          quencies (rad/s).                                                     While various open-source tools—such as SMR simulators
+                                                                                                and the hydrogen economic evaluation programme, developed
+                       I. I NTRODUCTION                                                         under the auspices of the International Atomic Energy Agency
+                                                                                                (IAEA)—provide simulation capabilities and offer Python-
+D      RIVEN by the accelerating global deployment of renew-
+       able energy sources, the emergence of distributed energy
+resources (DERs), the advancement of nuclear power tech-
+                                                                                                based interfaces for extensibility [19], they remain largely
+                                                                                                incompatible with conventional EMT simulation tools, thus
+nologies—particularly small modular reactors (SMRs) [1]–                                        limiting seamless co-simulation across domains.
+[4]—as well as the widespread adoption of electric vehi-                                           Beyond the limitations of simulation tool compatibility, im-
+cles and hydrogen production via electrolysis, the demand                                       provements can also be made at the level of numerical solvers.
+for intelligent power systems—with advanced capabilities in                                     Classical EMT algorithms typically discretize the system using
+simulation, management, scheduling, and optimization—has                                        the Trapezoidal rule, simplify the network using Norton equiv-
+grown significantly [5]–[7]. Consequently, research into in-                                    alents, and formulate node-voltage equations for resistive-
+creasingly complex and integrated hybrid energy systems                                         inductive-capacitive-conductive (RLCG) networks [20]. How-
+has intensified. From the perspective of energy types, these                                    ever, this method is not well-suited for solving other physical
+systems span a wide range of physical domains and energy                                        systems described in ordinary or partial differential equations
+conversion processes, including nuclear energy (SMR), solar                                     (ODEs or PDEs). A representative example is the Simulink®
+energy (photovoltaics), thermal energy (fossil fuel and geother-                                environment, where the electrical network solver operates
+mal power plants), mechanical energy (pumped hydro storage,                                     independently from the global solver. Although global solvers
+wind farms, hydropower stations), and chemical energy (fuel                                     are capable of handling most numerical challenges—including
+cells, lithium-ion batteries), among others [8], [9]. Such diver-                               oscillations, divergence, and stability—they often lack the
+sity not only increases the complexity of system operation                                      flexibility required in multi-domain coupled scenarios. Specif-
+and design but also necessitates modeling and simulation                                        ically, limitations arise in data exchange interfaces, time-step
+techniques capable of addressing heterogeneous temporal and                                     coordination, and numerical solutions. For instance, nuclear re-
+physical scales.                                                                                actor core models typically yield stiff nonlinear ODEs that re-
+   Recent initiatives from both the Natural Resources Canada                                    quire implicit integration with iterative solvers, while thermal-
+and the United States Department of Energy have focused on                                      hydraulic systems have larger time constants, allowing for
+advancing megawatt-scale, nuclear-assisted low-temperature                                      relatively coarser time-steps [21]. Photovoltaic (PV) models
+electrolysis (LTE) for hydrogen production [10], [11]. Along-                                   involve transcendental equations with strong nonlinearities that
+side these national efforts, increasing attention has been di-                                  demand Newton-based iterations [22]. In contrast, the mechan-
+rected toward research on clean energy integration, hydrogen                                    ical dynamics of wind turbine systems—such as doubly-fed
+production and distribution, and their coupling with power                                      induction generators (DFIGs)—can be solved using standard
+grids from technical and economic perspectives. In particular,                                  ODE methods, but their inertia constants are influenced by
+numerous studies have developed detailed proton exchange                                        the rotor’s mechanical characteristics [23]. Consequently, it
+membrane (PEM) electrolyzer stack models, including aux-                                        becomes evident that in multi-domain co-simulation scenarios,
+iliary components such as water pumps and hydrogen storage                                      an optimized framework is urgently needed to improve the
+tanks [12], [13]. In addition, [6] investigates power system                                    efficiency of simulation by refining the time-steps, solving
+scheduling strategies for hydrogen production incorporating                                     methods, and data exchange protocols for each subsystem.
+nuclear energy, renewable sources, and the IEEE-118 bus                                            A representative optimization framework is the transient
+system. Meanwhile, [14] provides a comprehensive overview                                       stability (TS)/EMT hybrid time-domain simulation framework
+of the potential, current status, and challenges associated                                     [24]–[26], which optimizes time-step coordination and data
+with hydrogen production technologies. These developments                                       exchange between electromechanical transients and EMT phe-
+highlight the need for multi-domain modeling across thermal,                                    nomena. Recent studies have explored a range of TS/EMT co-
+electrochemical, and electrical domains, prompting investi-                                     simulation strategies. The challenges and visions for intelligent
+gation into the capabilities of existing simulation methods,                                    grid co-simulation are outlined in [27]. A phasor-domain
+numerical frameworks, and their limitations.                                                    hybrid simulation approach for transmission and distribution
+   In recent years, major commercial simulation platforms                                       networks is proposed in [28]. [29] summarizes key interfacing
+for power electronics and power systems have increas-                                           techniques for DER-based power systems, such as geographi-
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 03:02:49 UTC from IEEE Xplore. Restrictions apply.
+                   © 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+                                      but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+                   This article has been accepted for publication in IEEE Transactions on Energy Conversion. This is the author's version which has not been fully edited and
+                                              content may change prior to final publication. Citation information: DOI 10.1109/TEC.2026.3658726
+
+JOURNAL OF LATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021                                                                                                                                     3
+
+
+
+
+Fig. 1. Conceptual diagram of the N-RHES illustrating multi-domain energy integration and EMT coupling.
+
+
+
+cally distributed real-time co-simulation and power hardware-                                                II. M ULTI -D OMAIN M ODELING OF
+in-

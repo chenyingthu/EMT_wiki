@@ -1,0 +1,240 @@
+第 47 卷 第 11 期                                             电 网 技 术                                              Vol. 47 No. 11
+ 2023 年 11 月                                           Power System Technology                                     Nov. 2023
+文章编号：1000-3673（2023）11-4668-11                     中图分类号：TM 721             文献标志码：A            学科代码：470·40
+
+
+
+                          基于一致性算法的多虚拟同步机
+                             功率振荡协调抑制
+                                          林继灿，刘沈全，王钢，黄敏
+                                  （华南理工大学电力学院，广东省 广州市 510640）
+
+
+   Coordinated Power Oscillation Suppression of Multi-VSG Based on Consensus Algorithm
+                                  LIN Jican, LIU Shenquan, WANG Gang, HUANG Min
+ (School of Electric Power Engineering, South China University of Technology, Guangzhou 510640, Guangdong Province, China)
+
+
+ABSTRACT:         While   simulating    the   characteristics   of    下，VSG 之间较低的互阻尼加剧了振荡的波动性，这些振
+synchronous generators to provide the inertia support, the            荡将损害系统的稳定运行和可再生能源的有效调节。目前，
+virtual synchronous generator (VSG) inevitably leads to the           在采用分布式通信架构抑制多 VSG 并联有功振荡的方法
+problem of active power oscillation. Especially in the case of        中，未考虑有功合理出力以及非理想通信条件下算法收敛等
+multi-VSG interacting, the low mutual damping between VSGs            问题。因此，为抑制系统功率振荡，提高系统之间的互阻尼，
+intensifies the oscillation volatility, which may damage the          首先分析了 VSG 系统并联交互振荡的原理，同时利用功角
+stable operation of the system and the effective regulation of        构造性能评价函数，推导出一种增加互阻尼的一致性算法，
+the renewable energy. Currently, in the methods of using the          使得扰动下系统内 VSG 的频率快速收敛达到一致。其次通
+distributed communication architectures to suppress the               过构造李雅普诺夫能量函数的方法证明了所提方法的稳定
+multi-VSG active power oscillation, the optimization of active        性，在此基础上，利用频域的 Nyquist 曲线分析互阻尼参数
+power output and the algorithm convergence under the                  对系统稳定性的影响。最后，通过电磁暂态仿真证明了互阻
+non-ideal communication conditions are often neglected.               尼的一致性算法能有效抑制并联 VSG 系统的功率振荡，同
+Hence, to suppress the power oscillations of the system and           时在非理想通信环境下也能保证算法的有效性。
+improve the mutual damping, firstly, the principle of parallel
+                                                                      关键词：虚拟同步机；功率振荡；互阻尼；一致性算法；李
+and interactive oscillation of the VSG system is analyzed.
+                                                                      雅普诺夫能量函数
+Simultaneously,    the    performance     evaluation       function
+                                                                      DOI：10.13335/j.1000-3673.pst.2022.1847
+constructed by using the power angle is applied to derive the
+consensus algorithm for increasing the mutual damping so that         0 引言
+the frequency of VSG in the system under disturbance may
+converge more quickly and achieve consensus. Secondly, the                随着不同一次能源(风能、太阳能、水、天然气、
+stability of the system is proved by constructing the Lyapunov        燃料电池等)的逆变器接口分布式能源(distributed
+energy function. On this basis, the influence of mutual damping       energy resources，DER)发电在电力系统中的普及，
+parameters on the stability of the system is analyzed by using        给传统电力系统的运行带来了新的挑战。虚拟同步
+the Nyquist curve in the frequency domain. Finally, the               发电机(virtual synchronous generator，VSG)[1-6]为电
+electromagnetic transient simulation proves that the mutual
+                                                                      网提供惯性支持，使得逆变型分布式电源
+damping consistency algorithm is able to effectively suppress
+                                                                      (distributed generator, DG)的 VSG 控制成为全球关
+the power oscillation of the parallel VSG system, and also
+ensure the effectiveness of the algorithm in the non-ideal            注的焦点。
+communication environment.                                                然而，VSG 控制技术在改善系统暂态响应特性
+
+KEY WORDS:           virtual   synchronous    generator;     power
+                                                                      的同时，也引入了同步机的振荡特性, 这些新出现
+oscillation; mutual damping; consensus algorithm; Lyapunov            的振荡将损害系统的稳定运行和可再生能源的有
+function                                                              效调节。为此，许多附加阻尼的方法被提出。在文
+摘要：虚拟同步机控制(virtual synchronous generator，VSG)
+                                                                      献[7]中，通过使用锁相环估计频率来实现额外的阻
+在模拟同步发电机特性以提供惯量支撑的同时，不可避免地                                            尼效应。但是这种方法需要考虑锁相环的稳定性问
+引入了有功功率振荡的问题，特别在多个 VSG 交互的情形                                          题。文献[8-9]中引入了实际功率和虚拟功率的导
+第 47 卷 第 11 期                              电 网   技   术                                      4669
+
+数，其效果与增加 阻 尼 系 数 的 效 果 相 同 。 文 献                 用一致性协同控制方法来进行多 VSG 的有功和无
+[10-11]探讨了虚拟阻抗的阻尼效应，并提出了一种                       功的功率分配，但是算法仍需要计算出公共节点
+动态虚拟阻抗来抑制振荡，但是，此方法容易造成                           (point of common coupling，PCC)的总功率值。文
+电能质量下降，同时影响微电网整体的稳定裕度。此                          献[28-30]在 DGs 中使用有功调度一致性算法时，同
+外，一系列利用角速度和角加速度的自适应惯性方法                          样需要对所有当前的发电机输出功率进行求和。这
+[12-13]
+          被提出。然而，上述研究针对的是单逆变器系                   些算法，都需要一个集中式处理器对智能体信息进
+统，没有考虑多逆变器之间的相互作用。                               行求和，这就使得算法并不是完全意义上的分布
+          与单个 VSG 对比，多个 VSG 中的功率振荡更              式。为此，文献[31-32]提出利用频率交互信息代替
+           [14]
+为剧烈           。文献[15-16]指出，当多个 VSG 并联运           功率交互信息，有效实现了算法的分布式控制。
+行时，由于并联的 VSGs 间缺乏互阻尼而容易引起                                综上所述，一致性分布式算法在微电网运行控
+功率振荡。文献[17]利用惯性中心来抑制 VSGs 并                      制与调度中已经取得了广泛应用，但应用于多 VSG
+联系统的功率振荡。但是，它必须依赖于中央控制                           系统中功率振荡以及互阻尼的研究仍然不足。为改
+器，缺乏扩展的灵活性。文献[18]利用广义 Nyquist                    善 VSGs 间的功率振荡，实现有功功率的分布式控
+判据分析建立的阻抗模型，认为系统中的惯性和阻                           制，本文利用 VSG 的功角构造性能评价函数，对
+尼是造成系统振荡的主要原因，同时利用阻尼比改                           一致性算法中的调整项进行改进，增加系统间的互
+善系统的动态稳定性，但是文献中对阻尼比的选取                           阻尼，解决了扰动下 VSG 之间的瞬时有功功率振
+没有明确的结论。文献[19]提出了一种粒子群优化                         荡问题。通过构造能量函数的方法证明了控制系统
+算法来寻找最佳参数，以提高系统稳定性。然而，                           的稳定性以及利用 Nyquist 曲线分析互阻尼参数
+没有进一步分析振荡期间 DG 之间的相互作用。文                         的特性。同时，考虑非理想通信网络下算法的收敛
+献[20]利用发电频率过渡的一致性进行惯量的匹                          性，利用增益调整函数，提高算法的收敛鲁棒性。
+配，提高 VSG 并联系统的暂态稳定性。但是这种                         最后，通过电磁暂态仿真，验证所提方法的正确性
+策略对系统参数精度要求较高，鲁棒性弱。文献[21]                        和有效性。
+使用分散式互阻尼控制，利用功率的微分进行互阻
+                                                 1 VSG 功率振荡分析
+尼的增加，有效抑制了多 VSG 系统的功率振荡。但
+是没有考虑有功出力合理分配的问题。文献[22-23]                       1.1 VSG 控制
+提出了具有更简单通信网络的分布式控制，有效地                                   附录图 A1 显示的是 VSG 控制的原理图。VSG
+实现系统二次控制的同时提高了系统的暂态稳定                            通过模拟同步电机的转子运动方程来模拟同步电
+性。其使用的模态分析方法只是对 2 个交互系统进                         机的惯量和阻尼，转子运动方程如下：
+行分析，无法分析多个 VSG 的并联振荡问题，同                                     d Pm Pe
+                                                             J dt      D (  0 )
+时也没有考虑到系统有功出力合理分配的问题。文                                                 0   0
+                                                                                              (1)
+                                                             
+献[24]利用一致性算法构造二次调频控制策略，抑                                      d  
+                                                              dt
+制了多 VSG 系统的功率振荡，同时合理分配有功
+功率。但是其中的功率分配并没有考虑到有功调度                           式中：J 为虚拟的转动惯量；D 为阻尼系数；和
+优化问题，也没有对算法在非理想通信环境下进行                           0 分别为虚拟的角频率和角频率初值；为同步发
+分析。基于一致性算法的分布式控制在利用简单的                           电机相角度。VSG 输出的有功功率为 Pe，有功功
+通信网络后，只需对相互通信的网络进行点对点的                           率参考值 Pm 可以用方程 PmPrefKf(n)来获得，
+交互，即可实现协调优化控制，是解决多 VSG 协                         Kf 为频率下垂系数，Pref 为有功功率的给定值。
+                        [25]
+调运行控制的有效解决手段               。部分结合一致性算                     VSG 通常采用积分下垂控制模拟同步电机励
+法抑制 VSG 功率振荡的控制策略，能在一定程度                         磁器的无功-电压下垂特性，表达式为
+上解决多台 VSG 并联运行时的有功振荡问题，但                                      Qm  Qref  K v (U n  U )
+                                                              
+同时考虑有功出力合理分配以及改善算法在非理                                              K                         (2)
+                                                              ed  s (Qm  Qe )
+想通信环境下的收敛性上研究仍有不足。                                            
+          目前基于有功调度一致性算法中都需要进行                    式中：ed-q 为无功–电压下垂控制输出的电压值；K
+全局功率信息的求和，以功率的变化值作为调整                            为积分系数；Un 为电压额定值；U 为 VSG 的输出
+                               [26]
+项，完成系统的全局供需功率平衡                       。文献[27]利   电压；Kv 为下垂系数；Qm 为无功功率参考值；Qref
+4670                                                  林继灿等：基于一致性算法的多虚拟同步机功率振荡协调抑制                                                              Vol. 47 No. 11
+
+为有功功率的给定值；Qe 为 VSG 的无功功率输出。                                                                       式中：kij 是一个同步转矩系数，它决定了 VSG 保
+       虚拟阻抗回路用于调整逆变器的输出阻抗，其                                                                       持与电网同步的强度；i 为 VSGi 的角频率偏差。
+状态方程为                                                                                                由式(6)可知，i∫(i0)dt。i 可以由式(1)获
+                          uod *  ed  rv iod   Lv ioq                                        得，因此，ij 的动态特能由 VSG 的转子运动方程
+                            *                                                              (3)   决定。结合文献[17]和[23]可得，多 VSG 并联运行
+                           uoq  eq  rv ioq   Lv iod
+                                                                                                  时，控制参数不同会造成各 VSG 产生的角加速度
+式中：rv 和 Lv 分别为虚拟电阻和电感；uod-q*为 dq                                                                  不同，从而具不同的动态响应速度。直接导致 VSG
+轴上电压环的输入；iod-q 为 VSG 在 dq 轴上的输出                                                                   并联运行的频率振荡进而引起了有功振荡。当 VSG
+电流。                                                                                               之间的互阻尼足够大，在负载扰动加入时，Pei 发
+       电压控制和电流控制使用传统的 PI 控制器，                                                                     生的振荡衰减会更快，系统输出功率则越平滑。
+VSG 输出的有功功率和无功功率，由 VSG 的瞬时                                                                           由式(1)可得系统在负荷波动情况下 VSG 的输
+功率通过低通滤波器(low pass filter，LPF)得到。                                                                 出频率特性传递函数：
+1.2      振荡分析                                                                                                       i                 1
+       以图 1 所示的 2 个并联 VSG 之间的负载分担                                                                        Gi (s)                                         (7)
+                                                                                                                    Pei    J i0 s  ( K fi  Di0 )
+进行分析，各 DG 连接在同一条交流母线上。X1s
+                                                                                                     结合式(4)和式(7)，可得 VSG 的小信号状态空
+和 X2s 是相应的输出滤波器电抗，X1g 和 X2g 为线路
+                                                                                                  间方程为
+阻抗。虽然微网电阻比例较高，但电抗项仍然是线
+路阻抗特性的主导成分，线路传输功率更多受两端                                                                                     d i   0                 1  
+                                                                                                           dt                               i 
+相差影响。因此，为简化分析，考虑线路阻抗为感                                                                                               Sai          S                    (8)
+  [17]                                                                                                     di                bi   i 
+性      ，第 i 个 VSG 系统输出的有功功率描述为                                                                                          J          J i0 
+                                                                                                           dt   i 0
+                                        j i      U iU j
+                             Pei                              sin( ij )                  (4)   式中：SaiUiUj/Xij；SbiKfiDi0。
+                                      j 1,...n      X ij
+                                                                                                     根据式(8)可知系统的特征值为 iSbi/(Ji0)
+式中：Xij 为第 i 个 VSG 和节点 j 之间的总阻抗；                                                                   [(Sbi/(Ji0))2Sai/(Ji0)]1/2。在考虑阻尼对系统稳定性
+Ui 和 Uj 分别为第 i 个 VSG 和节点 j 的电压值；ij                                                               的影响时，固定 Ji 的值。由系统的特征值可知，Sbi
+为功角。                                                                                              决定了系统阻尼对稳定性的影响。当给 VSG 附加
+               U11                                                             U L  L         阻尼时，可以利用相邻的频率信息构造新的交互阻
+    VSG1
+                                                                                                  尼项，改进 Sbi。使得系统在发生振荡时，定量增大
+                             X1s                  Pe1              X1g                            自阻尼，此增大部分为机组间的交互阻尼。
+               U 2  2                                                                              VSG 的转动惯量可用惯性时间常数 H 衡量：
+    VSG2
+                                                                                      PL
+                                                                                                                               J 0 2
+                             X2s                                   X1g                                                    H                               (9)
+                                               Pe2                                                                             Sbase
+
+                     图 1 VSG 并联系统简化拓扑结构                                                           式中：H 为惯性时间常数，Sbase 为 VSG 的额定容量。
+      Fig. 1         Simplified topology of VSG parallel system                                      根据文献[33]可知，H 越大，VSG 的惯性越大，
+       当负载扰动加入时，功角的变化可以描述为                                                                        在变化或扰动后，响应越慢，频率偏差越小。此时，
+ijij0ij，ij0 为初始值，ij 为偏差量。式(4)可                                                           VSG 只需要具有较小的阻尼即可。反之同理。
+以描述为                                                                                                 综上所述，为了提升多机交互系统在扰动介入
+           j i      U iU j                            j i      U iU j                           时的动态性能，本文利用一致性算法对相邻的频率
+ Pei                         sin( ij 0 )                             cos( ij 0 ) ij (5)
+         j 1,...n    X ij                           j 1,...n    X ij                            信息进行交互，在控制中增加交互阻尼。一致性算
+                                                                                                  法在迭代过程中，会使得一致性变量趋近于 0。当
+       式(5)中第 1 项表示扰动前的潮流状态，第 2 项
+                                                                                                  以频率变化作为一致性变量时，可以加快频率达到
+表示第 i 个 VSG 的功率偏差。定义 kijUiUjcos(ij0)/
+                                                                                                  稳定时的状态，即0。使得 VSG 在动态运行过
+Xij，则功率偏差可以描述为
+                                                                                                  程中，惯性较小的 VSG 同时具有较大的阻尼，惯
+                             j i                        j i         i   j
+           Pei   kij  ij   kij                                                       (6)   性较大的 VSG 具有较小的阻尼。此时，在动态过
+                          j 1,...n                   j 1,...n              s
+                                                                                                  程中各 VSG 的输出频率变化差异减小，从而快速
+第 47 卷 第 11 期                                                  电 网    技     术                                                                  4671
+
+收敛达到一致，提升系统的动态性能。                                                        从式(13)可以看出，利用功率信息进行交互时，
+                                                                      需要对各 DG 的实时功率进行收集，计算总的供需
+2 一致性互阻尼算法
+                                                                      功率偏差。因此，利用 DG 的频率信息来获取相关
+2.1    一致性算法                                                          的全局功率不平衡信息是实现完全分布式控制的
+       如果存在传输线路 ij 连接 DGi 和 DGj，则 DGj                                 有效手段。
+被视为在 Ni 的邻域集中，表示 jNi。DGi 只能从通                                           根据式(7)可知，功率的微增量可以通过角频率
+信系数 aij1 的相邻 Ni 中接收信息，否则 aij0。可                                     来获得。当 DG 的功率供需不平衡时，可以利用
+用对称 nn 阶邻接方程 A(aij)nn 表示。定义通信机                                     DG 对自身的频率变化来调整相应的功率输出。根
+组间的权重：                                                                据文献[31]可得：
+                                                    Ni                                               d
+                                                                         f ob _ i (k )  i (k )       Pmi (k )  2ai Pmi (k ) (14)
+                                dij  ai j / ( aij )          (10)                                 dPmi
+                                                    j 1
+                                                                        根据式(1)，利用交互的机组将得到的输出频率
+       此外，系统的 Laplacian 矩阵为 L(lij)n×n，其中，
+                                                                      进行信息交互，即可实现完全分布式控制，同时
+                      n
+lijaij， lii       aij 。本文采用一致性算法设计相                               也可以实现控制互阻尼的效果。增加互阻尼项后的
+                  j 1, j  i
+                                                                      等式变化为
+邻信息的交互。对于 n 节点的分布式系统，各节点                                                    d Pm Pe
+                                                                          J         D (  n )+ j (k ) (15)
+的一致性变量 xi 根据其邻接节点的一致性变量进行                                                   dt n n
+调整，随着迭代次数的逐步增加，任意相邻节点的                                                          为使系统输出频率的差异快速减小，定义性能
+一致性变量 xi、xj 趋于一致，满足|xi(k)xj(k)|0，                                   评价函数：
+当所有节点的状态变量在收敛条件范围内达到一                                                                                     f per   ij                          (16)
+致时系统收敛[29]，一阶一致性算法描述为
+                                                                                          ij   (i  0 )dt   ( j  0 )dt 
+                                      Ni
+                           xi   dij ( xi  x j )            (11)                             i dt    j dt                             (17)
+                                      j 1
+                                                                                调整项为 fper 对 fob_i 的偏导数，即
+式中：i1,2,…,n，n 为网络中的机组总数；xi 为迭
+                                                                                                                  f per
+代的信息。                                                                                          f ob _ i (k )                | fob _ i ( k )    (18)
+                                                                                                                 f ob _ i
+       对式(11)进行离散化可得：
+                                             Ni                                 根据式(7)(14)，功率不匹配值项 P 与角频率
+          xi (k  1)  xi (k )   dij ( x j (k )  xi (k ))   (12)
+                                             j 1
+                                                                      偏差 具有线性关系，因此，式(18)可化简为
+                                                                        f per    f per  ij
+2.2    互阻尼策略                                                                                      Dmi i (k )(i (k )   j (k ))
+                                                                       f ob _ i  ij f ob _ i
+       结合离散型一致性算法，传统的以有功功率为
+                                                                                                    (19)
+调节项的分布式一致性算法可表示[31]为
+                                                                                相关化简过程如附录 A 所示。在多个机组交互
+                            Ni
+
+             i (k  1)   dij  j (k )  f ob _ i (k )             过程中，ij 可以利用一致性算法中的通信权
+                            j 1
+                                               

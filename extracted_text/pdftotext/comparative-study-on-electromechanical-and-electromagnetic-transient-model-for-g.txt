@@ -1,0 +1,290 @@
+第 42 卷 第 3 期                                     电力系统保护与控制                                                            Vol.42 No.3
+2014 年 2 月 1 日                               Power System Protection and Control                                      Feb.1, 2014
+
+
+
+    并网光伏发电系统的通用性机电暂态模型及其与电磁暂态
+                                                  模型的对比分析
+
+                          孙 浩 1，张 曼 2，陈志刚 1，刘志文 1，谢小荣 2，姜齐荣 2
+                              （1.中国能源建设集团广东省电力设计研究院，广东 广州 510600；
+                                  2.电力系统国家重点实验室, 清华大学电机系，北京 100084）
+
+
+摘要：针对并网光伏发电系统电磁暂态模型复杂、计算速度慢的问题，提出了一种并网光伏发电系统的通用性机电暂态模型。
+该模型不包含电器元件及高频开关器件，由纯粹的数学计算完成，模型简单、计算速度快。在 PSCAD/EMTDC 中对该机电暂态
+模型进行了仿真，得到的结果与电磁暂态模型的仿真结果吻合，且仿真时间大大减少，从而验证了该机电暂态模型的正确性
+及有效性。该通用性机电暂态模型为大规模并网光伏电站的仿真建模等提供了模型参考，具有实用价值。
+关键词：光伏发电；并网；机电暂态模型；电磁暂态模型；仿真对比
+
+      Comparative study on electromechanical and electromagnetic transient model for grid-connected
+                                      photovoltaic power system
+                  SUN Hao 1, ZHANG Man2, CHEN Zhi-gang 1, LIU Zhi-wen 1, XIE Xiao-rong 2, JIANG Qi-rong2
+        (1. Guangdong Electric Power Design Institute, China Energy Engineering Group Co., Ltd, Guangzhou 510600, China;
+       2. State Key Lab of Power Systems Department of Electrical Engineering, Tsinghua University, Beijing 100084, China)
+
+Abstract: The computing speed of electromagnetic transient model for grid-connected photovoltaic power system is very slow
+because of its complexity. To solve this problem, a general electromechanical transient model for grid-connected photovoltaic power
+system is proposed, in which there are not electrical components and high frequency switching device, and it only consists of pure
+mathematic calculations, is simple and has fast calculation speed. By comparing the simulation results of this electromechanical
+transient model with electromagnetic transient model in PSCAD/EMTDC, we found that the simulation time is reduced greatly and
+the results are agreeable basically, which verifies the correctness and validity of the electromechanical transient model. The
+electromechanical transient model provides reference model for simulation and modeling of large scale grid-connected photovoltaic
+power station and is of great practical value.
+    This work is supported by National Natural Science Foundation of China (No. 51322701).
+Key words: photovoltaic power; grid-connected; electromagnetic transient model; electromechanical transient model; simulation
+comparison
+
+
+中图分类号： TM76；TM743                    文献标识码：A                  文章编号： 1674-3415(2014)03-0128-06
+
+
+                                                                     类是潮流模型[3]，即将其建模成简单的功率源，不
+0    引言
+                                                                     考虑其动态过程，该模型仅适用于潮流分析，而不
+  随着新能源、智能电网和微电网技术的发展，                                               能用于暂态分析；另一类是基于特定的光伏发电系
+并网光伏发电系统已经取得广泛的应用，并具有广                                               统建立对应的电路或电磁模型[4-5]，严格体现光伏发
+阔的发展前景[1-2]。在含光伏发电系统的电网动态分                                           电系统中具体的最大功率点跟踪（MPPT）控制算
+析中需要采用兼具精度和效率的暂态模型，在既往                                               法和逆变器电路及其控制逻辑，  这类模型非常详实，
+研究中，光伏发电系统模型通常采用两类模型，一                                               理论上能满足电网机电暂态分析要求，但也存在诸
+                                                                     多问题，如：1）由于光伏发电系统的内部结构和控
+基金项目：国家自然科学基金资助项目（51322701）                                          制方法因厂家不同而具体各异，导致其电路或电磁
+        孙 浩，等 并网光伏发电系统的通用性机电暂态模型及其与电磁暂态模型的对比分析                                     - 129 -
+
+模型的通用性差，如果对不同厂家、型号的光伏发            种多样[6]，如固定电压法、电导增量法、扰动观察
+电系统均如此建模，则工作量极大，不现实；2）电           法等。DC/AC 并网逆变器多采用电压型逆变器，主
+路或电磁模型涉及各厂家专有的设备内部参数，往            要的控制方式有电压控制和电流控制，电压控制是
+往难以取得相关的模型参数；3）电路或电磁模型复           将系统作为受控电压源处理，要求其输出电压与电
+杂度高，为保证精度，计算步长往往设置得非常低，           网电压同频同相；电流源控制是将系统作为受控电
+从而严重制约计算的速度。而且，电力系统机电暂            流源，要求其输出的电流与电网电压同频同相。目
+态仿真往往只需要光伏发电系统的有效值电压/电流           前的并网光伏发电系统中，DC/AC 逆变器多采用图
+输出，并不需要其三相动态过程。加上目前大电网分           1 所示的电压源输入、电流源输出的连接方式。
+析计算多采用商业或工程化仿真软件，亟需一种相对
+通用的光伏发电系统模型，以提高仿真分析的自动化
+水平和扩大计算规模。综上所述，亟需分析已有各类
+光伏发电系统的共性特征，并针对电力系统机电暂态
+仿真的需求，形成一种通用性的建模方法。
+  目前关于并网光伏发电系统的研究多集中在
+单台电磁暂态模型的建模仿真，而在实际的光伏发
+电站中，有多台光伏阵列同时工作。在研究光伏电
+站模型或者光伏电站并网给电网带来的影响时，如
+果对多台光伏发电系统的电磁暂态模型同时进行仿
+真，则仿真速度将会很慢。因此，研究并网光伏发
+电系统的通用性机电暂态模型对于提高仿真速度来
+说是非常有意义的。
+  本文首先简要介绍了并网光伏发电系统的构
+成，然后提出了一种并网光伏发电系统的通用性机
+电暂态模型，并对其内部结构进行了详细介绍，最
+后通过 PSCAD/EMTDC 对该机电暂态模型进行仿
+真，并与电磁暂态模型仿真的结果进行对比，验证
+了该机电暂态模型的正确性及有效性。                             图 1 常见光伏发电系统结构
+                                      Fig. 1 Structure of common photovoltaic system
+1   并网光伏发电系统构成
+                                     对于电压源输入、电流源输出的 DC/AC 并网
+    目前常见的并网光伏发电系统有单级式并网
+                                  逆变器，其控制方法有多种[7-8]。用的比较多的是基
+光伏发电系统、两级式并网光伏发电系统和多级式
+                                  于旋转坐标系的 PQ 解耦控制，主要包括外环功率
+并网光伏发电系统，如图 1 所示。单级式并网光伏
+                                  控制和内环电流控制。本文后面算例中使用的即为
+发电系统中，光伏阵列直接与 DC/AC 逆变器相连，
+                                  PQ 解耦控制。
+逆变器将光伏阵列输出的直流电能转换为满足电网
+需求的交流电，逆变器不仅需要变换电能，还需要            2   光伏发电系统机电暂态模型
+实现 MPPT。两级式并网光伏发电系统中，光伏阵
+                                       由前述知，并网光伏发电系统可能是单级的、
+列输出的电能经过 DC/DC 电路、 DC/AC 逆变器并网，
+                                  双级或多级的，MPPT 算法多种多样，逆变器及其
+DC/DC 电路实现 MPPT 及升压作用，逆变器实现电
+                                  控制方法也千差万别，为了规避这些内部的差别，
+能变换。多级式并网光伏发电系统中，光伏阵列输出
+                                  而更多地关注其机电暂态特性，本文提出一种通用
+的电能首先经过 DC/AC 逆变器成高频交流电，然后
+                                  性机电暂态模型，如图 2 所示，S、T 分别为光伏阵
+经过高频变压器升压到目标电压等级，再经过高频整
+                                  列所处环境的光照强度和温度，Vpvm 为光伏阵列最
+流器将电能转换成高压直流电，最后经过 DC/AC 逆
+                                  大功率点处的电压，其由光伏阵列的特性决定，并
+变器将电能转换成符合电网要求的交流电。
+                                  作为 MPPT 模块的输入参考电压，MPPT 的输出
+    不论采取何种拓扑结构，MPPT 及并网 DC/AC
+                                  Vpvm1 及直流链接的输出电压 VD、光伏阵列输出功
+逆变器都是必不可少的部分，其控制直接关系到并
+                                  率 Ppv1 作为 DC 变换的输入，共同决定光伏阵列的
+网系统接入电网的电能质量。MPPT 的控制方法多
+- 130 -                                                                   电力系统保护与控制
+
+端电压，即 Vpv1。直流链接的作用是通过平衡直流                                                        数为 T，则 MPPT 模型可以表示为
+侧功率 Ppv2 和交流侧功率 PDe 来维持直流母线电压                                                                                  e  s
+                                                                                                   Vpvm1             Vpvm  Vpvm                   (7)
+为恒定值，为后级逆变器提供直流电压，逆变器的                                                                                        1  Ts
+控制分为外环和内环控制，具体控制原理将在后文                                                           其中， Vpvm 为跟踪误差。
+介绍。                                                                              2.3 DC/DC 变换器模型
+                                                                                     以 Boost 电路为例，DC/DC 变换器主要起到了
+                                                                                 升压及功率变换的作用，DC/DC 变换的输入输出量
+                                                                                 之间的关系分为两种情况。
+                                                                                     于单级式并网光伏发电系统，为
+                                                                                               Ppv2  f1 ( Ppv1 )  Ppv1
+                                                                                                                                                    (8)
+                                                                                               Vpv1  f 2 (VD , Vpvm1 )  VD
+                                                                                   对于双级式和多级式并网光伏发电系统，为
+                图 2 机电暂态模型信号传递关系图
+Fig. 2 Signal relationship of electromechanical transient model
+                                                                                        Ppv2  f1 ( Ppv1 )  Ppv1
+                                                                                                                    (9)
+                                                                                                  Vpv1  f 2 (VD , Vpvm1 )  Vpvm1
+    该机电暂态模型较多地屏蔽了光伏发电系统
+                                                                                 其中， 为 DC 变换的效率。
+千差万别的内部特性，而以外特性动态方程为主，
+                                                                                 2.4 直流链接模型
+不包含电器元件、更没有高频开关器件，可大大提
+                                                                                     直流链接是连接直流侧与交流侧的中间环节，
+高分析速度。以下将对该模型中的模块及其之间的
+                                                                                 即直流母线电容的模型，根据电容的能量与电压关
+关系进行介绍。
+                                                                                 系，得到直流链接模型为
+2.1 光伏电池模型
+                                                                                                              dEC
+    为了规避不同光伏电池对建模的影响，采用光                                                                                           PPV2  PDe
+                                                                                                              dt                                   (10)
+伏电池通用性行为模型[9]。该模型对应的数学方程                                                                                      E  1 2CV 2
+如式（1）~式（6）        ，其建模参数仅包括：标准环境                                                                              C          D
+
+下电池的短路电流 Isc、开路电压 Uoc、最大功率电                                                      式中：Ppv2 为直流链接的直流侧输入功率；PDe 为直
+压 Um 和最大功率电流 Im 这 4 个参数，由此即可得                                                    流链接逆变器侧的输出功率；C 为直流链接电容的
+到光伏电池的输出特性，即 U-I 曲线。                                                             容值；VD 为直流链接的电压值；EC 为电容上存储的
+       I  Isc' {1  C1 [eU /( C Uoc )  1]}
+                                           2
+                                             (1)                                 能量。
+                                                      '
+                                                        /  C2U oc 
+                                                                                 2.5 逆变器外环模型
+                               
+                       C1  1  I m' / Isc' e     U m
+                                                                           (2)       逆变器通常是由电力电子器件构成的逆变电
+                       '      '
+              C2 =(U /U  1)[ln(1  I /I )]
+                       m      oc
+                                                   '
+                                                   m
+                                                        '
+                                                        sc
+                                                              1
+                                                                           (3)   路，其目标是通过控制逆变电路输出电压的频率、
+          I sc' =I sc I , I m' =I m I , U oc' =U oc U , U m' =U m U    (4)   幅值和相位，实现向电网注入特定的电流和功率。
+                           I  [1   T  Tref ]S / Sref                (5)   逆变器的控制包括外环控制和内环控制。
+                                                                                     外环控制为功率控制，目的是实现 PQ 解耦控
+          U  [1   T  Tref ]ln[e   (S  S ref )]                   (6)
+                                                                                 制，其中有功控制通过直流母线电压的闭环控制实
+式中：Sref 为标准环境下的光照强度，为 1 kW/m2；
+                                                                                 现，无功控制通过无功功率的闭环控制实现，外环
+Tref 为标准环境下的温度，为 25 oC；Isc′ 、Uoc′
+                                、Im′
+                                   、
+                                                                                 控制的输出量为 d、q 轴电流的参考值。因此，逆变
+Um′  分别为 Isc、Uoc、Im、Um 在不同环境下的修正值；
+                                                                                 器外环控制的传递函数模型的一般形式如式(11)、
+、 为温度补偿系数；  为光强补偿系数。
+                                                                                 式(12)。
+2.2 MPPT 模型
+    MPPT 控制的方式虽然多种多样，但其目的都                                                          1           B d2 s 2  B d1 s  Bd0
+                                                                                    I d, ref 
+                                                                                                 Ad 2 s 2  Ad1 s  Ad 0
+                                                                                                                            VD ,ref  VD          (11)
+是使光伏阵列输出电压跟踪最大功率点电压，以输                                                              
+                                                                                    I
+出不同环境下的最大功率。MPPT 实现的效果可视                                                                                1
+                                                                                     d, ref  Sat I d,ref , I d,max , I d,min   
+为：光伏阵列输出电压一阶滞后于参考电压，稳态
+时存在固定的跟踪误差。因此，MPPT 控制的模型                                                             1            B q2 s 2  B q1 s  B q0
+                                                                                     I q, ref 
+                                                                                                   A    s 2
+                                                                                                              A    s    A
+                                                                                                                                     '
+                                                                                                                                   Q ref  Qe   
+可以主要由一阶惯性环节、滞后环节及跟踪误差组                                                                              q2          q1          q0                     (12)
+成，设控制器的纯滞后时间常数为  ，一阶时间常                                                             
+                                                                                                           1
+                                                                                      I q, ref  S at I q,ref , I q, max , I q, min 
+                 孙 浩，等 并网光伏发电系统的通用性机电暂态模型及其与电磁暂态模型的对比分析                                                                       - 131 -
+
+其中，（1） Sat  x, xmax , xmin  是饱和函数，作用是对                                                  K1i                   K
+                                                                       将 PI1 ( s)=K1p        、 PI 2 (s )=K 2p  2i 代入式（17）
+输出量进行限幅，其定义如下：                                                                             s                     s
+                               xmax x  xmax                          并化简，用一般形式表示如下
+                              
+     Sat  x, xmax , xmin    xmin x  xmin                                                   bd2 s 2  bd1 s  1
+                              x                                                           id                      id,ref
+                                    xmin  x  xmax                                            ad2 s 2  ad1 s  1
+                                                                                                                                (18)
+    （2） I d,max、I d,min、I q,max、I q,min 可以单独由建模                                                        2
+                                                                                           i  bq2 s  bq1 s  1 i
+参数给出，也可以只给出逆变器的最大限流值 I max ，                                                                q
+                                                                                                 aq2 s 2  aq1 s  1
+                                                                                                                      q,ref
+                                                                                           
+则                                                                      其中， aij、bij (i  d, q; j  1, 2) 为参数。式(18)即为逆
+             I d,max  I max  I q,max  I max  I d,ref
+                                                    2
+                                                                       变器内环电流模型的传递函数。模型内部还包含有
+                                                                     dq/abc 变换、锁相环、电气量测量等环节，在仿真
+              I d,min   I max  I q,min   I q,max
+                                                                       建模时可以利用 PSCAD 已有的模块实现。
+    （3）当参数 Ai 2  Bi 2  Ai 0  0(i  d, q) 时，外环                       2.7 通用性机电暂态模型的整体实现
+控制简化为 PI 控制。                                                                在模型整体实现的过程中，要注意根据实际选
+2.6 逆变器内环模型
+                                                                       取合适的模型参数，包括设备参数和外特性参数，
+    逆变器的内环控制为电流控制，控制目标是使
+                                                                       设备参数可以由厂家提供，                  如光伏阵列的特性参数，
+得 d、q 轴电流实际值跟踪参考值，从而使光伏发电
+系统输入到电网侧的电流及功率符合要求。内环模                                                 外特性参数可以通过一定的外特性测试获得，如
+型的输入量为 d、q 轴电流的参考值，输出量为 d、                                             MPPT 跟踪器的纯滞后时间常数及惯性时间常数、
+q 轴电流的实际值。                                                             逆变器的跟踪时间常数等。不同的光伏发电系统的
+    下面推导逆变器内环模型的传递函数。记 ia、                                             参数可能有所差别，但是均可用于该机电暂态模型，
+ib、ic 为逆变器输出电流，Ua、Ub、Uc 为逆变器输                                          充分体现了该机电暂态模型的通用性。就实现方法
+出相电压，ega、egb、egc 为电网相电压，L 为输出滤                                         而言，该机电暂态模型由纯数学算法实现，可以非
+波电感，R 为电感内阻和开关管等效内阻。                                                   常灵活地应用于 PSASP、PSS/E 等各种商业软件，
+    在静止 abc 坐标系下，根据电路定律有                                               通过嵌入式建模来实现。而电磁暂态模型由于含有
+              ia      ua         ega 
+          d         1         1                                  电力电子器件，只能用于少数对电力电子器件能进
+                ib        ub       egb                      (13)
+          dt   L  R   L  R                                     行仿真的软件，具有局限性。
+              ic     u c 
+                                     egc                                  为了验证上述所提出的机电暂态模型的正确
+    将式（13）进行 dq 变换得到                                                   性及有效性，将其与电磁暂态模型进行仿真对比，
+                        did                                         本论文在 PSCAD/EMTDC 中建立了并网三相光伏
+             egd =ud   L      Rid   L iq
+                          d t                                       发电系统的电磁暂态和机电暂态模型，以双级式并
+                                                               (14)
+                                                                       网光伏发电系统为例，逆变器外环采用 PI 控制，内
+             e  u   L diq  Ri   L i
+             gq     q               q        d                      环参数 ai 2  bi 2  0(i  d, q) ，机电暂态模型的仿真电
+                          dt          
+                                                                       路如图 3 所示，模型参数如表 1。
+    将式（14）进行拉普拉斯变换得到
+     egd   u d    Ls  R            L         id 
+                                                      (15)
+     egq   u q     L             Ls  R    iq 
+    若采用 PI 控制器，逆变器输出电压参考值为
+                            K1i 
+     u d,ref =u d   K 1p 
+                               s 
+                                     id,ref  id   L iq
+                                                              (16)
+     
+     u                       K 
+               u q   K 2p  2 i   iq,ref  iq   L id
+      q,ref                  s 
+    将其写成矩阵形式并与式（15）对比得到
+                          PI 1 ( s )
+             id    Ls  R   PI ( s ) id,ref
+                                     1                         (17)                 图 3 机电暂态模型仿真电路图
+            
+            i            PI 2 ( s )
+                                           i                           Fig. 3 Simulation circuit of electromechanical transient model
+             q   Ls  R   PI 2 ( s ) q,ref
+- 132 -                                                    电力系统保护与控制
+
+                  表 1 机电暂态模型参数
+    Table 1 Parameters of electromechanical transient model
+          模块          符号            意义               数值

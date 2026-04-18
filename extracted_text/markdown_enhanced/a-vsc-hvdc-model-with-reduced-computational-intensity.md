@@ -1,0 +1,30 @@
+# A VSC-HVDC Model with Reduced Computational Intensity
+Mohamed M. Z. Moustafa, Student Member, IEEE, S. Filizadeh, Senior Member, IEEE
+
+**Abstract--**The paper presents a simplified voltage-source converter (VSC) model to reduce the computational intensity of simulating a power system with embedded converters. This simplified model is based on the concept of dynamic average-value modeling and provides the ability to generate either the full spectrum or the fundamental-frequency component of the VSC voltage. The model is validated against a detailed model of a voltage-source converter based high voltage direct current (VSC-HVDC) circuit and shows accurate matching during steady state and transient operation. Simulation and validation results are obtained using an electromagnetic transient simulation program (PSCAD/EMTDC). A significant reduction in terms of central processing unit (CPU) time consumption is also achieved with the proposed models.
+
+**Index Terms--** Converter, VSC-HVDC, dynamic average value, computational time.
+
+*The authors are with the Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 5V6 Canada (e-mails: mmohamed@ee.umanitoba.ca; shaahin_filizadeh@umanitoba.ca)*
+
+## I. INTRODUCTION
+
+Starting in the late 1990’s [1,2], the advances made in semiconductor technology prompted the use of a new generation of static switches for high power dc transmission. In the new scheme, high-speed self-commutated switches, e.g. IGBTs and GTOs, previously used for motor drive and other similar applications, replace less rapid thyristors in an arrangement known as a voltage-source converter (VSC) [3, 4]. The VSC-based HVDC (VSC-HVDC) system came in service for the first time in Sweden in 1997 as a trial 3 MW scheme [5]. Since then more VSC transmission schemes have been built and several are currently in commercial operation.
+
+The VSC-HVDC transmission system offers a unique advantage in its ability to either absorb or generate reactive power in an independent and rapid mode [2, 3, 6]. Also, the reactive power control in VSC transmission is independent of real power control. This important feature is used when the converter is connected to a weak ac network or a network with no generation [2, 3, 6, 7]. Moreover, there is no risk of commutation failure- an issue that is of significant importance in conventional thyristor-based HVDC schemes [2, 3, 6, 7].
+
+Synthesis of voltages at the ac terminals of a VSC is typically done using high-frequency pulse-width modulation (PWM) techniques. Modeling and simulation of VSC-HVDC systems has been a challenging task that requires a compromise among level of detail, simulation speed and the components without adversely affecting computational intensity. Several publications [8-12] presented different approaches to model the VSC-HVDC systems. Dynamic average value modeling techniques for representing static switching converters for system-level studies are presented in an IEEE Task Force paper [13]. This paper also includes different approaches used to develop such models for dc-dc and ac-dc converters. The dynamic model and control for the VSC-HVDC is presented in [14-17]. A generalized dynamic model for multi-terminal applications of VSC-HVDC is presented in [18] including a model of the converter and its controllers, dc circuit equations and coupling equations.
+
+Despite the intensive modeling effort presented in the previous research materials the possibility of modeling the VSC based on dependent current and voltage sources components and its relation with the transmitted dc power has not been discussed in adequate length. In particular the CPU-time requirement associated with the proposed models has not been addressed in detail. This has profound impact on repetitive simulation studies such as multiple-run and optimization-based controller tuning.
+
+The objective of this paper is to present a dynamic model of a three-level VSC in VSC-HVDC system. The three-level VSC is modeled using dependent current and voltage sources. The model presented herein has the ability to present the full spectrum or the fundamental voltage behavior of the SPWM-generated voltage, depending on the user’s desire. Vector control strategy is implemented in the simulation model in order to control the VSC. Validation of the model is performed during steady state and transient operation conditions. Model behavior under symmetrical and unsymmetrical fault conditions is also presented. The beneficial use of the model in terms of simulation time is demonstrated as well.
+
+## II. MODELING OF THE VSC
+
+Modeling of the three-level VSC is a challenging issue, as mentioned earlier. Due to factors such as power systems’ expansion a larger presence of fast-acting controllers using VSCs, either in the form of VSC based HVDC transmission or in forms of FACTS devices, is expected. Simplicity as well as accuracy is expected from a VSC model in order to suitably represent it in studies where a large number of such devices are used. However, a trade-off between both of these qualities is required to be able to achieve the required accuracy with a non-complicated model.
+
+### A. Configuration of VSC-HVDC System
+
+Fig. 1 shows a schematic diagram of a VSC-based HVDC transmission system. The converters at the two ends of the dc line (VSC1 and VSC2) are supported on the dc side by dc-capacitors. These capacitors maintain a relatively constant dc voltage with minimum ripple and also serve as energy storage to supply or absorb a limited amount of energy during transients if necessary.
+
+The three-level NPC VSC with its three ac input terminals is used to connect to a split or center-tapped dc source, as shown in Fig.2. Thus, each phase of the VSC can switch to three different voltage levels, i.e. the positive dc terminal (+Vc), the negative dc terminal (-Vc) and the mid-point voltage of zero as presented in Fig. 3. By adjusting the relative width of posit

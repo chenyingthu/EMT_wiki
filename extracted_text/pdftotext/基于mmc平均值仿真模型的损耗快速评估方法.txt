@@ -1,0 +1,295 @@
+        第 44 卷 第 19 期                           中     国 电 机 工 程 学                报           Vol.44 No.19 Oct. 5, 2024
+        2024 年 10 月 5 日                               Proceedings of the CSEE               ©2024 Chin.Soc.for Elec.Eng. 7739
+DOI：10.13334/j.0258-8013.pcsee.231284 文章编号：0258-8013 (2024) 19-7739-12 中图分类号：TM 711 文献标识码：A
+
+
+
+   基于 MMC 平均值仿真模型的损耗快速评估方法
+                                                         孙正东，郝全睿*
+                  (电网智能化调度与控制教育部重点实验室(山东大学)，山东省 济南市 250061)
+
+
+                Fast Loss Evaluation Method Based on MMC Average Simulation Model
+                                                    SUN Zhengdong, HAO Quanrui*
+        (Key Laboratory of Power System Intelligent Dispatch and Control of Ministry of Education (Shandong University),
+                                                  Jinan 250061, Shandong Province, China)
+
+
+ABSTRACT: To address the problem that the calculation                    受控电压源吸收的能量表征损耗，同时提出一种基于衰减函
+accuracy and speed of MMC losses are difficult to balance, a             数的开关损耗注入方法，避免产生注入电压尖峰并改善注入
+fast online evaluation method of losses is proposed. First, based        效果。最后，在 PSCAD 中搭建计及损耗注入的 MMC 平均
+on the determined modulation and capacitor voltage balance               值仿真模型，验证所提方法的计算效率和准确性。
+strategy, the switching frequency surface is constructed to
+                                                                         关键词：模块化多电平换流器；损耗计算；平均值模型；损
+reflect the switching frequency under any steady-state working
+                                                                         耗注入
+condition. Next, the upper limit of switching frequency and the
+upper limit of switching losses are calculated by using the              0 引言
+average value model. Once again, combined with the
+                                                                             模 块 化 多 电 平 换 流 器 (modular multilevel
+calculation results and the switching frequency surface, the
+rapid calculation of the actual losses is realized with high             converter，MMC)因其结构易拓展、波形质量高、
+accuracy. Then, considering the impact of losses on the                  故障处理能力强而被广泛应用于直流输电领域[1-3]。
+simulation results, the energy absorbed by a controlled voltage          MMC 损耗是直流输电系统运行过程中损耗的主要
+source connected in series on the bridge arm is used to                  组成部分。对于损耗的准确评估关系到散热系统的
+characterize the losses. A switching loss injection method based
+                                                                         设计、电力电子器件选型和直流输电系统的经济性、
+on attenuation function is proposed to avoid injection voltage
+                                                                         可靠性评估，具有重要的现实意义和研究价值[4-5]。
+spikes and improve injection efficiency. Finally, an MMC
+average simulation model considering loss injection is built in              MMC 损耗主要包括开关器件的导通损耗和开
+PSCAD to verify the computational efficiency and accuracy of             关损耗：导通损耗与器件导通期间流过的电流和导
+the proposed method.                                                     通数目相关，评估难度较小；开关损耗则与器件开
+KEY WORDS: modular multilevel converter (MMC); power                     断前的电流、电压和开断状态相关。实际工程中，
+loss calculation; average value model; loss injection                    MMC 单个桥臂子模块多达数百个且投切状态受电
+摘 要 ： 针 对 模 块 化 多 电 平 换 流 器 (modular multilevel                          容电压平衡策略影响，动态特性复杂，开关损耗评
+converter，MMC)损耗计算精度和速度难以兼顾的问题，提                                         估难度大。
+出一种 MMC 损耗快速在线评估方法。首先，基于确定的调                                                 现有的 MMC 损耗计算方法大体可分为 2 类。
+制和电容电压平衡策略，构建开关频率曲面以反映任意稳态                                                   第 1 类方法通过详细电磁暂态仿真模型获得电
+工况下的开关频率；其次，利用平均值模型计算开关频率上
+                                                                         压、电流波形与开关器件的导通信号，通过对数据
+限和开关损耗功率上限；再次，结合计算结果和开关频率曲
+                                                                         二次处理得到损耗的计算结果。文献[6]结合详细模
+面，近似快速计算实际开关损耗，兼顾计算精度和计算效率；
+                                                                         型电磁暂态仿真数据与热电路模型，迭代计算损
+然后，考虑到损耗对仿真结果的影响，利用串联在桥臂上的
+                                                                         耗，在计算损耗时考虑了器件结温的影响，并不关
+     基 金 项 目 ： 国 家 电 网 有 限 公 司 科 技 项 目                                   注计算效率；文献[7]提出了一种基于结温预估的计
+(5108-202299261A-1-0-ZB)。
+     Science and Technology Project of State Grid Corporation of China
+                                                                         算方法，该方法考虑到实际情况中散热器热阻较
+(5108-202299261A-1-0-ZB).                                                小，进而对文献[6]所提的计算过程进行简化。
+7740                     中   国   电   机   工   程   学   报                                 第 44 卷
+
+       第 2 类方法根据解析公式直接计算损耗[8-11]。        耗以受控电压源的形式实时注入到仿真模型中，并
+文献[8]分段解析计算损耗。其中开关损耗只解析计                 将其成功应用到两电平 VSC 上；文献[17]指出，传
+算由于参考电压变化而产生的部分，对于由电容电                   统 IGBT 的伴随离散电路模型在损耗模拟方面存在
+压平衡策略和调制方法引起的开关损耗只给出了                    不足，并根据 IGBT 的损耗特性，采用响应匹配的
+简易、保守的估算；文献[9]提出了一种基于桥臂电                 方法，分工况对伴随离散电路模型进行改进。现有
+流绝对值和平均值的简化解析计算方法，该方法只                   研究大多通过改进 IGBT 模型使得仿真过程计及损
+针对文献[12]提出的电压平衡策略计算开关损耗，                 耗的影响，但 MMC 子模块数目众多，若采用改进
+缺乏通用性；文献[10]引入桥臂子模块投入占空比                 的 IGBT 模型，仿真速度势必会进一步降低。
+的概念并以此为基础计算损耗，对于开关损耗的计                           为了解决上述问题，本文基于仿真和解析计算
+算提出了一种开关频率越高、误差越小的近似计算                   的思想，提出一种利用 MMC 平均值模型快速评估
+方法；文献[11]采用数值计算得出电压、电流和开                 损耗的方法，兼顾损耗计算精度和计算效率。同时
+关器件的导通信号，进而计算损耗，但数值计算采                   基于所 提计 算方法 ，构 建一种 计及 损耗影 响的
+用的 MMC 模型过于简单。                           MMC 快速仿真模型，将计算出的损耗注入系统中，
+       在计算精度方面，第 1 类方法通过详细电磁暂            使仿真模型更能反映实际情况。本文的创新点主要
+态仿真模型获得精确的数据，特别是开关器件的导                   包括：
+通信号，因此计算精度较高；第 2 类方法可以准确                         1）提出一种基于 MMC 平均值模型的损耗快
+计算导通损耗，但对于开关损耗，由于其受电容电                   速评估方法：①基于开关损耗的产生原理，构建开
+压平衡策略和调制方式的影响，解析计算困难，计                   关损耗的近似表达式；②基于开关频率数据，二维
+算精度不高。                                   插值生成开关频率曲面，利用开关频率曲面反映任
+       在计算效率方面，第 1 类方法所需数据要利用            意稳态工况下的开关频率；③提出半平均值模型的
+能反映 MMC 子模块开关动态的详细电磁暂态模型                 构建方法，利用半平均值模型收集开关频率数据，
+获得，但 MMC 中子模块数目众多，详细模型仿真                 提高仿真效率。
+速度慢，计算效率低；第 2 类方法建立了损耗的解                         2）提出一种计及损耗影响的 MMC 损耗注入
+析表达式，计算效率高。                              方法：①用 MMC 桥臂上串联的受控电压源吸收的
+       为了提高损耗尤其是开关损耗计算的精确度               能量表征损耗；②将开关损耗以衰减的形式注入系
+并降低计算耗时，文献[13]基于平均值模型，解析                 统，以避免电压尖峰的产生；③设计新的衰减函数，
+表达各子模块电容的充放电过程，并在每个仿真步                   以获得更好的注入效果。
+长更新，一定程度上提高了数据的获取速度，但仍
+                                         1   MMC 基本拓扑结构及平均值模型
+需将仿真数据导入 Matlab 中进行损耗计算，操作较
+                                                 MMC 的基本拓扑结构如图 1 所示，换流器由
+为繁琐；文献[14]利用数值计算近似模拟仿真过程，
+提高了损耗计算速度，但无法计及控制环节的影
+响；文献[15]认为在单位功率因数下，传输功率与
+开关频率线性相关，并通过插值获得二者的对应关
+系，基于对应关系得到各工况下的子模块轮换数，
+进而计算开关损耗。该方法仅适用于 MMC 运行在
+单位功率因数的情况下，具有局限性。
+       综上所述，现有的 MMC 损耗评估方法很难同
+时兼顾准确性和计算效率，或者只针对特定情况，
+缺乏通用性。
+       此外，现有关于 MMC 损耗的研究主要聚焦在
+损耗的精确、快速计算方面，鲜有文献考虑到损耗
+对 MMC 系统仿真结果的影响。文献[16]提出了一                               图1   MMC 基本拓扑结构
+种考虑损耗的 IGBT 模型，将 IGBT 模块产生的损                         Fig. 1   Basic structure of MMC
+第 19 期                        孙正东等：基于 MMC 平均值仿真模型的损耗快速评估方法                                                  7741
+
+6 个桥臂组成，每个桥臂由 N 个结构完全相同的子                        损耗和底层控制损耗等相对较小，在计算损耗时通
+模块和 1 个电抗器(La)串联而成，上下 2 个桥臂构                     常将其忽略[18-19]，因此本文只考虑由 IGBT、二极
+成 1 个相单元。子模块采用半桥子模块拓扑(half                       管产生的损耗。
+bridge sub-module，HBSM)，HBSM 由 2 个 IGBT          2.2    MMC 通态损耗计算
+(T1、T2)、2 个反并联二极管(D1、D2)和一个电容器                         IGBT、二极管的通态损耗功率可以用通态压降
+(C)组成。                                           与通态电流的乘积来表示：
+      MMC 平均值模型如图 2 所示。各相上、下桥                               PT_cond = U CEiCE = ( RT0iCE + U CE0 )iCE          (1)
+臂等效为受控电压源 upx 和 unx(x = a, b, c)，由等效电
+                                                                 PD_cond = U DiF = ( RD0iF + U D0 )iF          (2)
+容 Ceq 和受控电流源组成的外部耦合电路进行控
+制。与 MMC 详细模型相比，平均值模型用受控电                         式中：PT_cond 为 IGBT 的通态损耗功率；PD_cond 为
+压源、受控电流源和等效电容组成的耦合电路取代                           二极管的通态损耗功率；iCE、iF 分别为流经 IGBT、
+了详细模型中大量的开关器件和电容，简化了桥臂                           二极管的电流；UCE0、UD0 分别为 IGBT、二极管的
+结构，在确保能反映 MMC 内部动态特性的同时，                         通态电压偏置；RT0、RD0 分别为 IGBT、二极管的
+大大提高了仿真的运行速度。                                    通态电阻。UCE0、UD0、RT0、RD0 的具体数值可以基
+                                                 于厂商提供的数据手册中的数据，通过曲线拟合的
+                                                 方式得到[20]。
+                                                       某一时刻，MMC 桥臂子模块的通态损耗取决
+                                                 于这一时刻投入、切除的子模块数目和桥臂电流方
+                                                 向。结合图 4 中不同情况下 HBSM 的电流流通路径
+                                                 和式(1)、(2)，以 a 相上桥臂为例，a 相上桥臂的平
+                                                 均通态损耗功率可以按照式(3)计算：
+                                                                 t2
+                                                 Ppa_cond = {∫ PT_cond [ ρ1npa + ρ2 ( N − npa )] + PD_cond ⋅
+                                                                 t1
+
+                                                                                                ■■ ρ1 = 0
+                  图2   MMC 平均值模型                                                                |■ ρ = 1 , ipa > 0
+         Fig. 2   Average value model of MMC                                                    |■ 2
+                                                   [ ρ2 npa + ρ1 ( N − npa )]dτ } / (t2 − t1 ), ■
+                                                                                                |■ ρ1 = 1 , i < 0
+2     MMC 的损耗计算                                                                                 |■■■ ρ2 = 0 pa
+
+2.1   MMC 的损耗组成                                                                                                (3)
+      MMC 的损耗组成如图 3 所示，大体可分为主                    式中：npa 为 a 相上桥臂的子模块投入总数目；ρ 1、
+电路损耗和底层控制损耗两类。由电力电子器件的
+非理想特性而产生的 IGBT 损耗和二极管损耗是
+MMC 损耗的主要组成部分，其他损耗如储能元件
+
+
+
+                                                       (a) iarm > 0，子模块投入                (b) iarm > 0，子模块切除
+
+
+
+
+                                                       (c) iarm < 0，子模块投入                (d) iarm < 0，子模块切除
+
+                                                          图4          不同情况下 HBSM 的电流流通路径
+                  图3   MMC 的损耗组成                        Fig. 4        The current flow path of HBSM under
+         Fig. 3   The loss constitution of MMC                             different conditions
+7742                                                   中    国        电    机   工   程    学    报                                   第 44 卷
+
+ρ 2 为与桥臂电流方向有关的函数；t1、t2 为两个不                                                  的开关损耗相等，则整个 MMC 的平均开关损耗功
+同的时刻。                                                                         率为
+       当 MMC 运行在三相对称条件下时，各个桥臂                                                                        Psw = 6 Ppa_sw                    (8)
+的通态损耗相同，则整个 MMC 的平均通态损耗功
+                                                                                      式(7)计算平均开关损耗功率时需要知道 t1—t2
+率为
+                                                                              时间内开关器件的开关次数，如引言所述，现有方
+                          Pcond = 6 Ppa_cond                            (4)
+                                                                              法主要通过仿真获取开关器件的电压波形，从而获
+2.3    MMC 开关损耗计算                                                             取 t1—t2 时间内准确的开关次数。如上文所述，因
+       开关器件的开关过程会产生损耗。根据生产商                                                   为仿真模型需要用到开关器件的详细模型，仿真耗
+提供的 数据 手册， 利用 曲线拟 合可 以近似 计算                                                   时长，当子模块数目多时，常规仿真软件(如 PSCAD)
+IGBT 的开通损耗 Eon、关断损耗 Eoff 和二极管的反                                               难以适用。
+                      [21-22]
+向恢复损耗 Erec                  ：
+                                                                              3 基于平均值模型的 MMC 损耗快速评估
+           ■                       2              uc                          方法
+           | Eon (iCE ) = ( a1iCE + b1iCE + c1 ) u
+           |                                       ref
+                                                                                      为了快速准确评估 MMC 损耗，本文提出了
+           |                       2               uc
+           ■ Eoff (iCE ) = ( a2iCE + b2iCE + c2 )                       (5)   一种基于 MMC 平均值模型的 MMC 损耗快速评
+           |                                      uref
+           |                      2             uc                            估方法。该方法基本思路如图 5 所示，包括 4 个
+           | Erec (iF ) = ( a3iF + b3iF + c3 )                                基本环节：
+           ■                                   uref
+
+式中：ai、bi、ci(i = 1, 2, 3)为拟合参数，基于数据手
+册中的数据，通过拟合的方式得到；uref 为参考截
+止电压；uc 为子模块电容电压。
+       以 a 相上桥臂为例，在 t 时刻桥臂子模块的投
+切状态发生改变，根据子模块的投切情况和桥臂电
+流方向，结合表 1 中的损耗组合类型，得到此时刻
+桥臂产生的开关损耗能量为
+                                   N
+                  E (t )pa_sw = Σ E (t ) pa_swi                         (6)
+                                  i =1
+
+式中 E(t)pa_swi 为 t 时刻 a 相上桥臂第 i 个子模块产生                                                      图5   考虑损耗注入的快速平均值模型
+                                                                              Fig. 5   Fast average value model considering loss injection
+的开关损耗能量。
+                                                                                      1）利用 MMC 平均值模型获取电容电压和桥
+        表1       不同情况下 HBSM 开关损耗组合类型
+       Table 1   The switching loss combination type of                       臂电流波形；
+              HBSM under different condations                                         2）根据开关频率曲面获取实际开关频率；
+  电流方向            SM 状态          T1 状态         T2 状态       组合类型                       3）根据实际开关频率计算开关及导通损耗；
+                      1→0         1→0          0→1         Eon + Erec                 4）将损耗对应的等效压降注入平均值模型。
+       正
+                      0→1         0→1          1→0            Eoff                    环节 1 中的 MMC 平均值模型已在 2 节做详细
+                      1→0         1→0          0→1            Eoff
+       负                                                                      介绍，本文不做赘述。环节 2 和 3 的难点为如何快
+                      0→1         0→1          1→0         Eon + Erec
+                                                                              速计算开关损耗，环节 4 的难点为如何解决开关损
+       将一段时间内的开关损耗能量叠加并求平均                                                    耗注入时存在的电压尖峰问题。下文将重点介绍开
+值，就可得桥臂在这一段时间内的平均开关损耗                                                         关损耗的快速计算和损耗注入方法。
+功率：                                                                           3.1      基于开关损耗上限的开关损耗快速计算
+                         1                                                    3.1.1
+           Ppa_sw =
+                      t2 − t1
+                              Σ E (t )pa_sw , t1 ≤ t ≤ t2               (7)            基本思想
+                                                                                      开关损耗的精确计算需要子模块各个时刻投
+       当 MMC 在三相对称条件下运行时，各个桥臂                                                 切状态这一关键信息，但 MMC 平均值模型桥臂为
+第 19 期                           孙正东等：基于 MMC 平均值仿真模型的损耗快速评估方法                                                                  7743
+
+简化结构，并不包含子模块各时刻投切状态信息。                                                                       开始
+
+因此，可以根据 MMC 平均值模型计算出开关频率                                                      是
+                                                                                     n(t) ≥ N − n(t − ∆T)？
+                                                                                                             否
+
+上限及对应的开关损耗上限。
+                                                                       n(1-0) = N − n(t)                 n(0-1) = n(t)
+    由式(5)—(8)可知，在系统参数确定的情况下，                                        n(0-1) = N − n(t − ∆T)            n(1-0) = n(t − ∆T)
+
+开关损耗功率与电流波形和 t1—t2 时间内的开关次
+                                                                                             结束
+数即开关频率相关。相同工况下，电流波形一致，
+开关损耗功率仅与开关频率相关且为正相关，即开                                           图6     子模块开关次数上限计算过程(t1 ≤ t ≤ t2)
+关频率越高，开关损耗功率越大。因此，实际的开                                            Fig. 6    Calculation process of upper limit of
+                                                                           switching times of SM (t1 ≤ t ≤ t2)
+关损耗功率可以表示为
+                                                        IGBT 开通、1 个 IGBT 关断，因此 HBSM 动作 1
+                           f real
+                  Psw ≈           Psw_max         (9)   次，开关次数就增加 1 次。根据图 6，可按照式(10)
+                           f max
+                                                        计算开关器件的开关频率上限：
+式中：Psw、Psw_max 分别为实际开关损耗功率和开关
+损耗功率上限；freal、fmax 分别为实际开关频率和开                                    f max =
+                                                                           Σ (n(t )(1−0) + n(t )(0−1) ) , t ≤ t ≤ t             (10)
+                                                                                                                 1         2
+                                                                                   2 N (t2 − t1 )
+关频率上限。
+3.1.2    开关频率上限与开关损耗功率上限                                式中 2N 为一桥臂上 IGBT 模块的总数。
+    利用式(9)计算开关损耗，首先要明确开关频率                                   在实际运行过程中，系统会采用电容电压平衡
+上限和开关损耗功率上限的计算方法，下文将对此                                  策略来维持子模块电容电压平衡，故一桥臂上各个
+进行说明。                                                   子模块电容电压偏差很小，可近似认为相等并以
+    每个控制周期时刻子模块的投切状态都尽可                                 MMC 平均值模型中桥臂等效电容电压的平均值来
+能的发生改变时，MMC 的开关频率将达到上限。                                 表示，进而 a 相上桥臂在 t 时刻的开关损耗能量上
+具体来说：t − ∆T 时刻时，桥臂投入的子模块数目                              限为
+为 n(t − ∆T)，切除的子模块数目为 N − n(t − ∆T)；t                                         ■( Eon + Erec )n (t )pa(1-0) +
+                                                                              |      ( Eoff )n(t )pa(0-1) ,  ipa > 0
+时刻时，在 t − ∆T 时刻投入的 n(t − ∆T)个子模块优                                             |
+                                                           E (t ) pa_sw_max = ■                                      (11)
+先被切除，切除的 N − n(t − ∆T)个子模块优先被投                                                |( Eon + Erec )n (t )pa(0-1) +
+入，其中 ∆T 表示控制周期。记当前控制周期时刻                                                      |      ( Eoff )n(t )pa(1-0) ,  ipa < 0
+                                                                              ■
+由投入到切除的子模块数目为 n(1-0)，由切除到投入                                  将一段时间内的开关损耗能量叠加并求平均
+的子模块数目为 n(0-1)。具体可分为以下两种情况：                             值，可得桥臂在这一段时间内的平均开关损耗功率
+    1）n(t) ≥ N − n(t − ∆T)：在 t − ∆T 时刻处于切除              上限：
+状态的 N − n(t − ∆T)个子模块在 t 时刻应该全部投
+                                                                                  1
+入，处于投入状态的 n(t − ∆T)个子模块中有 n(t) −                                Ppa_sw_max =
+                                                                               t2 − t1
+                                                                                       Σ E (t )pa_sw_max , t1 ≤ t ≤ t2 (12)
+(N − n(t − ∆T))个保持不变，
+                    其他 N − n(t)个全部切除。
+                                                             当 MMC 在三相对称条件下运行时，各个桥臂
+综上，此时 n(1-0) = N − n(t)、n(0-1) = N − n(t − ∆T)。
+                                                        的开关损耗相等，则整个 MMC 的平均开关损耗功
+    2）n(t) < N − n(t − ∆T)：在 t − ∆T 时刻处于切除
+                                                        率上限为
+状态的 N − n(t − ∆T)个子模块在 t 时刻应有 n(t)个投
+                                                                                  Psw_max = 6 Ppa_sw_max                        (13)
+入，其他 N − n(t − ∆T) − n(t)个保持不变，处于投入
+状态 n(t − ∆T)个子模块全部切除。综上，此时 n(1-0) =                     3.1.3     实际开关频率 freal 的快速获取
+n(t − ∆T)、n(0-1) = n(t)。                                     为了快速获得任意稳态工况下的开关频率，可
+    综合两种情况，在相邻的两个控制周期内，                                 将 MMC 详细模型全工况网格化运行，获得工况网
+MMC 桥臂子模块开关次数上限的具体计算过程如                                 格点处的开关频率，通过二维插值的方式生成开关
+图 6 所示。                                                 频率曲面，进而近似获得任意稳态工况下的开关频
+    开关频率为单个开关器件在一段时间内的开                                 率 fpre。为了保证一定的准确度，网格步长不能太大，
+关次数与时间的比值。HBSM 每次动作都会有 1 个                              开关频率数据集的体量不能太小，因此需要多次运
+7744                                             中    国       电   机   工   

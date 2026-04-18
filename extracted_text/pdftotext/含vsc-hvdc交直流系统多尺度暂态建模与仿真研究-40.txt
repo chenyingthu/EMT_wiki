@@ -1,0 +1,241 @@
+          第 37 卷 第 7 期                         中   国 电 机 工 程 学                   报               Vol.37 No.7 Apr. 5, 2017
+          2017 年 4 月 5 日                           Proceedings of the CSEE                      ©2017 Chin.Soc.for Elec.Eng. 1897
+DOI：10.13334/j.0258-8013.pcsee.160291              文章编号：0258-8013 (2017) 07-1897-12               中图分类号：TM 743
+
+
+
+       含 VSC-HVDC 交直流系统多尺度暂态建模与
+                   仿真研究
+                                    叶华 1，安婷 2，裴玮 1，韩丛达 2，齐智平 1
+(1．中国科学院电工研究所，北京市 海淀区 100190；2．全球能源互联网研究院，北京市 昌平区 102211)
+
+
+        Multi-scale Modeling and Simulation of Transients for VSC-HVDC and AC Systems
+                                    YE Hua1, AN Ting2, PEI Wei1, HAN Congda2, QI Zhiping1
+              (1. Institute of Electrical Engineering, Chinese Academy of Sciences, Haidian District, Beijing 100190, China;
+                    2. Global Energy Interconnection Research Institute, Changping District, Beijing 102211, China)
+
+
+ABSTRACT: To meet the needs of accurate, fast and flexible              current，VSC-HVDC)输电交直流电力系统多尺度暂态模型。
+simulation of electromagnetic and electromechanical transients          移频分析法采用希尔伯特变换，通过移除或保留交流信号基
+in AC/DC systems, methods such as shifted-frequency analysis            频载波实现慢–快变化暂态的模拟。该文建立了 VSC 移频相
+were developed for multi-scale modeling of voltage source               量模型，推导出 VSC 移频域与其控制系统 dq 域的转换关系，
+converter-based high voltage direct current (VSC-HVDC)-                 选择性插入模型获得直流输电线多尺度暂态模型，进而
+embedded AC system. The shifted-frequency method uses the               构建了全系统多尺度暂态模型。该模型通过设置仿真参数
+Hilbert transform, and then removes or retains the carrier at           (如时间步长)能够满足不同时间、不同电网位置电磁或机电
+power-frequency to track slow or fast-changing transients,              暂态仿真的需求。仿真结果表明，所提模型不仅准确描述了
+respectively. A shifted-frequency- based VSC model was first            VSC-HVDC 多尺度暂态过程，节省了计算时间，而且增强
+established, mathematical relationships of transforming the             了交直流系统电磁–机电暂态混合仿真的灵活性。
+SFA-domain and dq-domain quantities were derived, then
+                                                                        关键词：柔性直流输电；多尺度暂态模型；移频分析；电磁
+selective insertion of a -segment leaded to a multi-scale model
+                                                                        暂态；机电暂态；希尔伯特变换
+of DC line, and finally a multi-scale model of VSC-HVDC/AC
+systems was constructed. By adjusting simulation parameters             0 引言
+such as time-step sizes, diverse transients with multiple
+                                                                             柔 性 高 压 直 流 输 电 (voltage source converter
+time-scales and in different network positions can be simulated.
+The simulation results show that multi-time-scale transients can        based-high voltage direct current，VSC-HVDC)因具
+be simulated accurately in which the computational cost is              备 独 立 控 制 有 功 无 功 、 易 实 现 多 端 直 流 (multi-
+reduced significantly. In addition, the flexibility of simulating       terminal DC，MTDC)输电等特征，将被广泛应用于
+electromagnetic and electromechanical transients in AC/DC               工程实际[1]。为适用于高压远距离大容量柔性直流
+systems is enhanced.
+                                                                        输电，基于模块化多电平换流器(modular multilevel
+KEY WORDS: voltage source converter-based high voltage                  converter，MMC)的多端直流输电或直流电网已成
+direct current (VSC-HVDC); multi-scale transient model;
+                                                                        为当前研究热点[1-2]。
+shifted-frequency       analysis;    electromagnetic   transients;
+                                                                             为准确、快速分析 VSC-HVDC 复杂暂态特性
+electromechanical transients; Hilbert transform
+                                                                        及其与交流系统相互影响，合理设计控制器，保证
+摘要：为满足对交直流系统电磁–机电暂态特性准确、快速
+                                                                        交直流电网安全稳定运行，有必要开展含 VSC-
+和灵活仿真的需要，提出基于移频分析等方法的含柔性高压
+直流(voltage source converter-based high voltage direct
+                                                                        HVDC 交直流系统的电磁与机电暂态仿真[3-4]。电
+                                                                        磁 暂 态 程 序 (electromagnetic transients program ，
+     基金项目：国家电网公司“千人计划”科技专项(SGRIzlsdgcjsyjs JS
+                                                                        EMTP)被广泛用于非线性元件高频暂态仿真，但其
+[2014]264)。
+     State Grid Corporation of China Through the 1000-Plan Project      易受电网规模、仿真速度等方面的限制[5]。为加快
+(SGRIzlsdgcjsyjs JS [2014]264).                                         电力电子开关特性仿真速度，通常基于换流器平均
+1898                               中   国   电   机   工       程     学       报                                                第 37 卷
+
+值模型(averaged-value model，AVM)构建柔性直流                电经 VSC-HVDC 并网多尺度暂态现象如风功率波
+                 [6-8]
+输电系统等效模型                ，该模型仍属于电磁暂态模型              动期间发生的不对称故障等，并将其用于 CIGRE
+的范畴。另一方面，机电暂态稳定程序(如 PSS/E)                         B4 多端直流测试系统电磁–机电暂态混合仿真。通
+关注电力系统慢变化低频暂态过程，通常忽略电力                             过与电磁暂态模型仿真结果比较，验证所提模型的
+                  [9]
+电子高频暂态特性 。该类程序算法难以精确模                              准确性、有效性和灵活性。
+拟 VSC 等非线性系统的暂态特性，并且在模拟换
+                                                   1 柔性直流输电系统动态平均值模型
+流器交流侧不对称故障、高频谐波等方面存在一定
+不足[10-11]。                                                     为阐述方便，下文柔性直流输电系统中 AC/DC
+       为准确模拟直流系统高频暂态并提高交流系                         换流器指两电平、三电平 VSC 或 MMC-VSC。为
+统暂态稳定仿真速度，国内外学者针对传统直流输                             提高计算效率，通常忽略电力电子元件物理特性，
+电(line-commutated converter，LCC-HVDC)的电磁–          采用平均值方法建立换流器等效 AVM 如图 1 所
+机电混合仿真开展了大量工作[12-15]。文献[16]借鉴                      示[6-8]。该模型处理时域瞬时值，交流侧电压和电流
+上述工作提出了柔性直流输电系统的电磁–机电混                             在稳态时表现为基频正弦波。
+合仿真算法并给出几种接口方案。联合两类程序因                                 
+                                                                        受控直流源
+                                                                                                       ia
+                                                                                          uaN         ib
+两者建模机理不同会面临接口复杂、数据交换繁                                            idc     控制信号
+                                                       udc                                 ubN        ic
+琐、仿真灵活性差等问题。                                                            受控电压源                ucN
+                                                                         控制信号                                           交流电力
+       近年来，动态相量(dynamic phasor)理论被应用                                                               VSC
+                                                                                                                         系统
+                                                                                                            uabc iabc
+                                                                                   
+                                                                        mdq        mdq
+于含 LCC-HVDC 或 VSC-HVDC 交直流系统电磁–                              P、udc                                         锁相环
+                                                                          内环与外环              udq、udq
+机电暂态建模与仿真中               [17-20]
+                               。动态相量理论基于时                      Q                                 
+                                                                                                            Park 变换
+                                                                           控制器               idq、idq
+变傅里叶变换，根据研究目的选择不同频段进行暂
+                                                                 图1        换流器动态平均值模型及其控制系统
+态建模。采用高阶傅里叶系数模拟详细的电磁暂态
+                                                               Fig. 1     Dynamic AVM of typical converters and
+过程，但阶数对应的方程数目增多会影响计算速                                                         corresponding control system
+度，对于在仿真进程中确定时变的主导频率也较为
+                                                               由图 1 可见，换流器交流侧等效为三相受控电
+困难。另外，动态相量模型不能完全有效仿真交流
+                                                   压源：
+系统不对称故障以及存在与准稳态模型接口不准
+                                                                              1                        
+确等问题。                                                                  uabcN  udc (T ( )mdq  T ( )mdq )                   (1)
+                                                                              2
+       移 频 适 应 暂 态 仿 真 (frequency-adaptive
+simulation of transients，FAST)理论为解决上述电磁–                       其中：
+机电多尺度暂态建模与仿真问题提供了新思路[21]。                                                      cos           sin     
+                                                                                      2            2 
+该理论以希尔伯特变换为基本原理，建立的交流系                                                         cos(  )  sin(  ) 
+                                                                     T ( )           3              3                      (2)
+统 FAST 模型不忽略快速暂态特性，也能够提高模
+                                                                                      2             2 
+型计算速度。文献[22-24]建立了交流系统分布参数                                                    cos(  )  sin(  ) 
+                                                                                       3              3 
+传输线、同步发电机等元件的移频多尺度暂态仿真
+                                                   式中：uabcN[uaN,ubN,ucN]T；udc 为该换流器直流侧
+模型。但上述工作主要针对纯交流系统，目前基于
+                                                   电压；T 为 Park 变换；mdq[md                                    mq]T 和 mdq
+移频等方法的 HVDC 交直流系统多尺度暂态建模
+                                                   [md         mq]T 为控制系统输出的调制函数 dq 分量，两
+与仿真还鲜有报道[25-27]。
+                                                   者可用于多种调制方式如 MMC 中最近电平逼近调
+       针对上述问题，本文提出含 VSC-HVDC 交直
+                                                   制等；上标“”、
+                                                           “”分别表示正负序分量，本文
+流系统多尺度暂态模型。基于 VSC-HVDC 动态平
+                                                   考虑换流变压器阻断了网侧零序分量通路，所以并
+均值模型建立 VSC 移频相量模型，推导 VSC 移频
+                                                   未计及零序分量。将直流侧等效为受控直流电流源：
+域与控制系统 dq 域的转换关系，提出直流输电线
+多尺度暂态模型，进而结合纯交流系统移频模型构                                                          1                          
+                                                                        idc      iabc (T ( )mdq  T ( )mdq )               (3)
+建全系统多尺度暂态模型，并将其用于不同电网位                                                          2
+置的电磁–机电暂态混合仿真。采用该模型模拟风                             式中 iabc[ia,ib,ic]为换流器交流侧三相电流(以流向
+第7期                                                  叶华等：含 VSC-HVDC 交直流系统多尺度暂态建模与仿真研究                                                                                                           1899
+
+交流侧为正)。由文献[6-8]可知，两电平、三电平以                                                                                  x (t )  xR (t ) cos(0 t )  xI (t )sin(0 t ) 
+及 MMC 类型 VSC 动态 AVM 可统一为如图 1 所示                                                                                     j[ xR (t )sin(0 t )  xI (t ) cos(0t )] 
+(式(1)、(3)中的受控电压源、电流源形式)。因此，                                                                                        ( xR (t )  jxI (t ))[cos(0 t )  jsin(0 t )]                                (7)
+后文将推导三者通用的多尺度暂态模型。                                                                                         解析信号 x (t ) 频谱如图 2(b)所示。由图 2 可见，
+          动态平均值建模一般仅针对换流器开关部分，                                                                         实信号 x(t)的频谱位于正负半轴，而通过希尔伯特
+并不改变控制系统模型。本文中，VSC 控制系统内                                                                               变换得到解析信号 x (t ) 频谱仅存在于实半轴。
+环控制器采用典型正负序 dq 电流矢量控制，而外                                                                                   将图 2(b)所示的单带通信号频谱沿频率轴左右
+环控制器根据交直流系统动态特性采取相应的控                                                                                  移动，可使信号频率改变。若向负轴移动至坐标原
+           [28]
+制方式                 。若 VSC 交流侧系统为弱系统，外环一                                                               点，最大频率减小，这样能够增加信号的采样步长。
+般为频率与交流电压控制；若为强系统，则采用直                                                                                 定义移频相量 S ( x (t ))  xR (t )  jxI (t ) ，并对式(7)两
+流电压与无功控制。                                                                                              边同乘 ej 0t，可得：
+                                                                                                                  
+
+
+
+          多个换流站通过直流电缆/架空输电线互联。通                                                                                               S ( x (t ))  x (t )e j0t                                         (8)
+常采用直流输电线单个或串接  型电路研究直流
+                                                                                                           将式(8)的实部和虚部表达为矩阵形式：
+电网暂态特性。也有文献采用输电线分布参数或频
+率相关参数模型模拟直流输电线特性[3]。                                                                                        xR (t )   cos(0 t ) sin(0 t )   x(t ) 
+                                                                                                                                                                                           (9)
+                                                                                                            xI (t )    sin(0 t ) cos(0 t )   ( x(t )) 
+2 含 VSC-HVDC 交直流系统多尺度暂态
+                                                                                                       式中：H(x(t))如附录 A 所示；xR(t)与 xI(t)分别为
+模型
+                                                                                                       S ( x (t )) 的实部和虚部。式(8)中， S ( x (t )) 频谱如图
+2.1       移频分析法                                                                                        3(b)所示，由图 3 可见，通过频率移动即 ej 0t，电                                                     
+
+
+          交流系统电气量如电压或电流 x(t) 含有 f0                                                                   力系统解析信号频谱以 0 为中心变为以坐标轴原                    
+
+
+50Hz(或 60Hz)基频载波，角频率 02f0。当系统                                  
+                                                                                                       点为中心。 x (t ) 通过 ej 0t 仅移除了基频载波，此时      
+
+
+遭受扰动并处于暂态时，x(t)可表达为                                                                                    S ( x (t )) 含有的最大频率为。值得注意的是，传
+                    x(t )  A(t ) cos[(0   (t ))t  0 ]                                     (4)   统动态相量法[17-20]保留主导频率分量(如基频、二次
+                                                                                                       谐波)，忽略高次谐波频率信息，而移频分析法在该
+式中： 0 为初始相位角且为定值，而幅值 A(t)和频
+                
+
+
+                                                                                                       方面与其有本质区别，移频法移除基频量，保留其
+率 s(t) 0 (t)可变，均为时间的函数。采用三
+                               
+
+
+                                                                                                       他所有频率信息。
+角函数变换：
+                                                                                                                      | F ( x (t ))| S ( x (t ))  x (t )e j0t      | F ( S ( x (t )))|
+                    x(t )  xR (t ) cos(0 t )  xI (t )sin(0t )                                (5)
+                                                                                                                                                                
+          其中：
+                                                                                                            0       0       0  /(rad/s)               0        0         0  /(rad/s)
+                           xR (t )  A(t ) cos( (t )t  0 )                                             (a) 解析信号 x (t ) 频谱                          (b) 移频信号 S ( x (t )) 频谱
+                                                                                                (6)
+                           xI (t )  A(t )sin( (t )t  0 )                                                                     图3           频谱移动
+
+          当系统表现为机电暂态，即 A(t)和 (t)变化相                                                 
+                                                                                                                  Fig. 3         Frequency spectra shifting
+
+对较慢时，x(t)频谱具有窄带通特性，如图 2(a)所示。                                                                                 根据香浓 (Shannon) 采样定理 [30] ，理论上采样
+对 x(t)采用如附录 A 所示的希尔伯特变换，得其解                                                                            S ( x (t )) 最大时间步长限制为
+
+析信号[29]如下：                                                                                                                                      1       
+                                                                                                                      max  (t )                                                               (10)
+                           F(x(t))                                       F ( x (t ))
+                                                                                                                                              2f (t )  (t )
+                                     x (t )  x (t )  jH ( x(t ))
+                                                                                                       式 (10) 表明，最大采样时间步长 max(t) 与
+                            
+          0              0    0  /(rad/s)              0           0       0  /(rad/s)
+                                                                                                       (t)成反比。当(t)0，采样步长理论上可无
+           (a) 实信号 x(t)频谱                                  (b) 解析信号 x (t ) 频谱                          限大。当系统表现为低频机电暂态时，(t)取值较
+          图2         实信号经希尔伯特变换后的解析信号频谱                                                                小(00)，仿真时间步长一般取为毫秒级。
+Fig. 2 Frequency spectra of real to analytic signals using                                             当系统表现为高频电磁暂态时，取值较大，此
+                                     Hilbert transform                                                 时仅仅移除基频载波不足以减小采样频率。需考虑
+1900                                               中        国   电   机   工   程    学    报                                                   第 37 卷
+
+的谐波分量等电磁暂态表现为快速变化，一般采用                                                          将上述推导结果如式(15)代入式(17)，求得换流
+微秒级仿真时间步长模拟。根据式(8)，电磁暂态瞬                                                器交流侧三相等效受控电压源移频相量如下：
+时值可通过移频反变换得到：                                                                                                     mdq  
+                                                                                           uN_R  1
+                                                                                                                    +
+
+                                                                                                  u  T                                  (18)
+         x(t )  cos(0 t )  sin(0 t )   xR (t )                                               dc dq SF     
+                                                                                                                 mdq 
+         ( x(t ))    sin( t ) cos( t )   x (t )  (11)                            uN_I  2
+                            0         0     I 
+                                                                                其中：
+2.2     基于移频分析法的 VSC 多尺度暂态模型
+        基于第 1 节的动态平均值模型，下文将推导换                                                                  T (  )  T ( ) 
+                                                                                     Tdq SF                                            (19)
+流器交流侧等效受控电压源和直流侧等效直流电                                                                          T (  ) T (   ) 
+                                                                                             

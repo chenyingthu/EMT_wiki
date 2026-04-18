@@ -1,0 +1,218 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 3, JUNE 2022                                                                                           1813
+
+
+
+
+   Accuracy Evaluation of Electromagnetic Transients
+               Simulation Algorithms
+     Huanfeng Zhao , Student Member, IEEE, Yi Zhang , Fellow, IEEE, and Aniruddha M. Gole, Fellow, IEEE
+
+
+   Abstract—This paper introduces a novel frequency domain tech-                                             TABLE I
+nique to globally evaluate the accuracy of electro-magnetic tran-                  POWER SYSTEMS PHENOMENA AND FREQUENCY RANGES OF INTEREST [1], [2]
+sient simulations. It is shown that simulation accuracy at low
+frequencies can sometimes be poorer than at high frequency. A
+modified approach which quantifies accuracy from a driving point
+as a function of frequency is also introduced that uses the Bilinear
+Transformation and Norton equivalents, to produce a “simulation
+accuracy spectrum”. This approach can be applied to large systems
+without explicitly forming state space equations. It also permits
+the accuracy analysis of networks with distributed components
+such as frequency dependent transmission lines. Two examples are
+used to verify the proposed technique, a small network with a
+frequency dependent transmission line modeled by the univer-
+sal line model; and the IEEE 39 bus system connected with an
+LCC-HVdc system.                                                                   result in the frequency domain. However, this technique does not
+                                                                                   accurately reflect the simulation accuracy of the whole system.
+   Index Terms—Simulation accuracy, bilinear transformation,
+electromagnetic transients simulation, equivalent admittance,
+                                                                                   Reference [4] investigates the accuracy of simulation of indi-
+frequency dependent transmission line, controllability,                            vidual elements considering mixed integration methods which
+observability.                                                                     are a combination of multiple different integration algorithms.
+                                                                                   However, all these methods focus on an individual component
+                                                                                   and, as is shown in this paper, can lead to incorrect conclu-
+                            I. INTRODUCTION
+                                                                                   sions of the accuracy of the network. Reference [5] examines
+    N MODERN power system analysis, electro-magnetic tran-
+I   sient (EMT) simulation tools are widely used to investigate
+transient phenomena. As shown in Table I, depending on the
+                                                                                   the numerical accuracy based on the truncation error of the
+                                                                                   integration algorithm. The influence of distributed elements like
+                                                                                   transmission lines has also hitherto not been considered.
+phenomenon of interest, EMT simulation can cover a wide                               The key contributions from the paper to accuracy analysis of
+frequency range, from dc (0 Hz) to several tens of megahertz                       EMT simulations can be thus summarized:
+[1], [2].                                                                             a) The paper exposes a limitation of previous component
+   For specific studies, higher accuracy is required in certain                           level accuracy evaluation approaches by showing that it is
+frequency ranges. For instance, in order to accurately study the                          not always true that simulation error for high frequencies
+effect of lightning surges on transmission lines, the simulation                          is larger than for lower frequencies.
+model should be highly accurate in the frequency range from 10k                       b) In order to overcome this limitation, the paper proposes
+Hz to say, 3 MHz, but could be less accurate at low frequencies.                          (Section III) a State Space Equation based theoretical
+   In reference [3], [4], the numerical accuracy is determined for                        method to globally evaluate the simulation accuracy of
+individual dynamic elements such as capacitors and inductors.                             linear lumped parameter networks.
+The mapping from discrete to continuous frequency domain                              c) Subsequently, for the purpose of applying the pro-
+is used to compare the simulation result with the theoretical                             posed method to large power networks, a new concept
+                                                                                          of a “Simulation Accuracy Spectrum” is introduced in
+   Manuscript received December 17, 2020; revised May 20, 2021; accepted                  Section IV, which plots the accuracy from any driving port
+July 3, 2021. Date of publication July 26, 2021; date of current version May 24,          as a function of frequency. The accuracy spectrum can be
+2022. This work was supported by the IRC program of NSERC, Canada and
+by Mitacs, Canada. Paper no. TPWRD-01852-2020. (Corresponding author:                     computed without forming the state space equations and
+Huanfeng Zhao.)                                                                           therefore can easily be applied larger networks that can
+   Huanfeng Zhao and Aniruddha M. Gole are with the Department of Electrical              include distributed parameters.
+and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 5V6,
+Canada (e-mail: huanfengzhao@gmail.com; Gole@umanitoba.ca).                           d) The paper, for the first time introduces an approach to
+   Yi Zhang is with RTDS Technologies, Winnipeg, MB R3T 2E1, Canada                       analyze the accuracy of networks that have frequency
+(e-mail: yzhang@rtds.com).                                                                dependent transmission line elements. The Simulation
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2021.3099008.                                               Accuracy Spectrum concept is suitably extended cater to
+   Digital Object Identifier 10.1109/TPWRD.2021.3099008                                   this situation.
+
+                         0885-8977 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:27:56 UTC from IEEE Xplore. Restrictions apply.
+1814                                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 3, JUNE 2022
+
+
+
+
+Fig. 1.   Simple RLC circuit.
+
+                                                                                  Fig. 3.     Comparison of simulation and theoretical results for RLC circuit.
+
+
+                                                                                  inductor or capacitor simulated by the trapezoidal method has
+                                                                                  no numerical error. Therefore, the ensuing conclusion is that
+                                                                                  the simulation accuracy worsens as the excitation frequency
+                                                                                  increases. The same applies to the case of a capacitor.
+                                                                                     In order to verify the conclusion, the lumped network as
+                                                                                  shown in Fig. 1 is implemented on an electromagnetic transient
+Fig. 2.   Simulation accuracy for an inductor.                                    (EMT) simulator. A 132.79 V (RMS value) voltage source with
+                                                                                  zero degree phase is used as an input. Two simulations are
+                                                                                  conducted, one with a source frequency of 560 Hz and the other
+   II. PREVIOUS APPROACHES FOR ACCURACY EVALUATION
+                                                                                  with a frequency of 800 Hz. The corresponding current response
+                 AND THEIR LIMITATIONS
+                                                                                  iout is as in Fig. 3.
+A. Component Level Accuracy Evaluation                                               It is clearly seen that when the input voltage frequency is
+   In [3], [4] the authors compare the frequency response of an                   800 Hz, the current response matches the theoretical one well.
+individual dynamic elements, e.g., inductor, capacitors, etc., to                 However, if the frequency is reduced to 550 Hz, the current
+the frequency response of its corresponding discrete time do-                     is 1.33 times larger, and displaced by 15.84 degrees from that
+main representation. The discretized representation is obtained                   obtained from theory. This is contrary to the conclusion of
+by applying a selected integration method (e.g., trapezoidal rule)                earlier papers which state that accuracy should always degrade
+with a time-step Δt and then converting the resulting difference                  as frequency increases for a given time-step.
+equation into the frequency domain using the mapping:                                Therefore, in order to properly determine the simulation ac-
+                                                                                  curacy, the circuit must be considered in its entirety, and not
+                                z −1 = e−j·ω·Δt                            (1)    element by element.
+
+   Pioneering work by the authors of [3] showed the errors in                        III. PROPOSED METHODS FOR ACCURACY EVALUATION OF
+magnitude and phase as a function of frequency and time-step                                          EMT SIMULATION
+for individual inductor or capacitor elements for different inte-
+gration methods. Trapezoidal integration was shown to have a                      A. Theoretical Foundation for Simulation Accuracy [6]
+magnitude error but not a phase angle error for the admittance,                     Let the network equations be represented in state variable
+whereas the Backward Euler method was shown to exhibit both                       (SV) form:
+magnitude and phase error which resulted in increased damping.
+One conclusion of this approach was that the accuracy degraded                                            ẋ(t) = A · x(t) + B · u(t)                             (2)
+with frequency. In contrast, this paper will show that when
+                                                                                    The corresponding discrete-time state equation for simulation
+multiple elements are present, additional considerations must
+                                                                                  using a time step Δt is:
+be taken when analyzing accuracy and it may happen that in
+certain cases the accuracy is better at higher frequency than at                            x(n · Δt) = G · x((n − 1) · Δt) + H · u(n · Δt)                       (3)
+certain lower frequencies.
+                                                                                     Matrices G and H depend on the time-step and the selected
+                                                                                  integration method. For example, for trapezoidal integration they
+B. Limitation of Component Level Accuracy Evaluation                              are as in (6) below.
+   Consider the RLC circuit in Fig. 1. Following the steps in                        Since all voltages and currents, in the circuit are linear com-
+[3], the simulation accuracy for the 0.005 H inductor connected                   bination of the SVs, the simulation accuracy of any of these can
+to node Nb1 is shown in Fig. 2, for simulation with trapezoidal                   also be determined once the accuracy of SVs is computed.
+integration and a time-step of Δt = 90 μs. The y axis shows the                      In the frequency domain, the transfer function relating state
+ratio of the simulated inductor admittance and original inductor                  variables X(jω) to the input U(jω) in the actual (continuous
+admittance. Reference [3] also shows that the phase of any                        time) system is given by equation (4). In the discrete time domain
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:27:56 UTC from IEEE Xplore. Restrictions apply.
+ZHAO et al.: ACCURACY EVALUATION OF ELECTROMAGNETIC TRANSIENTS SIMULATION ALGORITHMS                                                                      1815
+
+
+
+
+Fig. 4.   Simulation accuracy of inductor current.
+
+
+(where x andu only assume values at integer multiples of the                      Fig. 5.   Demonstration example.
+timestep, i.e., x(n) ≡ x(n · Δt)). The frequency response of
+state variables X(z) resulting from the excitation U(z) is given
+by equation (5):
+   For the original continuous system:
+                           X(jω) = Fo (jω) · U(jw)
+                 where Fo (jω) = (jωI − A)−1 · B                           (4)
+   For the discrete system:
+                            X(z) = Fd (z) · U(z)
+                 where Fd (z) = (I − Gz −1 )−1 · H                         (5)
+  By the mapping function z −1 = e−jωΔt , the frequency re-
+sponse of the discrete system Fd (jω) can be calculated.
+
+B. Method 1: Global Evaluation of Simulation Accuracy
+ When the trapezoidal method is applied, the corresponding
+G and H matrices in (5) will be:
+                           −1               
+                     A · Δt             A · Δt
+        G= I−                      I+
+                        2                  2
+                           −1
+                     A · Δt                 1 + z −1
+        H= I−                    · B · Δt ·            (6)                        Fig. 6 (a) Excitation transients in time domain. (b) Excitation transients in
+                        2                      2                                  frequency domain.
+   Subsequently, substituting equation (6) into (5) gives the
+transfer function from the inputs U to all state variables X.                     that are applied to the linear part. They are not included in the
+Let us apply this technique to Fig. 1. Here U is a complex scalar                 accuracy analysis, although their presence does determine the
+as there is only one source and Fd is a vector of dimension 3.                    range of frequencies of interest [1], [2] over which the accuracy
+LetFdL be the element of Fd (jω) relating to state variable iL                    spectrum of the remainder (“internal system”) is evaluated.
+(inductor current). Thus, FdL (jω) is the frequency response for                     In this section, an example with transients excitation intro-
+the simulated iL . Let FoL (jω) be the corresponding theoretical                  duced by a switching operation is shown below to illustrate the
+frequency response of iL for the original system. For a perfect                   application of the proposed method.
+simulation, |FdL (jω)|/|FoL (jω)| should be unity, Fig. 4, shows                     Consider the switching on and off of a dc voltage (7) at the
+a plot of |FdL (jω)|/|FoL (jω)| as a function of frequency. The                   input of the circuit in Fig. 5, as shown in Fig. 6(a). Its frequency
+figure clearly predicts that at 550 Hz, the simulated current is                  spectrum is shown in Fig. 6(b).
+1.33 times its theoretical value, precisely as observed in the                                        
+simulation results in Fig. 3.                                                                            1 kV, when 0 < t < 0.01
+                                                                                             v (t) =                                                (7)
+                                                                                                         0 kV, when t < 0 or t > 0.01
+C. Implementation of the Proposed Method
+                                                                                     For other phenomenon, references [1], [2] could be used
+   The proposed simulation accuracy quantification method                         to determine the corresponding frequency range of interest.
+above is in the frequency domain, which implies that all elements                 It is clear that frequency components above 1557 Hz have a
+are linear. In this paper, the nonlinear elements are considered as               magnitude less than 2% of the lowest order component (dc) and
+components in the external network that generate the transients                   99.35% of the signal energy is contained in frequencies below
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:27:56 UTC from IEEE Xplore. Restrictions apply.
+1816                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 3, JUNE 2022
+
+
+
+
+Fig. 7.   Simulation accuracy of inductor current as a function of frequency.
+
+
+
+
+                                                                                  Fig. 9 (a) Frequency spectrum of inductor current. (b) Current difference in
+                                                                                  frequency domain.
+
+
+
+Fig. 8. Comparison of time domain simulation and theoretical results for
+                                                                                  10% at frequencies in the neighborhood of 550 Hz. The simu-
+inductor current.                                                                 lation result spectrum from Fig. 9(b), confirms this, because the
+                                                                                  magnitude error at these frequencies is under the 10% threshold
+                                                                                  for Δt = 50 μs and exceeds it for Δt = 60 μs.
+this. One could choose the [0 Hz, 1557 Hz] band as the frequency
+range of interest assuming higher frequencies can be neglected.                   D. Challenge for Practical Application
+   As in Section III.B, let FdL (jω) be the transfer function
+                                                                                     The above analysis method is general and applies to the
+element relating the simulated inductor current iL to the input
+                                                                                  accuracy analysis of any linear network. However, the above
+and FoL (jω) be the corresponding theoretical transfer function.
+                                                                                  procedure (Method 1) requires the network equations in state
+For a 100% accurate simulation, |FdL (jω)|/|FoL (jω)| should
+                      

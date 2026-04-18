@@ -1,0 +1,213 @@
+                                                                 Electric Power Systems Research 211 (2022) 108577
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Acceleration of electromagnetic transient simulations in modelica using
+spatial data locality
+A. Masoom a, *, T. Ould-Bachir b, J. Mahseredjian a, A. Guironnet c
+a
+  Department of Electrical Engineering, Polytechnique Montréal, Montréal, Canada
+b
+  Department of Computer Engineering, Polytechnique Montréal, Montréal, Canada
+c
+  Department of Research and Development, Réseau de Transport d’Électricité, Paris, France
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    This paper presents a new approach to boost the performance of Modelica-based electromagnetic transient (EMT)
+Modelica                                                     simulations by improving the data spatial locality of the wideband (WB) and constant parameter (CP) line
+Acausal modeling                                             models. In this approach, the transmission line (TL) models of a network, which account for an important portion
+Data locality
+                                                             of large-scale electrical networks, are clustered into a line block model to increase the data locality of the
+Electromagnetic transients
+Transmission line modeling
+                                                             computations. The paper also investigates the advantage brought by passing the computations of the delay
+IEEE 39-bus Benchmark                                        function of the line models to an external vectorized C code. The accuracy and performance of the proposed
+                                                             method are validated using the IEEE 39-bus benchmark. The results show an improvement in the simulation
+                                                             times compared with the conventional Modelica approach.
+
+
+
+
+1. Introduction                                                                                 simulators. Full compatibility with FMI standard [7] including model
+                                                                                                exchange [8,9] and convenient and efficient co-simulation [10,11] have
+    Classical EMT-type simulation tools are programmed using impera­                            made the language more popular in the power community. Moreover,
+tive programming languages in which values are assigned to functions,                           Modelica interoperability [4] with the languages C, Python, and Julia
+the sequence of execution of these functions is declared, as is done for                        mitigates the drawbacks of the language in the simulation of very
+example in C/C+ or Fortran. In such programs, model equations are                               complex systems [12,13].
+tightly coupled with numerical solution methods. This characteristic                                 Modelica was initially explored for transmission line modeling (i.e.,
+complicates the model development process. The development of                                   wideband [14], and CP-line models) in [15] for EMT-type simulations.
+equation-based object-oriented declarative languages [1] with a higher                          Then the work was developed for the creation of an EMT-detailed li­
+level of abstraction such as Omela [2], Simscape [3], and Modelica [4]                          brary, called MSEMT [16], with a large set of components required for
+provide a convenient framework for modelers. In this paradigm, models                           simulation of the IEEE 39-bus and IEEE 118-bus benchmarks [17]. The
+are coded in terms of differential-algebraic equations (DAE) at                                 library includes the synchronous machine model with magnetic satu­
+high-level abstraction, which significantly eases the actual modeling                           ration and other nonlinear models [18]. In all experiments, the simu­
+process.                                                                                        lation speed of large-scale circuits is recognized as the key drawback in
+    The Modelica language has become increasingly popular for dy­                               Modelica. The general solutions are based on numerical optimizations,
+namic physical simulations in the last decade. A lot of work has been                           e.g., Jacobian optimization [19] and simulation in DAE mode [20]. A
+carried out for developing the language and enhancing its applications.                         solution was proposed in [21] specifically for power electric simulations
+In the field of power systems, the language was first used for phasor                           based on hybrid coding of Modelica and C++. The solution is
+domain studies such as transient stability and short-circuit studies using                      tailor-made for EMT simulations and described in [22]. Although it
+the libraries such as iPSL [5], PowerGrids [6]. The accuracy and per­                           produced a better performance compared with pure Modelica, there is
+formance of these packages are comparable with the specific domain                              still a gap in comparison with classical EMT-type simulators, such as
+
+
+    Abbreviations: CP, Constant Parameter; DAE, Differential-Algebraic Equation; EMT, Electromagnetic Transient; EMTP, Electromagnetic Transients Program;
+MSEMT, Modelica Simulator of Electromagnetic Transients; TL, Transmission Line; WB, Wideband.
+ * Corresponding author.
+    E-mail addresses: alireza.masoom@polymtl.ca (A. Masoom), tarek.ould-bachir@polymtl.ca (T. Ould-Bachir), jean.mahseredjian@polymtl.ca (J. Mahseredjian),
+adrien.guironnet@rte-france.com (A. Guironnet).
+
+https://doi.org/10.1016/j.epsr.2022.108577
+Received 3 October 2021; Received in revised form 16 April 2022; Accepted 2 July 2022
+Available online 9 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+A. Masoom et al.                                                                                                              Electric Power Systems Research 211 (2022) 108577
+
+
+EMTP® [23]. In most cases, the Modelica built-in delay operator had the             knowing that:
+main impact on the CPU time [18].
+    This paper presents a new technique relying on data locality [24] for           Zmdf = Tv Zmdf ,mod T−i 1                                                              (8)
+transmission line modeling to boost the run time performance. Data
+spatial locality refers to the property of accessing data adjacent to               Zmdf ,mod = Zc, mod +
+                                                                                                                   Rmod
+                                                                                                                                                                           (9)
+recently accessed data. This technique focuses on cache performance                                                 4
+optimization and makes the hierarchical memory layout more profitable                            √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+                                                                                                           / ′
+to speed up data accesses. In the proposed technique, spatial locality is                                                                                                (10)
+                                                                                                     ′
+                                                                                    Zc, mod =     Lmod Cmod
+achieved through larger block sizes via exploitation of a single line block
+model instead of several line models (so-called original method in this                The modal transformation is used to transform voltages and currents
+paper). In this technique, the variables and parameters used in the line            from modal (mod) to phase domain, v = Tv vmod and i = Ti imod , where
+                                                                                                − 1
+models are arranged in one-dimensional arrays to provide faster acces­              Ti = [Ttv ] and t indicates the transposition. In the above equations,
+sibility. This technique is implemented and numerically tested using the            Zmdf,mod is the modified surge impedance, Zc, mod the surge
+IEEE 39-bus network [17]. It is demonstrated that the algorithm yields              impedance, Lmod and Cmod respectively represent the inductance and
+                                                                                                          ′               ′
+
+
+numerically stable and more efficient results.                                      capacitance of TL in per unit length and Rmod is the resistance, all in
+    The paper is organized as follows. In Section II, the theoretical as­           modal domain. The Norton current source at the k-end is computed by:
+pects of transmission line modeling are recalled. Then, the strategy of
+line-block models is explained in Section III. The implementation and               ihist
+                                                                                     k,mod = +kv1 vk,mod (t − τ mod )
+
+Modelica codes are presented in Section IV. The simulation and nu­
+merical results are provided in Section V.                                          − ki1 ihist
+                                                                                           k,mod (t − τ mod )                                                            (11)
+
+2. Transmission line formulation                                                    +kv2 vm,mod (t − τ mod )
+
+   This section aims to recall the theoretical background for the wide­             − ki2 ihist
+                                                                                           m,mod (t − τ mod )
+band (WB) and constant-parameter (CP) line models.
+                                                                                        The coefficient vectors are defined as:
+
+2.1. WB-Line model                                                                          I − hmod I + hmod
+                                                                                    kv1 =                                                                                (12)
+                                                                                                2    Zmdf ,mod
+    The WB-line model [14] is a highly accurate phase-domain model for
+lines/cables since it considers the full frequency dependency of pa­                kv2 =
+                                                                                            I + hmod I + hmod
+                                                                                                                                                                         (13)
+rameters. The state-space equations of the WB-line model for k-end are                         2     Zmdf ,mod
+given below. These equations are directly used for coding the WB model
+in Modelica.                                                                        ki1 =
+                                                                                            I − hmod
+                                                                                                     hmod                                                                (14)
+                                                                                                2
+ik = ish,k − 2iki                                                        (1)
+                                                                                            I + hmod
+                                                                                    ki2 =            hmode                                                               (15)
+                      Ny
+                      ∑                                                                        2
+ish,k = G0 vk +             Wi                                           (2)
+                      i=1                                                                     Zc, mod − Rmod/4
+                                                                                    hmod =                                                                               (16)
+                                                                                              Zc, mode + Rmod/4
+dwi
+    = qi wi + Gi vk                                                      (3)                    √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+ dt
+                                                                                                                                                                         (17)
+                                                                                                    ′          ′
+                                                                                    τ mod = l    Lmode Cmod
+        Ng N
+        ∑  ∑ h (g)
+
+iki =                xg,i                                                (4)        where I denotes the identity matrix, τ mod represents the modal traveling
+                                                                                    time from one end (k) to the other end and l is the length of TL. Similar
+        g=1   i=1
+
+
+dxg,i                       (       )                                               equations are obtained by interchanging the subscript for m-end.
+      = pg,i xg,i + Rg,i imr t − τg                                      (5)
+ dt
+                                                                                    3. Strategy description
+imr = imi + im                                                           (6)
+                                                                                        In this section, the proposed method is elaborated for a three-phase
+where ik is the vector of injected current into the k-end, ish,k and iki are        system due to the adequacy for our test case, but it is easily expandable
+the vectors of shunt and incident currents, imr is the reflected current            to an m phase system.
+from the m-end. G0 is a constant residue at the infinite frequency, qi
+represents ith pole, Gi is the corresponding matrix of residues, Ny is the          3.1. WB-Line-Block model
+order of fitting, Ng is the number of modes, Nh (g) denotes the number of
+poles used to fit the gth modal propagation matrix, pg,i is the fitting pole,           Assuming our network contains n-TLs, each three-phase, Fig. 1 il­
+τg is the time delay of the gth mode and Rg,i is the matrix of residues.            lustrates the scheme of proposed method using the WB-line-block
+Similar equations are obtained by interchanging the subscript for m-end.            model. In this method, n-TLs are clustered into a single block model.
+                                                                                    The purpose is to share the memory space for all variables and param­
+2.2. CP-Line model                                                                  eters of the model. Table 1 shows the difference between the number
+                                                                                    and size of arrays in the original and proposed schemes for the WB-line
+   An N-phase CP-line model is described by two separate Norton                     model.
+equivalents [25]. In phase domain, the vectors of voltage (vk ) and cur­
+rent (ik ) at the k-end are related to the history current vector (ihist
+                                                                    k ) by:         3.2. CP-Line-Block model
+           (          )
+vk = Zmdf ik + ikhist
+                                                                         (7)
+                                                                                        In the method described in [15], the entire CP-line equations, i.e.
+
+                                                                                2
+A. Masoom et al.                                                                                                                         Electric Power Systems Research 211 (2022) 108577
+
+
+
+
+  Fig. 1. WB-line-block model structure; a Modelica class containing n-TLs.                           Fig. 2. CP-line-block model structure; a Modelica class containing n-TLs.
+
+
+
+Table 1                                                                                             Table 2
+Difference between the number and size of arrays in original and proposed                           Difference between the number and size of arrays in original and proposed
+schemes for the WB-line model.                                                                      schemes for CP-line model.
+  End                     Original scheme                         Proposed scheme                    End                Original scheme                            Proposed scheme
+  k-                      n × {ik [3], vk [3], iki [3],           ik [3n], vk [3n], iki [3n],        k-                 n × {ik [3], vk [3], ihist
+                                                                                                                                              k [3]}               ik [3n], vk [3n], ihist
+                                                                                                                                                                                      k [3n]
+                          ikr [3], ish,k [3]}                     ikr [3n], ish,k [3n]               m-                 n × {im [3], vm [3], ihist
+                                                                                                                                              m [3]}               im [3n], vm [3n], ihist
+                                                                                                                                                                                      m [3n]
+  m-                      n × {im [3], vm [3], imi [3],           im [3n], vm [3n], imi [3n],
+                          imr [3], ish,m [3]}                     imr [3n], ish,m [3n]
+                                                                                                    4. Implementation and programming
+(7)-(17), are coded in an acausal declarative approach, and the Modelica
+                                                                                                    4.1. WB-Line-Block model
+built-in function delay() is used for computation of (11). Thus, it is
+required to compute the history currents and terminal voltages at m and
+                                                                                                        The implementation of the WB-line-block model in Modelica is
+k-sides for each mode at t − τ mod . Totally, the number of delay()
+                                                                                                    illustrated in Fig. 3. In these codes, first, the model parameters using the
+functions is 4N for an N-phase CP-line model. The voltage and current
+                                                                                                    keyword parameter for all TLs of the network are defined. Then, the type
+values are stored in a ring buffer with a FIFO (

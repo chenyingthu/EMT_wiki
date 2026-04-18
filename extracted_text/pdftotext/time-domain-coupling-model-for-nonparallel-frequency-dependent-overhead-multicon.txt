@@ -1,0 +1,201 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022                                                                                         2997
+
+
+
+
+        Time-Domain Coupling Model for Nonparallel
+       Frequency-Dependent Overhead Multiconductor
+          Transmission Lines Above Lossy Ground
+      Manuja Gunawardana , Student Member, IEEE, Ashley Ng , and Behzad Kordi , Senior Member, IEEE
+
+
+   Abstract—Expansion of power grids has resulted in the con-                        With the expansion of power networks and due to spacial
+struction of multiple transmission lines within constrained spaces                constraints, transmission lines that come into close proximity
+inevitably making them nonuniform in nature. Existing trans-                      of each other have become an inevitable occurrence. This has
+mission line models available in electromagnetic transient (EMT)
+simulators are based on classical multiconductor transmission line                resulted in nonuniformities such as non-parallel lines in close
+(MTL) theory with the assumption that the transmission lines                      proximity, ultra high voltage (UHV) lines crossing above lower
+are infinitely long and have uniform cross-sectional dimensions.                  voltage lines or communication lines, and lines undergoing
+This paper develops a time-domain model, namely dispersive scat-                  sharp bends to be increasingly prevalent in transmission line
+tered field transmission line (DSFTL) model, for multiconductor
+                                                                                  networks. During these close encounters both transient and
+dispersive nonuniform overhead transmission lines above lossy,
+frequency-dependent ground. The proposed model which consists                     power-frequency voltages on one line have been found causing
+of closed-form equations in the time-domain has been implemented                  induced interference on other nearby lines [4]–[7].
+using a modified finite-difference time-domain (MFDTD) algo-                         Electromagnetic transient (EMT) simulators, employed to
+rithm and integrated into an EMT simulator (PSCAD/EMTDC).                         analyze the transient behavior of power networks, model trans-
+Results have been compared with and verified by those obtained
+                                                                                  mission lines using the multiconductor transmission line (MTL)
+using a full-wave approach and measured data available in the liter-
+ature. Simulations of nonuniform structures that include nonlinear                theory [8]–[10]. Frequency-dependent ground losses are typ-
+components (such as breakers) have also been carried out under                    ically incorporated into these models using Carson-Pollaczek
+fault conditions.                                                                 formula [11]. However, these models are only applicable to
+   Index Terms—Transmission line modelling, electromagnetic                       infinitely long uniform transmission lines, which is typically
+transient analysis, electromagnetic scattering, time-domain                       not fulfilled in physical implementation [8]. Therefore, there
+analysis, non-uniform lines.                                                      is a need to incorporate the effects of nonuniformities of fi-
+                                                                                  nite length transmission lines in EMT simulators in-order to
+                                                                                  accurately model the transient behavior of modern transmission
+                           I. INTRODUCTION
+                                                                                  networks [12], [13].
+       VERHEAD transmission lines serve as the primary
+O      method for transmitting electrical energy over large dis-
+tances. Overvoltage transients may originate in transmission
+                                                                                     Non-uniform structures can be accurately modeled using
+                                                                                  full-wave techniques but this is often associated with high
+                                                                                  computational costs and typically requires iterative methods to
+lines due to disturbances such as lightning or switching and reach                obtain solutions [13]–[15]. This makes them not very suitable for
+other components in a power system [1]–[3]. Consequently, elec-                   circuit-based time-domain simulations. Electromagnetic scat-
+trical insulation breakdown and equipment failure may occur                       tering models for single-conductor nonuniform transmission
+if countermeasures are not sufficiently taken. Therefore, accu-                   lines over perfectly conducting ground have been developed by
+rate electromagnetic transient (EMT) modelling of transmission                    Tkachenko et al. in [16], [17]. A time-domain model for multi-
+lines is an essential requirement in designing and analysing                      conductor frequency-independent lines utilizing finite-element-
+power systems.                                                                    method (FEM) has been introduced in [18]. However, this
+                                                                                  model involves a numerical integration at each time step. A
+   Manuscript received May 25, 2021; revised August 18, 2021; accepted            frequency-dependent non-uniform model based on an iterative
+October 6, 2021. Date of publication October 19, 2021; date of current version    and adaptive perturbation technique is proposed in [19]. In [20],
+July 25, 2022. The work was supported by the Faculty of Graduate Studies,
+University of Manitoba and Natural Sciences and Engineering Research Council
+                                                                                  the per-unit-length (PUL) parameters for lossy and nonuniform
+of Canada (NSERC). Paper no. TPWRD-00773-2021. (Corresponding author:             multiconductor transmission lines have been formulated assum-
+Behzad Kordi.)                                                                    ing the currents are parallel at every cross section, and therefore,
+   The authors are with the Department of Electrical and Computer Engineering,
+University of Manitoba, Winnipeg, Manitoba R3T5V6, Canada (e-mail:
+                                                                                  the model is valid for only small angles of inclination.
+sdmsgunawardana@gmail.com; nga34@myumanitoba.ca; behzad.kordi@                       Finite-difference methods have been used to model lossy
+umanitoba.ca).                                                                    nonuniform transmission lines in [21]–[23]. In these models
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2021.3121194.
+                                                                                  losses are assumed to be frequency-independent and the nonuni-
+   Digital Object Identifier 10.1109/TPWRD.2021.3121194                           formity is conductors being exponentially and linearly tapered or
+
+
+                         0885-8977 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:15:02 UTC from IEEE Xplore. Restrictions apply.
+2998                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022
+
+
+
+twisted which is not the case with overhead lines. However, this
+suggests that finite-difference methods are a suitable candidate
+for solving nonuniform structures in general. An approach for
+modelling uniform frequency-dependent transmission lines us-
+ing a modified finite-difference time-domain (FDTD) algorithm
+within a circuit simulator has been developed in [24].
+   In a recent publication by the authors [25], an EMT-
+compatible simulation model for lossless, crossing single-
+conductor (i.e. nonuniform) overhead transmission lines of finite
+length was proposed based on electromagnetic scattering theory.
+This model was later extended to a lossless multiconductor
+structure over perfect electric conductor (PEC) ground in [26].
+In both [25], [26], a simplifying assumption was made where
+the conductors and ground were assumed to be lossless.
+   In this paper, a dispersive, frequency-dependent, nonuniform
+multiconductor transmission line model based on electromag-
+netic scattering theory is proposed. The proposed model, the
+so-called dispersive scattered field transmission line (DSFTL)
+model, is able to incorporate the frequency-dependent losses of
+both the conductors and ground as in real power transmission
+networks. The proposed DSFTL model consists of closed-form
+equations in transmission line format which is essential for an ef-
+ficient implementation in the time-domain. Compared to lossless
+models, time-domain implementation of frequency dependent
+models is well known to be challenging [27]. Time-domain
+implementation of the DSFTL model has been achieved using
+a modified FDTD algorithm [24] originally introduced for uni-
+form lines which handles the frequency dependency using recur-
+sive convolution. The developed model has been implemented
+in EMTDC/PSCAD (an EMT simulator). The results obtained
+for transients using the DSFTL model have been compared with                    Fig. 1. Single-conductor transmission lines crossing each other above (a)
+those calculated using a commercial full-wave electromagnetic                   finitely-conducting ground and (b) complex image representation of conductors
+                                                                                above ground.
+solver. Power frequency results have been compared with field
+measurements of induced voltages at a power transmission line
+crossing obtained by other researchers [6]. A case study has also               space, permittivity, and conductivity of the ground, respectively.
+been performed to analyze the effects of typical power line faults              Electromagnetic field distribution of such structures is com-
+and breaker operations on other lines which cross paths with the                monly determined using complex image theory [28] as shown
+faulty line.                                                                    in Fig. 1(b). According to the complex image theory, the ground
+                                                                                half-space is replaced with air and an image of conductor i at
+          II. FORMULATION OF THE DSFTL MODEL                                    height hi is placed at a complex depth of hi + 2p where [28]
+   This section derives closed-form transmission line equa-
+                                                                                                                      1
+tions based on electromagnetic scattering theory for a lossy,                                          p=                        .                      (1)
+frequency-dependent, nonuniform wire structure over finitely-                                                   jωμ0 (σg + jωεg )
+conducting ground. For clarity, the derivation is performed on                    The scattered electric field E s generated by this structure, as
+two single-conductor lines crossing each other. Extension to                    detailed in [12], can be expressed in the frequency-domain as
+multiconductor cases and other nonuniform structures contain-
+ing non-parallel wires can be conveniently performed similar                                               E s = −jωA − ∇Φ                             (2a)
+to the method explained in [26] for the frequency-independent
+case.                                                                           where, A and Φ are the magnetic vector potential and electric
+                                                                                scalar potential, respectively. For a field point on the conductor
+A. Transmission Line Equations for Crossing Conductors                          i in the geometry shown in Fig. 1 we can write
+Over Finitely-Conducting Ground                                                                       
+                                                                                                   μ0 i
+   Let’s consider two single-conductor transmission lines cross-                   Azi (zi , jω) =         g (zi , zi ) Ii (zi , jω)dzi
+                                                                                                   4π 0
+ing each other at an angle of α over a finitely-conducting                                                     
+ground, as shown in Fig. 1(a). The constitutive parameters of                                              μ0 j
+                                                                                                   + cos α              g (zi , zj ) Ij (zj , jω)dzj (2b)
+the ground are μ0 , εg , and σg , that are the permeability of free                                        4π 0
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:15:02 UTC from IEEE Xplore. Restrictions apply.
+GUNAWARDANA et al.: TIME-DOMAIN COUPLING MODEL FOR NONPARALLEL FREQUENCY-DEPENDENT OVERHEAD MTL                                                           2999
+
+
+
+
+                                                                                   that e−jβRi for a lossy ground can also be approximated as 1
+                                                                                   upto a certain frequency which depends on the cross-sectional
+                                                                                   dimensions and resistivity of the ground. For example, for a
+                                                                                   10-m high line above a ground with a resistivity of 100 Ωm,
+                                                                                   this approximation is valid up to around 100 kHz and so would
+                                                                                   be the proposed model. Also, for the frequency range of power
+                                                                                   system transients, since σg  ωεg , the complex depth p in (1)
+                                                                                   can be approximated as [30]
+
+                                                                                                                            1
+                                                                                                                p≈               .                        (4)
+                                                                                                                          jωμ0 σg
+
+                                                                                   In this paper, the ground is assumed to be homogeneous. How-
+                                                                                   ever, the proposed formulation is applicable to multilayer earth
+                                                                                   using the complex image depth “p” as calculated in [30].
+                                                                                      Assuming the exponential terms in (3) are approximately
+                                                                                   equal to 1 and h  λmin , a closed-form expression can be
+                                                                                   obtained for the integral terms of (2) as [29]
+                                                                                           −jβRs            
+                                                                                              e        e−jβRi
+                                                                                                    −            I(z  , jω)dz 
+                                                                                         0      Rs       Ri
+                                                                                                     
+                                                                                                 1    1
+Fig. 2.   (a) Magnitude and (b) phase of g(zi , zi ) vs frequency.                     =          −      dz  I(z, jω) = ξ(z, jω)I(z, jω)                 (5)
+                                                                                            0   Rs   Ri
+
+                                                                                   where ξ is the analytical solution for the integral term. This
+and,
+                                                                                   result is important as it eliminates the need of performing a
+                               i
+                   1                                                               numerical integration at each time step of the upcoming time-
+     Φ(zi , jω) =                    g (zi , zi ) ρi (zi , jω)dzi
+                  4πε0          0
+                                                                                   domain implementation. Assuming a transverse field structure
+                                     j                                           and a thin-wire geometry, (2) can be rearranged into two closed-
+                          1                                                        form transmission-line-like equations as explained in [25] as
+                       +                   g (zi , zj ) ρj (zj , jω)dzj .   (2c)
+                         4πε0        0
+                                                                                              dV (zi , jω)
+where α is the crossing angle, i and j are the lengths of the                                            = − Zc (jω)I(zi , jω)
+conductors, Ii and Ij are the currents, ρi and ρj are the electric                                dzi
+                                                                                                                     
+charge densities at a field point on the surface of the wires i                                                jωμ0
+and j, and ω is the angular frequency, respectively. The Green’s                                             −         ξii (zi , jω)Ii (zi , jω)
+                                                                                                                4π
+function which defines the distribution of the scattered field is                                                                              
+given by [29]                                                                                                + cos αξij (zi , jω)Ij (zj , jω)             (6a)
+                             −jβRs             
+                             e          e−jβRi                                                                            
+               g(z, z  ) =          −                         (3)                                                  1                  dIi (zi , jω)
+                                Rs         Ri                                                 V (zi 

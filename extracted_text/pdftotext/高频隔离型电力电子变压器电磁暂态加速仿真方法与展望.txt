@@ -1,0 +1,302 @@
+      第 41 卷 第 10 期                              中   国 电 机 工 程 学               报            Vol.41 No.10 May 20, 2021
+ 3466 2021 年 5 月 20 日                                Proceedings of the CSEE                ©2021 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.201932 文章编号：0258-8013 (2021) 10-3466-14              中图分类号：TM 464 文献标识码：A
+
+
+
+                            高频隔离型电力电子变压器
+                           电磁暂态加速仿真方法与展望
+                     许建中，高晨祥，丁江萍，冯谟可，王晓婷，赵成勇*
+                    (新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206)
+
+
+           Electromagnetic Transient Acceleration Simulation Methods and Prospects of
+                     High-frequency Isolated Power Electronic Transformer
+      XU Jianzhong, GAO Chenxiang, DING Jiangping, FENG Moke, WANG Xiaoting, ZHAO Chengyong*
+                    (State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources
+                        (North China Electric Power University), Changping District, Beijing 102206, China)
+
+
+ABSTRACT: Power electronic transformer (PET), which can               提速思路进行分析，通过仿真对比，指出各自的优缺点和适
+realize transformation of multiple voltage levels and electrical      用场景。最后，对 PET 等效建模与实时仿真的研究方向进
+energy forms, has become the core equipment of flexible               行展望。
+distribution network. This paper introduced the key technology        关键词：电力电子变压器；电磁暂态；等效建模；快速仿真
+and prospects of the electromagnetic transient (EMT)
+equivalent modelling and fast simulation of various types of          0 引言
+PET. First, the urgent challenges of the EMT simulation of
+                                                                          随着大量间歇性、随机性的分布式可再生能源
+PETs were summarized by comparing with the equivalent
+                                                                      发电并网，单端单源供电、电能单向流动的传统交
+modelling algorithms of the HVDC modular multilevel
+converters (MMC). Then the equivalent modelling framework             流配电网，正在向多端多源供电、电能多向流动的
+of the PET was given. Taking the dual active bridge (DAB)             柔性直流或交直流混合配网快速发展[1]。电力电子
+converter as an example, three equivalent models (EM) using           变压器(power electronic transformer，PET)，也称固
+port decoupling, preprocessing of node admittance matrix and
+                                                                      态变压器，集成了控制保护、功率调节、宽禁带等
+conversion of multiple port parameter matrix were analyzed.
+                                                                      诸多技术，具备谐波治理、无功补偿、电网互联等
+Through    simulation    comparison,       the   advantages   and
+disadvantages and applicable scenarios of the three models            多种功能，可以让电能在不同电压等级和电能形态
+were pointed out. Finally, the research direction of PET              的端口间“按需分配”，是柔性交直流配网电能变
+equivalent modeling and real-time simulation was prospected.          换的关键设备[2]。
+KEY     WORDS:       power    electronic     transformer   (PET);         高频隔离型 PET 是指采用高频链(由高频变压
+electromagnetic transient; equivalent modelling; fast simulation      器及其输入、输出侧相连的换流单元构成)实现电气
+摘要：电力电子变压器(power electronic transformer，PET)                          隔离的一类 PET 拓扑。目前，国内外已投运的包含
+可以实现多电压等级和电能形态的变换，将在柔性配电网中                                            多个中低压等级的柔性配电网工程，如张北小二台
+发挥重要作用。文中对高频隔离型电力电子变压器加速仿真                                            柔性变电站[3]、珠海唐家湾三端直流配电工程[4]、
+关键技术进行介绍和展望。首先，结合 PET 电磁暂态仿真
+                                                                      江苏连岛交直流配网工程[5]，苏州同里 PET 工程[6]，
+的特点分析其面临的瓶颈与挑战，并与模块化多电平换流器
+                                                                      均采用高频隔离型 PET 拓扑结构。此外，当前仍有
+进行直观对比。接着，提出适用于高频隔离型 PET 的电磁
+暂态等效建模框架，并以双有源桥变换器为例，对端口解耦、                                           数个工程正在建设当中，建成投运后将在电网中发
+节点导纳矩阵预处理和多端口参数矩阵转换这 3 种现有的                                           挥更大作用[7]。
+                                                                          高频隔离型 PET 电磁暂态详细模型基于仿真
+    基金项目：国家重点研发计划资助项目(2018YFB0904600)
+    Project Supported by National Key R&D Program of China
+                                                                      平台中的分立元件，拓扑结构复杂多样，需要占用
+(2018YFB0904600).                                                     大量的仿真资源，通常作为仿真精度测试的基准模
+第 10 期             许建中等：高频隔离型电力电子变压器电磁暂态加速仿真方法与展望                                                3467
+
+型。为了满足用户的仿真需求，基于现场可编程门                        景，并对 PET 实时仿真等效模型的研究进行展望。
+阵列(field programmable gate array，FPGA)和 L/C
+                                              1 PET 电磁暂态仿真特点与挑战
+开关技术，文献[8-9]分别基于 RTDS 和 RT-LAB 开
+                                                    本章总结了 PET 电磁暂态仿真的 4 个特点，在
+发了级联 H 桥型 PET 和模块化多电平换流器
+                                              此基础上分析等效建模与仿真面临的挑战。
+(modular multilevel converters，MMC)型 PET 的详
+                                              1.1    功率模块结构复杂
+细模型，受硬件资源限制，二者都仅搭建了含少量
+                                                    为了实现不同能量形态的电能变换和不同场
+功率模块的模型来近似模拟换流器的运行特性，无
+                                              景的特定需求，PET 功率模块的拓扑类型复杂多
+法满足实际工程和研究需求。因此，PET 的等效或
+                                              样，具体而言，包含可以实现双向功率传输的 DAB、
+简化建模算法逐渐受到国内外学者关注[10-13]。
+                                              单向功率传输的单有源桥(single active bridge，
+     与其他模块化结构的换流器拓扑，如 MMC 等
+                                              SAB)、具有 AC 端口的级联 H 桥(cascaded H-bridge，
+相比，高频隔离型 PET 高频链环节的等效建模更加
+                                              CHB)型 DAB，以及由这些功率模块经多绕组变压
+复杂。目前针对高频隔离型 PET 的等效算法尚不成
+                                              器 磁 链 耦 合 构 成 的 多 有 源 桥 [20-23](multiple active
+熟，按照能否反映高频链的内部电气特性，可分为
+                                              bridge，MAB)，如图 1 所示。
+平均值模型和精确等效模型。
+     在 PET 平均值模型方面，北卡罗来纳州立大学
+的赵铁夫教授团队建立了五级型 PET 的连续状态
+                                                           (a) DAB
+空间平均值模型[10]，萨格勒布大学的 Pavlovic 教授
+等人提出了非线性函数降阶大信号简化平均值模
+型[11]，此类简化模型适用于系统级动态仿真分析以
+                                                           (b) SAB
+及控制参数调控，但无法反映系统谐波以及模块内
+部暂态特性。
+     在 PET 精确等效模型方面，电子科技大学的胡                             (c) CHB-DAB                   (d) MAB
+
+鹏飞教授等人建立了 LLC 谐振型 PET 等效模型，                                 图1       典型 PET 功率模块拓扑
+依赖于对特定换流器拓扑全部运行模式和状态的                               Fig. 1 Typical power module topologies of PETs
+分类积分解析，因此算法的通用性有待研究和提                               在此基础上，为进一步减小环流、降低损耗、
+  [12]
+高    。清华大学袁立强教授团队针对区域电能路由                     实现器件的零电压开关(zero voltage switching，
+器(一种 PET 拓扑)提出了级间电容解耦算法，可以                    ZVS)和零电流开关(zero current switching，ZCS)，
+                                     [13]
+减少待求解网络的节点数，但存在解耦误差                     。     又出现了基于 LC、LLC 和 CLLC 等多种类型谐振
+     与之相比，MMC 换流器的等效建模已较为成                    腔的 PET 功率模块[24-26]。此类拓扑在控制方面与
+熟，经过较长时间的去芜存菁，Gole 教授团队所提                     图 1 所示拓扑有较大区别，但基于戴维南/诺顿原理
+基于戴维南/诺顿等效原理的 MMC 电磁暂态等效                      的 PET 等效模型并不受控制系统影响，二者区别仅
+建模方法得到广泛认可，并且已在主流商用离线仿                        表现为电感、电容支路个数的差异，因此面临的仿
+真平台 PSCAD/EMTDC 以及实时仿真平台 RTDS                 真瓶颈没有本质的区别，下文将着重分析由图 1 所
+                     [14-15]
+和 RT-LAB 中都得到应用            。该模型在保留与详          示的 4 种功率模块构成的高频隔离型 PET 结构。
+细模型相同的控制保护指令接口前提下，能够实现                        1.2    功率模块连接方式多样
+对详细模型的高度拟合。                                         PET 承担电压变换与能量传输的功能，目前样
+     为更好地实现 PET 等效模型的商用化，文                    机与工程的交流电压等级都在 35kV 以下[3,27-28]。为
+献[16-19]借鉴已有 MMC 等效模型的研究成果，提                  解决 PET 容量、电压等级与单个模块器件耐压、耐
+出了适用于 ISOP 型双有源桥(dual active bridge，          流要求之间的矛盾，常使用高压端口串联低压端口
+DAB)变换器的等效仿真方法。在此基础上，本文                       并联的连接方式。PET 电压等级与功能的不同需
+进一步提炼已有模型的等效建模框架和提速思路，                        求，使得功率模块连接方式多样。
+归纳高频隔离型 PET 电磁暂态仿真的特点与挑战，                           PET 的典型拓扑连接方式如图 2 所示：输入串
+比较不同提速思路下等效模型的优缺点及应用场                         联输出并联型(input series output parallel，ISOP)，
+3468                                     中       国         电   机   工    程    学     报                                       第 41 卷
+
+                                             HVDC母线
+                                                                                       MVDC母线
+
+
+                                                               ﹢﹢                         ﹢
+                                                     AC/
+                                                     DC
+                                                                                                    图 例
+                                                     AC/
+                                                     DC
+                                                                         谐振型功率模块
+             HVAC
+              母线                                     AC/
+                                                     DC
+                                                                                                    +
+                                                                                                    ﹣
+                                                                                          模块
+             A
+             B                                                                            并联       AC           DC
+             C
+
+                                                     AC/
+                                                     DC
+
+
+
+                                                     AC/
+                                                     DC
+
+
+
+                                                     AC/
+                                                     DC        ﹣﹣                         ﹣
+                                                                                                   DC               AC
+                                                     LVDC母线
+                   (a) 输入串联输出并联(ISOP，相间耦合型)                            (b) 输入并联输出串联(IPOS)
+
+               A        级联H桥功率模块(CHB) A                                                LVDC母线
+              B                              B
+             C                                   C
+
+                                         ﹢                 ﹢ ﹢                            ﹢
+                 HVAC                    ﹢﹢
+                                                                    双有源桥功率模块(DAB)
+                  母线
+                        多有源桥功率模块(MAB)                                                              AC               DC
+                                                                                         模块
+                                                                                         串联
+                                                                                  冗余模块
+
+
+                                         ﹣﹣                                                              D1    D2
+
+
+                                          ﹣                                                              D3    D4
+
+
+
+                                                           ﹣ ﹣                            ﹣         AC              DC
+
+
+                   (c) 输入串联输出并联(ISOP，相内耦合型)                         (d)输入串联输出串联(ISOS)
+
+
+                                             图2            PET 拓扑连接示意图
+                           Fig. 2   Topology connection of power electronics transformer
+输入并联输 出串联(input parallel output series，                                      表1      MMC 与 PET 典型拓扑的节点数对比
+IPOS)，输入串联输出串联(input series output series，                              Table 1    Comparison of the number of nodes between
+                           [29]                                                   the typical topology of PET and MMC
+ISOS)，输入并联输出并联                (input parallel output
+parallel，IPOP)。其中，图 2(a)为张北小二台柔性变                                         节点数             变换器       单桥臂模块数                模块类型
+
+电站拓扑，“三变一”四有源桥功率模块的输入端                                                                     PET                28         全桥+四有源桥
+                                                                            960
+                                                                                          MMC                 80         半桥子模块
+在不同桥臂；图 2(b)包括输出端采用不控整流桥和
+两种连接方式(即 IPOS 和 IPOP)嵌套的“功率模块                                       数对比。
+集”示意图；图 2(c)为 CHB 功率模块与 MAB 功率                                              单个 PET 功率模块节点数为 22(含四绕组变压
+模块示意图，其输入侧半桥子模块位于同一相中，                                              器的辅助电感)，而 MMC 半桥子模块节点数为 3。
+中间级 MAB 变换器为“三变一”和“二变二”形                                            经计算，包含 56(228)个四有源桥功率模块的小二
+式的四有源桥；图 2(d)为各子图都面临的冗余模块                                           台柔性变电站，其节点数(也即详细模型待求解节点
+配置示意图。                                                              导纳矩阵阶数)与包含 480(6*80)个半桥子模块的
+1.3    节点导纳矩阵阶数高                                                    MMC 大致相同。
+       从图 1 可只，单个 PET 的功率模块包含大量电                                    1.4     仿真步长小
+力电子开关与储能元件，内部节点数量较多。同时，                                                     为降低双绕组和多绕组变压器的体积和成本，
+如图 2 所示的 PET 系统包含大量功率模块，进一步                                         PET 功率模块的高频链，即高频隔离变压器及其输
+增加了系统节点数量。虽然 PET 当前的电压等级与                                           入、输出侧相连的全桥换流单元，动作频率通常在
+模块数尚未达到 MMC 相同水平，但是由于单个模                                            1~20kHz，远高于 MMC 的 150~300Hz。同时，为了
+块节点数多，PET 具有与 MMC 接近的仿真规模。                                          确保 PET 移相控制和功率调节的精度，需要将仿真
+表 1 将包含输入侧全桥和中间级四有源桥变换器的                                            步长从 MMC 所需的 10~20s 降低到 1~10s[30-31]。
+PET 与包含半桥子模块的 MMC 换流器进行了节点                                                  PET 详细模型的节点导纳矩阵在每个步长都
+第 10 期                     许建中等：高频隔离型电力电子变压器电磁暂态加速仿真方法与展望                                                        3469
+
+需要重新求逆[32]，且在离线仿真中开关器件需要进                                 的器件级模型虽能更好地反映元件的瞬态特性，但
+行步长回溯插值，使得仿真速度受到步长的制约。                                    是模型复杂度高，且需要极小的仿真步长(常为数十
+      本文在 AMD A8-7100 Radeon R5, 8 Compute                纳秒)[34-35]，并不适用于大规模集成的系统级仿真。
+Cores 4C+4G @ 1.80GHz 测试机上对比了相同仿真                         因此，应当根据元件特性，进行不同程度的简化。
+用时下 MMC 与 PET 典型拓扑的系统规模，如表 2                              文献[34-35]指出，当关注的重点是系统级输出波形
+所示。结果表明，含 20 个 DAB 模块的 ISOP 型 PET                         而非器件级的波形时，可以采用忽略器件开通和关
+与含 520 个半桥子模块的 MMC 单相双桥臂详细模                               断的瞬态过程的开关理想模型，即二值电阻模型。
+型的仿真用时基本一致。                                               这一模型由于其结构简单、实现方便，被广泛应用
+ 表2      MMC 与 PET 典型拓扑的详细模型仿真用时对比                        于电力电子系统的仿真分析中[32,36]。
+  Table 2     Comparison of the simulation time between       对于电感、电容等储能元件，Dommel 算法，
+      PET and MMC typical topological detailed models     也即 EMTP 方法，作为电力设备和系统设计的重要
+         项目                 PET             MMC(单相)       组成部分应用较为广泛。Dommel 算法利用微分方
+      仿真时间/s                 5                  5
+                                                          程描述各元件特性并得到时域离散化模型，可以精
+      子模块个数              20 个 DAB        520 个半桥子模块
+                                                          确地模拟包含分布参数和集中参数的网络中的暂
+      开关频率/kHz               20                0.2
+      仿真步长/s                1                 20         态过程[32,36]。
+       仿真用时                         80min                     利用 Dommel 算法处理电感、电容所得离散化
+1.5    建模难点与挑战                                            模型如图 3 所示(梯形积分法)。其中，RL 和 RC 为等
+      综上，“节点导纳矩阵阶数高”与“仿真步长                                值电阻，与仿真步长、电容/电感值以及积分方式有
+小”共同作用，导致 PET 详细模型的仿真效率极低，                                关，iL_History(t)和 iC_History(t)为等值历史电流源，在每
+而“模块结构复杂”与“拓扑连接方式多样”则增                                    个步长的 EMT 仿真计算之前得到。
+加了等效模型构建的困难，主要表现为：
+                                                                            iL_History(t)          iC_History(t)
+      1）PET 的功率模块结构较为复杂，对应的节                                                   iL(tt)            iC(tt)
+                                                                               vL(tt)/RL            vC(tt)/RC
+点导纳矩阵稀疏度较高，存在大量的零元素，若直
+接对内部节点对应的分块矩阵求逆，等效算法的计                                      (a) 电感时域离散模型                 (b) 电容时域离散模型
+算复杂度难以降低。                                                                图3      储能元件离散化模型
+      2）PET 实际上是一个多端口混联网络，由于                                 Fig. 3   Discrete models of energy storage elements
+连接方式的多样性，使得功率模块的端口相互耦                                         高频变压器的宽频模型通常需要反映绕组和
+合，无法针对单侧端口进行单独处理，增加了换流                                    磁芯之间的电容效应、磁滞效应、频变效应等非线
+器等效模型求取难度。文献[33]指出，多端口子模                                  性特性，包含大量寄生电容，且变压器励磁电抗和
+块间的互联节点消去过程较为繁琐，带来的仿真运                                    漏抗随频率变化[37-38]，不适合进行大规模多模块的
+算量不容忽略。                                                   系统级仿真。文献[38]指出，在频率较低(约 20kHz
+      3）PET 的工况多样，对于闭锁充电及 SAB 的                           以下)时，可近似忽略寄生参数的影响，考虑到变压
+不控整流，依赖插值回溯来实现对二极管开关状态                                    器设计时通常会预留足够的饱和余量，因此可认为
+的精确模拟，将大幅降低仿真效率。                                          磁芯工作在线性区，得到适用于系统级仿真的变压
+2 PET 等效建模框架                                              器低频 T 型等效电路。与储能元件类似，利用
+                                                          Dommel 算法，变压器梯形积分离散化模型如图 4
+      针对上述 PET 电磁暂态等效仿真过程面临的
+                                                                                        YT12
+主要问题与挑战，本章给出了包含“伴随电路构
+建”、“内部节点消去”和“换流器等效电路形成”
+3 个步骤的 PET 等效建模框架。                                                                      YT12
+
+2.1    伴随电路构建
+                                                                      图4    变压器梯形积分离散化模型
+      PET 的功率模块中包含大量电力电子开关器                                    Fig. 4 Discretized model of transformer using
+件、电容电感等储能元件与高频隔离变压器，对应                                                 trapezoidal integration method
+3470                                     中      国   电   机   工   程    学    报                                         第 41 卷
+
+所示[36]。其中，YT11 和 YT22 为自导纳，jT1_HIS 和 jT2_HIS                        此时，只能逐次合并相邻两模块，通过迭代得
+为历史电流源，YT12 为变压器原副边互导纳，体现                                   到换流器等效电路。在相邻模块等效电路形成过程
+原副边的耦合作用。                                                   中，首先先列写相邻两模块的节点导纳方程，然后
+2.2    内部节点消去                                               对串并联侧分别用不同方法处理：对于串联侧，类
+由 1.3 节分析可知，单个功率模块内部节点多，PET                                 似于单模块等效过程，利用嵌套快速求解法消去内
+详细模型节点导纳矩阵阶数高，是导致仿真速度慢                                      部节点 3 和 4；对于并联侧，此时节点 5 和 7、6 和
+的根本原因，因此，PET 功率模块面临迫切的降阶                                    8 共用节点电压，对外等效电流为两模块并联端口
+需求。在电力电子系统的仿真中，开关器件的触发                                      电流之和，区别于串联端口，并不是简单的节点消
+信号并不会改变节点导纳矩阵的结构，仅是改变了                                      去，因此，应当采用文献[44]所述的“短路收缩”
+其中器件相对应的矩阵元素值。因此，节点导纳矩                                      方法，将节点导纳矩阵的对应行和列相加，得到外
+阵的结构具有不变性。                                                  端子等效节点导纳方程。经过嵌套快速求解法和短
+       对于同样具有“节点导纳矩阵阶数高”特征的                                 路收缩处理，换流器等效电路仅保留 4 个端子节点
+MMC，文献[39-43]利用了节点导纳矩阵结构的不                                  (节点 1、2、5、6)，经过 EMT 解算器解算，可得
+变性，通过嵌套快速求解法对式(1)所示节点导纳方                                    到端子电压电流信息。
+向进行处理，将内部节点电压电流信息 VIN 和 IIN
+                                                            3 PET 加速仿真方法
+转移到端口节点，得到外端子的等效节点导纳方
+程，如式(2)所示。                                                          由于 PET 模块内部节点多且拓扑连接方式多
+                                                            样，直接采用 2 章所述的嵌套快速求解法和短路收
+         Y11 Y12  VEX   J EX   I EX 
+         Y Y   V  =  J  +  0                (1)     缩方法进行矩阵降阶，将面临大量的矩阵相乘与求
+          21 22   IN   IN           
+                                                            逆工作，效率较低。对此，本节以典型 ISOP 型 DAB
+                 YEXVEX  J S  I EX                (2)
+                                                            变换器为例，介绍文献[16-19]所提 3 种提速思路，
+式中： YEX  Y11  Y12Y221Y21 为端口对外等效导纳阵；                     并对基于这 3 种提速方法组合而搭建的 3 种等效模
+J S  J EX  Y12Y221J IN 为端口等效历史电流源。                       型进行了优缺点与适用场景对比。
+       这种方法并不会丢失内部节点信息，可以在仿                                 3.1     端口解耦
+真结束后进行内部信息的反解。仿真表明，内部节                                              1）变压器端口解耦。
+点消去带来的矩阵降阶具有很好的加速效果。因                                               PET 模块节点数较多，直接采用 2.1 节嵌套快
+此，嵌套快速求解法是一种实现节点导纳矩阵降阶                                      速求解法，节点导纳矩阵阶数仍较高(以 DAB 模块
+的有效方法。                                                      为例，为 9 阶)，矩阵求逆工作量大；同时，2.3 节
+2.3    换流器等效电路形成                                            换

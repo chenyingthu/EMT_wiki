@@ -1,0 +1,191 @@
+                                                                   Electric Power Systems Research 252 (2026) 112400
+
+
+                                                                         Contents lists available at ScienceDirect
+
+
+                                                              Electric Power Systems Research
+                                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+FPGA-based simulation of grid-tied converters using frequency-dependent
+network equivalent ⋆
+Fahimeh Hajizadeh                       a,∗, Alireza Masoom                  b , Tarek Ould-Bachir             c , Jean-Pierre David a
+
+a
+    Dept. electrical engineering, Polytechnique Montréal, Montreal, Canada
+b Hydro-Québec Research Institute (IREQ), Varennes, Canada
+c
+    MOTCE Laboratory, DGIGL, Polytechnique Montréal, Canada
+
+
+
+
+a r t i c l e              i n f o                             a b s t r a c t
+
+Keywords:                                                      This paper introduces a real-time simulation framework for grid-tied converters, implemented on ﬁeld-
+FPGA                                                           programmable gate arrays (FPGAs). The framework incorporates a Frequency-Dependent Network Equivalent
+FDNE                                                           (FDNE) to reduce the original part of the circuit that is not directly under study into a frequency-dependent ad-
+Real-time simulation
+                                                               mittance model, enabling precise modeling of the power network’s frequency-dependent dynamics while stream-
+Electromagnetic simulation
+STATCOM
+                                                               lining the onboard simulation and modeling process. The proposed framework is implemented on the Alveo U280
+                                                               FPGA, achieving sub-microsecond latencies, low resource utilization, and high computational ﬁdelity across var-
+                                                               ious data types, including single-, double-precision, and customized ﬂoating-point formats. The numerical test
+                                                               and validation were conducted using a high-voltage power network that includes detailed models of transmis-
+                                                               sion lines, loads, and a Static Synchronous Compensator (STATCOM), etc. Simulation results show strong align-
+                                                               ment with reference models developed in the EMTP, achieving faster-than-real-time performance. These ﬁndings
+                                                               demonstrate the eﬀectiveness of the proposed solution in delivering high-speed, resource-eﬃcient, and scalable
+                                                               real-time simulations, providing a promising approach for testing and validating advanced control strategies in
+                                                               modern power systems.
+
+
+
+1. Introduction                                                                                 change rates, and frequency overshoots [7,8]. Moreover, control strate-
+                                                                                                gies to manage the dynamic performance of these converters must be
+    The integration of power converters in modern power systems has                             meticulously designed to minimize harmonic distortion and maintain
+become essential to accommodate the growing adoption of distributed                             unity power factor for improved grid resilience [9]. As the use of such
+energy resources (DER) such as wind turbines, solar photovoltaics and                           devices grows, it is essential to establish eﬀective control methodologies
+charging stations for electric vehicles [1]. Power converters are essential                     to manage interactions with traditional grid infrastructure.
+for connecting renewable energy sources to the grid, facilitating eﬃcient                           This paper presents a simulation framework for grid-connected con-
+energy transfer, and improving grid stability through active and reactive                       verters to address these challenges, designed using ﬁeld-programmable
+power management [2,3]. These converters connect various renewable                              gate arrays (FPGAs). The framework integrates a Frequency-Dependent
+energy sources to the power grid, facilitating cleaner energy consump-                          Network Equivalent (FDNE) model to accurately represent the
+tion and addressing intermittency and ﬂuctuating load demands [4–6].                            frequency-dependent behavior of the grid. The framework achieves
+However, the extensive use of power electronic devices, especially in                           sub-microsecond latencies while preserving computational accuracy. A
+grids with many DERs, poses distinct challenges to grid stability. This                         Static Synchronous Compensator (STATCOM) is employed as a test case
+situation requires advanced control solutions to address potential power                        to validate the eﬀectiveness of the proposed approach.
+quality issues.                                                                                     The primary contributions of this work include: 1) The develop-
+    However, using power converters, such as voltage source converters                          ment of two novel FDNE integration approaches based on state-space
+(VSCs) and other inverter-based resources, presents challenges for grid                         equations, enabling eﬃcient real-time simulation of an FDNE-integrated
+stability. These devices can interact with conventional synchronous ma-                         STATCOM model on FPGA. These formulations leverage matrix-based
+chines and other grid elements, causing oscillations, higher frequency                          computations, optimizing execution speed and numerical stability. 2)
+
+
+    ⋆
+        Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    ∗ Corresponding author.
+
+    E-mail addresses: fahimeh.hajizadeh@polymtl.ca (F. Hajizadeh), alireza@hydroquebec.com (A. Masoom), tarek.ould-bachir@polymtl.ca (T. Ould-Bachir),
+jean-pierre.david@polymtl.ca (J.-P. David).
+
+https://doi.org/10.1016/j.epsr.2025.112400
+Received 6 January 2025; Received in revised form 25 February 2025; Accepted 17 October 2025
+Available online 26 October 2025
+0378-7796/© 2025 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+F. Hajizadeh et al.                                                                                                Electric Power Systems Research 252 (2026) 112400
+
+
+
+
+                                        Fig. 1. A +100 Mvar/-100 Mvar STATCOM implemented by two-level VSC.
+
+
+The implementation of a resource-eﬃcient FPGA framework, utilizing               grating a FDNE for high-frequency EMT and Transient Stability Analysis
+high-level synthesis (HLS) for FPGA programming and integrating Cus-             (TSA) for electromechanical transients. This approach enables accurate
+tomized Floating-Point based (CuFP-based) arithmetic. CuFP allows cus-           simulation of both fast and slow power system dynamics while reduc-
+tomizable precision, balancing accuracy, and hardware eﬃciency to                ing hardware costs. The multi-port equivalent can be directly connected
+achieve optimal FPGA utilization. 3) A demonstration that the proposed           to the system boundary, allowing TSA to run on a real-time platform.
+model achieves faster-than-real-time performance, signiﬁcantly reduc-            The achieved time-steps vary by simulation type, with 25-50 µs for EMT
+ing simulation latencies. This capability positions the framework as a           simulations and 1-2 ms for TSA solutions.
+powerful tool for accelerating electromagnetic transient (EMT) simu-
+lation applications. 4) An in-depth analysis of resource utilization and         2.2. FDNE
+computational trade-oﬀs, emphasizing the role of the CuFP library in
+delivering optimal results.                                                          FDNE aims to reduce the computational burden of Transient simu-
+    The remainder of this paper is organized as follows: Section 2 pro-          lations of large networks are done by dividing the network under study
+vides an overview of the key concepts. Section 3 outlines the proposed           into two zones: the study zone and the external zone. Assuming that
+implementation methodology. Section 4 describes the test case used to            the external zone has a minor impact on a given transient study occur-
+assess the proposed model’s performance compared to the commercial               ring within the study zone. An FDNE model consists of a rational model
+tool EMTP® . Section 5 oﬀers a comprehensive analysis of the FPGA im-            [16], its coeﬃcients are calculated to match the frequency response of
+plementation, focusing on latency, resource utilization, and accuracy.           the subnetwork to replace (external zone) for a ﬁnite frequency band
+Finally, Section 6 presents the conclusions.                                     as:
+2. Background                                                                                                    ∑𝑛
+                                                                                                                       𝐑𝑘
+                                                                                 𝐘(𝑠) ≅ 𝐘ﬁtted (𝑠) = 𝐆0 + 𝑠𝐄 +                                                  (1)
+                                                                                                                 𝑘=1
+                                                                                                                     𝑠 − 𝑝𝑘
+2.1. FPGA-based power system simulation
+                                                                                 where 𝐘(𝑠) is a 𝑝 × 𝑝 frequency-dependent admittance matrix, and coeﬃ-
+    FPGAs have been used in real-time simulation applications for many           cients 𝑝𝑘 and 𝐑𝑘 are poles and residues matrices, respectively; 𝑛 denotes
+years, particularly in hardware-in-the-loop (HIL) conﬁgurations. The in-         the number of poles of the model; and 𝐆0 and 𝐄 are constant matrices
+herent parallelism of FPGAs allows for the simulation of complex power           (𝐄 is typically a zero matrix). The proposed method is sensitive to the
+electronic circuits with small time steps, ensuring high ﬁdelity and pre-        quality of the rational ﬁtting of the FDNE, as poor ﬁtting can lead to
+cise interfacing with physical controllers [10,11]. Beyond real-time sim-        inaccuracies in the simulation results.
+ulation, research has extended the use of FPGAs to faster-than-real-time              The FDNE model can be expressed using state-space equations as
+(FTRT) simulation. This approach allows for simulating the behavior              follows:
+of systems in less time than their actual operation, which is beneﬁcial          [       ] [       ][ ]
+                                                                                    ̇
+                                                                                    𝐱(𝑡)    𝐀     𝐁 𝐱(𝑡)
+for oﬄine analysis, optimization, and design validation [12,13]. The au-                  =                                                            (2)
+                                                                                   𝐢𝐹 (𝑡)   𝐂     𝐃 𝐯(𝑡)
+thors in [10] provide a comprehensive review of the current state of real-
+time simulation technologies for power systems. The study focuses on             where 𝐱(𝑡) is the FDNE state variable. The matrices 𝐀 and 𝐂 contain the
+digital real-time simulation (DRTS) and HIL simulation, examining their          FDNE model poles and residues, with dimensions (𝑝𝑛) × (𝑝𝑛) and 𝑝 × (𝑝𝑛),
+evolution, computing capabilities, common features, hardware and soft-           respectively. The matrix 𝐁 consists of ones and zeros, structured accord-
+ware components, and solution methodologies across various simulator             ingly, with a size of (𝑝𝑛) × 𝑝. The matrix 𝐃 is the same as in Eq. (1), with
+platforms. The work has demonstrated the simulation of power elec-               dimensions 𝑝 × 𝑝. the input and output vectors 𝐯(𝑡) and 𝐢𝐹 (𝑡) represent
+tronics systems with time steps in the range of a few microseconds. The          voltages and currents, respectively. The Backward Euler method is ap-
+paper [14] emphasizes the role of real-time simulation technologies in           plied in solving the state-space equations, where the next time-step is
+design, prototyping, testing, and teaching, categorizing applications by         computed using precomputed system matrices, reducing computational
+ﬁeld, ﬁdelity, and multiphysics aspects, with a focus on transmission and        complexity while preserving accuracy.
+distribution systems. It highlights that the time-step in real-time simu-        [          ] [            ][ ]
+                                                                                   𝐱(𝑡 + Δ𝑡)     𝐀𝑑     𝐁𝑑 𝐱(𝑡)
+lation is critical and varies by application: microsecond-range steps are                    =                                                            (3)
+                                                                                     𝐢𝐹 (𝑡)      𝐂𝑑     𝐃𝑑 𝐯(𝑡)
+used for HVdc systems and EMT simulations, while millisecond-range
+steps are typical for phasor simulations. Paper [15] presents a wide-            where 𝐀𝑑 , 𝐁𝑑 , 𝐂𝑑 , and 𝐃𝑑 are discrete versions of matrices 𝐀, 𝐁, 𝐂, and
+band multi-port system equivalent for real-time digital simulators, inte-        𝐃, respectively.
+
+                                                                             2
+F. Hajizadeh et al.                                                                                             Electric Power Systems Research 252 (2026) 112400
+
+
+                                                                                are explicitly derived for the STATCOM test case, the underlying
+                                                                                methodology is broadly applicable and can be easily generalized to other
+                                                                                grid-tied converter applications.
+
+                                                                                3.2.1. Approach 1
+                                                                                      To characterize the dynamic behavior of the STATCOM, we start by
+                                                                                deﬁning its mathematical formulation as outlined in [11]:
+                                                                                [            ] [ 𝜎                ]⎡ 𝐢 (𝑡) ⎤
+                                                                                  𝐢ℎ (𝑡 + Δ𝑡)    𝐇11     𝐇𝜎12 𝐇𝜎13 ⎢ ℎ ⎥
+                                                                                              =                     𝐯 (𝑡)                          (4)
+                                                                                      𝐢𝐶 (𝑡)     𝐇𝜎21    𝐇𝜎22 𝐇𝜎23 ⎢ 𝑖𝑛 ⎥
+                                                                                                                   ⎣ 𝐯(𝑡) ⎦
+                      Fig. 2. Detailed view of the STATCOM.
+                                                                                where 𝐇𝑖𝑗 are the matrices associated with switch combinations that re-
+                                                                                sult from the algebraic manipulations of the MANA matrix, the notation
+2.3. FPGA-based FDNE simulation                                                 𝜎 refers to the switch combination, 𝐢ℎ are history terms of the STAT-
+                                                                                COM, 𝐯𝑖𝑛 internal voltage sources, 𝐯 external voltage sources, and 𝐢𝐶 the
+    FPGA-based FDNE simulations have gained prominence for achiev-              current drawn from the external sources (FDNE). The size of the matrix
+ing ultra-low latency and high parallelism, enabling sub-microsecond            𝐇 depends on the number of history terms and the number of internal
+time steps. Additionally, in [17], the potential of real-time FDNE mod-         and external voltages. State update and output expressions in (4) can be
+els was explored on both CPUs and FPGAs, focusing on parallelizing the          separated, as shown in (5), (6):
+FDNE algorithm and proposing a partitioning method to optimize com-
+                                                                                                                ]⎡ ℎ ⎤
+                                                                                                                   𝐢 (𝑡)
+                                                                                             [
+                                                                                                            𝐇𝜎13 ⎢𝐯𝑖𝑛 (𝑡)⎥
+putations. Moreover, an FPGA-based FDNE model for accurate real-time
+                                                                                𝐢ℎ (𝑡 + Δ𝑡) = 𝐇𝜎11   𝐇𝜎12                                                    (5)
+simulation of aircraft power systems was presented in [18], employing                                            ⎢       ⎥
+                                                                                                                 ⎣ 𝐯(𝑡) ⎦
+FDNE models to precisely represent aircraft power cables within an HIL
+                                                                                                                ]⎡ ℎ ⎤
+                                                                                                                   𝐢 (𝑡)
+simulation environment. Our work achieves sub-microsecond time-steps                         [
+for a more intricate test case, highlighting the capability of FPGA-based            𝐢𝐶 (𝑡) = 𝐇𝜎21   𝐇𝜎22   𝐇𝜎23 ⎢𝐯𝑖𝑛 (𝑡)⎥                                   (6)
+                                                                                                                 ⎢       ⎥
+simulations to eﬃciently model complex FDNE systems with excellent                                               ⎣ 𝐯(𝑡) ⎦
+accuracy and precision for both real-time and FTRT applications.                    Same state update and output expressions separation can be applied
+                                                                                for the FDNE in (3), we have (7), (8):
+2.4. HLS FPGA programming                                                                             [ ]
+                                                                                              [      ] 𝐱(𝑡)
+                                                                                𝐱(𝑡 + Δ𝑡) = 𝐀𝑑    𝐁𝑑                                               (7)
+    HLS bridges the gap between software-oriented design and                                           𝐯(𝑡)
+                                                                                                      [ ]
+hardware-level implementation, oﬀering a streamlined approach to de-                         [       ] 𝐱(𝑡)
+                                                                       

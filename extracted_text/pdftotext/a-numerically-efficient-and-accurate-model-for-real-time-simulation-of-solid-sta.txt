@@ -1,0 +1,187 @@
+IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 41, NO. 6, JUNE 2026                                                                                           10067
+
+
+
+
+      A Numerically Efficient and Accurate Model for
+      Real-Time Simulation of Solid-State Transformer
+        Using Implicit-Explicit Integration Methods
+                  Hengyu Li , Member, IEEE, Walid Hatahet , Graduate Student Member, IEEE,
+  Jared J. Paull , Graduate Student Member, IEEE, Fei Zhang , Member, IEEE, Yuanshi Zhang , Member, IEEE,
+                        Liwei Wang , Senior Member, IEEE, and Wei Li , Member, IEEE
+
+
+   Abstract—Electromagnetic transient (EMT) models of power                        L-stability
+                                                                                            Strong form of A-stability with limit of
+electronic converters are essential for converter design, control,                          limz→−∞ R (z) = 0.
+and fault analysis. This article proposes a switching-function-based               BDF      Backward differentiation formula.
+detailed equivalent model (SFB-DEM) using combined implicit
+and explicit (ImEx) multistep Gear’s integration methods for nu-                   TBE      Trapezoidal rule switching to Backward Euler.
+merically efficient and accurate EMT simulation. The proposed                      ImEx-G2O Implicit-explicit Gear’s 2nd order method.
+SFB-DEM integrates the benefits of ImEx solvers, featuring con-                    ImEx-G3O Implicit-explicit Gear’s 3rd order method.
+verter circuit decoupling, node number reduction, and constant                     ISOP     Input-series-output-parallel.
+nodal-network conductance(G)-matrix in the EMT model. The                          MFT      Medium-frequency transformer.
+SFB-DEMs employing the ImEx 2nd and 3rd order Gear’s (i.e.,
+ImEx-G2O and ImEx-G3O) methods are implemented for solid-
+state transformer (SST) simulation. In addition, a switching inter-                                            I. INTRODUCTION
+polation technique is proposed and integrated with the ImEx-G2O
+                                                                                         HE development of solid-state transformer (SST) (also
+and ImEx-G3O solvers to account for intra-time-step switching
+events. The proposed SST SFB-DEMs greatly accelerate the EMT
+simulation, compared to the conventional detailed model (DM) and
+                                                                                   T     known as a power electronic transformer) has attracted
+                                                                                   much attention from industry and academia [1], [2], [3], [4],
+variable conductance(G)-matrix DEM (VG-DEM). For the SST
+with 60 SMs, the proposed SFB-DEM with ImEx-G3O method                             [5]. The SST circuit topologies are commonly categorized into
+achieves the EMT simulation speedup by 171 and 7.5 folds, com-                     four types, i.e., single-stage, two-stage with low voltage dc
+pared to the DM and VG-DEM, respectively.                                          (LVdc) link, two-stage with medium voltage dc (MVdc), and
+   Index Terms—Constant G-matrix, electromagnetic transient
+                                                                                   three-stage topologies [3], [4], [5], as presented in Fig. 1. An
+(EMT) program, implicit-explicit backward differentiation                          ISOP configuration is typically employed for the SST, realizing
+formula, solid-state transformer (SST), switching interpolation                    medium voltage ac (MVac) to LVdc conversion [2]. A three-
+technique, switching-function-based detailed equivalent model                      phase SST following ISOP configuration often uses multilevel
+(SFB-DEM).                                                                         ac–dc converter as its Stage I, composed of ac chain-links
+                                                                                   with cascaded full-bridge submodules (FBSMs). Meanwhile,
+                                                                                   multiple dual-active-bridge (DAB) dc–dc converters are coupled
+                             NOMENCLATURE
+                                                                                   with the cascaded FBSMs through MVdc capacitors as its Stage
+SFB-DEM          Switching-function-based detailed equivalent                      II. The DAB dc–dc converters play an important role to provide
+                 model.                                                            galvanic isolation between the MVdc and LVdc through MFTs,
+VG-DEM           Variable G-matrix detailed equivalent model.                      enabling bidirectional power flow and achieves high power
+A-stability      Absolute stability.                                               density [6], [7].
+                                                                                      However, the detailed model (DM) of the SST imposes
+                                                                                   tremendous computational burdens to electromagnetic transient
+   Received 13 August 2025; revised 30 November 2025; accepted 27 December
+2025. Date of publication 2 January 2026; date of current version 20 March 2026.   (EMT) simulation due to its detailed representation of massive
+This work was supported by the Natural Sciences and Engineering Research           semiconductor switches and discrete circuit components. In or-
+Council (NSERC) of Canada. Recommended for publication by Associate Editor         der to enhance the numerical accuracy and simulation efficiency
+Z. Li. (Corresponding author: Liwei Wang.)
+   Hengyu Li, Walid Hatahet, Jared J. Paull, and Liwei Wang are with the School    of the SST, various equivalent circuit modeling approaches
+of Engineering, The University of British Columbia Okanagan, Kelowna, BC           were introduced in the prior art. A high-speed EMT modeling
+V1V 1V7, Canada (e-mail: liwei.wang@ubc.ca).                                       strategy of the SST was proposed in [8] and [9], which uses
+   Fei Zhang and Yuanshi Zhang are with the School of Electrical Engineering,
+Southeast University, Nanjing 210096, China.                                       Norton equivalents to simplify the SST circuit into a two-port
+   Wei Li is with OPAL-RT Technologies, Montreal, QC H3K 1G6, Canada               system for node number reduction. However, the SST system is
+(e-mail: wei.li@opal-rt.com).                                                      decoupled through the ac voltages of the MFTs, which may lead
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPEL.2025.3650144.                                         to numerical inaccuracy for fast switching state changes of the
+   Digital Object Identifier 10.1109/TPEL.2025.3650144                             FBSMs in DABs. An alternative circuit decoupling through a
+      0885-8993 © 2026 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:21 UTC from IEEE Xplore. Restrictions apply.
+10068                                                                                IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 41, NO. 6, JUNE 2026
+
+
+
+                                                                                 solver, especially designed for stiff ODEs [18]. While Gear’s 2nd
+                                                                                 order method has both A- and L-stability, the stability region
+                                                                                 of Gear’s 3rd order method contains a large part of the left
+                                                                                 half-plane and in particular the whole negative real axis. Thus,
+                                                                                 the high-order implicit Gear’s methods have much larger nu-
+                                                                                 merical stability regions than other implicit multistep methods,
+                                                                                 such as Adams-Moulton methods. Similarly, the explicit Gear’s
+                                                                                 methods (also known as explicit BDF methods [22], [23]) have
+Fig. 1. SST configurations. (a) Single-stage. (b) Two-stage with LVdc link.
+(c) Two-stage with MVdc link. (d) Three-stage topology.                          larger numerical stability regions than the explicit Adams meth-
+                                                                                 ods (Adams-Bashforth methods) with the same order. Therefore,
+                                                                                 combined ImEx Gear’s methods integrate the merits of superior
+                                                                                 numerical accuracy due to the use of high-order multistep Gear’s
+dc-link capacitor was achieved by employing the cut-set-matrix                   solvers and SST circuit decoupling because explicit Gear’s
+algorithm in [10], which boosted the simulation efficiency of                    method is used to discretize the dc-link capacitors of the SST.
+the SST. However, the network G-matrix of this approach is                          For fixed-time-step EMT simulation of power converters,
+time-variant since the semiconductor switches are represented                    switching events may occur in between two consecutive integer
+by binary-value resistors, imposing a high computational burden                  time steps. Inaccurate switching event location will introduce
+due to frequent re-factorization of the G-matrix.                                significant numerical errors to the simulation results. Switching
+   To address the abovementioned issues, various modeling                        interpolation techniques were proposed and implemented in
+efforts have been carried out to realize a constant network                      [24], [25], [26], [27], [28], [29], [30] to account for intrastep
+G-matrix. A discrete-time switch model was developed in [11]                     switching for the TR method. However, a switching interpolation
+and [12], which features constant G-matrix by representing a                     technique for the SFB-DEMs with combined ImEx multistep
+semiconductor switch as an L or C element, depending on its                      ODE solvers is missing in the literature.
+switching states. However, the use of L/C incurs undesired                          As shown in Table I, the comparisons of different modeling
+fictitious voltage and current oscillations during switching tran-               approaches are performed regarding their computational efforts,
+sitions. Moreover, it can introduce unrealistically high virtual                 capability of representing converter blocking mode, and nu-
+power losses [13]. In [14], [15], [16], [17], another type of                    merical accuracy by high-order integration rules and switching
+modeling approach that leads to a constant G-matrix, namely,                     interpolation. Most of the prior-art equivalent circuit models,
+SFB-DEMs were proposed for modular multilevel converter                          e.g., [8], [9], [10], [31], and [32], achieve internal node elimina-
+(MMC) and multimodule SST. Thevenin equivalent circuit is                        tion to accelerate the EMT-type simulation for large-scale con-
+used to represent cascaded submodules (SMs) in discrete-time                     verter system. However, these methods commonly represent the
+domain and is updated based on switching functions and capac-                    semiconductor switches by two-value resistors. Consequently,
+itor voltages of the SMs. Combined implicit- and explicit-type                   refactorization of the network conductance (G)-matrix becomes
+(ImEx-type) integration methods are employed in [14], [15],                      inevitable, which result in tremendous computational burdens.
+[16], [17] to discretize circuit components, i.e., the SM capac-                 The EMT modeling strategy in [31] achieves a constant G-
+itor voltages using Forward Euler’s (FE) method for network                      matrix by adopting conventional L/C-associated discrete circuit
+decoupling, and the rest of the network by implicit trapezoidal                  [11]. Nevertheless, it introduces spurious numerical ringing in
+rule (TR) for the 2nd order numerical accuracy and absolute                      voltages and currents when encountering switching transients.
+stability (A-stability).                                                         In addition, several efficient EMT modeling approaches have
+   However, there are two drawbacks when employing the TR-                       been compared and analyzed in [29] and [30], where dynamic
+FE method in the EMT simulation of power converters. First,                      behaviors of the power converters are represented by switching
+the numerical accuracy is limited due to the use of the 1st order                functions which achieve a constant network G-matrix. Never-
+solver, i.e., FE method. Second, the TR method may experience                    theless, these modeling approaches in [29] and [30] use basic
+numerical oscillations due to its A-stability, but not L-stability               two-level power converters and have not achieved a reduction in
+[18], when system discontinuity presents, e.g., switching opera-                 circuit nodes and circuit decoupling. A high-fidelity device-level
+tions. The numerical oscillations can be eliminated by changing                  EMT modeling strategy has been proposed for numerically
+the solver from TR to Backward Euler (BE), namely TBE when                       efficient parallel simulation of MMC in [33]. It is assumed that
+switching transition occurs (also known as critical damping                      the MMC arm current is constant for two adjacent time steps to
+adjustment) [19], [20]. However, the numerical accuracy has to                   decouple the SMs from a converter arm. This equivalent circuit
+be sacrificed especially when the switching frequency is high,                   model achieves a constant G-matrix using the transmission line
+since the BE method has 1st-order accuracy [21].                                 model (TLM) technique [34]. However, the efficient parallel
+   To circumvent the abovementioned drawbacks, this article                      MMC model in [33] cannot represent the converter in the IGBT-
+employs combined implicit and explicit (ImEx) Gear’s 2nd                         blocked state and has four node voltages to be solved in each
+or 3rd order methods (i.e., namely ImEx-G2O or ImEx-G3O)                         SM.
+to discretize the circuit elements of the SST. Implicit Gear’s                      From the perspective of numerical accuracy, the prior-art
+method, (also known as backward differentiation formula, i.e.,                   equivalent circuit models use either implicit TR, which leads to a
+BDF), is a linear multistep ordinary differential equation (ODE)                 coupled network with a high-dimensional G-matrix, or employ a
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:21 UTC from IEEE Xplore. Restrictions apply.
+LI et al.: NUMERICALLY EFFICIENT AND ACCURATE MODEL FOR REAL-TIME SIMULATION OF SST USING IMPLICIT-EXPLICIT INTEGRATION                                10069
+
+
+
+                                                                   TABLE I
+                                     COMPARISON OF EQUIVALENT CIRCUIT MODELS FOR EFFICIENT EMT SIMULATION
+
+
+
+
+combination of TR and FE to achieve circuit decoupling, which
+sacrifices numerical accuracy since the FE method achieves only
+1st-order accuracy. Compared to the prior-art EMT modeling
+strategies, the proposed SFB-DEMs with combined implicit-
+explicit-type multistep solvers fulfill all the modeling features
+listed in Table I, which achieve superior 2nd-order (ImEx-G2O)
+or 3rd-order (ImEx-G3O) accuracy and accelerated simulation
+speed simultaneously. The novelty and main contributions of
+this article are summarized below.                                              Fig. 2. Schematic of FB converter. (a) Circuit in continuous-time domain.
+                                                                                (b) RSM in discrete-time domain.
+   1) A combined multistep ImEx Gear’s solver is proposed
+       to discretize the circuit elements of the multimodule SST.
+       The use of explicit Gear’s method to discretize DC-link ca-
+       pacitors enables converter decoupling and constant nodal-                A. Full-Bridge Converter
+       network G-matrix, which greatly accelerates the EMT
+                                                                                   This subsection compares two EMT modeling strategies, i.e.,
+       simulation.
+                                                                                the resistive switch model (RSM) and SFB-DEM for a full-
+   2) The proposed high-order ImEx Gear’s (ImEx-G2O or
+                                                                                bridge (FB) converter.
+       ImEx-G3O) solver offers better numerical accuracy com-
+                                                                                   1) Resistive Switch Model: In the RSM, two-value (ON/OFF)
+       pared to the first-order solvers, e.g., BE+FE or mixed 1st
+                                                                                resistor with a small resistance for ON state and a large resis-
+       and 2nd order solver, TBE. Numerical oscillations because
+                                                                                tance for OFF state is used to represent a semiconductor switch
+       of the TR solver to simulate switching operations are also
+                                                                                [36]. Fig. 2 shows the schematic of the FB converter and its
+       avoided by the implicit Gear’s solvers.
+                                                                                RSM, where the line inductor Lac and dc-link capacitor Cdc are
+   3) Switching interpolation technique is proposed for the
+                                                                                discretized using implicit integration methods (e.g., BE or TR)
+       ImEx-Gear’s solver in the SST. The simulation accuracy is
+                                                                                and are expressed in Norton equivalent. As shown in Fig. 2(b),
+       enhanced for the cases of large time-step EMT simulation.
+                                                                                the historical terms of the ac line inductor Lac and dc capacitor
+   4) The proposed SFB-DEM with ImEx Gear’s solver pro-
+                                                                                Cdc are denoted by ILac,his and ICdc,his , which are in parallel with
+       vides a universal modeling framework for an arbitrary
+                                                                                their equiv

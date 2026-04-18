@@ -1,0 +1,199 @@
+                                                                    Electric Power Systems Research 197 (2021) 107326
+
+
+                                                                         Contents lists available at ScienceDirect
+
+
+                                                              Electric Power Systems Research
+                                                                 journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Real-time RMS-EMT co-simulation and its application in HIL testing of
+protective relays☆
+Renzo Fabián Espinoza a, *, Guilherme Justino a, Rodrigo B. Otto a, Rodrigo Ramos b
+a
+    Itaipu Technological Park Foundation, Foz do Iguaçu, PR, Brazil
+b
+    São Carlos School of Engineering, University of Sao Paulo, SP, Brazil
+
+
+
+
+A R T I C L E I N F O                                          A B S T R A C T
+
+Keywords:                                                      This work proposes an interfacing technique that uses the built-in three-phase transmission line models available
+Real-time simulation                                           in simulation platforms to perform Root Mean Square (RMS)- Electromagnetic Transient (EMT) real-time, multi-
+Co-simulation                                                  domain and multi-rate co-simulation. The main objective of this paper is to show the application of this kind of
+Hardware-in-the-loop
+                                                               simulation in hardware-in-the-loop (HIL) testing of protective relays. Two well-known platforms are considered
+Protective relay
+Multi-domain
+                                                               in this work: OPAL-RT with its ePhasorSim tool is used for RMS simulation, and RTDS is used for EMT simulation.
+Multi-rate                                                     However, the proposed technique is sufficiently general to be applied to other real-time simulation platforms that
+                                                               have similar built-in transmission line models. To convert waveforms to phasors, a non-buffered rapid curve
+                                                               fitting method was implemented to attend to real-time constraints. During the testing phase of this research, tests
+                                                               for the HIL were completed using an actual transmission line protection relay. The presented results of tests
+                                                               highlight the benefits of the proposed interfacing technique.
+
+
+
+
+1. Introduction                                                                                 (RMS) models [1–15]. A vast review of advanced laboratory technique
+                                                                                                methods that include co-simulation frameworks is presented in [16].
+    The computational process involved in real-time simulations re­                                 This work proposes a transmission line interfacing technique that
+quires calculations to be finished before the end of each time step.                            uses the built-in transmission line models available on real-time simu­
+Therefore, the size of the modeled electrical system is limited to enable                       lators to conduct real-time, multi-domain, and multi-rate co-simulation
+the real-time simulation. In the case of Electromagnetic Transient (EMT)                        using OPAL-RT and RTDS platforms. The ePhasorSim [17] tool of
+approach to conduct Hardware-in-the-Loop (HIL) tests by means of                                OPAL-RT is used as the RMS simulator, and RTDS is used as the EMT
+digital real-time simulation, usually the electrical system to be studied is                    simulator. The analog inputs and outputs of both simulators are used as
+reduced considering this limitation, using Thevenin equivalents. This                           communication interface. RTDS is an EMT-focused simulator that re­
+practice is common in HIL protective relay tests. This reduction elimi­                         quires detailed modeling and time steps on the order of microseconds;
+nates the dynamics of the reduced part and, thus, a co-simulation multi-                        on the other hand, ePhasorSim allows the RMS simulation and can run
+domain approach is interesting because it maintains the EMT details of                          using time steps on the order of milliseconds. Therefore, it is possible to
+the studied circuit and the dynamics of the external circuit.                                   conduct a detailed EMT simulation interacting with an RMS simulation
+    There is increasing interest among utilities in performing real-time                        that allows the user to expand the studied electrical system and explore
+simulations of large power systems. If a large power system is simu­                            the benefits of both approaches. The main purpose of this work is to
+lated using EMT real-time simulators, the cost of hardware can be                               allow RMS-EMT real-time HIL tests of protective relays having the
+restricting to many users. There have been many efforts to develop real-                        external electrical power system in an RMS solution and the electrical
+time multi-domain co-simulation platforms where the portion of the                              system of interest in an EMT solution. The EMT part interacts directly
+network that needs to be modeled with details is done so using EMT                              with the protective relay under test.
+models, while the remaining part is modeled using Root Mean Square                                  The remainder of this paper is structured as follows. In section II, the
+
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 17–20, 2021.
+    ☆
+
+  * Corresponding author.
+    E-mail addresses: renzo.espinoza@pti.org.br (R. Fabián Espinoza), guilherme.justino@pti.org.br (G. Justino), rodrigobueno@pti.org.br (R.B. Otto), rodrigo.
+ramos@ieee.org (R. Ramos).
+
+https://doi.org/10.1016/j.epsr.2021.107326
+Received 30 November 2020; Received in revised form 23 April 2021; Accepted 25 April 2021
+Available online 13 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+R. Fabián Espinoza et al.                                                                                                 Electric Power Systems Research 197 (2021) 107326
+
+
+proposed technique is described. In section III, the results of tests            EMT). Fig. b shows a simplified single phase lossless model of the
+considering two transmission systems of four and five buses are                  transmission line used by EMT solution (RTDS in this case). It is the
+analyzed, as well as HIL tests using a real protective relay. Finally,           Bergeron model of transmission line [22], where,
+section IV presents the main conclusions of this work and address future
+                                                                                          vk(t)
+directions for research.                                                         ikm              + hk(t− τ) ;                                                          (1)
+                                                                                  (t) =
+                                                                                          Zc
+2. The proposed transmission line interface
+                                                                                          vm(t)
+                                                                                 imk
+                                                                                  (t) =           + hm(t− τ) ;                                                          (2)
+                                                                                          Zc
+    The proposed interface is suitable to decouple large systems, which is
+suitable for parallel computation because the transmission line can be                            vm(t− τ)
+expressed as separated resistive Norton or Thevenin circuits from either         hk(t− τ) = −                − imk
+                                                                                                                (t− τ) ;                                                (3)
+                                                                                                    Zc
+side using information from previous time steps [18]. Some works, such
+as [19–21], show advanced techniques to implement a transmission line                             vk(t− τ)
+interface between RMS and EMT simulations. These methods were                    hm(t− τ) = −                − ikm
+                                                                                                                (t− τ) .                                                (4)
+                                                                                                    Zc
+developed to be used in offline simulation, and most of them should be
+adapted to be used in real-time simulation. As described in [22], Ber­           From Eqs. (1) to (4), it is possible to observe that the controlled current
+geron’s model and its principle implementation is used as a base prin­           source of one side only depends on the voltage of the other terminal at
+ciple for many methods, and they consider half of the line in the RMS            previous time-steps. Thus, this work proposes to impose the voltage on
+domain and the other half in the EMT domain. Specifically, for                   the RMS side (k) using the transmission line model available in RTDS,
+RMS-EMT real-time co-simulation, [7,15] uses a hybrid transmission               instead of implementing the controlled source hm      (t− τ) . Fig. c shows a
+line as the RMS-EMT interface. The implementation of this approach
+                                                                                 single-phase transmission line model used by ePhasorSim.
+requires programming the transmission line model in the respective tool
+                                                                                    It is possible to see that if the voltage at m is known, the RMS side
+that is available in any real-time simulator. This task is not trivial
+                                                                                 simulation can be conducted. Fig. d shows the interface that is used by
+considering a three-phase coupled lossy transmission line, even though
+                                                                                 both simulators.
+there are methods to divide the transmission into some lossless parts and
+                                                                                    In this implementation, the k voltage of the RMS side is converted to
+place the losses at the ends of these parts. It should be noted that all
+                                                                                 an EMT waveform and injected into the EMT simulator with a controlled
+methods require any kind of conversion waveform-phasor and
+                                                                                 voltage source. This is accomplished in such a way that the m voltage of
+phasor-waveform. In this work, the use of built-in transmission line
+                                                                                 the EMT side is converted to RMS phasors and injected into the RMS
+components from OPAL-RT (RMS) and RTDS (EMT) are utilized, and the
+                                                                                 simulator using a voltage source.
+conversion waveform-phasor and phasor-waveform are implemented.
+    Fig. 1 serves to explain the main idea of the proposed method, where
+k is the terminal of the RMS side and m is the terminal of the EMT side.         2.1. Phasor to EMT conversion
+The transmission line of Fig. a is the interface of both domains (RMS and
+                                                                                      The following equations are used to convert the phasors to EMT
+                                                                                 waveforms:
+                                                                                         √̅̅̅               √̅̅̅
+                                                                                 va (t) = 2ℜVa (t)cos(wt) −  2ℑVa (t)sin(wt) ;                    (5)
+                                                                                             √̅̅̅               √̅̅̅
+                                                                                 vb (t) =     2ℜVb (t)cos(wt) −  2ℑVb (t)sin(wt) ;                                      (6)
+                                                                                         √̅̅̅               √̅̅̅
+                                                                                 vc (t) = 2ℜVc (t)cos(wt) −  2ℑVc (t)sin(wt) .                                          (7)
+
+                                                                                 Where Va (t), Vb (t) and Vc (t) are the voltage phasors at instant t and w =
+                                                                                 2πf(t) is the phasor frequency, considering that in the more general case,
+                                                                                 f is time dependent also. A controlled voltage source component was
+                                                                                 implemented in C language using the RTDS CBuilder tool as shown in
+                                                                                 Fig. 2, because there is no built-in voltage source capable of generating
+                                                                                 the corresponding waveform with this flexibility available in RTDS. This
+                                                                                 three-phase controlled voltage source was implemented with its Norton
+                                                                                 equivalents because RTDS uses Norton sources for implementing elec­
+                                                                                 trical components. A minimum series resistance for the Thevenin
+                                                                                 equivalent was considered. It has the three magnitudes and angles, as
+
+
+
+
+                                                                                 Fig. 2. Three-phase controlled voltage source developed in C language by
+                    Fig. 1. Proposed transmission line interface.                means of Cbuilder tool from RTDS.
+
+                                                                             2
+R. Fabián Espinoza et al.                                                                                                Electric Power Systems Research 197 (2021) 107326
+
+
+well as the desired frequency, as inputs at which waveforms are                                         ⎡                           ⎤
+                                                                                                      d                        b
+generated.                                                                                                  A=           B=
+                                                                                              ⎢    ad −  b2                       2 ⎥
+                                                                                                                            ad − b ⎥
+                                                                                                                                                                     (15)
+                                                                                      ′
+                                                                                 inv(F × F) = ⎢
+                                                                                              ⎣                                       ;
+                                                                                                     − b                       a ⎦
+                                                                                                C=                       D=
+2.2. EMT to phasor conversion                                                                      ad − b2                  ad − b2
+                                                                                                ⎡                ⎤
+    Fourier-based and curve fitting (CF) methods are two widely used                        ∑N
+                                                                                        x =     cos(wt  )v(t   )
+approaches to convert time-domain quantities to their frequency-                      ⎢
+                                                                                      ⎢
+                                                                                                      n      n   ⎥
+                                                                                                                 ⎥
+                                                                                                                                                                     (16)
+                                                                                  ′         n=0
+domain counterparts. Fourier-based methods have a sampling rate and              F ×v=⎢
+                                                                                      ⎣     ∑N
+                                                                                                                 ⎥;
+                                                                                                                 ⎦
+amount of processed samples constraints related to the fundamental                      y=      sin(wtn )v(tn )
+frequency to obtain its correct phasor representation. Thus, they have a                                    n=0
+
+delay associated with the amount of processed samples, and this may              [          ]       [          ] [ ]
+                                                                                      ℜV                A    B    x
+cause inaccuracies in the overall simulation. This constraint is notorious                      =               ×    .                                               (17)
+                                                                                     − ℑV               C    D    y
+in this kind of application because in real-time simulation, a rapid
+response is necessary because the calculated variables will be sent to the          It was implemented by distributing the computation process at each
+other part of the co-simulation.                                                 time-step of the simulation and without using buffers which save the
+    In the proposed method, the phasors are exchanged between the two            samples, in order to be executed in real-time without overruns. The
+simulators. In the protection relay testing application, the waveforms of        derived algorithm is shown Fig. 3. Additionally, a sliding window was
+voltage and current are sent from the real-time simulator to the device          implemented to obtain a smooth phasor updating.
+under test (DUT) and binary variables are exchanges between the real-               The CF component was implemented by

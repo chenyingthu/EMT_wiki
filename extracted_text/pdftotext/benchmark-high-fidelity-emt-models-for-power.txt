@@ -1,0 +1,175 @@
+   Benchmark High-Fidelity EMT Models for Power
+               Grid with PV Plants
+               Phani R V Marthi                                       Jongchan Choi                               Suman Debnath
+  Energy Science & Technology Directorate               Energy Science & Technology Directorate        Energy Science & Technology Directorate
+       Oak Ridge National Laboratory                        Oak Ridge National Laboratory                 Oak Ridge National Laboratory
+             Knoxville, USA                                       Knoxville, USA                                Knoxville, USA
+             marthip@ornl.gov                                      choij1@ornl.gov                             debnaths@ornl.gov
+
+
+
+   Abstract—In recent times electromagnetic transient (EMT)                       EMT models of power grid with PV plants. A benchmark
+modeling tools have been identified as one of the most important                  network for grid integration studies of large-scale PV plants
+requirements in replicating, analyzing, and investigating the                     in RSCAD is presented in [5]. In this work, the focus is not on
+dynamics of the power grid with photovoltaic (PV) plants.
+However, there are no benchmark models for power grid with                        developing a benchmark model of a PV plant instead the focus
+PVs to investigate emerging challenges with higher penetration of                 is on developing a network for grid integration of large-scale
+PVs (like trips and momentary cessations during faults from a                     PV plants. In [6], a benchmark model for PV systems and
+region faraway). To this end, in this paper, benchmark high-                      smart inverter control in a low-voltage distribution network
+fidelity EMT dynamic models of power grid with large-scale                        is presented. None of these works include benchmark EMT
+PV plants are presented. The models are developed in PSCAD
+and PSCAD/Fortran. Simulation results for different use cases                     models of power grid with multiple PV plants. The research
+(events) and scenarios are presented.                                             work in [7] is on EMT simulation of large PV plant and power
+   Index Terms—PV plant, EMT simulation, PV inverter.                             grid for disturbance analysis. In this work, the EMT models
+                                                                                  developed are benchmarked with the real large-scale PV plant.
+                           I. I NTRODUCTION                                       However, these models are under non-Disclosure Agreement
+   The penetration of large-scale inverter-based resources                        (NDA), limiting the usability by research community that
+(IBRs) in the power grid such as photovoltaic (PV) plants                         explores algorithms to avoid trips or shutdowns in PV plants.
+has increased tremendously in the past decade. With this                             Therefore, in this paper benchmark EMT model of power
+development, there is a fundamental shift in the way the                          grid with multiple PV plants is presented. These benchmark
+electric power grid responds to the events in the system. In the                  models are openly available and will help researchers in the
+conventional power grid with synchronous generators, when                         development and testing of algorithms in operations to detect
+the event happens the entire plant nearby would completely                        disturbances in power grid and take reactive or predictive ac-
+shut down. In the case of a power grid with a higher number                       tions in the power grid and/or in the PV plant. The benchmark
+of PV plants, the PV plants over a large region observe partial                   model is based on integration of high-fidelity EMT dynamic
+power loss rather than complete shutdown. Examples of such                        model of PV plants in IEEE-39 bus system. The benchmark
+observations during events in CA are reported in numerous                         models are tested for different test cases in PSCAD. The first
+events [1]- [4]. One of the key requirements recommended by                       test case is the simulation of three PV plants connected to
+reliability entities (such as NERC) is to utilize electromagnetic                 IEEE-39 bus system using benchmark models for different
+transient (EMT) PV plant models with higher fidelity. These                       fault conditions in the system. The second test case is the
+high-fidelity EMT models aid in accurately replicating, investi-                  simulation of three PV plants connected to IEEE-39 bus
+gating, and analyzing the performance of the PV plant during                      system using benchmark models for different short circuit ratio
+an event. However, there are very limited to no benchmark                         (SCR) in the system.
+   Research sponsored by Applied Grid Modeling (AGM) program in U. S.                II. H IGH - FIDELITY EMT DYNAMIC M ODELS FOR PV
+Department of Energy’s Office of Electricity (OE). The views expressed herein
+do not necessarily represent the views of the U.S. Department of Energy or the                              P LANTS
+United States Government. Phani Marthi, Suman Debnath, and Jongchan Choi             The detailed layout of the generic PV plant is shown in
+are with Oak Ridge National Laboratory, Knoxville, TN 37932, USA (email:
+marthip@ornl.gov). This manuscript has been authored by UT-Battelle, LLC          Fig. 1. It consists of several components such as feeders
+under Contract No. DE-AC05-00OR22725 with the U.S. Department of                  (with symmetric lengths or asymmetric lengths), transformers,
+Energy. The United States Government retains and the publisher, by accepting      shunt capacitors, overhead transmission lines, underground
+the article for publication, acknowledges that the United States Government
+retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or   transmission lines, PV inverters (different types of configura-
+reproduce the published form of this manuscript, or allow others to do so, for    tions), dc-dc converter controllers, dc-ac inverter controllers,
+United States Government purposes. The Department of Energy will provide          multiple numbers of modules, protection algorithms, and PV
+public access to these results of federally sponsored research in accordance
+with the DOE Public Access Plan(https://www.energy.gov/doe-public-access-         array configurations. A high-fidelity EMT dynamic model of
+plan).                                                                            the generic PV plant is developed based on the information
+                                    Fig. 1: Detailed layout of a large-scale PV power plant.
+
+
+collected on the mentioned components that are typically           bus. These feeders can accommodate multiple PV systems.
+used within the PV plant. Based on the collected information       To model the distribution lines/cables within the grid, dif-
+and data, parameters of the components in the generic PV           ferential algebraic equations (DAEs) are employed, as out-
+plant are determined such as transformer impedance, shunts,        lined in [8]. The DAEs undergo discretization using second-
+inductance and capacitance of feeder lines, filters’ inductance    order trapezoidal integration, resulting in a linear system of
+and capacitance within a PV system, inverter configuration, dc     equations denoted as A.x = b. The matrix A takes the form
+link capacitance, and PV array voltage-to-current relationship.    of an arrowhead or doubly bordered block-diagonal matrix.
+Data on the control parameters of the inverters were obtained      During electromagnetic transient (EMT) simulation, the linear
+(typically from the vendors) and the data on the power plant       equations necessitate a solution at each time-step, involving
+controller (PPC) were obtained from the information on the         matrix factorization and matrix-vector operations such as
+plant. Once this information is collected, the distribution grid   LU decomposition with forward/backward substitution. With
+and PV system models are developed for the generic PV              larger matrices, the computation time in EMT simulations
+plants.                                                            increases.
+A. Distribution Grid Model Development                                To mitigate the computing time, the Kron reduction method
+  In a PV plant, the distribution grid typically comprises         is applied to the doubly bordered block-diagonal matrix A.
+several radial feeders connected in parallel to a collector        This method reduces the size of the matrix being operated
+                                                                     different control time-steps matching the real codes utilized in
+                                                                     the inverter controllers (50–100 µs) and the PPC (100–1, 000
+                                                                     ms). Additionally, the hardware components within the PV
+                                                                     plant are simulated using a different time-step. Furthermore,
+                                                                     the inverter controllers include various protection features that
+                                                                     are listed below alongside the multi-rate implementation
+                                                                       1) alternating current (ac) load side over-current protection,
+                                                                       2) ac phase over-voltage protection, and
+                                                                       3) direct current (dc) link over-voltage protection
+
+                                                                     III. IEEE-39 B US S YSTEM C ONNECTED TO M ULTIPLE PV
+                                                                                                 PLANTS
+
+                                                                     A. IEEE-39 Bus System Model with Three PV Plants
+                                                                        In this study, benchmark EMT model of IEEE 39-bus
+                                                                     system with three PV plants is developed. The goal of this
+Fig. 2: Layout of IEEE-39 bus system connected to three IBRs         development is to replicate dynamics observed in PV plants
+with different configurations                                        in the real-world in regions with high-penetration of PV plants
+                                                                     locally. The layout of the IEEE-39 bus system along with three
+                                                                     different PV plants connected to it is shown in Fig. 2. Each PV
+upon from the complete A matrix to the block diagonal sub-           plant has a different layout of inverter configurations and dis-
+matrices contained within A. Consequently, the Kron reduction        tribution grid configurations. PV plant-1 (IBR-1) and PV plant-
+method significantly enhances the speed of EMT simulations.          2 (IBR-2) are rated at 125 MW each and PV plant-3 (IBR-3)
+                                                                     is rated at 250 MW (i.e., 2 modules rated at 125 MW). The PV
+B. PV System Model Development
+                                                                     plants include different PV inverters rated at 1 MW and 2.5
+   In the generic PV plant, two types of PV systems are              MW. IBR-1 has 50 1 MW inverters and 30 2.5 MW inverters.
+present, referred to as PV system-1 rated at 1 MW and PV             IBR-2 has 25 1 MW inverters and 40 2.5 MW inverters. IBR-3
+system-2 rated at 2.5 MW. The modeling of PV system-1                has total of 59 1 MW inverters and 54 2.5 MW inverters in
+and PV system-2 incorporates various components such as              both the modules. Module 1 contains 45 1 MW inverters and
+transformer configuration, filter configurations, inverter circuit   32 2.5 MW inverters. Module 2 contains 70 1 MW inverters
+configurations, inverter controllers, and protection configura-      and 22 2.5 MW inverters. Each PV plant model consists of
+tions in the controllers. A detailed explanation of the controller   five radial feeders connected in parallel in the distribution grid
+model is provided in the subsequent Section II-C. For the            with different configurations. IBR-1 has asymmetrical feeders
+remaining hardware components in the PV systems, their               (meaning feeders have different lengths) with asymmetrical
+models are constructed based on differential algebraic equa-         lines (meaning lines within the feeder have different lengths).
+tions specific to each system. Simulation algorithms, including      IBR-2 has asymmetrical feeders with symmetrical lines. IBR-3
+DAEs’ clustering and aggregation technique [9], multi-order          has asymmetrical feeders with asymmetrical lines. The IBR-1,
+discretization, and numerical stiffness-based hybrid discretiza-     IBR-2, and IBR-3 are integrated into the IEEE-39 bus system
+tion [8], are employed to further enhance the speed of EMT           at bus 1, bus 3, and bus 30 respectively. For power balance in
+simulations.                                                         the original IEEE-39 bus system, the synchronous generator
+C. Controllers’ Model Development                                    at bus 30 is removed.
+                                                                        Based on the details provided in Section II and Section
+   Within the plant, there exists a PPC that connects to inverter
+                                                                     III, high-fidelity EMT dynamic models of the three PV plants
+controllers. Typically, the inverter controllers operate with a
+                                                                     with different configurations are developed and integrated with
+control time-step ranging from 50–100 µs, while the PPC
+                                                                     the IEEE-39 bus system model in PSCAD. The high-fidelity
+employs a control time-step ranging from 100–1, 000 ms.
+                                                                     EMT dynamic models are custom-developed using Fortran in
+In conventional power plants, the active power delivered by
+                                                                     PSCAD.
+the inverters is determined based on available solar irradi-
+ance, while the reactive power is dependent on reference
+values transmitted from the PPC. The reactive power reference              IV. C ASE S TUDIES AND S IMULATION R ESULTS
+generated by the PPC for each inverter can vary based on
+the selected control mode, such as reactive power control,              The benchmark EMT model of the IEEE-39 bus with three
+power factor control, or voltage control at the plant’s point        PV plants is evaluated through the following test cases: a) line-
+of interconnection (POI). In the model specific to PV plant-         to-line faults at different locations in the IEEE-39 bus system;
+1, a hierarchical control system is developed, incorporating         and b) SCR variation in the IEEE-39 bus system.
+                   120                                                                                                               120                                                                                                               250
+                                                                                                 P IBR-1                                                                                                           P IBR-2                                                                                                    P IBR-3
+                                                                                                 Q IBR-1                                                                                                           Q IBR-2                                                                                                    Q IBR-3
+                   100                                                                                                               100                                                                                                               200
+
+
+                   80                                                                                                                 80                                                                                                               150
+Power [MW, MVAR]
+
+
+
+
+                                                                                                                  Power [MW, MVAR]
+
+
+
+
+                                                                                                                                                                                                                                    Power [MW, MVAR]
+                   60                                                                                                                 60                                                                                                               100
+
+
+                   40                                                                                                                 40                                                                                                                50
+
+
+                   20                                                                                                                 20                                                                                                                 0
+
+
+                    0                                                                                                                  0                                                                                                                -50
+
+
+                   -20                                                                                                               -20                                                                                                               -100
+                         0.95          1        1.05         1.1           1.15        1.2     1.25         1.3                            0.95          1        1.05         1.1          1.15         1.2     1.25         1.3                             0.95          1      1.05       1.1          1.15     1.2     1.25        1.3
+                                                              Time (s)                                                                                                          Time (s)                                                                                                       Time (s)
+
+                                                             (a)                                                                                                               (b)                                                                                                            (c)
+
+Fig. 3: Simulation results (P and Q) three IBRs connected to IEEE-39 bus system at F-1 (a) IBR-1; (b) IBR-2; and (c) IBR-3
+                   120                                                                  

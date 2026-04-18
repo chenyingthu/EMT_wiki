@@ -1,0 +1,194 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 22, NO. 3, AUGUST 2007                                                                                      1221
+
+
+
+
+                Re-examination of Synchronous Machine
+                Modeling Techniques for Electromagnetic
+                         Transient Simulations
+Liwei Wang, Student Member, IEEE, Juri Jatskevich, Member, IEEE, and Hermann W. Dommel, Life Fellow, IEEE
+
+
+   Abstract—This paper re-examines the three synchronous ma-                         models based on the        transformation. These models include
+chine modeling techniques used for electromagnetic transient sim-                    the Type-50 machine model in MicroTran (MT) [9], the Type-59
+ulations, namely, the    model, phase-domain model, and voltage-                     machine model in EPRI/DCG EMTP [10] and ATP [11], and the
+behind-reactance model. Contrary to the claims made in several
+recent publications, these models are all equivalent in the contin-                  synchronous machine model in PSCAD/EMTDC [12]. The va-
+uous-time domain, as their corresponding differential equations                      lidity of these models for both balanced and unbalanced power
+can be algebraically derived from each other. Computer studies of                    system operations has been confirmed by academic and indus-
+a single-machine infinite-bus system demonstrate that all of these                   trial applications [13], [14].
+models can be used for unsymmetrical operation of power sys-                            The so-called phase-domain (PD) models, as the original
+tems. The conversion of machine parameters is also discussed and
+is shown to have some impact on simulation accuracy, which is ac-
+                                                                                     form of the coupled electric circuit machine models, were
+ceptable for most cases. When the models are discretized and inter-                  proposed in [15] and [16] for the nodal analysis approach.
+faced with an EMTP-type network solution, the voltage-behind-re-                     These models achieved simultaneous solution of the machine
+actance model is shown to be the most accurate due to its advanced                   electrical variables and the network equations, they and im-
+structure.                                                                           prove numerical accuracy and stability [17], [18]. However,
+  Index Terms—Electromagnetic Transient Programs (EMTP),                             the time variant self and mutual inductances of the PD model
+phase-domain model, synchronous machine, unbalanced fault,                           stator and rotor circuits complicate the modeling and increase
+voltage-behind-reactance model.                                                      the computational cost.
+                                                                                        To integrate the advantages of the PD model with the benefit
+                                                                                     of the      transformation, the voltage-behind-reactance (VBR)
+                             I. INTRODUCTION
+                                                                                     machine model was introduced in [19] for the state variable ap-
+                                                                                     proach and extended for the EMTP-type solution in [20]. In
+M       ODELING of synchronous machines has been an ac-
+        tive research subject for quite a long time. Depending
+on the objective of studies and the required level of fidelity, the
+                                                                                     the VBR model structure, the stator circuit is represented in
+                                                                                          phase coordinates while the rotor equations are expressed
+modeling approaches may be roughly divided into three cat-                           in     rotor reference frame. Similar to the PD model, simulta-
+egories: finite element (or difference) method [1]; equivalent                       neous solution of the network and machine electrical variables
+magnetic circuit approach [2], [3]; and coupled electric circuit                     is achieved, and numerical accuracy and simulation efficiency
+approach. This paper mainly considers the last approach, which                       are further improved upon.
+leads to a relatively small number of equations and has been                            Although all of the above-mentioned models rely on the same
+very often utilized for predicting the dynamic responses of elec-                    set of assumptions [21]–[23], some researchers have questioned
+trical machines in power system operations. To further simplify                      the applicability of the     model to unbalanced conditions. In
+the coupled electric circuit approach, the machine physical vari-                    [24]–[26], the authors claim that the         machine model “as-
+ables are often transformed into quadrature and direct magnetic                      sumes perfectly balanced operation conditions in machine” and
+rotor axes [4]–[7]. This approach is also known as the       mod-                    “cannot accurately describe the transient and steady-state unbal-
+eling of rotating machines, which is widely used in Electromag-                      anced operation of the synchronous machine.” The authors of
+netic Transient Programs (EMTP) [8] for power system tran-                           [27] and [28] made similar conclusions by comparing the sim-
+sient simulations and analysis. Currently, there are many EMTP-                      ulation results of the     and PD models under unbalanced op-
+type programs that use general purpose synchronous machine                           eration. These results seem to contradict the existing machine
+                                                                                     modeling theories and undermine the long-established validity
+                                                                                     of the machine model for power system transient simulations.
+   Manuscript received August 29, 2006; revised December 8, 2006. This work
+                                                                                        In this paper, computer studies are conducted using the same
+was supported in part by the Natural Science and Engineering Research Council        synchronous machine as in [24]–[26] to demonstrate that the
+(NSERC) of Canada under the Discovery Grant and in part by the Power En-                 machine model, PD model, and VBR model all give iden-
+gineering Grant-In-Aid from BC Hydro and Powertech Labs, Inc. Paper no.
+TPWRS-00563-2006.
+                                                                                     tical simulation results for unbalanced operation, provided that
+   The authors are with the Department of Electrical and Computer Engi-              the simulation time-step       is sufficiently small. This result is
+neering, University of British Columbia, Vancouver, BC V6T 1Z4, Canada               expected as all of these models can be derived from each other
+(e-mail: liweiw@ece.ubc.ca; jurij@ece.ubc.ca; hermannd@ece.ubc.ca).
+   Color versions of one or more of the figures in this paper are available online
+                                                                                     and are therefore equivalent in the continuous time domain. The
+at http://ieeexplore.ieee.org.                                                       claims made in [24]–[28] that the machine model cannot rep-
+   Digital Object Identifier 10.1109/TPWRS.2007.901308                               resent unbalanced operations are unfounded. The difference in
+                                                                  0885-8950/$25.00 © 2007 IEEE
+1222                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 22, NO. 3, AUGUST 2007
+
+
+
+                                                                       A. The     Model
+                                                                         The voltage equations of the machine model can be repre-
+                                                                       sented in terms of transformed variables as
+
+                                                                                                                                     (3)
+
+                                                                       where
+                                                                                                                                     (4)
+                                                                                                                                     (5)
+                                                                                                                                     (6)
+Fig. 1 Coupled-circuits model of a synchronous machine.                                                                              (7)
+
+                                                                       Here,        and     are the winding voltages and currents, re-
+                                                                       spectively, in   rotor reference frame;    is the field winding
+simulation results, however, may possibly arise from inconsis-         voltage; is the speed voltage vector; and is the stator and
+tent machine parameters, problems with user interfaces, and/or         rotor resistance matrix.
+model implementation. We also show that the use of equivalent
+                                                                          The flux linkage equations are given as
+circuit parameters versus the manufacturer’s data (transient/sub-
+transient inductances and time constants) should not in general
+lead to significant differences in simulation results. However,                                                                      (8)
+one should be aware of existing procedures for parameter con-
+version and apply them with care.                                      where the machine self and mutual inductance matrix             is
+   This paper also shows that numerical properties of the con-         constant, due to Park’s transformation.
+sidered machine models differ when their respective differential         The electromagnetic torque is expressed as
+equations are discretized and interfaced with the network solu-
+tion. The VBR model is shown to be more accurate, even for                                                                           (9)
+sufficiently large integration time steps.
+
+                                                                       B. Phase-Domain Model
+                       II. MACHINE MODELS
+                                                                         The PD model is commonly expressed in terms of the ma-
+   Prior to comparing the results, it is instructive to briefly re-    chine’s physical variables and phase coordinates. In particular,
+view the various models discussed in this paper. According to          the voltage equation is expressed as
+the commonly used assumptions [21]–[23], a general purpose
+three-phase synchronous machine may be represented as a cou-
+                                                                                                                                    (10)
+pled circuit, depicted in Fig. 1. For the purpose of discussion and
+without loss of generality, the stator circuit consists of three ar-
+mature windings, and the rotor circuit includes one field winding      and the flux linkages are represented as
+and one damper winding in axis and two damper windings in
+axis, respectively. The axis is assumed to be leading the axis                                                                      (11)
+by 90 [23]. Motor convention is used in the machine’s voltage
+equations so that the stator currents flowing into the machine
+                                                                       where the stator and rotor self and mutual inductance matrix
+have a positive sign in the voltage equations. The flux linkage
+                                                                              depends on the rotor position . The electromagnetic
+of each winding is assumed to have the same sign as the current
+                                                                       torque is expressed in the machine variables as
+flowing in that winding.
+   The mechanical subsystem is assumed to be represented as
+                                                                                                                                    (12)
+                                                                (1)
+                                                                (2)
+                                                                       C. Voltage-Behind-Reactance Model
+Here, the operator          , is the number of poles, is the              The VBR machine model represents the stator variables in
+moment of inertia, and        are the developed electromagnetic            phase coordinates and the rotor variables in transformed
+torque and the mechanical torque, and       and     are the rotor      coordinates [19]. Here, the stator voltage equation is expressed
+position and speed, respectively. Although the models consid-          as
+ered herein all are assumed to have the same mechanical sub-
+system represented by (1) and (2), the electromagnetic torque is
+expressed differently in each case.                                                                                                 (13)
+WANG et al.: RE-EXAMINATION OF SYNCHRONOUS MACHINE MODELING TECHNIQUES                                                          1223
+
+
+
+where                                                             Here,     denotes the rotor winding flux linkages;         and
+                                                                       are the magnetizing flux linkages in the and axes,
+                                                                  respectively.
+                                                                     The equations for rotor speed and position in the VBR ma-
+                                                                  chine model are identical to (1) and (2). However, the electro-
+                                                           (14)
+                                                                  magnetic torque is calculated as [23]
+                                                           (15)
+                                                           (16)
+                                                                                                                               (31)
+                                                           (17)
+                                                                  D. Relationship Among Models
+                                                           (18)      Although the PD model is based on straightforward state
+The inductances       and       are calculated as                 equations describing the coupled circuit depicted in Fig. 1,
+                                                                  its implementation in digital programs is complicated by the
+                                                                  presence of the rotor-position-dependent self and mutual in-
+                                                           (19)
+                                                                  ductances represented in (11). The        model is algebraically
+                                                                  derived from the PD model using Park’s transformation with
+                                                           (20)   no approximations [22], [23]. Because the           model results
+                                                                  in equations with constant coefficients, its implementation is
+The voltage-behind-reactance term in (13) is defined as           relatively simple, which explains the wide use of this model.
+                                                                  However, the disadvantage of the       model is its interface with
+                                                                  EMTP network solutions, which was shown to result in a loss
+                                                           (21)   of numerical accuracy and stability for large time steps [20].
+where the rotor reference frame transformation matrix is             The VBR model was originally derived from PD and
+                                                                  models without any approximation by appropriately applying
+                                                                  the rotor reference frame only to selected terms [19]. Therefore,
+                                                           (22)   the model, the PD model, and the VBR model can be derived
+                                                                  from each other and are all equivalent in the continuous time
+                                                                  domain. However, the numerical properties of these models
+                                                                  differ when their equations are discretized using a particular
+                                                                  integration scheme. A detailed analysis of these models in [19]
+                                                                  and [20] shows that the VBR model is more accurate than the
+                                                           (23)
+                                                                  PD model due to rescaled and improved eigenvalues. To make
+                                                                  a fair comparison among the models here, (1) and (2) have been
+                                                                  discretized in the same way using implicit trapezoidal rule, and
+                                                                  the mechanical variables      and      are predicted using linear
+                                                                  extrapolation to avoid the solution of the machine nonlinear
+                                                                  equations. This method is commonly used in EMTP-type
+                                                                  programs and is justified on the facts that the time constant of
+                                                           (24)
+                                                                  the mechanical system is much larger than that of the electrical
+with                                                              system.
+
+                                                           (25)                   III. INPUT DATA CONVERSION
+                                                                     For most EMTP-type programs the self and mutual in-
+                                                           (26)   ductances of stator and rotor circuits are internally utilized
+                                                                  to calculate the equivalent circuit parameters and solve the
+The rotor state equations are represented as                      machine equations [22]. However, these internal circuit param-
+                                                                  eters are not directly determined from the test measurements.
+                          

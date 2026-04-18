@@ -1,0 +1,193 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 26, NO. 4, NOVEMBER 2011                                                                                 2355
+
+
+
+
+                   Magnetically-Saturable Voltage-Behind-
+                   Reactance Synchronous Machine Model
+                          for EMTP-Type Solution
+                               Liwei Wang, Member, IEEE, and Juri Jatskevich, Senior Member, IEEE
+
+
+
+   Abstract—A so-called voltage-behind-reactance (VBR) machine                       models used in EMTP, magnetic saturation may be included
+model has recently been proposed for the electro-magnetic tran-                      along -axis only; or along both          axes separately ignoring
+sient programs (EMTP) as an advantageous alternative to the                          cross saturation; or more accurately along the main flux path
+conventional      and phase-domain models. This paper extends
+the previous research and proposes a magnetically saturable                          taking     axes cross saturation into account. In order to incor-
+VBR synchronous machine model for EMTP-type solutions.                               porate magnetic saturation into the salient-pole synchronous
+The proposed saturable VBR model utilizes the saliency factor                        machine model, single-saturation factor [1], [7], [9]–[11] or
+approach to represent main-flux saturation for the salient-pole                      two-saturation factor approaches [4], [5], [8] can be utilized
+synchronous machines with the       axes static and dynamic cross                    depending on the availability of the -axis and/or intermediate
+saturation included. An efficient piecewise-linear method is used
+for representing the nonlinear saturation characteristic within the                  directions of the saturation characteristic [14], [17].
+discretized EMTP solution. Case studies verify that the new model                       Magnetic saturation in       machine models has been imple-
+maintains the improved numerical accuracy in steady state and                        mented for various EMTP software packages [20]–[23]. These
+transients even with large time step.                                                implementations include the saturable Type-59 machine model
+ Index Terms—Electro-magnetic transient programs (EMTP),                             [24], where the main flux saturation is accounted for round-rotor
+magnetic saturation, phase-domain model, synchronous machine                         and salient-pole synchronous machines with cross saturation in-
+modeling, voltage-behind-reactance model.                                            cluded. The Universal Machine (UM) models [25] in ATP also
+                                                                                     includes magnetic saturation, wherein for the salient-pole syn-
+                                                                                     chronous machines, the saturation along        axes is considered
+                             I. INTRODUCTION
+                                                                                     separately, and for the round-rotor synchronous machines, the
+                                                                                     saturation of the main flux is considered. In PSCAD/EMTDC, a
+
+N     UMEROUS machine models [1]–[17] were proposed de-
+      pending on required modeling fidelity and applications.
+This paper focuses on the synchronous machine models that are
+                                                                                     typical built-in synchronous machine model permits only -axis
+                                                                                     saturation [22]. In EMTP-RV [23], the main flux saturation is as-
+                                                                                     sumed for the round-rotor synchronous machines, while for the
+suitable for the power systems electro-magnetic transient pro-                       salient-pole machines, the saturation is represented along and
+grams (EMTP) [18]. EMTP-like programs are extensively used                              axes separately.
+in industry and academia as powerful and standard transient                             As an alternative to conventional         model, the so-called
+simulation tools. Therein, the so-called general-purpose models                      phase-domain (PD) models were also proposed for simulations
+of electrical machines are based on the classical       reference                    of electromagnetic transients [12], [26]–[28]. However, the
+frame theory [19] and are readily available as built-in library                      complexity of representing magnetic saturation using PD for-
+components.                                                                          mulation is much higher than that of the classical        models.
+   For the salient-pole synchronous machines, the existence                          The voltage-behind-reactance (VBR) machine models have
+of anisotropic rotor structure causes difficulties for the deter-                    been proposed recently for state-variable-based simulation
+mination of the -axis saturation characteristic and generally                        languages [29], [30] and EMTP-type programs [31]–[33] as
+complicates the modeling. Consequently, depending on the                             a computationally efficient alternative to the PD models. As
+required accuracy and acceptable model complexity, in typical                        has been documented in a number of recent publications, the
+                                                                                     VBR model formulation achieves many advantageous proper-
+   Manuscript received September 06, 2010; revised September 23, 2010; ac-           ties such as direct model interface with the external network,
+cepted January 04, 2011. Date of publication February 24, 2011; date of cur-         significantly improved numerical efficiency and accuracy. The
+rent version October 21, 2011. This work was supported in part by the Nat-
+ural Science and Engineering Research Council (NSERC) of Canada under the
+                                                                                     interested reader will find detailed analysis and comparisons of
+Discovery Grant, and in part by the Power Engineering Grant-In-Aid from BC              , PD, and VBR models in [29]–[33] which is not repeated
+Hydro and Powertech Labs, Inc. Paper no. TPWRS-00713-2010.                           here due to limited space.
+   L. Wang is with ABB Sweden Corporate Research, SE-721 78 Västerås,
+Sweden (e-mail: liwei.wang@se.abb.com).
+                                                                                        A VBR synchronous machine model that includes the -axis
+   J. Jatskevich is with the Department of Electrical and Computer Engineering,      saturation was implemented in [34] using state-space modeling
+University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail:               approach. A high-order VBR synchronous machine model for
+jurij@ece.ubc.ca).                                                                   representing arbitrary rotor network and saturation effects was
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       proposed in [35]. The VBR induction machine model that in-
+   Digital Object Identifier 10.1109/TPWRS.2011.2107755                              cludes main flux saturation was recently implemented for the
+                                                                  0885-8950/$26.00 © 2011 IEEE
+2356                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 26, NO. 4, NOVEMBER 2011
+
+
+
+EMTP-type solution [36]. This paper extends the previous work        flux vector   and the magnetizing current       of the equivalent
+on VBR model formulation [31] and representation of magnetic         isotropic machine are defined as [10], [11]
+saturation [36] to provide a new saturable VBR salient-pole
+synchronous machine model for the EMTP-type programs. The
+overall contributions of this paper can be summarized as fol-
+lows.                                                                                                                              (2)
+  • We present VBR model of a salient-pole synchronous ma-
+     chine that includes saturation of the main flux path using
+                                                                                                                                   (3)
+     the saliency factor approach. The new VBR model accu-
+     rately represents the axes cross saturation in steady state
+                                                                     A similar approach has also been used in [24] for salient-pole
+     and transients.
+                                                                     synchronous machines in EMTP, where the equivalent magne-
+  • We utilize a piecewise-linear representation of the non-
+     linear saturation characteristic, which makes the proposed      tizing flux     was expressed by                         instead
+     model very efficient for the discretized EMTP solution.         of (2). This suggests that the SF approach was not correctly im-
+     The proposed model allows an arbitrary number of piece-         plemented in [24], as it was pointed out in [10].
+     wise-linear segments to approximate a smooth saturation
+     characteristic with desirable accuracy.                         B. Piecewise Linear Method
+  • We provide extensive studies comparing the proposed sat-
+     urable VBR model and several established models to verify          Numerous methods were proposed to integrate magnetic
+     that the new model accurately accounts for the -axis            saturation into the       machine models. For example, in the
+     cross saturation in steady state and transients. We also show   case of the state-variable-based models, the flux correction
+     that numerical accuracy of the new model is well preserved      methods [5], [19], and the generalized flux space vector ap-
+     even for large time steps, which represents an advantage        proaches [9]–[11] are often used to integrate the saturation into
+     over commonly used existing EMTP models.                        machine’s state-space equations. However, in EMTP software
+                                                                     packages [20]–[23], the machine equations have to be dis-
+                                                                     cretized for interfacing with the nodal equations of the external
+ II. SYNCHRONOUS-MACHINE SATURATION REPRESENTATION                   circuit-network, which generally assumes a linear circuit within
+                                                                     a given time-step      in order to achieve a non-iterative network
+   Without loss of generality, a three-phase salient-pole syn-       solution [18]. For this purpose, the piecewise linear methods
+chronous machine with one field winding, , and one damper            of representing the nonlinear elements are widely used and
+winding      in the -axis, and two damper windings kq1 and           preferred for computational efficiency.
+kq2 in the -axis, is considered in this paper. The round-rotor          Thus, it is assumed that the -axis magnetic saturation charac-
+machines can be obtained as a special case with equal magne-         teristic is represented by a nonlinear monotonic saturation func-
+tizing inductances in and axes. It is assumed that the reader        tion . Based on the SF approach, the main-flux magnetic sat-
+is familiar with all relevant equations describing voltages, flux    uration characteristic of an equivalent isotropic machine may
+linkages, and torque for the magnetically-linear       and VBR       also be represented by the -axis characteristic as follows:
+models which can be found in [19] and [31].
+                                                                                                                                   (4)
+A. Saliency Factor Approach
+                                                                     Furthermore, calculating the partial derivative of (4) with re-
+   For the purpose of this paper, we assume the saliency factor      spect to magnetizing current , the so-called dynamic or in-
+(SF) approach [10], [11]. The -axis saturation characteristic        cremental inductance is obtained as
+is typically considered readily available as it can be measured
+using an open-circuit test [16]. However, the saturation char-                                                                     (5)
+acteristic along the -axis is generally not measurable through
+simple experiments, and instead it is approximated. The ap-          For the EMTP solution, this partial differentiation is then ap-
+proach makes use of such indirect approximation. In particular,      proximated within a given integration time step     as
+the saliency factor    is defined as
+                                                                                                                                   (6)
+                                                              (1)
+                                                                     Approximation of the nonlinear characteristic in (5) by (6) is
+where        ,      ,       , and         are the unsaturated and    also shown in Fig. 1, and it assumes a very small range       .
+saturated    axes magnetizing inductances, respectively.             Therefore, the nonlinear saturation function (4) may be repre-
+   Furthermore, it is assumed that the saliency factor         re-   sented within a time step     by the following linear relation-
+mains constant at all saturation levels. This commonly-used as-      ship:
+sumption allows the anisotropic salient-pole machine to be con-
+verted into an equivalent isotropic machine. Thereby, the main                                                                     (7)
+WANG AND JATSKEVICH: MAGNETICALLY-SATURABLE VOLTAGE-BEHIND-REACTANCE SYNCHRONOUS MACHINE MODEL                                                   2357
+
+
+
+                                                                                                                                                (13)
+
+                                                                                  Based on the model given in [29], the rotor currents are solved
+                                                                                  from the rotor flux linkage equations (see [29, (23) and (24)])
+                                                                                  and substituting them into (12) and (13), the         axes magne-
+                                                                                  tizing flux linkages (12) and (13) are expressed in terms of stator
+                                                                                  currents and rotor flux linkages as
+
+                                                                                                                                                (14)
+
+                                                                                                                                                (15)
+Fig. 1. Piecewise linear representation of magnetic saturation.
+                                                                                  where
+
+                                                                                                                                                (16)
+
+                                                                                                                                                (17)
+
+                                                                                  Therefore, the stator flux linkages can be reformulated by sub-
+                                                                                  stituting (14) and (15) into the stator flux linkage equations (see
+                                                                                  [29, (21) and (22)]), respectively, which gives
+                                                                                                                                                (18)
+                                                                                                                                                (19)
+                                                                                  where
+Fig. 2. Projections of the magnetizing and residual fluxes onto qd axes.
+                                                                                                                                                (20)
+                                                                                                                                                (21)
+where         is the residual flux, and      is the local slope, the
+                                                                                  and
+incremental inductance, as defined by (6).
+   As the machine equations are expressed in           coordinates,
+the linear relationship (7) is projected into the axes as shown                                                                                 (22)
+in Fig. 2. Thus, according to Fig. 2, the projections of the main
+magnetizing flux is found as                                                                                                                    (23)
+
+                                                                            (8)   Solving the rotor flux linkage equations (see [29, (23) and (24)])
+                                                                                  for rotor currents and substituting them into the rotor voltage
+                                                                            (9)
+                                                                                  equation (see [29, (20)]), the rotor state-space equations are
+                                                                                  therefore formulated as
+where residual fluxes are also found as
+                                                                                                                                                (24)
+                                                                           (10)
+                                                                           (11)                                                                 (25)
+
+Here, the angle takes into account the position of the main flux                  Substituting (18) and (19) into the stator voltage equations (see
+within the rotor reference frame,   coordinates.                                  [29, (17) and (18)]), respectively, the stator voltage equations
+                                                                                  can be rewritten as
+    III. SATURABLE VOLTAGE-BEHIND-REACTANCE MODEL
+                                                                                                                                                (26)
+   The saturable VBR synchronous machine model is derived
+                                                                                                                                                (27)
+based on the       model given in [29] (see [29, (17)–(26)]) and
+the piecewise linear representation of the saturation described                   The terms       in (26) is calculated by taking t

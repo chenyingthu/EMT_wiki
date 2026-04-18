@@ -1,0 +1,191 @@
+                                                                  Electric Power Systems Research 98 (2013) 19–28
+
+
+
+                                                           Contents lists available at SciVerse ScienceDirect
+
+
+                                                      Electric Power Systems Research
+                                                   journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Fast and efﬁcient calculation of lightning-induced voltages in
+frequency-dependent transmission lines over lossy ground
+Sina Mashayekhi a,1 , Behzad Kordi b,∗
+a
+    Department of Electrical and Computer Engineering, University of British Columbia, Vancouver, BC, Canada V6T 1Z4
+b
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB, Canada R3T 5V6
+
+
+
+
+a r t i c l e           i n f o                           a b s t r a c t
+
+Article history:                                          This paper presents a fast and efﬁcient algorithm for the calculation of electromagnetic ﬁelds radi-
+Received 24 February 2012                                 ated from lightning return-stroke channel as well as lightning-induced voltages in frequency-dependent
+Received in revised form 4 January 2013                   transmission lines. The algorithm developed in this paper employs a mixed time-frequency macro-model
+Accepted 9 January 2013
+                                                          that is based on tracing the poles and residues of the transfer function of the lightning-transmission-line
+Available online 13 February 2013
+                                                          system. Accurate and fast calculation of electromagnetic ﬁeld data along the excited transmission line is
+                                                          critical to obtain the source terms (or forcing functions) in ﬁeld-to-transmission-line coupling equations.
+Keywords:
+                                                          Using the proposed method, we are able to obtain a closed form solution for the lumped sources required
+Multiconductor transmission line
+Lightning
+                                                          for the analysis of a two-conductor transmission line exposed to nonuniform electromagnetic ﬁelds. The
+Macro-model                                               algorithm provides high accuracy as well as signiﬁcant speed gain for multiconductor transmission lines
+Overvoltage                                               (MTL) as well. To demonstrate the application of the proposed method, we will compare our results with
+Power system simulation                                   those obtained using other methods or measurements.
+                                                                                                                              © 2013 Elsevier B.V. All rights reserved.
+
+
+
+1. Introduction                                                                             inherent features of distributed models, such as those based on the
+                                                                                            FDTD method [8–16], is the capability of determining the response
+    Lightning-induced voltages on overhead transmission lines                               of the line to external exciting ﬁelds. However, these models are
+have been the subject of many theoretical and experimental inves-                           time consuming and need massive memory space which decreases
+tigations. Incorporation of accurate and efﬁcient calculation of                            the efﬁciency of the calculations. A distributed-model procedure
+over-voltages induced by indirect lightning strikes in power sys-                           for the calculation of lightning-induced voltages on transmission
+tem networks is important in electromagnetic transient (EMT) type                           lines has been implemented as a computer code known as LIOV
+simulators. A fundamental difﬁculty arises in integrating trans-                            (lightning induced over voltage) [17] where an extension of the
+mission line simulation into an EMT-type simulator. The reason                              Agrawal model [8] for the case of lossy ground has been employed.
+is that network nonlinearities and time-dependant components                                Improvements to this approach [18], incorporation within EMT-
+require a time-domain analysis whereas transmission line charac-                            type simulators [19], and consideration of the distribution network
+teristics such as conductor loss and dispersion are best described in                       topology and terminations [20] have been presented in the litera-
+the frequency domain. The issue of mixed time-frequency domain                              ture.
+modeling of lossy coupled multiconductor transmission lines has                                 For a terminal-based model, the problem of incident plane-wave
+been studied in both power systems and electronics communities                              electromagnetic ﬁeld coupling to MTL has already been addressed
+for many years.                                                                             in the literature, for example, in [21–29]. However, there are few
+    There are several models available to analyze transmission lines                        papers that consider the case of non-uniform electromagnetic ﬁelds
+which can be categorized into terminal-based models and dis-                                such as [30], where a hybrid FDTD and similarity transformation
+tributed ones. Terminal-based models [1–7], have access only to the                         technique are used to calculate the additional voltage sources due
+information of the transmission line’s terminals. These models are                          to excitation of lossless transmission line.
+not inherently capable of calculating external-ﬁeld coupling, such                              In this paper, a fast and efﬁcient macro-model is presented
+as those induced by indirect lightning strikes, whereas one of the                          for the calculation of induced voltages by external nonuni-
+                                                                                            form electromagnetic ﬁelds in frequency-dependent transmission
+                                                                                            lines. Radiated electromagnetic ﬁelds from indirect lightning
+    ∗ Corresponding author. Tel.: +1 204 474 7851; fax: +1 204 261 4639.
+                                                                                            strikes that are signiﬁcant sources of high power electromag-
+   E-mail addresses: Sina@ece.ubc.ca (S. Mashayekhi),
+                                                                                            netic radiation in power systems analysis, are studied in this
+Behzad Kordi@UManitoba.CA (B. Kordi).                                                       work as the source of nonuniform excitation of the transmission
+ 1
+   Tel.: +1 778 320 5555.                                                                   lines.
+
+0378-7796/$ – see front matter © 2013 Elsevier B.V. All rights reserved.
+http://dx.doi.org/10.1016/j.epsr.2013.01.002
+20                                                     S. Mashayekhi, B. Kordi / Electric Power Systems Research 98 (2013) 19–28
+
+
+                                                                                             ﬁeld, respectively. The lightning external excitation of the trans-
+2. Problem statement
+                                                                                             mission line is represented by distributed voltage and current
+                                                                                             sources in transmission line circuit model. The effect of these
+   The Telegrapher’s equations for a transmission line in the pres-
+                                                                                             sources can be lumped at the terminals of the transmission line
+ence of external electromagnetic radiation, such as those radiated
+                                                                                             by using two lumped voltage and current sources, as shown in
+by the lightning return-stroke channel (RSC) as shown in Fig. 1a,
+                                                                                             Fig. 1b. The advantage of using lumped sources at the terminal is
+are written in the frequency-domain as [10]
+                                                                                             that the transmission line can be treated as an unexcited trans-
+dV (z)                                                                                       mission line (i.e., zero right-hand side in (1)), and employ any of
+       + ZI(z) = VE (z)
+ dz                                                                                          several already-developed models that are available for the analy-
+                                                                                   (1)
+dI(z)                                                                                        sis of frequency-dependent transmission lines. With transmission
+      + YV (z) = IE (z)                                                                      lines as an integrated part of a large network, that includes other
+ dz
+                                                                                             components and protection devices, fast and efﬁcient calculation
+where in the general case of a lossy frequency-dependent trans-
+                                                                                             of the lumped sources becomes an important issue. Besides, by
+mission line, Z and Y are the per-unit-length impedance and
+                                                                                             using the approach presented in this paper, we are able to incorpo-
+admittance, respectively. In (1), VE and IE are distributed sources
+                                                                                             rate frequency-domain techniques for the calculation of lightning
+that represent external excitation of the transmission line and are
+                                                                                             electromagnetic (EM) ﬁelds in time-domain circuit/power system
+determined using a proper coupling model. There are a few alter-
+                                                                                             simulators. The lumped sources, which replace the distributed
+natively equivalent, commonly used coupling models developed by
+                                                                                             sources, are given by [10]
+Taylor et al. [31], Agrawal et al. [8], and Rachidi [32]. In this paper,
+without the loss of generality, we are using the extended version
+of the formulation developed by Taylor, Satterwhite, and Harrison.                                        L
+In this model, the distributed excitation sources are described in                           VFT (L) =             ϕ11 (z)[Ezinc (h, z) − Ezinc (0, z)]dz
+terms of the vertical and horizontal component of the incident elec-                                       0
+tric ﬁeld. For a two-conductor transmission line, shown in Fig. 1a,                                           h                                    h
+we have [10]                                                                                             +              Exinc (x, 0)dx − ϕ11 (L)         Exinc (x, L)dx   (3)
+                                                 h                                                                0                                0
+                                           ∂
+VE (z) = [Ezinc (h, z) − Ezinc (0, z)] −              Exinc (x, z)dx
+                                           ∂z
+               h
+                                                 0
+                                                                                   (2)                      L
+IE (z) = −Y         Exinc (x, z)dx                                                           IFT (L) = −               ϕ21 (z)[Ezinc (h, z) − Ezinc (0, z)]dz
+                                                                                                               0
+               0
+                                                                                                                           h
+where h is the height of the line, and Ezinc (x, z) and Exinc (x, z) are
+                                                                                                         + ϕ21 (L)              Exinc (x, L)dx                            (4)
+the horizontal and vertical components of the incident electric                                                             0
+
+
+
+
+Fig. 1. (a) A two-conductor transmission line excited by lightning RSC EM ﬁelds and (b) equivalent circuit representation with controlled sources located at the terminal of
+unexcited line.
+                                                 S. Mashayekhi, B. Kordi / Electric Power Systems Research 98 (2013) 19–28                                                                       21
+
+
+                                                                                       input and output of this box are the channel base current and radi-
+                                                                                       ated electromagnetic (EM) ﬁelds around the channel, respectively.
+                                                                                       Fig. 2a shows the EM ﬁeld macro-model with its input and output,
+                                                                                       and Fig. 2b shows the equivalent block diagram representation of
+                                                                                       the macro-model.
+                                                                                           The idea of the electromagnetic ﬁeld macro-model is to obtain
+                                                                                       electromagnetic ﬁeld at an arbitrary point in the space around the
+                                                                                       radiation source by using the already-known values of the elec-
+                                                                                       tromagnetic ﬁeld at other points in the space. Lets assume we are
+                                                                                       interested in determination of horizontal electric ﬁeld and suppose
+                                                                                       we have the ﬁeld data already calculated at N points at the height
+                                                                                       of h above a lossy ground with a conductivity of  g , as shown in Fig.
+                                                                                       3.
+                                                                                           The required ﬁeld information for those N points can be cal-
+                                                                                       culated using different methods. In this paper, we are using
+                                                                                       engineering models combined with Cooray–Rubinestein formula-
+                                                                                       tion [33,34], as well as the Numerical Electromagnetic Code (NEC)
+                                                                                       [35].
+                                                                                           In Cooray–Rubinestein formula, the horizontal electric ﬁeld over
+                                                                                       a ground with the conductivity of  g and at height x, Er , is rep-
+                                                                                       resented by the horizontal electric ﬁeld at the same height over
+                                                                                       a perfect ground, Erp , and azimuthal magnetic ﬁeld on a perfect
+                                                                                       ground Hrp , as
+                                                                                                                                                                         c0
+Fig. 2. (a) The ﬁeld macro-model of lightning RSC. Channel base current as input       Er (r, x, jω) = Erp (r, x, jω) − Hϕp (r, 0, jω)                                                         (6)
+and radiated electromagnetic ﬁelds as its output and (b) equivalent block diagram                                                                             εrg + (g /jωε0 )
+representation of (a).
+                                                                                       where Erp and Hϕp in the time domain, can be obtained by [36]
+
+where L is the length of the line and ϕ11 (L) and ϕ21 (L) are the                                                  H                         t                               
+elements of chain parameter matrix given by [10],                                                         1                3r(x − x )                                       R              
+                                                                                       Erp (r, x, t) =                                                i x , −                       d dx
+                                                                                                         4 ε0           −H
+                                                                                                                              R5                                             c
+ϕ11 (L) = cosh(L)                                                                                                                             0
+
+                                                                             (5)
+                                                                                                              H                                         
+              1                                                                                                       3r(x − x )                     R              
+ϕ21 (L) = −      sinh(L).                                                                               +                          i x , t −                  dx
+              ZC                                                                                              −H
+                                                                                                                         cR4                          c
+In (5),  is the propagation constant and ZC is characteristic                                                H                                                         
+                                                                                                                 r(x − x ) ∂i(x , t − (R/c)) 
+impedance of the transmission line.                                                                      −                                    dx                                                (7)
+    According to (3) and (4), for obt

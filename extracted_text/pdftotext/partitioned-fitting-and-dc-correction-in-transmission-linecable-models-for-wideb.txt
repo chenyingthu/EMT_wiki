@@ -1,0 +1,197 @@
+                                                           Electric Power Systems Research 189 (2020) 106809
+
+
+                                                               Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                        journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Partitioned ﬁtting and DC correction in transmission line/cable models for                                                                             T
+wideband EMT studies
+                              ⁎
+Miguel Cervantesa, , Ilhan Kocara, Jean Mahseredjiana, Abner Ramirezb
+a
+    Polytechnique Montreal, Montréal, Québec, Canada
+b
+    CINVESTAV Campus Guadalajara, Guadalajara, Mexico
+
+
+
+
+A B S T R A C T
+
+This paper extends the applications of and provides further insights about partitioned ﬁtting procedure. At the ﬁrst stage of this procedure, the ﬁtting is performed at
+a high frequency band by excluding frequency samples close to DC. The second stage ﬁnds a correction term for those excluded samples. This procedure achieves
+improved accuracy for the demonstrated case of transmission lines and cables used for HVDC transmission. The new approach complements the prevailing Universal
+Line Model (ULM) by reducing numerical instabilities due to large residue/pole ratios while delivering accurate DC response. This paper provides also time-domain
+implementation details of the state space realization obtained with partitioned ﬁtting. The numerical stability performance of the improved ﬁtting approach is
+demonstrated, through a set of test cases by applying diﬀerent integration and interpolation schemes.
+
+
+
+
+1. Introduction                                                                       numerical problems due to large residue/pole ratios. In FDCM, the large
+                                                                                      ratios are avoided by decomposing the propagation function H into
+    The transient analysis of DC transmission lines has become of spe-                grouped modal contributions. The modal contribution groups are
+cial interest with the increasing number of planned and installed HVDC                smooth functions of frequency and are ﬁtted in phase domain. How-
+systems [1-4]. The transmission line models for the simulation of such                ever, it is not always possible to apply this approach to aerial lines, due
+systems require covering a wide range of frequencies including those                  to the particular characteristics of eigenvalues; therefore, the problem
+very close to DC.                                                                     of poor ﬁtting at low frequencies is even more emphasized.
+    This paper is based on the usage of the universal line model (ULM)                    The ﬁtting procedure of ULM can be modiﬁed [8] by forcing the
+[5] approach with the implementation details provided in [6] in the                   exact DC response of H in the rational approximation. However, this
+modeling and simulation of HVDC lines. Numerical implementation of                    modiﬁcation requires an additional optimization step of residues to
+ULM in EMT-type programs relies on representing line functions, i.e.,                 reduce the acquired high-frequency errors.
+propagation function (H) and characteristic admittance (Yc) by rational                   The method presented in [9], maintains a low frequency re-
+function approximations, i.e., partial fractions, which are provided by               presentation of the line model by using an additional low-order ﬁtting
+existing curve ﬁtting techniques [7]. One practice to capture the DC                  function that compensates ﬁtting errors at low frequencies. However,
+response in the ULM is to specify a very low frequency for ﬁtting H and               this approach still requires a large frequency ﬁtting range and may
+Yc. However, this approach often leads to incorrect solutions for the DC              cause large residue/pole ratios that can produce numerical instabilities
+steady-state voltages and currents due to generally poor DC ﬁtting [8-                in time domain computations.
+9]. Moreover, it is prone to generate pairs of large residue/pole ratios                  The idea of using a two-stage ﬁtting method was brieﬂy proposed in
+with opposing signs from diﬀerent modal groups in the ﬁtting of H,                    the form of a letter publication in [10]. The objective was to improve
+which may cause numerical stability problems in time domain simu-                     the ﬁtting of FDCM by performing an additional step of ﬁtting for low
+lations [9-12]. Adapting more accurate integration techniques and a                   frequency samples. The ﬁrst stage performs ﬁtting by excluding very
+two-segment interpolation scheme, as proposed in [11], reduces in-                    low (close to DC) frequency samples. The second stage ﬁnds a correc-
+tegration errors and helps maintaining numerical stability in time do-                tion function for the initially excluded samples close to DC. This ap-
+main in most cases. However, the large residue/pole ratios in the ﬁtting              proach helps also avoiding large residue/pole ratios occurring in the
+of H are not removed. The frequency dependent cable model (FDCM),                     classic ULM approach. The approach in [10] was named Frequency
+presented in [12], proposes a new method for correcting cases with                    Dependent Model with DC correction (FDM/DC).
+
+
+
+    ⁎
+   Corresponding author.
+   E-mail addresses: miguel.cervantes-martinez@polymtl.ca (M. Cervantes), ilhan.kocar@polymtl.ca (I. Kocar), jean.mahseredjian@polymtl.ca (J. Mahseredjian),
+abner.ramirez@cinvestav.mx (A. Ramirez).
+
+https://doi.org/10.1016/j.epsr.2020.106809
+Received 28 February 2020; Received in revised form 27 June 2020; Accepted 5 August 2020
+Available online 12 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+M. Cervantes, et al.                                                                                             Electric Power Systems Research 189 (2020) 106809
+
+
+    This paper provides further details on the ﬁtting process of FDM/DC                      Ny
+                                                                                                   Gi
+model. Additional test cases are studied to evaluate the performance of          Yc ≅ G0 + ∑             ,
+                                                                                             i=1
+                                                                                                 s −  qi                                                      (6)
+the ﬁtting. The time-domain implementation is fully revealed. Finally,
+numerical stability performances of FDM/DC and ULM techniques are                where Ny is the order of approximation, qi represents the ith ﬁtting pole,
+studied by applying diﬀerent integration and interpolation schemes via           Gi is the corresponding matrix of residues, and G0 is a constant matrix
+a new test case. The summary of the paper is as follows. In Section 2,           representing the limit of Yc when s → ∞.
+the paper presents the theory of line/cable modeling using distributed
+parameters and the main equations for ULM and FDCM models. The                   2.3. Frequency-dependent cable model (FDCM)
+previously proposed FDM/DC approach is reviewed in Section 3.
+Section 4 presents a generic formulation to express the discrete form of             Although the ULM is applicable for most line/cable conﬁgurations,
+time domain convolutions to implement the proposed model. The im-                it generates unstable models in some cases [12]. The origin of the
+pact of improving the ﬁtting of H at low frequencies in time-domain              problem relies on the ﬁtting of H and can be explained as follows.
+simulations is analyzed via transient studies performed with diﬀerent            Eq. (5) contains multiples delay groups and it is solved using least
+integration and interpolation techniques in Section 5. Finally, conclu-          squares method. The only criterion is the minimization of the diﬀerence
+sions are presented in Section 6.                                                between the ﬁtted and the actual responses. Even though H can be
+                                                                                 accurately ﬁtted by combining the multiple delay groups, the rational
+2. Review of line/cable modeling                                                 approximation of separate delay groups does not necessarily match the
+                                                                                 actual modal contributions. Consequently, the solution of Eq. (5) may
+2.1. Main equations in frequency domain                                          result with delay groups having high residue/pole ratios. This may lead
+                                                                                 to numerically unstable models in the time domain solution.
+    A power line/cable system of length L and formed by N conductors                 Idempotent models also perform ﬁtting through modal decomposi-
+is presented in Fig. 1. Based on the current directions in Fig. 1, the           tion, but the non-smooth behavior associated with similar eigenvalues
+frequency domain voltages and currents at both ends can be related               has been overlooked. Moreover, those models divide modal contribu-
+using                                                                            tions into eigenvalues and idempotent matrices which can reduce the
+                                                                                 eﬃciency of models due to cascaded convolutions in time domain.
+Ik = Yc Vk − H (Im + Yc Vm) = Ishk − Iki ,                             (1)           The objective of the FDCM [12] is to properly account for modal
+Im = Yc Vm − H (Ik + Yc Vk) = Ishm − Imi ,                                       contributions in the ﬁtting of H. In FDCM, similar eigenvalues of H and
+                                                                       (2)
+                                                                                 their corresponding eigenvectors are grouped by summing them, and a
+where Ik and Im are the vectors of injected currents; Vk and Vm cor-             single time delay is assigned to every group. The modal contribution
+respond to nodal voltage vectors. H and Yc are deﬁned by:                        groups are smooth functions of frequency. Hence, the propagation
+                                                                                 function matrix becomes
+H = e−ΓL,                                                              (3)
+                                                                                      Ngr
+Yc = Γ Z−1,                                                            (4)            ^ e−sτi ,
+                                                                                 H ≅ ∑Hi
+                                                                                      i=1                                                                     (7)
+where Γ = YZ , with Z and Y corresponding to the per unit length
+series impedance and shunt admittance matrices, respectively. Both Z             where Ngr is the number of modal contribution groups. The ﬁtting of the
+and Y can be numerically obtained from the geometry and the electrical           propagation function is performed on each modal contribution group to
+parameters of the line.                                                          obtain poles and residues simultaneously, and consequently, the high
+                                                                                 residue/pole ratios appearing in the ULM are eliminated. A common set
+                                                                                                           ^ and the exponential time delay τ factor is
+                                                                                 of poles is used for each H
+2.2. Universal line model                                                                                   i                                 i
+                                                                                 removed prior to ﬁtting to give
+    In the ULM, H is ﬁrst diagonalized via modal decomposition [5].                    Mi
+                                                                                 ^ ≈          R i, m
+Then, poles and delays are identiﬁed by ﬁtting each mode. Modal de-              Hi  ∑                .
+                                                                                            s − pi, m                                                         (8)
+lays have close values and are grouped [13]. Once the poles and delays                m=1
+
+are known, the matrix of residues is obtained by solving an over-
+determined problem [5]. Thus, the propagation function H is approxi-             3. FDM/DC approach
+mated in the following state space form:
+      N
+      gr   i M                                                                       To increase the precision in the ﬁtting of H at frequencies close to
+         ⎛     R i, m (−sτi) ⎞
+H ≅ ∑ ⎜∑                e    ⎟,                                                  DC, a two-stage ﬁtting method is proposed in [10], which is named
+    i=1 ⎝m=1
+             s −  pi, m                                                (5)
+                             ⎠                                                   FDM/DC. In this approach, the frequency band is partitioned to relax
+where Ngr is the number of modal propagation groups, Mi is the order of          ﬁtting, and a correction term is found afterward. It has been reported in
+the approximation for the ith modal group, pi, m represents its mth pole,        [14-16] that partitioning the frequency band improves ﬁtting precision.
+Ri, m corresponds to the matrix of residues and τi is the time delay as-         In this section, this paper reviews the ﬁtting technique presented in
+sociated with the velocity of the ith modal group.                               [10] and provides additional details to clarify the ﬁnal step of the ﬁtting
+    The characteristic admittance Yc is approximated directly in phase           procedure of H.
+domain by:                                                                           In the FDM/DC [10], the propagation function H is ﬁtted (see Fig. 2)
+                                                                                 using the following steps.
+                                                                                     In the ﬁrst step the frequency range is divided into low frequency
+                                                                                 (LF) and high frequency (HF) sections (ranges). Typically, the LF sec-
+                                                                                 tion is between 0.001 Hz to 1 Hz and the HF section is between 1 Hz to
+                                                                                 1 MHz. However, the frequency range can be extended to higher fre-
+                                                                                 quencies covering a frequency range supported by line/cable constant
+                                                                                 routines. Therefore, the proposed approach can be applicable for any
+                                                                                 transient study.
+                                                                                     In the second step, the ﬁtting in HF section is performed to obtain
+              Fig. 1. Multiconductor line/cable segment of length L.             H̃HF (poles and residues). The rational approximation can be obtained
+
+                                                                             2
+M. Cervantes, et al.                                                                                                                 Electric Power Systems Research 189 (2020) 106809
+
+
+                                                                                        is adopted to evaluate the convolutions with H in two steps as function
+                                                                                        of the delay. In the proposed method, the discretization of the time-
+                                                                                        domain convolutions is obtained by assuming that the input is piece-
+                                                                                        wise linear [17]. First, we describe discrete convolution for terms in-
+                                                                                        volving the characteristic admittance, as given in [11]. Then, the dis-
+                                                                                        crete convolution for terms involving the propagation function, as
+                                                                                        proposed in [5], and [11] using two-step interpolation scheme, are
+                                                                                        outlined.
+
+                                                                                        4.1. Discrete convolution of terms involving the characteristic admittance
+
+    Fig. 2. Illustration of the FDM/DC approach for one entry of H, i.e. H.                Considering terminal kof the cable system in Fig. 1, the rational
+                                                                                        representation of the product YcVk in (1) is given by
+by using either the FDCM or ULM approach, to give                                                            Ny
+                                                                                                                                       1
+         Ngr
+                                                                                        Ishk = G0 Vk + ∑ Gi Wi, Wi =                        Vk .
+              i    M
+                   R i, m                                                                                                            s − qi                                      (15)
+˜ HF ≅ ∑ ⎛ ∑
+H
+                                           ⎞
+                               e (−sHF τi) ⎟,
+                                                                                                             i=1
+           ⎜    s   −    p
+       i=1 ⎝m=1  HF       i, m             ⎠                                  (9)            The corresponding discrete time-domain solution is given by [17]
+where sHF = jωHF .                                                                      wi (t + Δt ) = αi wi (t ) + λi vk (t + Δt ) + μi vk (t )                                 (16)
+   The third step evaluates the ﬁtted function H̃HF for the LF range.
+                                                                                        where Δt is the integration step, and αi, λi, and μi are the integration
+The resulting function error ΔHLF is given by
+                                                                                        constants given in the Appendix. A change of variables is applied to
+             ˜ HF (sLF ) = HLF − H
+ΔHLF = HLF − H                   ˜ LF ,                                   (10)          reduce the number of arithmetic operations:
+where sLF = jωLF ; HLF and H̃LF are respecti

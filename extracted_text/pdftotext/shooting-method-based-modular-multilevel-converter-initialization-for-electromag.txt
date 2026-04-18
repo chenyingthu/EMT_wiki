@@ -1,0 +1,183 @@
+                                                               Electrical Power and Energy Systems 161 (2024) 110163
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                             International Journal of Electrical Power and Energy Systems
+                                                             journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Shooting method based modular multilevel converter initialization for
+electromagnetic transient analysis
+D. del Giudice a ,∗, F. Bizzarri a,b , D. Linaro a , A. Brambilla a
+a
+    Dipartimento di Elettronica, Informazione e Bioingegneria, Politecnico di Milano, p.za Leonardo da Vinci, 32, I20133, Milano, Italy
+b
+    Advanced Research Center on Electronic Systems ‘‘E. De Castro’’ (ARCES), University of Bologna, Italy
+
+
+
+ARTICLE                  INFO                                ABSTRACT
+
+Keywords:                                                    This paper presents an accurate and efficient initialization strategy for modular multilevel converters (MMCs)
+Modular multilevel converter                                 based on the shooting method, a numerical technique aimed at deriving the periodic steady-state operating
+Initialization                                               condition of any circuit. This technique is compatible with MMC models of different levels of detail and whose
+Steady-state
+                                                             control scheme may include modulation strategies and capacitor voltage balancing algorithms. Electromagnetic
+Shooting method
+                                                             transient simulations of the NORDIC32 power system modified by adding a high-voltage direct current link with
+Thévenin equivalent model
+Average model
+                                                             128-level MMCs prove that the proposed initialization strategy allows starting simulations close to steady-state,
+Electromagnetic transient simulation                         thereby significantly limiting initialization transients and their corresponding extra CPU time.
+
+
+
+1. Introduction                                                                                    • The user should wait some time for the extinction of initialization
+                                                                                                     transients (needed for all the variables of the system – MMCs included
+    The modular multilevel converter (MMC) has become a very pop-                                    – to reach steady-state operation) before applying changes (e.g., dis-
+ular technology for high-voltage direct current (HVDC) systems. The                                  turbances or faults), otherwise unwanted transients and inaccurate
+key feature of the MMC is its modularity, as each of its arms includes                               results could be observed.
+a large stack of identical submodules (SMs). On the one hand, this                                 • Wrong initialization (or lack thereof) may even prevent the correct
+trait grants several advantages (including easy scalability to high volt-                            start of MMC-based grid simulations. To address this issue, MMC
+age and power applications [1]), which contributed to the growing                                    start-up sequences [5] (or other expedients like those described in
+deployment of MMCs. On the other hand, the multitude of SMs in                                       Section IV.A of [6] and 4.10 of [7]) can be used. However, this
+the MMC and its advanced control scheme hinder the execution of                                      solution introduces waiting times, too. Indeed, before studying any
+common power systems simulator tasks, such as initialization and                                     event, the user must wait for the start-up sequence to end, and for the
+electromagnetic transient (EMT) simulations [2].                                                     effects it has on grid voltage and frequency to decay. For simplicity,
+    After ad hoc techniques are used to compute the power flow solution                              also these effects are hereafter associated to initialization transients.
+of MMC-based systems [3], the initialization stage derives the internal                                Waiting times translate into additional CPU time needed to perform
+state and algebraic variables of its components so that subsequent                                 the time domain analysis that brings the entire power system to work
+EMT simulations begin from steady-state [4]. Such simulations are                                  at steady-state before the application of a disturbance or fault. This
+fundamental in the MMC design stage to validate converter controls                                 aspect is challenging when simulating MMCs, as they introduce a high
+and components during normal operating conditions and disturbances.                                computational burden (especially if detailed models are used) [8].
+    Although initialization has become a standard practice for tradi-                              Thus, proper initialization techniques are essential to minimize waiting
+tional power system elements (e.g., synchronous generators and their                               times and boost the efficiency of EMT simulations of MMC-based grids.
+regulators), it is still anything but trivial for those interfaced with the                            To the best of our knowledge, the literature on MMC initialization is
+grid through converters, including MMCs. A brute-force approach to                                 limited. The works in [9–11] initialize MMCs but assume that control
+avoid the need for a full-fledged initialization consists in skipping this                         signals are known and given by only the fundamental (synchronous)
+task and start EMT simulations anyway. This ploy, however, has two                                 frequency. However, closed-loop regulation schemes are used in ac-
+drawbacks.                                                                                         tual MMC-based systems, which implies that control signals cannot
+
+
+     ∗ Corresponding author.
+    E-mail addresses: davide.delguidice@polimi.it (D. del Giudice), federico.bizzarri@polimi.it (F. Bizzarri), daniele.linaro@polimi.it (D. Linaro),
+angelo.brambilla@polimi.it (A. Brambilla).
+
+https://doi.org/10.1016/j.ijepes.2024.110163
+Received 27 November 2023; Received in revised form 3 July 2024; Accepted 28 July 2024
+Available online 13 August 2024
+0142-0615/© 2024 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+D. del Giudice et al.                                                                       International Journal of Electrical Power and Energy Systems 161 (2024) 110163
+
+
+be known in advance. Moreover, as in the case of circulating cur-                  2. Modular multilevel converters in a nutshell
+rent suppression strategies, control signals may include harmonics. A
+more sophisticated strategy is proposed in [12]. However, the second               2.1. Topology and control
+harmonic of the circulating current suppression control signals is still
+assumed to be known, and analyses are limited to basic case studies                    Fig. 1 depicts a version of an MMC. It includes three phase-legs,
+involving a single MMC. Lastly, the technique developed in [13] as-                each of which consists of an upper and lower arm. In turn, every
+sumes that arm currents and voltages contain only the DC and the                   arm comprises a reactor (𝑅𝑆 , 𝐿𝑆 ) and a cascading stack of 𝑁 SMs,
+fundamental component.                                                             which can implement different topologies (e.g., the half-bridge one,
+    All these techniques rely on a pen-and-paper approach, in the sense            shown in the dashed section of the figure). The main breaker, which
+that initialization is achieved by manually deriving the equations of              is normally closed, can be opened to protect the MMC from abnormal
+the MMC – controls included – and exploiting them to find a set of                 operating conditions. The bypass breaker, which is normally open, can
+internal variables corresponding to steady-state operation. Other than             be exploited together with the 𝑅start−up resistors to execute MMC start-
+needing oftentimes some simplifying assumptions, as mentioned above,               up sequences (more detail on this is given in Section 5). 𝑅𝑇 and 𝐿𝑇
+this approach is inefficient, as it does not flexibly adapt to variations          correspond to the converter filter, while 𝑅𝐺 and 𝐿𝐺 are used to provide
+in the MMCs under study. Indeed, if changes occur, the above process               the 𝛥-side of the transformer a reference to ground.
+must be repeated from scratch, which requires some effort.                             The MMCs we consider here are regulated with the control scheme
+    To address this issue, we propose an alternative initialization strat-         in Fig. 2, which can manage unbalanced operating conditions [20].
+egy based on the time-domain shooting method (SHM) [14–16]. This                   Hereafter, the 𝑝, 𝑛 superscripts refer to positive and negative sequence,
+algorithm finds values of the state variables of the system that lie on            while the 𝑑, 𝑞 subscripts denote the direct and quadrature axis compo-
+the stable limit cycle constituting the steady-state solution of an initial-       nents of an electrical variable.
+value problem. This problem is cast as a nonlinear boundary-value                      The MMC control scheme consists of the following sections.
+problem solved with the Newton iterative method. The SHM was also
+recently used in [17] to initialize an HVDC grid and perform trajectory            • Section ⃝ 1 converts the three-phase voltages and currents at the
+
+sensitivity analyses, as well as in [18] to analyse the stability of a               MMC point of common coupling (PCC) to direct and quadrature
+small circuit made up of two voltage-source converters. In these works,              components in the positive and negative sequence with direct Park’s
+however, relatively simple converter models were employed. On the                    transforms [21].
+contrary, we adopt it for the first time to initialize two MMCs described          • MMCs can be controlled to fulfil different objectives. For instance,
+by accurate models and used in a modified benchmark power system.                    P/Q and DC-SLACK/Q MMCs are hereafter referred to as converters
+    Contrary to the previously cited initialization strategies [9–13] and            that control reactive power flow and respectively regulate the active
+other generic heuristic-based methods [19], the approach proposed                    power exchange and DC-side voltage to given setpoints. To do so,
+here is purely numerical and directly implemented at the simulator                   the outer power loop in section ⃝           2 is employed, which converts
+
+level. This implies that the SHM can flexibly determine the steady-                  these setpoints into direct and quadrature components of the pos-
+state operating conditions of MMC-based grids without relying on                     itive sequence reference current (𝚤𝑝𝑑 ref , 𝚤𝑝𝑞 ref ). On the contrary, the
+burdensome pen-and-paper computations, regardless of the level of                    homologous negative sequence components (𝚤𝑛𝑑 ref , 𝚤𝑛𝑞 ) are regulated
+                                                                                                                                                ref
+accuracy of the MMC model and its controls. Being purely numerical,                  to zero.
+the SHM also lends itself to the initialization of converters different            • Through inverse Park’s transforms, the inner current loop in section
+from MMCs. Here, however, we focus on the initialization of MMCs                     ⃝3 allows deriving the reference voltages 𝑢𝑎,𝑏,𝑐 needed at the PCC
+
+described by accurate models through the SHM since it has never been                 so that currents 𝚤𝑝𝑑 , 𝚤𝑝𝑞 , 𝚤𝑛𝑑 , and 𝚤𝑛𝑞 in ⃝
+                                                                                                                                   1 track the reference values
+
+addressed before and also because it is more challenging than with                   computed in ⃝.   2
+
+other converters due to their complex topology, control scheme, and                • Contrary to other converters, MMCs also need a scheme to sup-
+high computational burden [13].                                                      press circulating currents in their arms, which are caused by the
+    In this context, the application of the SHM to initialize grids with             inequality among the voltages at the SM strings [22]. This paper
+MMCs presents two main issues. The first issue concerns the implemen-                uses the suppression control scheme of [23] and replicated in Section
+tation of the SHM itself in a simulator, which requires significant coding           ⃝.
+                                                                                      4 In unbalanced operating conditions, circulating currents mainly
+
+effort and access to the simulation software — often precluded to                    include positive, negative, and zero sequence components whose
+the final users in many simulators (e.g., DIGSILENT POWERFACTORY,                    frequency is twice the nominal one. These components are limited by
+EMTP-RV, SIMULINK). For this reason, we implemented the SHM in a                     proportional-resonant (PR) filters that output an additional reference
+proprietary simulator (to which we have full access). The second issue               voltage 𝑒𝑎,𝑏,𝑐 , which is combined with 𝑢𝑎,𝑏,𝑐 and the DC-side voltage
+is related to the fact that, if detailed MMC models are used (i.e., involv-          𝑣dc to obtain the modulation indexes 𝑚𝑢𝑎,𝑏,𝑐 and 𝑚𝑙𝑎,𝑏,𝑐 of the upper and
+ing for instance nearest level control modulation and capacitor voltage              lower MMC arms.
+balancing algorithms), deriving the steady-state operating conditions              • Based on the modulation technique adopted (Section ⃝),         5  these in-
+through the SHM may be difficult or even impossible. This challenging                dexes correspond to a given number of inserted 𝑁𝑖𝑛 and bypassed
+aspect is overcome in this manuscript by resorting to a strategy that                𝑁𝑏𝑦 = 𝑁 − 𝑁𝑖𝑛 SMs. Among the plethora of solutions developed over
+finds a set of state and algebraic variables close to steady-state for               the years [24], we adopt the nearest level control modulation (NLCM)
+MMCs described by detailed models. To do so, we first rely on a simpler              – a technique with low switching frequency and suitable for MMCs
+MMC representation, use it to perform the SHM and then restore the                   with a high number of SMs, such as those considered in this paper.
+original MMC models, initialized by exploiting variables previously                • Lastly, in Section ⃝ 6 a capacitor voltage balancing algorithm (CBA)
+derived with the SHM.                                                                selects the actual SMs that need to be inserted or bypassed (thus
+    The remainder of this paper is structured as follows. Section 2                  determining their gate signals) by ensuring that their capacitors share
+describes the MMC control scheme and models adopted in this paper,                   similar voltages 𝑣𝑐 . In this paper, we adopt the CBA described in
+while Sections 3 and 4 respectively present a SHM primer and how                     Table 1 and hereafter referred to as swap-based [25]. Each time there
+our proposed initialization algorithm can be applied to start simulations            is a level crossing of the NLCM, this strategy concurrently selects
+from steady-state (or close to it) with any MMC model. The proposed                  𝑁𝑠𝑤𝑎𝑝 pairs of SMs in the inserted and bypassed states, as well as an
+method is validated in Section 5 by using an MMC-based benchmark                     additional SM (whose state depends on whether the NLCM requires
+system. Lastly, Section 6 presents a brief discussion of the main results            inserting or bypassing a new SM). Swapping consists in replacing the
+presented in this paper.                                                             gate signals of the 𝑁𝑠𝑤𝑎𝑝 inserted SMs with the lowest voltage to those
+
+                                                                               2
+D. del Giudice et al.                                                                                     International Journal of Electrical Power and Energy Systems 161 (2024) 110163
+
+
+
+
+                                                             Fig. 1. MMC and half-bridge SM topology (dashed box).
+
+
+
+
+                        Fig. 2. MMC control architecture. NF, PI, and PR respectively denote notch, proportional–integral, and proportional-resonant filters.
+
+Table 1                                                                                       needed to perform a transient stability analysis by simplifying the topol-
+Swap-based capacitor voltage balancing algorithm [25].
+                                                                                              ogy of the SM strings or exploiting novel simulation paradigms [24,
+ Action                   𝚤arm > 0                        𝚤arm < 0                            25]. Here we focus on two representations that are instrumental in
+ Insert a new SM          Insert the bypassed SM with     Insert the bypassed SM with         understanding our proposed MMC initialization algorithm, which are
+                          lowest 𝑣c and run swapping      highest 𝑣c and run swapping
+                                                                                              hereafter referred to as the Thévenin equivalent model (TEM) and
+ Bypass a new SM          Bypass the inserted SM with     Bypass the inserted SM with         average value model (AVM).
+                          highest 𝑣c and run swapping     lowest 𝑣c and run swapping
+                                                                                                  The TEM [26] relies on the simplified half-bridge SM representation
+                                                                                              depicted in Fig. 3(a). The valves 𝑆1 -𝐷1 and 𝑆2 -𝐷2 of the half-bridge
+  of 𝑁𝑠𝑤𝑎𝑝 bypassed SMs with the highest voltage (in case of charging                         in Fig. 1 are replaced by two time-varying resistors 𝑅1 and 𝑅2 , whose
+  arm current, opposite otherwise). On the one hand, modifying the                            resistance is either small (∼mΩ, switch closed) or high (∼MΩ, switch
+  gate signals of just one SM at a time (i.e., no swapping is performed)                      open), based on the SM gate signals. The 𝐶sm capacitor in each SM
+  may not guarantee that SM capacitor voltages are well balanced.                             is replaced by a companion model [27] given by a Thévenin equivalent
+  On the other hand, potentially changing all SMs gate signals at                             circuit comprising a resistor 𝑅𝑐eq and a voltage source 𝑣𝑐eq , whose values
+  each threshold crossing of the NLCM would lead to high switching                            depend on the time step and integration method adopt

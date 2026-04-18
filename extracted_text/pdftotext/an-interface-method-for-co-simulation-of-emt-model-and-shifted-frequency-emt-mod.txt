@@ -1,0 +1,222 @@
+3576                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+
+
+
+
+Power Engineering Letters
+  An Interface Method for Co-Simulation of EMT Model and Shifted Frequency
+      EMT Model Based on Estimation of Signal Parameters via Rotational
+                            Invariance Techniques
+                     Shilin Gao , Member, IEEE, Ying Chen , Senior Member, IEEE, Zhitong Yu,
+             Tian Cao , Graduate Student Member, IEEE, Wensheng Chen , Yankan Song , Member, IEEE,
+                                     and Yuhong Wang , Senior Member, IEEE
+
+
+   Abstract—The shifted frequency-based electromagnetic tran-                      analytical signals for SFEMT simulation, which are generated
+sient (SFEMT) simulation is much more efficient than traditional                   from real signals in the EMT simulation, are not true analytical
+electromagnetic transient (EMT) simulation for AC grids. This
+                                                                                   signals that are orthogonal to the original real signals, because
+letter proposes a novel interface for the co-simulation of the SFEMT
+model and the conventional EMT model. The fundamentals of                          these analytical signals still contain negative-frequency signal
+SFEMT modeling are first derived. Then, an interface for the                       components. This will affect simulation accuracy.
+co-simulation of EMT and SFEMT models is proposed based                               To address the issues of the existing interfaces, this paper
+on the estimation of signal parameters via rotational invariance                   proposes a novel interface for the SFEMT and EMT models.
+techniques. Theoretical analyses and test results demonstrate the                  First, the general form of SFEMT modeling is derived, giving
+effectiveness of the proposed method.
+                                                                                   a guideline for the design of co-simulation interface. Then,
+  Index Terms—Analytical signal, co-simulation, interface, electr-                 an interface based on the estimation of signal parameters via
+omagnetic transient simulation, shifted-frequency simulation.                      rotational invariance techniques (ESPRIT) is proposed. The
+                                                                                   ESPRIT can accurately calculate the frequency, amplitude and
+                            I. INTRODUCTION                                        phase of each component in an instantaneous signal with a
+                                                                                   short data window. According to signal processing theory, once
+      HE dynamics of a power system involve multi-scale tran-
+T     sients. As a result, it is meaningful to develop a multi-scale
+simulation method that adopts different modeling methods and
+                                                                                   the frequency, amplitude, and phase of the original signal are
+                                                                                   known, the analytical signal required for SFEMT simulation can
+                                                                                   be constructed. The proposed interface offers better accuracy
+time steps for different subsystems. An idea of multi-rate EMT
+                                                                                   compared to existing interfaces.
+simulation, which uses large step sizes for the AC grid and small
+                                                                                      The letter is organized as follows. Section II derives SFEMT
+step sizes for power electronics, was proposed two decades ago.
+                                                                                   modeling fundamentals. The interface of co-simulation is de-
+   The shifted frequency-based EMT (SFEMT) simulation with
+                                                                                   signed and studied in Sections III and IV. Section IV concludes.
+large step size is proposed for the AC power grid in [1], [2].
+Then, the co-simulation interface based on SFEMT simulation
+and traditional EMT simulation is proposed in [3], [4], in which                                 II. SFEMT MODELING FUNDAMENTALS
+some subsystems of the power system are calculated by SFEMT
+simulation and the others are calculated by traditional EMT sim-                   A. General Form of SFEMT Modeling
+ulation. However, the interfaces for these co-simulation methods                     In EMT simulation, the dynamic equation of an electrical
+have a certain degree of accuracy loss. In these interfaces, the                   component can be generally expressed as:
+
+   Received 28 August 2024; revised 3 January 2025; accepted 21 March 2025.                                 dx(t)
+Date of publication 31 March 2025; date of current version 20 June 2025. This                                     = Ax(t) + u(t)                              (1)
+work was supported by the Natural Science Foundation of China under Grant                                    dt
+52307127. Paper no. PESL-00271-2024. (Corresponding author: Ying Chen.)
+   Shilin Gao, Tian Cao, Wensheng Chen, and Yuhong Wang are with the               where x(t) is the state variable, A is the coefficient of x(t), and
+College of Electrical Engineering, Sichuan University, Chengdu 610065, China
+(e-mail: gaoshilin@scu.edu.cn; caotiankd@stu.scu.edu.cn; chenwensheng@             u(t) is the input. In (1), the nonlinear part of the component
+stu.scu.edu.cn; yuhongwang@scu.edu.cn).                                            dynamic is combined into u(t), which is generally calculated
+   Ying Chen, Zhitong Yu, and Yankan Song are with the Department of Electri-      by means of delay or prediction. For SFEMT modeling, a
+cal Engineering, Tsinghua University, Beijing 100084, China (e-mail: chen_ying
+@tsinghua.edu.cn; yuzhitong@cloudpss.net; songyankan@cloudpss.net).                mathematical transformation T [·] (e.g., Hilbert transform) with
+   Color versions of one or more figures in this article are available at          the differential property (T [ dx(t)
+                                                                                                                   dt ] =
+                                                                                                                           dT [x(t)]
+                                                                                                                              dt     ) and linear prop-
+https://doi.org/10.1109/TPWRS.2025.3555374.
+   Digital Object Identifier 10.1109/TPWRS.2025.3555374
+                                                                                   erty (T [kx(t)] = kT [x(t)]) is performed on both sides of (1)
+
+      0885-8950 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:54:29 UTC from IEEE Xplore. Restrictions apply.
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025                                                                                          3577
+
+
+
+simultaneously to construct the adjoint system of (1):                            Algorithm 1: ESPRIT Algorithm.
+               dT [x(t)]                                                           1: Construct the Hankel matrix X;
+                          = AT [x(t)] + T [u(t)]        (2)                        2: Determine the number of signal components;
+                   dt
+                                                                                   3: Calculate the frequency of each signal component;
+Through (1)+j(2), the system dynamic equation can be repre-
+                                                                                   4: Calculate amplitude and phase of the signal component;
+sented by analytical signal:
+                                                                                   5: Construct the analytical and analytical envelope signals.
+                       dx(t)
+                             = Ax(t) + u(t)                              (3)
+                        dt
+                                                                                real signals must first be transformed into analytical envelope
+where x(t) and u(t) are the analytical signals corresponding to
+                                                                                signals, and vice versa.
+x(t) and u(t), respectively. Then, by performing the frequency-
+shifting transformation on both sides of (3), (4) is derived.
+                                                                                A. Conversion Between Analytical Signal and Real Signal
+              dX(t)
+                    = AX(t) − jωs X(t) + U (t)                           (4)       The real signal that the EMT simulation needs can be obtained
+               dt                                                               from the analytical envelope signal by using:
+where X(t) and U (t) are the analytical envelopes corresponding                                                           
+                                                                                                      x(t) = Re X(t)ejωs t                    (7)
+to x(t) and u(t), respectively. By discretizing (4), an SFEMT
+model for the component can be obtained.                                        where x(t) is the real signal that the EMT model needs and X(t)
+                                                                                is the analytical envelope signal in the SFEMT model.
+B. Implementation of Analytical Signal Construction                                The analytical envelope signal that the SFEMT model needs
+                                                                                can be calculated by:
+   To obtain a true analytical signal, the analytical signal u(t)
+should not contain frequency components on the negative half                               X(t) = x(t)e−jωs t = (x(t) + jT [x(t)])e−jωs t               (8)
+axis of the spectrum [2] for the use of a large time step-size.
+                                                                                Due to the inability to obtain the analytical expression of the
+Otherwise, the signal component with negative frequency will
+                                                                                voltage and current in EMT simulation, this paper proposes
+become a signal component with a higher frequency after fre-
+                                                                                an analytical signal construction method based on the ESPRIT,
+quency shifting (e.g., −65 Hz to −115 Hz). Thus, to ensure that
+                                                                                which can accurately extract the spectrum of the real signal.
+the signal U (t) is a low-frequency envelope signal, the T [·] that
+can be used to construct u(t) must also satisfy:
+                                                                                B. Analytical Signal Construction Based on ESPRIT
+               F (T (u(t))) = −j sgn(f )F(u(t))                          (5)       1) Overall Process: The analytical signal construction
+where sgn(·) is the sign function and F(u(t)) is the spectrum                   method based on ESPRIT can be divided into five steps, which
+of u(t). Note that signal components with negative frequencies                  are shown in Algorithm 1. Details of each step are as follows.
+will exist in the analytical signals if (5) is not satisfied.                      2) Step 1–Formation of Hankel Matrix: Assuming the signal
+   According to the above analyses, the guidelines of the analyt-               x(t) has a sampling step size of Δt, x(t) can be discretized to
+ical signal construction can be proposed. First, for a signal u(t)              x(jΔt) = xj . For a data window with N = 2n + 1 samples.
+with a known analytical expression, the Hilbert transform can                   The Hankel matrix X, composed of signals within this data
+be used [1], [2]:                                                               window, can be represented as [5]:
+                                   ∞                                                             ⎡                              ⎤
+                                                  1                                                   x−n     x−n+1 · · · x0
+           T [u(t)] = H[u(t)] =         u(τ )            dτ    (6)                                ⎢                              ⎥
+                                    −∞        π(t  − τ)                                           ⎢x−n+1 x−n+2 · · · x1 ⎥
+                                                                                             X=⎢ .⎢                           .. ⎥          (9)
+which involves the convolution over the range (−∞, ∞). This
+                                                                                                                 ..    ..        ⎥
+                                                                                                  ⎣ ..            .        .   . ⎦
+cannot be applied to signals with unknown analytical expres-
+                                                                                                       x0       x1     · · · xn
+sions. For signals with unknown analytical expressions, the spec-
+trum analysis-based methods (e.g., ESPRIT) are considered,                        3) Step 2–Determination of the Number of Signal Com-
+which satisfy (5) and the conditions in Section II-A.                           ponents: By performing singular value decomposition on the
+                                                                                Hankel matrix, the singular value matrix Σ can be obtained:
+III. INTERFACE BETWEEN EMT MODEL AND SFEMT MODEL                                                      Σ = diag (σ1 , σ2 , . . . , σn )                 (10)
+                   BASED ON ESPRIT
+                                                                                where every two consecutive singular values correspond to a
+   In the muti-area co-simulation, the distributed transmission
+                                                                                signal component and the singular value associated with signal
+line model is widely used for the interface, which is also ap-
+                                                                                component is much greater than that of noises. Based on this,
+plicable to the co-simulation of the EMT and SFEMT models.
+                                                                                the number of signal components m can be determined.
+The difference is that an interface between the real signal and
+                                                                                   4) Step 3–Calculation of Signal Component Frequency: The
+the analytical envelope signal is needed in the co-simulation
+                                                                                Hankel matrix X can also be decomposed as [6]:
+of the EMT and SFEMT models. When the EMT simulation
+sends current and voltage signals to the SFEMT simulation, the                        X = Z LP Z R
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:54:29 UTC from IEEE Xplore. Restrictions apply.
+3578                                                                                            IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+
+
+
+               ⎡                        ⎤⎡                               ⎤
+                 1   1 ···           1       p1      0     ···        0
+              ⎢                         ⎥⎢                               ⎥
+              ⎢ z1 z2 · · · z2m ⎥ ⎢ 0                p2    ···        0 ⎥
+            =⎢⎢ ..   .. . .          .. ⎥  ⎢
+                                        ⎥⎢ .          ..   ..         .. ⎥
+                                                                         ⎥
+              ⎣ .     .      .        . ⎦ ⎣ ..         .      .        . ⎦
+                z1n z2n · · · z2m    n
+                                             0       0     ···      p2m
+             ⎡ −n                            ⎤
+               z1   z1−n+1 · · ·         z10
+             ⎢ −n                            ⎥
+             ⎢ z2   z2−n+1 · · ·         z20 ⎥
+             ⎢ .                          .. ⎥                                (11)
+             ⎢ .         ..    ..            ⎥
+             ⎣ .          .        .       . ⎦
+                −n      −n+1
+              z2m   z2m        · · · z2m 0
+
+                                                                      f i
+                                                                            , zin =
+                                                                  j2π fsp
+where the ith element in Z L and Z R is zi = e
+       fi
+ j2πn fsp
+e        . fsp is the sampling frequency, P is a matrix composed                      Fig. 1.    Schematic diagram of the modified IEEE 39-bus power system.
+of the frequency spectrum of each signal component (referred
+to as phasor). zi can be solved based on the matrix pencil
+techniques [6]. Then, the frequency of each signal component
+is calculated:
+                              Im (ln (zi ))
+                         fi =                               (12)
+                                  2πΔt
+   5) Step 4–Calculation of Amplitude and Phase of Each Signal
+Component: After obtaining fi , Z R and Z L in (11) can be
+calculated. By using the least squares method to solve (11), the
+phasor matrix P can also be obtained:
+                           −1 H                 
+                                                 H −1
+      P = diag Z H     L ZL     Z L XZ HR Z RZ R            (13)
+
+        L is the conjugate transposition of Z L . The amplitude
+where Z H
+ai and phase φi of each signal component can be obtained by:
+                                                                                      Fig. 2.    Phase A current of the transmission line 26–25.
+                             ai = 2 |pi | , φi = ∠pi                          (14)
+   6) Step 5–Analytical Signal Construction: When the fre-
+quency, amplitude, and phase of each signal component are                             sampling frequency for the signal in the Hankel matrix is set
+obtained, the imaginary part signal T (x(t)) in x(t) (denoted                         to 1 kHz. For a 60 Hz power system, n is typically set to 25,
+as x̂(t)) can be accurately calculated:                                               while for a 50 Hz power system, n is generally set to 30. This
+                              m                                                       configuration ensures both simulation accuracy and efficiency.
+                   x̂(t) =         ai (t) sin (2πfi t + φi (t))               (15)
+                             i=1                                                                                  IV. CASE STUDIES
+Based on the original real signal and imaginary part signal, the                         The effectiveness of the proposed method is validated on
+analytical envelope signal X(t) 

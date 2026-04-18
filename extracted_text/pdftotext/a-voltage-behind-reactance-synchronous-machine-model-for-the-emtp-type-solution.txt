@@ -1,0 +1,233 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 21, NO. 4, NOVEMBER 2006                                                                                    1539
+
+
+
+
+  A Voltage-Behind-Reactance Synchronous Machine
+         Model for the EMTP-Type Solution
+                              Liwei Wang, Student Member, IEEE, and Juri Jatskevich, Member, IEEE
+
+
+   Abstract—A full-order, voltage-behind-reactance synchronous                      phase coordinates. The voltage sources of the Thevenin equiv-
+machine model has recently been proposed in the literature. This                    alent contain predicted machine electrical and mechanical vari-
+paper extends the voltage-behind-reactance formulation for the                      ables, and the equivalent resistances are averaged to incorporate
+electromagnetic transient program (EMTP)-type solution, in
+which the rotor subsystem is expressed in     coordinates and the                   rotor saliency [8]. A prediction-correction scheme is used for
+stator subsystem is expressed in     phase coordinates. The model                   the machine variables, whereas the network variables are solved
+interface with the nodal-analysis network solution is non-iterative                 without iterations. The synchronous machine models Type-50 in
+and simultaneous. An example of a single-machine, infinite-bus                      MicroTran [9] and Type-59 in DCG/EPRI EMTP [10] fall into
+system shows that the proposed model is more accurate and                           this category.
+efficient than several existing EMTP machine models.
+                                                                                       The second approach is based on the compensation method,
+   Index Terms—Computational techniques, electromagnetic tran-                      in which the external ac system is represented as a Thevenin
+sient program (EMTP), phase-domain (PD) model, synchronous                          equivalent circuit and is interfaced with the synchronous ma-
+machine, voltage-behind-reactance (VBR) model.                                      chine in axes. Linear extrapolation of the rotor speed is used
+                                                                                    at the beginning of each time step. To obtain the solution, iter-
+                                                                                    ations are applied to both machine’s electrical and mechanical
+                            I. INTRODUCTION                                         variables. The compensation method works well as long as the
+                                                                                    distributed-parameter transmission lines separate the machines.
+                                                                                    When this is not the case, artificial “stub lines” are sometimes
+T     HERE have been numerous models proposed to represent
+      synchronous machines for power-system analysis. For
+transient stability studies, reduced-order machine models that
+                                                                                    used, complicating the network modeling and reducing its accu-
+                                                                                    racy. The universal machine model in the ATP is implemented
+neglect stator transients are commonly used [1]. However,                           using this method [11].
+for electromagnetic transient studies [2], full-order models                           In the third method, used in PSCAD/EMTDC [12], the ma-
+are often used, due to their greater accuracy. Depending on                         chine model is interfaced with the network as a compensation
+the modeling languages, various machine models have been                            current source and a special terminating impedance [13]. The
+developed using the state-variable approach [3]–[5] (wherein                        machine model is represented as a Norton current source that
+                                                                                    is calculated using the terminal bus voltages from the previous
+the discretization is performed at the system level by the ODE
+                                                                                    time step. Therefore, a one-time-step delay exists in this type of
+solver) and the nodal-analysis approach [6], [7] (wherein the
+                                                                                    machine model.
+discretization is done at the component/branch level using a
+                                                                                       The key advantage of the         model is that it uses a constant
+particular integration rule).                                                       inductance matrix, making it numerically efficient. Also, the
+   In this paper, synchronous machine models suitable for the                           model structure makes it possible to incorporate the mag-
+electromagnetic transient program (EMTP) solution are inves-                        netic saturation in a number of convenient ways [2], [11]. How-
+tigated. The EMTP and its derivative programs are extensively                       ever, the three methods of interfacing the traditional machine
+used by industry and academia as powerful and standard sim-                         model with the EMTP network solution artificially reduce sim-
+ulation tools, wherein the classical full-order      synchronous                    ulation efficiency by requiring a small time-step        to keep the
+machine model is available.                                                         interfacing error under certain tolerance. When larger time-steps
+   In the existing EMTP-type software packages, there are three                     are used, the accuracy of the simulation deteriorates. Moreover,
+commonly used methods for interfacing the        machine model                      the existing interfacing methods have been shown to cause nu-
+with the external network. In the first approach, the machine                       merical instability problems [14], [15], which is especially un-
+is represented internally in     coordinates, but it is interfaced                  desirable in real-time simulations [16].
+with the external network using a Thevenin equivalent circuit in                       As an alternative to the classical       model, some researchers
+                                                                                    have turned to the original coupled-circuit machine model for-
+  Manuscript received March 28, 2006; revised July 4, 2006. This work was           mulation, in which the model is expressed in physical variables
+supported in part by the Natural Science and Engineering Research Council           and phase coordinates [17]–[21]. In the EMTP community, this
+(NSERC) of Canada under the Discovery Grant and in part by the Power En-
+gineering Grant-In-Aid from BC Hydro and Powertech Labs, Inc. Paper no.
+                                                                                    approach is known as the phase-domain (PD) model and may
+TPWRS-00172-2006.                                                                   provide more accurate representation of machine internal phe-
+  The authors are with the Department of Electrical and Computer Engineering,       nomena, such as internal machine faults [20]. Because the stator
+University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail: li-
+weiw@ece.ubc.ca; jurij@ece.ubc.ca).
+                                                                                    circuit is directly interfaced to the rest of the network, no predic-
+  Color versions of Figs. 3-6 are available online at http://ieeexplore.ieee.org.   tions and/or iterations of electrical variables are needed and the
+  Digital Object Identifier 10.1109/TPWRS.2006.883670                               numerical stability is improved. However, the existence of time-
+                                                                 0885-8950/$20.00 © 2006 IEEE
+1540                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 21, NO. 4, NOVEMBER 2006
+
+
+
+variant self and mutual inductances increases the computational      further discussion, the relevant machine models in their general
+burden of this model. Present implementations include Type-58        form are briefly reviewed below.
+in ATP [21] (which requires re-triangulation at each time step
+[22], [23]) and the recently developed VTB model [24].               A. Traditional     Model
+   In order to improve simulation efficiency, a so-called               To obtain the   model, the equations of the coupled-circuit
+voltage-behind-reactance (VBR) synchronous machine model             machine model in physical variables are transformed to the rotor
+was proposed in [25] for the state-variable approach. In [26],       reference frame (Park’s transformation). The resulting voltage
+the VBR synchronous machine model was demonstrated in                equation, which includes the stator and rotor, may be compactly
+the hardware-in-the-loop application. This paper extends the         expressed as
+VBR model formulation for the EMTP-type solution that is the
+basis of the real-time power systems simulator at the University
+of British Columbia [27]. The simulation studies presented                                                                         (3)
+provide CPU times and an error analysis that demonstrate
+the improvement of numerical efficiency and accuracy of the          where
+proposed VBR model over several commonly used models,
+including the PD model. The advantages of the proposed VBR                                                                         (4)
+model include the following.                                                                                                       (5)
+    1) Similar to the PD model, the stator circuit is expressed                                                                    (6)
+        in phase coordinates using the physical currents as the
+        independent variables and is directly interfaced with                                                                      (7)
+        the external network. A simultaneous EMTP solution is                                                                      (8)
+        thereby achieved.
+    2) The rotor equations are expressed in -rotor reference
+                                                                     Here,        and       are the vectors of voltages and currents,
+        frame using flux linkages as the independent variables,
+                                                                     respectively;      represents the field winding voltage; in-
+        which significantly reduces the computational burden
+                                                                     cludes the speed voltage terms; and is a constant diagonal ma-
+        as compared to the PD model. The VBR model is also
+                                                                     trix containing the stator and rotor resistances. The flux linkage
+        shown to have improved numerical accuracy due to
+                                                                     equations may be expressed as
+        better scaled eigenvalues.
+    3) The model formulation is very flexible and can be
+        readily extended to include an arbitrary number of                                                                         (9)
+        electrical phases and/or damper windings.
+    4) Partitioning of the stator and rotor equations provides a     where
+        natural decoupling of the time scales. Simulation speed
+        may be further improved through the multi-rate integra-
+        tion [28] and latency techniques [29], which we will in-                                                                  (10)
+        vestigate in future studies.
+                                                                     Note that the inductance matrix,       , does not depend on the
+            II. SYNCHRONOUS MACHINE MODELS                           rotor position. Finally, the electromagnetic torque is expressed
+   The dynamics of synchronous machines can be represented           as
+by equations of corresponding electrical and mechanical sub-
+systems. Without loss of generality, this paper considers a three-
+phase synchronous machine with one field winding, fd, and one                                                                     (11)
+damper winding, kd, in the -axis, and two damper windings,
+kq1 and kq2, in the -axis. Motor convention is used for all
+                                                                     B. Phase-Domain Model
+models, wherein the -axis of the rotor reference frame is as-
+sumed to be 90 leading the -axis [30]. Throughout this paper,           The general form of the PD synchronous machine model is
+bold uppercase is used to denote matrices, and bold lowercase is     the coupled-circuit model, expressed in physical variables and
+used to denote vectors. Also, the operator            . The equa-    coordinates. In particular, the voltage equation can be expressed
+tions for mechanical subsystems are assumed to be the same for       as
+all models considered here, specifically
+
+                                                              (1)                                                                 (12)
+
+                                                              (2)
+                                                                     The flux linkages are given as
+Here, and        are the rotor position and the angular electrical
+speed;     and      are the mechanical torque and electromag-
+                                                                                                                                  (13)
+netic torque, respectively. For the purpose of consistency and
+WANG AND JATSKEVICH: VOLTAGE-BEHIND-REACTANCE SYNCHRONOUS MACHINE MODEL                                                              1541
+
+
+
+with the inductance matrix now depending on the position of the           The inductances      and      are calculated as
+rotor
+                                                                                                                                     (22)
+
+                                                                  (14)
+                                                                                                                                     (23)
+
+The developed electromagnetic torque is                                   The subtransient voltages         in (16) are defined as
+
+
+                                                                  (15)                                                               (24)
+
+                                                                          where
+   The main advantage of this model for the EMTP solution is
+that the stator circuit is directly integrated with the electrical net-
+work, thereby avoiding the interfacing and stability problems
+common in the qd model. However, the terms dependent on
+rotor position in (13)–(15) result in an additional computational
+burden and complexity of the final discretized model.
+
+                                                                                                                                     (25)
+C. Voltage-Behind-Reactance Model
+
+   The VBR formulation decouples the synchronous machine
+model into stator and rotor subsystems. Since the stator network
+is interfaced with the EMTP solution, the stator phase currents
+are used as the independent variables. However, the rotor sub-
+system is expressed in        rotor reference frame, with the flux                                                                   (26)
+linkages used as the independent variables. A detailed deriva-
+tion of the VBR model can be found in [25]. For completeness,
+                                                                          with
+only the final form suitable for the EMTP solution is given here.
+In particular, the stator voltage equation can be expressed as
+                                                                                                                                     (27)
+
+                                                                  (16)                                                               (28)
+
+where      is a constant diagonal matrix representing stator re-          Rotor dynamics are represented by the following equations:
+sistances [26], and            is the so-called subtransient in-
+ductance matrix, defined as in (17), shown at the bottom of the                                                                      (29)
+page, where
+                                                                                                                                     (30)
+                                                                  (18)
+                                                                          where
+                                                                  (19)
+
+                                                                  (20)                                                               (31)
+
+
+                                                                  (21)                                                               (32)
+
+
+
+
+                                                                                                                                     (17)
+1542                                                                   IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 21, NO. 4, NOVEMBER 2006
+
+
+
+Here,     denotes the rotor flux linkages, and      and     are       where
+the magnetizing flux linkages in     axes, respectively.
+   The mechanical equations for the VBR model are identical
+to (1) and (2). The electromagnetic torque may be calculated as
+[30]                                                                                                                               (40)
+
+                                                                      Substituting (39) into (37), the PD synchronous machine model
+                                                              (33)    can be finally interfaced into the external network as
+
+
+        III. DISCRETE-TIME MODEL REPRESENTATIONS                                                                                   (41)
+   In order to obtain numerical solutions of the synchronous ma-      where
+chine model within the EMTP, the implicit trapezoidal rule is
+applied to obtain the corresponding difference equations. In par-
+ticular, discretizing (1) and (2), the difference equations for the
+rotor position and speed are obtained as                                                                                           (42)
+
+                                                              (34)    and
+
+
+                                                                                                                                   (43)
+                                                              (35)
+                                                                      with
+which are common to all models considered here. The dis-
+cretized forms of the      synchronous machine model [8] are
+not included in this paper due to space considerations. Instead,
+the PD and the proposed VBR models are compared, since                                                                           (44)
+these two models have similar interfaces with the network. In         The electromagnetic torque is calculated in phase variables ac-
+particular, the gene

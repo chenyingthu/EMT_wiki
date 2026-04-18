@@ -1,0 +1,197 @@
+                                                                Electric Power Systems Research 197 (2021) 107292
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Shifted frequency analysis-EMTP multirate simulation of power systems
+J.O. Tarazona a, *, A.T.J. Martí a, J.R. Martí a, F.A. Moreira b
+a
+    Electrical and Computer Engineering Department, University of British Columbia, Vancouver, British Columbia V6T 1Z4, Canada
+b
+    Department of Electrical and Computer Engineering, Federal University of Bahia, Salvador, Bahia 40210-630, Brazil
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   This paper presents a novel hybrid multirate protocol to interface a Shifted Frequency Analysis (SFA) simulator
+Shifted frequency analysis (SFA)                            and an Electromagnetic Transients (EMT) simulator. The proposed protocol is based on the Multi-Area Thévenin
+Electromagnetic transients (EMT)                            Equivalent conceptual framework and uses a second parallel simulation of the EMT simulator to track the
+Power system stability
+                                                            imaginary part of the complex-valued solution from the SFA simulator. Having a Real-Part EMT simulation and
+Hybrid simulation
+Multirate simulation
+                                                            an Imaginary-Part EMT simulation, running in parallel, maintains the analyticity and synchronicity of the SFA/
+                                                            EMT hybrid simulator and enables the use of large time steps in the SFA solution. This also allows the extraction
+                                                            of the fundamental frequency phasor of the EMT solution directly through the SFA transformation. The inter­
+                                                            facing algorithm is demonstrated on the IEEE 39-bus system. The proposed protocol shows very good accuracy
+                                                            for capturing the electromechanical transients with the SFA simulator and an EMT-comparable accuracy with the
+                                                            EMT simulator. The results show the capability of the hybrid simulator to use significantly different solution
+                                                            steps in the SFA and EMT simulators, which results in considerable savings compared with an all-EMT solution.
+                                                            The proposed simulator would be very useful in conducting transient stability-type of studies when there is a
+                                                            need to model some devices with EMT accuracy.
+
+
+
+
+1. Introduction                                                                                  step delayed. This may cause inaccuracies in the EMT solution in the
+                                                                                                 presence of disturbances. To correct this, in [5] the interaction algo­
+    COMPUTATIONAL tools for transient stability (TS) and electro­                                rithm allows the EMT and TS solutions to iterate with each other until
+magnetic transients (EMT) studies have traditionally been used sepa­                             convergence is reached, and in [6], the TS and EMT solutions are made
+rately. However, with the increase in the complexity of power systems                            consistent by solving the TS and EMT equations simultaneously in a
+due to the introduction of new technologies and their controls, and an                           single large system of equations. In traditional hybrid TS-EMT tech­
+increasing number of interconnections, the simulation needs are more                             niques, the TS subsystem is represented in the EMT subsystem as either a
+complicated. It was with the advent of the High Voltage Direct Current                           multi- or single-port Norton [8] or Thévenin equivalent [3, 4, 5, 7]. For
+(HVDC) transmission, that the need first arose to incorporate in the                             these equivalents, the impedances are evaluated at one single frequency,
+traditional set of tools used for stability studies, the kind of models                          either the fundamental or the actual system frequency, as in [3] and [5],
+available in the EMT-type of programs.                                                           hence, in the presence of significant transients flowing through the
+    The detailed modelling of an HVDC link within a power system                                 boundaries this representation of the TS subsystem may not be accurate
+stability simulator was first proposed and implemented by Hefferman                              enough for the EMT solution. To solve this problem, in [6] a
+et al. [1]. In the past four decades, several publications have appeared in                      frequency-dependent network equivalent (FDNE) is used in the Théve­
+the literature for implementing TS-EMT hybrid simulators [2-8]. In                               nin equivalent of the TS subsystem. However, using an FDNE may cause
+many hybrid TS-EMT techniques the exchange of information between                                the solution to become numerically unstable due to the high order
+simulators occurs every TS time step, so at some point in the simulation,                        transfer function required and, also, any change in the topology of the TS
+the EMT solution would be using a phasor solution that is one TS time                            subsystem cannot be easily accommodated because the FDNE is fixed for
+
+
+
+ This work was supported in part by The Natural Sciences and Engineering Research Council of Canada (NSERC). F. A. Moreira acknowledges the financial support of
+the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior – Brasil (CAPES) – Finance Code 001. Paper submitted to the International Conference on Power
+Systems Transients (IPST2021) in Belo Horizonte, Brazil June 06-10, 2021.
+  * Corresponding author.
+    E-mail addresses: jotarazona@gmail.com (J.O. Tarazona), a.marti@alumni.ubc.ca (A.T.J. Martí), jrms@ece.ubc.ca (J.R. Martí), moreiraf@ufba.br (F.A. Moreira).
+
+https://doi.org/10.1016/j.epsr.2021.107292
+Received 3 December 2020; Received in revised form 16 March 2021; Accepted 15 April 2021
+Available online 11 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+J.O. Tarazona et al.                                                                                                     Electric Power Systems Research 197 (2021) 107292
+
+
+the whole simulation [8].                                                         2. Shifted frequency analysis of power systems
+    Other research in hybrid simulators has centred on developing an
+integrative approach to model TS and EMT tasks. Instead of coupling                  A power system bandpass signal u(t), with its frequency spectrum
+two different simulation frameworks, the solution is based on the                 centred on the system frequency ω0 , can be represented as
+concept called Frequency Adaptive Simulation of Transients (FAST), to
+                                                                                  u(t) = uI (t)cosω0 t − uQ (t)sinω0 t                                                (1)
+cover the application spectrum of typical EMT and TS programs [9]. In
+this approach, the entire system is first solved for fast transients in EMT
+                                                                                  where the low-pass signals uI (t) and uQ (t) are, respectively, the in-phase
+mode with a very small time-step size, which is not very efficient, and
+                                                                                  and quadrature components of u(t). The dynamic or time-varying phasor
+then solved for the electromechanical transients in TS mode with a much
+                                                                                  U(t) for the signal u(t) is defined as [17]
+larger time step size.
+    The Shifted Frequency Analysis (SFA) method [10] is a time-varying            U(t) = uI (t) + juQ (t)                                                             (2)
+phasor (TVP) approach that is particularly efficient for capturing the
+oscillations associated with electromechanical transients around the                 U(t), known as the complex envelope of u(t) in signal processing, is
+fundamental frequency of the system (50/60 Hz). This is the method                an analogous complex-valued low-pass representation of the original
+used in the TS mode of the FAST approach in [9]. In [11] a transient              bandpass signal u(t).
+stability simulator based on SFA was developed.                                      Another representation of u(t) is through its analytic signal z(t),
+    SFA is based on shifting by 50/60 Hz the frequency spectrum of the            defined as
+system variables using a time-domain rotational transformation. After             z(t) = u(t) + jH[u(t)]                                                              (3)
+shifting, the fundamental 50/60 Hz component of the system signals is
+centred at zero frequency, thereby allowing the use of large time steps to        where H[⋅] denotes the Hilbert transform [18].
+trace the envelopes of the 50/60 Hz and other waveforms around it,                  Substituting (1) and (2) in (3) yields
+without compromising the accuracy of the solution. The transformed
+variables in the SFA domain correspond to the conventional power                  z(t) = (uI (t) + juQ (t))ejω0 t = U(t) ejω0 t                                       (4)
+system phasor solutions in magnitude and phase angle. The difference is              Thus, the analytic signal z(t) is a complex-valued representation of
+that in SFA the magnitude and angle of these phasors are functions of             the original real-valued signal u(t). Equation (4) shows that a dynamic
+time [10]. These time dependencies can be modelled using the tradi­               phasor can be obtained by multiplying the analytic signal by e− jω0 t . This
+tional EMTP [12] discretization rules, for example, trapezoidal or                can be understood as the analytic signal being mapped into the dynamic
+backward Euler rules. The trapezoidal or backward Euler solutions                 phasor through a transformation T defined as follows:
+guarantee absolute numerical stability with a fixed time step. A fixed
+time step facilitates multirate solutions, where some system regions are          T − 1 = e− jω0 t                                                                    (5)
+naturally slow (e.g., traditional transmission system) and other regions              The signal in the original or “normal” domain is related to the signal
+or components are naturally fast (e.g., power electronic components).             in the transformed or “modal domain” (denoted with subscript “m”) as
+    In [13] and [14] new hybrid simulation techniques to interface dy­            follows:
+namic phasors and EMT simulators were presented. In [13] a dynamic
+phasor simulator of the generalized averaging method-type [15] was                zm (t) = T − 1 z(t)                                                                 (6)
+used and in [14] a matrix-transformation-based shifted frequency pha­
+                                                                                      Multiplying a signal by e− jω0 t causes its Fourier transform to be
+sor simulator was employed. Both techniques require transmission lines
+                                                                                  shifted ω0 frequency units to the left. Thus, for a bandpass signal with a
+to decouple the subsystems, which imposes an important restriction
+                                                                                  frequency spectrum centred on ω0 , the transformed signal is a low-pass
+because the maximum time step that can be used in the dynamic phasor
+                                                                                  signal with its frequency spectrum centred at zero frequency, and,
+solution is limited by the travel time of the line.
+                                                                                  therefore, larger time steps can be used to capture this signal in the
+    In this paper, a novel approach is presented whereby an SFA simu­
+                                                                                  simulation. The above transformation is the one used for Shifted Fre­
+lation framework for a subsystem is interfaced with an EMT simulation
+                                                                                  quency Analysis (SFA) [10] and the transformed signals in the shifted
+framework for another subsystem. In this hybrid environment, SFA is
+                                                                                  frequency domain or SFA domain, are the corresponding TVP’s of the
+used to solve for slow electrical and electromechanical transients around
+                                                                                  original real-valued time signals.
+the fundamental 60 Hz synchronous frequency, while EMT modelling is
+                                                                                      Using the SFA transformation, EMTP-like equivalent circuits can be
+used for loads, components, or subsystems that require a much smaller
+                                                                                  derived for the different circuit elements [19]. SFA models have been
+time step for their fast transients. Interfacing of the SFA and EMT sim­
+                                                                                  developed for transformers and transmission lines [10], synchronous
+ulators is done using the Multi-Area Thévenin Equivalent (MATE) so­
+                                                                                  machines [20] and induction machines [21]. In [10] a power system
+lution framework [16].
+                                                                                  transient stability simulator based on the SFA algorithm was developed.
+    The proposed multirate solution guarantees numerical stability at
+                                                                                      To analyze a power system with SFA, the corresponding analytic
+fixed time steps since the two solutions are directly coupled without a
+                                                                                  signals of the variables of the system at the initial state are obtained and
+time delay: at each EMT time-step, there is available an interpolated
+                                                                                  then transformed into the SFA domain. The solution of the circuit in
+value of the SFA solution. This approach increases the accuracy of the
+                                                                                  discrete-time is then found by representing each element in the circuit
+hybrid solution and reduces the possibility of numerical instability. In
+                                                                                  by its SFA model and solving the corresponding system equations. The
+the proposed method, the SFA subsystem is represented, using MATE, as
+                                                                                  solution algorithm is the same as for the EMTP [12] except that in SFA
+a multi-port Thévenin equivalent that results from the discretization of
+                                                                                  the calculations are carried out using complex arithmetic. The solution
+the differential equations and therefore, can capture the frequency
+                                                                                  of the circuit includes the magnitudes and angles of the time-varying
+response of the SFA subsystem for a range of frequencies determined by
+                                                                                  phasors in the system [19], which are the envelopes of the real signals
+the time step used in the SFA solution. This allows the simulation of
+                                                                                  in the system. The SFA solution can then be transformed back to normal
+scenarios involving harmonic and sub-harmonic resonances and is also
+                                                                                  time domain to get the actual real-valued solution of the system by
+important in stability studies with large frequency excursions.
+                                                                                  keeping only the real part of the complex analytic signals.
+    The rest of the paper is structured as follows: in Part II, the SFA
+technique is presented. The MATE solution framework is reviewed in
+                                                                                  3. MATE conceptual framework
+Part III. The interaction protocol SFA–EMT is described in Part IV. Then,
+Part V discusses a simulation case study, and in Part VI conclusions and
+                                                                                      A detailed presentation of MATE and its formulation in EMTP
+directions for future work are presented.
+
+                                                                              2
+J.O. Tarazona et al.                                                                                                 Electric Power Systems Research 197 (2021) 107292
+
+
+solutions is available in [16]. Here, a summary of the procedure is                   1 Solve for the link currents using the Thévenin voltages of all sub­
+presented to establish a frame of reference for the discussions that                    systems calculated in the previous iteration.
+follow. The MATE solution framework provides an effective means for
+                                                                                         IL = Z−T 1 EL                                                          (14)
+partitioning a large system into subsystems connected by link branches.
+The subsystems are solved independently and the whole system solution
+is found by solving for the links’ interactions. In the general formulation
+                                                                                      2 Solve for the node voltages in all subsystems by injecting the link
+of MATE, the link branches can be any type of element, but for the
+                                                                                        currents.
+application in this paper, they are considered as resistances with no
+mutual coupling. The number of subsystems in MATE can be N in gen­                       V j = ej − Y −j 1 Cj IL                                                (15)
+eral, however, to explain the concept, the system in Fig. 1 composed of
+two subsystems will be considered.
+    The system in Fig. 1 can be described by a set of modified nodal                  3 For each subsystem evaluate the current injections hj that would be
+equations [22], as follows:                                                             required for the next

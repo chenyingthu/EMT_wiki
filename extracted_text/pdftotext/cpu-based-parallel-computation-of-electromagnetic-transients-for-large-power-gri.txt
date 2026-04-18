@@ -1,0 +1,181 @@
+                                                                    Electric Power Systems Research 162 (2018) 57–63
+
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+CPU based parallel computation of electromagnetic transients for large                                                                                          T
+power grids
+                                                                       ⁎
+A. Abusalaha, O. Saadb, J. Mahseredjiana, , U. Karaagacc, L. Gerin-Lajoieb, I. Kocara
+a
+  Ecole Polytechnique Montreal, Quebec H3C 3A7, Canada
+b
+  IREQ, Hydro-Québec, Varennes, Quebec, J3X 1S1, Canada
+c
+  Hong Kong Polytechnic University, Hung Hom, Hong Kong
+
+
+
+
+A R T I C LE I N FO                                           A B S T R A C T
+
+Keywords:                                                     This paper presents the implementation of a parallel sparse matrix solver for improving the computational speed
+Electromagnetic transient                                     of an electromagnetic transients (EMTs) simulation software. The new method is established on the KLU sparse
+Modiﬁed-augmented-nodal-analysis                              matrix solver which is suitable for circuit based simulation methods The solver is programmed using paralle-
+KLU                                                           lization through automatic detection of sparse matrix submatrices separated by the natural decoupling available
+Sparse matrix solver
+                                                              in transmission line/cable models. The proposed approach is demonstrated in an EMT-type software that uses a
+                                                              fully iterative solution method for all nonlinear models. Furthermore, it is demonstrated for realistic large scale
+                                                              grids.
+
+
+
+
+1. Introduction                                                                                parallel computers rather than faster processor units.
+                                                                                                   The parallelization approach is researched in many publications
+    Computation time is a crucial parameter in the simulation of power                         [7,8] and has been initially applied in real-time simulation tools
+system electromagnetic transients (EMTs). This aspect is becoming in-                          [9–11]. Oﬀ-line methods have been proposed in Refs. [12,13] and other
+creasingly important with modern power systems that include the in-                            publications. Network tearing for parallelization without any loss of
+tegration of wind generators, HVDC transmission links and various                              accuracy is based on the natural time delay formed by distributed
+other devices. Moreover, due to the much superior accuracy of the                              parameter transmission line (or cable) models. It is also possible to
+circuit-based approach in EMT computation methods, there is a trend to                         avoid approximations using other tearing techniques, such as in Ref.
+extend its application to the simulation of electromechanical transients                       [14], when transmission line models are not present in a given network.
+for the same grid data set. This could require modeling very large scale                       In addition to CPU based parallelization, work has been done using
+networks. EMT computations with such a network are presented and                               other technologies, such as GPU [15].
+compared in Ref. [1].                                                                              An important diﬃculty in several references presented above, such
+    It is possible to improve the computational performance for oﬀ-line                        as Ref. [13], is that user intervention is required to decide on paralle-
+EMT-type solvers by programming more eﬃcient solution methods and                              lization tasks, interfacing procedures or selection of equivalents. Some
+models, but such research does not allow to achieve signiﬁcant gains                           real-time simulators [9] are capable of automatic task scheduling, but
+due to the inherent algorithms for circuit based modeling. Other ap-                           they are not based on the sparse-matrix solution approach researched in
+proaches for improving performance include multiple time-step (multi-                          this paper.
+rate) solutions [2], waveform relaxation [3,4], combinations of dif-                               The objective in this paper is to present shared memory CPU based
+ferent time-frame methods [5] and interfacing with frequency depen-                            parallelization on conventional multi-core computers. The objective is
+dent network equivalents [5,6]. The main diﬃculty with such methods                            also to avoid any user intervention in the parallelization process. The
+is generalization, automation and control of accuracy. The industrial                          presented work targets the upgrading of existing sparse matrix based
+grade implementation of such methods into existing EMT-type software                           solvers. Network tearing for parallelization is based on the natural
+poses major challenges.                                                                        decoupling delay caused by distributed parameter transmission line
+    A direct approach for oﬀ-line EMT-type computational speed im-                             models. There are no approximations in the proposed approach.
+provement is the application of parallelization. This is supported by the                          This paper demonstrates the application of a new sparse matrix
+fact that the current trend in the computing industry is to deliver                            solver for an existing EMT-type simulation tool (EMTP [16]) for
+
+
+    ⁎
+        Corresponding author.
+        E-mail address: jeanm@polymtl.ca (J. Mahseredjian).
+
+https://doi.org/10.1016/j.epsr.2018.04.017
+Received 13 December 2017; Received in revised form 3 April 2018; Accepted 25 April 2018
+Available online 11 May 2018
+0378-7796/ © 2018 Elsevier B.V. All rights reserved.
+A. Abusalah et al.                                                                                                       Electric Power Systems Research 162 (2018) 57–63
+
+
+improving computational performance through automatic paralleliza-                       has an ordering step to minimize ﬁll-in, symbolic factorization step to
+tion. Another distinctive contribution in this paper is that paralleliza-                determine the non-zero pattern and the computation step of L and U
+tion is applied for a fully iterative solver. All nonlinear models are                   matrix factors. During the numeric elimination stage the pivotal per-
+solved simultaneously using the Newton method. The iterations are                        mutation of A is found and the matrix is permuted in order to avoid
+essential for delivering highest accuracy, but the iterative process cre-                numerical instabilities. The minimum degree ordering technique is used
+ates supplementary computational burden.                                                 in the current version of EMTP to minimize the number of factors. Once
+    The contributions of this paper are tested on a new version of the                   the LU factors are found, backward and forward substitution is per-
+very large scale Hydro-Quebec grid benchmark initially presented in                      formed to ﬁnd the solution vector x based on the right-hand side b.
+Ref. [1]. A second benchmark with integration of wind generation is                          Any slope change in Eq. (3) or any change in switch status requires
+presented for testing challenging problems related to power electronics                  updating the matrix A in the iterative process at each solution time-
+converters. The benchmarks are used directly without any intervention                    point until convergence within prescribed tolerance. Although a very
+into topology and model selections for assisting the parallelization                     eﬃcient iterative process is programmed, it is still required to re-
+process.                                                                                 calculate the matrices L and U due to changes in matrix A. This re-
+    The ﬁrst section of this paper recalls the solution methods used in                  factorization process increases the computational burden.
+EMTP. The second section presents the selection and implementation of
+a new sparse matrix solver. The last section presents computing times                    3. Replacement of sparse matrix solver
+for the proposed benchmarks.
+                                                                                             The KLU [19,20] sparse matrix solver is a direct solver optimized for
+2. EMTP solution methods                                                                 the solution of sparse electrical circuit equations. It has been demon-
+                                                                                         strated in Ref. [21] to provide better performance than other sparse
+    In EMTP the power network equations are assembled using mod-                         matrix packages for highly sparse matrices. KLU can be used to solve
+iﬁed-augmented nodal analysis (MANA). Bold characters are used                           the non-symmetric matrices of EMTP.
+below to denote matrices and vectors. At each time-point the solved                          KLU is a sparse solver that is developed based on matrix graph
+system of equations is given by [16,17]                                                  theory and uses a combination of sorting techniques and factorization
+                                                                                         techniques to solve any sparse matrix in the least computing time, and
+Ax = b                                                                        (1)
+                                                                                         provide accurate and reliable results. Like many other solvers, this
+     In its expanded form, this system of equations is written as                        solver consists of three main stages. The three stages are symbolic
+                                                                                         analysis, numerical factorization and solve.
+⎡ Yn A c ⎤ ⎡ vn ⎤ = ⎡ in ⎤                                                                   During the symbolic analysis stage, the matrix undergoes multiple
+⎢ Ar A d ⎥ ⎢ ix ⎥ ⎢ vx ⎥                                                      (2)        stages of permutation that guarantee re-writing the matrix in its block
+⎣        ⎦⎣ ⎦ ⎣ ⎦
+                                                                                         diagonal form using block triangular factorization (BTF) when dis-
+    Where the classic nodal admittance matrix Yn is augmented with                       tributed parameter transmission line models exist in the simulated
+model equations written in the row matrix Ar and the coeﬃcient matrix                    network. This form allows to divide the matrix into multiple sub-
+Ad for the supplementary unknowns. The matrix Ac is used for linking                     matrices that are independent of each other and can be solved in-
+the model currents with models expressed using nodal analysis. The                       dependently. To achieve the BTF format, two permutation matrices are
+unknowns are the nodal voltages vn and model currents ix. The right-                     computed and applied on A, namely the row permutation PR and the
+hand side variables are the nodal current injections in and modal vol-                   column permutation PC matrices. The resulting BTF matrix is given by
+tages vx in the augmented part. As explained in Ref. [17], MANA for-
+mulation is more ﬂexible than classic nodal analysis and simpliﬁes the                   ABTF = PR APC                                                               (4)
+inclusion of model equations. Ideal and non-ideal switch equations, for                      Row permutation is found by applying a ﬁrst depth search in order
+example, are included directly in the augmented part. Other variables                    to allocate all strongly connected non-zero elements of the matrix that
+can be used in addition to currents in ix.                                               form independent blocks. Each group of strongly connected elements
+    The system of equations (Eq. (1)) is solved at each time-point.                      represents an independent submatrix of A. The column permutation
+Nonlinear model equations are included using linearization at each                       matrix is computed by ﬁnding the maximum transverse of the directed
+time-point. At any time-point the linearized equation of a nonlinear                     graph that represents the matrix A.
+model k can be expressed as [17]                                                             Fig. 1 shows a simple network with three subnetworks inter-
+ik = y (j) vk + IQ(j)                                                                    connected via a distributed parameter transmission lines. The non-zero
+                                                                              (3)
+                                                                                         pattern of the matrix A for this system is presented in Fig. 2. It can be
+where the slope y       (j)
+                              and the intercept current IQ(j) are found from the         observed that A does not initially have the BTF format. Applying the
+model equation diﬀerentiation at the operating voltage point at each                     permutation matrices PR and PC transforms the matrix of Fig. 2 into its
+iteration j. The above equation is generic and can be also written in its                BTF format shown in Fig. 3. Now the permuted matrix has three in-
+matrix form for more complex device models.                                              dependent blocks along its diagonal, and these three blocks represent
+    In EMTP, the matrix A is saved and solved in its non-symmetric                       the three subnetworks connected through the two constant parameter
+form. This is important for accommodating non-symmetric model                            transmission line model. As it is well known, this procedure is com-
+equations. EMTP uses a sparse direct solver that is based on LU de-                      pletely automatic and does not require user intervention. There is no
+composition with minimum degree ordering [18]. The sparse LU solver                      need to program topological analysis for discovering the subnetworks
+
+
+
+
+                                                       Fig. 1. Simple test case for demonstrating BTF permutation.
+
+
+                                                                                    58
+A. Abusalah et al.                                                                                                      Electric Power Systems Research 162 (2018) 57–63
+
+
+                                                                                        vector x.
+
+                                                                                        4. Parallel KLU implementation
+
+                                                                                            In order to accelerate the performance of the KLU solver, it is ne-
+                                                                                        cessary to implement it using multiple cores in parallel. The OpenMP
+                                                                                        [22] multithreading approach can be used for that purpose. OpenMP is
+                                                                                        an API for multi-platform shared-memory parallel programming [23]. It
+                                                                                        reduces the overall parallel programming eﬀort. In this paper the ob-
+                                                                                        jective is to use OpenMP directly for converting an existing code.
+                                                                                        OpenMP requires the user to deﬁne diﬀerent segments of the code
+                                                                                        where parallel processing is required, using directives. Once all parallel
+                                                                                        segments are speciﬁed, all parallelization processes such as thread
+                                                                                        launching, control, synchronization and termination are done by the
+                                                                                        compiler. The OpenMP directives allow to access physical cores and
+                                                                                        perform hyperthreading.
+                                                                                            In this paper, parallel programming has been applied in the fac-
+                                                                                        torization and substitution steps only, whereas the symbolic stage is
+                                                                                        kept purely sequential since it is done only once at the beginning of
+    Fig. 2. Non-zero pattern of Fig. 1 network matrix before applying BTF.              simulations. The number of threads and the number of CPU cores vary
+                                                                                        depending on the computer used in the simulation. The user can select
+                                                                                        the number of threads for a given simulation case, but this choice will
+                                                                                        be validated by the solver depending on the existing number of threads
+                                                                                        in the computer, the number of BTF blocks and the size of BTF blocks.
+                                                                                        This validation allow to achieve the best load balancing between
+                                                                                        threads and reduces threads waiting time. Depending on the network
+                                                                                        size, the ABTF blocks are automatically distributed to diﬀerent threads
+                                                                                        in order to be factorized and solved. The implementation presented in
+                                                                                        this paper has several optimizations as compared to Ref. [25] and that
+                                                                        

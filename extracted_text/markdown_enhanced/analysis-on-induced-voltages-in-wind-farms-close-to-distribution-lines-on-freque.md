@@ -1,0 +1,12 @@
+## Analysis on Induced Voltages in Wind Farms Close to Distribution Lines on Frequency-Dependent Soil
+
+**Wagner Costa da Silva**, **Walter Luiz Manzi de Azevedo**, **José Luciano Aslan D’Annibale**  
+FEEC-School of Electrical and Computer Engineering, State University of Campinas, Campinas, Brazil  
+wcostads@gmail.com | w157573@dac.unicamp.br | annibale_jose@yahoo.com.br
+
+**Anderson Ricardo Justo de Araújo**, **José Pissolato Filho**  
+FEEC-School of Electrical and Computer Engineering, State University of Campinas, Campinas, Brazil  
+ajusto@dsce.fee.unicamp.br | pisso@dsce.fee.unicamp.br
+
+### Abstract
+Abstract—This paper investigates the impact of the frequency-dependent soil electrical parameters on the transient voltages generated along the wind tower (WT) and on the induced voltages on an overhead distribution line (DL) close to the WT for a lightning striking at the WT. For this objective, a full-wave electromagnetic commercial software XGSLab® based on the Partial Element Equivalent Circuit (PEEC) is used. The frequency-dependent soil characteristic is incorporated into the software using the CIGRÈ recommended expressions for the resistivity $\rho(f)$ and relative permittivity $\varepsilon_r(f)$. The analysis is carried out for three different soil resistivities $\rho_0$ of 1000, 2500, and 5000 $\Omega\cdot\text{m}$. All the transient responses are compared with those computed assuming the ground modeled by its frequency-constant parameters ($\rho$, $\varepsilon_r$). Results demonstrated that the transient voltages at the WT base are significantly reduced when frequency-dependent soil is assumed, however, the voltage peaks to the distribution transformers, and outages in the distribution system. The classical work of Rusck [2] provided analytical expressions to compute the lightning-induced voltages (LIVs) for lines located on perfect conductor. Latter, Rachidi et al. demonstrated that the lossy ground plays a significant role in the assessment of the LIVs [3], [4]. Such voltages can generate overvoltages in the medium voltage network in the order of 50% to 80% greater than a discharge close to a medium voltage network [5]. Furthermore, each part of the WT [6]–[8] and the ground modeled by its soil electrical parameters dependent on the frequency, number of layers (stratified medium), water content and ionization effect [9]–[11] must be considered for a precise transient analysis.

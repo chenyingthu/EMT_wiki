@@ -1,0 +1,241 @@
+                                                                  Electric Power Systems Research 223 (2023) 109666
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                            Electric Power Systems Research
+                                                               journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Study of a numerical integration method using the compact scheme for
+electromagnetic transient simulations
+Yohei Tanaka a, *, Yoshihiro Baba b
+a
+    Grid and Communication Technology Division, Grid Innovation Research Laboratory, Central Research Institute of Electric Power Industry, Kanagawa 240-0196, Japan
+b
+    Graduate School of Science and Engineering, Doshisha University, Kyotanabe, Kyoto 610-0394, Japan
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    This paper proposes a one-stage and oscillation free numerical integration method using the compact scheme for
+Circuit equation                                             electromagnetic transient simulations. Since the compact scheme becomes L-stable at a moment when a circuit
+Compact scheme                                               suddenly changes to a stiff system, the method is capable of suppressing the spurious numerical oscillations.
+Electromagnetic Transient analysis
+                                                             Moreover, the compact scheme, which is a one-stage method, does not produce spurious spikes due to nonlinear
+Integration method
+SPARSE Tableau approach
+                                                             elements. The compact scheme is compared with the trapezoidal method, the two-stage diagonally implicit
+Stability                                                    Runge-Kutta (2S-DIRK) and the trapezoidal method with the second order backward difference formula (TR-
+                                                             BDF2). It follows from the comparison that the compact scheme does not produce the spurious numerical os­
+                                                             cillations and spikes.
+
+
+
+
+1. Introduction                                                                                    Conventional and latest methods for suppressing numerical oscillations
+                                                                                                   are reviewed and discussed in [2]. However, since the detection of a
+    Electromagnetic transients (EMT) simulations have been used for the                            sudden change of currents or voltages not always feasible, it is not
+studies of abnormal voltage/current, power quality, and so on. Recently,                           guaranteed that the numerical oscillation is suppressed with CDA or the
+EMT simulations have become increasingly important in the dynamic                                  interpolation method [7,8].
+analysis of power systems including many fast-speed-switching power                                    To cope with the problem of these techniques, the application of the
+electronics devices [1,2].                                                                         two-stage diagonally implicit Runge-Kutta (2S-DIRK) or the trapezoidal
+    In the EMT simulation, a numerical integration method is required to                           method with the second order backward difference formula (TR-BDF2)
+obtain the time solution of a circuit system including inductors and                               to EMT simulations have been proposed [7,9]. The 2S-DIRK and
+capacitors. The trapezoidal method has been used for many EMT                                      TR-BDF2 have a second-order accuracy and are L-stable. Unlike the
+simulation programs such as electromagnetic transients analysis pro­                               trapezoidal method, it is mathematically guaranteed that the 2S-DIRK
+gram (EMTP) [1–3] and PSCAD [4], since the method has a second order                               and TR-BDF2 never produce spurious numerical oscillations. Thus, no
+accuracy and is A-stable in spite of its simple calculation principle.                             detection of the events which can lead to numerical oscillations is
+However, the trapezoidal method produces spurious numerical oscilla­                               required. However, since the 2S-DIRK and TR-BDF2 are two-stage
+tions due to sudden changes of inductor currents or capacitor voltages.                            methods, which calculate a solution at the present time step from the
+    To solve this problem or to eliminate spurious oscillations, the crit­                         values obtained in the previous and intermediate steps, spurious spikes
+ical damping adjustment (CDA) method has been introduced [5,6]. In                                 can be generated because of nonlinear elements contained in a circuit
+the CDA, the backward Euler method is employed at a moment of sud­                                 system [7]. Thus, a one-stage integration method, which can suppress
+den changes of inductor currents or capacitor voltages. Since the back­                            the numerical oscillations, is desired.
+ward Euler method is L-stable, numerical oscillation is not sustained.                                 This paper proposes a one-stage and oscillation free numerical
+PSCAD uses the interpolation method [4] to suppress the numerical                                  integration method using the compact scheme [10] for EMT simulations.
+oscillations. In the method, the linear interpolation is used for deter­                           At first, the fundamental of the compact scheme is described, and the
+mining the time when the current or voltage is suddenly changed.                                   formulas of the compact scheme of inductors and capacitors for both
+
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12-15, 2023.
+    * Corresponding author.
+      E-mail address: yohei@criepi.denken.or.jp (Y. Tanaka).
+
+https://doi.org/10.1016/j.epsr.2023.109666
+Received 10 December 2022; Received in revised form 9 April 2023; Accepted 21 June 2023
+Available online 1 July 2023
+0378-7796/© 2023 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+Y. Tanaka and Y. Baba                                                                                                       Electric Power Systems Research 223 (2023) 109666
+
+
+linear and nonlinear cases are derived. Then, it is shown that the
+compact scheme can suppress numerical oscillations due to switching
+events, sudden changes of voltage and current source values and
+changes of the operating points of nonlinear components. Finally, some
+simulation cases computed using the compact scheme are compared
+with those computed using CDA, the trapezoidal method, 2S-DIRK and
+TR-BDF2.
+
+2. Compact scheme
+
+2.1. Integration of a differential equation by compact scheme
+                                                                                   Fig. 1. Equivalent circuit of a linear or a nonlinear inductor based on the
+                                                                                   approximation of the compact scheme.
+    The compact scheme proposed by Lele [10] is a finite difference
+method. The scheme is characterized by handling not only discretized
+                                                                                   current. GL, GLT and JL are given by
+function values but also their derivatives. The compact scheme has been
+frequently used in numerical calculations for solving Navier-Stokes                        h
+                                                                                   GL =
+equations [11,12].                                                                        2L
+    Consider the differential equation                                                      h2                                                                           (7)
+                                                                                   GLT =
+dy                                                                                         12L
+   = f (t, y)                                                           (1)
+dt                                                                                 JL = GL vn− 1 + GLT v′n− 1 + in− 1 .
+
+where f is a function of time t and variable y. Application of the compact
+                                                                                   2.3. Linear capacitors
+scheme to dy/dt of (1) yields the following expression:
+
+yn = yn− 1 + hαy′n + h(1 − α)y′n− 1                                                   The relation between the current i and the voltage v of a linear
+         (
+           1 α ″
+                 )          (
+                             1 α ″
+                                   )                                    (2)        capacitor is given by
+    +h2      −     y n + h2   −      y
+           6 2               3 2 n− 1                                              dv  i
+                                                                                      = .                                                                                (8)
+                                                                                   dt C
+where yn and yn-1 are the values at time steps t = tn and t = tn-1,
+respectively. y′ and y″ represent the first and second derivative values of        Using the compact scheme from the previous time step t = tn-1 to the
+y with respect to time t, respectively. h is the time step size, and α is a        present time step t = tn, the approximation formula of (8) is given by
+constant which gives the fourth-order accuracy if α = 0.5, and the third-                          h                  h2 ′
+order accuracy if α > 0.5. Substituting (1) into (2), we obtain                    vn = vn− 1 +      (in + in− 1 ) −     (i n − i′n− 1 )                                 (9)
+                                                                                                  2C                 12C
+yn = yn− 1 + hαf (tn , yn ) + h(1 − α)f (tn− 1 , yn− 1 )
+      (       )                   (     )                                          where i′ represents the first derivative value of i with respect to time t.
+        1 α ′                       1 α ′                               (3)
+  +h2      −    f (tn , yn ) + h2    −     f (tn− 1 , yn− 1 )                      Eq. (9) yields the equivalent circuit shown in Fig. 2. In Fig. 2, RCT is the
+        6 2                         3 2                                            coefficient which relates the current to its derivative value. GC, RCT and
+                                                                                   JC are given by
+where f′ represents the first derivative value of f with respect to time t.
+When α = 0.5, (3) is written as                                                    GC =
+                                                                                        2C
+                                                                                         h
+            h
+yn = yn− 1 + [f (tn , yn ) + f (tn− 1 , yn− 1 )]
+                                                                                   RCT =
+                                                                                         h                                                                             (10)
+            2
+                                                                        (4)              6
+             h2 ′
+         −      [f (tn , yn ) − f ′(tn− 1 , yn− 1 )].                              JC = − GC vn− 1 − RCT i′n− 1 − in− 1 .
+             12
+
+Eq. (3) and (4) are classified as a one-stage method like the trapezoidal          2.4. Nonlinear inductors
+method. In this paper, we formulate passive elements such as linear
+inductors and capacitors on the basis of the fourth-order formulation                 The characteristics of a nonlinear inductor are expressed by
+expressed by (4).
+                                                                                   dϕ
+                                                                                      = v, ϕ = ϕ(i)                                                                    (11)
+                                                                                   dt
+2.2. Linear inductors
+                                                                                   where v and i are the voltage and the current of the nonlinear inductor,
+   The relation between the current i and the voltage v of a linear
+inductor is given by
+di 1
+  = v.                                                                  (5)
+dt L
+
+Using the compact scheme from the previous time step t = tn-1 to the
+present time step t = tn, the approximation formula of (5) is given by
+
+                 h                  h2 ′
+in = in− 1 +       (vn + vn− 1 ) −     (v n − v′n− 1 )                  (6)
+                2L                 12L
+
+where v′ represents the first derivative value of v with respect to time t.
+Eq. (6) yields the equivalent circuit shown in Fig. 1. In Fig. 1, GLT is the       Fig. 2. Equivalent circuit of a linear or a nonlinear capacitor based on the
+coefficient which relates the derivative value of the voltage to the               approximation of the compact scheme.
+
+                                                                               2
+Y. Tanaka and Y. Baba                                                                                                       Electric Power Systems Research 223 (2023) 109666
+
+
+respectively. ϕ is the magnetic flux, which is nonlinearly dependent on
+current. If the nonlinear current-flux curve is linearized as shown in
+Fig. 3, we obtain
+ϕ = li + ϕ0                                                          (12)
+
+where l and ϕ0 are the slope and the intercept at an operating point,
+respectively. Using the compact scheme from the previous time step t =
+tn-1 to the present time step t = tn, the approximation formula of (11) is
+given by
+       ϕn− 1 − ϕ0,n    h                   h2 ′
+in =                +     (vn + vn− 1 ) −      (v n − v′n− 1 )       (13)                            Fig. 4. Linearization of nonlinear capacitance.
+             ln       2ln                 12ln
+
+where
+                                                                                      2cn
+                                                                                 GC =
+ϕn− 1 = ln− 1 in− 1 + ϕ0,n− 1.                                       (14)              h
+                                                                                       h
+Eq. (13) is also expressed by the equivalent circuit shown in Fig. 1. GL,        RCT =                                                                                 (20)
+                                                                                       6
+GLT and JL are given by                                                                               (
+                                                                                                     2 qn− 1 − q0,n
+                                                                                                                    )
+                                                                                 JC = − RCT i′n− 1 −                  − in− 1 .
+         h                                                                                                  h
+GL =
+        2ln
+                                                                                 2.6. Non-linear resistors
+           h2
+GLT =                                                                (15)
+          12ln
+                                                                                     The characteristic of a nonlinear resistor is given by
+                                  ϕn− 1 − ϕ0,n
+JL = GL vn− 1 + GLT v′n− 1 +                   .                                 i = f (v)                                                                             (21)
+                                        ln
+
+2.5. Non-linear capacitors                                                       where v and i are the voltage and the current of the nonlinear resistor,
+                                                                                 respectively. f is a nonlinear function of voltage. If the voltage-current
+    The characteristics of a nonlinear capacitor are expressed by                curve is linearized as shown in Fig. 5, we obtain
+
+dq                                                                               f (v) = gv + i0                                                                       (22)
+   = i, q = q(v)                                                     (16)
+dt
+                                                                                 where g and i0 are the slope and the intercept at an operating point,
+where v and i are the voltage and the current of the nonlinear capacitor,        respectively. Substituting (22) into (21), we obtain
+respectively. q is the charge stored in the nonlinear capacitor. If the          i = gv + i0 .                                                                         (23)
+voltage-charge curve is linearized as shown in Fig. 4, we obtain
+q = cv + q0                                                          (17)        Since the values of g and i0 are changed depending on the operating
+                                                                                 point, g and i0 can be expressed by functions of time. Thus, the time
+where c and q0 are the slope and the intercept at an operating point,            derivative of (23) is given by
+respectively. Using the compact scheme from the previous time step t =
+                                                                                 i′ = gv′ + g′v + i′0 .                                                                (24)
+tn-1 to the present time step t = tn, the approximation formula of (16) is
+given by                                                                         The finite difference expression of (24) can be given by
+     qn− 1 − q0,n    h                   h2 ′
+vn =              +     (in + in− 1 ) −      (i n − i′n− 1 )         (18)        i′n = gn v′n +
+                                                                                                  gn − gn− 1
+                                                                                                             vn− 1 +
+                                                                                                                     i0,n − i0,n− 1
+                                                                                                                                    .                                  (25)
+          cn        2cn                 12cn                                                          h                    h
+
+where                                                                            3. Formulation of the circuit equations
+qn− 1 = cn− 1 vn− 1 + q0,n− 1 .                                      (19)
+                                                                                     In this section, we consider a circuit which has Nn nodes and Nb
+Eq. (18) is also expressed by the equivalent circuit shown in Fig. 2. GC,        branches. In this paper, the circuit equations based on the compact
+RC

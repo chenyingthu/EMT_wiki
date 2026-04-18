@@ -1,0 +1,29 @@
+# Parallel computation of power system EMTs through Polyphase-QMF filter banks
+
+J.R. Zuluaga a, *, J.L. Naredo a, L.J. Castañón a, M. Vega b, O. Ramos-Leaños c
+
+a Cinvestav Guadalajara, Mexico
+b Universidad Autónoma de Guadalajara, Mexico
+c Centre de Recherché de Hydro Québec, Canada
+
+* Corresponding author. E-mail address: jrzuluagad@iteso.mx (J.R. Zuluaga).
+
+**Keywords:** Electromagnetic transients, Numerical laplace transform, Parallel processing, Real-time, Faster than real time, Polyphase QMF filter banks, FPGAs
+
+**Abstract:** The analysis of electromagnetic transients in power systems often requires intensive computations. Various methods have been proposed to reduce execution times and computational costs. A new technique is proposed here in which the system model is synthesized in the Laplace domain and is simulated in the time domain through long convolutions. The nodal matrix of the system under analysis is reduced by Kron’s method to leave only the nodes related to observations and to changes in explicit form. State vectors derived from the reduced matrix are convolved with auxiliary signals to simulate transient events and the convolutions are performed in parallel by an algorithm based on polyphase QMF filter-banks. The proposed technique is applied in the simulation of a transient on a 17-bus network. The obtained results are compared with those from PSCAD / EMTDC and from the conventional Laplace Transform. Finally, the suitability of this technique for parallel processing is demonstrated by a basic implementation on an FPGA.
+
+## 1. Introduction
+
+The analysis and the simulation of electromagnetic transients (EMT) in power systems often demand lengthy and intensive computations. These tasks usually are carried out through sequential time-domain techniques based mostly in emtp techniques [1,2]. Certain transient studies could require hundreds of simulations consisting in variations of the same network and the same phenomena; this is the case at statistical studies in insulation coordination [3,4]. The aim of this paper is to introduce a methodology to reduce computational times and costs in the simulation of EMTs, especially at statistical EMT studies.
+
+Various strategies have been previously developed to reduce the computational times and costs of these tasks [5]. Three of them are identified next. A first strategy consists in dividing a large network into time-decoupled subnetworks that can be computed simultaneously with parallel processors [6–8]. A second strategy consists in using network equivalents or simplified models for those subnetworks outside the area of interest of a transient study [9–11]. A third strategy is to apply multi-rate techniques for handling slow transient events with larger integration time-steps than for faster events [14].
+
+One problem with the time-decoupling strategy is that this relies on the presence of long lines or of two-port elements with the proper delays to provide the required time decoupling. It is then clear that one does not have the control over the size of the decoupled subnetworks and that the computational loads of the parallel processes can be unbalanced. As for the use of network equivalents and simplified models, these are usually represented by rational functions that are prone to passivity-violation problems [11–16]. Finally, varying time-step and multi-rate techniques are promising; however, their effective application to the analysis and simulation of EMTs in power systems is still at an early stage of development [12–15].
+
+To avoid the previous shortcomings, a new technique is proposed here that combines parallel processing, multi-rate techniques and reduction of computational complexity. This technique is based on the premise that transient events can be effectively represented by switch operations. The network under study is first represented by its nodal matrix in the Laplace-domain [2,17]. This nodal matrix is then reduced by Kron’s method [18], leaving in explicit form only the nodes of interest; that is, the ones presenting changes due to transients, as well as those related to observation variables. The reduced nodal form is next modified according to state changes and inverted to produce reduced $Z_{\text{red}}$ matrices, the columns of each of these matrixes that are involved in a switching event are combined into a single one $Z(p)$ characterizing the network response to the switch operation. The elements of $Z(p)$ are transformed afterwards to discrete time-domain and switch effects are determined by long convolutions between the $Z(p)$ transformed elements and waveforms from auxiliary sources representing the switch operation. Finally, the global response of the network under study to a sequence of transient events is obtained by repeatedly applying superposition [19].
+
+The major computational burden of the technique being proposed here is the execution of the convolutions involved in each transient event. Nevertheless, these convolutions are carried out effectively with a parallel-processing algorithm based on the structure of a bank of polyphase Quadrature-Mirror Filters (QMF) [20–23].
+
+$$Z_{SS} = -Z_{\text{red}} Y_{12} Y_{22}^{-1} \tag{9}$$
+
+Note in (5) that the voltage response $V_1$ consists of two parts. The first one is the steady state response $V_{SS}$ and the second one is a transient disturbance $V_{TR}$ due to a switch operation. Usually, the elements of $I_2$ are alternating current (AC) pure sinusoids at the nominal frequency $\omega_0 = 100\pi$ or $120\pi$ rad/s; the components of $Z_{SS}$ are thus constants evaluated at $\omega_0$. In the case that the initial steady state is a harmonic state, $Z_{SS}$ must be calculated at each harmonic frequency $k\omega_0$, with $k = 2, 3, \dots$, etc., and $V_{SS}$ is obtained by superposing the responses of the harmonics.

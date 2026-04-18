@@ -1,0 +1,203 @@
+1538                                                              IEEE Transactions on Power Systems, Vol. 11, No. 3, August 1996
+
+                        ependent Transformation atrices for Untranspose
+                              Lines using Newton-Raphson Method
+         L. M. Wedepohl'                              H.V. Nguyen'                                       G.D. Irwin2
+             FEE                                 Student Member, IEEE                                  Member, IEEE
+           Department of Electrical Engineering                                  Manitoba HVDC Research Centre
+            The University of British Columbia                                          Winnipeg, Canada
+                  Vancouver, Canada
+
+  ABSTRACT                                                       trices in time domain simulations, rational approximations
+  The frequency-dependent aspects of transmission line           need to be performed [3]. To achieve this, the elements of
+transformation matrices along with their asymptotic behav-       such matrices have to be continuously evaluated over a wide
+iours at high and low frequencies are thoroughly investigated    frequency range( 1 Hz - 1 IvlHz). Furthermore, they have to
+in this paper. The Newton-Raphson (NR) method for evalu-         be smooth. This has only been possible for underground
+ating the transformation matrices as smooth functions of fre-    cables [3]. For multi-circuit overhead lines, however, the
+quency is introduced. A different technique which utilizes a     transformation matrix elements do not always behave
+conventional diagonalization algorithm and a correlation         smoothly. It will be shown in this paper that the proposed
+technique for tracking the order of the eigenvectors and ei-     NR method completely overcomes this limitation. Modal
+genvalues is used to confirm the validity of the NR method.      parameters of muti-circuit overhead lines produced by the
+Transformation matrices for typical line configurations are      proposed NR method are smooth and well behaved. Further-
+evaluated and discussed. The paper concludes that the NR         more, they can be fitted with rational functions of the
+method is more efficient and appropriate for use in the time     minimum-phase-shifttype with real negative poles and zeros.
+domain frequency-dependent line models in the Electromag-        With this type of function, the approximate modal para-
+netic Transient Program (EMTP).                                  meters can be effectively incorporated into the EMTP line
+  Key words: transformation matrix (TI), Newton-Raphson          model using the trapezoidal rule, and numerical stability is
+(NR), line model, EMTP.                                          achieved [3,4]. The time-domain implementation procedure
+                                                                 could be followed exactly in the same manner as it was
+                      1. INTRODUCTION                            formulated and described in reference 3. It will not be re-
+                                                                 peated here due to space constraint. Thus, the main con-
+   The interest in accurately modelling the frequency-depend-    tribution of the paper lies in the development of the '
+ent aspects of untransposed transmission lines in the time do-   NR-based method.
+main has been investigated over the last two decades.
+Although much improvement has been made, it is still usual                    2. 'rRANSMISSION LINE THEORIES
+to assume a constant transformation matrix for conversion
+between the modal and the time domain in the present line          The fundamental telegrapher's equations for a multiphase
+models [l]. It is well known that constant transformation        transmission line are:
+matrices are accurate enough for single flat circuit lines.                   --
+                                                                              d2v-[zY]V
+                                                                                  -              d21
+                                                                                               ; -=[YZ]I
+However, for the case of double- or more circuit lines, the                    dX2                 dx2
+accuracy decreases noticeably, especially in the studies which   Where Z and Y are the per unit length series impedance and
+require to cover wide frequency ranges [ 2 ] .                   the shunt admittance matrices, respectively. V and I are col-
+  It has been recognized that in order to efficiently include    umn voltage and current matrices.
+the frequency-dependent nature of the transformation ma-           It is well known that the n-phase equations (1) are solved
+                                                                 by transforming the n coupled equations into the n decoupled
+95 SM 602-3 PWRS     A paper recommended and approved            equations. To achieve this, a modal transformation matrix TI
+by the IEEE Power System Engineering Committee of the
+                                                                 which diagonalizes the YZ product is evaluated from the sol-
+IEEE Power Engineering Society for presentation at
+the 1995 IEEE/PES Summer Meeting, July 23-27, 1995,              ution of the eigenproblem
+Portland, OR. Manuscript submitted December 27, 1994;
+made available f o r printing May 11, 1995.                                           TY'YZT~    =h                        (2)
+                                                                where h is the djagonal eigenvalue matrix.
+                                                                  The matrix TI varies with frequency since Y and Z are fre-
+                                                                quency-dependent. It is necessary to investigate the nature of
+                                                                the TI matrix only since the matrix T, which diagonalizes
+                                                                the product ZY can be evaluated directly from TI. It is very
+                                                                important to mention that TI and T, are equal only when Z
+                                               0885-8950/96/$05.00 0 1995 IEEE
+                                                                                                                             1539
+
+and Y are functions of the same matrix [ 5 ] . In practice, Z The term d,2 =     ,/=        is the earth complex depth of pen-
+and Y are functions of the same matrix only when the system etration, x and y are the horizontal and vertical co-ordinates
+is completely balanced.                                        of the conductors, respectively; and p2 is the earth resistivity.
+                                                                 The validity of equation (6) has been tested and confirmed
+        3. FREQUENCY-DEPENDENT      NATURE OF Y & Z
+                                                               in [SI. The results agree very closely with those obtained
+  In order to fully understand the characteristics of the TI from Carson's integral. The maximum error is only a few
+matrix, it is relevant to describe individually the frequen- percent in the kHz range. This is of very little consequence
+cy-dependent nature of the Y and Z matrices. The Y matrix in transient calculations where the entire frequency spectrum
+takes the following form,                                      contributes to the results anyhow. Furthermore, the value de-
+                                            D                  pends amongst others on a knowledge of the earth resistivity
+               Y =j27cwP-' with P , = In                   (31 pz , which is not only not accurately known, but is subject to
+                                             d,                quite wide seasonal variations according to the season of the
+where P = potential-coefficient matrix                         year (wet or dry). There is every incentive to use equation
+      D,, = distance from conductor i to image of conductor j  (6) because of its simplicity, efficiency and numerical stabil-
+      d, = direct distance form conductor i to conductor j     ity. It should be mentioned that the transformation matrices
+                                                               evaluated in this paper, using Carson's formula or equation
+      o = 27cf, angular frequency
+                                                               (6) in the YZ product, showed identical results.
+  The Z matrix has the general form of
+                  z= J*[P27c   + Z,] + Z e ,                         4. EIGENPROBLEM
+                                                                                 SOLVING WITII NEWTON-RAPNSON
+                                                           (4)
+                                                                  For convenience, the following variable notations are used:
+where po is the free-space permeability. The subscripts c         i) S is the YZ product
+and e refer to the internal conductor and earth impedance
+corrections, respectively. Note that the Z, matrix is a diag-     ii) TI(^) is the column k of matrix TI
+onal matrix. For a solid conductor, its elements at all fre-      iii) U is the unit matrix
+quencies become the ratio of a Bessel function of the first       Then, equation (2) can be expressed as:
+kind of order zero to a Bessel function of the first lund of
+order one. A simple but at the same time very accurate for-                               STI = TIL                           (7)
+mula for a solid cylinder is [101:                                 For a n-phase system, there are n 2 equations contained in
+                                                                 the matrix equation (7), because n equations are existed for
+                                                           (5)   each value of h k k and there are 'n' different values of these.
+                                                                 Let one consider one set of n equations belong to the particu-
+where:                                                           lar value h k , i.e.:
+  p1 = conductor resistivity
+                                                                                    (S - hkkU)T~(k)= 0               (8)
+  r = conductor radius
+                                                                  Equation (8) is a set of homogenous simultaneous equa-
+
+         K
+  del = - ,conductor complex depth of penetration
+
+  p = conductor permeability
+                                                             tions. By Kramer's rule it may be shown that the solution is
+                                                             trivial unless the determinant of (S - 3LkkU) is zero. Thus we
+                                                             can diagonalize the S matrix by setting this determinant to
+                                                             zero. This leads to a polynomial in h of order n, yielding
+  At very low frequencies de, approaches infinity, and
+                                                             exactly n values of h . Sometimes one or more values of h
+          P1                                                 may   be equal. Once the values of h are known, the elements
+  Z,,, = -, which is correctly the d.c. resistance.
+         xi-2                                                of TI(P)may be determined from (8).
+  At very high frequencies de, approaches zero, and            A suitable algorithm may be developed for determining the
+ Z,l+    -  p1 ,which is the correct skin effect impedance.
+                                                             eigenvalues   and eigenvectors of transmission line systems.
+          2xrd,l                                             There are different software packages available which can
+  The formula for evaluating the earth correction impedance readily be used for this purpose. However, in time domain
+matrix 2, was developed by Carson [6], which has been ac- programs such as the EMTP, there is a need to derive for
+cepted among power engineers as the correct formula to use. each frequency, the eigenvalues belonging to the same set of
+Deri et a1 mathematically proved and recommended to evalu- eigenvectors. The eigenvectors have to be smooth and con-
+ate the elements of this matrix with a simpler formula [Ill. tinuous throughout the entire frequency range. This is very
+This formula was originally proposed by Dubanton [7] and important if one needs to perform rational approximations
+has the following form,                                      for the eigenvectors [4]. If a conventional algorithm is used,
+                                                             the eigenvalues will switch places at certain frequencies
+                                 D;.
+                        Z,,= In -                            which create inevitable jumps in the eigenvectors, and com-
+                                 D,                          plex logic has to be used to ensure physical solutions. ,
+where Di. = ,/cyi +y, + 2de212+ (xi-
+1540
+  As mentioned in the introduction, the NR method overcom-                are smooth and well behaved. For the purpose of illustration,
+es this limitation It makes a direct solution of equation (8)             part of the modal parameters for the vertical twin-cirtuit line
+for each value of 1 and each set of T,, This is a non-linear              of Figure 1 are presented in the following sections.
+equation with 'In + 1" unknowns The number of variables                     For comparison purposes, there will be two kinds of curves
+could be reduced by one, by specifying the arbitrary value for            shown in the following figures, namely the solid and dotted
+one of the elements of TI, It is common sense to pick the                 ones. The solid cxrves represent the exact solutions obtained
+element which has the largest value at the inihal frequency               from the NR me1hod while the dotted ones depict their syn-
+and set it equal to one for all frequencies This can be dan-              thesized functions acquired from the fitting routine. This fit-
+gerous because sometimes a value may become zero or very                  ting routine is a modlfied version of the one described in [3].
+small at some frequencies leading to overflow errors Fur-                 The main modlfjcation involves the calculation of the time
+thermore, forcing an element of the eigenvectors to become                delay constant for the rational approximation of the modal
+purely real and constant for all frequencies might take away              propagation function. Since the angle of this function can be
+their natural variation behaviours A safer and more elegant               extracted directly, and is smooth and continuous, only one
+way is to introduce a constraint equation which provides con-             time delay at the fastest frequency need be evaluated, where-
+sistency for the solution One method is to specify the sums               as the average time delay over a frequency range was used
+of the squares of the elements of the eigenvectors to unity               in [4]. It is important to mention that the NR method pro-
+This constraint method has been applied and tested exten-                 duces modal parameters which are smooth and vary only
+sively in this paper With this criterion, the Jacobian matnx              slowly as a function of frequency, because of the inherent ei-
+is very well ordered and the rational approximations of the               genvalue-eigenvector tracking nature of the NR algorithm.
+transformation matrices are accurately found        It should be          This is the reason why syntheses using minimum-phase-shift
+noted that the NR method is not a self-starting routine                   rational functions have been successful in this paper.
+Another routine has to be used to supply the solution of the
+initial frequency first, before the NR one can get started                  5.1 Modal transformation TI matrix
+This is because the method is designed to utilize the results
+from the prevlous frequency as seeding values The purpose        There are n modes in a n-phase transmission line. If the
+of this is to speed up the iteration process In the program    ground wires are treated as conductors, there will be addi-
+written for this paper, the diagonalization routine based on   tional modes. It has been shown that at frequencies below
+the power method is used to start at the initial frequency     that at whch thle tower spacing is 1/2 wave length, the
+                                                               ground wires may be assumed to be zero at all points be-
+  5. MODAL   PARAMETERS OF MULTI-CONDUCTOR LINES w r r ~
+                                                               tween  towers. They may then be eliminated from the 2 and
+                                                               Y matrices by Gaussian elimination. This reduces the
+                 NEWTON-RAPHSON METHOD
+                                                               number of modes to the number of phase conductors. Power
+  Modal parameters were evaluated using the NR method for system transients are such that this simplifying assumption
+different line configurations, ranging from single- and twm- produces negligible errors and it is consequently used for the
+circuit lines for horizontal and vertical constructions to un- studies in t h s paper [12]. In the twin-circuit line of
+usual circuit lines with the phase conductors arranged in Figure 1, the ground wires are assumed to have uniformly
+various asymmetric settings, with or without ground wlres zero potential, thus there are only six modes describing this
+An example of an unusual double-circuit line is the case line. Figure 2 shows the magnitude of the elements in col-
+where the left three phases are vertical while the right ones umn 1 of the 6 x 6 transformation matrix. Note that there
+are horizontal Another strong asymmetry but common-in- are actually twelve curves superimposed in this figure. It
+practice case is when two or more different voltage circuit shows that the fitting functions match closely with the exact
+lines share the same right-of-way and may be located one un-
+derneath another. The NR method has no difficulty in diago-      10 I                                                      I
+
+
+
+                                                                                   I-
+nalizing such lines The obtained transformation matrices                    Exact function
+                                                                                                    Maximum error c 1.0 Yo
+
+                                                                                        oooooooo(I   Synthesized functbon
+                          20 8 m
+                                                                           --
+                                          Ground wire, 1 75 cm diameter
+
+
+                                    0 4
+                                                                           0.5
+                           190m     >         Phase conductor
+                                              4 X 3 84 cm diameter
+                                    Q 5       at 50 cm spacing
+                           20 8 m
+                                                       0   0
+                   3 0              0 6
+                                                       0 0                 0.0     I
+        26 0 m                                         50 cm
+                                                                                 10.'                

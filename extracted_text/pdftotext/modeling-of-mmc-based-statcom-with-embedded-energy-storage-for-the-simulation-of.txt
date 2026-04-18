@@ -1,0 +1,198 @@
+                                                       Electric Power Systems Research 220 (2023) 109316
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Modeling of MMC-based STATCOM with embedded energy storage for the
+simulation of electromagnetic transients✰
+Anton Stepanov a, *, Hani Saad b, Jean Mahseredjian c
+a
+  PGSTech, Montreal, QC, Canada
+b
+  ACDC Transient, Lyon, France
+c
+  Polytechnique Montreal, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          The Delta-connected STATCOM is regarded as the most advantageous topology for STATCOMs based on the
+Energy storage                                     Modular Multilevel Converter (MMC) technology. Embedding energy storage devices into the MMCs has gained
+Modeling                                           significant research interest in recent years. This paper focuses on modeling of MMC-based Delta-STATCOMs
+Modular multilevel converter
+                                                   with embedded energy storage. A flexible modeling approach is proposed, which allows easy interfacing of
+EMT
+STATCOM
+                                                   various converter models with various energy storage device models. Four commonly used types of MMC models
+                                                   are applied to STATCOM modeling: detailed, detailed equivalent, arm equivalent, and average value. Super­
+                                                   capacitors and batteries are used as energy storage devices. Dynamic performances of the models are compared
+                                                   in transient simulation cases using EMTP.
+
+
+
+
+1. Introduction                                                                        Accurate models of various types of equipment are required to
+                                                                                   perform electromagnetic transient (EMT) simulations in the design and
+    Modular multilevel converter (MMC) is a power electronic converter             analysis of electrical systems. Owing to the structural complexity of
+that generates AC voltages by inserting/bypassing the appropriate                  MMCs, numerous nonlinear devices, and advanced control systems,
+number of submodules (SMs). Each SMs represents one level of the                   many EMT models have been developed. They are generally divided into
+resulting voltage waveform [1]. MMCs have several advantages over                  four groups [14–16]:
+conventional 2- and 3-level voltage source converters, including easy                  Detailed Model (DM): represents nonlinear v-i characteristics of
+scalability to high voltage levels, smoother AC voltage waveform, lower            IGBTs. It is used to validate other models, to simulate SM internal faults,
+rate of change of voltage [2,3]. MMCs are used in many modern projects:            to analyze SM topologies etc.
+HVDC systems [4,5], power quality improvement [6,7] and others [8,9].
+    Energy Storage (ES) devices allow to enhance network congestion                 • Detailed Equivalent Model (DEM): represents IGBTs as two-value
+management, to counteract the effects of intermittent power generation                resistances. Useful for the analysis of low-level controls such as
+from renewable energy sources, provide grid frequency support,                        capacitor balancing algorithms, modulation.
+improve economic efficiency [9,10]. It has been concluded that MMCs                 • Arm Equivalent Model (AEM): represents all SMs in each arm by a
+with ES devices embedded within submodules are a promising solution                   single equivalent circuit. Reduces computational time while keeping
+to improve power quality [10–12]. Depending on the application re­                    accuracy of internal variables such as circulating current and MMC
+quirements, the nominal power of the embedded energy storage may                      internal energy.
+vary from partial (40% and lower) to full power of the converter, and its           • Average Value Model (AVM): represents all SMs in the converter as a
+energy capacity likewise depends on the project requirements [10,11].                 single capacitor. Accelerates simulations while keeping accurate AC
+    MMC-based STATCOMs can have single-star, double-star or delta                     system dynamics, sufficiently accurate for transient stability studies.
+topologies. Delta configuration with full-bridge (FB) SMs is considered
+in this paper since it has more advantages over other types [10,13].                  Despite considerable research efforts in MMC modeling, the
+
+
+
+    ✰
+       Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+    * Corresponding author.
+      E-mail address: anton.stepanov@emtp.com (A. Stepanov).
+
+https://doi.org/10.1016/j.epsr.2023.109316
+Received 19 November 2022; Received in revised form 28 February 2023; Accepted 7 March 2023
+Available online 20 March 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+A. Stepanov et al.                                                                                                 Electric Power Systems Research 220 (2023) 109316
+
+
+modeling of STATCOMs with embedded ES has not yet been widely                       • provide accurate control of the charging/discharging process;
+researched. Some models have been proposed in [17,18], and [19], but                • provide galvanic isolation if required.
+only for the double-star configuration with half-bridge SMs and only
+using batteries as ES devices. Thus, the modeling of Delta-STATCOM                     The DC/DC converter must be bi-directional, since both charging and
+configuration with FB SMs (Fig. 1) has not yet been discussed in the               discharging processes are present. In this paper it is considered that the
+literature.                                                                        DC/DC converter is present.
+    This paper aims to cover this gap by providing guidelines for EMT
+modeling of STATCOMs with energy storage using MMC technology,                     2.4. Control system
+with a specific focus on Delta configuration. A comprehensive set of
+models with various types of embedded ES is presented. Plus, a gener­                  The overview of the control system used in this paper is shown in
+alized modeling approach for various ES device models and interfacing              Fig. 2. The main control system for the full-bridge MMC STATCOM in
+converter is proposed in this paper, describing how any two-port ES                Delta configuration is taken from [23]. It employs the classical cascade
+device model can work with any converter model.                                    structure. The active channel of the outer loop is responsible for the DC
+    The paper is organized as follows: Section 2 describes the converter           voltage control (which makes it the total energy control of the STAT­
+topology and its control system, Section 3 describes the modeling                  COM), and the reactive channel is responsible for the AC voltage or
+principles of the ES and the converter, simulation results and analysis            reactive power output of the STATCOM. The outer loop generates
+are given in Section 4.                                                            reference signals for the inner current loop, which regulates the AC
+                                                                                   currents. The low-level control includes the calculation of the number of
+2. Topology overview                                                               SMs to insert, capacitor voltage balancing within the arm, and gating
+                                                                                   signals generation for the SM switches. Zero-sequence current (i0 ) con­
+2.1. Electrical circuit                                                            trol is responsible for the energy balancing among the three arms of the
+                                                                                   converter.
+   The STATCOM shown in Fig. 1 comprises three arms connected in                       In parallel to the main cascade control structure, the ES control
+delta configuration, where each arm contains an inductance and a chain             system is added. The outer loop of the ES control system is responsible
+of series-connected FB SMs with energy storage units. The SMs are                  for the grid frequency support and/or for the state of charge of the ES
+comprised of a capacitor and four fully controllable switches (IGBTs). To          device, the inner loop is responsible for ES current regulation, and low-
+be able to use the STATCOM at high voltage levels, a coupling trans­               level control generates the gating signals for the switches.
+former is typically used, which is also shown in Fig. 1.                               It should be noted that SM capacitor voltage in the MMC STATCOM
+                                                                                   with embedded energy storage is directly affected by three competing
+2.2. Energy storage device                                                         controls: DC voltage magnitude control in the main control system, grid
+                                                                                   support in the ES control system, and arm energy balancing. Thus, it is
+    While various options are available for energy storage, batteries [20]         important to make sure that the control loops do not adversely interact
+and supercapacitors [21] have gained popularity as embedded energy                 with each other. This can be done by selecting different settling times for
+storage units due to the ease of interfacing and reasonable technological          different loops in the control system. Active power grid support, for
+development. Thus, this paper focuses only on these ES devices.                    example, is typically slower than DC voltage control. In this paper, the
+                                                                                   time constant of energy balancing control is 0.05 s, the DC voltage
+                                                                                   control time constant is 0.1 s, the time constant of the LPF in ES outer
+2.3. Interfacing DC/DC converter
+                                                                                   control is 0.3 s.
+                                                                                       Grid synchronization is ensured by the PLL. Additional improve­
+    It is possible to connect the ES device to the SM either directly [9,12]
+                                                                                   ments to the control system may be considered, such as improved
+or through an interface DC/DC converter [12,21,22]. The DC/DC con­
+                                                                                   operation in unbalanced conditions [24,25], but this is out of the scope
+verter can be used for batteries and supercapacitors and may serve
+                                                                                   of the paper.
+multiple purposes:
+                                                                                   3. Modeling
+ • interconnect different voltage levels if the SM voltage differs from
+   the ES device voltage;
+                                                                                       This section deals with the modeling of embedded ES and the con­
+                                                                                   verter separately and is split into three subsections: ES devices, DC/DC
+                                                                                   interface converter, and MMC STATCOM with embedded ES. The pro­
+                                                                                   posed modeling methodology allows to interface any embedded ES de­
+                                                                                   vice (as long as it has a two-port EMT model) with any MMC-based
+                                                                                   topology since the ES devices are connected via two electrical nodes to
+                                                                                   any converter model, as will be shown in this section: at the SM-level in
+                                                                                   DM and DEM, at the arm-level in the AEM, to the equivalent converter
+
+
+
+
+             Fig. 1. Delta-STATCOM with embedded energy storage.                                         Fig. 2. Control system overview.
+
+                                                                               2
+A. Stepanov et al.                                                                                                         Electric Power Systems Research 220 (2023) 109316
+
+
+                                                                                      negative impact on the lifetime of the battery). Including the SOC in
+                                                                                      addition to the ideal model presented in the previous subSection 3.1.2.1
+                                                                                      allows to run longer simulations where the overall energy storage dy­
+                                                                                      namics are of interest. The SOC can be found by integrating the battery
+                                                                                      current:
+                                                                                                                ∫t
+                                                                                                           1
+                                                                                      SOC(t) = SOC(0) −              iB (τ)dτ                                           (2)
+                                                                                                           Cn
+           Fig. 3. Supercapacitor models: a) simple, b) multi-branch.                                           0
+
+
+
+capacitor in the AVM.                                                                 where Cn is the nominal capacity of the battery, iB (τ) is the current going
+                                                                                      out of the battery at the instant τ.
+3.1. ES devices                                                                          More advanced models may include the effects of temperature,
+                                                                                      current magnitude, and efficiency on the SOC [29,31,32].
+   Both considered ES devices (supercapacitors and batteries) are
+modeled as two-port electrical circuits, this allows easy interfacing with            3.1.2.3. Nonlinear behavior. Inclusion of nonlinear dynamic behavior
+the DC/DC interface converter model.                                                  makes battery models more realistic, so it should be used where the
+                                                                                      highest accuracy of the results is required. Often, the nonlinearities
+3.1.1. Supercapacitor                                                                 discussed in the literature describe the effects of the SOC and the battery
+     The simplest supercapacitor model is a series RC circuit shown in                current on the value of the battery voltage EB and passive elements of the
+Fig. 3a, where Rsup and Csup represent the resistance and capacitance of              model [32–34]. For EMT simulations, the models that only modify the
+the supercapacitor. This model may be sufficient for short-circuit studies            voltage source value, as shown in Fig. 5a, are advantageous since the
+but not enough for long charge/discharge processes if high accuracy is                admittance matrix is kept constant and therefore does not require
+needed [26]. In such cases, a multi-branch model is used as shown in                  refactoring and does not slow down the simulations.
+Fig. 3b. It comprises immediate (Ri , Ci ), delayed (Rd , Cd ), long-term (Rl ,           The relationship between the circuit parameters and the SOC can be
+Cl ), and leakage (Rleak ) branches [26]. The time-constants are in the               given using an analytic expression or a lookup table [17,33,34]. A
+order of seconds, minutes, and tens of minutes for the immediate,                     typical relationship between the battery voltage and its SOC is shown in
+delayed, and long-term branches, respectively. The immediate branch                   Fig. 5b. The actual curve can differ depending on the battery technology
+capacitance Ci may include nonlinearities, such as voltage dependency:                (lead-acid, Li-ion, NiMH, NiCd, etc.), its temperature, state of health and
+                                                                                      other parameters. Additional nonlinearities, such as hysteresis and
+Ci = Ci0 + Ci1 VCi                                                          (1)       Peukert effect, where the battery capacity decreases depending on the
+                                                                                      discharge rate, can also be included in the model [35].
+where Ci0 , Ci1 are constants and VCi is capacitor voltage.
+                                                                                      3.2. ES converter
+3.1.2. Battery
+    Battery models vary depending on the type of study, it is possible to                 Although in the literature the DC/DC interface converter between
+find electrochemical, analytical, circuit-based, stochastic and other                 the ES and the SM is sometimes omitted [12,17], it cannot always be
+models. For EMT studies, electrical-circuit-based models are the most                 avoided [18,19], and therefore it is important to include it in a gener­
+appropriate [27–29].                                                                  alized modeling procedure.
+                                                                                          The simplest model of the ES and interface converter is a controlled
+3.1.2.1. Ideal battery model. The simplest battery model comprises a                  current source iES (Fig. 6a). To calculate the SOC using (2), the battery
+constant voltage source EB0 (open-circuit battery voltage) and an                     current is calculated as
+optional internal resistance Rin measured at full charge as shown in
+Fig. 4a. An extension to this model can include different resistances for             iB = iES vC /EB0                                                                  (3)
+charging and discharging (Rch ,Rdisch ) as shown in Fig. 4b; and/or a
+dedicated branch for a transient response (Rtr , Ctr ) along with an                  where vC is capacitor voltage.
+optional self-discharge branch (Rsd ) shown in Fig. 4c [28–30]. Such ideal                The converter can be represented as an ideal transformer with var­
+battery model

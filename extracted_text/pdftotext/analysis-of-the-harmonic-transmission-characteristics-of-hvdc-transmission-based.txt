@@ -1,0 +1,185 @@
+IEEE JOURNAL OF QUANTUM ELECTRONICS, VOL. 52, NO. 1, JANUARY 2016                                                                                     0600708
+
+
+
+
+              Ultra-Fast Millimeter Wave Beam Steering
+     Romain Bonjour, Matthew Singleton, Simon Arega Gebrewold, Yannick Salamin, Student Member, IEEE,
+                 Felix Christian Abrecht, Benedikt Baeuerle, Arne Josten, Pascal Leuchtmann,
+                                     Christian Hafner, and Juerg Leuthold
+                                                                    (Invited Paper)
+
+   Abstract— In this paper, we demonstrate ultra-fast millimeter                technologies rather than electronics offers ample bandwidth.
+wave beam steering with settling times below 50 ps. A phased                    Several MWP PAA architectures have been proposed
+array antenna with two elements is employed to realize beam                     lately. Such devices could be based on spatial light modul-
+steering. The phased array feeder is implemented with a recently
+introduced time delay line that provides, at the same time,                     ators (SLM) [8]–[12], ring-resonators [13]–[18], switched
+an ultra-fast tunability, broadband operation, and continuous                   delays [19], [20], semiconductor optical amplifier
+tuning. Our implementation is used to perform symbol-by-symbol                  (SOA) [21], [22], gratings [17], [23]–[29], dispersive
+steering. In our demonstration, the beam direction is                           fibers [30]–[35] and tunable phase shifters [36]. While all
+switched between two sequentially transmitted symbols toward                    these devices are optimized for specific applications, none
+two receivers placed 30° apart. We show the successful
+symbol-by-symbol steering for data streams as fast as 10 GBd.                   provide large bandwidth, continuous tuneability, and low
+The suggested scheme shows that the ultra-fast beam steering                    settling times as needed for ultra-fast beam steering.
+is becoming practical and might ultimately enable novel high                       In this paper, we demonstrate an ultra-fast beam steering
+bit-rate multiple access schemes.                                               concept relying on microwave photonics processing. The delay
+   Index Terms— Ultra-fast beam steering, millimeter wave                       lines in the FN are based on a novel microwave photonics
+communication, microwave photonics, radio access network.                       true-time delay scheme called Complementary Phase Shifted
+                                                                                Spectra (CPSS) which we recently published in [37]. The
+                        I. I NTRODUCTION                                        advantages of ultra-fast beam steering are demonstrated with
+
+T     O MEET the relentlessly growing bandwidth of wireless
+      communication, moving carrier frequencies towards mil-
+limeter wave (mmW) is a promising path [1]–[3]. However,
+                                                                                a proof-of-concept mmW radio-access network leveraging
+                                                                                symbol-by-symbol steering. This technique enables highly
+                                                                                flexible bandwidth allocation. Thanks to that, the cost and
+higher carrier frequencies experience higher free space path                    power consumption of the receiver electronics can be strongly
+loss [4], increasing the total losses of the wireless link.                     reduced. The demonstration is performed for a transmitting
+This drawback can be compensated by using phased array                          antenna array but the same concept could be applied to receiv-
+antennas (PAAs) [5]. Besides providing higher reach and                         ing arrays in a similar way. Moreover, the proposed solution
+reduced crosstalk [6], PAAs enable beam steering in order to                    can be fully integrated on photonics platforms as it only relies
+direct the energy to multiple users. Non-mechanical and thus                    on standard components such as couplers, waveguides, and
+fast beam steering is achieved by implementing active feeder                    phase modulators.
+networks (FNs) in front of the PAAs [7]. The FNs create and                        This paper is organized as follows. A short review on
+delay copies of the signal using true-time delays (TTDs). If the                the main challenges in next generation mmW communication
+elements used to delay the signals are not ideal, beam squint                   systems is provided in Section II. In Section III, we detailed
+will occur, i.e. different frequencies will be steered in different             the architecture of our ultra-fast beam steering scheme. The
+directions.                                                                     proof of concept demonstration with beam steering between
+   Millimeter wave PAA systems call for a large fractional                      10 GBd symbols is described in Section IV. Finally, we draw
+bandwidth which makes implementation of TTDs in                                 our conclusions in Section V.
+electronics difficult. Conversely, microwave photonics (MWP)
+                                                                                           II. C HALLENGES IN M ILLIMETER WAVE
+where the signal processing is done relying on photonic
+                                                                                                     C OMMUNICATIONS
+  Manuscript received October 15, 2015; revised December 2, 2015; accepted         The use of mmW carrier frequencies for communication
+December 7, 2015. Date of publication December 17, 2015; date of current        links brings a number of challenges that will be discussed in
+version December 31, 2015. This work was supported by the European
+Union within the European Research Council (ERC) Advanced Grants through
+                                                                                this section.
+the Project ERC PLASILOR under Grant 670478. (Corresponding author:
+Romain Bonjour.)                                                                A. Free Space Propagation Losses
+  The authors are with the Institute of Electromagnetic Fields,                    Increasing the carrier frequency comes at the price of higher
+ETH Zurich, Zürich 8092, Switzerland (e-mail: rbonjour@ethz.ch;                 free space path losses [4]. The power budget in a wireless link
+matthew.singleton@outlook.com; simon.gebrewold@ief.ee.ethz.ch; yannick.
+salamin@ief.ee.ethz.ch; felix.abrecht@ief.ee.ethz.ch; benedikt.baeuerle@        can be derived from the Friis formula [38]
+ief.ee.ethz.ch; arne.josten@ief.ee.ethz.ch; pascal.leuchtmann@ief.ee.ethz.ch;
+christian.hafner@ief.ee.ethz.ch; juerg.leuthold@ief.ee.ethz.ch).                              Pout − Pin = L + G t + G r + F S P L,                       (1)
+  Color versions of one or more of the figures in this paper are available
+online at http://ieeexplore.ieee.org.                                           where Pin and Pout are the input and output power
+  Digital Object Identifier 10.1109/JQE.2015.2509242                            of the transmitting and receiving antenna, respectively,
+             0018-9197 © 2015 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted,
+but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+0600708                                                                             IEEE JOURNAL OF QUANTUM ELECTRONICS, VOL. 52, NO. 1, JANUARY 2016
+
+
+
+                                   TABLE I
+                        L OSSES FOR A 60 GHz L INK
+
+
+
+
+                                                                                    Fig. 2.      PAA feeder based on a TTD approximated by phase shifters.
+                                                                                    (a) Array element consisting of a phase modulator, a combiner and a
+                                                                                    photodiode that down-converts the optical signals into an RF signal before
+                                                                                    being fed to the antenna. (b) The TTD delay approximated by phase shifters
+Fig. 1. Principle of phased array antenna (PAA). In the feeder network of the       features an ideal power frequency response (left) without any loss compared
+PAA, the input signal is first split into n copies. Each of the copies is delayed   to its ideal counterpart. Yet the phase response (solid lines in right plot) shows
+with an appropriate value t such that the interferences after radiation point      errors when compared to the ideal TTD (dashed lines). This will lead to a
+towards the desired direction θ [39].                                               beam squint in the PAA [39].
+
+
+                                                                                                    III. U LTRA -FAST B EAM S TEERING
+while L corresponds to the link losses. G t and G r are the
+gain of the transmitting and receiving antennas, respectively,                         To enable broadband ultra-fast symbol-by-symbol beam
+whereas F S P L is the free space path loss defined as                              steering, a PAA is needed in which each antenna in the feeder
+                                                                                  network (FN) requires a well-defined TTD. An ideal TDD pro-
+                                     4π · d · f
+            F S P L = −20 · log 10               ,         (2)                      vides a frequency independent unitary power response and
+                                         c                                          a linear phase response. Varying the delay value changes
+where f , d and c are the carrier frequency, the distance                           the slope of the phase response [37]. In practical systems,
+between the antennas, and the speed of light in the prop-                           TTDs are approximated by various methods. In order to
+agation medium, respectively. Combining the FSPL and the                            compare various TTDs implementations, we have performed
+atmospheric losses provides a good estimate for the required                        simulations [39]. Our study provides a simple metric to
+specification of the various components in the link. Assuming                       assess the performances of FNs with the various TTDs. Here,
+an attenuation of 17 dB/km for 50 mm/s rain [6], the total                          we highlight the two most relevant approaches from [39]
+transmission losses for a 60 GHz system are reported in Table I                     enabling ultra-fast steering.
+for different distances. The losses are as high as 103 dB for a
+50 m link. Doubling the distance further increases the losses                       A. Array Feeder Based on Phase Shifters
+by 7 dB.                                                                               FNs can be built by replacing the TTDs in each of the
+   To overcome these high losses the power margin Pout − Pin                        antenna elements with phase shifters [41]. When approxi-
+from Eq. (1) should be maximized. This can be achieved by                           mating TTD with phase shifters, the phase response as a
+increasing the transmitted power and reducing the minimum                           function of frequency is constant instead of linear [37]. Due to
+power required in the receiver. More importantly, high direc-                       this approximation, beam squint will occur. Different spectral
+tivity antennas have to be implemented in order to focus the                        components will be steered in different directions.
+beam, i.e. increasing G t and G r in Eq. (1).                                          An element of a MWP PAA based on a phase shifter is
+                                                                                    schematically depicted in Fig. 2(a). Here, the phase shifters
+B. Point-to-Multipoint                                                              are placed on the input port carrying the data laser. The phase
+   To support point to multipoint transmission, directive beams                     shift will delay the beating of the reference and data signal
+from high gain antennas have to be steerable in order to                            in the photodiode. Fig. 2(b) shows that the power frequency
+combine both high reach and spatial flexibility. PAAs with                          response is perfectly constant across all frequencies. The phase
+active FNs are a solution to this challenge [40]. PAAs are                          response corresponds to a constant phase offset applied to all
+realized by driving n tunable time delay elements with an                           frequencies equally, Fig. 2(b). In the frequency band of the
+equally split source signal [39], see Fig. 1. It can be deducted                    signal (shaded area in Fig. 2(b)), the phase error is directly
+from Fig. 1 that two adjacent antennas require a time delay                         proportional to the fractional bandwidth, i.e. a system with a
+differencet = −x/c = − sin θ · d/c, where c represents the                         fractional bandwidth of e.g. 25% will have a phase error of
+speed of light [7]. The propagation direction can be controlled                     up to 25% for t = T . This error needs to be compared to
+by adjusting the signal delay t in each radiating antenna                          the ideal TTD phase response - see dashed lines in Fig. 2(b) -
+element [39].                                                                       and will lead to beam squint.
+BONJOUR et al.: ULTRA-FAST mmW BEAM STEERING                                                                                                                 0600708
+
+
+
+
+Fig. 3.    Ultra-fast tunable TTD based on complementary phase shifted
+spectra (CPSS). The input signal is first split into two complementary spectra
+using a delay interferometer (DI). Before being recombined, one of the signals
+is phase shifted by an optical phase modulator. The result is an almost ideal
+phase response [37].
+
+
+
+
+                                                                                     Fig. 5.    Simulated 3 dB supported range. The curves show for various
+                                                                                     array sizes (various colors), the area in which the gain flatness is better than
+                                                                                     3 dB for a particular fractional bandwidth and steering angle. FN based on
+                                                                                     CPSS-SCT (solid curves) provides larger steering range compare to phase
+                                                                                     shifter (dashed lines) in all cases. For an exemplary V-band communication
+                                                                                     link using frequencies from 54 to 64 GHz (17% fractional bandwidth)
+                                                                                     CPSS-SCT provides steering up to 120° while phase shifter FNs are limited
+                                                                                     to 85° [39].
+
+
+
+                                                                                        To improve the performance of the scheme, the
+                                                                                     CPSS scheme can be combined with a separate phase
+                                                                                     tuning of the reference laser [39]. This can be obtained
+                                                                                     by adding a phase-modulator to the reference laser. This
+                                                                                     so-called separate carrier tuning (SCT) [42], [43] technique
+                                                                                     allows to add an offset phase to each PAA elements. While
+                                                                                     the CPSS gives the possibility to control the slope of the
+Fig. 4. PAA feeder using CPSS-SCT. (a) An array element based on the                 phase response, the SCT adds and offset so that the unit can
+CPSS-SCT scheme is built by applying the CPSS scheme on the laser carrying           be operated at higher frequencies. The resulting power and
+data and, in parallel, adjusting the phase of the reference laser by another phase
+shifter. (b) The power response (left) shows variations of about 1.5 dB in the       phase frequency responses are plotted in Fig. 4(b) for a filter
+bandwidth of interest while tuning the delay. The phase response (solid lines)       optimized with a fractional bandwidth of 25% (shaded area).
+is close to the ideal TDD response (dashed lines) for a designed fractional          The phase response in the shaded area is close to ideal
+bandwidth of 25% (shaded area) [39].
+                                                                                     (dashed lines) which mean that beam squint should not occur.
+B. Array Feeder Based on CPSS-SCT
+   In this section we describe a FN based on tunable delay units                     C. Scheme Comparison
+providing ultra-fast, broadband, and continuous tuning [37].                            To assess PAA FN based on either phase-shifters or
+The technique called complementary phase shifted                                     CPSS-SCT tuning we compare the 3 dB supported range [39]
+spectra (CPSS) imitates an ideal TTD. The principle of CPSS                          for both implementation and for various array sizes. We define
+time delay can be understood with the help of Fig. 3. In this                        the 3 dB supported range as the range within which beam
+figure we plot the amplitude and phase response as well the                          steering for a given fractional bandwidth can be achieved with
+phasors of a signal at various stages of the TTD element. First,                     a gain flatness better than 3 dB. The dashed lines correspond
+the input signal is spectrally split using a delay interferometer                    to a PAA based on simple phase shifters (Fig. 2) while the
+into two complementary spectra (CS), see the phase and                               solid lines corresponds to a PAA FN relying on CPSS-SCT
+frequency responses at the upper and lower arms behind                               (Fig. 5).
+the delay interferometer. Secondly, one of the CS receives                              For a PAA with 16×16 elements (green curves) providing a
+an additional phase shift from a phase modulator. When                               gain of 24 dB, CPSS-SCT allows a steering range of 120° for a
+the two CS are recombined one obtains a phase frequency                              fractional bandwidth up to 17%. A PAA FN relying on simple
+response close to the ideal phase response of the ideal TTD.                         phase shifters would only support a steering range of 85°.
+   Such a CPSS delay element can be arranged into a                                     In our ultra-fast beam steer

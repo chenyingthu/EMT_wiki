@@ -1,0 +1,229 @@
+         第 41 卷 第 11 期                         中    国 电 机 工 程 学                报               Vol.41 No.11 Jun. 5, 2021
+         2021 年 6 月 5 日                             Proceedings of the CSEE                   ©2021 Chin.Soc.for Elec.Eng. 3829
+DOI：10.13334/j.0258-8013.pcsee.201526 文章编号：0258-8013 (2021) 11-3829-12 中图分类号：TM 711 文献标志码：A
+
+
+
+         电力电子化电力系统随机电磁暂态仿真算法
+                           陈鹏伟 1，刘奕泽 1，阮新波 1，陈新 1，孙雅旻 2
+        (1．江苏省新能源发电与电能变换重点实验室(南京航空航天大学)，江苏省 南京市 211106；
+         2．国网冀北电力科学研究院(华北电力科学研究院有限责任公司)，北京市 西城区 100045)
+
+
+                 Stochastic Electromagnetic Transient Simulation Algorithm Applied to
+                              Power Electronics Dominated Power System
+                          CHEN Pengwei1, LIU Yize1, RUAN Xinbo1, CHEN Xin1, SUN Yamin2
+       (1. Jiangsu Key Laboratory of New Energy Generation and Power Conversion (Nanjing University of Aeronautics and
+            Astronautics), Nanjing 211106, Jiangsu Province, China; 2. State Grid Jibei Electric Power Research Institute
+                 (North China Electric Power Research Institute Co., Ltd.), Xicheng District, Beijing 100045, China)
+
+
+ABSTRACT: To accurately and efficiently reflect the                    的电力系统随机动态模型和数值计算方法的基本特点和限
+operation characteristics of power electronic dominated power          制性，并从基本电气元件出发，建立了适用于电磁暂态仿真
+system under the disturbance of the parameter random                   的参数随机迁移元件动态伴随电路模型。然后，以电阻–电
+migration, the power system dynamic model based on                     感串联支路为例，解析推导了动态伴随电路模型的数值稳定
+stochastic differential equation and its numerical solution            性特征，进而针对电力电子化电力系统的仿真需求，设计了
+algorithms were analyzed firstly in terms of basic characteristic      随机电磁暂态仿真的算法主流程。最后，采用 RLC 简单电
+and limitations. Then, regarding the basic electrical components,      路和三相两电平 VSC 电路，通过对比 EMTP(electromagnetic
+the dynamic companion circuit model considering the random             transients program)确定性仿真和蒙特卡罗多轨迹仿真结果，
+excitation of the parameter was established for electromagnetic        验证动态伴随电路模型和所提随机电磁暂态仿真算法的正
+transient simulation. Based on the resistance-inductance series        确性与有效性，且对 EMTP 算法框架直接兼容。
+branch, the numerical stability characteristics of the dynamic
+companion circuit model were further derived, and thus the             关键词：随机微分方程；随机激励；随机电磁暂态仿真；
+main algorithm process of stochastic electromagnetic transient         EMTP 框架
+simulation was designed to meet the simulation requirement of
+                                                                       0 引言
+power electronic dominated power system. Through the
+comparison with electromagnetic transients program (EMTP)                  近年来，随着电网中大容量柔性直流输配电、
+deterministic simulation and Monte Carlo multi-trajectory              柔性交流输电的进一步应用，以及微电网、新能
+results, the case studies based on the simple RLC and VSC test
+                                                                       源的大规模接入，电力系统逐渐呈现电力电子化
+systems demonstrated the validity of the proposed dynamic
+companion circuit models and algorithm, and the proposed
+                                                                       趋势[1]。基于元件详细动态特性建模的数字电磁暂
+algorithm was also directly compatible with the EMTP                   态仿真能够刻画微秒级的系统动态过程，且不受系
+algorithm framework.                                                   统规模和结构复杂性的限制，逐渐成为电力电子化
+KEY WORDS: stochastic differential equation; random                    电力系统最为有效准确的模拟手段[2-4]。从算法结构
+excitation; stochastic electromagnetic transient simulation;           上看，电磁暂态仿真数值算法主要有 2 类：一类以
+electromagnetic transients program (EMTP) framework                    SimPowerSystems 为代表，采用状态变量分析法；
+摘要：为了准确高效地反映电力电子化电力系统在参数随机                                             另一类以 EMTP(electromagnetic transients program)
+迁移扰动下的运行特性，该文首先分析了基于随机微分方程                                             而著称，采用伴随电路(元件的差分方程可视为诺顿
+    基金项目：国家自然科学基金项目(52007080)；中国博士后科学基                                 等效电路)与节点导纳法构成的基本框架 [5] 。由于
+金资助项目(2020TQ0142，2020M681583)。                                         EMTP 类程序具有相对较小的计算量和可预计的计
+    Project Supported by National Nature Science Foundation of China
+(52007080); China Postdoctoral Science Foundation (2020TQ0142,
+                                                                       算耗时，ATP/EMTP、PSCAD/EMTDC、RTDS 等
+2020M681583).                                                          电磁暂态离线和实时仿真平台均采用了 EMTP 算
+3830                       中      国   电      机   工   程     学     报                                              第 41 卷
+
+法框架[6]。                                          了基础，但参数随机迁移作为乘性激励的引入使得
+       然而，由于电磁暂态仿真的建模基础是常微分                      随机激励项不再单独存在，现有随机动态模型和数
+方程描述的确定性过程(初值和参数是不变常数)，                          值算法在应用时存在极大限制。
+对系统涉及的外部随机激励、内部参数随机迁移及                                   就上述问题，本文首先分析了基于 SDE 的电
+其激发的动态过程不具备直接模拟能力，因此通常                           力系统随机动态模型和数值计算方法的基本特点
+需要多工况测试进行详细的系统特性验证。外部随                           和限制性，并从基本电气元件出发，在 EMTP 算法
+机激励通常属于加性激励，一般由负荷或新能源发                           框架下建立参数随机迁移元件的电磁暂态仿真动
+             [7]
+电过程引入 ，可通过风速、光辐照度或控制指令                           态伴随电路模型，并以电阻–电感串联支路为例进
+信号的时间序列来模拟，但需要较为详细的新能源                           行了动态伴随电路数值稳定性特征的解析分析。然
+                            [8]
+发电环节、负荷本体模型作为中间过程 ，且时间                           后，针对复杂电力电子化电力系统的仿真需求，设
+序列的准确生成依赖对外部激励随机动态过程的                            计了随机电磁暂态仿真的算法主流程。最后，采用
+       [9]
+辨识 。内部参数迁移通常属于乘性激励，一般由设                          RLC 简单电路和三相两电平 VSC 电路，通过对比
+                                      [10]
+备运行状态变化或等效区域内部结构变化引起                      ，      确定性电磁暂态仿真和蒙特卡罗多轨迹仿真结果，
+直观表现为电感、电容等元件参数的随机动态过                            验证所提动态伴随电路模型和随机电磁暂态仿真
+程，因而与 EMTP 算法框架存在兼容性问题。虽然                        算法在模拟参数随机迁移及其激发的系统动态过
+PSCAD/EMTDC 等提供了可变串联阻抗支路的修                       程方面的正确性与有效性。
+改接口，但同外部激励设置方式一样，属于按已知
+                                                 1 随机激励下电力系统建模
+参数时间序列或给定函数逐步修改节点导纳阵相
+应元素，未能完整模拟参数的随机性和电感、电容                           1.1      基于 SDE 的电力系统模型
+元件参数引入激励时的能量特性。                                          具有一般形式的矢量 SDE 可表示为[10-11]
+       考虑到确定性建模和仿真方法在表征和分析随                              d (t )   ( , t ) d t   ( , t ) d W (t ), (t0 )  0   (1)
+机动态系统的局限性，由概率论与微分方程理论结                           式中：  n  +  n 与  : n  +  n  nw ，
+合发展而成的随机微分方程(stochastic differential             分别为 SDE 的偏移过程与扩散过程；0 为 t0 时刻
+equation，SDE)理论[11]被引入电气工程领域，逐渐                  初值； W (t )  [W1 (t ),W2 (t ), ,Wnw (t )]T 为 nw 维独立
+成为研究随机激励对系统物理特性影响的重要手段                           的标准 Wiener 过程。对于离散形式下标准 Wiener
+之一。文献[12-13]按照发电机、负荷等电力系统基                       过程，任意相邻时刻 tn1,tn 间增量相互独立，且满
+本单元的数学形式，总结了电力系统随机动态分析                           足 Wn 1  Wn  Wn 1 ~ t N (0,1) ，其中 WnW(tn)，
+的系统性建模方法。文献[9]采用 Euler-Maruyama 方                ttntn1。
+法计算高斯型随机激励系统随机响应轨迹，并从理                                   考虑新能源发电、负荷波动等系统固有随机扰
+论上证明了方法的数值稳定性以及激励较小情况                            动，采用 SDE 对其进行建模，则系统随机动态过程
+下系统的均值和均方稳定性。文献[14]以功率波动                         可表示为[13]
+为随机激励，分析了仿真计算步长、随机激励强度、
+                                                                 x  f ( x , y, u, t )  
+随机激励步长对单机–无穷大系统功角响应的影                                           
+                                                                0  g ( x , y, u, t )                                 (2)
+响。基于 SUNDIALS 工具集，文献[15]采用交替求                                      ( x , y, u, t )   ( x , y, u, t )
+                                                                
+解思路提出了有源配电网的随机动态仿真方法。交
+替求解思路是将系统模型分为确定性系统与随机                            式中： f :  nx   ny   nu   nx 为微分方程，描述
+激励项两部分，前者刚性强采用隐式积分法而后者                           系统确定性动态过程； g :  nx   ny   nu   ny 为
+刚性弱采用 SDE 数值解法。特别地，文献[16]采用                      代数方程，表示派克变换、有效值测量等环节；x
+投影积分算法求解有源配电网模型随机激励项部                            为系统状态变量，如节点电压、支路电流、电机转
+分，其中投影积分算法小步长内部积分采用高效的                           子转速等；y 为代数变量；u 为离散变量，如线路
+Euler-Maruyama 方法而大步长外部积分则采用高                    中断信号、器件开断控制信号等；dW/dt，即代
+阶的 Milstein 方法。相关研究成果为源–网–荷随机                    表随机激励的高斯白噪声过程。
+激励条件下电磁暂态仿真技术的发展和应用奠定                                    由式(2)可见，系统模型可分清晰地划分为确定
+第 11 期                                  陈鹏伟等：电力电子化电力系统随机电磁暂态仿真算法                                                                                    3831
+
+性系统与随机激励项两部分，前者刚性强而后者刚性                                                                       d (t )  2 (t )dt   (t )dW (t )
+                                                                                              d (t )  2 (t )dt   (t )dW (t )
+弱，采用交替迭代方式求解时交互信息仅由随机激励                                                                Euler-Maruyama格式                              Milstein格式
+                                                                             100
+项单向传递至确定性系统部分。当系统涉及参数随机                                                                                      1/2阶
+                                                                                                                                                    1阶
+迁移时，式(2)中确定性动态过程部分将被拓展为                                                     10-2
+
+                   x  f ( x , y, u, t , , )                (3)
+                                                                            10-4
+      由于电阻、电感、电容等元件的参数随机迁移                                                                     Heun格式                          隐式Milstein格式
+                                                                             100
+                                                                                                                             后向Milstein
+属于乘性激励，随机激励项不再单独存在，导致系
+                                                                                                                                                    1阶
+统刚性和随机性相互作用，系统的多时间尺度特性                                                      10-2
+                                                                                                 1阶
+                                                                                                                                              梯形Milstein
+被进一步增强。当仿真系统涉及器件开关状态频繁
+                                                                            10-4
+变化的电力电子器件时，电磁暂态时间尺度的随机                                                         10-3                 10-2             10-1 10-3           10-2         10-1
+                                                                                                    t                                   t
+动态轨迹求解对式 (2)—(3)所示模型整体数值计算
+                                                                                       图1           不同离散格式强收敛性对比
+方法的要求也随之加深。                                                                 Fig. 1     Comparison of strong convergence between
+1.2   随机动态轨迹数值计算方法                                                                                       different schemes
+      对于 SDE 而言，多数情况只能通过数值计算方                                         收敛性 estrong
+                                                                              t    = E|n   (nt )| 对比结果，即对于足够
+法获得逼近精确解的随机动态轨迹，而目前较为成                                                小的步长t，存在常数 C 使得：
+熟的数值解法主要有 Euler-Maruyama 格式､Milstein                                                          logestrong
+                                                                                                     t     log C   log t                             (9)
+                                                   [12,17-18]
+格式、Heun 格式及其相应校正格式                                          。         式中为强收敛阶。
+      1）Euler-Maruyama 格式。                                                   由图 1 可见，
+                                                                                    Euler-Maruyama 格式为显式方法，
+         n  n 1   (n 1 )t   (n 1 )Wn 1           (4)   具有 1/2 强收敛阶；Heun 格式的稳定性易受步长和
+      2）Milstein 格式。                                                  乘性噪声影响，但精度表现优于 Euler-Maruyama
+
+       n  n 1   (n 1 )t   (n 1 )Wn 1                  格式；Milstein 和隐式 Milstein 计及了 Wiener 过程
+             1                                                        的二阶项，虽然算法复杂度会有所提高，但均为
+                (n 1 )  (n 1 )(Wn21  t )             (5)
+                                                                      1 阶强收敛。因此，考虑到精度表现，隐式 Milstein
+             2
+      为便于扩散量的引用和论述，记算子 D(·)，即：                                        格式中的梯形和后向形式将是本文用于参数随机
+                                                                      迁移元件电磁暂态仿真模型构建的优先选择。
+                                       1
+           D(n1 )   (n1 )Wn1   (n1 ) 
+                                       2                              2 基本元件随机电磁暂态仿真模型
+                      (n1 )(Wn1  t )
+                                   2
+                                                                (6)
+                                                                      2.1     电阻元件
+      3）Heun 格式。
+                                                                             若支路(i,j)间为电阻元件 R，电阻特性方程可表
+                      (n1 )   (n  t (n ))
+       n  n1                                        t          示为
+                                    2
+                                                                                              1
+              (n1 )Wn1                                     (7)            iR (t )         (vi (t )  v j (t ))  GR (vi (t )  v j (t ))       (10)
+                                                                                              R
+      4）隐式 Milstein 格式。                                                      由于上述特性方程中不含微分项，因而在
+ n  n 1  [(1   ) (n 1 )   (n )]t  D(n 1 ) (8)      EMTP 算法框架下无需利用数值积分方法差分化处
+式中 n 为预估值，可采用 Euler-Maruyama 格式构                                    理。当采用式(1)描述电阻参数随机迁移过程时，即
+造。当0.5，即为梯形 Milstein 格式；当1，即                                      dR(t )   ( R(t ))dt   ( R(t ))dW (t ) ，则离散后有：
+为后向 Milstein 格式。                                                                              1
+                                                                                   iR , n       (vi , n  v j , n )  GR , n (vi , n  v j , n )    (11)
+      Euler-Maruyama 和 Milstein 格式均由随机泰勒                                                      Rn
+展开式不同截断构成，Heun 和隐式 Milstein 格式则                                       式中 Rn 需要随仿真时刻同步更新，按后向和梯形
+是引入梯形公式和预估–校正产生的改进格式。为                                                Milstein 格式分别有：
+直观比较上述离散格式的精度，基于文献[17]提出                                                                Rn  Rn 1   ( R n )t  D( Rn 1 )                       (12)
+的数值测试方法，图 1 给出了对数坐标系下以线性                                                                 1
+                                                                             Rn  Rn 1  ( ( Rn 1 )   ( R n ))t  D ( Rn 1 ) (13)
+SDE d (t )  2 (t ) d t   (t ) d W (t ) 为测试对象的强                                     2
+3832                                                                 中      国          电   机   工   程     学     报                                               第 41 卷
+
+2.2      电感元件                                                                                          若采用梯形 Milstein 格式离散 dL(t)和 diL(t) (推
+       当支路(i,j)间为电感元件 L，考虑电感参数动态                                                               导过程见附录 A)，可得动态伴随电路为
+过程，由其磁链方程可得：                                                                                                  GL,n t /[2Ln  (Ln )t ]
+  d L (t )                         di (t )                                                                   
+                      dL(t )                                                                                                      KB,niL,n1
+             iL (t )         L(t ) L  vi (t )  v j (t ) (14)
+    dt                 dt             dt                                                                      I L rand,n-1  L             D(Ln1 )
+                                                                                                                                        n1
+                                                                                                                                                                  (20)
+       由式(14)可见，不同于参数迁移电阻，电感参数                                                                                 I                             L
+                                                                                                                             K i  n G (v 
+迁移过程会伴有能量的变化，且这种变化直接受其                                                                                          Lhist,n-1 B,n L,n1 Ln1 L,n i,n1
+                                                                                                               
+通过电流的影响。为不失一般性，将电感参数随机                                                                                                     v j ,n1 iL,n1 (Ln1 ))
+迁移过程描述为 dL(t )   ( L(t ))dt   ( L(t ))dW (t ) ，
+                                                                                               式中 K B,n        2 L /(2 L   ( L )t ) 。
+                                                                                                                    n      n         n
+代入式(14)后有：
+                                                                                               2.3     电容元件
+               vi (t )  v j (t )  iL (t ) ( L(t ))
+    diL (t )                                         dt                                              电容参数迁移过程同样伴有能量的变化，且这
+                                L(t )
+                                                                                               种变化受其电压影响。若支路(i,j)间为电容元件 C，
+               iL (t )  ( L(t ))
+                                   dW (t )                                             (15)    考虑电容参数动态过程，由其电荷方程可得：
+                      L(t )
+                                                                                                             dQC (t )         d(vi (t )  v j (t )) dC(t )
+       对 dL(t)采用后向 Milstein 格式离散，可得：                                                                                   C(t )                             
+                                                                                                               dt                      dt               dt
+                    Ln  Ln 1   ( Ln )t  D( Ln 1 )                              (16)                              (vi (t )  v j (t ))  iC (t )            (21)
+       代入式(14)离散可得：                                                                                    记电容电压为 vC (t )  vi (t )  v j (t ) ，参数随机迁
+                    t                                    i                                    移过程为 dC (t )   (C (t ))dt   (C (t ))dW (t ) ，则：
+iL ,n  iL ,n1       (vi ,n  v j ,n  iL ,n ( Ln ))  L ,n1 D( Ln1 ) (17)
+                    Ln                                     Ln1
+                                                                                                         i (t )vC (t ) (C (t ))     v (t ) (C (t ))
+                                                                                               dvC (t )  C                       dt  C               dW (t ) (22)
+       将式(17)改写为节点方程的形式，则有：                                                                                      C (t )                    C (t )
+                       t                                                                              对 dC(t)和 dvC(t)依次采用后向 Milstein 格式离
+         iL , n                   (vi , n  v j , n ) 
+                  Ln   ( Ln )t
+                                                                                               散，可得：
+                                            K A,n iL ,n 1
+                         K A,n iL ,n 1                     D( Ln 1 )                (18)                      Cn  Cn 1   (C n ) 

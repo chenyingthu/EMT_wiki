@@ -1,0 +1,25 @@
+# A Pulse-Source-Pair-Based AC/DC Interactive Simulation Approach for Multiple-VSC Grids
+
+Siqi Yu, Shuqing Zhang, Yingduo Han, Yingdong Wei and Sheng Zou
+
+**Abstract**—With the increasing penetration of renewable energies in modern power grids, large amounts of voltage source converters (VSCs) have been installed, resulting in many new transient issues. Electromagnetic transient (EMT) simulation plays an essential role in investigating and solving the issues. However, simulation efficiency plunges when object grids contain multiple VSCs, because each switching event incurs modification or re-decomposition of the network matrix in traditional EMT programs, which is very time-consuming. Thus, this paper proposes a VSC model represented by pulse voltage-current source pairs. Accordingly, a unidirectional loosely-coupled solving algorithm is designed. Synthetically, the authors propose a novel EMT simulation approach adaptive to systems with multiple VSCs. The proposed approach keeps the computational network invariable while sufficiently considers detailed switching events, thereby significantly improving the simulation efficiency of the EMTP program without precision loss.
+
+**Index Terms**—pulse pair sources, loosely-coupled solving, multiple VSCs, EMT simulation, switching events
+
+## I. INTRODUCTION
+
+In modern power systems, medium and low voltage transmission/ distribution grids spring up with high penetration of renewable energies. Applications of VSCs are rapidly growing and largely determining the characteristics of partial or local power systems [1]. They act as main interfaces of renewable energy sources [2-3], and they are crucial to power quality improvement [4], flexible AC/DC transmission & distribution [5-6] and reactive power compensation. Besides, more applications are reported in microgrids [26-27], DC distribution systems [28], railway electrification systems [29], etc. In all, VSC will inevitably become one of the essential equipment in future power grids.
+
+In the Hawaiian power grid in the United States [8], most of the 71.6% distributed energy sources are connected to the grid through VSCs. National Renewable Energy Laboratory (NREL) used the PSS/E software to simulate the electromechanical transients of the system, focusing on solving system-level frequency control problem. However, electromechanical transient simulation is insufficient in scenarios such as subsynchronous oscillation, fault ride-through and protection design, harmonic analysis, dynamic coordination among multiple VSCs and potential new kinds of stability problems. widely employed to study those problems. It is a fundamental difficulty for EMT programs (EMTP) to deal with large numbers of switching devices. In mainstream EMTPs, switching devices such as IGBTs and diodes are seen as ideal switches and modeled by binary resistors [9-10], the values of which changes along with the switching state. Therefore, it is necessary to modify the network matrix or even reform it. When the network contains a large number of frequently acting switching devices, a surge of computation time may happen in certain timesteps.
+
+This problem becomes critical for grids containing multiple tightly-coupled VSCs. A typical three-phase two-level VSC can be reduced to a six-switch circuit if the microsecond-level internal transients are ignored. Such n VSCs bring a circuit comprised of $6 \times n$ switch branches. The time-consuming matrix reconstruction and LU decomposition for circuit equations can cause severe overtime in certain single timestep. This is extremely damaging to the efficiency of real-time simulation, which is essential to hardware-in-the-loop (HIL) tests.
+
+There are three major solutions to this problem.
+
+### 1) Use designed circuits to represent a switching device
+Research [11-12] proposed an Associated Discrete Circuit method to make the computational resistances of the switch device in ON/OFF states keep identical. The change of switching state is expressed by current injection to avoid modification of the network matrix. However, the method requires a tiny simulation step (less than several microseconds) and has strict restrictions on parameter design. Besides, it incurs extra intrinsic high-frequency oscillations and artificial power loss.
+
+### 2) Build average models (AVMs) of VSCs
+Traditional AVMs are built by averaging the VSC state equation in one switching cycle [13-15] so that the switching actions can be ignored. However, this model only describes the average external characteristics of VSCs, ignoring all switching frequency (SF)-dependent components in voltages and currents. Thus, AVMs have certain deficiencies in both simulation accuracy and adaptability to various scenarios [16-17].
+
+Improvements of AVMs have been made. I

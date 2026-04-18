@@ -1,0 +1,191 @@
+2736                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+    Massively Parallel Modeling of Battery Energy
+ Storage Systems for AC/DC Grid High-Performance
+                Transient Simulation
+ Ning Lin , Member, IEEE, Shiqi Cao , Graduate Student Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—Extensive integration of power electronics appara-                   complex electric network operation scenarios as it implies the
+tuses complicates the modern power grid and consequently necessi-                very likelihood of their sudden connection or disconnection that
+tates time-domain transients study for its planning and operation.               consequently causes a powerflow redistribution or momentary
+In this work, a heterogeneous computing architecture utilizing
+the CPU and graphics processing unit (GPU) is proposed for the                   disequilibrium which could gradually intensify and eventually
+efficient study of interactions between a power grid network and                 cause instability. Hence, extensive utility-scale battery energy
+massive utility-scale battery energy storage systems (BESSs). The                storage systems (BESSs) are envisioned for voltage and fre-
+device-level electromagnetic transient (EMT) simulation aiming at                quency support [3], and some work with aggregated units have
+enhanced fidelity of the BESS is conducted simultaneously with
+                                                                                 been carried out [4], [5]. To gain an accurate insight into their
+electro-mechanical transient stability (TS) simulation which suf-
+fices system-level dynamic security assessment. Since the reser-                 efficacy for grid operation and planning purpose, it requires a
+vation of a large amount of energy storage units is computation-                 system-wide study with each individual unit modeled in de-
+ally intensive for the CPU, the concurrent multi-streaming, multi-               tail [6], which is infeasible to commercial simulation software
+threading capability of GPU is exploited to achieve asynchronous                 due to a heavy computational burden.
+sequential-parallel processing, so that the proposed EMT-TS co-
+                                                                                    Dynamic security assessment with electro-mechanical model-
+simulation can flexibly harness all available computing resources.
+The multi-rate scheme is adopted for further computational burden                ing in the phasor domain is prevalent regarding investigating the
+alleviation in addition to achieving timely information exchange.                voltage, angle, and frequency stability of AC and DC grids [7],
+It shows that the heterogeneous computation of an IEEE 118-bus                   [8]. It is carried out at the system level where various types
+system integrated with a substantial number of distributed bat-                  of converter-based energy sources and loads are lumped or
+teries becomes feasible following the achievement of a remarkable
+                                                                                 simplified [9], [10]. Although it suffices to show the entire
+speedup of over 200, and the device- as well as system-level accu-
+racy are validated by MATLAB/Simulink and DSAToolsTM /TSAT                       grid operation status, the positive-sequence transient stability
+simulation, respectively.                                                        (TS) simulation falls short of providing detailed device-level
+                                                                                 information, and the impact of an individual energy system with
+   Index Terms—AC/DC grid, battery energy storage,
+electromagnetic transients, graphics processing unit, high-                      an actual configuration and an exact control scheme on the bulk
+performance computing, parallel processing, power system                         AC network could also be unavailable. Additionally, a regular
+transient stability.                                                             time-step of a few milliseconds excludes typical power converter
+                                                                                 transients.
+                                                                                    The electromagnetic transient (EMT) simulation based on
+                           I. INTRODUCTION
+                                                                                 time-domain model discretization and linearization, in contrast,
+         ASSIVE integration of power-converter-based appara-
+M        tuses such as renewable energies and microgrids into a
+regional transmission and distribution grid diversifies its power
+                                                                                 can capture fast transients even in sub-microseconds [11]. The
+                                                                                 detailed models incorporated enable it to be a highly accurate ap-
+                                                                                 proach to evaluate electric power components and systems [12]–
+supply, whilst posing a challenge to the system dynamic secu-                    [14], especially a power converter controller. In the meantime, a
+rity [1], [2]. The semi-autonomy of these devices leads to more                  mandatory time-step typically ranging from a few to dozens of
+                                                                                 microseconds implies that it is more time-consuming than TS
+   Manuscript received 2 January 2022; revised 29 April 2022 and 2 July 2022;    assessment [15], [16]. Nevertheless, owing to a dominant se-
+accepted 1 August 2022. Date of publication 3 August 2022; date of current       quential processing manner, the efficiency of commercial EMT
+version 24 April 2023. This work was supported by the Natural Science and
+Engineering Research Council of Canada (NSERC). Paper no. TPWRS-00008-
+                                                                                 simulation software plunges alongside an increasing number of
+2022. (Corresponding author: Ning Lin.)                                          components as well as an expanding scale of the network. To
+   Ning Lin is with Powertech Labs Inc., Surrey, BC V3W 7R7, Canada (e-mail:     cater to the tremendous computing resource demand, multi-core
+ning3@ualberta.ca).
+   Shiqi Cao and Venkata Dinavahi are with the Department of Electrical and
+                                                                                 CPUs and their clusters are adopted as a solution [17]–[19].
+Computer Engineering, University of Alberta, Edmonton, AB T6G 2R3, Canada           The graphics processing unit (GPU) with an improving com-
+(e-mail: sc5@ualberta.ca; dinavahi@ualberta.ca).                                 putational capability supported by thousands of cores is an
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3196286.
+                                                                                 emerging platform for high-performance computing (HPC) of
+   Digital Object Identifier 10.1109/TPWRS.2022.3196286                          power systems and power electronics [20], [21], and remarkable
+
+
+                        0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                              2737
+
+
+
+speedups were gained with very limited computing hardware                       batteries, the simple 3-dimensional vectors for exponential zone
+resources in some scenarios which possess an explicit homo-                     voltage and the charging dynamics in an arbitrary EMT time-step
+geneity, or have an ideal system configuration consisting of mul-               take the forms of
+tiple identical subsystems which topologically exhibit perfect                                                                          
+                                                                                                                               A/s
+symmetry that caters to coarse parallelism [22]. Nevertheless,                    Eexp (t) = Ae−B·isat , L−1 Sch                            ,
+                                                                                                                          s/(B · |i|) + 1
+the GPU is not superior to the CPU in handling inhomogeneity                                                                   
+which is common in an electrical system. The evolving PCIe                                                          A/s
+                                                                                                × L−1 Sch                           ,           (2)
+and RAM technologies in the meantime enable efficient data                                                      s/(B · |i|) + 1
+exchange with other processors [23], especially the CPU, mak-                                                                                
+                                                                                                   K · Q · ĩ(t) K · Q · ĩ(t) K · Q · ĩ(t)
+ing a thorough utilization of all available computing resources in                Echg (t) =                     ,              ,               ,
+a computer feasible for fast online and offline study of practical                                isat + KQ Q isat + KQ Q |isat | + KQ Q
+power grids.                                                                                                                                    (3)
+   Therefore, in this work, heterogeneous CPU-GPU computing
+                                                                                where A, B, KQ are coefficients, i and ĩ are the battery current
+of large-scale electric power systems with both homogeneity
+                                                                                and its low frequency value, t is the time instant, K means the
+and inhomogeneity for more efficient simulation is investigated
+                                                                                polarization constant, Q denotes the capacity, and isat is current
+as an extension of pure-GPU application since it would be
+                                                                                capacity [24]. Similarly, the discharging dynamics of various
+computationally overwhelming to conventional methods. A TS-
+                                                                                battery types can also be assembled as a vector that shows an
+EMT co-simulation taking their respective merits into account
+                                                                                identical expression for all elements,
+is formed for transient analysis of a regional energy network
+                                                                                                                                  
+integrated with distributed grid-supporting BESSs. EMT mod-                                              K · Q · ĩ K · Q · ĩ
+                                                                                              Edsc =               ,           ,... .          (4)
+eling is carried out for power converters with fast transients,                                          Q − isat Q − isat
+while its counterpart targets the bulk power system. A detailed
+power converter model based on the transmission line link                       It can be inferred that the vectors in (2)–(4) expand alongside
+(TLL) model and state-space equation is proposed for a matrix                   an increase of BESSs in the regional grid, with all elements
+dimension reduction as well as converting the BESS inhomo-                      duplicated by corresponding times.
+geneity into its opposite so that fine-grained parallelism can be                  The presence of the s-domain function in (2) means vector
+achieved and ultimately a faster simulation speed. In addition                  Eexp is not imminently available for EMT simulation. Applica-
+to the single-instruction multiple-threading (SIMT) paradigm,                   tion of the Inverse Laplace Transform L−1 yields the following
+the multi-stream (MS) asynchronicity is explored for further                    differential equation in the time domain,
+efficiency improvement. Since the proposed heterogeneous HPC                             d
+methodology can address different types of computational bur-                               Eexp (t) = (B · |i(t)|)(Sch A − Eexp (t)),    (5)
+                                                                                         dt
+dens accordingly with limited CPU and GPU resources, it pro-                    which can then be discretized by approaches such as the Back-
+vides a benchmark solution for the efficient and comprehensive                  ward Euler method, i.e.,
+offline simulation of future power grids which are topologically
+becoming increasingly complex.                                                  Eexp (t) = (1 − |i(t)|BΔt)Eexp (t − Δt) + B · |i(t)|Sch AΔt,
+   The paper is organized as follows: Section II introduces                                                                                    (6)
+the detailed parallel BESS model, followed by AC/DC power                       where Δt is the simulation time-step.
+system modeling and TS-EMT co-simulation in Section III.                           It is noticed that Ae−Bisat , the exponential zone voltage of
+Section IV describes heterogeneous computing architecture for                   the lithium-ion battery, can be obtained directly, whereas that of
+simulation acceleration, and the results are given in Section V.                the other two types is iterative according to (6) and consequently
+Section VI presents the conclusions.                                            a proper initialization of each Eexp is needed.
+                                                                                   The state-of-charge (SOC) defined as the percentage of re-
+    II. DEVICE-LEVEL BESS PARALLEL EMT MODELING                                 maining charge to its nominal value is a critical factor that
+                                                                                determines the operation status of a BESS. Knowing the value
+A. Vectorized Battery Model
+                                                                                at an initial time instant t0 , it can be formulated as
+   The battery model can be depicted as a Thévenin equivalent                                                               t
+                                                                                                                                i(τ )
+circuit with a voltage source VBat in series with an internal                                   SOC(t) = SOC(t0 ) +                   dτ.      (7)
+impedance ZB . The controlled voltage source VBat contains                                                                   t0 Q
+5 parts, i.e., the constant voltage E0 , the polarization voltage                  When all elements are grouped into corresponding vectors
+Epol , the exponential zone voltage Eexp , and voltages induced                 and matrices for parallel processing, element-wise operations
+by the dynamic charge or discharge process Echg and Edsc , as                   are applied to their discrete forms. Take the dynamic charging
+expressed below,                                                                voltage vector of an array of batteries, for example, each element
+ VBat = E0 + Epol + Eexp + Sch Echg + (1 − Sch )Edsc , (1)                      is calculated independently, involving element-wise multiplica-
+                                                                                tion ◦ and division ,
+where Sch is a binary indicating the charging status with 1.
+As various types of batteries have different Eexp and Echg , the                   Echg = K ◦ Q ◦ ĩ ◦ [1  (isat + KQ ◦ Q),
+battery voltage is vectorized for parallel processing. Arranged
+in the sequence of lithium-ion, lead-acid, and nickel-cadmium                                1  (isat + KQ ◦ Q), 1  (|isat | + KQ ◦ Q)].             (8)
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+2738                                                                                        IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+Fig. 1.   A battery array: (a) configuration, (b) scalable model.
+
+
+
+  Similarly, the general expression for the charging and dis-
+charging processes of various batteries can be vectorized for
+parallel processing on the GPU,
+             VBat = E0 + Epol + Eexp + Sch ◦ Echg
+                          + (I − Sch ) ◦ Edsc ,
+                         VBat ∈ [VBmin , VBmax ]                           (9)    Fig. 2.   Grid-connected BESSs: (a) Integration types, (b) control scheme.
+
+where VBmin , VBmax are vectors denoting the cut-off voltages
+and fully-charged voltages.
+   In the circuit EMT simulation, when nodal voltages, instead                    where GBS0 -IBeqS0 and GBSj -IBeqSj represent the Norton
+of mesh currents, are to be solved using Kirchhoff’s current law,                 equivalent circuit of the Np2 × Ns array and a Np1 × NSj array,
+the Thévenin equivalent circuit of the battery model VBat -ZB                     respectively. As can be seen, the scalable model can flexibly be
+needs to be transformed into its Norton counterpart with an                       as detailed as an entire Np × Ns array, and as computationally
+equivalent current source IBeq in parallel with the conductance                   efficient as a lumped equivalent unit by simply adjusting Np1
+GB . Assuming the internal resistances of all batteries under                     and Nsj . For a grid-wide study of an AC/DC grid, the lumped
+study are converted into the conductance and then grouped as                      battery array model is sufficient when the main focuses are
+a vector GB = [GB1 , GB2 ,... ], the current contribution of the                  converter transient performance and the consequent impact on
+batteries can be expressed as                                                     system stability.
+                           IBeq = VBat ◦ GB .                            (10)
+                                                                                  B. Grid-Connected BESS
+where the vector IBeq = [IBeq1 , IBeq2 ,... ].
+   The Norton equivalent circuit GB -IBeq of a battery can be ex-                    A power transmission and distribution network may incorpo-
+tended to an array of batteries for design, online monitoring, and                rate a substantial number of utility-scale BESSs, which work as
+management purposes. As shown in Fig. 1(a), all the batteries of                  part of a virtual power plant (VPP) for grid resilience enhance-
+a BESS are organized in an Np × Ns array so that each basic unit                  ment, or for temporar

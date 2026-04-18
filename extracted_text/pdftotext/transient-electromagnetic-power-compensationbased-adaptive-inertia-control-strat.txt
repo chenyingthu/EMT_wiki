@@ -1,0 +1,210 @@
+IET Generation, Transmission & Distribution
+
+
+
+
+    ORIGINAL RESEARCH
+
+
+
+Transient Electromagnetic Power Compensation-Based
+Adaptive Inertia Control Strategy for Parallel Energy
+Storage VSC
+Denghui Hu1                    Xiaoling Su1             Zhengkui Zhao1                Laijun Chen1,2
+
+1                                                                                                                                                         2
+ Key Laboratory of Smart Operation of New Energy Power System, Ministry of Education, Qinghai University, Xining, China                                       Department of Electrical
+Engineering, Tsinghua University, Beijing, China
+
+Correspondence: Xiaoling Su (suxiaoling@qhu.edu.cn)
+
+Received: 7 July 2025          Revised: 10 October 2025           Accepted: 17 November 2025
+
+
+
+    ABSTRACT
+    Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face technological obstacles like active power
+    oscillations during the frequency regulation process for power system frequency management. Such problems are more prominent
+    in parallel VSC-ESS. To address this, this paper introduces a transient electromagnetic power compensation control strategy for
+    parallel VSC-ESS to suppress the overshooting and oscillations during the frequency response. First, a comprehensive investigation
+    of the state-space equations and transfer functions for parallelled VSC-ESS elucidates the influence of key control parameters on
+    both system stability and frequency response characteristics. Then, in order to improve the dynamic response performance, an
+    adaptive inertia control approach is devised. Simulation and experimental results verify the effectiveness and feasibility of the
+    proposed control.
+
+
+
+1         Introduction                                                                              and thermal dissipation properties, their overload capacity gives
+                                                                                                    significant merits to suppress the oscillations [13]. However, VSC
+As synchronous generators (SGs) are being replaced by new                                           with power electronics at its interface has a restricted overload
+energy generation gradually, power system sees an increasing                                        capacity, making it susceptible to active power oscillations [14],
+number of problems caused by low inertia and weak damping                                           which in turn impacts its frequency support capabilities due
+[1–3]. For a weak system, where frequency deviation (FD) and                                        to its active power-frequency characteristics [15]. Parallel VSC-
+the rate of change of frequency (RoCoF) are significantly high.                                     ESS have higher redundancy and scalability when compared to
+It is inevitable for power electronic devices like VSC-ESS achieve                                  individual converters, making them a vital enabling technology
+a rapid frequency response [4, 5] and provide active support                                        for supporting future power grids [16, 17]. However, angular
+capability [6–8].                                                                                   acceleration differences between parallel VSC units during fre-
+                                                                                                    quency response might predispose them to frequency oscillation
+Grid-connected VSC-ESS incorporates the rotor mechanical                                            problems [10, 18, 19].
+equations of SGs, exhibiting operational characteristics similar to
+SGs. This strategy with configurable parameters offers superior                                     FD and RoCoF are two critical indicator factors for VSC-ESS;
+operational flexibility and dynamic response capabilities [9, 10].                                  overlarge FD and RoCoF frequently activate anti-islanding pro-
+It also brings the oscillation characteristic of the SGs, because                                   tection, resulting in parallel VSC-ESS disconnection [20]. The
+it incorporates the rotor mechanical equations of SGs [11, 12].                                     inertia of the system has a significant impact on these two
+As SGs utilise materials with superior electrical conductivity                                      essential factors [16].
+
+
+This is an open access article under the terms of the Creative Commons Attribution-NonCommercial License, which permits use, distribution and reproduction in any medium, provided the original
+work is properly cited and is not used for commercial purposes.
+© 2025 The Author(s). IET Generation, Transmission & Distribution published by John Wiley & Sons Ltd on behalf of The Institution of Engineering and Technology.
+
+
+
+IET Generation, Transmission & Distribution, 2025; 19:e70201                                                                                                                             1 of 12
+https://doi.org/10.1049/gtd2.70201
+                                                                                                                                                    17518695, 2025, 1, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/gtd2.70201 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+To alleviate the frequency instability. The small-signal dynam-       as response time, frequency deviation, and RoCoF. To overcome
+ics of active power and frequency oscillations in a parallel          these restrictions, the primary contributions of this study are as
+VSC are analysed by a rigorous methodology comprising state-          follows:
+space modelling, pole locus analysis, and droop characteristic
+assessment in [14]. A recognised method whereby oscillation            1. A mathematical model of the parallel VSC-ESS is estab-
+suppression via an increased damping coefficient can compro-              lished; utilising the state space small-signal model of the
+mise primary frequency regulation. Subsequent strategies like             parallel VSC-ESS, the impact of virtual inertia damping, com-
+transient damping control alleviate this compromise and improve           pensation coefficients, and time constants on the system’s
+damping but fail to resolve concomitant challenges of power               frequency response characteristic is analysed.
+overshoot and extended transient response [21, 22]. References
+                                                                      2. Based on the amplitude-frequency characteristic curve and
+[23, 24] improve the dynamic response capabilities of parallel
+                                                                         pole locus of the parallel VSC-ESS, this paper analyses the
+VSC-ESS by improving the communication architecture and the
+                                                                         interactions between parameters of different VSC-ESSs and
+linkages between nearby units’ control parameters; as a result,
+                                                                         their impacts on system frequency response.
+the linked systems are more complicated and prone to instability.
+The active feedforward compensation strategy in Reference [25],       3. By comparing the system frequency response characteristics
+while effective in damping transient active power oscillations,          before and after implementing transient electromagnetic
+has the counterproductive effect of generating new oscillations          control. An adaptive coefficient is designed to adjust the
+in the steady-state frequency. A transient electromagnetic power         inertia parameter dynamically during the frequency response
+control strategy is introduced within the parallel VSC-ESS to            process. It is revealed that the proposed adaptive inertia
+suppress active power oscillations in [26]. Beyond effectively           control can reduce the maximum RoCoF and frequency
+mitigating active power oscillations, this strategy confers signif-      response time.
+icant improvements in the system’s dynamic response, notably
+achieving a faster response time and enhanced transient power
+output. However, the analysis of its frequency response character-    2     Stability of Parallel VSC-ESS
+istics under grid frequency disturbances has not been conducted.
+The aforementioned control strategies primarily address the           2.1     Topology of Parallel VSC-ESS
+overshoot and oscillation issues, which are related to active power
+frequency, but ignore the impact of the RoCoF on VSC.                 Figure 1 depicts the primary circuit and control topology of the
+                                                                      parallel VSC-ESS. Li and Ri are the equivalent inductance and
+In addition to feedback control, adaptive inertia control is an       resistance of the VSC-ESSi to the grid, respectively; Vdci is the
+approach for improving the dynamic frequency response of paral-       DC side voltage of the energy storage system; Ici is the VSC-ESSi
+lel VSCs [27, 28]. But an adaptive algorithm requires accurate grid   output current; Uci and δi are the VSC-ESSi output voltage and
+frequency detection. However, frequency is a spatially distributed    voltage phase, respectively; and Ug is the grid voltage.
+variable in large-scale power systems [29]; thus, a localised
+measurement may not accurately reflect the global dynamic state
+required for effective control. The work in [30, 31] introduces
+a coordinated control framework based on multi-parameter
+adaptation that aims to reduce active power oscillations in
+parallel VSC configurations. In addition, according to References
+[30, 31], a weak grid has little effect on the transient recovery
+speed of parallel VSC systems during frequency disturbances,
+but it dramatically increases the amplitude of active power and
+frequency overshoot. An adaptive method based on the 2-norm
+is proposed in [16], reflecting the coupling relationship between
+virtual inertia and damping coefficients of each VSC during
+the frequency response process. Consequently, the coordinated
+control of virtual inertia and damping, guided by this method,
+yields improvements in both the dynamic stability and frequency
+response of parallel VSC systems. The approaches discussed
+above are usually characterised by elaborate designs, and their
+adaptive control schemes have inherent limits in suppressing
+overshoot and oscillations under frequency disturbances, failing
+to achieve total transient stability for parallel VSC systems.
+
+In summary, in the event of grid disturbances, longer reaction
+times, overlarge frequency nadir, and RoCoF all necessarily
+reduce the efficiency of frequency support. [32]. Current research
+on the frequency dynamics of parallel VSC systems suffers
+from two fundamental limitations: a lack of understanding of
+the inter-converter frequency coupling mechanisms, and the
+frequency response should consider more key indicators, such          FIGURE 1       Topology of parallel VSC-ESS.
+
+
+2 of 12                                                                                         IET Generation, Transmission & Distribution, 2025
+                                                                                                                                                             17518695, 2025, 1, Downloaded from https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/gtd2.70201 by Tsinghua University Library, Wiley Online Library on [09/04/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+The VSC-ESSi control system is made up of two major compo-                       From Equation (4), the transfer functions Δωi (s)/Δωbus (s) and
+nents: active-frequency control in Equation (1) replicates inertial              ΔPL (s)/ Δωbus (s) are expressed as:
+damping characteristics as SGs, and reactive-voltage control
+in Equation (2) performs voltage regulation by modelling the                            ⎧ Δ𝜔𝑖 (𝑠)                    𝐾𝑖
+excitation characteristics as SGs.                                                      ⎪           =         2 + (𝐷 𝜔 + 𝑘 )𝑠 + 𝐾
+                                                                                          Δ𝜔
+                                                                                        ⎪ bus   (𝑠)    𝐽 𝜔
+                                                                                                        𝑖 0 𝑠       𝑖 0     𝜔𝑖      𝑖
+                                                                                        ⎪Δ𝑃 = Δ𝑃 + ⋯ Δ𝑃 + ⋯ Δ𝑃
+                 ⎧ dΔ𝜔𝑖        𝑃      𝑃                                                 ⎨   𝐿       01
+                                                                                                         [ 𝑛
+                                                                                                                 0𝑖        0𝑛
+                                                                                                                                              ]
+                                                                                                                                                      (5)
+                 ⎪𝐽𝑖     = m𝑖 − 0𝑖 − 𝐷𝑖 (𝜔𝑖 − 𝜔0 )                                      ⎪ Δ𝑃 (𝑠)           ∑ 𝐾𝑖 (𝐽𝑖 𝜔0 𝑠 + 𝐷𝑖 𝜔0 + 𝑘𝜔𝑖 )
+                 ⎨ d𝑡          𝜔      𝜔0                                   (1)          ⎪     𝐿
+                                 0                                                                  =−
+                 ⎪𝑃m𝑖 = 𝑃ref 𝑖 + 𝑘𝜔𝑖 (𝜔0 − 𝜔)                                           ⎪ Δ𝜔bus (𝑠)             𝐽 𝜔 𝑠2 + (𝐷𝑖 𝜔0 + 𝑘𝜔𝑖 )𝑠 + 𝐾𝑖
+                 ⎩                                                                      ⎩                  𝑖=1 𝑖 0
+
+
+
+where Ji , Di , and kωi are the virtual inertia, virtual damping, and            where ΔPL is the sum of the output power of all VSC-ESSs.
+frequency modulation coefficient, respectively. ωi , ω0 , and Δωi are
+the output angular frequency, rated frequency, and the difference                According to Figure 2 and Equation (5), the frequency response
+between them of the VSC-ESSi , respectively; Prefi is the active                 closed-loop transfer function Δωi (s)/ΔPL (s) of the VSC-ESSi is
+power reference value, Pmi is the mechanical power, and P0i is                   rearranged as
+the output active power of VSC-ESSi .
+                                                                                         ⎧ Δ𝜔𝑖 (𝑠) = −                     𝐺𝑖 (𝑠)
+                      1                                                                  ⎪ Δ𝑃𝐿 (𝑠)        ∑𝑛
+                𝐸𝑖 =      [𝑄 − 𝑄0𝑖 + 𝐷q𝑖 (𝑈cn𝑖 − 𝑈c )]                     (2)           ⎪
+                                                                                                                 𝐺
+                                                                                                              𝑚=1 𝑚
+                                                                                                                     (𝑠)(𝐽𝑚 𝜔0 𝑠 + 𝐷𝑚 𝜔0 + 𝑘𝜔𝑚 )
+                     𝐾q𝑖 𝑠 ref 𝑖
+                                                                                         ⎪                          𝐾𝑖
+                                                                                         ⎨𝐺𝑖 (𝑠) =          2 + (𝐷 𝜔 + 𝑘 )𝑠 + 𝐾
+                                                                                                                                                      (6)
+                                                                                         ⎪         𝐽𝑖 𝜔 0 𝑠       𝑖  0     𝜔𝑖       𝑖
+where Kqi is the integration coefficient, Qrefi is the reference
+                                                                                         ⎪                             𝐾𝑚
+value of reactive power, Q0i is the output reactive power of VSC-                        ⎪𝐺𝑚 (𝑠) =
+ESSi . Dqi is the reactive voltage regulation coefficient, Ucni is                       ⎩          𝐽𝑚 𝜔0 𝑠2 + (𝐷𝑚 𝜔0 + 𝑘𝜔𝑚 )𝑠 + 𝐾𝑚
+the reference value of voltage magnitude, and Ei is the internal
+potential.                                                                       Finally, the parallel system state-space model containing the
+                                                                                 complete line parameters is expressed as follows (7)
+
+2.2        Stability Analysis of Parallel VSC-ESS                                                       ⎧ d𝒙1
+                                                                                                        ⎪     = 𝑨1 𝒙1 + 𝑩1 𝒖1
+                                                                                                        ⎨ d𝑡                                          (7)
+According to Figure 1(a), the VSC-ESSi output power P0i is [29]:                                        ⎪𝒚1 = 𝑪1 𝒙1 + 𝑫1 𝒖1
+                                                                                                        ⎩
+
+              ⎧      3𝑈c𝑖 𝑈g sin 𝛿𝑖   3𝑈c𝑖 𝑈g
+                                                                                 where state variable x1 = [Δω1 Δω2 Δδ1 Δδ2 ]T ; input variable
+              ⎪𝑃0𝑖 =    2𝜔0 𝐿𝑖
+                                    ≈
+                                       2𝑋𝑖 𝑖
+                                              𝛿 ≈ 𝐾𝑖 𝛿𝑖
+              ⎨                                                            (3)   u1 = [Δωbus ]; output variable y1 = [Δω1 Δω2 ΔP01 ΔP02 ]T . where
+              ⎪𝛿𝑖 =   (𝜔𝑖 − 𝜔bus ) 𝑑𝑡                                            the coefficient matrix
+              ⎩     ∫
+                                                                                            ⎡− 𝐷1 𝜔0 + 𝑘ω1       0
+                                                                                                                           𝐾
+                                                                                                                         − 1       0 ⎤
+where ωbus is the AC bus frequency, Ki = 1.5Uci Ug /Xi ; in the case                        ⎢     𝐽1 𝜔0                   𝐽1 𝜔0         ⎥
+of a small perturbation, the phase δi varies less, and sinδi ≈ δi .                         ⎢                                           ⎥
+                                                                                            ⎢                𝐷2 𝜔0 + 𝑘ω2           𝐾2 ⎥
+                                                                                       𝑨1 = ⎢      0       −               0    −
+                                                                                                                𝐽2 𝜔0             𝐽2 𝜔0 ⎥ ;
+Combining Equation (1) and Equation (3), s is the complex                                   ⎢                                           ⎥
+frequency in the Laplace domain, and a is a small-signal quantity.                          ⎢      1             0         0       0 ⎥
+                                                                                            ⎢                                           ⎥
+The Taylor expansion of the equation at the rated state is                                  ⎣      0             1         0       0 ⎦
+obtained and subsequently linearised, and the DC and quadratic
+differe

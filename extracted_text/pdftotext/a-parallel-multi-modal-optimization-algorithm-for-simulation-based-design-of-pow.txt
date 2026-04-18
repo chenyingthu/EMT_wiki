@@ -1,0 +1,174 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                        10.1109/TPWRD.2015.2410172, IEEE Transactions on Power Delivery
+                                                                                                                                                                             1
+
+
+
+
+                  A Parallel Multi-Modal Optimization Algorithm
+                  for Simulation-Based Design of Power Systems
+                        A. Y. Goharrizi, Member, IEEE, R. Singh, A. M. Gole, Fellow, IEEE, S. Filizadeh, Senior Member, IEEE,
+                                                     J. C. Muller, R. Jayasinghe, Member, IEEE
+
+                                                                                                A non-convex optimization problem often has multiple
+              Abstract— This paper proposes a parallel multi-modal                            solutions (local optima); a property commonly referred to as
+         optimization algorithm that is combined with electromagnetic                         multi-modality [12]-[13]. The simpler optimization algorithms
+         transient (EMT) simulation in a platform that unifies the set-up,                    are only capable of searching for a local optimum, whereas
+         test, and execution of optimal designs for power systems. The                        more complex algorithms exist that are designed to search for
+         algorithm speeds up the design of power systems as its                               the globally optimal solution [14]. Another class of
+         computations can be executed independently on a highly                               optimization algorithms is capable of searching for multiple
+         parallelized environment. Additional speed-up is achieved by                         local (and global) optima simultaneously [13]. These “multi-
+         using a surrogate model to estimate the objective function in                        modal algorithms” may provide additional practical benefits
+         regions of suspected local optima. The estimated functions can be                    [16]. For example, the global optimum may not be suitable
+         used in the subsequent stages of post-optimization studies such as                   because the objective function may be excessively sensitive to
+         sensitivity analyses. Comparative studies in terms of computation                    parameter variations [10], in which case some other local
+         time are conducted against sequential execution of the proposed                      optimum that is less parameter-sensitive may be preferred
+         algorithm. The optimal design of a VSC-HVDC transmission is                          [17]-[18].
+         described to demonstrate the capabilities of the proposed                               One challenge with multi-modal algorithms is that they
+         algorithm.                                                                           require significant computation time. This paper proposes a
+                                                                                              novel multi-modal optimization algorithm, which is
+           Index Terms—Multi-modal optimization, grid computation,                            particularly suited to parallel implementation. Parallel
+         power systems transient simulation, simulation-based design.
+                                                                                              execution of optimization algorithms has been proposed as a
+                                                                                              means to expedite simulation-based optimal design [19]
+                                      I. INTRODUCTION
+                                                                                              particularly when evolutionary optimization algorithms are
+
+         S   IMULATION-based optimization is a supportive method
+             in the design of complex engineering systems, where the
+         objective function (OF) to be optimized is only available in
+                                                                                              used [20]-[22]. However, use of parallelism has not been
+                                                                                              exploited in multi-modal optimization for power systems
+                                                                                              design. The proposed algorithm has significantly higher
+         “black box” form, and cannot be explicitly expressed as a                            computational speed than its sequential version and hence can
+         mathematical equation in terms of the variables to be                                greatly shorten the design cycle. It also generates an inventory
+         optimized [1]-[5]. This method has been widely used for the                          of sample points on the objective function surface, which can
+         design of complex engineering systems, such as power                                 be readily used for assessment of the sensitivity of the optimal
+         electronic systems [4]-[5], fluidics [6], propulsion systems [7],                    solutions to parameter variations.
+         large-scale wireless sensor networks [8], and hybrid vehicles                           The paper demonstrates the proposed approach with a
+         [9]. A common feature among all these engineering                                    design example in which a voltage-source converter (VSC)
+         applications of simulation-based design is that deriving an                          based high voltage direct-current (HVDC) transmission
+         explicit formulation for the objective function in terms of                          system is optimized to provide fast dynamic response for the
+         design variables is not practically possible; therefore, the                         power order while reducing the dc voltage ripple and dc power
+         unattainable (or unavailable) explicit objective function is                         transient and steady state error. The proposed algorithm is also
+         replaced by a simulation model, which evaluates the objective                        compared with sequential computing to clearly show the
+         function for a given set of variables, and hence the term black-                     efficiency of the new approach.
+         box optimization [11].
+                                                                                              II. DESCRIPTION OF THE PROPOSED PARALLEL MULTI-MODAL
+            This work was supported in part by the Industrial Research Chair (IRC)                                   ALGORITHM
+         Program of the Natural Sciences and Engineering Council (NSERC) of                      Fig. 1 shows a flowchart of the proposed parallel multi-
+         Canada, and by the University of Manitoba.
+            A. Y. Goharrizi, S. Filizadeh and A. M. Gole are with the Department of           modal optimization algorithm. The algorithm includes five
+         Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB            stages of (i) initialization, (ii) localization, (iii) objective
+         R3T        5V6,      Canada        (e-mail:     yazdanpa@myumanitoba.ca,             function estimation, (iv) density increment, and (v)
+         shaahin.filizadeh@umanitoba.ca, gole@ee.umanitoba.ca).
+            R. Singh, J. C. Muller and R. Jayasinghe are with the Manitoba HVDC
+                                                                                              convergence check. Note that from Fig. 1 many of the steps
+         Research Centre, Winnipeg, MB R3P 1A3, Canada (e-mail: rsingh@mhi.ca,                such as initialization and handling of each individual localized
+         cmuller@pscad.com, jayas@mhi.ca )
+
+
+
+                                 0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See
+                                         http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                        10.1109/TPWRD.2015.2410172, IEEE Transactions on Power Delivery
+                                                                                                                                                                                                 2
+
+         area can be readily parallelized.                                                                               Start
+            The proposed algorithm is explained using a very simple
+                                                                                                                Initialization
+         two-variable optimization problem as given in (1). In later
+         sections more realistic and complex power systems examples                                                                  nth point set
+         are discussed. The objective function f(x,y) in this example has
+         three local minima in the specified region; located exactly at                                                  2nd point set
+         (0.01, -0.55), (1.60, -0.03) and (0.00, 1.60). Although the                                                                              n
+                                                                                                                1st point set
+         proposed algorithm will eventually be used for black box type
+         objective functions, the demonstration example has                                         Objective function               2
+         mathematically derivable and hence exactly known minima                                       evaluation
+                                                                                                                      1
+         that can be used to check the numerical method’s accuracy.
+                                                                                                                localization
+         minimize       f ( x, y )  3(1  x 2 ) 2 exp(  x 2   y  12 )
+                              x
+                          10(  x 5  y 5 ) exp(  x 2  y 2 )                     (1)                                      kth local area
+                              5                                                                                                                       k
+                                       2      2      2
+                          3 exp( ( x  1)  y )
+                                                                                                                    nd
+                                                                                                                2 local area
+                                                                                                                                          2
+
+                    - 3  x  3                                                                         st
+                                                                                                      1 local area
+          subject to                                                                                                            1
+                    - 3  y  3                                                                                                                          k
+                                                                                                                                                                                                     k
+         A. Initialization and Initial Mesh Generation                                                   Surrogate model of
+                                                                                                          OF and Minima                       2
+               The purpose of the initialization stage of the proposed                                       Estimation    1                                      Objective function         2
+         algorithm is to develop a scatter of n initial trial points                                                                                          evaluation through parallel
+                                                                                                              End
+          ( xi , yi ); i {1,2... n} in order to provide an estimation of the                                                                                         processing         1
+
+         overall surface of the OF. Fig. 2(a) shows a scatter of initial                           End          Converged                          Density
+                                                                                                         Yes        ?                No           increment
+         points and a corresponding mesh in the x-y plane for the
+         example in (1).
+             The mesh is obtained using the mesh generation algorithm                         Fig. 1. Flowchart of the proposed parallel multi-modal optimization algorithm.
+         described in [23] although other methods can be used if
+         desired. The generated mesh of points must be selected so that                       studies such as sensitivity analysis without any further
+         the constraints are met. The objective function value f ( xi , yi )                  simulations for these studies.
+                                                                                                  The proposed algorithm takes advantage of the
+         for each of the points in the initial mesh is calculated [17]. In                    independence of the localized areas to further parallelize its
+         the context of design using an EMT simulator, the OF is only                         ensuing steps. Further investigation of each localized area is
+         evaluated in “black box” form and each objective function                            assigned to a number of parallel computing machines as
+         evaluation requires one EMT simulation run [18]. These                               shown in Fig. 1.
+         simulations can be readily conducted in parallel as is shown in
+         Fig. 1. This parallel operation reduces the total time required                      C. Surrogate Model of OF and Minima Estimation
+         for evaluation of the objective functions in the initial mesh                           For each localized area a square mesh is selected wherein
+         potentially by a factor of n (assuming n or more parallel                            the localized area is inscribed as shown in Fig. 2(c). The
+         processors are available).                                                           number of points in each square mesh is selected based on the
+         B. Localization                                                                      accuracy requirements (denser for more accuracy). Each point
+                                                                                              in the square mesh is submitted for OF evaluation, and once
+            Once OF values are obtained for each point in the initial                         all the points in the square are evaluated, an interpolation
+         mesh, regions where local optima may exist are identified.                           process builds a “surrogate” model of the localized area [24].
+         This is done by comparing the OF value of every point in the                         The surrogate model is a simple mathematical function whose
+         mesh to the OF values of its neighboring points (the ones                            minimum can be analytically determined, and from which the
+         directly linked to it), and recording which points show smaller                      sensitivity to parameter changes can be calculated analytically.
+         OFs than all their neighbors. For example, three such points                         The analytical aspect speeds up the search for the location of
+         are identified by the algorithm and are shown in Fig. 2(b). The                      the minimum without requiring additional simulations to
+         true local minima of the objective function in (1) are denoted                       determine precise OF values.
+         by small asterisks in Fig. 2(b).                                                        The orderly placement of the points in each square mesh
+            As seen the three discovered local areas correctly                                eases the computational burden of finding the parameters of
+         encompass these minima. The next iterations of the algorithm                         each surrogate model.
+         serve to (i) produce increasingly accurate estimations of the
+         location of local minima, and (ii) provide an inventory of OF
+         around each local minimum to enable post-optimization
+
+
+
+                                 0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See
+                                         http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                        10.1109/TPWRD.2015.2410172, IEEE Transactions on Power Delivery
+                                                                                                                                                                                                              3
+
+               3                                                                 3                                                                                       3
+
+                                                                                                                 -4.2
+               2                                                                 2                                                 -5.3                                  2
+                                                                                                          -4.9
+                                                                                                                         
+                                                                                                                   -7.4              -4.2
+               1                                                                 1                       -2.8                                                            1
+                                                                                                                 -0.6                          -2.0
+                                                                                                                 1.6                  -4.0                -3.4
+                                                                                 0                                           0.0               
+
+
+
+
+                                                                             Y
+               0

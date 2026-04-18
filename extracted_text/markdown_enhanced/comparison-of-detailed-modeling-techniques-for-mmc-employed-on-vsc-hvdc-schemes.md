@@ -1,0 +1,26 @@
+# Comparison of Detailed Modeling Techniques for MMC Employed on VSC-HVDC Schemes
+Antony Beddard, Student Member, IEEE, Mike Barnes, Senior Member, IEEE, and Robin Preece, Member, IEEE
+
+**Abstract**—Modular multilevel converters (MMC) are presently the converter topology of choice for voltage-source converter high-voltage direct-current (VSC-HVDC) transmission schemes due to their very high efficiency. These converters are complex, yet fast and detailed electromagnetic transients simulation models are necessary for the research and development of these transmission schemes. Excellent work has been done in this area, though little objective comparison of the models proposed has yet been undertaken. This paper compares for the first time, the three leading techniques for producing detailed MMC VSC-HVDC models in terms of their accuracy and simulation speed for several typical simulation cases. In addition, an improved model is proposed which further improves the computational efficiency of one method. This paper concludes by presenting evidence-based recommendations for which detailed models are most suitable for which particular studies.
+
+**Index Terms**—Accelerated model, electromagnetic-transient (EMT) simulation, HVDC transmission, modular multilevel converter (MMC), voltage-source converter (VSC).
+
+*Manuscript received August 12, 2013; revised December 14, 2013 and March 12, 2014; accepted April 29, 2014. Date of publication June 09, 2014; date of current version March 20, 2015. This work was supported by the Engineering and Physical Sciences Research Council (EPSRC) under Grant EP/H018662/1-Supergen ‘Wind Energy Technologies’. Paper no. TPWRD-00903-2013.*
+*The authors are with the School of Electrical and Electronic Engineering, University of Manchester, Manchester M13 9PL, U.K. (e-mail: antony.*
+
+## I. INTRODUCTION
+THE DEMAND for voltage-source converter (VSC) high-voltage direct-current (HVDC) transmission schemes has grown significantly in recent years. This growth is primarily due to the improvements in the voltage and power ratings of insulated-gate bipolar transistors (IGBTs) and a number of new VSC-HVDC applications, such as the connection of large offshore windfarms.
+
+Since its inception in 1997 and until 2010, all VSC-HVDC schemes employed two- or three-level VSCs [1]. In 2010, the Trans Bay Cable Project became the first VSC-HVDC scheme to use modular multilevel converter (MMC) technology.
+
+The MMC has numerous benefits in comparison to two- or three-level VSCs; chief among these is reduced converter losses. Today, the three largest HVDC manufacturers offer a VSC-HVDC solution which is based on multilevel converter technology.
+
+Modelling MMCs in electromagnetic transient simulation (EMT) programs presents a significant challenge in comparison to modeling a two- or three-level VSC. The stack of series connected IGBT's in each arm of a two- or three-level VSC is switched at the same time. This simultaneous switching action enables the stack of IGBTs to be modeled as a single IGBT for many studies. The MMC topology, however, does not contain stacks of series-connected IGBT's which have identical firing signals and, therefore, comparable simplification in the model cannot be made.
+
+The converter employed on the Trans Bay Cable Project is an MMC with approximately 201 levels. A traditional detailed model (TDM) of this converter would require more than 2400 IGBTs with antiparallel diodes and more than 1200 capacitors to be built and electrically connected in the simulation package's graphical user interface, resulting in a large admittance matrix. The admittance matrix must be inverted each switching cycle, for which MMCs can have hundreds of times per fundamental cycle which is extremely computationally intensive. This makes modeling MMCs for HVDC schemes using traditional modeling techniques impracticable.
+
+To address this problem, an efficient model was proposed by Udana and Gole in [2], which is referred to as the detailed equivalent model (DEM) in this paper. In [2], the DEM was shown to significantly reduce the simulation time in comparison with a TDM without compromising accuracy. A drawback of the DEM is that the individual converter components are invisible to the user. This makes the model unsuitable for studies which require access to the individual converter components and it makes it difficult to reconfigure the converter submodule for different topologies. Only one other publication has compared the DEM with the TDM, which was performed in EMTP-RV [3].
+
+A new model, referred to as the accelerated model (AM) was proposed by Xu et al. in [4]. This model was found to offer greater computational efficiency than a TDM without compromising accuracy and it gives the user access to the individual converter components. In [4], an attempt was made to compare the AM simulation time with the DEM simulation time data from [2]; however, a full and objective comparison could not be completed because the models were built by different researchers on different computers.
+
+The objective of this paper is to perform a much needed independent comparison of the TDM, DEM, and AM models which will enable the reader to make a more informed decision when

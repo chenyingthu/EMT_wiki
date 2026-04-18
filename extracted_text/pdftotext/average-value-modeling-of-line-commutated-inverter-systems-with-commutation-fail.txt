@@ -1,0 +1,213 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022                                                                                         2805
+
+
+
+
+          Average-Value Modeling of Line-Commutated
+           Inverter Systems With Commutation Failure
+ Zeqi Hong , Student Member, IEEE, Seyyedmilad Ebrahimi , Member, IEEE, Yin Xu , Senior Member, IEEE,
+                      Juri Jatskevich , Fellow, IEEE, and Jinghan He , Fellow, IEEE
+
+
+   Abstract—Line-commutated converters are extensively used as                       Therefore, it is necessary to study such events to realize
+the interface between ac grids and classic HVDC systems. At the                   their causes, consequences, and devise possible detection and
+inverter side, commutation failure of switches is one of the most                 mitigation techniques. Conventionally, electromagnetic tran-
+common faults that can pose threats to the system operation.
+Practical and reliable study of such phenomena relies on accurate                 sient (EMT) simulations are conducted to study such kinds of
+and efficient converter models for simulations. Recently, a para-                 phenomena using either nodal-analysis-based programs such
+metric average-value model (PAVM) has been presented for ac–dc                    as Micro-Tran, PSCAD/EMTDC, EMTP-RV, or state-variable-
+rectifiers, which considers the internal faults of the converter. In              based programs such as MATLAB/Simulink, Simscape Electri-
+this paper, the PAVM methodology is extended to the dc–ac inverter                cal and PLECS, etc.
+systems, including the commutation failure of switches. The pro-
+posed PAVM also augments an automatic fault detection technique                      In all these EMT simulation packages, the detailed switching
+to determine the faulty switches. Using comprehensive simulation                  models of power-electronic converters (including LCCs) are
+studies, the developed model is verified to accurately predict the                available and can be readily used for simulating normal and/or
+commutation failure of switches and reconstruct the waveforms                     faulty operation of converters. Although switching models can
+consistent with the detailed switching models of inverters while                  provide accurate results, they need to handle a large number
+being computationally more efficient. The proposed PAVM is en-
+visioned to be an efficient and accurate asset for simulation of                  of switching events, which impose a significant computational
+HVDC systems and inevitable when faults of switches need to be                    burden for the solution of the entire network. This slows down
+considered.                                                                       the simulations, especially for system-level studies, including
+   Index Terms—Average-value model, commutation failure,
+                                                                                  multiple converters, and limits the size of the system that can
+electromagnetic transient, line-commutated inverter, simulation.                  be practically simulated [7]. Specifically, the detailed switching
+                                                                                  models are bottleneck in system-level studies [9], or optimiza-
+                                                                                  tion studies which need to run multiple simulations with different
+                           I. INTRODUCTION
+                                                                                  contingencies [10].
+      INE–COMMUTATED converters (LCCs) are widely used
+L     in classic high-voltage direct–current (HVDC) transmis-
+sion systems for the integration of renewable energy sources
+                                                                                     However, in many system-level studies, the details of indi-
+                                                                                  vidual switches inside the converters are not of great interest,
+                                                                                  and their overall operation is important instead. In light of this,
+with conventional power grids [1]. Although the LCCs have                         the so-called average-value models (AVMs) [7]–[23] have been
+proven reliable with low cost, simplicity, and large capacity                     developed where the switching events are neglected (averaged
+[2], [3], the commutation failure of switches at the inverter                     out), and the converters are represented by a set of continuous
+side of LCC-based HVDC systems is a common issue [4].                             algebraic equations which describe the relationships between
+This phenomenon can lead to serious voltage drops at the dc                       the averaged dc and ac-side variables [7].
+transmission system [4], and if not handled properly, there will                     This makes the AVMs of converters much more efficient than
+be a risk of dc blocking and missive power outage [5], [6].                       their detailed switching model counterparts and suitable for
+                                                                                  system-level studies. More specifically, the so-called parametric
+   Manuscript received April 5, 2021; revised August 5, 2021; accepted Septem-    AVMs (PAVMs) [12]–[21] have proven accurate in all operating
+ber 16, 2021. Date of publication October 1, 2021; date of current version        modes of diode and thyristor-controlled line-commutated recti-
+July 25, 2022. This work was supported in part by the Fundamental Research
+Funds for the Central Universities of China under Grant 2018JBZ004, and in        fiers (LCRs) under normal and unbalanced conditions. A PAVM
+part by the Natural Science and Engineering Research Council (NSERC) of           has recently been developed in [20], [21], which considers
+Canada under the Collaborative Research and Development Grant. Paper no.          the asymmetrical operation of LCRs due to internal faults of
+TPWRD-00536-2021. (Corresponding author: Yin Xu.)
+   Zeqi Hong, Yin Xu, and Jinghan He are with the Department of Electri-          switches. This PAVM [20], [21] formulates the ac-side variables
+cal Engineering, Beijing Jiaotong University, Beijing 100044, China (e-mail:      in positive and negative sequences and considers the dominant
+15117380@bjtu.edu.cn; xuyin@bjtu.edu.cn; jhhe@bjtu.edu.cn).                       harmonics. It has been shown that the PAVM in [20], [21] can
+   Seyyedmilad Ebrahimi and Juri Jatskevich are with the Electrical and Com-
+puter Engineering Department, The University of British Columbia, Vancouver,      accurately predict the asymmetrical steady-state and transient
+BC V6T 1Z4, Canada (e-mail: ebrahimi@ece.ubc.ca; jurij@ece.ubc.ca).               response of faulty rectifiers under different conditions. However,
+   Color versions of one or more figures in this article are available at         this PAVM [20], [21] requires determining the fault configura-
+https://doi.org/10.1109/TPWRD.2021.3117027.
+   Digital Object Identifier 10.1109/TPWRD.2021.3117027                           tion using an input to the model.
+
+
+                         0885-8977 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:26 UTC from IEEE Xplore. Restrictions apply.
+2806                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022
+
+
+
+
+Fig. 1.   Simplified schematic of the inverter side of an LCC-based classic HVDC system.
+
+
+   In LCC-based HVDC systems, the switches at the inverter-                       lumped RLC branches. The AC subsystem is modeled using its
+side are more prone to be faulted as a result of commutation                      Thevenin equivalent circuit consisting of three-phase equivalent
+failure (CF), which is often due to abnormal system conditions                    sources eabc and equivalent impedance RC and LC , which may
+(e.g., ac voltage sags) [5], [6]. This also requires the converter                also include the impedance of the connecting transformers, etc.
+model to handle the switching faults not only using inputs to                        To derive formulations in this paper, the angle of the inverter
+the model but also based on the external system conditions. In                    ac terminal voltages vabc is defined as
+[22], [23], analytical dynamic-phasor (DP) models have been                                               
+presented to predict the CF occurrence; however, they are valid                                      θe = ωe dt, ωe = 2πfe                       (1)
+only for a certain mode of operation for which equations are                      where fe and ω e represent the fundamental electrical frequency
+derived and assume that the converter consists of ideal switches                  of the ac network in Hz and rad/s, respectively.
+with zero extinction time and neglect series resistance at the ac                    Also, the angle of three-phase equivalent sources eabc is
+side. They also consider the 3rd harmonic only on ac variables.                   denoted by θs which is related to θe as
+   In this paper, first, the formulation of PAVM [20], [21] for ac–
+dc rectifiers is extended to dc–ac thyristor-controlled inverters.                                                θs = θe − δ,                          (2)
+The new extended model adopts the current-source interfacing
+                                                                                  where δ is the angle by which the fundamental components of the
+[16] that is compatible with the inverter operation of PAVMs
+                                                                                  inverter terminal voltages lead the equivalent source voltages.
+of LCCs. Moreover, an augmented technique is proposed to
+                                                                                     It is also noted that here the three-phase equivalent sources
+automatically determine the commutation failure of inverter
+                                                                                  are assumed to be ideal sinusoidal voltages consisting of fun-
+switches based on external system conditions. The proposed
+                                                                                  damental frequency components only which can be expressed
+method incorporates a numerical criterion based on the fault
+                                                                                  as
+instant and the magnitude of the ac voltage sag to determine                                      ⎧        
+which thyristor will fail its normal commutation.                                                 ⎪
+                                                                                                  ⎪          2/ E sin (θs )
+                                                                                                  ⎪
+                                                                                                  ⎪
+                                                                                                     e a =     3
+   Finally, the new extended PAVM is verified on a simplified                                     ⎨                  
+HVDC system, shown in Fig. 1. It is demonstrated that the pro-                                       eb =    2/3E sin θs − 2π/3 ,              (3)
+                                                                                                  ⎪
+                                                                                                  ⎪                  
+posed extended PAVM can obtain accurate results for transients                                    ⎪
+                                                                                                  ⎪
+                                                                                                  ⎩ ec = 2/ E sin θs + 2π/
+involving CF of switches, consistent with the detailed switching                                               3               3
+model of inverters. Moreover, the proposed extended PAVM
+                                                                                  where E denotes the rms value of source line voltages.
+is shown to be orders of magnitude faster than the switching
+model, making it efficient for simulation of HVDC systems
+when commutation failure of switches needs to be considered.                      A. Normal Commutation
+                                                                                     For a six-pulse inverter with normal commutation, the typical
+                                                                                  phase currents and voltages are shown in Fig. 2. As it can be
+       II. COMMUTATION FAILURE DUE TO AC VOLTAGE SAG                              observed, in each cycle of fundamental frequency, there are six
+   Classic HVDC systems consist of two back-to-back thyristor-                    conduction intervals and six commutation intervals which are
+controlled LCCs, which are connected through a transmission                       denoted as S1 – S12 in Fig. 2(a). Herein, these intervals are also
+line. One of the LCCs operates as the ac–dc rectifier, while                      separated/indicated by the start and end instants/angles of the
+the other LCC operates as the dc–ac inverter. Both rectifier and                  switch currents denoted by θk,st and θk,end , respectively where
+inverter have a smoothing reactor at the dc side for smoothing                    k is the switch number k ∈ {1, 2, 3, 4, 5, 6}.
+idc , which can be modeled by a large series inductance.                             According to the conduction and commutation intervals
+   In this paper, to focus on modeling the inverter side of the                   shown in Fig. 2(a), the switching pattern of six-pulse inverter
+HVDC system, it is assumed that the rectifier side has regulated                  under normal operation can be illustrated as in Fig. 3 using
+current (e.g., using a controller) and is modeled as a controlled                 twelve sectors in a circle which implies one full ac cycle of
+current source as shown in Fig. 1. The line-commutated inverter                   the fundamental frequency.
+is assumed to be a six-pulse thyristor-controlled converter; the                     Defining the sector index S ∈ {1, 2, 3, · · · , 12}, correspond-
+transmission line and the smoothing reactor are modeled using                     ing to the intervals S1 –S12 , the conduction and commutation
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:26 UTC from IEEE Xplore. Restrictions apply.
+HONG et al.: AVERAGE-VALUE MODELING OF LINE-COMMUTATED INVERTER SYSTEMS WITH COMMUTATION FAILURE                                                                 2807
+
+
+
+
+                                                                                     Fig. 4. Equivalent circuit of inverter-side of Fig. 1 during the sector S4 (i.e.,
+                                                                                     T2 conduction, T1 -T3 commutation).
+
+
+
+
+Fig. 2. Typical waveforms of a six-pulse thyristor-controlled inverter under
+normal conditions: (a) three-phase currents, (b) three-phase ac terminal voltages.
+
+
+
+
+Fig. 3. Switching conduction and commutation sectors over one full ac cycle
+of the fundamental frequency for a six-pulse thyristor-controlled inverter.
+
+
+
+
+switching pattern shown in Fig. 2(a) and Fig. 3 can be expressed
+as
+            ⎧                                                                        Fig. 5. Commutation process between T1 and T3 in sector S4 : (a) normal
+            ⎪
+            ⎪   1 θ5,end < θs ≤ θ2,st , 2 θ2,st < θs ≤ θ6,end                        commutation, (b) when voltage sag is applied during the conduction interval,
+            ⎪
+            ⎪
+            ⎪
+            ⎪   3 θ6,end < θs ≤ θ3,st , 4 θ3,st < θs ≤ θ1,end                        (c) when voltage sag is applied during the commutation interval.
+            ⎨
+                5 θ1,end < θs ≤ θ4,st , 6 θ4,st < θs ≤ θ2,end
+ S (θs ) =                                                         ,
+            ⎪
+            ⎪   7 θ2,end < θs ≤ θ5,st , 8 θ5,st < θs ≤ θ3,end
+            ⎪
+            ⎪
+            ⎪
+            ⎪   9 θ3,end < θs ≤ θ6,st , 10 θ6,st < θs ≤ θ4,end                       Fig. 5(a), during S3 where only T1 and T2 are conducting, the
+            ⎩
+               11 θ4,end < θs ≤ θ1,st , 12 θ1,st < θs ≤ θ5,end                       voltage va and ea are very close due to the small line impedance.
+                                                                  (4)                  To avoid the complexity of analytical derivations, the com-
+where S is a function of θs whose output indicates the index of                      mutating resistance RC is neglected.
+the conduction/commutation sector.                                                     During S4 , since T1 and T3 thyristors are both conducting,
+   It is noted that the duration of the commutation intervals in                     assuming lossless switches the voltage vmN can be expressed as
+Fig. 2(a) and Fig. 3 can be used to analyze the normal operation
+or commutation failure of switches, using the so-called volt-time                                                          dia            dib
+                                                                                                     vmN = ea + LC             = eb + L C     .                   (5)
+area concept introduced in [6].                                                                                            dt             dt
+   To present the concept and formulations and without the loss
+                                                                                       Also, the dc current can be expressed as idc = -(ia + ib ) = ic
+of generality, here sector S4 is considered. The equivalent circuit
+                                                                                     during S4 . Therefore, based on (5) the line voltage eba can be
+of the inverter-side of Fig. 1 during S4 is depicted as Fig. 4,
+                                                                                     expressed as
+where the thyristor T2 is ON and thyristor T1 is commutating
+with thyristor T3 . The ac voltages are shown in Fig. 5(a) where                                                   dia      dib       d (2ib + idc )
+va (solid red line), vb (solid blue line), ea (red dashed line), and                    eba = eb − ea = LC             − LC     = −LC                .
+                                                                                                                   dt       dt              dt
+vmN (black dashed line) are superimposed. It is noted that in                                                                                         (6)
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:26 UTC from IEEE Xplore. Restrictions apply.
+2808                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 4, AUGUST 2022
+
+
+
+  During S4 , idc can be assumed constant due to the larg

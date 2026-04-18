@@ -1,0 +1,201 @@
+                                                                Electric Power Systems Research 251 (2026) 112316
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Fast investigation of control interaction risks in PV parks using eigenvalue
+analysis in Modelica
+A. Masoom a,* , J. Mahseredjian b, U. Karaagac c
+a
+  Hydro-Québec Research Institute, Varennes, QC J3 × 1S1, Canada
+b
+  Department of Electrical Engineering, Polytechnique Montréal, Montreal, QC H3T 1J4, Canada
+c
+  Department of Electrical and Electronics Engineering, Middle East Technical University, Turkey
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   This paper contributes to the fast detection of control interaction risk in a PV park using the eigenvalue analysis
+Modelica                                                    in Modelica. The entire PV park and its interconnected network are represented by time-domain equations in
+Equation-based modeling                                     Modelica, then linearized state space equations are extracted directly by leveraging the Modelica features. This
+PV park
+                                                            constitutes an advantageous approach for fast finding eigenvalues and extracting potential instability conditions.
+Eigenvalue analysis
+State-space equations
+                                                            The presented approach is verified with electromagnetic transient (EMT) simulation and impedance-based sta­
+Linearization                                               bility analysis (IBSA) that uses EMT-type impedance scanning methods. The results show an outstanding
+Stability analysis                                          improvement in the simulation time and accuracy.
+Impedance scanning
+Phase margin
+Modal Analysis
+
+
+
+
+1. Introduction                                                                                    and electromagnetic transient (EMT) simulation [12].
+                                                                                                        The IBSA-based methods are well-defined in the literature [8]; whilst
+1.1. Literature review                                                                             it is appropriate for large-scale power systems with black box models.
+                                                                                                   The modern transmission grids employ several IBRs in addition to
+    The controllers of inverter-based resources (IBRs) with full-size                              conventional generating units (such as thermal power plants). However,
+converter (FSC), such as type-4 wind or photovoltaic (PV) parks, can                               the IBSA can identify only the CI risk of the IBR under study as all other
+interact with the transmission grid, potentially causing instability. The                          IBRs in the grid subsystem are indirectly represented in equivalent grid
+control interaction (CI) in weakly tied IBRs (either with doubly-fed in­                           impedance. Hence, IBSA does not give any insight regarding CI mech­
+duction generator (DFIG) or FSC) may occur due to the resonance                                    anisms and any hints for its mitigation. It should be noted that the IBSA
+formed by the capacitive IBR and the inductive grid [1,2]. This phe­                               was born for analyzing two terminal systems and it is hard to extend this
+nomenon has been confirmed with several real-world incidents [3]. In                               method for analyzing multi-terminal systems [13].
+addition, the recent research in [4] identified a new CI phenomenon                                     The EMT studies offer a valid and direct EMT simulations on the risk
+between a large-scale type-4 wind park and a 500 kV transmission grid                              of instability; however, they are not also able to identify and explain the
+in which one of the parallel transmission lines interacts with the wind                            causes and nature of problem. The EMT simulation-based assessment is
+park in super-synchronous frequency range.                                                         typically performed to validate either the IBSA or EV results [14].
+    Several methods have been evolved for the prediction of CI risks in
+IBR integrated systems [5]. The widely used methods include                                        1.2. Motivation
+impedance-based stability analysis (IBSA) [6,7] in various reference
+frames [8], state-space model-based eigenvalue analysis (EV) [9–11],                                  The EV analysis has been earlier employed and well documented for
+
+
+ Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8-12, 2025.
+    This work was supported by Hydro-Québec, RTE, Hitachi, and Mitacs as a part of project entitled ‘‘Measurement-based modeling and stability analysis of voltage
+source converter-based power systems.’’
+  * Corresponding author.
+    E-mail addresses: masoom.alireza@hydroquebec.com (A. Masoom), jean.mahseredjian@polymtl.ca (J. Mahseredjian), ulaskar@metu.edu.tr (U. Karaagac).
+
+https://doi.org/10.1016/j.epsr.2025.112316
+Received 6 January 2025; Received in revised form 4 April 2025; Accepted 30 September 2025
+Available online 9 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A. Masoom et al.                                                                                                    Electric Power Systems Research 251 (2026) 112316
+
+
+exploring the CI risk in the WPs [15–18]. The generic solutions pre­               nents (i.e. loads, transformers, lines, etc.) are first flattened and repre­
+sented in the literature are usually based on a simplification of each             sented through a system of DAEs:
+component of a system to a linear time-invariant one and representing
+                                                                                   F(t, ẋ, x, y, z) = 0                                                         (1)
+them with its state space equations in dq-frame, finally combining them
+based on their actual connections to form the whole system. The                    where t denotes time, x is the vector of state variables, y is the vector of
+state-space representation of large-scale systems is complicated. Each             algebraic variables and z is the vector of input variables. Eq. (1) can be
+change of circuit topology leads to a new extraction of system equations,          reformulated as:
+where this approach is not implemented in a graphical interface, and
+mostly relies on laborious manipulation of the adjacency matrices and              ẋ = h(t, x, u)
+                                                                                                                                                                 (2)
+equations in procedural programming languages, such as MATLAB or                   y = k(t, x, u)
+Julia [19]. In addition, the simplifications in the linearization process of           It is possible to linearize (2) using the Taylor series around an arbi­
+generic models, such as ignoring input measuring filters cause signifi­            trary time point, tl , (i.e., different operating conditions and contin­
+cant accuracy problems even for small perturbation scenarios that do               gencies such as before and after disturbances) as:
+not activate any non-linearity such as saturation of converters or acti­
+vation fault-ride-through (FRT) function [20]. Therefore, eigenvalue               u0 = u(tl )
+analysis is mainly used for mitigation design rather than identification of        y0 = y(tl )                                                                   (3)
+CI risks.                                                                          x0 = x(tl )
+    Modelica [21] is a declarative programming language allowing to set
+                                                                                   neglecting higher order terms, we have:
+the focus on equations describing a model, i.e., differential-algebraic
+equations (DAEs). Such an approach helps the modeler to concentrate                d                            ∂h(x, u)      ∂h(x, u)
+                                                                                      (x0 + δx) ≈ h(x0 , u0 ) +          δx +          δu
+on modeling rather than numerical methods. The workflow is such that               dt                             ∂x            ∂u
+                                                                                                                                                                 (4)
+the DAEs are sorted vertically and horizontally to form the block lower                                         ∂k(x, u)      ∂k(x, u)
+triangular matrix. For this purpose, various algorithms are automatically          y0 + δy      ≈ k(x0 , u0 ) +          δx +          δu
+                                                                                                                  ∂x            ∂u
+used for breaking algebraic loops and decreasing the index of DAEs.
+Different solvers (i.e., fixed/variable step) are available in commercial          re-ordering of (4) yields the following equations:
+or open-source Modelica compilers, in which DASSL [22] and IDA [23]
+                                                                                   d         ∂h(x, u)      ∂h(x, u)
+are well known for solving stiff DAEs. The language provides a                        (δx) =          δx +          δu + h(x0 , u0 )
+                                                                                   dt          ∂x            ∂u
+user-friendly environment for the modeler to design the graphical user                                                                                           (5)
+                                                                                             ∂k(x, u)      ∂k(x, u)      (                )
+interface and associate documentation for each model. The circuit can              δy      =          δx +          δu + k(x0 , u0 ) − y0
+be constructed by dragging and dropping the component models and
+                                                                                               ∂x            ∂u
+connecting them as a physical system. Any modification of circuit is very              Finally, this function returns the matrices A, B, C, and D in the
+straightforward in this environment.                                               following explicit form:
+    Recently, we introduced the Modelica Simulator Electromagnetic
+                                                                                   δẋ = Aδx + Bδu
+Transients (MSEMT) [24] tool. It was the first detailed EMT library in                                                                                           (6)
+                                                                                   δy = Cδx + Dδu
+Modelica, validated with EMTP® [25]. The library includes models for
+various power and control components.                                              where the partial derivatives are computed at the linearization time
+                                                                                   point as per (3), whether x0 is an equilibrium point, xe , or not. For
+1.3. Contributions                                                                 stability analysis, if at least one of the eigenvalues of A(xe ) has positive
+                                                                                   real part, it is an unstable equilibrium point for the nonlinear system.
+    The paper contributes to developing a generic EMT-detailed PV park             One challenge for nonlinear Modelica models is to investigate the line­
+model in Modelica that can be used for the integration studies of PV               arization carried out at an equilibrium point. One approach is to
+parks, i.e. transient and stability analyses. It is demonstrated how               compare the linearized matrix A for two arbitrary time points during
+Modelica can be leveraged for the fast detection of CI scenarios without           contingency. The state matrix is identical for a steady state or quasi-
+any simplification of models and compromising the presence of non­                 steady state operating point.
+linearities and accuracy. One goal of this paper is to use detailed IBR                Each complex eigenvalue corresponds to an oscillatory mode. If an
+controller models for ultimate accuracy not only in small perturbation             eigenvalue within the resonance frequency range contains a positive real
+scenarios but also in large disturbance scenarios which result in quasi            part, the damping at the frequency is negative, indicating that there
+steady-state operation conditions.                                                 might be risk of instability. This technique overcomes the challenges and
+    The technique allows for the analysis of numerous operating condi­             complexities related to the linearization of detailed models for PV plants
+tions in the search for CI risk. The potentially unstable cases are vali­          and large-scale circuits.
+dated using Modelica or EMTP simulations. All case studies are designed
+using MSEMT components in Modelica.                                                3. PV park equations and modeling
+
+1.4. Paper organization                                                                The complete design and implementation of PV park is based on the
+                                                                                   hierarchical blocks with masking in Modelica. Fig. 1. (a) shows the
+   The paper is organized as follows. Section II reviews the methodol­             model and sub-models. In general, a PV park model comprises the
+ogy of EV analysis, and Section III describes the modeling of PV parks. In         following sub-systems:
+Section IV, the results are presented and discussed.
+                                                                                      1). Aggregated PV array,
+2. Methodology                                                                        2). DC-AC converter: there is an option to use the detailed [26] or
+                                                                                          average model,
+    Extracting the explicit state-space equations for large nonlinear cir­            3). LV/MV converter transformer [24],
+cuits is a challenge for most software. In Modelica, the solution method              4). MV collector grid equivalent circuit, which is modeled by a PI-
+is such that EMT-detailed linear/nonlinear equations describing system                    section line model,
+components including PV arrays, controllers (i.e., PLLs, outer and inner              5). MV/HV park transformer,
+current control loops, etc.), electronic components, and power compo­
+
+                                                                               2
+A. Masoom et al.                                                                                                                    Electric Power Systems Research 251 (2026) 112316
+
+
+
+
+                                         Fig. 1. (a): PV park model implemented in Modelica; (b): PV park controller.
+
+
+   6). Converter controller with fault-ride-through (FRT) logic,                   irradiance of 1000 W/m2 (indicated byGref ). The diode equation is
+   7). Protection system which consists of overvoltage and low voltage             substituted into (7), to give
+       ride-through (OVRT and LVRT respectively), chopper protection                            ⎡ (          )   ⎤
+       and overcurrent function,                                                                             VPV +IPV Rs
+                                                                                                  ⎢            aNs Vth            ⎥ VPV + IPV Rs
+   8). The Power Plant Controller (PPC) for computation of reference               IPV = Iph − I0 ⎣e                           − 1⎦ −                                            (8)
+                                                                                                                                        Rp
+       reactive power based on selected control modes.
+
+                                                                                              Tref
+                                                                                   Vth = k                                                                                       (9)
+                                                                                               q
+3.1. PV characteristics and mathematics
+                                                                                   where Ns is the number of cells per module, a denotes the ideal factor,Vth
+    The PV array is a nonlinear DC element composed of several solar               is the diode threshold voltage, k and q are Boltzmann’s constant and
+cells connected in series and parallel. The equivalent model of a PV array         charge of an electron, respectively. The diode reverse saturation current
+can be represented by a current source with a diode, shunt and series              can be obtained from open circuit data:
+resistances, as shown in Fig. 2. The relation between PV array voltage
+                                                                                                  ISC
+and current (denoted by VPV and IPV , respectively) can be defined as              I0 = (           )                                                                          (10)
+                                                                                               VOC
+                 VPV + IPV Rs                                                                 aNs Vth
+IPV = Iph − Id −                                                         (7)              e             − 1
+                     Rp
+                                                                                       For the computation of Rp , another equation is required. The deriv­
+   The photoelectric currentIph , the diode reverse saturation current I0          ative of power with respect to voltage for a module is zero at maximum
+and the series and parallel resistancesRs andRp , can be computed from             power point, therefore:
+open- and short-circuit tests (denoted by OC and SC subscripts hereafter)                      ⃒                           (     )⃒
+in standard test conditions (STC), at 25◦ C (indicated byTref ) and                d(VPV IPV )⃒⃒                             dIPV ⃒⃒
+                                                                                                     = Imax,PV + Vmax,PV =             0              (11)
+                                                                                      VPV      ⃒
+                                                                                                 max                         dVPV ⃒max
+
+                                                                                      By inserting the derivative of (8) in (11), Rp is obtained:
+                                                                  

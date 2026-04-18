@@ -1,0 +1,211 @@
+                                                               Electrical Power and Energy Systems 175 (2026) 111623
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                            International Journal of Electrical Power and Energy Systems
+                                                             journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Dead-time effect modeling for hybrid modular multilevel converter using
+twin mapping
+Moke Feng a,* , Jianzhong Xu b, Wenxia Sima a, Ming Yang a, Hang Jing b , Keying Pan b
+a
+    State Key Laboratory of Power Transmission Equipment Technology, Chongqing University, Chongqing 400044, China
+b
+    State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing 102206, China
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keyword:                                                     Dead-time control is essential for modular multilevel converters (MMCs), but it negatively impacts MMC per­
+Electromagnetic transient (EMT) modeling                     formance. To support the development of control strategies to mitigate the adverse effects of dead-time, elec­
+Dead-time                                                    tromagnetic transient (EMT) simulations are crucial for analyzing MMCs’ dead-time behavior and developing
+Hybrid MMC
+                                                             strategies to mitigate these effects. However, simulating the impact of dead-time in high-level MMCs remains a
+Twin mapping
+Thevenin equivalent
+                                                             challenge. The complex modular cascaded circuit significantly slows simulation speed, while the freewheeling
+                                                             conduction of submodule diodes during dead-time disrupts the integrity of submodules in each bridge-arm. This
+                                                             makes it difficult to represent the circuit as a unified Thevenin equivalent for simplification. To address the issue,
+                                                             the dead-time effect is modeled using a diode-H-bridge in this paper. Submodules are categorized into those
+                                                             affected by the dead-time effect and those not. This paper also proposes the capacitor state mapping approach,
+                                                             referred to as “twin mapping method”, to restore the submodules’ behavior during and outside the dead-time,
+                                                             eliminating the isolation of submodules and enabling the application of the Thevenin equivalent theorem.
+                                                             Finally, a Thevenin equivalent model (EM) is developed and compared with a detailed model (DM) and state-
+                                                             space model (SSM). PSCAD/EMTDC simulations demonstrate that the proposed EM effectively captures dead-
+                                                             time spikes and notches while significantly accelerating simulation speed.
+
+
+
+
+1. Introduction                                                                                        In hybrid MMC, insulated gate bipolar transistors (IGBTs) and diodes
+                                                                                                   are required to turn on and off at specific time. If one IGBT in an H-
+    Modular multilevel converter (MMC) is a high-efficiency AC-DC                                  bridge is not fully turned off before the other turns on, a short-circuit
+power conversion equipment, characterized by its low harmonic content                              may occur between the positive and negative terminals of the sub­
+in output voltage, minimal current distortion, and reduced switching                               module capacitor. This can result in capacitor burnout and potentially
+losses [1–3]. MMC greatly enhances the stability and reliability of the                            cause a cascading fault, damaging the converter. Generally, on switch
+system, which is crucial for renewable energy power systems [4,5]. It                              state change, both IGBTs on the same side of the H-bridge are turned off
+has been extensively applied in the flexible high voltage direct current                           simultaneously to avoid short circuits. This all-off period is called the
+(HVDC) transmission projects and is progressively utilized in large-                               dead-time.
+capacity aggregation and distribution systems such as offshore wind                                    Submodules’ uncertainty in the switching actions can cause dead-
+power and large-scale photovoltaic plants [6–8].                                                   time signals to randomly elevate or reduce the output voltage of the
+    The hybrid MMC [9,10] stands out as it integrates half-bridge sub­                             bridge-arm, significantly affecting the operation of the MMC. Dead-time
+modules (HBSMs) and full-bridge submodules (FBSMs) in a balanced                                   increases circulating harmonic currents by preventing switching actions,
+ratio, harnessing the strengths of both MMC configurations [11–13]. As                             which distorts the output current waveform [14]. It amplifies common-
+depicted in Fig. 1, the hybrid MMC features a three-phase, six-bridge-                             mode voltage and current, posing risks to power electronic devices [15].
+arm configuration, with each arm comprising a series of interconnected                             Additionally, dead-time influences capacitor voltages, reducing system
+FBSMs and HBSMs. This design endows the hybrid MMC with the ability                                efficiency and stability. Increased thermal losses from AC current paths
+to handle DC fault current interruption and zero-voltage crossing,                                 affect component cooling and longevity. The output voltage experiences
+making it a promising candidate for a wide range of applications.                                  added fluctuations, slightly reducing output power [16–18]. These
+
+
+    * Corresponding author..
+      E-mail address: fengmoke@cqu.edu.cn (M. Feng).
+
+https://doi.org/10.1016/j.ijepes.2026.111623
+Received 10 July 2025; Received in revised form 10 December 2025; Accepted 19 January 2026
+Available online 3 February 2026
+0142-0615/© 2026 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+M. Feng et al.                                                                             International Journal of Electrical Power and Energy Systems 175 (2026) 111623
+
+
+
+
+                                                             Fig. 1. Topology of hybrid MMC.
+
+
+effects must be alleviated to ensure optimal MMC performance.                     proposes a decoupling strategy for MMC submodules, splitting the cir­
+    Ref [19] highlights that dead-time effects can be mitigated through           cuit into several less complex independent subcircuits to enhance
+techniques such as dead-time compensation [20,21], minimization                   computational speed.
+[22,23], and dead-time elimination (DTE) [24,25]. These methods have                  As research advances, EMT models need to increasingly meet
+effect in reducing the effect of dead-time in low-level converters                rigorous standards of accuracy while also considering simulation speed.
+[26–28]. Nevertheless, the dead-time effect still cannot be completely            Ref [32,33] describe the Thevenin equivalent model for MMC where all
+eliminated, and the validation on high-level scenarios are not sufficient.        submodules in the bridge-arm are equivalent to a comprehensive The­
+Compared to two- or three-level VSCs, as well as low-level VSCs, high-            venin circuit, accurately representing the dynamics of switch operations
+level MMCs accumulate a larger number of dead-time voltages, which                and the charging/discharging processes of submodule capacitors. This
+randomly generate arm-voltage and DC-side voltage spikes that                     model closely aligns with the original detailed EMT model while
+endanger equipment safety. However, existing dead-time suppression or             providing a robust and efficient simulation framework.
+elimination approaches validating on high-level MMC remains                           Yet, existing MMC equivalent models rarely address the dead-time
+conspicuously scarce. This deficiency stems not only from the dearth of           effects. On one hand, submodule diodes conduct uncontrollably dur­
+accurate dead-time models for high-level MMCs, but also from the                  ing dead-time, which requires the interpolation function to simulate
+prohibitive cost of constructing and testing such prototypes. Therefore,          such behavior. Interpolation is a low-level function of simulation soft­
+developing a model that faithfully reproduces dead-time effects is a cost-        ware, and user-defined equivalent model does not have access to it; on
+effective and effective means of providing a solid validating foundation          the other hand, the freewheeling diodes disrupt the integrity of sub­
+for dead-time-related research.                                                   modules in a bridge-arm, making the Thevenin equivalent theorem
+    Electromagnetic transient (EMT) simulation is essential for investi­          inapplicable. Therefore, to analyze dead-time effects, detailed model is
+gating the operational characteristics of MMC systems. However, the               the only choice, but its slow simulation efficiency is inadequate for high-
+detailed EMT simulation is extremely slow. This is because the complex            voltage and large-scale MMC systems.
+modular cascaded circuit of high-level MMC forms an ultra-high-order                  To develop an MMC model that is able to characterize the dead-time
+admittance matrix, and the time-consuming inverse computation of                  effect while possessing high simulation speed, this paper analyzes the
+this matrix is executed in each time step. In solving this problem, various       dead-time operational modes of hybrid MMCs and introduces the twin
+modeling techniques that simplify the circuit structure have been                 mapping method to reconstruct the integrity of the bridge-arm sub­
+developed. For instance, ref [29,30] introduce an averaging model for             modules, making Thevenin equivalent method applicable again. The
+MMCs, where submodules are replaced with an averaging voltage                     main contributions of this paper are summarized as follows:
+source, significantly simplifying the overall electric circuit. Ref [31]              1) Carrying out in-depth analysis of dead-time operational
+
+
+                                                                              2
+M. Feng et al.                                                                                         International Journal of Electrical Power and Energy Systems 175 (2026) 111623
+
+
+                                                                                             arms.
+                 T1      T3                                      D1                              3) Proposing a twin-mapping-based Thevenin equivalent model
+                                                       T1
+                        D1      D3                                                           for dead-time simulation. A diode-H-bridge is used to model the dead-
+                 A
+                                 C    uC                           C    uC                   time-freewheeling dynamics of high-level MMCs. Submodules are clas­
+                 B                               A                                           sified into two groups: those operating during dead-time and those
+                 T2      T4                            T2          D2                        outside it. Using the twin-mapping approach, capacitor states transition
+                        D2      D4
+                                                   B                                         between these two groups, thereby contributing the corresponding EMT
+                                                                                             characteristics to the MMC system. This integration of submodules al­
+                          (a)                                (b)                             lows the Thevenin equivalent theorem to be applied, enabling both ac­
+ Fig. 2. IGBT short circuit without dead-time control: (a) FBSM; (b) HBSM.
+                                                                                             curate and efficient EMT simulation for high-level MMCs.
+
+                                                                                             2. Causes and effects of the dead-time
+states. This paper thoroughly examines all operational states during
+dead-time, providing a detailed analysis to uncover the fundamental
+                                                                                                 In this section, FBSM is used to analyze and explain the causes of the
+principles of dead-time EMT simulation.
+                                                                                             dead-time effect, with the HBSM analysis provided subsequently for
+    2) Addressing the issue that Thevenin equivalent models cannot
+                                                                                             simplicity.
+simulate dead-time processes. This paper analyzes the dead-time
+                                                                                                 As illustrated in Fig. 2, assuming the initial operational state of the
+modes and proposes the methodology to transform the dead-time state
+                                                                                             FBSM is (1,0,0,1) (trigger signals of T1 to T4, with 1 for ON and 0 for
+from an internal microscopic state at the submodule level to an external
+                                                                                             OFF), a change in engagement state, such as from positive to negative,
+macroscopic state at the bridge-arm level, thereby circumventing the
+                                                                                             will cause the FBSM to first enter the dead-time state (0,0,0,0). Only
+challenge of constructing dead-time-supportive Thevenin model. This
+                                                                                             after all IGBTs are reliably turned off will the transition to the final
+facilitates the dead-time simulation by modifying the Thevenin bridge-
+
+
+
+
+                                     Positive             DT             Negative                Negative          DT           Bypass
+                                     (1,0,0,1)         (0,0,0,0)         (0,1,1,0)               (0,1,1,0)      (0,1,0,0)      (0,1,0,1)
+
+                                     T1                                                          T1
+
+
+                                              t1                   t2                t       0             t1            t2                  t
+                                 0
+
+                                     T2                                                          T2
+
+                                                            td
+
+                                              t1                   t2                t       0             t1            t2                  t
+                                 0
+
+                                     T3                                                          T3
+
+                                                            td
+
+                                 0            t1                   t2                t       0             t1            t2                  t
+
+                                     T4                                                          T4
+                                                                                                                   td
+
+
+                                              t1                   t2                t                     t1            t2                  t
+                                 0                                                           0
+
+                                     uSM                                                         uSM
+                                                            td
+                                                                                                                   td
+                                                                                     t                                                       t
+                                 0                                                           0
+                                              t1                        t2                                t1                  t2
+                                                            (a)                                                    (b)
+
+                      Fig. 3. Trigger signals and output voltage during operational state changes: (a) positive to negative; (b) negative to bypass.
+
+                                                                                         3
+M. Feng et al.                                                                                International Journal of Electrical Power and Energy Systems 175 (2026) 111623
+
+
+                                                                                     voltage remains negative during the dead-time, as depicted in Fig. 4(b),
+                                                                                     with no additional level occurring. Fig. 3(b) illustrates the condition
+           T1    D1 T3         D3            T1      D1 T3         D3                when an FBSM transitions from a negative engagement to a bypass state.
+         iSM         +                      iSM          +                           It is seen that when iSM < 0, an unexpected negative level is generated.
+                 C     uC                            C     uC
+                     -                                   -                                The dead-time voltages are caused by model transitions, as summa­
+     +uC T2      D2 T4         D4        -uC T2      D2 T4         D4                rized in Fig. A1 (for FBSM, see in Appendix) and Fig. 5 (for HBSM). In the
+                                                                                     figure caption, for example, Fig. 5 (a), “p → b” represents that the figure
+                   (a)                                (b)
+                                                                                     corresponds to the situation where the submodule is transferring from “p
+                                                                                     (positively engaged)” state to “b (bypass)” state. The abbreviations of
+                                                                                     states are summarized in Table 1.
+Fig. 4. Output voltage during dead-time (positive engagement to negative): (a)            Th

@@ -1,0 +1,277 @@
+         第 41 卷 第 7 期                        中    国 电 机 工 程 学                报               Vol.41 No.7 Apr. 5, 2021
+         2021 年 4 月 5 日                           Proceedings of the CSEE                   ©2021 Chin.Soc.for Elec.Eng. 2463
+DOI：10.13334/j.0258-8013.pcsee.201725 文章编号：0258-8013 (2021) 07-2463-11              中图分类号：TM 464 文献标识码：A
+
+
+
+                            基于电流过零点预计算的
+                           单有源桥变换器等效建模方法
+                              高晨祥，王晓婷，丁江萍，许建中*，赵成勇
+                    (新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206)
+
+
+                   Equivalent Modelling Method of Single Active Bridge Converter by
+                               Pre-calculating the Current Zero-crossing
+              GAO Chenxiang, WANG Xiaoting, DING Jiangping, XU Jianzhong*, ZHAO Chengyong
+                    (State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources
+                        (North China Electric Power University), Changping District, Beijing 102206, China)
+
+
+ABSTRACT: As an important scheme for grid connection of             真步长小以及不控整流桥的存在，其电磁暂态仿真效率很
+photovoltaic, wind power and other DC power sources,                低。文中提出一种基于电流过零点预计算的 SAB 变换器等
+modular isolated DC/DC converter (MIDC) has received                效建模方法。首先，针对 SAB 变换器的拓扑结构和工作原
+extensive attention. The input parallel output series (IPOS) type   理进行分析，求解不同模式下电感电流表达式。其次，计算
+single active bridge (SAB) converter is one of the common           电感电流过零点，并给出不同模式的区分条件。然后，类比
+topologies of MIDC. Due to the high node admittance order,          DAB 变换器，建立 IPOS 型 SAB 变换器的等效模型。在此
+low simulation step size and the existence of uncontrolled          基础上，利用 Lyapunov 法证明所提等效模型的稳定性。最
+rectifier bridge, its electromagnetic transient simulation          后，在 PSCAD/EMTDC 环境中验证所提出模型的精度和加
+efficiency is extremely low. This paper proposed an equivalent      速比。
+modeling method of SAB converter by the pre-calculating
+                                                                    关键词：单有源桥变换器；电流过零点；等效建模；稳定性
+current zero-crossing. First, the topology and working principle
+of the SAB converter were analyzed to solve the inductor            0 引言
+current expression in different modes. Secondly, the expression
+of the zero-crossing point of the inductance current was given            近年来，我国风电和光伏在电网中的装机容量
+with the distinguishing conditions of different modes. Then,        实现了 17%和 44%的迅猛增长[1]，模块化隔离型
+analogy to the DAB converter, the equivalent model of the           DC/DC 变换器(modular isolated DC/DC converter，
+IPOS type SAB converter was established. On this basis,             MIDC)作为实现大功率直流电源并网的重要方案
+Lyapunov method was used to prove the stability of the
+                                                                    之一，因为其具有无器件均压、均流问题、可靠性
+proposed equivalent model. Finally, the accuracy and
+                                                                    高、易于冗余设计等优势受到广泛关注[2]。
+acceleration ratio of the proposed model were verified in the
+PSCAD/EMTDC environment.                                                  现有的 MIDC 拓扑结构多样，包括移相控制全
+                                                                    桥变换器、单有源桥式变换器(single active bridge，
+KEY WORDS: single active bridge (SAB); current zero-
+crossing; equivalent model; stability                               SAB)、LCC 串并联谐振变换器、双有源桥式变换
+                                                                    器(dual active bridge，DAB)和基于晶闸管的谐振变
+摘要：模块化隔离型 DC/DC 变换器(modular isolated DC/DC
+                                                                    换器等[3-6]。文献[7]针对不同类型拓扑结构给出了
+converter，MIDC)作为光伏、风电等直流电源并网的重要方
+案，受到广泛关注。输入并联输出串联(input parallel output                             元件应力、元件数与损耗方面的比较。在实际分布
+series，IPOS)型单有源桥(single active bridge，SAB)变换器                      式电源并网过程的大多数时间内，电能为单向传
+是 MIDC 的常用拓扑之一，由于节点导纳矩阵阶数高、仿                                        输，因此双有源桥变换器会带来不必要的投资与损
+                                                                    耗[2]。LCC 等谐振变换器虽然可以提高效率，但是
+     基金项目：国家重点研发计划资助项目(2018YFB0904600)。
+     National Key R&D Program of China (2018YFB0904600).            所需滤波电感较大，控制较为复杂[8]。因此本文以
+2464                          中      国   电   机   工   程      学    报                                                                             第 41 卷
+
+SAB 变换器为主要研究对象。同时，由于光伏、风                                        T1                 T3
+                                                                                                                            D5             D7
+                                                                                  D1            D3
+电等直流电源的并网通常需要实现高增益、大容量
+的 目 标 ， 因 此 常 采 用 输 入 并 联 输 出 串 联 (input                        T2                 T4
+                                                                                                                            D6             D8
+parallel output series，IPOS)的模块级联方式。                                              D2            D4
+
+
+       为满足大容量与高电压需求，IPOS 型 SAB 变
+                                                                T1                 T3
+换器包含大量功率模块，仿真系统节点数高，在                                                             D1            D3
+                                                                                                                            D5             D7
+
+PSCAD/EMTDC 的电磁暂态仿真中，矩阵求逆工作
+量大。并且，每个模块内开关器件与高频变压器工                                          T2
+                                                                                                                            D6             D8
+                                                                                  D2            D4
+                               [9]
+作于较高频率，限制了系统的仿真步长 ，基于详
+细器件搭建的换流器模型的仿真效率很低。                                                 图1             IPOS 型 SAB 变换器拓扑图
+       对此，国内外学者针对仿真提速展开了很多研                                  Fig. 1              Topology of IPOS SAB converter
+
+究工作。文献[10-11]针对高频链全桥换流器提出了                       T1 和 T3 的触发相差 180，如图 2 所示。通过 T1 触
+连续状态空间平均模型和非线性函数降阶大信号                            发信号的占空比为 dP，可以实现功率控制。同时，
+简化模型；文献[12]提出了针对区域电能路由器的                         输入侧 H 桥的输出电压仅由 IGBT 触发信号决定。
+级间电容解耦算法，但由于未对隔离变压器进行处                                          T1               dPTs
+
+理，加速比和通用性受限。文献[13-14]利用变压器
+                                                                T2                                (1 dP)Ts
+                                                                                                         
+
+
+
+解耦思路与嵌套快速求解法结合，提出了针对 DAB
+与 CHB 型变换器的等效模型；文献[15]进一步利用                                     T3                                     dPTs
+
+DAB 单元的对称性和稀疏性，提出了基于节点导纳                                                               Ts /2
+                                                                                         
+
+
+                                                                T4
+矩阵预处理的等效模型，大幅提高了仿真速度。但
+是这几种等效建模方法均不能直接应用于 IPOS 型                                        vP
+SAB 变换器的仿真提速。相比于 DAB 单元，SAB                                                                                                                t
+具有不控整流桥，其二极管的开关状态不是由触发
+                                                                                       图2         触发信号图
+信号直接决定；另一方面，SAB 变换器的 IPOS 级                                     Fig. 2            Waveform of the trigger signal
+联方式也会导致与 ISOP 型 DAB 变换器的差异。
+                                                 1.2        工作原理
+       本文提出一种基于电流过零点预计算的 SAB
+                                                         随着占空比 dP 的变化，SAB 变换器有 2 种工
+变换器等效模型。首先通过对 SAB 拓扑及工作原
+                                                 作模式，分别为连续导通模式(continuous conduc-
+理进行分析，得出电感电流的表达式，然后给出不
+                                                 tion mode，CCM)和非连续导通模式[8](discontinuous
+同模式下电感电流过零点计算式及模式区分条件。
+                                                 conduction mode，DCM)，如图 3 所示。
+在此基础上，类比 ISOP 型 DAB 变换器，提出 IPOS
+                                                                 Ts /2
+                                                                                                                                 Ts /2
+                                                                                                                                   
+
+
+
+型 SAB 变换器的等效模型，并进行等效算法的稳                               vP                                                           vP
+                                                         dPTs 或(1 dP)Ts                                                 dPTs 或(1 dP)Ts
+定性分析。                                                                                                                                 
+
+
+
+
+                                                       vS                                                           vS
+
+1 SAB 变换器拓扑及原理                                         iP                                                           iP
+                                                            t1 t2             t3 t4 t5         t6 t7         t8 t           t1 t2 t3 t4         t5   t6 t
+1.1    SAB 变换器拓扑
+       IPOS 型 SAB 变换器的拓扑如图 1 所示，其中：                             (a) CCM 模式                                                   (b) DCM 模式
+
+U1 和 U2 为 SAB 单元电容电压；P 表示并联侧；S                                                 图3            不同模式工作波形图
+表示串联侧；vP 和 vS 分别表示 H 桥输出的交流方                                    Fig. 3             Waveform of different modes
+波电压；iP 和 iS 分别为对应的变压器原副边电流。                              其中，iP 为流过辅助电感的电流，其正负决定
+LT 为辅助电感，用于承担变压器两侧电压差。                           了不控整流桥二极管的导通情况。这 2 种工作模式
+       相比于 DAB 变换器，SAB 只传输单向功率，                  有明显区别：CCM 模式电感电流连续，DCM 模式
+因此，输出侧采用不控整流桥，输入侧常用控制方                           电感电流有断续情况。
+               [16]
+式为变占空比控制          ，IGBT 触发信号同桥臂互补，                       由于在一个周期内，电感电流波形呈现对称特
+第7期                                    高晨祥等：基于电流过零点预计算的单有源桥变换器等效建模方法                                                                                2465
+
+征，因此，本节分别选取 2 种模式的半周期进行分                                                           图 4(d)、(f)所示，电流表达式与式(1)、(2)一致。
+析，其不同阶段电流流通路径如图 4 所示。
+                                                                                   2 基于电流过零点预计算的不控整流桥等
+     T1   T3
+          D1    D3
+                           D5    D7
+                                               T1   T3
+                                                    D1   D3
+                                                                 D5     D7         效方法
+U1               iP                   U2 U1               iP                 U2
+     T2   T4                                   T2   T4
+          D2    D4         D6    D8                 D2   D4      D6     D8         2.1    算法原理
+           (a) CCM 模式(t2—t3)                        (b) CCM 模式(t3—t4)                    对于 SAB 的不控整流桥，二极管的开关状态
+     T1   T3
+                           D5    D7
+                                               T1   T3
+                                                                 D5     D7         由流过它的电流决定。在 PSCAD 仿真中，通过对
+          D1    D3                                  D1   D3
+U1               iP                   U2 U1               iP                 U2
+     T2   T4                                   T2   T4                             二极管电流过零点所在步长进行插值计算，实现对
+          D2    D4         D6    D8                 D2   D4      D6     D8
+                                                                                   实际开关过程的精确仿真，如图 5 所示[17]。其中，
+           (c) CCM 模式(t4—t5)                        (d) DCM 模式(t1—t2)
+                                                                                   tZ 为二极管实际过零点，介于 2 个仿真步长之间。
+     T1   T3                                   T1   T3
+                           D5    D7                              D5     D7
+U1
+          D1    D3
+                 iP                   U2 U1
+                                                    D1   D3
+                                                                             U2
+                                                                                   利用插值方式从 t0 值求取 t0t 值时，需要经过 3
+     T2   T4                                   T2   T4
+          D2    D4         D6    D8                 D2   D4      D6     D8         个步骤：1）确定 tZ 时刻，经过插值处理，求解 tZ
+           (e) DCM 模式(t2—t3)                        (f) DCM 模式(t3—t4)              时刻网络信息；2）利用后退欧拉法求取 tZt 时
+                      图4    不同阶段电流流通路径图                                            刻值；3）利用线性插值法求取 t0t 时刻值。
+ Fig. 4        Diagram of current flow path at different stages                            i(t)
+
+1.2.1 CCM 模式
+          针对如图 3(a)所示 CCM 模式，取 t2—t5 时间段
+进行分析。此时流过电感的电流 iP0，变压器副边                                                                           t0    tZ            t0  t tZ  t
+                                                                                                                                            t
+iS0，所以 D5 和 D8 始终导通，D6 和 D7 始终关断，                                                                             1
+                                                                                                                      2
+变压器原边电压恒为 NU2。                                                                                                                     3
+          在 t2—t3 时间内，触发 T1 和 T4，此时电容经
+                                                                                                   图5      PSCAD 二极管插值图
+T1 和 T4 向电感充电，电流路径如图 4(a)所示，电感
+                                                                                         Fig. 5   Interpolation process of diode in PSCAD
+储能增加，电流表达式为
+                                                                                         对于 SAB 变换器，由于变压器的高频特性，
+                                U  NU 2
+                       iP (t )  1       (t  t2 )                           (1)   二极管的开关周期很短，在每个周期内均对二极管
+                                   LT
+                                                                                   进行插值计算，会严重影响整个模型的仿真速度。
+          在 t3—t4 时间内，触发 T2 和 T4，此时电流经                                                   本章所提方法首先计算电感电流过零点(也即
+D2 和 T4 构成回流，路径如图 4(b)所示，电感储能                                                      二极管电流过零点)tZ，然后通过 tZ 与下一个步长的
+减小，电流表达式为                                                                          仿真时间比较，预测二极管的导通状态，并将其等
+                                             NU 2                                  效为二值电阻。即当电流过零点处导数小于 0 时，
+                      iP (t )  iP (t3 )         (t  t3 )                  (2)
+                                              LT                                   二极管由开通转为关断，取二极管等效电阻为
+          在 t4—t5 时间内，触发 T2 和 T3，此时电感经                                                                     R ,                t  tZ
+                                                                                                      RD   ON                                       (4)
+D2 和 D3 向电容放电，路径如图 4(c)所示，电感储                                                                               ROFF ,            t  tZ
+能减小，电流表达式为
+                                                                                         当电流过零点处导数大于 0，则反之。
+                                     U  NU 2                                            这一方法不涉及 tZ 时刻的网络重新求解以及相
+                 iP (t )  iP (t4 )  1       (t  t4 )                      (3)
+                                        LT                                         关插值过程，而是直接确定 t0t 的二极管开关状
+1.2.2 DCM 模式                                                                       态，从 t0 时刻网络的状态出发，求解 t0t 时刻的
+          针对如图 3(b)所示 DCM 模式，取 t1—t4 时间段                                           网络，尤其适用于不具备插值功能的固定步长仿
+进行分析。在 t1—t3 阶段，与 CCM 类似，对于右侧                                                      真。随着仿真步长的减小，t0 和 t0t 将逼近 tZ，
+不控整流桥，同样有：D5 和 D8 导通，D6 和 D7 关断，                                                   采用电流过零点预计算方法产生的误差也将减小。
+变压器原边电压为 NU2。                                                                            电力电子设备的精确仿真，需要保证仿真步长
+          DCM 模式的 t1—t2 和 t2—t3 阶段分别于 CCM                                          不超过开关周期的 1/20[9]，由于 SAB 的高频特性，
+模式的 t2—t3 和 t3—t4 阶段类似，其电流流通路径如                                                    其仿真步长一般设置为 1~5s，固有仿真步长较小，
+2466                                          中       国   电   机   工   程    学      报                                            第 41 卷
+
+这一特性为本章所提方法的使用提供了可能，即可
+                                                                          T1             T3
+以通过较小程度地缩小仿真步长，实现对详细模型                                                                                             D5         D7
+                                                                                        D1          D3
+的准确等效。
+2.2    算法实现                                                               T2             T4
+                                                                                                                   D6         D8
+                                                                                        D2          D4
+       对于 CCM 模式，由图 2 和图 3(a)可知，在一
+个周期内，t1 可以通过检测 T1 触发脉冲的上升沿获
+                                                                                                                        等效
+得。由电流波形的对称性可知：
+                      i (t1 )  i (t4 )                                                      模式
+                                                                                                   虚拟触发
+                                 TS                       (5)                                       信号
+                      t4  t1  2
+
+       设 t2t1XTS，则根据式(1)—(3)可得：
+    U1  NU 2 U1  NU 2              NU 2 1
+X                      (d P  X )      (  d P ) (6)
+       LT        LT                   LT 2                                              图6        不控整流桥等效过程图
+                                                                               Fig. 6        The equivalent process diagram of
+       解得：
+                                                                                    the uncontrolled rectifier bridge
+                           d P NU 2
+                     X                                   (7)            值得注意的是，本章所提基于电流过零点预计
+                            2   4U1
+                                                                  算的不控整流桥等效方法同样适用于包含 LC、LLC
+       所以电流过零点表达式为
+                                                                  等谐振腔的 SAB 拓扑，只需根据相应拓扑建立对
+                                       d P NU 2
+         t2  t1  (t2  t1 )  t1  ( 2  4U )TS
+                                                                  应电感电流表达式，分析模式分界条件，求取电流
+          
+                                               1
+                                                           (8)    过零点，对式(8)—(10)做更新即可。
+          t  t  S T
+           5 2 2                                                3 SAB 变换器等效模型及稳定性分析
+       同理，对于如图 3(b)所示 DCM 模式，电流过                                  3.1     等效建模原理
+零点 t3 和 t6 表达式如下：                                                         基于第 2 章不控整流桥的等效过程，将 IGBT
+                                U1                               开关组也用二值电阻等效，电容、电感、变压器等
+                    t3  t1  NU d PTS                          储能元件用梯形积分法离散化处理，可得图 7 所示
+                    
+                                    2
+                                                           (9)
+                    t  t  S  T                                 SAB 伴随网络，其中 YT11、YT12、YT22 为变压器等
+                     6 3 2
+                                                                  效导纳值，表达式如式(11)所示。
+       由于不同模式电流过零点表达式不同，因此，                                                                                              1
+                                                                                                               Lm       
+                                                                                     L  L1  Lm
+还需对 SAB 进行工作模式识别。由图 3 可知，2 种                                 

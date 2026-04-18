@@ -1,0 +1,224 @@
+2956                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 39, NO. 5, OCTOBER 2024
+
+
+
+
+          Advanced Wideband Line/Cable Modeling for
+                      Transient Studies
+Abner Ramirez , Senior Member, IEEE, Jesus Morales , Member, IEEE, Jean Mahseredjian , Life Fellow, IEEE,
+                                 and Ilhan Kocar , Senior Member, IEEE
+
+
+   Abstract—The grouping of propagation modes in line/cable sys-                     The universal line model (ULM) is one of the most used wide-
+tems involving a large number of conductors has been central                     band line/cable models for EMT studies [6]. However, it has been
+in recent research regarding the stability of simulations for elec-              reported that the ULM may yield numerically unstable models
+tromagnetic transient (EMT) studies. This article presents three
+improvements to the existing wideband line/cable modeling tech-                  mainly for systems composed of many cables and/or of short
+niques for EMT analysis. The first improvement consists of cal-                  length [7]. Such numerical instability is due to the appearance
+culating optimum time delays such that the oscillations in the                   of high residue/pole ratios and/or passivity violations [7]. The
+phase angle of the propagation function are reduced. The second                  frequency dependent cable model (FDCM) partially resolved
+is a novel strategy for grouping propagation modes. As a third                   such issues for cable systems by fitting grouped modal contri-
+improvement, the maximum fitting frequency of a rapidly decaying
+mode is limited when its magnitude is below a threshold value.                   butions, i.e., fitting the propagation function directly in the phase
+It is demonstrated that these modifications improve the stability                domain, instead of modal propagation functions, requiring more
+characteristics of time-domain simulation, compared to the existing              poles [7]. FDCM is best suited for cables where eigenvectors
+implementation of line/cable models in an EMT-type software.                     can be merged and smoothed by grouping repetitive or similar
+The proposed modifications are applied to several cable systems,                 eigenvalues. Although FDCM has been explored for some mixed
+including a very challenging real system involving 96 cables and
+one double-circuit overhead line, all with a length of 250 m.                    systems, its efficient and accurate application to large mixed
+                                                                                 systems is an active research area, outside this paper’s scope.
+   Index Terms—Curve fitting, frequency domain synthesis,                            The grouping of propagation modes and dealing with large
+electromagnetic transient analysis.
+                                                                                 number of conductors have been central in recent research
+                           I. INTRODUCTION                                       related to the application and stability of the ULM. Logically,
+                                                                                 time delays converge for shorter cables, requiring a different
+      HE electromagnetic transient (EMT) studies area repre-
+T     sents a backbone in the analysis of modern power systems.
+Having as background a strong theoretical framework, several
+                                                                                 approach. This paper presents a set of techniques for an improved
+                                                                                 implementation of the ULM. Three major changes are proposed.
+                                                                                 Firstly, the calculation of optimum time delays is performed
+EMT software tools are utilized by power engineers either for                    on a minimum-phase basis. In other words, we find a time
+research or industry applications [1], [2].                                      delay that renders a modal propagation function as close to a
+   Transmission lines and underground cables constitute impor-                   minimum-phase function as possible. This results in improved
+tant components of modern power systems for transmission and                     fitting accuracy and lower approximation order of the propaga-
+distribution of energy. There are several mathematical models                    tion function. Secondly, a simple yet effective adaptive grouping
+that permit the simulation of such components together with                      strategy is proposed, based on the closeness of time delays;
+other power systems devices. Those models have evolved to                        this permits to substantially alleviate high residue/pole ratios.
+improve accuracy of the EMT phenomenon, to account for                           Thirdly, the maximum fitting frequency of a rapidly decaying
+frequency-dependent parameters, and to involve a wide fre-                       modal propagation function is selected as the point where the
+quency band, among others [3], [4]. An overview on the state-of-                 magnitude is below a threshold value. This reduces the phase
+the-art tools for the modeling and simulation of EMT in power                    oscillations of propagation function at high frequencies and
+systems is presented in [1].                                                     results in improved fitting accuracy and lower approximation
+   Received 27 November 2023; revised 20 June 2024; accepted 20 August 2024.     order.
+Date of publication 26 August 2024; date of current version 25 September 2024.       It is shown that the proposed modifications render smaller
+Paper no. TPWRD-01659-2023. (Corresponding author: Abner Ramirez.)               residue/pole ratios, less severe passivity violations, and stable
+   Abner Ramirez is with the Kestrel Power Engineering, Mississauga, ON L4Z
+2T1, Canada, on leave from CINVESTAV campus Guadalajara, Guadalajara             time-domain simulations for the presented cases. Also, it
+45019, Mexico (e-mail: abner.ramirez@cinvestav.mx).                              is demonstrated that the enhanced implementation of ULM
+   Jesus Morales is with the PGSTech-EMTP, Montreal, QC H2K 1C3, Canada          provides a solution for challenging cases where the existing
+(e-mail: jesus.morales@emtp.com).
+   Jean Mahseredjian and Ilhan Kocar are with the Polytechnique Montreal,        ULM fails.
+Montreal, QC H3T 1J4, Canada (e-mail: jean.mahseredjian@polymtl.ca; il-              Section II presents the basic mathematical relations of the
+han.kocar@polymtl.ca).                                                           ULM. The three modifications to the existing implementation
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2024.3449868.                                      of ULM are described in Sections III to V, while Section VI
+   Digital Object Identifier 10.1109/TPWRD.2024.3449868                          presents several case studies. Some discussions, based on the
+
+                         0885-8977 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:46:19 UTC from IEEE Xplore. Restrictions apply.
+RAMIREZ et al.: ADVANCED WIDEBAND LINE/CABLE MODELING FOR TRANSIENT STUDIES                                                                              2957
+
+
+
+obtained results, are presented in Section VII. Finally, Sec-
+tion VIII concludes the paper.
+
+                   II. ULM BASIC RELATIONS
+   The ULM is based on rational approximations of both propa-
+gation matrix/function H(s) and characteristic admittance Yc (s).
+The propagation matrix is first decomposed in its Nc modal
+contributions as in√(1), where the set {λn } correspond to the
+eigenvalues of − YZl, being Z and Y the per-unit-length
+impedance and admittance of the line/cable, and l corresponds
+to its length [6].
+    H = THm T−1 = Tdiag{eλ1 , eλ2 , . . . , eλN c }T−1                   (1)
+   The ith modal propagation function Hi is approximated (fit-
+ted) using the pole-residue model (2) with corresponding sets of
+poles {pn } and residues {cn }.
+                              Mi
+                                   cn
+                      Hi =                e−sτi                          (2)
+                              n=1
+                                  s − p n
+
+   In (2), τ i represents the time delay associated with the prop-
+agation speed of the ith mode. The poles from (2) are used to
+calculate the residue matrices of H in phase domain by using
+the following relation:
+                      N Mi
+                               Ri,k −sτi
+                   H=                 e                                  (3)
+                      i=1
+                             s − pi,k
+                               k=1
+
+where N is the number of groups and Mi is the approximation
+order for the ith group. Also, we have the relation N ≤ Nc ,
+where Nc corresponds to the number of conductors, noting that
+modes with similar time delays are clustered into a group.
+   The two major procedures in the ULM are: the proper identifi-
+cation of time delays to unwind (reduce oscillations) Hi as close
+as to a minimum-phase function, and the grouping of modes                       Fig. 1. Magnitude and phase angle of an arbitrary Hi. (a) Magnitude, (b) phase
+                                                                                angle with and without extracting time delay, and (c) unwrapped phase angle
+with similar time delays. These are the main topics we address                  with and without extracting time delay.
+in this paper.
+
+     III. TIME DELAY AND MINIMUM PHASE FUNCTIONS                                greatest extent possible [9], [10], [11]. Such delay is formed
+                                                                                by the sum of two components. The first corresponds to a
+A. Previous Research
+                                                                                propagation velocity at a frequency for which the magnitude
+   Definition A minimum phase function is defined as a function                 of Hi equals 0.001. The second corresponds to a phase angle of
+with zeros on the left-hand complex plane, or on the jω axis                    a minimum phase function as given by the well-known Bode’s
+only [8].                                                                       equation [12], which is also evaluated at such frequency.
+   A signal’s response to the minimum phase function is not                        Since a time delay that provides a nearly minimum phase
+substantially distorted in the phase for a large bandwidth. In                  function is close to the corresponding lossless time delay, an
+other words, the phase of a minimum phase function does not                     optimization algorithm is required, for example Brent’s method,
+change significantly for a wide frequency range, thus distorting                to find an optimum time delay. Brent’s method requires a user-
+at minimum any signal’s phase at which operates. This character-                defined interval for the search of the optimum value [9], [13]. The
+istic is exploited in the time delay extraction process, to avoid an            left boundary of this interval can be chosen as the lossless time
+excessive number of poles when fitting the propagation function.                delay or the one based on Bode’s formula. The right boundary
+Due to the nature of the time delay, τ , being frequency depen-                 can be set two microseconds (μs) to the right of the left boundary,
+dent, the contribution of the exponential term in (2), besides the              as proposed in [9], [10].
+phase distortion by every partial fraction, makes the phase of Hi                  To illustrate the effect of time delay subtraction in the phase
+highly variable as for a non-minimum phase function.                            angle of an arbitrary Hi , consider Fig. 1(a) which presents its
+   With the practical implementation of the ULM it is common                    magnitude along an arbitrarily chosen frequency range from
+to apply a constant time delay to unwind the phase of Hi to the                 0.1 Hz up to 100 MHz. Fig. 1(b) and (c) present its phase angle
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:46:19 UTC from IEEE Xplore. Restrictions apply.
+2958                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 39, NO. 5, OCTOBER 2024
+
+
+
+
+Fig. 2. Phase angle of an arbitrary Hi showing sensitivity of the phase
+unwinding by a nearby time delay.
+
+
+
+
+                                                                                 Fig. 4.   Algorithm for grouping of time delays.
+
+
+
+                                                                                 delay that guarantees that the modal propagation function, Hi ,
+                                                                                 is the closest to a minimum phase function and that it provides
+                                                                                 a minimum approximation error. In the first step, an initial time
+Fig. 3. Algorithm for optimization of time delay for a close to minimum phase    delay is calculated via Bode’s formula, τ B . Although this renders
+function.                                                                        a close to minimum phase function [9], it is further optimized
+                                                                                 by following steps 2 to 6, which monitor the time delay giving
+                                                                                 the least variation in propagation function. At the end of step
+(in degrees) before and after extracting a constant time delay;                  6, Algorithm 1 provides a time delay τ o , with the best phase
+as referenced, the dashed lines represent the 180o and −180o                     unwinding. This is further optimized in step 7 by varying the
+lines. Note that, after extracting the delay, the phase angle curve              number of poles in combination with Brent’s method to achieve
+tends to resemble that of a minimum phase function for a wider                   the smallest approximation error [13]. The Brent’s method,
+frequency range as opposed without extraction, i.e., crossing                    which is an optimization method, relies on enclosing the optimal
+the ±180o line at a higher frequency; this is more noticeable in                 delay within an interval [9]. 0.9τ B and 1.1τ B are used as left
+Fig. 1(c) where the angle has been unwrapped. This process is                    and right bracketing values, respectively. For details of Brent’s
+known as unwinding the phase [11].                                               method, please refer to [13]. The outcome is a reduced-order
+    Fig. 2 shows the sensitivity of the phase unwinding by ex-                   approximation with optimized delay.
+tracting different time delays with 1% variation of the one used
+to obtain the results of Fig. 1(b) or (c). Note that, despite the                                         IV. GROUPING MODES
+small variation in time delay, the frequency at which the angles
+                                                                                    When the number of conductors in a system increases, some
+cross the ±180° line is substantially distinct.
+                                                                                 time delays become closer in magnitude and as such can be
+    The phase angle curves of Fig. 1 reveal that extraction of a
+                                                                                 grouped together. The current implementation of the ULM
+delay from Hi provides a minimum phase function only up to
+                                                                                 achieves grouping of modal delays based on a pre-established
+some point in the high-frequency range. The fact that the effect of
+                                                                                 phase-shift difference criterion [1]. However, such grouping
+time delay is valid up to a certain frequency, it can be deduced
+                                                                                 criterion can still provide similar delays for systems of short
+that it impacts the approximation order [9] and ultimately the
+                                                                                 length and many conductors. Having similar delays in different
+potential for large passivity violations [11]. Previous researchers
+                                                                                 groups provokes high residue/pole ratios, as demonstrated in the
+have proposed to optimize delay identification by measuring the
+                                                                                 examples of Section V.
+fitting accuracy while increasing the number of poles [10], [11].
+                                                                                    The proposed grouping strategy is described by Algorithm 2
+However, it has not been verified that indeed a close-to-minimum
+                                                                                 in Fig. 4. As shown in Algorithm 2, the strategy first identifies
+phase function is achieved.
+                                                                                 systems with very small delays (< 1 μs) and with significant
+                                                                                 differences between the largest and smallest delays (e.g., 10 μs).
+B. Unwinding Phase for Near to Optimum Delay
+                                                                                 Then, the grouping criteria, as given by crit, is generated based
+  Based on the theory of the previous subsection, Algorithm                      on the closeness between delays. For example, the scheme keeps
+1 in Fig. 3 presents a proposal to calculate an optimum time                     in the same group the delays that are within a decimal of the
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:46:19 UTC from IEEE Xplore. Restrictions apply.
+RAMIREZ et al.: ADVANCED WIDEBAND LINE/CABLE MODELING FOR TRANSIENT STUDIES                                                                            2959
+
+
+
+smallest delay in a group for which the smallest delay is <
+1 μs, and within a digit of the smallest delay in a group for
+which the smallest delay is > 1 μs. Two numerical examples
+follow. The delays [0.8281 0.8335 0.8339] (μs) are grouped
+and its representative delay is 0.8281 μs. The delays [45.4071
+48.4183 48.4263] (μs) are grouped and its representative delay
+is 45.4071 μs. Although the concept is simple, it results in
+effective modes grouping, as demonstrated by the examples in
+Section V.
+
+       V. MAXIMUM FITTING FREQUENCY OF RAPIDLY
+                  DECAYING MODES
+    Phase unwinding of a propagation mode Hi , which is mainly
+performed on the high-frequency range, becomes more effective
+when selecting a maximum fitting frequency fmax a

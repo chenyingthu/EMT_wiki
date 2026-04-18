@@ -1,0 +1,219 @@
+                                                         Electric Power Systems Research 197 (2021) 107342
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                       journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Laplace transform inversion through the theta algorithm for power-system
+EMT analysis
+L.J. Castañón a, *, J.L. Naredo a, J.R. Zuluaga a, E. Bañuelos-Cabral b, Pablo Gómez c
+a
+  Cinvestav Guadalajara, Mexico
+b
+  Universidad de Guadalajara, CUCEI, Mexico
+c
+  Western Michigan University, United States
+
+
+
+
+A R T I C L E I N F O                                 A B S T R A C T
+
+Keywords:                                             Laplace transform analysis of electromagnetic power system transients generally is based on a technique in which
+Electromagnetic transients                            the Laplace inversion integral is truncated with a suitable data window. This technique, being referred to as
+Frequency-domain                                      WNLT, is appropriate for most practical cases. Nevertheless, it results inadequate for certain R&D tasks. This
+Laplace transform
+                                                      paper presents a new technique for numerical Laplace inversion that does not require truncation with a data
+Padé approximants
+Shanks transformation
+                                                      window; it instead uses Brezinski’s theta algorithm to account for the infinite range of the Laplace inversion
+Epsilon algorithm                                     integral. As opposed to the WNLT, the new technique guarantees consistent and high accuracy levels at low
+Theta algorithm                                       computational costs. Finally, the new technique is applied to the transient analysis of a power-system network.
+                                                      Its results compare favorably well with those from the PSCAD/EMTDC program.
+
+
+
+
+1. Introduction                                                                       WNLT. Although the new method is primarily intended as an R&D tool,
+                                                                                      the general community of PS-EMT specialists may also benefit from its
+    The analysis and simulation of electromagnetic transients (EMTs) are              use.
+essential for the design and the safe and reliable operation of electric                  One limitation of the WNLT is that its accuracy is not fixed; that is, if
+power systems (PS). These activities are usually carried out using time               any parameter of a signal to be inverted is modified, the resulting pre­
+domain (TD) methods based on EMTP methodologies (ATP, PSCAD/                          cision changes. Another limitation is that the maximum precision
+EMTDC, EMTP-RV, etc.) [1,2]. Nevertheless, for many years, progress in                offered by the WNLT is 10− 9 and this is attained at a very high
+EMT analysis has been driven by advances in frequency-domain (FD)                     computational cost; that is, it requires a high number of spectral sam­
+analysis. At this respect, a key player among power-system specialists                ples, in the order of 220 (1048,576). An application of the WNLT
+has been the Windowed Numerical Laplace Transform (WNLT) [6,7].                       requiring a guaranteed accuracy of 10− 9 or better is the delay identifi­
+The WNLT has been adopted both, as an R&D tool and as a reference                     cation and extraction from a frequency-domain function prior to
+method to assess time-domain methods, models, and results [3, 4, 5]                   applying a rational fit [11,23]. A poor delay extraction can result in
+    The WNLT discretizes the Laplace inversion integral converting it to              rational fits of an unnecessary high order and with increased possibil­
+an infinite sum that is then truncated for numerical evaluation. [2,6].               ities of being non-passive.
+The errors due to this truncation are decreased by applying a suitable                    Other methods to invert numerically the Laplace transform do not
+data window [2,6,7,8,9,10]. Typical accuracies delivered by the WNLT                  truncate the integration range; instead, these methods use extrapolation
+are within the range of 10− 3 and 10− 6., which is appropriate for most               techniques to approximate sums of infinite series; these are referred to as
+practical situations. Until recently, the WNLT had responded well to the              sum-acceleration methods and offer high and fixed accuracies with a
+needs of PS-EMT specialists. However, sustained progress in this field is             moderate number of samples and, in consequence, with moderate
+pushing the WNLT beyond its limits. Therefore, new and more advanced                  computational cost. These methods have not been extensively applied to
+tools are needed to support progress in EMT analysis. This paper dem­                 PS-EMT analysis. If anything, only to small networks with single-phase
+onstrates the limitations of the WNLT and has as its main objective the               lines with constant parameters [12]. Previously, the authors of this
+introduction of a new FD tool that is more accurate and reliable than the             paper have presented one of these methods, the QD algorithm [13].
+
+
+
+    * Corresponding author.
+      E-mail address: lorenzo.castanon@cinvestav.mx (L.J. Castañón).
+
+https://doi.org/10.1016/j.epsr.2021.107342
+Received 30 November 2020; Received in revised form 1 March 2021; Accepted 28 April 2021
+Available online 18 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+L.J. Castañón et al.                                                                                                      Electric Power Systems Research 197 (2021) 107342
+
+
+    This paper presents a new numerical inversion technique for the                                                 {                          }
+Laplace transform that is based on Brezinski’s Theta algorithm [14,15]                                     2ecnΔt     1 ∑∞
+                                                                                      f (nΔt) + ∈al =             Re        F(c + jkΔω)ej2πnk/N ,                        (9)
+to accelerate the convergence of infinite sums. To the best of these au­                                    Δt        N k=0
+thors’ knowledge, this is the first application of Brezinski’s Theta algo­
+rithm in the inversion of the Laplace transform, as well as in the analysis           with n = 0, 1, 2, …, N − 1.
+of power-system EMTs. This paper shows that the Theta algorithm far                      For the sake of clarity, the following notation is now adopted:
+exceeds the limitations of the WNLT at a moderate computational cost
+                                                                                      fn = f (nΔt)
+
+2. Numerical treatment of the Laplace transform                                       and Fk = F(c + jkΔω).
+                                                                                          The evaluation of (9) requires truncating the summation at its right-
+   Let f(t) represent a time-domain signal and F(s) its corresponding                 hand-side to a finite number of terms M:
+Laplace transform, both are related by the Laplace inversion integral:                                    {                      }
+                                                                                                 2ecnΔt     1 ∑
+                                                                                                              M− 1
+               c+j∞
+               ∫                                                                      fn + ∈al =        Re         Fk e j2π nk/N
+                                                                                                                                   + ∈tr ,                 (10)
+        1                                                                                         Δt       N k=0
+f (t) =               F(s)est ds,                                          (1)
+        πj
+              c− j∞
+                                                                                      with ∈tr being the truncation error:
+                                                                                                      {                  }
+where s = c + jω is the Laplace variable with c representing a damping                      2ecnΔt      1 ∑
+                                                                                                          ∞
+
+constant and ω the angular frequency. If f(t) is real and causal, a                   ∈tr =        Re        Fk ej2πnk/N                                               (11)
+                                                                                             Δt        N k=M
+convenient form for (1) is:
+           ⎧ ∞
+             ∫
+                               ⎫                                                          The term ej2πnk/N in (9) is periodic with respect to running index k and
+       ect ⎨                   ⎬
+                                                                                      N is its period; (9) can thus be restated as follows:
+f (t) = Re                jωt
+                F(c + jω)e dω .                                    (2)
+        π ⎩                    ⎭                                                                          {                   }
+                      0
+                                                                                                 2ecnΔt      ∑
+                                                                                                             N− 1
+                                                                                      fn + ∈al =        Re        ̃ k ej2πnk/N ,
+                                                                                                                  F                                           (12)
+                                                                                                  ΔtN        k=0
+
+2.1. Discretization
+                                                                                      with
+     In practice, F(s) usually is given either as a collection of samples or as              ∑
+                                                                                             ∞
+
+an analytic function, with the latter being often intractable. These are              ̃k =
+                                                                                      F            Fk+lN
+the two main reasons for the numerical treatment of (1). This is per­                        l=0
+
+formed substituting ω in (2) by kΔω, where Δω is the frequency step.                      Note that ̃Fk is the aliased version of Fk . This is a consequence of
+Hence:                                                                                discretizing the time in (9) [19].
+                         {                         }
+                ect Δω     ∑∞
+         ̃
+f (t) ≅ f (t) =        Re       F(c + jkΔω)e jkΔωt
+                                                     ,                      (3)       2.2. Windowed numerical Laplace transform (WNLT)
+                          π         k=0
+
+                                                                                          For the WNLT, sum truncation in (10) is taken at M = N and trun­
+where ̃f(t) is an approximation to f(t). It follows from (3) that e− ct̃f(t) is       cation error is mitigated by applying a data window σk [7,9,10]:
+periodic [7]; moreover:                                                                              {                       }
+                                                                                            2ecnΔt     1 ∑
+                                                                                                         N− 1
+                                                                                                                                                       (13)
+                                                                                                                      j2π nk
+̃f (t) = f (t) + ∈al                                                       (4)        fn ≅
+                                                                                             Δt
+                                                                                                   Re
+                                                                                                       N k=0
+                                                                                                              Fk σ k e N .
+
+with                                                                                      The Von Hann (or Hanning) data window has been found simple and
+        ∑
+        ∞                                                                             effective [3,5]:
+∈al =         f (t + mT)e− cmT                                             (5)             {
+                                                                                              [1 + cos(π k/N)]/2 0 ≤ k ≤ N
+        m=1                                                                           σk =                                 .                         (14)
+                                                                                                       0         k〈0 , k〉N
+and
+                                                                                          One advantage of truncating at M = N is that the summation inside
+T = 2π / Δω .                                                              (6)        braces in (13) corresponds to the Discrete Fourier Transform (DFT)
+                                                                                      which is evaluated with high computational efficiency with the Fast
+   ∈al is the aliasing error produced by the discretization of F(s) in (3)
+                                                                                      Fourier Transform (FFT) algorithm [8]. For further simplicity and
+and T is the repetition period for ̃f(t). T also is the maximum time span at          computational efficiency, N is often taken as an integer power of 2 (2m).
+which a non-periodic f(t) can be effectively approximated by ̃f(t). T is                  The selection of damping constant c at the WNLT method is based on
+therefore referred to as the observation time. Aliasing error ∈al and                 (7). ∈rel depends at some point on the number of signal samples N [10]. A
+Laplace damping constant c are related through the following expression               value of ∈rel = 10− 5 has been established empirically for an N between
+[10]:                                                                                 29 (512) and 211 (2048) samples [3,5,10].
+c = − loge (∈rel )/T,                                                      (7)
+                                                                                      3. Infinite-series acceleration methods
+where ∈rel = ∈al /fmax and fmax is the maximum expected value for f(t)
+[10]. The aliasing error can thus be controlled by a proper choice of                     Instead of truncating the summation range of (9) with a data win­
+constant c.                                                                           dow, other methods resort to extrapolation techniques to accelerate the
+    Full numerical treatment of (2) requires the discretization also of t in          convergence of the infinite sum of (9). Two of these are the QD algo­
+(3); that is, the substitution of t by nΔt. For convenience, Δt is selected as        rithm [12,13], and the Epsilon algorithm [16]. The latter is the pre­
+a multiple of T:                                                                      cursor of the one being proposed here and, for this reason, it is described
+                                                                                      next.
+Δt = T / N .                                                               (8)
+    On replacing t by nΔt in (3) and on applying (4) and (6):
+
+                                                                                  2
+L.J. Castañón et al.                                                                                                      Electric Power Systems Research 197 (2021) 107342
+
+
+3.1. Epsilon algorithm
+                                                                                                    1
+                                                                                     εn2k+1 =            ,                                                             (23)
+                                                                                                ek (ΔSn )
+    The infinite sum in (9) is expressed as follows:
+                ∑
+                ∞                                                                    one obtains:
+f (z) = S =            ck zk                                             (15)
+                                                                                                             1
+                                                                                                                                                                       (24)
+                 k=0
+                                                                                     εnk+1 = εn−k− 11 + n+1     .
+                                                                                                       εk − εnk
+where ck = Fk y z = e2πjn/N . The definition of Sn is introduced here as the
+partial sum of the first n + 1 terms in S:                                              Note in this last expression the index change, from “2k” to “k”, that
+                                                                                     has been made to merge both subseries, (22) and (23), into (24). Ac­
+       ∑                                                                             cording to (22) and (23), when the subscript "k + 1′′ is even, (24) pro­
+       n
+Sn =         ck zk .                                                     (16)
+       k=0                                                                           vides an approximation to S and, when this subscript is odd, (24)
+                                                                                     provides an intermediate value.
+    Now S in (15) is approximated by the following rational function, so                Expression (24) is the basis for the Epsilon algorithm, which was
+that the division of Pn (z) by Qk (z) generates a series with positive powers        applied for the first time in the calculation of the inverse Laplace
+of z whose first n + k + 1 coefficients coincide with their corresponding            transform by Crump in 1972 [21]. More recently, Brančík [12] has
+ones in (15).                                                                        improved the algorithm by initializing it with the IFFT. He has also
+          Pn (z)   a0 + a1 z + ⋯ + an zn                                             applied it to the analysis of circuits with distributed-parameter elements.
+f (z) ≅          =                       ;                               (17)
+          Qk (z) 1 + b1 z + +⋯ + bk zk
+                                                                                     3.2. Theta algorithm
+then, Pn (z)/Qk (z)

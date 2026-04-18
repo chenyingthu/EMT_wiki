@@ -1,0 +1,29 @@
+## MSEMT: An Advanced Modelica Library for Power System Electromagnetic Transient Studies
+**Authors:** Alireza Masoom, Jean Mahseredjian, Fellow, IEEE, Tarek Ould-Bachir, Member, IEEE, and Adrien Guironnet
+
+**Abstract**—Electromagnetic Transient (EMT) simulation tools are typically developed using conventional procedural programming languages. On the other hand, modern high-level and equation-based programming languages, such as Modelica, are currently available. Modelica allows formulating models that are easy to develop, maintain and understand by expressing what needs to be computed without stating how it should be computed. This paper presents a Modelica-based simulator for electromagnetic transients. It is demonstrated that this approach offers significant advantages for developing sophisticated models. Computational performance and accuracy are compared to a conventional EMT-type simulation tool.
+
+**Index Terms**—Declarative modeling, equation-based modeling, object-oriented modeling, MSEMT library, modelica, EMT-type simulation, power system transients.
+
+*Manuscript received February 2, 2021; revised July 17, 2021; accepted September 3, 2021. Date of publication September 13, 2021; date of current version July 25, 2022. This work was supported by NSERC, Hydro-Québec, RTE, EDF, and OPAL-RT as a part of the industrial chair “Multi time-frame simulation of transients for large scale power systems.” Paper no. TPWRD-00202-2021. (Corresponding author: Alireza Masoom.)*
+
+Alireza Masoom and Jean Mahseredjian are with the Department of Electrical Engineering, Polytechnique Montreal, Montreal QC H3T 1J4, Canada (e-mail: alireza.masoom@polymtl.ca; jean.mahseredjian@polymtl.ca).
+Tarek Ould-Bachir is with the Department of Computer and Software Engineering, Polytechnique Montreal, Montreal QC H3T 1J4, Canada (e-mail: tarek.ould-bachir@polymtl.ca).
+Adrien Guironnet is with the R&D Department, Réseau de Transport d’Electricité (RTE), Paris, France (e-mail: adrien.guironnet@rte-france.com).
+Color versions of one or more figures in this article are available at https://doi.org/10.1109/TPWRD.2021.3111127.
+Digital Object Identifier 10.1109/TPWRD.2021.3111127
+
+## I. INTRODUCTION
+Power system simulation is based on component models that can be described mathematically with Ordinary Differential Equations (ODEs). The classic approach for the simulation of electromagnetic transients uses lumped circuits combined into a system of equations for formulating electrical network constraints. In EMTP [1], for example, modified-augmented-nodal analysis is used to connect lumped companion-circuits [2] resulting from the conversion of differential equations from models.
+
+Existing and widely used EMT software packages (see [3], [4]) are typically based on computer programming languages (Fortran, C++ …) for delivering compiled computer code. Such code allows simulating large-scale and complex power systems very efficiently by providing to users powerful graphical user interfaces for drawing simulated schematics and entering data. Such packages maintain a large set of hard-coded models that remain typically inaccessible to users. In such packages, it is also possible to develop/integrate powerful user-defined models either through block diagrams or through high-level languages and external access. User-defined models must typically account for underlying software procedures and numerical methods.
+
+In the Simscape Electrical [5] and Simscape Electrical Specialized Power Systems [6] packages, the block-diagram approach of Simulink is extended to include the state-space representation of linear electrical networks with externally connected components, such as nonlinear devices or synchronous generators in the block-diagram representation. Although it offers increased accessibility to users for native models, the resulting block diagrams do not deliver a high-level modeling environment. Some numerical limitations may also result from delays between external components and circuit representation.
+
+Attempts have been also made to develop an EMT-type simulation tool [7] using the higher-level MATLAB programming language in an open-source-code approach. Although this approach elevates the abstraction level, it remains that the models must be programmed using given numerical methods and actual equations become submerged in detailed codes.
+
+The existing EMT-type software packages deliver advanced simulation environments to engineers and can be also interfaced with high-level programming environments [8]. Although interfacing and co-simulation methods can become powerful, they typically suffer from numerical delays and simultaneous solution issues. But such closed-code approaches do not allow to provide high-level modeling environments that can be used for the development of advanced models by simply expressing model differential equations without consideration of underlying numerical solution methods.
+
+This paper proposes to explore the Modelica approach for delivering a full EMT-type simulation environment with the models expressed directly through high-level equations. The choice of Modelica is justified by the following. Modelica [9] is an object-oriented declarative equation-based non-proprietary language, that can conveniently model the dynamic behavior of complex physical systems. In Modelica, models can be described as Differential-Algebraic Equations (DAE) and block diagrams. The model becomes decoupled from the solver. Modelica also supports discrete systems as opposed to continuous systems.
+
+Modelica can be interfaced with traditional software (e.g., MATLAB and C) and to a variety of computing libraries, such as LAPACK [10], KLU [11], etc. as well. Modelica supports

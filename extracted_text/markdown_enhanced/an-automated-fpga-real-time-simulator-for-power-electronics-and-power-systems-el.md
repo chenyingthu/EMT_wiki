@@ -1,0 +1,28 @@
+An automated FPGA real-time simulator for power electronics and power systems electromagnetic transient applications
+R. Razzaghi*, M. Mitjans, F. Rachidi, M. Paolone
+École Polytechnique Fédérale de Lausanne, 1015 Lausanne, Switzerland
+
+**Article history:**
+Received 23 February 2016
+Received in revised form 10 June 2016
+Accepted 15 July 2016
+
+**Keywords:**
+Real-time simulation
+Electromagnetic transients
+FPGA
+Hardware-in-the-loop
+
+**Abstract**
+The paper presents an automated FPGA-based real-time electromagnetic transients simulator for power electronics and power systems applications. The simulator features an automated procedure enabling its straightforward applications to different topologies by avoiding the need of complex FPGA programming. The proposed solver integrates: (i) the Modified Augmented Nodal Analysis (MANA) method, (ii) the Fixed Admittance Matrix Nodal Method (FAMNM), (iii) the optimal selection of the switch conductance parameter, and (iv) efficient sparse matrix-to-vector multiplier. The simulator is able to accurately reproduce, in real-time, electromagnetic transients taking place in power electronics devices together with electromagnetic waves propagating in transmission lines. The peculiar structure of the MANA-FAMNM solver enables to reach extremely low integration time steps and avoids the need to redesign the FPGA code. The results of the proposed simulator are validated by dedicated comparisons with off-line EMTP-RV simulations and a hardware-in-the-loop (HIL) test for a three-phase two-level inverter and a three-phase power network.
+
+## 1. Introduction
+Electromagnetic transient (EMT) real-time simulators (RTSs) are essential tools in power systems and power electronics to design, analyze and test control processes [1], and to understand dynamics of complex systems and specific devices. RTSs have been evolving from the so-called Transient Network Analyzer (TNA) to digital RTSs [1]. This last type can make use of hardware based on multi-core CPUs, general-purpose processors (GPPS), digital signal processors (DSPs) or computer clusters. In general, CPU based RTSs represent a better option to simulate bulk power networks since they can achieve acceptable simulation time steps (e.g., in the order of few tens of microseconds) and model relatively complex systems. Additionally, existing CPU-based RTSs are typically linked to the well-established programming environments (e.g., MATLAB SimPowerSystems (SPS)). However, the achievable integration time steps of CPU-based RTSs have a lower bound associated with the partial sequential operations that the CPU architectures need to deploy. As a consequence, the relatively large simulation time steps required by these simulators do not allow to model high frequency phenomena such as EMTs in power converters or travelling wave transients taking place in transmission lines (e.g., faults and switching transients).
+
+During the past years, the size and computational power of FPGAs has been increased dramatically. FPGA-based real-time simulation has emerged as a leading trend for HIL applications for the power electronics applications (e.g., Refs. [2–5]). The parallel processing hardwired in FPGAs enables the implementation of specific methodologies that dramatically reduce the sequencing of the operations taking place in CPUs. FPGA-RTSs provide lower sampling rate, higher frequency bandwidth and lower I/O latency [6]. These characteristics position this type of simulators as better candidates for the accurate real-time simulation of power electronics and limited-size power systems. Indeed, one of the main drawbacks of the FPGA-RTSs is their difficult programming associated with the use of Hardware Description Languages (HDL). This low level programming limits the scalability of solvers and, as a consequence, the representation of complex models. Additionally, any modification in the implemented algorithm/model requires, in general, a time-consuming recompilation of the HDL code. Indeed, long offline validation procedure, together with the long code compiling time, complicates the development of sophisticated circuit models and controls deployable in this specific hardware platform. In this respect, the automation of FPGA-RTSs is a challenging research topic that has been discussed, for instance, in Ref. [7].
+
+With particular reference to EMT-RTS applications, the real-time simulation of electrical circuits requires a topological mapping of both propagative (transmission lines) and lumped elements of the circuit. Their number and interconnection is not known a-priori. Therefore, the construction of the problem equations (see Section 3) is case-dependent. As a consequence, the number of tasks involving FPGA resources such as memories, FIFOs, DSP block, etc. is not known a-priori, making the generalization of the code difficult. The developed FPGA-RTS should be capable of simulating a given network without the need for the a-priori knowledge about that. Of co
+
+## 2. Circuit analysis and models adopted in the proposed FPGA-RTS
+### 2.1. Circuit analysis and numerical integration methods
+As known, two main types of solution methods are used in circuit analysis: (i) nodal and (ii) state-space ones [1]. Within the context of FPGA-based real-time simulation, nodal analysis (or Modified Augmented Nodal Analysis—MANA) is preferable since it allows straightforward formulation of the system equations and, in particular, it enables the FAMNM approach. We briefly recall the MANA formulation [14]:

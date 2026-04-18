@@ -1,0 +1,245 @@
+834                                                                           IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 17, NO. 3, JULY 2002
+
+
+
+
+  Frequency-Dependent Transmission Line Modeling
+          Utilizing Transposed Conditions
+                                                   Bjørn Gustavsen, Member, IEEE
+
+
+   Abstract—Existing phase domain transmission line models are              This paper proposes a new transmission line model (hybrid
+capable of producing highly accurate results for both overhead           line) which utilizes the properties of the near diagonal system to
+lines and underground cables. This paper introduces a hybrid line        obtain a line model with high computational efficiency, without
+model which gives substantial savings in computation time without
+                                                                         compromising on accuracy. This is achieved by formulating the
+loss of accuracy, when one or more circuits of a transmission
+system are treated as continuously transposed. This is achieved          line model in terms of a constant transformation matrix, modes,
+by means of a constant transformation matrix in combination              and a (small) phase block which takes into account the cou-
+with a reduced-size phase domain line model and a number of              pling between circuits. The resulting model can be applied to
+single-phase (modal) line models. The calculated examples demon-         any combination of transposed and untransposed circuits, of any
+strate a potential speed increase over a full phase domain model         geometry.
+between three and four. If none of the circuits are transposed, the
+line model degenerates into a full phase domain line model.
+                                                                                        II. TRANSMISSION LINE EQUATIONS
+   Index Terms—Electromagnetic transients, multicircuit overhead
+lines, transmission line modeling, transposed circuits.                  A. Approach
+                                                                            A multiconductor transmission line can be described in the
+                         I. INTRODUCTION                                 frequency domain in terms of a series impedance matrix and
+                                                                         a shunt admittance matrix
+
+T      RADITIONALLY, frequency-dependent transmission line
+       models have been formulated using frequency-dependent
+modes and a transformation matrix which is assumed to be con-
+                                                                                                                                        (1)
+stant and real [1], [2]. The usage of modes leads to efficient time                                                                     (2)
+domain simulations, but the neglected frequency dependence of
+the transformation matrix can lead to errors in the simulation           where and are symmetrical, square matrices.
+result.                                                                     Assume that the conductors have been numbered such that
+   With the introduction of phase domain line models [3]–[6] the         the conductors within each circuit have contiguous phase num-
+transformation matrix is not needed and highly accurate simula-          bers. As a result, , of a multicircuit overhead line can be
+tions can be achieved for both overhead lines and underground            subdivided into a number of 3 3 blocks. Blocks on the diag-
+cables. However, the usage of phase domain quantities instead            onal represent the circuit self impedance while the off-diagonal
+of modal domain quantities leads to slower simulations.                  blocks represent mutual coupling between circuits.
+   When overhead lines are transposed, the user of an                       Treating a circuit as continuously transposed implies that all
+EMTP-type program will in principle have to subdivide the                conductors within the circuit get the same coupling to any other
+line into sections and explicitly introduce the transpositions.          conductor outside the circuit. This leads to a modification of the
+However, some of these programs have options for specifying              elements of and by an averaging process according to the
+that a circuit be “continuously transposed,” which is less               following rules.
+accurate but very convenient from a practical point of view. The
+                                                                            1) Diagonal blocks of untransposed circuits are left un-
+continuously transposed option has the effect of introducing
+                                                                               changed.
+balancing in the series impedance and shunt admittance matrix
+                                                                            2) Diagonal blocks of transposed circuits are modified by
+which define the line system. For multicircuit overhead lines
+                                                                               averaging the diagonal elements, and by averaging the
+it has been shown [7] that subsequent application of an ap-
+                                                                               off-diagonal elements [7].
+propriate constant transformation matrix will lead to a system
+                                                                            3) The rows of off-diagonal blocks representing coupling
+with diagonal elements and a few off-diagonal elements which
+                                                                               from a transposed circuit to an untransposed circuit are
+reflect the zero sequence coupling between the circuits.
+   For transposed double-circuit lines with vertical symmetry,                 modified by averaging the elements within each row.
+it is possible to take into account the zero sequence coupling              4) The columns of off-diagonal blocks representing cou-
+using a constant transformation matrix [8], but this approach                  pling from an untransposed circuit to a transposed circuit
+is only an approximation for general line configurations as the                are modified by averaging the elements within each
+zero sequence coupling is in general frequency dependent.                      column.
+                                                                            5) Off-diagonal blocks representing coupling between two
+                                                                               untransposed circuits are left unchanged.
+   Manuscript received August 6, 2001.                                      6) Off-diagonal blocks representing coupling between two
+   The author is with SINTEF Energy Research, N-7465 Trondheim, Norway
+(e-mail: bjorn.gustavsen@energy.sintef.no).                                    transposed circuits are modified by averaging the ele-
+   Publisher Item Identifier S 0885-8977(02)05921-6.                           ments within the block [7].
+                                                       0885-8977/02$17.00 © 2002 IEEE
+GUSTAVSEN: FREQUENCY-DEPENDENT TRANSMISSION LINE MODELING                                                                            835
+
+
+
+                                                                        This approach is fully general; it applies to any number of
+                                                                      untransposed and transposed circuits, with any numbering of
+                                                                      the phases. For a system of transposed circuits and untrans-
+                                                                      posed circuits, we get    modes and a phase block of dimension
+                                                                                .
+
+                                                                      B. Example
+Fig. 1.   Two parallel overhead lines.                                  We now proceed with the example in Fig. 1 with a , as given
+                                                                      by (3).
+B. Example                                                              Rules 1–3 produce the following :
+   As an example, we consider a system of two parallel overhead
+lines where one of the circuits is transposed, as shown in Fig. 1.                                                                  (6)
+   After modifying (and ) according to Rules 1–6, we get a
+   (and ) of the form                                                 where is a 3 3 identity matrix.
+                                                                         The transformation (4) with and        , as defined in (3) and
+                                                                      (6), gives the desired result
+
+                                                               (3)
+
+
+
+   It is noted that the upper-left block in (3), which corresponds
+to the transposed line, is a balanced matrix. It is also noted that
+                                                                                                                                     (7)
+the two off-diagonal blocks have rows (and columns) with equal
+                                                                         It can be seen that       has a 4 4 submatrix in the upper-left
+elements. The lower-right block, which corresponds to the un-
+                                                                      corner and two elements on the diagonal.         and      are the
+transposed circuit, is unaffected by Rules 1–6.
+                                                                      ground mode (0) and aerial modes           of the transposed cir-
+                                                                      cuit. The ground mode is seen to be coupled to the conductors
+                    III. MODAL TRANSFORMATION
+                                                                      of the untransposed circuit via the terms
+A. Approach                                                              If both circuits in Fig. 1 were transposed, we would instead
+   The line model proposed in this paper relies on transforming       have obtained a result for          (and    ) as follows:
+   (and ) into a matrix with a block in the upper-left corner
+followed by elements on the diagonal. This is achieved using
+the transform
+                                                                                                                                    (8)
+                                                               (4)
+
+where       is built from Clarke’s transformation matrix
+
+                                                                                     IV. TRANSMISSION LINE MODEL
+                                                               (5)       The results in Sections II and III showed that and can
+                                                                      be transformed into a phase block and a number of diagonal
+                                                                      elements (modes) via a transformation matrix , which depends
+It is noted that the first column of          corresponds to the      on the usage of transpositions.
+ground mode while the second and third columns correspond to             It follows that a transmission line model can be formulated in
+the aerial modes.                                                     terms of modes in parallel with a phase block, interfaced to the
+   The building of is done as follows.                                physical system (phase domain) by the transformation matrix
+    1) For each transposed circuit, insert the Clarke matrix (5)        . This is shown schematically in Fig. 2 for the example of two
+       in positions in corresponding to the phase numbering           transposed circuits, as defined by (8).
+       of the considered circuit.                                        The following notation is introduced for the phase block and
+    2) For each conductor which does not belong to a transposed       the diagonal elements outside the phase block:
+       circuit, insert a “1” on the diagonal of in the position                         Series impedance and shunt admittance of
+       corresponding to the phase number.                                               phase block.
+    3) Interchange the columns of          so that the leading                          Series impedance and shunt admittance of th
+       columns correspond to conductors of untransposed                                 mode.
+       circuits, followed by columns corresponding to ground             The phase block is modeled using a frequency-dependent
+       modes, followed by columns corresponding to aerial             transmission line model of the “phase domain” type [3]–[6], cal-
+       modes.                                                         culated from           and      . Trapezoidal integration gives at
+836                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 17, NO. 3, JULY 2002
+
+
+
+
+Fig. 2.   Transmission line model.                                      Fig. 3.    Time domain equivalent for phase block and ith mode (end K).
+
+
+each line end       a time domain equivalent in the form of a
+conductance matrix in parallel with a vector of history current
+sources, as shown on the left-hand side of Fig. 3.
+   Each mode in Fig. 2 is modeled using a frequency-depen-
+dent single-phase transmission line model, calculated from
+         and       . The time domain representation is in the
+form of a conductance in parallel with a history current source,
+                                                                        Fig. 4. Time domain equivalent for assembled model (end k ).
+as shown on the right-hand side of Fig. 3.
+   The Norton equivalents for the phase block and the modes are
+finally assembled into a complete model as follows:
+
+
+                                                                 (9)
+
+
+
+
+                                                                        Fig. 5.    Overhead line system.
+                                                                (10)
+
+                                                                              and are subjected to the transformation in (4), giving a 2
+                                                                            2 phase block                , and four modes                 .
+   Thus, the line model is interfaced to the host program (e.g.,           A phase domain transmission line is calculated based on
+EMTP) via a phase domain Norton equivalent, as shown in                                using the universal line model (ULM) [6]. Fig. 6
+Fig. 4, with the history current vector calculated via the first part   shows the magnitude of the fitted elements of the propagation
+of (10). The node voltages needed by the phase domain line and          matrix        as well as the magnitude of the complex deviation,
+the single-phase lines are calculated via the second part of (10),      using a 12th-order approximation. It is seen that a very accurate
+with     provided by the host program.                                  result has been achieved. A high accuracy was also obtained
+                                                                        for the fitting of the characteristic admittance      .
+                       V. CALCULATED RESULTS                               A single-phase transmission line is calculated for each of the
+                                                                        four modes                     using a 12th-order rational approx-
+A. Calculation Platform                                                 imation calculated by vector fitting [10]. Fig. 7 shows the four
+   A prototype of the new line model has been implemented               fitted modes         (the aerial modes of a given circuit are iden-
+based on the MATLAB 5.3 platform. This includes the cal-                tical so only two traces are shown in Fig. 7.). Again, it is seen
+culation of line data         , balancing of       according to         that a very accurate result has been achieved. A high accuracy
+transposed circuits (see Section II), modal diagonalization (see        was also obtained for the fitting of       .
+Section III), and the frequency domain calculations (see Sec-
+tion IV). The time domain simulations are done using MatTran            D. Time Domain Calculations
+[9], with the new line model included as a user-defined routine.           Fig. 8 shows a situation where circuit 1 in Fig. 5 is energized
+                                                                        from an ideal positive sequence voltage source, with conductor
+B. Overhead Line System                                                 1 grounded at the receiving end.
+   Fig. 5 shows two parallel overhead lines where both circuits            Figs. 9 and 10 show the simulated voltage on conductor 3
+are assumed to be continuously transposed.                              and 6 (receiving end) in the time range 0–2 ms and 0–20 ms,
+                                                                        respectively. The traces represent the voltage as calculated in
+C. Frequency Domain Calculations                                        two different ways:
+  With the node numbering in Fig. 5 the resulting transfor-                 1) simulation using full-phase domain model (ULM);
+mation matrix gets two Clarke blocks on its diagonal. The                   2) simulation using hybrid model.
+columns of are next rearranged so that the two ground modes                It is seen that hybrid line gives the same result as the full
+come first, as was explained in Section II.                             ULM, thus validating the accuracy of the hybrid model.
+GUSTAVSEN: FREQUENCY-DEPENDENT TRANSMISSION LINE MODELING                                                                               837
+
+
+
+
+                                                                        Fig. 8. Energizing circuit 1.
+
+
+
+
+Fig. 6. Fitting   H .
+
+
+
+
+                                                                        Fig. 9. Voltage at conductor 3 and 6 (receiving end).
+
+
+
+
+Fig. 7. Fitting   H .
+                         VI. EFFICIENCY
+A. Flop Counts
+   In order to quantify the improved efficiency of the hybrid line
+model over a full-phase domain line model, three transmission
+line systems of 50 km length were modeled using the two
+approaches:
+    1) one transposed circuit (flat line without ground wires);
+    2) two transposed circuits (see Fig. 5);
+    3) three transposed circuits (see Fig. 5 with additional circuit
+       in parallel).
+   For all line systems, a 12th-order rational approximation was        Fig. 10.    Voltage at conductor 3 and 6 (receiving end).
+used for the fitting of     and , similarly as in Section V-C.
+   Table I compares the number of floating point operations                                           TABLE I
+(flops) consumed by the line model in the time-step loop, de-                          NUMBER OF FLOPS CONSUMED IN TIME-STEP LOOP
+pending on the selected line model and the line configuration. It
+is seen that the hybrid line gives a speed gain of 3.5 in the case of
+one transposed circuit, and 9.21 in the case of three transposed
+circuits.
+
+B. Analysis
+  We consider the situation that and have both been fitted
+using an order of .
+  For the full ULM, the number of flops per time-step per line          where
+end resulting from the convolutions is approximately                               number of conductors;
+                                                             

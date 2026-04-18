@@ -1,0 +1,195 @@
+                                                            Electric Power Systems Research 252 (2026) 112314
+
+
+                                                                Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                         journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Accelerating electromagnetic transient simulations using graphical
+processing unitsI , II , H
+Devin Aluthge a , Ian Jeffrey a , Shaahin Filizadeh a                              ,∗, Dharshana Muthumuni b
+a
+    University of Manitoba, Winnipeg, MB, Canada
+b
+    Manitoba Hydro International, Winnipeg, MB, Canada
+
+
+
+ARTICLE                 INFO                             ABSTRACT
+
+Keywords:                                                This paper explores and evaluates various approaches to accelerate Electromagnetic Transient (EMT) sim-
+EMT simulations                                          ulations of power systems using Graphical Processing Units (GPUs). Existing EMT simulation methods
+GPUs                                                     face computational challenges in systems with extensive renewable energy sources due to the complexity
+Large systems
+                                                         and switching dynamics of the system. The paper focuses on simulation methods based upon specialized
+cuDSS
+                                                         GPU solvers to handle simulations of large and complicated power systems (e.g., with extensive switching
+                                                         components) with computational efficiency. Results from benchmark systems show significant speedups,
+                                                         particularly for large networks with high-frequency switching events.
+
+
+
+1. Introduction                                                                        nullifies any reduction in calculation time due to smaller sub-networks;
+                                                                                       the computational burden of EMT simulations is impacted by both the
+    Electromagnetic Transient (EMT) simulators are necessary tools to                  network size and complexity [3].
+model modern power systems [1], due to their accuracy in representing                      A shared-memory implementation of the network solution is pre-
+fast transients. The escalating adoption of inverter-based resources                   sented in [7]; a recent study [8] introduces a parallel-in-time equation
+(IBRs) has resulted in significant presence of power-electronic convert-               (re-)grouping technique for CPU-based parallelization with KLU factor-
+ers leading to the erosion of system inertia and the need for EMT                      ization. Since load balancing is needed if the (re-)grouping blocks are
+modeling and simulations of uncommonly large networks; this has                        more than the number of processors [7], an inefficient hardware scaling
+exposed crippling computational limitations of current EMT solvers.                    of shared memory implementation will occur. Otherwise, this approach
+Substantial efforts are underway to develop new algorithms, solution                   might be sub-optimal when modeling practical power systems.
+methods, and platforms to enable EMT simulation of exceedingly large                       Perhaps the most promising approach to accelerating network sim-
+and complex networks [2–4].                                                            ulation is the use of graphics processing units (GPUs). Specifically,
+    In EMT simulations node voltages are calculated using current                      the sizes of networks encountered in practice (even large networks),
+injections as inputs to network equations. Normally these are done                     combined with the ability to implement the entire network solution
+in sequence, resulting in computational inefficiencies. Various factor-                on the GPU (eliminating communication between the host CPU and
+ization methods, e.g., the KLU method (particularly suited for large
+                                                                                       the device GPU), make GPUs well-suited to the application. While
+networks) [5,6], are used to solve network equations efficiently. Se-
+                                                                                       the work presented in [9] addresses basic acceleration using GPUs, it
+quential solutions, which have inherent computational deficiencies, can
+                                                                                       does not develop a fully-fledged GPU-based EMT solver. The authors
+be avoided by using parallel computing. Although distributed parallel
+                                                                                       of [10] present timing and speedup gains, using GPUs, but do not
+computing scales well, its communication overhead, required at each
+                                                                                       address how classical network equations can be solved efficiently, nor
+time step, drastically slows the simulation [2]. The distributed parallel
+                                                                                       do they compare results to existing serial algorithms, e.g., KLU [5].
+model created in [2] has an exponential increment in the communi-
+                                                                                       Primitive techniques, such as pre-inverting the admittance matrix [4],
+cation time as the number of sub-networks increases, which effectively
+                                                                                       may enhance the simulation (serial or GPU implementation), however,
+
+
+ I This article is part of a Special issue entitled: ‘IPST 2025’ published in Electric Power Systems Research.
+II This work was supported by the Natural Sciences and Engineering Research Council (NSERC) of Canada, Manitoba Hydro International, Canada, and MITACS,
+Canada.
+ H Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8-12, 2025.
+  ∗ Corresponding author.
+    E-mail addresses: shaahin.filizadeh@umanitoba.ca (S. Filizadeh), dharshana@mhi.ca (D. Muthumuni).
+
+https://doi.org/10.1016/j.epsr.2025.112314
+Received 6 January 2025; Received in revised form 12 April 2025; Accepted 30 September 2025
+Available online 14 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+D. Aluthge et al.                                                                                                         Electric Power Systems Research 252 (2026) 112314
+
+
+switching devices, which are exceedingly common and abundant in                2.3. The Woodbury formula
+modern power systems, pose significant challenges to such methods as
+the matrix needs to be altered frequently. The GPU-based pre-inversion            The Woodbury formula [12] accounts for modifications to the 𝒀
+of the matrix is shown in [4] although no comparison of KLU with               matrix without inverting (or solving) the entire matrix when there is
+direct sparse techniques is given.                                             a change in the network. Assuming that 𝑘 entries in the admittance
+    This paper delves into GPU-based computations for EMT solutions,           matrix change, the Woodbury formula can be stated as follows.
+and compares the performance of several GPU and CPU-based solu-
+                                                                                                                (𝒀 + 𝑼 𝑽 𝑻 )−𝟏 =
+tion methods with the aim to determine the most suited algorithm                                                                                                       (2)
+                                                                                   −𝟏        −𝟏
+for GPU-based solution large systems. The overall goal is to present           𝒀        −𝒀        𝑼 (𝑰 + 𝑽 𝒀 −𝟏 𝑼 )−𝟏 𝑽 𝑻 𝒀 −𝟏
+                                                                                                            𝑻
+
+an efficient EMT simulator that runs entirely on the GPU. Section 2            where
+discusses several existing solution methods, e.g., KLU factorization,
+Cholesky decomposition [11], the Woodbury implementation [12], and                      • 𝒀 is the original 𝑛 × 𝑛 admittance matrix,
+the compensation method. Their potential for solving large networks                     • 𝑼 is an 𝑛 × 𝑘 matrix,
+are discussed in Section 3. Section 4 discusses the GPU-based solver                    • 𝑰 is a 𝑘 × 𝑘 identity matrix,
+developed and shows a number of examples.                                               • 𝑽 is a 𝑛 × 𝑘 matrix.
+
+2. Existing methods of solving network equations                                  The product 𝑼 𝑽 𝑻 is an 𝑛 × 𝑛 matrix of rank at most 𝑘, which
+                                                                               represents the changes of the admittance matrix. The columns of 𝑼
+   EMT simulations involve solving for node voltages, 𝒗(𝑡), in (1),            correspond to the modified rows and the columns of 𝑽 correspond to
+where 𝒀 (𝑡) is the network’s admittance matrix and 𝒊(𝑡) is the vector          the modified columns. For example if a 5 × 5 admittance matrix has
+of current injections to the nodes from dynamic devices and history            three changes at (3, 4), (2, 2) and (4, 1), 𝑼 and 𝑽 are be defined as:
+current terms in the companion models of network elements [1].
+                                                                                   ⎡0         0      0⎤        ⎡0        0     𝛥3 ⎤
+𝒀 (𝑡)𝒗(𝑡) = 𝒊(𝑡)                                                    (1)            ⎢0         1      0⎥        ⎢0        𝛥2    0⎥
+                                                                                   ⎢                  ⎥        ⎢                  ⎥
+                                                                               𝑼 = ⎢1         0      0⎥ ,   𝑽 =⎢0        0     0 ⎥,
+    The solution proceeds on a discretized time axis, and involves
+                                                                                   ⎢0         0      1⎥        ⎢𝛥1       0     0⎥
+factorization (or inversion) of 𝒀 (𝑡). For networks whose admittance               ⎢                  ⎥        ⎢                  ⎥
+matrix does not change, one may factor (or invert) 𝒀 (𝑡) and use it                ⎣0         0      0⎦        ⎣0        0     0⎦
+throughout the simulation. Frequent changes in the network arising             where the 𝛥 values are the numerical changes made to the matrix.
+from faults, and more commonly from switching power electronic                 When changes occur, the 𝑘 × 𝑘 matrix (𝑰 + 𝑽 𝑻 𝒀 −𝟏 𝑼 ) needs to be
+converters, require repetitive re-factorizations of 𝒀 (𝑡), which rapidly       evaluated and inverted. Assuming the 𝑛 × 𝑘 matrix 𝒀 −𝟏 𝑼 has been pre-
+becomes computationally taxing, especially in large and sophisticated          computed and that 𝑽 is sparse, the cost to construct the matrix is 𝑂(𝑘𝑛 )
+networks. With the expansion of IBRs and diminishing system inertia,           and the cost to invert it is 𝑂(𝑘3 ) where 𝑘 ≪ 𝑛.
+the solution of large networks with significant high-frequency switching
+converters has become a crippling challenge for existing EMT solvers.          2.4. Compensation method
+    Since the companion circuit theory [1] converts all elements to
+current sources and resistors, 𝒀 (𝑡) becomes a real-valued matrix. In              Unlike the previous numerical methods, which may be applied
+the remaining Sections of this paper, the time dependence of 𝒀 is              to any linear system of equations, the compensation method is a
+suppressed for brevity.                                                        circuits solution technique. This method [19–21] was developed as
+    EMT equations are commonly solved using numerical methods such             a result of Kron’s Diakoptics as per [22]. The main idea of the al-
+as LU factorization. Furthermore, techniques such as Cholesky decom-           gorithm is to solve a large network by partitioning it in to smaller
+position and LDL can be used to handle matrices with symmetry. These           pieces. Each sub-network may be solved in parallel with the rest, while
+techniques are briefly reviewed next.                                          other sub-networks are represented using Thevenin equivalents. The
+                                                                               method allows network segmentation at arbitrary locations without
+2.1. KLU factorization
+                                                                               relying on long transmission lines. Collecting all switching nodes of
+                                                                               a large network into one block of the 𝒀 matrix also allows for fur-
+    The LU decomposition method [13] is commonly used to solve (1);
+                                                                               ther computational advantage, by combining it with the Woodbury
+however, it is advantageous to use the KLU method [5] for factorization
+                                                                               formula. The efficiency of the compensation method is evaluated in Sec-
+of large admittance matrices. Here the matrix is permuted to result in a
+                                                                               tion 3 together with the Woodbury formula and GPU implementation
+block triangular form. The approximate minimum degree method and
+                                                                               of network solution.
+nested dissection [5] are used to minimize filling. As per [5,14], the
+KLU factorization method improves computational performance; KLU
+factorization and its improved variations are used in EMT simulators [6,       3. Performance of algorithms
+15] for circuits with a large number of nodes. KLU factorization is used
+as a benchmark CPU-based algorithm in this paper.                                  With the goal of developing an efficient EMT simulator entirely on
+                                                                               the GPU, this Section first explores various GPU-based methods for
+2.2. Cholesky decomposition                                                    solving (1). CPU-based methods are also tested to establish a baseline
+                                                                               for computational comparisons. For all tests, two 𝒀 matrices were
+    While in many EMT models the admittance matrix is not symmetric,           examined. The first matrix, with a size of 81 × 81, represents the IEEE
+a network comprising of typical power system devices will result in            39-bus benchmark system [23]; note that transformers, generators, and
+a symmetric admittance matrix. Taking symmetry into account, the               𝜋-sections models of transmission lines increase the number of nodes
+Cholesky factorization [16] offers performance benefits, as it can be          to 81 per-phase. Simulations in Section 4.3 consider a three-phase
+applied to symmetric positive definite (SPD) matrices. The Cholesky            representation of the system. The second matrix is 10 000 × 10 000 with
+factorization is currently used in EMT solvers, e.g., [17].                    all the properties of an actual admittance matrix but without stemming
+    Improvements come from representing the SPD matrix factorization           from a particular network.
+in terms of a single lower triangular matrix 𝑳 such that 𝒀 = 𝑳𝑳𝑻 ,                 CPU implementation methods (i) Eigen/Sparse [24], (ii) PARD-
+ideally reducing time and memory requirements by half. KLU supports            SIO [25], and (iii) various MATLAB solver approaches including the
+Cholesky decompositions [5] through the CHOLMOD library [18].                  backslash operator [26] are considered first. Note that these solvers
+
+                                                                           2
+D. Aluthge et al.                                                                                                       Electric Power Systems Research 252 (2026) 112314
+
+
+                       Table 1
+                       Timing of various solving algorithms.
+                        Algorithm name                                                             Size of matrix               Timing (ms)
+                        Eigen/Sparse library (CPU)                                                 81 × 81                      6
+                        cusolverSpDcsrlsvchol (GPU)                                                81 × 81                      1.2
+                        MATLAB Backslash (CPU)                                                     81 × 81                      0.102
+                        cuDSS solver (including symbolic factorization) (GPU)                      81 × 81                      0.089
+                        cusolverSpDcsrlsvluHost (CPU)                                              81 × 81                      0.088
+                        cusolverSpDcsrlsvcholHost (CPU)                                            81 × 81                      0.084
+                        cuDSS solver (excluding symbolic factorization) (GPU)                      81 × 81                      0.022
+                        cusolverSpDcsrlsvluHost (CPU)                                              10 000 × 10 000              12.73 min
+                        cusolverSpDcsrlsvcholHost (CPU)                                            10 000 × 10 000              4.25 min
+                        PARDISO (real and structurally symmetric type) (CPU)                       10 000 × 10 000              18 000
+                        MATLAB Inversion and multiplication (CPU)                                  10 000 × 10 000              12 000
+                        MATLAB sparse LU decomposition (CPU)                                       10 000 × 10 000              9806
+                        PARDISO (real and symmetric positive definite type) (CPU)                  10 000 × 10 000              9000
+                        cuDSS solver (including symbolic factorization) (GPU)                      10 000 × 10 000              5216
+                        cusolverSpDcsrlsvchol (Device implementation) (GPU)                        10 000 × 10 000              5000
+                        MATLAB Backslash (CPU)                                                     10 000 × 10 000              1302
+                        cuDSS solver (excluding symbolic factorization) (GPU)                      10 000 × 10 000              0.030
+
+
+
+are generally multi-threaded shared memory implementations. In ad-                      5.2 s for the 10 000 × 10 000 system, this costs would be encountered
+dition to these standard CPU-based libraries, Compute Unified Device                    only when the system is initially factored or changes. In cases where
+Architecture (CUDA) functions that run on the CPU are considered.                       switching is present, the matrix structure does not change and the
+CUDA is a parallel computing platform and programming model cre-                        symbolic factorization can be reused. Once factored, solving takes only
+ated by Nvidia that is generally designed to execute user functions                     30 μs, which inclu

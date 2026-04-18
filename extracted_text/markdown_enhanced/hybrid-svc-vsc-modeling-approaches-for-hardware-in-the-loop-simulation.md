@@ -1,0 +1,28 @@
+# Hybrid SVC-VSC modeling approaches for hardware-in-the-loop simulation
+
+P. Le-Huy *, O. Tremblay  
+Power System Simulation group at IREQ, Hydro-Québec’s research center, 1800 boul. Lionel-Boulet, Varennes, Québec, J3 × 1S1, Canada  
+* Corresponding author. E-mail address: le-huy.philippe@ireq.ca (P. Le-Huy).
+
+## Keywords
+Electromagnetic transient simulation, Hardware-in-the-loop, Modular multilevel converter, Real-time, Static var compensator
+
+## Abstract
+Hydro-Québec built two static var compensators at the 735-kV La Verendrye substation in 1985. Each has a capacity of $+330/-110$ Mvar to help regulate system voltage and power system dynamic. They exceeded their useful life, and their operation was becoming challenging due to the aging control technology. Spare part availability and cost were also becoming an issue. A refurbishment project was thus undertaken. Due to design constraints, a hybrid SVC was selected: traditional thyristor-switched capacitors are used, but thyristor-controlled inductors are replaced by full-bridge modular multilevel converters.
+
+Throughout the ongoing project, hardware-in-the-loop real-time simulation was used for dynamic performance testing, factory acceptance tests and pre-commissioning studies. Two modeling approaches were used to represent the hybrid SVC: conventional electromagnetic transient simulation and small time-step approach. As this paper demonstrates, both approaches are valid in this case and produce matching results if simulation contrivances are not neglected.
+
+## 1. Introduction
+HYDRO-QUÉBEC (HQ) installed several reactive power compensators in the 1980s and 1990s to help power transmission between the La Grande power generation complex and the load centers in the south of the Québec province [1–3] (see Fig. 1). Different technologies were explored and installed but most were static var compensators (SVC) with thyristor-controlled reactors (TCR) and thyristor-switched capacitors (TSC). In La Vérendrye 735-kV substation, two SVCs were built in 1985 with a capacity of $+330/-110$ Mvar each. The SVC coupling transformer secondary was selected to operate at $16$ kV, and filtering of the TCR harmonics was not implemented at that time. As time went by, operation of the twin SVCs became more challenging, and availability and cost of parts also became an issue.
+
+In the early 2010s, refurbishment projects for the La Grande corridor SVCs were initiated and pre-project work was done for the La Verendrye SVCs. After careful consideration, it was decided to keep the SVC coupling single-phase transformers and perform a thorough overhaul on them. The selected refurbishment technology relies on voltage-source converters (VSC), more precisely on modular multilevel converters (MMC) using full-bridge (FB) submodules (SM) [4]. However, as the previous SVC was operating with a $16$-kV secondary, providing the same Mvar capacity with solely MMC technology was non-optimal due to the current limitation of power electronic used in MMCs. Classical TSCs were thus added to the mix to reach the required capacitive Mvar capability. This hybrid SVC-VSC is also advantageous space-wise as the original layout didn’t include space for filtering, which would be required today for optimal use of conventional TCRs.
+
+Conventional SVC technology is well known and its modeling in real-time (RT) electromagnetic transient (EMT) simulation tools for hardware-in-the-loop (HIL) testing is well mastered. However, MMC technology, despite generating significant scientific papers, is not yet as widespread as thyristor-based apparatus. In fact, it is quite new at HQ: the La Verendrye project is the first HQ equipment based on MMC technology. Nevertheless, the HQ research center has been involved in MMC modeling since the early 2010s to adapt and prepare its RT simulation capabilities to cope with this technology [5–6].
+
+Throughout this ongoing project, control HIL was used in several key steps, such as the dynamic performance study (DPS), the factory acceptance tests (FAT) and the pre-commissioning studies. The first two activities were conducted mainly by the manufacturer using RT EMT simulations with small time-steps ($t_s < 5~\mu\text{s}$). Both the real control and protection system and the replica were tested with this approach. Following the FAT, both control systems were prepared for relocation: the real system was prepared for site deployment while the replica was sent to the HQ research center (IREQ) for pre-commissioning testing, where it was connected to HQ RT simulator (RTS) using conventional RT EMT simulation ($t_s > 20~\mu\text{s}$).
+
+In recent years, HQ, through various HIL projects (both HVDC and compensation systems), was exposed to assertive and zealous promotion of the idea that the sole valid possibility for HIL is the small time-step approach, regardless of the project details and specifications. The purpose of this paper is to share HQ’s experience modeling this hybrid SVC and to demonstrate that these two modeling approaches, when used properly, are valid in this case, and generate matching results. This paper, through this demonstration, aims to bring a more nuanced view to the HIL time-step issue and shed light on the
+
+**Fig. 1.** HQ La Grande 735-kV transmission corridor and its SVC substations. Abitibi, the 735-kV substation west of Chibougamau has two synchronous condensers instead of SVCs.
+
+**Fig. 2.** La Verendrye hybrid SVC one-line diagram.

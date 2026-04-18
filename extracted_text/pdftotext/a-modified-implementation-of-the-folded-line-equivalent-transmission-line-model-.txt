@@ -1,0 +1,196 @@
+                                                                Electric Power Systems Research 211 (2022) 108185
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A modified implementation of the Folded Line Equivalent transmission line
+model in the Alternative Transient Program
+Jaimis S.L. Colqui a ,∗, Luis Carlos Timaná b , Pablo Torrez Caballero a,c , Sérgio Kurokawa d , José
+Pissolato Filho a
+a
+    School of Electrical and Computer Engineering, State University of Campinas - UNICAMP, Av. Albert Einstein 400, Campinas, Brazil
+b Department of Electronic and Telecommunications Engineering, Catholic University of Colombia, Av. Caracas 46 -13, Bogotá, Colombia
+c Research and Development Center in Telecommunications - CPQD, R. Dr. Ricardo Benetton Martins 1.000, Campinas, Brazil
+d Department of Electrical Engineering, São Paulo State University - UNESP, Av. Brasil 56, Ilha Solteira, Brazil
+
+
+
+
+ARTICLE                  INFO                               ABSTRACT
+
+Keywords:                                                   This paper proposes a modified implementation of the Folded Line Equivalent transmission line model to
+Transmission line modeling                                  represent three-phase transmission lines. The Folded line equivalent decomposes a line into its open circuit and
+Electromagnetic transients                                  short circuit contributions. We propose an alternative orthogonal matrix to transform single-phase transmission
+Folded Line Equivalent
+                                                            line parameters, voltages, and currents to the Folded Line Equivalent domain. Because the proposed matrix
+EMT-type programs
+                                                            is orthogonal, it can directly represent bidirectional transformations using circuit components in simulation
+                                                            software, such as the ATP-EMTP. First, the circuit implementation of Clarke’s matrix decouples a three-phase
+                                                            transmission line into its modes. Then, the circuit implementation of the proposed matrix decouples each
+                                                            mode into its open circuit and short circuit contributions. This paper proves that the proposed approach
+                                                            outputs similar results as those obtained by the Universal Line Model and the JMarti model in the simulation
+                                                            of transmission lines under open-circuit, energization, and fault conditions. However, because the proposed
+                                                            model does not derive from the method of characteristics, it can run with simulation times greater than the
+                                                            propagation delay of the transmission line. It is shown that the proposed approach outputs accurate results for
+                                                            time steps that are 10%, 100%, 200%, and 400% of the propagation delay of the transmission line. Thus, one
+                                                            major advantage of the proposed approach is that it can be used to reduce runtimes in the representation of
+                                                            short transmission lines in large complex networks by increasing time steps without compromising accuracy.
+
+
+
+1. Introduction                                                                                   of the most accurate and general TL models. The ULM and the JMarti
+                                                                                                  model are fundamentally different. The ULM accurately represents
+    Frequency-dependent cable and transmission line (TL) models have                              cables and TLs in the phase domain. As a result, many programs such as
+been widely used in the analysis of electromagnetic transients studies                            the PSCAD/EMTDC [8] and the Electromagnetic Transients Program-
+in power systems for fault detection [1], analysis of electromagnetic                             Restructured Version (EMTP-RV) [9] implement the ULM. Numerous
+transients in the frequency domain [2], fault prevention [3], medicine                            TL models (including the ULM and the JMarti model) had derived from
+[4], and other applications. These models are developed in the mode                               the method of characteristics. Models that had derived from the method
+domain or directly in the phase domain. For instance, the ATP-EMTP                                of characteristics require (simulation) time steps to be smaller than
+implements the JMarti model, introduced in [5,6]. The JMarti model                                the propagation delay of the TL. Therefore, the time step used in the
+uses constant transformation matrices to decouple TLs. Constant trans-
+                                                                                                  simulation of complex power systems is limited to the propagation time
+formation matrices are valid for ideally transposed TLs and provide
+                                                                                                  of the shortest line. The Folded Line Equivalent (FLE) introduced in
+good results for non-transposed TLs with vertical symmetry. How-
+                                                                                                  [10] addresses this issue. The FLE decomposes the nodal admittance
+ever, constant transformation matrices do not provide good results
+                                                                                                  matrix of the TL in two blocks that represent the open-circuit and
+for non-transposed asymmetrical TLs or multi-circuit TLs because of
+the frequency dependence of their components. For these cases, the                                short-circuit conditions of the TL. The Vector Fitting (VF) algorithm
+frequency dependence of the transformation matrix must be taken into                              [11] fits rational functions to these blocks and imposes passivity, thus
+account. The Universal Line Model (ULM), introduced in [7], is one                                ensuring a stable and passive circuit [12]. The FLE had been applied
+
+
+     ∗ Corresponding author.
+       E-mail address: jaimis.leon@unesp.br (J.S.L. Colqui).
+
+https://doi.org/10.1016/j.epsr.2022.108185
+Received 18 November 2021; Received in revised form 17 May 2022; Accepted 8 June 2022
+Available online 1 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+J.S.L. Colqui et al.                                                                                                  Electric Power Systems Research 211 (2022) 108185
+
+
+to non-uniform TLs [13,14], combined with the propagation time to                    A time domain representation of the TL can be obtained by fitting
+represent TLs [15] and cables [16]. The main advantage of the FLE is             𝒀 𝑛𝑜𝑑 in (1). However, even for simple lines, the representation of the
+that it provides accurate results when the time step is greater than the         eigenvalues of 𝒀 𝑛𝑜𝑑 using fitting techniques is inaccurate [10]. To
+propagation time of the TL, reducing execution times in the simulation           address this issue, Gustavsen and Semlyen have introduced in [10] the
+of complex power systems. In contrast, other TL models require smaller           Folded Line Equivalent (FLE). The FLE is an alternative representation
+time steps and therefore take longer to compute simulations.                     of the TL that decomposes 𝒀 𝑛𝑜𝑑 into its open circuit admittance 𝒀 oc
+    This paper introduces a modified version of the FLE (MFLE) and im-           and short circuit admittance 𝒀 sc using a real similarity matrix 𝑲 that
+plement it in the ATP-EMTP using circuit elements. The main objective            is given by
+of the proposed model is to accurately represent short TLs in the simu-               [         ]
+                                                                                        𝑼    𝑼
+lation of large complex networks where the time step of the simulation           𝑲=                                                                  (4)
+                                                                                        𝑼 −𝑼
+may not be small enough to be compatible with the propagation time of
+the shortest TLs. Instead of using the transformation matrix introduced          where 𝑼 is the 𝑛×𝑛 identity matrix. Gustavsen and Semlyen’s approach
+in [10], this paper proposes an orthogonal matrix to transform voltages          accurately represents the eigenvalues of 𝒀 nod .
+and currents without altering their length. To represent multiconductor              Voltages and currents are transformed to and from the FLE domain
+TLs by the MFLE, the line is decoupled by a circuit implementation of            as follows
+Clarke’s matrix. Then each mode is represented by the proposed MFLE.             [ ]        [      ]   [ ]       [ ]
+                                                                                  𝑽1          𝑽 oc      𝑰1        𝑰
+The proposed approach is compared against the ULM implementation                        =𝑲           ,      = 𝑲 oc .                              (5)
+                                                                                  𝑽2          𝑽 sc      𝑰2        𝑰 sc
+of the PSCAD and the JMarti built-in model of the ATP-EMTP. Results
+show that the proposed approach is accurate and has the following                Substitution of (5) in (1) gives
+advantages:                                                                      [ ]            [      ]
+                                                                                  𝑰 oc           𝑽 oc
+                                                                                        = 𝒀 FLE                                                                    (6)
+     • Like the FLE, the MFLE accurately represents the eigenvalues of            𝑰 sc            𝑽 sc
+       the nodal admittance matrix of the TL.                                    where
+     • Because the proposed model is based on the FLE, it outputs ac-                                     [                 ]
+                                                                                                              𝒀 oc    0
+       curate results when the step size of the simulation is greater than       𝒀 FLE = 𝑲 −1 𝒀 nod 𝑲 =                                                            (7)
+                                                                                                               0     𝒀 sc
+       the propagation delay of the TL, effectively reducing simulation
+       runtimes.                                                                 and thus 𝑰 oc = 𝒀 oc 𝑽 oc and 𝑰 sc = 𝒀 sc 𝑽 sc
+     • The circuit implementation of the proposed transformation matrix             In general, the FLE solves voltages and currents in five stages as
+       performs a bidirectional transformation using only ideal trans-           detailed in the flowchart of Fig. 2:
+       formers.
+                                                                                    1. First Stage The real similarity matrix 𝑲 transforms 𝒀 nod to 𝒀 oc
+     • The proposed model provides a better understanding of mode
+                                                                                       and 𝒀 sc ;
+       behavior during high-frequency phenomena because it provides
+       access to mode voltages and currents                                         2. Second Stage The Vector Fitting (VF) procedure [11] approxi-
+     • The proposed model is efficient because analyzing three indepen-                mates the poles and residues of 𝒀 sc and 𝒀 oc . The fitted functions
+       dent modes is simpler than analyzing the entire coupled TL.                     are referred to as 𝒀 sc,fit and 𝒀 oc,fit ;
+     • The proposed approach can be implemented using ideal trans-                  3. Third Stage Passivity is enforced to 𝒀 sc,fit and 𝒀 oc,fit by the
+       formers, making it easy to implement in simulation software e.g.,               VF algorithm, ensuring stable functions and circuits [12]. The
+       EMTP-RV, ATP, and PSCAD/EMTDC.                                                  resulting functions are 𝒀 sc,fit,pas and 𝒀 oc,fit,pas .
+                                                                                    4. Fourth Stage The state-space representation of 𝒀 sc,fit,pas and
+Since the MFLE derives from the FLE model, it inherits all of the
+                                                                                       𝒀 oc,fit,pas are constructed as detailed in [18] and then repre-
+features and limitations mentioned in [10].
+                                                                                       sented by a Norton equivalent as detailed in [19].
+                                                                                    5. Fifth Stage The Norton equivalents of 𝒀 sc,fit,pas and 𝒀 oc,fit,pas are
+2. The folded line equivalent transmission line model
+                                                                                       transformed to the phase domain using the inverse of the similar-
+                                                                                       ity matrix 𝑲 and combined into a single Norton equivalent. The
+    In the frequency domain, the nodal admittance matrix 𝒀 nod relates
+                                                                                       time-domain Norton equivalent is then solved using the trape-
+voltages 𝑽 and currents 𝑰 at line terminals terminals of the TL of Fig. 1
+                                                                                       zoidal rule of integration [10] or recursive convolutions [20].
+as follows
+[ ]           [ ]
+ 𝑰1            𝑽1                                                                   This paper proposes an alternative transformation matrix 𝑳 that is
+      = 𝒀 𝑛𝑜𝑑                                                         (1)
+ 𝑰2            𝑽2                                                                given by
+where 𝑽 and 𝑰 are vectors containing voltages and currents at line                   ⎡ √1     1
+                                                                                              √ ⎤
+terminals 1 and 2. The nodal admittance matrix 𝒀 𝑛𝑜𝑑 of an overhead                  ⎢         2 ⎥
+                                                                                 𝑳 = ⎢ 12      1 ⎥,                                                                (8)
+TL is composed of 4 symmetrical matrices as follows                                  ⎢√      −√ ⎥
+        [       ]                                                                    ⎣ 2        2⎦
+          𝒀𝑝 𝒀𝑚
+𝒀 𝑛𝑜𝑑 =           .                                              (2)
+          𝒀𝑚 𝒀𝑝                                                                  to decouple single-phase TLs into their short-circuit and open-circuit
+                                                                                 contributions as shown in Fig. 3. The proposed matrix 𝑳 retains all
+In (2), 𝒀 𝑝 and 𝒀 𝑚 are obtained from the traveling wave formulation of
+                                                                                 properties of matrix 𝑲 proposed in [10]. However, the implementation
+the TL and are given by [17]
+                                                                                 of 𝑳 is more convenient. We take advantage of the fact that 𝑳 is or-
+         (       )(       )−1
+𝒀 𝑝 = 𝒀 𝑐 𝑼 + 𝑯2 𝑼 − 𝑯2                                              (3a)        thogonal, i.e., its columns form an orthonormal basis of R2 . Therefore,
+                                                                                 𝑳 does not alter the length of 𝑽 or 𝑰 in each transformation in (5).
+           (        )−1                                                              To represent multiconductor TLs in simulation software, the TL is
+𝒀 𝑚 = −2𝒀 𝑐 𝑼 − 𝑯 2                                                  (3b)
+                                                                                 decoupled into its modes using the circuit representation of Clarke’s
+where 𝑼 is√the 𝑛×𝑛 identity matrix, the characteristic
+                                                    ( impedance
+                                                        √     ) matrix           matrix proposed in [21]. Then, each mode is transformed to its short
+𝒀 𝑐 = 𝒁 −1 𝒁𝒀 , the propagation matrix 𝑯 = exp −𝓁 𝒁𝒀 , 𝑛 is the                  circuit and open circuit conditions using an arrangement of ideal
+number of phases, 𝒁 is the per-unit-length (p.u.l.) impedance matrix             transformers that represent 𝑳 (Fig. 3).
+of the TL, 𝒀 is the per-unit-length (p.u.l.) admittance matrix of the TL,            Note that there is no coupling between the open circuit and short
+and 𝓁 is the length of the line.                                                 circuit contributions. Each fitted admittance is individually represented
+
+                                                                             2
+J.S.L. Colqui et al.                                                                                                             Electric Power Systems Research 211 (2022) 108185
+
+
+
+
+                                                         Fig. 1. Two port network representation of a transmission line.
+
+
+                                                                                            in MatLab. This paper shows an alternative implementation of the FLE
+                                                                                            in the ATPDraw/ATP-EMTP using ideal transformers.
+
+                                                                                            3. Circuit representation of Clarke’s matrix
+
+                                                                                               A perfectly transposed TL that has its ground wires embedded using
+                                                                                            Kron’s reduction [23] has a per-unit-length (p.u.l.) impedance 𝒁 and
+                                                                                            admittance 𝒀 given by
+                                                                                                ⎡ 𝑍𝑝     𝑍𝑚     𝑍𝑚 ⎤                 ⎡ 𝑌𝑝     𝑌𝑚     𝑌𝑚 ⎤
+                                                                                            𝒁 = ⎢ 𝑍𝑚     𝑍𝑝     𝑍𝑚 ⎥ ,           𝒀 = ⎢𝑌𝑚      𝑌𝑝     𝑌𝑚 ⎥                     (9)
+                                                                                                ⎢                  ⎥                 ⎢                  ⎥
+                                                                                                ⎣ 𝑍𝑚     𝑍𝑚     𝑍𝑝 ⎦                 ⎣𝑌𝑚      𝑌𝑚     𝑌𝑝 ⎦
+                                                                                            where subscripts 𝑝 and 𝑚 represent the diagonal and non-diagonal
+                                                                                 

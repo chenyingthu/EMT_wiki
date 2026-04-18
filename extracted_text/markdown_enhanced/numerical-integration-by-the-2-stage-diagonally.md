@@ -1,0 +1,29 @@
+# Numerical Integration by the 2-Stage Diagonally Implicit Runge-Kutta Method for Electromagnetic Transient Simulations
+
+**Taku Noda**, Member, IEEE, **Kiyoshi Takenaka**, and **Toshio Inoue**, Member, IEEE
+
+Manuscript received October 14, 2007; revised October 14, 2007. First published May 12, 2008; current version published December 24, 2008. Paper no. TPWRD-00611-2007.
+
+T. Noda is with the Electric Power Engineering Research Laboratory, Central Research Institute of Electric Power Industry (CRIEPI), Yokosuka, Kanagawa 240-0196, Japan (e-mail: takunoda@ieee.org).
+
+K. Takenaka and T. Inoue are with the System Engineering Research Laboratory, Central Research Institute of Electric Power Industry (CRIEPI), Komae, Tokyo 201-8511, Japan (e-mail: takenaka@criepi.denken.or.jp; inotoshi@criepi.denken.or.jp).
+
+Digital Object Identifier 10.1109/TPWRD.2008.923397
+
+**Abstract**—This paper proposes applying the two-stage diagonally implicit Runge–Kutta (2S-DIRK) method of numerical integration to the calculation of electromagnetic transients (EMTs) in a power system. The accuracy and the numerical stability of 2S-DIRK are almost the same as those of the trapezoidal method, while 2S-DIRK does not produce sustained numerical oscillation due to a sudden change of an inductor current or a capacitor voltage unlike the trapezoidal method. First, this paper reviews the 2S-DIRK integration scheme and derives the 2S-DIRK formulas of inductors and capacitors for both linear and nonlinear cases. Then, analytical comparisons of 2S-DIRK with the trapezoidal, backward Euler, and Gear–Shichman methods are carried out, and numerical examples which verify the analytical comparisons are shown. Finally, 2S-DIRK is compared with critical damping adjustment (CDA) implemented in Electromagnetic Transients Program (EMTP) for some simulation cases.
+
+**Index Terms**—Electromagnetic transient analysis, integration (mathematics), numerical stability, power electronics, power semiconductor switches, power system simulation, power system transients.
+
+## I. INTRODUCTION
+
+ELECTROMAGNETIC TRANSIENT (EMT) simulations are used for the studies of overvoltages, relay settings, inrush currents, abnormal resonances, harmonics, and so on. Studies including generators, motors, and power electronics converters have become practically feasible by EMT simulations owing to the developments of simulation techniques and the recent progress of computers in terms of processing speed and memory capacity, and EMT simulations are now extensively used also for these purposes.
+
+For such simulations, electromagnetic transients program (EMTP) has been used, and now other simulation programs are also available. The original version of EMTP uses the trapezoidal method for the numerical integration of dynamic circuit elements such as inductors and capacitors [1]. The trapezoidal method is a simple one-step integration method which calculates a solution at the present time step only from values obtained at the previous time step. In spite of its simple formula, the trapezoidal method has a second-order accuracy and is A-stable [2]. When an integration method is said to be A-stable, it does not diverge for any time step size. However, the trapezoidal method produces “fictitious” sustained numerical oscillation for a sudden change of a variable. This numerical oscillation appears when an inductor current or a capacitor voltage is suddenly changed, and this can be a serious drawback for EMT simulations including power electronics converters which use semiconductor switches. To cope with this problem, critical damping adjustment (CDA) has been proposed and implemented in some versions of EMTP [3], [4]. In CDA, the trapezoidal method is basically used, and only at a moment a sudden change of a variable is detected the integration method is replaced by the backward Euler method. Since the backward Euler method does not produce sustained numerical oscillation, a favorable solution is obtained in most cases. In a practical implementation [4], switching events, sudden changes of voltage and current source values, and changes of the operating points of nonlinear components represented by piece-wise linear curves are detected to switch to the backward Euler method.
+
+However, the detection of a sudden change of a variable is not always feasible. For instance, when a sudden change of a voltage or a current is transmitted to another place by a distributed-parameter line, detecting the sudden change at the receiving end is difficult. A voltage or current source controlled by a control system can produce a sudden change for instance due to a limiter operation, but detecting this is also difficult. Detecting all types of sudden changes by programming is not practical and can be a serious overhead of execution time. Thus, an inherently “oscillation free” integration method is desired.
+
+Reference [5] has reported a study of numerical integration methods for long-term dynamics simulations of a power system, and it has been shown that the two-stage diagonally implicit Runge–Kutta (2S-DIRK) method [6] has a second-order accuracy and is A-stable like the trapezoidal method but does not produce sustained numerical oscillation. Taking advantage of this excellent property, this paper proposes the use of 2S-DIRK for EMT simulations. At first, a brief review of the 2S-DIRK integration scheme is given, and the 2S-DIRK formulas of inductors and capacitors for both linear and nonlinear cases are derived. Then, analytical comparisons of 2S-DIRK with the trapezoidal, backward Euler, and Gear–Shichman methods are carried out, and numerical examples which verify the analytical comparisons are shown. Finally, 2S-DIRK is compared with CDA implemented in EMTP for some simulation cases.
+
+## II. 2S-DIRK
+
+### A. 2S-DIRK In

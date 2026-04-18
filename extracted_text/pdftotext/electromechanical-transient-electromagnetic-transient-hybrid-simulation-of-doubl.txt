@@ -1,0 +1,294 @@
+第 39 卷 第 3 期                                              电 网 技 术                                                Vol. 39 No. 3
+ 2015 年 3 月                                            Power System Technology                                     Mar. 2015
+文章编号：1000-3673（2015）03-0615-06                     中图分类号：TM 315               文献标志码：A              学科代码：470·4047
+
+
+
+              双馈风力发电机组的电磁暂态−机电暂态
+                    混合仿真研究
+                      顾卓远，汤涌，刘文焯，易俊，张健，戴汉扬，于强
+                                    （中国电力科学研究院，北京市 海淀区 100192）
+
+
+             Electromechanical Transient-Electromagnetic Transient Hybrid Simulation of
+                                  Doubly-Fed Induction Generator
+             GU Zhuoyuan, TANG Yong, LIU Wenzhuo, YI Jun, ZHANG Jian, DAI Hanyang, YU Qiang
+                          (China Electric Power Research Institute, Haidian District, Beijing 100192, China)
+
+
+ABSTRACT: To analyze the dynamic response of double-fed               响应。便于今后与风机制造厂家合作建立实际风机的详细电
+induction generator (DFIG) in-depth, based on the operation           磁暂态模型，为深化研究风电机组对电网稳定的影响提了
+principle of DFIG an electromagnetic transient model of DFIG          供有力的技术支持。
+is built and the electromagnetic transient-electromechanical          关键词：双馈风力发电机组；电磁暂态；混合仿真；建模
+transient hybrid simulation of DFIG is performed. The hybrid
+                                                                      DOI：10.13335/j.1000-3673.pst.2015.03.005
+simulation of DFIG is implemented by the self-developed
+large-scale power system analysis software package based              0    引言
+hybrid simulation platform named Power System Department-                  随着全球化石能源逐渐枯竭，可再生能源在各
+Power System Model (PSD-PSModel), and the frame of the
+                                                                      国能源战略中的地位越来越重要。在众多新能源中，
+basic model of DFIG is established. The wind farm is
+                                                                      风能以其清洁、蕴藏量大、技术相对成熟等优势成
+equivalently simulated by single machine, and IEEE 14-bus
+test system is utilized for the detailed simulation to analyze the
+                                                                      为世界各国开发绿色能源的首选，双馈风力发电机
+dynamic behavior of the system, the control strategy and              (doubly-fed induction generator，DFIG)也得到了广
+dynamic response. The achievement can contribute to facilitate        泛应用。风能具有间歇性和随机性的特点，大规
+the cooperation with wind power generator manufactures to             模双馈机组接入系统对电网的安全稳定运行有诸
+built detailed electromagnetic transient model of actual DFIG         多影响，主要表现在以下几个方面[1]：
+to provide powerful technical support for the in-depth study on            1）对电力系统暂态稳定性的影响。随着风电
+the impacts of wind power generation units on power grid
+                                                                      接入比例的逐渐增大，其对电力系统暂态稳定性的
+stability.
+                                                                      影响不容忽视。文献[2]认为双馈风电机组接入后会
+KEY WORDS: doubly-fed induction generators; electromagnetic           降低同步机组的阻尼特性，不利于同步机组功角的
+transient; hybrid simulation; modeling                                快速稳定。文献[3]认为双馈风机和同步电机的功角
+摘要：为深入分析双馈型风力发电机组的动态响应，基于双                                            摇摆曲线存在两类交点，在大扰动时，首摆期间双
+馈风机的运行原理，建立了双馈风机的电磁暂态模型，并进                                            馈风机会降低系统的暂态稳定性。
+行了电磁暂态–机电暂态混合仿真研究。在自主开发的大型                                                 2）对电压稳定性的影响。一般认为双馈风力
+电 力 系 统 分 析 软 件 包 混 合 仿 真 平 台 (power system
+                                                                      发电机组可以实现有功无功解耦控制，通过控制策
+department-power system model，PSD-PSModel)中实现了双
+                                                                      略的调整具备电压支撑能力。文献[4]详细研究了双
+馈风机的混合仿真功能，建立了双馈风机的基本模型框架。
+                                                                      馈风电机组对系统电压稳定性的影响。
+采用单台机等值模拟风电场，并利用 IEEE 14 节点算例进行
+了详细的仿真研究，分析了其控制策略和暂态过程中的动态                                                 3）对频率稳定性的影响。大多通过控制手段
+                                                                      来增强风电机组对电网频率的支撑能力[5]。
+    基金项目：国家 863 高技术基金项目(2011AA05A103)；国家电网                                  因此，有必要开发风电机组的动态模型，研
+公司科技项目(SGHB0000KXJS1400040)。
+    The National High Technology Research and Development of
+                                                                      究其与电力系统之间的相互影响。目前在风电机
+China(863 Program)(2011AA05A103).                                     组建模、风功率预测等方面，欧盟电网已达到较
+616                    顾卓远等：双馈风力发电机组的电磁暂态−机电暂态混合仿真研究                                                      Vol. 39 No. 3
+
+高水平，部分研究成果已经开始投入商业使用，
+如 PSS/E(power system simulator/engineering) [6]、
+PowerFactory，在今后相当长的一段时间内，这
+些研究成果都属于商业机密 [7]。在这种条件下，
+如何自主研发风力发电机组的动态模型且具备较
+强的仿真能力成为我国风电发展面临的主要问题
+之一。
+        根据研究的目的不同，双馈风电机组可以建立
+不同的数学模型。但是在建模的详细程度上仍然存
+在争议[8]。文献[9]给出了双馈风力发电机的降阶模
+型，忽略了定子和转子的暂态过程，换流器采用可                                                图 1 双馈风力发电机组结构
+                                                         Fig. 1    Structure of doubly-fed induction generator
+控电流源模型，只给出了有限的控制细节。文献[10]
+                                                   量可表示为
+介绍了一种适用于大规模电力系统稳定计算的双
+                                                               1
+馈风力发电机动态模型，并分析了控制参数对暂态                                      P = ρ πR 2CPVwind
+                                                                         3
+                                                                              (1)
+                                                               2
+稳定的影响。文中将转子侧换流器处理为可控电压
+                                                   式中：P 代表风力机的输出功率；ρ 代表空气密度；
+源，并且假设直流母线电压恒定，网侧换流器采用
+                                                   R 代表叶片半径；Cp 代表风能利用效率系数；Vwind
+电流源模拟。
+                                                   代表风速。效率系数 Cp 是表征风力机运行效率的
+      文献[11]为了提高计算速度，方便与机电暂态
+                                                   重要参数，它与风速、风轮转速、风轮半径、浆距
+程序接口，对双馈风机模型做了大幅简化，忽略转
+                                                   角均有关系，是一个非常复杂的非线性函数。
+子和换流器动态过程。文献[12]认为在电网故障情
+                                                   1.2.2     传动系统的数学模型
+况下，应该计及类似于同步发电机的次暂态电抗，
+                                                           轴系传动系统由旋转部分、齿轮箱和轴系组
+使用双鼠笼模拟转子回路。文献[13]认为，双馈风
+                                                   成。惯量主要是风力机风轮和发电机转子质量块，
+力发电机模型采用降阶模型时，在无故障情况下可
+                                                   齿轮箱的齿轮只占很小一部分，可以忽略齿轮惯
+以很好地反映 DFIG 的动态响应。文献[14]提出恒
+                                                   性，只考虑变比。选用双质量块模型进行模拟，建
+速风力机应该使用完整的暂态模型，不应忽略定子
+                                                   模时采用标幺值系统，低速旋转的风轮和发电机转
+暂态过程。对于双馈风力发电机，发电机模型的选
+                                                   子转速基准值的比值选取为齿轮箱变比，其数学模
+择会影响到定子电流，可能会导致暂态期间保护系
+                                                   型为
+统误动作。
+                                                                  ⎧ dωt Tt − Tshaft
+                                                                  ⎪ dt = 2 H
+        本文从双馈风力发电机建模仿真的现状和实
+际 需 求 出 发 ， 借 助 PSD-PSModel(power system                          ⎪               t
+
+                                                                  ⎪ dωg Tshaft − Te
+department-power system model)电磁暂态-机电暂                            ⎪       =
+态混合仿真平台，对风力发电机组开展电磁暂态-                                            ⎨ dt         2H g                                  (2)
+                                                                  ⎪
+机电暂态混合仿真研究，为今后深化研究风电机组                                            ⎪Tshaft = Kdamping (ωr − ωg ) + Kstiffnessθ k
+                                                                  ⎪ dθ k
+对电网影响提供有力的技术支持。                                                   ⎪       = ωr − ωg
+                                                                  ⎩ dt
+1 双馈风力发电机组的电磁暂态建模                                  式中： ω t 代表风力机风轮转速； t 代表时间； Tt
+1.1     双馈风力发电机组的基本结构                              代表风力机输出的机械转矩； Tshaft 代表轴转矩；
+        双馈型风力发电系统结构如图 1 所示，主要包                     Ht 代表风力机惯性时间常数； ω g 代表发电机转
+括风力机模型、轴系传动系统模型、双馈感应发电                             子转速； Te 代表发电机电磁转矩； Hg 代表发电
+机模型及换流器模型 4 部分和控制系统。由于时间                           机惯性时间常数； Kdamping 代表阻尼系数； ω r 代
+常数不同，控制系统采用分层控制，包括风力机的                             表轴转速； Kstiffness 代表轴的刚性系数； θ k 代表
+控制系统和双馈发电机的控制系统。                                   轴扭转的角度。
+1.2     风力机与传动系统的数学模型                              1.3     风力机的控制系统模型
+1.2.1    风力机的数学模型                                  1.3.1 浆距角控制系统
+      根据空气动力学原理，风机从风能中捕获的能                                浆距角控制系统的作用是在风速过大时，增大
+第 39 卷 第 3 期                                         电   网   技   术                                                   617
+
+浆距角，减小效率系数 Cp，从而减少风力机输入的                                     枢侧和励磁侧磁链矩阵；ω为转子旋转的电角速度；
+机械功率，使其在额定范围内运行。而在额定功率                                           ⎡0 0 0 ⎤
+以下运行时，使浆距角保持在最小，以便最大程度                                       N = ⎢0 0 − 1⎥ 。
+                                                                 ⎢        ⎥
+地利用风能，如图 2 所示。                                                   ⎣⎢0 1 0 ⎥⎦
+                                                                     此表达式为微分形式的电路方程，求解时需要
+                                                             进行离散化，在实现 PSD-PSModel 时采用梯形法进
+                                                             行离散化。
+                                                             1.4.2 双馈感应电机模型与网络的接口
+                                                                     双馈感应电机的模型是在 dq0 坐标系下描述
+                                                             和求解的，而外部网络采用的则是 ABC 相域描述，
+                 图 2 浆距角控制系统                                 因 此必须采用 某种方式与 外部网络进 行接口 。
+           Fig. 2 Pitch angle control system
+                                                             PSD-PSModel 中的实现思路是根据外部网络的戴
+1.3.2 转速控制系统
+                                                             维南等值电路得到端口电压，然后计算注入电流
+      转速控制系统的作用是在不同风速下，都能使
+                                                             与外部网络进行迭代求解。电机开路时为了保证
+发电机运行在最佳转速，完成最大风能追踪，如图
+                                                             计算稳定性，需要采用更小的计算步长。为了消
+3 所示。
+                                                             除这方面的影响，在定子三相端口处并联大电阻，
+                                                             使用额外的补偿电流来消除计算误差[15-16]。这时，
+                                                             在正常计算的情况下，电机对于系统的注入电流
+                                                             并没有改变，而在电机开路时又可以保证数值稳
+                                                             定性。
+                  图 3 转速控制器框图                                1.5     双馈风电机组数学模型及其控制系统模型
+       Fig. 3    Block diagram of speed controller
+                                                             1.5.1 转子侧换流器控制系统
+1.4   双馈感应电机模型的实现                                                    为了方便控制发电机转速，使其运行在最佳转
+1.4.1 双馈感应电机数学模型                                             速上实现最大功率追踪，采用转矩电流双闭环控制
+      根据研究目的以及精确度不同，旋转电机模型                                   系统实现双馈电机的控制，转矩控制外环，电流控
+可以分为 3 类：有限元模型、等效磁路模型和耦合                                     制内环。对于无功功率的控制，采用无功功率外环、
+电路模型。前两者能够提供更好的计算精度，但是                                       电流内环的控制方式，如图 4 所示。
+效率较低，主要应用于电机设计；耦合电路模型在
+电力系统仿真分析中得到了广泛应用，此类模型还
+分为基于 qd0 变换的模型、相域模型以及阻抗后的
+电压源模型(voltage-behind-reactance，VBR)。其中
+基于 qd0 坐标变换的模型最为成熟可靠，主流的电
+磁暂态仿真程序(如 PSCAD/EMTDC)采用的都是这
+种模型。
+      电力工业涉及到很多不同种类的电机，为了增                                                     图 4 转子侧换流器控制系统
+强程序的实用性和灵活性，本文建立了通用电机模                                                Fig. 4   Rotor-side converter control system
+
+型。选择基于转子转速旋转的 dq 坐标系，电枢侧                                     1.5.2 网侧换流器控制系统
+和励磁侧的电压和电流满足等式                       [15]                            网侧换流器的控制目标是保持直流母线电压
+                ⎧              dλP                           稳定，调整电网和直流母线间的功率流动，保持
+                ⎪⎪VP = − RPiP − dt + ω N λP                  单位功率因数运行。一般对于网侧换流器采用直
+                 ⎨                                   (3)
+                 ⎪V = − R i − dλE                            流母线电压外环、交流侧电流内环的双闭环控制
+                 ⎪⎩ E     E E
+                                dt                           系统，如图 5 所示。直流母线电压作为外环控制
+式中：VP 和 VE 分别代表电枢侧和励磁侧电压；RP                                  目标，电压控制器的输出作为电流内环的整定，
+和 RE 分别代表电枢侧和励磁侧回路电阻；iP 和 iE                                 电流控制器控制交流侧电流，使之快速跟踪电流
+分别代表电枢侧和励磁侧电流；λP 和λE 分别代表电                                   指令。
+618                       顾卓远等：双馈风力发电机组的电磁暂态−机电暂态混合仿真研究                                      Vol. 39 No. 3
+
+                                                      合仿真，首先是对双馈风机进行电磁暂态建模、
+                                                      控制系统通过自定义的方式实现，根据研究目的
+                                                      对空气动力学部分和机械部分的动态过程进行不
+                                                      同程度的简化，完全能够满足大电网机电暂态稳
+                                                      定计算对风力发电系统精确仿真研究的需求。在
+                                                      此平台上，可以深入开展风力发电系统不同程度的
+              图 5 网侧换流器控制系统
+                                                      简化对系统暂态稳定性影响的研究，对于开展风力
+       Fig. 5 Grid-side converter control system      发电机组仿真的深化研究具有重要的意义和应用
+                                                      价值。
+2 双馈风机电磁暂态-机电暂态混合仿真
+2.1   PSD-PSModel 电磁暂态-机电暂态混合仿真
+                                                      3 算例
+程序                                                        采用 IEEE14 节点系统算例进行仿真研究，见
+      随着区域电网互联的形成，我国电网的规模越                            图 6，该系统有 5 台发电机，发电机 1 为平衡机，
+来越大，很难再孤立地考虑局部电网的安全问题。                                母线 3、6、8 连接同步调相机，系统共 14 个节点，
+实际上，电网中任何一个局部条件的变化都可能引                                15 条支路。系统中所有发电机均采用详细的次暂态
+起整体行为的改变。同时，大功率电力电子元件，                                参数模型并考虑励磁控制系统，所有机组均未安装
+如 直 流 输 电 、 静 止 无 功 补 充 装 置 (static var               PSS(power system stabilizer) 。利用 PSD-PSModel
+compensator，SVC)、可控串补(thyristor controlled            电磁暂态-机电暂态混合仿真程序作为仿真工具。
+series compensation，TCSC)和各种快速自动控制装                   节点 2 为双馈风力发电机，其有功出力为 36 MW，
+置的广泛应用，也使得电网的动态特性日趋复杂。                                由于所搭建的双馈风力发电机的额定有功功率为
+      然而，在现有的基于基波相量分析的机电暂                             1.5 MW，在这里假设 24 台 DFIG 处于同一个运行
+态和长过程分析软件中，对于柔性交流输电系统                                 点上，外部条件相同，将 24 台风机等值为一台机
+(flexible alternative current transmission systems，   后接入系统。
+FACTS)等电力电子设备的仿真，均采用准稳态模
+型模拟，对其快速暂态特性和非线性元件引起的
+波形畸变均不能反映；而基于 ABC 三相瞬时值的
+电磁暂态分析软件，系统所有元件动态特性均采
+用微分方程描述，计算步长小、计算量大，仿真
+规模受到限制，往往需要通过对交流系统大规模
+等值才能完成，大大影响了系统分析的准确性和
+可靠性。
+      因此，将电磁暂态仿真和机电暂态仿真进行接
+口，完成电磁暂态、机电暂态的混合仿真，在一次
+仿真过程中实现对大规模电力系统的机电暂态仿                                            图 6 IEEE14 节点系统结构图
+真和局部网络的电磁暂态仿真，对研究大规模电力                                      Fig. 6 Grid structure of IEEE14 system
+系统的暂态稳定特性具有很强的工程实用价值和                                     第 1 种情况为系统处于稳态，在 1 s 时刻，母
+理论意义。                                                 线 4 与母线 5 之间支路发生三相接地对称短路故障，
+      PSD-PSModel 电磁暂态-机电暂态混合仿真程                      0.1 s 后切除，仿真结果如图 7 所示。
+序是中国电力科学研究院在国家科技部和国家电                                     图 7(a)(b) 分别为发电机和同步调相机的端电
+网公司科技项目的资助下，独立研制开发的具有全                                压曲线。图 7(c)所示为 DFIG 在故障期间的有功出
+部自主知识产权的电磁暂态仿真软件，具备与机电                                力变化曲线，可以看到扰动结束后大约 3 s，DFIG
+暂态仿真的各种不同类型接口，可以与机电暂态程                                的有功出力达到平稳状态。从图 7(d)可以看出，无
+序联立运行，实现混合仿真研究。                                       功出力除了在扰动时刻比较剧烈外，能很快按照控
+2.2   双馈风力发电机组混合仿真的意义                                 制策略达到平稳状态，因此可以看出解耦控制是有
+      双馈风力发电机组的电磁暂态-机电暂态混                             效的。
+第 39 卷 第 3 期                                        电   网   技   术                                                  619
+
+
+
+
+            图 7 第 1 种情况仿真结果曲线                                              图 8 第 2 种情况仿真结果曲线
+      Fig. 7 Curve of simulation result in case 1                    Fig. 8 Curve of simulation result in case 2
+    由于涉及到机械系统且惯性时间常数较大，转                                    真结果。
+子需要相对较长的时间恢复到初始稳态。暂态期间                                              综上，通过混合仿真，可以清楚地得到风机内
+转速发生变化，为了保护机械系统，风力机控制系                                      部的动态响应。由于 DFIG 属于交流励磁的同步发
+统将开始动作，通过调节浆距角来防止转子转速过                                      电机，对于电网暂态稳定性的影响直接取决于其控
+快变化，整个过程如图 7(e)(f)所示。                                       制系统的结构、响应速度和内部的限幅环节。随着
+    从图 7(h)(j)中可以清晰地看到，在暂态过程中                               风电接入系统比例的逐渐扩大，其对电力系统运行
+双馈电机的转子电流和直流电容电压受到了很大                                       带来的影响值得深入分析。
+冲击，是引起保护动作的主要原因。混合仿真可以
+                                                            4 结论
+提供暂态期间更多的变量信息，为详细分析双馈机
+组响应提供了技术手段。                                                         本文主要研究了双馈风力发电机的电磁暂态
+    下面分析非对称故障，即第 2 种情况为系统处                                  模型，并利用自主研发程序 PSD-PSModel 进行了双
+于稳态，在 1 s 时刻，母线 4 与 5 之间支路发生单                               馈风电机组的电磁暂态-机电暂态混合仿真研究。
+相接地短路故障，0.1 s 后切除，图 8 为各变量的仿                                利用外网的戴维南等值电路进行 DFIG 的电磁暂态
+620                                 顾卓远等：双馈风力发电机组的电磁暂态−机电暂态混合仿真研究                                                                      Vol. 39 No. 3
+
+计算，并得到对系统的注入电流，同时外网利用                                                               and dynamic simulation[J]．Power System Technology，2005，29(12)：
+                                                                                    27-32(in Chinese)．
+DFIG 的注入电流进行全网的机电暂态计算。采用
+                                                                              [8]   许寅，陈颖，梅生伟．风力发电机组暂态仿真模型[J]．电力系统
+单台机等值模拟风电场的方法实现了双馈风力发                                                               自动化，2011，35(9)：100-107．
+
+电机群的电磁暂态-机电暂态混合仿真，最后利用                                                              Xu Yin，Chen Ying，Mei Shengwei．Review on wind turbine models
+                                                                                    for power system transient simulations[J]．Automation of Electric
+IEEE14 节点系统进行了混合仿真研究。                                                               Power Systems，2011，35(9)：100-107 (in Chinese)．
+       双馈风力发电机的机电暂态简化模型与电磁                                                    [9]   Slootweg J G，Polinder H，Kling W L．Dynamic modelling of a wind
+                                                                                    turbine with doubly fed induction generator[C]//Proceedings of IEEE
+暂态模型有不同的响应，目前还没有量化研究来分
+                                                                                    Power Engineering Society Summer Meeting．Van Couver：IEEE，
+析两种模型对电力系统影响的差异性，这将是下一                                                              2001：644-649．
+步研究工作的重点。                                                                     [10] Ekanayake J B，Holdsworth L，Wu X G，et al．Dynamic modeling
+                                                                                    of doubly fed induction generator wind turbines[J]．IEEE Trans on
+参考文献                                                                                Power Systems，2003，18(2)：803-809．
+                                                                              [11] Ledesma P，Usaola J．Doubly fed induction generator model for
+[1]   Sun Yuanzhang，Lin Jin，Li Guojie，et al．A survey on the grid
+                                                                                    transient stability analysis[J] ． IEEE Trans on Power Energy
+      integration of wind farms with variable speed wind plant systems[J]．
+                                                                                    Conversion，2005，20(2)：388-397．
+      Automation of Electric Power Systems，2010，34(3)：75-80．
+                                                                              [12] Kalsi S S，Stephen D D，Adkins B．Calculation of system fault
+[2]   于强，孙华东，汤涌，等．双馈风电机组接入对电力系统功角稳
+                                                                                    currents due to induction motors[J]．Proceedings of the Institution of
+      定性的影响[J]．电网技术，2013，37(12)：3399-3405．
+                                                                                    Electrical Engineers，1971，118(1)：201-215．
+      Yu Qiang，Sun Huadong，Tang Yong，et al．Impact on angle stability
+                                                                              [13] Sørensen P，Hansen A D，Lund T，et al．Reduced models of doubly
+      of power system with doubly fed induction g

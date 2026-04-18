@@ -1,0 +1,195 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024                                                                                        921
+
+
+
+
+            Electromechanical Transient Modeling of the
+             Low-Frequency AC System With Modular
+                Multilevel Matrix Converter Stations
+                        Zheyang Yu , Zheren Zhang , Member, IEEE, and Zheng Xu , Fellow, IEEE
+
+
+   Abstract—This paper studies the electromechanical transient                   stability rather than the thermal stability of the transmission line,
+modeling of a low-frequency AC (LFAC) system with modular                        which influences the cost of the HVAC scheme for long-distance
+multilevel matrix converter (M3C) stations. Firstly, the mathemat-               power transmission. The above problems can be avoided if the
+ical model of the M3C and its equivalent circuits are established.
+Then, an iterative power flow calculation algorithm for AC systems               HVDC scheme is adopted, and the maximal transmission power
+integrated with the M3C-LFAC system is developed. The dynamic                    of the HVDC transmission system is determined by the ther-
+model of the M3C for electromechanical transient simulation is                   mal stability of the transmission line [2]. Although the HVDC
+studied and implemented in PSS/E. Based on a test system consist-                converter stations are costly, the HVDC scheme has economic
+ing of two asynchronous AC systems with an embedded M3C-LFAC
+                                                                                 benefits in long-distance power transmission. However, for
+system, comparisons between the electromechanical transient sim-
+ulation results from PSS/E and the electromagnetic transient simu-               multi-terminal HVDC systems or HVDC grids, the DC circuit
+lation results from PSCAD are conducted. The results from PSS/E                  breakers are needed, which are very costly and not technically
+and PSCAD coincide with each other well, and the validity of the                 mature.
+established electromechanical transient model is proved. Lastly, a                  The LFAC scheme is a compromise between the HVDC
+stability study of a modified New England 39-bus system with an
+                                                                                 scheme and the conventional HVAC scheme. Compared to the
+embedded M3C-LFAC system is executed, and the characteristics
+of the M3C-LFAC system are presented.                                            conventional HVAC scheme, the transmission capacity and an-
+                                                                                 gle stability can be improved in the LFAC scheme due to the
+   Index Terms—Electromechanical transient modeling, power                       lower operation frequency [1], [3]. Compared to the HVDC
+flow calculation, power system stability, modular multilevel matrix
+converter, low-frequency AC.                                                     scheme, the LFAC scheme has the advantages such as the
+                                                                                 convenience for multi-terminal connection, the low-cost and
+                                                                                 high-maturity AC circuit breakers. Thus, the LFAC scheme is
+                           I. INTRODUCTION                                       a competitive scheme in some practical engineering scenarios,
+    N THE modern electrical power system, high voltage AC                        especially in long-distance bulk power transmission and offshore
+I   (HVAC) and high voltage DC (HVDC) are two major options
+for power transmission. Due to the convenience and the eco-
+                                                                                 wind farm integration [4].
+                                                                                    It should be noted that all electric equipment operating in
+nomic efficiency in system extension, the backbone networks                      LFAC systems need to be redesigned according to the operating
+of the regional power systems are mostly formed by HVAC.                         frequency [5]. In addition, frequency converters are needed for
+In the history of power transmission, many frequencies were                      connecting AC systems of different frequencies. In the early
+used. However, keeping synchronous is required for all electric                  LFAC scheme, the operation frequency is selected as 1/3 of the
+equipment connected in one AC system. Since the rated fre-                       power frequency (16.7/20 Hz) for the employment of cyclo-
+quency is an important parameter in electric devices design, a                   converter as the AC/AC converter [3]. However, the optimal
+unified frequency is convenient both for system operator and                     operating frequency for the LFAC system is not always 1/3
+equipment manufacturer. Up till now, most AC systems are                         of the power frequency [6], [7]. Thus, AC/AC converters that
+operated in 50 Hz or 60 Hz. However, the HVAC transmission                       can realize flexible frequency control of the LFAC system are
+capacity is limited by the angle stability or the capacitive current             required.
+for overhead line transmission or submarine cable transmission                      Because of the operation flexibility and the design scalability,
+[1]. The maximal transmission power is limited by the angle                      the modular multilevel cascaded converter (MMCC) has been
+                                                                                 wildly used in power systems [8]. Classified from the circuit con-
+   Manuscript received 16 June 2022; revised 17 October 2022 and 7 January
+                                                                                 figuration, the single-star bridges cells (SSBC), the double-star
+2023; accepted 9 January 2023. Date of publication 13 January 2023; date of      bridge cells (DSBC) and the triple-star bridge cells (TSBC) can
+current version 26 December 2023. Paper no. TPWRS-00884-2022. (Corre-            realize a three-port, five-port and nine-port circuits, respectively
+sponding author: Zheren Zhang.)
+   The authors are with the College of Electrical Engineering, Zhejiang Uni-
+                                                                                 [9]. In the power grid application, STATCOM, back to back
+versity, Hangzhou 310027, China (e-mail: 906267954@qq.com; 3071001296-           HVDC (BTB HVDC) and M3C can be realized by SSBC, DSBC
+zhang@zju.edu.cn; xuzheng007@zju.edu.cn).                                        and TSBC correspondingly. Power grid applications such as
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2023.3236819.
+                                                                                 STATCOM and BTB-HVDC have been employed extensively
+   Digital Object Identifier 10.1109/TPWRS.2023.3236819                          [10], [11], [12], [13], [14].
+                        0885-8950 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:45:49 UTC from IEEE Xplore. Restrictions apply.
+922                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+   Up till now, the application of the M3C in the transmission
+grid is limited. The M3C can operate as a frequency converter
+which realizes a direct AC/AC conversion. The AC systems
+operating in different frequencies can be interconnected by the
+M3C. Based on the fully controllable devices, the M3C can
+realize voltage support control and active power control, and the
+M3C is able to support the system frequency when operating in
+the grid-forming mode. Thus, the M3C is a competitive choice
+for the LFAC system. In China, the 35 kV Taizhou offshore
+wind power integration demonstrative M3C-LFAC project has
+just been commissioned, and the 220 kV/300 MW Hangzhou
+demonstrative M3C-LFAC project is under construction [15]. It                   Fig. 1.   Structure of the M3C system.
+can be foreseen that the M3C-LFAC will play an important role
+in the future power grid.
+   The operation characteristics and the control strategy of the                   The main contributions of the paper are: (1) the power flow
+M3C itself have been widely discussed in [16], [17], [18], [19],                calculation method for the power frequency AC system with em-
+[20], [21], [22], most of which are based on electromagnetic                    bedded M3C-LFAC systems; (2) the dynamic model of the M3C
+transient simulation. The researches on the converter topology,                 suitable for electromechanical transient simulation. The pro-
+the control scheme and the fault ride-through capability have                   posed power flow calculation method can be applied for general
+shown the application possibility of the M3C-LFAC in power                      power frequency AC/LFAC hybrid systems; and the established
+systems. The aim of the electromagnetic transient simulation                    M3C electromechanical transient model can be applied to any
+is to reproduce the precise time-domain waveform of state                       LFAC systems with different network topologies and different
+variables at any location in the system [23]. The power system is               M3C operation modes. The electromechanical dynamic model
+modeled at the circuit level in phase domain, and the switchable                of M3C with virtual synchronous generator (VSG) control and
+elements such as IGBTs and diodes in each submodule of the                      its simulation results in decentralized control is useful for the
+M3C are treated as a two-state resistive device [24]. The nodal                 system study of power electronic converters working as VSG.
+analysis method is adopted for the electromagnetic transient                       This paper is organized as follows. In Section II, the basic
+simulation [25]. The nodal admittance matrix which changes                      theory about the M3C is described. In Section III, a power flow
+with time will increase the simulation time greatly.                            calculation method for hybrid systems with embedded M3C-
+   In the electromechanical transient simulation, the electrical                LFAC systems is presented. Section IV establishes the M3C
+quantities of the AC network are represented by the positive                    electromechanical transient model. In Section V, the validity
+sequence fundamental-frequency phasors. The interconnecting                     of the proposed model is checked by the comparison with the
+transmission network is described as algebraic network equation                 electromagnetic transient results in PSCAD. In Section VI a
+[26]. The algebraic equation will not change if no fault and                    stability study of a modified New England 39-bus system is
+manipulation occur on the power system, and the time step                       implemented. Conclusions are drawn in Section VII.
+is chosen as a large value (typically 10 ms) irrespective of
+electromagnetic response. Thus, fast simulation speed can be                                                II. BASIC THEORY
+achieved in the electromechanical transient simulation.
+   In the planning stage of practical projects, the steady state                A. Topology of M3C
+and transient stability analysis are necessary for the feasibility                 The structure of the M3C is shown in Fig. 1, where two AC
+studies [8], [27], [28], [29], [30]. These studies can be completed             systems are connected to an M3C. V represents the M3C input
+by commercial electromechanical simulation software such as                     side; uV M and iV M (M = A, B, C) are the M3C valve side
+PSS/E, PSLF and PowerWorld. These commercial tools have                         voltage and current on the input side, respectively. Likely, v
+extensive simulation models such as flexible AC transmission                    represents the M3C output side; uvm and ivm (m = a, b, c) are
+systems (FACTS) and HVDC systems. Normally, the variable                        the M3C valve side voltage and current on the output side. The
+impedance model is used to represent the FACTS devices such as                  converter transformer is used to connect the point of common
+the static VAR compensator (SVC) and the thyristor controlled                   coupling (PCC, also the M3C AC bus) to the M3C valve side. The
+series compensator (TCSC); a simplified steady-state model is                   M3C consists of 9 arms, each of which has an inductance L0 , an
+used to simulate the HVDC converters with thyristors [31];                      equivalent resistance R0 and N cascaded full-bridge submodules
+some injecting current models are used to simulate the voltage                  (SMs).
+source converters (VSC) [32], [33]. With the user defined model                    For a clear presentation, subscripts ABC represent the input
+function, the users can define the simulation model according to                side of the M3C, and superscripts abc represent the output side
+their purposes.                                                                 of the M3C. αβ0 and dq0 represent the variables in the αβ0
+   However, up till now, there is no standard M3C model in                      and the dq0 coordinate frame. urj and irj (j = A, B, C; r = a, b,
+commercial electromechanical transient simulation software as                   c) are the voltage and the current of cascaded SMs in the arm,
+far as the authors know. Based on the user defined model                        respectively.
+function in PSS/E, this paper will develop an electromechanical                    Based on the Kirchhoff’s voltage law (KVL), the following
+simulation model for the M3C-LFAC system.                                       equations can be derived from the arm circuits of the M3C.
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:45:49 UTC from IEEE Xplore. Restrictions apply.
+YU et al.: ELECTROMECHANICAL TRANSIENT MODELING OF THE LFAC SYSTEM                                                                                      923
+
+
+
+Matrix form is adopted for simplicity:
+       ⎡a b           ⎤       ⎡a b            ⎤ ⎡ a                 ⎤
+         i    i    ic          iA iA icA             uA ubA ucA
+    d ⎣ aA bA cA ⎦
+L0       i    iB iB + R0 ⎣iaB ibB icB ⎦ + ⎣uaB ubB ucB ⎦
+    dt B
+         iC ibC icC
+           a
+                               iaC ibC icC           uaC ubC ucC
+   ⎡                    ⎤ ⎡                  ⎤ ⎡                  ⎤
+    uV A uV A uV A          uva uvb uvc          uoo uoo uoo
+=⎣uV B uV B uV B⎦−⎣uva uvb uvc⎦+⎣uoo uoo uoo⎦.
+                                                                      Fig. 2. M3C AC side equivalent circuit on input side.
+    uV C uV C uV C          uva uvb uvc          uoo uoo uoo
+                                                                 (1)
+                                                                      needs to be described under the form of the positive sequence
+where uoo is the voltage between the neural point of the con- phasors.
+verter transformer valve side on the input side and on the output        For the input side of the M3C, we can obtain (6) based on the
+side.                                                                 relationship between the valve side current and arm current of
+   A so-called double αβ0 transformation [34], [35] is used to the M3C in the αβ0 reference frame:
+simplify and decouple (1), which is given by (2):
+                                                                                          i0α = √13 (iaα + ibα + icα ) = i√V 3α
+       TD−αβ (M 3×3 ) = T abc−αβ0 (M 3×3 )T tabc−αβ0 (2)                                                                                      (6)
+                                                                                          i0β = √13 (iaβ + ibβ + icβ ) = √V 3β
+                                                                                                                          i
+
+where T abc−αβ0 is the transformation matrix from the abc
+                                                                                                                                 √
+reference frame to the αβ0 reference frame, and is defined as in where ir = 2 (ir − 1 ir − 1 ir ) and ir = 2 (ir − ir ),
+       t                                                                         α        3    A      2 B      2 C        β       2     B     C
+(3); T abc−αβ0 is the transpose of T abc−αβ0 .
+                                                                      (r = a, b, c).
+                                  ⎡                   ⎤
+                                   1 − 12 − 12                          Therefore, substituting (6) into (5), the M3C input side equa-
+                               2⎢         √       √
+                                            3       3⎥                tions can be rewritten as:
+              T abc−αβ0 =         ⎣0       2    − 2 ⎦            (3)                              
+                               3 1                                                    d                         √ u0
+                                    √     √1     √1                                                   iV α                        u
+                                      2     2      2                               L0     +  R  0            + 3 α        = 3 Vα              (7)
+                                                                                      dt              iV β           u0β          uV β
+   By applying double αβ0 transformation to each 3 × 3 matrix
+in (1), (4) is obtained and it can be divided into four parts:           Considering the converter transformer, the relationship be-
+the input side equations, the output side equations, the circu-       tween    the M3C valve side voltage and the PCC voltage on the
+lating current equations and the zero sequence equations. The         input   side can be derived as (8) in the αβ0 reference frame:
+circulating current only flows among the 9 arms in the M3C;                                  d iV α           u          u
+the zero sequence components in the M3C are always isolated                           LtIn               + V α = sInα                         (8)
+                                                                                             dt iV β          uV β       usInβ
+by the converter transformer. Therefore, the circulating current
+equations and the zero sequence equations do not influence where LtIn is the leakage reactance of the converter transformer
+the interaction between the connected AC systems and the on the input side.
+M3C, which are omitted in the M3C electromechanical transient            Therefore, the M3C and its connected AC system on the input
+model. The concerned equations in the M3C electromechanical           side  can be described as (9):
+transient model can be written as (5).                                                     d               iV α      √ u0α              u
+        ⎡α β 0 ⎤              ⎡α β 0 ⎤ ⎡ α                        ⎤      (L  0 +  3L tIn )     +  R 0 

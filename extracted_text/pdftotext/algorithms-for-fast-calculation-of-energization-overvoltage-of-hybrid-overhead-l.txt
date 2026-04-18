@@ -1,0 +1,201 @@
+                                                                 Electric Power Systems Research 225 (2023) 109875
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Algorithms for fast calculation of energization overvoltage of hybrid
+overhead line-cable transmission lines based on full
+frequency-dependent parameters
+Borui Gu a, Han Li a, Shurong Li a, Xiaoguang Zhu a, Xuefeng Zhao b, Junbo Deng a, *,
+Guanjun Zhang a
+a
+    State Key Laboratory of Electrical Insulation and Power Equipment, Xi’an Jiaotong University, Xi’an, 710049, China
+b
+    Electric Power Research Institute of State Grid Shaanxi Electric Power Company, Xi’an, 710054, China
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    This paper addresses the challenges associated with the time-consuming and complex nature of using electro­
+Cable                                                        magnetic transient (EMT) simulation software, such as PSCAD/EMTDC, for calculating transient overvoltages in
+Overhead line                                                complex power grids. To overcome these challenges, we propose a novel algorithm for fast calculation of
+Energization overvoltages
+                                                             energization overvoltages in hybrid overhead and cable transmission lines. The proposed algorithm begins by
+Modal theory
+                                                             calculating the frequency-dependent parameters of the transmission lines in the full frequency domain. These
+Numerical inverse Laplace transform
+Full frequency-dependent parameters                          parameters are then decoupled using phase-mode transformation. Subsequently, the algorithm derives the
+                                                             boundary conditions of the transmission line based on its topology, leading to corresponding complex frequency-
+                                                             domain voltage expressions. To obtain the calculation results of energization overvoltages along the hybrid
+                                                             transmission lines, the algorithm applies mode-phase transformation and an improved numerical inverse Laplace
+                                                             transform (NILT). To verify the accuracy and speed of the proposed algorithm, it is applied to a 330 kV hybrid
+                                                             overhead line and cable transmission system with a length of 56.8 km. The results demonstrate that the proposed
+                                                             algorithm achieves a maximum relative error of less than 0.261 % compared to the frequency-dependent phase
+                                                             model (FDPM) used in PSCAD. Additionally, the calculation time of the proposed algorithm is shown to be only
+                                                             32.654 % – 58.649 % of the FDPM’s calculation time.
+
+
+
+
+1. Introduction                                                                                    distributed parameter models [3]. The lumped parameter model, such as
+                                                                                                   the π model, is commonly used in power frequency steady-state studies
+   Overhead lines (OHLs) have been partially or completely replaced by                             but is limited for transient analysis as it does not consider wave prop­
+underground cables in urban areas due to increasing land costs [1].                                agation      [4].     Distributed      parameter      models     include
+However, the combination of OHLs and underground cables in hybrid                                  frequency-independent and frequency-dependent models. The
+transmission lines introduces differences in transient overvoltage                                 frequency-independent model, like the Bergeron model, offers more
+behavior, particularly for no-load energization overvoltages, which can                            accurate power loss approximation compared to the π model by incor­
+have a significant impact on insulation levels. In addition, the transient                         porating distributed parameters and lumped parameter resistance [5].
+overvoltage simulation of hybrid cable and overhead transmission sys­                              Frequency-dependent models, such as the J. Marti model, Noda model,
+tems using electromagnetic transient (EMT) simulation software is                                  and FDPM (frequency-dependent phase model), consider the
+time-consuming, which may significantly reduce the efficiency of en­                               frequency-dependent characteristics of transmission line parameters.
+gineering and research work [2]. Therefore, accurate and efficient                                 The J. Marti model, based on modal theory, utilizes rational function
+calculation and calibration of no-load energization overvoltages are                               approximation and implicit integration for time-domain response
+crucial for hybrid OHL and cable transmission lines.                                               calculation. However, it can lead to calculation errors for coaxial cable
+   Existing EMT models for calculating no-load energization over­                                  lines and requires user-specified calculation frequency, introducing
+voltages can be categorized into lumped parameter models and                                       potential errors [6]. The Noda model is considered the most rigorous
+
+
+    * Corresponding author.
+      E-mail address: dengjb@mail.xjtu.edu.cn (J. Deng).
+
+https://doi.org/10.1016/j.epsr.2023.109875
+Received 28 May 2023; Received in revised form 22 August 2023; Accepted 24 September 2023
+Available online 30 September 2023
+0378-7796/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+B. Gu et al.                                                                                                         Electric Power Systems Research 225 (2023) 109875
+
+
+
+
+                                            Fig. 1. Diagram of the equivalent circuit of mode domain circuit.
+
+
+frequency-dependent model but suffers from a large number of full               Additionally, the proposed algorithm simplifies the modeling process of
+matrices, reducing computational speed, and convergence issues in               the transmission system, resulting in improved modeling efficiency for
+certain cases [7]. FDPM, recognized as the highly precise, advanced, and        complex transmission systems.
+extensively employed EMT calculation model in existing software                     The structure of the paper is as follows: Section 2 provides a detailed
+worldwide, is founded on the fundamental transmission line model                explanation of the theoretical foundation and specific details of the
+theory [8]. In contrast to other models, FDPM uniquely incorporates the         proposed algorithm. Section 3 presents the establishment of a power
+propagation coefficient and characteristic impedance to represent               system model based on a 330 kV hybrid transmission system located in
+transmission lines, recognizing their frequency-dependent nature. By            Northwest China. In Section 4, the performance of the algorithm is
+calculating discrete values of these parameters in the frequency domain,        compared and analyzed in terms of calculation accuracy and computa­
+FDPM effectively obtains time domain results through the utilization of         tional speed. Finally, Section 5 presents the conclusions drawn from the
+rational function approximation and convolution methods [9].                    study.
+    Additionally, researchers have proposed novel EMT models for OHLs
+and cables. I. Kocar et al. developed a precise frequency-dependent             2. Calculation of energization overvoltages of hybrid OHL and
+model based on the traveling-wave method, focusing on accurate deri­            cable transmission lines
+vation of the propagation function in the mode domain [10]. Li et al.
+proposed a calculation method for determining the dominant frequency            2.1. Modal theory and improved numerical inverse Laplace transform
+of energization overvoltages in pure cables and hybrid transmission
+lines, improving the accuracy of dominant frequency calculation [11].               Telegraph equations are commonly employed to multi-conductor
+Ye et al. introduced a multiscale frequency-dependent model for OHLs,           transmission systems, encompassing both overhead lines and under­
+employing transient frequency adaptivity to enhance computational               ground cables. In the complex frequency domain, these equations can be
+speed and time step in the time domain [12]. Ghazizadeh et al. proposed         expressed as [15]
+an algorithm for calculating energization overvoltages of DC cables and         ⎧ 2
+                                                                                ⎪  d V p (x, s)
+OHLs using lumped parameter transmission lines, considering                     ⎪
+                                                                                ⎪
+                                                                                ⎨               = Zp (s)⋅Y p (s)⋅V p (x, s)
+frequency-dependent characteristics and skin/proximity effects [13].                  dx2
+                                                                                                                                                   (1)
+Han Li et al. proposed a fast algorithm for calculating energization            ⎪   2
+                                                                                ⎪
+                                                                                ⎪ d Ip (x, s) = Y (s)⋅Z (s)⋅I (x, s)
+                                                                                ⎩
+overvoltages of pure cables, calculating frequency-dependent parame­
+                                                                                                   p      p      p
+                                                                                      dx2
+ters at the dominant frequency to improve computational speed [14].
+    Although FDPM and other EMT models exhibit accuracy in calcu­               where Vp(x,s) and Ip(x,s) are the complex frequency-domain and phase-
+lating energization overvoltages, they rely on equivalent circuits,             domain voltage and current vectors of the multi-conductor transmission
+limiting computational efficiency. Shorter transmission lines necessitate       system at position x, respectively, and Zp(s) and Yp(s) are the frequency-
+smaller time steps (Δt), significantly slowing down calculations. Addi­         dependent series impedance and parallel admittance matrices of the
+tionally, existing EMT simulation software, such as PSCAD/EMTDC in­             multi-conductor transmission system, respectively.
+volves complex modeling processes that impede efficiency in theoretical             Zp and Yp are not diagonal matrices because of the electromagnetic
+research and engineering calculations. While some EMT algorithms                coupling between conductors, which makes it difficult to solve the dif­
+proposed by scholars offer computational speed advantages, they are             ferential equations in Eq. (1). To solve this problem, the modal theory
+often limited to simpler transmission line topologies and may not ac­           can be used to transform the phase-domain frequency-dependent pa­
+count for frequency-dependent characteristics or complex hybrid                 rameters of the transmission line into mode-domain frequency-depen­
+transmission lines.                                                             dent parameters [15]. The voltage transformation matrix A and current
+    To address these limitations, this study proposes algorithms for fast       transformation matrix B, as shown in Eq. (2), are utilized to diagonalize
+calculation of energization overvoltages in hybrid OHL and cable                Zp(s)⋅Yp(s) or Yp(s)⋅Zp(s). This decoupling process separates the coupled
+transmission lines based on full frequency-dependent parameters. By             differential equations within the abovementioned system of differential
+eliminating the requirement for the time step (Δt) to be smaller than the       equations, as shown in Eq. (3).
+propagation time (τ) of voltage waves in the transmission lines, the            {
+                                                                                  V p (x, s) = A⋅V m (x, s)
+proposed algorithm significantly improves computational speed                                                                                          (2)
+                                                                                  Ip (x, s) = B⋅Im (x, s)
+compared to existing electromagnetic transient (EMT) models like
+                                                                                ⎧ 2
+FDPM       [14].    Furthermore,     the   algorithm     calculates   the       ⎪ d V m (x, s)
+                                                                                ⎪              = A− 1 ⋅Zp (s)⋅Y p (s)⋅A⋅V m (x, s) = Λ(s)⋅V m (x, s)
+frequency-dependent parameters of the transmission line in the com­             ⎪
+                                                                                ⎨
+                                                                                      dx2
+plete     frequency     domain,    thereby    fully    considering    the                                                                                         (3)
+                                                                                ⎪
+                                                                                ⎪ d2 Im (x, s)
+frequency-dependent characteristics of the transmission line parameters         ⎪
+                                                                                ⎩              = B− 1 ⋅Y p (s)⋅Zp (s)⋅B⋅Im (x, s) = Λ(s)⋅Im (x, s)
+                                                                                      dx2
+and enhancing the accuracy of the energization overvoltage calculation.
+
+
+                                                                            2
+B. Gu et al.                                                                                                                                        Electric Power Systems Research 225 (2023) 109875
+
+
+
+
+                                                     Fig. 2. Workflow of algorithm based on full frequency-dependent parameters.
+
+
+where m indicates that the parameter is in the modal domain. Λ(s) is a                        where s represents an n-dimensional complex frequency vector with its i
+diagonal matrix obtained by the phase-mode transformation of Zp(s)⋅                           th element si shown in Eq. (8), t represents an n-dimensional time vector,
+Yp(s) or Yp(s)⋅Zp(s), as shown in Eq. (5). Each diagonal element in Λ(s)                      F(s) represents the n-dimensional image function to be inverted using
+represents a specific mode-domain circuit, the equivalent circuit of                          the Laplace transform, and f(t) represents the n-dimensional original
+which is shown in Fig. 1.                                                                     function.
+   The relationship between the voltage transformation matrix A and
+                                                                                              si = ci + jωi                                                                                      (8)
+current transformation matrix B is shown in Eq. (4).
+                                                                                                 By substituting Eq. (8) into Eq. (7), as well as applying the rectan­
+A = B− T                                                                            (4)
+                                                                                              gular numerical integration method and n-fold partial inverse Laplace
+                                                                                              transform, Eq. (9) can be obtained as
+Λ(s) = Zm (s)⋅Y m (s) = Y m (s)⋅Zm (s)                                              (5)
+                                                                                                                    ci Nsi Δti   ∑
+                                                                                                                                 ∞
+
+where Zm(s) and Ym(s) represent the per-unit-length mode-domain                               ̃ i− 1 (pi− 1 ) = e
+                                                                                              F                                          ̃ i (pi )ej2πmNsi Δti /τi
+                                                                                                                                         F                                                       (9)
+                                                                                                                      τi
+frequency-dependent series impedance matrix and parallel admittance
+                                                                                                                                 m=− ∞
+
+matrix of the multi-conductor transmission system, respectively, as                           where Nsi represents the number of time sampling points for the i th
+shown in Eq. (6).                                                                             dimension of the Laplace inverse transform, Δti is the time step of the i th
+{                                                                                             dimension of the Laplace inverse transform, and the expression for pi can
+  Zm = A− 1 ⋅Zp ⋅B
+                                                                (6)                           be found in previous research [16].
+  Y m = B− 1 ⋅Y p ⋅A
+                                                                                                 By utilizing the FFT, IFFT, and q-d algorithms to solve Eq. (9), the
+    To transform the complex frequency-domain voltage expression                              results in the time domain can be obtained. When calculating the
+obtained from solving Eq. (3) into the time domain, a numerical inverse                       energization overvoltages of the transmission lines, the value of n in the
+Laplace transform (NILT) algorithm, based on the fast Fourier transform                       above equation was set to 1.
+(FFT), inverse fast Fourier transform (IFFT) algorithm, and the quotient-
+difference (q-d) algorithm, was employed to simplify the calculation
+process and improve computational efficiency [16]. The principle of the                       2.2. Algorithms for fast calculation of the energization overvoltages of
+n-dimensional inverse Laplace inverse transform is expressed by Eq. (7).                      hybrid transmission lines
+
+                                                                                                  The algorithm based on full frequency-dependent parameters con­
+ 

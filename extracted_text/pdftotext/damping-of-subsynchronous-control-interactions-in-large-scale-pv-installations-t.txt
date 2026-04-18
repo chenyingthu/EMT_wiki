@@ -1,0 +1,193 @@
+Received September 7, 2021, accepted September 13, 2021, date of publication September 14, 2021,
+date of current version September 23, 2021.
+Digital Object Identifier 10.1109/ACCESS.2021.3112921
+
+
+
+
+Damping of Subsynchronous Control Interactions
+in Large-Scale PV Installations Through
+Faster-Than-Real-Time Dynamic Emulation
+SHIQI CAO 1 , (Graduate Student Member, IEEE), NING LIN                                               2 , (Member, IEEE),
+
+AND VENKATA DINAVAHI 1 , (Fellow, IEEE)
+1 Electrical and Computer Engineering Department, University of Alberta, Edmonton, AB T6G 2R3, Canada
+2 Powertech Labs Inc., Surrey, BC V3W 7R7, Canada
+
+Corresponding author: Shiqi Cao (sc5@ualberta.ca)
+This work was supported by the Natural Sciences and Engineering Research Council of Canada (NSERC).
+
+
+
+
+  ABSTRACT Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in the integration
+  into transmission and distribution network, manifesting subsynchronous control interaction (SSCI) when the
+  host grid is weak. In this work, the oscillation modes of a typical PV network are analyzed, and a faster-than-
+  real-time (FTRT) emulation is proposed for predicting the SSCI and consequently mitigating its impacts on
+  AC grid by taking the effective active/reactive power control action. The electromagnetic transient (EMT)
+  simulation is utilized to model the PV panels and converter stations to reflect the actual dynamic process.
+  Meanwhile, the AC grid undergoes transient stability (TS) simulation to obtain a high speed up over real-time,
+  and consequently, a power-voltage interface is adopted for the coexistence of different simulation methods.
+  The reconfigurability and parallelism of the field-programmable gate arrays (FPGAs) enable the EMT-TS co-
+  emulation strategy to run concurrently. With a remarkable 122 FTRT ratio, the proposed hardware emulation
+  can provide an effective solution before the SSCI causes serious disruption following its detection. The
+  hardware emulation results are validated by the off-line simulation tool Matlab/Simulink R and TSAT R in
+  the DSAToolsTM suite.
+
+  INDEX TERMS AC/DC grid, dynamic simulation, electromagnetic transient, faster-than-real-time, field-
+  programmable gate arrays, hardware emulation, parallel processing, predictive control, PV generation.
+
+
+I. INTRODUCTION                                                                                subsynchronous control interaction (SSCI) has become
+Due to enhanced environmental standards, worldwide renew-                                      increasingly common [6]. As a phenomenon of resonance
+able energy installation has witnessed a dramatic increase.                                    between a power electronic device and neighboring series
+Less restricted by geographical conditions and higher flex-                                    compensated transmission lines [7], the SSCI is distinct from
+ibility in terms of installation compared with other forms                                     torsional interaction which involves the mechanical system
+of renewable energies, the solar power system is deemed                                        of a synchronous generator [8], and therefore, it may grow
+as one of the most effective solutions to the environmental                                    more rapidly and subsequently present a severe threat to the
+problem and energy crisis [1]–[3]. Although the integration of                                 security and reliability of the overall power system.
+photovoltaic (PV) generation systems eases energy demand                                          First seen in a doubly-fed induction generator (DFIG)
+on the modern power system, their connection to the utility                                    based wind farm in Texas in 2009 [7], tremendous efforts
+network can lead to grid instability or even failure, if the                                   have since been endeavored in mitigating the SSCI in
+converters are not properly controlled [4], [5].                                               wind farms [9]–[11]. However, the inverter-based pho-
+   In a grid with massive inverter-based renewable genera-                                     tovoltaic (PV) station is not exempted from the same
+tions, subsynchronous resonance (SSR) due to                                                   phenomenon and needs investigation. The power generated
+                                                                                               by large-scale PV farms has to be transmitted over a long
+   The associate editor coordinating the review of this manuscript and                         distance since the plants are usually far away from load
+approving it for publication was Alon Kuperman              .                                  centers. Therefore, the PV source in conjunction with the
+
+                     This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+VOLUME 9, 2021                                                                                                                                                        128481
+                                                          S. Cao et al.: Damping of Subsynchronous Control Interactions in Large-Scale PV Installations
+
+
+
+
+transmission links constitutes a weak grid that faces many               be considerably reduced if they are used to inject the
+stability issues, including the SSCI [12]–[16]. Considering              compensation signals only at the concerned subsynchronous
+that in an interactive network, the oscillations between a PV            frequency instead of fundamental [30]. Meanwhile, for the
+converter and the line will soon spread to the AC grid, analysis         commissioned large-scale wind farms, it is sophisticated and
+and mitigation of the PV oscillation become crucial in the               economically unviable to individually implement the control
+transient stability analysis.                                            schemes on the existing converters of diversely located
+   Among prevalent SSR analysis methods, frequency scan-                 hundreds of WTGs that could be of different make and/or
+ning is an approximate linear method that calculates the                 type [31]. It is evident that both the RSC and GSC auxiliary
+equivalent impedance of the whole system seen from the rotor             damping controllers are specifically suitable for wind farms.
+at a specific frequency [17]. Its main drawback is relatively            There is not enough literature to support that supplementary
+low accuracy, albeit little calculation effort is required. Time-        damping controller techniques can be applied to photovoltaic
+domain simulation and eigenvalue analysis are more suitable              power plants. Further, the utilization of FACTS devices or
+for analyzing the SSCI in PV farms [18]. The former method               converter-based damping controllers is not an economical
+takes the linear and nonlinear characteristics of the system             solution to mitigate the SSCI in the real-world.
+into account, and it provides a variety of time-varying curves              SSCI involves the interactions between a weak transmis-
+that reflect a real SSCI scenario under the circumstance                 sion system and a power electronics control system (such
+of accurate modeling. Therefore, in this work, a detailed                as HVDC links, SVC, or wind turbine control system) [8].
+PV inverter is modeled to demonstrate the mechanism of                   The SSCI and its mitigation techniques for conventional
+SSCI by both eigenvalue analysis that obtains the oscillation            wind farm systems have been well documented [9], [11],
+frequencies and time-domain simulation.                                  [32], [33], however, not as much literature is available
+   Following the eigenvalue analysis of the control system               regarding the SSCI phenomenon in the context of series
+in PV stations, mitigating the potential adverse impacts of              compensated PV farm systems. Due to the inverter and
+SSCI is also a critical part of the proposed work. Traditional           its control system, the PV stations and their neighboring
+SSR mitigation strategies can be classified as: 1) Apply                 transmission system are a potential source of SSCI. In this
+bypass filter [19]; 2) Trip the oscillating lines [20]; 3) Utilize       work, a hardware-based FTRT emulation is proposed for
+flexible AC transmission systems (FACTS) devices, such as                damping SSCI in PV farms. The integrated voltage source
+static var compensator (SVC) [21], [22], static synchronous              converter (VSC) and PV plant can be treated as a PV-
+compensator (STATCOM) [23], [24], unified power flow                     STATCOM, which can realize dynamic active/reactive power
+controller (UPFC) [25], and gate-controlled series capacitor             control. Therefore, the power injection method for miti-
+(GCSC) [26], [27]; 4) Add a supplementary damping                        gating the SSCI in PV farm is utilized. As mentioned,
+controller in either rotor-side converter (RSC) or grid-side             since the un-damped oscillations of SSCI are purely based
+converter (GSC) control loops [28], [29]. The bypass filter              on electrical and controller interactions, the SSCI may
+is applied for mitigating SSR and maybe effective for                    induce serious damage to the power system. An extremely
+mitigating SSCI [8]. However, this solution is expensive                 fast time-domain emulation platform is required to deter-
+at high voltage levels and is less effective at higher                   mine the proper power injection values to mitigate the
+frequencies [20]. The bypass filter is applied for mitigating            oscillations.
+SSR and may be effective for mitigating SSCI. However,                      Traditionally, the transient stability simulation is con-
+this solution is expensive at high voltage levels and is less            ducted on the CPU-based off-line simulators, such as
+effective at higher frequencies. Blocking or cutting off the             PSS R /e, PowerWorld R , and DSAToolsTM /TSAT R . How-
+abnormal components may influence the overall stability                  ever, the CPU-based simulation is implemented sequentially,
+of the integrated network, further, this strategy may not be             which is insufficient for real-time control in the energy
+effective for mitigating SSCI [8]. The utilization of FACTS              control center. The reconfigurability of FPGA enables the
+devices plays a crucial role in mitigating SSR on the thermal            power system components running in parallel to realize real-
+turbine generator connected to the series compensated power              time or even FTRT emulation [34], [35]. With the hardware
+systems. The working principle of the FACTS devices is to                emulation, the energy control center may have sufficient time
+alert the series compensated factor by the reactive power                to select an optimal solution for mitigating the SSCI in PV
+change. However, the complex control strategies and costs of             farm.
+FACTS devices are the main restrictions of their wide spread                The paper is organized as follows: Section II introduces
+deployment.                                                              the background of SSCI and the eigenvalue analysis for
+   On the other hand, supplementary damping controller                   a typical PV farm and its inverter station. The detailed
+techniques for mitigating SSCI have been reported recently.              modeling of the hybrid AC/DC grid components, as well
+The controls and parameters have substantial impacts on                  as equivalent PV cell circuits are specified in Section III.
+defining the negative resistance of wind generators, which               Section IV demonstrates the hardware design of the proposed
+can significantly damp SSCI. Since the converter controllers             FTRT emulation on FPGA. The FTRT emulation results and
+are originally designed to compensate currents or voltages               power control strategy are validated in Section V. Section VI
+at the fundamental frequency, their control capability can               presents the conclusion and prospective work.
+
+128482                                                                                                                                  VOLUME 9, 2021
+S. Cao et al.: Damping of Subsynchronous Control Interactions in Large-Scale PV Installations
+
+
+
+
+FIGURE 1. Configuration of a PV plant connected with AC grid.
+
+
+II. PV FARM SUBSYNCHRONOUS OSCILLATION AND
+EIGENVALUE ANALYSIS
+The increasing demand for renewable energy and FACTS
+devices with voltage source converters (VSCs) induces                               FIGURE 2. Detailed topology of (a) PV arrays and (b) PV inverter.
+the potential risk of subsynchronous control interaction.
+In order to investigate the principle of SSCI in PV farm,                           parallel strings and each string includes Ns PV panels in
+eigenvalue analysis is applied and the results are validated in                     series, as shown in Fig. 2 (a). The IPV -Udc characteristic can
+Matlab/Simulink R .                                                                 be expressed as following equation [38]:
+                                                                                                                               Udc
+A. SUBSYNCHRONOUS CONTROL INTERACTION                                                             IPV = Np Is [1 − C1 (e C2 Ns UT − 1)],                   (2)
+The subsynchronous resonance (SSR) is one of the major
+issues that the traditional power systems encounter [36],                           where Is refers to the saturation current, UT denotes the
+and the inclusion of grid-connected VSC and its control                             thermal voltage, C1 and C2 are constant values. According
+system leads the hybrid grid more vulnerable. The IEEE                              to Fig. 2 (b) the differential equation related to PV voltage
+SSR Working Group conducted a general classification of                             Udc can be derived as:
+SSR/SSO [37]. SSO including subsynchronous control inter-                                              dUdc
+action (SSCI) is defined as the subsynchronous oscillation                                       Udc · C    = Udc · IPV − Utd · Id ,         (3)
+                                                                                                         dt
+problems caused by the interaction between the turbine                              where Utd and Id represent the grid connection point voltage
+generator and other equipment in the system (VSC, HVDC,                             and current in d-q frame.
+variable speed drive converter, etc.).
+   Usually, large-scale renewable power plants locate far                           C. CONTROL SYSTEM OF PV INVERTER
+away from the main grid and VSCs are needed. The PV farm                            As mentioned, the introduction of VSCs may lead to the
+SSCI may emerge when a long transmission line is connected,                         SSCI, which is largely dependent on the choice of control
+which will influence the overall security and stability of the                      parameters and the network strength. A common PV inverter
+power system. The AC grid strength is typically described by                        control strategy is provided in Fig. 3, where the signals with
+the short circuit ratio (SCR), which is defined as (1).                             superscript ‘*’ are the reference values. Then, the transfer
+                                UN2                                                 function of the voltage control loop can be expressed as:
+                        SCR =          ,                   (1)
+                               Zg · SN                                                         dx1
+                                                                                                   = Udc − Udc  ∗
+                                                                                                                  ,                              (4)
+where Zg represents the grid impedance, UN and SN refer                                         dt
+                                                                                               dx2
+to the rated grid line voltage and the rated power of PV                                           = Kp1 · (Udc − Udc  ∗
+                                                                                                                         ) + Ki1 · x1 − Id ,     (5)
+generation, respectively. A real power transmission system                                      dt
+                                                                                               dx3
+is treated as a weak AC system when SCR is less than                                               = Ut − Ut∗ ,                                  (6)
+3. According to (1), the PV farm connected with a long                                          dt
+                                                                                               dx4
+transmission line is more likely to be regarded as a weak                                          = Kp3 · (Ut − Ut∗ ) + Ki3 · x3 − Iq ,         (7)
+system due to the large impedance.                                                              dt
+                                                                                    where x1 , x2 , x3 , and x4 are state variables; Kp1 and Kp3
+B. STRUCTURE OF PV FARM
+                                                                                    refer to the gains of the controllers; Ki1 and Ki3 represent the
+Fig. 1 provides the configuration of a PV farm connected with                       integral coefficients.
+an infinite bus. Udc is the output DC voltage of the PV station,                       Meanwhile, the control system of the PV inverter includes
+C refers to the DC filter capacitor, Cf and Lf represent the                        phase locked loop (PLL) to provide the fundamental fre-
+filter capacitor and inductor of the PV inverter, Rg and Lg are                     quency and phase information of the AC grid, and the
+the resistance and inductance of transmission line, Ut and Ug                       differential equations have the following expression:
+are voltages at the point of common coupling (PCC) and grid
+voltage, respectively. The detailed PV cell equivalent circuit                                    dxpll
+                                                                                                        = Utq ,                                            (8)
+and the subsequent PV inverter is provided in Fig. 2.                                              dt
+   In a typical PV power plant, a large number of PV panels                                      dθpll
+                                                                                                        = Kp4 · Utq + Ki4 · xpll + ω0 ,                    (9)
+are arranged in an array in order to provide sufficient energy                                     dt
+to the inverter. An arbitrary PV array is composed of Np                            where θpll is the angle produced by PLL.
+
+VOLUME 9, 2021                                                                                                                                          128483
+                                                          S. Cao et al.: Damping

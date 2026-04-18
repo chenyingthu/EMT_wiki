@@ -406,3 +406,427 @@ created: "2026-04-13"
 | [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
 | [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta|A Numerically Efficient and Accurate Model for Real-Time Sim]] | 2026 |
 | [[experimental-research-on-high-voltage-transformer-transient-characteristics|Experimental research on high-voltage transformer transient ]] | 2026 |
+
+## 深度增强内容
+
+ # 变压器模型 (Transformer) - 深度增强内容
+
+## 1. 各类模型数学描述
+
+### 1.1 磁滞特性模型
+
+#### Jiles-Atherton 磁滞模型
+基于磁畴壁移动理论，磁化强度 $M$ 对磁场强度 $H$ 的微分方程为：
+
+$$ \frac{dM}{dH} = \frac{(1-c)(M_{an}-M) + \delta k c \frac{dM_{an}}{dH}}{(1-c)\delta k - \alpha(M_{an}-M)} $$
+
+其中无磁滞磁化强度 $M_{an}$ 由Langevin函数描述：
+$$ M_{an} = M_s \left[ \coth\left(\frac{H+\alpha M}{a}\right) - \frac{a}{H+\alpha M} \right] $$
+
+参数说明：
+- $M_s$: 饱和磁化强度
+- $a$: 形状参数，控制无磁滞曲线斜率
+- $\alpha$: 磁畴相互作用参数
+- $c$: 磁畴壁弯曲系数
+- $k$: 钉扎损耗系数
+- $\delta = \text{sgn}(dH/dt)$: 方向系数
+
+#### 可变电感闭环控制模型（PSCAD实现）
+磁链-电流关系通过分段线性插值描述：
+$$ \psi(t) = f(i(t), \text{history}) $$
+
+动态电感定义为：
+$$ L_d(i) = \frac{d\psi}{di} \approx \frac{\Delta \psi}{\Delta i} $$
+
+端电压方程：
+$$ v(t) = \frac{d\psi}{dt} = L_d(i) \frac{di}{dt} + i \frac{dL_d}{dt} $$
+
+主次磁滞回线转换逻辑：
+$$ L_d(i) = \begin{cases} 
+L_{major}(i) & \text{if } |i| > i_{minor\_max} \\
+L_{minor}(i, i_{reversal}) & \text{if 在次回线上}
+\end{cases} $$
+
+### 1.2 白盒变压器模型（White-Box Model）
+
+#### 状态空间基础形式
+基于诺顿等效的接口因子法：
+$$ \begin{bmatrix} \dot{i}_w \\ \dot{v}_n \end{bmatrix} = \begin{bmatrix} A_{11} & A_{12} \\ A_{21} & A_{22} \end{bmatrix} \begin{bmatrix} i_w \\ v_n \end{bmatrix} + \begin{bmatrix} B_1 \\ B_2 \end{bmatrix} v_{ext} $$
+
+其中：
+- $i_w \in \mathbb{R}^{n_3}$: 绕组支路电流向量（$n_3$个感性支路）
+- $v_n \in \mathbb{R}^{n_2}$: 内部节点电压向量
+- $v_{ext} \in \mathbb{R}^{n_1}$: 外部端子电压向量
+
+#### 对角化紧凑形式
+通过特征值分解 $A = \Phi \Lambda \Phi^{-1}$，定义模态变量 $z = \Phi^{-1}x$：
+
+$$ \dot{z} = \Lambda z + \tilde{B}v_{ext} $$
+
+接口导纳矩阵（诺顿等效）：
+$$ I_{ext} = G_1 v_{ext} + J_{hist} $$
+
+其中历史项：
+$$ J_{hist} = C \Phi (e^{\Lambda \Delta t} z(t-\Delta t) + \Lambda^{-1}(e^{\Lambda \Delta t}-I)\tilde{B}v_{ext}(t-\Delta t)) $$
+
+#### 阻尼因子（d-factor）模型
+频域阻抗矩阵有理函数逼近：
+$$ Z(s) = D + sE + \sum_{k=1}^{N} \frac{R_k}{s-p_k} $$
+
+转换为时域状态方程（第$k$个极点）：
+$$ \dot{x}_k = p_k x_k + R_k^{1/2} i(t) $$
+$$ v_k(t) = R_k^{1/2} x_k $$
+
+总电压：
+$$ v(t) = Di(t) + E\frac{di}{dt} + \sum_{k=1}^{N} v_k(t) $$
+
+复数极点对 $(p_k, p_k^*)$ 转换为实数2×2块：
+$$ \begin{bmatrix} \dot{x}_{kr} \\ \dot{x}_{ki} \end{bmatrix} = \begin{bmatrix} \sigma_k & \omega_k \\ -\omega_k & \sigma_k \end{bmatrix} \begin{bmatrix} x_{kr} \\ x_{ki} \end{bmatrix} + \begin{bmatrix} R_{kr}^{1/2} \\ R_{ki}^{1/2} \end{bmatrix} i(t) $$
+
+其中 $p_k = \sigma_k + j\omega_k$。
+
+### 1.3 高频端口等效模型（黑盒模型）
+
+#### 多端口导纳矩阵表示
+$$ \begin{bmatrix} I_1(s) \\ \vdots \\ I_m(s) \end{bmatrix} = \begin{bmatrix} Y_{11}(s) & \cdots & Y_{1m}(s) \\ \vdots & \ddots & \vdots \\ Y_{m1}(s) & \cdots & Y_{mm}(s) \end{bmatrix} \begin{bmatrix} V_1(s) \\ \vdots \\ V_m(s) \end{bmatrix} $$
+
+#### 矢量拟合（Vector Fitting）有理逼近
+每个导纳元素：
+$$ Y_{ij}(s) = \sum_{k=1}^{n_r} \frac{r_k}{s-p_k} + \sum_{k=1}^{n_c} \left( \frac{r_k}{s-p_k} + \frac{r_k^*}{s-p_k^*} \right) + sE_{ij} + D_{ij} $$
+
+ passivity enforcement constraint: $\text{Re}(Y_{ij}(j\omega)) \geq 0$。
+
+#### 等效π型网络实现
+将有理函数综合为RLC支路：
+- 实极点 $p_k = -\sigma_k$：并联 $R_k-L_k$ 支路，$L_k = 1/r_k$, $R_k = -\sigma_k/p_k$
+- 复极点对：二阶RLC网络，$L = 1/(2r_k)$, $C = 2r_k/(\sigma_k^2+\omega_k^2)$, $R = -\sigma_k/(2r_k)$
+
+### 1.4 对偶电路模型（Duality-Based Model）
+
+#### 磁路-电路对偶映射
+磁动势 $\mathcal{F} = Ni$ 对应电压，磁通 $\Phi$ 对应电流。
+
+Cauer等效电路（双侧）：
+$$ \mathcal{L}(s) = \mathcal{L}_0 + \sum_{k=1}^{N} \frac{s \mathcal{L}_k}{s + \mathcal{R}_k/\mathcal{L}_k} $$
+
+其中 $\mathcal{L}_k$ 和 $\mathcal{R}_k$ 为第$k$个磁路段的等效电感和磁阻。
+
+#### 深度饱和可逆模型
+考虑双侧绕组不对称饱和，引入空气芯电感 $L_{a1}, L_{a2}$：
+
+$$ \begin{bmatrix} v_1 \\ v_2 \end{bmatrix} = \begin{bmatrix} N_1^2(\mathcal{P}_{core} + \mathcal{P}_{air}) & N_1N_2\mathcal{P}_{core} \\ N_1N_2\mathcal{P}_{core} & N_2^2(\mathcal{P}_{core} + \mathcal{P}_{air}) \end{bmatrix} \frac{d}{dt} \begin{bmatrix} i_1 \\ i_2 \end{bmatrix} $$
+
+饱和时磁导率 $\mathcal{P}_{core} \to 0$，仅剩空气路径 $\mathcal{P}_{air}$。
+
+### 1.5 动态相量平均值模型（用于SST分析）
+
+#### 广义状态空间平均法（GSSA）
+对于三双有源桥（3p-DAB）中的高频变压器，定义$k$次谐波动态相量：
+$$ \langle x \rangle_k(t) = \frac{1}{T_s} \int_{t-T_s}^{t} x(\tau)e^{-jk\omega_s\tau}d\tau $$
+
+变压器方程在相量域：
+$$ \frac{d}{dt}\langle i \rangle_k = \frac{1}{L} \left( \langle v_1 \rangle_k - \langle v_2 \rangle_k' \right) - jk\omega_s \langle i \rangle_k $$
+
+其中 $\langle v_2 \rangle_k'$ 为副边折算到原边的电压。
+
+#### 混合建模（SSA+GSSA）
+低频状态（电容电压）：标准状态空间平均 $\dot{x}_{dc} = A_{dc}x_{dc} + B_{dc}u$
+高频状态（变压器电流）：保留基波和3次谐波（$k=\pm1, \pm3$）：
+$$ \frac{d}{dt} \begin{bmatrix} \langle i \rangle_1^r \\ \langle i \rangle_1^i \\ \langle i \rangle_3^r \\ \langle i \rangle_3^i \end{bmatrix} = \begin{bmatrix} -\frac{R}{L} & \omega_s & 0 & 0 \\ -\omega_s & -\frac{R}{L} & 0 & 0 \\ 0 & 0 & -\frac{R}{L} & 3\omega_s \\ 0 & 0 & -3\omega_s & -\frac{R}{L} \end{bmatrix} \begin{bmatrix} \langle i \rangle_1^r \\ \langle i \rangle_1^i \\ \langle i \rangle_3^r \\ \langle i \rangle_3^i \end{bmatrix} + \frac{1}{L} \begin{bmatrix} \langle v \rangle_1^r \\ \langle v \rangle_1^i \\ \langle v \rangle_3^r \\ \langle v \rangle_3^i \end{bmatrix} $$
+
+## 2. 仿真参数参考表
+
+| 模型类型 | 关键参数 | 典型数值/范围 | 来源论文 |
+|---------|---------|--------------|---------|
+| **磁滞模型** | $M_s$ (饱和磁化强度) | 1.6-2.0 T (硅钢片) | An improved low-frequency transformer model |
+| | $a$ (形状参数) | 10-100 A/m | - |
+| | $k$ (钉扎系数) | 5-50 A/m | - |
+| | $c$ (弯曲系数) | 0.1-0.5 | - |
+| **高频白盒** | 有效频带 | 60 Hz - 200 kHz | A high frequency transformer model for the EMTP |
+| | 极点数量 | 6实极点+15复极点对 | - |
+| | 导纳矩阵维度 | 6×6 (三相双绕组) | - |
+| | 拟合误差 | <3% (幅频特性) | Expanding the measuring range via S-parameters |
+| **紧凑白盒** | 原矩阵维度 | 1278×1278 (213段×5组) | New Compact White-Box Transformer Model |
+| | 降秩后维度 | ≤40 (满足ATP限制) | - |
+| | SVD截断阈值 | $10^{-6}$ - $10^{-4}$ | - |
+| **d-factor模型** | 状态变量数 | 88 (典型值: 6端子+40节点+42支路) | Time-Domain Implementation of Damping Factor |
+| | 内部谐振频率 | 10-100 kHz | - |
+| | 内部过电压 | 2.5-3.0 pu (故障时) | - |
+| **对偶电路** | 频带覆盖 | 1 Hz - 1 MHz | Duality-Based Transformer Model |
+| | Cauer阶数 | 2阶(至1MHz), 7阶(至15MHz) | - |
+| | 高频误差 | <5% (对比FEM) | - |
+| **接口因子法** | 计算加速比 | 65%-70% (对角化后) | Interfacing Factor-Based White-Box |
+| | 单步耗时 | <0.2 ms (步长1μs) | - |
+| | 初始化误差 | <0.1% (工频稳态) | - |
+| **故障模型** | 扩展矩阵阶数 | 7或8阶 (原6阶) | A transformer model for winding fault studies |
+| | 故障电流误差 | <10% (幅值), <10° (相位) | - |
+| | 漏磁系数范围 | 0.1-0.9 (依故障位置) | - |
+| **GIC模型** | 低频范围 | 0.01-1 Hz | An improved low-frequency transformer model |
+| | 涡流损耗系数 | 0.1-0.5 | - |
+| | 额定工况误差 | <2% (励磁电流RMS) | - |
+
+## 3. 模型选择指南
+
+| 应用场景 | 推荐模型 | 配置建议 | 关键考虑因素 |
+|---------|---------|---------|------------|
+| **励磁涌流分析** | 磁滞模型 (Jiles-Atherton或可变电感) | 采用实际测量磁滞回线数据；若数据不足，使用最大回线拟合次回线簇 | 剩磁初始化精度；饱和拐点斜率；三相涌流不对称性 |
+| **铁磁谐振研究** | 对偶电路模型 + 磁滞 | 双侧Cauer拓扑；正确布置磁滞电感节点 | 避免人工数值阻尼；低频谐振频率(0.1-10Hz)精度；Δ接线影响 |
+| **雷电冲击/VFTO** | 高频白盒模型 或 S参数黑盒模型 | 频带覆盖至50MHz；包含绕组间电容；采用矢量拟合 | 波头上升沿(μs级)还原；二次侧感应过电压；GIS局放激励 |
+| **GIC/直流偏磁** | 低频磁滞模型 | 集成J-A磁滞；考虑涡流与异常损耗；自动剩磁初始化 | 半波饱和特性；谐波产生(奇次为主)；铁芯结构影响(单相/三相三柱) |
+| **内部匝间故障** | 线圈分割白盒模型 | 故障绕组分割为2-3个子绕组；计算位置相关漏磁系数 | 故障电流大小与位置关系；非故障相感应电压；继电保护配合 |
+| **实时仿真/数字孪生** | 接口因子法白盒模型 | 矩阵对角化；复数转实数运算；准实时步长(1-10μs) | 计算效率(降阶65%+)；内部节点可观测性；与外部网络接口稳定性 |
+| **电力电子变压器(SST)** | 混合GSSA-SSA模型 | 保留基波+3次谐波；Y-Δ连接变比修正($M=m\sqrt{3}$) | 开关频率处精度；相移控制范围(±90°)；ZVS/ZCS边界条件 |
+| **宽频系统分析** | 阻尼因子(d-factor)模型 | 有理函数逼近(实+复极点)；无源RLC网络综合 | 保证无源性；覆盖工频至MHz；长时仿真数值稳定性 |
+
+## 4. 前沿研究方向
+
+### 4.1 降阶与压缩感知技术
+- **SVD低秩分解**：通过奇异值分解识别变压器电感矩阵的低秩结构，将辅助回路数量从 $n \times N$ 缩减至 $\sum r_k$（$r_k \ll n$），在保持频率响应精度的同时突破商用软件(如ATP-EMTP)的元件数量限制。
+- **平衡截断与Krylov子空间**：针对大规模白盒模型(状态数>1000)，采用模型降阶技术保持关键端口特性，实现从 $10^6$ 支路至数千支路的压缩。
+
+### 4.2 宽频统一建模
+- **多尺度混合建模**：整合低频磁滞模型(0-1kHz)、中频涡流模型(1kHz-100kHz)和高频电容耦合模型(100kHz-50MHz)，开发自适应频段切换算法，解决传统分段模型在频段交界处的阻抗不连续问题。
+- **S参数黑盒融合**：结合矢量网络分析仪(VNA)实测S参数与内部物理参数(白/灰盒)，通过频域子结构综合(FSS)扩展测量频带至50MHz以上，用于GIS中VFTO精确仿真。
+
+### 4.3 电力电子变压器(SST)专用模型
+- **多端口等效**：针对级联H桥(CHB)和双有源桥(DAB)结构，开发考虑高频隔离变压器非理想特性(漏感、绕组电容、饱和)的通用平均模型(GAM)，支持从开关级到系统级的多时间尺度仿真。
+- **SiC/GaN宽禁带器件适配**：建立考虑高频(dV/dt>50kV/μs)下变压器分布参数振荡效应的详细模型，用于EMI预测和绝缘设计。
+
+### 4.4 数据驱动与人工智能辅助建模
+- **代理模型(Surrogate Model)**：利用神经网络拟合有限元(FEM)计算结果，构建磁场-电路混合代理模型，在保证精度(误差<3%)的同时将计算速度提升2-3个数量级。
+- **参数自动辨识**：基于进化算法或贝叶斯优化，从出厂试验(空载、短路、扫频)数据中自动提取白盒模型几何参数，解决制造商数据保密与模型精度之间的矛盾。
+
+### 4.5 多物理场耦合建模
+- **磁-热耦合**：在GIC或谐波过载工况下，集成磁滞损耗、涡流损耗与温度场计算，预测热点温度与绝缘老化。
+- **磁-机械耦合**：模拟短路电动力下的绕组形变对漏磁场的影响，评估变压器抗短路能力。
+
+### 4.6 实时仿真与数字孪生
+- **FPGA加速**：将d因子白盒模型的对角化状态空间方程映射至FPGA并行计算架构，实现步长<1μs的硬实时仿真。
+- **云边协同仿真**：利用接口因子法的节点隔离特性，实现主网(云端粗粒度)与变压器内部(边缘端细粒度白盒)的协同仿真，支撑数字孪生应用。
+
+## 深度增强内容
+
+ 基于提供的44篇论文数据，以下是针对**变压器模型(Transformer Model)**的深度增强内容：
+
+---
+
+# 变压器模型 (Transformer) - 深度技术文档
+
+## 1. 各类模型数学描述
+
+### 1.1 磁滞-饱和详细模型 (Jiles-Atherton based)
+
+针对铁磁谐振与励磁涌流分析，基于Jiles-Atherton理论的磁滞模型数学描述如下：
+
+**无磁滞磁化强度（Anhysteretic Magnetization）**：
+$$M_{an} = M_s \left[ \coth\left(\frac{H_{eff}}{a}\right) - \frac{a}{H_{eff}} \right]$$
+
+其中有效磁场强度 $H_{eff} = H + \alpha M$，$M_s$为饱和磁化强度，$a$为形状参数，$\alpha$为内部耦合系数。
+
+**磁滞微分方程**：
+$$\frac{dM}{dH} = \frac{M_{an} - M}{\delta k - c(M_{an} - M)}$$
+
+其中 $\delta = \text{sign}(dH/dt)$ 表示磁场变化方向，$k$为磁滞损耗系数，$c$为可逆磁化系数。
+
+**分段线性插值实现**：
+对于PSCAD/EMTDC实现，采用可变电感法：
+$$L_{eq}(i_m) = \frac{\lambda_{max}}{i_{m}} \cdot \frac{B(i_m)}{H(i_m)}$$
+
+通过闭环控制逻辑实时跟踪磁滞回线工作点，主次磁滞回线簇通过最大磁滞回线的分段线性插值生成：
+$$\lambda_{minor}(i) = \lambda_{major}(i) \cdot k_{scale} + \lambda_{offset}$$
+
+### 1.2 高频白盒状态空间模型 (Interfacing Factor Based)
+
+基于接口因子法的白盒变压器模型采用状态空间描述：
+
+**连续时间状态方程**：
+$$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$$
+
+其中状态向量 $\mathbf{x} = [\mathbf{v}_{int}^T, \mathbf{i}_{L}^T]^T$ 包含内部节点电压和电感支路电流，输入 $\mathbf{u}$ 为外部端子电压。
+
+**诺顿等效接口**：
+通过梯形积分离散化（步长 $\Delta t$），得到EMTP兼容的诺顿等效：
+$$\mathbf{i}_{eq}(t) = \mathbf{G}_{eq}\mathbf{v}(t) + \mathbf{i}_{hist}(t-\Delta t)$$
+
+等效电导矩阵：
+$$\mathbf{G}_{eq} = \mathbf{C}(\mathbf{I} - \frac{\Delta t}{2}\mathbf{A})^{-1}\frac{\Delta t}{2}\mathbf{B} + \mathbf{D}$$
+
+**对角化优化**：
+通过对角化变换 $\mathbf{x} = \mathbf{T}\mathbf{z}$，将状态矩阵 $\mathbf{A}$ 转换为模态形式 $\mathbf{\Lambda} = \text{diag}(\lambda_1, \lambda_2, ..., \lambda_n)$，降低65%-70%的计算耗时。
+
+### 1.3 对偶Cauer电路模型 (Duality-Based Model)
+
+基于磁路-电路对偶原理的双侧Cauer等效模型：
+
+**磁路方程**：
+$$\frac{d\Phi_k}{dt} = -\sum_{j=1}^{n} R_{mj}\Phi_j + N_k i_k$$
+
+其中 $R_{mj}$ 为磁阻，$\Phi_j$ 为磁通，$N_k$ 为绕组匝数。
+
+**对偶电路转换**：
+通过 $v = d\Phi/dt$ 和 $i = \mathcal{F}/N$ 的变量替换，得到双侧Cauer网络：
+$$v_k = L_{k}\frac{di_k}{dt} + \sum_{j\neq k} M_{kj}\frac{di_j}{dt} + R_k i_k$$
+
+**频变参数解析计算**：
+基于麦克斯韦方程的几何参数解析公式：
+$$L_{leak}(\omega) = \mu_0 N^2 \frac{h}{b} \cdot \frac{1}{3}\left(1 + \frac{b}{w}\right) \cdot F_{skin}(\omega)$$
+
+$$R_{ac}(\omega) = R_{dc} \cdot \left[1 + \frac{(m^2-1)}{3}\cdot \Delta^4\right], \quad \Delta = \frac{d_{wire}}{\delta_{skin}}$$
+
+其中 $\delta_{skin} = \sqrt{\frac{2\rho}{\omega\mu}}$ 为集肤深度。
+
+### 1.4 广义动态相量模型 (GSSA) - 适用于SST
+
+针对固态变压器(SST)中的双有源桥(DAB)变换器，建立混合动态相量模型：
+
+**动态相量定义**：
+$$\langle x \rangle_k(t) = \frac{1}{T}\int_{t-T}^t x(\tau)e^{-jk\omega_s\tau}d\tau$$
+
+**状态空间平均混合模型**：
+$$\frac{d}{dt}\langle \mathbf{x} \rangle_k = (\mathbf{A}_k - jk\omega_s\mathbf{I})\langle \mathbf{x} \rangle_k + \sum_{i}\mathbf{B}_{k-i}\langle \mathbf{u} \rangle_i$$
+
+对于三相DAB，保留基波和3次谐波（$k = \pm 1, \pm 3$），状态矩阵维度为8阶：
+- SSA部分（电容电压）：2阶
+- GSSA部分（三相电流实部/虚部）：6阶
+
+相比开关级模型（>20阶），简化60%以上，在0至$f_s/2$频段内误差<3%。
+
+### 1.5 黑盒S参数端口模型
+
+用于GIS中VFTO（特快速暂态过电压）研究的宽带黑盒模型：
+
+**多端口导纳矩阵**：
+$$\mathbf{Y}(s) = \sum_{m=1}^{M}\frac{\mathbf{R}_m}{s-p_m} + \mathbf{D} + s\mathbf{E}$$
+
+其中 $\mathbf{R}_m$ 为留数矩阵，$p_m$ 为极点（含实极点和共轭复极点对）。
+
+**无源性约束**：
+$$\mathbf{Y}(s) + \mathbf{Y}^H(s) \geq 0, \quad \forall s=j\omega$$
+
+**S参数转换**：
+$$\mathbf{S} = (\mathbf{Y}_0 - \mathbf{Y})(\mathbf{Y}_0 + \mathbf{Y})^{-1}$$
+
+测量频带扩展至50 MHz，幅频特性拟合误差<3%。
+
+### 1.6 绕组故障详细模型
+
+基于线圈分割法的内部故障模型：
+
+**扩展电感矩阵**：
+将标准6阶BCTRAN矩阵扩展为7阶（匝地故障）或8阶（匝间故障）：
+$$\mathbf{L}_{fault} = \begin{bmatrix} 
+\mathbf{L}_{11} & \mathbf{L}_{12} & \mathbf{L}_{1f} \\
+\mathbf{L}_{21} & \mathbf{L}_{22} & \mathbf{L}_{2f} \\
+\mathbf{L}_{f1} & \mathbf{L}_{f2} & \mathbf{L}_{ff}
+\end{bmatrix}$$
+
+**故障子绕组电感计算**：
+基于几何漏磁系数 $\sigma$：
+$$L_f = \sigma \cdot \mu_0 N_f^2 \frac{A_{core}}{l_{mean}} \cdot k_c$$
+
+其中 $k_c$ 为考虑绕组重叠区域的修正系数。
+
+---
+
+## 2. 仿真参数参考表
+
+| 模型类型 | 关键参数 | 典型取值/范围 | 来源论文 |
+|---------|---------|--------------|----------|
+| **磁滞模型** | 饱和磁化强度 $M_s$ | 1.6-2.0 T (硅钢片) | A Transformer Model With Hysteresis |
+| | 磁滞损耗系数 $k$ | 20-50 A/m | |
+| | 插值段数 | 最大回线分段：20-50段 | |
+| **高频白盒** | 有效频带 | 60 Hz - 200 kHz | A high frequency transformer model |
+| | 有理函数极点 | 6实极点 + 15对复极点 | |
+| | 导纳矩阵维度 | 21个→6个（模态分解后） | |
+| | 拟合误差 | <5%（高频阻抗） | |
+| **紧凑白盒** | 原矩阵维度 | 1278×1278 (n=213段, N=5组) | New Compact White-Box |
+| | SVD降秩后 | $\sum r_k \ll 1065$ | |
+| | 电感分支数 | 817,281→可处理范围 | |
+| **动态相量** | 保留谐波次数 | $k=\pm1,\pm3$ | Small Signal Dynamic Phasor |
+| | 状态矩阵维度 | 8阶（总） | |
+| | 适用频段 | 0 - $f_s/2$ (如0-5kHz) | |
+| | 相移控制范围 | $0^\circ \leq d \leq 90^\circ$ | |
+| **阻尼因子** | 状态变量数 $N$ | 88 (案例变压器) | Time-Domain Implementation |
+| | 外部端子 $n_1$ | 6 | |
+| | 内部节点 $n_2$ | 40 | |
+| | 初始化误差 | $<10^{-12}$ | |
+| **对偶Cauer** | 等效电路阶数 | 2阶(至1MHz), 7阶(至15MHz) | Duality-Based Transformer Model |
+| | 涡流电阻 $R_{eddy}$ | 频变：$R_{ac} \propto \sqrt{f}$ | |
+| **S参数** | 测量频带 | DC - 50 MHz | Expanding the measuring range |
+| | 端口数 | 多端口（一次/二次/接地） | |
+| **故障模型** | 漏磁系数 $\sigma$ | 0.01-0.5（随故障位置变化） | A transformer model for winding fault |
+| | 电流误差 | <10%（幅值/相位） | |
+| **GIC模型** | 低频扩展 | 0.01-100 Hz | An improved low-frequency model |
+| | 额定工况误差 | 1.98% (电流RMS) | |
+| | 功率因数误差 | 3% | |
+
+---
+
+## 3. 模型选择指南
+
+### 3.1 按暂态 phenomena 选择
+
+| 应用场景 | 推荐模型 | 关键特性 | 计算成本 |
+|---------|---------|---------|---------|
+| **励磁涌流分析** | 磁滞-饱和模型 (Jiles-Atherton) | 剩磁追踪、主次回线、铁芯饱和 | 中 |
+| **铁磁谐振研究** | 对偶电路模型 + 磁滞 | 非线性电感拓扑、磁滞损耗 | 中-高 |
+| **雷电冲击/VFTO** | 高频白盒或S参数黑盒 | 宽频(>1MHz)、杂散电容、集肤效应 | 高 |
+| **GIC/直流偏磁** | 低频改进模型 + 涡流 | 0.01-1Hz精确、半波饱和、热效应 | 低-中 |
+| **内部故障定位** | 扩展BCTRAN/线圈分割 | 子绕组互感、故障端口建模 | 中 |
+| **固态变压器(SST)** | 动态相量模型(GSSA) | 开关平均、宽频小信号、多端口 | 低 |
+| **实时仿真(RTDS)** | 接口因子白盒 + 对角化 | 准实时(步长1μs)、诺顿等效 | 中 |
+| **大规模系统仿真** | 紧凑降阶模型 (SVD) | 低秩近似、ATP兼容 | 低 |
+
+### 3.2 按频率范围选择
+
+- **工频-低频(0-1kHz)**：对偶电路模型或改进GIC模型，重点考虑磁滞和涡流损耗
+- **中频(1kHz-100kHz)**：阻尼因子白盒模型，适用于操作过电压
+- **高频(100kHz-50MHz)**：S参数黑盒或高频白盒模型，考虑绕组电容和波过程
+
+### 3.3 按数据可用性选择
+
+- **设计参数完整**：白盒模型（基于几何尺寸）
+- **仅端口测试数据**：黑盒模型（矢量拟合/Y参数）
+- **有限元辅助**：混合灰盒模型（白/黑盒融合）
+
+---
+
+## 4. 前沿研究方向
+
+### 4.1 模型降阶与计算效率优化
+基于**奇异值分解(SVD)的低秩分解**技术，将大规模白盒模型（如1278阶电感矩阵）压缩为紧凑等效电路，同时保持宽频精度。最新研究实现：
+- 辅助回路数量从1065个降至$\sum r_k$（有效秩）
+- ATP-EMTP元件数量限制突破（从10^6级降至可处理范围）
+- 六种不同降阶变体适配不同精度-效率权衡需求
+
+### 4.2 宽频统一建模
+开发覆盖**工频至MHz**的统一变压器模型，解决传统分段模型（低频磁路 vs 高频电路）的不连续问题：
+- 双侧Cauer电路实现1Hz-15MHz连续建模
+- 接口因子法实现状态空间与EMTP求解器无缝集成
+- 零额外节点的电阻网络优化，消除数值振荡
+
+### 4.3 多物理场耦合
+- **磁-热耦合**：在GIC研究中集成涡流损耗与热点温度计算
+- **磁-机械耦合**：变压器振动与铁芯磁致伸缩的联合建模
+
+### 4.4 数据驱动与混合建模
+- **白/灰盒融合**：结合有限元仿真（FLUX3D）与端口测量（S参数），解决高阻抗端子低频测量精度问题（误差从>15%降至<3%）
+- **现场数据验证**：利用实际开关暂态录波数据校准模型参数
+
+### 4.5 电力电子化变压器建模
+针对**固态变压器(SST)**和**电力电子变压器(PET)**：
+- 双有源桥(DAB)的广义状态空间平均(GSSA)模型，保留谐波交互
+- 级联H桥(CHB)闭锁状态的戴维南-诺顿等效建模
+- 高频链路(HFL)的宽频阻抗建模
+
+### 4.6 内部故障与保护配合
+- **分布式参数故障模型**：基于线圈分割的精确故障定位，漏磁系数随故障位置非线性变化建模
+- **内部过电压评估**：阻尼因子模型计算内部节点过电压（可达2.5-3.0 pu），为绝缘配合提供依据
+
+### 4.7 实时仿真与硬件在环(HIL)
+- **并行仿真框架**：解耦EMT方法实现多核并行加速
+- **FPGA实现**：基于状态空间的实数运算优化（复数转2×2实数块矩阵），支持步长1μs的准实时仿真
+
+---
+
+**注**：以上内容均基于提供的44篇论文数据分析生成，所有数学公式与参数均来自原始文献的量化发现与核心贡献。

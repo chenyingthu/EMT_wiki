@@ -1,0 +1,119 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 22, NO. 2, APRIL 2007                                                                                  1257
+
+
+
+  A Binary Frequency-Region Partitioning Algorithm for the Identification of a
+               Multiphase Network Equivalent for EMT Studies
+                                                             Taku Noda, Member, IEEE
+
+
+  Abstract—Previously, a method for identifying a multiphase net-                                            TABLE I
+work equivalent for electromagnetic transient calculations using                              PROPOSED BINARY PARTITIONING ALGORITHM
+partitioned frequency response has been proposed. The method ac-
+curately and robustly identifies an equivalent of the target network
+by dividing its frequency response into sections, but no specific al-
+gorithm for the frequency-region partitioning has been proposed.
+To make the entire identification process automatic, this letter pro-
+poses a binary partitioning algorithm.
+   Index Terms—Electromagnetic transient analysis, equivalent
+circuits, frequency response, interconnected power systems, power
+system modeling, power system simulation.
+                                                                                 of size     by       can be identified by a least-squares method
+                           I. INTRODUCTION                                       using the entire frequency response with the known poles. Fi-
+                                                                                 nally, we obtain the matrix partial fraction expansion (MPFE )
+      LECTROMAGNETIC TRANSIENT (EMT) simulations
+E     have become crucial for the design and operation of a
+power system. For reducing the computational burden, it is
+                                                                                 model
+
+                                                                                                                                                 (1)
+often desirable to replace a large part of a power system far
+from the source of a transient with a reduced-order network
+equivalent. Obtaining a network equivalent of an apparatus,                      of the target network, where        is a constant        -by-
+such as a transformer, whose equivalent circuit is not obvious                   matrix.
+but its frequency response is available by measurement, is also
+desirable. To these ends, a method for identifying a multiphase                             III. BINARY PARTITIONING ALGORITHM
+network equivalent for EMT calculations utilizing partitioned
+frequency response has been proposed [1]. The method divides                     A. Algorithm
+the frequency response of the target network into sections, and                     The bandwidth of each frequency section in the pole identi-
+by applying enhanced rational fitting to each section, it accu-                  fication process should be narrow enough so that the        terms
+rately and robustly identifies equivalent poles of the target and,               in the rational function do not cause ill conditioning in the
+thus, a network equivalent. However, no specific algorithm for                   least-squares fitting process. However, ill conditioning comes
+the frequency-region partitioning has been proposed. To make                     not only from the bandwidth but also from the shape of the
+the entire identification process automatic, this technical letter               frequency response in the section. Thus, explicitly calculating
+proposes a binary algorithm of frequency-region partitioning                     an appropriate bandwidth would be difficult.
+for the identification method.                                                      The proposed binary partitioning algorithm is based on a
+          II. REVIEW OF THE IDENTIFICATION METHOD                                trial-and-error process. First, the rational fitting for the pole
+                                                                                 identification is applied to the entire frequency region without
+   The identification method proposed in [1] assumes that the                    partitioning. If the rational fitting achieves specified accuracy,
+frequency response of the target network is given in the form                    the pole identification is completed. Otherwise, the frequency
+of an      -by-        transfer function matrix        defined at dis-           region is divided into two sections and the same procedure
+crete angular frequencies                             . If the input to          is recursively applied to both sections. The subdivision is
+the network is the voltages of the terminals and the output is                   repeated until all subsections achieve specified accuracy. The
+their currents,       is an admittance matrix. The identification                algorithmic description of the proposed binary partitioning is
+method first identifies the poles                                by the          shown in Table I. In this way, it is ensured that all poles are
+frequency response of              (i.e., the matrix trace of      ). In         identified within specified accuracy.
+this pole identification process, the frequency response is di-
+vided into sections and enhanced rational fitting is applied to                  B. Treatment of Boundary
+each section. Since the frequency range of each section is lim-
+                                                                                    In the algorithm description above, how a section is divided
+ited, the terms in the rational function do not cause ill condi-
+                                                                                 into two subsections is not mentioned. Since two neighboring
+tioning in the fitting process             . The residue matrices
+                                                                                 subsections should not identify (share) the same poles, the
+                                                                                 boundary of two subsections should be placed at a local
+   Manuscript received August 29, 2006. Paper no. PESL-00062-2006.               minimum of the magnitude of          . Therefore, the following
+   The author is with the Electric Power Engineering Research Laboratory, Cen-
+tral Research Institute of Electric Power Industry (CRIEPI), Kanagawa 240-
+                                                                                 procedure is used. First, the boundary is placed at the mid-
+0196, Japan (e-mail: takunoda@ieee.org).                                         point of the frequency section of interest (“current section” in
+   Digital Object Identifier 10.1109/TPWRD.2007.893382                           Table I). Starting from the midpoint, the closest local minimum
+                                                               0885-8977/$25.00 © 2007 IEEE
+1258                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 22, NO. 2, APRIL 2007
+
+
+
+
+Fig. 1. Test network.
+
+
+
+
+Fig. 2. Result of the pole identification process with the result of frequency-
+region partitioning by the proposed binary algorithm.
+
+
+
+is searched for. This search can be coded by a simple loop
+with a comparison of values. If a local minimum is found
+within a distance from the midpoint closer than the half the
+bandwidth of the section, then the boundary is moved to the
+local minimum. Otherwise, (if a local minimum is not found
+nearby), the boundary remains at the midpoint.                                    Fig. 3. Identification result for some elements of the admittance matrix. (a) The
+                                                                                  (1,1) element is shown. (b) The (1,2) element is shown.
+
+                        IV. NUMERICAL EXAMPLE
+   Fig. 1 is the 500-kV test network that was also used in [1]. The               and the identified frequency responses of the elements (1,1)
+test network includes three generators with transformers, five                    and (1,2) of the admittance matrix. The identified MPFE model
+loads, a capacitor bank with a transformer, and six double-cir-                   reproduces the given frequency response very accurately, and
+cuit transmission lines. Although Fig. 1 is shown on a one-line                   the deviations cannot be distinguished. The other elements
+diagram, the network is represented by full three-phase models.                   of the admittance matrix are also reproduced with similar
+The frequency dependence and the imbalance of the network                         accuracy. The obtained MPFE model has been used for the
+components are taken into account. The detailed conditions are                    switching transient case shown in [1], and the result confirms
+found in [1].                                                                     that the MPFE model reproduces almost the identical result to
+   A network equivalent of the three-phase admittance seen                        the full system representation. Since the obtained result is very
+from Bus A is identified. Fig. 2 shows the result of the pole                     similar to the one shown in [1], it is not repeated here.
+identification process, and it compares the given and the fitted
+frequency response of the trace of the admittance matrix. The                                                  V. CONCLUSION
+deviation is too small to distinguish the two curves. In the pole                    This technical letter has presented a binary frequency-region
+identification process, the proposed binary frequency-region                      partitioning algorithm which is used with a method for iden-
+partitioning algorithm has been applied, and the frequency                        tifying a multiphase network equivalent for EMT calculations.
+response, as a result, has been partitioned into nine sections,                   With the partitioning algorithm, the entire identification process
+with a specified relative tolerance of 1%. The boundaries,                        is now automatic.
+shown by the “ ” symbols, are placed on a local minimum if it
+exists nearby as mentioned in Section III-B. The poles are ob-                                                    REFERENCES
+tained by the result of the rational fittings in the nine frequency
+                                                                                      [1] T. Noda, “Identification of a multiphase network equivalent for electro-
+subsections and, finally, the residue matrices of the poles are                           magnetic transient calculations using partitioned frequency response,”
+obtained by a least-squares method. Fig. 3 compares the given                             IEEE Trans. Power Del., vol. 20, no. 2, pt. 1, pp. 1134–1142, Apr. 2005.
+

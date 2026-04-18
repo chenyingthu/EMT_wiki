@@ -1,0 +1,205 @@
+Received 30 July 2024, accepted 12 September 2024, date of publication 16 September 2024,
+date of current version 30 September 2024.
+Digital Object Identifier 10.1109/ACCESS.2024.3462255
+
+
+
+
+Electromagnetic Transient Modeling of
+Asynchronous Machine in Modelica,
+Accuracy, and Performance Assessment
+ALIREZA MASOOM                      1 , (Member, IEEE), AND JEAN MAHSEREDJIAN                                    2 , (Life Fellow, IEEE)
+1 Hydro-Québec Research Institute, Varennes, QC J3X 1S1, Canada
+2 Department of Electrical Engineering, Polytechnique Montréal, Montreal, QC H3T 1J4, Canada
+
+Corresponding author: Alireza Masoom (masoom.alireza@hydroquebec.com)
+This work was supported by NSERC, Hydro-Québec, RTE, EDF, and OPAL-RT as a part of the industrial chair ‘‘Multi Time-Frame
+Simulation of Transients for Large Scale Power Systems.’’
+
+
+
+
+  ABSTRACT Classical EMT-type simulators are mostly programmed in procedural languages, e.g. Fortran
+  or C. In these languages, the focus is mainly on the solution methods. Modern languages, such as Modelica,
+  are declarative and primarily focused on modeling and simulation. Modelica offers a much higher abstraction
+  level, which makes the codes more concise and understandable. This paper contributes to the electromagnetic
+  transient modeling and simulation of asynchronous machines in Modelica. In this paper, the modeling of a
+  three-phase squirrel cage (single and double cage) and wound-rotor induction machine in three different
+  reference frames is described and implemented. The accuracy and performance of Modelica models are
+  compared and validated with the classical modeling approach used in the reference software EMTP. It is
+  demonstrated that Modelica-based models with variable-step solvers offer fast and accurate results for
+  time-domain simulations of motor sequential startup cases.
+
+
+  INDEX TERMS Asynchronous machine, sequential start-up, Modelica, equation-based modeling, variable-
+  step solver.
+
+
+I. INTRODUCTION                                                                                energy sources, such as the Doubly Fed Induction Generator.
+Electromagnetic Transient (EMT) modeling and simulation                                        Modeling of ASMs is principally based on the selectable
+deal with power electric components and systems in the                                         reference frame. In the classical modeling approach, first,
+form of differential equations for the study of a wideband                                     the differential equations of the ASM are discretized using a
+range of phenomena such as switching, lightning, ferrores-                                     fixed-step solver, then using the companion circuit, the model
+onace, and electromechanical oscillations [1]. The commonly                                    is represented through a Norton equivalent (NE) in modified-
+used EMT-detailed models are implemented either using the                                      augmented-nodal analysis (MANA) in [3], for example. The
+block-diagram programming approach, e.g., Simscape Elec-                                       NE is based on a given numerical integration technique,
+trical Specialized Power System [2], or using an imperative                                    such as commonly used trapezoidal integration, for exam-
+language such as Fortran and C++ in, for example, EMTP®                                        ple. In [3], it is optionally possible to iterate with network
+[3]. The block-diagram approach is at a higher level, and                                      equations to achieve higher accuracy. Although such a solu-
+easily accessible, but the modeler must define the flow of                                     tion method is fast and suitable for large circuits, it relies
+information and the sequence of blocks.                                                        on a specific solver and detailed coding of all equations
+   Asynchronous machines (ASM) are widely used in power                                        and procedures. Spurious oscillations can be suppressed
+systems in the form of motors or generators in renewable                                       using a damping resistor in parallel with inductors in the
+                                                                                               machine model [4]. In the classical approach, the controllers
+   The associate editor coordinating the review of this manuscript and                         are modeled separately from the main electrical network.
+approving it for publication was Lei Zhao               .                                      In some simulation packages [2], the machine models are
+                                  2024 The Authors. This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 License.
+135864                                               For more information, see https://creativecommons.org/licenses/by-nc-nd/4.0/                         VOLUME 12, 2024
+A. Masoom, J. Mahseredjian: Electromagnetic Transient Modeling of Asynchronous Machine
+
+
+
+
+implemented using a current source. This approach may typ-                     performance and accuracy of ASM models are tested during
+ically cause numerical instability problems, especially with                   fault and network islanding. This paper also presents the
+larger time steps. To preserve simulation stability, a resistance              advantages of variable-step solvers for the simulation and
+whose value is dependent on the simulation time-step can be                    analysis of motor sequential start-ups. It is also demonstrated
+connected to the machine terminals [2].                                        that simulation converges directly with different tolerances
+   Modelica [5] is an object-oriented declarative language.                    and without the addition of artificial components.
+The modeler’s concentration is on model equations rather                          This paper is organized as follows. In Section II, the theory
+than giving a stepwise algorithm on how to achieve the                         of ASM models is described. In Section III, the implementa-
+desired goal. In Modelica, a model can be explicitly described                 tion of the models in Modelica is presented. The models are
+by its Differential-Algebraic Equations and block diagrams at                  validated using three examples in Section IV.
+a much higher abstraction level and most importantly, it is
+independent of the underlying solution method. Modelica                        II. ASYNCHRONOUS MACHINE THEOROTICAL
+can be linked to various EMT-type codes through FMI [6],                       DESCRPTION
+[7]. Modelica supports a graphical user interface (GUI)                        A. WOUND ROTOR AND SINGLE SQUIRREL CAGE
+for designing the model symbol and drawing the network                         MACHINES
+diagram. It simplifies the component connectivity checks,                      A single squirrel cage machine is widely used as a motor in
+documentation, and observing the results as well. Several                      industry and can be represented as a wound-rotor machine in
+integration methods, such as the trapezoidal, backward Euler,                  which the terminals are short-circuited. Therefore, the model
+DASSL [8], and IDA [9] are currently available in Modelica                     of the wound-rotor machine will be discussed in this section.
+simulators, e.g. OpenModelica [10] and Dymola [11].                            Fig. 1 shows the q-axis equivalent circuit of a wound-rotor
+   In Modelica, each component is coded by a specialized                       ASM. The following equations describe the abc to reference
+class model or block (can be used in the block dia-                            frame transformations applied for ASM [21].
+gram approach). Other types of classes exist to support
+                                                                                                        vqds = P (θ) vabcs                          (1)
+modeling, including function (to provide algorithmic
+contents), package (to provide a structuring mechanism),                                                vqdr = P (β) vabcr                          (2)
+connector (to define the model terminals), and partial
+model (used as base). In the class model, each electrical
+component is represented by the parameters, variables, and
+finally, the relation between variables of a model regardless
+of which one is known or unknown. During the compiling
+of Modelica codes, a flattening procedure is run to map the
+hierarchical structure of a model into a set of differential,
+algebraic and discrete equations. The solution direction of
+                                                                               FIGURE 1. The q-axis equivalent circuit of a wound-rotor ASM in
+equations will adapt to the data flow dependencies between                     time-domain.
+the equations. The analysis is not just sorting but also manip-
+ulation of equations, which includes, for example, index                       where P denotes the Park transformation matrix, θ and β =
+reduction and tearing of equations, to convert the coefficient                 θ − θ r represent the angular positions of the reference frame
+matrix into block lower triangular form.                                       and the difference between the positions of the reference
+   The Modelica language is frequently used in phasor                          frame and the rotor position, θr , respectively. Depending on
+domain simulations [12], for voltage and transient stabil-                     the chosen reference frame, θ can take different values; for
+ity applications [13]. OpenIMDML [14], for example is a                        example, if the rotor reference frame is chosen, then θ = θr .
+specialized library for simulations of drives and inductions                      Electrical equations of ASM can be declared by selecting
+machines in phasor domain. The existing machine models                         the current or flux as independent variables, but from the
+in the Modelica Standard Library [15] provide only basic                       simulation standpoint, if flux is chosen as the state variable,
+models with several limitations and do not allow to perform                    in the voltage equations only one derivative of flux appears,
+EMT-type detailed simulations. The authors of this paper                       which causes more efficient computations. Equation (3) rep-
+recently considered the Modelica language for EMT simula-                      resents the electrical behavior of an ASM by a fourth-order
+tions [16], [17] including power electronics [18]. In addition,                nonlinear flux state-space model in per-unit (pu) form. In the
+some other efforts have been carried out to accelerate the sim-                following equations, bold uppercase represents matrices, bold
+ulations using data locality and vectorization techniques [19]                 lowercase denotes vectors and p is the derivative operator.
+and compiled models in Dynawo [20].
+                                                                                                     pφ = ωbase (Aφ + v)                            (3)
+   This paper focuses on EMT-detailed asynchronous                                                                     
+machine models (single and double cages, wound-rotor)                                                 A = − RL−1 + W                                (4)
+development in Modelica. It is demonstrated that the modern                                                     −1
+                                                                                                        i=L          φ                              (5)
+approach helps modelers concentrate on modeling rather
+than the solution methods. In the numerical examples, the                                           iabcs = P  −1
+                                                                                                                     (θ) iqds                       (6)
+
+VOLUME 12, 2024                                                                                                                                  135865
+                                                            A. Masoom, J. Mahseredjian: Electromagnetic Transient Modeling of Asynchronous Machine
+
+
+
+
+                   iabcr = P−1 (β) iqdr                        (7)      same circuit is obtained for d-axis by replacing the indices
+                                                                        and reversing the polarity of speed voltage sources.
+where
+                            T
+   φ = ϕqs ϕds ϕqr ϕdr
+       
+                                                               (8)
+                          T
+   v = vqs vds vqr vdr                                         (9)
+                       T
+    i = iqs ids iqr idr                                       (10)
+  R = diag(Rs , Rs , Rr , Rr )                                (11)
+                                                  
+        Lls + Lm         0         Lm         0                         FIGURE 2. The q-axis equivalent circuit of a double-cage-rotor in
+           0       Lls + Lm        0        Lm                        time-domain.
+  L=  Lm
+                                                             (12)
+                         0     Llpr + Lm      0    
+            0          Lm           0    Llpr + Lm                         Equations (1)-(7) and (14)-(16) remain valid for the
+                                                                        double-cage machines, Equations (8)-(13) are re-defined as
+         0 ω
+                                     
+                      0           0
+       −ω 0                                                            (18)-(23), shown at the bottom of the next page.
+                      0           0 
+  W=                                                         (13)         In the above equations, indices r1 and r2 represent the
+                               ω − ωr 
+                                      
+       0 0           0
+                                                                        properties of cage 1 and 2 respectively. In (23), Llr1 and Llr2
+         0 0 − (ω − ωr )          0
+                                                                        are the leakage inductances of cages 1 and 2, respectively.
+   In the above equations, all parameters and variables are
+computed on the stator side and the indices s and r represent            III. MODEL IMPLEMENTATION IN MODELICA
+the stator and rotor, respectively. The variables vabcs and             This section presents the modeling of wound-rotor ASM in
+vabcr are the stator and rotor terminal voltages; the vectors v, i,     Modelica. Fig. 3 shows the high-level Modelica codes for
+and φ denote the stator and rotor voltages; currents, and flux          the implementation of associated equations. The definition of
+linkages in the qd frame, iabcs and iabcr are the stator and rotor      variables and parameters is hidden due to space limitations
+current vectors. Rs and Rr are stator and rotor resistances. L          and only the equation compartment is shown. In these
+is a symmetrical matrix, and Lls , Llpr and Lm indicates the            pieces of code, firstly, the rotating reference is selected. The
+stator and rotor leakage inductances and mutual inductance              stator and rotor winding terminals are respectively repre-
+respectively. In (13), for the rotor reference frame, ω = ωr ,          sented by Ps and Pr. In Modelica, the physical terminal is
+for stator reference frame ω = 0 and finally for synchronous            coded as connector class and is composed of 3 pins (pin
+reference frame, ω = 1.                                                 [1], pin [2], and pin [3]). For each pin, two variables; volt-
+   The mechanical equations in pu that describe the dynamics            age (denoted by v), and current (denoted by i), are defined.
+of the single mass rotor are given as:                                  Current is characterized as a flow variable. When two pins
+                                                                        are connected, it means the connector variables without the
+                      Te = ϕds iqs − ϕqs ids                  (14)      flow prefix are equal (i.e. v) and the sum of corresponding
+                            1                                           connector variables with the flow prefix (i.e. i) equals zero.
+                     pωr =      (Te − Tm )                    (15)
+                           2H                                           Then, using the selected reference frame, the stator and rotor
+                     pθr = ωbase ωr                           (16)      voltage vector, denoted respectively by vqds and vqdr are
+where Te represents the electromagnetic torque, ωbase is the            computed. The Park transform is coded in a separate class
+base electrical angular velocity in radian per second and H             (i.e. function) and denoted by P. The general rotation
+represents the inertia constant in pu-s. It is noted the mechan-        matrix,W is coded as per (13). The elements of this matrix
+ical equations can be easily extended to a multi-mass system.           are time-variant, and change based on the selected reference
+   For single-cage ASM, the terminals of rotor windings are             frame. Then, the state space electrical equation of ASM is
+short-circuited, therefore, (9) is given as follows. Other equa-        implemented. In this equation, flux, phi, is a vector of state
+tions remain intact.                                                    variables and defined as per (3). Stator and rotor current
+                                        T                             vector iqd_SR, is calculated using (5). Equation (10) defines
+                      v = vqs vds 0 0                       (17)        the elements of this vector. Then, the stator and rotor currents
+                                                                        are converted to abc frame.
+B. DOUBLE-CAGE INDUCTION MOTOR                                             Computation of electromagnetic torque and other elec-
+Double-cage induction motors are used in applications where             tromechanical equations are coded as per (14)-(16). One
+high starting torque is required. This arrangement increases            can see that Modelica offers high-level and understandable
+the rotor resistance which is directly proportional to the              codes in a few lines that match the equations of the model.
+starting torque of an induction motor. (9) Fig. 2 shows the             In this approach, the equations are defined by ‘‘=,’’ and the
+q-axis equivalent circuit of a double-cage rotor for time-              unknowns can lie on both sides, and there is no pre-defined
+domain solution. The equivalent circuit is based on EMTP                causality (input/output data flow). There is no constraint to
+and differs from other EMT-type simulation packages, where              connect the terminals of the machine to the voltage or current
+the second cage is represented by duplicating and parallel              source. The simulation engine must reorder the equations
+connection of the single-cage rotor model [23]. Likewise, the           symbolically to determine their execution order.
+
+135866                                                                                                                             VOLUME 12, 2024
+A. Masoom, J. Mahseredjian: Electromagnetic Transient Mod

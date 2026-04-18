@@ -1,0 +1,189 @@
+                                                              Electric Power Systems Research 220 (2023) 109308
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Improved methods for optimization of power systems with renewable
+generation using electromagnetic transient simulators✩
+D. Kuranage a , S. Filizadeh a ,∗, D. Muthumuni b
+a
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB, R3T 5V6, Canada
+b
+    Manitoba HVDC Research Center, 211 Commerce Drive, Winnipeg, MB, R3P 1A3, Canada
+
+
+
+ARTICLE                 INFO                              ABSTRACT
+
+Keywords:                                                 This paper introduces new techniques for efficient use of electromagnetic transient simulators combined with
+Electromagnetic transient simulation                      optimization algorithms to optimize power systems with converter-tied renewable resources. This work is
+Optimization algorithms                                   motivated by several challenges that must be overcome for simulation-based optimal design, including high
+Parallel processing
+                                                          computational burden of simulating large switching systems, repetitive nature of the design cycle, and large
+Renewable generation
+                                                          number of variables that need to be handled. Two screening methods are proposed in this paper to identify
+                                                          the parameters that do not influence the optimal solution significantly and hence can be ignored. Moreover,
+                                                          hybridization of optimization algorithms and parallel processing techniques are explored to achieve additional
+                                                          computational benefits. Case studies of systems with different complexity and number of variables are used to
+                                                          demonstrate the effectiveness of the proposed techniques.
+
+
+
+1. Introduction                                                                               parameter sets is evaluated by the EMT simulator [4]. In [4], OE-
+                                                                                              EMTS is used to optimize the parameter values of a voltage source
+    With rising demand for electricity and radical changes brought                            converter and a dc-dc converter while the same methodology has been
+about by converter-tied renewable resources and energy storage, power                         used to design HVDC controllers in [5]. In both cases, Nelder–Mead’s
+systems are becoming increasingly complex. The complexity of renew-                           Simplex algorithm is used since it performs well for optimization of a
+able-intensive power systems is spurred by the presence of switching                          relatively small number of parameters [4,5]. Even though the Simplex
+converters, sophisticated control systems, and intricate dynamic be-                          algorithm is computationally efficient, it is prone to converging to a
+havior. Converter-based generation schemes have shown rapid growth                            local optimum. Moreover, in the context of optimizing power systems
+resulting in challenges in the design and operation of the system [1].                        with renewable resources with a large number of parameters, the
+Converter-tied resources not only diminish the system inertia, but also                       Simplex algorithm may not be a suitable choice [6].
+release high-frequency harmonics to the system [1]. These resources                               The authors in [7] have used genetic algorithms (GA) to obtain
+have sophisticated control systems whose parameters must be selected                          optimal designs for photovoltaic grid-connected systems. There is a
+carefully and optimally [2]. It is cumbersome, if not entirely infeasi-                       high likelihood of GA converging into the global optimum since it
+ble, to use analytical approaches to model and solve such parameter                           considers several populations and includes operators such as mutation
+tuning and optimization problems [2]. Therefore, it is necessary to
+                                                                                              and crossover that tend to diversify the solution set [6]. However,
+have simulation-based tools to model these systems accurately so that
+                                                                                              GAs take considerable time to converge, particularly for optimization
+their dynamic performance can be successfully assessed, and their
+                                                                                              of a large number of parameters when it might be prohibitively long.
+parameters be tuned before actual implementation [3,4].
+                                                                                              Therefore, in the context of the large power systems, complexities such
+    Electromagnetic transient (EMT) simulation combined with opti-
+                                                                                              as high computational burden, repetitive nature of the design cycle,
+mization algorithms is a powerful tool for design and parameter-tuning
+                                                                                              large number of parameters to be handled, and the inherent limitations
+of converter-intensive power systems [3]. There exists previous work
+                                                                                              of the optimization algorithms cause difficulties. Accordingly, it is
+that has used optimization-enabled EMT simulation (OE-EMTS) to op-
+                                                                                              necessary to develop new and computationally efficient methods to
+timize power system parameters, where the candidate parameter sets
+                                                                                              overcome these problems.
+are generated by the optimization algorithm and the suitability of those
+
+
+ ✩ This work was supported in part by Natural Sciences and Engineering Research Council (NSERC) of Canada, MITACS, Canada, and Manitoba HVDC Research
+Center, Canada.
+  ∗ Corresponding author.
+    E-mail addresses: kuranagd@myumanitoba.ca (D. Kuranage), shaahin.filizadeh@umanitoba.ca (S. Filizadeh), dharshana@mhi.ca (D. Muthumuni).
+
+https://doi.org/10.1016/j.epsr.2023.109308
+Received 10 December 2022; Received in revised form 7 February 2023; Accepted 7 March 2023
+Available online 13 March 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+D. Kuranage et al.                                                                                               Electric Power Systems Research 220 (2023) 109308
+
+
+    This paper introduces a number of novel methods to (i) perform                is also a crucial task. The general expectation from the initial values
+screening that identifies and removes non-influential variables to lower          is to produce a response that is stable even though it may feature
+the dimension of the optimization problem, and (ii) accelerate the                poor dynamic performance. Improvement of the response is left to the
+design process using hybrid optimization algorithms and parallel pro-             simulation-based optimization.
+cessing methods. To demonstrate the efficacy of the proposed meth-                    The initial parameter values for the cases in this paper are selected
+ods, design parameters of two different type-4 wind turbine generator             using a few rounds of trial-and-error while utilizing basic insight about
+controllers are optimized. The first case involves optimization of 8              controller gains, e.g., that higher proportional gains generally tend to
+parameters while the second case involves 18 parameters. Both cases               accelerate the response, but may lead to instability at large enough
+prove to be extremely challenging for manual parameter tuning due to              values, and that smaller integral time-constant values may settle the
+the number of parameters and the complexity of the dynamic behavior               response faster, but may cause oscillations.
+of the networks. The results confirm that the proposed approaches are
+effective in optimization using EMT simulators of power systems with              3.1.2. Method 2 - run-time screening
+converter-tied renewable resources. EMT simulations in this paper are                 A second screening method is introduced for population-based op-
+conducted using PSCAD/EMTDC to which optimization algorithms are                  timization algorithms such as GA, which run for several generations. If
+interfaced.                                                                       the value of a parameter does not change noticeably in the first few gen-
+                                                                                  erations, it can be argued that the parameter has already converged into
+2. Optimization-enabled electromagnetic transient simulation                      its optimal interval and does not need further optimization. Parameters
+(OE-EMTS)                                                                         that vary considerably must be optimized further until they converge
+                                                                                  into a small interval. Moreover, these results may reveal insight about
+     OE-EMTS is an advanced tool for the design of complex power                  the range of the parameters values. If the designer has assigned larger
+systems using an EMT solver in conjunction with a (nonlinear) op-                 search interval to the algorithm, they can be reduced so that smaller
+timization algorithm. The role of the optimization algorithm is to                population are used, which leads to more computational benefits.
+generate new candidate values for the parameters in the design. The
+system’s performance for a given set of trial parameters is measured by           3.2. Parallel processing modification for GA
+the EMT simulator, which requires a metric formulated in the form of
+an objective function (OF) to measure the closeness between the actual                The sequential GA (normal GA) starts with the user-defined val-
+and desired outcomes [4]. Small OF values typically indicate that the             ues for the parameter boundaries and the number of chromosomes
+actual and the expected performance of the system are closely match-              in the initial, surviving, and mating populations. The algorithm then
+ing, indicating a high-quality design. After every simulation run, the            generates random number sets for the initial population considering
+evaluated OF is given to the optimization algorithm, which judiciously            parameter boundaries. The produced parameter sets are usually called
+generates new trial parameter sets. This process ends after obtaining a           chromosomes. Normally, the algorithm releases only one parameter set
+parameter set that gives a minimum OF with satisfactory performance.              (one chromosome) at a time and the EMT simulator runs sequentially
+     GA and nonlinear Simplex have been widely adopted for simulation-            with different parameter values assigned to it in each run and gives
+based design of complex power systems. Despite their relative success,            the respective OF value back to the optimization algorithm. After
+it is often noted that a GA’s excessive computational burden and Sim-             evaluating the first generation, the chromosomes that have the lowest
+plex’s inability to handle high-dimensional problems and its tendency             OF values will be selected for the next generation as the surviving
+to converge to a local optimum are critical bottlenecks in the optimal            population. The best solution sets from that surviving population are
+process. The following section proposes several methods that address              chosen as the mating pool to generate new chromosomes called off-
+these bottlenecks.                                                                spring. This is done by using the crossover operator where the two
+                                                                                  parent chromosomes exchange their parameter values with respect
+3. Improved methods for optimization                                              to one or more randomly selected crossover points. The remaining
+                                                                                  surviving population after selecting the mating pool is replaced with the
+    Improved EMT-based optimization methods proposed next aim to                  offspring. To prevent premature convergence, another operator called
+(i) reduce the number of optimization variables by identifying and                mutation is adopted [8], which randomly changes randomly selected
+removing non-influential variables, and (ii) enhance the computational            parameters. The new generation will then be evaluated using EMT
+efficiency of the design cycle by reducing unnecessary, time-consuming            simulations. This continues for several generations until the algorithm
+EMT simulations.                                                                  converges into an optimal solution.
+                                                                                      Although GA performs well with large parameter sets, its slow
+3.1. Screening methods                                                            convergence rate requires considerable time to find the optimum. Thus
+                                                                                  many researchers have explored methods to parallelize GA, owing
+   Screening methods are developed to reduce the size of the design               to the independence of its iterations from one another. Most of the
+problem by identifying the parameters that do not influence the final             research work found in literature (e.g., [9–11]) has adopted paral-
+design and thus may be excluded.                                                  lelism in GA by using sub-populations that evolve in parallel while
+                                                                                  sharing information among them at prescribed time intervals. How-
+3.1.1. Method 1 - initial screening                                               ever, in the simulation-based optimization approach discussed in this
+    In this method, the initial value of each variable is changed by              paper, calculation of the OF value causes the highest computational
+applying positive and negative increments; for each increment a sim-              burden and far exceeds those of basic GA operations of selection,
+ulation run is conducted to evaluate whether the increment has a                  crossover, and mutation. Therefore, this paper adopts a specific par-
+significant impact on the OF. Variables that do not significantly affect          allel GA implementation, which focuses on parallelizing the iterations
+the OF are excluded from the optimization process. While this method              (i.e., OF calculations) in a single large population instead of among
+proves successful in many cases, its effectiveness depends on the initial         small sub-populations.
+values of the optimization variables. For a highly nonlinear system,                  As shown in Fig. 1, parallel processing occurs within the
+if the initial multi-dimensional point is far from the optimum, this              PSCAD/EMTDC simulation set where it is externally controlled by the
+method may discard variables that may indeed be influential. (𝑅1.𝐶2)              GA, coded in a Python script. All the simulation cases included in
+Therefore, this method for initial screening must be used with limited            the simulation set are launched in parallel using all processor cores
+liberty. Selection of the initial values for the parameters to be optimized       available [12].
+
+                                                                              2
+D. Kuranage et al.                                                                                                           Electric Power Systems Research 220 (2023) 109308
+
+
+
+
+                                                                                                  Fig. 2. Schematic diagram of the system for Example I.
+
+
+
+
+                                                                                Fig. 3. Block diagram of the machine-side controller (a) active power controller, (b)
+                                                                                reactive power controller.
+
+
+
+
+             Fig. 1. Schematic diagram of the parallel genetic algorithm.           Decoupled controls are used for both converters as shown in Figs. 3
+                                                                                and 4. When the system becomes weaker after the line tripping, the
+                                                                                active power that can be injected to the grid from the wind farm
+    In this paper, all the examples of parallel processing are done using       is reduced, which causes the voltage at the POI to collapse. It is
+eight simulation cases within one simulation set. Even though they are          determined that satisfactory performance is obtained if the gains and
+copies of the same simulation file, the parameter values in them are            time-constants of proportional-integral (PI) controllers are tuned to
+                                                                                maintain 5 MW output from the wind farm and to avoid overvoltages
+assigned independently by the GA. In the sequential implementation,
+                                                                                that are greater than selected overvoltage value at POI even after the
+only one parameter set is evaluated at a time, while in the parallel
+                                                                                fault. Therefore, an objective function is formed by adding the integral
+version, eight parameter sets are evaluated concurrently. After the EMT
+                                                                                square error (ISE) of the active power and integral of overvoltage at
+solver runs all eight cases in parallel, the OF values for every case are
+                                                                                POI (see (1)); minimization of this objective function yields optimal
+sent back to the Python GA script.                                              parameter values for the controllers.
+
+3.3. Hybridizing optimization algorithms                                                             𝑇                             𝑡2
+                                                                                𝑂𝐹 = 𝐾(𝑡)                (𝑃 − 𝑃ref )2 𝑑𝑡 +              |𝑉over − 𝑉ref | 𝑑𝑡                (1)
+                                                                           

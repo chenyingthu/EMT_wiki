@@ -1,0 +1,27 @@
+# Comprehensive Full-Scale Converter Wind Park Initialization for Electromagnetic Transient Studies
+
+Juan Antonio Ocampo-Wilches, Member, IEEE, Jean Mahseredjian, Life Fellow, IEEE, Keijo Jacobs, Ahda G. Pavani, Senior Member, IEEE, and Haoyan Xue, Senior Member, IEEE
+
+**Abstract**—This paper proposes a comprehensive method for initializing the electromagnetic transient models of full-scale converter wind parks. The method uses the ac load-flow solution to initialize the mechanical model, the electrical components, the machine, the converter and the control systems. The effectiveness of the method is demonstrated through EMT simulations of three different power system benchmarks: an aggregated WP connected to a small transmission grid, a detailed WP model with wind turbines connected to a small transmission grid, and a large-scale transmission grid with ten different aggregated WPs. The results show that the proposed method reduces computing times required to reach steady-state and consequently accelerates overall simulations.
+
+**Index Terms**—Initialization, full-size converter, wind park, large-scale power system, steady-state, electromagnetic transients.
+
+*Received 16 July 2024; revised 27 December 2024; accepted 9 March 2025. Date of publication 3 April 2025; date of current version 19 May 2025. Paper no. TPWRD-01168-2024. (Corresponding author: Juan Antonio Ocampo-Wilches.)*
+*Juan Antonio Ocampo-Wilches, Jean Mahseredjian, Keijo Jacobs, and Haoyan Xue are with the Department of Electrical Engineering, Polytechnique Montreal, Montreal, QC H3T1J4, Canada (e-mail: juan-antonio.ocampo-wilches@polymtl.ca; jean.mahseredjian@polymtl.ca; keijo.jacobs@polymtl.ca; haoyan.xue@polymtl.ca).*
+*Ahda G. Pavani is with the Federal University of ABC (UFABC), Santo André 09280-560, Brazil (e-mail: ahda.pavani@ufabc.edu.br).*
+
+## I. INTRODUCTION
+
+Recently, power system oscillations originating from the interaction of wind parks (WPs) with other system components, have compromised the stable operation of transmission grids [1]. The growing number of WPs connected to power systems necessitates fast and accurate electromagnetic transient (EMT-type) simulation models to ensure their safe and reliable operation [2]. There are ongoing efforts to develop generic, non-proprietary, EMT-type models for WPs, that can capture all performance aspects as detailed as manufacturer-specific models [3], [4].
+
+The initial conditions of most grid component models can be derived from the load-flow (LF) solution [5], [6], [7]. The EMT models can be used to directly provide a multiphase and unbalanced load-flow solution [8], [9], and techniques such as the modified-augmented nodal analysis (MANA) have proven to be generic and efficient multiphase load-flow solution methods for such applications [9], [10].
+
+However, the initialization can be challenging for power electronic grid components with complex control systems, such as WPs. Incorrect initial conditions can lead to erroneous steady-state operation modes, delays in achieving the desired steady-state operating point, improper activation of protection devices, and sometimes, saturation or lasting oscillations before reaching the desired operating point [11].
+
+The comprehensive initialization of the full-scale converter (FSC) WP EMT model has not been thoroughly addressed in previous studies. The steady-state conditions for the converter control system, the mechanical and electrical machine models cannot be derived directly from the load-flow solution, and additional computations are necessary. Most methods in the literature do not account for practical and realistic WP systems, including detailed converter and wind park controllers (WPC).
+
+In [12], a WT initialization method is proposed for electromechanical stability simulations. However, the presented technique does not consider the converter model, filters, wind park control or external components. Besides, the initialization of the generator is described based on the model equations. However, complete access to the variables of the generator is not always given.
+
+The initialization methods for DFIG-based WP models presented in [13] and [14] are based on the analytical solution of a set of equations, including the induction machine, turbine, and converter equations. The initialization proposed in [15] uses the load-flow solution with an iterative method to compute the steady-state values. However, these methods do not address essential constraints imposed by realistic WP systems and commercial EMT-simulation software, as they do not include the initialization of control systems, converters, and the wind park controller (WPC). Thus, the existing initialization methods for DFIG WP systems do not offer solutions that can be adapted to FSC WP systems.
+
+For PV parks, an initialization technique based on a chain matrix is proposed in [16]. The method is not directly applicable or compatible with typical solutions employed in EMT-simulation tools, since a secondary iterative method will be required to calculate the equivalent model at the point of interconnection (POI) increasing the computing time. In [17], a procedure to compute the steady-state solution for portions of the electric circuit and the control system of PV systems is presented. This paper, however, does not provide details on the converter initialization. Furthermore, it does not consider unbalanced LF considerations, and it requires different implementations for

@@ -1,0 +1,216 @@
+                                                              Electric Power Systems Research 212 (2022) 108490
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Interfacing real-time and offline power system simulation tools using UDP or
+FPGA systems
+Christian Scheibe a,d ,∗, Ananya Kuri a,d , Yuyao Feng c , Le Zhao c , Xuejun Xiong c , Piergiovanni La
+Seta a , Xiao Peng Liang b , Johannes Knödtel d , Philipp Holzinger d , Marc Reichenbach d ,
+Gert Mehlmann d
+a
+  Power Technologies International Siemens AG, Erlangen, Germany
+b
+  Power Technologies International Siemens AG, Shanghai, China
+c
+  Shanghai Electric Power Research Institute, Shanghai, China
+d
+  Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany
+
+
+
+ARTICLE                 INFO                              ABSTRACT
+
+Keywords:                                                 This contribution proposes a coupling interface between the real-time simulation system RTDS Novacor
+Co-Simulation                                             and the Power System Simulation Software PSS/E for electromagnetic transient (EMT) and phasor (RMS)
+Transient stability analysis                              hybrid simulations to enable a performant connection between the domains. For the coupling interface, two
+Electromagnetic transients
+                                                          implementations with different characteristics in latency and hardware requirements are presented. Firstly,
+Real-time simulation
+                                                          an Ethernet (UDP) based connection and secondly a fiber-based connection using the Aurora protocol. The
+Offline simulation
+                                                          first approach is purely software based, while the second one requires additional hardware. The technical
+                                                          implementation of the interfaces is explained in detail. The functionality of the interfaces is verified on the
+                                                          basis of an EMT-RMS simulation in a small overhead line test system.
+
+
+
+1. Introduction                                                                           methods to solve large portions of a grid using time steps in the range
+                                                                                          of multiple milliseconds. EMT-type simulations are usually utilized for
+    The field of power grid simulation evolved from a very complex                        a detailed investigation of fast and very fast transient phenomena and
+and time-consuming problem to a flexible and performant task thanks                       their impact on equipment. Also, their time step directly influences the
+to the transition from analog to digital simulators. However, for years                   precision of the results. Usual time steps range from 50 μs and lower
+the simulators were not performant enough to calculate big networks
+                                                                                          depending on the frequency of the transients involved [4].
+in real-time. This changed thanks to the advancements in hardware and
+                                                                                              As EMT simulations spread more widely into the field formerly
+software development in the recent years.
+                                                                                          covered by phasor based transient stability investigations and real-time
+    Alongside, the power system experiences the challenging transition
+from systems dominated by large machines to a converter-dominated                         simulation methods demand EMT modeling for most applications, a
+grid. Hence, time constants implied by the inertia of the machines do                     challenge is to be faced to overcome the gap between the domains.
+play less of a role than previously [1]. This, however, puts strain on                    A solution might be the field of Co-Simulation of power systems. The
+the requirements of power system simulation. Transient Stability (TS,                     coupling of RMS- and EMT-simulations has the potential to overcome
+RMS) type simulations require time constants to be low enough to not                      the limits of monolithic simulations and add the strengths of both
+interfere with the phasor based nature of their algorithm. That means                     domains [5]. The proposed interface, therefore, is a candidate for this
+a typical investigation for RMS simulations is well below 10 Hz in all                    field, further expanding the range of capable interfaces.
+considered frequencies which excludes many aspects of converter-based                         Previous works included the interfacing and coupling of EMT-RMS
+transients. These require investigation using electromagnetic transient                   Co-Simulation based on offline programs such as PSCAD, PSSE, Matlab
+based simulations (EMT) [2,3].                                                            or PowerFactory [6]. Also, real-time simulators were coupled pre-
+    EMT-type simulations require a lot more capable computation power
+                                                                                          viously in [7–9]. This publication aims to provide insights into the
+to show the same per-time simulation performance as RMS simulators
+                                                                                          development and the feasibility of an interface bridging the real-time
+do. This originates from their algorithm being created to investigate dif-
+                                                                                          and offline domains. Therefore, the development process is shown in
+ferent problems. RMS usually uses (complex) phasor based simulation
+
+
+    ∗ Corresponding author at: Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany.
+      E-mail address: christian.scheibe@siemens.com (C. Scheibe).
+
+https://doi.org/10.1016/j.epsr.2022.108490
+Received 2 October 2021; Received in revised form 13 April 2022; Accepted 2 July 2022
+Available online 18 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+C. Scheibe et al.                                                                                                       Electric Power Systems Research 212 (2022) 108490
+
+
+the following sections. Finally, using a small overhead line test grid,
+simulations are performed to show the feasibility of the interface.
+
+2. Simulation interface concept
+
+   Coupling real-time and offline simulation domains involves bridging
+the gap between two completely different concepts. Generally, a real-
+time simulator acts based on the principle of hard real-time described
+by Kopetz et al. in [10]. That means, that any one of the given time
+steps must be executed in a period smaller than the one simulated in                                        Fig. 1. EMT-RMS-Conversion concept.
+the device. An overflow occurs if this is not the case. Simulators handle
+overflows differently depending on the principles they are intended for.
+While some applications only run using these hard real-time criteria,              The results are per-phase complex phasors. These phasors can now
+others may accept some overflows. This is called firm real-time if the             be transformed into the positive sequence domain of the RMS simu-
+result of a simulation including exceeded deadlines can be rejected.               lator. The symmetric component equations sum the phasor’s real and
+Soft real-time requirements on the other hand include the result of                imaginary values according to Eq. (3) [13].
+such an overflowed time step. Therefore, the result can be accepted
+                                                                                                 ] 1⎡
+                                                                                                      1           1     1 ⎤ ⎡ 𝑖a ⎤
+as degraded.                                                                               [
+   While the real-time simulator runs based on hard real-time require-              𝐼 RMS = 0 1 0 ⋅ ⎢1            𝑎2    𝑎 ⎥ ⋅ ⎢𝑖b ⎥                                  (3)
+                                                                                                   3⎢                      ⎥ ⎢ ⎥
+ments, the offline tool does not inherit such traits. Therefore, the offline                        ⎣1            𝑎     𝑎2 ⎦ ⎣ 𝑖 c ⎦
+                                                                                                   ◦
+simulation tool along with the network to be simulated must be adapted             with 𝑎 = 𝑒j120
+and modeled to at least fulfill soft real-time requirements. This step
+requires analysis of the simulated network in question. If the model
+runs slower than real-time, further optimizations must be performed                2.2. Signal interpolation and time step adaptation
+such as
+                                                                                       The difference in time steps between the simulator’s domains and
+     • Network Reduction [11]                                                      the transmission rate alongside of it makes the use of interpolation tech-
+     • Time Step adaption                                                          niques a necessity. For the transition from RMS to EMT, the backward
+     • Controller Optimization                                                     Euler linear interpolation method is used. Depending on the difference
+                                                                                   in time step between the domains, the missing EMT steps between
+    The interface itself must bridge the two aforementioned domains                two major RMS time steps are calculated as to be seen in (4). After
+and simulators. Therefore, a conversion is needed along with the cou-              each step the running variable 𝑛 is increased by one. At the end of the
+pling itself. In this publication, two concepts of data exchange are               interpolation window, the value of the interpolated signal is equal to
+proposed and the underlying mechanics are explained.                               the ‘‘new’’ value in the phasor domain simulation. After that, a new
+                                                                                   interpolation cycle starts again by resetting the running variable and
+     • An UDP interface exchanging positive sequence phasor values                 receiving a new target value.
+       using Ethernet communication
+                                                                                       Re-transformation to instantaneous values is then performed by
+     • An FPGA interface exchanging and transforming instantaneous                 applying the inverse positive sequence transformation using a fixed
+       values and handling the data conversion internally as a smart               frequency (𝑓0 ) rotating phasor reference.
+       bridge
+                                                                                                               𝑛
+                                                                                   𝑥EMT (𝑡) = 𝑥(𝑡RMS−1 ) +         [𝑥(𝑡RMS ) − 𝑥(𝑡RMS−1 )]                           (4)
+   Therefore a purely software based and a mainly hardware focused                                            𝑛max
+                                                                                            ⌊           ⌋
+proposal is included. The modeling of the equivalent circuits is ex-                            𝛥𝑡RMS
+plained in the following sections.                                                 𝑛max =                                                                            (5)
+                                                                                                𝛥𝑡EMT
+
+2.1. Phasor transformation                                                         2.3. Electrical representation
+
+    Similar to the concept proposed in [12], the implementation de-                    The coupling of the simulators is performed using a voltage source
+manded transformations due to the difference in simulation types be-               on the EMT side and a current source on the RMS side (ideal trans-
+tween EMT and RMS. The RMS type simulation requires positive se-                   former model) as indicated in Fig. 2. The current at the coupling
+quence based phasors that need to be derived from instantaneous                    interface point is measured, transformed and transmitted from the
+values of the EMT simulation. The process of calculation is indicated              EMT side to the RMS side and for the voltage from RMS to EMT,
+in Fig. 1. It consists of a phasor generation and positive sequence                respectively [14,15]. The same concept was used in previous works
+filtering along with a final transformation to derive magnitude and                showing good results [5,12,16]. Specific details of the implementation
+phase of the phasor. The transformation from EMT to phasor domain                  vary between the used simulation tools and will be specified later in
+is based on a fundamental-frequency discrete Fourier transformation                this publication.
+(DFT). As described in (2) the DFT works as a window function. The
+window is usually sized equally to fit a fundamental frequency period.             3. Coupling techniques
+The number of samples used in the transformation depends on the
+sampling time of the simulation 𝛥𝑡𝑎 and the fundamental frequency of                   The considerations for the design of the coupling interface indicated
+the investigated signal 𝑓0 as (1) points out.                                      that the coupling interface might run based on the faster time step of
+          1                                                                        the real-time simulator or the slower time step of the offline simulation
+𝑁=                                                                      (1)
+       𝑓0 ⋅ 𝛥𝑡𝑎                                                                    system. As a result, the two interfaces are being developed. The former,
+                                                                                   based only on software and using the real-time simulator’s capabilities
+      2 ∑
+          𝑁−1
+𝑋=          𝑥(𝑖) ⋅ 𝑒−j𝑖2𝜋∕𝑁                                             (2)        for the transformation and the latter inheriting the transformations and
+      𝑁 𝑖=0
+                                                                                   running on the faster time step.
+
+                                                                               2
+C. Scheibe et al.                                                                                                 Electric Power Systems Research 212 (2022) 108490
+
+
+
+
+                                                                                          Fig. 4. Principle of the FPGA based communication interface.
+
+
+
+                      Fig. 2. Electrical equivalents and data exchange.
+
+
+
+
+                                                                                                         Fig. 5. FPGA LUT utilization.
+
+                    Fig. 3. Principle of the UDP communication interface.
+
+
+                                                                                Aurora) most sources of additional delay in the RTDS-to-PSS/E-loop
+3.1. UDP based interface                                                        and the return path can be eliminated. While in the case of the UDP-
+                                                                                based interface the amount of data that can be processed, is limited by
+    The real-time simulator provides an interface to send and receive           the processing power of the data handler, in the FPGA-based interface
+data packets using a variety of protocols. The simplest of them is              it is limited by the resources available on the FPGA.
+basically a vector consisting of 4-byte long values, either integer or               To quantify this, a baseline of resources on the FPGA with all
+single precision floating point (IEEE754) numbers. The simulator man-           necessary components implemented (such as PCIe interface and Aurora
+ufacturer references this method as GTNET-SKT (Gigabit Transmission             interface) is measured. This yields a measure of the resources available
+Network Interface Socket Protocol). The transmitted package size there-         for data processing. In turn, a comparison of this measure with the re-
+fore is a multiple of 4 bytes. The sending rate of the packages is fixed        sources needed for the data processing components is performed, giving
+and handled asynchronously to the simulator itself and can be set in            a rough estimate of the capabilities of the interface. The configuration
+the model. Typically, the sending rate is set to be a constant based on         of the hardware determines the number of variables to be transferred
+the phasor simulator’s time step.                                               from one simulation domain to the other.
+    The packages are then sent to a data handler running on the same                 In Fig. 5, the baseline and different simulation configurations are
+machine as the offline simulator. The handler receives and processes            compared. Only the amount of used and remaining LUTs (Lookup
+the UDP packages and feeds them into the offline simulation tool.               Tables) are given, since these are the limiting factor in this design.
+Meanwhile it also keeps track of package losses and delays and is               Some aspects of the implementation algorithm (i.e. synthesis, logic
+capable of performing data adaptations if needed.                               optimization and Place and Route) and clock frequency constraints play
+    Finally, a shared memory interconnection is established to the              into the resource demands of the data processing components, this
+PSS/E instance. For this purpose the shared memory algorithm of [16]            data is extrapolated from the resource utilization of a design with a
+is used and adapted for the PSS/E format. The interface ensures that            single channel. The FPGA device used in this evaluation is a Xilinx
+data between handler instance and simulator instance are exchanged              XC7VX690T-2FFG1761C on a Xilinx VC709 board.
+with minimum latency. Fig. 3 depicts the communication structure of
+the interface.                                                                  4. Real-time simulation model
+
+3.2. FPGA based interface
+                                                                                    The part of the system calculated on the real-time machine consists
+                                                                                of the electrical representation and the communication that allows for
+    Since the computational load increases drastically with increasingly
+                                                                                the grid model to interact with the controller based interface.
+complex structures and the demand for hard real-time, a second FPGA-
+based coupling method is proposed. FPGAs 

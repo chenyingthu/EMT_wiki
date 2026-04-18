@@ -1,0 +1,29 @@
+# Fast Detection of SSR for Wind Parks Connected to Series-Compensated Transmission Systems
+
+**Younes Seyedi** a, *, **Jean Mahseredjian** a, **Houshang Karimi** a, **Ulas Karaagac** c, **Aramis Schwanka Trevisan** b
+
+a Department of Electrical Engineering, Polytechnique Montreal, QC Canada  
+b RTE International, Courbevoie, France  
+c Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong  
+
+* Corresponding author. E-mail addresses: younes.seyedi@polymtl.ca, younes.seyedi@gmail.com (Y. Seyedi).
+
+**Keywords:** Control interaction, Electromagnetic transients, Stability, Power systems, Wind park
+
+**Abstract:** The interactions between wind parks and the series-compensated transmission lines can bring about sub- or super-synchronous resonance (SSR) incidents which jeopardize the safe operation of the entire network. In practice, such incidents may emerge under various conditions as different types of wind turbines with various parameters can be deployed at several locations in the network. Hence, it is crucial to efficiently identify the conditions that lead to adverse interactions and their subsequent SSR incidents. This paper proposes a simulation-based method, namely disturb and scan (DaS), for fast and automated detection of SSR. The proposed technique uses small-scale disturbances in time-domain electromagnetic transient (EMT) simulations to perform spectral analysis along with positive-sequence impedance scans. Numerical results are presented and validated for benchmark systems that utilize type-III and type-IV wind turbines. The system operators can adopt the developed methodology to quickly assess the risks of SSR, evaluate conditions of instability, and improve their network protection and control schemes.
+
+## 1. Introduction
+
+Power systems which involve long transmission lines can employ compensation techniques to increase their power transfer capability, and to improve transient stability [1,2]. However, modern transmission systems encounter new and important challenges as more renewable and inverter-based resources, such as wind and solar photovoltaic (PV) parks, are interconnected to the network [3]. Among these challenges are harmful control interactions that lead to oscillations and voltage instability in transmission systems incorporating inverter-based resources [4,5]. Field measurements have also revealed that oscillations and harmonic resonance may occur when the controllers in wind parks interact with the controllers in high voltage DC (HVDC) transmission systems [6].
+
+Sub- or super-synchronous resonance (SSR) incidents may arise when wind turbine-generators interact with the series capacitors in the transmission system such that the oscillatory power exchange is undamped or even unstable [7,8]. Specifically, in the case of doubly-fed induction generator (DFIG) wind parks, the study in [9] uses modal analysis to show that sub-synchronous oscillations occur under low wind speed and high compensation conditions.
+
+The SSR incidents are adverse to safe operation of power systems since they can damage the wind turbines and lead to wide area outages. It is shown that the wind park operating conditions as well as the control parameters of their power converters can lead to SSR in case of DFIG wind systems [10]. Moreover, the type of wind systems, e.g., DFIG or full converter, can affect the emergence of SSR in series-compensated transmission systems [11]. Since wind parks are large-scale systems that incorporate different control and protection sub-systems, several parameters contribute to stability issues. It is thus crucial to detect the operating conditions that may lead to oscillations and instability in power systems that incorporate wind parks.
+
+In general, measurement-based SSR detection methods can be classified into two groups. The time-series analysis methods [12–16] obtain voltage/current samples (generated via time-domain EMT simulations or recorded by digital relays) and process them by signal processing or machine learning tools to identify oscillations. The impedance scanning methods [17–20] extract the frequency-dependent impedances of the transmission grid and the wind park and use a stability criterion to identify instabilities and undamped oscillations.
+
+This paper proposes a measurement-based technique, namely disturb and scan (DaS), to accelerate the identification of operational conditions that lead to SSR in power systems with wind parks. The proposed technique consists of three main steps. In the first step, a high-impedance fault at the point of connection (PoC) creates small-scale voltage disturbances, and the currents injected by the wind park are captured in the simulations. In the second step, the search bands are identified based on the peak analysis of the magnitude spectra of the time-domain results. The peaks in the spectra may be related to damped can confirm instability with less computational burden in a shorter time. The main steps of the DaS scheme are explained in the sequel.
+
+In the first step, a time-domain EMT simulation is carried out that applies a temporary and high-impedance fault at the PoC, as shown in Fig. 1. The post-fault current, denoted by $I_x(t)$ is measured and stored for post-processing. The high-impedance fault creates small-signal disturbances that can potentially excite different modes in the system.
+
+In the second step, the magnitude spectrum of the post-fault current is extracted using the Fourier transform, and the peaks are identified. Let $S_x(f)$ denote the Fourier transform of $I_x(t)$, the peaks are local maxima in the magnitu

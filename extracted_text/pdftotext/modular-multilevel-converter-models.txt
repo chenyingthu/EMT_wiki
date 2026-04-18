@@ -1,0 +1,200 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                           1
+
+
+
+
+                      Modular Multilevel Converter Models
+                         for Electromagnetic Transients
+         Hani Saad, Member, IEEE, Sébastien Dennetière, Member, IEEE, Jean Mahseredjian, Fellow, IEEE,
+        Philippe Delarue, Member, IEEE, Xavier Guillaud, Member, IEEE, Jaime Peralta, Member, IEEE, and
+                                         Samuel Nguefeu, Member, IEEE
+
+
+   Abstract—Modular multilevel converters (MMCs) may contain                            The large number of IGBTs in MMCs complicates the sim-
+numerous insulated-gate bipolar transistors. The modeling of such                    ulations in electromagnetic transient-type (EMT-type) simula-
+converters for electromagnetic transient-type (EMT-type) simula-                     tion tools. Detailed MMC–HVDC models must include the rep-
+tions is complex. Detailed models used in MMC-HVDC simula-
+tions may require very large computing times. Simplified and av-                     resentation of thousands of IGBTs and small numerical integra-
+eraged models have been proposed in the past to overcome this                        tion time steps are required to accurately represent fast and mul-
+problem. In this paper, existing averaged and simplified models                      tiple simultaneous switching events [5]. The excessive compu-
+are improved in order to increase their range of applications. The                   tational burden introduced by such models requires researching
+models are compared and analyzed for different transient events                      more efficient models. A current trend is based on simplified
+on an MMC-HVDC system.
+                                                                                     and averaged value models capable of delivering sufficient ac-
+  Index Terms—Average-value model (AVM), EMT-type pro-                               curacy [6] in dynamic simulations.
+grams, HVDC transmission, modular multilevel converter                                  Average value models (AVMs) approximate system dy-
+(MMC), switching function, voltage-source converter (VSC).
+                                                                                     namics by neglecting switching details [7], [8]. They require
+                                                                                     significantly less computational resources and can use larger
+                             I. INTRODUCTION                                         integration time steps leading to much faster computations [9].
+                                                                                     In [10], an AVM model for a 401-level MMC-HVDC system
+                                                                                     has been presented. A phasor-domain-based model of the MMC
+
+T       HE inclusion of high-voltage direct current (HVDC)
+        transmission in electric power grids is expanding rapidly.
+Two HVDC technologies are prevailing: 1) line-commutated
+                                                                                     was presented in [11].
+                                                                                        This paper introduces a new model based on the switching
+                                                                                     function principle applied to each MMC arm. An improved
+converters (LCC) based on thyristor semiconductor devices and                        AVM model is also presented.
+2) voltage-source converter (VSC) type using insulated-gate                             References [12] and [13] are based on circuit reduction
+bipolar transistors (IGBTs). VSC–HVDC systems present                                achieved by the replacement of IGBTs by ON/OFF resistors in
+several advantages over the traditional LCC–HVDC links [1],                          the SMs. The mathematical formulation and computational
+such as independent control of active and reactive powers,                           performance of this approach have been already demonstrated
+ability to supply weak grids or passive networks, and black                          [14]. However, the blocked state of submodules has not been
+start capability.                                                                    previously addressed. This paper presents an iterative solution
+    The recent modular multilevel converter (MMC) topology [2]                       for correcting this limitation within a more efficient overall
+offers significant benefits compared to previous VSC technolo-                       model implementation.
+gies [3]. With a sufficient number of MMC levels per phase, the                         This paper also presents comparisons between different types
+filter requirements can be eliminated. Moreover, switching fre-                      of MMC models for deriving their advantages and limitations
+quency and transient peak voltages on IGBT devices are lower                         according to simulation needs.
+in MMCs, which reduces converter losses [4]. Scalability to
+higher voltages is easily achieved and reliability is improved                                                 II. MMC TOPOLOGY
+by increasing the number of submodules (SMs) per phase [5].                             Fig. 1 shows the three-phase configuration of the MMC
+                                                                                     topology. The MMC model developed here is based on the
+                                                                                     preliminary MMC–HVDC system design for the planned in-
+   Manuscript received April 07, 2013; revised September 11, 2013; accepted          terconnection between France and Spain 400-kV networks in
+October 08, 2013. Paper no. TPWRD-00396-2013.                                        2013 [10]. The MMC is comprised of           SMs per arm which
+   H. Saad, J. Mahseredjian, and J. Peralta are with the École Polytechnique
+de Montréal, Montréal, QC H3C 3A7 Canada (e-mail: hani.saad@polymtl.ca;
+                                                                                     results in a line-to-neutral voltage waveform of           levels
+jean.mahseredjian@polymtl.ca; jaime.peralta@polymtl.ca).                             [15]. The inductor         is added on each arm to limit arm-cur-
+   S. Dennetière and S. Nguefeu are with Réseau de Transport d’Electricité           rent harmonics and fault currents. Each SM is a half-bridge
+(RTE), Paris-La Défense, Paris 92068, France (e-mail: sebastien.den-
+netiere@rte-france.com; samuel.nguefeu@rte-france.com).
+                                                                                     converter as depicted in Fig. 2 and includes mainly a capacitor
+   P. Delarue and X. Guillaud are with L2EP, École Centrale de Lille,                   and two IGBTs with antiparallel diodes (S1 and S2).
+Lille 59651, France (e-mail: Philippe.Delarue@univ-lille1.fr; xavier.guil-
+laud@ec-lille.fr).                                                                                        III. SUBMODULE OPERATION
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                         Since the IGBT device is controllable through gate signals
+   Digital Object Identifier 10.1109/TPWRD.2013.2285633                              and   , the SM can have three different states. In the ON state:
+
+                                                                      0885-8977 © 2013 IEEE
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+
+                                                                                    Fig. 3. MMC model evolution in decreasing complexity.
+
+
+
+
+                                                                                    Fig. 4. Discretized SM with simplified IGBT/diode models.
+
+
+
+                                                                                    A. Model 1: Detailed IGBT-Based Model
+Fig. 1. Typical MMC topology for a three-phase converter.
+                                                                                       This model considers a detailed representation of power
+                                                                                    switches. The model presented in [10] uses an ideal controlled
+                                                                                    switch, two nonlinear (series and anti-parallel) diodes, and two
+                                                                                    snubber circuits. The nonideal diodes are modeled with non-
+                                                                                    linear resistances using the classical V-I curve of a diode and
+                                                                                    a snubber circuit to mimic the reverse recovery condition. The
+                                                                                    nonlinear characteristics can be tuned based on manufacturer
+                                                                                    data sheets or field measurements. This model is able to ac-
+                                                                                    count for switching and conduction losses and any topological
+                                                                                    conditions in the converter.
+Fig. 2. Half-bridge SM circuit for the th SM.
+                                                                                    B. Model 2: Equivalent Circuit-Based Model
+                                                                                       In this model the SM power switches are replaced by ON/OFF
+     is on,     is OFF, and the SM voltage              is equal to the             resistors:       (small value in milliohms) and               (large
+capacitor voltage       . In the OFF state:      is off,     is ON, and             value in megaohms). This approach allows performing an arm
+          0. In the blocked state:       is off,     is off, and                    circuit reduction for eliminating internal electrical nodes and al-
+depends on the arm current            direction. The capacitor may                  lowing the creation of a Norton equivalent for each MMC arm.
+charge through S1 and cannot discharge.                                             In [12] (simplified version of Fig. 2),     and      are controlled
+   Depending on the IGBT technology used in such a converter,                       and used for replacing the two IGTB/diode combinations. With
+the high-speed bypass switch K1 (Fig. 2) is required to increase                    the trapezoidal integration rule, each SM capacitor is replaced
+safety and reliability in case of SM failure, and the thyristor K2                  by an equivalent current history source                  in parallel
+(Fig. 2) is fired to protect the IGBTs against high fault currents                  with a resistance                    , where      is the numerical
+[5].                                                                                integration time-step. The derivation of these equations can be
+                                                                                    found in [12] and [13]. However, the blocked state condition
+                          IV. MMC MODELS                                            and other implementation details have not been addressed.
+                                                                                    Table I shows the algorithm used for Model 2. In Point 2.a.
+  There are many variables in an MMC model. Different                               of Table I, it can be seen that the computation of ON/OFF
+models can be used according to the type of study and re-                           states are straight forward since only gate signal values are
+quired accuracy. Model evolution in decreasing complexity is                        required. When the blocked state is set, only the freewheeling
+depicted in Fig. 3. Black boxes represent simplifications. It is                    diodes can conduct. The diode conduction states depend on
+expected that by decreasing model complexity, computational                         voltage and current variables (Table I, 2.a) that are known only
+performance can be increased. Model 1 is the most detailed.                         from the previous iteration (                and             ). The
+Model 2 uses a simplified power switch circuit model. Model                         discontinuities in state variables due to the blocked state will
+3 makes a simplified arm circuit equivalent. In Model 4, the                        cause numerical oscillations and in addition, the correct diode
+complete MMC structure is reduced to an equivalent system.                          conduction states must be computed. A new implementation
+The model details are presented in the next sections.                               of Model 2 is proposed here. It uses the EMTP-RV solver
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+SAAD et al.: MODULAR MULTILEVEL CONVERTER MODELS FOR ELECTROMAGNETIC TRANSIENTS                                                                                     3
+
+
+
+                             TABLE I
+                    MMC ARM ALGORITHM OF MODEL 2
+
+
+
+
+                                                                                    Fig. 6. Effect of the iterative process, green solid line the iterative process is
+                                                                                    on, blue dotted line the iterative process is off.(a) Voltage             and (b)
+                                                                                    current:         .
+
+
+
+                                                                                    The test presented in Fig. 6 illustrates its effect on voltage and
+                                                                                    current waveforms.
+                                                                                       The main advantage of Model 2 is the significant reduction
+                                                                                    in the number of electrical nodes in the main system of network
+                                                                                    equations. The algorithm still considers each SM separately and
+                                                                                    maintains a record for individual capacitor voltages. It is appli-
+                                                                                    cable to any number of SMs per arm.
+
+                                                                                    C. Model 3: MMC Arm Switching Function
+                                                                                       In this model, each MMC arm is averaged using the
+                                                                                    switching function concept of a half-bridge converter. Let
+                                                                                    be the switching function that takes the value 0 when the state
+                                                                                    of SM is OFF and 1 when it is ON. For each SM
+
+
+                                                                                                                                                                  (1)
+
+                                                                                    Assuming that capacitor voltages of each arm are balanced [18],
+                                                                                    the average values of capacitor voltages are equal. In addition,
+                                                                                    by neglecting the voltage differences between capacitors, the
+                                                                                    following assumption can be made:
+
+                                                                                                                                                                  (2)
+
+                                                                                    where        represents the sum of all capacitor voltages of an
+                                                                                    arm. The accuracy of assumption (2) increases when the number
+                                                                                    of SMs per arm is increased and/or when the fluctuation am-
+Fig. 5. Block diagram, iterative process used for Model 2.                          plitudes of capacitor voltages are decreased. This assumption
+                                                                                    allows deducing an equivalent capacitance                    for
+                                                                                    each arm.
+for nonlinear components [16]. When the blocked state is set                           By defining the switching functions of an arm as follows:
+for one of the SMs and a change in conduction state of one
+of the diodes is detected, an iterative process is activated in
+the current time-step in order to find the correct conduction                                                                                                     (3)
+states and the trapezoidal integration rule is switched to the
+Backward Euler method for the next timestep (Fig. 5). The                           and including the linear conductivity losses         for each
+latter is for eliminating numerical oscillations [17] caused by                     SM, the following switching functions can be derived for each
+discontinuities in trapezoidal integration.                                         arm when the SMs are in ON/OFF states [19]:
+   The simulation of an MMC with 401 levels showed that in
+average less than 3 iterations are needed for the convergence
+of the method in Fig. 5. It proves the efficiency of this method.                                                                                                 (4)
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+4                                                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+
+                                                                                    Fig. 8. Model 4, AVM for MMC: (a) ac side and (b) dc side.
+
+Fig. 7. Switching function model of MMC arm. (a) ON/OFF states model and
+(b) blocked state model.
+                                                                                    in [14]. Thus, using an approach simila

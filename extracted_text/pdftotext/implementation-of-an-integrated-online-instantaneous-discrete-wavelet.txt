@@ -1,0 +1,203 @@
+                                                               Electrical Power and Energy Systems 68 (2015) 373–383
+
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                Electrical Power and Energy Systems
+                                                 journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Implementation of an integrated online instantaneous discrete wavelet
+transform decomposition toolbox in ATP-EMTP
+Nima Mahmoudpour a,c, Farhad Haghjoo b,c, Seyed Mohammad Shahrtash c,⇑
+a
+  Azarbaijan Regional Electricity Company, Tabriz, Iran
+b
+  Shahid Beheshti University, Tehran, Iran
+c
+  Center of Excellence for Power System Automation and Operation, Electrical Engineering Department, Iran University of Science and Technology, Tehran, Iran
+
+
+
+a r t i c l e          i n f o                           a b s t r a c t
+
+Article history:                                         Although wavelet transform decomposition has wide applications in the analysis of power system tran-
+Received 7 January 2014                                  sients due to its multi-resolution analyzing nature, conventional transient simulation programs do not
+Received in revised form 26 November 2014                provide an effective inbuilt wavelet transform toolbox for online studies. This paper proposes the devel-
+Accepted 24 December 2014
+                                                         opment and implementation of an Online Instantaneous Discrete Wavelet Transform Decomposition
+Available online 17 January 2015
+                                                         Toolbox (IWTD toolbox) in ATP-EMTP software by its MODELS programming language. Integration of a
+                                                         powerful online discrete wavelet transform toolbox with alternative transient program makes this soft-
+Keywords:
+                                                         ware highly functional especially with selectable different full and reduced order mother wavelets with
+ATP-EMTP software
+Discrete wavelet transform
+                                                         deﬁnable reduction degree. The proposed toolbox provides a user-friendly interface with additional capa-
+Online decomposition                                     bilities and features for ATP users. Numerous cases simulated and compared with the results of the well-
+Power system transients simulation                       known MATLAB Wavelet Toolbox have indicated that the proposed toolbox works reliably and accurately
+                                                         in the ATP-EMTP environment.
+                                                                                                                           Ó 2014 Elsevier Ltd. All rights reserved.
+
+
+
+
+Introduction                                                                                nature in electric power systems. With this digital program, com-
+                                                                                            plex networks and control systems of arbitrary structure can be
+   Discrete Wavelet Transform (DWT) is well suited to non-sta-                              simulated. ATP-EMTP has also extensive modeling and additional
+tionary signals whose frequency spectrum is time-variant and                                important features besides the computation of transients.
+may contain both high-frequency components and localized                                       Obviously, an integrated toolbox that can be used to perform
+impulses superimposed on power frequency and its harmonics as                               wavelet transformation of the ATP simulated waveforms is a highly
+is typical of fast power system transient signals. The ability of                           useful feature for those studies investigating wavelet transforma-
+the wavelets to focus on short time intervals for high-frequency                            tion based techniques. Although several wavelet transform pro-
+components and long time intervals for low-frequency compo-                                 grams such as MATLAB Wavelet Toolbox are available, their
+nents provides non-uniform division of frequency domain and                                 usage generally requires that simulated waveforms to be saved
+improves the analysis of wide band electromagnetic transient sig-                           in data ﬁles and then perform the analysis external to the simula-
+nals [1]. Due to the wide variety of signals and problems encoun-                           tion environment (i.e. ATP-EMTP). This kind of applying DWT and
+tered in power engineering, there are different applications of                             also what has been proposed in [36] should be categorized in off-
+wavelet transform in power system analysis. These include power                             line approaches, as application of DWT is allowed when the whole
+system protection and relaying [2–13], analysis of power quality                            signal is captured.
+disturbances [14–19], high voltage insulation condition monitor-                               It was believed that there are some limitations in employing
+ing [20–30], power measurement [31–32], and analysis of power                               wavelet transformation in online applications, which had lead to
+system transients [33–35].                                                                  using it only in ofﬂine mode; including:
+   Nowadays, among all known software packages for studying
+power system transients, ATP-EMTP is considered to be one of                                    a. Generating any of the upper level wavelet transform compo-
+the most widely used universal programs for simulation of tran-                                    nents should be performed through a successive step-by-
+sient phenomena of electromagnetic as well as electromechanical                                    step calculation from the ﬁrst level up to the desired level.
+                                                                                                   Therefore, there is a time consuming calculation process
+    ⇑ Corresponding author. Tel.: +98 21 73225613; fax: +98 21 73021613.                           for each new sample of the original signal when it is
+      E-mail address: shahrtash@iust.ac.ir (S.M. Shahrtash).                                       calculated.
+
+http://dx.doi.org/10.1016/j.ijepes.2014.12.067
+0142-0615/Ó 2014 Elsevier Ltd. All rights reserved.
+374                                    N. Mahmoudpour et al. / Electrical Power and Energy Systems 68 (2015) 373–383
+
+
+      b. Down-sampling, which is employed by DWT in the decom-                  toolbox considering different cases studies. Comparison between
+         position process to avoid increase in computational burden             the performance of the proposed toolbox (as an online approach)
+         (although it makes the reconstruction process as compul-               and MATLAB Wavelet Toolbox (as an ofﬂine approach) are also
+         sory, whenever the original signal is required).                       made in this section. Conclusions and future work are included
+                                                                                in Section ‘Conclusion’. Appendix A presents the basic equations
+   Nonetheless, if an online application of DWT is going to be                  and programming procedure of the toolbox in brief.
+introduced, to the authors’ knowledge, the requirements for an
+online version of WT can be summarized as follows:                              Theoretical bases of the instantaneous discrete wavelet
+                                                                                transform decomposition
+  1. The ﬁlters’ structures should be based on DWT, which mainly
+     means employing low-pass ﬁlters for extracting approxima-                  Discrete wavelet transform
+     tion components in companion with band-pass ﬁlters for
+     detail ones (these are basic structural properties of DWT).                   Wavelets are a family of functions obtained from a function,
+  2. The ﬁlters for different decomposition levels should provide               named as ‘mother wavelet’, w, by dilating and time-shifting. The
+     frequency responses matching with the prescribed frequency-                discrete version of wavelet transform of a discrete signal x(k) is
+     bands (this is another basic structural properties of DWT).                deﬁned as:
+  3. The low-pass and band-pass ﬁlters at any desired decomposi-                                                    
+     tion level should be orthogonal (this is also a basic structural
+                                                                                             1 X          k  nb0 am
+                                                                                                                   0
+                                                                                DWTðm; kÞ ¼ pﬃﬃﬃﬃﬃﬃ xðnÞw                                                           ð1Þ
+     property of DWT).                                                                       am 0 n
+                                                                                                              am
+                                                                                                               0
+  4. The procedure of applying each ﬁlter should be well-matched
+                                                                                where w() is the mother wavelet. a = a0m and b = nb0a0m are the
+     with moving data window principle and sample-by-sample
+                                                                                scaling and the translation parameters, respectively [1]. DWT pro-
+     calculation in any computational transient analysis (this is
+                                                                                vides a decomposition of the signal into sub bands with a band-
+     the basic formal feature for an online ﬁlter).
+                                                                                width that increases linearly with frequency [36].
+  5. Simultaneous calculations should be possible for the calcula-
+                                                                                    In other presentation, DWT is introduced as a set of low-pass
+     tion of detail and/or approximation components at different
+                                                                                (called by H) and band-pass (called by G) ﬁlters. Such a structure,
+     levels (this is another formal feature for an online ﬁlter).
+                                                                                with three level of decomposition, has been shown in Fig. 1, where
+  6. Constructing WT ﬁlters, needed for extracting the detail or
+                                                                                the original signal is decomposed into the approximation (aj) and
+     approximation components at different levels, should be
+                                                                                detail (dj) coefﬁcients. G and H are orthogonal vectors with N  1
+     performable without complexity.
+                                                                                elements. The coefﬁcients of the ﬁlters are determined according
+  7. Order of the ﬁlters should be kept as low as possible, to keep
+                                                                                to the type of the selected mother wavelet. This implementation
+     the calculation burden as low as being insertible between
+                                                                                is commonly known as Mallat tree algorithm [1,12].
+     samples.
+                                                                                Instantaneous wavelet transform decomposition
+   Now, according to the above remarks for the evaluation of any
+proposed online version of DWT it is deducible that among the
+                                                                                    It is well known that in conventional DWT, the jth level detail or
+few proposed ﬁlters in the literature, [37,38] due to lack of the ﬁrst
+                                                                                approximation component can only be calculated after a series of
+three properties and [36] due to not possessing the fourth and ﬁfth
+                                                                                successive convolutions up to the desired level of decomposition.
+features cannot be categorized as online WT-based ﬁlters. On the
+                                                                                    But according to the new ﬁlter proposed in [20], named as
+other hand, [20,21] have recently proposed instantaneous wavelet                                                                                 ðjÞ
+                                                                                ‘‘Instantaneous Wavelet Transform Decomposer’’ or IWTDðNÞ ; to
+transform decomposition ﬁlters with reduced order to overcome
+                                                                                ﬁnd the kth element of the dj along with the kth element of any
+large calculation burden and compatible with moving data win-
+                                                                                of upper level components, Eq. (2) can be used, where gj() and
+dow and sample extraction from signals. These features will be
+                                                                                hj() are the elements of Gj and Hj ﬁlters, respectively, j is the level
+so valuable for WT-based ﬁlters if implemented as an inbuilt online
+                                                                                of decomposition, N is the number of elements of mother wavelet
+toolbox in ATP-EMTP environment. Fortunately, ATP-EMTP pro-
+                                                                                vectors and aj = 2j – 1.
+vides a powerful feature named MODELS programming language                      2                         3 2                                                   3
+for the representation and study of the time-variant systems,                            :            :                     :           ::     :          :
+                                                                                6                         7 6                         j             j        j 7
+which makes it proper to implement DWT calculations between                     4 dj ðn  1Þ aj ðn  1Þ 5 ¼ 4 xðn  aj ðN  1Þ  2 Þ  xðn  1  2 Þ xðn  2 Þ 5
+two consecutive samples in the EMTP based simulation software                         dj ðnÞ       aj ðnÞ           xðn  aj ðN  1ÞÞ    xðn  1Þ     xðnÞ
+                                                                                2                                            3
+[39].                                                                                      g j ð1Þ             hj ð1Þ
+   In this paper, by taking advantage of the latter ﬁlters and MOD-             6          g j ð2Þ             hj ð2Þ        7
+                                                                                6                                            7
+                                                                                6                                            7
+ELS programming capabilities, a novel general-purpose integrated                6                                          7
+                                                                                6                                            7
+toolbox for the aforementioned purposes is implemented and                      6                                            7
+                                                                                4                                          5
+investigated in ATP-EMTP software. The novelty of the proposed                    g j ðaj ðN  1Þ þ 1Þ hj ðaj ðN  1Þ þ 1Þ
+toolbox is that it can be used in an online manner to perform dis-                                                                                                  ð2Þ
+crete wavelet transform on the samples as soon as they are gener-
+ated by the simulation at each time-step (together with the
+previous samples). Thus, it is possible to have integrated simula-
+tion of power systems and any monitoring/control/protective
+                                                                                                 G         2      d1
+apparatuses, such as DWT based protective relays.
+   In sequel, the theoretical bases of the conventional and Instan-                 x(n)                                G         2      d2
+taneous Discrete Wavelet Transform Decomposition are described                                   H         2                                   G         2      d3
+in Section ‘Theoretical bases of the instantaneous discrete wavelet
+                                                                                                                        H         2
+transform decomposition’. Then, the proposed toolbox (IWTD
+toolbox) and its implementation method in ATP-EMTP are pre-                                                                                    H         2      a3
+sented in Section ‘The proposed IWTD toolbox’. Section ‘Simulation
+and results’ contains simulations and the results of the proposed                                 Fig. 1. Tree implementation of wavelet ﬁlters.
+                                                                                  N. Mahmoudpour et al. / Electrical Power and Energy Systems 68 (2015) 373–383                                                                                                                                            375
+
+
+
+
+                                                                                                                                                          Total Number of Required Mathematical Operations
+                                       36
+                                                                                                                                                                                                             12000         Conventional DWT
+                                       32
+     Burden Reduction using IWTD (%)
+
+
+
+                                                                                               N=2                                                                                                                         Full order IWTD
+                                       28                                                                                                                                                                    10000         Reduced order IWTD
+
+                                       24
+                                                                                                                                                                                                              8000
+                                       20
+
+                                       16                                                      N=4                                                                                                            6000
+
+                                       12                                                      N=6                         

@@ -1,0 +1,180 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 1, JANUARY 2022                                                                                         249
+
+
+
+
+      Extending the Frequency Bandwidth of Transient
+        Stability Simulation Using Dynamic Phasors
+         M. A. Kulasza , U. D. Annakkage , Senior Member, IEEE, and C. Karawita , Senior Member, IEEE
+
+
+    Abstract—This paper presents a novel approach to dynamic                         Subsynchronous oscillations associated with generator tur-
+phasor-based transient stability simulation. The proposed method                  bines, series capacitors, HVdc systems, and renewable genera-
+is based on the modified nodal analysis (MNA) approach to circuit                 tion are a major concern in modern power systems. Torsional
+simulation, which is used to construct continuous differential-
+algebraic equations (DAEs). The proposed method makes use of                      modes with frequencies greater than 10Hz can be excited by
+the stamp technique, which makes it possible to construct a general               HVdc system controls [4]. Subsynchronous resonance resulting
+purpose MNA-based simulator. Stamp-based models for common                        in oscillations with frequencies greater than 20Hz have been
+power system components are derived in this work. A new MNA-                      observed in systems with wind generation located near series
+based synchronous machine model is presented, which represents                    compensated lines [5]. These dynamics cannot be analyzed using
+machines as nonlinear inductances instead of subtransient equiva-
+lents. The resultant continuous DAEs are numerically solved using                 conventional transient stability analysis as they include frequen-
+the general purpose variable step and variable order library IDA.                 cies that cannot be reliably simulated using the quasistationary
+Simulation results from the IEEE 68 bus test system, a real 400 bus               assumption [6].
+power system, and the IEEE 39 bus test system with an embedded                       The accurate and detailed study of power system dynamics
+HVdc transmission system demonstrate that the proposed method                     has generally been associated with electromagnetic transient
+is suitable for large ac networks with power electronic devices. The
+results demonstrate good agreement between the proposed method                    (EMT) simulators. EMT simulation tends to be computation-
+and electromagnetic transient (EMT) simulation. The results also                  ally intensive, so simulation of large system models requires
+demonstrate that the proposed method is fast and scalable with                    methods such as parallel processing. An alternative approach is
+CPU times that are up to 200 times faster than EMT simulation.                    to augment existing transient stability simulation using dynamic
+   Index Terms—Dynamic phasors, modified nodal analysis, power                    phasors. Dynamic phasors are a natural extension of steady state
+system transient stability, power system simulation.                              phasors that model dynamics while retaining the advantages of
+                                                                                  carrier frequency demodulation [3]. Additionally, many existing
+                                                                                  models can be extended to fit into dynamic phasor-based sim-
+                           I. INTRODUCTION                                        ulation. Previous research in small signal stability analysis has
+      RANSIENT stability is defined as the ability of a power                     demonstrated the potential of dynamic phasors for improving
+T     system to maintain stability following disturbances such as
+bus faults [1]. Historically, transient stability has been concerned
+                                                                                  the accuracy of quasistationary-based analysis [7]–[9].
+                                                                                     The equations that describe a power system’s dynamics are
+with low frequency electromechanical oscillations in the range                    generally differential-algebraic equations (DAEs) of the form
+of 0Hz. The first transient stability simulation computer pro-
+                                                                                                                F (t, y, ẏ) = 0,                        (1)
+grams used admittance matrices to represent electrical networks,
+which became known as the quasistationary assumption [2],                         which are typically sparse and stiff. Implicit numerical methods
+[3]. This assumption made stability analysis of early power                       with error control and variable step properties are ideal for power
+systems feasible because it relaxes out high frequency network                    system simulation because a small time step can be used to
+dynamics, which are unnecessary for analysis of low frequency                     accurately pass through high frequency transients. The time step
+electromechanical oscillations [1]. Removing a network’s high                     is then automatically increased to simulate electromechanical
+frequency characteristics makes it feasible to conduct long du-                   transients.
+ration simulations of large power system models.                                     The methods used by conventional transient stability simula-
+                                                                                  tors to construct and solve (1) cannot be used with dynamic
+   Manuscript received October 12, 2020; revised February 17, 2021 and May        phasors since they are inherently tied to the quasistationary
+18, 2021; accepted June 20, 2021. Date of publication July 2, 2021; date of       assumption. Existing circuit simulation techniques can be used
+current version December 23, 2021. This work was supported in part by the
+RTDS Technologies Inc. and in part by the TransGrid Solutions Inc., Winnipeg,     to develop a new approach since it is possible to show that an
+Manitoba, Canada. Paper no. TPWRS-01721-2020. (Corresponding author: M.           instantaneous circuit is structurally similar to its dynamic phasor
+A. Kulasza.)                                                                      equivalent [10]. Numerical integrator substitution (NIS) forms
+   M. A. Kulasza and U. D. Annakkage are with the Department
+of Electrical and Computer Engineering, University of Manitoba, Win-              the foundation for EMT simulation and has been explored for dy-
+nipeg, MB R3T 5V6, Canada (e-mail: umkulasm@myumanitoba.ca;                       namic phasor-based simulation in previous research [11]–[13].
+Udaya.Annakkage@umanitoba.ca).                                                    The main drawback of NIS is that local integration embeds the
+   C. Karawita is with TransGrid Solutions Inc., Winnipeg, MB R3T 6C2,
+Canada (e-mail: ckarawita@tgs.biz).                                               simulation time step into a system’s equations, which makes
+   Digital Object Identifier 10.1109/TPWRS.2021.3094451                           variable step simulation difficult and inefficient.
+                         0885-8950 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:37:22 UTC from IEEE Xplore. Restrictions apply.
+250                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 1, JANUARY 2022
+
+
+
+   An alternative to NIS is to directly construct a set of continu-             uses the Blondel transformation to define a dynamic phasor
+ous equations of the form given by (1). A dynamic phasor-based                  operator P such that given a general real sinusoidal signal of
+simulation method based on the sparse tableau approach that is                  the form
+well-suited to parallel processing has been previously investi-
+gated [14]. A novel dynamic phasor-based simulation approach                                         x(t) = X(t) cos (ω0 t + δ(t)) ,                  (2)
+was developed in previous reseach, which was used to simulate
+the IEEE 39 bus test system for both balanced and unbalanced                    P computes the dynamic phasor, X(t), of x(t), defined by
+disturbances [15], [16]. A limitation of the aforementioned
+                                                                                                    X(t) = P (x(t)) = X(t)ejδ(t) .                    (3)
+methods is that the number of variables and equations rapidly
+grows as system size increases due to the amount of redundancy                  The reader is referred to the original work for details regarding
+in their mathematical models.                                                   the definition of P. The sinusoidal counterpart to X(t) can be
+   The main contribution of this work is a new scalable tran-                   recovered by re-introducing the carrier as follows
+sient stability simulation method based on dynamic phasors                                                                
+and modified nodal analysis that is suitable for realistic power                                    x(t) = Re X(t)ejω0 t .                    (4)
+system models. Necessary background information is provided
+in Section II and details on the method’s algorithm are pre-                       The defining characteristic of dynamic phasors is the manner
+sented in Section III. Another contribution of this work is the                 in which they treat the derivative of X(t). Dynamic phasor-based
+practical considerations required for the simulation of equations               models define a phasor’s derivative as
+generated using the proposed method, which are included in
+Section IV. Finally, Section V provides test results for the IEEE
+                                                                                                      d             ˙
+                                                                                                         P (x(t)) = X(t) + jX(t),                     (5)
+68 bus test system, a real 400 bus test system, and the IEEE 39                                       dt
+bus test system with an embedded HVdc transmission system.                      which is the dynamic phasor differentiation property expressed
+                                                                                in per unit time [3]. Models based on the quasistationary as-
+                          II. BACKGROUND                                        sumption use a standard static phasor representation of network
+                                                                                                                           ˙ = 0.
+                                                                                variables, which is equivalent to (5) with X
+   The models presented in Section III are based on dy-
+namic phasors, which require the background information
+and properties discussed in Section II-A. These components                      B. Modified Nodal Analysis
+are then assembled into a system of DAEs using modified
+                                                                                   Modified nodal analysis (MNA) is a natural extension of
+nodal analysis, which is briefly described in Section II-B.
+                                                                                standard nodal analysis that accommodates current controlled
+Finally, solving a system’s DAEs and implementation spe-
+                                                                                components [25]. In standard nodal analysis, the voltage at n − 1
+cific details require background information on the type of
+                                                                                nodes of an n node network are used as y, with one node serving
+numerical solution used in this work, which is included in
+                                                                                as the reference node. Kirchoff’s current law (KCL) at each
+Section II-C.
+                                                                                node is used to construct F, where branch currents are written in
+                                                                                terms of node voltages using constitutive relationships. The main
+A. Dynamic Phasors
+                                                                                issue with standard nodal analysis is that it breaks down when
+   Several dynamic phasor frameworks have been developed that                   a branch current cannot be expressed in terms of the network’s
+differ in their mathematical definition to address a wide variety of            voltages. This break down occurs for components as simple as
+system models. The first formalized approach was developed for                  linear inductors when constructing continuous DAEs of the form
+balanced three-phase systems and is based on the Blondel trans-                 (1).
+formation [3]. A general framework suitable for single-phase                       MNA accommodates current controlled components by in-
+and unbalanced systems was later proposed based on analytic                     cluding their branch currents as variables in y. The branch
+signals and the Hilbert transform [17]. A great deal of work                    constitutive relationships are included in F to account for each
+has been conducted using the Hilbert transform-based dynamic                    additional variable. MNA also uses KCL at each node as a
+phasor framework, most notably in frequency adaptative simu-                    starting point for F and proceeds by eliminating as many branch
+lation [18]. Another dynamic phasor framework emerged from a                    currents as possible. Furthermore, the MNA process does not
+seemingly unrelated area of research known as generalized state                 restrict y to node voltages and branch currents. For example,
+space averaging [19]. This framework is not limited to the dc and               a variant of MNA known as charge-oriented MNA includes
+fundamental components of a system model since it is based on a                 capacitor charge and inductor flux in y [26].
+Fourier series with time dependent coefficients. Research using                    A feature of MNA that makes it well-suited to general circuit
+this framework has seen a wide range of applications, including                 simulation is that a circuit’s equations may be constructed using
+HVdc and flexible ac transmission system (FACTS) [20], [21],                    structural information through the stamp concept [27]. Stamps
+SSR analysis [22], and hybrid simulation [23], [24].                            act like a component’s blue-print in a system of equations like
+   The method proposed in this work was developed with the                      the form given by (1). Stamps are often visualized using generic
+goal of simulating network level transients in large power system               matrices and abstract indexes, but their most important feature is
+models. Therefore, it was considered sufficient to use the bal-                 defining a set of constraint equations relating internal variables
+anced three phase dynamic phasor framework. This framework                      to node voltages.
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:37:22 UTC from IEEE Xplore. Restrictions apply.
+KULASZA et al.: EXTENDING THE FREQUENCY BANDWIDTH OF TRANSIENT STABILITY SIMULATION USING DYNAMIC PHASORS                                              251
+
+
+
+C. Numerical Solution                                                              The vector u ∈ Rn represents the constant inputs to a system’s
+                                                                                equations, such as the voltage at an infinite bus or the field
+   Backward differentiation formula (BDF) methods are a com-
+mon choice for numerically solving DAEs [28]. The BDF family                    voltage for a generator without an exciter. The sparse matrices
+                                                                                A ∈ Rn×n and T ∈ Rn×n represent the constant coefficients
+of methods is designed to be particularly well-suited to solving
+                                                                                for y and ẏ, respectively. For example, the coefficients as-
+stiff systems of equations and has been used in a number of
+previous research applications involving transient stability sim-               sociated with lines and transformers are included in a sys-
+                                                                                tem’s equations through A and T. Finally, the vector f ∈ Rn
+ulation [29], [30]. BDF methods have also been used in EMT
+                                                                                represents the nonlinear and time-dependent components of a
+simulation with predictors specifically tuned for sinusoidally
+varying quantities [31].                                                        system’s equations. For example, the electromagnetic torque in
+                                                                                a generator’s speed equation is included in a system’s equations
+   The BDF method with order k when applied to (1) has general
+form                                                                            using f because it is a nonlinear combination of the generator’s
+                 ⎛                         ⎞                                    stator current and air-gap flux.
+                               k
+                           1                                                       Generators contribute the most significant number of real
+               F ⎝t, yn ,          αj yn−j ⎠ = 0,              (6)              auxiliary variables through their rotor and control equations.
+                          β0 h j=0
+                                                                                Rotor variables include the flux in field and damper windings
+where coefficients β0 and αj depend on k [28]. It can be shown                  along with the rotor’s angle and speed. Control variables depend
+that the BDF method with order k = 1 is equivalent to the                       on the type of exciter and governor used to model a generator.
+backward Euler method. In general, (6) is a nonlinear set of                    The MNA approach offers a great deal of flexibility with regards
+equations and a method such as Newton iterations must be used                   to variable selection because any number of variables can be
+to find yn . The Jacobian, J, for (6) is found by differentiating               included to simplify equations. However, the convenience of ad-
+F in terms of yn and letting γk = βα00h , which has the general                 ditional variables must be balanced with the hidden constraints
+form                                                                            and numerical difficulties that can be introduced by algebraic
+                                                                                equations [28]. Additional variables in common models like
+                        ∂F      ∂F  

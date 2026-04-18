@@ -295,3 +295,374 @@ created: "2026-04-13"
 | [[accuracy-assessment-of-analytical-expressions-for-the-ground-return-impedance-of|Accuracy assessment of analytical expressions for the ground]] | 2025 |
 | [[frequency-and-transient-responses-of-a-275-kv-pressure-oil-filled-cable-model-va|Frequency and transient responses of A 275 kV pressure oil-f]] | 2025 |
 | [[time-delay-estimation-through-all-pass-functions-for-ulm-line-and-cable-models|Time-delay estimation through all-pass functions for ULM lin]] | 2026 |
+
+## 深度增强内容
+
+ 基于提供的论文数据，以下是针对 **电缆模型 (Cable Model)** 的深度增强内容：
+
+---
+
+# 电缆模型深度解析
+
+## 1. 各类模型数学描述
+
+### 1.1 频变多导体电缆基本方程
+
+电缆的电磁行为由频变电报方程描述：
+
+$$
+\begin{aligned}
+\frac{d\mathbf{V}(x, \omega)}{dx} &= -\mathbf{Z}(\omega)\mathbf{I}(x, \omega) \\
+\frac{d\mathbf{I}(x, \omega)}{dx} &= -\mathbf{Y}(\omega)\mathbf{V}(x, \omega)
+\end{aligned}
+$$
+
+其中 $\mathbf{Z}(\omega) = \mathbf{R}(\omega) + j\omega\mathbf{L}(\omega)$ 为串联阻抗矩阵，$\mathbf{Y}(\omega) = \mathbf{G}(\omega) + j\omega\mathbf{C}$ 为并联导纳矩阵。对于 $n$ 导体电缆系统，$\mathbf{Z}, \mathbf{Y} \in \mathbb{C}^{n \times n}$。
+
+传播常数矩阵和特征阻抗矩阵分别为：
+$$
+\begin{aligned}
+\boldsymbol{\gamma}(\omega) &= \sqrt{\mathbf{Z}(\omega)\mathbf{Y}(\omega)} = \mathbf{T}(\omega)\boldsymbol{\lambda}(\omega)\mathbf{T}^{-1}(\omega) \\
+\mathbf{Z}_c(\omega) &= \sqrt{\mathbf{Z}(\omega)\mathbf{Y}^{-1}(\omega)}
+\end{aligned}
+$$
+
+其中 $\mathbf{T}(\omega)$ 为模态变换矩阵，$\boldsymbol{\lambda}(\omega) = \text{diag}\{\gamma_1, \gamma_2, ..., \gamma_n\}$。
+
+### 1.2 通用线路模型 (ULM) 数学框架
+
+ULM将频变特性通过有理函数逼近实现时域仿真。传播矩阵 $\mathbf{H}(s)$ 和特征导纳 $\mathbf{Y}_c(s)$ 的矢量拟合(VF)表示为：
+
+$$
+\mathbf{H}(s) \approx \sum_{k=1}^{N} \frac{\mathbf{R}_k}{s-p_k}e^{-s\tau_k} + \mathbf{D}, \quad s = j\omega
+$$
+
+$$
+\mathbf{Y}_c(s) \approx \sum_{k=1}^{M} \frac{\mathbf{r}_k}{s-q_k} + \mathbf{D}_y + s\mathbf{E}_y
+$$
+
+其中 $\tau_k$ 为模态时延，$\mathbf{R}_k, \mathbf{r}_k$ 为留数矩阵，$p_k, q_k$ 为极点。
+
+**关键约束条件**（基于约束线性最小二乘法）：
+$$
+\left| \frac{\text{Residue}}{\text{Pole}} \right| \leq \epsilon_{\text{stab}}
+$$
+
+该约束确保时域卷积的数值稳定性，避免大留数/极点比导致的误差放大。
+
+### 1.3 分频段宽频带模型 (Partitioned Fitting)
+
+针对宽频带 (0.001 Hz – 1 MHz) 建模，采用两阶段分解：
+
+$$
+\mathbf{H}(s) = \underbrace{\mathbf{H}_{DC}(s)}_{\text{低频校正}} + \underbrace{\mathbf{H}_{AC}(s)}_{\text{高频拟合}}
+$$
+
+**第一阶段（高频拟合）**：在 $[1\text{ Hz}, 1\text{ MHz}]$ 频段进行标准矢量拟合，排除直流附近数据以避免病态条件。
+
+**第二阶段（DC校正）**：使用低阶有理函数补偿低频特性：
+$$
+\mathbf{H}_{DC}(s) = \sum_{k=1}^{N_{DC}} \frac{\mathbf{R}_k^{DC}}{s-p_k^{DC}}, \quad N_{DC} \ll N
+$$
+
+### 1.4 实测数据融合模型 (Measurement-Based Coaxial Mode)
+
+对于高频同轴模态（>500 kHz），传统几何参数计算存在显著误差。融合模型表示为：
+
+$$
+\alpha_{\text{fusion}}(\omega) = 
+\begin{cases} 
+\alpha_{\text{geom}}(\omega), & \omega \leq \omega_c \\
+\alpha_{\text{meas}}(\omega) \cdot \left(1 + \delta_{\text{stranding}}(\omega)\right), & \omega > \omega_c
+\end{cases}
+$$
+
+其中 $\omega_c$ 为截止频率，$\delta_{\text{stranding}}$ 为绞线效应修正因子（通常 40-60% 增量）。波阻抗融合通过高频滤波实现：
+$$
+Z_{\text{coax}}^{\text{eff}}(s) = Z_{\text{coax}}^{\text{geom}}(s) \cdot \frac{1}{1 + (s/\omega_c)^{n_{\text{filter}}}}
+$$
+
+### 1.5 全通函数时延估计模型 (All-Pass Delay Estimation)
+
+为保证因果性（传播速度 $\leq c$）和最小相位特性，将传播函数分解为：
+
+$$
+\mathbf{H}(s) = \mathbf{H}_{\text{min}}(s) \cdot \mathbf{A}(s)
+$$
+
+其中 $\mathbf{A}(s)$ 为全通函数矩阵，满足 $|\mathbf{A}(j\omega)| = \mathbf{I}$。通过迭代优化：
+$$
+\min_{\tau} \| \angle \mathbf{H}(j\omega) - \angle \mathbf{H}_{\text{min}}(j\omega, \tau) - \omega\tau \|_2
+$$
+
+确保所有零点位于左半平面（最小相位），且时延估计满足：
+$$
+\tau_{\text{est}} \geq \frac{l}{c} \cdot \sqrt{\varepsilon_r \mu_r}
+$$
+
+---
+
+## 2. 仿真参数参考表
+
+| 参数类别 | 参数名称 | 推荐值/范围 | 适用场景 | 来源文献 |
+|---------|---------|------------|---------|----------|
+| **频率范围** | 宽频带建模下限 | 0.001 Hz | 长电缆充电、极化效应 | [Partitioned fitting, 2020] |
+| | 宽频带建模上限 | 1 MHz (可扩展) | 雷电、VFTO暂态 | [Partitioned fitting, 2020] |
+| | 实测融合截止频率 | 500 kHz | 同轴模态过渡 | [Multi-conductor cable, 2023] |
+| **有理拟合** | 矢量拟合容差 | 0.1% – 0.01% | 频域逼近精度 | [Advanced wideband, 2024] |
+| | 直流校正阶数 $N_{DC}$ | 2 – 4 | 低频特性补偿 | [Partitioned fitting, 2020] |
+| | 高频拟合阶数 $N$ | 20 – 50 | 主模型阶数 | [Partitioned fitting, 2020] |
+| **稳定性约束** | 留数/极点比阈值 $\epsilon_{\text{stab}}$ | $10^3$ – $10^4$ | 数值稳定性控制 | [Improvement of Numerical Stability, 2010] |
+| | 快速衰减模式截断 | 幅值 $< 10^{-3}$ | 高频振荡抑制 | [Advanced wideband, 2024] |
+| **时延估计** | 因果性速度上限 | $c$ (光速) | 保证物理可实现性 | [Time-delay estimation, 2026] |
+| | 迭代收敛容差 | $10^{-8}$ (NLT参考) | 高精度时延提取 | [Time-delay estimation, 2026] |
+| **模式分组** | 96电缆系统分组数 | 8 组 (原36组) | 计算效率优化 | [Advanced wideband, 2024] |
+| | 双回架空线分组数 | 4 组 (原10组) | 矩阵降维 | [Advanced wideband, 2024] |
+| **损耗修正** | 同轴模态高频增量 | +40% – +60% | 1MHz附近衰减 | [Multi-conductor cable, 2023] |
+| | 绞线效应修正频段 | >100 kHz |  Skin-effect修正 | [Multi-conductor cable, 2023] |
+
+---
+
+## 3. 模型选择指南
+
+### 3.1 基于暂态类型的模型选择
+
+| 暂态类型 | 频率范围 | 推荐模型 | 关键配置 | 注意事项 |
+|---------|---------|---------|---------|----------|
+| **工频稳态** | 50/60 Hz | 恒定参数π型等效 | 单π或级联π | 仅适用于短电缆 (<10 km) |
+| **开关操作暂态** | 100 Hz – 10 kHz | 频变相域模型 (FD) | 考虑护套接地方式 | 需包含大地返回路径 |
+| **雷电冲击** | 10 kHz – 1 MHz | 宽频带分频拟合模型 | DC校正+高频实测融合 | 必须考虑同轴模态衰减修正 (误差可降低50%以上) |
+| **VFTO/极快速暂态** | >1 MHz | 实测数据融合模型 | 包含半导电层损耗 | 传统几何模型失效，必须用实测数据修正 |
+| **海底电缆长距离** | 0.001 Hz – 10 kHz | 分频段ULM+交叉互联模型 | 极低速模式单独处理 | 考虑护套涡流和海水环境 |
+| **混合线路** | 全频段 | 统一线路模型 (ULM) + 全通时延 | 自适应模式分组 | 架空线与电缆连接处阻抗匹配 |
+
+### 3.2 基于电缆结构的特殊考虑
+
+**三芯铠装电缆 (Three-Core Armored)**：
+- 必须考虑**螺线管效应** (Triple Helix Effect)：钢丝铠装产生附加电感 $L_{\text{armor}} \approx \mu_0 \mu_r n^2 A / l$
+- 护套-铠装间存在强电磁耦合，建议采用**相域直接建模**而非模域变换
+
+**交叉互联电缆 (Cross-Bonded)**：
+- 护套回路阻抗矩阵 $\mathbf{Z}_{\text{sheath}}$ 呈现周期性边界条件
+- 建议采用**级联多段模型**，每段代表一个交叉互联大段
+
+**高压直流 (HVDC) 电缆**：
+- 必须启用**直流校正** (DC Correction)，否则稳态电压误差显著
+- 空间电荷极化效应需扩展频变电容模型：$C(\omega) = C_{\infty} + \frac{C_0 - C_{\infty}}{1+(j\omega\tau)^{\alpha}}$
+
+---
+
+## 4. 前沿研究方向
+
+### 4.1 数据驱动的电缆模型修正 (Measurement-Based Modeling)
+传统基于几何参数的模型在高频段（>500 kHz）误差显著。**最新趋势**是将实测同轴传播特性（衰减常数 $\alpha$ 和波速 $v$）通过贝叶斯推断或机器学习融合进解析模型，解决绞线效应和半导电层损耗的建模难题。关键突破点在于保持低频特性不变的同时修正高频阻尼。
+
+### 4.2 因果性与无源性强制保持的宽频带拟合
+当前研究聚焦于通过**全通函数迭代** (All-Pass Iteration) 和**约束优化**确保模型的物理可实现性：
+- **因果性**：传播速度在任何频率下不超过光速，避免非物理的前驱波 (Precursor)
+- **无源性**：阻抗/导纳矩阵正定性保证，通过 Hamiltonian 矩阵特征值检验实现
+
+### 4.3 自适应模式分组与模型降阶
+针对多导体电缆系统（如96芯海底电缆），通过**传播速度聚类**将相似模式分组，可将状态空间维度从 $N \times n$ 降低至 $N \times m$ ($m \ll n$)。最新方法基于**时延相近性**和**衰减率阈值**双重准则，在保持波形精度 (>99.9%) 的前提下减少计算量 70% 以上。
+
+### 4.4 土壤电离化与接地故障暂态建模
+地下电缆故障时，土壤可能发生电离化导致电导率 $\sigma$ 随电场强度 $E$ 变化：$\sigma(E) = \sigma_0 + k|E|^{\beta}$。当前研究致力于将此非线性效应纳入频变电缆模型，用于准确评估故障电流分布和地电位升 (GPR)。
+
+### 4.5 多物理场耦合：热-电暂态联合仿真
+电缆暂态伴随的导体发热会改变材料参数（电阻率、介质损耗）。前沿方向是建立**电热耦合模型**，通过时变温度 $T(t)$ 修正频变参数：
+$$
+R(\omega, T) = R(\omega, T_0)[1 + \alpha_T(T - T_0)]
+$$
+实现电磁暂态与长期热稳定的统一仿真框架。
+
+## 深度增强内容
+
+ # 电缆模型深度增强内容
+
+## 1. 各类模型数学描述
+
+### 1.1 频变多导体电缆基本方程
+
+电缆的电磁行为由频变参数电报方程描述：
+
+$$
+\frac{\partial \mathbf{V}(x, s)}{\partial x} = -\mathbf{Z}(s)\mathbf{I}(x, s) \\
+\frac{\partial \mathbf{I}(x, s)}{\partial x} = -\mathbf{Y}(s)\mathbf{V}(x, s)
+$$
+
+其中 $\mathbf{Z}(s) = \mathbf{R}(s) + s\mathbf{L}(s)$ 为串联阻抗矩阵，$\mathbf{Y}(s) = \mathbf{G}(s) + s\mathbf{C}$ 为并联导纳矩阵。对于 $n$ 导体系统，$\mathbf{V}, \mathbf{I} \in \mathbb{C}^{n \times 1}$。
+
+### 1.2 通用线路模型(ULM)数学框架
+
+#### 特性阻抗与传播函数
+特性阻抗矩阵和传播矩阵定义为：
+$$
+\mathbf{Z}_c(s) = \sqrt{\mathbf{Z}(s)\mathbf{Y}^{-1}(s)} \\
+\mathbf{H}(s) = e^{-\sqrt{\mathbf{Z}(s)\mathbf{Y}(s)} \cdot l} = e^{-\boldsymbol{\Gamma}(s) \cdot l}
+$$
+
+其中 $l$ 为电缆长度，$\boldsymbol{\Gamma}(s)$ 为传播常数矩阵。
+
+#### 有理函数逼近
+ULM采用部分分式展开(PFE)逼近频变参数：
+$$
+\mathbf{Z}_c(s) \approx \mathbf{D} + s\mathbf{E} + \sum_{m=1}^{N} \frac{\mathbf{R}_m}{s - p_m}
+$$
+
+$$
+\mathbf{H}(s) \approx \sum_{m=1}^{N_h} \frac{\mathbf{R}_m^h}{s - p_m^h} e^{-s\tau_m}
+$$
+
+其中 $\tau_m$ 为模态时延，$\mathbf{R}_m$ 为留数矩阵，$p_m$ 为极点。
+
+### 1.3 分频段拟合与直流校正模型
+
+针对宽频建模(0.001 Hz - 1 MHz)，采用两阶段逼近策略：
+
+#### 阶段一：频域分区
+$$
+\mathbf{H}(s) = \underbrace{\mathbf{H}_{DC}(s)}_{\text{低频校正项}} + \underbrace{\mathbf{H}_{AC}(s)}_{\text{高频主模型}}
+$$
+
+其中高频主模型在 $[f_{min}, f_{max}]$（通常为1 Hz - 1 MHz）进行拟合，低频校正项采用低阶有理函数：
+$$
+\mathbf{H}_{DC}(s) = \sum_{k=1}^{N_{dc}} \frac{\mathbf{R}_k^{dc}}{s - p_k^{dc}}
+$$
+
+#### 阶段二：约束优化
+通过约束线性最小二乘法消除大留数/极点比：
+$$
+\min_{\mathbf{R}, p} \sum_{i} \left\| \mathbf{H}(j\omega_i) - \mathbf{H}_{fit}(j\omega_i) \right\|_F^2 \\
+\text{s.t.} \quad \left| \frac{R_m}{p_m} \right| < \epsilon_{max}, \quad \forall m
+$$
+
+### 1.4 实测同轴特性融合模型
+
+对于高频精度要求（>500 kHz），融合实测与解析模型：
+
+#### 修正的传播函数
+$$
+\mathbf{H}_{hybrid}(s) = \mathbf{W}(s) \odot \mathbf{H}_{classic}(s) + [\mathbf{I} - \mathbf{W}(s)] \odot \mathbf{H}_{measured}(s)
+$$
+
+其中 $\mathbf{W}(s)$ 为频率相关权重矩阵，$\odot$ 表示Hadamard积。对于同轴模态：
+$$
+\alpha_{coax}(s) = \alpha_{classic}(s) \cdot \left(1 + \delta_{sk}(s) + \delta_{sc}(s)\right)
+$$
+
+$\delta_{sk}$ 和 $\delta_{sc}$ 分别表示绞线效应和半导电层损耗的修正系数，在1 MHz处典型值为0.4-0.6。
+
+### 1.5 基于全通函数的时延估计模型
+
+为保证因果性与最小相位特性，采用全通滤波器迭代修正：
+
+#### 相位解缠与延迟均衡
+定义全通函数 $A(s) = \prod_{k} \frac{s - z_k}{s + z_k}$，其中 $\text{Re}(z_k) > 0$。传播函数的相位修正为：
+$$
+\phi_{corrected}(\omega) = \phi_{original}(\omega) + \arg\{A(j\omega)\} - \omega\tau_{est}
+$$
+
+迭代优化目标：
+$$
+\tau_{opt} = \arg\min_{\tau} \left\| \frac{d}{d\omega} \left[ \arg\{\mathbf{H}(j\omega)\} + \omega\tau \right] \right\|_2
+$$
+
+约束条件：
+$$
+v_{mode} = \frac{\omega}{\text{Im}\{\gamma(\omega)\}} < c \quad \text{(光速限制)}
+$$
+
+### 1.6 自适应模式分组模型
+
+对于 $n$ 导体系统，通过幂等分解(Idempotent Decomposition)将传播模式分组：
+
+$$
+\mathbf{H}(s) = \sum_{g=1}^{N_g} \mathbf{P}_g \cdot h_g(s, \tau_g)
+$$
+
+其中 $\mathbf{P}_g$ 为第 $g$ 组投影矩阵，满足 $\sum_g \mathbf{P}_g = \mathbf{I}$ 且 $\mathbf{P}_g \mathbf{P}_h = \delta_{gh}\mathbf{P}_g$。
+
+分组依据时延相近性：
+$$
+|\tau_i - \tau_j| < \Delta\tau_{th} \Rightarrow i,j \in \text{同一组}
+$$
+
+## 2. 仿真参数参考表
+
+| 参数类别 | 参数名称 | 推荐值/范围 | 适用场景 | 来源文献 |
+|---------|---------|------------|---------|----------|
+| **频率范围** | 低频截止 | 0.001 Hz | 直流暂态、长电缆充电 | [Partitioned fitting, 2020] |
+| | 高频截止 | 1 MHz - 10 MHz | 雷电冲击、陡波前过电压 | [Multi-Conductor Cable, 2023] |
+| | 快速衰减模式阈值 | $\|H(j\omega)\| < 10^{-3}$ | 抑制高频相位振荡 | [Advanced Wideband, 2024] |
+| **拟合精度** | 矢量拟合容差 | 0.5% | 平衡精度与计算效率 | [Advanced Wideband, 2024] |
+| | 均方根误差 | < 0.1% | 宽频带精确建模 | [Multi-Conductor Cable, 2023] |
+| | 直流校正阶数 | 2-4阶 | 低频段精度补偿 | [Partitioned fitting, 2020] |
+| **数值稳定性** | 留数/极点比限制 | $\|R/p\| < 10^3$ | 避免时域卷积不稳定 | [Partitioned fitting, 2020] |
+| | 最大迭代次数 | 20-50次 | 全通函数时延估计 | [Time-delay estimation, 2026] |
+| **模式分组** | 96电缆系统分组数 | 8组 | 降低矩阵维度 | [Advanced Wideband, 2024] |
+| | 双回架空-电缆系统 | 4组 | 混合线路建模 | [Advanced Wideband, 2024] |
+| **时延参数** | 同轴模态时延 | 实测值±5% | 高频波传播 | [Multi-Conductor Cable, 2023] |
+| | 护套-大地回路时延 | 解析计算值 | 低频电磁暂态 | [Multi-Conductor Cable, 2023] |
+| **空间离散** | 分段长度 | < 1/10最小波长 | 雷电过电压分析 | [NLT Cable Analysis] |
+
+## 3. 模型选择指南
+
+### 3.1 按暂态类型选择
+
+| 应用场景 | 推荐模型 | 关键配置 | 精度指标 |
+|---------|---------|---------|---------|
+| **工频稳态与开关操作** | 分区拟合模型 + DC校正 | 低频段0.001-1 Hz精细拟合 | 直流电压误差 < 0.1% |
+| **雷电过电压(>1MHz)** | 实测融合模型 | 同轴模态采用实测衰减系数 | 波前衰减误差 < 5% |
+| **长距离海底电缆** | 全通函数时延估计ULM | 严格因果性约束($v<c$) | 无超光速传播 |
+| **宽频带混合线路** | 自适应分组宽频模型 | 快速衰减模式截断阈值$10^{-3}$ | 相位振荡抑制 > 90% |
+| **多芯电缆暂态** | MoM-SO精确参数模型 | 考虑邻近效应与螺线管效应 | 阻抗计算误差 < 2% |
+
+### 3.2 按电缆结构选择
+
+**单芯高压电缆(HVDC/AC)**
+- 首选：标准ULM模型 + 频变阻抗
+- 特殊考虑：金属护套接地方式（单端接地/交叉互联）影响导纳矩阵$\mathbf{Y}$结构
+
+**三芯铠装电缆**
+- 首选：考虑螺线管效应的修正模型
+- 关键参数：铠装层磁导率频变特性与涡流损耗
+
+**同轴电缆（高频通信/测量）**
+- 首选：实测融合模型（>500 kHz）
+- 关键修正：半导电层复介电常数 $\varepsilon_r(\omega) = \varepsilon'(\omega) - j\varepsilon''(\omega)$
+
+### 3.3 按计算资源选择
+
+| 资源限制 | 策略 | 模型简化 |
+|---------|------|---------|
+| **实时仿真** | 模式降阶 | 采用自适应分组，将$N$模态压缩至$N/4$组 |
+| **大系统仿真** | 混合建模 | 电缆用ULM，架空线用 Bergeron 模型 |
+| **长期暂态** | 宽频压缩 | 快速衰减模式在$10^{-3}$幅值处截断 |
+
+## 4. 前沿研究方向
+
+### 4.1 数据-物理融合建模(Data-Physics Fusion)
+基于2023年实测融合模型的演进方向：
+- **机器学习辅助修正**：利用神经网络学习几何参数与实测衰减的映射关系，替代固定修正系数$\delta_{sk}, \delta_{sc}$
+- **在线参数辨识**：通过分布式光纤传感(DAS)实时更新电缆模型参数，实现数字孪生
+
+### 4.2 宽频因果性与无源性强制
+基于2024-2026年研究趋势：
+- **Hamiltonian系统理论应用**：构建保证无源性的结构保持模型，避免有理拟合后的无源性强制后处理
+- **分数阶微积分**：采用分数阶导数描述电缆的频变特性，减少所需极点数量：
+  $$
+  \mathbf{Z}(s) = \mathbf{R}_0 + \mathbf{L}_0 s + \sum_{k} \mathbf{L}_k s^{\alpha_k}, \quad 0 < \alpha_k < 1
+  $$
+
+### 4.3 多物理场耦合建模
+- **热-电耦合**：考虑绝缘层温度依赖的介电损耗$\tan\delta(T)$，建立电热联合暂态模型
+- **机械-电磁耦合**：海底电缆敷设状态下的几何形变对阻抗矩阵$\mathbf{Z}$的影响
+
+### 4.4 高效数值算法
+- **幂等分解快速算法**：利用$\mathbf{P}_g$的幂等特性开发$O(n)$复杂度的时域卷积算法
+- **GPU加速矢量拟合**：针对大规模电缆系统（>100导体）的并行极点-留数计算
+
+### 4.5 开放问题
+1. **极低频(ELF)建模**：0.001 Hz以下电缆参数的准确测量与模型验证仍缺乏标准方法
+2. **非均匀土壤**：多层土壤电离化状态下的频变大地返回阻抗准确建模
+3. **老化电缆**：绝缘材料老化导致的局部介电常数不均匀性对高频暂态的影响量化

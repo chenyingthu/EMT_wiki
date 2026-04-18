@@ -1,0 +1,235 @@
+第 47 卷 第 2 期                                              电 网 技 术                                                Vol. 47 No. 2
+ 2023 年 2 月                                            Power System Technology                                      Feb. 2023
+文章编号：1000-3673（2023）02-0823-10                        中图分类号：TM 721          文献标志码：A            学科代码：470·40
+
+
+
+               双导体有损频变均匀传输线的电磁暂态
+                    时域仿真模型研究
+                                      刘刚 1，温晓芳 1，郝世缘 1，纪锋 2
+                              （1．华北电力大学电力工程系，河北省 保定市 071003；
+       2．先进输电技术国家重点实验室(全球能源互联网研究院有限公司)，北京市 昌平区 102209）
+
+
+              Study on Electromagnetic Transient Time-domain Simulation Model of Lossy
+                 Frequency-dependent Uniform Transmission Line With Two-conductor
+                                    LIU Gang1, WEN Xiaofang1, HAO Shiyuan1, JI Feng2
+      (1. Department of Electrical Engineering, North China Electric Power University, Baoding 071003, Hebei Province, China;
+ 2. State Key Laboratory of Advanced Power Transmission Technology(Global Energy Interconnection Research Institute Co., Ltd.,)
+                                             Changping District, Beijing 102209, China)
+
+
+ABSTRACT: The characteristic impedance and the transfer              真模型中的 2 个重要参数。该文以有损频变均匀双导体传输
+function are two important parameters in the electromagnetic         线为研究对象，采用相模变换实现传输线耦合量的解耦，在
+transient time-domain simulation model of the multi-conductor        模态域利用 Pade 近似和 Foster 电路模型获得特征阻抗的时
+transmission    line.   In   this   paper,   taking    the   lossy   域等效电路。同时利用拉普拉斯反变换和 Prony 近似得到传
+frequency-dependent uniform double-conductor transmission            输函数的近似函数。该文基于等效电路和近似函数通过
+line as the research object, the coupling amount of the              MATLAB 编程建立了双导体传输线的电磁暂态时域仿真模
+transmission line is decoupled by using the phase-mode               型。最后，用该时域仿真模型获得了阶跃激励下传输线首末
+transformation. Then, in the mode domain, the time-domain            端的电压响应，并与 PSCAD/EMTDC 软件仿真结果进行对
+equivalent circuit of the characteristic impedance is obtained       比分析，验证了所提时域模型的有效性。
+by using the Pade approximation and the Foster circuit model.        关键词：Bergeron 模型；Pade 近似；Prony 近似；频变参数；
+Simultaneously, the approximate function of the transfer             电磁暂态
+function is got by using the Laplace inverse transformation and
+                                                                     DOI：10.13335/j.1000-3673.pst.2021.2318
+the Prony approximation. Based on the equivalent circuit and
+the approximation function, the electromagnetic transient            0   引言
+time-domain simulation model of the double-conductor
+                                                                          当电力系统发生短路、过电压或其它非正常运
+transmission line is established by adopting the MATLAB
+                                                                     行工况时，传输线上的电压电流会在短时间内快速
+programming. Finally, this time-domain simulation model is
+used to achieve the voltage responses at the beginning and the
+                                                                     变化，可能会对电气设备甚至整个电力系统造成危
+terminal ends of the transmission line under the step excitation.    害[1]，为了避免此类危害的发生，需要准确分析传
+The simulation results are compared with those using the             输线和电气设备上的电压电流动态变化过程，因此
+PSCAD/EMTDC software to verify the time-domain model in              建立准确的传输线暂态时域模型至关重要[2-3]。
+this paper.                                                               最初提出的传输线时域模型为 Bergeron 模型，
+KEY WORDS: Bergeron model; Pade approximation; Prony                 但 Bergeron 模型未考虑损耗分布特性和线路参数
+approximation; frequency-dependent parameters; electromagnetic       频变特性的影响[4]。而实际传输线的距离很长，并
+transient                                                            且线路参数是随频率变化的[5-7]，因此，很多学者开
+摘要：特征阻抗和传输函数是多导体传输线电磁暂态时域仿                                           始研究频变传输线电磁暂态模型。Budner 提出了时
+                                                                     域瞬态解的频率相关线路模型，他在导纳线路模型
+    基金项目：先进输电技术国家重点实验室开放基金项目(GEIRI−                                  中使用了加权函数的概念[8]。但是，加权函数高度
+SKL−2018−001)。
+    Project Supported by State Key Laboratory of Advanced Power
+                                                                     振荡且较难精准拟合。之后，学者们开始在算法改
+Transmission Technology (GEIRI−SKL−2018−001)．                        进和拟合精度等方面展开研究。Snelson 提出了行
+824                            刘刚等：双导体有损频变均匀传输线的电磁暂态时域仿真模型研究                                                 Vol. 47 No. 2
+
+波法[9]，引入一个常数将电流和电压在时域中联系                                                      uab           i
+                                                                                   Riab  L ab                        (1)
+起来(其表达式与 Bergeron 模型中对波过程解释的                                                   x             t
+                                                                              i             u
+表达式类似)，然后转换到频域中求解。Meyer 和                                                     ab  Guab  C ab                         (2)
+                                                                               x             t
+Dommel 在 Snelson 的基础上，提出了前、反行波
+                                                                      ua       ia 
+权函数法[10]，使计算结果更加准确，但是该方法含                                   式中： uab    ，iab    。
+                                                                      ub       ib 
+有多个卷积积分，计算复杂。为解决这一问题，
+Semlyen 通过指数函数来拟合线路的冲击响应和阶                                      电力系统中，传输线一般为循环对称结构，因
+
+跃响应，并用插值法把复杂的卷积运算转化为递归                                      此有：
+                                                                             Rz   0       L      Lh 
+公式的求解[11]。J.Marti 基于 Semlyen 思想，建立了                                      R=           ，L=  z
+                                                                            0     Rz       Lh    Lz 
+更加有效的 J.Marti 模型，该模型采用渐进拟合法在                                                                                           (3)
+频域中拟合特征阻抗和传输函数，将模拟滤波技术                                                  G = Gz    0        C
+                                                                                         ，C =  z
+                                                                                                       Ch 
+                                                                            0        
+                                                                                    Gz                Cz 
+应用于频变传输线的暂态计算中[12]，该思想受到广                                                                    Ch
+泛应用，但由于拟合的有理式零极点被局限于实数                                        式(1)(2)变换到复频域，可得如下方程：
+域，在一定程度上降低了拟合的精确度。后来，                                                        U ab
+                                                                                   ( R  sL) I ab                     (4)
+Gustavsen 提出了矢量匹配法，该方法减少了计算                                                   x
+                                                                             I
+量并使拟合精度进一步提高[13]，其不足为不同的初                                                  ab  (G  sC )U ab                          (5)
+                                                                              x
+始迭代极点会导致不同的有理式；因此，有学者将
+                                                                       U a          Ia 
+矢量匹配法和遗传算法结合起来完成拟合[14]。这种                                   式中： U ab    ，I ab    。
+                                                                       U b           Ib 
+方法精度较高且计算速度较快，但过程稍显复杂。
+      针对以上研究现状，为简化特征阻抗和传输函                                       从式(3)知，R，L，G，C 均为对称矩阵。导
+
+数的近似方法，本文将分别用 Pade 近似和 Prony                                线之间的电磁联系导致了互电感和互电容的产生，
+
+近似实现特征阻抗和传输函数的拟合，该方法只需                                      使 L 矩阵和 C 矩阵中存在耦合元素，为方便计算，
+在已知线路参数的前提下，采用 Pade 近似得到特                                   需采用相模变换实现解耦，相模变换示意图如图 2
+
+征阻抗的 Foster 等效电路，采用 Prony 近似得到传                             所示。
+
+输函数的近似函数，然后将其应用于 Bergeron 模
+型，最终通过 MATLAB 编程获得适用于时域仿真
+的有损频变均匀传输线电磁暂态模型。本文所提方
+法无需迭代，更简单易懂，易于程序实现。为了验                                                       图 2 相模变换示意图
+                                                            Fig. 2   Schematic diagram of phase-mode transformation
+证方法的有效性，论文分别用所提方法建立的时域
+传输线模型和 PSCAD/EMTDC 对双导体传输线的                                      以 ab 代表 2 个导体，αβ 代表 2 个模量。从两
+阶跃响应进行仿真，并对比分析了二者的结果。                                       相自然坐标系 ab 到静止坐标系 αβ 的 Clarke 变换为
+                                                                               a        1 1 1 
+1 相模变换                                                                      =T b  ， T =                          (6)
+                                                                                          2 1 1
+      为了分析方便，本文以双导体传输线为例，其                                      矩阵 T 的 2 个列向量是一组标准正交基，其
+电路图如图 1 所示。                                                 转置矩阵即为自身的逆矩阵，故对应的 Clarke 反变
+        udy    Rdy                                RL
+                            t 0                            换为
+                                                                      a  1      1    1 1 1 
+                                                                     b  =T    ， T =T 
+                                                                                         T
+               Rdy                                RL                                                                  (7)
+                                                                                         2 1 1
+                  图 1 双导体传输线电路图                                  由于该变换与频率无关，所以可将式(7)代入
+      Fig. 1   Circuit of two-conductor transmission line   式(4)(5)，整理得到：
+      图中：udy 表示电压源；Rdy 表示电源内阻；l                                         U αβ
+                                                                               T ( R  sL)T 1 I αβ (8)
+表示传输线长度；RL 表示负载电阻；L、C、R、G                                                x
+分别表示传输线的串联电感分布参数矩阵、并联电                                                  I αβ
+                                                                              T (G  sC )T 1U αβ   (9)
+容分布参数矩阵、串联电阻分布参数矩阵、并联电                                                   x
+导分布参数矩阵。电路的时域电报方程为                                             在循环对称结构下，T(R+sL)T–1 和 T(G+sC)T–1
+第 47 卷 第 2 期                                                       电   网    技   术                                                               825
+
+均是对角矩阵[15-16]。这样就利用 Clarke 变换实现了                                                    从图中可知，求得单导体传输线首末端电压电
+解耦，从而可以应用单导体传输线理论解决双导体                                                      流的前提是特征阻抗和传输函数的准确拟合。
+问题。
+                                                                            3 基于 Pade 近似的特征阻抗拟合
+2 复频域 Bergeron 等效电路
+                                                                                    本文对于特征阻抗拟采用 Pade 近似，Pade 近
+      复频域下单导体传输线首末端的电压和电流                                                   似是一种有理分式逼近法，以尽量快的速度与泰勒
+                         [17]
+可以用传输矩阵                        表示为                                                       1  2x 2
+                                                                                                                              1
+                                                                            级数展开式相匹配。如对 (      ) 做近似，Pade 近
+U (k, s)                                                                                1 x
+ I (k, s)                                                                似采用 5 阶的有理分式得到的结果与标准值的精
+          
+  e ( s )l  e ( s )l           e ( s )l  e ( s )l                 确度仅差在 10–8 数量级，而泰勒级数展开式需要取
+                            Z (s)                         U (m, s)       11 项才能达到相同精度。此外，Pade 近似往往比
+            2                                2                       
+  1 e ( s )l  e ( s )l        ( s )l      ( s ) l
+                                                             I (m, s) 
+                                 e         e                             截断的泰勒级数准确，而且当泰勒级数不收敛时，
+                                                         
+  Z ( s )      2                          2                               Pade 近似往往仍可行，所以多应用于基于计算机的
+                                                                    (10)    科学计算中。其基本思路为将原函数近似为有理多
+式中：k 代表线路首端；m 代表线路末端；U(k,s)，                                                项式相除的形式[18-19]，本文中 Pade 近似函数用 Zd(s)
+I(k,s)分别表示线路首端的电压和电流，传输函数                                                   表示：
+         –γ(s)l
+G(s)=e            ；传播常数  ( s )  ( R  sL)(G  sC ) ；特                                              y1s n  y2 s n 1    yn s  yn 1
+                                                                                Z (s)  Z d ( s)                                               (15)
+             ( R  sL)                                                                                 x1s n  x2 s n 1    xn s  1
+征阻抗 Z ( s)            ；U(m,s)、I(m,s)分别表示
+             (G  sC )                                                              式(15)两端同乘以分母并整理得
+线路末端的电压和电流。                                                                          y1 s n  y2 s n 1    yn s  yn 1  Z ( s ) x1 s n 
+      用式第一行减去式(10)第二行乘以 Z(s)并                                                       Z ( s ) x2 s n 1    Z ( s ) xn s  Z ( s )          (16)
+整理得到线路首端电压：                                                                 式中有 2n+1 个待定系数，选择 2n+1 个频点构成以
+     U (k, s )  I (k, s) Z ( s )                                          下方程组，求解即可。
+         U (m, s )                                                                   MB  Z                                                     (17)
+       [             I (m, s )]e  ( s )l Z ( s )                (11)
+          Z ( s)                                                            其中，
+                                                                            M=
+      类似地，线路末端电压
+         U (m, s )  I (m, s ) Z ( s )                                          s1n  s1 1             Z ( s1 ) s1n            Z ( s1 ) s1 
+                                                                                                                                                   
+             U (k, s )                                                                                                                      
+           [            I (k, s )]e  ( s )l Z ( s )             (12)         s2nn 1  s2 n 1 1 Z ( s2 n 1 ) s2nn 1  Z ( s2 n 1 ) s2 n 1 
+              Z (s)                                                                                                                                
+      根据式(11)(12)可得复频域下 Bergeron 等效电                                                        B  [ y1  yn yn +1 x1  xn ]
+路如图 3 所示。                                                                                      Z = [ Z ( s1 )         Z ( s2 n 1 )]T
+                                                                                    至此，可求出式(16)中的 x、y 值，也就得到了
+                                                                            特征阻抗的有理近似函数，之后，将其展开为部分
+                                                                            分式和的形式，如式(18)所示。
+                                                                             Z d (s) 
+                                                                                   y1 s n  y2 s n 1    yn s  yn 1        n     rj
+                                                                                                    n 1
+                                                                                                                         = k              (18)
+                                                                                     x1 s  x2 s    xn s  1                j 1 s  p j
+                                                                                          n
+
+                   图 3 复频域 Bergeron 等效电路
+       Fig. 3       Bergeron equivalent circuit in complex
+                                                                                    首先将式(18)中的 k 等效为一个电阻，然后将
+                          frequency domain                                  每一项分式都等效为一个 RC 并联模块。这样就得
+      图 3 中，Iks 和 Ims 为线路首末端的历史电流源，                                         到了特征阻抗的 Foster 模型(即一系列 RC 并联模块
+如式(13)(14)所示。                                                               的串联)，如图 4 所示，其中 Cj 和 Rj 由有理近似函
+                  U (m, s )                                                 数的极点和留数确定。
+         Ik s  (            I (m, s ))e ( s )l                 (13)
+                   Z ( s)                                                           单个 RjCj 并联模块如图 5 所示。
+                               U (k, s )                                            根据图 5，求出复频域下该电路的阻抗，并将
+                    Im s  (              I (k, s ))e  ( s )l   (14)
+                                Z ( s)                                      其与部分分式建立等式关系，如式(19)。
+826                      刘刚等：双导体有损频变均匀传输线的电磁暂态时域仿真模型研究                                                                                             Vol. 47 No. 2
+
+                                                             可知式(21)中有 2n 个参数，分别为留数 rj 和极
+                                                     点 pj，每个采样点对应原函数中一个时刻的值：
+                                                                                 g (iT )  g i ，i  0,1, , 2n  1                                                          (22)
+                                                     式中 T 为采样周期，第一个采样点为原点。
+                                                             令
+                                                                                                               pT
+                                                                                            z j  e j ，j  1, , n                                                          (23)
+                                                             结合式，得：
+                                                                                            n
+                图 4 Foster 等效模型                                                  gi = rj z ij ，i  0,1,, 2n  1                                                           (24)
+           Fig. 4 Foster equivalent model                                                 j 1
+
+                                                             此时引入变量 αi，有：
+                                                                                  n                           n
+                                                                                 i zi   ( z  z j ) ， n  1                                                            (25)
+                                                                                 i 0                         j 1
+
+                                                             根据式(24)和(25)，可得：
+                                                                  n                              n        n
+                                                               g k i i   ( rj z kj i ) i =
+                                                              i 0                          i 0         j 1
+                                                                          n                  n
+                                                                          rj z kj (  i z ij )  0 ，k  0,1, , n  1 (26)
+                                                                         j 1              i 0
+
+                                                             进而：
+                 图 5 RjCj 并联模块                                           n 1
+             Fig. 5 RjCj parallel module                                  gk i i   g k  n ，k  0,1, , n  1                                                          (27)
+    

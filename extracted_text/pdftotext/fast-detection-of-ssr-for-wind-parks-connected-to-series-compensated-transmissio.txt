@@ -1,0 +1,192 @@
+                                                                 Electric Power Systems Research 211 (2022) 108321
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Fast Detection of SSR for Wind Parks Connected to Series-Compensated
+Transmission Systems
+Younes Seyedi a, *, Jean Mahseredjian a, Houshang Karimi a, Ulas Karaagac c,
+Aramis Schwanka Trevisan b
+a
+    Department of Electrical Engineering, Polytechnique Montreal, QC Canada
+b
+    RTE International, Courbevoie, France
+c
+    Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    The interactions between wind parks and the series-compensated transmission lines can bring about sub- or
+Control interaction                                          super-synchronous resonance (SSR) incidents which jeopardize the safe operation of the entire network. In
+Electromagnetic transients                                   practice, such incidents may emerge under various conditions as different types of wind turbines with various
+Stability
+                                                             parameters can be deployed at several locations in the network. Hence, it is crucial to efficiently identify the
+Power systems
+                                                             conditions that lead to adverse interactions and their subsequent SSR incidents. This paper proposes a
+Wind park
+                                                             simulation-based method, namely disturb and scan (DaS), for fast and automated detection of SSR. The proposed
+                                                             technique uses small-scale disturbances in time-domain electromagnetic transient (EMT) simulations to perform
+                                                             spectral analysis along with positive-sequence impedance scans. Numerical results are presented and validated
+                                                             for benchmark systems that utilize type-III and type-IV wind turbines. The system operators can adopt the
+                                                             developed methodology to quickly assess the risks of SSR, evaluate conditions of instability, and improve their
+                                                             network protection and control schemes.
+
+
+
+
+1. Introduction                                                                              analysis to show that sub-synchronous oscillations occur under low wind
+                                                                                             speed and high compensation conditions.
+    Power systems which involve long transmission lines can employ                                The SSR incidents are adverse to safe operation of power systems
+compensation techniques to increase their power transfer capability,                         since they can damage the wind turbines and lead to wide area outages.
+and to improve transient stability [1,2]. However, modern transmission                       It is shown that the wind park operating conditions as well as the control
+systems encounter new and important challenges as more renewable                             parameters of their power converters can lead to SSR in case of DFIG
+and inverter-based resources, such as wind and solar photovoltaic (PV)                       wind systems [10]. Moreover, the type of wind systems, e.g., DFIG or full
+parks, are interconnected to the network [3]. Among these challenges                         converter, can affect the emergence of SSR in series-compensated
+are harmful control interactions that lead to oscillations and voltage                       transmission systems [11]. Since wind parks are large-scale systems
+instability in transmission systems incorporating inverter-based re­                         that incorporate different control and protection sub-systems, several
+sources [4,5]. Field measurements have also revealed that oscillations                       parameters contribute to stability issues. It is thus crucial to detect the
+and harmonic resonance may occur when the controllers in wind parks                          operating conditions that may lead to oscillations and instability in
+interact with the controllers in high voltage DC (HVDC) transmission                         power systems that incorporate wind parks.
+systems [6].                                                                                      In general, measurement-based SSR detection methods can be clas­
+    Sub- or super-synchronous resonance (SSR) incidents may arise                            sified into two groups. The time-series analysis methods [12–16] obtain
+when wind turbine-generators interact with the series capacitors in the                      voltage/current samples (generated via time-domain EMT simulations
+transmission system such that the oscillatory power exchange is un­                          or recorded by digital relays) and process them by signal processing or
+damped or even unstable [7,8]. Specifically, in the case of doubly-fed                       machine learning tools to identify oscillations. The impedance scanning
+induction generator (DFIG) wind parks, the study in [9] uses modal                           methods [17–20] extract the frequency-dependent impedances of the
+
+
+
+    * Corresponding author.
+      E-mail addresses: younes.seyedi@polymtl.ca, younes.seyedi@gmail.com (Y. Seyedi).
+
+https://doi.org/10.1016/j.epsr.2022.108321
+Received 1 October 2021; Received in revised form 15 February 2022; Accepted 2 July 2022
+Available online 14 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+Y. Seyedi et al.                                                                                                                   Electric Power Systems Research 211 (2022) 108321
+
+
+transmission grid and the wind park and use a stability criterion to                  can confirm instability with less computational burden in a shorter time.
+identify instabilities and undamped oscillations.                                     The main steps of the DaS scheme are explained in the sequel.
+    This paper proposes a measurement-based technique, namely disturb                     In the first step, a time-domain EMT simulation is carried out that
+and scan (DaS), to accelerate the identification of operational conditions            applies a temporary and high-impedance fault at the PoC, as shown in
+that lead to SSR in power systems with wind parks. The proposed                       Fig. 1. The post-fault current, denoted by Ix (t)is measured and stored for
+technique consists of three main steps. In the first step, a high-                    post-processing. The high-impedance fault creates small-signal distur­
+impedance fault at the point of connection (PoC) creates small-scale                  bances that can potentially excite different modes in the system.
+voltage disturbances, and the currents injected by the wind park are                      In the second step, the magnitude spectrum of the post-fault current
+captured in the simulations. In the second step, the search bands are                 is extracted using the Fourier transform, and the peaks are identified. Let
+identified based on the peak analysis of the magnitude spectra of the                 Sx (f) denote the Fourier transform of Ix (t), the peaks are local maxima in
+time-domain results. The peaks in the spectra may be related to damped                the magnitude spectrum that satisfy the following condition:
+or undamped oscillations that exist in the system response. In the third
+step, the positive-sequence impedance scans are carried out for the                   |Sx (̃f i )| > λ|Sx (f0 )|                                                                (4)
+frequencies that belong to the search bands. Finally, undamped oscil­
+lations and SSR events are detected by inspecting the impedance-                      where f0 represents the fundamental frequency, and ̃f i ∕     = f0 show the
+frequency points with proper stability criterion.                                     frequency of the ith peak. The coefficient λis a small positive number that
+    The main contributions of this paper are as follows. The proposed                 aims to reject spurious peaks due to presence of noise and inter-
+scheme requires fewer number of EMT simulations to detect the oper­                   harmonics in the measurements. The condition in (4) ensures that
+ating conditions that lead to instability. Hence, it can significantly                insignificant local maxima do not trigger unnecessary scans. Assuming
+reduce the computational burden as well as the simulation time for SSR                that the DFT window is large enough, the proper value of λ can be found
+detection. The proposed method can be integrated in an automated                      by inspecting the magnitude spectrum of the currents when the system
+procedure that facilitates training of data-driven and predictive models.             operates under the steady-state (normal) conditions.
+Therefore, it can be integrated into protection systems to adaptively                     Let F
+                                                                                              ̃ represent the set of peak frequencies that are sorted based on a
+predict SSR incidents even when the network topology changes, e.g.,                   descending order of their magnitude, i.e.
+when the number of operational wind turbines changes.
+                                                                                      ̃ = {̃f 1 , ̃f 2 , ̃f 3 , ...}
+                                                                                      F              ⃒ ( )⃒                                                                     (5)
+                                                                                      |Sx (̃f i )| > ⃒Sx ̃f j ⃒ ⇔ i < j
+2. Positive-Sequence Scanning Technique
+                                                                                           In the third step, search bands are constructed around each fre­
+    In this paper, the positive-sequence scanning method is used for                  quency ̃f i ∈ ̃
+                                                                                                    F. The search bands can be defined based on different
+extracting the frequency-dependent impedances of the grid and the wind                methods. In this paper, it is assumed that the ith search band spans the
+park [18]. The impedances are extracted from the measurements of
+                                                                                      frequency range [̃f − Δi,l , ̃f + Δi,u ] Hz, where the upper and lower de­
+voltage and current at the PoC. The combined impedance is obtained by                                              i       i
+                                                                                      viations satisfy the following relationships:
+adding the grid and the wind park impedances. The combined scan
+consists of two steps: 1) converter-side positive-sequence scan, and 2)                      { ̃f − max{1, max{̃f ⃒⃒̃f < ̃f }}, ̃
+                                                                                                  i                  j j          i    f i < f0
+grid-side positive-sequence scan. The converter-side scan aims to extract             Δi,l =             {        { ⃒               }}                                          (6)
+the positive-sequence impedance of the wind park based on the volta­                           ̃f i − max f0 , max ̃f j ⃒̃f j < ̃f i , ̃f > f
+                                                                                                                                          i    0
+ge/current perturbation injection at the PoC. The objective of the
+grid-side scan is to calculate the positive-sequence impedance of the grid                   { min{f , min{̃f ⃒⃒̃f > ̃f }} − ̃f , ̃
+                                                                                                    0        j j        i      i      f i < f0
+that is connected to the wind park.                                                   Δi,u =      {         { ⃒             }}                                                  (7)
+                                                                                                                  ⃒̃
+                                                                                               min 2f0 , min ̃f j f j > ̃f i − ̃f i , ̃f i > f0
+    Let Rg (f) and Xg (f) respectively denote the estimated grid resistance
+and reactance at the frequency f. Moreover, suppose that Rw (f) and                       Fig 2. illustrates an example of peak identification and the associate
+Xw (f) represent the wind park resistance and reactance, respectively.                search bands that are used for performing the SSR assessment.
+The combined resistance and reactance are obtained as                                     Once the search bands are determined the combined scan is per­
+                                                                                      formed that aims to distinguish between undamped and damped oscil­
+R(f ) = Rg (f ) + Rw (f )                                                  (1)
+                                                                                      lations based on the criterion in (3). This screening method is called
+X(f ) = Xg (f ) + Xw (f )                                                  (2)        selective scan since the frequency-dependent impedances of the sub­
+                                                                                      systems are evaluated in a specific frequency range.
+    The system is stable if all zeros of the total impedance have negative                Algorithm 1 explains the selective scan procedure for detection of
+real parts [21]. Hence, it can be shown that the system is stable when the            SSR under given operating conditions. To this aim, the following func­
+following relationship holds [21]:                                                    tion is defined assuming that the input arguments f1 and f2 always satisfy
+     d
+            ⃒
+            ⃒                                                                         f2 > f1 :
+R(f ) X(f )⃒⃒ > 0, ∀fi ∈ F                                             (3)
+     df      f =f  i
+                                                                                      α(f1 , f2 ) = (X(f2 ) − X(f1 ))ρ(f1 , f2 )                                                (8)
+
+where F denotes the set of frequencies at which a reactance zero-crossing             where
+occurs. If there exists at least one fi that does not satisfy condition in (3),
+then the system is deemed to be unstable.
+
+3. Disturb and Scan Technique
+
+   SSR incidents can be potentially identified by finding the set of zero-
+crossing frequencies followed by assessment of the criterion in (3). The
+basic premise of the DaS scheme is to find candidate frequencies that
+belong to the set F without performing the positive-sequence scan in a
+wide range of sub- and super-synchronous frequencies. If the system                   Fig. 1. The high-impedance fault at the PoC, and the post-fault current that
+leads to SSR incidents under the operating conditions, the DaS method                 flows through the PoC.
+
+                                                                                  2
+Y. Seyedi et al.                                                                                                      Electric Power Systems Research 211 (2022) 108321
+
+
+                                                                                      1) Grid: The grid is modeled as a balanced voltage source with the rated
+                                                                                         voltage of 230 kV, and the source impedance is equal to 2 + j25 Ω.
+                                                                                      2) Series capacitor: The capacitance of the series capacitor is auto­
+                                                                                         matically calculated based on the compensation level of the system.
+                                                                                      3) Transmission line: A constant parameter line with the length of 100
+                                                                                         km connects the transmission system to the wind park.
+                                                                                      4) Wind park: The wind parks are either DFIG- or full converter- based
+                                                                                         systems. The wind systems operate at unity power factor and
+                                                                                         generate a certain amount of real power depending on the wind
+                                                                                         speed and the number of operating turbines. The wind park consists
+                                                                                         of interconnected turbines, equivalent collector grid, inverter and
+Fig. 2. An example of peak identification and construction of the search bands:          park transformers, converter and park controllers, and a protection
+̃ = {̃f , ̃f }.
+F      1 2                                                                               unit. The average value model is used for simulation of the power
+                                                                                         converters. The rated voltage and the nominal power of each wind
+                         R(f2 ) − R(f1 )                                                 system are 0.575 kV, and 1.6 MVA, respectively. The nominal
+ρ(f1 , f2 ) = R(f1 ) −                   X(f1 )                            (9)           voltage of the collector grid is 34.5 kV. Unless otherwise stated, the
+                         X(f2 ) − X(f1 )
+                                                                                         wind park contains 66 operational wind systems.
+    In the above equations, Rand Xrespectively denote the combined
+resistance and reactance given by Eqs. (1) and (2). α(f1 ,f2 )calculates the             The following simulation results are obtained based on the frequency
+product of reactance difference and the resistance at the estimated                   step δ = 1. A high impedance fault has a resistance equal to 150 Ωwhich
+reactance zero-crossing frequency. Eq. (9) represents a linear estimator              produces small-signal disturbances at the operating point. The spectrum
+of the resistance at the reactance zero-crossing frequency. The use of a              analysis is carried out with the coefficient λ = 0.03.
+linear estimator is justified by the observation that for small values of                Fig. 3.
+the frequency step (δ ≤ 1), the combined impedance is a monotonic
+function of frequency. The procedure in Algorithm 1 gives the highest
+                                                                                      4.1. Scenario I: DFIG-based Wind P

@@ -1,0 +1,308 @@
+       第 41 卷 第 24 期                               中     国 电 机 工 程 学                 报          Vol.41 No.24 Dec. 20, 2021
+ 8520 2021 年 12 月 20 日                                   Proceedings of the CSEE                ©2021 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.202511 文章编号：0258-8013 (2021) 24-8520-11 中图分类号：TM 46 文献标识码：A
+
+
+
+   混合型 MMC 全状态高效电磁暂态仿真方法研究
+                          连攀杰，刘文焯，杨泽栋，汤涌，郁舒雁，李霞，许克
+           (电网安全与节能国家重点实验室(中国电力科学研究院有限公司)，北京市 海淀区 100192)
+
+
+ Research on Hybrid MMC Full-state Efficient Electromagnetic Transient Simulation Method
+                    LIAN Panjie, LIU Wenzhuo, YANG Zedong, TANG Yong, YU Shuyan, LI Xia, XU Ke
+            (State Key Laboratory of Power Grid Safety and Energy Conservation (China Electric Power Research Institute),
+                                                     Haidian District, Beijing 100192, China)
+
+
+ABSTRACT: The hybrid modular multilevel converter                          提出一种混合型 MMC 的闭锁等效方法，提高混合型 MMC
+(MMC), which composed of half-bridge sub-modules and                       闭锁模式的仿真效率；根据混合型 MMC 的调制特性，改进
+full-bridge sub-modules, takes into account the DC fault                   灵活堆排序的电容电压排序算法，提高混合型 MMC 解锁模
+ride-through capability and economy, with broad engineering                式的仿真效率。最后，结合 Matlab 和 PSCAD 典型算例进
+
+application prospects. For the problems of complex equivalent,             行测试，验证所提高效混合型 MMC 全状态电磁暂态仿真方
+                                                                           法的精确性和快速性。
+multiple internal nodes and low computational efficiency in the
+electromagnetic transient simulation model of the hybrid                   关键词：混合型模块化多电平换流器；电磁暂态；全状态；
+MMC, this paper analyzed the working state of the hybrid                   闭锁等效；灵活堆排序算法
+MMC in the unlocked and locked modes, and proposed a
+                                                                           0     引言
+“efficient electromagnetic transient simulation method for
+hybrid     MMC       full-state”.     According     to    the   blocked          模 块 化 多 电 平 换 流 器 (modular multilevel
+characteristics of the half-bridge sub-modules and the                     converter，MMC)以其谐波含量少、故障处理能力
+full-bridge sub-modules in the hybrid MMC, the equivalent                  强、开关频率低、扩展性能好、便于模块化设计等
+simulation method was optimized to improve the simulation                  优势，迅速得到了国内外高度关注[1-3]。目前 MMC
+efficiency in the blocked mode. According to the modulation                逐渐从低电压、小容量示范工程向高电压、大容量
+characteristics of the hybrid MMC in unlocked mode, a flexible
+                                                                           方向快速发展，在异步联网、风电场并网、城市中
+capacitor voltage sorting algorithm was proposed to improve
+                                                                           心供电、常规直流混联等场合展现出独特的技术优
+the simulation efficiency for unlocked mode. Finally, with
+                                                                           势和经济效益，成为柔性直流输电系统的优选主流
+typical testing examples in Matlab and PSCAD, the accuracy
+and      rapidity    of   the       hybrid    MMC        high-efficiency
+                                                                           拓扑[4]。
+electromagnetic transient simulation method proposed in this                     MMC 子模块存在半桥、全桥和双箝位等多种
+paper were verified.                                                       拓扑形式。双箝位及其它改进子模块拓扑仍处理论
+                                                                           实验研究，国内尚无工程应用。半桥子模块成本低，
+KEY WORDS: hybrid modular multilevel converter (MMC);
+                                                                           损耗小，应用最广泛，但不具备直流故障穿越能力。
+electromagnetic      transients;     full-state;   locked    equivalent;
+flexible heap sorting algorithm                                            全桥子模块具备直流故障穿越能力，但造价高，运
+                                                                           行损耗大。由半桥子模块和全桥子模块组成的混合
+摘要：由半桥子模块和全桥子模块组成的混合型模块化多电
+                                                                           型 MMC 兼顾直流故障穿越能力和经济性，运用前
+平换流器(modular multilevel converter，MMC)兼顾直流故障
+                                                                           景广阔[5-9]。
+穿越能力和经济性，具有广阔的工程运用前景。针对混合型
+MMC 电磁暂态模型存在等效复杂、内部节点多、计算效率
+                                                                                 随着混合型 MMC 柔性直流输电系统的不断规
+低的问题，文章分析混合型 MMC 解闭锁模式的工作状态，                                               划和投运，研究混合型 MMC 电磁暂态仿真方法，
+提出一种“混合型 MMC 全状态高效电磁暂态仿真方法”：                                               建立适用于大电网全电磁暂态仿真的混合型 MMC
+根据混合型 MMC 中半桥子模块和全桥子模块的闭锁特性，                                               电磁暂态模型，对柔性直流系统调试，大规模交直
+第 24 期             连攀杰等：混合型 MMC 全状态高效电磁暂态仿真方法研究                                           8521
+
+流电网故障分析、稳定性分析和控制保护策略设计                  1     混合型 MMC 工作状态分析
+与验证等工程前期设计意义重大。
+                                        1.1   混合型 MMC 拓扑结构
+   针对混合型 MMC 详细模型电磁暂态仿真效率
+                                              三相混合型 MMC 的拓扑结构如图 1 所示，各
+低下，不适用于大型电力系统全电磁暂态仿真的问
+                                        桥臂由 N 个子模块组成，其中半桥子模块的数量为
+题。文献[10]基于嵌套快速同时求解算法提出了戴
+                                        Nh，全桥子模块的数量为 Nf。一定数量的全桥子模
+维南等效模型，与平均值模型[11]、详细模型[12]和受
+                                        块不仅使 MMC 具备了直流故障箝位能力，且能够
+控源模型[13]相比，戴维南等效模型兼顾高精度和高
+                                        输出负电平，提高了 MMC 的运行灵活性。
+效率，在大规模电力系统仿真中具有得天独厚的优
+势。文献[14-15]优化等效方式，文献[16-17]优化排
+序算法，对经典戴维南模型进一步提速。文献[18]
+基于多频段动态相量法，建立了 MMC 多频段动态
+相量频段间解耦模型。文献[19]基于旋转坐标系变
+换的大步长建模仿真理论，建立了 MMC 大步长仿
+真模型。文献[20]将半桥 MMC 仿真方法运用于全
+桥 MMC 和混合型 MMC 的电磁暂态仿真，建立混
+合型 MMC 戴维南模型，实现了混合型 MMC 解锁
+模式下高精度仿真。
+   但在电磁暂态仿真中，诸多情况都会涉及闭锁
+模式。针对混合型 MMC 闭锁模式下工作状态灵活                           图 1 三相混合型 MMC 的拓扑结构
+复杂，且面临插值问题。如何正确模拟混合型 MMC                Fig. 1 Topological structure of three-phase hybrid MMC
+
+闭锁模式，从而实现高精度、高效率仿真混合型                         混合型 MMC 存在解锁和闭锁两种不同的工作
+MMC 解闭锁模式，是混合型 MMC 全状态电磁暂               模式，每种模式均包括多种工作状态。
+态 仿 真 的 难 点 。 目 前 许 多 文 献 [21-23] 借 助   1.2   闭锁工作状态分析
+PSCAD/EMTDC 自带的二极管模型，通过控制开关                   闭锁模式下，混合型 MMC 子模块中的 IGBT
+的闭合模拟 MMC 闭锁模式。但此方法中单桥臂混                全部关断，由二极管确定子模块工作状态。二极管
+合型 MMC 需用 6 个二极管等效，增加了内部节点              具有一定阈值的正向电压则导通，具有反向电压则
+个数。部分混合型 MMC 等效模型在解锁模式下二                关断。根据二极管通断状态的不同，闭锁模式下子
+极管仍根据动作准则进行不必要的插值计算[21]，在               模块具有多种工作状态。半桥子模块对应的工作状
+闭锁模式下仍在进行电容电压排序[22]，均影响了混               态如图 2(a)所示，全桥子模块对应的工作状态如
+合型 MMC 的计算效率。
+   针对混合型 MMC 全状态电磁暂态仿真模型存
+在等效复杂、内部节点数量多、计算效率低、依赖
+PSCAD 等问题，文章分析混合型 MMC 解闭锁模
+式存在的多种工作状态，提出了一种混合型 MMC
+全状态高效电磁暂态仿真方法。针对混合型 MMC
+中半桥子模块和全桥子模块的闭锁特性，提出一种
+混合型 MMC 的闭锁等效方法，实现混合型 MMC
+闭锁模式下的高精度、高效率仿真。根据混合型
+MMC 解锁模式的调制原理，改进灵活堆排序的电
+容电压排序算法，提高混合型 MMC 解锁模式的仿
+真效率。最后结合 Matlab 和 PSCAD 典型算例进行
+测试，验证本文所提混合型 MMC 全状态高效电磁                            图 2 子模块闭锁模式下工作状态
+暂态仿真方法的精确性和快速性。                             Fig. 2 Working status in sub-module blocking mode
+8522                                        中    国        电   机   工   程     学      报                                               第 41 卷
+
+图 2(b)所示。
+       图 2 中红色表示二极管处于关断状态，绿色表
+示二极管处于导通状态。半桥子模块具有正向充
+电、反向旁路和截止 3 种状态，全桥子模块具有正
+向充电、反向充电和截止 3 种状态。混合型 MMC
+子模块串联组成各桥臂，闭锁模式下同桥臂的子模
+块电流相同，因此同桥臂同类型子模块具有相同的
+工作状态[21-23]。
+                                                                                   图 3 混合型 MMC 全状态等效模型
+1.3     解锁工作状态分析
+                                                                          Fig. 3    Hybrid MMC full state equivalent model
+       解锁模式下，混合型 MMC 的调制环节生成
+                                                                  路。式(1)、(2)为等效公式。
+IGBT 控制信号，部分 IGBT 导通。通过控制子模
+                                                                                           HB               FB
+块的投退，维持混合型 MMC 子模块电容电压均衡，                                                   uarmeq (t ) = uall_smeq (t ) + uall_smeq (t ) + u L (t )   (1)
+并使交流侧输出的电压波形接近正弦波。                                                                         HB
+                                                                            Rarmeq (t ) = Rall_smeq         FB
+                                                                                                    (t ) + Rall_smeq (t ) + RL (t )    (2)
+       半桥子模块、全桥子模块解锁模式下的工作状
+                                                                  式中：Rarmeq(t)为桥臂戴维南等效电阻；uarmeq(t)为桥
+态如表 1、2 所示，“1”表示导通信号，“0”表示
+关断信号。解锁模式下半桥子模块具有投入、退出                                            臂戴维南等效电压；uL(t)、RL(t)分别为桥臂电感经
+
+两种工作状态，全桥子模块具有正投入、负投入、                                            过积分算法离散后得到的等效电压和等效电阻值[15]；
+                                                                   HB               HB
+退出模式 1 和退出模式 2 共 4 种工作状态。                                         uall_smeq (t ) 、 Rall_smeq (t ) 分别为单桥臂所有半桥子模
+                                                                                FB              FB
+             表1   半桥子模块解锁模式工作状态
+                                                                  块的等效电压和等效电阻值；uall_smeq (t ) 、Rall_smeq (t )
+       Table 1 The simulation time of MMC test system             分别为单桥臂所有全桥子模块的等效电压和等效
+           状态                T1                 T2                电阻值。
+           投入                1                  0                         根据混合型 MMC 解闭锁模式不同，桥臂半桥
+           退出                0                  1
+                                                                  子模块、全桥子模块的戴维南支路分别采用不同的
+             表2   全桥子模块解锁模式工作状态                                   等效方法。
+       Table 2 The simulation time of MMC test system             2.2      闭锁等效方法
+      状态          T3         T4        T5            T6                   闭锁模式下 IGBT 全部关断，子模块工作状态
+  正投入             1          0          0            1
+                                                                  与二极管通断状态相关。目前电磁暂态仿真软件大
+  负投入             0          1          1            0
+                                                                  多采用定步长仿真方法，若不考虑二极管的插值作
+ 退出模式 1           1          1          0            0
+ 退出模式 2           0          0          1            1
+                                                                  用，工作状态只能在仿真步长的时间点改变并进行
+                                                                  后续计算，将产生大量的畸变点，严重影响混合型
+2 混合型 MMC 全状态高效电磁暂态仿真                                             MMC 电磁暂态仿真的精确性[22]。
+方法                                                                        文献[21-23]借助 PSCAD 自带的插值算法计算
+2.1     混合型 MMC 全状态等效模型                                           工作状态变化的准确时间，将每个二极管的动作准
+       半桥子模块和全桥子模块包含多种工作状态，                                       则加入到轮询列表，根据动作准则和二极管上一时
+由其组成的混合型 MMC 工作状态更加复杂多样。                                          刻的状态，判别是否进行插值。但上述等效仿真效
+本文提出一种“混合型 MMC 全状态高效电磁暂态                                          率低，且依赖 PSCAD 平台。文章基于半桥子模块
+仿真方法”，在不添加模型内部节点的前提下，实                                            和全桥子模块不同的闭锁特性，提出一种混合型
+现混合型 MMC 全状态高精度电磁暂态仿真，并对                                          MMC 闭锁等效方法，实现混合型 MMC 闭锁高效
+模型进行优化等效，提高混合型 MMC 电磁暂态仿                                          仿真。
+真的计算效率。                                                           2.2.1     桥臂半桥子模块闭锁仿真方法
+       图 3 为混合型 MMC 全状态等效模型，将单个                                           桥臂半桥子模块闭锁工作状态与子模块内两
+桥臂的半桥子模块、全桥子模块和桥臂电感分别等                                            个二极管的状态密切相关，文章利用两个虚拟二极
+效为戴维南支路，再将整个桥臂等效为戴维南支                                             管模型对同一桥臂的半桥子模块进行插值，与传统
+第 24 期                            连攀杰等：混合型 MMC 全状态高效电磁暂态仿真方法研究                                                         8523
+
+模型不同，虚拟二极管模型只在闭锁模式下投入，
+解锁模式下不进行插值计算。
+    如图 4 所示，虚拟二极管的拓扑结构与二极管
+详细电磁暂态详细模型基本一致。二极管支路由可
+变电阻和直流电压源 Vf 串联，阻尼支路由阻尼电容
+CS 和阻尼电阻 RS 串联。可变电阻值包括通态电阻
+ DIO        DIO
+RON  和截止电阻 ROFF 两种取值方式，设置方法如
+式(3)、(4)所示，二极管模型两端电压为正则取
+ DIO
+RON             DIO
+     ，两端电流为负则取 ROFF 。 ReqDIO 、 VeqDIO 分别
+表示虚拟二极管模型的戴维南等效电阻和等效电
+压。闭锁模式下，不进行子模块电容电压排序，直
+接根据式(5)、(6)确定桥臂全部半桥子模块电容的戴
+维南等效模型。
+                      DIO
+                     RON  = N h RON                       (3)                图 5 桥臂半桥子模块闭锁仿真流程图
+
+                     R DIO
+                             = N h RO FF                  (4)       Fig. 5   Simulation flowchart of the locking state of
+                       OFF
+                                                                       the half bridge sub-module of the bridge arm
+                     HB
+                    Rall_C (t ) = N h RC                  (5)
+                                                                     6）判断各虚拟二极管模型本步计算是否正确。
+                                Nh
+                    HB
+                   uall_C (t ) = Σ uCi (t )               (6)        情形 1：若上步虚拟二极管模型为截止状态且
+                                i =1                              本步虚拟二极管模型两端电压小于 0，则计算正确，
+式中：RON 为导通电阻；ROFF 为关断电阻；RC、uiC(t)                                 二极管仍为截止状态。
+                                                 HB
+分别为子模块电容等效电阻和等效电压； R                             all_C   (t ) 、      情形 2：若上步虚拟二极管模型为截止状态且
+ HB
+uall_C (t ) 为所有子模块电容串联的戴维南等效电阻                                    本步虚拟二极管模型两端电压大于 0，则计算错误，
+
+和等效电压。                                                            则二极管应该导通。如图 6(a)所示，根据历史电压和
+                                                                  本步电压进行插值，寻找电压过零时刻，在过零时刻
+                                                                            DIO
+                                                                  修改可变电阻值为 RON  ，重新执行步骤 2）
+                                                                                         ，基于多
+                                                                  步变步长后退欧拉法再次求解整个网络的电压电流。
+
+
+
+            图4   桥臂半桥子模块闭锁等效模型
+   Fig. 4   Equivalent model of bridge arm half-bridge
+               sub-module in blocking mode
+    确定虚拟二极管模型通断状态变化的准确时
+间，改变虚拟二极管模型的电阻值，是精确模拟半
+桥子模块闭锁模式的关键，文章采用的桥臂半桥子
+模块闭锁仿真流程如图 5 所示：                                                              图 6 虚拟二极管模型插值原理图
+    1）初始化虚拟二极管参数。                                                   Fig. 6    Schematic diagram of virtual diode model
+    2）基于本步的仿真步长和积分算法，求解虚                                                                interpolation
+拟二极管模型的戴维南支路。                                                        情形 3：若上步虚拟二极管模型为导通状态且
+    3）将桥臂内所有半桥子模块电容串联，等效                                          本步虚拟二极管电流大于 0，则计算正确，二极管
+为戴维南支路。                                                           仍为导通状态。
+    4）确定混合型 MMC 的导纳阵和右端项。                                            情形 4：若上步虚拟二极管模型为导通状态且本
+    5）将混合型 MMC 归入全网进行求解，
+                       由 MMC                                      步虚拟二极管电流小于 0。则计算错误，二极管应
+各节点电压求解虚拟二极管模型端口电压电流。                                             该截止。需根据历史电流和本步电流进行插值，如
+8524                                                       中      国     电        机   工     程      学   报                                               第 41 卷
+
+图 5(b)所示，寻找电流过零时刻，在过零时刻修改                                                            拟二极管模型的数量更多，基于虚拟二极管模型的
+                         DIO
+可变电阻值为 R                 OFF    ，重新执行步骤 2）
+                                         ，基于多步变                                      等效方式仍非最优。文章充分利用全桥子模块闭锁
+步长后退欧拉法再次求解整个网络的电压电流。                                                                的特性，直接模拟全桥子模块的闭锁工作状态，并
+       7）混合型 MMC 所有虚拟二极管模型全部计                                                        设计电压充电函数，插值求解全桥子模块状态的变
+算正确后，完成本步计算，并存储本步虚拟二极管                                                               化时间，改变全桥子模块的闭锁工作状态。
+状态、电压和电流值。                                                                                     由于同一桥臂全桥子模块的电流一致，因此同
+       8）进行下一步仿真计算。                                                                  一桥臂内的全桥子模块具有相同的闭锁工作状态。
+       通过合理设置虚拟二极管的参数，精确等效半                                                          将所有全桥子模块电容串联，获得图 7 所示的桥臂
+桥子模块闭锁模式下的工作状态，通过求解虚拟二                                                               全桥子模块闭锁等效模型。其中，开关 S1 闭合至 a
+极管模型开断状态变化的准确时间，精确模拟半桥                                                               代表截止状态；开关 S1 闭合至 b，开关 S2 闭合至 c
+子模块闭锁工作状态切换，实现混合型 MMC 桥臂                                                             代表正投入状态；开关 S1 闭合至 b，开关 S2 闭合至
+半桥子模块的高精度闭锁仿真。                                                                       d 代表负投入状态。图中 uFBsm(t)为桥臂所有全桥子
+2.2.2       桥臂全桥子模块闭锁仿真方法                                                            模块的外界电压。
+       混合型 MMC 桥臂全桥子模块闭锁模式包括正
+投入、负投入和截止 3 种工作状态。表 3 为全桥子
+模块闭锁工作状态及戴维南等效形式。
+        表 3 全桥子模块闭锁模式工作状态及等效形式
+       Table 3 The simulation time of MMC test system
+  状态             电压关系                  D3   D4   D5    D6 等效电阻 等效电压                                   图7     桥臂全桥子模块闭锁等效模型
+                                                            FB
+ 正投入           uism(t) > uiceq(t)      1    0      0   1   RON        uiFB(t)            Fig. 7   Equivalent model of full bridge sub-module bridge
+                                                            FB
+ 负投入          uism(t) < -uiceq(t)      0    1      1   0   RON        -uiFB(t)                                       arm locking
+                                                            FB
+正向阻断         0 ≤ uism(t) ≤ uiceq(t)    0    0      0   0   ROFF          0
+                                                            FB
+                                                                                               上述等效模型能够准确模拟桥臂全桥子模块
+反向阻断 -uiceq(t) ≤ uism(t) < 0           0    0      0   0   ROFF          0
+                                                                                     的闭锁工作状态。为准确模拟全桥子模块的闭锁工
+       表中：
+                                                                                     作状态切换，设计如图 8 所示的插值算法：
+               FB    ( R + RO FF ) RC + 2 RON RO FF
+            R  ON   = ON                                                     (7)
+                         2 RC + ( RON + RO FF )
+                                     FB
+                                    ROFF = RO FF                             (8)
+                 i                  RO FF        i
+                uFB (t ) =                      uceq (t )                    (9)
+                               RON + RC + RO FF
+       全桥子模块闭锁模式的工作状态与子模块外
+界电压 uism(t)和电容等效电压 uiceq(t)密切相关：当
+uism(t) > uiceq(t)，子模块处于正投入状态，D3、D6 导
+通，D4、D5 截止；当 uism(t) < -uiceq(t)，子模块处于
+负投入状态，D4、D5 导通，D3、D6 截止；当 -uiceq(t) ≤
+uism(t) ≤ uiceq(t)，子模块处于截止状态，所有二极管
+全部截止。
+       对比全桥子模块闭锁模式中不同工作状态的戴
+             FB    FB
+维南模型。等效电阻包括 RON 和 ROFF 两种形式，等                                                                         图 8 桥臂全桥子模块闭锁仿真流程图
+效电压包括 uiFB(t)、-uiFB(t)和 0 共 3 种形式。全桥子                                                        Fig. 8   Simulation flowchart of the locking state of
+模块正投入状态和负投入状态下具有相同的等效电                                                                            the full bridge sub-module of the bridge arm
+       FB
+阻R     ON   ，等效电压的绝对值相同，仅存正负号差别。                                                               1）根据式(10)获得充电电压 ucharge(t)。
+       采用基于虚拟二极管模型的等效方法亦可实现                                                                                                         Nf
+                                                                                                                      2
+                                                                                                      ucharge (t ) = uFBsm (t ) - ( Σ uceq
+                                                                                                                                       i
+                                                                                                                                           (t ) ) 2      (10)
+桥臂全桥子模块闭锁高效仿真，然而全桥子模块虚                                                                                                              i =1
+第 24 期                       连攀杰等：混合型 MMC 全状态高效电磁暂态仿真方法研究                               8525
+
+    2）采用历史状态预判本步全桥子模块的工作                              ②ucharge(t) > 0 且 uFBsm(t) > 0，则预判错误，采用
+状态，确定桥臂全桥子模块的戴维南支路。                             图 8(b)所示的方式，插值寻找 ucharge(t)过零点 t+，在
+    3）确定混合型 MMC 的导纳阵和右端项。                       t+ 时刻修改全桥子模块工作状态为正投入，基于多
+    4）将混合型 MMC 归入全网进行求解，根据                      步变步长后退欧拉法重新进行计算。
+MMC 各节点电压求解桥臂全桥子模块端口电压                                ③ucharge(t) > 0 且 uFBsm(t)

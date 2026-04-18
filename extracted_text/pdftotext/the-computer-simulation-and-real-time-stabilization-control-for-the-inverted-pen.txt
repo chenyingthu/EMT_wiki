@@ -1,0 +1,200 @@
+                                    2009 Fifth International Conference on Natural Computation
+
+
+     The Computer Simulation and Real-time Stabilization Control for the Inverted
+                         Pendulum System Based on LQR
+
+
+
+                       Hu Lingyan1ˈ2                                               Liu Guoping, Liu Xiaoping, Zhang Hua
+   1.School of Mechanical and Electrical Engineering,                        School of Mechanical and Electrical Engineering,
+       2. School of Information and Engineering,                                 Nanchang University, Nanchang, China;
+                 NanChang University,                                                   liuguoping@ncu.edu.cn
+                    Nanchang, China;
+                hulingyan@ncu.edu.cn
+
+ Abstract—The paper established mathematical model of                     computer simulation is carried out. Finally we applied the
+ inverted pendulum system, based on the elaborate mechanical              parameters which result in good performance in simulation
+ analysis. According linear quadratic optimal control theory,             experiments to physical control experiment. The real-time
+ the paper put forward an Linear Quadratic Regulator(LQR)                 experiment result shows the controller can realized the angle
+ for the system. The simulation result shows that the inverted            and position control in parallel in a short time. Furthermore,
+ pendulum system with the state feedback matrix can realize               comparison is carried out between the simulation and real-
+ the pendulum angle and the carriage position stabilization               time control.
+ control. In addition, the real-time control of the pendulum has
+ been accomplished successfully based on the real-time control                     II.       MATHEMATICAL MODEL FOR THE INVERTED
+ model built in Simulink. The result of real-time control                                                PENDULUM
+ experiment is simular to the simulation, which also validated
+ the correctness of the theoretical analysis and the rightness of             The inverted pendulum mainly consists of a carriage, a
+ the computer simulation. In addition, comparison analysis                pendulum, a rail for defining the position of the carriage and
+ between the simulation and real-time control experiment is               a driving unit. The pendulum is hinged in the center of the
+ carried out.                                                             top of the carriage and can rotate around the pivot in the
+                                                                          same vertical plane with the rail. The carriage can move right
+   Keywords- Inverted pendulum; Simulation; Real-time control;            or left on the rail freely. The physical model for the inverted
+ LQR                                                                      pendulum is shown is Fig. 1-a. It is given that 1)no friction
+                                                                          exists in the system between the carriage and the rail or
+                       I.     INTRODUCTION                                between the carriage and the pendulum; 2)Pendulum and
+                                                                          carriage are rigid bodies; carriage is as a particle; 3) no
+     Inverted pendulum is a nonlinear, coupling, variable and
+                                                                          relative sliding between the belt and the pulley, etc.
+ natural unsteadiness system. During the control process,
+                                                                              The mechanical analysis of the inverted pendulum is
+ pendulum can effectively reflect many pivotal problems such
+                                                                          shown as Fig. 1-b and Fig. 1-c.
+ as equanimity, robust, follow-up and track. Therefore, it is
+                                                                              Here, g=9.8m/s2 is the gravity acceleration. The variable
+ often used as a benchmark for verifying the performance and
+                                                                          F means the driving force in the unit [N] applied
+ effectiveness of a new control method because of the
+ simplicities of the structure.                                           horizontally to the carriage. The variables ¶ , φ represent,
+     The difficulty of inverted pendulum control is swing-up              respectively, the angle of the pendulum from upright
+ control. There are many research achievements about it now,              position, its angular velocity, and the clockwise direction is
+ but most of the researches are on the premise of that the track          positive. ș=ʌ+¶. The variables x, x denote the position of
+ of the carriage is long enough and the setting time is very              the carriage from the rail origin, its velocity, and right
+ long in many papers, especially controlled by intelligent                direction is positive. The other symbols are listed in Tab. 1.
+ controllers[1,2,3].
+     The controller put forward in the paper is Linear                                                          Fon
+ Quadratic Regulator(LQR). It is based on the linear theory,                             ¶                                          ¶
+ so its response is fast and the setting time is short. Although                                         
+                                                                                                      N bx         F
+                                                                                                                                P
+                                                                               F
+ there are many papers about inverted pendulum control with                                                                             mg
+                                                                                                                P           ©
+ LQR[4,5], they are always limited in theoretic analysis and                                                                                 N
+ computer simulation and the real-time control is seldom                                                        Mg
+ involved.
+     At first, the paper established mathematical model of                 (a) structure of the                     x
+ inverted pendulum, based on the detail mechanical analysis                inverted pendulum             (b)carriage          (c) pendulum
+ on the inverted pendulum system. Secondly, the LQ optimal
+ regulator is designed according the theoretical model. Then                Figure 1.        Mechanical analysis of inverted pendulum
+
+
+978-0-7695-3736-8/09 $25.00 © 2009 IEEE                             438
+DOI 10.1109/ICNC.2009.724
+    The friction appearing in the motion of the carriage is                 Where X = [ x x                  φ φ]T , u = F ,
+proportional to its velocity, and the friction coefficient is b.
+    Analyzing the horizon force of the carriage, equation (1)
+is obtained.
+                                                                           ª0          1                    0        0º
+                                                                           «                                          »
+                                                                           «0     − ( I + ml 2 )b       m 2 gl 2
+                  Mx = F − bx − N                                                                               0 »
+                                                               (1)         « I ( M + m) + Mml 2 I ( M + m) + Mml 2    »
+                                                                         A=«                                          »
+   According the force applied horizontally to the                         «0            0                 0         1»
+pendulum, equation (2) is obtained.                                        «                                          »
+                                                                           «0          mlb          mgl ( M + m)
+                                                                                                                   0 »
+          N = mx − mlϑ cos θ + mlθ 2 sin θ                            « I ( M + m) + Mml 2 I ( M + m) + Mml 2    »
+                                                            (2)            ¬                                          ¼
+
+   Formally substituting (2) into (1), we obtain
+                                                                               ª0                   º
+( M + m) x + bx − mlθcosθ + mlθ 2 sin θ = F           (3)                «               2    »
+                                                                               «        I + ml      »
+   According the force applied vertically to the pendulum,                     « I ( M + m) + Mml 2 »
+equation (4) is obtained.                                                    B=«                    » C = ª«1 0 0 0º»
+                                                                               «0                   »      ¬0 0 1 0 ¼ .
+                                                                               «          − ml      »
+                       d2                                                      «                    »
+        P − mg = m          (−l cos θ )                                                           2
+                       dt 2                                                    ¬« I ( M + m) + Mml ¼»
+                  = mlθ sin θ + mlθ 2 cos θ              (4)               The practical parameters of the inverted pendulum are
+                                                                         listed in Tab. 1.
+   According torque balance, equation (5) is obtained.
+                                                                                TABLE I.                PARAMETERS OF THE INVERTED PENDULUM
+
+                − Pl sin θ + Nl cos θ = Iθ                (5)          symbol                               Parameter                          value
+                                                                            M                             Carriage mass                          2.6Kg
+   According (2), (4) and (5), the dynamic equation (6) is
+obtained.                                                                   m                             Pendulum mass                        0.086Kg
+
+                                                                            b                 friction coefficient for carriage move          0.1(N·s)/m
+           (I + ml )ș + mgl sin ș = mlx cos ș
+                    2
+                                                            (6)             l          The length from pivot to centroi of pendulum             0.215m
+                                                                            I                   moment of inertia for pendulum               0.00033Kg·m2
+   Since ¶ is small( ¶ <<1)in the course of the inverted
+                                                                            T                           Sampling frequency                       0.02s
+pendulum control, linearization of the system((3) and (6))
+has the form
+                                                                                III.     LQR FOR THE INVERTED PENDULUM SYSTEM
+               ­°( I + ml 2 )φ − mglφ = − mlx                           LQR is a state feedback control algorithm as shown in
+                ®
+                °̄( M + m) x + bx + mlφ = F                         Fig. 2. It is required to find the control input u which
+                                                            (7).         minimizes the following target functional:
+                                                                                                          ∞
+   With the following approximate conditions                                                     J = ³ ( X T QX + u T Ru )dt
+                                                                                            0                              ˄9˅
+                       dθ
+                      ( )2 = 0                                              Where Q is semi-positive Hermitian matrix or real
+   cosș= -1, sinș= -ĳ, dt      ,                                         symmetry matrix , R is positive Hermitian matrix or real
+the dynamic system can be expressed as (8),                                            v(t)      u(t)                             X(t)        y(t)
+                                                                                                                  +
+                                                                                        +
+                                                                                                          B                   ³          C
+                        X = AX + Bu                                                     -                            +
+                                                                                                                          A
+                        y = CX                              (8)
+                                                                                                              K
+                                                                                              Figure 2. Structure of state feedback control
+
+
+
+                                                                   439
+symmetry matrix. The LQR algorithm is an optimal                                               J * = X T (0) PX (0)
+algorithm, whose goal is to minimize the target function J.                                                           .
+    Because the desired values are all zeros in the
+stabilization control, u(t)= -KX(t) Ǆ                                          IV.   NUMERICAL SIMULATION FOR THE INVERTED
+     Its state equation is expressed as (10) correspondingly,                                  PENDULUM SYSTEM
+                                                                              Control system for the inverted pendulum consists of the
+            X = AX − BKX = ( A − BK ) X                  ˄10˅            computer, the motion control card, the serve motor, and its
+                                                                          driver, inverted pendulum, photoelectric coder measurement,
+   then                                                                   etc. It is shown in Fig. 3.
+                   ∞
+                                                                              The motion control card sends the commands from
+            J = ³ ( X T QX + X T K T RKX )dt                              computer to the servo motor via Servo Drivers. Then the
+                  0                                                       servo motor drives the carriage and the pendulum moving by
+                   ∞                                                      belt.
+              = ³ X T (Q + K T RK ) Xdt                                       The numerical simulation experiment is to verify the
+                  0                                   .
+                                                                          stability of the inverted pendulum system with the state
+            T      T           d                                          feedback matrix K based on LQR theory.
+       Let X (Q + K RK ) X = −    ( X T PX )                                  The reason we choose stabilization control experiment is
+                               dt            ,                            that the stabilization control is also a regulate problem.
+   where P is Positive Hermitian matrix or real symmetry                      In this paper, the stabilization control of the inverted
+matrix. Therefore, the optimal target function is shown as                pendulum system means to balance upright the pendulum
+(11).                                                                     and move the carriage to the position x=0 in a limited time
+                                                                          when starting condition is not equilibrium state(X= 0). The
+          J = − X T PX ∞0                                                 desired position of the carriage can be set to any reasonable
+                                                                          point on the rail, however, the rail origin(x=0) is selected
+          = − X T (∞) PX (∞) + X T (0) PX (0)                             here as the desired position of the carriage without losing
+                                                             (11)         generality.
+                                                                              Consequently, we set an initial position x(0)=-0.1m, and
+   The optimal solution for the problem is                                the aim of stabilization simulation experiment is to balance
+                                                                          upright the pendulum and put the carriage to the original
+                      u(t)= -KX(t) =-R-1BTPX(t)                           position.
+                                                                               The performance for the theoretic system depends on the
+   where P satisfies the Riccati differential equation[6].                target function according LQR theory. It means the
+                                                                          performance depends on the weighted matrixes Q and R
+                   ATP+PA-PB R-1BTP+Q=0                                   entirely according (9). And how to choose these two
+                                                                          matrixes has no analysis method. It is chosen only by a
+    Since the system with state feedback matrix required to               qualitative analysis, and then be verified by the experiments.
+be stable(the eigenvalues of A-BK should have the negative                      According (9), Q and R are the weight of X(t) and u(t)
+real parts), X()->0.                                                     respectively, which decide the importance degrees of X(t)
+    Therefore, the optimal target function is                             and u(t) in target function.
+                                                                                For simplification and clearness of the physical
+                                                                          conception, define Q as a diagonal matrix.
+
+
+                                                                                              ªQ11 0 0 0 º
+                                                                                              «0 Q     0 0 »»
+                                                                                            Q=«
+                                                                                                    22
+
+                                                                                              «0   0 Q33 0 »
+                                                                                              «              »
+                                                                                              ¬0 0     0 Q44 ¼
+                                                                              Because the system has a single input variable which is
+                                                                          the Force F, R is a scalar which is denoted r.
+                                                                              Thus 

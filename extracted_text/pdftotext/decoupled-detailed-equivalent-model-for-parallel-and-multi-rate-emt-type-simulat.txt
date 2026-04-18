@@ -1,0 +1,176 @@
+740                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 2, APRIL 2026
+
+
+
+
+      Decoupled Detailed Equivalent Model for Parallel
+      and Multi-Rate EMT-Type Simulation of Modular
+      Multilevel Converter With Battery Energy Storage
+                        Walid Hatahet , Graduate Student Member, IEEE, Hengyu Li , Member, IEEE,
+                              Liwei Wang , Senior Member, IEEE, and Wei Li , Member, IEEE
+
+
+   Abstract—Modular multilevel converters (MMCs) integrated                        BESS into the modular structure of modular multilevel converter
+with battery energy storage systems (BESS) enable efficient uti-                   (MMC) is recognized as an important solution to manage excess
+lization of renewable energy resources such as wind and photo-                     power in HVDC systems [4]. Unlike conventional central battery
+voltaic, while enhancing reliability and scalability of high-voltage
+direct current systems. This paper proposes a decoupled detailed                   schemes, the modular configuration provides high reliability,
+equivalent model (D-DEM) for BESS-integrated MMC for elec-                         scalability and optimized efficiency [5]. However, the integra-
+tromagnetic transient (EMT) simulation. The proposed model can                     tion of modular BESS in MMC introduces complexity into
+accurately represent the dynamics of the converter under deblock-                  HVDC networks design and operation [6]. Thus, electromag-
+ing and blocking modes. To efficiently utilize available hardware                  netic transient (EMT) studies are essential to provide detailed
+resources, a multi-rate simulation technique is adopted to sim-
+ulate the MMC subsystems with different time steps. Addition-                      representation of system components, performance evaluation
+ally, switching interpolation technique is proposed to accurately                  in fault analysis and grid stability assessment [7].
+compensate for the intra-time-step switching events of the MMC                        Significant challenges exist in the simulation of MMC-based
+multi-valves. To further accelerate the EMT simulation of MMC, a                   HVDC systems under normal and faulty conditions. For in-
+hybrid parallel computing EMT solver is implemented, using both                    stance, a large number of switching nodes of the MMC results
+central and graphical processing units (CPU-GPU). The accuracy
+of the proposed D-DEM is validated against a detailed model (DM)                   in a high-dimensional, time-varying conductance G matrix [8],
+using Simulink/Simscape Electrical toolbox with 1 µs time step.                    leading to extensive computational complexities. In addition,
+The simulation efficiency of the proposed D-DEM is faster than                     the BESS-integrated MMC comprises converter subsystems
+the conventional DEM model by a factor of 2.81 with CPU-only                       with various switching frequencies, necessitating fine time step
+implementation for the MMC with 400 submodules per arm. Fur-                       resolution and frequent conductance matrix re-factorization [9].
+thermore, the proposed hybrid CPU-GPU solver achieves 79-fold
+faster than the CPU-only sequential implementation.                                These challenges impose heavy computational burdens on con-
+                                                                                   ventional EMT modeling approaches and highlight the need for
+   Index Terms—Battery energy storage system, electromagnetic                      efficient equivalent circuit modeling strategies [10], [11].
+transient simulation, multi-rate simulation, parallel processing,
+switching interpolation.
+                                                                                      Recent advancements in BESS-integrated MMC HVDC tech-
+                                                                                   nologies have brought new imperatives for the accelerated EMT
+                                                                                   simulation of these systems. In [12], a detailed equivalent model
+                            I. INTRODUCTION                                        (DEM), based on the Thevenin equivalent circuit of the MMC
+                                                                                   multi-valves, was developed to simulate converter dynamic re-
+       IGH voltage direct current (HVDC) transmission systems
+H      have witnessed a significant growth stemming from the
+widespread deployment in renewable energy systems [1]. The
+                                                                                   sponse and high-frequency transients in AC three-phase faults.
+                                                                                   In [13], an average-value model was proposed for numerically
+                                                                                   efficient simulation of the BESS-integrated MMC. Numerically
+use of battery energy storage systems (BESS) is substantial                        efficient equivalent models were proposed in [14], [15], [16] to
+to efficiently harness the surplus energy in the power grid                        model the MMC with embedded supercapacitor energy storage
+[2], and accelerate the transition from high-emission power                        based on the Thevenin equivalent circuit. While these models
+plants to clean renewable energy resources [3]. Embedding the                      offer valuable modeling insights, they are not able to represent
+                                                                                   the blocked state of the MMC in DC fault scenarios. Improved
+                                                                                   DEMs were developed in [17], [18] with provisions for rep-
+   Received 15 June 2025; revised 13 November 2025; accepted 19 December
+2025. Date of publication 26 December 2025; date of current version 26 March       resenting the critical blocked state of the converter. However,
+2026. This work was supported by Natural Sciences and Engineering Research         the coupled submodule- and battery-side converters and time-
+Council (NSERC) of Canada. Paper no. TPWRD-00787-2025. (Corresponding              varying conductance G matrix of the BESS-integrated MMC
+author: Liwei Wang.)
+   Walid Hatahet, Hengyu Li, and Liwei Wang are with the School of Engineer-       still complicate the EMT simulation.
+ing, University of British Columbia Okanagan, Kelowna, BC V1V 1V7, Canada             Advanced modeling algorithms, including multi-rate simu-
+(e-mail: liwei.wang@ubc.ca).                                                       lation and switching interpolation, are also critical to achieve
+   Wei Li is with the OPAL-RT Technologies, Montreal, QC H3K 1G6, Canada
+(e-mail: wei.li@opal-rt.com).                                                      high accuracy and efficiency of the EMT simulation of
+   Digital Object Identifier 10.1109/TPWRD.2025.3648650                            MMC-based HVDC systems. In [19], an efficient DEM of MMC
+      1937-4208 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:58:52 UTC from IEEE Xplore. Restrictions apply.
+HATAHET et al.: D-DEM FOR PARALLEL AND MULTI-RATE EMT-TYPE SIMULATION OF MMC WITH BATTERY ENERGY STORAGE                                               741
+
+
+
+was introduced, wherein multiple sample rates were employed                     valuable contributions of [33] can be extended from CPU-based
+to simulate the MMC on a hybrid CPU and Field Programmable                      EMT studies to CPU-GPU platform with multi-rate simulation
+Gate Array (FPGA) platform. A multi-rate mixed-solver tech-                     and switching interpolation (SI) at SM and BESS sides.
+nique was proposed for AC/DC systems using different time                          This paper aims at enhancing numerical efficiency of EMT-
+steps for the decomposed subsystems [20]. A fully FPGA-based                    type simulation of BESS-integrated MMC through improved
+multi-rate simulation of two-terminal HVDC system was in-                       converter modeling, advanced simulation techniques and accel-
+troduced in [21], where the system was decoupled by the stub                    erated computing platform. The novelty and overall contribu-
+line and simulated in parallel. In [22], an interconnected AC                   tions are summarized as follows:
+and MMC-MTDC system is partitioned into AC and DC sub-                             1) A fully decoupled detailed equivalent model (D-DEM) is
+systems and represented by time-varying Thevenin and Norton                           proposed for the BESS-integrated MMC. The proposed
+equivalents using multi-rate co-simulation and spline interpo-                        D-DEM achieves constant conductance G matrix and re-
+lation technique. However, these modeling efforts focus on the                        duced number of nodes in its nodal equation. On the other
+conventional MMCs without integrated BESS.                                            hand, the conventional coupled detailed equivalent model
+   Massive parallel processing capabilities of graphical process-                     (C-DEM) results in a variable G matrix due to the use of
+ing units (GPUs) are leveraged to speed up the computation-                           binary-value resistors to model semiconductor switches.
+intensive simulation of MMC-based HVDC systems [23]. A                             2) A multi-rate simulation technique is proposed for the
+device-level parallel-in-time algorithm was developed on GPUs                         BESS-integrated MMC to accelerate its EMT simulation.
+to simulate the MMC for electric vehicle applications [24]. A                         A large time step size (20 μs) is assigned to subsystems
+high-fidelity EMT modeling of MMC with supercapacitor-based                           with low switching frequencies, while a smaller step size
+energy storage embedded in submodules (SMs) was developed                             (5 μs) is used for SM capacitor and BESS converter
+in [25]. The transmission line model (TLM) technique was                              subsystems.
+deployed to represent the reactive components of MMC and                           3) A switching interpolation technique is proposed for the
+to decouple the SMs circuits from the converter in order to                           D-DEM to capture and compensate for the intra-step
+achieve parallel simulation on GPU [25]. In [23], [24], [25], the                     switching events. This technique improves simulation ac-
+complexity of SM equivalent circuits increases when bipolar                           curacy and avoid the use of excessively small time steps
+SMs, such as full-bridge (FB) or clamped-double SMs are used                          for high frequency switching converters.
+in an MMC. Moreover, switching interpolation technique is not                      4) The proposed D-DEM can represent the MMC under
+adopted in [23], [24], [25] which limits the simulation time steps                    IGBT deblocking and blocking modes and can be used
+to be small values to ensure simulation accuracy.                                     for MMCs with different types of SM topologies. This
+   More recently, a multi-rate simulation of inverter-based re-                       paper further develops a hybrid CPU-GPU D-DEM with
+sources is proposed in [26] for power system simulation on a                          parallel processing to obtain high speed-up, compared to
+GPU platform. The work in [27] presents an interface between                          its CPU-only implementation.
+the EMT simulator and a Dynamic Phasor (DP) simulation
+program, which preserves selected harmonic contents on the
+DP side. Similar work in [28] proposes a base-frequency DP                                  II. MMC DETAILED EQUIVALENT MODELS
+solver that alters its solution technique between DP and EMT.
+                                                                                   This section introduces both the conventional and proposed
+This co-simulator combines the benefits of multi-rate simulation
+                                                                                DEMs of the BESS-integrated MMC. The proposed DEM
+of different subsystems. However, the works in [26], [27], [28]
+                                                                                has the advantage of decoupled circuit structure with reduced
+need extension beyond power grid applications to large power
+                                                                                number of nodes and constant conductance matrix, compared
+converter systems such as MMCs. A multi-time-scale simulation
+                                                                                to the conventional DEM. In addition, multi-rate simulation
+method for EMT modeling of battery integrated solid-state
+                                                                                and switching interpolation techniques are proposed to further
+transformer is proposed in [29]. Although simulation efficiency
+                                                                                increase the simulation accuracy and efficiency for the proposed
+is improved through trigger-based partitioning, this study does
+                                                                                DEM.
+not explore switching interpolation techniques to enable larger
+simulation step-sizes or GPU acceleration. The work in [30]
+presents a multi-rate co-simulation framework for modeling
+MMC dynamics in large-scale power systems, integrating DP                       A. Coupled Detailed Equivalent Model (C-DEM)
+and EMT solvers. Similar work in [31] develops an average-                         The circuit diagram of the three-phase MMC without inte-
+value MMC model using DP in co-simulation with an EMT                           grated battery energy storage system is illustrated in Fig. 1.
+solver. An accelerated detailed equivalent model is proposed                    Each phase of the MMC consists of two converter arms (i.e.,
+in [32], which introduced a strategy to eliminate admittance                    upper and lower arms). Each converter arm consists of Ncell
+matrix re-inversions during the converter’s normal operation.                   series-connected submodules and an arm inductor Larm . Dif-
+However, the models in [30], [31], [32] use conventional MMC                    ferent submodules types, e.g., half- or full-bridge (HB or FB,
+submodules without BESS. The work in [33] presents a detailed                   respectively) submodules can be employed in an MMC. Fig. 2(a)
+equivalent EMT model for MMCs with partially integrated                         illustrates the integration of BESS within each SM. A half-bridge
+BESS that collapses each arm to a controlled voltage source                     DC-DC converter/chopper is used to interface SM capacitor with
+with a constant network G matrix during normal operation. The                   the BESS, as shown in Fig. 2(a).
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:58:52 UTC from IEEE Xplore. Restrictions apply.
+742                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 2, APRIL 2026
+
+
+
+                                                                                     In (1), VSM is SM nodal voltage vector; ISM and GSM are
+                                                                                  the current vector and the nodal conductance matrix of the SM,
+                                                                                  respectively. When the semiconductor switches are represented
+                                                                                  by two-value (ON or OFF) resistors, GSM is time-variant. It is
+                                                                                  noted that the FBSM with integrated BESS in Fig. 2(b) requires
+                                                                                  a 4 × 4 linear system of (1) with 4 independent nodes (excluding
+                                                                                  ground node).
+                                                                                     The Thevenin equivalent circuits of Fig. 2(b) and (c) viewed
+                                                                                  from the SM-side input ports are calculated. With Ncell series
+                                                                                  connected SMs in each arm, the arm equivalent circuit is formed
+                                                                                  by combining Ncell number of Thevenin equivalent circuits into
+                                                                                  one Thevenin equivalent circuit for MMC-network solution.
+                                                                                  After the MMC-network solution is completed, the arm current
+                                                                                  is used to solve (1) for the SM nodal voltage vector, VSM in each
+                                                                                  time step to update the SM’s component solutions. It is noted that
+Fig. 1.   MMC circuit diagram.                                                    the network and SM conductance G matrices are time-variant
+                                                                                  due to IGBT-switching operations of the SMs. Therefore, the
+                                                                                  refactorization (e.g., LU factorization method) of the network
+                                                                                  and SM conductance matrices reduces the numerical efficiency
+                                                                                  of the MMC model. As the number of SMs per arm increases,
+                                                                                  high computational power is required for the EMT-type solution
+                                                                                  of the MMC with integrated-BESS.
+
+                                                                                  B. Decoupled Detailed Equivalent Model (D-DEM)
+                                                                                     In order to achieve constant conductance G matrices of the
+                                                                                  network and SMs of the MMC, a decoupled detailed equivalent
+                                                                                  model (D-DEM) of the MMC is proposed in the paper. Different
+                                                                                  from the conventional resistive switch model (RSM) of the
+                  

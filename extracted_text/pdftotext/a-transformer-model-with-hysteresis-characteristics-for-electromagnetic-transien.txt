@@ -1,0 +1,229 @@
+         第 37 卷 第 5 期                          中    国 电 机 工 程 学               报           Vol.37 No.5 Mar. 5, 2017
+         2017 年 3 月 5 日                             Proceedings of the CSEE              ©2017 Chin.Soc.for Elec.Eng. 1543
+DOI：10.13334/j.0258-8013.pcsee.160123              文章编号：0258-8013 (2017) 05-1543-09       中图分类号：TM 41
+
+
+
+   考虑磁滞特性变压器 PSCAD/EMTDC 电磁暂态
+      仿真建模方法及励磁差异性分析
+                             吴嘉琪 1，李晓华 1，陈忠 2，丁晓兵 3，田庆 3
+(1．华南理工大学电力学院，广东省 广州市 510640；2．中国南方电网有限责任公司超高压输电公司，
+   广东省 广州市 510620；3．中国南方电网有限责任公司电力调度控制中心，广东省 广州市 510623)
+
+
+ A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based
+                 on PSCAD/EMTDC and Excitation Difference Analysis
+                          WU Jiaqi1, LI Xiaohua1, CHEN Zhong2, DING Xiaobing3, TIAN Qing3
+       (1. School of Electric Power, South China University of Technology, Guangzhou 510640, Guangdong Province, China;
+               2. Ultra-High Voltage Transmission Company of CSG, Guangzhou 510620, Guangdong Province, China;
+             3. Power Dispatching and Communication Center of CSG, Guangzhou 510623, Guangdong Province, China)
+
+
+ABSTRACT: In order to research the inrush problems in                  ATP-EMTP 电磁暂态仿真软件中描述铁心铁磁材料磁滞特
+HVDC transmission projects, a new three-phase transformer              性的非线性电感 Type96 以及 BCTRAN 共同建立考虑磁滞特
+model with hysteresis characteristics of PSCAD/EMTDC was               性变压器模型思想，提出一种考虑磁滞特性变压器 PSCAD/
+presented, which derives from ideas of the transformer model           EMTDC 电磁暂态仿真新模型。该模型在经典模型的基础上
+considering hysteresis characteristics in ATP-EMTP, in which it        增加了考虑磁滞特性的励磁支路，利用试验获得的最大磁滞
+consists of Type96 and BCTRAN. This model added an                     回线数据便可有效地反映变压器的磁滞特性，验证表明该模
+excitation branch considering hysteresis characteristics based         型能很好地反映变压器磁滞特性，且因参数易得，便于用户
+on the classical model. The hysteresis characteristics can be          在 PSCAD/EMTDC 中仿真使用。同时也仿真研究利用磁滞
+described effectively when using experimental data obtained.           回线和磁滞中线模拟变压器励磁特性的差异性，得出采用磁
+The simulation results show that the model reflects excitation         滞中线代替磁滞回线来模拟变压器铁心励磁特性在励磁涌
+characteristics well, and parameters are readily available, it’s       流峰值上具有一致性，但磁滞回线对涌流稳态过程特别是谐
+easy for users to use it in PSCAD/EMTDC. It also studied the           波特性有较大影响。
+differences of excitation characteristics simulated by the
+                                                                       关键词：磁滞回线；磁滞中线；励磁特性；三相经典变压器
+hysteresis loop and the hysteresis midline, and it concluded that
+                                                                       模型；ATP-EMTP；PSCAD/EMTDC；电磁暂态仿真
+there is a consistency in respect of the inrush current peak in
+transient process if the hysteresis midline instead of the             0 引言
+hysteresis loop to simulate the excitation characteristics of
+                                                                          高压直流输电系统一极投入运行时，其上的
+transformer cores, but the hysteresis loop has a greater impact
+on the transient process especially the harmonic characteristics       Y/Y 和 Y/D 两台换流变将同时空载投入。在系统电
+of inrush current.                                                     压的励磁下，由于换流变内部非线性铁心因不同的
+KEY WORDS: hysteresis loop; hysteresis midline; excitation             初始电压而达到不同的饱和程度，往往会产生较大
+characteristics; three-phase classical transformer model ；             的励磁涌流，另一极换流变会出现复杂性和应涌
+ATP-EMTP;       PSCAD/EMTDC;          electromagnetic     transient    流。此过程会对换流变内部结构产生强烈的冲击，
+simulation                                                             同时因励磁涌流含有大量的非周期分量和高次谐
+摘要：为了研究高压直流输电中励磁涌流问题，该文结合                                              波分量，导致电流互感器铁心严重饱和，产生不平
+                                                                       衡暂态电流，引起换流变保护误动[1]。因此，研究
+     基金项目：国家自然科学基金项目(51377059)。
+     Project Supported by the National Natural Science Foundation of
+                                                                       换流变复杂性涌流特性及其抑制措施研究尤为必
+China (51377059).                                                      要，而其研究核心在于对换流变压器铁心励磁特性
+1544                     中   国   电   机   工        程        学         报                                                                           第 37 卷
+
+的精确建模。文献[2]采用 J-A 理论拟合磁滞回线，              应强度 B 和磁场强度 H 之间的关系不仅不是线性
+通过改良的艾杰文函数来拟合各向同性铁磁物质                    的，而且不是单值的，决定了磁滞特性模拟本身是
+的理想磁化曲线，以磁畴壁位移思想为基础并根据                   一个复杂的过程。目前实际直流工程对应的直流控
+能量损耗原理推导出磁滞回线方程，由于获取模型                   制保护模型均基于 PSCAD/EMTDC 软件，虽然国
+中 5 个参数的过程较为复杂，对实际工程不是很实                 内外学者做出了大量关于模拟变压器磁滞特性的
+用；文献[3]在经典 Preisach 模型的基础上修正完善           研究[2-17]，但结合国内实际工程和 PSCAD/EMTDC
+了磁滞回线数学模型，但模型参数的确定较为困                    软件自身特点能运用于其中的磁滞回线拟合方法
+难，不太适用于实际工程；文献[4]采用修正的反正                 几乎没有。
+切函数描述未饱和时主区间内的两条极限磁滞回                                 励磁回线轨迹的主要影响因素有电流大小、方
+环，采用两条平行的直线段来描述饱和后主区间外                   向及剩磁的大小，本文以剩磁为 0 的情况为例，给
+的磁化曲线，只拟合了最大磁滞回线，未考虑其内                   出几种可能出现的情况作分析，如图 1 所示。其中
+部的次磁滞回线簇。                                最外闭合曲线为主磁滞回线，直线 l 为运行轨迹由
+       综合目前变压器模型研究现状，尚有两方面的              磁滞中线到磁滞回线对应电流的分界线，Pi 为电流
+问题需要进一步深入研究：                             峰值点，对应于磁滞回线的左右转折；oi 为电流过
+       1）考虑磁滞特性变压器 PSCAD/EMTDC 电磁        零点，对应于磁滞回线与 Y 轴的交点，其中 i  
+暂态模型。由于 PSCAD/EMTDC 中经典变压器模              1,2,,6。情况 1 如图 1(a)所示，即电流从 0 缓慢增
+型不能较好地反映电力变压器的励磁特性真实状                    大，没有超过饱和电流，最终达到稳定；情况 2 如
+况，同时也考虑到，用于国内高压直流输电工程研                   图 1(b)所示，
+                                                 即电流从 0 瞬间增大至超过饱和电流，
+究的基于 PSCAD/EMTDC 仿真平台的西门子、南              随后慢慢减小至低于饱和电流，最终达到稳定；情
+瑞的所有直流控制保护模型中没有计及磁滞特性                    况 3 如图 1(c)所示，即电流从 0 瞬间增大至超过饱
+的变压器模型，因此建立考虑磁滞特性的变压器模                   和电流，并达到稳定；情况 4 如图 1(d)所示，即电
+型很有必要。                                                                              P3P5                                                           P3             P1
+
+       2）磁滞回线与磁滞中线模拟变压器励磁特性                                          o3        P1
+                                                                                                                                           o1   P5
+                                                                          o1               正向                                              o3             正向
+的差异性以及两种模拟方式在不同研究目的下的                                                                      饱和点
+                                                                                                     负向
+                                                                                                                                                          饱和点
+                                                                     o                         I                                      o                     I
+                                             负向                                                     饱和点
+选取问题。通过了解两种模拟方式的异同点及各自                       饱和点
+                                                                P2
+                                                                     o2
+                                                                          o4
+                                                                                                                                      o2
+                                                                                                                                 P6
+的优缺点，以便后期研究针对不同的研究目的选取                                P4                                                 P2            P4
+                                                                                                                                                            I
+                                                  l                  o                         I                                      o
+                                                                                                                                                                     P1
+不同的变压器励磁特性模拟方式，目的性更强，研                                                    o1    P1
+                                                                                                        P2
+                                                                                                                                      o
+                                                           P2        o2                                                               o
+究效率更高。                                                P4             o3
+                                                                                     P3                      l                                        P3
+                                                                                                                       P4                  o1
+                                                                          o4
+       本文提出了一种考虑铁心磁滞特性的变压器                                                                P5                                          o2        P5
+                                                                                                                            P6             o3
+PSCAD/EMTDC 电磁暂态仿真新模型。该模型采用                                          T                                                                T
+
+                                                                (a) 情况 1                                                         (b) 情况 2
+自定义编程创建描述磁滞特性的非线性电感，将其
+并联在变压器的绕组间，利用非线性电感支路来模                                                                            P1                                                    P5P3 P1
+
+                                                                                                                                           o2
+拟变压器的励磁支路，并结合 ATP-EMTP 变压器模                                                                 正向                                                             正向
+                                                                                           饱和点                                                            饱和点
+型仿真以及实际电力变压器试验来验证其合理性，                       负向                      o                         I
+                                                                                                        负向
+                                                                                                        饱和点
+                                                                                                                                      o
+                                                                                                                                      o1
+                                                                                                                                                                I
+                                             饱和点
+同时基于 PSCAD/EMTDC 电磁暂态仿真软件仿真                                                                             P6 P4
+                                                                                                                   P2
+                                                                                                                                      o3
+
+                                             P2                                                                                                                 I
+分析采用磁滞中线与磁滞回线模拟变压器励磁特                                                o
+                                                                                               I                                      o
+                                                                                                                                                                     P1
+                                                                                                    P1
+                                                                                                                                      o
+性在变压器空载合闸励磁涌流特性中的差异性，提                       P2
+                                                                     o                                            P2
+                                                                                                                                      o1                    P3
+出相应的模型使用建议。                                                                                                  P4                            o2
+                                                                                                                                      o3                   P5
+1 考虑磁滞特性变压器模型                                                        T
+                                                                                                    P6
+                                                                                                                                      o
+                                                                                                                                      T
+
+1.1    铁心磁滞特性描述                                                 (c) 情况 3                                                         (d) 情况 4
+
+       磁滞回线反映了铁磁材料的磁化性能，而磁化                                              图1         磁滞回线预判运行轨迹
+过程是比较复杂的，铁磁材料的磁化强度 M、磁感                               Fig. 1 Anticipation trajectory of hysteresis loops
+第5期             吴嘉琪等：考虑磁滞特性变压器 PSCAD/EMTDC 电磁暂态仿真建模方法及励磁差异性分析                                                                                       1545
+
+                                                                                     1.5
+流从 0 瞬间增大至超过饱和电流，随后慢慢减小至
+低于饱和电流，接着又增大至超过饱和电流，随后
+慢慢减小至低于饱和电流，如此反复。                                                                    0.5
+
+
+
+
+                                                                            磁通/pu
+     分析上述情况中磁滞回线的变化特征，近似将
+磁滞回线看成由主磁滞回线(含上下支路)和位于主
+                                                                                    0.5
+磁滞回线内部的次磁滞回线簇(含上下支路)组成，
+辅助以磁滞中线，其中三者的饱和部分相互重合。
+当变压器铁心剩磁为 0 时，工作点先沿着磁滞中线                                                            1.5
+                                                                                        3                   1            1              3
+运动，否则直接沿着磁滞回线运动；在沿着磁滞回                                                                                            电流/%
+
+线运动时，电流减小，工作点沿着上支路运动，电                                                              图2          阿姆科 M4 取向硅钢励磁曲线
+流增大，工作点沿着下支路运动；当电流正负峰值                                             Fig. 2 Excitation curve of Armco M4 oriented silicon steel
+
+点超越主磁滞回线饱和点即由多值特性区域进入                                              1.1.2    次磁滞回线簇拟合
+单值特性区域后，工作点沿着磁滞中线运动，否则                                                  国外专家学者研究铁磁材料励磁特性从试验
+沿着磁滞回线运动。相应的，需分别对主磁滞回线、                                            中获得变压器铁心励磁曲线轨迹图，如图 3(a)中实
+磁滞中线和次磁滞回线簇进行拟合，其中次磁滞回                                             线部分所示。通过对励磁曲线轨迹进行分析得出，
+线簇的拟合尤为重要。                                                         当励磁电流增大时，运行点穿过转折点，如转折点
+1.1.1    主磁滞回线及磁滞中线拟合                                              2 到转折点 3、转折点 4 到转折点 5，其运行轨迹最
+     对于主磁滞回线及磁滞中线的拟合，通过试验                                          终都汇聚到右上方的饱和点；而当励磁电流减小
+获取变压器铁心最大磁滞回线及磁滞中线数据，采                                             时，运行点穿过转折点，如转折点 1 到转折点 2、
+用分段线性插值法获取连续主磁滞回线及磁滞中                                              转折点 3 到转折点 4，其运行轨迹最终都汇聚到左
+线。为了方便验证模型的合理性，本文给出与 ATP-                                          下方的饱和点。基于此规律，可根据主磁滞回线来
+EMTP 中 Type96 非线性电感相同的实测阿姆科 M4                                     拟合次磁滞回线簇，将主磁滞回线看成上下支路两
+取向硅钢主磁滞回线及磁滞中线数据标幺值                                     [18]
+                                                           ，如      部分，分别采用分段线性插值法确定次磁滞回线的
+表 1 所示，得到主磁滞回线及磁滞中线如图 2 所示。                                        上下支路，如图 3(a)所示。
+用户需提供实际的变压器铁心的信息，形成正确的                                                  本文以主磁滞回线上支路为例进行说明，
+比例尺，来获取特定材料的磁滞回线。                                                  图 3(a)中 dX 为次磁滞回线上支路与主磁滞回线上支
+         表1    阿姆科 M4 取向硅钢励磁曲线数据                                   路 P-V-N 对应于同一电流的磁通差的绝对值。当工
+          Tab. 1     The data of excitation curve of               作点从 P1 沿 P1-N 移动过程中 dX 随线性减小，即
+              Armco M4 oriented silicon steel                      从 P1 点处的 dP1 线性减小到 N 点处的 dN 为 0，其线
+         主磁滞回线下支路                        磁滞中线上支路                   性插值示意图如图 3(b)。
+   编号      电流 I/%      磁链 /pu
+                                  编号      电流 I/%      磁链 /pu
+                                                                                                                              d
+    1      0.7365     1.1864      15        0           0                                                   P
+                                                                                                         5
+    2      0.3683     1.1721      16      0.0027      0.2527      主磁滞回线                    dP1
+                                                                                      dX       P1    1
+                                                                                                                                     dX       dP1
+    3      0.1228     1.1364      17      0.0103      0.5079
+                                                                                      X
+                                                                            V
+    4      0.0246     1.1007      18      0.0189      0.7482                        o
+                                                                                           X 3 U                  I   N        o   X     P1         
+                                                                              4
+    5       0.0430     1.0149      19      0.0448      0.8793                 N1          dX
+                                                                           2 dN1
+    6       0.0810     0.8577      20      0.0929      1.0031
+                                                                   N
+    7       0.1473      0.6146      21      0.2168      1.0745         (a) 变压器铁心励磁曲线轨迹                                     (b) 线性插值示意图
+    8       0.2332      0.8791      22      0.5087      1.1442
+                                                                              图3           次磁滞回线上支路线性插值示意图
+    9       0.3314      0.9863      23      1.2114      1.1815
+                                                                              Fig. 3 Linear interpolation schematic of
+   10       0.4910      1.0721      24      1.9640      1.2150
+                                                                                                minor loop upper branch
+    11      0.7242      1.1292      25      2.7005      1.2221
+   12       1.1293      1.1721      —         —           —
+                                                                        对于次磁滞回线簇上支路的拟合有：
+                                                                                                    d X  X  N
+   13       1.9640      1.2150      —         —           —
+                                                                                                                                                     (1)
+   14       2.7005      1.2221      —         —           —                                         d P1  P1   N
+1546                                                        中    国   电   机   工   程      学       报                                            第 37 卷
+
+                           main   X  d X                         (2)                                               
+                                                                                                I0       DELT   I1 
+                                                                                 Ia     MUL                            SUM
+                          main ( P1   N )  d P1

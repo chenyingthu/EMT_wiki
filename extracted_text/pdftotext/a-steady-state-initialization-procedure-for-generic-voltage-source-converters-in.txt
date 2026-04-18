@@ -1,0 +1,198 @@
+                                                              Electric Power Systems Research 221 (2023) 109404
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A steady-state initialization procedure for generic voltage-source converters
+in electromagnetic transient simulations✩ , ✩✩
+Guilherme Cirilo Leandro ∗, Taku Noda
+ENIC Division, Grid Innovation Research Laboratory, Central Research Institute of Electric Power Industry (CRIEPI), 2-6-1 Nagasaka,
+Yokosuka, Kanagawa 240-0196, Japan
+
+
+
+ARTICLE               INFO                                ABSTRACT
+
+Keywords:                                                 Electromagnetic transient (EMT) simulations are often performed to analyze disturbances which occur during
+Control-system part initialization                        a steady-state operation of the power grid. In modern transmission and distribution power grids, a number
+Electromagnetic transient simulation                      of voltage-source converters (VSCs) are used for renewable energy interconnections and system control. To
+Heuristic procedure
+                                                          perform EMT simulations with such VSCs, a time step of the order of microseconds is used to represent
+Steady-state initialization
+                                                          the switching operations of the VSCs. In order to avoid a prohibitively-long computation time, a steady-
+Systematic procedure
+Voltage-source converter
+                                                          state initialization method is required to directly start from a steady state. This paper proposes a systematic
+                                                          and heuristic procedure for the steady-state initialization of generic VSCs. Using an AC steady-state solution,
+                                                          detailed portions in the circuit part and the control-system part of a VSC are systematically initialized. For
+                                                          validation, EMT simulations of a 6.6-kV distribution grid with two VSCs are performed with and without
+                                                          the proposed initialization procedure in this paper. Practically no transient is observed in the result with the
+                                                          proposed procedure, and therefore it is confirmed that directly starting from a steady state is made possible.
+                                                          On the other hand, the result without the proposed procedure does not reach the steady state even after
+                                                          continuing the EMT simulation for 300 ms.
+
+
+
+1. Introduction                                                                                linear circuit elements can be initialized in a straightforward way based
+                                                                                               on an AC steady state obtained by a power-flow solution [4–7]. Non-
+    Electromagnetic transient (EMT) simulations are often performed to                         linear elements can also be initialized, if the method proposed in [8]
+analyze disturbances which occur during a steady-state operation of                            is used. Some methods can be expanded to consider harmonics [9,10].
+the power grid. In modern transmission and distribution power grids, a                         The methods proposed in [11,12] are based on the shooting method,
+number of power-electronics converters are being used. Most of those                           and therefore they involve a significant number of unknown variables
+power-electronics converters are voltage-source converters (VSCs) [1].                         for the calculation. On the other hand, the method proposed in [13]
+To perform EMT simulations of such modern power grids with VSCs,                               reduces the number of unknown variables by applying the chain-
+the time step needs to be in the order of microseconds to represent the                        matrix concept to represent the VSCs. The method proposed in [14]
+switching operations of the VSCs. If the simulation was started from a                         is able to initialize a modular multilevel converter (MMC), which is
+zero initial condition, a prohibitively-long computation time would be                         a more complicated power-electronics converter. The methods above
+required to establish a steady state. In some cases, a steady state will                       are algorithmically sophisticated and general. Since they are general,
+not be reached at all [2]. Therefore, it is essential to use a steady-state                    however, they involve iterative calculations requiring a relatively large
+initialization method to start directly from a steady state [3,4].                             amount of computations. It should be noted that some experts often
+    Mathematically, the existing steady-state initialization methods can                       implement custom-made initialization procedures based on their own
+be classified, in general, into the following categories: time-domain                          heuristic knowledge to speed up the simulation.
+methods, frequency-domain methods and hybrid time–frequency do-                                    Rather than exploiting algorithmically-sophisticated general meth-
+main methods. Most of them are based on power flow calculation, and                            ods, this paper proposes a heuristic but systematic procedure for the
+
+
+
+ ✩ This work is supported by the following electric power companies in Japan: Hokkaido Electric Power Company, Tohoku Electric Power Company, Tokyo
+Electric Power Company Holdings, Hokuriku Electric Power Company, Japan, Chubu Electric Power Company, Japan, Kansai Electric Power Company, Chugoku
+Electric Power Company, Shikoku Electric Power Company, Kyushu Electric Power Company, and Okinawa Electric Power Company.
+✩✩ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+  ∗ Corresponding author.
+     E-mail addresses: ciriloleandro3886@criepi.denken.or.jp (G. Cirilo Leandro), takunoda@ieee.org (T. Noda).
+
+https://doi.org/10.1016/j.epsr.2023.109404
+Received 9 December 2022; Received in revised form 2 April 2023; Accepted 8 April 2023
+Available online 4 May 2023
+0378-7796/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+G. Cirilo Leandro and T. Noda                                                                                               Electric Power Systems Research 221 (2023) 109404
+
+
+                                                                                        2. Overall steady-state initialization procedure
+   Nomenclature
+
+   𝑉ℎ , 𝑉ℎ𝛥                     Phase voltage at the ideal transformer pri-                The overall steady-state initialization procedure proposed in this
+                                mary side and its line-to-line counterpart.             paper consists of the following three stages.
+   𝐶ℎ , 𝐶ℎ𝛥                     Capacitor’s capacitance for the Y-connected                • Stage 1: Positive-sequence power-flow calculation,
+                                and the 𝛥-connected LC filters.                            • Stage 2: Three-phase AC steady-state calculation, and
+   𝜃                            Phase angle of 𝑉̂𝑔 .                                       • Stage 3: Initialization of individual component models.
+   𝜃̂                           Value of 𝜃 measured by the PLL block.
+   𝑣𝑑𝑐                          VSC’s DC voltage.                                       Actually, Stages 1 and 2 have already been proposed in [7], and this
+                                                                                        paper proposes the VSC part of Stage 3 only. The flowchart of the
+   𝑣̂ 𝑑𝑐                        Value of 𝑣𝑑𝑐 in per-unit (pu).
+                                                                                        overall steady-state initialization procedure is shown in Fig. 1.
+   𝑣̂ ∗𝑑𝑐                       Reference value of 𝑣̂ 𝑑𝑐 .
+                                                                                            At Stage 1, the positive-sequence or balanced power-flow solution
+   𝑖𝑎 , 𝑖𝑏 , 𝑖𝑐                 Currents flowing through the filter inductor
+                                                                                        of the simulation case is calculated with the slack node, P–Q nodes
+                                and VSC’s converter part.
+                                                                                        and P–V nodes which appropriately replace component models in the
+   𝑖̂𝑎 , 𝑖̂𝑏 , 𝑖̂𝑐              Values of 𝑖𝑎 , 𝑖𝑏 , 𝑖𝑐 in pu.                           simulation. In most cases, generators and upper-voltage substations are
+   𝑖̂𝑑 , 𝑖̂𝑞                    Values of 𝑖̂𝑎 , 𝑖̂𝑏 , 𝑖̂𝑐 in the 𝑑𝑞 domain.             replaced by P–V nodes, and loads are replaced by P–Q nodes. A VSC is
+   𝑖̂∗𝑑 , 𝑖̂∗𝑞                  Reference values of 𝑖̂𝑑 , 𝑖̂𝑞 .                         replaced by a P–Q node or a P–V node depending on its control mode.
+   𝑃̂                           Active power injected into the grid, in pu.             When the control system is in a constant reactive-power mode (AQR),
+   𝑃̂ ∗                         Reference value of 𝑃̂ .                                 the VSC is replaced by a P–Q node. When the control system is in a
+   𝑉̂𝑔                          Value of 𝑉𝑔 in pu.                                      constant voltage mode (AVR), on the other hand, it is replaced by a
+   𝑄̂                           Reactive power injected into the grid, in pu.           P–V node.
+   𝑄̂ ∗                         Reference value of 𝑄.        ̂                              At Stage 2, the three-phase AC steady-state solution is calculated
+                                                                                        based on the power-flow solution obtained at Stage 1. The generators
+   𝑣𝑔𝑎 , 𝑣𝑔𝑏 , 𝑣𝑔𝑐              Voltages at the grid connection point.
+                                                                                        and the upper-voltage substation busses among the P–V and P–Q nodes
+   𝑣̂ 𝑔𝑎 , 𝑣̂ 𝑔𝑏 , 𝑣̂ 𝑔𝑐        Values of 𝑣𝑔𝑎 , 𝑣𝑔𝑏 , 𝑣𝑔𝑐 in pu.
+                                                                                        are replaced by three-phase voltage sources whose voltages and phase
+   𝑣̂ 𝑔𝑑 , 𝑣̂ 𝑔𝑞                Values of 𝑣̂ 𝑔𝑎 , 𝑣̂ 𝑔𝑏 , 𝑣̂ 𝑔𝑐 in the 𝑑𝑞 domain.       angles are obtained by the power-flow solution from Stage 1. The
+   𝐶̂ℎ                          Value of 𝐶ℎ in pu.                                      loads which are usually represented by P–Q nodes at Stage 1 are
+   𝑉̂ℎ                          Value of 𝑉ℎ in pu.                                      represented by RLC circuits of the user’s choice, and the circuit param-
+   𝑉𝑔                           Positive-sequence voltage at the grid con-              eters are obtained by the power-flow solution. A VSC is represented
+                                nection point.                                          by a three-phase balanced current or voltage source depending on
+   𝑉̂𝑔∗                         Reference value of 𝑉̂𝑔 .                                its control mode. When the control system is in a AQR mode, the
+   𝑣̂ ∗𝑔𝑎 , 𝑣̂ ∗𝑔𝑏 , 𝑣̂ ∗𝑔𝑐     Reference values of 𝑣̂ 𝑔𝑎 , 𝑣̂ 𝑔𝑏 , 𝑣̂ 𝑔𝑐 .             VSC is represented by a three-phase balanced current source whose
+   AQR                          Automatic reactive power regulator.                     magnitudes and phase angles are calculated by the power-flow solution
+   PLL                          Phase locked loop.                                      obtained at Stage 1. When the control system is in a AVR mode, the
+   PWM                          Pulse width modulation.                                 VSC is represented by a three-phase balanced voltage source whose
+                                                                                        magnitudes and phase angles are also calculated by the power-flow
+   ACAVR                        AC automatic voltage regulator.
+                                                                                        solution obtained at Stage 1. With these replacements, now the three-
+   LPF                          Low-pass filter.
+                                                                                        phase AC steady-state solution can be calculated in the 𝑗𝜔 domain.
+   PI                           Proportional–integral.                                  This is an unbalanced AC steady-state solution in a practical sense. The
+   DCAVR                        DC automatic voltage regulator.                         details are described in [7].
+   ACR                          Automatic current regulator.                                At Stage 3, all component models including VSCs are individually
+   PID                          Proportional–integral–differential.                     initialized using the solutions obtained at the previous two stages.
+
+
+
+
+steady-state initialization of generic VSCs in EMT simulations. The main
+contribution of this paper is to avoid a prohibitively-long computation
+time when performing EMT simulations of modern power grids with
+VSCs by providing a practical steady-state initialization procedure. To
+apply the proposed procedure, first, an unbalanced AC steady state is
+obtained by a power flow solution using the method proposed in [7].
+Then, detailed portions in the circuit part and the control-system part
+of a VSC are initialized using their own calculation procedures. For
+each portion, an initialization procedure is established by heuristic
+knowledge considering the operation of a VSC, and those are organized
+as a systematic procedure. In this paper, EMT simulations of a 6.6-kV
+distribution grid with two VSCs are performed with and without the
+proposed initialization procedure to show its effectiveness.
+    First, Section 2 describes the overall steady-state initialization pro-
+cedure. Section 3 and Section 4 respectively describe the detailed
+initialization methods of the circuit part and the control-system part
+of a VSC. For validation, Section 5 presents EMT simulation results
+with and without the proposed procedure, and Section 6 discusses the
+results. Finally, Section 7 concludes the paper.                                               Fig. 1. Flowchart of the overall steady-state initialization procedure.
+
+
+                                                                                    2
+G. Cirilo Leandro and T. Noda                                                                                          Electric Power Systems Research 221 (2023) 109404
+
+
+The circuit element components such as inductors and capacitors are               impact on simulation results, the case where it is neglected is illustrated
+initialized as follows. First, the state variable of the component, current       in Fig. 3. If the magnetizing circuit needs to be considered, the method
+or voltage, at time zero is calculated from the three-phase AC steady-            described in Appendix B can be used. Steinmetz’s equivalent circuit
+state solution, and then the calculated value is set to the past history          now consists of the winding resistance and the leakage inductance
+of the integration formula used for the subsequent EMT calculation.               on the primary winding (converter side), 𝑅𝑝 and 𝐿𝑝 , those on the
+When the trapezoidal rule is used for the numerical integration, the              secondary winding (grid side), 𝑅𝑠 and 𝐿𝑠 , and the ideal transformer
+integration of the state variable 𝑥 to proceed from 𝑡 = 0 to 𝑡 = ℎ is             whose turn ratio is 1 ∶ 𝑎.
+approximated by the following equation [15]                                           The positive-sequence voltage and current at the grid connection
+                                                                                  point are denoted by 𝑉𝑔 and 𝐼𝑔 . As mentioned earlier, they are bal-
+                 ℎ(       )
+     ℎ
+         𝑥𝑑𝑡 ≅     𝑥 + 𝑥1                                              (1)        anced, and the direction of 𝐼𝑔 is taken so that the current injected from
+∫0               2 0
+                                                                                  the VSC to the grid is positive. In order to initialize the interconnection
+The time step is denoted by ℎ, and 𝑡 = 0 and 𝑡 = ℎ respectively                   transformer, it is necessary to initialize the currents through the two
+correspond to subscript 0 and 1. At the beginning of an EMT simulation,
+                                                                                  sets of the inductances 𝐿𝑝 and 𝐿𝑠 . Since the winding connection of the
+the value of 𝑥0 as the past history of 𝑥 is needed. Appendix A describes
+                                                                                  grid side is 𝛥, the current through 𝐿𝑠 in the winding from phase 𝑎 to 𝑏
+the case where the 2-stage diagonally implicit Runge–Kutta (2S-DIRK)
+                                                                                  can be calculated by
+method [16] is used for the numerical integration. More complicated
+                                                                                        𝐼𝑔       ( )
+circuit components such as line models and generator models have their                              𝜋
+                                                                                  𝐼𝑠 = √ exp 𝑗                                                            (2)
+own initialization routines. The next two sections describe procedures                    3         6
+to initialize both the circuit and control-system parts of a VSC using its
+                                                                                  The current from phase 𝑏 to 𝑐 and that from 𝑐 to 𝑎 can be calculated
+terminal voltages and currents.
+                                                                                  by multiplying the factors exp (−𝑗 2𝜋
+                                                                                                                      3
+                                                                                                                        ) and exp (+𝑗 2𝜋
+                                                                                                                                       3
+                                                                                                                                         ) respectively. Using
+                                                                                  the information obtained from (2), the currents through the three 𝐿𝑠 at
+3. Initialization of the circuit part
+                                                                                  time zero are calculated so that the 𝑥0 terms in (1) of those inductor
+                                                                                  currents for the subsequent EMT calculation are initialized. The current
+   As shown in Fig. 2, the circuit part of a VSC is further divided into
+      

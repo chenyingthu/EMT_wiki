@@ -1,0 +1,208 @@
+                                                            Electrical Power and Energy Systems 176 (2026) 111707
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                          International Journal of Electrical Power and Energy Systems
+                                                          journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Multi-rate real time hybrid simulation of controllable line commutated
+converter based HVDC
+Guoqing Li a , Mingcheng Yang a,* , Wei Wang a, Guobin Jin a , Jun Yang b, Yahu Gao b
+a
+  Key Laboratory of Modern Power System Simulation and Control & Renewable Energy Technology, Ministry of Education, Northeast Electric Power University, Jilin
+132012, China
+b
+  State Key Laboratory of Advanced Power Transmission Technology, China Electric Power Research Institute Co., Ltd., Beijing 102200, China
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 This paper proposes a CPU-FPGA collaborative multi-rate real-time simulation framework tailored for control­
+Controllable line-commutated converter HVDC               lable line-commutated converter high-voltage direct current systems (CLCC-HVDC), addressing the core demands
+systems                                                   of small-time step modeling parameter optimization and high-efficiency real-time simulation for this complex
+CPU–FPGA collaborative architecture
+                                                          hybrid topology. First, a discrete inductor decoupling method is presented that treats inductors as natural
+Real-time simulation
+Multi-rate simulation
+                                                          decoupling boundaries and implements topology segmentation using latency and controlled voltage sources.
+Parameter optimization                                    Second, an analytical parameter selection strategy for the associated discrete circuit model is established: the
+                                                          strategy decomposes the characteristic operating intervals of the CLCC converter, solves the corresponding
+                                                          circuit differential equations to determine the voltage and current stresses of each valve group as rated pa­
+                                                          rameters, and then derives the optimal equivalent admittance based on the minimum loss error criterion. Finally,
+                                                          experimental verification results demonstrate that the proposed framework operates on the FPGA platform with
+                                                          a time step of 2 μs, achieving a normalized root mean square voltage error of less than 7% and reducing
+                                                          computation time by approximately 77% compared with the CPU-only offline simulation scheme. This study
+                                                          establishes a robust and efficient digital simulation paradigm for the verification of emerging hybrid HVDC
+                                                          topologies.
+
+
+
+
+1. Introduction                                                                                performance, testing protection strategy logic, and optimizing system
+                                                                                               topology design. However, the coupled effects of the system's multi-
+    High-voltage direct current (HVDC) transmission systems are                                timescale dynamics and complex switching actions significantly in­
+increasingly important for integrating large-scale renewable energy over                       crease the computational complexity and processing load of simulations.
+long distances [1]. Among converter topologies, the controllable line-                         This poses challenges to the computational power and timing response
+commutated converter (CLCC) has emerged as a promising alternative                             capabilities of real-time simulation platforms.
+to traditional LCCs due to improved commutation stability and cost ef­                            Current real-time simulation methods rely primarily on multi-core
+ficiency [2]. By combining fully controlled insulated-gate bipolar tran­                       CPUs or FPGAs [4,5]. Multi-core CPUs offer software flexibility but
+sistors (IGBTs) with thyristors, CLCCs enhance controllability in weak                         require small time steps to accurately capture switching events,
+AC networks and effectively reduce the risk of commutation failures.                           increasing computational load and limiting scalability [6–9]. FPGA-
+Furthermore, CLCC-HVDC has been applied in practical engineering,                              based platforms offer higher processing speed and lower latency,
+proving its effectiveness in resisting commutation failure [3].                                while associated discrete-circuit (ADC)-based switch models maintain
+    Despite these advantages, achieving high-precision modeling of                             nodal admittance-matrix consistency, thereby improving real-time per­
+CLCC-HVDC systems remains challenging. The hybrid topology and in­                             formance [10–13]. However, FPGA-only methods are constrained by
+tegrated multi-semiconductor device characteristics of such systems                            sequential EMT algorithms and high resource consumption when
+readily induce nonlinear electromagnetic transients, coupled with                              modeling complex circuits [14].
+complex and variable switching behavior. High-precision electromag­                               To address the limitations of single-platform simulations, multi-rate
+netic transient (EMT) simulation is crucial for verifying controller                           co-simulation on heterogeneous processors has emerged as a promising
+
+
+    * Corresponding author.
+      E-mail address: 1121725221@qq.com (M. Yang).
+
+https://doi.org/10.1016/j.ijepes.2026.111707
+Received 3 June 2025; Received in revised form 3 January 2026; Accepted 13 February 2026
+Available online 20 February 2026
+0142-0615/© 2026 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+G. Li et al.                                                                                     International Journal of Electrical Power and Energy Systems 176 (2026) 111707
+
+
+Table 1
+Comparison of mainstream real-time simulation platforms.
+  Platform type   Advantages           Limitations             Typical
+                                                               applications
+
+  CPU-based       •High flexibility    • Requires a heavy      • EMT simulation
+    [6–9]         and easy software    computational           of medium- and
+                  modification         source to capture       large-scale power
+                  •Wide                switching transients    networks(e.g.,
+                  compatibility with   •Larger simulation      LCC–HVDC)
+                  modeling tools       step(e.g.,20–50 μs)
+  FPGA-based      • High               • Limited by the        • Hardware-in-
+    [10–14]       computation speed    sequential EMT          the-loop (HIL)
+                  and low latency      algorithm structure     controller testing
+                  •ADC-based switch    • High hardware         • Fast-switching
+                  models ensure        resource usage          converter
+                  nodal admittance     • Model modification    simulation
+                  consistency          requires re-synthesis   • EMT simulation
+                  • Small simulation                           of topology
+                  step(e.g.,100 ns-2
+                  μs)
+  CPU–FPGA        • Parallel multi-    • Interface             • Large-scale
+    co-           rate processing      decoupling errors       converter-based
+    simulation    • Flexible task      may cause numerical     power system (e.
+    [15–19]       allocation between   oscillation             g., MMC–HVDC)
+                  heterogeneous        • Synchronization       • Real-time EMT
+                  processors           management is           simulation and
+                  • Improved real-     complex                 system-level
+                  time performance                             verification
+                  and scalability
+
+
+
+solution. For instance, reference [15] proposed a CPU–FPGA framework
+that assigns distinct tasks to different processors, significantly reducing                         Fig. 1. Scheme of CLCC-HVDC real-time simulation.
+the computational burden. However, the ideal transformer model (ITM),
+despite its structural simplicity and theoretical accuracy, has a stability             offline simulation scheme, the framework achieves a normalized root
+region constrained by impedance matching and simulation latency. In                     mean square error (NRMSE) of less than 7% and reduces computation
+practice, variations in the system's equivalent impedance can easily                    time by 77%, thereby substantiating its high accuracy and efficiency.
+breach these limits, leading to simulation divergence. Other studies                        The main contributions of this paper are summarized as follows:
+[16,17] improved the ITM by integrating filters to expand the stable
+operating region of photovoltaic and energy storage systems. However,                   1. A discrete inductor decoupling method is proposed that uses in­
+selecting filter parameters requires iterative tuning, thereby increasing                  ductors as decoupling boundaries and implements topology seg­
+implementation complexity and compromising the method's generality.                        mentation through latency and controlled voltage sources. This
+Further advancements [18,19] have provided insights into DC trans­                         method ensures the simulation accuracy of the entire system and the
+mission planning, but are insufficient for the engineering verification of                 integrity of the control and main circuits, facilitates modification and
+CLCCs. First, CLCC valves are equipped with metal oxide arresters                          analysis of each part, and enhances the portability and adaptability
+(MOVs), and accurately capturing their nonlinear dynamics is critical for                  of the models.
+validation tasks such as voltage stress analysis. Second, traditional                   2. A parameter selection strategy for the ADC model is established. The
+interface algorithms are constrained by equivalent impedance matching                      strategy decomposes the operating intervals of the CLCC converter,
+conditions and cannot meet the requirements of multi-condition oper­                       solves the corresponding circuit differential equations to determine
+ation. Furthermore, existing improved solutions often require iterative                    the voltage and current stresses of each valve group as rated pa­
+parameter adjustments, which significantly increase the complexity of                      rameters, and then derives the optimal equivalent admittance based
+engineering implementation.                                                                on the minimum loss error. This approach eliminates reliance on
+    To provide an intuitive and systematic comparison of performance                       trial-and-error methods and significantly enhances the simulation
+differences and applicability boundaries among various technical solu­                     fidelity for hybrid switching devices.
+tions, Table 1 comprehensively reviews the mainstream real-time                         3. A CPU-FPGA collaborative multi-rate real-time simulation frame­
+simulation methods currently used in the power system field. It sys­                       work tailored for the CLCC-HVDC system is established. Experi­
+tematically summarizes and contrasts the technical advantages, limita­                     mental verification shows that the framework runs on the FPGA
+tions, and typical engineering application scenarios for each platform,                    platform with a time step of 2 μs, achieving a voltage NRMSE of less
+offering clear and reliable reference criteria for the scientific selection                than 7% and reducing computation time by approximately 77%
+and optimized design of subsequent simulation solutions.                                   compared with the CPU-only offline simulation scheme.
+    The innovation of this paper is a CPU-FPGA collaborative multi-rate
+real-time simulation framework for CLCC-HVDC systems. This frame­                           The rest of this paper is organized as follows. Section 2 analyzes the
+work employs a task-sharing model, wherein the CPU handles low-                         structure of the CLCC–HVDC system and its simulation requirements.
+frequency dynamic process simulation, while the FPGA captures high-                     Section 3 describes the real-time modeling process and hardware
+frequency switching transients. This approach enables high-precision                    implementation. Section 4 details the modular decomposition and
+waveform reproduction with a 2 μs step size. The present study ana­                     component modeling. Section 5 validates the proposed framework
+lyzes the voltage and current stresses of the CLCC converter valve. The                 under steady-state and fault conditions. Finally, Section 6 concludes the
+analysis is then combined with the minimum-loss error target to propose                 paper.
+a selection strategy for the equivalent admittance parameter. The
+experimental results demonstrate that, compared with a CPU-only
+
+
+                                                                                    2
+G. Li et al.                                                                               International Journal of Electrical Power and Energy Systems 176 (2026) 111707
+
+
+                                                                                  FPGA decoupling boundary is also imperative to ensure reliable data
+                                                                                  interaction. This consistency is achieved by maintaining the stability of
+                                                                                  the equivalent admittance matrix, thereby enabling accurate and stable
+                                                                                  data exchange between the CPU and FPGA.
+
+                                                                                  3. Structure analysis of the CLCC-HVDC system and simulation
+                                                                                  requirement
+
+                                                                                  3.1. Multi-rate real time hybrid simulation architecture
+
+                                                                                     To meet the multi-scale simulation requirements analyzed in Section
+                                                                                  2, a heterogeneous architecture based on the OPAL-RT platform is
+                                                                                  employed. As illustrated in Fig. 2, the system is logically partitioned into
+                                                                                  a large-time step model and a small-time step model based on the
+                                                                                  components' dynamic characteristics:
+
+                                                                                    (1) CPU subsystem. The subsystem runs at a time step of 20 μs and
+               Fig. 2. Scheme of CLCC-HVDC real-time simulation.                        models components with slow dynamics, including the rectifier-
+                                                                                        side and inverter-side AC grids, the LCC rectifier, and the DC
+                                                                                        transmission lines. It also executes system control algorithms and
+2. Structure analysis of the CLCC-HVDC system and simulation
+                                                                                        protection logic.
+requirement
+                                                                                    (2) FPGA subsystem. The CLCC converter topology, which features
+                                                                                        high-frequency switching and fast commutation transients, is
+    The detailed topology of the CLCC-HVDC system is shown in Fig. 1. It
+                                                                                        modeled on the FPGA. The FPGA solver runs with a time step of 2
+comprises the rectifier-side AC grid, a conventional LCC converter, the
+                                                                                        μs to ensure high temporal resolution.
+DC transmission line, the CLCC inverter, and the inverter-side AC grid.
+                                                                                    (3) Decoupling method. As shown by the blue bars in Fig. 2, the
+    In the CLCC converter, each bridge arm consists of a parallel
+                                                                                        interface algorithm enables decoupling between the CPU and
+configuration of a main branch and an auxiliary branch. These branches
+                                                                                        FPGA domains. As the core of the multi-rate simulation interface,
+comprise series-connected valve units using different semiconductor
+                                                                                        it manages the exchange of key data (i.e., voltage and current)
+technologies: the main branch's thyristor valve unit V11 still uses a large
+                                                                                        and synchronizes the multi-rate solvers via the PCIe bus.
+number of series-connected thyristors, whereas V12 and V13 are low-
+voltage, high-current valve units (LVHCVU) composed of IGBTs. The
+                                                                                  3.2. Modeling workflow and implementation
+auxiliary branch V14 is a high voltage, low current valve unit (HVLCVU)
+comprising multiple thyristors connected in series. To ensure dynamic
+                                                                                     The implementation process translates the theoretical analysis into a
+voltage sharing during switching transitions, RC damping circuits are
+                                                                                  deployable real-time model. As shown in the workflow diagram in Fig. 3,
+placed in parallel with the thyristor valves, and RCD damping circuits
+                                                                                  the process comprises three distinct phases:
+are similarly used with the IGBT valves. Additionally, MOVs are
+installed on both the main and auxiliary IGBT valves to maintain for­
+                                                                                    (1) FPGA configuration generation. Initi

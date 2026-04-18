@@ -1,0 +1,226 @@
+1778                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 27, NO. 4, NOVEMBER 2012
+
+
+
+
+                      Time Domain Transformation Method
+                       for Accelerating EMTP Simulation
+                           of Power System Dynamics
+                                       Shengtao Fan, Member, IEEE, and Hui Ding, Member, IEEE
+
+
+   Abstract—Electromagnetic Transients Program (EMTP) is                             A. System Equivalent
+widely used in power system dynamics studies. However, in most
+cases EMTP is found inadequate for dealing with the realistic size                      The detailed EMT modeling is only used for the part of
+power systems due to the small time step resulting in relatively                     the system which is of great interest (referred to as the in-
+slow simulation speeds. To accelerate the EMTP simulations of                        ternal system), while the remaining part of the system (external
+power system dynamics, a novel frequency-adaptive methodology                        system) is reduced to an equivalent system. In order to precisely
+is proposed. In this method, a new transformation is presented.                      reflect the wide band frequency dynamic characteristics of the
+The properties of the transformation and the numerical solutions
+based on the transformation are discussed. The component models                      external system, the frequency dependent network equivalent
+obtained by discretizing the differential equations at the branch                    (FDNE) was proposed to represent the high frequency behavior
+level are also given which are convenient for EMTP implementa-                       of the external system [5]–[7]. However, the system equivalent
+tion. The proposed method allows using large time steps without                      method should have limitations when the external systems
+sacrificing accuracy, which greatly improves the simulation speed.                   contain nonlinear components.
+To validate the proposed methodology, a general program has
+been developed. Furthermore, various case studies substantiate
+                                                                                     B. Hybrid Simulation
+the claims and demonstrate the application of the method.
+  Index Terms—Algorithms, companion model, Electromagnetic                              The basic idea of the hybrid simulation is to divide the system
+Transients Program (EMTP), power system dynamic, power                               network into two parts: one is for the TS simulator which can
+system simulation, power system transient stability, shifted fre-                    represent very large systems without dynamic equivalents, and
+quency analysis (SFA).                                                               the other for the EMT simulator which needs detailed represen-
+                                                                                     tation at the device level [8]. The idea of combining TS and
+                                                                                     EMT simulation was first proposed and implemented by Hef-
+                             I. INTRODUCTION
+                                                                                     fernan in 1981 [9]. Since then, considerable research efforts
+                                                                                     have been put to improve its performance [4]. However, the
+
+E     LECTROMAGNETIC Transients Program (EMTP) was
+      originally developed for calculating the electromagnetic
+transients in arbitrary single- or multiphase networks with
+                                                                                     lack of concrete theory foundation prevents it from being a per-
+                                                                                     fect solution. The underlying problem is that the TS program is
+                                                                                     based on the fundamental frequency, single-phase, phasor-type
+lumped and distributed parameters. Now it is seeing broader                          data, while the EMT program is based on the three-phase instan-
+applications in power system steady state as well as dynamic                         taneous waveform data which includes wide-band frequency
+studies and will remain one of the mainstreams in power system                       components.
+research. For example, EMTP can be used in the simulation of
+transient states of large-scale power systems including power                        C. Parallel Processing
+electronic apparatuses and control devices associated with                               Parallel processing is another important technique to expand
+FACTS and HVDC, which requires a simulator as fast as the                            the scale of the simulated power system. The basic network par-
+transient stability (TS) and as detailed as the electromagnetic                      titioning technique for parallel processing is based on the natural
+transients (EMT) simulator. However, in most cases EMTP                              decoupling introduced by traveling wave propagation on trans-
+is found inadequate for dealing with the large size of realistic                     mission lines. The time delay produced by the effect of traveling
+power systems due to the small time step resulting in relatively                     waves in the long transmission lines is large enough to com-
+slow simulation speeds [1]–[4]. Many attempts have been made                         pletely decouple the partitioned subsystems [10]. Some more
+to expand the scales of the simulated systems, which can be                          flexible methods for partitioning the network were proposed in
+divided into four categories.                                                        [11] and [12]. Splitting the original system is independent of
+                                                                                     transmission lines, and arbitrary buses in the network can be as-
+                                                                                     sumed as boundary buses. Moreover, partitioning the original
+   Manuscript received March 27, 2011; revised August 24, 2011 and December
+                                                                                     network into subsystems allows using different time steps for
+21, 2011; accepted February 13, 2012. Date of publication April 03, 2012; date
+of current version October 17, 2012. Paper no. TPWRS-00269-2011.                     different subsystems. A smaller time-step is used for compo-
+   The authors are with the Power System Department of CEPRI, Beijing                nents with fast dynamics while a larger time-step can be used
+100192, China (e-mail: shengtaofan@gmail.com; umhvdc@gmail.com).
+                                                                                     for slower dynamic subsystems [13], [14]. However, parallel
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       processing alone has practical limitations when used for real-
+   Digital Object Identifier 10.1109/TPWRS.2012.2188913                              istic-size power systems.
+
+                                                                  0885-8950/$31.00 © 2012 IEEE
+FAN AND DING: TIME DOMAIN TRANSFORMATION METHOD FOR ACCELERATING EMTP SIMULATION OF POWER SYSTEM DYNAMICS                           1779
+
+
+
+D. Frequency-Adaptive Simulation of Transients (FAST)                  the signal changes, the larger time step can be used. Therefore
+   In power systems where ac carrier frequencies are typically         the idea is that, through time transformation     is transformed
+either 50 or 60 Hz, perturbations usually cause low-frequency          into new variable which varies more slowly.
+deviations of voltages as well as currents and thus create narrow         Before doing this, a new variable will be firstly introduced.
+bandwidth waveforms, which is similar to the communication             Differentiating (4), we obtain
+systems where the carrier frequency is very high but carries
+much lower frequency information on its sidebands. It is often                                                                       (5)
+that the main information of interest is concerned with the
+envelope waveforms of the signals which are usually changing           Upon defining
+slowly. However, since the algorithms of EMTP are based
+on the three-phase instantaneous waveform representation,                                                                            (6)
+they also track the ac carrier and the time-step size must be
+selected small enough to sample the ac carrier. In order to            which gives the following ODEs:
+use lager time step, the original system is transformed into
+a shifted frequency system where the frequencies around the                                                                          (7)
+fundamental frequency become frequencies around dc (0 Hz),
+which is achieved by SFA [15]–[20].                                    where
+   In order to expand EMTP to efficiently simulate the slow dy-
+namics in power systems (e.g. the TS dynamics), a novel fre-                                                                         (8)
+quency-adaptive methodology is proposed. In this method, a
+time domain transformation is presented. The properties of the             is a newly introduced simulation parameter, which usually
+transformation and the numerical solutions based on the trans-         equals to the fundamental frequency. Its function is similar to
+formation are discussed. The component models obtained by              the shift frequency in SFA. Solving (7) will give the solutions
+discretizing the differential equations at the branch level are also   of both       and     simultaneously.
+given which are convenient for EMTP implementation. Using                 Then we can construct two new variables with the following
+the proposed method, the time steps can be enlarged tens or            transformation:
+hundreds or even thousands times without sacrificing accuracy,
+which greatly improves the simulation speed. It is very efficient                                                                    (9)
+and can simultaneously provide the instantaneous waveform in-
+formation usually provided by EMT simulators and the phasor
+                                                                       where the transformation matrix        is defined as
+information method usually provided by TS simulators.
+
+             II. TIME DOMAIN TRANSFORMATION                                                                                        (10)
+
+  Usually the electrical signals in power systems have a fun-
+                                                                       The physical interpretation of the transformation is discussed in
+damental frequency component modulated by slower events,
+                                                                       Appendix A and the properties of        are given in Appendix B.
+which create a slow time varying waveform superimposed on
+                                                                       If    has the form as (1), then
+the fundamental frequency waveform in the following form:
+
+                                                                (1)
+
+In the phasor representation,        is characterized by the am-                                                                   (11)
+plitude       and the phase angle       , which are slow varying
+signals. Strictly speaking, it can be formulated as                    and if           , it follows that
+
+                                                                (2)
+
+                                                                (3)
+                                                                                                                                   (12)
+   Suppose that        is the solution of the following ordinary
+differential equation (ODE):                                           By (2) and (3)
+                                                                (4)                                                                (13)
+which can be numerically solved by certain numerical integra-          Similarly
+tion method such as the trapezoidal rule of integration (TR)
+method. However, the time step will be limited by the funda-                                                                       (14)
+mental frequency component. Actually, solving one differential
+equation with certain method, the time steps needed usually de-        which implies that       and    are signals varying more slowly
+pends on how slowly the signal       change. The more slowly           than the original signal     and      .
+1780                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 27, NO. 4, NOVEMBER 2012
+
+
+
+             III. NUMERICAL SOLUTIONS BASED
+             ON TIME DOMAIN TRANSFORMATION
+
+  From (9) we can get the inverse transformation
+
+                                                               (15)
+
+Substituting (15) into (7) yields the ODEs about         and      :
+
+                                                               (16)
+                                                                      Fig. 1. “Differentially extended network”.
+
+Therein,       and     are signals varying more slowly than
+                                                                                                     TABLE I
+and      , which implies that, compared with (7), the numerical                            ORIGINAL NETWORK PARAMETERS
+solution for (16) allows larger time steps. To obtain the solutions
+of the original ODE (4), we can firstly solve (16) with certain
+numerical method and then transform the solutions from the u-v
+reference frame to the x-y reference frame with (15). However,
+another implementation method can be obtained which is more
+appropriate for EMTP.                                                                               TABLE II
+   Suppose the TR method is used to solve the ODEs about                                DIFFERENTIAL NETWORK PARAMETERS
+and      , then we have
+
+                                                               (17)
+
+where h is the time step. Upon differentiating (9), we obtain
+                                                                      Equation (21) gives a new discretizing formula for (7) in the x-y
+                                                                      reference frame.
+                                                            (18)
+Substituting (9) and (18) into (17), we obtain the following dis-                     IV. COMPONENT MODELS BASED
+cretization formula:                                                                 ON TIME DOMAIN TRANSFORMATION
+
+                                                                         Models for different network components can be obtained
+                                                                      at the branch level based on (21), which provides an algebraic
+                                                                      equation relating branch voltages and currents at any given in-
+                                                                      stant of time to their past values. Prior to this, the concepts of
+                                                                      “differential network” and “differentially extended network” of
+                                                                      the original network are firstly introduced. The “differential net-
+                                                                      work” is the network which gives the differential solutions of
+                                                                      the original network. The “differentially extended network” is
+                                                                      obtained through combining the “differential network” and the
+                                                                      original network.
+                                                               (19)      The “differentially extended network” of one network shown
+                                                                      in Fig. 1 is used to illustrate the concepts. The left part of Fig. 1
+Let                                                                   is same as the original network, whose parameters are given in
+                                                                      Table I. The right part is the corresponding “differential net-
+                                                               (20)   work”, where the resistance of , the inductance of , and the
+                                                                      capacitance of      equal to the resistance of R, the inductance of
+                                                                      L, and the capacitance of C, respectively. The other parameters
+The properties of        are also given in Appendix B. Applying       of the “differential network” are summarized in Table II.
+the properties of       and       , we can derive                        Applying (21) to the “differentially extended network” gives
+                                                                      the equivalent circuit for the time domain simulation which is
+                                                                      shown in Fig. 2, where
+
+                                                                                                                                      (22)
+
+                                                               (21)
+                                                                      The history current of L and           is
+FAN AND DING: TIME DOMAIN TRANSFORMATION METHOD FOR ACCELERATING EMTP SIMULATION OF POWER SYSTEM DYNAMICS                                        1781
+
+
+
+
+                                                                                 Fig. 3. RLC series circuit.
+
+
+
+
+Fig. 2. Equivalent circuit of the original network for time domain simulation.
+                                                                                 A. RLC Series Circuit
+                                                                                  The RLC series circuit shown in Fig. 3 satisfies the following
+                                                                                 ODEs:
+
+
+                                                                                                                                                (27)
+
+
+                                                                                 where               ,              ,             . Thus the natural
+                                                                                 angular frequency of the circuit is                    . Supposing
+                                                                         (23)    the initial values                           , the theoretical solu-
+                                                                                 tions can be obtained by solving (27), which are exponentially
+                                                                         (24)    damped sinusoidal signals.
+                                                                                    The circuit is simulate

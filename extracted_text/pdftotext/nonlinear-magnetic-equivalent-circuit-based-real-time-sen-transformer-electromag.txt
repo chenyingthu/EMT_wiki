@@ -1,0 +1,288 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 6, DECEMBER 2016                                                                                     2483
+
+
+
+
+           Nonlinear Magnetic Equivalent Circuit-Based
+           Real-Time Sen Transformer Electromagnetic
+           Transient Model on FPGA for HIL Emulation
+                         Jiadai Liu, Student Member, IEEE, and Venkata Dinavahi, Senior Member, IEEE
+
+
+
+   Abstract—Strategic power-ﬂow control using a Sen transformer                     (UPFC) [7], [8] is one such solution which consists of a series
+(ST) can be a robust and cost-effective solution to relieve grid con-               and a shunt converter that can generate a compensation voltage
+gestion due to increased installation of renewables. The ST con-
+
+
+
+
+                                                                                           LY
+                                                                                    to insert in series with the transmission line. The compensation
+sists of a multiwinding transformer and tap changer that can reg-
+ulate the power ﬂow through a transmission line by injecting a                      voltage is fully controllable both in magnitude and phase angle
+series-connected controllable voltage. This paper develops a real-                  with respect to the line voltage, for independent regulation of
+time high-ﬁdelity magnetic equivalent circuit-based electromag-                     the active and reactive power ﬂowing through the line in both
+netic transient model for the ST on the ﬁeld-programmable gate                      directions. However, high installation and operation costs have
+array (FPGA) for hardware-in-the-loop applications. This geom-                      hitherto prevented the UPFC's widespread implementation. The
+etry-based model was developed to depict the major ﬂux paths in
+the transformer core, and complex nonlinear phenomena, such as                      Sen transformer (ST) proposed in [9], can address the same ob-
+
+
+
+
+                                                                              N
+saturation, hysteresis, and eddy currents. The entire real-time ST                  jectives but with a lower cost, higher reliability, and efﬁciency
+model and other power system components are emulated by hard-                       [10]; however, no ST has been commissioned yet in a power
+ware description language, employing the 32-b ﬂoating point preci-                  system. The ST consists of a single-core three-limb three-phase
+sion on the FPGA chip. A fully paralleled and pipelined hardware                    transformer and tap changers. The multi-winding transformer
+architecture is developed to achieve accurate real-time emulation
+                                                                                    has three primary windings and nine secondary windings. By
+                                                             O
+as well as the lowest latency and smallest hardware resource con-
+sumption. The real-time results are validated against 3-D ﬁnite-el-                 setting the tap changers into different combinations, the ST
+ement simulation using JMAG software.                                               can inject a compensation voltage with controllable magnitude
+  Index Terms—Electromagnetic transient (EMT) analysis,                             and phase angle much the same way like the UPFC, thereby
+ﬁeld-programmable gate arrays (FPGAs), ﬁnite-element methods,                       providing an independent active power and reactive power-ﬂow
+hardware-in-the-loop (HIL) emulation, hysteresis, magnetic                          control. The concept of the smart power-ﬂow controller (SPFC)
+equivalent circuits, parallel algorithms, parallel processing,                      was introduced in [11] which offered the ST with the option
+                                       D
+power-ﬂow control, pipelining, real-time systems, Sen transformer
+                                                                                    of either a low-cost electromechanical design with mechan-
+(ST).
+                                                                                    ical tap changers or a power electronics-based design using
+                                                                                    thyristor-based tap changers.
+                            I. INTRODUCTION
+                                                                                       A detailed electromagnetic transient model of the ST in real-
+         EA
+
+
+G       ROWING demand by a plethora of sensitive loads,                             time is necessary to study its impact on the host power system.
+        stringent reliability constraints, and heightened environ-                  It would also allow rapid testing and prototyping of new control
+mental concerns that favour greater integration of renewables,                      algorithms under hardware-in-the-loop (HIL) conditions [12].
+have created perfect conditions for a highly stressed and dys-                      A real-time transient ST model was developed on the CPU in
+peptic transmission grid [1], [2]. Congestion of lines under these                  [13], and an advanced tap-changing algorithm was proposed in
+conditions has become commonplace with increased proba-                             [14]; however, this real-time ST model was developed based on
+bility of major outages leading to blackouts. While long-term                       a lumped electrical circuit model, which ignored the detailed
+R
+
+
+
+transmission planning and expansion still remains the prudent                       transformer core geometry and ﬂux paths in the core. Further-
+solution, a near term economical alternative might be the                           more, in this model nonlinear core saturation was included using
+strategic placement of power-ﬂow controllers to relieve trans-                      a piece-wise linear approximation, which is prone to numer-
+mission bottlenecks [3]–[6]. The uniﬁed power-ﬂow controller                        ical oscillations; complex behavior such as hysteresis and eddy
+                                                                                    current transients were entirely omitted. The increased com-
+                                                                                    putational complexity of detailed electromagnetic transient ST
+   Manuscript received June 16, 2015; revised October 28, 2015 and December
+27, 2015; accepted January 13, 2016. Date of publication January 18, 2016;          model makes the CPU an unlikely implementation platform for
+date of current version November 18, 2016. This work was supported by the           real-time HIL emulation.
+Natural Science and Engineering Research Council of Canada (NSERC). Paper
+                                                                                       This paper proposes a real-time high-ﬁdelity nonlinear
+no. TPWRD-00743-2015.
+   The authors are with the Department of Electrical and Computer Engi-             magnetic equivalent circuit (MEC)-based ST electromag-
+neering, University of Alberta, Edmonton, AB T6G 2V4 Canada (e-mail:                netic transient (EMT) model on the ﬁeld-programmable
+jiadai@ualberta.ca; dinavahi@ualberta.ca).
+                                                                                    gate array (FPGA) for HIL emulation. The MEC approach
+   Color versions of one or more of the ﬁgures in this paper are available online
+at http://ieeexplore.ieee.org.                                                      [15], [16] which is geometry-based is employed to model
+   Digital Object Identiﬁer 10.1109/TPWRD.2016.2518676                              the multi-winding transformer consisting of magnetomotive
+
+                         0885-8977 © 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                             See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+
+        Authorized licensed use limited to: UNIVERSITY OF ALBERTA. Downloaded on April 18,2022 at 20:20:08 UTC from IEEE Xplore. Restrictions apply.
+2484                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 6, DECEMBER 2016
+
+
+
+
+                                                                                          LY
+Fig. 1. Schematic of the ST and its interconnection to the transmission network.
+
+
+
+
+                                                                          N
+force (mmf) sources and permeance elements. The nonlinear                                  in phase- ; windings         and for the compensation
+permeance elements necessitate a time-varying transformer                          voltage          in phase- . By using the on-load tap changers,
+nodal admittance matrix which in turn require the entire power                     the active number of turns of the nine secondary windings can
+
+hysteresis and eddy current behavior are modeled based on
+                                                          O
+system matrix to be updated in every emulation time-step. The                      be conﬁgured so that the induced compensation voltage can be
+                                                                                   controlled both in magnitude and phase angle independently. If
+Preisach theory [17], [18] and frequency-dependent equivalent                      the 120 phase-shift compensation voltage is series connected
+network [19], [21], respectively. All of these details increase                    with the transmission line, as shown in Fig. 1, the previous
+the computational burden of the high-ﬁdelity electromagnetic                       sending-end voltage (the ST primary side voltage),             , is
+transient model and put upward pressure on the emulation                           modiﬁed to a new effective sending-end voltage (the ST sec-
+                                     D
+time-step. The FPGA has previously proven to be an efﬁcacious                      ondary side voltage),       , as can be seen from the top lefthand
+platform for transient simulation of power systems [22]–[25]                       corner of Fig. 1. The number of turns of the secondary windings
+mainly due to its capability of exploiting hardware parallelism                    can be classiﬁed into three groups:          and
+and pipelining. The real-time hardware emulation results are                       and            ; and        and            . The windings in one
+validated using 3-D ﬁnite-element (FE) simulation in JMAG®.                        group have the same tap setting, however, one group may have
+        EA
+
+
+   The remainder of this paper is organized as follows. Sec-                       a different tap setting from others. The major ﬂux paths con-
+tion II presents the ST operation background and nonlinear                         sisting of core and leakage ﬂuxes in the yoke and limb are also
+MEC-based ST model. Section III gives the implementation                           depicted in Fig. 1.
+details of the hardware emulation. Section IV provides the
+case studies and real-time results to validate the emulated                        B. Tap-Selection Algorithm
+MEC-based ST on the FPGA. Finally, Section V presents the                             The Control Unit takes the measurements of the sending end
+conclusion.                                                                        voltage,       , and the receiving end voltage, , from the trans-
+R
+
+
+
+                                                                                   mission network as well as the required power level,          and
+  II. GEOMETRICAL SEN TRANSFORMER (ST) EMT MODEL                                         as inputs. The calculated compensation voltage magni-
+                                                                                   tude        and the phase angle are further forwarded to the
+A. ST Operating Principle                                                          Tap-setting Unit to generate the combinations of the tap settings
+   The three-phase, three-limb ST circuit schematic and its in-                    for each secondary winding. Further information regarding the
+terconnection to the transmission line is shown in Fig. 1. At the                  tap-setting algorithm and its implementation can be found in
+sending-end the three-phase transmission line supplies voltages,                   [14].
+                and          to the ST primary windings, which
+are connected in Y and in shunt with the transmission line. The                    C. High-Fidelity Nonlinear Magnetic Equivalent Circuit
+nine secondary windings:          , and     are placed in the ﬁrst                 (MEC)-Based ST Model
+limb;      , and are placed in the second limb; and           and                     The three-phase, three-limb MEC-based ST representation, is
+   are placed in the third limb. The three secondary windings                      shown in Fig. 2. Each limb consist of four types of components:
+which are placed in different limbs are connected in series with                   1) MMF sources,                        and           , generated
+the transmission line and inject a compensation voltage, e.g.,                     by the current ﬂow through the primary windings in phases
+windings         and for the compensation voltage               in                   and , respectively;
+phase- ; windings         and      for the compensation voltage                                                                                and
+
+       Authorized licensed use limited to: UNIVERSITY OF ALBERTA. Downloaded on April 18,2022 at 20:20:08 UTC from IEEE Xplore. Restrictions apply.
+LIU AND DINAVAHI: NONLINEAR MAGNETIC EQUIVALENT CIRCUIT-BASED REAL-TIME ST EMT MODEL                                                                     2485
+
+
+
+            are generated by the current ﬂow through the
+secondary windings in phases          , and , respectively; 2)
+nonlinear permeances,           and     represent nonlinear iron
+core permeances for ST primary windings in phases            and
+ , respectively;                                        and
+represent nonlinear iron core permeances for the ST secondary
+windings in phases        and , respectively; 3) linear perme-
+ances,       to           to      and      to      represent the
+ST leakage air permeances in phases         and , respectively;
+4) linear permeances                represent ST zero-sequence
+permeances in phases          and , respectively. In addition,
+there are also two nonlinear iron permeances        and     that
+represent ST yoke between phase- and phase- , and phase-
+
+
+
+
+                                                                                         LY
+and phase- , respectively.
+   The branch ﬂuxes and the mmf's in the ST core can be related
+to each other by the following equation,
+
+                                                                        (1)
+
+where       and are           vectors of branch ﬂuxes, winding
+currents, and branch mmf's, respectively. And and are
+
+
+
+
+                                                                          N
+diagonal matrices of branch permeances and number of winding
+turns, respectively.
+   According to Gauss' law for magnetism [26], the summation
+of ﬂuxes entering or leaving a node in the magnetic equivalent
+circuit must be zero, given as,
+                                                         O                     Fig. 2. High-ﬁdelity magnetic equivalent circuit representation for the ST iron
+                                                                               core.
+
+
+                                                                        (2)
+
+where       is the node-branch connection matrix, its entries can
+be       , and 0 which stands for branch ﬂux entering, leaving,
+                                     D
+and no connection to the node, respectively.
+   The branch MMF vector can be obtained by applying matrix
+     to node MMF vector          given as,
+         EA
+
+
+                                                                        (3)
+
+By combining the above three equations the relationship                          From Faraday's law the winding terminal voltages can be
+between the branch ﬂuxes and the winding currents can be                       written in matrix format as,
+established:
+                                                                                                                                                          (7)
+                                                                        (4)
+                                                                               where      is a 6 12 winding turns matrix.                    is a 6    1 ST
+where
+R
+
+
+
+                                                                               terminal voltage vector, given as:
+                                                                        (5)
+
+  is the        identity matrix.
+   By partitioning the permeance network into two branch sets,
+    , for the branches with MMF sources and permeance ele-
+ments, and     , for branches with only permeance elements, (4)
+can be rewritten as:
+
+                                                                        (6)
+
+where         is a 12 12 sub-matrix of .     and   are 12
+  1 vectors, and      and     are diagonal 12 12 matrices,
+given as:
+
+
+
+
+        Authorized licensed use limited to: UNIVERSITY OF ALBERTA. Downloaded on April 18,2022 at 20:20:08 UTC from IEEE Xplore. Restrictions apply.
+2486                                                                            IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 6, DECEMBER 2016
+
+
+
+  The discrete-time difference equations of (7) can be obtained
+by applying Trapezoidal rule,
+
+                                                                         (8)
+
+where    is the simulation time-step, with                     being the 6
+ 1 history vector term expressed as:
+
+                                                                         (9)
+
+Substituting (6), the left hand side of (8) can be rewritten as,
+
+                                                                       (10)     Fig. 3. Hysteresis major and minor loops corresponding to the reversal point
+                                                                                stack (RPS) within the Preisach hysteretic unit (PHU).
+
+
+
+
+                                                                                         LY
+where      is a 6    12 matrix given as:
+
+                                                                       (11)
+
+Further (10) can be rewritten as:
+
+                                                                       (12)
+
+with being the 6 6 impedance matrix and               being the 6
+
+
+
+
+                                                                          N
+  1 current vector, given as shown in the equation at the bottom
+                                                                                Fig. 4. High ﬁdelity MEC-based ST model interfaced with cascaded equivalent
+of the page. By noting that the ST current vector          is ex-               circuit.
+pressed, shown in the equation at the bottom of the page.
+  Equation (8) can be further rewritten as
+                                                         O                      where       is the 6 6 matrix given as shown in the equation
+                                                                       (13)     at the bottom of the page.
+                               

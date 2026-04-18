@@ -1,0 +1,214 @@
+                                                    Electric Power Systems Research 223 (2023) 109649
+
+
+                                                         Contents lists available at ScienceDirect
+
+
+                                               Electric Power Systems Research
+                                                  journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An Enhanced Method to Achieve Exact DC Values for Frequency-dependent
+Transmission lines
+H.M.J. De Silva *, Z Liu
+Manitoba Hydro International Ltd, Canada
+
+
+
+
+A R T I C L E I N F O                            A B S T R A C T
+
+Keywords:                                        This paper proposes an improved method to enhance the dc response of a frequency-dependent transmission line
+Dc correction                                    model used in EMT studies. A modification to the rational function approximation of propagation and charac­
+Electromagnetic transients                       teristic admittance matrices of a transmission line is introduced to enforce exact dc values at 0 Hz. Furthermore,
+Rational function
+                                                 weighting factors are applied to improve accuracy at low frequencies. Finally, the order of the propagation
+Universal line model
+Phase domain model
+                                                 function is reduced to decrease the computational effort.
+                                                    The validity of the proposed approach is demonstrated using examples involving underground cables and
+                                                 overhead lines. First, the effect of dc correction is demonstrated by comparing transmission line frequency
+                                                 domain characteristics. In addition, time domain simulations via open and short circuit conditions show a more
+                                                 accurate simulation of HVDC transmission lines with the proposed method.
+
+
+
+
+1. Introduction                                                                   modifying the functional form of rational function. However, for the
+                                                                                  propagation function, an optimization algorithm is necessary to elimi­
+    HIGH Voltage direct current (HVDC) transmission lines are preferred           nate errors at high frequencies. Such an algorithm increases complexity
+to transmit power over long distances for the sake of lower cost                  and there is a possibility of a non-convergence solution. Although this
+compared to traditional ac transmission [2]. In addition, HVDC trans­             method guarantees the exact dc value, the curve-fitting accuracy at low
+mission lines can also be used to connect two unsynchronized networks             frequencies may be poor. It is observed that this may lead to an artificial
+and to integrate renewable energy resources such as wind into the main            overshooting in some time domain simulations [3].
+transmission grid. The transient simulations involving HVDC cable and                 In [3], a two-stage fitting procedure is introduced to enhance fitting
+overhead line models require accurate representation of a wide fre­               at low frequencies. First, frequency-dependent characteristics (such as
+quency range from dc to a few MHz.                                                propagation and characteristics admittance) at high frequency range are
+    The Universal Line Model (ULM) [1] is widely used in EMT transient            curve-fitted (e.g. 1 Hz to 1 MHz) and then the difference between actual
+studies including switching, lighting, and faults analysis, etc. The              and fitted curves is computed for the low frequency range (e.g. from
+curve-fitting of transmission line propagation and characteristic admit­          0.001 Hz to 1.0 Hz). The characteristics at the low frequency range are
+tance functions is required in frequency-dependent transmission line              then approximated (curve-fitted) to enhance accuracy at low fre­
+models such as ULM. This curve-fitting process is typically performed for         quencies and to reduce the presence of large residue/pole ratios. Finally,
+frequencies from a few Hz to 1 MHz. Difficulties arise when trying to             high and low frequency curve-fitted functions are combined to represent
+obtain accurate curve-fitting at very low frequencies with the traditional        the entire frequency range.
+method [2-4]. These include (a) incorrect dc value in time domain                     In [4], the frequency-dependent characteristics are curve-fitted for a
+simulations, (b) unstable simulations due to large residue/pole ratios (c)        wide frequency range from 1 mHz to 1 MHz. Additional low order fitting
+the presence of artificial overshooting in dc response (d) increased order        function is applied to compensate for the curve-fitting discrepancy for
+of curve-fitted functions. To relieve these difficulties, numerous solu­          the propagation and characteristic admittance functions at low
+tions have been proposed in the past by various researchers.                      frequencies.
+    Reference [2] proposed a method to enforce exact dc value by                      However, increased curve-fitting accuracy does not guarantee exact
+
+
+
+ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12-15, 2023.
+ * Corresponding author
+   E-mail address: jeewantha@mhi.ca (H.M.J. De Silva).
+
+https://doi.org/10.1016/j.epsr.2023.109649
+Received 9 December 2022; Received in revised form 31 March 2023; Accepted 21 June 2023
+Available online 29 June 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+H.M.J. De Silva and Z. Liu                                                                                                              Electric Power Systems Research 223 (2023) 109649
+
+
+dc values, as the curve-fitting error at frequencies approaching dc is            Once the Yc(s) and A(s) are expressed in rational form, (1) and (2) can be
+unavoidable. A slight deviation of curve-fitted characteristics can cause         represented as EMT Norton equivalent circuits using recursive convo­
+noticeable mismatch in dc response [1].                                           lution technique [1].
+   This paper introduces modified rational function formulas to enforce
+the exact dc value without additional constrained optimization as dis­            3. proposed modified formulas to enforce exact dc value
+cussed in [2]. The following improvements are utilized to achieve the
+exact dc enforcement.                                                             3.1. Enforcing exact dc values
+
+   (a) Residue computation via dc enforcement.                                        To enforce dc for Yc(s), the functional form described in [2] is used.
+   (b) Use of weighing function to improve the accuracy at very low               The residue computation procedure of Yc(s) is modified to obtain the
+       frequencies and to mitigate overshooting in time domain                    exact dc value. At 0 Hz, the fitted Yc(s) is set to its exact dc value (Yc dc)
+       simulations.                                                               in (6). This dc value can be computed analytically [2].
+   (c) The rearrangement of the propagation function and order
+                                                                                                                           ∑
+                                                                                                                           M
+       reduction at low frequency section are used to decrease the order          Yci,j (s = 0) = Yc dci,j =
+                                                                                                                             cq
+                                                                                                                                        +d                                           (6)
+       of the rational function.                                                                                           q=1
+                                                                                                                                 − aq
+   (d) Large residue/pole ratios in curve-fitted function can be present
+                                                                                      Re-arranging (6), the term d can be written as
+       due to the selection of a wide frequency range for approximation.
+       It is well known that this can cause unstable time domain simu­                 ∑
+                                                                                       M
+                                                                                         cq
+       lations. The instability can be eliminated by incorporating a              d=                + Yc dci,j                                                                       (7)
+                                                                                               aq
+       modified recursive convolution algorithm as reported in [5].
+                                                                                       q=1
+
+
+                                                                                       Substituting (7) into (3), the modified equation for Yc(s) can be ob­
+2. Universal Line Model                                                           tained [2]
+                                                                                              ∑M     (           )
+    This section briefly summarizes the ULM [1], a widely used trans­             Yci,j (s) =     cq
+                                                                                                          1
+                                                                                                             +
+                                                                                                               1
+                                                                                                                   + Yc dci,j                            (8)
+mission line model in EMT studies. For multi-conductor lines, the                             q=1
+                                                                                                       s − aq aq
+frequency-dependent characteristics are represented by the character­
+                                                                                      Residues (cq) can be calculated using Vector-fitting technique. Note,
+istic admittance matrix (Yc(s)) and propagation matrix (A(s)). These
+                                                                                  that curve-fitting error does not affect the dc value of the function.
+matrices can be derived from per-unit length impedance and admittance
+                                                                                      In [2], modified propagation function has a constant term as shown
+matrices [7,9,10]. The relationship between voltages and currents at
+                                                                                  in (9).
+terminals of a transmission line can be expressed in frequency domain as
+[6,8]                                                                                             N(p)
+                                                                                               Ng ∑
+                                                                                               ∑       cpi se− sτp
+                                                                                  Ai,j (s) =                                  + A dci,j e− sτ1                                       (9)
+Ik = Yc Vk − A(Yc Vm + Im )                                            (1)                      p=1       i=1
+                                                                                                                 s − api
+
+Im = Yc Vm − A(Yc Vk + Ik )                                            (2)            This is different from the propagation function in (5). This causes a
+                                                                                  deviation at high frequencies and a constrained optimization method is
+    Where, Vk, Ik, Vm, Im are the sending-end voltages, sending-end               required to mitigate the error [2]. This paper presents a different
+currents, receiving-end voltages, and receiving-end currents respec­              approach, which does not change the functional form in (5), hence there
+tively. The complex frequency term (s, s = jω) is removed for simplicity.         is no deviation at high frequencies (note that at high frequencies, the
+    In ULM, the elements of Yc(s) matrix are approximated by a proper             propagation function approaches zero). Therefore, optimization pro­
+rational function of order (M) as shown in (3). A common set of poles             cedure is unnecessary.
+(aq) can be estimated by curve-fitting trace of Yc(s) matrix. Residues (cq)           Once the poles of the propagation function are calculated (see sec­
+are then calculated by curve-fitting phase elements. The well-known               tion II), the following modified procedure is used to compute residues to
+Vector fitting technique is used for curve-fitting [6]. The order (M) is          enforce the correct dc value. At 0 Hz, the propagation function in (5)
+gradually increased until the desired accuracy is achieved [1].                   becomes,
+              ∑M
+                     cq                                                                            N(p)
+                                                                                                Ng ∑
+                                                                                                ∑
+Yci,j (s) =                +d                                          (3)        A dci,j =
+                                                                                                        cpi
+                                                                                                                                                                                   (10)
+              q=1
+                  s −   aq                                                                                       − api
+                                                                                                p=1       i=1
+
+    For the A(s), first modal delays are estimated. Then modes of un­                 Where, Adc is the exact dc value, which can be computed analyti­
+wound A(s) (after removing the time delay) are approximated using                 cally. The first residue can be written as,
+rational functions as shown in (4). N(p), τp, api, cmodepi are the order,
+delay, poles, and residues of pth mode respectively. Note that the modes                     N(p)
+                                                                                          Ng ∑
+                                                                                          ∑       − cpi a11
+that have close characteristics are grouped together to improve the               c11 =                                  − a11 A dci,j                                             (11)
+                                                                                                    i=q
+                                                                                                                api
+conditioning of the solution and to reduce the presence of large residue
+                                                                                          p=1
+
+
+/pole ratios.                                                                        Where, q = 2; if p = 1 and q = 1; if p ∕
+                                                                                                                            = 1. Substituting (11) into (5),
+                                                                                  the modified propagation function can be written as,
+                    N(p)
+                    ∑    cmodepi e− sτp
+Amode (s, p) =                                                         (4)                                          Ng N(p)     (                         )
+                           s − api                                                             a11 A dci,j e− sτ1 ∑ ∑              − a11 e− sτ1   e − sτp
+                    i=1                                                           Ai,j (s) +                     =          cpi                 +                                  (12)
+                                                                                                   s − a11                        (s − a11 )api s − api
+  Using the modal poles and delays in (4), the phase elements of A(s)
+                                                                                                                   p=1 i=q
+
+matrix are approximated in the form as shown in (5) using least square                From (12), the residues (except for the first one) can be computed
+method.                                                                           using least squares without disturbing the exact dc value. The first res­
+                N(p)
+             Ng ∑
+                                                                                  idue is then calculated by evaluating (11). As a result, the exact dc value
+             ∑       cpi e− sτp
+Ai,j (s) =                                                             (5)        is enforced without deviating the functional form of the propagation
+              p=1   i=1
+                          s − api                                                 function in (5).
+
+    Where, Ng is the number of modes and cpi’s are the residues of A(s).
+
+
+                                                                              2
+H.M.J. De Silva and Z. Liu                                                                                             Electric Power Systems Research 223 (2023) 109649
+
+
+
+
+                                                                                                             Fig. 2. HVDC cable system.
+
+
+                   Fig. 1. weighting factor vs frequency [Hz].
+                                                                                      Table 1
+                                                                                      Cable Data.
+3.2. Improving accuracy and reduction of low frequency oscillations
+                                                                                        Conductor outer radius                                  0.022 m
+                                                                                        Conductor resistivity                                   1.724e-8 Ωm
+    Although the proposed curve-fitting method enforces the correct dc                  Insulator 1 capacitance                                 0.3 uF/m
+values, there can be noticeable approximation errors specially at low                   Insulator 1 outer Radius                                0.0395 m
+frequencies (e.g. between 0 Hz to 1 Hz). The approximation error can                    Sheath outer radius                                     0.044 m
+                                                                                        Sheath dc resistance                                    0.046 ohm/km
+cause overshooting (or sometimes oscillatory behavior) in the dc
+                                                                                        Insulator

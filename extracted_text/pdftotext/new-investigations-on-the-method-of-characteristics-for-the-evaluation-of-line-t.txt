@@ -1,0 +1,203 @@
+                                                           Electric Power Systems Research 160 (2018) 243–250
+
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                      Electric Power Systems Research
+                                                     journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+New investigations on the method of characteristics for the
+evaluation of line transients
+T. Kauffmann, I. Kocar ∗ , J. Mahseredjian
+Polytechnique Montreal, University of Montreal, QC H3T 1J4, Canada
+
+
+
+
+a r t i c l e        i n f o                             a b s t r a c t
+
+Article history:                                        The method of characteristics (MoC) transforms line equations into ordinary differential equations, and
+Received 13 December 2017                               the numerical transient solution is typically performed through discretization in time and space. There
+Received in revised form 28 February 2018               exits also a version of MoC proposed in the literature, in which the discretization in space is eliminated for
+Accepted 5 March 2018
+                                                        uniform lines. This has the potential to render the MoC faster than the traveling wave-based models. This
+                                                        paper examines in detail the possibility of removing spatial discretization and extends the application
+Keywords:
+                                                        for the evaluation of transients on cables in addition to transients on lines. It has been demonstrated
+Method of characteristics
+                                                        that, although removing spatial discretization is possible by introducing certain change of variables and
+Transient analysis
+Transmission lines
+                                                        approximations, the resulting model has limited numerical precision and may show numerically unstable
+Frequency and time domain analysis                      behavior. This is principally due to the approximation error introduced by the linearization of differential
+                                                        equations, necessary to obtain a relationship between line ends. The paper discusses other sources of
+                                                        numerical errors and shows that the line needs to be subdivided to improve precision.
+                                                                                                                            © 2018 Elsevier B.V. All rights reserved.
+
+
+
+
+1. Introduction                                                                        forms the partial differential equations (PDEs) into sets of ordinary
+                                                                                       differential equations (ODEs) directly in time domain by using char-
+    The most common transient solution method of lines is based                        acteristic curves. It was successfully applied to study corona on
+on traveling wave equations and obtained by transforming the                           transmission lines with constant parameters [9]. Further research
+frequency domain equations into time domain. In the frequency                          efforts not only focus on the frequency dependence of parame-
+domain, lines and cables are characterized with two frequency                          ters but also deal with non-linear [10], external ﬁeld-excited [11]
+dependent coefﬁcients: the propagation function H and the charac-                      and non-uniform transmission lines [12]. The MoC requires spatial
+teristic admittance Yc . The basic idea of the frequency dependent                     discretization in addition to discretization in time. Therefore, the
+models in Electromagnetic Transient Type (EMT-type) programs                           solution is inefﬁcient for uniform lines compared to traveling wave
+is to use rational function approximations for these coefﬁcients,                      models such as ULM. On the other hand, an alternative solution pro-
+obtained by using ﬁtting techniques, to allow efﬁcient computation                     cedure has been proposed for MoC to remove spatial discretization
+of convolution integrals through recursive schemes. The Universal                      for uniform lines by using the relationship on the propagation speed
+Line Model (ULM) is the prevailing approach [1]. The recent effort                     of modal waves along characteristic curves [13,14]. This approach
+in this ﬁeld is on the passivity enforcement of models [2], improve-                   seems promising since the removal of spatial discretization has the
+ment of numerical stability [3,4], enforcement of symmetry [5] and                     potential to render the technique very efﬁcient due to the following
+real time implementation [6]. Alternative models include the fre-                      key advantages:
+quency dependent line model [7], obtained with the assumption
+of constant transformation matrices, and the frequency dependent
+                                                                                       - As opposed to two convolutions for each end in traveling wave
+cable model proposed to deal with systems having large number of
+                                                                                         models only one convolution is required
+coaxial cables [8].
+                                                                                       - Traveling wave models require the ﬁtting of H and Yc . In the MoC,
+    Another class of transient solution techniques is based on the
+                                                                                         however, the series impedance elements are needed to be ﬁt,
+application of method of characteristic (MoC). This technique trans-
+                                                                                         which are smoother.
+
+
+                                                                                          This paper ﬁrst presents a ﬁtting procedure for series impedance
+ ∗ Corresponding author.                                                               elements and then contributes important clariﬁcations on the
+    E-mail address: i.kocar@polymtl.ca (I. Kocar).                                     application of MoC without spatial discretization, identiﬁes the
+
+https://doi.org/10.1016/j.epsr.2018.03.004
+0378-7796/© 2018 Elsevier B.V. All rights reserved.
+244                                             T. Kauffmann et al. / Electric Power Systems Research 160 (2018) 243–250
+
+
+sources of numerical errors, and discusses variations for improve-                    struct the overdetermined system of equations for both stages of
+ment. It is shown that the fundamental source of numerical                            ﬁtting.
+problems is the approximation error arising from the linearization                        One remark in the solution of (4) is related to D. It should corre-
+of differential equations relating line terminal variables. A large                   spond to a constant line inductance at high frequencies and letting it
+integration step dictated by the modal delays is required when it                     be an unknown variable has one sole purpose of relaxing the ﬁtting
+is desired to eliminate spatial discretization. This paper concludes                  process and minimizing the order of ﬁtting. However, the ﬁtting
+that the line should be subdivided to improve numerical precision                     result should be checked carefully if the product DC produces real-
+and maintain stability. The subdivision of line however supresses                     istic modal velocities, i.e. less than speed of light, otherwise it is
+the expected numerical advantages over traveling wave methods                         advisable to ﬁx D by using a high frequency sample and move it to
+for uniform lines.                                                                    the left hand side of (4).
+
+2. Frequency dependent model in time domain                                           2.2. Back to time domain
+
+    This section shows the development of line equations in time                          Once the series impedance and shunt admittance matrices are
+domain while considering the frequency dependence. To empha-                          realized with (2) and (3), they are inserted into the line equations in
+size the frequency dependence of electrical parameters, it is helpful                 (1). Then, the transformation of equations into time domain results
+ﬁrst to write the distributed line equations in frequency domain. For                 in:
+a transmission line with n conductors:                                                 ∂i(x, t)    ∂v(x, t)
+                                                                                                +C          =0                                                       (5)
+  dV (x, s)                      dI (x, s)                                               ∂x          ∂t
+−           = Z (s) I (x, s) , −           = Y (s) V (x, s)                  (1)
+    dx                              dx                                                                                                 t
+                                                                                       ∂v (x, t)    ∂i (x, t)                  ∂
+   In (1) s is the Laplace operator, x is the spatial variable along                             +D           + RDC i (x, t) +              h (t − ) i (x, ) d = 0 (6)
+which the waves propagate, V and I are voltage and current vectors,                      ∂x            ∂t                      ∂t
+                                                                                                                                        0
+Z is the series impedance matrix and Y is the shunt admittance
+matrix, both per unit length. For a line of n conductors, the size of                     where
+the matrices is n-by-n and the size of the vectors is n-by-1.                                   
+                                                                                                N
+   The transformation of (1) into time domain results in convolu-                     h (t) =         epi t Ki .                                                     (7)
+tion integrals which need to be computed over discrete time steps                               i=1
+when the model is hosted in an EMT-type program. The approx-
+                                                                                          In (6), the derivative can be moved inside the integral yielding:
+imation of frequency dependent coefﬁcients with partial fraction
+expansions lead to efﬁcient computation of convolution integrals.                      ∂v(x, t)    ∂i(x, t)
+                                                                                                +D          + Rh i (x, t) +  (x, t) = 0                             (8)
+The following rational form can be used for the ﬁtting of Z                              ∂x          ∂t
+                                        
+                         
+                         N
+                           Ki
+                                                                                          with
+Z (s) ∼
+      = RDC + s     D+                                                       (2)                         
+                                                                                                         N
+                                s − pi
+                         i=1                                                          Rh = RDC +               Ki                                                    (9)
+    if s is realized as complex frequency, then RDC represents the DC                                    i=1
+
+resistance matrix, D corresponds to a constant matrix of inductance,                                
+                                                                                                    N
+Ki is the matrix of residues associated with the pole pi , and N is the                (x, t) =            pi Ki [epi t ∗ i (x, t)]                                (10)
+number of poles used for ﬁtting. The rational function accounts for                                   i=1
+the frequency dependence of resistance and inductance.
+    A similar form for the shunt admittance matrix is used but only                      where the symbol * denotes convolution.
+the equivalent of D is kept since the conductance and the frequency                      The Eqs. (5) and (8) form a system of two PDEs governing voltage
+variation of parameters can usually be neglected:                                     and current waves along the line, and they take into account the
+                                                                                      frequency dependence of series impedance.
+Y (s) = sC                                                                   (3)
+                                                                                      3. Method of characteristics
+      In (3), C is the shunt capacitance matrix and it is constant.
+                                                                                          This section describes the application of the method of charac-
+2.1. Fitting procedure                                                                teristics which seeks to transform the PDEs into ODEs. The voltage
+                                                                                      and current variables in the system of PDEs above are in phase
+   Since the ﬁtting quality plays an important role in simulation                     domain. They need to be ﬁrst transformed such that each vari-
+precision, an efﬁcient ﬁtting procedure is contributed here. First,                   able gets associated with a single modal velocity. To this end, the
+(2) is rearranged as follows:                                                         following transformation matrices are introduced:
+
+1                     K   N                                                          T−1
+                                                                                       V DCTV =                                                                    (11)
+  (Z (s) − RDC ) ∼
+                         i
+                 =D+                                                         (4)
+s                     s − pi                                                          T−1
+                          i=1                                                          I CDTI =                                                                    (12)
+
+   The matrix RDC is obtained by using a very low frequency sam-                         where  is a diagonal matrix. Note that C and D are constant
+ple, then the diagonal elements of the left hand side of (4) are                      matrices so there is no need to introduce frequency dependent
+summed and the vector ﬁtting (VF) method [15] is applied in order                     transformation matrices. Note that  is associated with modal
+to identify the common poles for each entry in the matrix. Fol-                       velocities:
+                                                                                            
+lowing the identiﬁcation of poles, Ki and D are computed using                                      −1
+                                                                                       =               = diag (1 , . . ., n )                                   (13)
+an overdetermined linear system of equations. Note that a wide-
+band frequency range (typically from a few millihertz to a few MHz)                      The modal velocities (i ) are always positive and are related to
+and several frequency samples (typically 100–200) are used to con-                    the derivative dx/dt. According to the direction of the wave, the
+                                                          T. Kauffmann et al. / Electric Power Systems Research 160 (2018) 243–250                                 245
+
+
+derivative dx/dt is positive (from sending end to receiving end)                                   The resulting equations are summed and subtracted to remove
+or negative (from receiving end to sending end). Therefore, the                                 the partial differentiation, and the following set of ODEs is obtained:
+characteristic curves in the x, t plane are given by
+                                                                                                 dvm      dim
+             dx           dxn
+                                                                                                    + Zw     +  R m im +   m = 0                              (26)
+                 1                                                                                dt       dt
+ = diag          , . . .,
+               dt           dt                                                                   dvm      dim
+              dx                                                                   (14)            − Zw     −  R m im −   m = 0                              (27)
+                     1       dxn                                                                  dt       dt
+ = −diag           , . . .,
+                 dt           dt                                                                   The ﬁrst one corresponds to the wave traveling from the send-
+   The transformation matrices are then used to convert the volt-                               ing end, and the second one from the receiving end. Note that the
+ages and currents in modal domain:                                                              convolution term still contains the variable x. The line transients
+                                                                                                can be computed by numerically solving (26) and (27).
+v (x, t) = TV vm (x, t)
+                                                                                     (15)
+i (x, t) = TI im (x, t)                                                                         4. Resolution and implementation
+
+    The system of equations in modal domain is given by:                                            It is necessary to deﬁne spatial boundaries in order to numeri-
+                                                                                                cally solve the ODEs of (26) and (27). In Ref. [14] it is proposed to
+∂im (x, t)      ∂vm (x, t)
+           + Cm            =0                                                        (16)       take the sending and receiving ends as the boundaries of the system
+   ∂x              ∂t
+                                                                                                and apply trapezoidal method to linearize the ODEs and eliminate
+∂vm (x, t)      ∂im (x, t)                                                                      spatial discretization. If the delay associated with the fastest mode
+           + Dm            + Rm im (x, t) +  m (x, t) = 0                           (17)
+  ∂x               ∂t                                                                           is  the following equations are obtained by applying trapezoidal
+    with                                                                                        method to the ODEs (only one equation is shown since the other
+                                                                                 

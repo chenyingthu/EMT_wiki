@@ -1,0 +1,193 @@
+850                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 2, APRIL 2023
+
+
+
+
+      Switch-Averaged Frequency Domain Simulation of
+                   Photovoltaic Systems
+  Santiago Agudelo, Student Member, IEEE, Fausto Diaz, Member, IEEE, Abner Ramirez , Senior Member, IEEE,
+                                      and Jesus Morales , Member, IEEE
+
+
+   Abstract—This paper pushes forward frequency domain (FD)                          Computational resources is a major issue for both TD and
+modeling of switched networks aimed at transient simulation, with                 FD techniques when switching dynamics are under interest. In
+particular interest in photovoltaic (PV) systems. The PV system                   [2], the EMTP-RV software tool is employed to simulate wind
+simulation is performed via the numerical Laplace transform
+(NLT) in a sequential (partitioned-time) fashion by using a set of                and PV resources integrated to the utility grid. As EMTP-RV
+time-windows. The proposed technique enhances existing FD PV                      is a TD-based method, a small time-step has to be utilized to
+models by a) averaging switching functions and b) using sample                    accurately reproduce switching dynamics [4]. In a step forward,
+overlapping to alleviate numerical oscillations due to rise-time phe-             the parallel architecture of the graphics processing unit (GPU)
+nomenon at time-window interfaces. The proposed enhancements                      is combined with CPU capabilities to achieve efficient tran-
+provide a more efficient dynamic simulation compared to both
+classical single-window full-sample NLT implementation and non-                   sient simulations for large PV systems [3]. On the other hand,
+averaged FD PV models. Verification is performed via prevalent                    in classical implementation of the NLT transient calculations
+electromagnetic transient (EMT) software tools.                                   assume a single (usually large) time-window; this involves a
+  Index Terms—Frequency domain analysis, laplace transforms,
+                                                                                  prohibitive number of samples. A partitioned-time simulation
+and photovoltaic systems.                                                         is proposed in [8] where the total simulation time is divided
+                                                                                  into time-windows, each with possibly different number of
+                            I. INTRODUCTION                                       samples. However, this type of approach brings a new challenge
+                                                                                  since rise-time oscillations appear at time-window interfaces. A
+       RANSIENT simulation of switched networks involving
+T      renewable energy sources has received great attention over
+the last few decades. Interaction with the conventional electrical
+                                                                                  solution to the rise-time oscillations phenomenon is proposed
+                                                                                  in [8] for networks involving frequency-dependent lines/cables;
+                                                                                  however, such phenomenon is further accentuated in switched
+network, increasing penetration levels, stability issues, and pro-                networks, which is not addressed in [8]. In [10], interpolators
+tection design are among the reasons for which power engineers                    are applied to the samples at the interface of two subsequent
+and researchers dedicate a great deal of time and effort to the                   time-windows to smooth rise-time oscillations.
+simulation of such networks.                                                         In [11], the FD Norton-type models for both single- and three-
+   There are several techniques for the analysis of networks                      phase PV systems are presented. Partitioned-time simulation is
+involving power electronic devices, in this paper referred to                     utilized in [11] accompanied by selection of high-energy fre-
+as switched networks, intended for either transient analysis or                   quencies to speed up simulations. The rise-time effect, attributed
+steady state calculations. Depending on the type of study and                     to half-value convergence of the inverse NLT and manifesting
+network characteristics, some techniques are better suited than                   as rise-time numerical oscillations, is mentioned in [11] but not
+others. As for transient analysis, constant-parameters switched                   fully addressed.
+networks can be readily simulated in time-domain (TD) [1], [2],                      The TD-based averaged-value modeling (AVM) technique,
+[3], [4] while switched networks involving frequency-dependent                    also known as dynamic phasors, overcomes the computational
+components can naturally be studied via FD methods [5], [6],                      burden issue by averaging instantaneous variables within a
+[7], [8], [9], [10], [11]. This paper focuses on transient analysis               sliding time-window; however, at the expenses of omitting
+in FD via the NLT.                                                                high-frequency ripple [12], [13], [14], [15], [16]. DC/DC simple
+   Manuscript received 30 January 2022; revised 16 May 2022; accepted 15 Au-      converters, such as boost and series resonant converters, are
+gust 2022. Date of publication 18 August 2022; date of current version 24 March   modeled via AVM in [12] and [13], where only DC and fun-
+2023. This work was supported by CONACYT-Mexico scholarships, under               damental switching frequencies are accounted for. The effective
+Grants 937566 and 754353. Paper no. TPWRD-00131-2022. (Corresponding
+author: Abner Ramirez.)                                                           averaging of switching dynamics is demonstrated in [12] and
+   Santiago Agudelo, Fausto Diaz, and Abner Ramirez are with the CIN-             [13]. In [16], a parametric PV-cell model, based on the averaging
+VESTAV Campus Guadalajara, Zapopan, JAL 45017, Mexico (e-mail:                    concept, is proposed for long-term analyses. A comprehensive
+santiago.agudelo@cinvestav.mx; fausto.diaz@cinvestav.mx; abner.ramirez@
+cinvestav.mx).                                                                    overview of AVM for representing static switching converters
+   Jesus Morales is with the PGSTech - EMTP, Montreal, QC H2K 1C3, Canada         is provided in [14]. Despite not reproducing high-frequency
+(e-mail: jesus.morales@emtp.com).                                                 dynamics, AVM provides reasonable results with expected sys-
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2022.3200011.                                       tem dynamics’ behavior when the AC part of the network is
+   Digital Object Identifier 10.1109/TPWRD.2022.3200011                           sufficiently stiff [15]. The damping or filtering effect provided
+
+                         0885-8977 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:25:29 UTC from IEEE Xplore. Restrictions apply.
+AGUDELO et al.: SWITCH-AVERAGED FREQUENCY DOMAIN SIMULATION OF PHOTOVOLTAIC SYSTEMS                                                                               851
+
+
+
+by the frequency-dependent network surrounding the switched
+device, or the presence of reactors, also justifies the use of AVM.
+This makes the AVM concept attractive for FD modeling of
+switched networks.
+    Based on the above overview, this paper presents an alter-
+native FD modeling of PV systems, via the NLT, for transient
+analysis. It represents a follow-up paper enhancing the approach
+proposed in [11]. The backbone of the proposed modeling
+relies on FD partitioned-time simulation by using time-windows
+with appropriate initial conditions represented as voltage/current
+sources for dynamic elements, i.e., transmission lines and in-
+ductor/capacitor elements, as in [11]. Unlike existing FD PV                    Fig. 1.   Illustration of partitioned-time solution and rise-time oscillations.
+models, this paper proposes to average high-frequency switching
+dynamics in FD; this permits to save computational resources.
+As second feature, numerical oscillations due to rise-time phe-                 for dynamic elements (L and C), represented as constant volt-
+nomenon at time-window interfaces are substantially allevi-                     age/current sources [18]. Also, if frequency-dependent com-
+ated via straightforward overlapping of a few samples around                    ponents are present in the network under analysis, e.g., trans-
+such interfaces. It is demonstrated that the alternative proposed               mission lines, appropriate frequency-dependent current sources
+modeling, hereafter referred to as FD-AVM, is more efficient                    must be calculated and included; details are provided in [8], [17].
+than both classical implementation of NLT and non-averaged
+FD PV models, providing very good results within the AVM                        B. Rise-Time Phenomenon
+context. It is also shown that the FD-AVM approach provides                        Also, as dictated by the NLT theory, at the interface of two
+better agreement with TD switching models than the classical                    consecutive time-windows, the inverse Laplace transform con-
+TD AVM technique. Thus, the proposed FD-AVM approach,                           verges to the half-value of the initial condition; this followed by a
+besides averaging switching functions to speedup simulations,                   few numerical damped oscillations. The rise-time phenomenon
+it fully addresses the issue of rise-time oscillations, which is not            is clearly visible in the inset of Fig. 1. Alleviation of this phe-
+resolved in [11], and proposes a simpler, yet effective, solution               nomenon is more challenging when the network involves power
+compared to [10].                                                               electronic devices. This is due to numerical oscillations that can
+    Section II of the paper presents the partitioned-time solution              interfere or be confused with switching frequency oscillations
+scheme in FD. The basic ideas of averaging switching dynamics                   from switching devices.
+in FD and alleviating rise-time phenomenon via overlapping                         A similar phenomenon, due to amplification of the rise-time
+of samples are outlined in Section III. Two case studies are de-                of driving sources when reaching the opposite side of a transmis-
+scribed in detail in Section IV. Section V includes the discussion              sion line, is studied in [8]. Such amplification is resolved in [8]
+of some points regarding the proposed approach. Finally, the                    by applying a piecewise approximation of the Laplace transform
+paper is concluded in Section VI.                                               to the driving sources.
+
+                                                                                  III. SWITCH AVERAGING AND TIME-WINDOW OVERLAPPING
+ II. SEQUENTIAL TIME-WINDOW SIMULATION SCHEME AND
+                                                                                                IN THE FD-AVM APPROACH
+                RISE-TIME PHENOMENON
+   For completeness of the paper, this Section briefly outlines                 A. Averaging Switching Functions
+the partitioned-time solution scheme using the NLT for tran-                       In this paper, the issue of a large number of samples in classical
+sient analysis. Also, the rise-time oscillations phenomenon is                  single time-window implementation of the NLT is overcome
+reviewed.                                                                       in two ways. The first one relies on using partitioned-time
+                                                                                simulation [8], [17], as described in Section II. The second one
+                                                                                consists in averaging the FD switching functions involved in
+A. Partitioned-Time Simulation                                                  the PV system and usually generated by PWM schemes. These
+   Fig. 1 depicts an arbitrary transient waveform obtained via                  two solutions (either alone or together) permit to use a reduced
+NLT simulation for which a total observation time T is assumed.                 number of samples, thus achieving computational savings, as
+The sequential solution scheme adopted in this paper considers                  demonstrated in Section IV. The basics of averaging modeling
+that T is divided into a set of partial time-windows Tk , with k =              in TD, i.e., TD-AVM, and the main idea of FD averaging, i.e.,
+1, 2, …. The NLT is utilized with reduced number of samples to                  FD-AVM, are discussed next.
+obtain the transient waveforms for each Tk . Moreover, the time-                   The TD-AVM method (or dynamic phasors) expresses a TD
+windows can be of different length and with distinct number of                  variable x(·) via a series Fourier expansion on the interval (t –
+samples according to the fast/slow dynamics involved [8], [17].                 P, t), as [12], [13], [14]
+This permits to achieve further computational savings.                                                              N
+                                                                                                                    
+   As indicated by the Laplace domain theory, each time-                                      x(t − P + r) =              xk (t)ejkωs (t−P +r)             (1a)
+window must be simulated with appropriate initial conditions                                                        k=0
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:25:29 UTC from IEEE Xplore. Restrictions apply.
+852                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 2, APRIL 2023
+
+
+
+where ωs = 2π/P and r ∈ (0, P ). The slowly time-varying kth
+coefficient in (1a) is calculated as
+                    
+                 1 P
+    xk (t) =           x(t − P + r)e−jkωs (t−P +r) dr. (1b)
+                 P 0
+   In case of products between variables, the convolution oper-
+ation in (1c) is defined.
+                     
+           xyk =        xk−i yi , for all integers i. (1c)
+                       i
+
+   TD-AVM traditionally accounts for DC and fundamental
+components (i.e., k = 0, 1), thus neglecting higher frequencies.                Fig. 2.   Interpolators applied to an arbitrary damped oscillatory waveform.
+This suffices for a fair averaging of the x-variable dynamics,
+thus becoming computationally more efficient than classical TD-
+based models, as a large time-step can be used in AVM. Note that                illustrated in (4c), where ∗ denotes convolution operation.
+TD-AVM has been conceived for system-level transient studies                                 ⎡                              ⎤
+                                                                                               xDC x−Δω         0    ··· 0 ⎡          ⎤
+and corresponding small-signal analysis [14]. Fundamentally,                                 ⎢ xΔω xDC x−Δω · · ·           ⎥ yDC
+the system of differential equations (2) is transformed, via (1),                            ⎢                              ⎥ ⎢ yΔω ⎥
+                                                                                             ⎢                        ..    ⎥ ⎢       ⎥
+to the new differential equations, as in (3), where all dynamic                              ⎢ 0      x       x          .  ⎥ ⎢ y2Δω ⎥
+                                                                                    x∗y =⎢              Δω      DC          ⎥ ⎢       ⎥ . (4c)
+variables obey (1a) and (1b). In case of convolution between a                               ⎢ ..                     ..    ⎥ ⎢ y3Δω ⎥
+                                                                                             ⎢ .        0     xΔω        .  ⎥  ⎣      ⎦
+switching function and a voltage/current variable, (1c) applies.                             ⎣                              ⎦      ..
+                                                                                                        ..            ..            .
+                  d                                                                              0       .               .
+                     x = f (x(t), u(t)).                                 (2)
+                  dt                                                               Note that, in the proposed FD-AVM approach, only switching
+              d                                                                 function variables are averaged, leaving untouched the rest of
+                x = − jkωs xk + f (x, u)k .                        (3)
+              dt k                                                              FD solution variables. In other words, these solution variables
+                                                                                can retain their frequency content as defined by the FD/TD dis-
+   Note that, to obtain a consistent set based on (3), the same
+                                                                                cretization relations [8]. This translates in more accurate results
+Fourier coefficients are retained for all dynamic variables, in-
+                                                                                (in the sense of averaging dynamics) compared to TD-AVM,
+cluding the excitation function [12], [13], [14]. To the best
+                                                                                in which all variables (including sources) are averaged. This is
+authors’ knowledge, no applications of TD-AVM to networks
+                                                                                shown in Section IV-A via a case study.
+involving frequency-dependent components have been reported
+so far.
+   FD-based methods, e.g., NLT, follow a different solution phi-                B. Alleviating Rise-Time Oscillations
+losophy compared to TD-based techniques, such as TD-AVM.                           A former solution to the rise-time oscillatory phenomenon
+In NLT, a package of samples constitutes a FD solution variable,                is proposed in [10]. It consists of applying interpolators to
+i.e.,                                                                           the samples around two subsequent time-windows interface,
+                                                T r                           thus smoothing the oscillatory phenomenon. However, different
+           x = xDC xΔω x2Δω x3Δω · · ·                      (4a)                interpolators are used since voltage/current variables of a net-
+where Tr denotes transpose and Δω is the frequency spacing [8].                 work exhibit distinct dynamics and thus they 

@@ -1,0 +1,203 @@
+   Synchronous Machine Exciter Circuit Model In A
+        Simultaneous Field Winding Interface
+       U. Karaagac, H. Gras, J. Mahseredjian                                             A. El-Akoum, X. Legrand
+                  Ecole Polytechnique                                                         Electricite de France
+                   Montreal, Canada                                                              Paris, France
+
+
+Abstract—This paper presents the implementation of a phase           electrical connection to the field winding. However, the
+domain (PD) synchronous machine (SM) model through                   compensation method has important topological limitations
+modified-augmented-nodal-analysis (MANA) formulation for             [1]. Although in theory and when topological ill-conditioning
+the computation of electromagnetic transients. This formulation      does not occur, the compensation method can be used to
+provides a direct and simultaneous electrical connection to the      obtain simultaneous solutions for all interconnected nonlinear
+SM field winding, and enables accurate modeling of its exciter as    devices, its implementation is complex and most programs [4]
+an electrical side. Detailed exciter modeling can be used to study   rely on the presence of distributed-parameter transmission
+exciters transient performance and potential failure conditions      lines to decouple cases with several machines. Artiﬁcial one
+in its circuit components. This paper also presents and tests a
+                                                                     time-step delay lines are used in certain cases, such as parallel
+simple current source interface for existing dq0-type SM
+                                                                     units, at the expense of reduced accuracy.
+machine models with control signal input for field control.
+Realistic test cases are used to validate and compare the                This paper uses the MANA formulation [6] with a phase-
+proposed models.                                                     domain synchronous machine (PDSM) model [9] in order to
+                                                                     provide an accurate and simultaneous solution method for
+Index Terms—synchronous machine, excitation system, EMTP.            connecting exciter electrical circuits to SM field winding
+                                                                     terminals. In addition, this paper proposes an alternative (not
+                       I.   INTRODUCTION                             simultaneous) exciter circuit connection approach based on a
+    Simulation of electromagnetic transients in modern power         current source interface, for existing SM models, such as
+systems is widely used for the determination of component            classical dq0 models.
+ratings such as insulation levels and energy absorption                  A realistic test system containing two parallel hydraulic
+capabilities, in the design and optimization process, for testing    units with static type exciters is used to compare proposed
+control and protection systems and for analyzing power               modeling approaches. EMTP-RV [6] is used for all
+system performance in general [1], [2]. In order to simulate         simulations and the proposed PDSM model with field winding
+electromagnetic transients, various simulation tools have been       electrical connection is implemented through the user-deﬁned
+developed such as [3]-[5]. These simulation tools are called         (dynamic link library) option available in EMTP-RV [6].
+electromagnetic transients type (EMT-type) programs and
+solve nodal analysis (NA) or modified-augmented-nodal-                   The first part of the paper presents the SM models with
+analysis (MANA) formulation based power system network               field winding electrical connection. The second part presents
+equations (PSNE). EMTP-RV is the only one using the                  simulation results.
+MANA [6] formulation.
+                                                                           II.   SYNCHRONOUS MACHINE MODEL WITH FIELD
+    Traditionally in EMT-type programs, excitation systems                        WINDING ELECTRICAL CONNECTION
+are modeled using control block diagrams. Therefore, the
+synchronous machine (SM) admittance matrix inserted into                 This model version is identified hereinafter as SM1. In this
+the PSNE does not include the field winding terminals. In            approach the SM model with field winding electrical
+many cases it is important to model the SM exciter as an             connection (see Figure 1) is obtained by using the PDSM
+actual electrical circuit for detailed analysis of its performance   model and its representation in MANA formulation. The
+and for identifying hazardous conditions for exciters circuit        discretized PDSM model equations are given in [10]-[11]
+components. The connection of an actual exciter circuit to the       using the trapezoidal integration rule. The numerical
+SM model can be achieved by providing access to its field            oscillations of this rule, due to detectable discontinuities, are
+terminals in the internal circuit model.                             eliminated using the Backward Euler method.
+
+   One alternative is to use the compensation method based               In this model, damper winding effects are represented with
+universal machine (UM) model [7] as it provides direct               three damper windings: one on d-axis, and two on q-axis. The
+
+
+
+
+978-1-4799-1303-9/13/$31.00 ©2013 IEEE
+d-axis is assumed to be leading the q-axis by 90 and                       C. Power System Network Equation Formulation and
+generator convention is used while expressing the voltage                       Solution Algorithm
+equations [12]. Throughout this paper, bold uppercase denotes                   The nodal analysis based formulation of network equations
+the matrices, bold lowercase denotes the vectors and the                    requires the admittance model of the SM. This can be
+operator p is d dt .                                                        achieved by applying matrix reduction to (5) for expressing
+                                                                            the voltages and currents of the stator windings and the field
+                                                                            winding in terms of the voltages and currents of damper
+                       iF                           ia                      windings. A better and more flexible approach is to use
+                                                                            MANA [6][8]. In such a formulation the admittance model
+                                     SM             ib
+           external +                                    external           requirements are eliminated and equation (5) can be included
+                             with field winding
+           electrical v
+                        F   electrical connection        electrical         directly into the PSNE. In the following MANA equations,
+           network                                  ic   network            the last row and column of the coefficient matrix are used for
+                      -
+                                                                            including (5)
+                                                                                                t                t      t
+                                                                                     Yn       Vadj   Dbdepc    Sadj SM adj
+                                                                                                                             vn           in
+ Figure 1. Synchronous machine with field winding electrical connection         Vadj          0       0        0      0       
+                                                                                                                              i Vs          
+                                                                                                                                     vS 
+                                                                                Dbdepr        0       0        0      0       i Vd    0  (8)
+A. Mechanical Equations                                                         S                                             iS   0 
+   The mechanical subsystem equations are written [9], [10],                    adj           0       0       S0      0                   
+[12] as                                                                         SM            0       0        0    ASM       xSM  bSM 
+                                                                                       adj
+
+               Jm p ωm  Dm p θm  Km θm  Ta                         (1) Equation (5) is rewritten as v  R i  h . The added matrices
+where ωm  pθm (see parameter definitions in [10]).                       and vectors in (8) are used to include all machines present in a
+                                                                          network. SMadj is the machine adjacency matrix and holds
+B. Phase-Domain Synchronous Machine Equations
+                                                                            the nodal relations at the network connection points, ASM is
+   The PDSM model uses the coupled electric circuit of the
+machine. The voltage equations are given by                     block diagonal and holds the resistance matrices R , xSM
+                         v  R i  p λ                     (2) includes machine winding currents i and bSM holds history
+                                                                terms h . The reader should refer to [6], [8] and [9] for the
+where v is the vector of voltages across the machine
+                                                                definitions of all other submatrices and vectors in (8).
+windings, i is the vector of currents in the machine windings,
+ R is the diagonal matrix of the winding resistances and λ is       The sequence of calculation steps is briefly described as
+the vector of flux linkages around the machine windings. The follows:
+flux linkages are given by
+                                                                    1. calculate history terms resulting from the trapezoidal
+                           λ  L( ) i                      (3)          integration rule (see (7));
+where L( ) is the matrix of winding inductances and is a                      2.      predict  (see [9]) to update L( ) and calculate the
+function of rotor position  .                                                         resistance matrix R ;
+   The electromagnetic torque equation is [12]                                 3.      refactor and solve the PSNE (8) to find voltages and
+                                                                                       currents;
+                         P t
+                             i  p L( )  i
+                      Tgen                                          (4)
+                          4                                                    4.      calculate Tgen using (4);
+where P is the number of poles.
+                                                                               5.      solve (1) to find θm and ωm ;
+    By applying the trapezoidal integration rule (time step t ),
+the discretized version of equation (2) is written as                          6.      return to step 1 for the next time point solution.
+
+                                v  R i  h                          (5)      The field winding electrical connection option can be
+                                                                            deactivated by modifying SMadj to exclude the field winding
+with
+                                                                          as well as bSM to include the field winding voltage provided
+                            R  R  k L                            (6) by an external control diagram block connection.
+
+                                          
+                       h  R  k L ˆ ˆi  vˆ                        (7)
+                                                                                    III.     SYNCHRONOUS MACHINE MODEL WITH FIELD
+k  2 / t and the hatted variables are available from the                                      VOLTAGE CONTROL SIGNAL INPUT
+previous solution time point t  t .                                           In the classical EMTP dq0-SM model equations, the field
+                                                                            winding voltage is calculated using its previous time step
+                                                                            value provided by the excitation system assembled through a
+control block diagram. Following the PSNE solution, the                     1) Scenario-1 (S1)
+stator voltages are used for calculating the SM currents. To                 A three-phase-to-ground fault is applied on the BUS2 end
+interface the SM field winding with an actual electrical, it is          of the 400kV BUS1-BUS2 line at 0.5s and cleared by the
+proposed to represent the SM with a controlled current source            circuit breakers CB1 and CB2. The system is simulated for 5s.
+between the SM field winding connection points as illustrated
+in Figure 2. The voltage between the SM field winding                      2) Scenario-2 (S2)
+connection points is provided to the SM model as field voltage               S1 is repeated for a permanent single-phase-to-ground
+control input. The field current calculated by the SM solver is          fault by considering single phase reclosing facility with 500ms
+provided to the controlled current source for the next time-step         dead time. The system is simulated for 3s.
+solution. This interface causes a one time-step delay in the                3) Scenario-3 (S3)
+computations.                                                                This scenario simulates the failure of a thyristor in the
+    It should be noted that this approach can be also                    excitation system rectifier. The failure of a thyristor usually
+implemented in the PDSM (SM1) version presented in the                   causes a short-circuit between its terminals [13]. Such a failure
+previous section by deactivating the field winding electrical            causes a line-to-line fault at the rectifier side of the excitation
+connection. However, the standard SM module in EMTP-RV                   transformer. As a result, the circuit-breaker at the rectifier side
+is based on the dq0 transformation and offers much higher                of the excitation transformer opens. This causes the operation
+computational efficiency [9]. Therefore, SM2 is based on the             of the “loss of excitation protection” and trips the unit.
+dq0 representation.                                                      Therefore, in this study, the failure of the thyristor is
+                                                                         represented with an open-circuit between its terminals. This
+   Although time-step delayed interfaces may become                      failure mode is less common [13]. For this failure mode, the
+unstable in generic circuits, in the case of the SM, the field           unit is able to remain connected to the grid. In the simulation,
+winding does not permit sudden current jumps and                         the failure occurs at t = 0.5 s and the system is simulated for
+consequently the interface remains sufficiently accurate even            1s.
+with large time-steps.
+   This model version is named hereinafter SM2.                                            BUS1                                            BUS2
+
+                                                                                                           +
+                                                                                                                   PI                                 U1
+                                                       ia                            Zs
+                                                                                 +
+                             vF                                                                      CB1                        CB2
+                                                                                                           +
+         external     +                   SM           ib                                            +
+                                                                                                                   PI
+                                                                                                                                  +                   U2
+                                                            external
+
+
+
+                                                                                                                            +
+         electrical   vF          with field voltage        electrical                                                  F
+                                                                                      SLACK BUS
+
+
+
+
+                                                                                                                                                  +
+         network                    control input      ic   network                                                                                    2 identical
+                      -
+
+
+
+
+                                                                                                                                      LF
+                             iF                                                       V = 400 kV                                                      hydraulic units
+                                                                                                                                P = 100 MW
+                                                                                                                                Q = 50 MVAR
+
+   Figure 2. Synchronous machine with field winding controlled source                     Figure 3. Single line diagram of the test system
+                            connection
+
+                                                                                            PV BUS                              Governor
+                      IV.   EMTP-RV SIMULATIONS                                             V = 14.85 kV
+                                                                                            P = 140 MW
+A. Simulated System                                                                                                         Pm              
+    The EMTP-RV single line diagram of the test system is                                                      +   vs                       +
+shown in Figure 3 and Figure 4 with the related load-flow                                  +30
+                                                                                                                                vs SM vF
+                                                                                      1     2                                               -
+constraints. The test system is created from the single machine
+system in [10] by adding a parallel hydraulic unit and
+                                                                                                                                6-pulse bridge
+                                                                                             

@@ -1,0 +1,300 @@
+第 49 卷 第 5 期：1819-1830                                      高电压技术                                          Vol.49, No.5: 1819-1830
+2023 年 5 月 31 日                                       High Voltage Engineering                                       May 31, 2023
+DOI: 10.13336/j.1003-6520.hve.20221761                                                               2023 年 5 月 31 日第 49 卷 May
+
+
+   基于 FPGA 的双馈风力发电机定转子解耦数字镜
+              像超实时仿真
+                      陈厚合 1，杨                   政 1，叶 华 2，裴 玮 2，KAI Strunz3
+         （1. 东北电力大学电气工程学院，吉林 132012；2. 中国科学院电工研究所，北京 100190；
+                                               3. 柏林工业大学，柏林 10587）
+
+     摘     要：为实现双馈风力发电机(doubly fed wind generator，DFIG)大规模实时仿真，设计了一种基于现场可编程
+     逻辑阵列(field programmable gate array，FPGA)的 DFIG 数字镜像 IP 核。并提出面向异步机定子与转子“T 型”等
+     效电路解耦的虚拟电容等效法，在此基础上提出 DFIG 内部各组件并行算法，最后构建 DFIG-IP。通过流水线优
+     化设计，完成基于 FPGA 的 DFIG-IP 在 4 种工况下计算精度与计算速度的实验验证。研究结果表明：该文所提方
+     法降低 DFIG 异步机求解模块所需 FPGA 资源约 77%；基于 FPGA 设计的 DFIG-IP 在 500 MHz 时钟频率下，超实
+     时加速度比可达 27.8，单个 DFIG-IP 占用 ZCU106 资源不超过 20%；所提方法能够满足 DFIG 并网系统实时仿真
+     在精度与速度上的要求。研究结果可为含大量新能源并网系统的电磁暂态仿真加速研究提供参考。
+     关键词：现场可编程逻辑阵列(FPGA)；虚拟电容等效；并行计算；双馈风力发电机；超实时仿真
+
+
+         Faster-than-real-time Simulation of Stator-rotor Decoupling Digital Twin of Doubly-fed
+                                  Induction Generator Based on FPGA
+                             CHEN Houhe1, YANG Zheng1, YE Hua2, PEI Wei2, KAI Strunz3
+                   (1. School of Electrical Engineering, Northeast Electric Power University, Jilin 132012, China;
+                     2. Institute of Electrical Engineering, Chinese Academy of Sciences, Beijing 100190, China;
+                                      3. Technische Universität Berlin, Berlin 10587, Germany)
+
+
+     Abstract：To achieve the large-scale real-time simulation of doubly fed wind generator (DFIG), we designed a DFIG
+     digital image intelligent property (IP) core based on field programmable gate array (FPGA), and proposed a virtual
+     capacitance equivalent method for decoupling the “T-shaped” equivalent circuit of the stator and rotor of the
+     asynchronous machine. Based on this, a parallel algorithm for each component in DFIG was proposed. Finally, DFIG-IP
+     was constructed. Through pipeline optimization design, we performed the experimental verification of the calculation
+     accuracy and speed of DFIG-IP based on FPGA under four working conditions. The research results show that the
+     proposed method can be employed to reduce the FPGA resource required by DFIG asynchronous machine solution
+     module about 77%. The DFIG-IP designed based on FPGA can achieve a faster-than-real-time acceleration ratio of 27.8 at
+     500 MHz clock frequency, and a single DFIG-IP can occupy no more than 20% of ZCU106 resources. The method
+     proposed can meet the requirements of DFIG grid connected system real-time simulation in accuracy and speed. The
+     research in this paper can provide a reference for accelerating the research of electromagnetic transient simulation of grid
+     connected systems with a large number of new energy sources.
+     Key words：field programmable gate array(FPGA); virtual capacitor equivalent; parallel computing; doubly-fed induction
+     generator; faster-than-real-time simulation
+
+
+                                                                      技术成熟、价格较低的优点，国内风电以双馈机
+0 引言1
+                                                                      型为主[1]。我国 2021 年提出，新能源要成为主体电
+     双馈风力发电机作为新能源发电的一种，具有                                             源，海量双馈机组接入电力系统已为必然[2]。风电
+
+———————                                                               机组大规模接入电网，将给电力系统电磁暂态仿真
+基金资助项目：国家自然科学基金 (52177123；52077028)。                                  带来诸多挑战[3]。电磁暂态仿真是研究电力系统动
+Project supported by National Natural Science Foundation of China
+(52177123, 52077028).
+1820                                  高电压技术                                 2023, 49(5)
+
+态特性的重要手段，然而双馈机型构成较为复杂，                     真问题方面已体现出优良的性能 [18] 。有研究采用
+双馈风电场电磁暂态仿真效率低下，而数字孪生电                     FPGA 开发了一种嵌入式实时仿真器，可模拟实际
+力系统[4-7]又对电磁仿真的计算精度与计算速度两                  物理对象的动态特性，如文献[19]研究了电力电子
+方面提出更高的要求。因此，亟需研究仿真效率更                     设备中基于 FPGA 嵌入式实时模拟器，当换流器故
+高和准确性更强的风电场电磁暂态仿真方法。                       障后，FPGA 可替代换流器的控制部分发出正确的
+       当前开展风电大规模仿真，主要利用风电场等                控制信号维持换流器正常运行。也有研究将物理实
+值方法、改良求解算法及提升计算平台硬件性能来                     体抽象为数据模型，采用 FPGA 的高并行计算能力
+实现。风电场等值建模方法 [8-10]，主要用于研究风                对模型进行求解。又如文献[20]将换流器定义为 1
+电场外特性，而在研究宽频振荡问题时，需要考虑                     个具有随机变量的概率模型，并将该模型嵌入到
+具体换流器的内外环及其锁相角度的控制措施[8]，                   FPGA 设备上进行实时求解并发出控制信号。这种
+多机等值忽略了每台风电机配置参数的特异性[11]，                  模拟方法在一些文献中被定义为电力系统器件级数
+这对于数字化电力系统智能终端的建立是不可接受                     字孪生[4-7,15,20-21]。以上文献针对矩阵的求逆运算均
+的。而改良求解算法[12-14]，如采用解耦算法或采用                预 先 存 于 FPGA 的 随 机 存 储 器 (random access
+换流器平均值模型，可保留每台风电机的特异性且                     memory，RAM)中，此方法虽可降低资源使用率，
+可加快其电磁暂态仿真速度，但对于风电机大规模                     但同时会降低模型的通用性。
+仿真仍不能实时计算[12]。对于提升硬件性能主要采                     从现有研究看，针对单个 DFIG 设备内部各模
+用中央处理器(central processing unit，CPU)多核并              对 DFIG 进行实时“镜像复现”
+                                           块间的并行研究不足，
+行计算、CPU 与图形处理器(graphics processing         的数字镜像系统[22]设计亦鲜有研究。其次，由于异
+unit，GPU)异构并行计算以及建造实时仿真平台来                 步机电压–磁链方程每时步求解需要对矩阵进行求
+实现。GPU 较 CPU 更适合并行计算场景。文献[15]              逆运算[15]，在 FPGA 器件中实现较为困难，因此风
+基于 CPU 的多线程运算能力对含 DFIG 的风电场进               场仿真多基于 CPU，目前未有采用纯 Verilog 语言
+行加速计算，但实验结果表明，此方法对于大规模                     编制的 DFIG 数字镜像 IP 核(Intellectual Property，
+风电并网系统电磁仿真仍有缺陷。文献[16-17]突破                 用于表征具有自主知识产权的预定义系统级功能模
+传统单 CPU 架构，采用 CPU+GPU 异构平台对电磁              块或核心模块）对 DFIG 仿真加速的相关研究，以
+暂态仿真加速。文献[16]研发的 CloudPSS 电磁仿真             下简称为 DFIG-IP。
+平台，对 500 台直驱风机 1 s 物理过程仿真，采用                  针对以上问题，本文提出虚拟电容等效法，将
+GPU 异加速时，耗时 5 s，极大的提高了仿真速度。                其用于异步机定转子解耦，
+                                                      避免异步机电压–磁链方
+文献[17]构建了一个基于 GPU 的并行仿真平台，在                程每时步矩阵求逆计算。其次，本文基于时步内数
+100 台双馈风力发电机(doubly fed wind generator，    据无关可并行原则提出 DFIG 内部各组件并行算
+DFIG)风场算例下验证了 CPU+GPU 相结合的仿真               法，并在此基础上采用 Verilog 语言设计 DFIG-IP。
+较传统 CPU 仿真拥有计算速度优势。虽然这些方法                  最后，将本文设计的 DFIG-IP 烧录至 FPGA 中，进
+提高了风场电磁暂态仿真速度，但对数据预处理以                     行与 RT-lab 互联平台的硬件实验，验证基于 FPGA
+及每个时步仿真结果的处理仍依赖 CPU，仍会付出                   的 DFIG-IP 的计算精度与速度。
+较大的时间成本，此外 GPU 售价高昂，工程上采
+                                           1 虚拟电容等效法与异步机定转子解耦
+                由此可知：1）
+用此方法开展电磁暂态仿真代价巨大。
+采用新的加速算法，如果仿真平台的性能不改善，                     1.1 虚拟电容等效法
+仿真速度仍不会有质的提升；2）建造性能更好的仿                       由戴维南定理可知，系统稳态时，阻抗相同的
+真平台花费巨大，工程上难以实现。                           元件接入同一电路，端口电压可保持不变。考虑电
+       现场可编程逻辑阵列(field programmable gate   机机械部分比电气部分时间尺度长，在电磁仿真极
+array，FPGA)内部拥有海量查找表(look-up-table，        短的离散时间内转子转速近似不变，即在离散时间
+LUT)、触发器(flip flop，FF)等资源，较 CPU 具有         内存在短暂的稳态。因此，在这个极短的离散时间
+低功耗、高灵活性及高实时性等优点，较 GPU 又                   内，采用与实际电感相同阻抗的虚拟电容接入原电
+具有价格优势。FPGA 在解决电力系统电磁暂态仿                   路，可保持励磁电压不变。
+陈厚合，杨         政，叶             华，等：基于 FPGA 的双馈风力发电机定转子解耦数字镜像超实时仿真                                                                           1821
+
+     图 1 为三支路均为电感的“T 型”电路。考虑
+节点 m 对地支路为励磁电感 Lm 时，列写基尔霍夫
+定律(KVL)并采用中点积分法在(n–1/2, n+1/2)时段
+内离散化可得式(1)。考虑短暂稳态，用虚拟电容
+Cm 替代励磁电感 Lm 并采用中点积分法在(n,n+1)时                                                              图 1 虚拟电容励磁支路解耦
+段内离散化可得式(2)。对节点 m 两侧的 ab 绕组列                                               Fig.1 Virtual capacitor magnetizing branches decoupling
+写 KVL 并采用中点积分法在(n–1/2,n+1/2)时段内离
+散化可得式(3)。                                                                的所有关系式。将其相加后，m 节点的电压恒等变
+                  Lm n 1/2 n 1/2
+                  umn 
+                  t
+                     im  im                                     (1)
+                                                                         化并相加可得
+                                                                              n 1
+                                                                                     u n 1 k              n 1
+                                                                                                                   u nk   n 1
+                                                                                                                                  u n k
+           du
+         Cm m  im  umn 1 
+                              t n 1/2
+                                 im  umn
+                                                                               mK k  Kumn  Ka  Ka k  K b  Kb k                        (6)
+                                                                   (2)        k 0                          k 0           k 0
+            dt                Cm
+                                                                         式中 K=2–Ka–Kb，Ka=Δt2/(CmLa)，Kb=Δt2/(CmLb)。由
+    di
+    La a  ua  um  ian 1/2 
+                                 t u  u         n
+                                                   a
+                                               ian 1/2
+                                                           n
+                                                           m            式(6)可知，需要满足|K|>1 才可使方程有界，由此
+    dt                              La                                  可得解耦的稳定条件 Δt 为
+                                                        (3)
+    dib                n +1/2
+                                 t ubn  umn    n 1/2                                        0  t 
+                                                                                                             La Lb Cm
+    Lb    ub  um  ib                      ib                                                                                          (7)
+    dt                              Lb                                                                      La  Lb
+式中：虚拟电容 Cm 采用稳态等效阻抗计算式求得，                                                1.2 双馈风力发电机定转子解耦
+即 Cm=1/((ω*)2Lm)；ω*为励磁支路转速；Δt 为离散                                            由附录 B 式(B1)可知异步机电压磁链方程分解
+步长；im=ia+ib。                                                             到 dq 轴后存在交互，由于磁链时刻变化，因此每时
+    由于在进行电磁暂态仿真时，n 时刻的端口电                                                步内均需要进行矩阵求逆运算。为避免 FPGA 进行
+压及(n–1/2)时刻的绕组电流已知，可利用式(3)求得                                             求逆运算，本文对附录 B 式(B1)重新列写 KVL 方
+(n+1/2) 时 刻 流 过 两 侧 绕 组 的 电 流 ， 接 着 可 求 得                                程并采用转子参考坐标系可得式(8)、式(9)。
+(n+1/2)时刻励磁绕组电流。因此，利用式(1)可求得                                                                      dids
+本时刻的励磁电压；将式(1)与式(3)代入式(2)可求得                                                   uds  Rs ids  Lls dt  udm  r qs
+                                                                               
+(n+1)时刻 m 节点的电压。由于求解 m 节点(n+1)时                                                                   didr
+                                                                               udr  Rr idr  Llr       udm          (8)
+刻的电压均采用已知项或历史项，所以上述方法完                                                                             dt
+成了“T 型”电感电路中 a 与 b 两绕组的解耦。综                                                                didm
+                                                                               udm  Lm
+上所述，本文所提虚拟电容等效法可用于三支路均                                                                      dt
+为电感的“T 型”电路解耦。                                                                                    diqs
+                                                                               uqs  Rs iqs  Lls       uqm  r ds
+     下面对本文所提算法的离散步长 Δt 进行稳定                                                                        dt
+                                                                                                  diqr
+性分析。联立式(2)与式(3)可得，(n+1)时刻与 n 时                                                 uqr  Rr iqr  Llr       uqm          (9)
+                                                                                                   dt
+刻 m 节点的电压如式(4)所示。                                                                          diqm
+                                                                               uqm  Lm
+           
+           umn 1  t 
+                                   
+                          t uan  umn        
+                                            ian -1/2 
+                                                                                            dt
+                    Cm        La                                       式中：uds、uqs 为定子 dq 轴上的电压；udr、uqr 为转
+                        
+                                                                         子 dq 轴上的电压；ids、iqs 为定子 dq 轴上的电流；
+           
+                         
+                     t ubn  umn             
+                                    ibn 1/ 2   umn             (4)   idr、iqr 为转子 dq 轴上的电流；Rs、Lls 为定子电阻与
+                          Lb                  
+                                                                       定子漏感，Lm 为励磁电感；Rr、Llr 为转子电阻与转
+             n t n 1/2 n 1/2
+            u m 
+                  Cm
+                        
+                        ia     ib         
+                                          umn 1                        子漏感；λds、λqs 为定子 dq 轴上的磁链；ωr 为转子
+                                                                         转速；udm、uqm 为折算到 dq 轴上的励磁支路电压；
+     联立式(4)可得关于节点 m 电压的递推格式为                                             idm、iqm 为折算到 dq 轴上的励磁支路电流，其值分
+          t 2              t 2
+umn 1 
+         Cm La
+              uan  umn Cm Lb
+                                                      
+                                 ubn  umn  2umn  umn 1 (5)           别为 idm=ids+idr，iqm=iqs+iqr。
+                                                                             由式(8)与式(9)可知，定子绕组、转子绕组及励
+                        0          n
+     由式(5)可知 u 至 u 的励磁节点前(n+1)时刻
+                        m          m                                     磁绕组各电气量存在交互。因此采用 1.1 节所提虚
+1822                                                                            高电压技术                                                      2023, 49(5)
+
+拟电容等效法将其折算到 dq 轴的定转子电气量解                                                                  采用梯形求逆法与虚拟电容等效法所求得 dq 轴电
+耦。对式(8)、式(9)进行处理得：                                                                        流结果见图 2，基准电流为定子额定电流 2130 A。
+                                       n 1/2
+                                         qs     n 1/2
+                                                  qs       R L                          可以看出，虚拟电容等效法求解精度与梯形求逆法
+            udns  udnm  r                              s  ls  idsn 1/2
+ i n 1/2                                  2              2 t              
+                                                                                          的仿真结果几乎完全重合。因此虚拟电容等效法可
+  ds                                      R
+                                          s       L ls                                             简化 DFIG-IP 采用 FPGA
+                                                                                          完成异步机的定转子解耦，
+                                         2  t 
+                                                                                       计算时的求解流程。
+                                              R L 
+            udns  udnm  r qns1/2   s  ls  idns1/2
+                                               2 t                                    2 基于 FPGA 的可复用双馈风力发电机数
+                                   R       Lls                                         字镜像模拟器架构
+                                     s
+                                   2  t 
+                                                
+                                                                                             本文设计的基于 FPGA 的可复用双馈风力发电
+ 
+ idnr1/2 
+                         n     n
+                                 
+             2t udr  udm   Rr t  2 Llr  idnr1/2
+                                                                                          机数字镜像模拟器架构包含 FPGA-DFIG 模拟部分
+                                Rr t  2 Llr
+                                                                                         与 RT-lab/电网、上位机数据交互部分。因此，模拟
+
+           t
+                
+ udnm  Lm idm  idm
+                    n 1/2
+
+                                 
+                            n 1/2
+
+                                                                                          器架构包含 DFIG 计算模块及本文所建 IP 与外界通
+            n 1/2                   n 1/2     n 1/2                                   信模块，以下为 2 个模块架构的详细阐述。
+ udnm1  idm t  udnm  ids  idr t  udnm
+           Cm                             Cm                                            2.1 IP 计算架构
+                                                                               (10)           图 3 所示为双馈风力发电机的物理架构，主要
+                                       n 1/2
+                                                n 1/ 2
+                                                                 R L                    由 9 个模块组成，分别为浆距角控制、二质量块传
+             uqns  uqnm  r           ds       ds
+                                                                 s  ls  iqns1/ 2
+iqns1/ 2                                     2                 2 t                 动链方程、转子运动方程、异步发电机电压方程、
+                                             R
+                                             s        L ls                              转子侧换流器(rotor-side converter，RSC)控制、网侧
+                                            2  t 
+                                                                                       换流器(grid-side converter，GSC)控制、DC 链路、
+                                                 R L 
+             uqns  uqnm  r dns1/ 2   s  ls  iqns1/ 2                           RL 滤波电路以及锁相环(phase locked loop，PLL)
+                                                  2 t 
+                                                                                          控制，图中各参数的物理意义如 3.1 节所述。本文
+                                      R
+                                      s        Lls 
+                                     2  t 
+                                                  
+
+iqr 
+                           n     n
+                                     
+ n 1/ 2 2t uqr  uqm   Rr t  2 Llr  iqnr1/ 2
+                                  Rr t  2 Llr
+           L
+                
+uqnm  m iqm  iqm
+           t
+                      n 1/2
+
+                                 
+                              n 1/2
+
+
+
+
+           i n 1/ 2                  i n 1/ 2  iqnr1/ 2
+uqnm1  qm t  udnm  qs                                   t  uqnm
+            Cm                                Cm
+                                                                               (11)           图 2 定转子解耦法与梯形求逆法电流对比结果
+                                                                                           Fig.2 Current comparison results between stator and rotor
+式中 Cm=1/(ωr2Lm)。由式(10)、式(11)可知， idnr1/ 2 与
+                                                                                              decoupling method and trapezoidal inversion method
+iqnr1/ 2 的表达式仅存在常数项与历史项，因此，电机
+                                                                     n 1/ 2
+转子完成了对定子的解耦；而对于 idns1/ 2 与 iqs                                                由于
+磁链交互的原因需要本时刻的转子 dq 轴电流才可
+以求解，为节省时间可采用后向欧拉法对其近似，
+这样就完成了电机定子对转子的完全解耦。由以上
+分析可知，等式右侧均为已知量，因此采用虚拟电
+容等效法可将异步机定转子解耦，进而避免 FPGA
+矩阵求逆运算。此外，由于式(10)、式(11)的定转子
+电流求解过程数据无交互，因此定转子电流可并行
+求出，进一步节省了异步机仿真计算时间。                                                                                         图 3 DFIG 发电单元
+                                                                                                    F

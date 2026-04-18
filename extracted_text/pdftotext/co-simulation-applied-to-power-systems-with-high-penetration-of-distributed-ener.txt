@@ -1,0 +1,190 @@
+                                                              Electric Power Systems Research 212 (2022) 108413
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Co-simulation applied to power systems with high penetration of distributed
+energy resources
+Igor Borges de Oliveira Chagas ∗, Marcelo Aroca Tomim
+Department of Electrical Energy, Federal University of Juiz de Fora (UFJF), MG, Brazil
+
+
+
+ARTICLE               INFO                                ABSTRACT
+
+Keywords:                                                 Although co-simulation in power systems has not been widely explored yet, it has been shown to be
+Co-simulation                                             a powerful tool for dynamic studies, especially with the growth of the insertion of distributed energy
+Power systems simulation                                  resources in electrical networks. In this work, a form of co-simulation based on fictitious transmission lines
+Functional mock-up interface
+                                                          was proposed. Results show that the co-simulation scenarios coherently reproduce results of a complete
+                                                          system using two co-simulation packages. Computational timings are also reduced. Co-simulation interfacing
+                                                          OpenModelica-generated code and OpenDSS is also discussed.
+
+
+
+1. Introduction                                                                           compliance with the FMI interface are encapsulated within a Functional
+                                                                                          Mock-up Unit (FMU) [1,2].
+    Over the past two decades, power systems have been undergoing                             In [1], the potential of using co-simulation was demonstrated in
+major changes in their topology, due to new generation and consump-                       the simulation of a wind farm collector system with 50 generators of
+tion needs, that required the connection of new sources of generation                     10 [MW] each. The simulations became possible within the context of
+and loads. Generation connected at distribution systems level and based                   co-simulation, given the natural partition of the system into smaller
+on mostly renewable sources usually known as Distributed Energy                           and simpler parts, which simultaneously favors the precision of the
+Resources (DERs), started being harvested at such a rapid rate that
+                                                                                          calculations as well as the reduction of computational time for the
+concerns have arisen with respect to their impact on the operation of
+                                                                                          simulations. Furthermore, the subsystems were processed as FMUs
+modern electrical systems.
+                                                                                          interconnected by means of fictitious transmission lines. This strategy is
+    In this context, there is a need for more advanced power systems
+                                                                                          independent of electrical frequency and is based on traveling wave the-
+analysis tools. One of the reasons is that DERs interconnection with a
+power system can be quite heterogeneous, requiring specific modeling                      ory. Communication between subsystems occurs through the exchange
+and computing techniques. The second is that simulations of such                          of only historical terms computed at the interconnection nodes.
+systems can be quite complex and very time-consuming, not to mention                          In [3] a co-simulation tool is presented, which combines a simu-
+their intermittent characteristic, which may require even stochastic                      lation tool for transmission systems through single-phase equivalents,
+approaches for their proper evaluation. Thus, co-simulation appears as                    with electromagnetic transients (EMT) study programs, for the eval-
+an alternative to evaluate power systems highly penetrated by DERs.                       uation of the dynamic behavior of transmission systems with high
+    Thus, the co-simulation strategy allows complex and heterogeneous                     penetration of electronic-based devices. A similar technique can be
+systems to be divided into smaller subsystems, whose modeling and                         found in [4] with two solar photo-voltaic generation plants mod-
+solution can be implemented on the most appropriate platforms.                            eled according to EMT paradigm in two different instances of Matlab.
+    As one advantage, co-simulation allows integrating subsystems that                    These models communicate with the distribution system modeled in
+can even be modeled in different domains (e.g., time and frequency                        OpenDSS [5]. Results showed reduced computational time for co-
+domain). Another advantage would be the reduced computational time
+                                                                                          simulation when compared to simulation in a single EMT simulation
+when compared to the simulation of a given system using a single tool.
+                                                                                          environment.
+    Based on the aforementioned advantages, co-simulation techniques
+                                                                                              Co-simulation between transmission and distribution systems has
+allow the integration of models through the standardized FMI in-
+terface, Functional Mock-up Interface. This interface ensures coupling                    also been shown to be a promising technique. In this case, the systems
+compatibility among heterogeneous systems. Subsystems generated in                        can be simulated on different computational platforms, with their more
+
+
+
+  ∗ Corresponding author.
+     E-mail addresses: igor.borges@engenharia.ufjf.br (I.B.d.O. Chagas), marcelo.tomim@ufjf.br (M.A. Tomim).
+
+https://doi.org/10.1016/j.epsr.2022.108413
+Received 2 October 2021; Received in revised form 16 April 2022; Accepted 2 July 2022
+Available online 22 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+I.B.d.O. Chagas and M.A. Tomim                                                                                            Electric Power Systems Research 212 (2022) 108413
+
+
+efficient solution techniques, which now exchange data with each other                • Co-Simulation (CS): a standard interface for coupling a system
+in a cyclical way.                                                                      model to simulation tools in a co-simulation environment is pro-
+    In [6], a form of co-simulation for dynamic studies is presented,                   vided. Data exchange between subsystems is restricted to dis-
+where a transmission system, with dynamically modeled generators,                       crete communication points. In the time between communication
+is connected to distribution systems penetrated by inverter-based dis-                  points, subsystems are solved independently of each other by
+tributed generations, also dynamically represented. The study showed                    their individual solvers. Co-simulation subsystems are internally
+that stability can be better assessed by co-simulation, rather than eval-               represented by state variables 𝐱(𝑡) that communicate with each
+uating each system separately, showing the need for a co-simulation                     other through inputs 𝐮(𝑡) and outputs 𝐲(𝑡).
+platform for stability analysis. Other co-simulation studies of this nature
+                                                                                      Through the FMI interface, a subsystem model can be generated
+can be found in [7,8].
+                                                                                  for both Model Exchange and Co-Simulation. This model is then called
+    Differently from other previously reported studies, this work aims
+                                                                                  FMU, which stands for Functional Mock-up Unit.
+at shedding some light on investigations carried out on the applica-
+                                                                                      A FMU is a zipped file with several other files:
+tion of co-simulation in power systems dynamic assessment in purely
+complex domains. The usage of fictitious transmission lines in order                  • an XML file containing the definition of all exposed variables and
+to interconnect transmission and distribution systems, both modeled in                  other structural information.
+complex frequency domain, and tackled by distinct numerical solvers                   • a set of C functions with all necessary equations for solving a
+is evaluated. A methodology for selecting parameters for the fictitious                 system or accessing co-simulation tools. This set can be provided
+transmission line based on discrete-system numerical stability is also                  in binary form, as a shared library, or in plain source code.
+covered.                                                                              • potential additional features for coupling a specific system to
+    In a first test, the co-simulation was applied for the dynamic solution             other simulation tools.
+of an 11-bus transmission system coupled to a 38-bus distribution
+                                                                                      A main difference between the co-simulation and model-exchange
+system. Both systems were modeled by means of their positive se-
+                                                                                  modes is that, in CS mode, the solver is integrated into the FMU. The
+quence in Modelica language and converted into FMUs for latter co-
+                                                                                  host environment is responsible for initializing the FMU, defining its
+simulation. Results for the co-simulation carried out with subsystems
+                                                                                  inputs, simulation step, as well as reading the outputs. In the case of
+interconnections modeled as ideal transmission lines are presented.
+                                                                                  ME FMU, the solver is native to the host simulation environment.
+    In a second study aspects related to the integration of different
+                                                                                      The core of a FMU is distributed as machine-compiled dynamic
+simulation tools will be discussed. For this discussion, the co-simulation
+                                                                                  access libraries, which allow them to be shared while intellectual
+was applied to the same positive-sequence-based 11-bus system which
+                                                                                  property remains protected [1,9].
+is now connected to an instance of the IEEE 34-bus distribution sys-
+                                                                                      The choice of the FMU solution method also deserves attention.
+tem modeled in OpenDSS. This distribution system was modeled in
+                                                                                  There is a need to observe which methods are available in a FMU ex-
+the phase domain, considering only static power plants and loads, as
+                                                                                  porting tool and whether they are suitable for the solution of the system
+usually considered in load flow studies.
+                                                                                  under study. In the present development, the FMUs were generated by
+    In both study cases, the co-simulation master algorithm was imple-
+                                                                                  OpenModelica simulation platform with the SUNDIALS’ CVODE solver,
+mented in Python, with the aid of the modules PyFMI [9] and OMSim-
+                                                                                  which integrates BDF, based on Backward Differentiation Formulas,
+ulator [10], for comparison purposes. PyFMI module is integrated with
+                                                                                  and Adams–Moulton methods [9,11].
+JModelica, whereas OMSimulator is part of the OpenModelica software
+                                                                                      In order to establish a proper communication amongst FMUs, a
+framework.
+                                                                                  master algorithm must be implemented, as there is no direct com-
+    This article is organized as follows: a Section 2 presents some               munication between subsystems. This algorithm should be responsible
+fundamentals on co-simulation. In Section 3, the strategy for managing            for defining interconnections among subsystems, initializing variables,
+the co-simulation that relies on fictitious ideal transmission lines as           assigning parameters and synchronizing data flow among the various
+subsystems interconnections will be presented. In Section 4 the steps             subsystems that compose a simulation. The FMI standard defines the
+followed to perform a co-simulation will be presented. In Section 5,              interface routines that enable the interaction between the master algo-
+the steps that enabled a co-simulation between OpenModelica and                   rithm and the FMU units, although the master algorithm is not part of
+OpenDSS will be presented. In Section 6, the test systems for both                the FMI standard [1,2].
+transmission and distribution levels will be also presented. Finally, the
+results obtained from tests will be discussed in Section 7. Last, but not         3. Phasor-domain co-simulation strategy
+least, conclusions drawn from the presented investigation will set forth
+in Section 8.
+                                                                                      In the present work, the interconnection among electrical subsys-
+                                                                                  tems is realized by means of a Bergeron model for a lossless transmis-
+2. Co-simulation                                                                  sion line. This model is widely used in many electromagnetic transients
+                                                                                  simulators in the time domain.
+    According to [2], co-simulation is a general approach for simulating              Considering the ideal line with terminals 𝑘 and 𝑚, the current
+coupled systems and physical phenomena in engineering with a focus                injections, 𝑖𝑘 (𝑡) and 𝑖𝑚 (𝑡), can be described as the set of equations given
+on time-dependent analysis .                                                      in (1), where 𝑌𝑐 and 𝜏 correspond to the characteristic admittance of the
+    In order to improve the means of exchanging simulation models be-             line and its propagation time, respectively. This set of equations forms
+tween suppliers and manufacturers and to avoid coupling incompatibil-             the well-known Bergeron model for a single-phase lossless transmission
+ities, the FMI (Functional Mock-up Interface) standard was developed.             line and that can also arranged in an equivalent circuit as illustrated in
+The FMI 2.0 specification defines criteria for two types of interfaces:           Fig. 1. In this model, the terms ℎ𝑘 (𝑡 − 𝜏) and ℎ𝑚 (𝑡 − 𝜏) depend solely on
+co-simulation and model exchange [2].                                             past values and, thus, are known as historical currents.
+
+    • Model Exchange (ME): a modeling environment generates a rep-                ⎧ 𝑖𝑘 (𝑡) = 𝑌𝑐 𝑣𝑘 (𝑡) − ℎ𝑘 (𝑡)
+                                                                                  ⎪
+      resentation in C code, for the dynamic model, so that it can                ⎪ 𝑖𝑚 (𝑡) = 𝑌𝑐 𝑣𝑚 (𝑡) − ℎ𝑚 (𝑡)
+      used by other simulation environments. In this mode, a solver               ⎨                                                                                    (1)
+                                                                                  ⎪ ℎ𝑘 (𝑡) = 𝑌𝑐 𝑣𝑚 (𝑡 − 𝜏) + 𝑖𝑚 (𝑡 − 𝜏)
+      implemented in the host simulation environment must be able to              ⎪
+      solve the imported system.                                                  ⎩ℎ𝑚 (𝑡) = 𝑌𝑐 𝑣𝑘 (𝑡 − 𝜏) + 𝑖𝑘 (𝑡 − 𝜏)
+
+                                                                              2
+I.B.d.O. Chagas and M.A. Tomim                                                                                              Electric Power Systems Research 212 (2022) 108413
+
+                                                                                              [        ]             1               1
+                                                                                                  𝐸𝑘           ⎡               −          ⎤
+                                                                                         𝐮=                 𝐁= ⎢ 𝑍 𝑘 +𝑍 𝑐        𝑍 𝑘 +𝑍 𝑐
+                                                                                                                                          ⎥                            (4b)
+                                                                                                𝐸𝑚             ⎢− 1                 1     ⎥
+                                                                                                               ⎣ 𝑍 𝑚 +𝑍 𝑐       𝑍 𝑚 +𝑍 𝑐 ⎦
+
+                                                                                         The stability of a discrete system is determined by the magnitude of the
+                                                                                         eigenvalues 𝜆𝑖 of the transition matrix 𝐀. If all eigenvalues 𝜆𝑖 satisfy
+                                                                                         the condition |𝜆𝑖 | < 1, the system is asymptotically stable. On the other
+                                                                                                                  | |
+                                                                                         hand, it is unstable if |𝜆𝑖 | > 1. If |𝜆𝑖 | = 1, the system can be stable or
+                                                                                                                  | |
+                  Fig. 1. Equivalent circuit of an ideal transmission line.
+                                                                                         unstable, depending on the structure of 𝐀.
+                                                                                             Thus, returning to the system defined in (3), the eigenvalues of
+                                                                                         𝐀, given in (5), correspond to the geometric mean of the ref

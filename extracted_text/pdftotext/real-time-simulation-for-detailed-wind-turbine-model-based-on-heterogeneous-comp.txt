@@ -1,0 +1,185 @@
+                                                           Electrical Power and Energy Systems 155 (2024) 109486
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                          International Journal of Electrical Power and Energy Systems
+                                                         journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Real-time simulation for detailed wind turbine model based on
+heterogeneous computing
+Bing Li, Haoran Zhao ∗, Yibao Jiang, Linghan Meng
+School of Electrical Engineering, Shandong University, Jinan 250061, China
+
+
+
+ARTICLE                INFO                               ABSTRACT
+
+Keywords:                                                 The deployment of sophisticated and costly large-capacity wind turbines continues to rise. It is urgent for
+Wind turbine                                              precise real-time simulation to accurately identify and address potential problems. However, the existing
+Real-time simulation                                      solutions, which joint various simulation platforms, suffer from the disadvantages of complex architecture
+CPU-FPGA
+                                                          and high cost. This paper proposes a CPU-FPGA heterogeneous computing-based real-time simulation platform
+Coupling dynamics
+                                                          for detailed wind turbine model (DWTM). DWTM encompasses the turbine model (covering the inflow wind,
+                                                          aerodynamic, and mechanical dynamic), the electrical model (covering the electromagnetic transient), and
+                                                          the control system. The real-time operating system is introduced to guarantee the real-time performance
+                                                          of the turbine model and control system in the CPU. FPGA is used to perform real-time electrical model
+                                                          calculation. Furthermore, a general FPGA solver for electromagnetic transients is designed. It can accommodate
+                                                          various circuit topologies without the need for recompiling the FPGA code. Finally, the real-time simulation
+                                                          performance and accuracy are verified. The coupled dynamics between the turbine and electrical models are
+                                                          investigated under multiple power grid and wind conditions.
+
+
+
+1. Introduction                                                                               The real-time simulation platform of the DWTM is the basis for
+                                                                                          performing Hardware-In-the-Loop (HIL) simulation, which can improve
+    With the increasing global energy demand and worsening envi-                          the simulation reliability greatly [5]. In addition, it is an essential
+ronmental issues, the installed capacity of wind power continues to                       step for a comprehensive controller test. Consequently, it is urgent to
+grow worldwide [1]. Wind power has promising development prospects                        develop real-time simulation platform for DWTM. However, the DWTM
+and significant strategic implications. The large-capacity wind turbine                   has complex characteristics: various types of component models, high-
+(e.g., H260-18MW from China) is extensively adopted in newly de-                          order system dynamics, and multi-timescale coupling dynamics [6].
+veloped wind farms. It is more expensive and complex. Therefore,                          The real-time simulation of DWTM faces significant challenges due to
+more accurate simulation must be performed to identify and analyze                        its complex characteristics.
+potential issues.                                                                             The existing solutions still have some prominent shortcomings in the
+    Existing simplified wind turbine models usually ignore some cou-                      real-time simulation of DWTM. Real-time simulators such as RTDS and
+pled dynamics (e.g., electrical faults and tower vibration) to improve                    RT-Lab offer real-time simulation capabilities for electromagnetic tran-
+simulation efficiency [2,3]. It no longer satisfies the accurate analysis
+                                                                                          sients [7]. However, lacking support for inflow wind, aerodynamic, and
+requirements of the modern large-capacity wind turbine. Therefore,
+                                                                                          mechanical dynamic models hinders its direct application in DWTM
+it is necessary to adopt the detailed wind turbine model (DWTM).
+                                                                                          real-time simulation scenario. Ref. [8] proposed a platform joined
+The DWTM encompasses the millisecond-level turbine model (including
+                                                                                          Bladed and RTDS to perform DWTM real-time simulation. Bladed is
+the inflow wind model, aerodynamic model, and mechanical dynamic
+                                                                                          used to perform real-time simulation of the turbine model. Meanwhile,
+model) [4] and the microsecond-level electrical model (i.e., electro-
+                                                                                          the real-time simulation of the electrical model is implemented by
+magnetic transient model). It covers various system elements, including
+                                                                                          RTDS. The two platforms interact data through PLC (Programming
+blades, hub, nacelle, tower, drive train, generator, converter, transform-
+ers, etc. The DWTM has the ability to shed light on the mechanical-                       Logic Controller). The hardware structure of this solution is complex,
+electromagnetic coupling dynamics. This feature plays a crucial role                      resulting in cumbersome to use. Meanwhile, the licensing fees of Bladed
+in accurately assessing performance and verifying controllers for the                     and RTDS are expensive, which makes it unfeasible for some labora-
+large-capacity wind turbine.                                                              tories to implement this solution. Building upon this work, Ref. [9]
+
+
+  ∗ Corresponding author.
+     E-mail addresses: bingli@mail.sdu.edu.cn (B. Li), hzhao@sdu.edu.cn (H. Zhao), yjiang@sdu.edu.cn (Y. Jiang), linghanmeng@mail.sdu.edu.cn (L. Meng).
+
+https://doi.org/10.1016/j.ijepes.2023.109486
+Received 14 May 2023; Received in revised form 12 July 2023; Accepted 4 September 2023
+Available online 7 November 2023
+0142-0615/© 2023 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+B. Li et al.                                                                               International Journal of Electrical Power and Energy Systems 155 (2024) 109486
+
+
+replaces Bladed with OpenFAST [10]. The simulation platform joined                    This paper proposes a real-time simulation platform utilizing CPU-
+OpenFAST and RTDS is implemented. This solution further avoids the                FPGA heterogeneous computing, as illustrated in the lower part of
+licensing fee of Bladed software. But it does not bypass the obstacles            Fig. 1. With the support of the real-time operating system (RTOS),
+brought about by the high cost of RTDS. It is promising to adopt                  the CPU side can realize real-time computing [19]. However, exist-
+FPGA-based scheme to replace RTDS for microsecond-level electrical                ing open-source RTOS fall short in terms of clock jitter and latency
+model real-time simulation, with the advantages of low cost, strong               benchmarks [20], limiting their support to the real-time application
+parallel processing, pipeline execution, and hardware-level real-time             whose computation period is lower than 100 ms. Therefore, the real-
+performance [11].                                                                 time calculation of the turbine model and control system is feasible on
+    Although FPGA has many important advantages in the application                the CPU. Conversely, the real-time calculation of the electrical model
+of electromagnetic transient real-time simulation [12]. But it also has           would not be satisfied on the CPU because of the microsecond-level
+one fatal flaw. The compilation speed of the code during its devel-               period.
+opment is very slow. Assuming the FPGA code needs to be modified
+                                                                                      In this paper, the Linux-RT patch is adopted to establish a real-time
+when the circuit topology changes. This would introduce enormous
+                                                                                  environment on the CPU. The turbine model solver, main controller
+compilation time consumption that is practically unacceptable. Nu-
+                                                                                  solver, and VSC controller solver are implemented, respectively. The
+merous studies have proposed FPGA-based electromagnetic transient
+                                                                                  turbine model solver is developed based on OpenFAST. The implemen-
+real-time simulation schemes [13,14]. However, the previous works
+                                                                                  tation can refer to our previous work in Ref. [9]. The main and VSC
+lack solutions for designing the general FPGA solver, which can avoid
+modifying the code when circuit topology changes.                                 controller solvers are based on the code generated by Matlab/Simulink.
+    To overcome the challenges associated with real-time simulation               Specifically, the embedded code generation functionality of Simulink is
+of DWTM, a novel CPU-FPGA heterogeneous computing solution is                     adapted to generate the corresponding code of the control system. The
+proposed in this paper. The major contributions of this paper are                 generated code is then integrated into our overall simulation frame-
+summarized as follows: (1) A novel CPU-FPGA heterogeneous solution                work. Furthermore, the simulation control module is implemented.
+is designed and implemented. This solution circumvents the issues of              It emphasizes precise control of the computational flow of the three
+high cost and complex platform structures encountered in the existing             solvers and the communication module with FPGA.
+joint simulation solutions. (2) A general FPGA solver for real-time                   The real-time electrical model simulation is implemented on FPGA.
+electromagnetic transient simulation is designed and implemented. It              The source solvers for the asynchronous machine and the ideal voltage
+overcomes the critical drawback of having to recompile the FPGA code              source are developed. The development of the source solver refers to
+when the circuit topology changes in existing research. In addition, the          the method proposed in Ref. [21]. The network solver for power grid is
+coupled phenomena between power grid faults and mechanical vibra-                 developed based on the proposed algorithm in Section 3. It consists of
+tion are presented. The torsional vibration and non-torsional vibration           matrix multiplication and vector addition units. The behavior of each
+of the turbine are investigated under different power grid conditions             solver is controlled by the finite state machine (FSM). Besides the two
+and wind conditions when the fault occurs. These vibration test results           solvers mentioned above, the PWM (Pulse Width Modulation) generator
+are valuable for the design of the load reduction controller.                     is also implemented on FPGA. It receives the duty cycle data from the
+    The remainder of this paper is organized as follows: Section 2                control system to generate modulation signals for GSC and RSC convert-
+presents the overall design of the heterogeneous computing-based plat-            ers. Additionally, the simulation control unit is developed to perform
+form. Section 3 proposes the EMT (ElectroMagnetic Transient) algo-                the management of computational flow, timing, and communication
+rithm for the general FPGA solver. Section 4 presents the implemen-
+                                                                                  unit.
+tation of the general FPGA solver. Case studies of highly representative
+                                                                                      The HSS speed 𝜔r , electromagnetic torque 𝑇e , and control signals are
+scenarios are carried out and analyzed in Section 5, followed by the
+                                                                                  exchanged after each simulation time step. The 8 Gbps PCIe (Peripheral
+conclusion of this work in Section 6.
+                                                                                  Component Interconnect Express) 3.0 high-speed connector is adopted
+2. Overall design of real-time simulation platform                                to achieve the data exchange between CPU and FPGA. The FPGA
+                                                                                  employs PCIe IP (Intellectual Property) core provided by Xilinx, while
+    The DWTM is composed of turbine model and electrical model.                   the CPU necessitates corresponding PCIe drivers. Furthermore, the
+The turbine model takes into account the wind inflow, aerodynamic                 communication module also ensures time synchronization between the
+driver train dynamics, and the mechanical dynamics of the blade,                  two computing platforms to maintain a consistent simulation timeline.
+nacelle, tower, and platform. The electrical model adopts a typical type              Based on the corresponding relations between the frequency and the
+3 (Doubly-Fed Induction Generator, DFIG) wind turbine, considering                usual simulation time step, the multi-rate simulation method is adopted
+components such as the generator, converter, transformer, and power               in this paper. To clearly present the multi-rate simulation process, the
+grid to simulate the transient behavior of the electrical circuit. Besides,       mechanism of the proposed real-time simulation platform is shown in
+the control system including the main controller and VSC (Voltage                 Fig. 2. Three simulation time steps are adopted for the turbine model,
+Source Converter) converter is also considered. The main controller is            electrical model, and controllers. The time step 12.5 ms is set for the
+used to perform active, reactive power control and pitch, yaw control.            turbine model and main controller. The time step 10 μs is set for the
+The VSC controller controls the grid side converter (GSC) and rotor side          electrical model and PWM generator. The time step 200 μs is set for
+converter (RSC) [15]. The high-speed shaft (HSS) speed 𝜔r and elec-               the VSC controller. The first-order hold sampling method is adopted
+tromagnetic torque 𝑇e interact between the turbine and the electrical             between the fast and slow time step systems. In summary, the five
+models. The control system interacts control signal with the turbine              subsystems move forward synchronously and sample the coupling data
+and electrical models. The diagrams of DWTM and control system are                according to their simulation time steps.
+shown in the upper part of Fig. 1.
+    The turbine model primarily focuses on the dynamics whose typical
+frequency range of 0–4 Hz [16]. The 5–20 ms simulation time step                  3. EMT algorithm toward general FPGA solver
+is sufficient for the typical frequency. However, the electromagnetic
+transient, due to the high-frequency dynamic up to 10 kHz of the                     The numerical integration method is a key consideration in elec-
+converter, necessitates the simulation time step of 10–20 μs [17].                tromagnetic transient simulation based on the EMTP (Electromagnetic
+Additionally, in the control system, the main control needs millisecond-          Transient Program) method. Commonly used integration methods in-
+level update period, while the VSC control typically operates with a              clude the implicit trapezoidal and the backward Euler method [11].
+calculation period of 200 μs [18].                                                A weighted numerical integration method can be adopted to unify
+
+                                                                              2
+B. Li et al.                                                                                             International Journal of Electrical Power and Energy Systems 155 (2024) 109486
+
+
+
+
+                                                        Fig. 1. Overall design of real-time DWTM simulation platform.
+
+
+
+
+                                                                                                                    Fig. 3. Equivalent circuit of the capacitance.
+
+
+                                                                                                 Table 1
+                                                                                                 Discrete format for branches.
+                                                                                                  Type                    𝐺eq                   𝜎                        𝜂
+                                                                                                                                                                          1
+                                                                                                  R                       0                     0                         𝑅
+                                                                                                                          𝜃𝛥𝑡                                             𝛥𝑡
+                                                                                                  L                        𝐿
+                                                                                                                                                1                         𝐿
+    Fig. 2. Multi-rate simulation mechanism of the real-time simulation platform.                                          𝐶                    𝜃−1                       (2𝜃−1)𝐶
+                                                                                                  C                       𝜃𝛥𝑡                    𝜃                          𝜃 2 𝛥𝑡
+                                                                                                                             𝜃𝛥𝑡                𝐿+(1−𝜃)𝛥𝑡𝑅                    𝛥𝑡𝐿
+                                                                                                  RL                      𝐿+𝜃𝛥𝑡𝑅                  𝐿+𝜃𝛥𝑡𝑅                  (𝐿+𝛥𝑡𝜃𝑅)2
+           

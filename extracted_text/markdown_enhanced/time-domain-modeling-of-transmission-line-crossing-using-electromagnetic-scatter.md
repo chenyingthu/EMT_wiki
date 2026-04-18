@@ -1,0 +1,28 @@
+## Time-Domain Modeling of Transmission Line Crossing Using Electromagnetic Scattering Theory
+**Manuja Gunawardana**, Student Member, IEEE, and **Behzad Kordi**, Senior Member, IEEE
+
+## Abstract
+Classical multiconductor transmission line (MTL) theory, which is employed in electromagnetic transient (EMT) simulators, is built on the assumptions that the wire structure is infinitely long and has a uniform cross-section. Therefore, non-uniformities which occur in physical power systems, such as transmission line crossings, are not represented in classical MTL models. A new transmission line model has been developed to calculate space varying per unit length (PUL) parameter matrices near a conductor crossing using electromagnetic scattering theory. The proposed scattered field transmission line (SFTL) model has been implemented for lossless, frequency-independent conductors, that cross each other at a variable crossing angle. A single dimensional finite difference time domain (1D-FDTD) algorithm has been used to obtain the time-domain solution at each simulation time-step. Obtained results have been compared with those from a three dimensional (3D) full-wave electromagnetic solver.
+
+## Index Terms
+Transmission line theory, scattering theory, non-uniform lines.
+
+*Manuscript received March 27, 2019; revised June 11, 2019; accepted July 27, 2019. Date of publication August 9, 2019; date of current version March 24, 2020. This work was supported in part by the Natural Sciences and Engineering Research Council (NSERC) of Canada, in part by Manitoba Graduate Scholarship (MGS), and in part by the University of Manitoba Graduate Fellowship (UMGF). Paper no. TPWRD-00335-2019. (Corresponding author: Behzad Kordi.)*
+
+*The authors are with the Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada (e-mail: gunawams@myumanitoba.ca; behzad.kordi@umanitoba.ca).*
+
+*Color versions of one or more of the figures in this article are available online at http://ieeexplore.ieee.org.*
+*Digital Object Identifier 10.1109/TPWRD.2019.2934099*
+
+## I. INTRODUCTION
+Transmission lines play a vital role in a power system by transmitting electrical energy over large distances. In addition to the power frequency voltage, transient over-voltages produced by various causes including switching operations, lightning strikes, and short circuit faults, also travel along transmission lines [1]. These transients can cause damage to power system components and result in massive repair and replacement costs. Transients travelling in power lines can also induce electromagnetic interference on other power lines and communication lines in close proximity [2], [3]. Therefore, it is essential to accurately model a transmission network in order to understand the transient behaviour of a power system.
+
+The widely used method to include transmission lines in power system electromagnetic transient (EMT) type simulation models is to use multiconductor transmission line (MTL) theory based on the solution of Telegrapher’s equations and transverse electromagnetic (TEM) mode of propagation [4]. Apart from power transmission lines, MTL models are also used to analyze a wide variety of structures ranging from transformer winding to interconnects of an electronic chip [5]–[7]. However, since the TEM mode is only valid for a system of infinitely long, uniform conductors [4], classical MTL theory cannot be used to model non-uniformities in wire structures [8].
+
+One such non-uniformity that appears commonly in power systems, but is not accurately incorporated in current EMT simulators, is the coupling between crossing transmission lines or a power line and a communication line. A schematic of the problem is shown in Fig. 1. With further expansion of transmission networks, more such crossings get added to the network. Although, the most accurate method to model these situations is to use full-wave electromagnetic techniques [9], [10], most of them are in the frequency domain and are computationally expensive. As such, they may not be very suitable for incorporation in power system simulation tools. Therefore a computationally efficient, enhanced model is required.
+
+**Fig. 1.** An illustration of electromagnetic interference from a power line crossing another power line.
+
+Kami et al. [11] have introduced a frequency-domain model for crossing conductors based on transmission line equations with external field excitation. Ametani et al. [12] have modelled two non-parallel conductors in free space by cascading multiple parallel sections with increasing gap distances. The impedance and admittance of each section have been calculated using Carson-Pollaczek’s impedance and space admittance [13], [14] formulae which assume the conductors are infinitely long.
+
+As discussed in [12], segmenting the inclined wire changes its length and affects its traveling time if not addressed properly. The connections between sections have also been found to be causing unwanted oscillations due to reflections. In [15]–[17], a space-varying impedance for lines of finite length has been calculated, which has been used in a 3D finite difference time domain (FDTD) solver [18] to study non-parallel conductors and single inclined conductors above ground. In [19], [20] high frequency, transmission-line-like equations have been developed for finite-length and bent conductors using electromagnetic scattering.

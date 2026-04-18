@@ -1,0 +1,191 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication.
+DOI: 10.17775/CSEEJPES.2024.03600
+
+
+
+
+                 A Fixed-Admittance Algorithm for the
+               FPGA-Based Microsecond-Level Nonlinear
+               Real-Time Simulation of the Hybrid DCCB
+                                         Hang Su, Jin Xu, Member, IEEE, Jianqi Zhou, Zhiping Qi,
+                                             Jianghua Yu, and Keyou Wang, Member, IEEE
+                                                                                     overvoltage, and energy dissipation in milliseconds. The
+   Abstract—The hybrid high-voltage DC circuit breaker (DCCB)                         electromagnetic transients (EMT) are characterized as follows:
+is equipment with the typical nonlinear response in fault-clearing.                      1) Nonlinear response: The metal oxide varistor (MOV) of
+As an alternative or prior step to drive and control system testing,                  the DCCB is a typical nonlinear component, with its equivalent
+it is necessary to perform real-time simulations of the DCCB,                         parameters varying after the voltages greater than the turn-on
+which improves safety compared to circuit experiments. The                            threshold. It will also experience overshoots and oscillations
+response of equipment containing nonlinear components,
+represented by the DCCB, is more complex, with time scales of
+                                                                                      during fault-clearing.
+milliseconds or even microseconds. The key to realizing nonlinear                        2) High stress of voltage and current: The low impedance of
+real-time simulation is to efficiently and accurately solve circuits                  the system leads to a rapid rise in the short-circuit current
+with nonlinear/time-varying components. In this paper, the                            (generally in about kA/ms). In addition, due to the large
+concept of "virtual component" is proposed to keep the                                absolute value of the voltage and current as well as the short
+admittance matrix constant in nonlinear simulation by                                 commutation process (generally about tens to hundreds of
+performing equivalent circuit transformations on a small number                       microseconds), the stress can be up to kA/μs or kV/μs.
+of nonlinear components in the network, thus effectively                                 To accurately describe and reappear the EMT of the DCCB,
+improving the simulation efficiency. Compared to traditional
+                                                                                      the researchers carried out in-depth analysis and modeling: [4]
+nonlinear methods, the virtual-component-based electromagnetic
+transient (VC-EMT) method avoids network decoupling, multiple
+                                                                                      proposes an equivalent model of the DCCB test circuit, [5]-[6]
+iterations, and solves the compensation hysteresis. The results                       propose a variety of MOV dynamic models with high accuracy
+show that the VC-EMT method realizes accurate and efficient                           and simple parameter acquisition. The similarity of the above
+real-time simulation of 500kV/25kA DCCB with a maximum                                works is the construction of behavioral models including linear
+error of less than 0.5% at 1μs time step.                                             and nonlinear circuits based on RLC components and their
+                                                                                      stray parameters, and the accuracy of the models has been
+   Index Terms—Real-time simulation, Nonlinear systems, DC                            demonstrated by circuit experiments [7].
+circuit breaker, Fixed-admittance, Virtual component                                     As key equipment for clearing critical faults such as short
+                                                                                      circuits, DCCB's high-voltage and large-current fault test
+                            I. INTRODUCTION                                           conditions are highly hazardous to both equipment and
+
+T    HE hybrid high-voltage DC circuit breaker (DCCB) as the
+     most ideal and fastest solution for clearing fault current and
+     isolating faulted lines in flexible DC transmission systems
+                                                                                      personnel. In addition, conducting short-circuit fault tests
+                                                                                      requires high hardware and experimental sites, and the number
+                                                                                      of qualified test sites is far from meeting the test demand.
+[1]-[2], is the equipment with the typical nonlinear and fast                         Therefore, it is difficult to carry out a power-in-the-loop (PIL)
+dynamic response [3], which puts forward new requirements                             test on DCCB, and a hardware-in-the-loop (HIL) test is
+for nonlinear simulation in accuracy and efficiency.                                  required as an auxiliary method. DCCB real-time simulation
+   During fault-clearing, the DCCB goes through high current                          technology can help real-time simulators to simulate the
+transfer and shutoff, establishment, and maintenance of                               nonlinear dynamic process of DCCB on the real-time scale and
+                                                                                      support HIL tests on DCCB control and protection systems
+                                                                                      with real physical signal interactions, which cannot be realized
+   Manuscript received May 19, 2024; revised October 23, 2024; accepted               by adopting off-line platforms such as PSCAD/EMTDC and
+December 2023, 2024. This work was supported in part by the National Key              other non-real-time simulation. Therefore, it is necessary to
+R&D Program of China (2022YFE0105200), in part by State Grid Zhejiang
+Electric Power Company Science and Technology Program (5211JX230004),                 conduct real-time simulation research on DCCB.
+and in part by Anhui Key Research and Development Program 2023, Yangtze                  For real-time simulation of nonlinear systems containing
+River Delta Science and Technology Cooperation Project (2023i11020005).               time-varying components, more detailed studies related to
+   Hang Su, Jin Xu, Keyou Wang (Corresponding author, e-mail:                         electric machines [8], transformers [9], and converters [10]
+wangkeyou@sjtu.edu.cn) are with the Ministry of Education, Key Laboratory
+of Control of Power Transmission and Conversion, Shanghai Jiao Tong                   have been conducted. But very rarely about the DCCB,
+University, Shanghai 200240, China.                                                   preliminary explorations have been carried out in [11]. The
+   Jianqi Zhou is with the State Grid Jiaxing Power Supply Company, Jiaxing           biggest challenge in the real-time simulation of DCCB is to
+314033, China.                                                                        simulate more complex EMT using smaller step sizes while
+   Zhiping Qi and Jianghua Yu are with the Hekai Electric Company, Heifei
+231131, China.                                                                        ensuring that the solution is accurate and efficient. Considering
+                                                                                      the low proportion of nonlinear/time-varying components in
+                                                                                                                                               2
+
+the circuits, to improve efficiency, nonlinear specialized           branch, and absorber branch, respectively. The transfer branch
+methods are generally not used for such circuits but are solved      and absorber branch are connected in parallel to form a stack,
+by modifying linear methods [12]. There are mainly three types       and each stack consists of cascaded diode full-bridge
+of modification methods:                                             submodules SMt (as shown in Fig. 1(b)) and a MOV in parallel.
+   1) Current source substitution method (CSS) [13]-[14]: The
+nonlinear component is equated to a nonlinear current source in
+parallel with a linear component, and the nonlinear response is
+simulated by adjusting the nonlinear current source. The
+shortcoming is that compensation has a hysteresis, leading to
+non-negligible errors when the component changes rapidly.
+   2) Compensation method [15]-[17]: The network is split into
+a linear subnetwork and a nonlinear subnetwork, and the two
+subnetwork responses are solved separately, and then the
+combined response is obtained by iteration. In real-time
+simulation, iteration may increase the solution time and limit
+the minimum step size.
+   3) Piecewise linear method [18]-[19]: The nonlinear curve is
+approximated by multiple linear intervals, and the switching of      Fig. 1. The typical topology and equivalent circuit of the Hybrid DCCB. (a)
+different intervals is realized by modifying the admittance          Stack, (b) Diode full-bridge submodule
+matrix. As a switching method, the admittance matrix must be
+adjusted when the operating point is out of the interval. If the        As shown in Fig. 2, the fault-clearing operation of the DCCB
+identification or adjustment process is not handled properly, the    includes the current rising stage, snubber charging stage,
+values may be numerically unstable.                                  absorbing stage, and oscillation stage, which include two SM
+   Therefore, applying the above methods to the DCCB                 commutation processes and two branch commutation processes.
+real-time simulation may be limited in terms of accuracy,            The MOV absorbs energy from the beginning of the second
+efficiency, or stability. In this paper, a virtual-component-based   branch commutation. All operations are completed within a few
+electromagnetic transient (VC-EMT) nonlinear simulation              milliseconds, in which the duration of the commutation is about
+method is proposed. It has the following advantages:                 tens to hundreds of microseconds.
+   1) High accuracy: While realizing nonlinear real-time
+simulation with high accuracy in the microsecond level step, it
+also avoids compensation hysteresis in traditional methods.
+Comparison with PSCAD shows that the maximum error of the
+simulation result is within 0.5% at 1μs time step.
+   2) High efficiency: Due to the virtual component, the
+admittance matrix is constant and unaffected by the variation of
+nonlinear/time-varying components. The algorithm avoids
+iterations by converting the matrix LU decomposition into an
+algebraic operation on the history current sources. Parallel         Fig. 2. Operation and the response of the Hybrid DCCB during the fault.
+optimization further reduces the execution time of each loop.
+   This paper applies the VC-EMT method to a 500kV/25kA                 In order to show the effect of stray parameters on the
+Hybrid DCCB real-time simulation with a step in 1 μs. The            nonlinear response of the MOV during the fault-clearing
+sections are organized as follows: in Section 2, the topology,       process, the [20] proposes an improved nonlinear model for the
+modeling, and simulation of the DCCB are summarized and              MOV, as shown in Fig. 3. In the second branch commutation
+discussed; in Section 3, the concept of "virtual component" is       process and absorbing stage, the improved model equates the
+elaborately described; in Section 4, the application of the          MOV to a series nonlinear RL circuit. In the oscillation stage,
+VC-EMT method to the DCCB simulation is presented; in                the MOV is modeled as a parallel RC circuit.
+Section 5, the results of the DCCB real-time simulation are
+shown to verify the accuracy and efficiency of the proposed
+method; and finally, a conclusion is given in Section 6.
+
+  II. REVIEW AND DISCUSSION OF HYBRID HIGH-VOLTAGE
+      DCCB NONLINEAR MODELING AND SIMULATION
+                                                                     Fig. 3. The improved nonlinear model for the MOV. (a) The second branch
+A. Operation and Nonlinear Modeling of the Hybrid DCCB               commutation process and absorbing stage, (b) The oscillation stage
+
+   The hybrid DCCB mainly consists of the mechanical fast            B. Discussion of the Hybrid DCCB Nonlinear Simulation
+circuit breaker, power electronic submodule, and MOV, and the          The offline software is widely used to simulate DCCB, such
+typical topology is shown in Fig. 1, which presents multiple         as EMTP-RV and PSCAD/EMTDC. To simplify the
+branches in parallel and multiple submodules in cascade. The         construction of the network equations, all of the above software
+three parallel branches are called the main branch, transfer         uses the nodal analysis method (NAM) as the framework [21].
+                                                                                                                                                  3
+
+The EMT simulation can be expressed as the following                   updating the admittance matrix causes difficulties in simulation.
+generalized matrix equation:                                           If an equivalent system with the same response as Fig. 4(a) and
+                Gn  Vn (t )  M  [I h (t ) +I inj (t )] (1)          constant admittance matrix can be constructed, then it will
+where Gn denotes the matrix of equivalent admittance, M                create great convenience for nonlinear simulation.
+denotes the correlation matrix, Vn(t) denotes the nodal voltage           The constructed equivalent system is shown in Fig. 4(b),
+vector, Ih(t) denotes the history current source vector, and Iinj(t)   with the addition of a switch that is disconnected in parallel
+denotes the injected current source vector.                            with Rnonlinear compared to the original system shown in Fig.
+   In EMT simulations, the equivalent admittance of the resistor       4(a). Since the added switch is disconnected, the current
+is related to the component parameters only. The equivalent            flowing through the branch of the additional switch is zero, thus
+admittance of the inductor and capacitor is also related to the        ensuring that the original system (Fig. 4(a)) and the equivalent
+simulation step Δt and the numerical integration method. Since         system (Fig. 4(b)) are equivalent and respond consistently in
+the FPGA generally adopts a fixed-step operation mode in               the simulation. At the same time, since the additional switch
+real-time simulation, this means that the change of circuit            does not exist in the original system and is artificially
+parameters during the simulation will lead to the change of Gn         constructed for simulation convenience, it can also be called a
+simultaneously. Different from offline simulations where the           virtual component. Similarly, the additional switch branch is
+accuracy can be improved by iteration, dealing with the change         called a virtual branch. The process of converting the two
+of Gn in real-time simulations is more tricky due to the time and      systems is called "virtual construction".
+resource constraints. There are two classical methods:
+   1) Real-time update of the Gn: High-dimensional matrix LU
+decomposition will increase solution time, so it is difficult to
+achieve real-time simulation at the microsecond level.
+   2) Pre-storage of Gn: When the circuit parameters change
+non-periodically, unpredictably, and continuously, such as the
+DCCB clearing fault, it will bring a huge storage demand.
+Moreover, frequent switching of the Gn can easily generate
+numerical stability problems. The interpolation and iteration
+are needed to suppress non-realistic numerical oscillations.
+   It can be seen that the classical methods mentioned above are       Fig. 4. Diagrams of virtual constructions and virtual components (a) Original
+inconvenient to be applied in nonlinear real-time simulation.          system, (b) Equivalent system
+On the contrary, if we keep the Gn constant, whether the
+component parameters are changed or not. It will avoid                    On the basis of ensuring consistent response, the equivalent
+updating the admittance matrix in the real-time simulation and         system shown in Fig. 4(b) also needs to satisfy the constraint
+improve efficiency. This method has been used in the real-time         that the admittance matrix is constant. The EMT simulation
+simulation of the power electronic converter. Therefore,               needs to first convert the equivalent system shown in Fig. 4(b)
+keeping the admittance matrix constant is the key to realizing         into a Norton equivalent circuit as shown in Fig. 6(a). The
+the small-step real-time simulation of nonlinear circuits.             Norton equivalent circuit for each component consists of
+                                                                       equivalent admittance and history current sources connected in
+III. VIRTUAL COMPONENT AND IT-BASED ELECTROMAGNETIC                    parallel. The equivalent admittance of Rnonlinear(t) is defined as
+       TRANSIENT NONLINEAR SIMULATION METHOD                           Yn(t), and the equivalent admittance of the off-state switch
+                                                                       (virtual component) is defined as Yv(t). If the equivalent
+   In this section, the "virtual component" is proposed, which is
+                                                                       admittance of the nonlinear Norton sub-network is required to
+used to perform equivalent circuit transformations on a small
+                                                                       be constant, according to the circuit theorem, the sum of Yn(t)
+number of nonlinear components in the circuits. The key
+                                                                       and Yv(t) needs to be constant at all times, as shown in (2):
+innovation is to convert the time-varying admittance matrix in
+                                                                                                  Yn (t )  Yv (t )  Yc               (2)
+the nonlinear simulation to a constant matrix, thus improving
+the simulation efficiency. The derivation of the Norton                where Yc is a constant, and since both Yn(t) and Yv(t) are
+equivalent circuit is performed including nonlinear resistors,         nonnegative, Yc also needs to satisfy the (3):
+inductors, and capacitors. Principles of parameter optimization                               Yc  max{Yn (t ), Yv (t )}               (3)
+and nonlinear simulation solution steps are also discussed.               The meaning of (2) and (3) can be expressed more intuitively
+                                                                       in Fig. 5. In Fig. 5(a), the nonlinear admittance Yn(t) varies with
+A. Virtual Component and Virtual Admittance Exposition
+                                                                       time t according to the yellow curve and reaches the maximum
+   The virtual component and its virtual admittance are the key        value Yn(t2) a

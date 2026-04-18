@@ -1,0 +1,226 @@
+892                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 2, APRIL 2009
+
+
+
+
+                                  FPGA-Based Real-Time EMTP
+                             Yuan Chen, Student Member, IEEE, and Venkata Dinavahi, Member, IEEE
+
+
+
+   Abstract—Real-time transient simulation of large transmis-                        large network sizes, and to reduce the simulation timestep to
+sion networks requires significant computational power. This                         accurately capture high frequency transients, which essentially
+paper proposes a field-programmable gate array (FPGA)-based                          translates to the requirement of higher computational power for
+real-time electromagnetic transient simulator. Taking advantage
+of the inherent parallel architecture, high density, and high clock
+                                                                                     the simulator hardware.
+speed, the real-time Electromagnetic Transients Program (EMTP)                           Historically, real-time digital simulator hardware was built
+is implemented on a single FPGA chip. It is based on a paralleled                    around the general purpose processor (GPP) based on the
+algorithm that is deeply pipelined, and uses a floating-point                        RISC or x86 architectures or the digital signal processor (DSP)
+arithmetic calculation to achieve high accuracy for simulating                       [3]–[10]. The computational engine that performed the EMTP
+fast electromagnetic transients. To validate the new simulator, a                    calculations was basically a sequential software program. Since
+sample system with 15 transmission lines using full frequency-de-
+pendent modeling is simulated in real time. A timestep of 12
+                                                                                     the computational capability required by real-time EMTP is
+  s has been achieved based on a 12.5-ns clock period with high                      beyond most single general purpose computers due to the in-
+data throughput. The captured real-time oscilloscope results                         creasing complexity of power systems being modeled, parallel
+demonstrate excellent accuracy of the simulator in comparison                        computer architectures became necessary. This was accom-
+to the offline simulation of the original system in the Alternative                  plished by using multi-DSP [4], [6], [7], multi-RISC [8], or
+Transients Program version of EMTP.                                                  PC-cluster architectures [9], [10]. For instance, [7] proposed
+  Index Terms—Electromagnetic transient analysis, field-pro-                         a method using two DSPs for each transmission line. Each
+grammable gate arrays (FPGAs), parallel algorithms, real-time                        DSP processes the quantities for one end of the line (sending
+systems.                                                                             end and receiving end) simultaneously. For larger network
+                                                                                     sizes, the system was partitioned into smaller subsystems.
+                             I. INTRODUCTION                                         Each processor was made responsible for calculation of quan-
+                                                                                     tities within a single subsystem. Timestep synchronization,
+       LECTROMAGNETIC transient simulation plays an
+E      important role in the planning, design, and operation
+of modern power transmission systems. Simulation can be
+                                                                                     precise communication and data exchange are fundamental
+                                                                                     in this multiprocessor architecture. Although, theoretically
+                                                                                     clusters with large number of processors can be constructed,
+accomplished in either offline or real-time mode. For offline                        the main computation bottleneck in such an architecture is the
+transient simulation, the electromagnetic transients program                         inter-processor communication latency. Another approach to
+(EMTP) [1], [2] is widely accepted and well used. There are                          accommodate large transmission networks while maintaining
+several EMTP-type software packages available commercially                           sufficient accuracy for real-time simulation [11] is to use an
+that offer a wide variety of modeling capability. Real-time                          efficient wide-band frequency-dependent network equivalent
+simulation is desired for the testing of manufactured protection                     (FDNE). However, deriving an accurate FDNE model is a
+and control equipment in a hardware-in-the-loop configuration.                       finely-tuned art requiring significant setup time due to the var-
+Real-time simulation can be based on an analog simulator such                        ious optimizations and fittings required to obtain a low-order
+as a transient network analyzer (TNA) or on a real-time digital                      equivalent. In contrast to the full-scale representation, there
+simulator. The analog TNA uses scaled down models of power                           is also a degree of loss of one-to-one mapping between the
+system components. For example, the frequency response of                            original system physical layout and the simulator architecture,
+a long transmission line is approximated by cascading several                        since the signals inside the equivalenced system are no longer
+analog sections representing shorter line segments. This can                         accessible.
+be quite cumbersome due to the high cost, large space, and                               The ultimate performance of any real-time simulator depends
+long setup and changeover times, thereby limiting the TNA’s                          to a large extent on the capabilities of the underlying hard-
+application to small and medium sized networks. Over the last                        ware. Field-programmable gate arrays (FPGAs) offer a viable
+two decades, real-time digital simulators have achieved a high                       alternative for speeding up the real-time simulator without
+level of sophistication to be able to supplant analog TNAs. Nev-                     sacrificing accuracy or incurring excessive communication
+ertheless, there is an ever increasing pressure to accommodate                       latency. The FPGA is comprised of a variety of logic building
+                                                                                     blocks. Each block consists of programmable look-up tables
+   Manuscript received November 26, 2007; revised January 07, 2008. First pub-       and registers, and the interconnections among these blocks
+lished May 12, 2008; current version published March 25, 2009. This work was         can be programmed through a hardware description language
+supported by the Natural Science and Engineering Research Council of Canada
+(NSERC). Paper no. TPWRD-00739-2007.                                                 such as VHDL. Admittedly, programming in VHDL is more
+   The authors are with the Department of Electrical and Computer Engi-              complex than programming in a high-level structured language
+neering, University of Alberta, Edmonton, AB T6G 2V4, Canada (e-mail:                such as C or C++; however, unlike the GPP or DSP, which is a
+yuanchen@ece.ualberta.ca; dinavahi@ece.ualberta.ca).
+   Color versions of one or more of the figures in this paper are available online
+                                                                                     sequential device, the FPGA allows for true parallel processing,
+at http://ieeexplore.ieee.org.                                                       supporting multiple simultaneous threads of execution. More-
+   Digital Object Identifier 10.1109/TPWRD.2008.923392                               over, the FPGA is a fully user configurable device, i.e., it can
+                                                                  0885-8977/$25.00 © 2008 IEEE
+CHEN AND DINAVAHI: FPGA-BASED REAL-TIME EMTP                                                                                              893
+
+
+
+be configured according to any specific application. It is this
+inherent hardwired parallelism and configurability that makes
+the FPGA most suitable for the EMTP hardware implementa-
+tion. Although [12] presents a lossless line model with shaping
+to account for distortion of traveling waves for FPGA-based
+simulation, it does not show the actual implementation details
+nor the real-time results.
+   In this paper, we propose a FPGA-based real-time EMTP
+simulator. The central component of proposed simulator is the
+full frequency-dependent line model. The auxiliary models in-
+clude the linear lumped elements, switches, and sources. The
+simulator is based on a parallelled EMTP algorithm with deeply
+pipelined computations using floating point number representa-
+tion. The simulator accepts the standard ATP data input. The
+size of the transmission network that can be simulated in real
+time depends the available FPGA resources. The preliminaries
+on FPGA architecture and operation are described in Section II.
+Section III explains the skeletal framework of the FPGA-based
+real-time EMTP, and Section IV presents the implementation
+and operation details of the simulator. A real-time transient sim-
+ulation case study is presented in Section V, where the real-time
+simulation results captured on an oscilloscope are compared
+with the ATP offline simulation results. Conclusions are given
+in Section VI.
+                                                                      Fig. 1. (a) Generic architecture of FPGA and (b) a logic element.
+
+                       II. FPGA PRIMER
+   The FPGA is generally composed of three types of config-
+urable logic components [13]: configurable logic block (CLB),
+configurable input/output block (IOB), and programmable in-
+terconnect as shown in Fig. 1(a). The CLB provides the func-
+tional elements for constructing the user defined logic. Each
+CLB is composed of several basic logic building blocks whose
+number depends on the FPGA fabrication process. The basic
+logic building block in the FPGA, called by different names de-
+pending on the FPGA vendor, is a logic element (LE) (Altera®)
+or a logic cell (LC) (Xilinx®). It usually consists of a 4-input
+look-up table (LUT), a D-type flip-flop, and a multiplexer as
+shown in Fig. 1(b). The LUT can quickly generate any combi-
+natorial function of four input variables. The flip-flop is used to
+register a sequential function. The user configurable IOB pro-        Fig. 2. Details of a DSP Block inside the FPGA.
+vides the interface between external package pins of the FPGA
+and its internal logic. Each IOB controls one package pin and
+can be configured for input, output, or bidirectional signals. The    FPGAs contain several blocks of memory which can be con-
+interconnection sets up the routing paths to connect the CLB and      figured to be of many different types such as ROM, single-port
+IOB.                                                                  RAM, and dual-port RAM with any data and address bus width.
+   The FPGA design process begins by defining the user appli-         Thus, many independent memory banks can be accessed in par-
+cation using a hardware description language such as VHDL or          allel, whereas in a GPP or DSP, all memory and buses are shared.
+Verilog. After the code is developed, automatic synthesis, place,     Currently available FPGAs also contain several DSP Blocks or
+and route tools such as Quartus (Altera) or ISE (Xilinx) are used     DSP Slices. A DSP Block is a dedicated configurable math cir-
+to generate a binary configuration file called the bitstream. The     cuitry which provides the multiply, accumulate, and add/sub-
+process of downloading the bitstream into the FPGA from a host        tract functions for added flexibility and fast computation capa-
+computer is called FPGA programming. The user defined FPGA            bility. Fig. 2 shows the DSP Block architecture.
+is now ready for use.                                                    In the paralleled architecture, the pipelining technique is
+   The most attractive feature of the FPGA is its inherent par-       another important strategy for improving hardware perfor-
+allel architecture. That is, the FPGA can be partitioned and con-     mance. In a pipeline scheme, a function is divided into
+figured into a large number of parallel-processing units which        stages depending on the number of operations. Registers are
+process their data simultaneously. A GPP or DSP, on the other         then inserted between these stages to separate the operations.
+hand, is a sequential device in which one or several instructions     Thus, data can march through the operations at every clock.
+are executed sequentially in one or more clock cycles. Modern         Although a pipeline has the cost of latency which is the input
+894                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 2, APRIL 2009
+
+
+
+
+                                                                    Fig. 4. The 46-bit floating-pointer number format used for real-time EMTP.
+
+
+
+
+Fig. 3. Example of the convolution operation in the FPGA.
+
+
+
+to output delay, the key merit of a pipeline is its computational
+throughput, which is defined as the number of operations that
+can be performed per unit of time. A good example to illustrate
+these features is the convolution function which is widely used
+in digital signal processing. A convolution defined by (1) can
+be hardware implemented in FPGA as shown in Fig. 3. In Stage
+1, all input data are accessed from the RAMs simultaneously.
+The multiplications are carried out at Stage 2 and the addition
+is done at Stage 3. The final summation is done at Stage 4. As
+shown in the figure, the data flows into the pipeline at every
+clock and is processed independently at each individual stage.
+In this case, the latency is 4 clock cycles while the throughput
+is 1 result per clock cycle. If the convolution operation is
+performed on a sequential GPP or a DSP, the latency and             Fig. 5. FPGA-based real-time EMTP simulator architecture.
+throughput would be 4 clock cycles and 1 result per 4 clock
+cycles, respectively. Thus the FPGA performs 4 times faster
+than a GPP or DSP for this convolution operation                    where the exponent bias is 1023. The range of is approx-
+                                                                    imately           to       . In the EMTP, the convolution inte-
+                                                             (1)    gration and matrix multiplication operations require accumu-
+                                                                    lation. However, a floating point accumulation typically con-
+                                                                    sumes more FPGA resources and requires a higher clock speed
+   All of the above features make the FPGA outperform the GPP       [14]. For this reason, we used a fixed point accumulator with
+or DSP for most digital signal processing applications. There-      the number format 40.100 which has 40 integer bits and 100
+fore, the FPGA is chosen in this paper to implement the com-        fraction bits to guarantee both the range and precision. Thus, all
+putationally intensive EMTP calculation.                            data stored in the system are floating point numbers. The ad-
+                                                                    dition/ subtraction and multiplication are also in floating point.
+        III. FPGA-BASED REAL-TIME EMTP SKELETON                     Only when accumulation is required, a floating point number
+                                                                    is converted to fixed point, and the accumulation result is then
+A. Data Representation
+                                                                    converted back to floating point.
+   The first question that needs to be addressed for any FPGA
+implementation is what data format to use, since it will affect     B. System Architecture
+the accuracy of computation. Basically there are two types of
+number systems: fixed point number and floating point number.          The FPGA-based real-time EMTP consists of the following
+Compared with the fixed point number, the floating point            eight hardware subsystems as shown in Fig. 5: 1)            (Fre-
+number has the advantages of a dynamic range, and higher ac-        quency Dependent Line Model) unit; 2)               (Passive Ele-
+curacy. It is widely used in real number arithmetic. Considering    ment) unit; 3)           unit; 4)         unit; 5)           unit;
+the FPGA resource utilization and required precision, a 46-bit      6)          unit; 7)                 unit; and 8)            unit.
+floating point format is used in the FPGA-based real-time              This is the first level of parallelism which means each sub-
+EMTP. A 46-bit floating point number consists of 1 sign bit, 11     system has its own independent computational hardware to per-
+exponent bits, and 34 fraction (mantissa) bits as shown in the      form the required calculation. The second level of parallelism is
+Fig. 4. A floating-point number can be described as follows:        within each unit as will be explained later. Details of the func-
+                                                                    tion and configuration of each subsystem are described in Sec-
+                                                             (2)    tions III-C–I.
+CHEN AND DINAVAHI: FPGA-BASED REAL-TIME EMTP                                                                                                   895
+
+
+
+C. Frequency-Dependent Line Model
+   The frequency-dependent line model [15] is the most accurate
+line model available for calculating transients. It is based on the
+well-known line model equations in frequency-domain
+
+
+
+                                                              (3a)
+
+
+                                                              (3b)
+
+where        ,      ,       , and      are the voltages and cur-
+rents corresponding to the sending-end       and receiving-end        Fig. 6. (a) Transmission line and (b) its frequency-dependent model.
+   , respectively; is the line length;         and       are the
+frequency-dependent characteristic impedance and propagation
+function respectively, defined as
+                                                                                                                                              (9b)
+
+                                                              (4a)    where
+
+                                                              (4b)
+                                                                                                                                             (10a)
+where         ,       ,       , and        are series resistance,                                                                            (10b)
+series inductance, shunt conductance, and shunt capacitance,
+respectively.                                                         The characteristic impedance            can be fitted by a rational
+   To relate the line currents and voltages in frequency domain,      functi

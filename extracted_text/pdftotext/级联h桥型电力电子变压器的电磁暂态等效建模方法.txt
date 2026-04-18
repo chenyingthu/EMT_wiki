@@ -1,0 +1,304 @@
+         第 40 卷 第 21 期                          中     国 电 机 工 程 学                报              Vol.40 No.21 Nov. 5, 2020
+         2020 年 11 月 5 日                              Proceedings of the CSEE                  © 2020 Chin.Soc.for Elec.Eng. 7047
+DOI：10.13334/j.0258-8013.pcsee.191882                 文章编号：0258-8013 (2020) 21-7047-09           中图分类号：TM 46
+
+
+
+                             级联 H 桥型电力电子变压器的
+                               电磁暂态等效建模方法
+                          丁江萍 1，高晨祥 1，许建中 1*，赵成勇 1，曹均正 2
+                  (1．新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206；
+                                  2．中电普瑞电力工程有限公司，北京市 昌平区 102200)
+
+
+                           Electromagnetic Transient Equivalent Modeling Method of
+                               Cascaded H-bridge Power Electronic Transformer
+                DING Jiangping1, GAO Chenxiang1, XU Jianzhong1*, ZHAO Chengyong1, CAO Junzheng2
+                     (1. State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources
+                          (North China Electric Power University), Changping District, Beijing 102206, China;
+                      2. C-EPRI Electric Power Engineering Co., Ltd., Changping District, Beijing 102200, China)
+
+
+ABSTRACT: The power electronic transformer (PET) applied                KEY WORDS: cascaded H-bridge (CHB); decoupling
+to the medium and high voltage distribution network widely              companion circuit; power electronic transformer (PET); Norton
+adopts a two-stage cascade structure of a cascaded H-bridge             and Thévenin’s equivalent; electromagnetic transient (EMT);
+rectifier and a dual-active bridge DC/DC converter. Aiming at           equivalent modeling
+the problem of extremely slow simulation speed in offline               摘 要 ： 应 用 于 中 高 压 配 电 网 的 电 力 电 子 变 压 器 (power
+simulation platforms such as PSCAD/EMTDC and MATLAB,                    electronic transformer，PET)广泛采用级联 H 桥整流器与双
+based on the Thévenin’s equivalent and nested fast                      有 源 桥 DC/DC 变 换 器 两 级 级 联 结 构 。 针 对 其 在 诸 如
+simultaneous solving algorithm, an electromagnetic transient            PSCAD/EMTDC、MATLAB 等离线仿真平台中仿真速度极
+simulation accelerated model of cascaded H-bridge PET was               慢的问题，基于诺顿等效及嵌套快速同时求解算法，提出一
+proposed. Specifically, by arranging the decoupling companion           种级联 H 桥型 PET 的电磁暂态仿真提速模型。具体而言，
+network of the primary/secondary side of the high-frequency             即通过灵活构造高频变压器原/副边的解耦伴随网络，将级
+transformer flexibly, the cascaded sub-modules were divided             联子模块分割为两个单端口网络，进而对等效部分正向求解
+into two single-port networks, and then the equivalent part of          诺顿(戴维南)等效参数、代入电磁暂态程序整体求解，及反
+the   Thévenin’s     (Norton’s)    equivalent      parameters   were    解以初始化下一个仿真步长的电气网络。由于对外等效为仅
+forwardly solved. Then, the equivalent part was substituted into        包含 4 个外部节点的戴维南(诺顿)等效电路，使得所提模型
+the electromagnetic transient program for overall solution and          在系统整体求解过程中计算复杂度几乎不随子模块个数增
+inverse solution to initialize the electrical network for the next      加。在 PSCAD/EMTDC 中搭建了级联 H 桥型 PET 闭环系统，
+simulation step. Since the external equivalent form was a               与详细模型仿真结果对比表明，所提模型能够精确仿真 PET
+
+Thevenin’s (Norton’s) equivalent circuit with only 4 external           暂稳态过程，且具有较高的加速比。
+
+nodes, the computational complexity of the proposed model in            关键词：级联 H 桥；解耦伴随电路；电力电子变压器；诺
+the overall system solution process hardly increased with the           顿和戴维南等效；电磁暂态；等效建模
+number     of    submodules.      The   cascaded     H-bridge   PET
+                                                                        0 引言
+closed-loop control system was built in the PSCAD/EMTDC.
+Compared with the detailed model simulation results, the                     电力电子变压器(power electronic transformer，
+proposed model can accurately simulate the PET transient                PET)将电压变换、能量控制、动态无功补偿等功能
+steady-state process and has a high acceleration ratio.                 集于一身，是未来新能源并网及交直流输配电系统
+      基金项目：国家重点研发计划项目(2016YFB0900903)。
+                                                                        互联的重要接口设备[1-4]。级联 H 桥型 PET 具备模
+      Project Supported by National Key R&D Project (2016YFB0900903).   块化结构，在中高压配电网中广泛使用，因其高压
+7048                           中   国   电   机   工   程    学   报                                               第 40 卷
+
+侧的 AC/DC 变换器采用级联 H 桥换流器(cascaded               1 级联 H 桥型 PET 拓扑
+                   [3]
+H-bridge，CHB)而得名 ，中间隔离级通常采用双
+                                                       图 1 为级联 H 桥型 PET 系统，具有 AC-DC-
+有 源 桥 (dual active bridge ， DAB) 或 多 有 源 桥
+                                               AC-DC-AC 五级电能变换，包含级联多电平 AC/DC
+(multiple active bridge，MAB)型 DC-DC 变换器。
+                                               换流器、含 1 个高频隔离变压器的双有源桥 DC-DC
+       在 PET 设备接入电网使用之前，首先需要在仿
+                                               变换器和 DC/AC 换流器。低压直流母线可直接与
+真平台下进行仿真验证，在控制策略优化环节甚至
+                                               直流负载相连，或通过 DC/AC 换流器接交流负载。
+需要进行多重运行以寻求最优控制参数[5-7]。然而，
+                                               本文的等效建模对象为 H 桥-DAB 作为基本单元的
+为精确反映 PET 的动态特性，必须在小步长环境下
+                                               多模块部分，以下简称为 CHB 单元。各单元在输
+仿真。以 3 模块级联 H 桥型 PET 为例，如 DAB 采
+                                               入侧端子首尾连接，为串联形式，输出端子分别接
+取单移相控制，工作频率在 5kHz，经仿真测试，
+                                               在正极和负极直流母线，为并联形式，即具有 ISOP
+需设置 10s 及以下的仿真步长才能较为精确控制
+                                               型结构。由于三相的 CHB 单元结构完全一致，因
+移相角，严重拖慢整个系统的仿真效率。
+                                               此下文均以 A 相为例展开。
+       针对这一问题，文献[8]建立了级联 H 桥型 PET
+                                                                                                       T9
+的平均值模型，在稳态及电压暂降过程中能够较精                                                      T1   T2        T5   T6
+                                                                                                     k1
+                                                                                                            T10
+                                                                                      C1                          C2
+                                                                            T3   T4        T7   T8    T11   T12
+确得反映系统电气量的幅值，但完全忽略了开关动
+作产生的谐波，并且仅适用于采用脉宽调制(pulse
+width modulation，PWM)的 PET 系统。文献[9]基于
+RT-LAB 平台开发了 PET 的纳秒级实时仿真模型，
+其本质是用等效电感/电容支路替代了电力电子开
+关[10]。开关状态的改变仅体现为等效电流源的取值
+不同，系统节点导纳矩阵保持不变，从而规避了高
+阶导纳矩阵求逆过程，但仍然是一种详细模型，需
+要消耗大量仿真资源。文献[11-12]针对采用新型多
+                                                            图1     级联 H 桥型 PET 系统示意图
+端口子模块的模块化多电平换流器，提出了一种广                                          Fig. 1   Schematic diagram of
+义戴维南/诺顿等效方法，对系统进行降维等效的同                                      cascaded H-bridge PET system
+时保证了仿真精度。相比而言，级联 H 桥型 PET                              图 1 虚框线内的部分经过等效后，需要预留用
+属于输入串联输出并联(in-series-out-parallel，ISOP)        户自定义参数和数据接口，以实现对模块内各个量
+型结构，端子约束关系与文献[11]中输入串联输出                       的控制 。 需 要预留 的用 户自定 义参 数主要 包括
+串联(in-series-out-series，ISOS)型的子模块存在差          IGBT 及二极管的导通和关断电阻，电容 C1、C2 的
+异，目前尚无针对级联 H 桥型 PET 的诺顿或戴维                     容值，电容两端并联的均压电阻值(若有)，附加电
+南等效方法。                                         抗的电感值和变压器参数等。需要预留的数据接口
+       本文提出一种级联 H 桥型 PET 的电磁暂态仿                为 CHB 单元中的 T1—T12 的触发信号，各 CHB 单
+真提速模型，它属于能够精确仿真 PET 内部子模块                      元中电容 C1 两端的电压及输出电流等等。
+电容特性的诺顿等效模型，且具有较为明显的提速
+                                               2 CHB 单元的伴随电路构造
+效果。具体而言，即通过灵活构造高频变压器原/
+副边的解耦伴随网络，将级联子模块分割为两个单                                 按基本组成元件划分，单个 CHB 单元包含
+端口网络，接着基于文献[13]对单端口子模块的等                       IGBT/二极管开关组、电感元件、电容元件和变
+效方法，对等效部分正向求解诺顿/戴维南等效参                         压器。
+数、系统整体求解、反解以初始化下一个仿真步长                                 在电磁暂态仿真中，设T 为一个仿真步长，
+的电气网络，使得所提模型在整体求解过程中计算                         各元件的时变电路参数整理如表 1 所示：关于各个
+复杂度几乎不随子模块个数增加。最后，在 PSCAD/                     H 桥中的开关器件及电感、电容元件的等效方法，
+EMTDC 中对级联 H 桥型 PET 闭环系统进行精度验                  已有诸多文献给出[14-17]，即按照 Tk(k1,2,,12)在
+证和开环加速比测试。                                     当前时刻的状态，可将 IGBT/二极管开关组等效为
+第 21 期                       丁江萍等：级联 H 桥型电力电子变压器的电磁暂态等效建模方法                                                                                           7049
+
+                                   表1        CHB 单元等效模型参数及电压/电流更新量计算式
+          Tab. 1   CHB unit equivalent parameters and voltage/current increment updated calculation formula
+    元件名称                         等效参数计算式                                             储能元件电流/电压更新计算式
+
+IGBT/二极管开关组                  
+                            G , Tk 1
+                        Gk  ON
+                            GOff , Tk  0
+                                          , k 1, 2,      ,12                                            —
+
+                                             T
+                                      GL                                                          VL (t ) VL1
+     电感                                      2L
+                         J LEQ  GLVL (t T )  I L (t T )                    I L (t )  I L (t T )  GL (VL (t T ) VL (t ))
+
+                                             2C
+                                      GC                                                     I Ci (t )  I Ci , i  1,2
+     电容                                      T
+                         J CEQ VC (t T )GC  I C (t T )            VCi (t ) VCi (t T )  RCi ( I Ci (t T )  I Ci (t )), i 1,2
+
+                                      D
+                                     GAA  GAA                                                      V1 ( t ) VT1
+                                      D
+                                     GBB  GBB                                                     V2 (t ) VT2
+   隔离变压器                 D
+                       J TEQ_HIS1  J TEQ_HIS1
+                                      PI
+                                                GABV2 (t T )   I1 (t )  I1 (t T )  GAA (V1 (t ) V1 (t T ))  GAB (V2 (t ) V2 (t T ))
+                         D
+                       J TEQ_HIS2  J TEQ_HIS2
+                                      PI
+                                                GBAV1 (t T )   I 2 (t )  I 2 (t T )  GBA (V1 (t ) V1 (t T ))  GBB (V2 (t ) V2 (t T ))
+
+
+一个在高、低阻值间切换的二值电阻[15]，其中 Gi
+为时变电阻元件的电导，这种等效方法能够直观反
+映开关损耗；采用梯形积分法离散化附加电感(即
+图 1 中与变压器串联的电感)，可将其等效为一个电
+流源 JLEQ 并联一个等效电阻(其电导表示为 GL)的形                                                              (c) 本文采用的等效伴随电路
+式[16]，将当前时刻电感电压的测量值赋值给存储变
+                                                                      图2        高频隔离变压器的等效电路及两种伴随电路
+量 VL(t)，并更新存储的电感电流 IL(t)，传递到下一                                      Fig. 2       Equivalent circuit of high frequency isolated
+个仿真步长，以得到下一时刻的历史电流源 JLEQ；                                                  transformer and the two companion circuits
+类似地，可对直流侧电容进行离散化等效[17]，得到                                              对原边和副边电流进行梯形数值积分，t 时刻
+等效电导 GC 和历史电流源值 JCEQ，并更新电容电                                       端口电流和电压的关系可表示为
+流及电压。
+                                                                    I1 (t )  GAA GAB  V1 (t )  V1 (t  T ) 
+    对高频隔离变压器的伴随网络构造有多种方                                             I (t )   G           (                ) 
+                                                                    2   BA GBB  V2 (t )  V2 (t  T ) 
+法，如经典的型等效方法或构造 4 节点 6 阻抗支
+                                                                            I1 (t  T ) 
+路[18]。本文提出一种变压器原/副边不具有电气联系                                                  I ( t  T )                              (1)
+                                                                            2            
+的伴随网络构造方法，推导过程如下。模型建立的
+                                                                       其中：
+假设为仅考虑磁耦合及漏感参数。变压器等效电路                                                                                                                       1
+                                                                                                       Lm      
+如图 2(a)所示，L1、L2(折合到一次侧)为漏感，Lm                                                          ( L  Lm )
+                                                                   GAA GAB  T  1                     k      
+为励磁电感，其参数通过工作频率下变压器短路和                                             G                                         
+                                                                    BA GBB  2  Lm                 L
+                                                                                                    ( m2  L2 ) 
+开路实验数据获得[18]。                                                                            k         k          
+                                                                                                Lm                L 
+                                                                                 T             k 2  L2      m 
+                                                                                                                   k
+                                                                         L1Lm                                        (2)
+                                                                                                     L
+                                                                       2( 2  L1 L2  Lm L2 )   m         L1  Lm 
+                                                                          k                        k               
+                                                                       若将式(1)改写成式(3)的形式，即可构造如
+                      (a) 等效电路
+                                                                  图 2(b)所示的含受控源型等效电路。
+                                                                         I1 (t )  GAA  GAB                0                        GAB 
+                                                                         I (t )                       GBB  GAB                    GAB 
+                                                                                                                                              
+                                                                         2                  0
+                                                                                 V1 (t )   J PI                  
+                                                                                 V (t )    TEQ_HIS1                                                (3)
+                                                                                        2
+                                                                                                      J PI
+                   (b) 含源型伴随电路                                               V1 (t )  V2 (t )   TEQ_HIS2 
+7050                                               中       国   电        机   工           程       学     报                                           第 40 卷
+
+                                                                                            1                                      1
+       其中：
+
+J TEQ_HIS1    GAA
+
+
+
+
+                                                                                I1/kA
+
+
+
+
+                                                                                                                         I2/kA
+    PI
+                          GAB v1 (t T ) i1 (t T )                                  0                                      0
+ PI                                                         (4)
+J TEQ_HIS2  GBA      GBB  v2 (t T ) i2 (t T )
+                                                                                        1                                       1
+       本文在此基础上，重新构造了如图 2(c)所示的                                                           50                                       50
+伴随网络，变压器原边和副边分别被等效为受控电
+
+
+
+
+                                                                                V1/kV
+
+
+
+
+                                                                                                                         V2/kV
+                                                                                            0                                      0
+流源并联一个电阻的诺顿等效形式，且原/副边电气
+                                                                                        50                                      50
+量解耦，即无需依赖对侧的电压来表示本侧的电
+                                                                                            100         102      104               100   102       104
+流。列写其端口电压电流关系，可表示为式(5)。式                                                                                  t/ms                             t/ms
+
+中的上标“D”表示将原/副边当前时刻电压、电流                                                                                      (b) 变压器端口电压及电路波形
+
+关系进行了解耦处理。                                                                                            图3      变压器伴随电路的精度验证
+                                                                                                        Fig. 3   Accuracy verification of
+        I1 (t )  GAA       0  V1 (t )   J TEQ_HIS1 
+                     D                           D
+
+                  
+        I (t )   0         D  V (t ) 
+                                                             (5)                                    transformer's companion circuit
+        2                       2   J TEQ_HIS2 
+                                                 D
+                             GBB
+
+       比较式(1)和(5)，可得图 2(c)中伴随网络与
+图 2(a)所示电路对外等价的条件为
+
+            GAA D
+                    GAA
+             D
+            GBB  GBB
+             D                                                 (6)
+             J TEQ_HIS1  J TEQ_HIS1  GABV2 (t )
+                             PI
+
+            J D
+             TEQ_HIS2  J TEQ_HIS2  GBAV1 (t )
+                             PI
+
+
+
+       V1(t)、V2(t)无法在上一时刻得到，在一定误差
+允许范围内，图 2(c)的一种实现方式为用历史电压
+和电流来近似表示 V1(t)、V2(t)，即通过一个步长的
+约等来获得变压器伴随网络中的电流源取值。由
+表 1 中的公式可更新下一时刻的端口电压和电流。
+       通过搭建图 3(a)所示的测试电路，对本文所提
+                                                                                                          图4     CHB 单元的伴随电路
+的伴随电路构造方法进行精度验证，图 3(b)给出了
+                                                                                                    Fig. 4   Companion circuit of CHB unit
+图 3(a)所示测试电路中端口电压、电流的波形测试
+                                                                            理解为两个存在信息交互关系的单端口电路。
+结果，仿真步长为 1s，本文模型与 PSCAD/EMTDC
+                                                                                            值得注意的是，感性元件(即附加电感，变压器)
+软件中变压器模型相比，变压器端口电气量均较为
+                                                                            的电压和容性元件的电流需要将伴随网络代入外
+吻合，初步验证了等效建模方法的精确性。
+                                                                            电路求解节点电压方程后求解得到，图 4 中使用电
+       综上，CHB 单元的伴随电路整体如图 4 所示，
+                                                                            压、电流表测量仅作示意，等效模型实际是通过反
+由 P1、P2 两部分构成，电路参数计算式可见表 1。
+                                                                            解内部节点信息得到表 1 中的储能元件电压/电流
+虽然变压器原/副边分割成了两部分，但两侧在受控
+                                                                            更新值。第 3 节将介绍如何采用诺顿等效建模方法
+电流源 JDTEQ_HIS1、JDTEQ_HIS2 计算环节需要用到对侧的
+                                                                            进行 CHB 单元间的消去和反解。
+信息。之后即可分别进行求解，因此 P1、P2 也可
+               300H                     80
+                                                                            3 级联 H 桥型 PET 的诺顿等效建模方法
+                                                                            3.1             CHB 单元诺顿等效建模
+                                                                                            由图 4 可知，P1 和 P2 在当前仿真时刻 t 时，
+                                                      H1           L1
+                                                          

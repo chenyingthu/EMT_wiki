@@ -1,0 +1,215 @@
+                                                                   Electric Power Systems Research 195 (2021) 107120
+
+
+                                                                        Contents lists available at ScienceDirect
+
+
+                                                            Electric Power Systems Research
+                                                               journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Multi-scale formulation of admittance-based modeling of cables
+Felipe Camara a, Antonio C.S. Lima *, b, Kai Strunz c
+a
+  Furnas Centrais Elétricas, Dept. Electrical Studies and Operation Planning, RJ, Brazil
+b
+  Federal University of Rio de Janeiro, COPPE/UFRJ, RJ, Brazil
+c
+  Technische Universität Berlin, TU-Berlin, SENSE Laboratory, Germany
+
+
+
+
+A R T I C L E I N F O                                         A B S T R A C T
+
+Keywords:                                                     This paper proposes a novel multi-scale cable model in phase-coordinates exploiting the fully-coupled structure
+Electromagnetic transients                                    of the nodal admittance matrix instead of using the conventional approach based on the Method of Character­
+cable                                                         istics (MoC). The usage of the admittance modeling allows a straightforward representation of cables regardless
+transmission line
+                                                              of their lengths as it does not require a minimum time-step below the transient time associated with the fastest
+frequency dependency
+multi-scale simulation
+                                                              mode. In addition, some accuracy issues regarding the rational modeling of the nodal admittance matrix are
+dynamic phasor                                                overcome resorting to the Folded Line Equivalent (FLE) transformation.
+analytic signal                                                  Following the so-called frequency-adaptive simulation of transients (FAST) concept, the trapezoidal rule and
+                                                              recursive convolution expressions are rewritten to perform computations using analytic signals or complex
+                                                              variables. This will allow the possibility to combine electromagnetic and electromechanical trasients phenomena
+                                                              in the same simulation environment with a unique mathematical model.
+                                                                 A novel variable time-step algorithm is presented and its flexibility is so general that can be incorporated in
+                                                              Electromagnetic Transient (EMT) software such as EMTP-RV, PSCAD or Hypersim in straightforward way.
+                                                                 Besides keeping the accuracy of the classic EMT-modeling, the proposed formulation provides a sensible gain
+                                                              in the overall computation time without significant loss of accuracy and also smooth transitions regardless of the
+                                                              time-step length.
+
+
+
+
+1. Introduction                                                                                simulators brings up some issues, for instance, communication protocols
+                                                                                               between algorithms, exchanging data timings, waveform-to-phasor
+    The complexity of electric power systems has increased considerably                        conversions and conversely. In the early 1990s, the concept of
+in the last decades. Besides the deregulation process, there has been an                       time-varying or dynamic phasors was proposed [3] and extended the
+ever growing usage of power electronics devices associated with                                phasor-based notation to accommodate fast electromagnetic transients.
+distributed generation, renewable power such as wind and solar, and                            This formulation was then incorporated to power system modeling and
+HVDC just to name a few. This scenario demands a higher knowledge                              stated as Shifted Frequency Analysis (SFA) [4–7].
+and a detailed description of the main components of the network                                   Later, the so-called Frequency-Adaptive Simulation of Transients
+instead of the conventional approach based on positive sequence phasor                         (FAST) [8–11] technique applied the dynamic phasor concept in order to
+representation. However, a detailed modeling of all the network would                          allow a variable time-step environment as opposed to interfacing diverse
+demand a computer burden that is barely feasible even considering                              programs.
+nowadays computing power. Alternatively, one may resort to a com­                                  The modeling of overhead lines and cables are carried out mostly by
+bined approach where a large part of the network is represented in the                         means of the method of characteristics (MoC). This implies in dealing
+conventional way with a small part being modeled in more detail. The                           with a rather small time-step to track the transient behavior [12,13].
+usage of the so-called hybrid simulation can provide such framework                            This scenario becomes even more restricted in the case of short overhead
+[1].                                                                                           lines and cables where very small time-steps may be needed as it should
+    The joint simulation of electromagnetic transients (EMT) and tran­                         be smaller than the travel time of the fastest mode. In the past, very short
+sient stability (TS) is not a new topic as the first attempts to do so date                    lines were represented using π-sections [14] which precludes the pos­
+back to the 1980s [2]. However, integrating these two types of                                 sibility to include the frequency dependent behavior.
+
+
+    * Corresponding author.
+      E-mail addresses: fcamara@furnas.com.br (F. Camara), acsl@coppe.ufrj.br (A.C.S. Lima), kai.strunz@tu-berlin.de (K. Strunz).
+
+https://doi.org/10.1016/j.epsr.2021.107120
+Received 4 September 2020; Received in revised form 16 December 2020; Accepted 21 February 2021
+Available online 4 March 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+F. Camara et al.                                                                                                        Electric Power Systems Research 195 (2021) 107120
+
+
+    Recent research with FAST addressed the modeling of transmission
+lines gathering the structure of a MoC-based constant parameter line
+model with an equivalent π-circuit to overcome the limitation of using a
+time-step shorter than the traveling time [15], i.e., it enables the topo­
+logical coupling between the line ends when the time-step is larger than
+the traveling time. Adopting the same concept, the frequency de­
+pendency of parameters was introduced in [16].
+    The aforementioned line models are not a general approach as they
+cannot deal with underground/submarine cables which present a heavy
+frequency dependent transformation matrix and cannot consider the
+                                                                                                                 Fig. 2. Fourier spectra
+case of a full frequency dependent line model for large time-steps.
+Furthermore, for short lengths, there will be a need to interpolate the
+                                                                                    signal s(t).
+model given that it is expected to have a time-step shorter than the travel
+                                                                                       [    ]
+time of the fastest mode.
+    To overcome these limitations, this paper proposes to carry out the             D s (t) = s (t) e− jωs t                                                         (2)
+modeling based on the nodal admittance matrix Yn . For so, this work can
+be understood as a continuation in the efforts to provide a general cable              The key advantage of such representation lies in the requirement of
+model using the FAST framework and aiming at multi-scale simulations                much less samples to accurately represent dynamic phasors in compar­
+with lesser limitations.                                                            ison with instantaneous signals. This process, stated as the Shifted Fre­
+    A novel re-initialization procedure is introduced to accommodate the            quency Analysis (SFA), filters out the power frequency and only
+time-step transition along the simulation run in order to provide smooth            deviations from this frequency are observed.
+waveforms. As a result, a sensible speed gain is achieved without                      Hence, in steady-state and electromechanical analysis, where the
+sacrificing accuracy.                                                               signals are close to the fundamental frequency, the application of dy­
+    The paper is organized as follows: Section 2 provides the background            namic phasors allows one to use large time-steps without sacrificing
+information with regard to FAST concept and presents the re-                        accuracy.
+initialization approach for admittance-based models which represents                   Since the analytic signal is a complex variable, the real part corre­
+one of the main contribution of this research. A brief review of time-              sponds to the instantaneous value and the envelope or magnitude is
+domain modeling of cables is presented in Section 3. Some test cases                achieved by its absolute counter part.
+to assess the behavior of the proposed approach are presented in Section
+4. The results are then discussed in Section 5 and finally, the main                2.1. FAST modeling
+conclusions are drawn in Section 6.
+                                                                                       In order to perform a time-domain realization of a pole-residue
+2. Frequency-adaptive simulation of transients (FAST)                               model and express the system variables as analytic signals, i.e., in the
+                                                                                    complex form, a first-order model can be written
+    The FAST concept enables the integrative simulation of both
+                                                                                    dx (t)
+instantaneous and phasor-based variables within the same environment                       = p x (t) + r v (t)                                                       (3)
+                                                                                     dt
+layered on the concept of analytic signals or dynamic phasors and
+shifting frequency.                                                                     Resorting to the definition of dynamic phasors, i.e., insertion of (2) in
+    The dynamic phasor concept rely on the application of analytic or               (3)
+complex signals A [⋅] as adopted in frequency modulation for radio                   [ [      ]      ]
+transmission [17]. Basically, it expresses a real signal s(t) in a complex          d D x (t) ejωs t
+form where the imaginary part σ(t) is obtained by the Hilbert transform                                = p x (t) + r v (t)                                   (4)
+                                                                                           dt
+of the original signal, as shown in (1).
+                                                                                    Evaluating the derivative term gives
+A [s(t)] = s (t) = s(t) + jH [s(t)] = s(t) + jσ (t)                      (1)
+                                                                                                                  [     ]
+Real signals typically have its spectrum centered at the fundamental                     [     ]                dD x (t)
+frequency fs and, as a consequence of this transformation, analytical               jωs D x (t) ejωs t + ejωs t           = p x (t) + r v (t)                        (5)
+                                                                                                                   dt
+signals maintain only its positive content with the magnitude multiplied
+by two, see Fig. 1.                                                                 Collecting like terms yields
+    Multiplying the analytic signal A [⋅] by e− jωs t degenerates the so-               [    ]
+called dynamic phasor D [⋅] or shifted frequency signal and the related             dD x (t)               [                          ]
+frequency spectra is then shifted to the origin, as illustrated in Fig. 2. In                    = e− jωs t (p − jωs ) x (t) + r v (t)
+practice, this frequency shifting approach converts a bandpass signal
+                                                                                        dt                                                                           (6)
+                                                                                                                 [      ]         [     ]
+into a low-pass one that corresponds to the complex envelope of the real
+                                                                                                 = (p − jωs ) D x (t) + r D v (t)
+
+
+                                                                                    Performing the discretization by means of trapezoidal integration rule,
+                                                                                    (6) is expanded as follows
+                                                                                       [     ]    [         ]                ( [      ]      [         ])
+                                                                                                                          Δt
+                                                                                    D x (t) − D x (t − Δt) = (p − jωs )        D x (t) + D x (t − Δt)
+                                                                                                                          2
+                                                                                                                        ( [     ]     [          ])
+                                                                                                                     Δt
+                                                                                                                  +r     D v (t) + D v (t − Δt)
+                                                                                                                     2
+                                                                                                                                                        (7)
+
+                             Fig. 1. Fourier spectra                                Back substitution into the analytic signal notation yields
+
+                                                                                2
+F. Camara et al.                                                                                                  Electric Power Systems Research 195 (2021) 107120
+
+                                       (                           )
+                                    Δt
+    x (t) − x (t − Δt) ejωs Δt = r      v (t) + v (t − Δt) ejωs Δt
+                                     2
+                     (                            )                     (8)
+                  Δt
+    +(p − jωs )        x (t) + x (t − Δt) ejωs Δt
+                   2
+     Finally, after some manipulation (8) can be simplified
+                        (       )
+x (t) = α x (t − Δt) + α λ + μ v (t − Δt)
+                  (     )                                               (9)
+i (t) = x (t) + λ + d v (t)
+
+where
+    p = p − jωs
+                ⎛         ⎞
+                                                                                                 Fig. 3. Schematic for the time-step transition
+         jωs Δt ⎝
+                 2 + p Δt                     r Δt
+    α =e                  ⎠          λ =
+                 2 − p Δt                  2 − p Δt
+                                                                       (10)       procedure can be applied for multiple changes in the same fashion in
+                 ⎛           ⎞
+                                                                                  accordance with the re-initialization scheme. The extension to the multi-
+                        r Δt ⎠
+    μ = ejωs Δt ⎝                                                                 phase case is straightforward, see [19] for further information.
+                     2 − p Δt                                                         The proposed formulation allows the assessment of electromagnetic
+                                                                                  and electromechanical phenomena with an unique model. This is ach­
+   Applying the recursive convolution, the same structure of (9) is               ieved by setting the shifting frequency fs = 50 Hz or fs = 60 Hz, contrary
+achieved with different expressions for α , λ and μ                               at the beginning of the simulation when the shift frequency is fs = 0 Hz
+p     = p − jωs                                                                   for an EMT-type simulation.
+                               ⎛              ⎞                                       It should be observed the flexibility of the complex companion
+                             r ⎝   1 − e p Δt ⎠                                   network since in the case where the frequency shifting equals fs = 0 Hz it
+α     = e p Δt        λ =−      1+                                                resembles the same model when handling only with real values [14].
+                             p         p
+                                                                       (11)
+                 ⎛               ⎞
+                                                                                  3. Cable modeling
+           r ⎝   1 − e p Δt ⎠ jωs Δt
+μ     =−      α−             e
+           p        p Δt
+                                                                                  3.1. Folded line equivalent
+
+It can be seen that the devised expressions for admittance-based models               In order to overcome the constraint concerned with the cable length,
+attain the same Norton-type structure as adopted by EMT-type programs             the modeling based on the nodal admittance matrix Yn seems to be a
+[18]. The same holds for the coefficients if fs = 0 Hz, i.e., with no fre­        suitable approach due to its fully-coupled structure relating currents and
+quency shifting as if real variables were considered.                             voltages at terminals in the frequency domain.
+                                                                                      However, a common issue faced by the direct fitting of Yn is its poor
+2.2. Re-initialization approach                                                   accuracy at the lower frequency range given the large eigenvalue ratio.
+                                                                                      The Folded Line Equivalent (FLE) model proposed in [20] addressed
+    The re-initial

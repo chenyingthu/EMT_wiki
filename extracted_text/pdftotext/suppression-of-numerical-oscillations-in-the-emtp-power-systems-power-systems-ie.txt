@@ -1,0 +1,225 @@
+IEEE Transactions o n Power Systems, Vol. 4, No. 2, May 1989                                                                                                                           139
+
+
+                                              SUPPRESSION OF NUMERICAL OSCILLATIONS IN THE EMTP
+
+
+                              Jose R. Marti. Member, IEEE                                                       .liming Lin. Member, IEEE
+                          The University of Aritish Columbia                                             Electric Power Research I n s t i t u t e
+                               Vancouver, B.C.. Canada                                                             Beijing. Chlna
+
+
+
+
+Abstract - The integration scheme i n t h e EJectromagnetic                                       The major disadvantage of adding a r t i f i c i a l damping
+Transients Program EMTP has been modified t o solve t h e                                 e i t h e r through t h e integration r u l e o r e x t e r n a l resistances,
+problem of sustained numerical oscillations that. can occur                               is t h a t t h e rest of the normal system response is d i s t o r t e d
+when t h e trapezoidal r u l e has t o a c t as a differentiator.                         by t h e phase e r r o r s introduced by t h e damping.
+These oscillations appear, f o r instance, on t h e volt.ae;e
+                                                                                                Other schemes have been proposed t h a t t r y t o control
+across an inductance             a f t e r current        interruption. The
+                                                                                          t h e i r r e g u l a r oscillal.ions locally, without a f f e c t i n g t h e rest
+technique presented i n t h i s paper prevents t h e s e oscillations
+                                                                                          of tho simulation (e.g., 121). These schemes a r e based on
+by providing c r i t i c a l damping of t h e discontinuity within one
+A t of t h e simulation. The critical damplne adjustment (CDA)
+                                                                                          rr!ad.iustments of i n i t i a l c:onditions and interpo1at.ions. These
+                                                                                          techniques, however, are relatively complicated t o implement
+is achieved by means of two At/2 integration s t e p s using
+t h e backward Euler rule. With t h e CDA scheme t h e                                    f o r a general c l a s s of network components.
+trapezoidal r u l e can still be used throughout the e n t i r e                               The c r i t i c a l damping adjustment (CDA) procedure presented
+siaulatiori without t h e problem at discontinuities. Thc!                                .in t h i s paper belongs t o t h i s l a s t group in t h e sense t.hat
+effectiveness of the new scheme is i l l u s t r a t e d with                             it eliminates the numerical oscillations locally. The main
+simulat.ion    results. Keywords           --  d i s c r e t e -time systems,             djfference, however. is t h a t i t is not based on interpolation
+numerical oscillations, integration rules, EMTP solution.                                 or re-initialization, but on t h e property of the backward
+                                                                                          Lnler rule t o provide t o t a l damping of t h e overshoot at. t h e
+                                  1 INTRODUCTION                                          discontinuity in e x a c t l y two integration s t e p s ( c r i t i c a l
+                                                                                          damping).
+      One important f a c t o r f o r t h e widespread use of t h e
+ electromagnetic t r a n s i e n t s program EMTP [ l ] has probably                          Due t o its simplicity, t h e mtrdifications required t o
+ been its choice of i n t e g r a t i o n scheme. The trapezoidal r u l e                 implement t h e CDA procedure a r e very straightforward, not
+ is used i n t h e EMTP t o convert the d i f f e r e n t i a l equations of              only f o r simple e1ement.s l i k e inductances and capacitances.
+ t h e network c0mponent.s i n t o simple algebraic relationships                         but a l s o f o r more complicated models l i k e frequency
+ involving voltage, current, and known past values.                                       dependent transmission l i n e s and non -1jnc:ar elements. Tht:
+                                                                                          CDA procedure h a s been implemented and t e s t e d i n t h e UBC
+       The accuracy of a disc:ret.e- system solution dependS on                           version of t h e EMTP with a minimum of modjfications t o t h e
+ t h e s t e p size A t and on the integration rule. The s t e p s i z e                  overall solution     scheme. I t      is a l s o currently    being
+ determines t h e maximum frequencies t h a t can hct simula tcd.                         implemented in t h e l a r g e r production code of t h e DCG/EPRI
+ and the integration r u l e determines the distortion a t                                EMTP.                                                                                  fl-
+
+ different frequencies. Thct maximum frequency t h a t can hr:
+ simulated is independent of the integration rule and i s                                     Thjs ptaper explains t h e reasons f o r supporting t h e
+ determined by t h e samplinl: rat(!. This is t h e Nyquist                               continued use of t h e trapezoidal rule a s t h e basic
+ frequency Kiven by fN = 1/{2At), The distortion introdiicod                              integration r u l e i n t h e EMTP and how t o solve t h e prohlem of
+ by the integration r u l e gets worse as WI! approach the                                sustained numerical oscillations a t discontinuities with the
+ Nyquist frequency.                                                                       ncw c r i t i c a l damping adjustment schemc:.
+
+        A s i t is shown i n t h i s paper, t h e trapezoidal r u l e has
+ very good c h a r a c t e r i s t i c s i n terms of low distortion and                                       2 SOLUTION SCHEME I N THE EMTP
+ numerical s t a b i l i t y . Moreover. t h e trapezoidal                   r u l e is
+ A-stable, which means t h a t run-off i n s t a b i l i t y cannot occur.                     The solution scheme i n the EMTP (11 is based on t h e
+ For some types of simulations. however, the ruJe may havv t o                            tliscrt!t.lsatiori of firs1 order diff't!rerl:lal c!quations by means
+ work as a pure differentiator, e.g., voltage on an inductance                            of the trapezoidal rule of integration. For instance, l-he
+ a f t e r current interrupt ion. o r currt!nt in a capacit a n w a f t er                difft:rrmt ial c:qnation f o r an inductanw
+ a voltage is switched on. Under these conditions, sustained
+ (though bounded) numc!ric:al asci I lalions n i ~ : u i ~ T          . h i s problem                                        U (t ) = L d i -
+                                                                                                                                            (t)
+ has been reported in (21, 131. and 141. One suggested                                                                                     dt
+ solution has been t o add damping t o t h e s y s t m in order t o
+ force the oscillations t o decay. Damping can be provided hy                             becomes tht: difference equation
+ t.ht! intrigriitioii riilc i t s e l f . e . g . , with b c k w n r d tlnler. Gear.
+ o r some combination of rules with a n e t damping e f f e c t ((41.
+  151. [GI).         Damping can a l s o be provided c*xt.ernaIly, hy adding
+ f i c t i t i o u s resistances i n parallel with the inductances and
+  in s e r i e s with the capacltances (131. 141).                                        This equaljon         relates i ( t ) t o v(t)             Ih~urq:h          ,311   t~~uivalrnl
+                                                                                          conductance
+                                                                                                                                            At
+                                                                                                                            GL-Trop =       -                                           (3)
+                                                                                                                                            2 1.
+ 58 SN 732-0              A p a p e r recommended and approved                             and an equivalent current source
+ by t h o I E E E Pourer System E n g i n e e r i n g Committee o f
+ t h e I E E E Power E n g i n e e r i n g S o c i e t y € o r p r e s e n t a t i o n                                                         /I t
+ a t t h e LEEE/PES 1988 Sunnmer ).leetin::,                Portland,                                       h , r r a p ( t )= t ( f - A t ) + - - - v ( t - A t ) *
+                                                                                                                                               2L
+ nregon, J u l y 24 - 29, 1988. X a n u s c r i p t s u h i t t e d
+ .January 29, 1988; made a v a i l a b l e f o r p r i n t i n g
+ May 27, 1988.
+
+
+                                                                  0885-8950/89/0500-0739$01.WO1989 IEEE
+740
+
+Equation (2) can then be rewritten as                                                             3 EVALUATION OF INTEGRATION RULES
+
+                                                                                  3.1 ACCURACY
+Source h ( t ) a t time t is known from t h e previous hist.ory of                   The accuracy of an integration r u l e can be assessed by
+t h e system (solution at t h e previous time s t e p ( t - - A t ) i n t h i s   considering its frequency response.
+case).
+                                                                                      Applying t h e Z -transform's basic property
+       Similar discrete-time relationships can be found f o r
+o t h e r network components (including distributed-parameter                                         % ( f (t - k d t ) ) = z - " ( f ( t ) )                 (10)
+transmission lines). A l l t h e network components can then be
+combined i n a matrix equation of t h e form                                      t o difference eq. (2) f o r t h e trapezoidal rule,
+
+
+
+
+where [GI represents t h e equivalent node conductances, [v(t)]                   from which
+t h e node voltages, [ i s ( t ) j t h e source currents, and [h(t)] t h e
+history terms.
+    If eq. ( 3 ) is discretized using backward Euler's r u l e
+instead of trapezoidal. t h e resulting differtm:e equation is
+                                                                                  Taking voltage as input and current as output, H(z) i s t h e
+                                             At                                   t r a n s f e r function of t h e d i s c r e t e time system. The response
+                       i(t) - i(t - A t ) = -i U ( t ) ,                    (7)   t o a sinusoidal e x c i t a t i o n v ( t ) = eJot is given by
+
+                                                                                                             i(t)= t f ( z ) e ' w ' ,
+which s t i l l has t h o same general form of eq. (5). The
+differences a r e i n t h e valuf. of t h e cquivalent conductance
+                                                                                  with z = &At.
+                                                                                     The t r a n s f o r functions foi. t h e            integration   rules    of
+                                                                                  Table I a r e showri I n Table 2.
+
+as compared t o eq. (3), and i n t h e value                of   t h e current
+source                                                                            TABLE 2 I)iscrcAtt. time t r a n s f e r functions ~ ( z )(z = & ) A t )
+                                                                                          f o r t h e integration r u l e s of Tablt~ 1.
+
+
+a s compared t o eq. (4).                                                                                                   TRANSFER FUNCTION H(r)
+                                                                                          .__I__-
+
+       Other integration r u l e s can also be used t o d i s c r e t i z e               Trapezoidal
+eq. (1) and still a r r i v e at t h e rc?lationships i r i eqs. (5) and
+( 6 ) . Table 1 siimmarizfis t h e r6!sulting difference equations
+f o r some tradit.iona1 integration rules.                                              Rackward Euler                                 /At\
+
+                                                                                  t                              I
+
+
+TABLE 1 Difference equations f o r an inductance f o r several
+        integration rules.
+
+
+
+I
+       RULE                         DIFFERENCE EOIJATION                     1I
+    Trapezoidal
+                            i(t)-i(t-dt)-
+
+      Backward
+       Euler
+                                                               At
+                                      i ( t ) - i ( t - A t )= - --u(t)
+                                                                1.            I        To waluatt: t h o accuracy of t h e rules, t h e j r frequc!ncy
+                                                                                  rt~sporisrr as i n t e g r a t o r s i n t h e discreti!- timo system H(z) i s
+                                                                                  cc~mparttd with the trxact frcxluwicy response of an int f!erator
+                                                                                  i n t h e continuous- time systcm: H(s) :: l/(sL) for s = j o . The
+                                                                                  corresponding frequency response H S djfferentia t ors is simply
+
+
+1   Gear Second
+       Order      I            4         1
+                          i(t)--l(t- At)+-i(t-2At)
+                                                  3
+                                                                 -3L----U
+                                                                                  t h e inverse of that as integrators: HC1ifferelltj a t o r
+                                                                                  1/f'integrator .
+                                                                                        Fii:urc* 1 shows t h e accuracy as a function of frequcvxy
+                                                                                  f o r thci integration rules iri Table 2. The froquoncy axis is
+                                                                                  latiellcd i n per unit of l/At. (fpu : f ( W ) - A t ) up t o thc!
+                                                                                  Nyquist frf!queric:y 1/(2A t ) = 0.5 i n por unit.
+                                                                                       The plots i n Fig. ](a) show t h a t trapezoidal and backward
+      In s e l e c t i n g a n intop;rat.ion r u l e f o r t.he EMTP, careful      Euler   give    fairly       a c c u r a t e magnitude responses      for
+ att.erititin must be given t o t h e general -purpose nat.ure of thc.             frequencies up t o about one--fifth of t h e Nyquist frequency.
+ program. hie t.o t h e l a r g e variet.y of possihlf~ nc-twork                   Gear's rule is s l i g h t l y less accurate while Simpson's r u l e
+ c:onditions that thc! program must be able t.o simulattt, t h e                   gives t h e most accurate of t h e responses shown i n t h i s
+ chosen intel:ration scheme must have very good overall                            figure. In addition. Sinpson produces no phase distortion.
+ charact.c!ristics Iri twms of efficiency (that is, accuracy a t                   SJmpson's rule. howcver, is not s t a b l e as a d i f f e r e n t i a t o r
+ relativrtlg l a r g e A t ' s ) and stabi1it.y.                                   and, therefore, cannot be used f o r the implicit solution
+                                                                                   scheme of t h e EMTP.
+                                                                                                                                                                        741
+
+                         Accuracy of Integration Rules                              TABLE 3 Distortion in t h e nature of c i r c u i t components duf-
+                              Magnitude Response                                            t o discrutjzation .
+     2
+                                                                                       Circuit Element              Trapezoidal Dis-              Backward Buler Dis-
+   1.8 -
+                                                                                                                       c r e t i z a t ion            (:ret i m t ion
+    1.6 -                                            Slmpson                                                                                           __
+
+
+                                                                                                               II                            II
+                                                                                                               I
+                                                                                                                                             t a n (w dt/2)
+                                                                                                                          L L Q ( u ) =L--
+                                                                                                                                                  (wdt/2)
+
+
+   0.2
+   Om4   1                                                                                                     1          R
+                                                                                                                              EQ
+                                                                                                                                    2L
+                                                                                                                                   =-
+                                                                                                                                    At
+
+
+         0   0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5
+                       Frequency i n p e r u n i t of (l/A t )
+
+                                     (a)
+
+                         Accuracy of Integration Rules
+                               Phase Response
+
+
+
+
+                                                                                    3.2 EFFICIENCY
+                                                                                          For an overall a c c u r a t e simulation, hoth magnitude and
+                                                                                    phase e r r o r s have t o be kept small, with the phase e r r o r s
+
+
+
+
+    ::;
+                           

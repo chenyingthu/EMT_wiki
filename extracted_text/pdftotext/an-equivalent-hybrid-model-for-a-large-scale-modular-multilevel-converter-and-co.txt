@@ -1,0 +1,202 @@
+Received April 20, 2022, accepted May 15, 2022, date of publication May 18, 2022, date of current version May 23, 2022.
+Digital Object Identifier 10.1109/ACCESS.2022.3176006
+
+
+
+
+An Equivalent Hybrid Model for a Large-Scale
+Modular Multilevel Converter and
+Control Simulations
+MOHAMMED ALHARBI 1 , SEMIH ISIK 2 , (Graduate Student Member, IEEE),
+AND SUBHASHISH BHATTACHARYA 2 , (Fellow, IEEE)
+1 Department of Electrical Engineering, College of Engineering, King Saud University, Riyadh 11421, Saudi Arabia
+2 Department of Electrical and Computer Engineering, North Carolina State University, Raleigh, NC 27606, USA
+
+Corresponding author: Mohammed Alharbi (mohalharbi@ksu.edu.sa)
+This work was supported by the King Saud University, Riyadh, Saudi Arabia, through the Researchers Supporting, under Project
+RSP2022R467.
+
+
+
+
+  ABSTRACT Modular multilevel converter (MMC) is adopted mainly for high voltage applications with
+  many power blocks per arm. Before commissioning a large-scale MMC application, it is vital to simulate
+  and study internal and system-level dynamics. However, it is challenging to simulate an MMC with many
+  SMs in EMT simulation tools due to simulation time and computation burden. Therefore, several simplified
+  modeling techniques are proposed to reduce the challenges. Even though the existing models reasonably
+  reduce the computation complexity and simulation time, there are still challenges as the internal dynamics
+  of an MMC cannot be fully captured. On the other hand, the detailed equivalent models capture the internal
+  dynamics, but the simulation complexity and the time increase. Therefore, it is still a need for better, faster,
+  and more accurate simulation models to study the system-level and internal dynamics of an MMC. Therefore,
+  this paper proposes a hybrid simulation model for a large-scale MMC application using a scale-up control
+  structure method. The proposed method is verified in the MATLAB/Simulink simulation tool. Besides, the
+  proposed model is tested and verified at the Real-Time Digital Simulator (RTDS) in a Hardware-in-Loop
+  (HIL) environment.
+
+  INDEX TERMS EMT, hybrid model, MMC, HVDC, simulation, RTDS.
+
+I. INTRODUCTION                                                                                   The MMC topology is flexible to increase the capacity
+Voltage Source Converter (VSC) based High Voltage Direct                                       based on the demand due to its modular and scalable features.
+Current (HVDC) applications is witnessed a global rise in the                                  The MMC structure can be built by several hundreds of
+last two decades. Significantly, the technical developments                                    power blocks called Sub-Module (SM), as seen in Fig. 1.
+in the VSC topology and the invention of the Modular Multi-                                    Different SM structures are available for MMC applications,
+level Converter (MMC) in the early 2000s helped increase the                                   but Half-Bridge SM (HBSM) or Full-Bridge SM (FBSM) is
+number of HVDC projects worldwide. Besides, it is expected                                     the most used type. The HBSM includes two switching ele-
+that it will grow by around 11% between 2020 to 2025 based                                     ments, such as Insulated Gate Bipolar Transistors (IGBTs),
+on the compound annual growth rate [1]. One reason for                                         and an energy storage element such as a capacitor. In contrast,
+this increase is to integrate more renewable energy sources.                                   the FBSM includes four IGBTs and a capacitor, as seen in
+Besides, VSC-based HVDC provides several benefits to the                                       Fig. 2(a) and 2(b). The HBSM causes fewer losses, and it
+existing AC grids, such as grid stability and black-start capa-                                is more economical than the FBSM. However, unlike the
+bility under abnormal conditions. Furthermore, the MMC                                         HBSM, the FBSM can block a DC fault from the AC grid. The
+topology helps reduce the cost of HVDC applications cost                                       scope of this paper does not include DC side fault analysis,
+by reducing the component sizing and reducing the total land                                   hence HBSM is adopted throughout the paper.
+area by requiring a much smaller filter.                                                          Regardless of the SM type, each phase of an MMC consists
+                                                                                               of positive and negative arms with the same number of SMs.
+   The associate editor coordinating the review of this manuscript and                         The number of SMs can be increased or decreased based
+approving it for publication was Rui Li           .                                            on the desired capacity. The higher number of SM results
+
+                     This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+53504                                                                                                                                                                 VOLUME 10, 2022
+M. Alharbi et al.: Equivalent Hybrid Model for Large-Scale MMC and Control Simulations
+
+
+
+
+FIGURE 1. Illustration of the conventional three-phase MMC system.
+
+
+                                                                                  FIGURE 3. MMC scale-up structure.
+
+
+
+
+                                                                                  Transient (EMT) model. However, performance degrada-
+                                                                                  tion still occurs, especially with many MMC applications.
+                                                                                  Averaging-based models for MMC are proposed in [5]–[8],
+                                                                                  resulting in less computational and simulation time. Even
+                                                                                  though the system-level accuracy is enough in these models,
+                                                                                  the user does not have the flexibility to test the internal
+FIGURE 2. (a) HBSM and (b) FBSM circuits.
+                                                                                  dynamic of the MMC, such as SM voltage balancing con-
+                                                                                  trol. The authors [9], [10] proposed a co-simulation model
+in higher losses as each SM consists of switching elements                        where a part of the system is modeled based on a detailed
+and the energy storage element. Besides, it is challenging                        equivalent model, and the rest of the system is modeled with
+for simulation tools to analyze the dynamic operation of                          a less detailed orientation. Although faster simulation time
+an MMC-based HVDC system with many SMs. An MMC                                    is achieved in this work, implementing parallel processing
+with hundreds of SMs creates a large number of nodes,                             at different time steps and synchronization of the different
+resulting in an extensive network admittance matrix. The                          control structures such as MMC internal current control, the
+generated network admittance matrix needs to be recalculated                      system-level control can be highly challenging. Researchers
+for every switching event. Hence, repeating this process at                       in [11]–[15] adopted the dynamic phasors approach to MMC
+every switching action may be incredibly challenging and                          modeling. The algorithm of this type of model is simple as the
+time-consuming. Therefore, the real-time digital simulators                       magnitude of the phase of the measured time-domain signals
+are proposed to simulate an extensive MMC system of up                            is represented in the phasor domain as a complex conjugate
+to10,000 nodes per outer core with a time step of 1-20 µs                         pair. Hence, this allows the user to include or eliminate spe-
+in a short amount of time. Besides, the real-time digital                         cific harmonics in the model. The dynamic phasor approach
+simulators allow Hardware-in-Loop (HIL) testing to connect                        MMC model can be considered an alternative at the lowest
+an external controller and an emulator [2]–[4]. Even though                       frequency component, but it might be inefficient when the
+the computational burden and time dramatically decrease                           number of harmonics increases.
+with the real-time digital simulators, the cost of the digital                       As one can see, averaging models are not well suited for
+simulators is expensive. Therefore, based on the need for an                      internal dynamics studies for MMC as the modeling of the
+accurate offline simulation tool, several equivalent detailed                     MMC is not as detailed. On the other hand, detailed equiva-
+and averaging models for MMC applications are proposed                            lent models can be used with better accuracy for system-level
+in small-time steps with adequate accuracy. The authors                           and internal dynamic studies. However, computational bur-
+of [5] proposed a Thevenin-based detailed equivalent MMC                          den and the simulation time are the main challenges, espe-
+model. The proposed method shows a better performance                             cially for the MMC applications with a high number of SMs.
+with enough accuracy than the traditional electromagnetic                         As MMC simulation models are incredibly critical for many
+
+VOLUME 10, 2022                                                                                                                           53505
+                                                                    M. Alharbi et al.: Equivalent Hybrid Model for Large-Scale MMC and Control Simulations
+
+
+
+
+reasons, there is still a need for well-performed, fast, and
+accurate simulation models.
+
+
+
+
+                                                                             FIGURE 5. The MMC scale-up control structure.
+FIGURE 4. Arm voltage generation with the scale-up MMC structure.
+
+
+   Thus, this paper proposes a simplified, detailed MMC sim-                 has the same total number of SMs Nt . The SMs are connected
+ulation model based on the scale-up control method proposed                  in series with an arm inductor Lo . The HBSM circuit is mainly
+in [16], [17]. The scale-up control methodology is proposed                  preferred as it is more straightforward, cost-effective, and
+for MMC applications to increase or decrease the MMC                         causes less losses than the other SM types such as the FBSM
+capacity without significant system modification. The pro-                   circuit. Each SM capacitor is either inserted into the circuit or
+posed hybrid simulation model works based on the scale-up                    bypassed based on the switch configuration. The total number
+control principle to represent accurate MMC models at a fast                 of series-connected SMs determines the voltage of an MMC
+simulation pace with enough accuracy.                                        arm.
+   All SMs in an MMC arm are divided into smaller groups in
+the proposed method. One of the sets in each arm is modeled                   A. MMC SCALE-UP STRUCTURE
+using an equivalent detailed model and called a master set.                  The MMC scale-up structure is illustrated in Fig. 3. The total
+The rest of the sets in the arm is controlled by the master                  number of SMs per arm is distributed into n sets. Each set
+set as a dependent voltage source. For instance, if there are                consists of N SMs. Each set produces an AC output voltage
+400SMs in an MMC arm, the SMs can be grouped into                            independently as shown in Fig. 4. Yet, the scale-up architec-
+20 sets where each sets includes 20SMs. The master set is                    ture is better suited for decentralized controllers, whereas the
+modeled using the equivalent detailed model based on the                     conventional method is mainly controlled with a centralized
+proposed methodology regardless of the set location. The                     control structure. The sets are controlled independently with
+rest of the 19 sets will behave as a dependent voltage source                identical local controllers [16]. The voltage of the upper arm
+managed by the master set. The proposed method is tested                     vu,x and lower arm vl,x (x ∈ a, b, c) are represented as
+and verified using the real-time digital simulator (RTDS)                    follows:
+and MATLAB/Simulink. The results validate that the pro-                                                                      n
+posed method performs faster than the traditional detailed                                      VDC        diu,x           X
+                                                                                       vu,x =         − Lo       − vm,x =      vset,i
+                                                                                                                                 u,x      (1)
+equivalent EMT models with a similar accuracy rate. The                                           2         dt
+                                                                                                                                    i=1
+computational burden does not drastically increase even the                                                                          n
+number of sets/SM increases. The proposed method allows                                         VDC      dil,x          X set,i
+                                                                                         vl,x =     − Lo       + vm,x =  vl,x                         (2)
+changing the capacity of the MMC without any significant                                         2        dt
+                                                                                                                                    i=1
+modification. Besides, the proposed method can be used for                                     vl,x − vu,x
+internal dynamic and system-level MMC studies. The rest of                              vm,x =                                        (3)
+                                                                                                    2
+the paper is organized in MMC operation and control with the
+                                                                             where iu,x and il,x are the upper and the lower arm current,
+scale-up control structure in section II. The proposed hybrid
+                                                                             respectively. VDC represents the DC bus voltage. vm,x is the
+simulation model is explained in section III. The proposed
+                                                                             AC output voltage of the MMC.
+method’s results and the comparison with the conventional
+                                                                                The arm currents can be expressed based on Kirchoff’s
+methods are presented in section IV.
+                                                                             current law for the upper arm and the lower arm as follows:
+II. MMC OPERATION AND CONTROL WITH THE                                                                       ix
+                                                                                               iu,x = iz,x +                                          (4)
+SCALE-UP METHODOLOGY                                                                                         2
+As seen in Fig. 1, the conventional three-phase MMC                                                          ix
+                                                                                               il,x = iz,x −                                          (5)
+includes six identical MMC arms: upper and lower. Each arm                                                   2
+
+53506                                                                                                                                     VOLUME 10, 2022
+M. Alharbi et al.: Equivalent Hybrid Model for Large-Scale MMC and Control Simulations
+
+
+
+
+                           iu,x + il,x
+                  iz,x =               = idc,x + icirc,x                (6)       the required information, such as commanded generated volt-
+                                2                                                 age v∗k,x (k ∈ u, l). The second is always to keep the set volt-
+where ix represents the AC side current. iz,x represents the                      age at the desired level. Sorting-algorithm-based balancing
+differential current, consisting of one-third of the DC cur-                      voltage and the nearest level modulation (NLM) technique
+rent, and the second harmonic dominated AC current under                          are used in each local controller to regulate the corresponding
+steady-state.                                                                     set SMs voltage. The local controller’s capacitor Voltage
+                                                                                  Balancing (CVB) algorithm determines which of the SMs in
+                                                                                  the sets will be inserted or bypassed based on the current arm
+                                                                                  direction. The SM capacitor voltage is desired to stay at the
+                                                                                  nominal value vc . The nominal value is chosen as (7) where
+                                                                                  Nt is the total number of SMs per arm. The number of sets is
+                                                                                  chosen based on (8) in the scale-up structure.
+                                                                                                                Vdc
+                                                                                                            vc =                              (7)
+                                                                                                                Nt
+                                                                                                                Nt
+                                                                                                             n=                               (8)
+                                                                                                                N
+                                                                                  III. PROPOSED HYBRID SIMULATION MODEL
+                                                                                  Fig. 6 depicts the proposed hybrid simulation model for
+                                                                                  large-scale MMC applications. A single-phase is taken as an
+                                            

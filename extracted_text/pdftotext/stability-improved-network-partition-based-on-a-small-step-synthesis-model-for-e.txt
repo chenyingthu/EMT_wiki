@@ -1,0 +1,213 @@
+                                                           Electrical Power and Energy Systems 176 (2026) 111709
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                            International Journal of Electrical Power and Energy Systems
+                                                         journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Stability-improved network partition based on a small-step synthesis model
+for electromagnetic transient simulation
+Haoran Zhao, Changwang Zhao, Bing Li ∗, Luwei Tan
+School of Electrical Engineering, Shandong University, Jinan 250061, China
+
+
+
+ARTICLE               INFO                                ABSTRACT
+
+Keywords:                                                 Electromagnetic transient simulation offers high fidelity for modern power systems with high penetration of
+Electromagnetic transient                                 power electronics, but it suffers from low efficiency due to small time step requirements. To improve efficiency,
+Simulation                                                network partition based on energy storage elements (i.e., capacitors and inductors) has gained attention, yet
+Network partition
+                                                          its numerical stability is limited by the simulation time step. This paper proposes a stability-improved network
+Stability analysis
+                                                          partition method using a small-step synthesis model. First, the semi-implicit leapfrog method-based network
+Small-time step synthesis
+                                                          partition formulation is derived. Second, the small-step synthesis model-based network partition method is
+                                                          proposed. The method improves the numerical stability of the simulation by applying a small-step synthesis
+                                                          model to the network partition branches. Finally, the stability boundaries for the time step and synthesis order
+                                                          are derived based on the Lyapunov criterion and spectral radius analysis. The IEEE 14-bus system and a wind
+                                                          farm model are used to validate the proposed method. The results demonstrate that the proposed method
+                                                          enhances stability without sacrificing accuracy or efficiency.
+
+
+
+1. Introduction                                                                            first category involves natural partitioning based on long transmission
+                                                                                           lines [13] which leverage the inherent wave propagation delay of the
+    With the large-scale integration of wind and photovoltaic power,                       transmission lines. It can achieves high accuracy without introduc-
+modern power systems are increasingly characterized by high penetra-                       ing simulation errors. However, long transmission lines of sufficient
+tion of power electronics and renewable generation [1,2]. As a result,                     length are not present in many power systems, thereby restricting
+the broadband oscillation phenomenon gradually intensifies in modern                       the practical applicability [14]. The second category involves rigorous
+power systems [3]. Traditional electromechanical transient simulation
+                                                                                           mathematical transformations applied to the original system equa-
+method can only capture the dynamics near the fundamental frequency
+                                                                                           tions to enable network partitioning, with the key challenge being
+(e.g., 50 Hz or 60 Hz) [4]. It fails to reflect broadband oscillation
+                                                                                           the accurate and efficient calculation of interface variables between
+phenomenon. In contrast, electromagnetic transient simulation (EMT)
+retains all physical details including system nonlinearity and high-                       subsystems. Representative approaches include the branch tearing and
+frequency characteristics introduced by power electronic devices [5,                       node splitting methods proposed in [15,16], where interface variables
+6].                                                                                        between subsystems are determined by updating a reduced-order nodal
+    Despite its advantages, EMT simulation suffers from efficiency lim-                    admittance matrix involving only the boundary nodes. In a similar
+itations [7]. To accurately represent the switching behavior of power                      context, the multi-area Thevenin equivalent method proposed in [17]
+electronic devices, the simulation time step must be constrained to the                    models each subsystem as a multi-port equivalent circuit and coordi-
+microsecond level [8,9]. Such a small time step leads to extremely low                     nates them through centralized interface equations. Additionally, the
+computational efficiency when applied to large-scale renewable energy-                     waveform relaxation method enables each subsystem to independently
+integrated power systems with thousands of nodes [10]. Hence, it                           solve its dynamic equations while iteratively exchanging waveforms
+highlights the urgent need for more efficient EMT simulation methods.                      of the interface variables to ensure consistency [18,19]. Recently, hy-
+    By network partition, the large-scale power system can be divided
+                                                                                           brid approaches that combine the strengths of the mentioned methods
+into multiple subsystems, thereby reducing the dimension of the ad-
+                                                                                           have been introduced to enhance partition granularity and improve
+mittance matrix. Thus, the simulation efficiency can be highly im-
+                                                                                           overall simulation efficiency [20,21]. Although these methods offer
+proved [11,12]. Existing network partition methods can be broadly
+classified into three categories based on the underlying principles. The                   high accuracy, they are limited by the increasing computational burden
+
+
+  ∗ Corresponding author.
+     E-mail addresses: hzhao@sdu.edu.cn (H. Zhao), zhaocw@mail.sdu.edu.cn (C. Zhao), bingli@mail.sdu.edu.cn (B. Li), 13625660215@163.com (L. Tan).
+
+https://doi.org/10.1016/j.ijepes.2026.111709
+Received 2 June 2025; Received in revised form 8 December 2025; Accepted 13 February 2026
+Available online 21 February 2026
+0142-0615/© 2026 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+H. Zhao et al.                                                                          International Journal of Electrical Power and Energy Systems 176 (2026) 111709
+
+
+       Table 1                                                                 guidance for selecting an appropriate synthesis order 𝑘 for constructing
+       Comparison of existing methods.                                         the model.
+         Refs.          Cat. I           Cat. II        Cat. III                   The rest of this article is organized as follows. Section 2 introduces
+                        [13] [14]        [15]–[21]      [22]–[25]              the basic theory of SILM and derives two types of network partition
+         Accuracy       HHH              HHH            HHH                    methods based on SILM. Section 3 introduces the stability improved
+         Efficiency     H                HH             HHH
+                                                                               network partition method based on small-step synthesis model. Sec-
+         Stability      HHH              HHH            H
+                                                                               tion 4 conducts stability analysis on the proposed method and derives
+                                                                               analytical solutions for synthesis order 𝑘. Section 5 illustrates the case
+                                                                               study of the modified IEEE 14-bus system and wind farm model, and
+for interface variable, which grows significantly with the number of           analyzes the simulation results. Finally, Section 6 concludes this article.
+subsystems and hinders scalability for large-scale systems.
+    The third category performs network partitioning based on en-              2. SILM-based network partition
+ergy storage elements (i.e., capacitors and inductors), which are more
+commonly found in power systems compared to long transmission                     This section first introduces the basic theory of SILM. Then, the
+lines. In addition, the computational burden associated with interface         SILM-based network partition method is derived for two types of
+variable handling increases only linearly with the number of subsys-           branches composed of energy storage elements, along with the corre-
+tems, making this approach more efficient than the second category of          sponding simulation procedure. Finally, the state-space models of the
+methods. Refs. [22,23] employ a forward Euler method to discretize             partitioned branches are provided, serving as the foundation for the
+energy storage elements, enabling a one-step-delay network partition           subsequent derivations in Sections 3 and 4.
+scheme. Ref. [24] introduces an explicit–implicit hybrid integration
+strategy along with a fine-grained partitioning scheme tailored for            2.1. Basic theory of SILM
+double fed induction generator (DFIG)-based wind farms with LLL/LCL
+branches. The semi-implicit leapfrog method (SILM) is adopted to                   The SILM is a numerical integration algorithm that combines the
+create half-step delays between the calculation of branch currents and         computational efficiency of explicit schemes with the numerical stabil-
+node voltages, thereby enabling the parallel computation of currents           ity of implicit methods. Using a simple damped–spring–mass system as
+and voltage [25]. Although these methods are more flexible than the            an example, the governing differential equations are expressed as:
+first category and computationally more efficient than the second,             ⎧   d𝑥
+                                                                               ⎪      =𝑣
+they suffer from notable numerical stability issues [26]. Specifically,            d𝑡                                                                             (1)
+                                                                               ⎨   d𝑣
+the maximum allowable simulation time step for ensuring numerical              ⎪ 𝑀    = −𝐾𝑥 − 𝐶𝑣
+stability is constrained by the parameters of the energy storage el-           ⎩   d𝑡
+ements [27], such as the values of capacitors and inductors. When              where 𝑀 is the mass; 𝑣 is the velocity; 𝑥 is the displacement; 𝐾 is
+the system fails to satisfy the stability requirement, the inductance          the spring stiffness coefficient; and 𝐂 is the damping coefficient. By
+or capacitance values at the partition interface must be artificially          applying the SILM to discretize the system, the following expressions
+enlarged to achieve numerical convergence. This inevitably introduces          are obtained:
+modeling errors, thereby preventing the final simulation accuracy from           𝑛+1 − 𝑥𝑛        1
+                                                                               ⎧𝑥          = 𝑣𝑛+ 2
+meeting the required standard. To provide a clear comparison of the            ⎪ 𝛥𝑇
+                                                                               ⎨                                                                                  (2)
+advantages and limitations of the above three categories (i.e., Cat. I,            𝑛+ 1     𝑛− 1        𝑛+ 1   𝑛− 1
+                                                                               ⎪𝑀 𝑣 2 − 𝑣 2 = −𝐾𝑥𝑛 − 𝐶 𝑣 2 + 𝑣 2
+Cat. II, Cat. III), Table 1 summarizes their performance in terms of           ⎩        𝛥𝑇                   2
+accuracy, efficiency and stability. It can be observed that while all
+                                                                               in which, 𝛥𝑇 denotes the simulation time step; 𝑥𝑛+1 and 𝑥𝑛 represent
+categories of methods perform well in terms of accuracy, they generally
+                                                                               the displacement at the time of (𝑛 + 1)𝛥𝑇 and 𝑛𝛥𝑇 , respectively; 𝑣𝑛+1∕2
+fail to strike a balance between efficiency and stability. This further
+                                                                               and 𝑣𝑛−1∕2 represent the velocity at the time of (𝑛 + 1∕2)𝛥𝑇 and (𝑛 −
+highlights a critical research gap, motivating the need for a method
+                                                                               1∕2)𝛥𝑇 , respectively.
+that effectively reconciles these competing objectives.
+                                                                                   The SILM combines the numerical stability of implicit schemes with
+    To address the above issue, this paper proposes a stability-improved       the computational efficiency of explicit methods, making it particularly
+network partition method for EMT simulation based on the small-step            suitable for modeling partition branches in EMT simulations.
+synthesis model. The proposed method can improve the stability of
+the system without enlarging the LC parameter by using the small-              2.2. Network partition on the LCL branch
+step synthesis model for the network partition branches. To the best
+of the authors’ knowledge, this work is the first to apply the small-              The network partition on the LCL branch (NP-LCL) is constructed
+step synthesis model to network partition for improving the simulation         using the branch shown in Fig. 1. It consists of two series-connected
+stability.                                                                     resistive–inductive branches and a intermediate capacitive branch. 𝑅𝛼
+    The major contributions of this paper are as follows:                      and 𝐿𝛼 represent the resistance and inductance connected to subsys-
+    (1) A network partition method based on the semi-implicit leapfrog         tem 𝛼; 𝑅𝛽 and 𝐿𝛽 denote the resistance and inductance connected to
+scheme and energy storage elements is derived, enabling the division           subsystem 𝛽; 𝐶 is the intermediate capacitance.
+of the system into subsystems that can be simulated in parallel.                   The differential equations for the LCL branch are:
+    (2) The small-step synthesis model for network partition is pro-
+                                                                               ⎧                   d𝐼𝛼
+posed. It avoids the traditional constraint between the time step and          ⎪ 𝑈c − 𝑈𝛼      = 𝐿𝛼     + 𝑅𝛼 𝐼𝛼
+the parameters of the energy storage elements, thereby significantly           ⎪                    d𝑡
+                                                                               ⎪                   d𝐼𝛽
+enhancing simulation stability.                                                ⎨ 𝑈c − 𝑈𝛽      = 𝐿𝛽     + 𝑅𝛽 𝐼 𝛽                                                   (3)
+    (3) By analyzing the synthesis order, defined as the ratio of the          ⎪                    d𝑡
+                                                                               ⎪                  d𝑈
+global simulation time step to the small model time step, we show that         ⎪ −𝐼𝛼 − 𝐼𝛽     =𝐶 c
+                                                                               ⎩                   d𝑡
+increasing it improves the numerical stability of the proposed method.
+    (4) By Lyapunov stability theory, the stability boundaries of the          where 𝑈𝛼 is the boundary node voltage of subsystem 𝛼; 𝑈𝛽 is the
+proposed small-step synthesis model-based network partition method             boundary node voltage of subsystem 𝛽; 𝐼𝛼 is the current of inductor
+are established. The resulting analytical expressions provide explicit         𝐿𝛼 , defined as positive in the direction toward subsystem 𝛼; 𝐼𝛽 is the
+
+                                                                           2
+H. Zhao et al.                                                                             International Journal of Electrical Power and Energy Systems 176 (2026) 111709
+
+
+
+
+                            Fig. 1. Diagram of NP-LCL branch.
+
+
+
+current of inductor 𝐿𝛽 , defined as positive in the direction toward
+subsystem 𝛽; 𝑈c is the voltage across the intermediate capacitor.
+   By applying the SILM to discretize the above equations:
+⎧                  𝑛+ 1     𝑛− 1       𝑛+ 1     𝑛− 1
+⎪ 𝑛       𝑛
+                  𝐼𝛼 2 − 𝐼𝛼 2         𝐼𝛼 2 + 𝐼𝛼 2
+⎪ 𝑈c − 𝑈𝛼 = 𝐿𝛼                   + 𝑅𝛼
+⎪                       𝛥𝑇                   2
+⎪                     1
+                   𝑛+ 2        1
+                            𝑛− 2       𝑛+ 12    𝑛− 1                                        Fig. 2. Diagram of the NP-LCL branch based on SILM.
+⎨ 𝑛               𝐼𝛽     − 𝐼𝛽         𝐼𝛽     + 𝐼𝛽 2                    (4)
+          𝑛
+⎪ 𝑈c − 𝑈𝛽 = 𝐿𝛽                   + 𝑅𝛽
+⎪                       𝛥𝑇                   2
+⎪   𝑛+ 12   𝑛+ 12       𝑈c − 𝑈c𝑛
+                          𝑛+1
+⎪ −𝐼𝛼 − 𝐼𝛽        =𝐶
+⎩                           𝛥𝑇
+where 𝛥𝑇 denotes the simulation time step; 𝑈𝛼𝑛 and 𝑈𝛽𝑛 represent
+the voltages at nodes 𝛼 and 𝛽 at time 𝑛𝛥𝑇 , respectively; 𝑈c𝑛 denotes
+                                                          𝑛−1∕2      𝑛−1∕2
+the voltage at intermediate capacitor at time 𝑛𝛥𝑇 ; 𝐼𝛼          and 𝐼𝛽
+represent the currents of branches c − 𝛼 and c − 𝛽 at time (𝑛 − 1∕2)𝛥𝑇 ,
+respectively; 𝑈c𝑛+1 denotes the voltage at intermediate capacitor at time
+             𝑛+1∕2          𝑛+1∕2
+(𝑛 + 1)𝛥𝑇 ; 𝐼𝛼      and 𝐼𝛽        represent the currents of branches c − 𝛼                             Fig. 3. Diagram of NP-CLC branch.
+and c − 𝛽 at time (𝑛 + 1∕2)𝛥𝑇 , respectively. The fractional superscripts
+indicate that the updates of currents and voltages are asynchronous.
+Here, all branch currents are updated first, followed by the update
+of the voltage at intermediate capacitor, with the current and voltage              (3) Stage 3: 𝑈c𝑛+1 is calculated by (7). Furthermore, it is fed back as
+updates staggered by half a simulation time step.                                       a controlled voltage source to subsystems 𝛼 and 𝛽.
+    By algebraic manipulation, the update expressions for the branch
+           𝑛+1∕2    𝑛+1∕2                                                            It can be seen that the above network-partition method enables
+currents 𝐼𝛼      , 𝐼𝛽     , and the node voltage 𝑈c𝑛+1 can be derived as
+                                                                                  subsystems 𝛼 and 𝛽 to be simulated in parallel, thereby improving
+follows:
+                                                                                  overall simulation efficiency. It should also be emphasized that the
+ 𝑛+ 12      

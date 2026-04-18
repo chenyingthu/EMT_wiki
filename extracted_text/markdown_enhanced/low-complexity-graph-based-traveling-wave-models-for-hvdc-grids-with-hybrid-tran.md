@@ -1,0 +1,29 @@
+# Low-complexity graph-based traveling wave models for HVDC grids with hybrid transmission lines: Application to fault identification
+
+P. Verrax *, a, b, N. Alglave a, A. Bertinato a, M. Kieffer a, b, B. Raison a, c  
+a SuperGrid Institute, 23 rue Cyprian, BP 1321, Villeurbanne, Cedex 69611, France  
+b L2S, Univ Paris-Saclay, CNRS, CentraleSupelec, Gif-sur-Yvette F-91190, France  
+c Institute of Engineering Univ. Grenoble Alpes, CNRS, Grenoble INP*, G2Elab, Grenoble 38000, France  
+
+* Corresponding author at: SuperGrid Institute, 23 rue Cyprian, BP 1321, Villeurbanne, Cedex 69611, France.  
+E-mail address: paul.verrax@supergrid-institute.com (P. Verrax).
+
+**Keywords:** Hybrid lines, Fault location, Graphs theory, Parametric model, Identification
+
+**Abstract:** Faults affecting hybrid transmission lines comprising both overhead and underground parts, generate numerous traveling waves may be difficult to describe and evaluate. This paper proposes a combined knowledge-based and behavioral modeling approach to represent the voltage and current waveform after the fault occurrence. The grid is reprensente as a graph which facilitates the selection of waves traveling through the grid for a finite time-horizon simulation. A relatively compact description of the waves is then derived. The obtained model depends explicitly on the characteristics of the grid and on the fault parameters. An application of the model to the identification of the faulty portion of an hybrid line within an HVDC grid is proposed.
+
+## 1. Introduction
+
+The integration of renewable electricity sources leads to the evolution of the existing transmission and distribution power grids into a more interconnected system. For high voltage transmission, direct current (HVDC) technology may outperform HVAC for long distance interconnections, in particular for underground or undersea cables [1]. The use of hybrid lines comprising portions of cables and overhead lines permits a better adaption to different terrains and configurations (offshore connection, populated areas, existing corridors, etc.), see for instance [2,3]. Such hybrid lines can be further integrated into larger Multi-Terminal DC grids (MTDC) to increase the overall reliability while diminishing the investment costs [4,5]. An example of a four station meshed HVDC grid comprising two overhead lines and two hybrid lines is depicted in Figure 1.
+
+The protection of MTDC grids against faults remains a challenging topic, in particular when it comprises several portions of underground cables (UGC) and overhead lines (OHL). The differences between UGC and OHL, for instance in terms of surge impedance, makes the use of traditional rate of change of voltage (ROCOV) and current (ROCOC) algorithms ill-suited [6]. For hybrid lines, protection algorithm should be able to identify the faulty section as faults on areal section are generally temporary and can lead to the auto-reclosing of the line. Traditional protection algorithms are generally unable to perform this task. A brief literature overview on protection algorithms for hybrid lines is given in Section 2, showing the interest of model-based approaches. This paper proposes a systematic approach for the modeling of the traveling waves appearing after a fault using a graph description of the grid. For each wave, the proposed parametric model combines a physical and a behavioral part, as detailed in Section 3. The physical part accounts for the propagation delays of the waves though the transmission lines and the reflection and transmission occurring at the nodes of the grid. The behavioral part accounts for the distortion of the waves due to the soil resistivity and the cable resistance. The obtained model depends explicitly on the parameters that characterize a fault, such as the fault distance and the fault resistance. An application example of the model to identify the faulty segment within a hybrid line is presented in Section 4. Test results using a test grid simulated in EMTP-RV [7] software are provided in Section 5.
+
+## 2. Literature overview
+
+The selective clearing of faults by disconnecting only the affected line is usually the preferred solution as it allows to operate the healthy parts of the grid continuously. This requires DC Circuit Breakers (DCCB) at the extremity of each line. Each DCCB is then controlled by the neighboring relay which, in case of a fault affecting the line it protects, must send a tripping order as fast as possible (typically in less than 1 ms).
+
+The protection algorithm at the relay must thus differentiate faults affecting the protected line (internal faults) from faults affecting other parts of the grid (external faults). Furthermore, in the case of hybrid lines, the identification of the faulty segment is of interest. While faults affecting cables are usually permanent, faults affecting OHL are often temporary and a re-closing of the line may be attempted. Nevertheless, the identification of the faulty segment within an hybrid line is a difficult task. Many existing approaches involve distributed sensors at the junction between each portion and synchronized communication between more general case of an hybrid link embedded in a MTDC grid. The primary protection is ensured by a differential current criterion evaluated at the junction points. Localization is then performed using the arrival time difference at the different sensors, measured using a wavelet transform of the current. Nevertheless, the availability of sensors at each junction is costly and communication between those would lead to additional delays.
+
+Model-based approaches representing the transient behavior of the
+
+**Fig. 1.** Example of a meshed HVDC grid comprising two hybrid lines and two overhead lines. DC circuit breakers located at the extremity of each line as well as at the output of the converters are omitted.

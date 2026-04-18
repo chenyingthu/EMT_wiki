@@ -1,0 +1,168 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2714639, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                       Parallel Electromagnetic Transients Simulation
+                       with Shared Memory Architecture Computers
+                        Shengtao Fan, Member, IEEE, Hui Ding, Member, IEEE, Anuradha Kariyawasam, Student Member,
+                                                IEEE, and Aniruddha M. Gole, Fellow, IEEE
+
+
+                                                                                     exceeds the time-step, the two sides are computationally
+              Abstract-- This paper proposes a graph based matrix level               decoupled and hence paralelizabe, as one side cannot affect
+           partitioning methodology for parallel electromagnetic transient            the other in the same time step. However this technique
+           (EMT) simulation. By partitioning the graph associated with the            becomes difficult for simulation cases with no transmission
+           admittance matrix, an efficient bordered block diagonal (BBD)
+                                                                                      lines or very short transmission lines (or cables) such as
+           matrix form is obtained, which is particularly suitable for
+           parallel implementation. Even without the presence of                      shipboard systems, microgrids or systems with dense power
+           distributed transmission lines, fully automatic system                     electronic clusters, where the small travel time may demand
+           partitioning and parallelization of the simulation are achieved.           an unreasonably small time step. One approximate solution is
+           The parallelized algorithm is implemented on a shared memory               to introduce artificial transmission lines (‘stubs’ lines) with
+           computer and assessed using two scalable test cases. The first             travel times greater than one time step to implement the
+           involves an underground cable with many distributed parameter
+                                                                                      partition [6]. Alternatively other approximate approaches
+           cascaded sections. The second is an interconnection of multiple
+           instances of the IEEE 14 bus system, where only lumped                     intentionally introduce a one time step delay to decouple
+           transmission line models are used. The tests show that EMT                 portions of a network. Information is exchanged between the
+           simulation can be significantly accelerated. The scalability is            decoupled portions using controlled voltage and current
+           tested with up to 64 cores.                                                sources [7]. However, the one time step delay can lead to
+                                                                                      inaccuracy or even numerical instability. To overcome these
+               Index Terms-- Bordered block diagonal, electromagnetic difficulties, the concept of diakoptics [8]-[11] and related
+           transient simulation, LU factorization, graph based partitioning,
+                                                                                      methods [12]-[15] have been proposed. These do not rely on
+           parallel processing
+                                                                                      any natural parallelism such as travel times. Instead,
+                                     I. INTRODUCTION                                  parallelism is identified by analyzing the structure of the
+                                                                                      network. In diakoptics, the full network is reduced to a sparse
+           E    LECTROMAGNETIC Transient (EMT) simulation has interconnection of several subsystems with internal nodes
+                become a fundamental tool in the design, operation and collapsed. Due to this collapse, the solution of this network
+           analysis of modern power systems. Application scenarios only involves a much smaller number of nodes. Once this
+           include transient simulations of large-scale power systems network is solved, the terminal node solution of each
+           such as FACTS and HVDC systems [1], microgrids, collapsed subsystem becomes available, from which its
+           shipboard power systems [2], cross-bonded cable systems [3] internal node voltages can be obtained independently, i.e., in
+           and so on. Such simulations require significant computer time. parallel. However, existing diakoptics type methods are circuit
+           Traditional speedup approaches such as increasing clock based and partitions are performed on the original electrical
+           speed or exploiting instruction-level parallelism (ILP) have network. Although this has the merits of clear physical
+           now saturated. However, new trends in processor interpretation, fully automating the process is challenging and
+           development have made multi-core processors commonplace, usually involves some amount of user intervention [15].
+           and thread level parallelism (TLP) has become a method of                     In this paper, a new fully automated methodology of
+           choice to increase a system's overall performance [4]. partitioning and parallelization is proposed. To facilitate
+           Therefore, it is necessary to investigate efficient approaches automation, instead of performing system partitioning at the
+           for parallel EMT simulation to fully utilize existing computer network level, the proposed method uses a graph based
+           technology.                                                                approach to directly partition the admittance matrix into a
+               To parallelize EMT simulations, many attempts have been bordered block diagonal (BBD) form. The resulting BBD
+           made for system decomposition. One commonly used matrix is further factored into a LU product, with blocked L
+           approach uses the natural decoupling introduced by traveling and U matrices. As the diagonal blocks are only loosely
+           wave propagation on transmission lines [5]. If the travel time coupled with each other through the boundary nodes, the
+                                                                                      method is particularly suitable for coarse-grain parallel
+               Shengtao Fan, Hui Ding, Anuradha Kariyawasam and Aniruddha M. Gole     implementation [16]-[19].
+           are with the Department of Electrical and Computer Engineering, University    Additionally, the implementation uses a multiple
+           of    Manitoba,    Winnipeg,     MB      R3T   5V6     Canada     (e-mail: instruction multiple data (MIMD) shared-memory architecture
+           shengtaofan@gmail.com; umhvdc@gmail.com; kariyawasam83@gmail.com;
+           ani_gole@umanitoba.ca).
+                                                                                      in which explicit instructions for data exchange between
+
+
+  0885-8977 (c) 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2714639, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             2
+
+           processors are not required, greatly facilitating the parallel                                      lower and upper triangular matrix is also required.
+           implementation of the EMT simulation. In this paper,
+           discussion is restricted to tightly coupled shared memory
+           systems, e.g., a single CPU with multiple cores, or multiple
+           single core CPUs. Such computers have small inter-processor
+           communication latency (i.e., time to communicate between
+           processors), which is very important for efficient thread
+           synchronization.
+              Using the above algorithm and hardware implementation,
+           the resulting EMT solver has the following desirable features:
+           a) Parallelism is determined from the network structure.
+             Systems with transmission lines need no special treatment.
+           b) The parallelized EMT algorithm utilizes the available
+             multiple processors without any user interaction.
+
+                         II. PARALLELIZATION OF EMT SIMULATION
+              An overview of the EMT simulation outlining the main
+           computational stages of a typical EMT simulation is first
+           presented. Block LU factorization based parallelization and
+           the partitioning scheme for obtaining bordered block diagonal                                       Fig. 1. Flowchart of EMT simulation.
+           (BBD) matrices are then introduced.
+                                                                                                               Speeding up the EMT simulation requires careful
+           A. Typical Process of EMT Simulation                                                                identification of all parallelizable operations. These are
+               The entire EMT simulation period is divided into small                                          discussed in the subsections to follow.
+           time steps. The network response in any time step is                                                B. Parallelization in calculation of history terms
+           calculated from a known solution from the previous time step.
+                                                                                                                  The calculation of companion circuits for network
+           In order to achieve this, the network elements are represented
+                                                                                                               component and updating of network states is inherently
+           by their companion circuits consisting of resistors and current
+                                                                                                               parallel as it only requires known voltages and currents e.g.,
+           sources, the latter representing ‘history terms’ related to
+                                                                                                               from the previous time step. Parallelizing the network solution
+           conditions in prior time steps or actual sources [20]-[22]. The
+                                                                                                               is more challenging as discussed in the section below.
+           values of the companion circuit being used depend on the
+           choice of integration method, with trapezoidal integration                                          C. Parallel Solution of Nodal Equations
+           being the most common [22]. Using nodal analysis, the                                                  1) BBD Matrix and Block LU Factorization
+           network equation becomes a linear vector equation of the                                               A bordered block diagonal (BBD) matrix based method as
+           form YV  J , where V is the vector of node voltages to be                                          [16] is used to achieve decomposition through exploring the
+           solved for, Y is the nodal admittance matrix, and J is the                                          sparse structure of the admittance matrix. A similar approach
+           vector of known currents (sources or history terms). When                                           for power flow and transient stability calculations was
+           ideal voltage sources or some controlled sources are present,                                       reported in [16], where the matrix entries are phasors and all
+           the method can be extended to a “modified” nodal analysis                                           calculations are with complex numbers. Here it is adapted for
+           (MNA) method [23], where the vector of unknowns may also                                            electromagnetic      transients   simulation,    where     the
+           include some currents, and the admittance matrix may include                                        representation is in the time domain and all elements are real
+           elements that have units other than pure admittance, giving a                                       numbers.
+           more generalized form as in equation (1), with Y , V and J                                             Suppose the modified nodal equation system to be solved is
+           replaced by A , x and b . Once the unknown vector x is                                                                    Ax  b                             (1)
+           solved for, the history terms and the admittance matrix (in                                         where b is the right hand vector and x is the vector of
+           case any switches have operated) for the next time step are                                         unknown variables. The matrix A is a highly sparse matrix,
+           calculated. Time is then advanced by the time step and the                                          which can be converted into the BBD form (2) through proper
+           solution for this new time step is generated. Fig. 1 shows the                                      row and column permutations. As a decomposition method,
+           basic algorithm.                                                                                    BBD based approaches have been used in many areas of
+               To solve nodal equations (1), a widely used procedure is                                        parallel calculation, such as circuit simulation [25], power
+           first factorizing the admittance matrix into lower and upper                                        flow calculation [26], and power system transient stability
+           triangular matrices. The solutions are then obtained through                                        simulation [16], [27]. The construction of the BBD form will
+           one forward and one backward substitution step [24]. If the                                         be discussed latter.
+           nodal admittance matrix has been modified due to switching
+           events etc., a refactorization of the admittance matrix into one
+
+
+
+  0885-8977 (c) 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2714639, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             3
+
+                                                                                                                                          m
+                  A11                                      A1n   x1   b1 
+                                                                                                                            A nn   L ni U in  L nn U nn                                         (10)
+                            A 22                           A 2 n   x 2   b 2                                                i1
+                 
+                                                                                                                  To solve the unknown variables, a forward substitution
+                                                                    (2)
+                                                                                                         process is first performed on (11), which will give the
+                                         A mm              A mn   x m  b m                               solutions of intermediate variables y .
+                 A n1      An2         A nm              A nn   x n   b n                                                          Ly  b                                             (11)
+           with,                                                                                               where,
+                                                      n  m 1                                  (3)                       y   y1 y 2  y m y n  t             (12)
+           Variables xi , i  1,  m , are the internal variables and x n                                          After y is available, a backward substitution is then
+           denotes the boundary variables which couple with the internal                                       performed on (13), which finally gives the solutions for x .
+           variables.                                                                                                              Ux  y                              (13)
+              A diakoptics like method as in [13]-[15] used previously                                         From (11), one obtains:
+           for EMT simulation also generates similar BBD type matrices                                                             Lii yi  bi , i  1 m                                          (14)
+           and thus can provide parallelism. However, to automatically
+                                                                                                                                                      m
+                                                                                                                                                                 
+                                                                                                                                   L nn y n   b n   L ni y i 
+           exploit parallelism and achieve additional speedup, this paper
+                                                                                                                                                                                                   (15)
+           explores the use of block LU factoring of the coefficient
+                                                                                                                                                     i1        
+           matrix. To solve (2), the ma

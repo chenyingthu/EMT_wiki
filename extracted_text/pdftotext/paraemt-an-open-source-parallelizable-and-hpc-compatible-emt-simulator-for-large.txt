@@ -1,0 +1,183 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 39, NO. 2, APRIL 2024                                                                                911
+
+
+
+
+         ParaEMT: An Open Source, Parallelizable, and
+             HPC-Compatible EMT Simulator for
+              Large-Scale IBR-Rich Power Grids
+                     Min Xiong , Student Member, IEEE, Bin Wang , Senior Member, IEEE,
+              Deepthi Vaidhynathan , Senior Member, IEEE, Jonathan Maack , Matthew J. Reynolds,
+          Andy Hoke , Senior Member, IEEE, Kai Sun , Fellow, IEEE, and Jin Tan , Senior Member, IEEE
+
+
+   Abstract—The electromagnetic transient (EMT) simulation is an                 nodal formulation, bordered block diagonal matrix, parallel
+essential tool for studying power grids dominated by inverter-based              computation, high-performance computing.
+resources (IBRs). However, due to small simulation time steps
+and increasing problem sizes, performing EMT simulations for
+                                                                                                          I. INTRODUCTION
+large-scale power grids becomes computational-intensive, and of-
+ten impractical. To address this challenge, we developed ParaEMT,                         ITH the proliferation of inverter-based resources (IBRs)
+an open-source Python-based EMT simulator that is parallelizable
+and compatible with high-performance computing (HPC) systems
+                                                                                 W        in power grids in recent decades, there is a broad con-
+                                                                                 sensus that electromagnetic transient (EMT) simulation is a
+for simulating large-scale power grids with a significant presence               critical element for addressing IBR integration, especially in
+of IBRs. Its key features include: 1) utilizing parallel computation
+                                                                                 bulk power grids with high levels of IBRs [1]. Some of notable
+for network solution by decomposing the network conductance
+matrix into the bordered block diagonal form; 2) enabling parallel               drivers of performing EMT studies for bulk power grids include
+updates of device states and network historical currents; 3) lever-              sub-synchronous oscillations [2], sub-synchronous control in-
+aging HPC to further accelerate simulation through a developed                   teractions [3], integration of IBRs into a weak grid, unbalanced
+generic interface. The accuracy of ParaEMT has been validated                    fault’s impact on grids, and potential misoperation of protection
+on the reduced 240-bus (720-node) Western Electricity Coordinat-                 systems [2], [4], [5], [6]. To better study and understand the
+ing Council system by benchmarking the EMT dynamics against                      impact of IBRs on system-level dynamics of power grids, offline
+PSCAD. Furthermore, ParaEMT achieves a notable speedup of ap-                    numerical simulations provide an economical alternative to the
+proximately 25 to 36 times on a synthetic 10,080-bus (30240-node)                digital real-time simulators and transient network analyzers
+system by leveraging the HPC resource named Eagle at the National                [6]. Among the offline tools, phasor-based electromechanical
+Renewable Energy Laboratory. A regional 100% renewable case
+                                                                                 transient simulations focus on slower dynamics, e.g., <5 Hz,
+of the reduced 240-bus system has been developed for simulating
+system-wide IBRs’ interactions in large-scale power grids using                  and use time steps of around milliseconds to simulate positive-
+ParaEMT.                                                                         sequence states. Although phasor simulations are relatively fast,
+                                                                                 they cannot accurately capture the complex dynamics of IBRs
+   Index Terms—Power system dynamics, electromagnetic                            that cover a wide range of frequencies, up to tens or hundreds
+transient simulation, inverter-based-resource, large-scale systems,              of hertz. In comparison, three-phase instantaneous value-based
+                                                                                 electromagnetic transient (EMT) simulations utilize fundamen-
+   Manuscript received 28 June 2023; revised 11 October 2023; accepted 4 De-     tal circuit models without assumptions on system frequencies
+cember 2023. Date of publication 13 December 2023; date of current version 26    and can accurately represent fast and detailed dynamics [6], [7],
+March 2024. This work was supported in part by the National Renewable Energy
+Laboratory (NREL), operated by Alliance for Sustainable Energy, LLC, for         and thus they can be used to de-risk the integration of high
+the U.S. Department of Energy (DOE) under Contract DE-AC36-08GO28308             penetration levels of IBRs. Implementing fundamental circuit
+through the Laboratory Directed Research and Development (LDRD) Program          models and ensuring the model accuracy and numerical stability
+and in part by the U.S. DOE’s of Energy Efficiency and Renewable Energy          require small time steps of approximately 50–100 microseconds
+(EERE) under the Solar Energy Technologies Office under Award 38457. Paper
+no. TPWRD-00902-2023. (Corresponding author: Jin Tan.)                           or smaller, which makes EMT simulations extremely time-
+   Min Xiong is with National Renewable Energy Laboratory, Golden, CO 80401      consuming, especially for large-scale applications where the
+USA, and also with the University of Tennessee, Knoxville, TN 37996 USA          dimensions of three-phase systems become very high. There-
+(e-mail: mxiong3@vols.utk.edu).                                                  fore, accelerating EMT simulations has been of great interest
+   Bin Wang was with National Renewable Energy Laboratory, Golden, CO            and significance for evaluating fast dynamic risks in practical
+80401 USA. He is now with the University of Texas at San Antonio, San Antonio,
+TX 78249 USA (e-mail: bin.wang2@utsa.edu).                                       planning and operations of power grids [8].
+   Deepthi Vaidhynathan, Jonathan Maack, Matthew J. Reynolds, Andy Hoke,            As multicore processors have become commonplace, con-
+and Jin Tan are with National Renewable Energy Laboratory, Golden, CO 80401      siderable effort has been directed toward parallel computations
+USA (e-mail: deepthi.vaidhynathan@nrel.gov; jonathan.maack@nrel.gov;             for EMT simulations of large power grids [9]. Traditionally,
+matthew.reynolds@nrel.gov; andy.hoke@nrel.gov; jin.tan@nrel.gov).
+   Kai Sun is with the University of Tennessee, Knoxville, TN 37996 USA
+                                                                                 the parallelization of EMT simulations relied on exploiting
+(e-mail: kaisun@utk.edu).                                                        the natural decoupling between subnetworks that arises from
+   Color versions of one or more figures in this article are available at        the traveling wave propagation delay across long-distance dis-
+https://doi.org/10.1109/TPWRD.2023.3342715.                                      tributed parameter transmission lines and cables in a manual
+   Digital Object Identifier 10.1109/TPWRD.2023.3342715                          way; however, the performance of this approach is constrained
+
+                   © 2023 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see
+                                                        https://creativecommons.org/licenses/by/4.0/
+912                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 39, NO. 2, APRIL 2024
+
+
+
+by the number, location, and length of transmission lines, and it     the device state updates and network historical current updates
+becomes infeasible when the delay is too small [9], [10], [11],       implemented in ParaEMT. Case studies conducted the reduced
+[12]. An alternative, which does not rely on the time delay of        240-bus (720-node) Western Electricity Coordinating Council
+lines, is to automatically reformulate the network conductance        (WECC) system [34], [35] and a modified version of it that
+matrix into a bordered block diagonal (BBD) form, which is not        features a 100% renewable energy penetration level in the Cal-
+fully decoupled but still amenable to parallelization [13].           ifornia region are presented in Sections IV and V, respectively.
+   Following the pioneering work [14] in 2011, many studies           Section VI evaluates the time performance of ParaEMT on simu-
+have been carried out to advance the acceleration of device-level     lating a large-scale, 10080-bus (30240-node) system, leveraging
+or system-level EMT simulations by incorporating graphics             the supercomputer Eagle at NREL. Finally, conclusions and
+processing unit (GPU) technology [15], [16], [17], [18]. The          discussions are provided in Section VII.
+single instruction multiple thread execution mode facilitated by
+GPUs allows for an effortless implementation of thread-level                  II. INTRODUCTION OF THE OPEN-SOURCE EMT
+parallelization in EMT simulations, leading to a speedup factor
+                                                                                         SIMULATOR PARAEMT
+up to 6 [17] and 40 [18] compared to conventional central
+processing unit (CPU)-based simulations.                              A. Simulation Framework
+   Meanwhile, as a user-configurable device capable of achiev-
+ing inherent hardwired parallelism with pipelined architecture,          To simulate the network generally represented by R-L-C cir-
+field programmable gate arrays (FPGAs) have been effectively          cuits, different approaches have been developed in commercial
+employed for hardware-in-the-loop-based real-time EMT sim-            tools to formulate the network equation, including mainly the
+ulations [19], [20], [21], [22]. Also, hybrid EMT and phasor          traditional nodal formulation used in [32], the modified nodal
+domain simulations have been investigated to reduce overall           formulation utilized in SPICE [36], the modified augmented
+computational costs [23], [24], [25]. In [26], an EMT simulation      nodal analysis employed in EMTP-RV [37], [38], and the sparse
+platform, called CloudPSS, is introduced, which uses cloud ser-       tableau formulation adopted in XTAP [39].
+vice and heterogeneous parallel computing to efficiently perform         The traditional nodal approach based on the trapezoidal rule
+EMT simulations.                                                      method is employed in ParaEMT. The differential equation of
+   High-performance computing (HPC) is another advanced               any R-L-C circuit is discretized by the trapezoidal-rule method,
+and promising technique for handling computationally intensive        which is numerically A-stable. Subsequently, the original circuit
+power systems studies, such as contingency analysis, reliability      can be represented by an equivalent resistor and a historical
+analysis, state estimation, and transient stability simulation.       data-determined current source:
+With rich computing resources, multiple subtasks can be simul-                                      v(t)
+taneously processed with superior efficiency [27], [28]. Lever-                            i(t) =        + ihist (t − Δt)
+                                                                                                    Req
+aging HPC clusters at the Pacific Northwest National Labora-
+tory and the National Renewable Energy Laboratory (NREL),                        ihist (t − Δt) = ai(t − Δt) + bv(t − Δt)             (1)
+transmission and distribution phasor-domain co-simulations of
+large systems were performed and presented in [29] and [30],             Moreover, in ParaEMT, to mitigate undesired fictitious
+respectively.                                                         numerical oscillations, artificial resistors Rp ≈40L/(3Δt) and
+   To efficiently simulate EMT dynamics of large-scale IBR-rich       Rs ≈3Δt/(40C) are added in parallel/series with L/C, respec-
+power grids, the authors of this paper developed a Python-based       tively, while maintaining high simulation accuracy [40].
+open-source EMT simulator, named ParaEMT, that can execute               The coefficients corresponding to the companion circuits of
+parallel computations on HPC clusters [31]. ParaEMT employs           various types of network circuits are summarized in Table IV in
+the conventional nodal formulation-based EMT simulation strat-        the appendix. Finally, based on the companion circuit represen-
+egy outlined in [32] and integrates the generic IBR model             tation, the network equation can be formulated with Kirchhoff’s
+detailed in [33] to emulate IBR-related dynamics.                     current law as a real-valued nodal equation:
+   To the best of the authors’ knowledge, this is the first work
+                                                                                       Gv(t) = i(t) + ihist (t − Δt)                  (2)
+on parallel EMT simulation of large-scale systems (e.g., with
+240-10080 buses) leveraging the HPC clusters. Also, ParaEMT           where G is the network conductance matrix comprised of all
+is the first open-source EMT simulator for large-scale systems        equivalent resistors, v(t) is the three-phase instantaneous nodal
+that can be easily integrated with HPC clusters. Although multi-      voltage vector, i(t) is the three-phase instantaneous current in-
+ple commercial software, such as PSCAD, EMTP-ATP, EMTP-               jection vector, and ihist (t-Δt) is the historical current vector of
+RV, XTAP, OPAL-RT, and RTDS, are dominating the EMT                   the companion circuits [32], [41].
+simulation, the Python-based simulator ParaEMT supplements               The simulation process is illustrated in Fig. 1. The three aqua
+those tools by providing an open and transparent platform for         boxes include the tasks that are naturally decoupled for different
+educational and research purposes. For example, users can mod-        devices or network circuits. Instead, as marked in the purple box,
+ify the code to implement different parallel simulation strategies,   the network equation is coupled between different nodes unless
+test performance of numerical approaches, and simulate dynam-         advanced techniques are taken to decouple it to some extent.
+ics of user-defined models in the EMT domain on large-scale
+systems.
+   The rest of this paper is organized as follows. Section II in-     B. Element Library and Device Modeling
+troduces the simulation strategy, the developed element library,        ParaEMT currently supports a variety of typical power system
+and the utilized initialization approach of ParaEMT. Section III      devices, which are summarized in Table I [33], [34], [42].
+presents the BBD matrix-based parallelization of the network          Additional component models—such as grid-forming converter-
+solution, and the natural decoupling-based parallelization of         based resources, distributed parameter transmission lines, and
+XIONG et al.: PARAEMT: AN OPEN SOURCE, PARALLELIZABLE, AND HPC-COMPATIBLE EMT SIMULATOR                                                 913
+
+
+
+                                                                      C. Simulation Initialization
+                                                                         Proper initialization is critical for attaining a normal operation
+                                                                      condition and saving simulation time for reaching a converged
+                                                                      steady state. Unlike the blocking and releasing method utilized
+                                                                      in PSCAD, ParaEMT initializes the system with a positive
+                                                                      sequence power flow solved by the Newton-Raphson method,
+                                                                      and then converts the voltages into three-phase waveforms fol-
+                                                                      lowing:
+                                                                                        va = Vmag cos(Vang )
+                                                                                        vb = Vmag cos(Vang − 2π/3)
+                                                                                        vc = Vmag cos(Vang + 2π/3)                     (3)
+                                                                      where va , vb , and vc are three-phase voltages, and Vmag and
+                                                                      Vang are the magnitude and angle of positive sequence phasor
+                                                                      voltages. The same conversion strategy is applied to currents.
+                                                                         Because a fully automatic initialization does not exist yet, the
+                                                                      dynamic models, including synchronous generators, machine
+                                                                      controls, and IBRs, are initialized through pre-coded backward
+                                                                      propagation of variables following the control diagram equations
+Fig. 1.   EMT simulation flowchart.
+                                                                      under initial conditions [6].
+                                                                         Currently, ParaEMT’s initialization considers balanced
+                                                                      steady state. Future work can be directed towards initialization
+                                                                      of distributed line models, un-transposed line models, and power
+                              TABLE I                                 electronics with harmonics when those models are incorporated
+            DEVICE MODELS FOR EMT SIMULATION IN PARAEMT               [6], [44].
+
+                                                                      D. Process of Conducting EMT Simulations Using ParaEMT
+                                                                         To execute an EMT simulation in ParaEMT and save the
+                                                                      results, the following steps are followed:
+                                                                         1) Step 1. Initialize the System Power Flow: The pre-
+                                                                      established PSSE raw file of a system is loaded, after which
+                                                                      the power flow is calculated using the Python application pro-
+                                                                      gramming interface, and then the data is recorded as a JSON
+                                                                      source file.
+                                                                         2) Step 2. Run the Time Domain EMT Simulation: In this
+                        

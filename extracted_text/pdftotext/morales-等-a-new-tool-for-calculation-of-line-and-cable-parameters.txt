@@ -1,0 +1,183 @@
+https://doi.org/10.1016/j.epsr.2023.109314
+                                                                                                              This is the Pre-Published Version.
+
+             A New Tool for Calculation of Line and Cable
+                             Parameters
+                                                       J. Morales, H. Xue, J. Mahseredjian, I. Kocar
+
+
+      Abstract−This paper presents a new tool for the computation                                  V
+   of per-unit-length parameters for transmission line and cable                                          R ' j L '  I  Z ' I          (3)
+   models used for simulating electromagnetic transients (EMT).
+                                                                                                   z
+                                                                                                  I
+                                                                                                         G ' jC '  V  Y ' V
+   The proposed methodology is based on the MoM-SO theory and
+                                                                                                                                               (4)
+   state-of-the-art formulations for the computation of the series                                z
+   impedance and shunt admittance parameters. The new tool has
+   major advantages compared to traditional approaches available                     The traditional Line Constants and Cable Constants
+   in EMT-type software. These advantages include accurate skin                  routines [1]-[3] have been used for the computation of pul
+   and proximity effect modeling, above-ground cable modeling,                   parameters for many years. These routines are included in
+   modeling of stranded wires in cables, representation of                       most EMT-type software. Alternatively, pul parameters can be
+   multilayer soil, coupled overhead lines and underground cables,               obtained via Finite Element Method (FEM) based techniques
+   etc. This paper presents the new tool together with                           [4]-[6], which are considered more accurate, but usually
+   demonstrations of transient simulations for practical examples.
+                                                                                 demand a significantly higher computational burden.
+      Keywords: EMTP, line, cable, transients, per-unit-length.                  Therefore, the Line/Cable Constants routines are often
+                                                                                 preferred for their simplicity and efficiency.
+                             I. INTRODUCTION                                         The Line/Cable Constants tools, however, have limitations
+                                                                                 and have become out of date for today’s needs. For instance,
+   A    CCURATE transmission line models (including both
+        overhead lines and underground cables) in EMT-type
+   software require accounting for the distributed parameters
+                                                                                 they neglect proximity effects which can be relevant for cable
+                                                                                 simulations; they can handle only bare-aerial conductors (Line
+                                                                                 Constants) or only buried cables (Cable Constants), but mixed
+   nature and the frequency dependency of its parameters to
+                                                                                 aerial and underground conductors cannot be modeled; they
+   properly represent transient phenomena. The computation of
+                                                                                 can only model two different mediums (air and ground), thus,
+   these models is usually a two-step process: 1) computation of
+                                                                                 they are not suitable for submarine cables, where the sea water
+   per-unit-length (pul) parameters and 2) parametrization of the
+                                                                                 representation is required in addition to ground and air
+   model. The parametrization depends on the targeted type of
+                                                                                 mediums; also, above ground cables, such as required for gas-
+   model. It is either for constant parameter or frequency
+                                                                                 insulated substations or some above ground cable installations,
+   dependent models. The frequency dependent modeling
+                                                                                 may be poorly represented due to some simplifications in
+   requires separate fitting procedures.
+                                                                                 earth-return current formulas.
+      Since the pul parameters are the input data for the second
+                                                                                     This paper presents a new tool named Line/Cable Data for
+   step, the computation of these parameters is crucial for
+                                                                                 the calculation of pul parameters that overcomes the
+   deriving accurate and reliable time-domain models. The pul
+                                                                                 limitations of the traditional Line/Cable Constants routines
+   parameters are denoted as
+                                                                                 while performing a level of accuracy similar to FEM-based
+                            Z '  R ' jL '                  (1)
+                                                                                 techniques. The proposed Line/Cable Data tool applies the
+                            Y '  G ' jC '                  (2)                MoM-SO theory [7]-[10] combined with state-of-the-art
+   where Z ' denotes the pul series impedance and Y ' denotes                    formulations [11], [12]. An early version of the new approach
+   the pul shunt admittance, with R ' , L ' , G ' and C ' being                  presented in this paper is reported in [13]. Since then, further
+   the pul resistance, inductance, conductance, and capacitance,                 developments and the complete integration into EMTP [14]
+   respectively. Pul parameters describe the transmission line                   have been achieved. A similar parameters calculation tool is
+   behavior through the well-known Telegrapher’s equations                       proposed in [15], but only for tunnel installed cables.
+                                                                                     One of the contributions of this paper is revisiting the
+                                                                                 techniques applied and explaining how they are reunited in the
+                                                                                 new Line/Cable Data package, which is important since until
+   J. Morales is with PGSTech, Montréal (Québec) H2K 1C3, Canada (e-mail:        now the applied methods are spread in the literature. Another
+   jesus.morales@emtp.com).                                                      contribution is the demonstration of the capabilities of the new
+   H. Xue and Jean Mahseredjian are with Polytechnique Montreal, Montréal
+   (Québec)      H3C 3A7,    Canada      (e-mail:   haoyan.xue@polymtl.ca,       Line/Cable Data package through transient simulations with
+   jean.mahseredjian@polymtl.ca).                                                practical examples that would be impossible to reproduce with
+   I. Kocar is with The Hong Kong Polytechnic University, Hung Hom               traditional techniques.
+   (Kowloon), Hong Kong (e-mail: ilhan.kocar@polyu.edu.hk).
+                                                                                     A brief review of the techniques involved in the new
+   Paper submitted to the International Conference on Power Systems Transients   Line/Cable Data package is first presented in sections II and
+   (IPST2023) in Thessaloniki, Greece, June 12-15, 2023.                         III, followed by case studies in section IV.
+
+© 2023. This manuscript version is made available under the CC-BY-NC-ND 4.0 license https://creativecommons.org/licenses/by-nc-nd/4.0/
+     II. SERIES IMPEDANCE COMPUTATION WITH MOM-SO                              fields external to the conductor volume ( H                     and E )
+    The new Line/Cable Data tool performs the computation of                   unchanged is given by
+the pul series impedance parameters by applying the Method-                                                   J  H H                              (7)
+of-Moments and Surface Admittance Operator (MoM-SO)                               Substituting (5) and (6) into (7) leads to
+technique [7]-[10]. To start revisiting the MoM-SO technique,                                             1  1 E 1 E 
+let us first consider a solid conductor, surrounded by a lossless                                  J                                            (8)
+homogeneous medium as shown in Fig. 1.                                                                   j  1 n 0 n 
+                                                                                 This expression is key in the derivation of the pul
+                                                                               impedance parameters, and it is recalled later in section II C.
+                                                                                       B. Electric-field integral equation
+                                                                                  After the application of the equivalencing theorem, the
+                                                                               medium has become homogeneous, which allows expressing
+                                                                               the electric field E (at the surface of the conductor) by the
+                                                                               electric field integral equation [7]
+                                                                                                                      V
+Fig. 1. Single conductor and reference frame for the MoM-SO technique                                    E   j A                     (9)
+review.                                                                                                               z
+                                                                               where A is the vector potential component, defined by
+   Considering the setup of Fig. 1 and assuming an electric                                                   2
+current flowing through the conductor, a longitudinal (on the                                     A   0  J   G  r , r ' d                (10)
+z-axis) electric field E and a magnetic field H normal to                                                      0
+the conductor’s surface are produced. The relationship                         where G  r , r ' denotes the Green function that accounts for
+between these two fields is given by
+                                                                               an infinite space [7];  and r correspond to polar
+                                1 E
+                        H                                (5)                  coordinates as shown in Fig. 2 (a).
+                              j1 n                                             Substituting (10) and (3) into (9) leads to
+where  denotes the angular frequency, 1 represents the                                                 2
+                                                                                              E  j0  J   G  r , r ' d  Z ' I            (11)
+conductor permeability, and n the direction of H .
+                                                                                                          0
+A. Equivalencing theorem                                                         Equation (11) is the second key relationship for the
+   The equivalencing theorem is a mathematical tool that                       computation of the pul impedance and it is recalled below.
+consists of replacing the conductor space by the surrounding                          C. Discrete form of electromagnetic fields
+medium while introducing a density current J at the
+                                                                                  The cylindrical geometry of the conductors allows a spatial
+conductor’s surface to maintain the external fields unchanged                  representation of the above-mentioned electric field and
+[7], [16]. This is illustrated in Fig. 2 (a) and (b).                          density current by means of low-order Fourier series, i.e.,
+                                                                                                                       N
+                                                                                                      E     En e jn                          (12)
+                                                                                                                   n  N
+                                                                                                                           N
+                                                                                                                   1
+                                                                                                    J   
+                                                                                                               2 a
+                                                                                                                     J n e jn                    (13)
+                                                                                                                       n  N
+                                                                               where N denotes the Fourier series order. As previously
+                                                                               reported in the literature, N  4 is considered enough for
+                                                                               high accuracy. Note that setting N  0 is equivalent to
+                   (a)                                 (b)
+                                                                               neglecting proximity effects [9], which can be used to speed
+Fig. 2. Illustration of the equivalencing theorem, (a) original problem, (b)   up computations in cases where proximity effects are
+equivalent (fictitious) representation.                                        irrelevant.
+                                                                                   The above defined forms for E and J permit rewriting
+   The current density J             introduced produces fictitious            (8) in terms of their Fourier coefficients as
+electric and magnetic fields ( H and E in Fig. 2) internal to                                    2  ka '|n|  ka  kout a '|n|  kout a  
+the conductor’s surface, related by                                                     J n  En                                             (14)
+                                                                                                 j  |n|  ka      0 |n|  kout a  
+                                 1 E
+                         H
+                                                                               where |n| . is the Bessel function of first kind and
+                                                          (6)
+                               j0 n
+where  0 is the permeability of the surrounding medium.                       |n| ' .   its derivative; and             k   and   kout   denote the
+   According to the equivalencing theorem [7], [16], the                       wavenumber. Refer to [7], [17] for details.
+density current required to maintain the electric and magnetic
+       D. Surface Admittance Operator                                    H. Hollow conductors
+   Based on (12) and (13), E and J can be expressed as               The derivation of the pul impedance parameters presented,
+vectors in terms of their Fourier coefficients as                 can be easily extended to include hollow conductors by
+                   E   E N              EN 
+                                                T                 accounting for the internal surface of conductors in the same
+                                 E0                       (15)
+                                                                  way as for their external surface [8]. This extension produces
+                    J   J  N J0 J N 
+                                                T
+                                                    (16)          an increase in the size of the matrix relationship (25) by N
+                                                                  rows/columns for each additional surface given by each
+   Then, an appropriate arrangement of the Fourier
+                                                                  hollow conductor involved.
+coefficients in (14) allows a vector/matrix relationship
+between the electric field and density current as                         I. Ground return effects and multilayer soil
+                             J  Ys E               (17)              The representation of ground return currents in the
+   Since (17) is analogous to a current and voltage               impedance parameters of lines/cables is reported in the
+relationship, the resulting matrix Ys is denoted as the           literature by Carson and Pollaczek equations [1], [2], which
+surface admittance operator [7]-[10].                             are implemented in the traditional Line/Cable Constants
+                                                                  routines. It is worth to mention that these formulas are limited
+      E. Application of the Method of Moments                     to a certain frequency range and recently, it has been found
+   Substituting (12) and (13) into (11) leads to                  that they may produce unrealistic propagation modes at high
+                     2
+  N
+               j        N                                       frequencies as demonstrated in [18]-[20].
+  En e jn  2 0   J ne jn G  r, r ' d  Z ' I    (18)        In the MoM-SO technique, ground return effects are
+n  N                0 n  N                                    represented through the Green function G introduced in
+   The analytical solution of (18) is obtained by application     (10). In the formulation of MoM-SO presented above, G is
+of the Method of Moments (MoM) as given in [7], and it is         mentioned to represent an infinite space for simplicity, as
+used to obtain a discrete version of (18) as                      initially proposed in [7]. However, the representation of air-
+                      E  j0GJ  UZ ' I                (19)     ground medium as reported in [9] is adopted in the new
+where U is a matrix containing ones and zeros and relates         Line/Cable Data tool. This technique provides a more accurate
+the total current flowing in the conducto

@@ -1,0 +1,102 @@
+                                                                                                                                                                                                                                                                                                     1
+
+
+
+
+                                                                                                                                                       Neural Electromagnetic Transients Program
+                                                                                                                                                                         Yifan Zhou, Member, IEEE, and Peng Zhang, Senior Member, IEEE
+
+
+
+                                                                                                                                              Abstract—This paper devises a neural electromagnetic tran-                     molecular dynamics. A few studies also investigated the po-
+                                                                                                                                           sients program (NeuEMTP), an unsupervised, physics-informed                       tential of PINN in power system analytics, such as steady-state
+                                                                                                                                           learning approach to numerical-integration-free EMTP solutions.                   analysis [5] and electro-mechanical dynamics analysis [6].
+                                                                                                                                           The main contributions lie in: (1) a learning-based NeuEMTP
+                                                                                                                                           architecture to simultaneously generate the electromagnetic states                   This paper tackles the EMTP obstacle by leveraging the
+                                                                                                                                           at all desired time steps, making the step-by-step integration                    physics-informed learning philosophy. Two major challenges
+                                                                                                                                           unnecessary; (2) an unsupervised, physics-informed training pro-                  are to be addressed: (i) how to properly embed the trape-
+                                                                                                                                           cedure to realize the NeuEMTP functionality without requiring                     zoidal discretization-based EMTP formulation into the ma-
+                                                                                                                                           any EMTP trajectories beforehand; (3) an EMTP-oriented-                           chine learning architecture; (ii) how to accurately imitate
+                                                                                                                                           neural-network (EMTPNet) accompanied with a novel activation
+                                                                                                                                           function Act mix to enable efficient extrapolations of diverse                    the highly-oscillating electromagnetic waveforms by a neural
+2022 IEEE Power & Energy Society General Meeting (PESGM) | 978-1-6654-0823-3/22/$31.00 ©2022 IEEE | DOI: 10.1109/PESGM48719.2022.9916869
+
+
+
+
+                                                                                                                                           oscillation modes under arbitrary frequencies. Case studies sys-                  network. Our key innovation is a Neural EMTP (NeuEMTP)
+                                                                                                                                           tematically verify that NeuEMTP generates high-fidelity EMTP                      approach, which integrates an EMTP-oriented-neural-network
+                                                                                                                                           trajectories without involving any numerical integration before                   (EMTPNet) and an EMTP-physics-law-informed training pro-
+                                                                                                                                           or during the training process, and is promising to achieve faster-               cess to enable ultra-efficient, high-fidelity, and unsupervised
+                                                                                                                                           than-real-time EMTP simulations on the off-the-shelf computers.
+                                                                                                                                                                                                                             EMTP computation. The contributions of this work include:
+                                                                                                                                             Index Terms—Electromagnetic transients program (EMTP),                          • A learning-based EMTP architecture is designed, which
+                                                                                                                                           deep learning, physics-informed deep learning, trapezoidal rule,
+                                                                                                                                           data-driven computing.                                                               generates the electromagnetic transients at all time steps si-
+                                                                                                                                                                                                                                multaneously via a single forward propagation of EMTPNet.
+                                                                                                                                                                     I. I NTRODUCTION                                        • An EMTP-physics-law-informed and unsupervised training
+                                                                                                                                                                                                                                procedure is established, which completely removes the hard
+                                                                                                                                           E     LECTROMAGNETIC transients program (EMTP), an
+                                                                                                                                                 indispensable tool for modern power systems, is known
+                                                                                                                                           for its formidably daunting computational complexity. The
+                                                                                                                                                                                                                                requirements to have massive EMTP trajectories as training
+                                                                                                                                                                                                                                samples, making NeuEMTP more efficient than any existing
+                                                                                                                                           step-by-step numerical integration makes the classical EMTP                          learning-based power system dynamic analytics.
+                                                                                                                                                                                                                             • An EMTP-oriented-neural-network (EMTPNet) is devised,
+                                                                                                                                           extraordinarily time-consuming since tiny discretizations are
+                                                                                                                                           required to precisely trace the electromagnetic waveforms [1].                       which designs a novel activation function Act mix and an
+                                                                                                                                              Recent developments of machine learning (ML) shed light                           EMTP interpretation layer to jointly capture diverse electro-
+                                                                                                                                           on revolutionizing the dynamical system analytics [2]. In con-                       magnetic oscillation modes under arbitrary frequencies.
+                                                                                                                                           trast to the numerical solvers, learning-based methods directly                      The remainder of the paper is organized as follows. Sec-
+                                                                                                                                           learn trajectories from data without repeatedly solving the                       tion II devises the NeuEMTP algorithm. Section III provides
+                                                                                                                                           dynamical equations, which are promising for achieving or-                        case studies. Section IV concludes the paper.
+                                                                                                                                           ders of magnitude of acceleration. Nevertheless, conventional                                               II. M ETHODOLOGY
+                                                                                                                                           learning-based dynamics prediction approaches mostly adopt
+                                                                                                                                                                                                                             A. Preliminaries of Classical EMTP
+                                                                                                                                           a supervised learning architecture. The strong reliance on
+                                                                                                                                           sufficient training data, although workable for slow dynamics                        For an arbitrary electrical component, its EMTP formula-
+                                                                                                                                           prediction of power systems [3], may not be practical for                         tion is established by discretizing the state-space model into
+                                                                                                                                           learning the high-frequency electromagnetic oscillations. The                     algebraic equations of an equivalent resistance using numerical
+                                                                                                                                           reason is that generating and storing a large quantity of high-                   integration rules [1], such as the trapezoidal discretization:
+                                                                                                                                           fidelity EMTP trajectories could be exceedingly inefficient.                                                i(t) = gv(t) − ih (t)                       (1)
+                                                                                                                                              Physics-informed deep learning is a newly-emerged learning
+                                                                                                                                           technique, where a physics-informed neural network (PINN)                         Here, i(t) and v(t) respectively denote the current and voltage
+                                                                                                                                           predicts a dynamical system’s behaviour leveraging the dif-                       of the component; g denotes the equivalent conductance;
+                                                                                                                                           ferential equations behind the dynamical responses [4]. Ben-                      ih (t) denotes a historical current injection, which reflects the
+                                                                                                                                           efiting from the exploration of the physics laws, this learn-                     impact from the previous time step. Specifically, (2) details
+                                                                                                                                           ing procedure can be accomplished with fewer or even no                           the expression of g and ih (t) for resistance, inductance and
+                                                                                                                                           training data. PINN can promisingly accelerate the solving of                     capacitance:
+                                                                                                                                           ordinary/partial differential equations and has been applied in                            1
+                                                                                                                                                                                                                               gR =       , ih,R (t) = 0                                  (2a)
+                                                                                                                                           diverse disciplines such as fluid flows, biological simulation,                            R
+                                                                                                                                                                                                                                      ∆t
+                                                                                                                                                                                                                               gL =        , ih,L (t) = −gL vL (t − ∆t) − iL (t − ∆t) (2b)
+                                                                                                                                              This work was supported in part by the National Science Foundation under                2L
+                                                                                                                                           Grant Nos. OIA-2040599 and OIA-2134840.                                                    2C
+                                                                                                                                              Y. Zhou and P. Zhang are with the Department of Electrical and Computer          gC =         , ih,C (t) = gC vC (t − ∆t) + iC (t − ∆t) (2c)
+                                                                                                                                           Engineering, Stony Brook University, New York 11794-2350, USA (e-mails:                    ∆t
+                                                                                                                                           yifan.zhou.1@stonybrook.edu, p.zhang@stonybrook.edu).                             where ∆t denotes the step size in the EMTP computation.
+                                                                                                                                                 978-1-6654-0823-3/22/$31.00 ©2022 IEEE
+                                                                                                                                                      Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:35:45 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                               2
+
+
+
+  By assembling the discretized formulation of each compo-                         Backpropagation                         Backpropagation
+nent, the EMTP model of the entire system can be established:
+                   Gv(t) = is (t) + ih (t) := i(t)                        (3)           DNN
+                                                                                                                                               EMTP model
+Here, v denotes the vector of nodal voltages; i denotes the                                                                    EMTP
+                                                                                            Training set                        Net
+vector of nodal current injections, which assembles currents                       (a mass of EMTP trajectories)
+from both power sources (i.e., is ) and history terms (i.e., ih );
+                                                                                    (a) Conventional supervised ML    (b) Unsupervised, physics-informed NeuEMTP
+G denotes the equivalent conductance matrix of the system.
+                                                                                  Fig. 2: Illustration of the unsupervised learning architecture of NeuEMTP and
+   Therefore, at each time step, EMTP updates the electro-                        its comparison with conventional supervised ML approaches
+magnetic states at the current step based on the results at the
+previous step(s), as depicted in Fig. 1(a). This step-by-step                        This observation motivates the establishment of NeuEMTP
+numerical integration makes EMTP exceedingly inefficient.                         as an unsupervised learning-based EMTP approach. Fig. 2(b)
+                                                                                  summarizes the schematic of NeuEMTP. Kernel ingredients of
+                                                                                  NeuEMTP include:
+                                                                

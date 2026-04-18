@@ -1,0 +1,187 @@
+                                                          Electrical Power and Energy Systems 31 (2009) 512–521
+
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                             Electrical Power and Energy Systems
+                                               journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Optimization of numerical integration methods for the simulation
+of dynamic phasor models in power systems
+Turhan Demiray *, Göran Andersson
+Power Systems Laboratory – ETH Zürich, Physikstrasse 3, ETL-I34, 8092 Zuerich, Switzerland
+
+
+
+a r t i c l e        i n f o                           a b s t r a c t
+
+Article history:                                       This paper proposes the use of frequency matched linear numerical integration techniques for the sim-
+Received 28 September 2008                             ulation of systems modelled by the dynamic phasors approach (DPA). Such methods show an increased
+Received in revised form 30 March 2009                 accuracy and computational efﬁciency around the matched frequency. Such frequency matched methods
+Accepted 30 March 2009
+                                                       are derived by analyzing the local truncation error in the frequency domain and determining the coefﬁ-
+                                                       cients of the method in such a way so that the error is minimized around the matched frequencies. The
+                                                       aim in this way is to increase the accuracy and the efﬁciency of the numerical calculation, during the
+Keywords:
+                                                       inherent fast oscillations featured in such systems modelled with dynamic phasors approach.
+Simulation
+Dynamic phasors approach
+                                                                                                                        Ó 2009 Elsevier Ltd. All rights reserved.
+Root-matching
+Frequency matched numerical integration
+
+
+
+
+1. Introduction                                                                              tities of the electrical grid with the system frequency fs cannot be
+                                                                                             integrated with the maximum possible integration step size
+   For the combined simulation of the electromagnetic and elec-                              hmax ¼ 2f1s , due to the lack of accuracy of the used numerical integra-
+tromechanical transients in power systems, various system vari-                              tion methods at the system frequency. The most commonly used
+able representations are used. The electromagnetic transients                                integration methods, such as forward-Euler, backward-Euler, trap-
+programs often use the instantaneous value representation of sys-                            ezoidal and Gear’s method, are optimal for the numerical integra-
+tem variables and system equations in the original three phases                              tion of low frequency signals, so that they are prone to some errors
+[1]. Another possibility is to use a variable representation on a                            at higher frequencies if larger step sizes are used.
+rotating reference frame (DQ0), which leads to constant system                                   One approach to overcome this problem is to use the so called
+quantities in balanced steady state. Another form of system vari-                            root-matching method [9]. Numerical integration techniques gener-
+able representation is the so called dynamic phasors, which is                               ally discretize a continuous system HðsÞ by mapping it into an
+based on the time varying Fourier Series approximation of the peri-                          equivalent discrete time system HðzÞ. The optimum discretization
+odic or nearly periodic system quantities [2,3]. Dynamic phasors                             method should match the poles, zeros and ﬁnal value of the differ-
+provide a suitable framework which has the capability to model                               ence equation to those of the actual continuous system. If these con-
+power system behavior as accurate as EMTP simulations and at                                 ditions are fulﬁlled, the difference equations are stable regardless of
+the same time, computationally more efﬁcient. In particular, the                             the step size, if the actual continuous system is also stable. This root-
+dynamic phasors approach has been applied to model three-phase                               matching approach can be interpreted as an adjustment of the dis-
+systems with electric machines, FACTS devices and power convert-                             cretization (numerical integration) method to the eigenvalues of the
+ers [4–7]. Mathematical details of the dynamic phasors approach                              system. This method has been successfully applied for the discreti-
+will be discussed in Section 2.                                                              zation of the RL, RC, etc. branch elements in EMTP instead of the tra-
+   Regardless of the selected variable representation, in most of                            ditionally employed trapezoidal discretization method [1].
+the cases, numerical integration techniques such as forward-Euler,                               In [10], the authors introduced another integration method
+backward-Euler, trapezoidal and Gear’s method are employed.                                  adapted to the periodic steady state at system frequency fs . This
+Generally, in three-phase instantaneous value representation for                             method allows the use of larger step sizes up to h ¼ 2f1s for the
+modelling of power systems, the integration step size is very lim-                           numerical integration of three-phase instantaneous electrical AC
+ited. Even if fast transients have decayed, the sinusoidal AC quan-                          quantities.
+                                                                                                 Since we are using the dynamic phasor representation for
+ * Corresponding author.
+                                                                                             power system modelling and simulation, our aim in this paper is
+    E-mail addresses: demirayt@eeh.ee.ethz.ch (T. Demiray), andersson@eeh.                   to optimize the numerical integration method for variables repre-
+ee.ethz.ch (G. Andersson).                                                                   sented by dynamic phasors.
+
+0142-0615/$ - see front matter Ó 2009 Elsevier Ltd. All rights reserved.
+doi:10.1016/j.ijepes.2009.03.033
+                                             T. Demiray, G. Andersson / Electrical Power and Energy Systems 31 (2009) 512–521                                 513
+
+
+    As mentioned previously, in the root-matching method, the                          modelled with dynamic phasors are shifted by jkxs . This fre-
+poles, zeros and ﬁnal value of the discrete time system are                            quency shift gives rise to faster oscillations in the step response,
+matched to those of the actual continuous system. The idea now                         which decay in stable systems, depending on the real part of the
+is to relax this condition of root-matching and to match the numer-                    eigenvalues. These fast oscillations are inherent to dynamic phasor
+ical integration not exactly to the eigenvalues of the dynamic pha-                    models. Our aim in the following sections is to derive a numerical
+sors but approximately to the oscillatory frequencies of the                           integration method based on the trapezoidal method which is opti-
+dynamic phasors. The aim in this way is to increase the accuracy                       mized for the numerical integration of such fast oscillations around
+and the efﬁciency of the numerical calculation during these inher-                     system frequency xs or multiples of system frequency kxs .
+ent fast oscillations in systems modelled by dynamic phasors.
+    The paper will be organized as follows. First a general overview                   3. Trapezoidal method
+of the dynamic phasors approach will be given. This is followed by
+the investigation of the numerical integration techniques in the                          The trapezoidal method is one of the most commonly used
+frequency domain, which will then allow us to derive the desired                       numerical integration techniques in the simulation of dynamic sys-
+frequency matched discretization methods. The accuracy and efﬁ-                        tems. It belongs to the family of linear multi-step methods and par-
+ciency of these derived methods will be compared with the tradi-                       ticularly to the Adam’s Moulton methods (2nd order Adam’s
+tional approaches in a simple power systems example modelled                           Moulton method) [11]. A linear multi-step method is a method
+with dynamic phasors.                                                                  which approximates the true solution of the ﬁrst-order nonlinear
+                                                                                                                                     _
+                                                                                       ordinary differential equation of the form xðtÞ   ¼ f ðx; tÞ at xðt þ hÞ
+2. Outlines of the dynamic phasor approach                                             by using a linear combination of previously computed values of
+                                                                                       the state variables x and their derivatives x_ and is given as
+   The main idea of the Dynamic phasors approach (DPA) is to                                         X
+                                                                                                     p                               X
+                                                                                                                                     p
+approximate a possibly complex time domain waveform xðsÞ in                            xðt þ hÞ           ai xðt n  ihÞ þ                     _ n  ihÞ:
+                                                                                                                                             bi xðt           ð7Þ
+the interval s 2 ðt  T; t with a Fourier series representation of                                  i¼0                             i¼1
+the form                                                                               In the case of 2nd order Adam’s Moulton method the time domain
+         X
+xðsÞ           X k ðtÞejkxs s ;                                              ð1Þ      approximation of xðt þ hÞ is given by the following general
+          k2K                                                                          expression:
+                Z t
+            1                                                                                                   _ þ hÞ þ b0 xðtÞ;
+                                                                                       xðt þ hÞ  a0 xðtÞ þ b1 xðt         _                                 ð8Þ
+X k ðtÞ ¼              xðsÞejkxs s ds;                                       ð2Þ
+            T    tT
+                                                                                       or in discrete form
+where xs ¼ 2p=T and X k ðtÞ is the kth time varying Fourier coefﬁ-
+                                                                                       xnþ1 ¼ a0 xn þ b1 f ðxnþ1 Þ þ b0 f ðxn Þ;                             ð9Þ
+cient in complex form, also called dynamic phasor, and K is the set
+of selected Fourier coefﬁcients which provide a good approximation                     with the coefﬁcients a0 ¼ 1 and b0 ¼ b1 ¼ 2h.
+of the instantaneous quantity.                                                            Adam’s Moulton Methods are implicit methods and therefore
+    In this representation, since the interval under consideration                     they have to be solved iteratively at every integration step. Itera-
+slides as a function of time, the Fourier coefﬁcients X k are time                     tive methods generally require an initial guess for the solution of
+varying. In this approach we are interested in cases where only a                      nonlinear equations. A good initial guess reduces the number of re-
+few coefﬁcients provide a good approximation of the original                           quired iterations for convergence which directly affects the com-
+waveform.                                                                              putational efﬁciency of the method. Such an initial guess can e.g.
+    Some important properties of dynamic phasors are:                                  be calculated by an explicit Adam’s Bashforth method of the same
+                                                                                       order
+ The relation between the derivatives of xðsÞ and the derivatives                     xpnþ1 ¼ a0;p xn þ b0;p f ðxn Þ þ b1;p f ðxn1 Þ;                      ð10Þ
+  of X k ðtÞ, which is given in (3), where the time argument t has
+  been omitted for clarity. This can easily be veriﬁed by differen-                    with the coefﬁcients a0;p ¼ 1, b0;p ¼ 32 and b1;p ¼  12. This process is
+  tiating the formula given in (1)                                                     often referred to as a predictor–corrector approach, since Adam’s
+                                                                                     Bashforth method predicts the solution and Adam’s Bashforth
+ dx     dX k
+      ¼       jkxX k :                                                       ð3Þ      method corrects the solution. The predictor–corrector approach is
+ dt k    dt
+                                                                                       commonly employed in conjunction with local truncation error
+ The product of two time-domain variables equals a discrete time                      estimation, which is then used for an adaptive step-size selection.
+  convolution of the two dynamic phasor sets of variables, which                       If a predictor–corrector approach with same orders k is used the lo-
+  is given in (4)                                                                      cal truncation error can be approximated as el ðtÞ ¼ C j xp  x j, with
+            X
+            1                                                                          xp the predictor, x the corrector solution and C a constant dependent
+hxyik ¼           ðX kl Y l Þ:                                               ð4Þ      on the order of used method.
+            l¼1                                                                           In the following, the focus will be on the error analysis in the
+                                                                                       frequency domain and numerical stability of the trapezoidal meth-
+   For instance, let us assume a linear time invariant dynamic sys-                    od as also performed in [10].
+tem modelled as a set of ﬁrst-order differential equations
+                                                                                       3.1. Error analysis in frequency domain
+_
+xðtÞ ¼ AxðtÞ þ BuðtÞ;                                                         ð5Þ
+with an arbitrary sinusoidal forcing or source function uðtÞ with fre-                   The generalized local truncation error of the 2ndorder Adam’s
+quency kfs and low frequency state xðtÞ. Assuming that the source                      Moulton method is given as
+function can be approximated by uðtÞ  U k ðtÞejxs t , the dynamic pha-
+                                                                                       el ðt þ hÞ ¼ xðt þ hÞ  ½a0 xðtÞ þ b1 xðt
+                                                                                                                              _ þ hÞ þ b0 xðtÞ
+                                                                                                                                          _ :               ð11Þ
+sor model of the system becomes
+                                                                                       The Laplace transformation of the local truncation error yields
+X_ k ðtÞ ¼ ðA  jkxs IÞX k ðtÞ þ BU k ðtÞ:                                    ð6Þ                                                                   
+                                                                                       Rl ðsÞ ¼ XðsÞ esh  a0  b1 sesh  b0 s :                            ð12Þ
+X k and U k are the new variables of the system and I is the identity                                 |ﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ{zﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ}
+matrix. The eigenvalues’ oscillatory frequencies of the new system                                                          El ðsÞ
+514                                            T. Demiray, G. Andersson / Electrical Power and Energy Systems 31 (2009) 512–521
+
+
+
+
+            Fig. 1. Error frequency response El ðsÞ of trapezoidal method.
+
+Generally the numerical integration methods are optimized for DC
+stationary solutions meaning that the local truncation error be-
+comes zero at s ¼ 0 (El ð0Þ ¼ 0). This is also observable in Fig. 1,                     Fig. 2. Region of stability (j z j< 1) of the trapezoidal method as a function of the
+which depicts the frequency response of the local error function                         step size h and the real part of the eigenvalue r ¼ Refsg.
+El ðsÞ for the trapezoidal method. The derivation of the trapezoidal
+method can also be accomplished in the frequency domain. The
+coefﬁcients a0 , b1 and b0 in the general formulation of the 2nd or-                    This means, that stable continuous time systems with Refsg < 0 are
+der Adam’s Moulton can also be determined from the local error                           mapped directly to stable discrete time systems with j z j< 1
+function in the frequency domain El ðsÞ in such a way, so that the lo-                   regardless of the selected step size h. Such numerical integration
+cal error function El ðsÞ has a triple root at DC (s ¼ 0). This leads to                 methods mapping stable continuous time systems to stable discrete
+the solution of the following three equations with three unknown                         time systems are called absolute stable methods or A-stable meth-
+coefﬁcients a0 , b1 and b0 :                                                            ods. Fig. 2 shows j z j as a function of step size h and Refsg. We also
+                                                                                         observe that 0 <j z j< 1, which is the condition for numerical stabil-
+El ð0Þ ¼ 1  a0 ¼ 0;                                                          ð13Þ
+                                                                                         ity. After the local truncation error analysis in the frequency domain
+dEl ð0Þ                                                                                  and the stability region analysis of the trapezoidal method, the fo-
+        ¼ h  b1  b0 ¼ 0;                                                   ð14Þ
+  ds                                                                                     cus in the following sections will be on the frequency matched
+ 2
+d El ð0Þ    2                                                                            meth

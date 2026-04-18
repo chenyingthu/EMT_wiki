@@ -1,0 +1,224 @@
+                                                       Electric Power Systems Research 198 (2021) 107341
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Compensation method for parallel real-time EMT studies✰
+B. Bruned a, *, S. Dennetière a, J. Michel a, M. Schudel a, J. Mahseredjian b, N. Bracikowski c
+a
+  RTE, Campus Transfo, Jonage, France
+b
+  Polytechnique Montréal, Canada
+c
+  Université de Nantes, France
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          The classical solution for computing electromagnetic transients (EMTs) in parallel relies on the propagation delay
+Electromagnetic Transients (EMT)                   of transmission lines. The lines are used as decoupling elements to split the network into different tasks. When
+Parallel simulation                                there is no natural delay or the delay is too short for the selected simulation time-step, other techniques have to
+Compensation Method
+                                                   be considered. This paper presents one of them. The compensation method is used in this paper for network
+Real-time simulation
+Hardware-in-The-Loop
+                                                   decoupling for parallelization. A detailed implementation of this method is presented for real-time simulation.
+                                                   Performances are assessed in both offline and real-time environments with distribution and High Voltage Direct
+                                                   Current (HVDC) network test cases. Switching cases are also studied with HVDC power electronics devices. A
+                                                   Hardware-In-The-Loop (HIL) setup for an HVDC link in operation is also considered to validate the proposed
+                                                   method in a real-time environment.
+
+
+
+
+1. Introduction                                                                     propagation delays, other parallel solution techniques have to be
+                                                                                    considered. This is the case for large distribution networks [2] or grids
+    The high penetration of renewable energies has increased the use of             with power electronics devices [1].
+power electronics in the transmission network. Transmission Network                     Attempts to decouple networks when line-delay is not available are
+Operators (TSOs) have to study increasingly complex interaction phe­                typically based on the reformulation of the network matrix into the
+nomena between power electronics devices [1]. Also for Distribution                 Bordered Bloc Diagonal (BBD) form. Domain Decomposition techniques
+Network Operators (DNOs), the development of large active networks                  [8-10] can be used to run the matrix solution in parallel. The main
+can impact the stability of the whole grid [2]. To study the transients of          difficulty is that the BBD form may not be optimal for improving
+both cases, good accuracy can be achieved by lowering numerical                     computational performance. Also, as explained in [7], existing appli­
+integration time-steps [3,4,5]. Parallelization is a key method to accel­           cations assume linear networks and significant computational perfor­
+erate EMT simulation to improve accuracy. It is based on the multi-core             mance degradation is expected for nonlinearities and switching
+properties of modern computers.                                                     topologies due to needed matrix reformulations.
+    One of the main methods to parallelize an EMT simulation relies on                  In this paper the compensation method [11,12] (CM) is used to
+the propagation delay of the transmission line model. When, the prop­               manually decouple networks at required locations when line-delay
+agation delay is greater than the time-step, decoupling is possible. This           decoupling is not available. The CM was initially used for electromag­
+natural latency (line-delay) allows to send computed network values to              netic transients when solving nonlinear models [13]. Its extensions and
+the next time-step. This method has been implemented for offline and                relation with hybrid-analysis are discussed in [14]. It can be in fact used
+real-time environments. In real-time [6], a topology analysis identifies            for solving separately any number of components in linear and nonlinear
+the transmission lines available for decoupling. Then, it splits the                mode. The theoretical links between CM, diakoptics and other more
+network on each part of the lines and creates tasks. Transmission                   recent network tearing approaches are presented in [15]. In fact the
+line-delays are also used in [7], where matrix permutation to block                 original CM is more generic and includes other methods.
+triangular form is applied to establish and solve the decoupled matrices.               To the authors’ best knowledge, the CM performances/advantages
+    When the network model does not contain lines (or cables) with                  have not been previously studied for practical problems with switching
+
+
+    ✰
+     Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 7–10, 2021.
+    * Corresponding author.
+      E-mail address: boris.bruned@rte-france.com (B. Bruned).
+
+https://doi.org/10.1016/j.epsr.2021.107341
+Received 9 November 2020; Received in revised form 8 March 2021; Accepted 29 April 2021
+Available online 21 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+B. Bruned et al.                                                                                                      Electric Power Systems Research 198 (2021) 107341
+
+
+and real-time simulation.
+    The paper is organized as follows. The compensation method
+implementation for EMT offline/real-time environment is presented in
+Section 2. Validation and performance assessments are presented in
+Section 3 for a large distribution network and an industrial HIL appli­
+cation case that includes HVDC converters.
+
+2. Compensation method
+
+2.1. Overview                                                                              Fig. 2. Ideal current sources to replace the compensation branch.
+
+
+    The CM uses two main fundamental principles: the Norton/Thévenin                    In Step 3, it is now possible to compute the branch currents iC using:
+equivalents and the superposition theorem. It is equivalent to cutting
+                                                                                     ZC iC = vth2 − vth1                                                           (4)
+connecting components, such as wires in a network to create detached
+subnetworks. It is also possible to cut through branches (linear or
+                                                                                     where ZC = Zth1 + Zth2 + ZB . ZB is the connecting component impedance
+nonlinear). The basic principle is illustrated in Fig. 1 using two sub­
+                                                                                     matrix and it is zero when the connecting components are wires.
+networks (N1 and N2 ), but it is also applicable to an arbitrary number of
+                                                                                        In Step 4, the set of currents iC is used to apply compensation as
+subnetworks, assuming that they become independent due to cutting.
+                                                                                     shown in Fig. 2, using Eq. (1) and with all independent sources killed.
+The cutting connecting components are selected manually.
+                                                                                     The found final voltage vectors are
+    In summary, the detached subnetworks can be solved in parallel
+using nodal formulation with discretized component models. This par­                 vfinal
+                                                                                      n1 = vn1 + v1C
+                                                                                                                                                                   (5)
+allel step is followed by the solution of the connecting components and              vfinal
+                                                                                      n2 = vn2 + v2C
+then compensation in N1 and N2 for the currents of connecting com­
+ponents. This is illustrated in Fig. 2.                                              Where v1C and v2C result from the contributions of iC .
+    The detailed steps are summarized as follows using Fig. 2. Let us                    Steps 1, 2 and 4 can be run in parallel whereas Step 3 is computed
+assume nC cutting (connecting) components. There are two sets of                     sequentially. The classical nodal formulation has been used in this paper
+nodes: nC1 (size nC ) on the left and nC2 (size nC ) on the right. With vector       in network equation formulation due to initially available setup in [6].
+ ic = 0, the networks N1 and N2 can be solved in parallel in Step 1 using            Sparse LU decomposition is used to solve nodal equations.
+nodal analysis:                                                                          For switching subnetworks, the compensation impedance matrix is
+                                                                                     updated and then re-factorized. It occurs each time a Thevenin equiv­
+Y 1 vn1 = i1
+                                                                          (1)        alent impedance changes.
+Y 2 vn2 = i2
+
+where Y represents individual admittance matrices, vector vn holds the               2.2. Parallelism mechanisms
+unknown nodal voltages and vector i stands for nodal current injections
+from independent sources and model history terms. The Thevenin                           The above CM is a decoupling method that can be combined with the
+voltages vth1 and vth2 at the node sets nC1 and nC2 are found directly from          classical solution based on natural delays of transmission lines. First, the
+the solution of (1) at each simulation time-point.                                   network is split into several sub-networks according to the line-delays.
+    In Step 2, the Thevenin impedance matrices (nC × nC ) are found from             Second, the CM can be applied to the subnetworks. Then, a task is
+(1) using unitary current injections for each kth node in sets nC1 and nC2 ,         created for each subnetwork for which Steps 1–2–4 are performed in
+with all independent sources killed:                                                 parallel. The compensation task is dedicated to Step 4. The barrier
+                                                                                     mechanism handles data exchanges between compensation and sub­
+                   Y 1 v1 = i(k)                                                     networks tasks. It is a common mechanism to synchronize threads in
+                             1
+                                                                          (2)
+                                                                                     parallel. Two barriers are used: one to obtain all Thevenin equivalents
+                             (k)
+                   Y 2 v2 = i2
+                                                                                     (from each subnetwork), and another to broadcast the results of the
+    The Thevenin impedances become:
+                                                                                     compensation solution. Fig. 3 illustrates the case of three tasks
+       [                ]
+Zth1 = v(1)   … v(n  C)                                                              compensation method with two barriers. It can be reduced to two tasks if
+                                                                          (3)
+         1nC1      1nC1
+       [ (1)            ]                                                            the compensation computation is done within a subnetwork task.
+Zth2 = v2nC2 … v(n   C)
+                   2nC2
+                                                                                         After the splitting process, each task is mapped to a thread: one
+                                                                                     thread for each subnetwork and one thread for the compensation. The
+where Zth1 and Zth2 columns are extracted from corresponding voltages
+found in v1 and v2 of Eq. (2). These matrices do not change between
+consecutive time-point solutions if the networks N1 and N2 do not
+encounter topological changes.
+
+
+
+
+Fig. 1. Cutting through wires (dashed line) of two networks using the
+compensation method.                                                                           Fig. 3. Overview of a three tasks compensation algorithm.
+
+                                                                                 2
+B. Bruned et al.                                                                                                          Electric Power Systems Research 198 (2021) 107341
+
+
+nodal solution and the computation of history currents of subnetworks is                 It is clear that for large linear distribution grids the compensation
+done in the same task. Each thread is executed in one simulation core.                method is an efficient solution to parallelize network solution without
+An automatic task mapping [16] can be run over this first mapping to                  compromising accuracy (as expected from theory). Only numerical
+allocate tasks from control systems or subnetwork split during line-delay             noise is observed in Fig. 7. Additionally, it lowers the acceptable time-
+analysis.                                                                             step for SIL real-time simulation.
+     The compensation split is done manually in this paper. In most cases,
+it is a convenient method when the user knows where to cut the simu­
+                                                                                      3.2. HVDC test case
+lated for best performance gains. For very large networks, it can be
+automated using the BBD approach, see also [15].
+                                                                                         Networks with HVDC devices are another application for the CM as
+                                                                                      no power lines can be used to split the solution of large power con­
+3. Validation and performance
+                                                                                      verters. The test case is composed of the HVDC interconnection between
+                                                                                      France (Les Mandarins) and United Kingdom (Sellindge) called IFA2000
+3.1. Distribuntion network
+                                                                                      [18] in operation since 1986. It is composed of two LCC bipoles (Line
+                                                                                      Commutated Converter) of 1000 MW each. The operating voltage is set
+    Very large distribution networks strongly benefit from the compen­
+                                                                                      to +/- 272 kV. For EMT simulation, it can be considered as a switching
+sation decoupling used in this paper, as power lines have propagation
+                                                                                      network as the thyristors commute several times during the simulation.
+delays smaller than the simulation time-step. The test network illus­
+                                                                                      As depicted in Fig. 8, each DC pole is represented by two detailed 6-pulse
+trated in Fig. 4 is a 20 kV distribution grid composed of 600 nodes
+                                                                                      bridges. Frequency dependent cable models [19] are used to represent
+connected to a 63 kV grid. It is a benchmark model from [6] with the
+                                                                                      the 73 km long DC cables. Filters are also modeled in detail. A model of
+same complexity as a national distribution grid [2]. Power lines are
+                                                                                      the HVDC control system is imported from Matlab Simulink software
+modeled with R-L impedances. According to EMT studies standard rec­
+                                                                                      using an EMT-Simulink interface [20]. 400 kV AC grids are modeled
+ommendations [3], this simplistic modeling can be used for studies
+                                                                                      with a source and an impedance representing the short circuit level.
+which involve slow control response. It has the downside to slow down
+the simulation as no line-delays are available for decoupling. Loads are
+represented by a dynamic load model from [17] using controlled voltage
+sources. The tearing is feeder-cluster oriented and done manually as
+illustrated in Fig. 4. The test scenario is a 1 s simulation at 50 μs time step
+with a single-phase-to-ground fault of 1 mΩ located at the 20 kV side of
+the 63 kV/20 kV power transformer (Fig. 5). The 100 ms fault is initiated
+at t = 0.2 s. This test case can be considered as linear: the nodal
+admittance matrix is re-factorized at t = 0.2 s when the fault is initiated.
+    Two architectures are used. Arch1 is a laptop computer with Intel
+i7–6820HQ CPU @ 2.70GH. Arch2 is an OP5031 target 64 bits Linux
+                                                                                      Fig. 5. Three phase voltage at the feeder root during the mono-phase fault
+with 32 cores (2 CPU Intel Xeon E5 3,2 GHz - 16 cores). Arch2 can be run
+                                                                                      (normal case).
+in offline or real-time mode, Arch1 is only for the offline mode. For
+offline cases, the average realized time-step is measured. For real-time
+                                                                                      Table 1
+case, only SIL (Software-In-Loop) is run. The minimum time-steps with
+                                                                                      Performance comparison between compensation and normal case.
+no overruns are displayed on the last column of Table 1.
+    Currents at the 20 kV feeder root (Fig. 6) are compared using the                  Test case         Nb       Exec Time        Exec Time      RT Time      Speed up
+                                                                                                         Cores    Arch1            Arch2          Step         RT
+following relative error formula (Fig. 7):
+⃒                        ⃒                                                             Normal            1        221 μs           137 μs         145 μs       –
+⃒ecompensation − enormal ⃒                                                             Parallel 1 cuts   2        123 μs          

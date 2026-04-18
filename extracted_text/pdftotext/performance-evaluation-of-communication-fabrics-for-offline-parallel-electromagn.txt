@@ -1,0 +1,198 @@
+                                                             Electric Power Systems Research 223 (2023) 109629
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Performance evaluation of communication fabrics for offline parallel
+electromagnetic transient simulation based on MPI✰
+P. Le-Huy *, S. Guérette , F. Guay
+Power System Simulation group at the Hydro-Québec Research Center (IREQ), 1800 boul. Lionel-Boulet, Varennes, Québec, J3 × 1S1, Canada
+
+
+
+
+A R T I C L E I N F O                                    A B S T R A C T
+
+Keywords:                                                Offline electromagnetic transient (EMT) simulation is a very time-consuming activity for large-scale and complex
+Electromagnetic transient simulation                     power systems. Hydro-Québec (HQ) is involved in the development of EMT simulation tools, one of which can
+Large-scale simulation                                   operate both in real-time (RT) and offline. This software heavily relies on parallel processing to achieve high-
+MPI
+                                                         level performance. However, the offline mode is currently limited as it targets only single system image com­
+Offline simulation
+Parallel processing
+                                                         puters. As the offline mode uses the Message Passing Interface (MPI) standard to implement its parallel pro­
+PC cluster                                               cessing, porting the offline mode to PC clusters is the logical step to increase the offline simulation capabilities of
+                                                         HQ EMT simulation software.
+                                                            This paper evaluates the performance of different communication fabrics for the execution of offline EMT
+                                                         simulation operating in parallel with MPI. The performance metrics used for this evaluation are first discussed.
+                                                         The evaluated communication fabrics are then presented and tested with an offline simulation of the HQ power
+                                                         transmission system.
+
+
+
+
+1. Introduction                                                                               increasing. As the current implementation relies on MPI and this
+                                                                                              communication mechanism is supported on PC clusters, exploring the
+    ELECTROMAGNETIC transient (EMT) simulation has always been                                use of clusters for offline simulation was the next logical step.
+considered a computationally intensive endeavor. For real-time (RT)                               In this paper, four communication fabrics supporting MPI are eval­
+applications, mainly control hardware-in-the-loop (HIL), parallelism                          uated for offline EMT simulation: SGI NUMAlink (NL) 7 [6], HPE Flex
+was quickly adopted to divide the workload associated to a simulation                         Grid Interconnect (FGI) [7] and Mellanox InfiniBand [8,9] ConnectX-3
+on multiple processing units [1–2]. Specialized and expensive hardware                        Quad Data Rate (QDR) and ConnectX-6 High Data Rate (HDR). NL
+was necessary, effectively making RT-HIL simulation a luxury activity                         and FGI are interconnects that enable several motherboards, each with
+reserved to a few laboratories and utilities.                                                 their own CPUs and memory, to operate as a single system where all the
+    As most EMT simulation tools were designed and developed prior to                         physically-distributed resources are shared and coherent. On the other
+the wide spread of affordable multi-core CPUs, exploiting parallelism                         hand, InfiniBand interconnects are used to create clusters of computers,
+was never part of their original design goals and it impacted all technical                   each with their local operating system and resources. The purpose of this
+development choices thereafter. Various efforts were recently made to                         work is to evaluate the time cost per simulation step and the impact on
+exploit the multiple cores available in most PC nowadays [3–4].                               EMT simulation performance of using such communication fabrics, not
+    In the case of Hydro-Québec’s (HQ) EMT simulation tool [2], as the                       to evaluate the raw processing power of supercomputers/PC clusters or
+offline mode is derived from the RT mode, parallel processing was                             CPU performances.
+already built in. It relies on the Message Passing Interface (MPI) stan­                          The paper is organized as follow: Section II presents the performance
+dard [5] for inter-core communication and synchronization on a single                         metrics used in this work while Section III explores SGI and HPE
+system image computer.                                                                        communication fabrics. Section IV briefly discusses InfiniBand
+    As simulated systems continue to grow in both scale and complexity,                       communication fabric and Section V describes the simulated system
+the need for faster and more efficient offline simulation tools keeps                         used to stress and evaluate each communication fabric. Results are
+
+
+
+ ✰
+    Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+ * Corresponding author.
+   E-mail address: le-huy.philippe@ireq.ca (P. Le-Huy).
+
+https://doi.org/10.1016/j.epsr.2023.109629
+Received 10 December 2022; Received in revised form 23 February 2023; Accepted 21 June 2023
+Available online 26 June 2023
+0378-7796/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+P. Le-Huy et al.                                                                                                       Electric Power Systems Research 223 (2023) 109629
+
+
+presented and analyzed in regard to the performance metrics previously             not monotonically increasing anymore. κ’(n,1) is non-null and has to be
+presented. Finally, Section VI concludes the paper with a summary and a            considered in the measured total execution time obtained with a single
+description of future work.                                                        processing unit.
+
+2. Parallelism Quality Evaluation                                                  T′(n, 1) = σ(n) + ϕ(n) + κ’(n, 1)                                                (6)
+                                                                                       It is of primary importance to use caution when directly using (6)
+    Quite early, parallelism was exploited to decrease the EMT simula­             instead of (3) in (4): if κ’(n,1) is not negligeable, it will typically lead to
+tion execution time, mainly for the purpose of RT HIL applications.                artificially-increased, and even super-linear, speedups. Approximating
+However, parallelism is not a panacea: it has a cost and presents limi­            σ (n) and ϕ(n) is then mandatory for a proper performance analysis.
+tations. The three following metrics (the execution speedup, the
+computational efficiency, and the Karp-Flatt metric) are used in this              2.2. Efficiency
+paper to evaluate the impact of the communication fabric on the quality
+of the MPI-based parallel processing used for EMT simulations.                        A second very common metric for computational performance
+                                                                                   assessment is efficiency. Considering the discussion in the previous
+2.1. Speedup                                                                       section, the computational efficiency is defined as follows:
+
+    A given problem of size n that has a sequential part f and a parti­            η(n, p) =
+                                                                                               σ(n) + ϕ(n)
+                                                                                                                                                                    (7)
+tionable part (1-f) (where (0 ≤ f≤ 1)) can be solved with p processing                            pT(n, p)
+units. In an ideal world, the partitionable part is infinitely dividable in            When computational hardware is efficiently used, it will yield an
+equal parts and no overhead or penalty is incurred for doing so. The               efficiency close to unity. Otherwise, a low η metric is an indication of
+achievable speedup ψ (n,p) in this ideal situation is adequately described         wasted resources.
+by Amdahl’s law [10].
+                   1                                                               2.3. Karp-Flatt Metric
+ψ (n, p) ≤                                                              (1)
+             f + (1−p f )
+                                                                                      Another very useful metric, the Karp-Flatt metric e(n,p) [12], also
+    This equation gives an upper boundary for the speedup in terms of              known as the experimentally determined serial fraction, can be used to
+the size of the problem and the number of processing units used. So, for a         evaluate the parallel processing. Based on observed speedup ψ exp(n,p),
+completely partitionable problem, the theoretical speedup is equal to              the Karp-Flatt metric is defined for p > 1 as
+the number of processing units used p. As defined, Amdahl’s law does                               1           1
+not allow super-linear speedup.                                                                ψ exp (n,p) −
+                                                                                                                                                                    (8)
+                                                                                                               p
+                                                                                   e(n, p) =                   .
+    This theoretical upper boundary does not consider parallelization                              1−     1
+                                                                                                          p
+cost (e.g., communication, synchronization, wait time, etc.) and assumes
+perfect load balancing. A more realistic boundary can be defined by first              e(n,p) is equal to 0 for an infinite speedup. A low value of this metric
+considering the total execution time T(n,p) of the given problem where             indicates good parallel performance while high parallelization cost
+σ (n) and ϕ(n) are respectively the serial and parallel part of the work­          yields high values.
+load, which are a function of the problem size n, and κ(n,p) the afore­                It is possible to diagnose several problems from the evolution of e(n,
+mentioned parallelization cost.                                                    p) as a function of the number of processing units.
+                                                                                       Load-balancing issues are usually linked to irregular increases of e(n,
+                        ϕ(n)                                                       p) as p increases. Furthermore, larger imbalance results in greater in­
+T(n, p) = σ(n) +             + κ(n, p)                                  (2)
+                         p                                                         creases of e(n,p).
+                                                                                       Smooth increases of e(n,p) are often linked to increasing paralleli­
+   As defined, κ(n,1) is assumed to be null, leading to the execution time
+                                                                                   zation overhead such as synchronization.
+with a single processing unit to be defined as
+                                                                                       Other problems related to hardware resources and specificities can
+T(n, 1) = σ (n) + ϕ(n)                                                  (3)        be observed through subtle, or less subtle, variation of the Karp-Flatt
+                                                                                   metric [11–12], as observed in Section V.
+which in turn allows to define the extended Amdahl’s law [11].                         In summary, if, for a given problem, e(n,p) remains stable as p in­
+             T(n, 1)                                                               creases, the parallelization can be considered efficient and the parallel
+ψ (n, p) ≤                                                              (4)        processing performances are limited by the inherent sequential part of
+             T(n, p)
+                                                                                   the workload. If e(n,p) increases with p, the performance decrease is
+                 σ (n) + ϕ(n)                                                      related to the increasing overhead introduced by the higher number of
+ψ (n, p) ≤                                                              (5)        processing units.
+             σ(n) + ϕ(n)
+                      p
+                         + κ(n, p)
+
+    Furthermore, κ(n,p) monotonically increases as a function of the               3. Communication Fabric: SGI NUMAlink 7 and HPE Flex Grid
+number of processing units.                                                        Interconnect
+    Precisely determining or measuring σ (n), ϕ(n) and κ(n,p) is not
+trivial. Approximations can be extracted from experimental values but                 The NL 7 is the last cache-coherent non-uniform memory access
+typically, only experimental values of T(n,p) are readily available. It is         (ccNUMA) communication fabric made by SGI and it is used in the
+important to note that according to (3), T(n,1) contains only the serial           UV300 supercomputer (which was rebranded the HPE MC990 after
+and parallel part of the workload, nothing else. It is then very important         HPE’s acquisition of SGI). It is a direct descendant of the NL 6 used in the
+for performance analysis to make sure that the parallelization cost κ(n,1)         SGI UV2 technology [13–14]. The HPE FGI, used in the Superdome Flex
+is null.                                                                           (SDF) supercomputer is a direct descendant of the NL 7 and it shares
+    However, in some cases, the problem or workload is so large that it            with it its topology and node architecture.
+stresses elements that are typically considered ideal or simply neglected:            An 8-chassis SGI UV300 [8 × 4 Intel Xeon E7–8891v4 (10 cores @
+memory size and access speed, data locality, IO latency and throughput,            2.8 GHz and 60 MB L3 cache)] and a 4-chassis HPE SDF [4 × 4 Intel Xeon
+etc. From that observation, it is interesting to extend the definition of          Scalable Gold 6144 (8 cores @ 3.5 GHz and 24.75 MB L3 cache)] were
+κ(n,p) to consider this reality. As such, the processing overhead κ’(n,p) is       used in this work.
+
+                                                                               2
+P. Le-Huy et al.                                                                                                  Electric Power Systems Research 223 (2023) 109629
+
+
+   As the SGI UV300 was presented in [15], the current discussion will            3.3. Operating Systems and MPI Packages
+focus on the HPE SDF.
+                                                                                     The SGI UV300 was tested with the SGI MPT 2.14 MPI library
+                                                                                  operating with a modified version of SUSE Linux Enterprise Server
+3.1. Topology                                                                     (SLES) 12 sp1.
+                                                                                     The HPE SDF results were obtained with the HPE MPT 2.24 library
+   The HPE SDF retains the all-to-all connectivity of the UV300 up to             operating with a modified version of SLES 12 sp3.
+eight chassis as shown in Fig. 1. Very low latency for memory access
+throughout the system is ensured by a single communication fabric hop.            4. Communication Fabric: Mellanox ConnectX-3 QDR and
+Each communication ASIC has 16 ports capable of 13.3 GB/s data rate.              ConnectX-6 HDR
+The FGI retains the NL7 low latency packet encoding and adaptive
+routing.                                                                              Mellanox ConnectX-3 and ConnectX-6 are devices that support the
+                                                                                  InfiniBand communication protocol by creating a switch-based
+3.2. Node Architecture                                                            communication fabric that enables bi-directional point-to-point serial
+                                                                                  connections between each node of the fabric [8]. The nodes are typically
+   As shown in Fig. 2, SDF chassis retains the same architecture as the           processor nodes (i.e., a regular computer) but the protocol also supports
+UV300 node but adapted to Intel 1st and 2nd generation of Xeon Scal­              IO nodes such as disks or storage. High performances are achieved
+able processor. The four processors form a UPI ring and are connected to          through hardware offload of communication tasks directly to the Host
+a pair of Flex ASICs which allows each node to participate in the FGI.            Channel Adapter (HCA) residing in each node, thus saving precious CPU
+
+
+
+
+     Fig. 1. Example of an 8-chassis (32 sockets) HPE Superdome Flex Grid Interconnect with all-to-all communication fabric (same topology as SGI UV300).
+
+                                                                              3
+P. Le-Huy et al.                                                                                                     Electric Power Systems Research 223 (2023) 109629
+
+
+                                                                                  or disk. This means that both of these resources are of no consequence
+                                                                                  for this simulation tool at runtime. However, this puts a lot of pressure
+                                                                                  on the cache memory of the CPU: as the following results will demon­
+                                                                                  strate, a shortage of cache memory is highly detrimental to the simu­
+                                                                                  lation performances.
+                                                                                      For users to retrieve simulation results, a data acquisition tool was
+                                                                             

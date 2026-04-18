@@ -1,0 +1,29 @@
+## Duality-Based Transformer Model Including Eddy Current Effects in the Windings
+Saeed Jazebi, Member, IEEE, and Francisco de León, Fellow, IEEE
+
+**Abstract**—This paper presents a general method for building equivalent electric circuits of power transformers, including eddy current effects in windings and core. A high-frequency equivalent dual model for single- and three-phase transformers with two multilayer windings is derived from the application of the principle of duality. The model is built from elements available in circuit simulation programs, such as Electromagnetic Transients Program (EMTP)–Alternative Transients Program, EMTP-RV, PSCAD, and PSpice. The parameters of the frequency-dependent leakage inductance and winding resistance are computed with analytical formulae obtained from the solution of Maxwell’s equations that are based on the geometrical dimensions and material information. Ideal transformers are utilized to isolate the electric components (winding resistors and capacitors) from the magnetic components (inductors). The physically correct connection points for electric and magnetic components are clearly identified. The proposed methodology is successfully validated versus finite-element simulations and laboratory measurements.
+
+**Index Terms**—Eddy currents, electromagnetic transients, leakage inductance, principle of duality, transformer modeling.
+
+*Manuscript received November 12, 2014; revised February 22, 2015; accepted April 13, 2015. Date of publication April 28, 2015; date of current version September 21, 2015. Paper no. TPWRD-01369-2014.*
+*The authors are with the Department of Electrical and Computer Engineering, NYU Polytechnic School of Engineering, Brooklyn, NY 11201 USA (e-mail: jazebi@ieee.org; fdeleon@nyu.edu).*
+*Color versions of one or more of the figures in this paper are available online at http://ieeexplore.ieee.org.*
+*Digital Object Identifier 10.1109/TPWRD.2015.2424223*
+
+## I. INTRODUCTION
+
+TRANSFORMERS for power system applications are designed for the operating frequency (50/60 Hz). Nevertheless, during their life span, transformers may face very-high-frequency (VHF) transients up to 10 MHz. Therefore, models are required to predict their behavior at high frequencies to properly compute overvoltages, optimize the internal and external insulation design, and for insulation coordination.
+
+Manufacturers of power-electronics devices are also interested in transformer models that accurately predict cross-regulation, transient performance, and high-frequency losses before prototyping. Finite-element methods are usually avoided due to the cost of the software, modeling complexity, and prolonged running time.
+
+There are three general physical (topological) methods for system modeling: gyrator-capacitor models [1]–[5], bond graph models [6]–[9], and duality derived models [10]–[24]. In addition, there are some purely analytical [25]–[28] and circuit simulator methods [29]–[34] for the representation of eddy current effects in transformers.
+
+In 1969, the capacitance-permeance analogy was introduced by Buntenbach [1]. Later, Hamill developed the technique to model magnetic components [2]. This approach was further extended to include nonlinearities in [3] and [4], and frequency-dependency behavior in [5]. One of the disadvantages of the gyrator-capacitor models is the absence of gyrators in Electromagnetic Transients Program (EMTP)-type programs.
+
+Bond graph techniques [6], [7] are a graphical representation of energy flow in physical dynamic systems. Bond graphs are capable of representing electrical, magnetic, mechanical, thermal, and hydraulic systems. They are also capable of considering coupling effects between these different physical domains [8]. This method was utilized to model nonlinearities in electromagnetic devices in [8] and recently expanded to model transformers [9]. These models still require further development for compatibility with high-frequency simulations by representing eddy current and capacitive effects.
+
+The principle of duality between magnetic and electric circuits was first introduced by Cherry [10] and further developed by Slemon [11]. There are many transformer models based on the principle of duality [12]–[24]. The leakage inductance of a single-phase three-winding transformer has been modeled with the direct application of the principle of duality in [20]. Later, the model has been extended for multiwinding transformers in [21]. The low-frequency behavior of these models has been enhanced for 2-, 3- and -winding transformers in [22] and [23]. In this paper, the reversible model of [22] is further developed for midfrequency studies considering the effects of eddy currents in the windings and iron core together with capacitive couplings.
+
+The main contribution of this paper is to include eddy current effects in the dual reversible model of [20] to produce a midfrequency model. A general method to derive the equivalent circuit of any type of transformer is presented. Analytical formulae are derived for the calculation of the model parameters for multilayer cylindrical windings. The frequency-dependent parameters of the leakage inductance and winding resistances can be calculated from the transformer geometry and material information. Physically correct connection points are determined for the interturn and interlayer capacitors. The model is based on simple circuit elements and can be easily assembled in circuit simulator programs, such as EMTP and PSpice, using only readily available circuit elements.
+
+Since the model is completely dual, each node represents a physical point in the transformer that makes it ideal for transformer designers. The model

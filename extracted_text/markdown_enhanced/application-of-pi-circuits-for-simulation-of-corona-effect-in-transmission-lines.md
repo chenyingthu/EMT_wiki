@@ -1,0 +1,27 @@
+# Application of π Circuits for Simulation of Corona Effect in Transmission Lines
+L. S. Lessa, Student Member, IEEE, A. J. Prado, Member, IEEE, S. Kurokawa, Member, IEEE, J. Pissolato Filho, Member, IEEE, L. F. Bovolato, Non-member
+
+**Abstract**—In this article, it is represented by state variables phase a transmission line which parameters are considered frequency independently and frequency dependent. Based on previous analyses, it is used the reasonable number of π circuits and the number of blocks composed by parallel resistor and inductor for reduction of numerical oscillations. It is analyzed the influence of the increase of the RL parallel blocks in the obtained results. The RL parallel blocks are used for inclusion of the frequency influence in the transmission line longitudinal parameter. It is a simple model that is been used by undergraduate students for simulation of traveling wave phenomena in transmission lines. Considering the model without frequency influence, it is included a representation of the corona effect. Some simulations are carried considering the corona effect and they are compared to the results without this phenomenon.
+
+**Index Terms**— Electromagnetic transient, EMTP, mathematical model, simulation, transmission lines, π circuit, numeric method, wave traveling.
+
+## I. INTRODUCTION
+REPRESENTING the transmission lines and electric power systems, several models are used to the electromagnetic transient analyses, for example, state variables, differential equations. So, these mathematical tools are included in routines and used in numerical simulations of electromagnetic transients. Based on these models, simulation programs, called EMTP type programs, were created. The EMTP index means the Electromagnetic Transient Programs [1], [2] For undergraduate students who are beginning to develop works in this area, it becomes very complicated to use this type of program [3], [4] when it is considered skin effect, ground effect and frequency influence. It is involve models and numerical routines that are very complex. For the study of these students, this research initiation can be based on basic concepts and simple models of transmission lines for transient simulations [5]. In this paper, it is used the representation of transmission lines as a single phase circuit modeled by π circuits [6, 7], using state variables model. The used numeric routine combines the method of characteristics with the trapezoidal integration method, resulting in a simplified algorithm, which facilitates the initiation of undergraduate students, being capable for simulating electromagnetic transients in networks and obtaining results with satisfactory precision and accuracy. The state equations, which are the voltages and currents along the line, are analyzed numerically using mathematical matricial software (MatLabTM) because this software type allows extending the limits imposed by the EMTP-type programs for the number of π circuits. Using a model that does not include the frequency influence on the longitudinal line parameters, it is considered the corona effect. In this case, it is simulated that this effect reaches a small section of the represented transmission line [11].
+
+## II. MATHEMATICAL MODEL
+The state equations can be described by a linear system as:
+$$ \dot{x} = [A]x + [B]u \tag{1} $$
+where: $x$ is the vector of state variables, $u$ is input vector, $A$ and $B$ are system matrices.
+
+The equation (1) using the method of Heun that is also known as trapezoidal rule. It is a widely used numerical procedure for solving differential equations and linear systems [8, 9]. Described as trapezoidal rule of integration for discrete parameters, this methodology consists of an improved form of the method of tangent or Euler's method that generally applied to solve differential equations, avoiding difficulties in the analytical solutions. The trapezoidal integration applied to solve equation (1) is given by the following equation:
+$$ x[k + 1] - x[k] = \frac{T}{2} \left( A x[k + 1] + B u[k + 1] + A x[k] + B u[k] \right) \tag{2} $$
+Solving the state equation (2), where $T$ is the integration step, it is rearranged as:
+$$ x[k + 1] = x[k] + \frac{T}{2} \left( A x[k + 1] + B u[k + 1] + A x[k] + B u[k] \right) \tag{3} $$
+Solving the equation (3), it can be rewrite as:
+$$ \left[ I - \frac{T}{2} A \right] x[k + 1] = \left[ I + \frac{T}{2} A \right] x[k] + \frac{T}{2} B \left[ u[k] + u[k + 1] \right] \tag{4} $$
+Making simplifications to equation (4), it is obtained:
+$$ x[k + 1] = A'' x[k] + B' \left[ u[k] + u[k + 1] \right] \tag{5} $$
+where: $A'$, $A''$ and $B'$ are constants of the matrix described by the next equations.
+
+This work is supported by FAPESP (The State of São Paulo Research Foundation).
+Leonardo da Silva Lessa (nardolessa@yahoo.com.br), Afonso José do Prado (afonsojp@uol.com.br), Marco Leandro Bonelli (mlbonelli@gmail.com), Sérgio Kurokawa (kurokawa@dee.feis.unesp.br) and Luiz Fernando Bovolato (bovolato@dee.feis.unesp.br) are with the Department of Electrical Engineering at FEIS/UNESP – The University of São Paulo State, Brazil. José Pissolato Filho (pisso@dsce.fee.unicamp.br) is with the Department of Electrical Engineering, DSCE/UNICAMP – The State University of Campinas, Brazil.

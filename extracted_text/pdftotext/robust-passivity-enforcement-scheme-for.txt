@@ -1,0 +1,197 @@
+930                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 25, NO. 2, APRIL 2010
+
+
+
+
+           Robust Passivity Enforcement Scheme for
+          Time-Domain Simulation of Multi-Conductor
+                Transmission Lines and Cables
+ H. M. Jeewantha De Silva, Member, IEEE, Ani M. Gole, Member, IEEE, John E. Nordstrom, and L. M. Wedepohl
+
+
+   Abstract—This paper proposes an algorithm to enforce passivity                 the time domain [1], [12] and can be used to investigate tran-
+on the time-domain simulation model for a multi-conductor cable                   sients on transmission lines with arbitrary (including nonlinear)
+or transmission line. The model is first reformulated in a form                   terminations.
+which reduces the severity of passivity violations. The frequency
+sweep method is then used to identify any remaining passivity                         The physical transmission line by necessity must always be
+violating regions of the model’s frequency response. These small                  passive, i.e., regardless of its terminations, the line itself cannot
+passivity violations are then removed using a linear constrained                  generate active power at any frequency. However one of the
+least squares algorithm to perturb the diagonal elements of                       major problems with the above modeling method is that the
+propagation matrix. The passivity enforcement algorithm is ap-                    resultant curve-fitted model of the (passive) transmission line
+plied to the Universal Line Model (ULM), a widely used robust
+phase domain formulation implemented in many commercial
+                                                                                  cannot be guaranteed to always be passive. Depending on its
+electromagnetic transients simulation programs. Two examples of                   terminating connections, a non-passive transmission line model
+multi-conductor underground cable systems, one for ac and the                     may lead to incorrect, unstable simulations.
+other for HVDC transmission are presented to demonstrate the                          To compensate for this error, it is necessary to modify the pa-
+proposed approach.                                                                rameters of the curve-fitted transmission line model with a pas-
+  Index Terms—Constrained least squares, electromagnetic                          sivity correction algorithm. In general, passivity correction al-
+transients, passivity, phase domain model, rational function                      gorithms based on nonlinear optimization can be computation-
+approximation.                                                                    ally expensive [8]. Alternatively, algorithms can be formulated
+                                                                                  as a linear constrained least square problem [5]–[7], [9]. How-
+                                                                                  ever the above methods can only be successfully applied, if the
+                            I. INTRODUCTION                                       passivity violations are very small.
+                                                                                      The development of a passivity enforcement method for delay
+                                                                                  based multi-conductor transmission line models is an ongoing
+       IME-DOMAIN simulation models for overhead transmis-
+T      sion lines and underground cables, which take into ac-
+count the frequency dependent nature of line parameters are re-
+                                                                                  research topic and recent advancements can be found in [10],
+                                                                                  [11], and [13]. The above methods assume that the passivity vi-
+                                                                                  olations are small and are applicable to modal-domain trans-
+quired in a wide range of studies such as analysis of ac switching                mission line formulations (i.e., those that use constant transfor-
+transients and HVDC transmission system transients. In gen-                       mation matrices for converting between the phase and modal
+eral, the frequency domain expressions for the line or cable pa-                  domains). These models are often adequate for vertically sym-
+rameters are complicated and are not in a form readily simu-                      metrical overhead transmission lines, where the assumption of
+lated in the time domain. In order to establish a time-domain                     constancy of the transformation matrix is fairly accurate but they
+implementation, the line’s characteristic admittance matrix el-                   are not so effective for asymmetrical overhead transmission line
+ements are first approximated (curve-fitted) by rational transfer                 configurations and arbitrary cable arrangements, where these
+functions. The same is done for the elements of the propaga-                      matrices show a high amount of frequency dependence.
+tion matrix, except that the fitting now includes a transporta-                       This paper proposes a new algorithm to ensure passivity in a
+tion lag in addition to the transfer function. Once expressed in                  nonpassive transmission line model. Unlike earlier approaches
+rational function form, the model becomes implementable in                        [11], [13] the proposed method is not restricted to constant trans-
+                                                                                  formation matrix-based models, but can be applied to any phase
+                                                                                  domain model. This method first reformulates the form of the
+   Manuscript received July 17, 2008; revised April 10, 2009. First published     transmission line’s admittance and propagation functions to be
+December 11, 2009; current version published March 24, 2010. This work was
+supported in part by the Industrial Research Chair (IRC) program of the Natural
+                                                                                  fitted using the modified functional form method [4]. With this
+Sciences and Engineering Research Council (NSERC) of Canada and by the            approach, passivity violations are shown to be less likely, and
+Manitoba HVDC Research Centre (MHVDCRC). Paper No. TPWRD-00561-                   when present they are small. Next, any such remaining passivity
+2008.
+   H. M. J. De Silva, A. M. Gole, and L. M. Wedepohl (Fellow EIC) are with
+                                                                                  violations are removed using least-square fitting in order to in-
+the Department of Electrical and Computer Engineering, University of Man-         troduce corrective perturbations to the elements of the charac-
+itoba, Winnipeg, MB R3T5V6, Canada (e-mail: jeewanth@ee.umanitoba.ca;             teristic admittance and propagation matrices.
+gole@ee.umanitoba.ca; wedepohl@shaw.ca).
+   J. Nordstrom is with the Manitoba HVDC Research Centre Inc., Winnipeg,
+                                                                                      The above passivity enforcement algorithm is used to develop
+MB R3J3W1, Canada (e-mail: johnn@hvdc.ca).                                        passive time-domain models of cables and transmission lines in
+   Digital Object Identifier 10.1109/TPWRD.2009.2035916                           the PSCAD/EMTDC software. The approach is demonstrated
+                                                                0885-8977/$26.00 © 2010 IEEE
+DE SILVA et al.: ROBUST PASSIVITY ENFORCEMENT SCHEME FOR TIME-DOMAIN SIMULATION                                                        931
+
+
+
+                                                                                                    TABLE I
+                                                                                                   CABLE DATA
+
+
+
+
+Fig. 1. Cable System: Two coaxial cable system.
+                                                                          As described earlier, the residues        are calculated using
+                                                                       least square fitting [2].
+with examples of underground dc and ac cable systems, and
+validated by comparison with frequency domain solutions.
+                                                                             III. PASSIVITY CRITERIA FOR MULTI-CONDUCTOR
+                                                                                           TRANSMISSION LINES
+   II. PHASE DOMAIN MODELING OF TRANSMISSION LINES
+  The frequency domain equations for multi-conductor                      Treating the finite length transmission line as a multi-port
+( -phase) transmission line are given by [1]                           electrical network, passivity is guaranteed, if and only if its
+                                                                       transfer admittance        is positive real for every value of fre-
+                                                                (1)    quency (with              ) [10]. The transfer admittance
+                                                                (2)    relating sending and receiving end voltages to the currents, is
+                                                                       shown below in (8a). Using (8a), (1) and (2),            is readily
+where                                                                  obtained as a function of and         as shown in (8b)
+
+                                                                (3)
+                                                                                                                                     (8a)
+                                                                (4)
+Here,     , , , are the characteristic admittance, propaga-
+tion, series impedance, shunt admittance matrices (dimension
+         ); and is the line length. and are -dimensional                                                                             (8b)
+voltage and current vectors and subscripts “ ” and “ ” denote
+sending-end and receiving-end of the line [1].                            Although not explicitly shown in (8b) it should be noted that
+   Time domain modeling requires the approximation of the el-            , and        [as defined in (3) and (4)] are functions of fre-
+ements of matrices and        with rational functions of suitable      quency          . The necessary and sufficient conditions for the
+order ( and ) as in (5) and (6) [1], [12], [15]. Using tech-           transfer admittance matrix        to be positive real (and hence,
+niques such as recursive convolution [14], these rational func-        for the transmission line model to be passive) are [11]
+tions can be converted in to a time domain equivalent circuit,
+which can be readily implemented in electromagnetic transient                           is analytic
+programs
+                                                                                                                Hermitian Matrix
+                                                                (5)
+                                                                                 is positive definite.                                (9)
+
+                                                                (6)        As complex poles and residues always appear in conjugate
+                                                                       pairs, the first two conditions stated above are automatically ful-
+                                                                       filled [10]. The satisfaction of the third condition requires all
+   An efficient robust technique called vector fitting [3], [15] can   eigenvalues of the matrix          , with         to be positive at
+be used to calculate the unknown coefficients [                        every frequency .
+in (5) and (6)]. The time delay        in (5) is estimated before          As an example, consider the 100 km twin HVDC cable
+applying the curve fitting procedure [1], [14].                        depicted in Fig. 1 with data as shown in Table I. The system
+   The Universal Line Model (ULM) [2] is an accurate                   has four conductors (core and sheath for each cable), and
+numerically efficient phase domain model currently imple-              hence has 4 4 dimensioned shunt admittance               and series
+mented in many electromagnetic transient programs such as              impedance           matrices.
+PSCAD/EMTDC. This model employs a modified form for the                    The matrices         ,      , and the 8 8 dimensioned
+propagation function from that in (5) as shown in (7), which           and          are accordingly calculated using (3), (4), (8b) and
+considers multiple (modal) delays                                      (9c), respectively. Fig. 2 shows the plot of the 8 eigenvalues of
+                                                                               as functions of frequency. As all eigenvalues are posi-
+                                                                       tive at every frequency, the passivity condition is satisfied. This
+                                                                       confirms that in this case the frequency domain formulation is
+                                                                (7)    passive for the actual cable system.
+932                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 25, NO. 2, APRIL 2010
+
+
+
+
+Fig. 2. Eigenvalue of   H (s).
+                                                                           Fig. 4. Eigenvalue of   H (s).
+
+                                                                              By consideration of several example cases of different under-
+                                                                           ground cable arrangements, the authors have observed that the
+                                                                           poor curve fitting at lower frequencies (1 Hz or smaller) often re-
+                                                                           sults in large passivity violations (negative eigenvalues of large
+                                                                           magnitude). Negative eigenvalues at higher frequencies are usu-
+                                                                           ally rare and if present, are of relatively small magnitude. Pas-
+                                                                           sivity correction can be introduced for these small passivity vio-
+                                                                           lations more easily by using perturbation methods as described
+                                                                           in Section V-B.
+
+                                                                               IV. IDENTIFICATION OF PASSIVITY VIOLATED REGIONS
+Fig. 3. Magnitude of    A(1; 1) after Vector Fitting over [1 Hz, 1 MHz].      The accurate identification of the passivity violated regions
+                                                                           is a crucial requirement for any passivity enforcement scheme.
+                                                                           Some earlier work [5], [6] has reported analytical approaches
+    As discussed in Section II, the time domain modelling re-              based on Hamiltonian matrices to determine the passivity vio-
+quires a rational function approximation (curve fitting) of ma-            lating regions. However these approaches are strictly restricted
+trices         and         . The frequency response of a typical           to linear systems without transportation lag and thus are not di-
+entry           of its propagation matrix        is shown in Fig. 3,       rectly applicable to transmission lines or cables. More recent
+which also shows a plot of a rational function approximation of            work [10], [11] has extended such analysis to transmission lines
+the form (7) obtained by fitting over the frequency range [1 Hz,           but theses techniques require significant computational effort
+1 MHz]. Note that the fitting at frequencies lower than the lower          and frequency sampling as for the frequency sweep method dis-
+bound            1 Hz is poor.                                             cussed in the next paragraph. Also these publications consider
+    Fig. 4(a) and (b) present plots of two typical eigenvalues of          situations where the transmission line is modeled in the modal
+the Hermitian matrix            , computed based on the rational           domain with constant transformation matrices for converting
+function fittings of matrices           and         . Also shown in        between mode and phase quantities.
+the graphs are plots of the actual (theoretical) eigenvalues for              The approach in this paper is to use a frequency sweep
+comparison. The eigenvalue plot based on fitted matrices de-               method [9], where passivity is verified by carefully evaluating
+viates significantly from the theoretical result, due to the poor          all eigenvalues of         by stepping through the entire fre-
+fitting below the minimum bound of 1 Hz. Although the first                quency range (0 Hz to a very large frequency, say, 10 MHz) in
+eigenvalue as calculated from fitted matrices [see Fig. 4(a)] still        small steps, carefully evaluating all eigenvalues of       . One
+remains positive over the full frequency range shown; the plot of          possible drawback of this method is that a negative eigenvalue
+the second eigenvalue from the fitted matrices [see Fig. 4(b)] is          may be missed due to the coarseness of the frequency step used
+significantly negative with a value of about       at approximately        or it may lie beyond the maximum search frequency. However,
+            Hz. This negative eigenvalue indicates that there is a         noting that eigenvalues are smooth functions of frequency, this
+large passivity violation in the fitted model as a result of the error     drawback is addressed by conducting a careful inspection of
+caused by the rational function approximations (curve fitting) of          the eigenvalue plot up to a frequency well in excess of the
+the entries of         and        .                                        simulation bandwidth. Any suspicious frequency range (where
+DE SILVA et al.: ROBUST PASSIVITY ENFORCEMENT SCHEME FOR TIME-DOMAIN SIMULATION                                                            933
+
+
+
+an eigenvalue approaches very small values) is flagged for a
+more refined search and subsequently scanned by conducting a
+localized frequency sweep with a much smaller frequency step.
+
+                 V. PASSIVITY ENFORCEMENT
+   If the fitted formulation shows passivity violation, its param-
+eters can be modified so as to ensure positive eigenvalues for
+       . A nonlinear optimization algorithm can be used for this
+purpose, which penalizes negative eigenvalue excursions, but
+such an algorithm can be numerically inefficient and susceptible
+to non-convergence.
+   Alternatively a more computationally efficient linear con-
+strained least squares algorithm can be used to perturb the fitted
+parameters to achieve passivity. However, such a modification
+of parameters is only meaningful when the 

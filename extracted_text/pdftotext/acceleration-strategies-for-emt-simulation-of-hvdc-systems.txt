@@ -1,0 +1,184 @@
+                                                                  Electric Power Systems Research 252 (2026) 112399
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                               Electric Power Systems Research
+                                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Acceleration strategies for EMT Simulation of HVDC systems☆,☆☆,★,★★
+A. Allabadi a,* , J. Mahseredjian a, S. Dennetière b, A. Abusalah a , I. Kocar a , T. Ould-Bachir a
+a
+    Polytechnique Montréal, Montreal, QC H3T 1J4, Canada
+b
+    Réseau de Transport d’Electricité, Paris 92932, France
+
+
+
+
+A R T I C L E I N F O                                          A B S T R A C T
+
+Keywords:                                                      This paper investigates electromagnetic transient (EMT) simulation of large-scale multiterminal HVDC (MTDC)
+EMT                                                            networks, focusing on methods for significant computational acceleration. Three key techniques are evaluated
+HVDC                                                           for their applicability: network parallelization, which exploits the natural decoupling properties of transmission
+MTDC
+                                                               lines; control system parallelization, which leverages modularity in converter and inverter-based resource con­
+Offline simulation
+and Parallel computing
+                                                               trols; and optimized sequential solvers for control systems. Additionally, two hybrid approaches that integrate
+                                                               these strategies are proposed, achieving substantial speedups in simulation performance. Using the InterOPERA
+                                                               benchmark system modelled in EMTP®, the proposed approaches achieve up to 23x acceleration without
+                                                               compromising accuracy.
+
+
+
+
+1. Introduction                                                                                 Parallel processing strategies enable efficient computations with MMC
+                                                                                                equivalent models [5]. Initialization techniques further expedite simu­
+    With the growing integration of renewable energy sources and the                            lations by minimizing simulation time to reach steady-state, with
+need for flexible, long-distance power transmission, high-voltage direct                        schemes developed specifically for the MMC model [6] and for generic
+current (HVDC) technology has become a vital component of modern                                MTDC systems [7].
+power grids [1]. HVDC systems are particularly well-suited for trans­                               Other acceleration techniques are more generic, addressing EMT
+mitting large amounts of power over long distances with minimal losses,                         simulations broadly rather than focusing exclusively on HVDC or MTDC
+making them essential for interconnecting remote renewable energy                               systems. One example is transmission line-based parallelization (TLP),
+sources, stabilizing grid operations, and supporting cross-regional                             which exploits transmission line propagation delays to decouple and
+power transfer. Traditional point-to-point HVDC systems are widely                              parallelize segments of the power network [8].
+implemented; however, as renewable energy adoption increases, there is                              Given the complexity of control systems in EMT simulations, where
+a shift towards multi-terminal HVDC (MTDC) systems to facilitate                                control system computations can represent a substantial part of the load,
+greater network flexibility and interconnectivity [2].                                          control system parallelization (CtrlP) methods have been proven effec­
+    EMT simulations of large-scale MTDC systems can be computation­                             tive. For instance, A functional mock-up interface (FMI) was used to
+ally expensive due to the intense computational loads of solving control                        distribute control system tasks across processors in [9].
+and power system equations at each time-point.                                                      In addition to CtrlP, altering the control system solution method
+    Several strategies have been proposed to accelerate EMT simula­                             offers further potential for improvement. Traditionally, control system
+tions, specifically targeting computationally intensive components in                           solvers introduce an artificial delay of one time-step to break feedback
+HVDC systems, such as the Modular Multilevel Converter (MMC). For                               loops. While this sequential solution approach provides acceptable re­
+example, optimized models for MMCs have been introduced in [3,4].                               sults in several cases, especially with small numerical integration time-
+
+
+
+  ☆
+    This work was supported by the Natural Sciences and Engineering Research Council (NSERC) of Canada as part of the industrial chair “Multi time-frame
+simulation of transients for large scale power systems.”
+    ☆☆
+        A. Allabadi, J.Mahseredjian,A. Abusalah,Ilhan Kocar, and T. Ould-Bachir are with Polytechnique Montréal, Montreal, QC H3T 1J4, Canada
+     ★
+       S. Dennetière is with the Réseau de Transport d’Electricité, Paris 92,932, France.
+     ★★
+        Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+  * Corresponding author.
+    E-mail addresses: ahmad.allabadi@polymtl.ca (A. Allabadi), jean.mahseredjian@polymtl.ca (J. Mahseredjian), sebastien.dennetiere@rte-france.com
+(S. Dennetière), anas.abusalah@polymtl.ca (A. Abusalah), ilhan.kocar@polymtl.ca (I. Kocar), tarek.ould-bachir@polymtl.ca (T. Ould-Bachir).
+
+https://doi.org/10.1016/j.epsr.2025.112399
+Received 6 January 2025; Received in revised form 26 February 2025; Accepted 17 October 2025
+Available online 31 October 2025
+0378-7796/© 2025 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+A. Allabadi et al.                                                                                                  Electric Power Systems Research 252 (2026) 112399
+
+
+steps, it can become problematic in large-scale systems dominated by            The system consists of a bipolar MMC-based point-to-point HVDC sys­
+IBRs and power electronic devices. In such systems, particularly in             tem. It includes two MMCs for collecting and transmitting offshore wind
+sensitive control subsystems, artificial delays can lead to numerical in­       power. Table I details simulation models and parameters.
+stabilities, as demonstrated in [10]. Simultaneous control solvers avoid            The system is decoupled into three subsystems using the available
+the introduction of artificial delays by using Jacobian matrix-based it­        lines. Each subsystem is simulated on separate CPUs using EMTP® [14].
+erations [10]. However, in large-scale MTDC systems, such methods               In this paper, all simulations were conducted on Intel® Xeon® Gold
+may limit computational performance. Alternatively, a non-iterative             6258R CPU.
+Jacobian-based approach (NIJ) is proposed in [10]. It is based on suc­              Table II shows the computational results, comparing the TLP
+cessive (at each time-point) linearizations. This NIJ approach provides         approach to the default serial simulation (Ser). Here, both the TLP and
+acceptable performance for most cases. To address the computational             Ser use the default control solver in EMTP®, which uses NIJ approach
+burden more efficiently, optimized sequential control solvers (OSeqCtrl)        [10], therefore, they are tagged as (TLP_NIJ) and (Ser_NIJ), respectively.
+have been introduced. These solvers demonstrated significant speed              By decoupling the system into parallel subsystems, TLP inherently par­
+improvements in solving control systems with feedback loops [11].               allelizes the control systems, leading to significant reductions in total
+    This paper investigates three techniques to accelerate EMT simula­          simulation time.
+tions for large-scale MTDC systems: TLP, CtrlP, and OSeqCtrl. The study             The control system gets the highest acceleration, with a speedup
+aims to demonstrate each technique’s potential to reduce simulation             factor of 2.1 compared to Ser_NIJ, followed by the power system
+time while maintaining model fidelity. An enhanced CtrlP strategy is            equations, which achieved a speedup of 1.5. As the computational load
+proposed along with OSeqCtrl. The evaluation of these methods is pre­           is predominantly concentrated in the control systems, accounting for
+sented across different scales of MTDC networks, including both a small         approximately 87 % of the total computational load, their acceleration
+point-to-point HVDC system and the large-scale MTDC system repre­               contributes the most to the overall simulation acceleration, resulting in a
+sented by the InterOPERA benchmark [12]. In addition, hybrid accel­             total speedup of 2.0. The accuracy of this method is validated in Section
+eration strategies that combine TLP, CtrlP, and OSeqCtrl are proposed to        V.B.
+leverage both network and control system parallelization.                           The TLP method holds the potential for even greater performance
+    This paper is structured as follows. Sections II to IV introduce the        improvements in scenarios where the power system computational load
+three key acceleration methods—TLP, CtrlP, and OSeqCtrl var­                    is more substantial. Given that the control system represents most of the
+iants—and evaluate their performances individually on a small-scale             computational burden, the next sections explore methods to further
+HVDC test system. Section V expands the analysis by applying these              accelerate control system solutions.
+methods to a large-scale MTDC network. Finally, Section VI concludes
+by summarizing the key findings and contributions of this paper.                3. Control system parallelization, CTRLP
+
+2. Transmission line based parallelization, TLP                                     While TLP is highly effective for systems with abundant transmission
+                                                                                lines, many large-scale EMT simulations require additional techniques
+    In large-scale EMT simulations, network parallelization leverages the       to achieve further computational efficiency, particularly when dealing
+natural decoupling effect of transmission lines, where propagation de­          with complex control systems. In both small and large-scale HVDC
+lays allow different network segments to be simulated in parallel. This         systems, a significant portion of the computational load arises from
+approach can significantly reduce the computational burden.                     solving control system equations, especially due to integrating IBRs.
+    In [8], the FMI is used as an interoperability standard with a              Therefore, accelerating the control system solution can substantially
+master-slave configuration to create a co-simulation setup of multiple          speed up the simulation process. Generic IBR models are considered in
+simulation instants. This allows parallel execution of decoupled sub­           this paper.
+systems using transmission line propagation delays. Therefore, it is                One promising approach is the parallelization of control systems,
+particularly effective for networks involving long transmission lines and       which has been explored in [9] using a co-simulation-based method. In
+multiple IBRs, where the computational load can be offloaded across             EMT simulations, the solutions of power system and control system
+parallel simulation instances. The communication protocol for syn­              equations alternate, with a one-time-step buffer between them. The
+chronizing parallel instances is established using low-level primitives.        MTDC control systems usually have several modular and identical sub­
+This setup enables efficient and scalable simulations without compro­           systems. For example, as illustrated in Fig 1, each MMC block contains
+mising accuracy.
+                                                                                Table I
+2.1. Performance evaluation                                                     Simulation and Model Details for The HVDC system in Fig 1.
+                                                                                                                          Details
+    The TLP method in [8] is applied to the test system shown in Fig 1.
+                                                                                 Component       Grid equivalents         Voltage sources with impedance
+                                                                                   model         MMC                      Generic 401-level, half-bridge, arm
+                                                                                                                          equivalent model (Model 3) [15].
+                                                                                                                          GFM-MMC operates in V/f control mode.
+                                                                                                                          More details about V/f and Vdc-control
+                                                                                                                          can be found in [16].
+                                                                                                 Wind parks               Generic aggregated DFIG models with
+                                                                                                                          controls.
+                                                                                                                          Contains 1200 wind turbines, 1.5 MW
+                                                                                                                          each.
+                                                                                                 Lines /cables            Wideband models [17]
+                                                                                                                          DC cable: 70 km, ±640 kV
+                                                                                 Simulation      Total number of          318
+                                                                                   details       simulation nodes
+                                                                                                 Total number of          3617
+                                                                                                 control devices
+                                                                                                 Simulation interval      10
+                                                                                                 (s)
+                                                                                                 Time-step (µs)           50
+                     Fig. 1. Bipolar point-to-point HVDC test system.
+
+                                                                            2
+A. Allabadi et al.                                                                                                 Electric Power Systems Research 252 (2026) 112399
+
+
+Table II                                                                         the computational load across 6 CPUs. The default control solver in
+Computational performance comparison, TLP.                                       EMTP® is used (NIJ) [10].
+  Equations           Ser_NIJ            TLP_NIJ simulation time   Speedup           As shown in Table III, the CtrlP achieved notable improvements in
+                      simulation time    (s)                       factor        overall simulation speed. The control system computations substantially
+                      (s)                3 CPUs                                  reduced from 188.5 s to 37.5 s. This significant acceleration, with a
+  Power system        27.1               18.1                      1.5           speed-up factor of 5.02, highlights the method’s effectiveness in
+  Control system      188.5              87.7                      2.1           reducing control solution times. Consequently, the total simulation time
+  Total               215.6              105.8                     2.0           decreased from 215.6 s in the Ser_NIJ setup to 64.6 s with CtrlP, yielding
+    simulation
+                                                                                 an overall speedup of 3.33 across 6 CPUs. The accuracy of this method is
+                                                                                 validated in Section V.B.
+the same control system. The solution of each control module is inde­
+pendent of the others at any given discrete time-point, making it possible       4. Sequential control solver, OSeqCtrl
+to parallelize these solutions across multiple CPUs. By assigning the
+control subsystems to different processors (e.g., 4 CPUs), the computa­              As demonstrated in the previous section, control systems contribute
+tional load can be distributed, thus accelerating the simulation process.        significantly to the overall computational load in EMT simulations,
+A similar approach can be applied to IBR controls when having multiple           forming a primary bottleneck to simulation speed. This is largely due to
+IBRs.                                                                            their complexity and the presence of nonlinear feedback loops, which
+    As suggested in [9], the FMI standard can be employed for this               are computationally intensive to solve. Although TLP or CtrlP signifi­
+parallelization under a master-slave configuration. In this setup, each          cantly accelerated the process, the control system solution remains a
+control subsystem is treated as a slave FMU, communicating with a                considerable bottleneck, emphasizing the need for exploring other
+master that handles synchronization across all time-points.                      control accelerating techniques.
+    Some IBR models have control systems that can be further decoupled               The reduced Jacobian matrix approach [13] and its optimized
+into independent branches. For instance, in the DFIG model shown in Fig          version [11] allow to significantly improve computational performance
+2, the rotor control (RSC), grid-side converter (GSC) control, and pitch         while maintaining the highest accuracy for a given time-step. As
+control are decoupled. This gives the potential to achieve further ac­           demonstrated in [11], it is also possible to apply an optimized sequential
+celeration by parallelizing them. However, as the RSC and GSC controls           solution (see SEQ+DFSOpt metho

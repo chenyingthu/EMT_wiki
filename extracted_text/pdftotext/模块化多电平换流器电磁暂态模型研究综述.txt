@@ -1,0 +1,328 @@
+第 44 卷 第 12 期                                               电 网 技 术                                              Vol. 44 No. 12
+ 2020 年 12 月                                             Power System Technology                                     Dec. 2020
+文章编号：1000-3673（2020）12-4755-11                       中图分类号：TM 721             文献标志码：A            学科代码：470ꞏ40
+
+
+
+         模块化多电平换流器电磁暂态模型研究综述
+                               陈武晖 1，吴明哲 1，张军 1，余浩 2，梁定康 3
+                               （1．江苏大学 电气信息工程学院，江苏省 镇江市 212013；
+                      2．广东电网有限责任公司电网规划研究中心，广东省 广州市 510080；
+                          3．太原理工大学 电气与动力工程学院，山西省 太原市 030024）
+
+
+         Review of Electromagnetic Transient Modeling of Modular Multilevel Converters
+                       CHEN Wuhui1, WU Mingzhe1, ZHANG Jun1, YU Hao2, LIANG Dingkang3
+        (1. School of Electrical and Information Engineering, Jiangsu University, Zhenjiang 212013, Jiangsu Province, China;
+      2. Grid Planning & Research Center, Guangdong Power Grid Co., Ltd., Guangzhou 510080, Guangdong Province, China;
+      3. College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan 030024, Shanxi Province, China)
+
+
+ABSTRACT:          Modular     multi-level   converters(MMC)are         建模的努力方向。
+mostly used for the commissioned VSC-HVDC projects. Due
+                                                                        关键词：模块化多电平换流器；MMC 详细模型；戴维南等
+to the large number of MMC levels and the complexity of its
+                                                                        效模型；平均值模型
+topology structure, the level of detail and the computational
+                                                                        DOI：10.13335/j.1000-3673.pst.2020.0322
+efficiency of the MMC modeling are a principal contradiction.
+To solve this problem, the relevant literature has proposed             0 引言
+detailed MMC models, equivalent circuit models, average
+                                                                            模 块 化 多 电 平 换 流 器 (modular multilevel
+models, and simplified average models based on various
+                                                                        converter，MMC)具有有功和无功解耦控制、电压
+specific requirements. According to the modeling methods, it
+can be divided into six models. In this paper, the basic ideas          和容量的可扩展性、电压变化梯度小、开关频率低、
+and methods of the six models are illustrated from complex to           开关损耗小、对电力电子器件的耐压能力要求较低、
+simple in modeling and from slow to fast in calculation speed,          输出电压谐波含量低、适合与弱电网或者无源电网
+and the application scope of the model and the calculation              并网等诸多优势[1-3]。当前直流设备厂家也主要提供
+efficiency are explained. The problems and challenges faced
+                                                                        MMC- HVDC 设备和技术服务，因此 MMC-HVDC
+and the future MMC electromagnetic transient modeling efforts
+                                                                        已经取代了传统的 2 电平或者 3 电平 VSC-HVDC
+are put forward.
+                                                                        获得广泛应用[4-6]。例如，我国已经投运的渝鄂柔性
+KEY WORDS: modular multilevel converter (MMC); MMC
+                                                                        直流背靠背联网工程、鲁西背靠背异步联网工程以
+detailed model; Thévenin equivalent model; averaged-value model
+                                                                        及目前在建的张北直流电网工程，国外西门子在建
+摘要：在实际投入运行的柔性直流输电(VSC-HVDC)工程中                                          的 ULTRANEN、BorWin3 等工程都采用的 MMC
+多采用模块化多电平换流器(modular multilevel converter，
+                                                                        拓扑结构[7]。随着 MMC 在 VSC-HVDC 输电工程应
+MMC)。由于 MMC 电平数量多，拓扑结构复杂，MMC 模
+                                                                        用逐步增多，MMC 建模分析也成为研究的热点问
+型详细程度和计算效率是一对主要矛盾。为解决这一问题，
+相关文献根据各种具体需求，已经提出 MMC 详细模型、等                                            题。然而，MMC 子模块拓扑结构类型较多[7]，而
+值电路模型、平均值模型以及简化平均值模型，根据建模方                                              且为了提升输送电压等级的电压，采用的电平数量
+法具体可以分为 6 种模型。按照由复杂到简单、计算速度由                                            越来越多，子模块数量随着增多，拓扑结构也变得
+慢到快的顺序，全面阐释了 6 种模型的建模基本思路和方                                             更复杂，这些给 MMC-HVDC 电磁暂态建模和仿真
+法、模型适用范围以及计算效率；然后，指出了 MMC 电磁
+                                                                        计算带来巨大的挑战[1-3,8-9]。
+模型存在的问题和面临的挑战，提出了未来 MMC 电磁暂态
+                                                                            MMC 电磁暂态模型主要用来刻画几s 到几 s
+    基金项目：国家自然科学基金项目(51977098)；山西省应用基础研                                  之间的动态事件变化规律，仿真步长较小，通常为
+究项目(201801D221362)。                                                     20~200s[10-11]，计算量巨大，因此 MMC 模型详细
+    Project Supported by National Natural Science Foundation of China
+                                                                        程度和计算负担是建模需要考虑的主要矛盾。针对
+(NSFC) (51977098); Foundation for Young Scholars of Shanxi Province
+under Grant (201801D221362).                                            各种具体研究需求，平衡计算速度和分析精度，相
+4756                                      陈武晖等：模块化多电平换流器电磁暂态模型研究综述                                                 Vol. 44 No. 12
+
+关文献采用不同的建模方法提出了多种 MMC 电磁                                           “投入状态”和“旁路状态”之间切换，不允许出
+                   [11]
+暂态模型                  ，按照由复杂到简单和计算速度由慢到                            现“闭锁状态”。SM“闭锁状态”用于 MMC-HVDC
+快的顺序，大致分为以下几类[12-13]：MMC 详细模                                       启动时电容充电或故障时电容旁路。
+型、等值电路模型、平均值模型以及简化平均值模                                               图 2(a)是 MMC 换流器的详细拓扑结构，
+                                                                                           图 2(b)
+型。针对这几类模型的局限性国内外研究专家已经                                             是 SM 结构，每个桥臂上 SM 总数为 N，可以根据
+做了大量研究，提出了相应的改进模型，但是增加                                             MMC 输出电压需求扩展为任意数量。任意时刻每
+模型新功能提升仿真能力的同时，也增加了模型的                                             个桥臂上、下同时导通的子模块数量 Nu、Nl 以及
+复杂度，降低了模型的计算效率。                                                    MMC 输出电平总数 T 满足如下关系
+       针对相关文献的研究成果，本文重点总结以往                                                   T  N 1                                         (1)
+研究所提出的 MMC 电磁暂态模中的详细模型、等                                                     Nu  Nl  N                                       (2)
+值电路模型以及平均值模型的建模基本思路、应用
+范围以及计算效率，并且进一步提出 MMC 电磁暂
+                                                                         vuaSM
+态模型存在的问题和面临的挑战，指出未来的努力
+方向。
+
+1      MMC 拓扑结构与控制
+1.1        MMC 拓扑结构
+   无特殊说明，本文以下叙述中默认 MMC 的子
+模块(sub-module，SM)是半桥型子模块，由于 MMC
+可以四象限运行，MMC-HVDC 两侧的 MMC 拓扑
+结构和 控制 策略相 同， 因此叙 述过 程中不 区分                                              vlaSM
+
+MMC-HVDC 的两侧 MMC 模型。
+   半桥型子模块由 2 个带有反并联二极管的
+IGBT 和一个电容构成，如图 1 所示。根据 IGBT
+                                                                                           图 2 MMC 详细结构
+的通断信号可将 SM 工作状态分为 3 种[8]：图 1(a)                                                  Fig. 2   Detailed topology of MMC models
+所示，器件 1 施加开通信号、器件 2 施加关断信号，                                        1.2       MMC 控制系统
+此时电容被接入电路中，称为 SM 的“导通状态”                                                   MMC 在本质上属于 VSC[14]，但是由于 MMC
+或者“投入状态”；图 1(b)所示，器件 1 施加关断                                        内部拥有复杂的结构和数目众多的电力电子器件，
+信号、器件 2 施加开通信号，在此期间电容被旁路，
+                                                                   需要同时执行成百上千个开关器件的触发控制，因
+称为“切除状态”或者“旁路状态”       ；图 1(c)所示，
+                                                                   此 MMC 控制层面上具有控制量较大、过程复杂的
+器件 1、2 同时施加关断信号，根据电流方向不同，
+                                                                   特点，与 VSC 控制系统相比需要实现更多的功能。
+电容器可能被充电，也可能被旁路，称为“异常状
+                                                                           图 3 给出了 MMC 的控制策略。MMC 控制策
+态”或者“闭锁状态”。MMC 正常运行时，SM 在
+
+           ON 1           D1              OFF 1     D1
+
+       a                       C      a                   C
+
+           OFF 2          D2              ON 2      D2
+
+       b                              b
+
+                   (a) 导通状态                   (b) 关闭状态
+
+
+           OFF 1          D1
+                                              假定电流由a入b出
+       a                       C
+                                              假定电流由b入a出
+           OFF2           D2
+
+       b
+                   (c) 异常状态
+
+                 图 1 子模块工作状态与电流分布                                                           图 3 MMC 控制策略
+Fig. 1       States and current distribution inside a sub-module                   Fig. 3   Control strategy of the MMC
+第 44 卷 第 12 期                                           电   网   技   术                                               4757
+
+略分为 VSC 控制部分和 MMC 控制部分。VSC 控                                    环电流，其主要成分为正常运行的直流电流和二倍
+制部分属于上层控制策略，采用双闭环结构的直接                                          频负序交流分量[8]，其中二倍频分量不仅影响桥臂
+电流控制方式，通过电流内环控制达到快速响应、                                          电流还会增加 SM 电容的电压纹波[15]，为了减轻或
+跟踪电流的功能，而 MMC 控制部分属于底层控制，                                       消除环流的影响，文献[8]设计了环流抑制控制器，
+除了基本的调制策略外，还加入了环流控制(CCSC)                                       如图 6 所示。
+和电容电压排序功能的平衡控制算法(BCA)。                                                  其中：ja，b，c 中的一相；0 为基波角频率；
+1.2.1    VSC 的双闭环控制                                             L0 为桥臂电感；iuj、ilj 为 j 相上、下桥臂电流；idiffj
+    VSC 外环控制是根据所期望的交直流电气量                                       为同时流过上下桥臂的换流器内部电流，即 j 相内
+(如电压、电流、频率等)，产生对应的电流参考值，                                        部电流；Tacb/dq 为 2 倍频负序坐标变换；i2fdq 为内部
+并作为内环控制的输入量。将目标量分为有功类和                                          环流 dq 轴分量；i2fdq_ref 为环流 dq 分量参考值，为
+无功类物理量，如图 4 所示，其中有功类有 3 种模                                      抑制环流则设为 0；udiff_ref 为负序三相内部不平衡
+式分别为：定有功功率控制、定直流电压控制和定                                          电压参考值；ej 为内环控制输出的交流调制波；uuj、
+交流频率控制；无功类分为 2 种模式：定交流电压                                        ulj 为控制系统产生的上下桥臂电压参考信号；Udc
+控制和定无功功率控制。电流内环控制由外环产生                                          为 MMC 直流电压。
+的控制量通过 PI 环节、前馈补偿环节实现 dq 轴的
+解耦，进而产生下一层控制器的电压参考信号 ej
+                                                                                           20 L0
+(j=a，b，c)[14]，内环 dq 解耦控制器如图 5 所示。
+                                                                                           20 L0
+其中：idref、iqref 为外环控制器输出；usd、usq、id、
+                                                                           20t                              20t
+iq 为交流电压和电流的 dq 分量；控制器其输出 ucd、
+ucq 为电压参考信号 ej 的 dq 分量；L0 为桥臂电感；
+ω0 为基频角频率。
+1.2.2    环流控制(CCSC)
+    由于 MMC 桥臂不平衡电压会在桥臂内产生循
+
+                                                                                  图 6 环流抑制控制器结构
+                                                                                  Fig. 6 Structure of CCSC
+                                                                1.2.3    最近电平逼近调制与平衡控制算法
+                                                                        MMC 调制已经有较多的方法[16-19]，例如载波
+                                                                移相脉宽调制法(PD-PWM)、特定谐波脉宽调制法
+                                                                (SHE-PWM)以及最近电平逼近调制(NLC)等 [20-21]。
+                                                                随着子模块的增多大部分调制方法变得复杂，NLC
+                                                                是更有效地调制手段。
+                                                                        NLC 调制与 BCA 算法基本原理如图 7 所示[22]，
+
+
+              图 4 外环有功和无功类控制框图
+        Fig. 4 Outer loop active and reactive control
+
+
+
+
+                       0 L0
+                       0 L0
+
+                                             
+
+
+
+                   图 5 dq 轴解耦控制器                                            图 7 NLC 调制及平衡控制算法
+          Fig. 5   Decoupling controller of dq axes                         Fig. 7 NLC and BCA of MMC
+4758                       陈武晖等：模块化多电平换流器电磁暂态模型研究综述                                 Vol. 44 No. 12
+
+以 j 相上桥臂为例(下桥臂类似)，其中 Nuj、Nlj 分别
+为 j 相上下桥臂某时刻需要投入的 SM 数量；iuj、ilj
+分别为相上下桥臂电流；UujcN、UljcN 分别为 j 相上
+下桥臂中第 N 个 SM 中电容电压值；TujSMN 和 TljSMN
+分别为 j 相上下桥臂中第 N 个 SM 的触发信号。其
+工作原理如下：调制模块通过对该相上桥臂电压参
+考信号 uuj 与 SM 中电容电压平均值 Uc 的比值取整
+得出某一时刻该相上桥臂需要投入的 SM 个数 Nu，
+然后由 BCA 模块对该相上桥臂中每个 SM 的电容
+电压 Uujc 进行排序，同时检测桥臂电流 iuj 的方向(即
+图 2 中 iuj 方向)，若电流大于零，则 SM 处于充电
+状态，选取 SM 中电容电压从低到高顺序投入，其
+余 SM 旁路；反之电流小于零，SM 放电，则选取
+SM 中电容电压从高到低顺序投入，其余旁路，最
+终生成上桥臂每个 SM 的触发信号 TujSM[22]。此外，
+文献[23]提出了能提高 BCA 工作效率方法。
+
+2      MMC 电磁暂态模型
+2.1    基于半导体器件完整物理特性的 MMC 详细
+                                                              图 8 IGBT 详细模型
+模型(模型 1)
+                                                         Fig. 8 Detailed model of IGBT
+       MMC 中的电力电子开关 IGBT 或二极管等半
+                                                   的形式，二极管的非线性特性如图 10 所示，可以
+导体器件用微分方程或者等效电路描述，如图 8 所
+                                                   测量或查询制造商给出 IGBT 的相关数据。由这种
+示[24-25]。图 8(a)表示 IGBT 的内部结构断面示意图，
+                                                   非线性 IGBT 模型构成的 SM 模型可以连接成如
+图 8(b)是 IGBT 的等效电路图，包括两部分：左侧
+                                                   图 2 所示的 MMC 详细模型。
+虚线框内代表的是电力场效应晶体管(metal oxide
+                                                     IGBT 非线性简化 MMC 详细模型具有较多的
+semiconductor field effect transistor，MOSFET)结构，
+                                                   电力电子元件，给计算机仿真软件带来诸多不便。
+右侧虚线框内则表示耐高电压、大电流的双极结型
+                                                   以半桥型结构的子模块组成的一个换流器为例，假
+晶体管(bipolar junction transistor，BJT)结构，底部
+                                                   如桥臂上有 200 个 SM，则一个桥臂上共有 800 个
+虚线框内是 BJT 的电路结构。用电力电子开关 IGBT
+                                                   (IGBT 与二极管各 400 个)开关器件，该换流器一共
+或二极管等半导体器件的物理等值电路模型组合
+                                                   有 80064800 个开关器件，仿真软件对这样一个
+成 SM 模型，然后再连接成图 2 所示的基于完整物
+                                                   超高阶矩阵大系统求解无疑是耗时又费力的，另外，
+理特性半导体器件模型的 MMC 详细模型。
+                                                   开关状态变化影响计算矩阵的结构，增加仿真软件
+       基于半导体器件完整物理特性的 MMC 模型详
+                                                   的计算量。文献[23]建立了 401 个电平的 MMC 换
+细地描述了 IGBT 器件特性，能够精确分析开关导
+                                                   流器的基于半导体器件简化模型的 MMC 详细模型，
+通和关断特性以及开关功率损耗，研究新型 MMC
+                                                   通过仿真得出此模型仿真结果比较精准，但是仿真
+拓扑结构，修改增添拓扑结构的元件[24-26]。这种模
+                                                   计算时间较长。文献[27]应用半导体器件简化模型
+型主要用于电路模拟仿真软件，例如 PSPICE、
+                                                   的 MMC 详细模型给出了适合于更大功率范围的
+SPICE 等仿真工具。但这种模型太复杂，并且很难
+                                                   MMC 换流器拓扑，仿真验证新拓扑具有良好的性
+获得等值电路参数，计算量巨大，不适合电力系统
+仿真计算分析研究，一般商业化的电力系统仿真软
+件也不提供半导体器件完整物理特性的内置模型。
+2.2    基于半导体器件非线性简化模型的 MMC 详
+细模型(模型 2)
+       如图 9 所示，将 IGBT 和一个二级管并联单元                               图 9 IGBT 模型
+等值为一个理想开关和两个非理想二极管反并联                                         Fig. 9 IGBT model
+第 44 卷 第 12 期                                          电     网   技   术                                                          4759
+
+                                                                         半导体器件可切换电阻简化 MMC 详细模型与
+                                                                 前一类半导体器件非线性简化 MMC 详细模型相比，
+                                                                 电力电子元件数量大量减少，仿真计算时间快，同
+                                                                 样已经内置于 PSCAD/EMTDC 等电磁暂态仿真软
+                                                                 件。但是由于考虑半导体开关暂态行为，需要求解
+                                                                 大量的电气节点，还需要一个快速求解非线性开关
+                                                                 事件的算法，并且要求计算方法具有求解“刚性”
+                                                                 微分方程的能力，总体计算时间还很长，主要用于
+                                                                 验证其他简化等值模型，如详细等值电路模型和平
+                                                                 均值模型的有效性，但依然不适合大规模电力系统
+            图 10 反并联二极管非线性特性
+ Fig. 10   Nonlinear characteristic of anti-parallel diode       的仿真建模[11]。
+                                                                 2.4     基于详细等值电路的 MMC 模型(模型 4)
+能。文献[28-31]使用基于 IGBT 非线性简化 MMC
+                                                                 2.4.1    基于详细等值电路的 MMC 模型建模基本思
+详细模型验证了所提出的控制和保护策略。
+                                                                 路与方法
+      基于半导体器件非线性简化模型的 MMC 详细
+模型可以精确模拟 MMC 中电流分布和开关特性，                                           MMC 戴维南等效模型的具体建模过程如图 12
+开关损失发生在非线性 IGBT 的开关过程中，但是                                        所示[32]：由图 12(a)所示，首先将 SM 中 IGBT 开关
+                                                                 元件等效，如前文 2.3 节所述，按照开关元件的通
+不能像基于完整物理特性半导体器件模型的 MMC
+                                                                 断状态(开通、关断)等效成不同的电阻值(如取开通
+详细模型一样精确模拟电力电子开关器件的功率
+                                                                 时电阻值为 0.01，取关断时电阻值为 1M)，即
+消耗。这种模型可用于探究 SM 个体异常运行问题，
+                                                                 电阻 R1i 和 R2i 根据门极信号和电流方向选择取值；
+研究新型拓扑，验证更简化模型(例如平均值模型等)
+                                                                 然后，保留桥臂电感，采用常用数值积分方法(包括
+的准确性，该模型已经内置于电力系统电磁暂态仿
+                                                                 “梯形积分法”和“后退欧拉法”等)将 SM 中的电
+真软件，如 PSCAD/EMTDC 等。但是，由于这种
+                                                                 容离散化为等值电阻 Rc，对应图 12(b)，电容数值
+模型结构较为复杂，电力电子元件数量比较多，仿
+                                                                 离散化计算见公式(3)—(6)。再将图 12(b)中 SM 等
+真速度较慢，一个数秒的仿真甚至会花费更长的时
+                                                                 效为戴维南电路，得到图 12(c)，相关参数如式(7)(8)。
+间来完成，对计算机性能要求较高，用于大规模电
+                                                                 最后，把 SM 对应的戴维南电路进行代数叠加，得
+力系统的仿真是不可行的。
+                                                                 到一个叠加后的受控的电压源和受控的电阻，再加
+2.3   基于半导体器件可切换电阻简化的 MMC 详
+                                                                 上之前保留的桥臂电感 L0 共同构成戴维南等效电
+细模型(模型 3)
+                                                                 路，对应图 12(d)，对应式(9)(10)。MMC 桥臂详细
+      半导体器件可切换电阻简化的 MMC 模型与上
+                                                                 等值电路模型保留了图 3 中的所有控制策略，计算
+一节所示模型类似，MMC 的拓扑结构与原模型一                                          过程中也保留每个 SM 电容电压的变化过程记录，
+致，唯一的不同是该模型把半导体器件(IGBT 和反                                        可精确计及 MMC 中每个 SM 的不同电容电压的影
+并联二极管)按照通断状态等效成带有两个值的电                                           响，可分析设计 SM 电容平衡控制器算法，也可用
+阻，文献[14]给出了具体等效过程：当 IGBT 导通                                      于研究 MMC 谐波性能[14]。
+时等效为很小电阻值(m)，当 IGBT 关断时等效为                                                     RC (t )  t / 2C (3)
+很大电阻值(M)，如图 11 所示。这类模型可以用                                                         u c  R ci c(t )  u ceq (t  t )             (4)
+于验证 MMC 简化模型，分析 MMC 子模块的不正
+                                                                            u ceq (t  t )  R c(t )i c(t )  u c(t  t )       (5)
+常运行特性[11]。
+                                                                                       i armeq (t )  R 2i  u ceq (t  t )
+                                                                                ic                                               (6)
+                                                                                                 R1i  R 2 i  R c
+                                                                                                    R2i ( R1i  Rc )
+                                                                                    RSMi (t )                                    (7)
+                                                                                                    R2i  R1i  Rc
+                                                                                                                     R2i
+                                                                          u SMi (t  t )  u ceq(t  t )                        (8)
+                                                                                                               R2i  R1i  RC
+                                                                                                        N
+               图 11 子模块等效电路
+                                                                                       R armeq ( t )   R SMi ( t )              (9)
+       Fig. 11 Equivalent model of sub-module      

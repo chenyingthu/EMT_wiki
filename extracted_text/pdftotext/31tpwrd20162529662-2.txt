@@ -1,0 +1,151 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2529662, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                            1
+
+
+
+
+                       Partial refactorization based machine modeling
+                          techniques for electromagnetic transients
+                           U. Karaagac, Member, J. Mahseredjian, Fellow, I. Kocar, Member, G. Soykan, Member, O. Saad,
+                                                                     Member
+
+
+                                                                                                               system network equations (PSNE) in NA formulation becomes
+             Abstract— Electromagnetic transient type (EMT-type)                                               variable rank to model the ideal switch operations. In addition,
+          programs solve nodal analysis (NA) or modified-augmented-                                            direct representation of the branch relations and the devices
+          nodal-analysis (MANA) formulation based power system network                                         with voltage and current relations is not possible. These
+          equations (PSNE). The PSNE coefficient matrix can be either
+                                                                                                               limitations can be eliminated using the modified-augmented-
+          constant or time-varying depending on the utilized synchronous
+          machine (SM) model. Therefore, a computational efficiency                                            nodal-analysis (MANA) formulation [1]-[3] and that is why
+          comparison for the SM models requires accounting for the                                             this paper is based on MANA formulation.
+          refactorization scheme and the utilized sparse matrix solver                                            In both NA and MANA formulations, the PSNE coefficient
+          (SMS). In addition, MANA formulation does not require or force                                       matrix is sparse and the solution of PSNE is based on sparse
+          admittance model usage and enables flexibility while representing                                    matrix methods and LU factorization [4].
+          the SMs in PSNE. This paper compares computational
+                                                                                                                  In both NA and MANA formulations, the synchronous
+          performances of various SM models for a practical case and
+          accounts for the refactorization scheme, the utilized SMS and the                                    machines (SMs) are modeled separately from network
+          SM representation in MANA formulation.                                                               equations and require a special interface. A common approach
+             Index     Terms—Electromagnetic         transients,  modified-                                    is to interface the SM models with PSNE by using Norton
+          augmented-nodal-analysis (MANA), synchronous machine,                                                equivalent (NE) circuits. The NE circuits of the SMs are
+          partial refactorization, sparse matrix solver                                                        calculated and inserted into PSNE by modifying the network
+                                                                                                               admittance matrix and the vector of history current sources.
+                                         TABLE OF ACRONYMS
+                                                                                                               Following the PSNE solution, electrical and mechanical
+              AMD                Approximate minimum degree ordering                                           variables of the SMs are calculated using the SM terminal
+              BTF                Block triangular form
+                                                                                                               voltages.
+              COLAMD             Column approximate minimum degree ordering
+              EMT                Electromagnetic transient                                                        The classical dq0 model [5] of SM is widely used in the
+              EMTP               Electromagnetic transients program (EMTP-RV)                                  computation of EMTs, and interfaced with PSNE using a
+              MANA               Modified-augmented-nodal-analysis                                             Thevenin prediction-based circuit equivalent [6]-[10]. This
+              MANA-C             MANA formulation with machine thevenin equivalents                            model uses a constant admittance matrix and offers the best
+                                 MANA formulation with machine complete electrical
+              MANA-T                                                                                           computational speed.
+                                 equations
+              MMD                Multiple minimum degree ordering                                                 In the phase-domain (PD) [11]-[13] and voltage-behind-
+              NA                 Nodal analysis                                                                reactance (VBR) [14][15] model structures, the stator circuit is
+              NE                 Norton equivalent                                                             represented in phase coordinates and directly included within
+              PD                 Phase domain                                                                  PSNE. These approaches improve numerical accuracy and
+              PSNE               Power system network equations                                                stability [7]-[10], [15], [16]. However, due to time varying
+              SM                 Synchronous machine
+              SMS                Sparse matrix solver
+                                                                                                               inductances of these models, it is necessary to update and
+              TE                 Thevenin equivalent                                                           refactor the PSNE at each solution time point and so causing
+              VBR                Voltage behind reactance                                                      significant computational speed deterioration.
+                                                                                                                  The recent SM models, proposed in [8] (PD-dq0 model) and
+                                          I. INTRODUCTION                                                      [10] (VBR-dq0 model) are obtained by applying Park’s
+                                                                                                               transformation to the discretized equations of PD and VBR
+          T    he nodal analysis (NA) formulation based power system
+               network model has been widely used in Electromagnetic
+          transient type (EMT-type) programs. Despite its formulation
+                                                                                                               models, respectively. These models maintain the precisions of
+                                                                                                               accurate models and eliminate their computational
+          efficiency, NA has several important limitations resulting from                                      inefficiencies through a constant admittance matrix.
+          the existence of admittance model assumption. The power                                                 In [10], the performances of dq0, PD-dq0, VBR-dq0, PD
+                                                                                                               and VBR models have been tested on a 30-machine practical
+                                                                                                               case for both precision and efficiency of simulation. This study
+             U. Karaagac, J. Mahseredjian, I. Kocar and G. Soykan are with École                               shows that, the computation time increases more than twice in
+          Polytechnique de Montréal, Montréal (Québec), Canada.                                                EMTP (EMTP-RV version) [2][3] when PD or VBR model is
+             O. Saad is with IREQ, Hydro-Québec, Varennes, Quebec, Canada
+
+
+
+  0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2529662, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                            2
+
+          utilized instead of dq0, PD-dq0 or VBR-dq0 for the same                                              dq0 and VBR-dq0 models are not considered in this paper as
+          numerical integration time step. A similar increase in the                                           both models use constant admittance matrix and provide
+          computation time of EMTP has been also reported in [7] for a                                         similar computational performance with the PD-dq0 model
+          five machine practical case.                                                                         [10].
+             The PD model proposed in [17] also achieves a constant                                              The SM models, the proposed MANA formulations and the
+          admittance matrix usage in the SM-network interface. The                                             partial refactorization scheme for PD and VBR models are
+          accuracy assessment in [17] is based on single-phase-to-                                             implemented in MatEMTP (a transient analysis program in
+          ground fault simulation results for a SM directly connected to                                       MATLAB m-files) [1]. In addition, two different SMSs are
+          an infinite bus. The authors left the computational efficiency                                       used for the solution of PSNE: LU factorization with
+          assessment of this model as future study. As the computational                                       approximate minimum degree ordering (AMD) [18][19] and
+          performance of this model has not been validated for a multi-                                        KLU Matrix-solver package [20].
+          machine practical system, and due to its inclusion of artificial                                       The first part of this paper briefly recalls the discrete-time
+          damper windings, it is not considered in this paper.                                                 model equations for PD and VBR models. The second part
+             As in the dq0 model, constant admittance matrix usage in                                          presents the proposed MANA formulations. The KLU package
+          PD-dq0 and VBR-dq0 models is achieved using stator current                                           is presented briefly in the third part. The forth part
+          predictions. Prediction errors will, however, increase with                                          demonstrates the partial factorization implementation and the
+          larger time steps and can cause numerical errors or instability                                      simulation studies are presented in the last part.
+          in some cases. The dq0 model uses damping resistances [6] -
+          [10] to correct numerical problems caused by prediction. A                                                       II. SYNCHRONOUS MACHINE EQUATIONS
+          practical case is presented in [10] where the prediction errors                                        The damper winding effects are represented with three
+          in the dq0 model cause numerical accuracy and stability                                              lumped-parameter damper windings: one on d-axis, and two on
+          problems for large simulation time steps. The prediction errors                                      q-axis. The d-axis is assumed to be leading the q-axis by 900
+          do not cause such a numerical problem in PD-dq0 and VBR-                                             and the generator convention is used for machine equations
+          dq0 models for the same test case [10]. However, this is still                                       [21]. Throughout this paper, bold uppercase denotes matrices,
+          an issue since the damping resistances may still be needed in                                        bold lowercase denotes vectors and the operator p is d dt .
+          some cases to correct numerical problems.
+                                                                                                               Reader should refer to [9] for the mechanical equations.
+             An alternative approach to damping resistance usage is the
+                                                                                                                  The machine models are implemented using the trapezoidal
+          implementation of an iterative solution loop with the PSNE
+                                                                                                               rule of integration. The numerical oscillations of this rule, due
+          [10]. In this approach the machine Thevenin equivalent (TE)
+                                                                                                               to detectable discontinuities, are eliminated using the
+          of the SM is updated for voltage convergence through an
+                                                                                                               Backward Euler method. An operating segment change on the
+          iterative process [2], [3] that includes all other nonlinear
+                                                                                                               saturation curve is also treated as a discontinuity.
+          devices and machines connected through the main network.
+                                                                                                                  Due to space limitations, the PD-dq0 model equations and
+          The iterative solution used in [10] caused an increase of only
+                                                                                                               the network iterative solution approach (PD-dq0-IT model) are
+          20% in the 30-machine test case, when using a very low
+                                                                                                               not presented in this paper. The reader should refer to [8]-[10].
+          relative convergence tolerance.
+             EMTP uses a complete refactorization scheme and a SMS                                               A. Discrete-Time Phase-Domain (PD) Model Equations
+          that employs multiple minimum degree ordering (MMD) to                                                 The PD model uses the coupled electric circuit of the
+          obtain sparser LU factors. The hypothesis is that the                                                machine and the discretized version of voltage equations is
+          computational performances of PD and VBR models might be                                             given by [7]-[13]
+          improved significantly through a partial refactorization
+                                                                                                                      vs       Rss   Rsr    is   k λ sk   hs 
+          scheme. Depending on the computational gain with partial                                                   v                                           (1)
+          refactorization, PD and VBR models might be preferred to                                                    r        Rrs     Rrr  ir   k λ rk  hr 
+          their counterparts (PD-dq0 and VBR-dq0) as these models do                                           where
+          not contain predicted stator currents and eliminate the possible                                            Rss   Rsr    Rs  k Lss   k Lsr   
+          requirement of either damping resistance usage or network                                                                                                       (2)
+          iterative solution option.                                                                                  Rrs      Rrr   k Lrs              R r  k Lrr 
+             The above hypothesis (see also [17]) has never been                                                                              hs   Rs ˆis  k λˆ s  vˆ s                               (3)
+          implemented and verified before this paper.                                                                                          h  R ˆi  k λˆ  vˆ
+                                                                                                                                                 r         r r         r     r                            (4)
+             This paper compares the numerical performances of the PD-
+          dq0 (with and without network iterative solution), PD and                                            and k  2 / t . In the above equations and hereinafter, the
+          VBR models by considering the employed SMS and                                                       hatted variables are available from the previous solution time
+          refactorization scheme. In addition, this paper proposes two                                         point t  t . The vectors v s , i s and λ s denote the stator
+          new MANA formulations for PD and VBR models. In the first                                            voltages, currents and flux linkages in phase coordinates
+          formulation, machine TEs and in the second formulation all                                           respectively. Similarly, v r , i r and λ r are the rotor voltages,
+          machine electrical equations, are inserted into the PSNE. The                                        currents and flux linkages respectively. R s and R r are
+
+
+
+  0885-8977 (c) 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future iss

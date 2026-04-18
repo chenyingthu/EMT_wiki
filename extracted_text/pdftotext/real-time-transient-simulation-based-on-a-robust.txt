@@ -1,0 +1,223 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 22, NO. 4, NOVEMBER 2007                                                                                    1771
+
+
+
+
+   Real-Time Transient Simulation Based on a Robust
+           Two-Layer Network Equivalent
+      Xin Nie, Student Member, IEEE, Yuan Chen, Student Member, IEEE, and Venkata Dinavahi, Member, IEEE
+
+
+
+   Abstract—Real-time digital simulation of large power systems
+requires not only significant computational power but also simpler
+and accurate models. This paper proposes a new approach for
+transient simulation of power systems using a robust two-layer
+network equivalent model and an advanced PC-Cluster based
+parallel real-time simulator. Using a combination of well estab-
+lished fitting and optimization methods, the generated low-order
+model is of high accuracy compared to its full model over a wide
+frequency bandwidth. The merits of this method are its robustness
+in terms of stability and positive-realness, its accuracy at not only
+transient frequencies but also at dc and power frequency, and its
+optimal order determination feature. To validate the new method,
+a realistic large-scale power system—the Alberta Interconnected
+Electric System—is simulated in real-time. The real-time elec-
+tromagnetic transient program is implemented in C++ language
+using object-oriented programming techniques on the PC-Cluster.
+A time-step of 20 s has been used for the real-time simulation.
+The captured oscilloscope results demonstrate excellent accuracy
+and efficiency of the proposed model in comparison to a full-scale
+off-line simulation of the original system in the ATP version of
+EMTP.
+                                                                                     Fig. 1. Two-Layer Network Equivalent for the external system.
+  Index Terms—Electromagnetic analysis, frequency domain
+analysis, object oriented programming, power system transients,
+real-time systems, transmission lines.                                               linear equivalent network, i.e., a Frequency-Dependent Net-
+                                                                                     work Equivalent (FDNE) [2], [3]. The latest development in
+                                                                                     constructing FDNE is the vector fitting technique [4], [5].
+                             I. INTRODUCTION                                             For real-time transient simulation of large power systems,
+                                                                                     however, the computational bottleneck still remains due to the
+                                                                                     efficiency concern in convolutions and the high order of the
+R     EAL-TIME simulation plays an important role in the
+      design and development of power systems for the
+closed-loop testing of protective relays and digital controllers.
+                                                                                     fitted FDNE model of external systems. The Two-Layer Net-
+                                                                                     work Equivalent (TLNE) (Fig. 1), first proposed in [6], is an-
+Although it is desirable to represent the whole power system in                      other development in overcoming this obstacle for real-time dig-
+great detail, it is not always practical to do so due to excessive                   ital simulation. In the TLNE, the external system is further par-
+computational burden. In electromagnetic transient studies [1],                      titioned into a Surface Layer represented by reduced-order fre-
+due to system complexities, it is a common practice to divide the                    quency-dependent transmission line models and a Deep Region
+system into a Study Zone, a restricted part of the system where                      represented as a low-order FDNE. The impact of Surface Layer
+the transient phenomena occur and whose components must                              and Deep Region on the external system input admittance varies
+be fully characterized including any nonlinear and time-variant                      with frequency. At low frequencies, both the Surface Layer and
+elements, and an External System which encompasses the rest                          Deep Region contribute to the input admittance. When the fre-
+of the system (Fig. 1). Since high frequency electromagnetic                         quency increases, however, the contribution of the Deep Region
+waves propagate short electrical distances because of high                           diminishes drastically due to high attenuation. Therefore, the
+attenuation, therefore, the external system is represented by a                      FDNE model for the Deep Region is able to be obtained in low
+                                                                                     order.
+   Manuscript received October 9, 2006; revised August 8, 2007. This work was
+                                                                                         Existing methods in [6] for obtaining TLNE rely on low-
+supported by the Natural Science and Engineering Research Council of Canada          order vector fitting for both Surface Layer and Deep Region
+(NSERC). Paper no. TPWRS-00681-2006.                                                 parameters, and Sequential Quadratic Programming (SQP) to
+   X. Nie is with the SNC-Lavalin T & D, Calgary, AB T2G 4Y5, Canada
+(e-mail: xnie@ece.ualberta.ca).
+                                                                                     ensure passivity of the model. Nonetheless, the following con-
+   Y. Chen and V. Dinavahi are with the Department of Electrical and Computer        cerns were revealed in our experience [7], [8] with this method:
+Engineering, University of Alberta, Edmonton, AB T6G 2V4, Canada (e-mail:               1) With low-order vector fitting in obtaining the Deep Re-
+yuanchen@ece.ualberta.ca; dinavahi@ece.ualberta.ca).
+   Color versions of one or more of the figures in this paper are available online
+                                                                                           gion, it is difficult to control deviations with respect to
+at http://ieeexplore.ieee.org.                                                             the original Deep Region, which SQP may not be able to
+   Digital Object Identifier 10.1109/TPWRS.2007.907963                                     compensate.
+                                                                  0885-8950/$25.00 © 2007 IEEE
+1772                                                                    IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 22, NO. 4, NOVEMBER 2007
+
+
+
+  2) Frequency response at dc is not specifically accentuated
+     although it affects the dc offset in the transient. Optimiza-
+     tion of the Surface Layer can help in increasing accuracy
+     of response in the low frequency range with little cost of
+     computational time.
+  3) SQP is prone to divergence. If better first approximations
+     of external system input admittance, which are both stable
+                                                                       Fig. 2. Admittance matrix for the TLNE external system.
+     and passive, can be found, then SQP can be replaced by
+     constrained nonlinear least-square optimization, which
+     gives improved convergence.
+                                                                                    are obtained from low-order vector fitting. Then the
+  4) In multi-port external systems with complex frequency
+                                                                       input admittance                of external system is obtained by
+     response, the passivity constraint is very strong, so the
+                                                                       combining                 and             as shown in Fig. 2. How-
+     freedom for changing the parameters is small. Therefore,
+                                                                       ever, using vector fitting alone can not always ensure a relatively
+     the first approximation in a multi-port case, is required to
+                                                                       good approximation especially for an external system with com-
+     be closer to the original than that for the single-port case.
+                                                                       plicated frequency response over a wide frequency bandwidth.
+     Thus, transmission line parameters in the Surface Layer
+                                                                       It is necessary to find out alternate methods that are able to gen-
+     require higher accuracy but low-order realization.
+                                                                       erate better approximations for the TLNE. In the Robust TLNE,
+   In this paper, we propose real-time simulation of power
+                                                                       genetic algorithms are used to find out the best low-order Deep
+systems based on a Robust Two-Layer Network Equivalent. Its
+                                                                       Region               approximation which can minimize the devi-
+features include low-order Marti’s frequency-dependent line
+                                                                       ation of external system input admittance                 approxi-
+model in Surface Layer, global searching of low-order Deep
+                                                                       mation. Further improvement is achieved by constrained non-
+Region networks by genetic algorithms, and constrained non-
+                                                                       linear least-square optimization with the inclusion of frequency
+linear least-square optimization with improved convergence, as
+                                                                       response at dc and the optimal Deep Region order determina-
+well as the stability and passivity of the obtained model. The
+                                                                       tion feature.
+Robust TLNE is introduced in Section II. Section III presents
+                                                                           In this paper, application of the Robust TLNE model is lim-
+a detailed case study of a realistic, large power system- the
+                                                                       ited only to a balanced external system, i.e., one that includes
+Alberta Interconnected Electric System- as well as off-line
+                                                                       fully transposed transmission line models in the Surface Layer
+time-domain results from ATP to show the effectiveness of
+the proposed approach. A close agreement of the full model             and a balanced FDNE model in the Deep Region. With Clarke’s
+and the Robust TLNE model of the system has been obtained.             modal transformation [10], the external system can then be de-
+A real-time EMTP has been implemented on a PC-Cluster                  coupled into two aerial modes            of identical passive parts
+[9] using C++ language and object-oriented programming                 and one ground mode (0). The Robust TLNE procedure is ap-
+techniques. Section IV describes this implementation and also          plied only to the aerial modes, since the FDNE model is suffi-
+shows the real-time transient simulation results. Conclusions          cient for fitting the ground mode frequency response due to its
+are given in Section V.                                                relative smoothness.
+
+                                                                       B. Surface Layer
+       II. ROBUST TWO-LAYER NETWORK EQUIVALENT
+                                                                          The Surface Layer consists of reduced-order frequency-de-
+A. Background                                                          pendent transmission line models. In the Robust TLNE model,
+   The robustness of a network is determined not only by its           Marti’s frequency-dependent line model [12] is employed since
+stability, i.e., transfer function of admittance matrix with stable    it is widely used and its low-order realization [13], [14] has
+poles, but also by its passivity, or positive-realness [5]. A pas-     been shown to be suitable for real-time implementation [15],
+sive network must absorb active power at any frequency when            [16]. It is based on the well-known line model equations in fre-
+any set of voltages are applied. The passivity criterion is of equal   quency-domain
+importance to stability due to its strong effect on the stableness
+of time-domain simulations; the electric network with passivity
+violations will most likely result in unstable and erroneous sim-                                                                    (2a)
+ulations. For a network represented by the nodal equation
+
+                                                                                                                                     (2b)
+                                                                (1)
+                                                                       where        ,        ,        , and          are the voltages
+the passivity criterion requires that the real part of the input       and currents corresponding to the sending-end          and re-
+admittance       be positive at all frequencies for a single-port      ceiving-end     , respectively; is the line length;        and
+network, or all eigenvalues of the real part of the input admit-             are the frequency-dependent characteristic impedance
+tance matrix      be positive in the entire frequency range for a      and propagation function, respectively, defined as
+multi-port network.
+   In the existing TLNE method, both the approximation of Sur-                                                                       (3a)
+face Layer admittance                and Deep Region admittance
+NIE et al.: REAL-TIME TRANSIENT SIMULATION BASED ON A ROBUST TWO-LAYER NETWORK EQUIVALENT                                            1773
+
+
+
+
+Fig. 3. Marti’s frequency-dependent line model [12].
+
+
+
+                                                              (3b)
+
+where         ,     , , are series resistance, series inductance,
+shunt conductance, and shunt capacitance, respectively.
+    By introducing forward traveling functions                  and
+         , backward traveling functions          and          , and
+weighting function           , (2a) and (2b) give the Thevenin
+equivalent network as shown in Fig. 3. where the             is the
+impedance of equivalent network approximating                 ; the
+voltage sources         and        are the time-domain forms of
+          and        .
+    The accuracy of Marti’s line model greatly depends on the
+fitting of impedance function            and weighting function
+        . The appropriate techniques used in this paper are Bode’s
+                                                                      Fig. 4. Flowchart for genetic algorithms procedure.
+asymptotic fitting technique [12] and nonlinear Levenberg-Mar-
+quardt (LM) fitting method [14]. We preferred the non-linear
+LM fitting method due to its improved accuracy and speed.
+    From individual lines which have the nodal (2a) and (2b), the     and            corresponds to the blocks of the first approxima-
+admittance matrix of the reduced-order Surface Layer network          tion of Surface Layer admittance                 in (4). The ulti-
+can be constructed as follows:                                        mate goal of building the Robust TLNE is to match
+                                                                      with the original external system input admittance
+                                                                      as close as possible while ensuring stability and passivity of the
+                                                                      model, and accurate frequency response at dc and power fre-
+                                                               (4)
+                                                                      quency. The application of genetic algorithms plays a crucial
+                                                                      role in constructing the Robust TLNE.
+where subscript stands for the ports connected to the Study
+Zone, subscript stands for the ports connected to the Deep Re-
+gion (Fig. 2), and designates simplification or approximation.        D. Genetic Algorithms
+
+                                                                         The genetic algorithm is a probabilistic-rule based global
+C. Deep Region                                                        search method mimicking natural biological evolution [11]. It
+   The fitting of external system by vector fitting is stressed on    is a generation-based algorithm which operates on a population
+relatively lower frequency range since high frequency transients      of potential solutions or individuals. The flowchart in Fig. 4
+do not travel very far in the external system. In the TLNE, the       illustrates the genetic algorithms procedure. The inputs of ge-
+Deep Region is further “insulated” from the Study Zone by the         netic algorithms are chromosomes, which are encoded decision
+Surface Layer. Thus, the order of Deep Region can be signifi-         variables (variables considered for optimization). Objective
+cantly reduced.                                                       functions are used to assess the performance (fitness) of the in-
+   The first approximation of external system input admittance        dividuals. Depending on the problem size and characteristics, a
+             is the initial mathematical combination of admit-        set of individuals or a population is first generated and evaluated
+tance matrix                 of the Surface Layer constituting        by objective functions, and each individual is given a fitness
+reduced-order line models and               of the Deep Region        value. At each generation, selection phase and reproduction
+comprising low-order FDNE                                             phase are carried out. Reproduction phase commonly includes
+                                                                      two steps: recombination and mutation. In the recombination
+                                                                      step, operators are applied to exchange genetic information
+                                                                      between pairs or groups of individuals. Mutation, which is used
+                                                               (5)    to converge genetic algorithms to global optimum, is applied
+                                                                      to new chromosomes generated after recombination. It causes
+where the superscript denotes “first” since the subsequent op-        individual chromosomes to change according to probabilistic
+timizations are to be carried out;       ,          ,        ,        rules. Thus, in subsequent generations, genetic algorithms
+1774                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 22, NO. 4, NOVEMBER 2007
+
+
+
+produce better results by applying the principle of survival of           the Jacobian matrix        , an iterative process is initiated by
+the fittest.                                                              recursive evaluation of the following equation:
+    The concept for finding reduc

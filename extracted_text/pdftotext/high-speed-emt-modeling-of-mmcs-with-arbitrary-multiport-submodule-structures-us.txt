@@ -1,0 +1,200 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018                                                                                           1299
+
+
+
+
+               High-Speed EMT Modeling of MMCs With
+                Arbitrary Multiport Submodule Structures
+                 Using Generalized Norton Equivalents
+        Jianzhong Xu, Member, IEEE, Shengtao Fan , Member, IEEE, Chengyong Zhao, Senior Member, IEEE,
+                                      and Aniruddha M. Gole, Fellow, IEEE
+
+
+   Abstract—In order to improve features, such as fault current
+blocking and capacitor voltage balancing, modular multilevel
+converter (MMC) topologies incorporating multiport submodules
+(SMs) are being considered as candidates for HVdc transmission
+applications. This paper presents high-speed and accurate
+electromagnetic transient (EMT) models for MMCs composed of
+such multiport SMs. The approach uses the Schur’s complement
+technique to recursively eliminate internal nodes of the converter
+structure to create a multiport Norton equivalent that connects
+to the external network. Thus, the final admittance matrix seen by
+the EMT solver has a dimension orders of magnitude smaller than
+that of the unreduced structure. As with previously developed
+approaches for MMCs with single-port SMs, all internal infor-
+mation, such as individual SM capacitor voltages, is preserved
+and can be output by the program if needed. This increases the
+bookkeeping effort, but the overall reduction in matrix size more
+than compensates for any resulting time penalty. Approximately
+two to three orders of magnitude speedup over a straightforward
+implementation in an EMT program is achieved.
+  Index Terms—Modular multilevel converter (MMC), Schur’s                            Fig. 1.   Schematic diagram of single-port three-phase MMC.
+complement, electromagnetic transient (EMT), multi-port sub-
+modules (SMs), high speed modeling, generalized Norton
+equivalent.                                                                          upper and lower arms. Within each arm, there are numerous (up
+                                                                                     to several hundred) series connected single-port sub-modules
+                             I. INTRODUCTION                                         (SMs). These can be half-bridge SMs (HBSM), full-bridge SMs
+      HE modular multilevel converter (MMC) has become a                             (FBSMs), or a combination of both types [3]. The fully de-
+T     highly desired topology for point-to-point high voltage di-
+rect current (HVdc) transmission as well as for construction
+                                                                                     tailed electromagnetic transient (EMT) simulation of MMCs on
+                                                                                     EMT programs is a challenge, due to their extremely large SM
+of large scale dc grids [1], [2]. A traditional single-port MMC                      count in each arm and high number of nodes in the topology
+topology shown in Fig. 1 includes three phase legs each with                         [4], [5].
+                                                                                        Reference [6] proposed the Nested Fast and Simultaneous
+                                                                                     Solutions for the power electric networks, indicating that the
+   Manuscript received April 25, 2017; revised June 23, 2017; accepted August
+12, 2017. Date of publication August 17, 2017; date of current version April 6,      network can be partitioned into nested subsystems; thus re-
+2018. This work was supported by the National Key Research and Development           ducing the computational burden of the circuit without losing
+Plan of China under Grant 2016YFB0900903. Paper no. TPWRD-00583-2017.                any information. The approach is similar to the diakoptics ap-
+(Corresponding author: Jianzhong Xu.)
+   J. Xu is with the State Key Laboratory of Alternate Electrical Power Sys-         proach of Kron and others [7]–[9]. Reference [10] introduced
+tem with Renewable Energy Sources, North China Electric Power University,            the nested theory to EMT modeling of MMCs, where each of the
+Beijing 102206, China, and also with the Department of Electrical and Com-           six arms of the MMC is reduced to a single two-node Thévenin-
+puter Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada
+(e-mail: Jianzhong.xu@umanitoba.ca).                                                 equivalent. This admittance matrix of this reduced system is
+   S. Fan and A. M. Gole are with the Department of Electrical and Computer          overlaid on the admittance matrix of the remainder of the ac and
+Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada (e-mail:           dc side networks in the EMT solver. As none of the hundreds of
+shengtaofan@gmail.com; aniruddha.gole@umanitoba.ca).
+   C. Zhao is with the State Key Laboratory of Alternate Electrical Power Sys-       internal nodes appear in the overlaid matrix, the admittance ma-
+tem with Renewable Energy Sources, North China Electric Power University,            trix in the EMT solver remains at a manageable size for further
+Beijing 102206, China (e-mail: chengyongzhao@ncepu.edu.cn).                          LU (or other) factorization when the semiconductor switches in
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       the sub-module operate. This leads to a significant improvement
+   Digital Object Identifier 10.1109/TPWRD.2017.2740857                              in the simulation time.
+                          0885-8977 © 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+1300                                                                                         IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018
+
+
+
+
+                                                                                   Fig. 3.    The two-port MMC structure.
+
+
+
+Fig. 2.    (a) Two-port SM and (b) its companion circuit.
+                                                                                   and the conventional arises from its ability to simplify voltage
+                                                                                   balancing. At any given instance, the MMC uses a certain num-
+   It must be realized that in these more traditional full- or half-
+                                                                                   ber of sub-modules in series to provide the ordered voltage at
+bridge topologies as in Fig. 1, each SM is a single-port with
+                                                                                   its output. The remaining sub-modules are bypassed. Because
+only two terminals. Hence all SMs in an arm carry the same
+                                                                                   of the availability of its second port, these idle sub-modules
+current [10] and this makes the procedure for obtaining a single
+                                                                                   can then be connected with neighboring active modules so that
+Thévenin equivalent for the arm very straightforward.
+                                                                                   the capacitors are paralleled and automatically become equal in
+   After its initial introduction, several researchers have ex-
+                                                                                   voltage. A detailed description of the operation of the topology
+tended the modeling approach in [10] to accurately represent
+                                                                                   is available in [18], [19].
+blocking behavior [11], fast voltage balancing control [12], [13]
+                                                                                      For MMCs with the multi-port SM (such as the two-port
+and higher simulation speeds [14]. A similar algorithm is also
+                                                                                   example in Fig. 2), a generalized nested approach such as that
+used in the real-time digital simulations [15]–[17].
+                                                                                   in [6] can be used to reduce the computational burden of the
+   Recently, new MMC topologies are emerging [18]–[21] for
+                                                                                   host EMT program into which the model is introduced. As in
+HVdc applications that add enhanced functionality to the con-
+                                                                                   earlier publications [10], this is achieved by representing each
+verter, such as the ability to ride through dc faults and simplified
+                                                                                   of the six arms of the MMC of Fig. 1 as a Thévenin or Norton
+capacitor voltage balancing. These MMCs can be composed
+                                                                                   equivalent. However, for the one-port SMs in [10], the same
+of multi-port SMs. A two-port SM example [18] is shown in
+                                                                                   current flows in all the sub-modules and allows one to simply add
+Fig. 2, which has two ports (P1 , N1 ) and (P2 , N2 ). Note that the
+                                                                                   the Thévenin resistances and Thévenin voltage sources of each
+term “port” is used loosely in this paper for convenience, as a
+                                                                                   of the SMs into a single Thévenin equivalent. In contrast, the
+strict definition would require the current entering and leaving
+                                                                                   newer generation of MMCs with multi-port SMs, do not enjoy
+any port to be the same, i.e., IP1 + IN1 = 0, etc., which is not
+                                                                                   this property. Modeling these multi-port MMCs (e.g., the two-
+the case here. Instead, the following identity is satisfied by the
+                                                                                   port MMCs in this paper) using detailed EMT simulation models
+terminal currents: IP1 + IP2 = IN1 + IN2 . It could have been
+                                                                                   becomes time-expensive, and so there is a need to develop high-
+referred to as a four terminal sub-module, but that create confu-
+                                                                                   speed models without sacrificing accuracy for such devices.
+sion when the MMC itself being used as part of a multi-terminal
+                                                                                      The companion circuit of the two-port module is shown in
+dc grid.
+                                                                                   Fig. 2(b). G1 , G2 , . . . , G8 , are the conductance of the module’s
+   This paper develops an approach using generalized multi-port
+                                                                                   eight switches which are either equal to the off-state switch con-
+Norton Equivalents for modeling various emerging multi-port
+                                                                                   ductance GOFF or the on-state conductance GON . The internal
+MMC topologies that is more than two orders of magnitude
+                                                                                   capacitor is represented by a Norton circuit (i.e., the Norton
+faster than a non-reduced model. The methodology is demon-
+                                                                                   current source ICEQ and Norton conductance GC ), which is a
+strated with the modeling of an MMC with two-port modules
+                                                                                   function of the integration method, SM capacitance and simu-
+of the form in Fig. 2.
+                                                                                   lation time step.
+                                                                                      The companion circuit for a generalized multi-port
+          II. RECURSIVE APPROACH TO MODELLING OF THE                               SM is shown in Fig. 4. It has m ports ((P1 , N1 ),
+                        MULTI-PORT MMC
+                                                                                   (P2 , N2 ), . . . , (Pm , Nm )). It has n nodes, in which nodes 1
+   Fig. 3 shows how the two-port module is used within an                          to 2m are at the m port terminals that interface to other sub-
+MMC structure. The advantage of the two-port topology over                         modules (or in case of the terminal SMs, to the dc bus or ac arm
+traditional approaches is not discussed here and can be found in                   inductance). Nodes 2m + 1 to n are internal nodes and nodes
+[18] and [19]. The main difference between the two-port MMC                        n − 1 and n are the sub-module’s capacitor terminals.
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: HIGH-SPEED EMT MODELING OF MMCs                                                                                                               1301
+
+
+
+                                                                                  facing to the other SMs which are m in number, this final block
+                                                                                  represents a circuit with N × (n − m) + m nodes. However, in
+                                                                                  the developed Norton equivalent, there are only 2m nodes per
+                                                                                  arm to be included in the external system’s EMT solver. Thus
+                                                                                  adding the MMC arm increases the size of the external system’s
+                                                                                  admittance matrix by 2m. This is what results in the simulation
+                                                                                  efficiency as the representation of the arm in the main EMT sim-
+                                                                                  ulation (PSCAD/EMTDC in this case) has a very small number
+                                                                                  of nodes. For example, with the two-port SM in Fig. 2, and
+Fig. 4.   The companion circuit of the generalized multi-port SM.
+                                                                                  assuming 200 sub-modules per arm, this reduces the node count
+                                                                                  from 802 (i.e., 200 × (6 − 2) + 2)) to 4 for each arm.
+
+                                                                                  B. Solving the Full Network (Excluding Internal Nodes)
+                                                                                     Note that the outward flow is essentially a method to obtain
+                                                                                  a Norton equivalent for the MMC arm for presentation to the
+                                                                                  EMT solver of the full network. No internal MMC voltages
+                                                                                  are calculated. With the reduced equivalent circuits all six arms
+                                                                                  added to the overall network’s admittance matrix, the EMT
+                                                                                  solver can readily solve for the network and obtain node voltages
+                                                                                  for all network nodes including the 2m terminal nodes of each
+                                                                                  arm.
+
+                                                                                  C. Calculating Internal SM Quantities to Generate New
+                                                                                  History Terms (Inward Flow)
+                                                                                     Because the external EMT solver does not have access to
+                                                                                  the internal structure of the sub-modules, additional steps are
+                                                                                  necessary within the MMC module to calculate these. Such
+Fig. 5.   The recursive procedure of the proposed algorithm.                      calculations are necessary to generate the history terms neces-
+                                                                                  sary in Section II-A described above. They are also needed to
+   When constructing a MMC, the multi-port SMs are cascaded                       calculate quantities like the sub-module’s internal currents or
+by connecting all the interface nodes, which is structurally                      capacitor voltages which are required for the voltage balancing
+similar to the typical three-phase MMC configuration, as in                       algorithm. This is easily implemented.
+Fig. 1, except that now the connection is a multi-port connec-                       Once the solution for the arm’s external nodes is obtained, the
+tion instead of a single-port one.                                                internal nodes of Block N can be solved for. Note that the admit-
+   The proposed Recursive Solution Algorithm in this paper                        tance matrix required for this solution is the admittance matrix
+includes several steps to obtain the equivalent circuit of the                    of the sub-module itself overlaid with the additional equiva-
+MMC arm with cascaded multi-port SMs, as in Fig. 5.                               lent circuit admittances of Block N-1. The excitation sources
+                                                                                  for calculating the solution include the voltages calculated in
+                                                                                  Section II-B for the external nodes and the history sources from
+A. Eliminating SM Circuits to Obtain a Single Arm Equivalent                      Block N-1. Once the solution for Block N is obtained, the ter-
+(Outward Flow)                                                                    minal voltages for Block N-1 become available and can be used
+   First, the internal nodes within each SM k (k ∈                                to solve for Block N-2. The process is continued until the so-
+{1, 

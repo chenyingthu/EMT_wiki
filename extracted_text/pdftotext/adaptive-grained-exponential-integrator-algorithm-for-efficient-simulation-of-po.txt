@@ -1,0 +1,168 @@
+1114                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+
+  Adaptive-Grained Exponential Integrator Algorithm
+  for Efficient Simulation of Power Converter Systems
+  Jared Paull , Graduate Student Member, IEEE, Carl Knickle , Member, IEEE, Nicole Lofroth , Member, IEEE,
+                       Liwei Wang , Senior Member, IEEE, and Wei Li , Member, IEEE
+
+
+   Abstract—Electromagnetic transient (EMT) simulation                             efficient EMT simulation algorithms increases as power elec-
+is increasingly important for complex power electronic                             tronic systems grow increasingly complex. Fast EMT simulation
+converter system design and validation. This paper proposes                        aids in design and validation of existing or emerging power con-
+an adaptive-grained exponential integrator (AGEI) algorithm
+designed to efficiently simulate power electronic networks. The                    verter technologies [1]. Simulation of power electronic circuits
+AGEI algorithm relies on precomputation of carefully-chosen                        involves in the integration of continuous state variables (currents
+discretization steps to reduce memory burden. It then performs                     and voltages), while accurately capturing converter switching
+sequential intermediate integrations between discrete switching                    behavior. Power electronic circuits often present numerically
+events to accelerate transient simulation. The variable time-step,                 stiff problems, making the solver choice non-trivial. Low order
+high-order integration algorithm finds a balance between simula-
+tion run-time and computational overhead. The AGEI algorithm                       implicit integration methods such as trapezoidal rule, backwards
+varies the number of the forcing function terms to meet desirable                  Euler method, or low order numerical differentiation formula
+error thresholds. The proposed algorithm is L-stable and can be                    are often used to guarantee numerical stability. These low order
+flexibly applied to stiff and non-stiff circuit systems, rendering                 methods generally require a small discretization time-step to
+it suitable for a wide arrange of power converter topologies and                   ensure accuracy, leading to many computed points. Additionally,
+parameters. A hardware experimental study validates the AGEI
+algorithm’s accuracy while simulation case studies demonstrate                     small fixed time-step solvers are often implemented to accurately
+the AGEI algorithm significantly improves numerical efficiency.                    capture switching events [2]. Imprecise switching event detec-
+It is shown in the typical converter case studies that the proposed                tion can inject low order harmonics into waveforms or introduce
+algorithm enables more than 8-fold and 3-fold simulation speedup                   unrealistic jitter, noise, and inductive current chopping [2], [3].
+compared to popular simulation tools, i.e., Simulink and PLECS,                    Switching interpolation techniques can be used to greatly reduce
+respectively. The numerical efficiency gains of the proposed
+algorithm become more apparent for power converter circuits                        errors associated with switching event detection in fixed step
+with only-DC input sources or stiff circuit systems.                               solvers [3].
+                                                                                      Variable time-step solvers serve as an alternative to fixed
+   Index Terms—Adaptive-grained exponential integrator (AGEI),
+discrete-state event-driven (DSED) simulation, state-space equa-
+                                                                                   time-step solvers. Variable time-step solvers have been used
+tion, electromagnetic transient simulation, power electronic                       to accurately pinpoint discrete switching events, eliminating
+system.                                                                            the need for switching interpolation [4]. Variable step solvers
+                                                                                   reduce the step size when transients occur and then increase the
+                                                                                   step size once steady state is achieved [5]. By adapting the step
+                            I. INTRODUCTION
+                                                                                   size according to system transient behavior, both fast and slow
+     LECTRO-MAGNETIC transient (EMT) simulation of
+E    power electronic converter circuit is a historically chal-
+lenging task. Power converter circuits contain switching el-
+                                                                                   transient phenomena can be captured with maximum efficiency
+                                                                                   [6]. The challenge with variable step solvers lies in choosing
+                                                                                   the suitable step size. It is not always clear when transient ends,
+ements that rapidly change the circuit topologies. Frequent                        or if all frequency transients have ended [6]. In [6], variable
+switching events introduce complex transients and alters the sys-                  step algorithms are proposed which analyze transient trends to
+tem matrices used to express the circuit. Demand for numerically                   adapt the step size accordingly. Variable step solvers typically
+                                                                                   implement low order integration techniques which limit the max-
+   Received 16 March 2024; revised 23 July 2024 and 22 October 2024; accepted      imum step size that they can use [4], [5], [6], [7], [8]. Although
+1 February 2025. Date of publication 7 February 2025; date of current version 20   the variable-step techniques [4], [5], [6], [7], [8] in general
+March 2025. This work was supported by the Natural Sciences and Engineer-          compute fewer points than fixed-step solvers, these low-order
+ing Research Council (NSERC) of Canada. Paper no. TPWRD-00424-2024.
+(Corresponding author: Liwei Wang.)                                                variable-step solvers still require numerous computed points
+   Jared Paull, Carl Knickle, Nicole Lofroth, and Liwei Wang are with the          between switching events to ensure numerical accuracy. Still,
+School of Engineering, University of British Columbia Okanagan, Kelowna,           variable step solvers are prevalent for offline EMT simulation
+BC V1V 1V7, Canada (e-mail: jared.paull@ubc.ca; carlknickle@gmail.com;
+nicolelofroth@icloud.com; liwei.wang@ubc.ca).                                      of power electronic systems. Popular EMT simulation tool such
+   Wei Li is with the OPAL-RT Technologies, Montréal, QC H3K 1G6, Canada           as PLECS is equipped with the variable step Dormand-Prince
+(e-mail: wei.li@opal-rt.com).                                                      (DOPRI) solver, while Simulink/Simscape Electrical toolbox
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3539681.                                        utilizes Simulink suite of variable step ODE solvers including
+   Digital Object Identifier 10.1109/TPWRD.2025.3539681                            ode45, ode15s, ode23tb, amongst others. Recently, a variable
+
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                    1115
+
+
+
+step Taylor-series-based ODE solver has found success for                       for stiff ODE system, leading to slow simulation speed in
+EMT simulation [9], [10]. The Taylor series ODE solver is                       the event of small system time constants. In [19], a backward
+well suited for both step-size and numerical order adjustments.                 differentiation formula (BDF)-based DSED solver is proposed
+However, since the Taylor-series-based ODE solver is explicit,                  to handle network stiffness when discretizing state equations.
+their numerical efficiency is affected by its limited numerical                 The backwards DSED (BDSED) solver is slightly more com-
+stability region (being not A-stable) [9], especially for stiff                 putationally efficient than Simulink’s existing ode15s solver.
+circuit network where a small time step is required to maintain                 The BDSED solver requires many discretization steps between
+numerical stability.                                                            switching events, reducing the speedup and making it non-ideal
+   Nowadays, commercial circuit simulators incorporate either                   for non-stiff systems.
+a nodal analysis approach or a state-space equation approach.                      Exponential integrators are an alternative to both low or-
+The nodal analysis approach discretizes the circuit at the branch               der discretization methods, and Taylor-series-based approxima-
+level with low order techniques such as trapezoidal or Euler’s                  tions. Given that low order discretization methods are based
+method. The state-space equation approach provides a complete                   on truncated Padé approximations, increasing the discretiza-
+system description in the form of state-equations. Higher order                 tion order can serve to increase accuracy, stability, and to
+discrete time formula can then be applied to the state-equation                 eliminate numerical oscillation. This concept was first intro-
+representation. Accordingly, state-equation based solvers can                   duced into EMT simulation by Watson in [20], where the
+benefit from more accurate solver techniques [11]. In the pres-                 so-called root-matching (exponential) method was proposed to
+ence of switching, nodal-based approaches have benefited from                   replace the trapezoidal rule in nodal analysis. By using high
+system equations that are easy to obtain and recalculate [1].                   order exponentials, the solver eliminated numerical oscilla-
+State-equation solvers rely on the system’s state-space matrices                tion while retaining stability, which enables better handling of
+to solve the system of ordinary differential equations (ODEs).                  discrete events. However, the root matching methods in [13]
+Obtaining the system matrices is a non-trivial task as traditional              and [14] rely on small, fixed time-step to maintain numerical
+automatic state equation generation methods are not equipped                    accuracy.
+to efficiently handle switching elements [12]. However, many                       Prior-art implementations of the exponential integrator are
+techniques exist and are commonly used in simulation tools for                  typically for power system transient simulations, which uses
+automatic state equation generation of power electronic convert-                either a phasor model or an average value model (AVM) of
+ers [12], [13], [14], [15]. Recently, an automated semi-symbolic                power converters. In [21], [22], [23], the exponential integra-
+state equation generation method is presented which greatly                     tor algorithm was used for time domain simulation of very-
+reduces the cost to find the system matrices per computation                    large-scale-integration (VLSI). However, the formulation and
+point [16]. Using this methodology, state equations can be auto-                scale of these circuits are not comparable to the detailed model
+matically derived as a function of switch state before simulation               (DM) formulation of power electronic converters. In [24], the
+runtime, making recalculation trivial.                                          exponential integrator is applied to large-scale power deliv-
+   Numerical integration algorithms are not the only factor influ-              ery networks, which are formulated as differential-algebraic
+encing simulation efficiency. Simulation framework is equally                   equations (DAEs). The network was formulated as a simple
+important. Traditionally, transient simulations were entirely time              RLC network with time-varying supply voltage and current
+driven, meaning the discretization time-steps were based on                     sources [24], i.e., without semiconductor switching involved.
+a predetermined scheme. In [17], a discrete-state event-driven                  In [25], the exponential integrator is implemented specifically
+(DSED) simulation framework was proposed which adjusts inte-                    for simulation of large-scale nonlinear circuits. The method was
+gration order and time-step size dynamically, based on an event-                designed specifically for DAE formulation of VLSI systems. In
+driven mechanism. The DSED solver determines discretization                     [26] and [27], exponential integrator is applied to a large-scale
+time-step using a converter’s digital control signals, allowing                 network for electromagnetic transient simulation using GPU
+for intelligent step size selection, based on predicted switching               and AVM of power converters. Within the limited quantity of
+events. The DSED method has served as an essential framework                    existing literature on exponential integrator algorithms for DMs
+for other innovative power electronic circuit solvers in [9], [18].             of power converters, all the prior-art solvers are fixed-step fixed-
+   In [9], the DSED method works in conjunction with the                        forcing function term solvers. In [28], exponential integrator is
+developed flexible-adaptive (FA) algorithm, resulting in a high-                used for simulation of large-scale wind farms using detailed
+speed non-stiff circuit solver. The FA algorithm accepts vari-                  models of a wind farm. The solver is fixed step, fixed order,
+able time-step sizes from the DSED framework and adjusts                        and specifically designed for large-scale networks, i.e., scale
+the integration order to ensure an error threshold is met. The                  of hundreds to thousands of system states. In [29] and [30],
+DSED solver only re-calculates the system states whenever a                     exponential integrator is utilized for DM of power electronic
+switching or control event occurs within the circuit, reducing                  converters. However, the proposed ART solver [29], [30] is of
+the total number of intermediate calculated points between the                  fixed step, fixed order, and specifically designed for real-time
+events. It is shown in [18] and [9] that the DSED framework                     simulation. Meaning, the ART solver uses a limited maximum
+paired with the FA algorithm is orders of magnitude faster than                 step size due to the use of single forcing function term, hence
+commercial power converter circuit simulators, e.g., PLECS                      limiting its simulation efficiency. There is no prior-art work on
+and Simulink/Simscape Electrical toolbox. However, the FA                       DM exponential integrator solvers using variable time-step and
+algorithm proposed in the DSED framework is not suitable                        incorporating the DSED framework. The proposed solver in this
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1116                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+paper focuses specifically on DM simulation of power electronic                   The state-space equation in (1) can be solved analytically
+converters.                                                                     using the exponential integrator as
+   This paper proposes a new power converter simulation algo-                                             tn +h
+rithm based on the exponential integrator. The key attributes of                    xn+1 = eAk h xn +            eAk (tn +h−τ ) Bk u (τ ) dτ (2)
+the proposed algorithm, and overall contributions of this paper                                                  tn
+are summarized as follows.                                                      where the integration time step is h; xn and xn+1 are the states
+   1) A high-order, variable time-step, variable forcing func-                  at tn and tn+1 , respectively.
+      tion term exponential integrator solver is proposed with                     The solution of xn+1 in (2) is composed of two parts in
+      computation techniques that enables numerically efficient                 summation, i.e., homogenous solution and forcing-function-
+      simulation of complex power converter systems. The pro-                   dependent solution, involving the input source vector u(t). The
+      posed exponential integrator algorithm utilizes the DSED                  forcing-function-dependent solution in (2) can be expanded
+      framework to implement variable time-step solver, which                   using Taylor series as [31]
+      decreases the number of computed points, leading to a                                                        ∞
+      significant speedup compared to existing solvers.                                                                                    d(j−1) un
+                                                                                         xn+1 = eAk h xn +               ϕj (Ak h) hj Bk                (3)
+   2) An adaptive-grained approach is proposed to precompute                                                      j =1
+                                                                                                                                             dt(j−1)
+      the matrix exponentials before simulation execution.
+      The proposed adaptive-grained precomputation method                       where the so-called ϕ-function is defined as
+      greatly accelerates the simulation efficiency of the                                                   1
+                                                                                                      1
+      proposed exponential integrator. The adaptive-grained                             ϕj (z) =                e(1−θ)z θj−1 dθ, j ≥ 1.                 (4)
+                                                                                                   (j − 1)! 0
+      approach separates an overarching time-step size into
+      sequential grained step sizes, drastically reducing the                      It is noted that the exponential integrator (3) is an explicit ODE
+      number of precomputed terms.                                              solver of state-space (1). Calculations of the matrix exponent

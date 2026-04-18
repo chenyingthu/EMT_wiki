@@ -1,0 +1,157 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2774806, IEEE
+                                                                                                  Transactions on Power Delivery
+
+                                                                                                                                                                                                             1
+
+
+
+
+                 Dynamic Electro-Magnetic-Thermal Modeling of
+                  MMC-Based DC-DC Converter for Real-Time
+                          Simulation of MTDC Grid
+                                            Ning Lin Student Member, IEEE, Venkata Dinavahi, Senior Member, IEEE
+
+
+
+              Abstract—The model of a modular multilevel converter (MMC)                                       providing a platform for system performance study [7]–[9].
+           determines the extent of critical circuit information that electro-                                 Simple converter models such as the averaged model can be
+           magnetic transient simulations can reveal. In this paper, two                                       employed for gaining speed advantage while the accuracy is
+           MMC models are proposed for efficient real-time hardware-
+           in-the-loop (HIL) emulation on the field-programmable-gate-                                         compromised [10]. Modeling the power converter specifically
+           arrays (FPGA). The nonlinear switch-based model employing the                                       using the ideal switch model with a fixed low on-state re-
+           insulated-gate bipolar transistor (IGBT) dynamic curve-fitting                                      sistance Ron and a high off-state resistance Rof f is sufficient
+           model considers factors affecting its transient performance so                                      for system-level studies which can show effects such as switch
+           that device-level behavior such as power loss and junction tem-                                     transition and harmonics [11], [12]. However, the preference
+           perature can be reproduced accurately in the electro-magnetic-
+           thermal simulation of a power converter for its design evaluation.                                  for high power density by increasing the switching frequency
+           Meanwhile, regarding the MMC submodule as a transmission                                            and reducing the converter volume underlines the necessity of
+           line stub achieves faster computation speed and enables the                                         acquiring switching power loss for converter design evaluation.
+           formation of a hybrid arm to save FPGA hardware resources.                                          Consequently, it is better to include device-level switch models
+           As the large network that the MMC presents is burdensome for                                        so long as they do not hinder achieving real-time execution.
+           real-time execution with a small time-step, circuit simplification
+           based on partitioning and merging is conducted. Hardware                                            The inability of the ideal model in providing any switch-
+           implementation of a three-terminal high-voltage direct-current                                      ing transients precludes it from being employed for electro-
+           (HVDC) system containing an MMC-based DC-DC converter is                                            magnetic-thermal simulations.
+           carried out and the efficacy of proposed models is validated by                                         Meanwhile, efforts have been expended in developing con-
+           comparing HIL emulation results with the off-line simulation tool                                   trol algorithms to reduce IGBT thermal stresses [13], and with
+           PSCAD/EMTDC R .
+                                                                                                               switching details, determination of an appropriate algorithm
+              Index Terms—DC-DC converter, electromagnetic transients,                                         prior to setting up a real converter becomes feasible. Other
+           electro-thermal, field programmable gate arrays (FPGA), multi-                                      detailed IGBT models were developed to provide insight into
+           terminal direct-current (MTDC), modular multilevel converter
+           (MMC), parallel processing, real-time systems, solid-state trans-                                   accurate switching waveforms and therefore are frequently
+           former.                                                                                             referred to for power converter design assessment [14], [15].
+                                                                                                               Their main drawbacks are low computation efficiency due to
+                                                                                                               the solution of device physics and the tendency of numerical
+                                            I. I NTRODUCTION                                                   divergence even the converter scale is small. The curve-
+              The modular multilevel converter (MMC) has prompted the                                          fitting model is therefore favored in large circuits simulation
+           development of high-voltage direct-current (HVDC) technique                                         for electro-thermal analysis where the transient values are
+           for various applications. Operating as a solid-state transformer                                    programmed in advance or stored in a look-up table (LUT)
+           (SST), the MMC-based DC-DC converter enables the connec-                                            [16], [17]; yet the versatility of transient waveforms to elec-
+           tion of a number of HVDC stations to form a multi-terminal                                          tromagnetic surroundings needs to be taken into account.
+           DC (MTDC) system [1], [2]. Meanwhile, it also brings other                                              FPGAs are becoming the mainstream processors for em-
+           benefits, such as fault isolation, and power flow control [3]–                                      ulating in real-time conventional power system equipment
+           [5]. The SST is composed of an inverter, a rectifier, and a                                         models [18]–[21] and for DC grid component models [22],
+           transformer, which is designed to be physically isolated from                                       [23]. Therefore, a dynamic curve-fitting electro-thermal IGBT
+           the AC grid and can, therefore, operate at a medium frequency                                       model is proposed in this work on the FPGA, so that more
+           to make the SST less bulky [6]. However, such a benefit is                                          device-level information can be revealed in real-time for
+           accompanied by a corresponding rise of switching frequency                                          aforementioned purposes that cannot be achieved by the ideal
+           and higher switch power loss.                                                                       switch model or detailed models involving a lot device physics.
+              Real-time simulation of HVDC system plays a pivotal                                              Its static parameters are extracted from the I-V characteristics
+           role in validating control and protection strategies as well as                                     provided by the manufacturer’s datasheet, while the dynamic
+                                                                                                               part is modeled as a function of factors affecting its transient
+             This work is supported by the Natural Science and Engineering Research                            performance. A hybrid arm is constructed by taking a number
+           Council of Canada (NSERC).                                                                          of submodules (SMs) as a transmission line modeling (TLM)
+             The authors are with the Department of Electrical and Computer Engi-
+           neering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada. Email:                           stub, which, with merits such as lower hardware resource
+           ning3@ualberta.ca, dinavahi@ualberta.ca.                                                            requirement and faster execution speed, is more suitable than
+
+
+  0885-8977 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2774806, IEEE
+                                                                                                  Transactions on Power Delivery
+
+                                                                                                                                                                                                                2
+
+
+
+
+                 Vg1                   MMC1                                                                                                                                MMC2                         Vg2
+                                                                  L1          DC Line 1                            DC Line 2                        L2
+                                                       Idc1                                                                                                  Idc2
+                  AC Grid 1                                                                                                                                                                AC Grid 2
+                                                                                                                                                                           MMC3
+                                       Idc4                                                                                                                                                      Vg3
+                                                         L4                                                                  DC Line 3                L3
+
+                                                                                                                                           Fault               Idc3
+                                                                    MMCH                MFT                 MMCL                                                                           AC Grid 3
+                                               MMC-SST
+
+                                                                Fig. 1: MMC-based DC-DC converter for MTDC system.
+
+
+           the detailed equivalent model (DEM) for HIL emulation.
+              This paper is organized as follows: Section II introduces                                                    SM1        SM1          SM1
+                                                                                                                                                                                                   S1
+           two MMC models and the hybrid arm model. In Section
+           III, hardware design of the SST is carried out. Section IV                                                                                                                           Ck
+                                                                                                                Vdcu SMN              SMN          SMN                             S2
+           presents HIL emulation results of an MTDC system and their
+           validation. Conclusions are drawn in Section V.
+                                                                                                                                                                            Device-level model
+                              II. P OWER C ONVERTER M ODELING                                                                                                              Vac
+              Fig. 1 shows a typical MMC-based front-to-front DC-
+           DC converter integrated into a three-terminal HVDC sys-                                                                                                                      R1
+           tem, where M M C1 is the rectifier station, and M M C2 and
+                                                                                                                Vdcd SM1              SM1          SM1
+                                                                                                                                                                                 R2             Ck
+           M M C3 are inverter stations. The SST comprises of two
+           MMCs, denoted as M M CH and M M CL , and one medium
+           frequency transformer (MFT). The configuration of the MMC                                                       SMN        SMN          SMN
+                                                                                                                                                                                        Ideal model
+           is given in Fig. 2, which also shows two half-bridge submodule
+           models: the device-level model employing nonlinear IGBT                                                  Fig. 2: MMC configuration and its submodule models.
+           models, and the ideal model which represents the switches as
+           two-state resistors with distinct off- and on-state resistances.
+              The model of MMC determines the speed of electro-                                                     a iSM (t)         R1                 a iSM (t)         R1              a iSM (t)
+           magnetic transient (EMT) simulation. The ideal-switch-based
+           DEM has been proven by EMT tools and is prevalent for                                                                        ZCk                                  ZCk                         Req
+           achieving faster simulation speed compared with traditional                                           vSM (t)         R2                  vSM (t)          R2                 vSM (t)
+                                                                                                                                      VCeqk                                VCeqk                          Veq
+           models [24]. It is based on the following equations:
+                                                   R1 R2 + R2 ZCk                                                   b                 Vgk=1              b                  Vgk=0          b
+                                        Req =                     ,                                   (1)                     (a)                                     (b)                      (c)
+                                                   R1 + R2 + ZCk
+                                        R2 VCeqk (t − ∆t)                                                      Fig. 3: MMC TLM-stub model: (a) SM on-state/blocked state,
+                                Veq (t − ∆t) =              ,         (2)                                      (b) SM off-state/blocked state, and (c) general representation.
+                                         R1 + R2 + ZCk
+           where ZCk and VCeqk compose the Thévenin equivalent
+           circuit of the submodule capacitor, R1 and R2 are resistances
+                                                                                                               resistance is always in the conducting path during operation.
+           of the two complementary switches, and ∆t is the simulation
+                                                                                                               The existence of the SM capacitor can be determined by the
+           time-step. However, it lacks device nonlinearities and is only
+                                                                                                               gate signal of the upper switch, deemed as a binary, i.e.,
+           suitable for system performance preview. On the contrary, non-
+                                                                                                               Vgk =1 for on-state and Vgk =0 for off-state. For the blocked
+           linear switch models are highly inefficient for CPU simulation
+                                                                                                               state, simply ordering Vgk =0 and R2 =Rof f omits the free
+           and usually require large amount hardware resource for FPGA
+                                                                                                               wheeling diode effect, just as the DEM. To enable correct
+           implementation due to the iterative nature of the solution.
+                                                                                                               SM ON/OFF mode of the blocked state, the gate signal
+           Thus, a hybrid MMC model which features more circuit details
+                                                                                                               is determined by the direction of the arm current iSM : if
+           and computational efficiency is proposed.
+                                                                                                               it flows into the SM through node a, which is defined as
+                                                                                                               the positive direction, then Vgk =1; otherwise, Vgk =0. This
+           A. MMC TLM-Stub Model (TLM-S)                                                                       criterion leads to two equivalent circuits similar to Fig. 3(a)
+              As shown in Fig. 3(a)(b), when an arbitrary submodule                                            and Fig. 3(b). For the former state, the submodule impedance
+           numbered k is under on-state, the capacitor is being charged                                        equals to Ron +ZCk , while this value is Ron for the latter.
+           through a small resistance, and if the submodule is off,                                            Correspondingly, the capacitor voltage vCk alternates between
+           the equivalent circuit is a small resistor. Thus, an on-state                                       iSM · ZCk + VCeqk and VCeqk . Nevertheless, to simulate the
+
+
+  0885-8977 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPW

@@ -1,0 +1,211 @@
+                                                                   Electric Power Systems Research 252 (2026) 112394
+
+
+                                                                         Contents lists available at ScienceDirect
+
+
+                                                             Electric Power Systems Research
+                                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+High-accuracy EMT simulations through pole-residue compensation ⋆
+A. A. Kida a,∗, A.C.S. Lima b , F. A. Moreira c , F. M. Vasconcellos c
+a Federal Institute of Bahia, Salvador, BA, Brazil
+b
+    Department of Electrical Engineering, COPPE/UFRJ, Federal University of Rio de Janeiro, Rio de Janeiro, Brazil
+c Department of Electrical and Computer Engineering, Federal University of Bahia, Salvador, BA, Brazil
+
+
+
+
+a r t i c l e              i n f o                             a b s t r a c t
+
+Keywords:                                                      This paper addresses the frequency warping error in frequency-dependent equivalents to improve the accuracy of
+Rational approximation                                         Electromagnetic Transient (EMT) simulations. This numerical error, intrinsic to all linear multi-step integration
+Pole-residue formulation                                       methods, such as the trapezoidal rule, distorts frequency response and degrades time-domain simulation accu-
+Time-frequency analysis
+                                                               racy. This work introduces the Pole-Residue Frequency Warping Compensation (PRFWC) algorithm to mitigate
+Frequency warping
+Simulation accuracy
+                                                               the frequency warping in rational approximations with the pole-residue formulation. Performance validation
+                                                               of the proposed algorithm is conducted through two case studies: a transmission line and a distribution sys-
+                                                               tem. Numerical results show that the PRFWC improves simulation accuracy by two orders of magnitude over
+                                                               uncompensated models, with minimal computational burden.
+
+
+
+1. Introduction                                                                                           The continuous-time domain transfer function of the integrator is
+
+                                                                                                     𝑏(𝑠)  1
+    The increasing complexity of power systems are accelerated by                                         = ,                                                                (1)
+the energy transition from fossil-based to low-carbon and renewable                                  𝑢(𝑠)  𝑠
+sources [1]. As a result, in-depth analysis of new dynamic interactions                              where 𝑏(𝑠) and 𝑢(𝑠) are the output and the input of the integrator in
+between their components and subsystems is paramount [2]. In this con-                               s-domain, respectively; 𝑠 is the complex frequency variable in the s-
+text, Electromagnetic Transient (EMT) simulations are an essential tool                              domain.
+that can be tuned to provide suﬃcient accuracy to anticipate these in-                                   Applying the trapezoidal rule to derive the transfer function of (1)
+teractions, ensuring reliable and eﬃcient power system planning and                                  in the discrete-time domain yields:
+operation.                                                                                                      (         )
+                                                                                                                       −1
+    Accurate yet eﬃcient simulations can be achieved by preserving                                    𝐵[𝑧]    ℎ 1+𝑧
+                                                                                                           = (            ),                                              (2)
+the frequency characteristics of subsystems using frequency-dependent                                𝑈 [𝑧]    2 1 − 𝑧−1
+equivalents [3,4]. A common approach is to represent these equiva-
+lents using rational functions derived from data-driven curve-ﬁtting                                 where 𝐵[𝑧] and 𝑈 [𝑧] are the Z-transforms of 𝑏(𝑠) and 𝑢(𝑠), respectively,
+techniques [5–7]. Vector Fitting (VF) stands out among the curve-                                    obtained using the trapezoidal rule; 𝑧 is the complex variable in the
+ﬁtting techniques for its computational eﬃciency, accuracy, straight-                                Z-domain.
+forward formulation, versatility, and open-source availability [5]. Ad-                                 By equating (1) and (2), then solving for 𝑧, yields the bilinear trans-
+ditionally, it is embedded in various EMT-type simulators, including                                 formation (also known as the Tustin method) [13]:
+EMTP-ATP [8], EMTDC/PSCAD [9], and EMTP [10].
+                                                                                                           1 + 0.5𝑠ℎ
+    Time-domain simulations require careful consideration regarding                                  𝑧=              .                                                       (3)
+                                                                                                           1 − 0.5𝑠ℎ
+discretization techniques. The trapezoidal rule is widely employed
+in commercial EMT-type simulators [11] as it is the most accu-                                          The mapping between the analog (continuous-time) frequency 𝜔𝑎
+rate among linear multi-step integration methods with A-stability                                    and its corresponding digital frequency 𝜔 is derived by substituting
+[12].                                                                                                𝑠 = 𝑗𝜔𝑎 and 𝑧 = exp (𝑗𝜔ℎ) into (3), where ℎ is the integration time-step.
+
+
+
+
+    ⋆
+        Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    ∗ Corresponding author.
+
+   E-mail addresses: alexandre.kida@ifba.edu.br (A.A. Kida), acsl@dee.ufrj.br (A.C.S. Lima), moreiraf@ufba.br (F.A. Moreira), felipe.vasconcellos@ufba.br (F.M.
+Vasconcellos).
+
+https://doi.org/10.1016/j.epsr.2025.112394
+Received 6 January 2025; Received in revised form 3 March 2025; Accepted 17 October 2025
+Available online 30 October 2025
+0378-7796/Published by Elsevier B.V.
+A.A. Kida et al.                                                                                                                   Electric Power Systems Research 252 (2026) 112394
+
+
+Solving for 𝜔𝑎 yields:
+           (    )
+      2      𝜔ℎ
+𝜔𝑎 = tan          .                                                     (4)
+      ℎ       2
+    The nonlinear frequency mapping between 𝜔𝑎 and 𝜔 in (4) com-
+presses the discrete-time frequency scale, introducing a numerical er-
+ror known as frequency warping [14]. This error is not unique to the
+trapezoidal rule but is inherent to all linear multi-step integration meth-
+ods [13].
+    Strategies for frequency warping mitigation mainly involve adjusting
+the ℎ size, pre-warping, or relying on non-standard solution techniques.
+    Pre-warping techniques are mostly considered in the context of digi-
+tal ﬁlter design [15–17]. For instance, a digital frequency speciﬁcation,
+such as its cutoﬀ frequency, is prewarped using (4) to build the analog
+prototype low-pass ﬁlter speciﬁcation, which is then transformed into
+the desired ﬁlter transfer function [15]. Applications of pre-warping for
+frequency-dependent equivalent (FDE) and power systems are scarce in
+the literature. In that regard, the author in [18] pre-warped the input fre-
+quency response data for a given ℎ before the ﬁtting process. However,
+this approach cannot be applied to the existing rational approximation,
+                                                                                                Fig. 1. Electrical network synthesis. Adapted from [3].
+necessitating a model recalculation for diﬀerent ℎ values.
+    Concerning ℎ adjustments, adaptive ℎ methods based on energy bal-
+ance were developed in [19,20]. However, reducing ℎ might lead to                  (positive deﬁnite matrix); 𝑝𝑖 is the 𝑖th pole; 𝐫𝑖 ∈ ℂ𝑁×𝑁 is the associated
+excessive computational overhead. Additionally, Marti and Lin [21] pro-            𝑖th residue matrix.
+posed the following guideline for ℎ:                                                   A single entry 𝑚, 𝑞 of 𝐘(𝑠), 𝑌 𝑚𝑞 (𝑠), can be synthesized using basic
+        1                                                                          circuit components such as resistors, inductors and capacitors [3], as
+ℎ≤           ,                                                          (5)        depicted in Fig. 1. Therefore,
+      10𝑓𝑚𝑎𝑥
+                                                                                                      𝑁𝑅𝑃
+where 𝑓max is the highest frequency of interest. However, the authors                            1    ∑       1
+                                                                                   𝑌 𝑚𝑞 (𝑠) =       +                                                                           (7)
+in [22] showed that frequency warping can still be signiﬁcant for ex-                            𝑅0       𝑅 𝑗 + 𝑠𝐿𝑗
+                                                                                                      𝑗=1
+tended simulation durations, even when ℎ satisﬁes the criterion in (5).                         ⏟⏟⏟ ⏟⏞⏞⏞⏞⏞⏞⏟⏞⏞⏞⏞⏞⏞⏟
+                                                                                                    𝐷
+    Non-standard solution techniques, such as the high-order integration                                          Real poles
+method based on the Obreshkov formula, can be applied to mitigate                                   𝑁𝐶𝑃
+                                                                                                    ∑                  1
+frequency warping [23]. In [14], the authors showed that although the                           +                                        ,                                      (8)
+                                                                                                                      1
+harmonic balance method may encounter convergence issues and per-                                   𝑘=1 𝑅𝑘 + 𝑠𝐿𝑘 + 𝑠𝐶 +𝐺
+                                                                                                                               𝑘     𝑘
+formance degradation for signals containing many harmonics, it does                                 ⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟
+                                                                                                             Complex poles
+not exhibit frequency warping. The main concern with non-standard
+discretization methods is their lack of extensive documentation, which             where 𝐷 is the constant term; 𝑁𝑅𝑃 , 𝑁𝐶𝑃 are the number of real and
+may lead to unpredictable or undocumented behavior. In contrast, tech-             complex poles of the model, respectively.
+niques based on the trapezoidal rule are favored for their reliability,
+stability, and straightforward implementation.                                     2.1. Frequency-warping
+    The main contribution of this work is a novel strategy to compen-
+sate for the frequency warping caused by the trapezoidal rule, employ-                If the diﬀerential network equations are solved using the trape-
+ing rational models based on the pole-residue formulation. Additionally,           zoidal rule, the capacitances and inductances in (7) become frequency-
+this work demonstrates how pre-warping inductances and capacitances                dependent due to the frequency warping [24]. Therefore,
+aﬀect a rational approximation. Finally, the impact of frequency warp-
+                                                                                   𝐿𝐷𝑇 (𝜔) = Ψ(𝜔)𝐿,                                                                             (9)
+ing on time-domain simulations of frequency-dependent equivalents is
+highlighted.
+    This paper is structured as follows. Section 2 provides the theoretical        𝐶𝐷𝑇 (𝜔) = Ψ(𝜔)𝐶,                                                                           (10)
+background for rational approximations, while also complementing the
+                                                                                                   (    )
+concepts of frequency warping and pre-warping introduced earlier in                          2       𝜔ℎ
+                                                                                   Ψ(𝜔) =      tan        ,                                                                   (11)
+this paper. Section 3 details the proposed algorithm. Section 4 presents                    𝜔ℎ        2
+numerical results based on two test cases, providing insights into the per-        where 𝐿𝐷𝑇 (𝜔) and 𝐶𝐷𝑇 (𝜔) are the discretized inductance 𝐿 and capac-
+formance of the proposed technique. Lastly, key conclusions are drawn              itance 𝐶, respectively; the frequency warping error is numerically rep-
+in Section 5.                                                                      resented as Ψ(𝜔).
+
+2. Discretization eﬀect of inductances and capacitances in a                       2.2. Pre-Warping
+pole-residue formulation
+                                                                                      In the discrete-time domain, the expected (analog) behavior of in-
+  An 𝑁-port nodal admittance matrix 𝐘(𝑠) ∈ ℂ𝑁×𝑁 can be approxi-                    ductors and capacitors for a pre-warping frequency 𝜔′ can be retrieved
+mated by a rational function 𝐘(𝑠) ∈ ℂ𝑁×𝑁 . Hence,                                  by scaling 𝐿𝐷𝑇 (𝜔′ ) (9) and 𝐶𝐷𝑇 (𝜔′ ) (10) for a factor 𝜉(𝜔′ ). Hence,
+                                                                                                              ( ′ )
+                   𝑁                                                                          1      𝜔′ ℎ      𝜔ℎ
+                   ∑𝑝
+                         𝐫𝐢                                                        𝜉(𝜔′ ) =        =      cot       ,                                      (12)
+𝐘(𝑠) ≈ 𝐘(𝑠) =                  + 𝐃,                                     (6)                 Ψ(𝜔′ )    2         2
+                   𝑖=1
+                       𝑠 −  𝑝𝑖
+                                                                                                                                             (        )
+where 𝑖 ∈ {1, … , 𝑁𝑝 }; 𝑠 = 𝑗𝜔; 𝜔 is the angular frequency in rad∕s; 𝑁𝑝                                                 𝜔′ ℎ𝐿𝐷𝑇                  𝜔′ ℎ
+                                                                                   𝐿′ (𝜔′ ) = 𝜉(𝜔′ )𝐿𝐷𝑇 (𝜔′ ) =                 cot                     ,                     (13)
+is the number of poles or model order; 𝐃 ∈ ℝ𝑁×𝑁 is the constant term                                                        2                     2
+
+                                                                               2
+A.A. Kida et al.                                                                                                                        Electric Power Systems Research 252 (2026) 112394
+
+
+                                                                                                   Therefore,
+                                                                 (          )                                            𝑑 [                      ]
+                                         𝜔′ ℎ𝐶𝐷𝑇                     𝜔′ ℎ                                                      (𝑠−𝑝′ )(𝑠𝜉𝐶1 +𝐺1 )
+𝐶 ′ (𝜔′ ) = 𝜉(𝜔′ )𝐶𝐷𝑇 (𝜔′ ) =                            cot                 ,   (14)         𝑟′      = lim𝑠→𝑝′      𝑑 (
+                                                                                                                         𝑑𝑠
+                                                                                                                                                    ),
+                                                 2                    2                                             𝑑𝑠
+                                                                                                                        𝑠2 𝜉 2 𝐿1 𝐶1 +𝑠𝜉𝐾+𝑅1 𝐺1 +1
+                                                                                                                   (𝑠−𝑝′ )𝐶1 +(𝑠𝜉𝐶1 +𝐺1 )                                          (24)
+                                                                                                      = lim𝑠→𝑝′                              ,
+where 𝐿′ (𝜔′ ) and 𝐶 ′ (𝜔′ ) are the frequency-warped-compensated induc-                                               2𝑠𝜉 2 𝐿1 𝐶1 +𝜉𝐾
+                                                                                                           𝑝′ 𝜉𝐶1 +𝐺1
+tance and capacitance, respectively.                                                                  = 2𝑝′ 𝜉 2 𝐿 𝐶 +𝜉𝐾 .
+                                                                                                                 1 1
+   Consider the complex pole-residue modeled using an RLCG
+                                                                                                   By substituting (22) in (24) results in
+branch [3] depicted in Fig. 1. Therefore, frequency warping can be mit-
+igated by updating 𝐿 ← 𝐿′ (𝜔′ ) (13) and 𝐶 ← 𝐶 ′ (𝜔′ ) (14). Thus,                                    𝑝𝐶1 + 𝐺1
+                                                                                            𝑟′ =                  .                                                                (25)
+                                                                                                    2𝑝𝜉𝐿1 𝐶1 + 𝜉𝐾
+
+                       1                                                                        Finally, replacing (18) in (25) and recovering the suppressed nota-
+𝑌 (𝑠) =                                  ,                                                  tion leads to:
+            𝑅1 + 𝑠𝐿1 + 𝑠𝐶 1+𝐺
+                         1   1                                                                     𝑟
+                                                                                 (15)       𝑟′ =        .                                                      (26)
+                                   𝑠𝐶1 + 𝐺1                                                      𝜉(𝜔′ )
+       =                                                                     ,
+            𝑠2 𝐿1 𝐶1 + 𝑠(𝑅1 𝐶1 + 𝐿1 𝐺1 ) + 𝑅1 𝐺1 + 1                                           The scaling of 𝐿1 and 𝐶1 by 𝜉(𝜔′ ), implies scaling of 𝑝′ and 𝑟′ by
+   The roots of 𝑌 (𝑠) in (15) are its poles 𝑝, thus                                         1∕𝜉(𝜔′ ). A similar inference applies to the real pole case (RL branch)
+         √                                                                                  using the same methodology outlined in this section.
+    −𝐾 ± 𝐾 2 − 4𝐿1 𝐶1 (𝑅1 𝐺1 + 1)                                                              The pre-warped version of 𝐘(𝑠), denoted as 𝐘′ (𝑠) ∈ ℂ𝑁×𝑁 , is ex-
+𝑝=                                   ,                                           (16)
+                2𝐿1 𝐶1                                                                      pressed as
+                                                                                                       𝑁
+where 𝐾 = 𝑅1 𝐶1 + 𝐿1 𝐺1 

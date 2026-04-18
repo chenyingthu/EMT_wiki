@@ -1,0 +1,208 @@
+2966                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+       DQ Admittance Model Extraction for IBRs via Gaussian Pulse Excitation
+          Lingling Fan , Fellow, IEEE, Zhixin Miao , Senior Member, IEEE, Li Bao, Student Member, IEEE,
+              Shahil Shah , Senior Member, IEEE, and Rahul H. Ramakrishna , Student Member, IEEE
+
+
+   Abstract—While dq admittance models have shown to be very                     or state-space models. To obtain parametric models from non-
+useful for stability analysis, extracting admittance models of                   parametric models, a data fitting procedure has to be carried out,
+inverter-based resources (IBRs) from the electromagnetic transient               as shown in [4], [5].
+(EMT) simulation environment using frequency scans takes time.
+In this letter, a new perturbation method based on Gaussian pulses                  In Category 1, speeding up can be realized by use of multi-
+in combination with the system identification algorithms shows                   tone sinusoidal or chirp signal injection followed by the cross-
+great promise for parametric dq admittance model extraction.                     correlation analysis [6], or the pseudo random binary sig-
+We present the dq admittance model extracting method for a                       nal (PRBS) injection followed by the cross-correlation anal-
+type-4 wind turbine. Challenges in implementing Gaussian pulse                   ysis [7]. Note that for better outcomes, PRBS injection usu-
+excitation are also pointed out. The extracted dq admittance model
+via the new method shows to have a high matching degree with the                 ally repeats sequences for several times. For example, in [8],
+measurements obtained from frequency scans.                                      five repetitions show to produce more accurate frequency re-
+                                                                                 sponses from 0.06 to 10 rad/s with 200-s simulation data being
+  Index Terms—Inverter-based resources, admittance model,
+measurement.
+                                                                                 used.
+                                                                                    Compared to non-parametric models, parametric models have
+                           I. INTRODUCTION                                       a unique advantage. They can be used directly for analysis and
+                                                                                 simulation. This feature also makes model validation very easy.
+         HILE dq admittance models have shown to be very
+W        useful for stability analysis (see e.g. [1]), extracting
+admittance models of inverter-based resources (IBRs) from the
+                                                                                 After a model is obtained from a training data set, it can be
+                                                                                 used to simulate output responses for another data set. A high
+                                                                                 matching degree indicates the good quality of a model.
+electromagnetic transient (EMT) simulation environment using                        In Category 2, various system identification methods may
+frequency scans takes time. The frequency scanning method                        be applied to extract input/output models. The authors have
+may require hundreds of experiments. For each experiment, a                      designed a dq admittance identification method using subspace
+sinusoidal perturbation with a given frequency is injected into                  methods in [9]. Two step response experiments are used to
+an input portal and the measurements of the output portals are                   create two sets of output data, which were further converted
+recorded and processed to extract the phasor of the harmonic                     to the Laplace domain expressions. Eventually, a dq admittance
+component [2].                                                                   model in the Laplace domain can be found. This method has also
+   To speed up the process, alternative model extraction methods                 been implemented to extract the dq admittance of a real-world
+have been employed. In general, there are two categories of mod-                 2.3-MW commercial battery inverter located in NREL’s Flatiron
+els that can be obtained from measurement data: non-parametric                   campus [5]. Experiment results show that step response experi-
+(Category 1) and parametric (Category 2) [3]. Non-parametric                     ment requires to have large enough perturbation to create output
+models can be time-domain impulse responses at discrete time                     data and differentiate noise and signals. The voltage perturbation
+points and frequency-domain responses at discrete frequency                      applied needs to be at 10% of the nominal voltage magnitude.
+points. Frequency scans lead to non-parametric models. Para-                     Such step excitation changes the system operating conditions.
+metric models include those expressed as transfer functions                      Hence, impulse perturbations are preferred.
+                                                                                    An ideal impulse injection is difficult to implement numeri-
+   Manuscript received 20 September 2022; revised 23 December 2022 and 2
+February 2023; accepted 27 February 2023. Date of publication 13 March 2023;     cally. Instead, a Gaussian pulse can be used to emulate an ideal
+date of current version 24 April 2023. This work was supported in part by the    impulse. A Gaussian pulse does not have abrupt changes and
+U.S. Department of Energy SETO under Grant DE-EE-0008771, in part by the         has a continuous and smooth waveform.
+National Renewable Energy Laboratory, operated by Alliance for Sustainable
+Energy, LLC, for the U.S. Department of Energy (DOE) under Contract DE-             In this letter, we present a new dq admittance extraction
+AC36-08GO28308, and in part by National Science Foundation under Grants          method based on Gaussian pulse excitation. Gaussian pulse exci-
+2103480 and 1807974. Paper no. PESL-00247-2022. (Corresponding author:           tation has been popularly used in physics [10]. The time-domain
+Lingling Fan.)
+   Lingling Fan, Zhixin Miao, Li Bao, and Rahul H. Ramakrishna are with          expression of a Gaussian pulse and its Fourier transform are as
+the Department of Electrical Engineering, University of South Florida, Tampa,    follows.
+FL 33620 USA (e-mail: linglingfan@usf.edu; zmiao@usf.edu; libao@usf.edu;
+rahul12@usf.edu).                                                                                      1      t2              1         2
+   Shahil Shah is with the National Renewable Energy Laboratory, Golden, CO                   g(t) = √    e− 2σ2 , G(f ) = e− 2 (2πσf )
+80401 USA (e-mail: shahil.shah@nrel.gov).                                                             2πσ
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2023.3256119.                                      They are shown in Fig. 1. It can be seen that the Fourier transform
+   Digital Object Identifier 10.1109/TPWRS.2023.3256119                          of a Gaussian pulse is also a Gaussian pulse in the frequency
+                        0885-8950 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:18:55 UTC from IEEE Xplore. Restrictions apply.
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023                                                                                                     2967
+
+
+
+
+Fig. 1.    Gaussian pulses in time domain and frequency domain.
+                                                                                   Fig. 2.   The dq admittance measurement test bed for a type-4 wind turbine.
+
+domain. σ determines the width of the time-domain pulse. A
+narrower time-domain pulse covers a wider frequency spectrum.
+   Gaussian pulses are smooth in both the time domain and
+frequency domain. This leads to numerical advantages in in-
+put/output model identification relying on algorithms of sub-
+space methods and optimization.
+   It has to be noted that impedance measurement is an active
+research area in the power electronics community. Research
+groups in the power electronics community have explored var-
+ious excitation methods, including chirp excitation [6], PRBS
+excitation [7], and most recently impulse excitation [11]. On the
+other hand, Gaussian pulse excitation has not been examined.
+   In the following, we present the admittance model extracting
+method for a type-4 wind turbine. Challenges in implement-
+ing Gaussian pulse excitation are pointed out. The extracted
+dq admittance model via the new method shows to match
+the frequency-domain measurements obtained from frequency
+scans very well.                                                                   Fig. 3.   The training data set: Input and output data of Gaussian pulse injection.
+   The three unique advantages of the proposed method based
+on Gaussian pulse injection are: i) a very short simulation time
+for data generation compared to frequency scan, ii) the outcome                    The measurement data are processed to extract the Fourier
+being a parametric model, iii) a guaranteed accuracy through                       coefficients at that frequency. The perturbation frequency varies
+validation against chirp signal-generated data.                                    from 1 Hz to 100 Hz. Next, the q-axis of the source voltage is
+                                                                                   perturbed and the similar procedure is carried out. As a total,
+          II. DQ ADMITTANCE OF A TYPE-4 WIND TURBINE                               200 experiments are carried out.
+   In dq admittance estimation, the system to be estimated is                         The measurements from frequency scans are most accurate
+a two-input two-output system. The dq admittance relates the                       among all methods. This is due to the high signal to noise ratio of
+currents flowing into the IBR with the injection voltage as                        single-frequency injection signal. This dq admittance, shown as
+follows.                                                                           red lines in Fig. 6, will be used for comparison. This frequency-
+                                                                             scan based dq admittance has been used in our prior research [12]
+              id (s)      Ydd (s) Ydq (s) vd (s)                                   and the admittance-based stability analysis results corroborate
+                      =                                   (1)
+              iq (s)      Yqd (s) Yqq (s) vq (s)                                   the EMT simulation results.
+                                      
+                                       Y (s)
+                                                                                   B. Gaussian Injection-Based Method
+A. Measurement Testbed and Frequency Scan
+                                                                                      Using the same testbed, the perturbation now changes to a
+   The dq admittance, notated as Y (fi ) (where fi is the per-                     Gaussian pulse with 0.01 width. The input (dq voltages) and the
+turbing frequency) may be measured via frequency scans. A                          output (dq currents) will be recorded and used as training data.
+measurement testbed for a type-4 wind turbine is shown in Fig. 2,                  They are shown in Fig. 3. In addition, a set of validation data
+with the turbine connected to a controllable three-phase voltage                   are generated by use of chirp signal injection (from 0.1 Hz to
+source. This testbed is implemented in MATLAB/Simscape. The                        30 Hz), shown in Fig. 4.
+wind turbine consists of a permanent synchronous generator, a                         Fig. 3 shows that the magnitude of the pulse is 0.05. Event
+rectifier, a dc-dc boost converter and a grid-side converter. The                  1 is d-axis voltage perturbation and Event 2 is q-axis voltage
+grid side converter is in the ac voltage and dc voltage control                    perturbation. The input and output data have a sampling rate of
+mode.                                                                              10 kHz.
+   First, the d-axis of the voltage is perturbed by a sinusoidal                      Based on the two sets of the event data, two models m1 and
+signal with 0.1 p.u. amplitude. The dq currents are recorded.                      m2 as transfer functions will be identified by use of tfest of
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:18:55 UTC from IEEE Xplore. Restrictions apply.
+2968                                                                                          IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+Fig. 4.   The validation data set: Input and output data of chirp signal injection.
+
+
+the system identification toolbox of MATLAB.
+                                    
+          Ydd (s)             Ydq (s)         
+  m1 =               , m2 =              , Y = m1                   m2 . (2)
+           Yqd (s)             Yqq (s)
+
+   This particular system identification tfest employs Instru-
+mental Variables (IV) method, a refined method that can mitigate
+the effect of biased error in least square estimation [3]. Compared
+to the state-space model estimation function ssest which uses
+the prediction error method (PEM), tfest has shown to result
+in better matching for the training data.
+   An important assumption is the model order. The basic rule
+is to have the order as low as possible (to avoid overfitting),
+while the matching degree is acceptable. So we start from a very
+low order and gradually increase the order to have increased
+matching degree. Once increasing order does not help matching
+degree increase, we stop.
+   With the model order assumed, m1 (s) and m2 (s) can be
+obtained. Furthermore, they can be simulated with the input
+as either Gaussian pulses or chirp signals. Fig. 5 shows the
+comparison of the simulated responses of m1 and m2 for the
+training data and the validation data. The percentage shown in
+the legend is the normalized root mean squared error (NRMSE)
+fitness value. It represents how close the predicted model output
+is to the data.
+   For both the training data and the validation data, the models’
+outputs match the measurement very well. Therefore, the models                        Fig. 5. Comparison of the simulated responses and the measurement data. (a)
+                                                                                      m1 against the training data. (b) m1 against the validation data. (c) m2 against
+identified from this set of training data are considered as accept-                   the training data. (d) m2 against the validation data.
+able. The frequency response of the identified dq admittance
+is shown in Fig. 6. This response is compared with the discrete
+frequency response data obtained from frequency scans. It can be                      of dynamics. In this case study, we use a width of 0.01 to
+seen that the model’s frequency response matches the measured                         capture dynamics up to 30 Hz. If a Gaussian pulse width of 0.1 is
+response very well for frequencies below 30 Hz.                                       used, the excitation signal contains insignificant dynamics above
+      a) Challenges in Gaussian pulse injection experiment de-                        10 Hz and thus cannot produce output data with rich dynamics.
+sign: While it appears straightforward in experiment design and                          Also a suitable magnitude is desired. In the presented results,
+data processing, care should be taken in the pulse injection                          the pulse has a maximum value of 5% of the nominal voltage.
+design. A narrow width is preferred to include a wider range                          This value guarantees that the system is operating in the small
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:18:55 UTC from IEEE Xplore. Restrictions apply.
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023                                                                                                  2969
+
+
+
+                                                                                                               III. CONCLUSION
+                                                                                     We have introduced a new experiment data generation method
+                                                                                  to obtain the dq admittance of a black-box IBR. The method
+                                                                                  is based on Gaussian pulse excitation to create data. The in-
+                                                                                  put and output data are used for system identification and the
+                                                                                  outcome is a parametric low-order linear model. This paper
+                                                                                  also presents three critical components of the method: exper-
+                                                                                  iment design, model identification, and model validation. The
+                                                                                  frequency response of the admittance identified is shown to
+                                                                                  be accurate up to the subsynchronous frequency range. It can
+                                                                                  be seen that Gaussian pulse injection method is suitable for
+                                                                                  estimation dqLingling Fan admittance for the low frequency to
+                                                                                  subsynchronous frequency range.
+
+                                                                                                             ACKNOWLEDGMENT
+Fig. 6.   Dq admittance identified from the proposed method and frequency            The authors thank William Li of M.I.T. for informing us the
+scan.                                                                             Gaussian pulse injection method used in photonics. The authors
+                                                                                  thank the anonymous editor and reviewers for the constructive
+                                                                                  feedback.
+
+                                                                                                                     REFERENCES
+                                                                                   [1] L. Fan and Z. Miao, “Admittance-based stability analysis: Bode plots,
+                                                

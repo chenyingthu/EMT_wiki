@@ -1,0 +1,190 @@
+                                                              Electric Power Systems Research 252 (2026) 112326
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+SFA-EMT hybrid simulation of power systems: Application to
+HVDC systems
+Javier O. Tarazona a , Andrea T.J. Martí b , José R. Martí c,*
+a
+  PSC North America, 155-4299 Canada Way, Burnaby, BC V5G4Y2, Canada
+b
+  Department of Civil Engineering, University of British Columbia, Vancouver, BC V6T 1Z4, Canada
+c
+  Department of Electrical and Computer Engineering, University of British Columbia, Vancouver, BC V6T 1Z4, Canada
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 This paper presents the application of a novel hybrid multirate protocol to interface a Shifted Frequency Analysis
+Electromagnetic transients (EMT)                          (SFA) solution with an Electromagnetic Transients (EMT) solution. Using the Multi Area Thévenin Equivalent
+Hybrid simulation                                         (MATE) framework, the protocol enables the direct interfacing of SFA and EMT solutions without time step
+Multirate simulation
+                                                          delays, iterations, or the use of transmission lines to decouple the solutions. The protocol adds a parallel EMT
+Power electronic subsystems
+Shifted frequency analysis (SFA)
+                                                          solution to track both the real and imaginary parts of the EMT solution. This allows for a direct interface to the
+                                                          complex-number SFA solution. The proposed hybrid approach allows for large time steps in the SFA solution and
+                                                          does not require the time steps of the SFA and EMT systems to be multiples of each other. The protocol has been
+                                                          previously validated in a transient stability study, and it is applied in this paper to power electronics devices in
+                                                          the EMT subsystem using a modified CIGRE HVDC benchmark system. The use of SFA and the multirate nature of
+                                                          the solution offers significant computational savings for large power systems compared to an EMT-only solution.
+
+
+
+
+1. Introduction                                                                                SFA-EMT [15] uses EMT discretization to find equivalent discrete-time
+                                                                                               circuit branches to replace the conventional impedance and admit­
+    THE increased penetration of inverter-based resources (IBRs) is                            tance branches of transient stability programs to obtain a solution where
+weakening the system’s inertia and increasing the effect of system per­                        the magnitude and phase angle of the voltage and current phasors are
+turbations [1]. Since the IBRs require small discretization steps, one                         functions of time. Other approaches to having a time-dependent
+option to study these systems is to use an electromagnetic transients                          magnitude and phase angle phasor are Dynamic Phasor solutions [10,
+(EMT) type of modelling for the entire system. However, given the size                         11]; these approaches are based on Fourier decomposition instead of the
+and extension of modern interconnected power systems, this approach                            EMT discretization approach. The SFA-EMT approach is particularly
+becomes computationally expensive. A recent approach [2] uses the                              efficient in terms of time step sizes when the frequency deviations from
+Multi Area Thévenin Equivalent (MATE) concept [22] to create sub­                             60 Hz are small. For larger deviations, the method is similar in efficiency
+systems with different discretization step sizes.                                              to plain EMT solutions. Recent studies [12–14] show that SFA delivers
+    For transient stability studies [3], a common approach has been to                         better accuracy than a transient stability simulator for both classic and
+interface a conventional phasor solution of the AC system with an EMT                          low inertia systems.
+solution of the IBR systems. This approach has the problem of intro­                               In general, previous approaches to interface an SFA solution of the
+ducing one time-step delay between the transient stability solution and                        AC grid with an EMT solution of IBRs have used transmission lines to
+the EMT solution [4–6]. This delay can lead to errors in the multirate                         decouple the two subsystems and, therefore, the maximum time step
+solution. The hybrid simulators presented in [7] and [8] use interfacing                       that could be used in the SFA solution was limited by the travelling time
+protocols that iterate between the transient stability TS solvers and the                      of the line.
+EMT solvers to avoid the one-time-step delay in the multirate solution at                          A hybrid SFA-EMT multirate simulator is presented in [16] where
+the expense of additional iteration time.                                                      good solutions are obtained without transmission lines interfacing. In
+    The Shifted Frequency Analysis (SFA) method for transient stability                        [16], the proposed protocol was validated for a transient stability study
+
+
+    This work was supported in part by The Natural Sciences and Engineering Research Council of Canada (NSERC).
+    * Corresponding author.
+      E-mail addresses: jotarazona@gmail.com (J.O. Tarazona), andrea.marti@ubc.ca (A.T.J. Martí), jrms@ece.ubc.ca (J.R. Martí).
+
+https://doi.org/10.1016/j.epsr.2025.112326
+Received 5 January 2025; Received in revised form 18 February 2025; Accepted 30 September 2025
+Available online 10 October 2025
+0378-7796/© 2025 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+J.O. Tarazona et al.                                                                                                 Electric Power Systems Research 252 (2026) 112326
+
+
+on the IEEE 39-bus test system. In that work we did not consider the                 signal is also a bandpass signal centred on ω0 . From (6) and applying the
+details of power electronics subsystems. In the present paper, this                  properties of Fourier transform, it follows that the time-dependent
+SFA-EMT protocol is applied to a modified version of the CIGRE HVDC                  phasor (TDP), or the transformed signal, has its frequency spectrum
+benchmark system [18] with the details of the power electronic devices               centred at zero frequency and is, therefore, a low-pass signal, which
+simulated.                                                                           changes much less rapidly than the analytic signal. Hence, larger time
+    The rest of the paper is structured as follows: in Part II, a brief review       steps can be used to capture this signal in the simulation. The above
+of the SFA technique is presented. In Part III, some aspects of the MATE             transformation is the one used for Shifted Frequency Analysis (SFA) [9],
+solution framework are discussed. The interaction protocol SFA/EMT is                and, as mentioned previously, the transformed signals in the shifted
+described in Part IV. Then, Part V discusses a simulation case study, and            frequency domain or SFA domain are the corresponding TDPs of the
+in Part VI, conclusions and directions for future work are presented.                original real-valued time signals. In Fig. 1, the SFA process to derive the
+                                                                                     TDP from the real bandpass signal is shown.
+2. Shifted frequency analysis of power systems                                           EMT-like equivalent circuits can be derived for the different network
+                                                                                     elements, and the solution can be found for SFA in a similar way to EMT
+    The dynamic behaviour of power systems is such that after the high               programs [14]. SFA models have been developed for several types of
+frequencies associated with the electromagnetic transients have died                 power system components [9,20,21]. The SFA solution of the circuit
+out, the voltages and currents in the system have frequency spectra                  gives the magnitudes and angles of the time-dependent phasors in the
+centered around the fundamental frequency of the system, with half                   system [14]. In this paper, unless otherwise stated, the term
+bandwidths less than that frequency. This type of signal is called a                 time-dependent phasor (TDP) will refer exclusively to the SFA solution.
+bandpass signal. In the time domain, these signals are 60 Hz (or 50 Hz)
+sinusoids with a slow modulation in amplitude and phase or frequency.                3. MATE conceptual framework
+
+2.1. Time-Dependent phasor                                                               The concept of Multi Area Thévenin Equivalents was introduced in
+                                                                                     [22] to divide a system into subsystems where each subsystem can have
+    The time-dependent phasor U(t) of a bandpass signal u(t), with its               its own solution method and its own solution step. The details of the
+frequency spectrum centred on the system frequency ω0 , is defined as                MATE solution were presented in [17]. In MATE, after each subsystem is
+[19]                                                                                 solved, the solutions are integrated simultaneously without time delays.
+
+U(t) = uI (t) + juQ (t)                                                   (1)        3.1. Multirate solution with MATE
+
+where uI (t) and uQ (t) are low-pass signals, modulating two in quadrature               MATE can be easily used in a partitioned system where each sub­
+sinusoidal carrier signals with the same frequency (ω0 ) and 90◦ apart in            system uses an EMT solution. In [2,23–25] successful MATE multirate
+phase.                                                                               EMT-EMT interacting simulations are presented. The applications in
+                                                                                     [23–25] require the time steps to be multiples of each other. In [2], this
+2.2. The analytic signal                                                             restriction was lifted, and an “asynchronous multirate solution” was
+                                                                                     presented. This approach is used in this paper.
+   Another representation of u(t) is by means of its analytic signal z(t),               In the asynchronous MATE solution, each subsystem is solved inde­
+defined as                                                                           pendently with its own arbitrary integration step. For each subsystem, at
+                                                                                     each solution time, the subsystem will have its Thévenin equivalent
+z(t) = u(t) + jH[u(t)]                                                    (2)
+                                                                                     available to interface with the other subsystems. In the EMT solution,
+                                                                                     the Thévenin required for the solution of a particular subsystem at its
+where H[o] signifies the Hilbert transform and is given by
+                                                                                     next time step is calculated at the current time step, and a linear inter­
+                 1           1
+                                 ∫∞
+                                       u(τ)                                          polation will provide a Thévenin equivalent of that subsystem for the
+H[u(t)] =           ∗ u(t) =                dτ                            (3)        solution of the other subsystems [23]. This process is illustrated in Fig. 2
+                 πt          π         t− τ
+                                 − ∞                                                 for a slow subsystem (using a large Δt) and a fast subsystem (using a
+    The importance of the analytic signal is that it retains the real signal         small Δt).
+u(t) in its real part, its magnitude is the envelope of u(t), and the de­                In this asynchronous multirate solution, when a subsystem is being
+rivative of its angle is the instantaneous frequency of u(t) [19]. The               updated, the solutions of the subsystems advancing at a slower pace
+                                                                                     (larger time step) must be, using the terminology of signal processing,
+relationship between the time-dependent phasor U(t) and the analytic
+                                                                                     oversampled (interpolated) and the solutions of subsystems running at a
+signal z(t) is as follows.
+                                                                                     higher rate (smaller time step) have to be decimated (downsampled)
+z(t) = U(t) ejω0 t                                                        (4)        [2].
+                                                                                         In the decimation of solutions advancing at faster rates, the simple
+2.3. The SFA transformation                                                          interpolation of the Thévenin voltages in the Thévenin will not be
+                                                                                     enough. In fact, it may actually degrade the accuracy of the multirate
+          By defining a transformation T as follows:                                 solution because the fast solution may be ill-conditioned by the high
+                                                                                     frequencies that it may contain. According to the Shannon-Nyquist
+T   − 1
+          = e− jω0 t                                                      (5)        Sampling theorem, the maximum observable frequency in a sampled
+                                                                                     signal is the Nyquist frequency (fNy), given by the inverse of twice the
+    Eq. (4) can be thought of as representing the mapping of the analytic
+                                                                                     sampling interval (Δt) (this is a theoretical limit; in EMT simulation, one
+signal into the time-dependent phasor domain. The signal z(t) in the
+                                                                                     should stay at least 5 to 10 times below this frequency [26] for accuracy
+normal time domain is related to the time-dependent phasor U(t) as
+                                                                                     purposes). Any frequency higher than the Nyquist frequency present in
+follows:
+                                                                                     the signal being sampled will produce a phenomenon known as aliasing
+U(t) = zm (t) = T− 1 z(t)                                                 (6)        in the sampled signal, which will distort the sampled signal. This situ­
+                                                                                     ation is explained graphically in Fig. 3 for the case of two subsystems,
+(subscript “m” is used to denote the transformed time domain). For a                 fast and slow.
+bandpass signal with a frequency spectrum centred on ω0 , the analytic                   In order to prevent aliasing, prior to downsampling, the Thévenin
+
+                                                                                 2
+J.O. Tarazona et al.                                                                                                              Electric Power Systems Research 252 (2026) 112326
+
+
+
+
+Fig. 1. Amplitude spectra of a signal in different representations for the SFA process: a) Real bandpass signal, b) Analytic signal and c) SFA time-dependent pha­
+sor [19].
+
+
+                                                                                         4.2. Single-rate SFA-EMT simulation [19]
+
+                                                                                             Let us consider a system partitioned into two subsystems connected
+                                                                                         with “n” links, one identified as Subsystem 1 (SFA) and the other
+                                                                                         identified as Subsystem 2 (EMT), as indicated in Fig. 4. The SFA sub­
+                                                                                         system is to be solved with an SFA simulator and the EMT subsystem
+                                                                                         with an EMT simulator, both solutions use the same integration step Δt
+                                                                                         and the combined system solution will be found using MATE.
+                                                                                             From the discussion at the beginning of this section, the EMT sub­
+Fig. 2. Interpolation of the Thévenin of the slow subsystem to calculate the link
+                                                                                         system comprises two separate subsystems, one for the real part of the
+solutions required to update the fast subsystem at various solution times [19].
+                                                                                         EMT solution and a companion running in parallel for the imaginary
+                                                                                         part of the solution. In the rest of this paper, the real and imaginary EMT
+                                                                                         subsystem solutions will be referred to as one single subsystem solution,
+                                                                                         with the understanding that whatever is done by that subsystem is done
+                                                                                         by both the real and the imaginary parts.
+
+                                                                                             1) Links solution
+
+                                                                                             Let us assume that the Thévenin equivalents of both subsystems for
+                                                                                         solution time t have been deter

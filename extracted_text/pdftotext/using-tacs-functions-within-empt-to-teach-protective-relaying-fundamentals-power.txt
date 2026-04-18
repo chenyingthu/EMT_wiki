@@ -1,0 +1,177 @@
+IEEE Transactions on Power Systems, Vol. 12, No. 1, February 1997                                                                             3
+
+         Using TACS Functions Within EMTP to Teach Protective Relaying Fundamentals
+
+                             Richard W. Wall                                                    Brian K. Johnson
+                   Department of Electrical Engineering                                 Department of Electrical Engineering
+                          University of Idaho                                                  University of Idaho
+                               Boise, ID                                                           Moscow, ID
+
+       Abstract - The purpose of this discussion is to provide an                This paper is intended to provide an educational tool
+  educational tool for investigating relaying concepts by modeling           for the university class room as well as for industry short
+  digital relays using TACS functions within EM- in a closed-
+  loop manner. Various elements of digital protection systems are            courses teaching relaying fundamentals using hypothetical
+  identified and organized to generate an systematic approach to             relay models. The approach for developing a model of a
+  modeling the actual hardware of relay systems. Discussion is lim-          relay using TACS hctions within EMTP is to integrate a
+  ited to conventional relaying systems that monitor the vitality of         number of functional building blocks which implement the
+  the 60 Hz voltages and/or currents. TACS functions for transport           protection system dynamics. The following discussion as-
+  delay and pulse generators are used to model dynamics associated           sumes the reader has a basic understanding of EMTP and
+  with analog to digital conversion and sampling systems. DSP                TACS.
+  algorithms convert a sequence of sampled data into a sequence of
+  values for magnitude and phase components. A simple example                    Although not easy to learn, EMTP and TACS have the
+  of a time overcurrent relay is developed to demonstrate the tech-          advantage of being mature simulation tools which many
+  niques to implement relay control in EMTP with TACS and illus-             power engineering students have or will use. EMTP has
+  trates the kinds of phenomena that can be studied using these              been developed1to efficiently model multi-phase distributed
+  techniques.                                                                parameter transmission lines and many power system appa-
+                                                                             ratus. Modeling these elements is vastly more difficult using
+  Kevwords: Relays, DSP, Digital filtering, EMTP, TACS, Power                electronic comiponent simulation programs. Since many
+  Engineering Education, Continuing Education                                students already know SPICE, learning EMTP is not a sig-
+                        I. Introduction              1                       nificant factor. There are several versions of EMTP avail-
+      Power system protective relaying systems are striving to               able to educational institutions at essentially the costs to
+  meet the demands of systems which are ever increasing in                   create and ship the program and documentation to the insti-
+  complexity. These protection systems require computer                      tution The costs vary considerably between the versions.
+  based digital relays to quickly, accurately, and reliably                  Presently available versions of EMTP include the DCG,
+  identify faults. High-speed digital relays must make deci-                 ATP, and EMTDC. There are several short courses over a
+  sions while the power system is still in transition. Under-                wide cost range and users groups available to aid instructors
+  standing the operation and performance of microprocessor                   in learning to use EMTP.
+  based relays requires new engineering tools. The challenge                     With the introduction of graphical user interfaces for
+  educators face when preparing the next generation of pro-                  EMTP (for example, ATPDRAW or PSCAD) knowledge
+  tection engineers and relay designers is to teach both the                 of the subtleties of EMTP is less important. This is espe-
+  analysis tools and the fundamental concepts of very com-                   cially true if the EMTP data file is assembled by the instruc-
+  plex relay systems and devices[1,2].                                       tor with comments explaining the items they should change
+                                                                             (i.e. transformer ratio, relay trip setting). MATLAB,
+                                                                             DADISP, and other mathematics based software can be
+  96 WM 051-3 PWRS A paper recommended and approved by the IEEE              used to further post-process data files generated by EMTP
+  Power Engineering Education Committee of the IEEE Power Engineering
+  Society for presentation at the 1996 IEEWPES Winter Meeting, January 21-
+                                                                             but cannot be currently used in closed-loop with EMTP.
+  25, 1996, Baltimore, MD. Manuscript submitted July 27, 1995; made              For conventional protection systems, the most important
+  available for printing January 2, 1996.
+                                                                             function that the relay performs is to determine the vitality
+                                                                             of the 60 Hz power signal. This is usually accomplished by
+                                                                             monitoring the magnitude and, in some cases, phase of one
+                                                                             or more power line voltages and/or currents. At the mo-
+                                                                             ment a fault or a switching action occurs, transients are
+                                                                             generated which can persist as long as several milliseconds.
+                                                                             For a relay to make a reliable decision, the 60 Hz compo-
+                                                                             nent must be filtered from the other power system signals
+                                                                             present during this transient period. Since digital filtering
+                                                                             plays such a key role in digital relaying, a basic understand-
+
+
+
+                                                         0885-8950/97/$10.00 0 1996 IlEEE
+4
+    ing of digital filtering or digital signal processing (DSP)                (7). The requirements for each block in Fig. 1 will be dis-
+    theory is also necessary.                                                  cussed in greater detail to identify important features im-
+         Texts are available to support courses in digital relaying            plemented in those functional blocks.
+    [3,4]. Supplemental texts on the bdamentals of digital                                 ZPI. NETWORK SIMULATION
+    filtering are useful to help students understand the factors
+    which control the filters performance such as response time,                    Blocks { 1) and (9) of Fig. 1 make up the power system
+    noise rejection, and computational requirements [5,6,1 I].                 electrical network models for the simulation. Switching
+    The discussion below examines some of these issues and                     operations are implemented in the network with time con-
+    other digital filtering characteristicswhich are important for             trolled switches generate the transients to which the net-
+    the student to understand when implementing generic digi-                  work and digital relay controls system must respond. These
+    tal relays.                                                                switches are not controlled by TACS and represent user
+                                                                               inputs to the power system simulation. Switch models in
+        The approach and example in the following discussion                   ( 8 ) include particular switch dynamics and constitute the
+    can serve as a basis for computer laboratory experiments                   feedback control fkom TACS to the network portion of
+    which explore the fundamentals of digital relaying. The                    EMTP. In actual power systems, the breaker that initiates
+    time required to learn EMTP make the methods described                     the transient is often the breaker under relay control that
+    here difficult to use in an introductory undergraduate class               must respond to the generated transient. In EMTP, these
+    in power system analysis, however they are applicable to a                 switches are often be implemented as separate and inde-
+    second class in power systems at the senior/graduate level                 pendent switches to accommodate inputs from TACS.
+    class, graduate-only class, or a continuing education class.
+                                                                                            A. Power System Network - Block {l)
+       The methods and examples described in this paper have                       The complexity of the network modeling the power
+    been used in two short courses and as homework assign-                     system represented by (I} in Fig. 1, is a function of the
+    ments in a graduate course on protective relay systems.                    level of detail required of the simulation. If the focus is
+    They will also be used for demonstration purposes in an                    studying the transient behavior of the power system to relay
+    senior level power systems course in the near future. As-                  operations, then the network simulation should be highly
+    signments using the EMTP models could be added later as
+                                                                               representative of the actual or proposed system and there-
+    graphical user interfaces improve.                                         fore may be quit detailed and complex. However, the net-
+                         L E ~ E ~ T A STRATEGY
+                                        T I ~ ~                                work may be very elementary, even to the point of being a
+                                                                               single source, R J X circuit, for the purpose of investigating
+                            FMTP Fnvinmment
+                                                                               relay dynamics during power system transients.
+     [Network Code   1               TACS Code                             I
+                                                                                   Any voltages and currents available for outputs fiom the
+                                                                               EMTP network solution are available as inputs to TACS,
+                                                                               thus serving as power system instrumentation. Devices such
+                                                                               as the CT, VT, and CCVT can be modeled in the network
+                                                                               [13,20], or if the dynamics of actual instrumentation de-
+                                                                               vices are known in transfer function form, they can be
+        Fig. 1 . Block diagram for implementing digital relaying in TACS       modeled in the TACS portion of EMTP, which will be dis-
+                                                                               cussed below.
+        The block diagram shown in Fig. 1 illustrates a general
+    strategy for implementing relay simulations in EMTP.                            Switching operations which initiate power system tran-
+    Since this strategy operates in closed-loop, a solution for                sients are also implemented in EMTP as time controlled
+    each time-step in EMTP requires a solution in TACS. The                    switches. Such switching operations include energizing
+    function blocks identified in Fig. 1 by { 1) and (9) are pro-               and de-energizing transmission lines and apparatus, generat-
+    grammed in the network portion of EMTP. Function blocks                     ing faults, and changing power system loads. The sequence
+    (2) through (8) are programmed in TACS. Block (2) can                       of such switching operations are defined by the EMTP user.
+    be implemented in either the network portion of EMTP or                                  B. Controlled Switches - Block /9)
+    in TACS. In some relay simulation, blocks { 2 } , (3}, and
+                                                                                    Operating the simulation as a closed-loop control sys-
+    {XI may be omitted in this strategy depending upon several
+                                                                                tem requires modeling the operations of power circuit
+    factors including the desired simulation detail or quality
+                                                                                breakers that can be controlled fkom TACS [7]. The
+    level, the primary focus to the simulation, and the total sys-
+                                                                                switches need to open at or very near to current zero
+    tem. Block (4) may be omitted if the DSP algorithm as-
+                                                                                crossings for the simulation to be representative of actual
+    sumes a sampling interval equal to that of the EMTP simu-
+                                                                                PCB operations.
+    lation time-step. If this is not the case, EMTP measure-
+    ments must be sampled as required by blocks (5) through
+                                                                                                                                     5
+      To TACS
+       Breaker      4 -                                           version complexity and finite bandwidth related to sam-
+        Control           r-1
+                                                                  pling rate.
+                                                                       The broad spectrum frequencies that transients generate
+                                                                  can be reinforced by interactions with the electrical net-
+                                      Nlb                         work. It is highlly desirable to block these signals to signifi-
+                                                                  cantly reduce the effects of aliasing in digital filters. Con-
+     * - Type 11 Switch                                           ventional data sampled systems employ analog low-pass
+     . - Nehvork Node                                             filtering to reduce effects of aliasing [6,13]. The anti-
+         Fig. 2. Breaker model using type 11 switch functions.    aliasing filters can be modeled in TACS in transfer fimction
+    TACS controlled switches are required to model circuit        form.
+breakers. The simplest choice is the type 13 switch. But                     C. Sample and Conversion - Block {4}
+this switch opens immediately upon receiving the open
+command. The type 11 switch was developed to model                    A technique for implementing a sample and hold algo-
+thyristors, so it is unidirectional. However, the type 11         rithm was presented in [15]. Implementation issues ad-
+switch waits for a current zero crossing before opening; this     dressed in [15] help to avoid TACS processing glitches by
+is more desirable for modeling power circuit breakers. Fig.       synchronizing the hold delay required for Block ( 5 ) to the
+2 illustrates implementing breaker operations using two           EMTP simulation time-step.
+type 11 switches operated in parallel with a common gate                D. Magnitude and Phase Conversion - Block {5}
+control.
+                                                                      The magnitude and, in most relay applications, phase
+                          IV. TACS Network                        relationships of 60 Hz signals determine the vitality of the
+                                                                  power system. The magnitude and phase of a signal are
+    Blocks (2) through (8) shown in Fig. 1 are all imple-         typically acquired using a time domain to phasor domain
+mented in TACS. TACS affords the engineer options to              transformation algorithm. Fundamental to the success of
+allow modeling these functions in transfer function form in       the phasor transformation process is having the signals at
+either the continuous or discrete domain [7,8]. As dis-           the same fkequency, whether that be 60 Hz or some other
+cussed earlier, {2}, (3), and (8) may not be required de-         frequency of interest. It would initially appear optimal to
+pending upon the focus of the transient study. The discus-        use a filter which only responds to signals very close to 60
+sion to follow will address issues associated with blocks         Hz. One would soon discover that such narrow bandwidth
+(2) through { 8) .                                                system have an unacceptably slow response to changes in
+                     A. Instrumentation -Block {2}                magnitude. Thus modeling various conversion algorithms
+                                                                  can demonstrate how the benefits of a narrow bandwidth to
+    Numerous quality references address transient behavior        eliminate interference fiom harmonics and other sources of
+of CT, CCVT and PT instrumentation apparatus.                     noise must be weighed against the time response of wide
+[9,10,11,12,13,20] Such dynamics can have significant             bandwidth fiten [14].
+effects on relay operations and there is great merit in model-              Conventional digital relaying algorithms generally
+ing these devices to evaluate relay performance. Imple-           involve converting a data sequence generated by an analog
+menting instrumentation dynamics, in effect, filters the          to digital process, which is discrete in both time and magni-
+power system measurements before going to the relay.              tude. The process generates “snap-shots” of the phase and
+                                                                  magnitude of the 60 Hz component of the input. This is
+                  B. Signal Conditioning - Block {3}
+                                                                  accomplished using a particular set of digital filters that
+    Filtering to segregate the 60 Hz component from all           form an orthogonal basis set, such as discrete fourier trans-
+other signals on a power system is common to all but travel-      forms (DFT) or Walsh functions. This data can be produced
+ing wave relays. Electro-mechanical relays and early solid-       by sampling a continuous power signal with a digital

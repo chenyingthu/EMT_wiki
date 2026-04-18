@@ -1,0 +1,191 @@
+                    Received 27 March 2019; revised 27 July 2019; accepted 10 September 2019. Date of publication 11 November 2019;
+                                                        date of current version 2 January 2020.
+                                                              Digital Object Identifier 10.1109/OAJPE.2019.2952776
+
+
+
+
+                Accelerated Sparse Matrix-Based
+             Computation of Electromagnetic Transients
+                            A. ABUSALAH1 , (Member, IEEE), O. SAAD2 , (Member, IEEE),
+                       J. MAHSEREDJIAN 1 , (Fellow, IEEE), U. KARAAGAC 3 , (Member, IEEE),
+                                      AND I. KOCAR 1 , (Member, IEEE)
+                                   1 Polytechnique Montréal, Campus Université de Montréal, Montréal, QC H3T 1J4, Canada
+                                                    2 IREQ, Hydro-Québec, Varennes, QC J3X 1S1, Canada
+                                   3 Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong
+
+                                               CORRESPONDING AUTHOR: J. Mahseredjian (jeanm@polymtl.ca)
+                   This work was supported by the NSERC Industrial Research Chair, Hydro-Quebec, RTE, EDF, Opal-RT, and InnovEE.
+
+
+
+
+          ABSTRACT       This paper is related to research on parallelization methods for the simulation of electro-
+          magnetic transients (EMTs). It presents an automatic parallelization approach based on the solution of
+          sparse matrices resulting from the formulation of network equations. Modified-augmented-nodal analysis
+          is used to formulate network equations. The selected sparse matrix solver is parallelized and adapted to
+          improve performance by pivot validity testing and partial refactorization. Refactorization is needed when
+          dealing with varying topology networks and nonlinear models. The EMT solver employs a fully iterative
+          method for nonlinear functions. Conventional computer CPU-based parallelization is achieved and does not
+          require any user intervention for given arbitrary network topologies. The presented approach is tested on real
+          networks with complex models, including nonlinearities and power-electronics converters for wind generator
+          applications.
+
+          INDEX TERMS           Electromagnetic transients, modified-augmented-nodal-analysis, KLU, sparse matrix
+          solver, parallelization.
+
+
+
+I. INTRODUCTION                                                                             improvements in model performance using, for example,
+
+T     HE computing time reduction for the simulation of
+      electromagnetic transients [1], [2] (EMTs) is a cru-
+cial research topic. The EMT-type [2] simulation methods
+                                                                                            average-value models [5] for power-electronics based sys-
+                                                                                            tems or circuit reduction [6]. Network reduction can be
+                                                                                            also achieved using frequency domain fitting [7] or through
+are circuit based and can use very accurate models for an                                   dynamic equivalents [8]. Other approaches include usage of
+extended frequency range of power system phenomena. This                                    multiple time-steps [9], waveform relaxation [10] and com-
+qualifies them as being of wideband type. In fact the EMT                                   binations of different methods [11].
+approach is applicable to both slower electromechanical tran-                                  Although for some models the numerical performance
+sients and much faster electromagnetic transients. The com-                                 improvements can be generalized, the above methods can-
+putation of electromechanical transients can be achieved with                               not be applied automatically and require user intervention
+EMT-type solvers for very large networks [3] and requires                                   and various other manual modifications. A more direct
+significant computing time when compared to phasor-domain                                   path towards computational speed improvement in EMT-type
+approaches, but even for smaller networks, the computing                                    numerical methods is through efficient sparse matrix solvers
+time can become a key factor due to numerical integration                                   and parallelization. The latter has been initiated in real-
+time-step constraints or model complexity level. More and                                   time simulation tools [12]–[14] and followed also in off-line
+more challenging simulation cases are created for studying                                  [2], [15], [16] applications. The network tearing approach for
+modern power systems, those include, for example, HVDC                                      parallelization is based on the exact separation created by
+systems [4] and wind generation [4].                                                        distributed parameter transmission line/cable models. Other
+   There are several techniques for improving computational                                 methods [17], [18] can be applied for cutting networks at
+performance in EMT-type solvers. Such techniques include                                    arbitrary locations.
+
+                 This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see http://creativecommons.org/licenses/by/4.0/
+VOLUME 7, 2020                                                                                                                                                   13
+   An important problem in network solution paralleliza-             is given by
+tion methods, such as [16], [17], is that user intervention is
+                                                                                                Ax = b                                 (1)
+required for setting the network separation locations. In [18]
+the derivation of bordered-block-diagonal matrices (diakop-          This sparse system of equations is solved for the vector of
+tics) allows to cut networks without using transmission line         unknowns x at each time-point in time-domain, after updat-
+delays. But such methods are demonstrated for linear and             ing the matrix of coefficients A and the vector of known
+fixed topology networks that do not require time consum-             variables b. The vector b contains history terms and other
+ing matrix updating and refactorizations. Moreover, large            independent functions, such as independent sources. The sys-
+network test cases are created by replicating a given small          tem (1) is non-symmetric and can also accommodate generic
+network a few hundred times. Such idealistic situations do           equations, such as
+not occur for actual real power grids.
+                                                                                k1 vk + k2 vm + k3 ix + k4 iy + · · · = bz             (2)
+   This paper targets off-line simulation methods and presents
+CPU-based parallelization for conventional multi-core com-           where the terms on the left contribute coefficients (kj ) into the
+puters using a sparse matrix solver, named KLU [19], [20].           A matrix for voltage (vj ) and current (ij ) unknowns, and bz is a
+Such a solver has been already applied for circuit simulation        cell in the b vector. This equation allows to integrate directly
+problems [20]–[23], including the simulation of electromag-          source and switch equations. For an ideal switch equation, for
+netic transients in [22], [23]. This paper contributes several       example,
+significant improvements over [22], [23]. Fully automatic
+                                                                                        kvk − kvm − ks ikm = 0                         (3)
+parallelization is again achieved through block-triangular fac-
+torization (BTF), but new modification of the KLU solver             In switch closed position, k = 1 and ks = 0. When the ideal
+allow to significantly improve performance. The modifica-            switch is open, k = 0 and ks = 1. It is also possible to model
+tions include pivot validity testing and partial refactorization     non-ideal switches by setting k = 1 and replacing ks by high
+for a fully iterative sparse matrix solver. Refactorization is       and low resistance values. Other models, such as ideal trans-
+required to account for varying topologies (switching) and           formers with tap control can be easily accommodated [25].
+nonlinear models. The capability to efficiently account for             The NEs (1) are solved at each time-point after updating A
+iterations and refactorization in realistic networks is a distinc-   for switch position changes, transformer tap changes or any
+tive aspect in the presented research.                               other modifications in model equations. For nonlinear models
+   Another improvement in this work is more efficient                (NMs), the NEs must be solved iteratively to achieve an
+implementation of parallelization through distributed thread         accurate simultaneous solution. This is done by linearizing
+memory.                                                              each model [25] at each operating point change and solving
+   The proposed approach is implemented in EMTP [24]                 iteratively (1) until convergence for all nonlinear models.
+and tested on realistic large scale networks. The demon-             Model linearization results into a Norton equivalent with
+stration on such networks/benchmarks constitutes another             the Norton resistance contributing changes into A and the
+important contribution of this paper. The solution process           Norton current contributing updates into the b vector. This
+includes seamless transition from load-flow solution to time-        is a Newton method with A being the Jacobian matrix.
+domain parallel computations using modified-augmented-                  For time-varying models (TVMs), such as switches or
+nodal analysis.                                                      transformer tap positions, it is also possible to update A
+   The proposed approach can be implemented in any                   iteratively without advancing to the next time-point. This
+EMT-type simulation tool. Moreover, the proposed improve-            accuracy option, marked as iterative time-varying method
+ments in KLU are applicable to other types of solvers.               (ITVM), allows to achieve a simultaneous solution for the
+   This paper starts by reviewing the main structures of the         determination of all changes and dependencies between mod-
+EMT-type solver for which the sparse matrix code is being            els at the same time-point. This process also includes the
+replaced. It follows by the presentation of the new parallel         sequential re-calculation of control system equations [25].
+sparse matrix solution process and then its implementation.             In EMTP the NE (1) are currently solved on a single CPU-
+Test cases are presented to demonstrate the numerical perfor-        core using a non-symmetric direct sparse solver method based
+mance advantages.                                                    on minimum degree ordering [26]. The permuted matrix A
+                                                                     does not result into decoupled blocks and cannot be used for
+II. REVIEW OF EMTP STRUCTURE AND SOLVER                              parallelization.
+The new approach proposed in this paper is implemented                  The fact that many models, such as the coefficients in (3),
+using the modified-augmented-nodal analysis (MANA) for-              are time-varying and also for continuous changes that may be
+mulation method [24]. This method offers several advan-              required by model updates in A during iterations, it is neces-
+tages [25] over classical nodal analysis. Its formulation is         sary to recalculate the LU factors of A. The refactorization
+briefly recalled here to relate to material presented in the         process of the complete matrix A is time-consuming. The
+following sections. In MANA the system of equations is               number of refactorizations is case dependent and has fluctu-
+generic and can use different types of unknowns in addition          ating impact on numerical performance. This is an important
+to voltage. In MANA the system of network equations (NEs)            aspect.
+
+14                                                                                                                           VOLUME 7, 2020
+Abusalah et al.: Accelerated Sparse Matrix-Based Computation of EMTs
+
+
+
+                                                                                In KLU it is also possible to apply a scaling matrix for
+                                                                             the above equation, but it was not retained here since its
+                                                                             calculation process can create inefficiencies and there were
+                                                                             no advantages for the applications studied in this paper.
+                                                                                In the standard KLU approach, when at least one element
+                                                                             of Ai is modified, it is needed to perform full re-factorization
+                                                                             with updated pivoting. This process becomes inefficient for
+FIGURE 1. KLU pseudocode for LU factorization.
+                                                                             the refactorization needs expressed in the previous section.
+                                                                             In KLU it is also possible to request refactorization reusing
+                                                                             the previously calculated nonzero pattern, but in that case
+  The upgrading of the sparse matrix solver for accelerating                 there is no pivot validity testing and the solution accuracy may
+computations is described in the following sections.                         deteriorate significantly.
+                                                                                To improve the performance of the existing KLU code
+III. BLOCK TRIANGULAR FACTORIZATION AND KLU
+                                                                             for the EMT computation methods presented in this paper,
+The Block Triangular Factorization (BTF) method [20], [27]                   the following enhancements are contributed in this paper:
+can be used during symbolic analysis of A to transform it                    ‘‘Pivot validity test’’ and ‘‘Partial re-factorization’’ using a
+into a block-diagonal form ABTF . To do so, two matrices are                 parallel implementation.
+calculated and applied, the row permutation matrix PR and                       In the following text, the acronym SMPEMT (sparse
+the column permutation matrix PC , and result into                           matrix package for EMTs) refers to the enhanced KLU ver-
+                                                                             sion presented in this paper.
+                         ABTF = PR APC                                 (4)
+                                                                             A. PIVOT VALIDITY TEST
+   This process is able to automatically find the subnetworks
+                                                                             One of the challenging problems is the refactorization pro-
+decoupled by distributed parameter transmission line/cable
+                                                                             cess for time-varying and iterative model coefficients in Ai .
+models. The blocks in ABTF are decoupled (independent) at
+                                                                             Instead of performing full refactorization (standard KLU)
+each solution time-point and can be solved in parallel. The
+                                                                             as explained above, significant computational gains can be
+resulting block sizes vary according to subnetwork sizes.
+                                                                             achieved by applying pivot validity testing. This algorithm is
+   The blocks in ABTF can be solved using any efficient sparse
+                                                                             described by the following steps for Ai :
+matrix solver. Let us assume that Ai is the ith block in ABTF
+and there are N blocks in the network.                                       1. First call to SMPEMT:
+   The sparse solver method selected here is the KLU method.                     a. Perform symbolic analysis with AMD
+It is currently one of the most efficient packages for circuit-                  b. Perform full factorization to find Li and Ui
+based simulations [20]. This choice was made after testing                       c. Go to step 3
+other packages, including SuperLU [28] and [26].                             2. Not first call to SMPEMT:
+   The KLU solver, as other sparse matrix solvers, applies                      a) Perform re-factorization using existing nonzero pattern
+ordering to reduce the fillings in the LU-factorization. The                        with new enabled invalid pivot testing
+AMD (approximate minimum degree ordering) [19] and                                   i. Invalid pivot found: go to step 1.b
+COLAMD (column approximate minimum degree order-
+                                                                                b) Go to step 3
+ing) [19] ordering methods are available in KLU. AMD
+allowed to achieve the best performance for the test cases                   3. Backward and Forward substitution
+studied in this paper. The symbolic analysis of AMD is                       The step 2.a is applied when matrix Ai has changed. The
+conducted only once at the startup of the simulation process.                structure (non-zero elements) of the matrix is established at
+   The second stage in KLU is the numerical analysis stage                   the beginning and cannot change, only matrix cell values can
+which involves two main steps. First the Gilbert-Peierls algo-               change.
+rithm is used to find the nonzero patterns of L and U matrices.                 For the step 2, the pseudocode used in Fig. 1 starts with a
+Once the nonzero pattern is established, a left-looking numer-               modified matrix, but initially keeps the previously calculated
+ical factorization with partial pivoting is used to calculate the            permutations due to partial pivoting (step 2.b in Fig. 1). The
+L and U numerical values. This process can be expressed by                   pivot validity test is now applied instead of step 2.b in Fig. 1.
+                                                                             The invalid pivot (pivot validity) test is based on a definable
+                         Li Ui = PRi Ai PCi                            (5)   tolerance εp . When
+where PRi and PCi are now permutation matrices for the ith                                           εp anew > aold                       (6)
+block. The complete LU factorization process

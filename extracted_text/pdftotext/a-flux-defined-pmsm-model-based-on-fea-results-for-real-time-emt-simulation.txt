@@ -1,0 +1,232 @@
+                                                       Electric Power Systems Research 252 (2026) 112427
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A Flux-Defined PMSM Model Based on FEA Results for Real-Time
+EMT Simulation
+Dong Li a,* , Ali B. Dehkordi a,b, Yi Zhang a,b
+a
+    RTDS Technologies Inc., Winnipeg, Canada
+b
+    University of Manitoba, Winnipeg, Canada
+
+
+
+
+A R T I C L E I N F O                              A B S T R A C T
+
+Keywords:                                          To expedite the PMSM design and test process, high-fidelity PMSM model derived from Finite Element Analysis
+Finite element analysis                            (FEA) has been studied by many researchers. This paper proposed a new approach to calculate derivatives of
+Look-up table                                      currents with flux linkage data, which does not require taking hours to inverse the data table. Detailed math­
+Permanent magnet synchronous machine
+                                                   ematical proof is reported, based on which the implementation is explained, including presenting an efficient
+Reduced-order-model
+Real time simulation
+                                                   trilinear interpolation method. Simulation stability issue in the extrapolated range is also discussed and a so­
+                                                   lution is provided. The proposed method was implemented on RTDS hardware and can run in real time with the
+                                                   simulation time step of less than 1 µs. The test results of the proposed model are compared with FEA and
+                                                   conventional lumped-parameter PMSM model. An EV powertrain test case is also used to demonstrate the new
+                                                   model.
+
+
+
+
+1. Introduction                                                                     excitation, Finite Element Analysis (FEA) tools can generate accurate
+                                                                                    flux distribution and torque due to any instantaneous condition, which
+    Permanent Magnet Synchronous Machines (PMSM) are widely used                    naturally considers spatial harmonics, cogging torques and saturation
+in various industries, due to efficiency, power density, precision, and             effects [4–6]. However, the computation cost of FEA is heavy, thus this
+reliability in electromechanical systems.                                           method is not commonly used in EMT simulation.
+    The inherent characteristics of magnet form, stator winding geom­                   To take advantage of high accuracy of FEA and apply it into EMT
+etry, and the variable air gap length in a PMSM can lead to notable                 type simulation, one way is to use co-simulation by interfacing an FEA
+spatial harmonics, potentially influencing the machine’s performance,               tool and an EMT circuit simulator. However, the co-simulation is usually
+efficiency, and noise characteristics. In certain applications like EV              computationally heavy and is not suitable for real-time simulation.
+powertrains, it’s crucial to take into account the impact of spatial har­           Authors in [7] implemented real time FEA based on additional FPGA
+monics due to their potential effects on the performance and even                   hardware, where interfacing the FEA model with the rest of network
+control behaviors [1–3]. To study the PMSM high-frequency transients,               becomes challenging. Another approach is to use FEA-based Reduc­
+especially when interaction with power electronics and machine                      ed-Order-Models (ROMs) [8,9]. By using pre-computed FEA sweeping
+nonlinearity are involved, Electromagnetic Transients (EMT) type                    tabular data, it is possible to run a model, like PMSM, in EMT study with
+simulation is essential. However, most conventional PMSM models used                level of accuracy close to FEA, in a computation-cost friendly manner,
+in EMT simulations are lumped parameter models which ignore the ef­                 even possible in real time. The accuracy depends on the granularity of
+fect of spatial harmonics [2]. As a result, the potential influence of              the pre-computed FEA tabular data. Such model would be especially
+spatial harmonics would be omitted in the simulation study.                         useful in control design including Hardware-In-the-Loop (HIL) studies,
+    On the other hand, Finite Element Method tools are widely used in               which has become a typical procedure in developing EV powertrain [10,
+machine design, due to their ability to analyze complex geometries and              11].
+materials with high precision. Given a machine 2d or 3d design and                      With such a PMSM model that runs in real time and utilizes data
+
+
+
+    This work has been done with the financial support of RTDS® Technologies Inc.
+      Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    * Corresponding author.
+      E-mail addresses: dong.li@ametek.com (D. Li), ali.dehkordi@ametek.com (A.B. Dehkordi), yi.zhang@ametek.com (Y. Zhang).
+
+https://doi.org/10.1016/j.epsr.2025.112427
+Received 21 October 2025; Accepted 21 October 2025
+Available online 4 November 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+D. Li et al.                                                                                                             Electric Power Systems Research 252 (2026) 112427
+
+
+
+
+                                           Fig. 1. The process of using FEA results in the proposed FD-PMSM model.
+
+
+generated from FEA design, the drivetrain design process can be                       [17].
+significantly simplified. While the conventional PMSM model relying on                    In this paper, a Flux-Defined PMSM (FD-PMSM) model is introduced
+lumped parameters obtained from test measurements and estimations of                  and implemented on a real-time simulator hardware platform. Instead of
+a real machine, the PMSM model derived from the FEA design could be                   inverting the LUTs to have a flux – current correlation, this paper uti­
+tested with real control hardware, and accurately includes spatial har­               lized a different approach which solves the derivative of currents first to
+monics, cogging torque and saturation effects without manufacturing                   form a current – flux – current derivative correlation, which can save
+the machine. In this way, the motor design, motor drive design, testing               hours of time building the inversed LUT. This paper also provides details
+and optimization processes can be integrated [12].                                    on implementing the proposed method including a trilinear interpola­
+    Authors in [2] introduced the classic constant dq inductance PMSM                 tion and an extrapolation method to maximize the efficiency for real
+model for real time simulation, where saturation and spatial harmonics                time simulation. Fig. 1 shows the process of using FEA results in the
+are not included. Authors in [9] and [13] included saturation and slot­               proposed FD-PMSM model. The procedure also applies to some research
+ting effects by using Look-Up Tables (LUTs) of pre-stored inductance                  work in the literature review but may with different LUT format and
+matrices and excitation fluxes from a previous FEA. Authors in [2] and                EMT algorithm.
+[14] proposed an efficient inductance-based model without storing the
+whole table but the harmonics of inductances up to a certain order.                   2. Tabular data from finite element analysis
+Instead of inductance matrix, in some research, LUTs of flux-linkages are
+used for the PMSM model [8,15–17]. The flux-based model considers                         FEA tools can use highly accurate finite element methods to solve
+combined permanent flux linkage and stator-generated flux linkage                     electromagnetic and electric fields. As shown in the first box in Fig. 1, for
+naturally, instead of self and mutual inductances, which means less LUT               a given set of excitation currents (d-axis and q-axis currents) and rotor
+data to be stored, and could provide better numerical stability in                    position for a PMSM, FEA can compute the flux distribution and torque.
+step-based simulation [15,16]. Methods in [8,15–17] are all imple­                    The flux result can be stored in the format of dq0 fluxes. By gradually
+mented based on inverting the current-flux correlation, which firstly use             changing id , iq and rotor position, then performing FEA and store the
+the voltage and current from last time step to update the flux linkage,               corresponding dq0 fluxes and torque result for each combination, a 3d
+then use the flux linkage to search for the corresponding currents.                   lookup table can be generated, which then can be used for EMT simu­
+However, to inverse the LUT, iterative methods like interior point                    lation. The index of the lookup table would be id , iq and rotor position θ.
+method will be used, which could take hours to build the inversed LUT                 The output of the lookup table would be φd , φq , φ0 and Te .
+
+
+
+
+                   Fig. 2. Plots versus iq and rotor position, with id fixed, (a) q-axis flux, (b) d-axis flux, (c) zero-sequence flux, (d) torque.
+
+                                                                                  2
+D. Li et al.                                                                                                            Electric Power Systems Research 252 (2026) 112427
+
+
+
+
+                                           Fig. 3. Coordinate transformation for simplifying trilinear interpolation.
+
+
+
+
+                Fig. 4. Flow chart of FD-PMSM EMT model.
+
+
+    The current and rotor position sweeping can be achieved by using
+script with FEA tools. Some commercial FEA software also provides
+built-in sweeping functions, e.g. Ansys Maxwell.
+    While the PMSM is rotational symmetry, it is not necessary to
+perform rotor angle sweeping on 360 degrees. For a three-phase one
+pole pair machine, 120 degrees sweeping would be sufficient. For PMSM
+with multiple pole pairs, 120
+                            p degrees would be sufficient, where p is
+number of pole pairs. With more slots and phases, an even smaller range
+could be used. Without sweeping the whole 360 degrees, the size of the
+tabular data can then be significantly reduced.
+    In the example used in this paper in the later sections, the number of
+                                                                                   Fig. 5. 2d demonstration of extrapolation methods (a) Simple extrapolation,
+pole pairs is 2 and the id , iq and rotor position indexes used are,               (b) pre-smoothed extrapolation.
+⎧
+⎨ id index = [ − 150, − 120, − 90… 120, 150] (Amp)
+  i        = [ − 150, − 120, − 90… 120, 150] (Amp)                    (1)          elements, the tabular data will have 11 × 11 × 61 = 7381 records, and
+⎩ q index
+    θindex = [0, 1, 2, 3, 4 …57, 58, 59, 60] (degree)
+                                                                                   each record contains corresponding values of φd , φq , φ0 and Te . It also
+    Since id index and iq index contains 11 elements and θindex contains 61        means - to generate this data table, the FEA tool needs to run over 7381
+
+                                                                               3
+D. Li et al.                                                                                                       Electric Power Systems Research 252 (2026) 112427
+
+
+ Table 1                                                                           current respectively; Ld and Lq are d-axis and q-axis equivalent induc­
+ PMSM Parameters in Simulation Verification.                                       tance respectively; φf is the permeant magnet strength.
+   PMSM Number of pole pairs                                    2                  {
+                                                                                     φd = Ld id + φf
+   PMSM LUT Id Iq index interval                                30 A                                                                                   (2)
+   PMSM Number of Id or Iq intervals                            10                     φq = Lq iq
+   PMSM LUT rotor position index interval                       1 degree
+   PMSM Number of rotor position intervals                      60                     Stator voltage equations are shown in (3). Here, ud and uq are stator
+   Ideal velocity source speed                                  1000 rad/s         d-axis voltage and q-axis voltage respectively; Rs is stator resistance; ωe
+   Simulation time step                                         1.5 µs             is the electric angular speed.
+                                                                                   ⎧
+                                                                                                   dφd
+                                                                                   ⎨ ud = Rs id + dt − ωe φq
+                                                                                   ⎪
+                                                                                   ⎪
+variations. Each run in FEA tool would take around 1 - 2 s for compu­
+                                                                                                                                                           (3)
+tation (2-d design, 988 mesh element), which gives a general idea on the
+                                                                                   ⎩ uq = Rs iq + dφq + ωe φ
+                                                                                   ⎪
+                                                                                   ⎪
+computation cost of FEA.                                                                            dt      d
+
+    It is important to note that higher data granularity generally leads to
+more accurate results but comes at the cost of increased FEA computa­                  Torque equation is shown in (4), where Te is the electric torque and p
+tion and larger LUT storage. However, as long as the current intervals             is number of pole pairs.
+are small enough to accurately capture saturation effects and the angle                     [       (       ) ]
+                                                                                   Te = 1.5p φf iq + Ld − Lq id iq                                        (4)
+intervals are fine enough to clearly reflect spatial harmonics, the data
+granularity is considered sufficient. Fig. 2 shows some plots taken from               Rotor motion equation is shown in (5), which describes the me­
+the data table generated by FEA tool. It is clear to see that with current         chanical behavior of the rotor, where J is the inertia; D is the damping
+interval of 30 A and angle interval of 1 degree, both the spatial har­             factor; Tload is the load torque.
+monics and saturation effects can be modeled smoothly.                             1 dω e 1
+                                                                                               (
+                                                                                                      D
+                                                                                                                 )
+                                                                                          =      Te − ωe − Tload                                        (5)
+                                                                                   p dt     J         p
+3. FD-PMSM mathematical model
+
+   A PMSM can be described by the following equations: flux equation,              3.1. Conventional PMSM model
+voltage equation, torque equation and rotor motion Eq. (2) - (5) [8,18].
+   Eq. (2) is the flux equation, where φd and φq are flux linkages of d-              If lumped parameters Ld , Lq and φf are considered to be constants,
+axis and q-axis respectively; id and iq are stator d-axis current and q-axis       ideal lumped-parameter PMSM model can be simply modeled based on
+                                                                                   Eq. (2) - (5). If the saturation effect is considered, Ld , Lq and φf become
+
+
+
+
+                 Fig. 6. Benchmark with FEA tool - OC voltage and torque of the machine (1000 Ω line-to-ground resistors at machine terminal).
+
+                                                                               4
+D. Li et al.                                                                                                           Electric Power Systems Research 252 (2026) 112427
+
+
+
+
+                  Fig. 7. Benchmark with FEA tool - SC voltage and torque of the machine (1 Ω line-to-ground resistors at machine terminal).
+
+
+functions of id and iq .                                                             ⎧                                   (            )
+                                                                                                    ∂φd did ∂φd diq        1 ∂φd
+                                                                                     ⎪ ud = Rs id +
+                                                                                     ⎪
+                                                                                     ⎪                     +        + ωe         − φq
+                                                                                     ⎨              ∂id dt ∂iq dt          p ∂θ
+3.2. Proposed Flux-Defined PMSM model                                                                                                                               (9)
+                                                                                                                         (            )
+                                                                                     ⎪
+                                                                                     ⎪              ∂φ  di   ∂φ di         1 ∂φq
+                                                                                     ⎩ uq = Rs iq + q d + q q + ωe
+                                                                                     ⎪                                           + φd
+    When considering spatial harmonics, dq transformation no longer                                 ∂id dt ∂iq dt          p ∂θ
+decouple machine equations like (2). In the proposed Flux-Defined
+PMSM, instead of using Ld , Lq and φf to calculate flux and torque with                 The φd , φq , ∂∂φi and ∂∂φθ terms in (9) all can be obtained from tabular data
+Eq. (2) and (4), direct accurate values of φd , φq and Te can be found in            pre-generated by FEA tools with certain interpolation methods. While
+                                                                                     value of id and iq from the last time step can be used, Eq. (9) becomes a
+the LUTs generated by FEA. While considering spatial harmonics, φd

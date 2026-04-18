@@ -1,0 +1,24 @@
+## Large-scale hybrid real time simulation modeling and benchmark for nelson river multi-infeed HVdc system
+
+Chenghong Zhou a, *, Chun Fang a, Miodrag Kandic a, Pei Wang a, Kelvin Kent b, Donald Menzies c  
+a Grid Infrastructure Planning Department, Manitoba Hydro, Canada  
+b Kelvin Kent is with the System Performance Department, Manitoba Hydro, Canada  
+c Manitoba Hydro International, Canada  
+
+## Keywords
+Electromagnetic Transient for Direct Current (EMTDC), Real Time Digital Simulator (RTDS), Line Commutated Converter (LCC), Hardware-in-the-Loop (HIL), Northern Collector System (NCS), Hybrid
+
+## Abstract
+Nelson River Bipole I/II Line Commutated Converter (LCC) HVdc system has been in operation for more than 40 years and carries about 70% of total Manitoba Hydro power. The recent addition of Bipole III has formed a multi-infeed HVdc system with tightly coupled converter stations at both ends. Due to the complexity of the three Bipoles in a multi-infeed system, a large-scale hybrid real time hardware-in-the-loop (HIL) simulation model was developed with a combination of software models in Real Time Digital Simulator (RTDS) for Bipole I/II and the hardware replicas for Bipole III controls to support Bipole III commissioning and the future three-bipole planning, operation and maintenance efforts. In the paper, a RTDS modeling approach of Bipole I/II AC/DC system is introduced and discussed. This modeling approach includes the strategic design to fully utilize the library components in the page modules for AC/DC controls and the modeling structure of dividing a large HVdc system into many standalone modular systems. The paper also describes the use of a large-scale hybrid simulation model during on-site commissioning of Bipole III system. Such engineering practice has significantly reduced the technical risks, financial cost and secured the success of the Bipole III commissioning.
+
+## Introduction
+Manitoba Hydro Nelson River Bipole I/II system has been operating for more than 40 years providing about 70 percent of electrical power to domestic customers and export services. Bipole I is rated at 1854 MW, +/- 463.5 kV and Bipole II has a rating of 2000 MW, +/- 500 kV with Line Commutated Converter (LCC) technology [1]. These two overhead DC transmission lines run from North to South of the province with a distance of approximately 900 km. The rectifier stations of Bipole I and Bipole II are located at Radisson and Henday, respectively, in the Northern Collector System (NCS), and both inverter stations are terminated at Dorsey station. Three generation stations in the NCS supply the power to the DC system. A total of nine synchronous condensers are placed at Dorsey station to provide reactive power support, voltage regulation and system inertia. For system reliability, Manitoba Hydro has developed the third Bipole, namely Bipole III, which was put in service in July 2018, forming a multi-infeed, multi-egress HVDC system topology with the existing Bipole I and Bipole II system [2-4]. Bipole III has a separate inverter location and transmission corridor from Bipole I and Bipole II, which also enhances overall HVdc system reliability. Fig. 1 shows the Manitoba Hydro HVdc system with the existing Bipole I and Bipole II and the new addition of Bipole III.
+
+The two Nelson River Bipole systems have been modeled in different off-line simulation platforms such as load flow, transient stability and PSCAD/EMTDC simulation, for various planning and operational studies [5-8]. Digital real time simulation used in power systems could reproduce the behavior of the real power system being modeled with the desired accuracy. It has become an increasingly common practice that utilities and manufacturers utilize real time simulation for design and testing of protection devices and AC/DC controls as well as HVdc controllers [9-15]. With the complexity of the multi-infeed system, Manitoba Hydro has identified the need of developing a real time simulation model for the planning, operation and maintenance of the three-bipole system, including Bipole III study, commissioning, Bipole I/II refurbishment, etc.
+
+A full RTDS Bipole I/II system modeling was the first stage of developing the large-scale real time hardware-in-the-loop (HIL) simulation model. The Bipole I/II RTDS control model was planned to have
+
+1. The differences of the two bipoles in controls and AC connections:
+   a) Controls: Bipole I valve group controls are different between its negative (Pole 1) and positive (Pole 2) poles, such as firing angle tracking functions. Bipole II has its own unique controls, such as AC under voltage protection and detection.
+   b) Valve group configuration: Bipole I has three valve groups per pole and each valve group has six-pulse operation while Bipole II has two valve groups per pole and each valve group has 12-pulse operation.
+   c) Converter transformers: at Dorsey inver

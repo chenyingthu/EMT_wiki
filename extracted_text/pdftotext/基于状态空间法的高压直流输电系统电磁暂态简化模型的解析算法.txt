@@ -1,0 +1,289 @@
+2019 年 3 月                                   电 工 技 术 学 报                                              Vol.34   No. 6
+第 34 卷第 6 期             TRANSACTIONS OF CHINA ELECTROTECHNICAL SOCIETY                                Mar.     2019
+
+
+DOI: 10.19595/j.cnki.1000-6753.tces.180271
+
+
+
+
+          基于状态空间法的高压直流输电系统
+           电磁暂态简化模型的解析算法
+                          程佩芬 1             李崇涛 1           傅     闯2       杜正春 1
+                             （1. 西安交通大学电气工程学院                        西安     710049
+                                 2. 南方电网科学研究院                   广州    510080）
+
+
+        摘要        提出一种基于状态空间法的高压直流（HVDC）输电简化模型的解析算法，用于模拟
+    逆变侧交流故障下直流系统的暂态响应。首先利用准稳态模型对 HVDC 系统的整流侧做简化；然
+    后把不同工况下的换流器写成统一的形式，并把简化后的 HVDC 系统模型用一个分时段线性的非
+    齐次微分方程组来描述；最后，通过引入辅助变量，将非齐次方程转化为齐次，从而使计算复杂
+    度大大降低，同时简化后的系统可以用解析算法求解。控制系统用微分-代数方程组描述，用变步
+    长数值积分法求解。在 Matlab 里编写相应程序实现所提简化模型的解析算法，并与 PSCAD 里搭
+    建的双端电磁暂态模型进行比较，以验证所提算法的准确性。
+        关键词：电网换相换流器高压直流输电                               暂态仿真         解析算法       换相失败
+        中图分类号：TM74
+
+
+     An Analytic Solution for Simplified Electromagnetic Transient Model
+        of HVDC Transmission System Based on State Space Method
+                        Cheng Peifen 1      Li Chongtao 1   Fu Chuang 2   Du Zhengchun 2
+         （1. School of Electrical Engineering       Xi’an Jiaotong University   Xi’an   710049      China
+     2. Electric Power Research Institute     China Southern Power Grid     Guangzhou      510080    China）
+
+        Abstract    In this paper, an analytic solution for simplified high voltage direct current (HVDC)
+    system based on state space method is proposed, which is mainly used to simulate the transient
+    response of DC system under AC fault on the inverter side. Firstly, the rectifier side of HVDC system is
+    simplified using quasi-steady model. Secondly, the converter under different conditions is described as
+    a uniformed express, and the simplified HVDC system is described by a piecewise linear
+    inhomogeneous differential equations. Finally, the inhomogeneous differential equations are
+    transformed into homogeneous ones by introducing auxiliary variables, which greatly reduces the
+    computational complexity. Meanwhile, the simplified system can be accurately solved by analytical
+    algorithm. The control system is described with differential-algebraic equations and solved by the
+    variable-step numerical integration method. According to the analytical solution of the simplified
+    model proposed in this paper, the corresponding program is coded in Matlab and compared with the
+    double-terminal HVDC model built in PSCAD to verify the accuracy of the proposed solution.
+        Keywords ： Line commutated converter-high voltage direct current (LCC-HVDC), transient
+    simulation, analytical solution, commutation failure
+
+
+国家重点研发计划（2017YFB0902000）和国家自然科学基金（51507127）资助项目。
+收稿日期 2018-03-05    改稿日期 2018-05-22
+第 34 卷第 6 期    程佩芬等        基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法                                  1231
+
+
+0   引言                                                基于状态空间法的 HVDC 电磁暂态简化模型解析算
+                                                      法。采用该方法在提高计算速度的同时，并不降低
+    随着现代电力系统中源荷分布不均的情况越来
+                                                      对逆变侧动态响应的模拟精度。
+越突出，高压直流输电（High Voltage Direct Current,
+                                                           在算法的实现上，首先利用准稳态模型，将
+HVDC）作为一种可以将电能进行大容量、远距离
+                                                      LCC-HVDC 系统的整流侧简化为一个幅值可变的
+输送的有效途径，在电力系统中得到广泛的应用 [1] 。
+                                                      理想直流电压源和电阻的串联，并不考虑整流侧的
+其中，电网换相换流器高压直流（Line Commutated
+                                                      直流滤波器；HVDC 系统被分为一次设备模块和直
+Converter-HVDC, LCC-HVDC）输电由于其耐受电
+                                                      流控制系统模块两个部分进行计算。根据换流阀的
+压等级较高、输送容量大等优势在实际电力系统中
+                                                      工作状态，一次设备模型可以采用线性开关系统来
+应用广泛。成熟的机电暂态仿真软件如 PSASP、BPA
+                                                      描述，在数学模型上即为一组线性非齐次微分方程
+中，对直流的处理一般采用响应模型，不能详细模拟
+                                                      组。通过加入整流侧的简化数学模型和引入辅助变
+到换流阀的动态行为[2-3]。为了获取 HVDC 系统详细的
+                                                      量，把方程组进一步转化为线性齐次微分方程组，
+动态响应，直流系统一般需要采用电磁暂态模型[4-5]。
+    传 统 的 电 磁 暂 态 仿 真 软 件 ， 如 EMTP/ATP、               使计算表达式简化。对于控制系统而言，根据控制
+
+PSCAD/EMTDC 等 是 采 用 小 步 长 数 值 积 分 仿 真 的               逻辑得到其对应的微分-代数方程组，采用变步长数
+
+方法来计算 HVDC 系统换流器的动态响应。为了准                             值积分法求解其时域响应。
+
+确模拟换流器导通、换相和关断的过程，这类软件                                     本文介绍了 LCC-HVDC 简化模型的建立过程
+的仿真步长都是微妙级，因此暂态仿真计算需要较                                及对应解析算法的推导过程，并使用 Matlab 进行编
+长的时间。另外，为了获取换流器晶闸管关断时刻，                               程实现。同时，在 PSCAD 中搭建双端电磁暂态模
+需要采用插值的方法获取换相电流过零点，这可能                                型作为对照，以验证模型和算法的有效性。
+带来数值振荡问题。为了解决上述问题，文献[6-7]                             1   一次设备部分的数学模型
+提出了一种高压直流输电系统的解析解法。
+    由于 LCC 中晶闸管的半控性，在故障情况下 LCC-                            本文所用算例简化前的系统结构如图 1 所示，
+HVDC 系统中可能会出现复杂的动态行为 [8-10] 。直                        包含了换流变压器、换流器、平波电抗器和直流滤
+流逆变侧换相失败是 HVDC 系统最常见的故障[11-14]。                       波器等器件，直流线路用 T 型等效电路进行模拟。
+因此，为了研究 LCC-HVDC 系统的换相失败问题，                                在电力系统分析中，当主要关心逆变侧的换相
+必须对逆变侧的动态行为进行准确描述；另外，馈                                失败时，对整流侧的模拟精度可以适当放宽。考虑
+入式的高压直流输电系统是我国远距离送电的普遍                                到逆变侧的换相失败对整流侧换流器变换的影响较
+现象，而在馈入式的电网里，受端（逆变侧）系统                                小，因此可以忽略整流侧换流器的变换过程，利用
+才是关注的重点。对受端系统进行仿真时，对于整                                准稳态模型对整流侧进行简化。简化后一次设备系
+流侧的处理可以适当简化。基于此，本文提出一种                                统的结构如图 2 所示，框内即为整流侧等效部分。
+
+
+
+
+                                 图1     双端 HVDC 一次设备系统结构
+                Fig.1   Structure diagram of two-terminal HVDC primary equipment system
+  1232                                              电 工 技 术 学 报                                                      2019 年 3 月
+
+
+                                                             式中，p 为微分算子， p = d/dt 。
+                                                             1.2     换流器、换流变压器和平波电抗器的数学模型
+                                                               为简单起见，将换流器、换流变压器和平波电
+                                                             抗器作为一个整体列写方程。 Yy 和 Yd 换流变压器
+                                                             都是等值电感换算到换流器侧的理想变压器，换流
+                                                             器为理想开关模型。以换流器 3 处于换相工况（上
+                                                             桥臂 A 相导通，下桥臂 B → C 换相），换流器 4 处于
+          图2     等值单端 HVDC 一次设备系统结构                          导通工况（上桥臂 A 相导通，下桥臂 B 相导通）为
+      Fig.2   Equivalent structure diagram of one-terminal   例，等效电路如图 3 所示。
+                HVDC primary equipment system
+1.1     整流侧的简化数学模型
+       根据准稳态模型，整流侧的电源、换流变压器
+和换流器可以等效为理想电压源和等值电阻的串
+联。准稳态模型可由一组方程描述为 [15]
+
+              U RD = U RD0 cos α − RRγ BR I RD        （1）
+
+                             3 3
+                   U RD0 =       kRT ERm BR           （2）
+                              π
+                                  3
+                             RRγ = ω Ly               （3）
+                                  π
+                                                                      图3     A|B → C, A|B 工况下的等效电路
+                          Req =RRγ BR                 （4）
+                                                             Fig.3   Equivalent circuit of A|B → C, A|B operation status
+                     uRD = U RD0 cos α                （5）          根据文献[6]的推导，可得到图 3 中等效电路的
+式中，U RD 和 U RD0 分别为 HVDC 系统中考虑和不考                            数学表达式
+虑触发延迟和换相角时，整流侧直流电压的平均值；
+                                                                      ⎡Tc pxc ⎤ ⎡ B11    B12 ⎤ ⎡ v ⎤ ⎡ b1 ⎤
+RRγ 为等值换相电阻； Req 为整流侧等值电阻； uRD                                        ⎢ 0 ⎥ = ⎢B                        +       u
+                                                                                         B22 ⎥⎦ ⎢⎣ u ⎥⎦ ⎢⎣b2 ⎥⎦ D
+                                                                                                                              （7）
+                                                                      ⎣       ⎦ ⎣ 21
+为等值电压源幅值； α 为控制系统输出的触发延迟
+                                                             式中，Tc 为系数矩阵，Tc =diag( Ly Ly Ly Ld Ld Ld LS )；
+角； BR 为整流侧串联的桥个数； I RD 为整流侧的直
+                                                                                                                      T
+流电流；kRT 为整流侧换流变压器的电压比；ERm 为                                  xc 为状态变量， xc = ⎡⎣iyA iyB iyC idA idB idC iS ⎤⎦ ；v 为代
+整流侧交流母线相电压的峰值； ω 为整流侧的角频                                     数变量，v = ⎣⎡u yA u yB u yC udA udB udC uyD udD ⎦⎤ ； u 为
+                                                                                                                          T
+
+
+率； Ly 为 Yy 联结换流变压器的等值电感。
+                                                             由交流系统输入的变量， u = [uA uB uC ] ；u D 为一
+                                                                                                                 T
+
+       在式（5）中，等值电压源受 α 影响，而 α 由                              次设备数学模型的代数变量； B11 、 B12 、 B21 、 B22 、
+控制系统根据直流系统的响应来确定，因此整流侧                                       b1 和 b2 为相应的系数矩阵。
+事实上等值为幅值可变的电压源。而当采用受控电                                             式（7）中消去代数变量 v 可得
+压源等效整流侧时，由于忽略了换流器的变换过程，
+                                                                              pxc = Bc u + bc uD                             （8）
+直流电压的谐波分量不复存在，因此直流侧的滤波
+器可以不用考虑。而在暂态过程中，直流侧的平波                                                            iS = cIc xc                                 （9）
+电抗器起到限流作用，因此在该模型中进行了保留。                                      式中，Bc 为系数矩阵， Bc = Tc−1 ( B12 − B11 B21
+                                                                                                 −1
+                                                                                                    B22 ) ；
+  由式（5）可见，整流侧等效理想电压源的电压                                      bc = Tc−1 (b1 − B11 B21
+                                                                                  −1
+                                                                                     b2 ) ； cIc = e7T ； ek 代 表 第 k 个 位
+幅值 uRD 仅与控制系统输出的触发延迟角有关，即
+                                                             置为 1 的单位向量， e 的维数和与之相乘的状态变
+uRD 仅在控制系统输出变化时其数值发生改变，在
+                                                             量组成的向量维数一样， k 的值即为所提取的状态
+每个仿真时段内其保持恒定，因此有                                             变量在状态变量组成的向量的位置。因此，第 j 个
+                          puRD = 0                    （6）    运行工况下逆变侧的状态方程可写为
+第 34 卷第 6 期              程佩芬 等          基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法                                                                  1233
+
+
+                                                                     1.5     全系统数学模型的形成
+                 pxIc = BIcj u I + bIcj uID                  （10）
+                                                                            由于电流关系满足
+                    iIS = cIc xIc                             （11）              iIS − iIF − iID = 0                                   （16）
+
+      当系统工况改变时，仅仅是电路连接关系改变，                                                 式（16）等号两边求导得
+而微分方程保持不变，因此，不同工况下的换流器                                                                  piIS − piIF − piID = 0                        （17）
+写成一个统一的形式，相应的系数矩阵随着工况的
+                                                                            电流微分满足
+不同而改变。文献[6]详细分析了换流器所有可能出
+现的工况（稳态运行和故障下）及其对应的电路连                                                           piIS =cIc pxIc = cIc BIcj u I + cIc bIcj uID        （18）
+接关系式，本文不再详细介绍。
+                                                                              piIF = cIF pxIF = cIF AIF xIF + cIF bIFuID              （19）
+1.3   直流线路的数学模型
+      为简单起见，把整流侧的等值电阻和平波电抗                                                 piID = cID pxD = cID AD xD + cID bRD uRD + cID bID uID
+器并入直流线路一起列写方程。根据图 2 中的组成                                                                                                              （20）
+结构，可列写状态方程                                                                  联立式（17）～式（20）可得
+            ⎡ RD + Req         1                     ⎤
+            ⎢−            −                      0 ⎥                       kIcj u I − kIF xIF − kID xD + kIj uID − kR uRD = 0        （21）
+               L + LRS      LD + LRS
+ ⎡ piRD ⎤ ⎢ D                                        ⎥ ⎡i ⎤
+                                                           RD
+ ⎢       ⎥  ⎢    1                               1 ⎥⎢ ⎥
+                                                     ⎥ D +           式 中 ， kIcj = cIc BIcj ； kIF = cIF AIF ； kID = cID AD ；
+⎢ puD ⎥ = ⎢     C
+                                 0
+                                                CD ⎥ ⎢ ⎥
+                                                          u
+⎢⎣ piID ⎥⎦ ⎢      D
+                                                       ⎢⎣ iID ⎥⎦     kIj = cIc bIci − cIF bIF − cID bID ； kR = cID bRD 。
+           ⎢                     1               RD ⎥
+           ⎢     0            −                −     ⎥                      联立式（10）、式（13）、式（15）和式（21）
+           ⎣⎢                   LD               LD ⎦⎥
+                                                                     可得
+         ⎡   1    ⎤       ⎡ ⎤
+         ⎢L + L ⎥         ⎢ 0 ⎥
+         ⎢ D   RS ⎥       ⎢ ⎥                                              ⎡ pxD ⎤ ⎡ AD                     bID ⎤ ⎡ xD ⎤ ⎡ 0 ⎤
+         ⎢        ⎥       ⎢ ⎥                                              ⎢ px ⎥ ⎢               AIF       bIF ⎥⎥ ⎢ xIF ⎥ ⎢⎢ 0 ⎥⎥
+         ⎢        ⎥ uRD + ⎢ ⎥ uID                             （12）         ⎢ IF ⎥ = ⎢                               ⎢ ⎥+               u +
+         ⎢   0    ⎥       ⎢ 0 ⎥                                            ⎢ pxIc ⎥ ⎢                     0 bIcj ⎥ ⎢ xIc ⎥ ⎢ BIcj ⎥ I
+         ⎢        ⎥       ⎢ 1 ⎥                                            ⎢      ⎥ ⎢                            ⎥⎢ ⎥ ⎢ ⎥
+         ⎢        ⎥       ⎢ ⎥                                              ⎢⎣ 0 ⎥⎦ ⎢⎣ − kID      −kIF     0 kIj ⎥⎦ ⎢⎣uID ⎥⎦ ⎢⎣ kIcj ⎥⎦
+         ⎢⎣  0    ⎥⎦      ⎢⎣ LD ⎥⎦
+      式（12）可简写为                                                                      ⎡ bRD ⎤
+                                                                                     ⎢ 0 ⎥
+          pxD = AD xD + bRD uRD + bID uID                     （13）                   ⎢       ⎥u                                       （22）
+                                                                                     ⎢ 0 ⎥ RD
+                                                                                     ⎢       ⎥
+式中，xD = [iRD uD iID ]T ，iRD = cRD xD ，iID = cID xD ，                                 ⎢⎣ −kR ⎥⎦
+cRD = e2T ， cID = e3T ； AD 、 bRD 和 bID 为相应的系数                               式（22）可简写为
+矩阵。
+1.4 直流滤波器的数学模型                                                              ⎡ px ⎤ ⎡ A b ⎤ ⎡ x ⎤ ⎡ E ⎤      ⎡g⎤
+                                                                            ⎢ 0 ⎥=⎢      ⎥ ⎢ ⎥ + ⎢ ⎥ u I + ⎢ ⎥ uRD                   （23）
+      本文算例选用的是单调谐滤波器，其具体结构                                                  ⎣ ⎦ ⎣c d ⎦ ⎣ y⎦ ⎣ f ⎦           ⎣h ⎦
+在图 1 中已标出。根据其结构，列写逆变侧的单调
+                                                                     式中， x = [ xD xIF xIc ] ； y = uID 。在式（23）中，
+                                                                                                    T
+谐滤波器的状态方程
+                                                                     消去 y 可得
+               ⎡           1 ⎤
+                  0                        ⎡ 0 ⎤
+      ⎡ puIF ⎤ ⎢⎢         CIF ⎥ ⎡uIF ⎤ ⎢
+      ⎢ pi ⎥ = ⎢ 1
+                               ⎥          + 1 ⎥ uID           （14）                           + Bu
+                                                                                       px = Ax    + cu                             （24）
+                           RIF ⎥ ⎢⎣ iIF ⎥⎦ ⎢
+                                                                                                   I      RD
+      ⎣ IF ⎦ −                                     ⎥
+                ⎢        −     ⎥           ⎢⎣ LIF ⎥⎦
+                ⎣ LIF      LIF ⎦                                     式中， A = A − b c d ； B =E − b f d ； c = g − b h d 。
+      式（14）可简写为                                                      因此，在第 k 个时间间隔内，状态变量 x 满足
+
+              pxIF = AIF xIF + bIFuID                         （15）                  px = A k x + B k u I + ck uRD                 （25）
+
+式中，xIF = [uIF iIF ]T ，iIF = cIF xIF ，cIF =e2T ；AIF 和 bIF             1.6     进一步简化
+为相应的系数矩阵。                                                                   通过进一步简化，可以将式（25）描述的非齐
+    1234                                                                  电 工 技 术 学 报                                                      2019 年 3 月
+
+
+次微分方程组进一步写为齐次微分方程组。由于式                                                              束时间示意图如图 4 所示，可见工况的结束时间 tkE
+（25）的输入 u I 为正弦量，引入辅助变量 vI 后得其                                                    由控制系统给出的超前触发延迟角 β 决定。
+表达式为
+              ⎡U IA cos(ωt + θ IA ) ⎤                   ⎡U IA sin(ωt + θ IA ) ⎤
+      u I = ⎢⎢U IB cos(ωt + θ IB ) ⎥⎥           vI = ⎢⎢U IB sin(ωt + θ IB ) ⎥⎥
+              ⎢⎣U IC cos(ωt + θ IC ) ⎥⎦                 ⎢⎣U IC sin(ωt + θ IC ) ⎥⎦
+                                                                           （26）
+        u I 和 vI 满足                                                                           图4        导通工况结束时间示意图
+                                                                                            Fig.4     The diagram of the turn-off time of
+                          ⎧ pu I = −ω vI
+                          ⎨                                                （27）                             conduction status
+                          ⎩ pvI = ω u I
+                                                                                          β k −1 和 β k 分别是 tkE−1 和 tkE 时控制系统给出的超
+        联立式（6）、式（25）和式（27）可得                                                        前触发延迟角，有
+        ⎡ px ⎤ ⎡ A k            B k         0         ck ⎤ ⎡ x ⎤                                                                    π
+        ⎢ pu ⎥ ⎢                                           ⎥⎢      ⎥                                               β k −1 − β k +
+        ⎢ I ⎥=⎢ 0                 0         −ω I 3       0 ⎥ ⎢ u I ⎥                                tkE =tkE−1 +                      3      （33）
+                                                                           （28）                                             ω
+        ⎢ pvI ⎥ ⎢ 0             ω I3         0          0 ⎥ ⎢ vI ⎥
+        ⎢      ⎥ ⎢                                          ⎥⎢      ⎥                     当第 k 个工况为换相工况时，工况的结束时间
+        ⎣ puRD ⎦ ⎣⎢ 0             0           0          0 ⎦⎥ ⎣uRD ⎦
+                                             T
+                                                                                    为换流阀关断时刻，由换流阀的换相电流过零点决
+式中， x = ⎡⎣ x T u IT vIT uRD ⎤⎦ ； I 3 是维数为 3 的单位                                   定。换相电流 ic (t ) 包含在状态变量 x 中，可写成
+矩阵。
+                                                                                                            ic (t ) = akT x (t )              （34）
+  式（28）可简写为
+                                                                                    式中， akT 为相应的系数向量，表明状态变量 x 中组
+                                 px = Ak x                                 （29）
+                                                                                    成换相电流的成分。设 tkE 为换相工况的结束时刻，
+  需要注意的是，当系统的工况变化时，换流器                                                              则有
+的等效电路也相应变化，状态矩阵 Ak 也随之改变。                                                                                              (          )x
+                                                                                                    ic ( tkE ) =akT e k k
+                                                                  

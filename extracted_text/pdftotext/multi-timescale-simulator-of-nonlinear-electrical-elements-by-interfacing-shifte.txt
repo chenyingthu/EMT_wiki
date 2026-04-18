@@ -1,0 +1,233 @@
+                                                            Electric Power Systems Research 208 (2022) 107856
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                         journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Multi-timescale simulator of nonlinear electrical elements by interfacing
+shifted equivalent phasors and electromagnetic transient simulation
+Zhen Gong , Chengxi Liu *, Liangzhong Yao
+School of Electrical Engineering and Automation, Wuhan University, Wuhan 430072, China
+
+
+
+
+A B S T R A C T
+
+This paper proposes a multi-timescale transient branch companion model for electrical elements with strong nonlinearity, which is suitable for electromagnetic
+transient simulation for a wide range of time-scales. A shifted equivalent phasor (SEP) method for signals with wide frequency range is adopted combined with
+envelope signals and equivalent phasor-shift operator, and a saturable SEP based transformer model is established. A method of piecewise linearization based on
+Newton-Raphson is used to simulate excitation current under different simulation time step sizes in order to illustrate the overshoot phenomenon of piecewise
+linearization under large step sizes. Reducing the step size can effectively suppress the overshoot, but simulation efficiency will be sacrificed. This problem can be
+avoided in SEP model even if large time step is adopted and integrated simulation of both instantaneous and envelope (with larger timescale) waveforms can be
+efficiently tracked within one simulation run based on the determination of two parameters setting: shifting equivalent phasor and time step size. Finally, the
+transformer model and voltage source converter (VSC) are established and validated in MATLAB and PSCAD to prove its correctness and efficiency.
+
+
+
+
+1. Introduction                                                                               However, its simulation accuracy depended on the choice of domi­
+                                                                                         nant frequency and phasor. The above methods can achieve the purpose
+    At present, electromagnetic transient (EMT) simulation is the most                   of improving the efficiency of EMT simulation, but sacrifice the accu­
+reliable approach to evaluate the dynamic response of large-scale AC-DC                  racy. Furthermore, an adaptive frequency transient simulation (FAST)
+interconnected power grids, for it can accurately characterize the high-                 method performed the Hilbert transform on the instantaneous signal to
+frequency dynamic characteristics of the power grids. Unlike transient                   construct the corresponding analytical signal, and then performed fre­
+stability simulation, EMT simulation generally uses instantaneous sig­                   quency shift operation on the signal spectrum in the frequency domain
+nals to reflect the dynamic response of various electrical quantities.                   [10]. If the shifted frequency was set to the carrier frequency, approxi­
+Therefore, it requires smaller integration steps, however, compromising                  mate DC frequency-shifted signal can be obtained so as to facilitate
+on its computational efficiency [1].                                                     larger time steps and to improve the efficiency, which can still describe
+    In EMT simulation, the transformer core is represented by a                          the response of the instantaneous values, without losing any frequency
+nonlinear inductor, the piecewise linearization method is widely adop­                   component signal.
+ted to emulate the nonlinear elements [2]. Overshoot occurs when using                        However, as FAST uses the Hilbert transform to construct the
+large time step [3]. Reference [3] established an EMT model is to cap­                   required analytical signal, which is still a type of linear transformation,
+ture the key dynamics of inrush current of fault recovery transformer.                   it is just suitable for linear elements. When performing EMT simulations
+Reference [4–7] analyzed the saturation characteristics of transformer                   on non-linear electrical elements, such as power electronic devices,
+by the piecewise linearization technique, but did not consider the                       transformers and motors, the fundamental and harmonic signals will be
+overshoot distortion issues.                                                             produced simultaneously during the transient process. Obviously, when
+    Alternative methods are proposed to obtain low-frequency compo­                      examining the dynamic responses of nonlinear systems after faults or
+nents of the original signals, so that a larger time step can be used in the             other disturbances, the nonlinear characteristics of the above elements
+whole or part of the transient simulation process by improving the                       cannot be ignored, and the corresponding dynamic response for har­
+modeling method. To reduce the additional calculations due to the                        monic signals needs to be carefully characterized. At this time, the
+switching operations, reference [8] proposed an averaging model to                       electrical signal spectrum of interest will no longer be concentrated on
+improve the efficiency of EMT simulation of power electronic devices.                    the narrow band of the carrier frequency. In addition, the product of two
+Similar to [8], dynamic vector method was also used for HVDC system [9].                 variables is a general form in nonlinear power systems such as electronic
+
+
+ * Corresponding author.
+   E-mail address: liuchengxi@whu.edu.cn (C. Liu).
+
+https://doi.org/10.1016/j.epsr.2022.107856
+Received 28 July 2021; Received in revised form 29 January 2022; Accepted 9 February 2022
+Available online 26 February 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+Z. Gong et al.                                                                                                            Electric Power Systems Research 208 (2022) 107856
+
+
+
+
+             Fig. 1. Current and voltage conventions for an inductor.
+
+                                                                                           Fig. 2. Companion model of flux-controlled nonlinear inductor.
+converter or product of the inductance and voltage where the real part of
+analytical signals obtained from Hilbert transform cannot represent the
+instantaneous waveform of original product quantities.
+    This paper proposes a multi-timescale transient model for nonlinear
+electrical elements, which extends traditional shifting-frequency anal­
+ysis (SFA) to adapt for wide frequency ranges by interfacing a hybrid
+simulator based on shifted equivalent phasor and electromagnetic
+transient (EMT) simulator. Equivalent phasor can identify different
+harmonic components in a model with much wider frequency band than
+traditional phasor-based method by constructing a dynamic phasor
+domain evolution of various harmonics of a quasi-periodic signal
+[11–15]. The new simulator proposed in this paper takes advantage of
+                                                                                                             Fig. 3. Time scale division of signal.
+the dynamic phasor (DP) simulator to characterize various harmonic
+components of nonlinear elements, combining with the high simulation
+speed of envelope tracking SFA based method to identify different har­            G(j)
+                                                                                           τ
+                                                                                         (j)
+                                                                                                                                                                       (9)
+                                                                                   L = Γ
+monic waveform amplitudes, and instantaneous waveform simulator                        2
+EMT is adopted by multiplying shifted phasor operator if fast transients              ILh (j) is the historical current source, Γ (j) the reciprocal of the
+is of concern.                                                                    inductance increment and GL(j) the equivalent conductance increment
+                                                                                  corresponding to the (n + 1)th time step and (j + 1)th Newton-Raphson
+2. Newton-Raphson discrete equivalent model                                       iteration step. The companion model of (6) is shown in Fig. 2.
+                                                                                      In the same way as for the nonlinear resistor, models can be found for
+    Traditionally, two concepts essential to EMT simulation of nonlinear          other branches of networks and circuits [11]. It is noted that the
+electrical elements based on Newton-Raphson are adopted in compen­                modeling of nonlinear electrical element using Newton method is a
+sation method of Alternative Transients Program (ATP) [12]: (i) the               conventional method in ATP, and it is proved in reference [13] that the
+discretization of the differential equations, (ii) companion model.               function’s roots can be found by only one iteration no matter initial
+    The flux-controlled nonlinear branch equations depicted in Fig. 1 are         point.
+as follow:
+dψ (t)                                                                            3. Modeling and simulation using a shifted equivalent phasor
+       = V(t)                                                           (1)       (SEP)
+ dt
+
+i = g(ψ )                                                               (2)       3.1. Dynamic phasor modeling
+
+where ψ is the main flux.                                                            Consider that a real-valued periodic function represented by a
+  Trapezoidal integration [10] yields:                                            summation of a series of infinite number of sinewaves with various
+             τ                                                                    amplitudes and phasor shifts indicating different frequencies shown in
+ψ n+1 − ψ n = (Vn+1 + Vn )                                              (3)       Fig. 3. Fourier series representation of the time-domain waveform x(τ) is
+                 2
+                                                                                  shown as follows [15–17]:
+where n is the time step counter, and τ is the time step size.
+                                                                                           ∑
+                                                                                           ∞
+  From Eq. (2), Eq. (4) can be derived as follows                                 x(τ) =           〈x〉k (t) × ejkωs τ                                                (10)
+                                                                        (4)
+                                                                                           k=− ∞
+in+1 = g(ψ n+1 )
+
+    Eq. (4) can be expanded:                                                      where ωs=2π/T and 〈x〉k (t) is the kth time varying Fourier coefficient as
+              (        )    (           )                                         (11) shown, and τ ∈ (t-T, t].
+in+1 (j+1) = g ψ (j+1)   = g ψ (j)
+                               n+1 + Δψ                                                       ∫
+                 n+1
+                                                                                             1 t
+   (       ) dg(ψ ) ⃒            (             )                                  〈x〉k (t) =        x(τ) × e− jkωs τ dτ                               (11)
+                  n+1 ⃒ (j)                                                                  T t− T
+                                                                        (5)
+       (j)                         (j+1)  (j)
+= g ψ n+1 +            ⃒ψ n+1 × ψ n+1 − ψ n+1
+              dψ n+1
+                                                                                      Complex coefficients 〈x〉k (t)denoted as DP that characterize time
+                          (           )
+   (j)  (j+1)                (j)           (j)
+= G Vn+1 + in+1 (j) − Γ(j) ψ n+1 − ψ n + G Vn                                     evolution of kth harmonic component of x(t) in the sliding time window
+                                                                                  (t-T, t] are shown in (10). The above method is widely utilized to identify
+    The discretised form Eq. (5) can be rearranged as follows:                    quasi-periodic operating conditions in the modeling of electronic con­
+                                                                                  verters which referred is to as shifting frequency method (SFM) method
+i(j+1)  (j) (j+1) (j)
+ n+1 = GL Vn+1 + ILh                                                    (6)       [18–20]. It is readily observed that once the DP components of different
+                                                                                  harmonic waveforms are obtained by Eq. (11), one can opt to use not
+where                                                                             only a number of low-frequency harmonics but also mid- or
+        (      )       (           )
+                                                                                  high-frequency harmonic components to represent the original signal.
+ (j)
+ILh  = g ψ (j)
+           n+1 − Γ
+                   (j)
+                        ψ (j)          (j)
+                          n+1 − ψ n + GL Vn                             (7)
+                                                                                  Note that this is different from traditional FAST-based simulation
+                        ⃒                                                         method which is only suitable for studying low-frequency harmonic
+                        ⃒
+Γ(j) = (din+1 / dψ n+1 )⃒ψ (j)                                          (8)       problem [22].
+                                                                                      For the nonlinear inductor, the multiplicative nonlinear inductance
+                            n+1
+
+
+
+
+                                                                              2
+Z. Gong et al.                                                                                                       Electric Power Systems Research 208 (2022) 107856
+
+
+
+
+           Fig. 4. Companion model of linear inductor in DP domain.
+
+
+Lm function is used to mathematically describe a saturation effect of
+nonlinear model of generator or transformer etc., so the following two
+properties are often proven to be useful. Eq. (12) describes the DP of the
+derivative of a signal, and (13) shows the DP representation of the
+product of two signals.
+                 〈     〉
+d                 dx(t)                                                          Fig. 5. Multi-frequency band equivalent phasor shifting by the application of
+   〈x(t)〉k (t) =         − jkω〈x〉k (t), ω= 2π /T                     (12)        SEP-derived phasor form.
+dt                 dt k
+
+                 ∑
+                 ∞
+〈x(t)⋅y(t)〉k =           〈x(t)〉k− i 〈y(t)〉i                           (13)       ⎧                              ∑
+                                                                                                                ∞
+
+                 i=− ∞
+                                                                                 ⎪
+                                                                                 ⎨ S(t − T + s) = 〈x(t)〉0 (t) +
+                                                                                 ⎪                                (2〈x(t)〉k (t)ejkωs (t− T+s) )
+                                                                                                                                                                (17)
+                                                                                                                  k=1
+   Electric circuits using trapezoidal integration based on DP are               ⎪
+                                                                                 ⎪                                         ∑
+                                                                                                                           ∞
+                                                                                 ⎩̂S(t) = sI (t) + jsQ (t) = 〈x(t)〉0 (t) +   2〈x(t)〉k (t)
+deduced according to Eqs. (12) and (13) as follows [15].
+   For linear inductor, its derivative time domain equation is as follows:
+                                                                                                                           k=1
+
+
+
+di(t) 1                                                                          where ̂S(t) is the slow changing complex envelope of the time-domain
+                                                                      (14)
+                                                                                 signal S(t). Here ejkωs(t-T+s) is denoted as shifted equivalent phasor
+     = v(t)
+ dt   L
+                                                                                 where ωs is fundamental frequency. When the envelope of the waveform
+and solved for the derivative:                                                   is of concern, shifted equivalent phasor is set to be 1 and the amplitude
+〈i(t)〉k (t) = Y〈v(t)〉k (t) + IhL (t)                                             of the ̂
+                                                                                        S(t) is the objective envelope signal and large time step is utilized
+                                [            ]                                   to speed up the computation. If large disturbance occurs in the network,
+                                  1 − jωkΔt/2
+IhL (t) = Y〈v(t)〉k (t − Δt) +                  〈i〉k (t − Δt)                     instantaneous waveform can be tracked by multiplying shifted equiva­
+                                  1 + jωkΔt/2                         (15)
+                                                                                 lent phasor ejkωs(t-T+s) as shown by Eq. (17) to obtain real signals to
+Y=
+      Δt/2L                                                                      process EMT simulation.
+   1 + jωkΔt/2                                                                       It is noted that recursive discrete Fourier transform (RDFT) operation
+    Companion model in DP domain of Eq. (15) is shown in Fig. 4, and             with sliding window of time of original signal s(t) is considered to view
+the capacitance model is illustrated in [16].                                    different harmonics’ envelopes. For fs=fci (i = 1,2,3,…,N), where N is the
+    The drawback of traditional DP method is the simulation time step            number of frequencies obtained from RDFT, the complex envelope is
+should be set small enough to capture the high or mid frequency tran­            obtained from ̂  S(t) and the Fourier spectrum of it is concentrated around
+sient, since larger time step like 100μs:10μs in DP-EMT co-simulation            zero (i.e. f = 0) as shown in Fig. 5.
+method can have large errors in transient simulation [15]. However,
+large time step simulation in AC-DC electric network is dema

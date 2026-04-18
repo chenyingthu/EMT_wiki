@@ -1,0 +1,214 @@
+                                                                 Electric Power Systems Research 210 (2022) 108163
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Algorithm for fast calculating the energization overvoltages along a power
+cable based on modal theory and numerical inverse Laplace transform
+Han Li a, Peixin Yu a, Shurong Li a, Xuefeng Zhao b, Junbo Deng a, *, Guanjun Zhang a
+a
+    State Key Laboratory of Electrical Insulation and Power Equipment, Xi’an Jiaotong University, Xi’an, 710049, China
+b
+    Electric Power Research Institute of State Grid Shaanxi Electric Power Company, Xi’an, 710054, China
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    Transient overvoltage caused by energization may damage the insulation in a power cable transmission system.
+Power cable                                                  Therefore, overvoltage along the cable should be calculated and evaluated carefully. Calculation based on
+Energization overvoltage                                     traditional commercial software is time-consuming, therefore, there is a need to develop a new algorithm to
+Modal theory
+                                                             improve the computational efficiency. First, coupled cable conductors are transformed into independent modes
+Laplace transform
+Numerical inverse Laplace transform
+                                                             through phase-mode transformation. Then, the voltage formula of each independent mode in the complex fre­
+Frequency dependent phase model                              quency domain is obtained through Laplace transform. Finally, energization overvoltages along the cable are
+                                                             calculated using numerical inverse Laplace transform (NILT) and mode-phase transformation. The proposed
+                                                             algorithm is applied to a 330 kV cable line with a length of 9.6 km to certify the accuracy and computational
+                                                             efficiency. Compared with frequency dependent phase model (FDPM) in PSCAD/EMTDC, relative errors of the
+                                                             obtained results are less than 1%, and the maximum CPU time consumed is only about 8%. The proposed al­
+                                                             gorithm can improve the computational speed of cable energization overvoltages greatly on the premise of
+                                                             ensuring accuracy and may be contributing to actual applications.
+
+
+
+
+1. Introduction                                                                                    lossless transmission line that takes into account the wave impedance Z0
+                                                                                                   and the wave speed c0 with a resistance R that characterizes the atten­
+    With rapid urbanization, there is a strong demand to transfer tradi­                           uation [7]. It is a single-frequency parameter model and is often used in
+tional overhead lines (OHL) into underground power cable lines [1]. The                            steady-state calculations. The Noda model is a frequency-dependent
+risk of suffering severe overvoltages increases owing to their larger                              model which calculates the cable parameters in the phase domain
+capacitance compared with OHLs [2]. For high-voltage cable power                                   rather than the frequency domain. However, not only full parameter
+transmission systems, energization overvoltage is one of the severest                              matrices of the power cable are supposed to be calculated in this model,
+overvoltages that can occur in the system, which should be simulated or                            but the convolution processes are also introduced, which will lead to a
+calculated before the construction of the cable transmission project [3].                          significant decrease in computational speed [8]. The J. Marti model is a
+When equipment such as a circuit breaker is operated in an actual                                  frequency-dependent model with relatively high accuracy, which per­
+transmission system, energization overvoltages should be checked to                                forms rational function fitting in the s-domain. It is suitable for OHL
+avoid damages to the insulation [4].                                                               modeling. However, it requires the user to specify the dominant fre­
+    A commercial program for electromagnetic transient (EMT) calcu­                                quency manually before the simulation, which may lead to a more
+lation such as PSCAD/EMTDC and EMTP, adopts the pi model, Bergeron                                 complex modeling process and lower accuracy [9]. The FDPM is the
+model, Noda model, J. Marti model, and FDPM to model the power cable                               most accurate and commonly used frequency-dependent model in the
+[5]. The PI model is a lumped-parameter model, and the other models                                simulation software and is also the reference model for comparison in
+are all distributed-parameter models. The application of the PI model is                           this study. It operates on the principle that the full
+limited, and it can only be considered for modeling when the length of                             frequency-dependence of a transmission system can be represented by
+the cable is very short or the wave propagation time does not exceed the                           the propagation function and characteristic admittance [10,11].
+time step in the simulation [6]. The Bergeron model is a Norton                                        The aim of all distributed-parameter models mentioned above is to
+equivalent model based on the traveling wave theory, which combines a                              solve the telegrapher’s equations with higher accuracy and faster
+
+
+        E-mail address: dengjb@mail.xjtu.edu.cn (J. Deng).
+    *
+        Corresponding author.
+
+https://doi.org/10.1016/j.epsr.2022.108163
+Received 26 January 2022; Received in revised form 28 May 2022; Accepted 31 May 2022
+Available online 5 June 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+H. Li et al.                                                                                                              Electric Power Systems Research 210 (2022) 108163
+
+
+
+
+                                    Fig. 1. Diagram of the distributed parameter circuit of single-phase transmission line.
+
+
+computational speed. In addition to the methods employed in these                  modeling process of the power cable with a large number of cable sec­
+models, the telegrapher’s equations can also be solved by applying the             tions. By using the modal theory, unnecessary coupling of cable loops
+combination of the modal theory and NILT. At present, there have                   can be avoided, and the combination of Laplace transform and NILT can
+already existed some classical NILT algorithms such as the Gaver-                  eliminate the limitation on the minimum time step, which may be
+Stehfest method, Schapery method, Weeks method, Talbot method,                     helpful in improving the computational efficiency and bringing faster
+and Fourier series method, which are powerful when the expressions in              computational speeds. The energization overvoltage calculation algo­
+the complex frequency domain are too complicated to be converted to                rithm based on modal theory and NILT is an important supplement to
+the time domain by the analytical Laplace transform [12]. Kuhlman                  the existing commercial software, which may also be contributing to the
+compared the efficiency of the above five algorithms based on the                  actual projects.
+boundary element method, and the results show that the Fourier series                  The paper is structured as follows: Section 2 introduces the energi­
+method is more suitable for common time behaviors and is more robust               zation overvoltage calculation algorithm based on modal theory and
+to free parameters [13]. Rani et.al established a new NILT algorithm by            NILT in detail, and it is applied to an actual 330 kV cross-bonded power
+using the Bernoulli polynomials operation matrix and verified the ac­              cable line in Section 3, the accuracy of the obtained overvoltages is also
+curacy of the results by some nonlinear differential equations [14].               verified in this section; Section 4 shows the advantages of the modal
+Baumann et.al proposed a Sinc based NILT algorithm and verified its                theory and NILT based algorithm. In Section 5, the frequency depen­
+accuracy for solving fractional differential equations [15]. In addition to        dence of the energization overvoltage calculation algorithm is discussed,
+the theoretical studies on the NILT algorithms, there also exist some              and finally, conclusions are presented in Section 6.
+studies applying NILT algorithms to the modeling of transmission lines.
+For example, Brančík et.al proposed a multi-dimensional NILT algorithm            2. Calculation of energization overvoltages along the cable
+based on the fast Fourier transform (FFT) and quotient-difference (q-d)
+algorithm and applied this algorithm to the calculation of single-phase            2.1. Telegrapher’s equations and modal theory
+transmission lines [16,17]. They also performed the modeling on
+nonuniform lossy transmission lines with fractional-order elements by                  Telegrapher’s equations are of great importance in the analysis of
+using NILT methods [18]. Griffith et.al proposed a NITL-based method,              EMT processes on power cable lines [21,22], whose phasor forms are as
+which is able to analyze the lossy coupled transmission lines with                 follows:
+arbitrary linear terminal and interconnecting networks [19]. Ghnimi et.            ⎧ 2
+                                                                                   ⎪  d V
+al presented a study to compare the performance and accuracy of                    ⎪
+                                                                                   ⎪ 2p = Zp ⋅Y p ⋅V p
+                                                                                   ⎨
+different NILT algorithms for multiconductor transmission line systems                 dx
+                                                                                                                                                      (1)
+modeling, and the result showed that the algorithm based on FFT and                ⎪     2
+                                                                                   ⎪ Ip = Y ⋅Z ⋅I
+                                                                                   ⎪
+                                                                                   ⎩
+                                                                                       d
+q-d is the best [20].
+                                                                                              p p p
+                                                                                       dx2
+    The energization overvoltages of power cables can be easily calcu­
+lated by using the models integrated into commercial EMT simulation                where Vp and Ip represent the frequency-dependent voltage and current
+software. However, all these models treat the power cable as a two-port            at position x of the cable, respectively; and Zp and Yp denote the
+network, which means that only the overvoltages at the sending and                 frequency-dependent series impedance matrix and parallel admittance
+receiving ends of the power cable are to be calculated. When over­                 matrix of the cable, respectively.
+voltages along a power cable with a large number of cable sections are to              Zp and Yp are not diagonal matrices because of the mutual coupling
+be calculated, the modeling process is supposed to be relatively                   between the loops in the cable, which makes it complex to solve the
+complicated. Besides, it’s necessary to calculate energization over­               differential equations shown in Eq. (1). To solve this problem, the
+voltages faster in some emergency situations, but the computational                voltage transformation matrix Tv and current transformation matrix Ti
+speed of the above methods still needs to be improved. In addition, most           are introduced, as shown in Eq. (2). The diagonalization process is
+of the existing NILT algorithms are simply applied to single-phase uni­            shown in Eq. (3), in which Λ is the diagonalized matrix.
+form transmission lines or multi-conductor uniform transmission lines,             {
+                                                                                     V p = T v ⋅V m
+few studies combine their algorithms with overvoltage calculations                                                                                    (2)
+                                                                                     Ip = T i ⋅Im
+along the power cable. On the basis of these reasons, a novel algorithm is
+                                                                                   ⎧ 2
+proposed for fast calculating the energization overvoltages along the              ⎪ d Vm
+                                                                                   ⎪        = T −v 1 ⋅Zp ⋅Y p ⋅T v ⋅V m = Λ⋅V m
+cross-bonded power cable based on modal theory and NILT. In the                    ⎪
+                                                                                   ⎨
+                                                                                      dx2
+calculation process, the power cable is not simply considered as a two-                                                                                                (3)
+                                                                                   ⎪
+                                                                                   ⎪ d 2 Im
+port network, but the voltage formula in the complex frequency                     ⎪
+                                                                                   ⎩ 2 = T −i 1 ⋅Y p ⋅Zp ⋅T i ⋅Im = Λ⋅Im
+                                                                                      dx
+domain depending on position is deduced, which greatly simplifies the
+
+
+                                                                               2
+H. Li et al.                                                                                                     Electric Power Systems Research 210 (2022) 108163
+
+
+
+
+                                           Fig. 2. Workflow of energization overvoltage calculation algorithm.
+
+
+where m indicates that this parameter is calculated in the modal domain.            For a specific mode, fd can be calculated approximately when im­
+    The modes can be connected to the circuit shown in Fig. 1, where in         pedances of the power source and the load are not considered by [20]
+                                                                                      /         /( √̅̅̅̅̅̅̅̅̅̅̅̅̅ )
+the left side is the Thevenin equivalent power source and impedance, the
+                                                                                fd = 1 (4τ) = 1 4 Lmi Cmi l                                       (6)
+right side is the i-th obtained mode. Further, Rmi, Lmi, Gmi, and Cmi
+represent the resistance, inductance, conductance, and capacitance per
+                                                                                where τ denotes the wave propagation time, l denotes the length of the
+unit length of the i-th modal domain.
+                                                                                cable line, and Lmi and Cmi represent the inductance and capacitance per
+    Since Tv, Zp, and Yp used in the above process are frequency-
+                                                                                unit length of the corresponding modes, respectively.
+dependent, it is necessary to determine the dominant mode and domi­
+nant frequency fd of the cable to ensure accurate overvoltage calcula­
+tion. For a single-core coaxial power cable, dominant modes change              2.2. Energization overvoltage calculation algorithm
+between intersheath and coaxial modes [23]. For the case satisfying
+d > HS orfd > fc                                                      (4)           The analysis of the energization overvoltages along the cross-bonded
+                                                                                cable and the corresponding overvoltage calculation algorithm is shown
+the dominant mode is the coaxial mode; otherwise, the dominant mode             in Fig. 2.
+becomes the intersheath mode [21]. In Eq. (4), HS denotes the pene­                 There are three steps shown in the algorithm flow; each step involves
+tration depth, and fc denotes the critical frequency shown in                   mutual transformations between the time, phase, modal, and complex
+{       √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                                    frequency domains, as shown in Fig. 3.
+  HS = ρS /(ωμS )
+         /(            )                                         (5)
+  fc ≈ ρS πμS d2                                                                2.2.1. Calculation on frequency-dependent parameters and modal analysis
+                                                                                   A cross-bonded cable refers to a cable whose metallic sheaths are
+where ρs, μs, and d denote the resistivity of sheath, permeability of           transposed. It includes the major and minor sections, as shown in Fig. 4.
+sheath, and thickness of the metallic sheath, respectively.                        To calculate the energization overvoltages along the cross-bonded
+                                                                                cable, the dominant frequency fd should be calculated at first. It is
+
+
+
+
+                                             Fig. 3. Mutual transformations between domains in each step.
+
+                                                                            3
+H. Li et al.                                                                                                                        Electric Power Systems Research 210 (2022) 108163
+
+
+
+
+                                                                 Fig. 4. Structural diagram of cross-bonded cable.
+
+
+necessary to use the iterative calculation frequency fcal to calculate the
+                                                                  (q)                        αi (i = 1, 2, ⋯, 6) denotes the column vector. Then each αi represents an
+cable parameters temporarily when solving the dominant frequency;                            eigenvector of (ZY)(c)p , and the diagonal elements λmi of the obtained
+
+here, q denotes the number of iterations. fcal
+                                           (q)
+                                                can be considered the                    

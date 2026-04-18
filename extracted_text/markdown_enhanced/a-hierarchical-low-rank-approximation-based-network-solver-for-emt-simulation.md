@@ -1,0 +1,25 @@
+# A Hierarchical Low-Rank Approximation Based Network Solver for EMT Simulation
+**Lu Zhang**, Student Member, IEEE, **Bin Wang**, Member, IEEE, **Xiangtian Zheng** Student Member, IEEE, **Weiping Shi**, Fellow, IEEE, **P. R. Kumar**, Fellow, IEEE, and **Le Xie**, Senior Member, IEEE
+
+*Preferred address for correspondence: Le Xie, Dept. of ECE, Texas A&M Univ., 3128 TAMU, College Station, TX 77843-3128.*
+
+**Abstract**—In electromagnetic transient (EMT) simulation, 80-97% of the computational time is devoted to solving the network equations. A key observation is that the sub-matrix representing the interaction between two far-away groups of buses is usually sparse and can be approximated by a low-rank matrix. Based on this observation, we propose a novel low-rank approximation method which permits $O(N \log N)$-time matrix-vector multiplication for each network solution time step. Comprehensive numerical studies are conducted on a 39-bus system and a 179-bus system from the literature, and large cases created from the two systems. The results demonstrate that the proposed approach is up to 2.8× faster than the state-of-the-art sparse LU factorization based network solution, without compromising simulation accuracy. Since our low-rank approximation is highly parallelizable, further speedup may be possible.
+
+**Index Terms**—Electromagnetic transient (EMT), network solution, graphic partition, hierarchical low-rank approximation.
+
+*Fig. 1: EMT-related events in the power grid where SSO(sub-synchronous oscillations) is the main concern*
+
+## I. INTRODUCTION
+THE significant increase of variable energy resources in the power grid, coupled with the substantial growth of electrified vehicles, lead to a more stressed grid with much higher variability at the operational stage. Such variability together with today’s lack of accurate online simulation capabilities lead to the difficulty in predicting the transient dynamics across the grid. This, combined with lower operating reserves, pose significant challenges to online security assessment. To address this requires a capability to accurately predict the future transient behavior of the grid in a faster than real-time manner, taking all factors, such as electromechanical and electromagnetic, into account. Present operating practice considering only electromechanical transients is already slow, which may have been acceptable in the past when there were sufficient operating reserve buffers, but is insufficient for the next-generation grid transformed by the reliance on many more variable resources and serving many more varying demands, with a much lower reserve margin [1], [2], [3]. Fig. 1 shows an incomplete list of growing physical anomaly partially induced by electromagnetic transients (EMTs) over the past five decades.
+
+This paper targets at speeding up the challenging EMT simulation. It is motivated by the fact that a commercial EMT simulator today takes up to 80 hours to simulate one second of transient for an 87,000-node system [4], with the majority of the time cost, 80 − 97% [5][6], being taken by the network solution. Thus, the network solution is a bottleneck of the EMT simulation. Among different network solvers, sparse LU based solver seems to be the most efficient for large grids [7]. However, its performance is insufficient to meet the challenge, and LU-based solvers are sequential in nature and difficult to parallelize for additional speedup. If any network delay exists, it can be naturally used to decompose the network to achieve a limited parallelization. However, the resulting improvement is limited when there exist large blocks, e.g., of greater than 13K dimensions, representing dense regions [8].
+
+There are also an excellent line of work based on hardware approach using multi-core CPUs, GPUs, and FPGAs [6][7][8][9][10][11][12], achieving significant speedup.
+
+In this paper, we propose a novel approach to accelerate EMT simulation by taking advantage of the network topological structure and achieve fast matrix-vector multiplication by low-rank approximation. The low-rank approximation significantly reduces the computational time and speeds up the network solution to $O(N \log N)$ outperforming previous network solvers, including sparse LU based solvers. The key contributions of this paper are summarized below.
+1. We propose a hierarchical low-rank approximation algorithm to solve the network equation for fast EMT simulation.
+2. We present the time complexity, memory and error analyses of the proposed approach.
+3. We benchmark the accuracy of the proposed approach by comparing with the commercial software EMTP-RV.
+4. We conduct extensive performance tests and compare with the state-of-the-art sparse LU-based network solver.
+
+Our approach is parallelizable in similar way as [13], but

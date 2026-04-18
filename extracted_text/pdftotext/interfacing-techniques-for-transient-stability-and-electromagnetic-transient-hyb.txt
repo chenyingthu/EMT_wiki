@@ -1,0 +1,171 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 4, OCTOBER 2009                                                                                  2385
+
+
+
+
+           Interfacing Techniques for Transient Stability
+             and Electromagnetic Transient Programs
+                                         IEEE Task Force on Interfacing Techniques for Simulation Tools
+                             V. Jalili-Marandi, V. Dinavahi, K. Strunz, J. A. Martinez, and A. Ramirez
+
+
+   Abstract—Transient stability (TS) and electromagnetic transient                   scaled-down representation of the study system. In the TNA
+(EMT) programs are widely used simulation tools in power systems,                    lines were modeled as series PI-circuits made up of R, L, and
+with distinct applications but competing requirements. TS pro-                       C elements [2]. The application of TNA has been restricted due
+grams are fast which makes them suitable for handling large-scale
+networks, however, the modeling is not sufficiently detailed. On                     to its high cost, large dimensions, and model simplification is-
+the other hand, EMT simulators are highly detailed, but limited in                   sues. The advent of digital computers offered an alternate ap-
+speed; consequently, they are used to simulate only small portions                   proach for EMT analysis that overcame some of the restrictions
+of the network. Integrating these two types of simulators generates                  of TNA. EMT-type programs allow low-cost, flexible, and ac-
+a hybrid simulator which inherits the merits of both programs. A
+                                                                                     curate modeling of the EMT phenomenon; however, these sim-
+hybrid simulator can fulfill the modeling requirements of a large
+network by providing a fast as well as a detailed simulation. Es-                    ulators are not without some limitations related to modeling ac-
+tablishing a connection between two different programs brings up                     curacy and processing time [2], [4], [5].
+several important issues which have been addressed, classified, and                     Several applications in large-scale power systems such as
+explained in this paper. An alternative integrated modeling of TS                    simulation of transient states of the network including power
+and EMT is also discussed using the concept of frequency shifting.
+                                                                                     electronic apparatuses and control devices associated with
+   Index Terms—Electromagnetic transient analysis, hybrid simu-                      FACTS and HVDC require a simulator as fast as the TS and
+lation, interfacing, power system transient stability.                               as detailed as the EMT simulator. Many attempts were made
+                                                                                     towards that end, such as using parallel processing or simplified
+                             I. INTRODUCTION                                         models in the form of equivalents [6]–[8], however, in most
+                                                                                     cases they were found inadequate for dealing with the large size
+
+T     RANSIENT STABILITY (TS) and Electromagnetic
+      Transient (EMT) studies are two important analyses in
+power systems [1], [2]. Transient stability study is important
+                                                                                     of realistic power systems. The idea of a combined TS and EMT
+                                                                                     simulator was first proposed and implemented by Heffernan
+                                                                                     et al. [9], in 1981. Two separate and distinct simulators were
+for planning and design, operation and control, and post-dis-                        integrated for transient analysis of a system which includes a
+turbances analysis in power systems [3]. Transient stability                         HVDC link [10]. Later several improvements were made in
+type programs solve several thousands of differential-alge-                          different steps of building the hybrid simulator.
+braic equations for multi-machine power systems assuming                                The application of hybrid simulation is a relatively recent
+single-phase fundamental frequency behavior. To handle such                          topic. Our intent in this paper is to aggregate various terms,
+large numbers of equations a time-step in the range of millisec-                     definitions, and methods which have been used in each step of
+onds is chosen for the simulation.                                                   building a hybrid simulator. The paper is organized as follows: in
+   Applications such as insulation coordination, design of pro-                      Section II, general terms and definitions which are related to the
+tection schemes, and power electronic converter design require                       TS and EMT programs will be reviewed. Although there are sev-
+the computation of electromagnetic transients. EMT simula-                           eral documents concerning these topics, here we briefly present
+tion must be done by considering all phases, over a wide range                       the latest definitions reported in IEEE Standards and Task Force
+of frequency, and with a time-step in the range of microsec-                         publications. In Section III and Section IV, the properties and
+onds or even less. In the past, traditional EMT analysis was                         restrictions of TS and EMT programs will be described. In Sec-
+based on the Transient Network Analyzer (TNA), an analog                             tion V the motivation for using a hybrid simulator is presented.
+                                                                                     Section VI presents an overview of all the requirements and
+   Manuscript received December 12, 2007; revised March 27, 2008. Current            protocols used for hybrid simulation. In Section VII, an inte-
+version published September 23, 2009. This work was supported by the Nat-            grated EMT-TS frequency adaptive simulation method will be
+ural Science and Engineering Research Council of Canada (NSERC). Paper no.           discussed. The conclusion of this paper appears in Section VIII.
+TPWRD-00800-2007.
+   Task Force members: U. Annakkage, V. Dinavahi (Task Force Chair), S. Fil-
+izadeh, A. M. Gole, R. Iravani, V. Jalili-Marandi, J. Jatskevich, A. J. Keri, P.                 II. GENERAL TERMS AND DEFINITIONS
+Lehn, J. A. Martinez, B. A. Mork, A. Monti, L. Naredo, T. Noda, A. Ramirez,
+M. Rioual, M. Steurer, and K. Strunz are with the Task Force on Interfacing          A. Transient
+Techniques for Simulation Tools, which is with the Working Group on Mod-
+eling and Analysis of System Transients Using Digital Programs, IEEE Power              IEEE Standard Dictionary defines a transient phenomena as
+Engineering Society Transmission and Distribution Committee..                        follows [11]:
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                          Pertaining to or designating a phenomenon or a quantity that
+   Digital Object Identifier 10.1109/TPWRD.2008.2002889                              varies between two consecutive steady states during a time in-
+                                                                  0885-8977/$26.00 © 2009 IEEE
+2386                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 4, OCTOBER 2009
+
+
+
+terval that is short compared to the time scale of interest. A         rotor angle stability phenomenon, with a time frame of interest
+transient can be a unidirectional impulse of either polarity or        in the order of 3 s to 5 s following the disturbance. This time
+a damped oscillatory wave with the first peak occurring in ei-         span may increase up to 10–20 s in the case of very large net-
+ther polarity.                                                         works with dominant inter-area swings [1].
+   Overvoltages due to lightning and capacitor energization
+are examples of events that cause impulsive and oscillatory            D. Electromagnetic Transient
+transients, respectively. Some of the most common types of                An electromagnetic transient can be defined as the response
+transient phenomena in power systems include energization              of the power system elements to a perturbation caused by ex-
+of transmission lines, switching off of reactors and unloaded          ternal electromagnetic fields or to a change in the physical con-
+transformers, linear resonance at fundamental or at a harmonic         figuration of the network such as switching and loading. Elec-
+frequency, series capacitor switching and sub-synchronous              tromagnetic transients in power systems result from a combina-
+resonance, and load rejection [2].                                     tion of transient components in lumped-parameter elements and
+                                                                       traveling waves in distributed-parameter elements [17]. Tran-
+B. Stability                                                           sient over-voltage on a transmission line that is energized from
+   From a system point of view there exist several types of sta-       one end, while its other end is still open, presents a typical case
+bility definitions such as: Lyapunov stability, input-output sta-      of an electromagnetic transient. It consists in a very fast time
+bility, stability of linear systems, and partial stability [1]. Kim-   variation waveform superimposed on the fundamental (source)
+bark has classically defined stability related to power systems in     frequency waveform. According to transmission line theory, if
+[12], however, this definition was restricted to synchronous ma-       the sending end is connected to a dc voltage source of 1 p.u.
+chines, and their being “in step.” The IEEE/CIGRE Joint Task           there exists a 2 p.u. over-voltage at the open ended terminal.
+Force on Stability Terms and Definitions [1] adopted the fol-          This doubling effect can also be observed at the motor terminals
+lowing definition:                                                     of adjustable speed drives, in cases where the length of cable
+   Power system stability is the ability of an electric power          between the pulse-width modulated converter and the motor is
+system, for a given initial operating condition, to regain a state     more than 20 m. Furthermore, the over-voltage can produce a
+of operating equilibrium after being subjected to a physical           transient phenomenon in nearby transmission systems or elec-
+disturbance, with most system variables bounded so that prac-          trical equipments without even being physically connected to
+tically the entire system remains intact.                              the energized line. Switching operations, faults, and direct or
+   Instability in power systems can be caused by either small or       indirect lightning strikes are other sources for electromagnetic
+large disturbances. During a small disturbance the set of equa-        transients in inter-connected power networks [2].
+tions which describe the perturbed power system can be lin-
+earized; however, during the large disturbance these equations         E. Parallel Processing
+cannot be linearized for the purpose of analysis [13]. Typical ex-        The method of Diakoptics, introduced in 1952 by Kron [18],
+amples of small disturbances are a small change in the scheduled       is the earliest application of the network partitioning and par-
+generation of one machine, or a small load (say 1/100 of system        allel processing in power systems. Several research areas in
+capacity or less) disconnected or added to the network [14],           power systems such as load flow, transient stability, electromag-
+[15]. Severe perturbations such as short-circuit faults and loss of    netic transients, security assessment, and reliability studies have
+generation events are representative of large disturbances. Addi-      taken advantage of parallel processing techniques to achieve
+tionally, phenomena which cause instability problems in power          highly efficient computations [19]–[23]. The IEEE Task Force
+systems have been sub-classified based on their duration [1].          report [20] has proposed the following definition of parallel
+                                                                       processing:
+C. Transient Stability                                                    Parallel processing is a form of information processing in
+    Power system stability phenomena can be categorized into           which two or more processors together with some form of inter-
+three major classes: rotor angle stability, voltage stability, and     processor communications system, cooperate on the solution of
+frequency stability. If an interconnected network has been sub-        a problem.
+jected to a perturbation; the ability of this power system to keep        Two types of parallelization are available: parallel-in-space
+its machines in synchronism, and to maintain voltages of all           and parallel-in-time. A parallel-in-space approach is based on
+buses as well as the frequency of the whole network around the         decomposing the original system into smaller subsystems and
+steady-state values is the basis for the above mentioned classifi-     distributing their computations among several processors [24].
+cation [3]. Each form of stability phenomena may be caused by          As power systems are stiff systems (i.e., a system in which time
+a small or large disturbance.                                          constants of the subsystems vary over a wide range [13]), it is
+    Although in the literature the term transient stability has been   practical to use multi-rate integration methods for different sub-
+used to refer to the large-disturbance rotor angle stability phe-      systems to discretize differential-algebraic equations (DAEs)
+nomenon [13], [14], some authors have used this term as a gen-         which describe the dynamic behavior of subsystems [25].
+eral purpose stability study of the given network with a partic-          A parallel-in-time approach is based on using simultaneous
+ular disturbance sequence [16]. The IEEE/CIGRE task force re-          multiple time-step solution of nonlinear DAEs that describe the
+port has categorized both the small and large disturbance rotor        system [24]. In this case, each processor is assigned to solve
+angle stability phenomena as short-term events. Furthermore,           equations for only one iteration, and usually the number of pro-
+it recommends the term transient stability for large-disturbance       cessors should be equal or greater than the number of required
+JALILI-MARANDI et al.: INTERFACING TECHNIQUES FOR TRANSIENT STABILITY                                                                  2387
+
+
+
+iterations. Experimental studies claim that partitioning a net-         components and systems, design of protection schemes, and
+work into too many subsystems by using a large number of                fault analysis in series-compensated lines or on HVDC lines [2],
+processors which are parallel-in-space increases the inter-pro-         [7]. Electromagnetic transient study requires detailed modeling
+cessor communication time, while excessive exploitation of par-         and therefore a much smaller time-step than in the transient sta-
+allel-in-time processors increases the number of iterations. Nev-       bility study. Depending on the type of transient and the highest
+ertheless, a proper combination of these two types of paralleliza-      frequency involved, the required step-size can vary in the range
+tion methods can be used to effectively accelerate the speed of         of a few nanoseconds for very fast transients, to a few hundred
+computation [24].                                                       microseconds [4], [32] for slower transients.
+                                                                           Electromagnetic transients are fast phenomena for which
+           III. PROPERTIES AND RESTRICTIONS OF                          power-frequency phasor modeling is not valid. In contrast with
+              TRANSIENT STABILITY SIMULATORS                            transient stability analysis, instantaneous values need to be used.
+   The complete power system model for transient stability anal-        In addition, electromagnetic transient phenomenon is not a sym-
+ysis can be mathematically described by a set of first-order dif-       metric event that could be studied on the single-phase basis, but
+ferential equations and a set of algebraic equations. The dif-          we need to use a full three-phase simulations [2]. Comprehensive
+ferential equations model dynamics of the rotating machines             discussions on approaches for EMT modeling of several power
+while the algebraic equations represent the transmission system,        system elements and transmission lines can be found in [4], [17],
+loads, and the connecting network [26]. These equations are             [29]–[31]. Section B in the Appendix presents the general form
+nonlinear, and the typical solution approach is to use a dis-           of the electromagnetic transient study equations.
+cretization method such as the Trapezoidal rule to convert the             A large number of equations and a small time-step have made
+differential equations to a new set of nonlinear algebraic equa-        the electromagnetic transient study a computationally onerous
+tions, and then solving these two sets of nonlinear algebraic           type of simulation. Practically it is inefficient to perform elec-
+equations by a suitable iterative method such as the Newton-            tromagnetic transient analysis for a large network where all of
+Raphson. Section A in the Appendix provides the details on the          the components are represented using detailed models. Usually
+general solution of the transient stability problem.                    some form of network partitioning and model reduction are re-
+   A complete description of the power network requires a very          quired to reduce computational burden. For instance, we need
+large number of equations. For instance, consider a realistic           the distributed-parameter form of modeling to evaluate the steep
+inter-connected power system which includes over 3000 buses             surge propagation in windings of transformers or in windings of
+and about 400 power stations which are feeding 800 loads. As-           synchronous generators; however, for studies related to propa-
+suming that the transmission system and loads are modeled by            gation of low-frequency transients, transformers and generators
+algebraic equations, and the generation stations are modeled by         can be represented by lumped-parameter approximations [17],
+a set of 20 first-order differential equations each. The transient      [32], [33].
+stability analysis of the described network needs solving of 8000
+differential equations and about 3500 algebraic equations [15],                V. NEED FOR A HYBRID TRANSIENT SIMULATOR
+[27]. To make this solution as time-efficient as possible usually          For transient evaluation of a realistic-size power networks
+a time-step in the range of milliseconds is c

@@ -1,0 +1,181 @@
+2624                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+
+       Universal Decoupled Equivalent Circuit Models of
+           Solid-State Transformer for Accelerated
+                    EMT-Type Simulation
+           Hengyu Li , Graduate Student Member, IEEE, Walid Hatahet , Graduate Student Member, IEEE,
+         Jared J. Paull , Graduate Student Member, IEEE, Jintao Han , Liwei Wang , Senior Member, IEEE,
+                                            and Wei Li , Member, IEEE
+
+
+   Abstract—Multilevel Multimodule Solid-State Transformer                         The SST, performing AC-AC power conversion, has typically
+(SST) is emerging as a key technology interfacing MVAC and                         three stages, i.e., modular multilevel AC-DC converter in Stage
+LVAC systems via chainlink AC-DC converter and Dual Active                         I, high-frequency Dual Active Bridge (DAB) DC-DC converters
+Bridge (DAB) DC-DC converters. The SST has the advantages of
+high modularity, bidirectional power transfer, galvanic isolation,                 [2], [3], [4] in Stage II, and 2-/3-level DC-AC converter in Stage
+and high-frequency power conversion. Fast control prototyping                      III. One of the most popular SST configurations has multiple
+of the SST requires numerically efficient and accurate equivalent                  power modules series-connected on the primary MVDC side
+circuit models for Electromagnetic Transient (EMT) simulation.                     and parallel-connected on the secondary LVDC side, known
+This paper proposes universal decoupled equivalent circuit models
+                                                                                   as Input-Series-Output-Parallel (ISOP) configuration [5], [6].
+using switching function to simplify the power converter circuits.
+Various types of power converters including full-bridge converter,                 A voltage balancing control [6] is employed in the ISOP-SST to
+DAB DC-DC converter, and three-phase 3-level converters can be                     regulate MVDC capacitor voltages of Full-Bridge Submodules
+universally modeled by the proposed equivalent circuits in both                    (FBSMs) for stable input voltages of the primary-sides of DAB
+deblocking and blocking modes. The use of switching function and                   modules.
+DC-link decoupling strategy in equivalent circuit models achieves                     Numerically efficient and accurate Electromagnetic Transient
+constant G-matrix and significantly reduced node number in the
+EMT solution. A switching interpolation technique is proposed                      (EMT) models of multilevel multimodule converters play an
+for the SST to accurately represent switching events when a large                  essential part in converter design and fast control prototyping.
+simulation time step is used. Case studies have demonstrated that                  The conventional Detailed Model (DM), composed of many
+the proposed equivalent circuit models significantly improve the                   discrete circuit components, imposes dramatic computational
+numerical efficiency, compared to the conventional detailed model                  burdens due to the large number of switches from the con-
+and variable G-matrix detailed equivalent model.
+                                                                                   verter Submodules (SMs). Consequently, the development of
+   Index Terms—Electromagnetic transient simulation, detailed                      EMT-type Detailed Equivalent Models (DEMs) [7], [8], [9],
+equivalent model, switching-function-based average value model,                    [10], [11], [12], [13] has attracted much attention in modeling
+solid-state transformer, switching interpolation.
+                                                                                   modular multilevel converters (MMC). However, compared to
+                                                                                   MMC modeling, the SST modeling imposes special challenges
+                            I. INTRODUCTION                                        because the DAB submodules in SSTs have higher circuit com-
+      OLID State Transformer (SST) is a key enabler that in-                       plexity, higher switching frequency, interleaving operations of
+S     terfaces Medium-Voltage (MV) AC/DC with Low-Voltage
+(LV) AC/DC distribution systems for renewable energy inte-
+                                                                                   submodules, and complicated circuit coupling between Stages I
+                                                                                   and II of the SSTs. The DEMs of the SST were proposed in [14],
+gration, distributed energy storage, electric vehicle charging                     [15], [16], [30], [31] for accelerated EMT simulation, which
+infrastructure, and AC/DC loads. The SST has the merits of high                    reduces the SST’s internal node number by using Thevenin’s
+efficiency, high-power density, bidirectional power flow capa-                     or Norton’s equivalent circuits. These prior-art works in [14],
+bility, galvanic isolation, and high voltage conversion ratio [1].                 [15], [16], [30], [31] represent converter submodules using
+                                                                                   either Resistive Switch Model (RSM) [14], [15], [16], [31] of
+   Received 13 October 2024; revised 25 April 2025; accepted 22 June 2025.         two-value ON/OFF resistors or L/C-Associated Discrete Circuit
+Date of publication 30 June 2025; date of current version 25 September 2025.       (L/C-ADC) [30] to model each semiconductor switch. Thus, the
+This work was supported by the Natural Sciences and Engineering Research
+Council (NSERC) of Canada. Paper no. TPWRD-01557-2024. (Corresponding              converter DEMs have different equivalent circuit topologies and
+author: Liwei Wang.)                                                               need to be individually derived for various types of submod-
+   Hengyu Li, Walid Hatahet, Jared J. Paull, and Liwei Wang are with the School    ules of the SSTs. Although the DEM in [14], [15], [16], [31]
+of Engineering, The University of British Columbia Okanagan, Kelowna, BC
+V1V 1V7, Canada (e-mail: liwei.wang@ubc.ca).                                       improves the simulation efficiency compared to the DM, the
+   Jintao Han and Wei Li are with OPAL-RT Technologies, Montreal, QC H3K           system conductance (G)-matrix in EMT solution is time-variant
+1G6, Canada (e-mail: wei.li@opal-rt.com).                                          due to the use of two-value resistor to represent the ON/OFF
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3584585.                                        states of semiconductor switches. Frequent refactorization of the
+   Digital Object Identifier 10.1109/TPWRD.2025.3584585                            G-matrix limits further improvement of simulation efficiency.
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 00:28:52 UTC from IEEE Xplore. Restrictions apply.
+LI et al.: UNIVERSAL DECOUPLED EQUIVALENT CIRCUIT MODELS OF SOLID-STATE TRANSFORMER                                                                    2625
+
+
+
+The conventional L/C-ADC model of SST [30] achieves con-
+stant G matrix but causes fictitious voltage and current oscilla-
+tions during switching transitions and results in unrealistically
+high switching losses, especially for simulating converters with
+high PWM frequencies or resonant operations.
+   Switching-function-based DEMs (SFB-DEMs) were origi-
+nally proposed for modular multilevel converters (MMC) in
+[11], [12], [13], which achieve constant G-matrix for numeri-
+cally efficient EMT solutions. The SFB-DEMs reduce the di-
+mensions of the G-matrix by eliminating the nodes of SMs in
+a converter arm. Furthermore, MMC switching-function-based
+average value models (SFB-AVMs) were proposed in [17] and
+                                                                                Fig. 1.   Schematic diagram of the SST DM.
+[18], which further simplify the DEMs of MMCs by assuming
+all SM capacitor voltages are balanced. Thus, one equivalent
+capacitor per arm is used to represent converter arm dynamics.                        types of converters such as single-phase full-bridge or
+A universal modeling framework combining the SFB-DEM                                  three-phase 2- or 3-level converters in both deblocking
+and SFB-AVM was proposed in [19] to further increase the                              and blocking modes for normal and short-circuit fault
+modeling flexibility for different converter operating scenarios.                     operations.
+An SFB-AVM is proposed in this paper, which is different from                      2) The proposed equivalent models decouple the three stages
+the conventional/standard AVMs [26], [27], [28], [29]. In the                         of the SST at the MVDC- and LVDC-link capacitors,
+conventional/standard AVMs, the instantaneous values of the                           which reduces the total number of nodes and the size of
+switched voltage and current are averaged in one switching                            the overall linear system solved by EMT program.
+cycle (the so-called fast average or switching cycle-by-cycle                      3) A constant G-matrix in EMT solution is achieved in both
+average) to remove the switching events/ripple representation                         of the proposed SFB-DEM and SFB-AVM of the SST, due
+in the conventional/standard AVMs. The proposed SFB-AVM                               to the use of switching functions and explicit integration
+represents detailed switching events of the SST in submodule                          rule for the MVDC- and LVDC-link capacitors. Thus,
+level (Stage I FBSM and Stage II DAB DC-DC converter                                  the simulation efficiencies of the proposed SFB-DEM
+submodule). It is so called SFB-AVM, because the average                              and SFB-AVM are greatly improved, compared to the
+voltage of MV FBSM capacitors from Stage I is used as sub-                            conventional DM and Variable G-matrix (VG) DEMs.
+module capacitor voltage at the primary side of each DAB sub-                      4) A switching interpolation technique is applied in the pro-
+module for the detailed switching based EMT simulation. There-                        posed SFB-DEM and SFB-AVM to accurately capture the
+fore, the proposed SFB-AVM actually represents detailed semi-                         intra-step switching events in all three stages of the SST,
+conductor switching in DAB submodule level and can simulate                           i.e., multilevel AC-DC converter, DC-DC DAB convert-
+switching harmonics/ripples and low-level controls of the SST,                        ers, and NPC three-level converter. Thus, large integra-
+e.g., FBSM stack energy balancing in Stage I and interleaving                         tion time steps are used in the proposed SFB-DEM and
+operation of DAB submodules in Stage II.                                              SFB-AVM to improve EMT simulation efficiency while
+   Offline and real-time EMT simulation tools often use nu-                           preserving simulation accuracy.
+merical integration solvers with fixed time steps. It is critical
+for the numerical solvers to capture switching time instants                                II. SST CIRCUIT TOPOLOGY AND CONTROL
+precisely when the switching status changes, especially for
+high-frequency converters. However, switching events may oc-                    A. Three-Stage Circuit Topology
+cur within two consecutive simulation time steps (intra-step                       Circuit configuration of the SST is introduced in this subsec-
+switching) rather than on the time steps. This brings significant               tion. The SST is composed of three stages including modular
+challenge to ensure simulation accuracy, when large integration                 multilevel AC-DC converter with cascaded FBSMs in Stage Ⅰ,
+time steps are used. Numerical errors, caused by inaccurate                     DAB bidirectional DC-DC converter in Stage Ⅱ, and three-phase
+switching timing representation, lead to distorted simulation                   three-level Neutral Point Clamped (NPC) inverter in Stage Ⅲ.
+results. Hence, switching interpolation were proposed in [20],                  As presented in Fig. 1, the AC side of Stage Ⅰ is connected to
+[21], [22], [23], [24], [25] to compensate for inaccurate location              three-phase MVAC grid. In Stage Ⅰ, MVDC capacitor voltage
+of switching events to enable larger simulation time step and                   from the kth submodule in phase j is denoted as vC,j  k
+                                                                                                                                        , (k = 1,
+higher simulation efficiency. However, the switching interpola-                 2 …N, j represents phase A, B, C). N represents the number of
+tion technique has not been implemented in the prior-art SST                    FBSMs in each phase. According to KCL at MVDC nodes, the
+DEMs.                                                                           MVDC capacitor current ikC,j is calculated using the DC current
+   This paper proposes numerically efficient and accurate SST                   from the kth FBSM in the Stage Ⅰ and DAB primary-side DC
+EMT equivalent circuit models, namely, SFB-DEM and SFB-                         current in the Stage Ⅱ.
+AVM. The key properties of the proposed models and the overall                     In Stage II, there are N DAB modules coupled with Stage I’s
+contributions of the paper are summarized as follows:                           FBSMs through the MVDC capacitors in each phase. As shown
+   1) The proposed SFB-DEM and SFB-AVM feature a uni-                           in Fig. 1, winding leakage inductance of the DAB transformer
+       versal equivalent circuit, capable of representing various               is denoted as Llk . All the positive and negative DC terminals on
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 00:28:52 UTC from IEEE Xplore. Restrictions apply.
+2626                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+
+                                                                                 Fig. 3. SFB-DEM of FB converter. (a) Positive insertion. (b) Negative inser-
+Fig. 2. Control strategies of the SST. (a) Overall configuration of the SST.     tion. (c) Bypass. (d) Blocking. (e) Equivalent circuit of FB converter.
+(b) MVDC voltage and reactive power controls. (c) LVDC voltage control.
+(d) Stage Ⅲ NPC converter modulation.
+
+
+the secondary sides of DAB modules are connected collectively                    (FE) method, leads to constant network conductance G-matrix
+sharing a mutual LVDC-link which provides LVDC voltage                           in EMT solution, which significantly improves simulation effi-
+input to Stage Ⅲ. Thereafter, an ISOP structure is implemented                   ciency, compared to conventional VG-DEMs [14], [15], [16].
+combining Stages Ⅰ and Ⅱ. A three-phase 3-level NPC converter                    Lastly, the SFB-AVM further improves numerical efficiency
+is used in Stage Ⅲ, transferring power from LVDC to LVAC                         of chainlink-based multilevel converters by ignoring the small
+terminals, connected to three-phase loads.                                       capacitor voltage ripple difference among the SMs. Detailed
+                                                                                 derivations of the proposed SFB-DEM and SFB-AVM for the
+                                                                                 SST are discussed in this Section. A switching interpolation
+B. Operation Principle and Control Strategy                                      technique is proposed in this Section to accurately capture
+   The operating principle and control strategy of the SST are                   switching time instants for the fixed time-step solvers, for which
+introduced in this subsection. Independent controllers and differ-               the SFB-DEM and the SFB-AVM are developed. The proposed
+ent upper- and lower-level controls are applied to the three stages              SFB-DEM and SFB-AVM are scalable to different topologies
+as shown in Fig. 2. Control strategy of Stage Ⅰ consists of the                  or configurations of SSTs (different circuit connections of the
+outer-loop MVDC voltage control/real power and reactive power                    SSTs, different numbers of submodules, and various types of
+control in dq-frame to generate three-phase voltage modulation                   submodules in Stages I and II). The universal modeling frame-
+          ∗                                                                      work of the proposed SFB-DEM and SFB-AVM is inherent in
+signals vabc . Then, level-shifted PWM scheme is used to obtain
+chainlink SMs insertion index with 2N + 1 discrete voltage                       the double-diode equivalent circuits in Fig. 5 for both IGBT
+steps. Individual SM switching signals SI,j are produced by                      deblocking and blocking modes.
+SM voltage balancing control, based on SM DC voltage sorting
+algorithm.
+   For Stage Ⅱ, a single-phase-shift PWM scheme is used to gen-                  A. SFB-DEM of Fundamental VSCs
+erate switching signals for both FBSMs of a DAB module. An
+outer-loop voltage control is applied to LVDC-link to regulate                      1) SFB-DEM of Full-Bridge Converter: Full-bridge (FB)
+the power transferred in the Stage Ⅱ, via the phase difference                   converter is a fundamental building block of more sophisticated
+between the primary and secondary-side switching signals, as                     power converters, such as SST or MMC. As presented in Fig. 3,
+shown in Fig. 2(c). The PWM schemes of the three-phase                           various operating modes of the FB converter are analyzed, in-
+NPC inverter are provided in Fig. 2(d), which generates the                      cluding positive/negative insertion, bypass, and blocking modes
+complimentary switching signals for the switches of the NPC                      to derive the equivalent circuit of the SFB-DEM. In Fig. 3(e),
+inverter.                                                                        the equivalent output voltages of the FB converter for positive
+                                                                                 and negative SM current iSM directions are denoted as Vsp and
+                                                                                 Vsn , respectively. It is noted that the two diodes in the parallel
+ III. UNIVERSAL DECOUPLED EQUIVALENT CIRCUIT MODELS                              equivalent branches of Fig. 3(e) are used to represent the IGBT
+   Two numerical efficient models, i.e., DEM and AVM are                         blocking mode of the FB converter, as shown in Fig. 3(

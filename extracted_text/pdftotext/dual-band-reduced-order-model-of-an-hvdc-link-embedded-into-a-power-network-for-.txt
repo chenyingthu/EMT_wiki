@@ -1,0 +1,159 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TEC.2019.2935892, IEEE
+                                                                                              Transactions on Energy Conversion
+
+
+
+
+          Dual-Band Reduced-Order Model of an HVDC Link
+           Embedded into a Power Network for EMT Studies
+                            Carlos Ruiz, Student Member, IEEE, Edgar Medina, Student Member, IEEE,
+          Abner Ramirez*, Senior Member, IEEE, Ali Mehrizi-Sani, Senior Member, IEEE, J. Jesus Chavez, Member, IEEE,
+                    Ali Davoudi, Senior Member, IEEE, and Mohamed Abdel-Rahman, Senior Member, IEEE
+
+
+
+            Abstract—This paper presents an approach to obtain reduced-                                       power systems can be broadly classified as:
+         order models for power networks involving power electronic                                                • Modal analysis (MA).
+         converters (PEC) via the frequency-domain balanced realizations
+                                                                                                                   • Singular value decomposition (SVD), which includes
+         (FDBR) technique. PECs play an essential role in power
+         processing and energy conversion in modern electrical networks,                                                the classical time-domain balanced realization (BR)
+         such as the interconnection of renewable generators, HVDC links,                                               method.
+         and active filters. Integration of PECs into dynamic equivalents                                          • Moment matching (MM), also known as Krylov
+         needs model-order reduction (MOR) in both low- and high-                                                       methods.
+         frequency ranges to account for both slow and fast dynamics due                                           The above-mentioned techniques provide a reduced-order
+         to the network and switching natures. The objective of the FDBR                                      system in the form of a first-order state space representation [9]-
+         technique is to obtain an internally balanced system, i.e., an                                       [10].
+         equally controllable/observable system, that can be reduced
+                                                                                                                   MOR techniques based on MA identify and preserve the
+         according to its dominant dynamics within the limited frequency
+         bandwidths. This allows accounting for specific band-limited                                         dominants modes; however, the input and output characteristics
+         phenomena, such as those generated within a power network                                            are not completely preserved [11]. SVD-based methods, e.g.,
+         caused by PECs, which is the focus of this paper. The results show                                   BR, characterize equally controllable and observable modes via
+         that faster yet accurate simulations are achieved by reduced-order                                   Hankel singular values. Lyapunov equations are solved to
+         models through FDBR compared to their full-order counterparts.                                       calculate the system’s Hankel values; such solution can imply
+                                                                                                              computational burden for very large systems [10]. The MM
+           Keywords: Electromagnetic transient analysis, frequency-
+         domain analysis, reduced order systems.                                                              methods are the most computationally efficient; however, they
+                                                                                                              do not exhibit global error limits as in BR technique. Also, MM
+                                           I. INTRODUCTION                                                    methods require selection of interpolation points, which is not
+                                                                                                              automated and depends on the user’s specifications.
+         A      DETAILED representation of modern electrical power
+               systems for electromagnetic transient (EMT) studies
+         requires considerable computational resources [1]. This
+                                                                                                                   In [12], an extended Krylov subspaces method is applied to
+                                                                                                              reduce a large-scale power system in the low-frequency range,
+                                                                                                              and then the reduced-order model is incorporated into an
+         computational burden has been traditionally addressed by
+                                                                                                              unstable power system to tune a PSS stabilizer. Also, with focus
+         utilizing average value models (AVM), mainly accounting for
+                                                                                                              in the low-frequency range, [13] presents a novel model order
+         DC and fundamental frequency, speeding up simulations at the
+                                                                                                              reduction scheme for power networks based on clusters on
+         cost of ignoring high-frequency dynamics [2]. Alternatively,
+                                                                                                              which the structure of the network is preserved. A few
+         MOR techniques aim to derive a reduced-order dynamic model
+                                                                                                              applications of the classical BR technique, such as medium-
+         that reproduces the most important dynamic properties of the
+                                                                                                              voltage system and networks including wind power plants, are
+         original system. The reduced-order dynamic model diminishes
+                                                                                                              described in [14]. In [15], the model coherency method is
+         computational complexity and utilizes less computational
+                                                                                                              combined with classical BR to produce reduced-order models
+         resources compared to the original system [1], [3]-[5]. Due to
+                                                                                                              of dynamic equivalents. In [16] linear modal analysis and
+         the damping effect and low-pass feature of linear power system
+                                                                                                              proper orthogonal decomposition are combined to obtain
+         components, transient phenomena do not travel far into the
+                                                                                                              reduced-order models for the analysis and control of inter-area
+         network, which is the traditional key motivation for reducing
+                                                                                                              oscillations.
+         the size of large networks. MOR is applied in several fields,
+                                                                                                                   Different MOR techniques have been applied to electrical
+         such as system identification, control, filtering, thermal models,
+                                                                                                              systems involving PECs. In [17], classical BR is applied to a
+         hybrid electric vehicles, and power systems [6]-[8].
+                                                                                                              grid involving voltage source inverters (VSI). The grid is
+              The main techniques utilized to reduce the model order in
+                                                                                                              modeled as an infinite bus with an impedance in series;
+
+         C. Ruiz, E. Medina, and A. Ramirez are with CINVESTAV-Guadalajara,                                   mail: J.J.ChavezMuro@tudelft.nl).
+         Mexico, (e-mails: caruiz@gdl.cinvestav.mx, eymedina@gdl.cinvestav.mx                                 A. Davoudi is with University of Texas at Arlington, USA, (e-mail:
+         abner.ramirez@cinvestav.mx).                                                                         davoudi@uta.edu).
+         A. Mehrizi-Sani was with Washington State University, USA. He is now with                            M. Abdel-Rahman is with Ain Shams University, Egypt, (e-mail:
+         Virginia Tech, Blacksburg, VA 24061, (e-mail: mehrizi@eecs.wsu.edu).                                 mohamed_a_rahaman@eng.asu.edu.eg).
+         J. Jesus Chavez is with Delft University of Technology, The Netherlands, (e-
+
+
+
+0885-8969 (c) 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TEC.2019.2935892, IEEE
+                                                                                              Transactions on Energy Conversion
+
+
+
+         however, this representation is not able to accurately provide                                                            II. FUNDAMENTALS OF FDBR
+         network dynamics. These dynamics play an important role in
+                                                                                                                  A. FDBR Fundamental Theory
+         stability studies and must be considered to generate precise
+         models leading to realistic scenarios [18].                                                             This section outlines the basic theory of FDBR [19]. The
+              Due to the presence of PECs in a power network, high                                            classical time-domain BR equations [5] are given in Appendix
+         frequencies must be considered to accurately represent                                               A. The presented theory is applicable to both single-input
+         switching frequencies. This justifies reducing the linear part of                                    single-output (SISO) and multi-input multi-output (MIMO)
+         the network under analysis in both low- and high-frequency                                           systems.
+         ranges. The inspiration for this research came from the fact that                                       Consider the nth order linear time-invariant (LTI) system
+         decreasing model order for a wide frequency range still                                              given in (1), which represents the full-order system as
+         accounts for an extensive range of dynamics whilst in some                                           characterized by parameters (A, B, C, D).
+         cases dynamics can be enclosed to the type of devices involved                                                                 x = Ax + Bu
+                                                                                                                                                                            (1)
+         in the power network.                                                                                                          y =Cx + Du
+              In this paper a balanced realization method in frequency-                                          Model order reduction is aimed at obtaining the rth order
+         domain is used. BR is a mature and classic method that exhibits                                      system (Ar, Br, Cr, D), as given in (2), with r < n, that closely
+         important guaranteed properties such as bounded                                                      reproduces the dynamics of the original full-order system (1)
+         approximation error [1], [5]. This procedure is based on the                                         within the frequency range [Ω1, Ω2].
+         analysis of principal components of the impulse response of the                                                              xr = Ar xr + Br u
+         system and relies on coordinate transformation of the original                                                                                 .                   (2)
+         dynamic system to obtain an internally balanced system. This                                                                  y = Cr xr + Du
+         coordinate transformation is determined by equating the                                                 The controllability (Wcf) and observability (Wof) Gramians of
+         system’s controllability and observability Gramians to a                                             system (1) in the frequency range [0, Ω] are given by [1]
+                                                                                                                                          
+         diagonal matrix containing the Hankel singular values, also                                                             1
+                                                                                                                           Wcf =     ( j I − A) BB (− j I − A ) d
+                                                                                                                                                   −1    *            * −1
+         known as the second-order modes of the system. The Hankel                                                              2 −
+         singular values provide a measure of the level of                                                                                                                     ,                         (3)
+                                                                                                                                 1
+                                                                                                                                2 −
+         controllability/observability of the system allowing direct                                                      Wof =        ( − j I − A * −1 *
+                                                                                                                                                     )  C  C ( j I − A) −1
+                                                                                                                                                                            d 
+         truncation to yield a stable reduced-order subsystem. More
+         recently, BR has been structured in frequency-domain (FDBR)                                          where superscript * denotes complex conjugate transpose and I
+         to reduce a system within a specific frequency range [19]. This                                      represents an n×n identity matrix. If the frequency range is
+         paper expands the application of the FDBR technique to power                                         changed to [0, ], the classical controllability and observability
+         systems simulations involving PECs and proposes a two-                                               Gramians are obtained [1]. Both Gramians in (3) satisfy the
+         frequency band methodology to obtain the reduced-order model                                         Lyapunov relations:
+         of power networks involving PECs via FDBR. The low-                                                                        AWcf + Wcf A* = −( BB* F * + FBB* ) ,                               (4a)
+         frequency (in the Hz range) and the high-frequency (in the kHz
+         range) band approximations permit to simultaneously include                                                               A*Wof + Wof A = −(C *CF + F *C *C ) ,                                (4b)
+         slower dynamics, characteristic of the power network, and                                            where:
+         switching frequency dynamics, corresponding to PECs. This                                                                                  
+
+         localized reduced-order model fitting represents computational                                                                       F =  ( j I − A)−1 d  .                                   (5)
+                                                                                                                                                    −
+         savings compared to a reduced-order full-frequency range fitted
+         system while preserving accuracy. The fact that alternative                                             Note that, once F in (5) is calculated for the defined
+         energy resources play an important role in modern power                                              frequency range (see Appendix B), (4) is resolved for both
+                                                                                                              Gramians. If the frequency range under interest is [Ω1, Ω2], we
+         networks makes the proposed methodology applicable to cases
+                                                                                                              compute the Gramians as follows:
+         where the power systems engineer desires to analyze the
+         interfacing of PECs with a traditional network for EMT studies,
+                                                                                                                                    Wcf (1 ,  2 ) = Wcf ( 2 ) − Wcf (1 )
+         especially nearby switching frequencies of PECs, as illustrated                                                                                                     .                            (6)
+                                                                                                                                    Wof (1 ,  2 ) = Wof ( 2 ) − Wof (1 )
+         by the HVDC link case study presented in the paper. The
+         methodology is applied to a power network involving an HVDC                                             To account for two frequency ranges, i.e., low- and high-
+         link and its application to other networks involving PECs is                                         frequency ranges, (6) has to be evaluated for both ranges and
+         straightforward as long as the modeling differential/algebraic                                       then added up.
+                                                                                                                 Subsequently, a similarity transformation Tb can be found

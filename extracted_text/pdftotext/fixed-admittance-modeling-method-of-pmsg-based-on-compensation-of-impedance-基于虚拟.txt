@@ -1,0 +1,251 @@
+       第 44 卷 第 6 期                          中     国 电 机 工 程 学                报               Vol.44 No.6 Mar. 20, 2024
+ 2362 2024 年 3 月 20 日                              Proceedings of the CSEE                   ©2024 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.222442 文章编号：0258-8013 (2024) 06-2362-12 中图分类号：TM 743 文献标识码：A
+
+
+
+       基于虚拟阻抗补偿的 PMSG 恒导纳建模方法
+                                                     史一博，刘崇茹*
+                      (新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206)
+
+
+      Fixed-admittance Modeling Method of PMSG Based on Compensation of Impedance
+                                                     SHI Yibo, LIU Chongru*
+     (State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources (North China Electric Power
+                                       University), Changping District, Beijing 102206, China)
+
+
+ABSTRACT: The permanent magnet generator system has a                关键词：恒导纳模型；虚拟阻抗补偿；永磁同步电机
+complex structure and a large number of nodes. In the real-time
+electromagnetic transient simulation, if the traditional modeling
+                                                                     0 引言
+method is used, the calculation of the system admittance matrix            随着我国“2030 碳达峰、2060 碳中和”目标
+will be too complicated, resulting in a serious limitation of the
+                                                                     的提出，新能源发电进入快速发展建设阶段[1-3]。永
+simulation   scale.    Therefore,   this   paper   proposes    a
+fixed-admittance modeling method of permanent magnet
+                                                                     磁直驱风力发电机对环境污染小、发电成本相对较
+synchronous generator (PMSG) based on virtual impedance              低[4-6]。由于省去了齿轮箱，采用全功率变换器，永
+compensation. This method is based on the traditional                磁 同 步 发 电 机 (permanent magnet synchronous
+generator model, and the generator admittance matrix is fixed        generator，PMSG)具有效率高、对风速变化适应力
+by compensating the virtual impedance on the rotor. The
+                                                                     强等特点[7]，逐渐成为风力发电的主流。
+impedance parameters are optimized with the goal of
+                                                                           风力发电机由于定转子系统耦合关系复杂，并
+minimizing the transient error. By combining the constant
+admittance model of voltage source converter, a complete             且除了电路磁链还涉及到转子力矩的物理部分，因
+constant admittance model of PMSG can be established and             此目前主流的仿真模型仍然是相域(phase domain，
+electromagnetic transient simulation can be performed, thus          PD)模型 [8-9] 、转子坐标系模型 [10-12] 和电压后电抗
+saving a lot of computing resources. Simulation experiments          (voltage-behind-reactance，VBR)模型[13]等。
+show that the model has high simulation accuracy, and can be
+                                                                           文献[8]提出的 PD 模型是一种常用的发电机模
+used in discrete hardware simulation platforms such as FPGA,
+                                                                     型。PD 模型基于原始的电压磁链耦合公式[14]表示
+with good applicability.
+                                                                     三相的电压电流关系，参数以物理变量和相位坐标
+KEY WORDS: fixed-admittance model; compensation of
+                                                                     表示[15]，可以直接接入电网进行计算。
+impedance; permanent magnet synchronous generator
+                                                                           转子坐标系模型是通过派克变换将 PD 模型变
+摘要：永磁直驱风力发电系统结构复杂、节点数多，在进行
+                                                                     为同步速旋转坐标系得到的模型，派克变换将定子
+电磁暂态实时仿真时，若采用传统建模方法会因系统导纳矩
+                                                                     三相绕组转换为定子 dq 绕组，因此该模型也简称
+阵计算过于复杂导致仿真规模严重受限。该文提出一种基于
+虚 拟 阻 抗 补 偿 的 永 磁 同 步 发 电 机 (permanent magnet                        dq 模 型 。 该 模 型 广 泛 应 用 于 电 磁 暂 态 程 序 如
+synchronous generator，PMSG)恒导纳建模方法，该方法基                              PSCAD[12]和 Simulink[15]中。
+于传统发电机模型，通过在转子上补偿虚拟阻抗的方式使发                                                 此外，文献[13]提出的 VBR 模型也是一种常用
+电机导纳矩阵固定，并以暂态误差最小为目标，对阻抗参数                                           的发电机模型。VBR 最早由 S. D. Pekarek 等提出，
+进行优化设计；再通过结合换流器的伴随离散电路模型，可
+                                                                     其核心思想是基于 PD 模型表示出电机出口端电压
+建立 PMSG 完整恒导纳模型并进行电磁暂态仿真，能够节
+省大量的计算资源。仿真试验证明，该模型具有较高的仿真
+                                                                     电流关系进行简化计算，其本质仍然是类似 PD 模
+精度，并且可以用于 FPGA 等离散化硬件仿真平台上，具                                         型的三相坐标系仿真，与 PD 模型没有本质区别。
+有良好的适用性。                                                                   目前，工程上一个永磁直驱风电场往往包含几
+第6期                                   史一博等：基于虚拟阻抗补偿的 PMSG 恒导纳建模方法                                                               2363
+
+十台风力发电机，单台发电机组包含发电机和换流                                      功率存在对应关系，因此可以简化成分段函数。
+                                           [16]
+器等设备，结构复杂，节点数多                                。在进行电磁暂             当风速未达额定风速时，风力机处在最大功率
+态实时仿真时，如果采用 PD 模型、VBR 模型等传                                  点跟踪(maximum power point tracking，MPPT)控制
+统变导纳矩阵建模方法，会导致导纳矩阵求逆计算                                      阶段，风力机功率与风速成三次方关系。
+               [17]
+过于困难                ，消耗大量计算资源且系统仿真规模严                             当风速达到额定风速时，风力机处在变桨距控
+重受限，难以进行大规模新能源电力系统电磁暂态                                      制阶段，风力机捕获的机械功率等于额定功率。
+      [18-20]
+仿真             。因此有必要考虑模型的恒导纳方法，将                                 风力机机械功率曲线如图 2 所示。PM 为电机
+网络导纳矩阵固定进行简化计算。                                             功率。
+      恒导纳是一种建模方法，常用于绝缘栅双极晶                                          PM              MPPT 控制              变桨距控制
+                                                                   额定
+体管(insulate-gate bipolar transistor，IGBT)等电力电                      功率                                    实际功率曲线
+                                                                                    理论功率曲线
+                                 [21-23]
+子器件电磁暂态仿真建模                            ；在建立数学模型时
+采用等值近似，将原本会因为元件状态变化的导纳                                                                                   运行范围
+
+固定下来，以达到简化计算的效果。目前电力电子
+                                                                   最低
+器件恒 导纳 模型主 要包 括：伴 随离 散电路 模型                                        功率                                                  Vwind
+                                                                               切入风速            额定风速              切出风速
+(associated discrete circuit，ADC)模型[24]、附加支路
+                                                                                 图2    风力机机械功率曲线
+模型[25]、负电阻补偿模型[26]等，相关成果已经被广
+                                                                  Fig. 2        Wind turbine mechanical power curve
+泛应用在 RTDS、RT-LAB 等实时仿真平台。
+                                                            1.2   换流器模型
+      本文在 PD 模型的基础上提出一种基于虚拟阻
+                                                                  目前比较经典的电力电子开关电磁暂态模型
+抗补偿的 PMSG 恒导纳模型。通过在发电机转子侧
+                                                            有双值电阻模型[28]、LC 等效模型[28]、ADC 模型[25]
+添加阻抗，补偿导纳矩阵的时变部分使发电机导纳
+                                                            等，此外专家学者还提出负电阻补偿模型[26]、附加
+矩阵恒定；在换流器侧应用电力电子开关的伴随离
+                                                            支路模型[26]等新型开关模型。ADC 模型是目前应
+散电路模型，使换流器导纳矩阵恒定。在此基础上，
+                                                            用 最 为 广 泛 的 开 关 模 型 ， 广 泛 应 用 在 RTDS 、
+可建立起 PMSG 完整恒导纳模型并进行电磁暂态
+                                                            RT-LAB 等实时仿真平台。
+计算，避免计算过程中的导纳矩阵求逆，能够节省
+                                                                  ADC 模型的主要思路是将开关导通等效为电
+大量仿真资源。
+                                                            感支路，关断等效为电容与电阻的串联支路。等效
+1 PMSG 电磁暂态模型                                               模型如图 3 所示。通过选取电路参数，使梯形法离
+      传统永磁直驱风力发电机组由风力机、发电                                   散后电路模型的等效导纳相等，即开关变化不影响
+机、机网侧换流器、网侧滤波器及控制部分组成，                                      电路导纳。离散后的差分电路为等效电导并联等效
+整体机组拓扑如图 1 所示。图中，Vwind 为风速，ω                                电流源的诺顿形式。
+                                                                                              i(t)
+为转速，Te、I、U 分别为转矩电流和电压。
+                                                                                          +
+        风力机                    换流器                 LC                                开关                       差分模型
+        发电机                                       滤波器                   i(t)         导通 u(t)         L        i(t)
+                                                                    +                    -                +
+                                                                   u(t)                       i(t)        u(t)   Yeq    Ih(t)
+                                                        电
+           PMSG                                                                           +
+                                                        网           -                                C    -
+                                                                                     开关 u(t)
+                                                                                     关断              R
+                                                                                         -
+       Vwind    ω
+         风力机 Te 调制波 控制 调制波                                                        图3     伴随离散电路模型
+                    部分    Uac
+         控制 Id 机侧控制 U 网侧控制
+                     dc                                           Fig. 3       Typical associated discrete circuit model
+               图1     永磁直驱风力发电机的拓扑结构                              ADC 模型等效参数如下：
+                      Fig. 1 Topology of PMSG                 ■          Δt          2C
+1.1    风力机模型                                                  |Yeq = 2 L = 2CR + Δt
+                                                              |
+                                                              ■             ■ -i (t - Δt ) - Yeq u (t - Δt ),             on (1)
+      永磁直驱风机的风力机部分不存在齿轮箱和                                     | I h (t ) = |■
+高速轴，风力机直连发电机[27]。风速与捕获的机械                                     |■            |■(1 - 2 RYeq )i (t - Δt ) + Yeq u (t - Δt ), off
+2364                                                  中     国    电   机   工    程     学        报                                                第 44 卷
+
+式中：Yeq、Ih(t)分别为离散后电路模型的等效导纳                                              2 发电机恒导纳模型
+和等效电流源；Δt 为离散步长；L、R、C 为等效电
+                                                                         2.1       发电机模型处理
+路参数；u(t - Δt)、i(t - Δt)为离散时间内上一步长电
+                                                                                  在暂态仿真计算中，用 ADC 模型能使换流器
+压电流量。
+                                                                         的导纳矩阵恒定。如果用某种方法将发电机的导纳
+       换流器机侧采用零 d 轴电流控制与最优转矩控
+                                                                         矩阵固定，则整个风电机组导纳矩阵固定，方便暂
+制，网侧采用定直流电压控制与定交流电压控制。
+                                                                         态模型的建立和仿真[35-36]。
+1.3    发电机仿真模型
+                                                                                  首先将发电机模型整理为电磁暂态计算程序
+       目前常用的发电机电磁暂态仿真模型主要有
+                                                                         (electromagnetic transient program，EMTP)标准外部
+PD 模型[9,29]和 dq 模型[30] 2 种，VBR 模型与 PD 模
+                                                                         网络接口的格式 [37-39] ，表示出机端电压和电流关
+                                        [13,31-33]
+型没有本质区别，不再赘述                                     。
+                                                                         系。对发电机电压方程式(2)应用隐式梯形法离散
+       PD 模型是基于真实物理变量和静止坐标轴的
+                                                                         化，可得：
+电压电流耦合模型，电压方程如下[34]：
+                                                                             ■              Δt
+           ■ uabc ■ ■ rs         ■ ■ - iabc ■    ■λabc ■                     |λabc (t ) = 2 ( uabc (t ) + uabc (t - Δt ) + rs iabc (t ) +
+           |u | = |              | |        | + p|     |         (2)         |
+           ■ dq ■ ■           rr ■ ■ idq ■       ■ λdq ■                     ■       rs iabc (t - Δt )) + λabc (t - Δt )                     (9)
+                                                                             |             Δt
+       其中：                                                                   |λdq (t ) = ( - rr idq (t ) - rr idq (t - Δt )) + λdq (t - Δt )
+                                                                             ■              2
+                   ■rs = diag(rs，rs，rs )
+                   ■r = diag(r ，r )                              (3)     式中 Δt 为离散仿真步长。
+                   ■r          d   q
+                                                                                  将发电机磁链方程式(5) 代入(9) 消去磁链项并
+                          ■         ■ fa ■                               简化整理可得定子出口端三相电压：
+                          |f =|f |
+                          || abc | b |                                                           2                      2
+                                                                         uabc (t ) = -( rs +        Lss(t )) iabc (t ) + Lsr (t ) idq (t ) + esh (t ) (10)
+                           ■        ■| f c ■|                    (4)                             Δt                     Δt
+                           |       ■f ■
+                           | fdq = | d |                                          其中，定子电压历史量 esh(t)为
+                         |■        ■ fq ■
+                                                                                                         2
+                                                                                  esh (t ) = -( rs -        Lss (t - Δt )) iabc (t - Δt ) -
+       式(4)中的 f 可以为电压 u、电流 i 或者磁链 λ。                                                                     Δt
+永磁直驱发电机模型中无励磁绕组，因此在磁链方                                                                     2
+                                                                                              Lsr (t - Δt ) idq (t - Δt ) - uabc (t - Δt ) +
+                                                                                           Δt
+程中需要补偿永磁体磁链。磁链方程如下：
+                                                                                           2                 2
+                                                                                              λabcm (t ) - λabcm (t - Δt )                   (11)
+          ■λabc ■ ■ Lss       Lsr ■ ■ - iabc ■ ■λabcm ■                                    Δt              Δt
+          | λ | = |L                          +
+                              Lrr |■ |■ idq |■ |■ λdqm |■
+                                                                 (5)
+          ■ dq ■ ■ rs                                                             转子阻尼绕组电流可表示为
+式中：Lss、Lrr 为定转子绕组自感；Lsr、Lrs 为定转                                                                      2           2
+                                                                                idq (t ) = ( rr +       Lrr )-1 ( Lrs (t ) iabc (t ) - erh (t )) (12)
+子绕组互感。                                                                                               Δt          Δt
+       dq 模型是应用派克变换，将 PD 模型从三相静                                                   其中，转子电压历史量 erh(t)为
+止坐标系转换为同步速旋转坐标系得到的模型。电                                                                       2                      2
+                                                                         erh (t ) = ( rr -      Lrr ) idq (t -Δt ) + Lrs(t -Δt ) iabc (t -Δt ) (13)
+压方程如下：                                                                                       Δt                     Δt
+        ■ udq 0 ■ ■ rs        ■ ■ idq 0 ■    ■λdq 0 ■ ■ S ■                       将转子电流式(12)代入(10)，可得永磁同步发电
+        |u |=|                | |       | + p|      |+| |        (6)
+                                             ■ λdq ■ ■ ■
+                           rr ■ ■ idq ■                                  机外部网络接口电压：
+        ■ dq ■ ■
+                                                                                               uabc (t ) = - req (t ) iabc (t ) + eh (t )           (14)
+       其中：
+                           ■ -ωr λq ■                                    式中 req(t)为阻抗矩阵，可表示为
+                         S=|        |                            (7)
+                                                                                             2             4               2
+                           ■ ωr λd ■                                     req (t ) = rs +        Lss (t ) - 2 Lsr (t )( rr + Lrr )-1 Lrs (t ) (15)
+                                                                                             Δt           Δt               Δt
+       磁链方程如下：
+                                                                                  历史电压源 eh(t)可表示为
+        ■λdq 0 ■ ■ Ldq 0ss     Ldq 0sr ■ ■ idq 0 ■ ■ λdq 0m ■                                    2                2
+        | λ | = |L                                 +
+                               Ldq 0rr |■ |■ idq |■ |■ λdqm |■
+                                                                 (8)              eh ( t ) = -      Lsr (t )( rr + Lrr )-1 erh (t ) + esh (t ) (16)
+        ■ dq ■ ■ dq 0rs                                                                          Δt               Δt
+第6期                                            史一博等：基于虚拟阻抗补偿的 PMSG 恒导纳建模方法                                                                     2365
+
+      综上所述，永磁同步发电机外部网络接口的离                                                                                                    Z mq Z lq
+                                                                                            Z q = ( Z m-1q + Z l-q1 ) -1 =                      (21)
+散模型推导完成，外部网络接口式(14)中的 uabc、                                                                                                  Z lq + Z mq
+iabc 为发电机端电压及流出的电流，eh 为历史电动                                                     将式(15)中的第 3 项，三重矩阵相乘部分 Lsr(t) ·
+势，与上一步长电路参数有关，也与这一步长的 θ                                                  [rr + (2/Δt)Lrr]-1Lrs(t)分解为 d、q 轴两部分：
+值有关。
+                                                                                      2                                      ■rrd       ■
+2.2     阻抗矩阵整理                                                            Lsr (t )( rr + Lrr ) -1 Lrs (t ) = [ Lsrd Lsrq ]( |           |+
+                                                                                      Δt                                     ■      rrq ■
+      由阻抗矩阵 req(t)公式可知，等效阻抗矩阵 req(t)
+由 3 个部分组成：定子阻抗矩阵 rs、定子电感矩阵                                                       2 ■Lrrd        ■ -1 2 ■Lrsd ■                    2
+                                                                                    |           | )      |      | = Lsrd ( rrd + Lrrd ) -1·
+                                                                                 Δt ■     Lrrq ■ 3 ■Lrsq ■                       Δt
+项 (2/Δt)Lss(t) 及 三 重 矩 阵 乘 积 项 -(4/Δt2)Lsr(t)[rr +
+(2/Δt)Lrr]-1Lrs(t)。对于同步机而言，阻抗矩阵 req(t)                                           2                    2         2
+                                                                                   Lrsd + Lsrq ( rrq + Lrrq ) -1 Lrsq                           (22)
+                                                                                 3                    Δt        3
+的第 2 项和第 3 项皆与转子位置角 θ 有关。
+      dq 轴磁化阻抗 Zmd 和 Zmq 可表示为                                                   将式(22)中的 d 轴逆矩阵改写为
+                            ■         2                                                      2                     2     2
+                            || Z md = Δt Lmd                                     ( rrd +         Lrrd ) -1 = ( rd + Lld + Lmd )-1 =
+                                                                (17)                        Δt                     Δt    Δt
+                             ■
+                             | Z mq = 2 Lmq    

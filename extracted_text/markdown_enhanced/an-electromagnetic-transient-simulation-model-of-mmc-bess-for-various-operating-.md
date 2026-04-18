@@ -1,0 +1,25 @@
+# An Electromagnetic Transient Simulation Model of MMC-BESS for Various Operating Conditions
+
+Shunliang Wang, Member, IEEE, Minghao Huang, Hao Tu, Senior Member, IEEE, Rui Zhang, Graduate Student Member, IEEE, Junpeng Ma, Member, IEEE, Guangqiang Peng, and Tianqi Liu, Senior Member, IEEE
+
+Shunliang Wang, Minghao Huang, Hao Tu, Rui Zhang, Junpeng Ma, and Tianqi Liu are with the College of Electrical Engineering, Sichuan University, Chengdu 610031, China (e-mail: slwang@scu.edu.cn; huangminghao2023@stu.scu.edu.cn; htu@ieee.org; rui_zhang@stu.scu.edu.cn; jma@scu.edu.cn; tqliu@scu.edu.cn).
+Guangqiang Peng is with the China Southern Power Grid Extra High Voltage Power Transmission Company, Guangzhou 510663, China (e-mail: pengguangqiang@ehv.csg.cn).
+*(Corresponding author: Hao Tu.)*
+Received 20 January 2025; revised 14 June 2025; accepted 14 August 2025. Date of publication 18 August 2025; date of current version 25 September 2025. This work was supported by Smart Grid-National Science and Technology Major Project under Grant 2024ZD0801600. Paper no. TPWRD-00095-2025.
+
+**Abstract**—Existing electromagnetic transient (EMT) simulation models of the modular multilevel converter with an embedded battery energy storage system (MMC-BESS) often suffer from computational inefficiencies and difficulties in accurately simulating fault behaviors. To address these issues, this paper proposes an efficient EMT model for the MMC-BESS. The proposed model improves the detailed equivalent model (DEM) by accounting for the complex scenarios where both switches in the same leg are simultaneously turned off. The converter blocked state is simulated by incorporating auxiliary PSCAD switches and leveraging its built-in interpolation algorithms, while the battery disconnection is simulated by using supplementary decision formulas. Furthermore, a speedup calculation method is introduced to further optimize simulation efficiency. Evaluation of the proposed model is performed in the context of an HVDC system in PSCAD/EMTDC simulation environment, encompassing steady-state operation, transient responses, and faulted operating conditions. The results confirm the simulation accuracy and efficiency of the proposed model.
+
+**Index Terms**—Electromagnetic transients (EMT) simulation, high-voltage direct current (HVDC) system, modular multilevel converter (MMC).
+
+Fig. 1. The topology of an MMC-BESS.
+Fig. 2. The topology of SMs in the MMC-BESS.
+
+## I. INTRODUCTION
+
+IN recent years, the world has witnessed a remarkable surge in the penetration rate of sustainable energy sources, including wind turbines and solar photovoltaics [1]. Owing to their inherent fluctuations and unpredictability [2], [3], the battery energy storage system (BESS), which possesses the capability of power smoothing, peak shaving, load balancing, and frequency regulation, has become an indispensable component in modern power systems [4], [5], [6]. Among existing BESS technologies, the modular multilevel converter with an embedded BESS (MMC-BESS) has emerged as one promising option, owing to its advantages including high efficiency, large capacity, commendable modularity, and the flexibility of energy storage capacity adjustment [7], [8].
+
+The topology of an MMC-BESS is depicted in Fig. 1, where every phase leg comprises a multivalve and an arm inductor. Each multivalve is constructed by multiple series-connected submodules (SMs), whose topology is shown in Fig. 2 [9], [10], [11], [12]. The battery is connected to the SM capacitor through a Buck-Boost converter, reducing the DC filtering requirement, enabling control of the battery current, and potentially increasing the lifespan of the battery [13], [14]. The extensive use of switching devices in the MMC-BESS poses challenges to electromagnetic transient (EMT) simulations, which are widely used in practice to verify the MMC-BESS’s dynamic behaviors for various operating conditions, particularly during faults.
+
+Conventionally, the detailed switching model (DSM) of the MMC-BESS is used for EMT simulations. In DSM, every circuit component is modeled as a parallel combination of an admittance and a current source. The entire system is then represented as an admittance matrix and current source matrix, with which the node voltages are solved for each time step [15]. To accurately simulate the switching operation of power electronics devices, the admittance matrix must be updated whenever there is a change in the switching state, a process known as re-triangulation [16]. Owing to the numerous switching devices and their high-frequency switching characteristics, conventional EMT modeling methods become exceedingly time-consuming and inefficient for simulating power systems with the MMC-BESS.
+
+To mitigate computational complexity, efficient models including detailed equivalent models (DEM) and average-value models (AVM) have been developed. The AVM simplifies the model by treating the multivalve or the entire MMC as a closed box. In [17], the

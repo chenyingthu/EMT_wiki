@@ -1,0 +1,211 @@
+                                                             Electric Power Systems Research 223 (2023) 109657
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Inaccuracies due to the frequency warping in simulation of electrical systems
+using combined state–space nodal analysis✩
+A.A. Kida a,b ,∗, A.C.S. Lima c , F.A. Moreira b , J.R. Martí d , J. Tarazona d
+a
+  Federal Institute of Bahia, Jacobina, BA, Brazil
+b
+  Federal University of Bahia, Salvador, BA, Brazil
+c
+  Federal University of Rio de Janeiro, COPPE/UFRJ, Rio de Janeiro, Brazil
+d
+  University of British Columbia, Vancouver, BC, Canada
+
+
+
+ARTICLE               INFO                               ABSTRACT
+
+Keywords:                                                The simulation of electromagnetic transients may suffer from inaccuracies due to a phenomenon known as
+Transient simulation                                     frequency warping (FW). This paper presents an analysis of the effects of FW on the accuracy of digital
+Frequency warping                                        simulations, demonstrating that the use of the trapezoidal integration rule (TR), commonly employed in many
+Combined state–space nodal method
+                                                         electromagnetic transients simulators, is the root cause of such inaccuracies. Although FW is considered a major
+Trapezoidal integration rule
+                                                         problem in digital signal processing, it is often overlooked when simulating electrical transients. The analysis is
+Recursive convolutions
+                                                         carried out in a fourth-order RLC circuit, from which the analytic solution is derived. The circuit is solved using
+                                                         the combined state–space nodal method, considering the TR or recursive convolutions as solution methods for
+                                                         the state–space representation. It was observed that the FW caused a change in the natural oscillation frequency
+                                                         of the system, causing a pulsating behavior of absolute error. The accumulation of errors over time can result
+                                                         in deteriorated solutions when either the time steps are not sufficiently small or the simulation runs for a
+                                                         long enough duration. This paper emphasizes the significance of accounting for the FW phenomenon in digital
+                                                         simulations that rely on integration methods, such as the TR.
+
+
+
+1. Introduction                                                                           the system [4]. This frequency distortion causes a deviation in the
+                                                                                          observed values of inductances (L) and capacitances (C) [5]. The FW
+    The development of the Electromagnetic Transients (EMT) type of                       is often taken into account in speech recognition [6,7], digital filter
+programs started around 50 years ago initially as the EMTP [1] and                        design [4,8], phase-locked loops analysis [9,10] and oscillator circuit
+later as a ‘‘family’’ of programs such as PSCAD, MicroTran, ATP and                       analysis [11,12].
+others. These simulators obtain the solution in the discrete-time domain                      The dynamics of a system can also be modeled using state–space
+by transforming differential equations representing the dynamics of the                   equations (SSE). This is the common approach in programs such as
+network into algebraic equations using a numerical integration method.                    Simulink and Modelica [13]. This approach can also include Frequency
+However, the basic modeling proposals from [1] are still used in several                  Dependent Network Equivalent (FDNE) for wideband modeling of over-
+EMT-type programs, like the trapezoidal integration rule (TR) and the                     head lines [14–16] and underground cables [14,15,17] in phase coor-
+method of characteristics, for the propagation of traveling waves in                      dinates. The SSE can be implemented with a pole-residue model [15],
+transmission lines.                                                                       which leads to efficient recursive expressions implemented using TR or
+    The TR is a linear multistep method with A-stability property [2],                    the so-called recursive convolutions (RC) [18]. More recently, Ref. [19]
+without risk of numerical instability, although it can lead to numeri-                    presented a methodology for combining SSE and nodal or modified
+cal bounded oscillations around the expected solution [3]. Numerical
+                                                                                          nodal analysis.
+integration methods like the TR can introduce a non-linear mapping
+                                                                                              The analysis of the inaccuracies resulting from FW is relevant due to
+of the frequency axis, resulting in a type of numerical error known
+                                                                                          its potential impact on the system response. FW can occur in resonant
+as frequency warping (FW) that can alter the frequency response of
+
+
+  ✩ This research was supported in part by Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) under Grant 001, Conselho Nacional de
+Desenvolvimento Científico e Tecnológico (CNPq) under grants 404068/2020-0, 400851/2021-0, Fundação de Amparo à Pesquisa do Estado de Minas Gerais
+(FAPEMIG) under grant APQ-03609-17 and Instituto Nacional de Energia Elétrica (INERGE).
+  ∗ Corresponding author at: Federal Institute of Bahia, Jacobina, BA, Brazil.
+     E-mail addresses: alexandre.kida@ifba.edu.br (A.A. Kida), acsl@dee.ufrj.br (A.C.S. Lima), moreiraf@ufba.br (F.A. Moreira), jrms@ece.ubc.ca (J.R. Martí),
+jotarazona@gmail.com (J. Tarazona).
+
+https://doi.org/10.1016/j.epsr.2023.109657
+Received 11 December 2022; Received in revised form 9 March 2023; Accepted 21 June 2023
+Available online 13 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+A.A. Kida et al.                                                                                                         Electric Power Systems Research 223 (2023) 109657
+
+
+phenomena, such as ferroresonance, where changes in the discretized L
+and C values can alter the natural frequency of oscillation. Another rele-
+vant situation is the scenario whenever power electronic converters are
+considered, such as in wind and photovoltaic generation for example, as
+the overall system inertia decreases, leading to low and high-frequency
+oscillations with poor damping [20]. This issue can affect simulation
+accuracy since the FW is frequency-dependent and the global truncation
+error (GTE) accumulates over time. Even small errors that occur early
+in a process can compound over time, leading to significant deviations
+from the correct solution. The local truncation error (LTE) estimator
+often overlooks this issue [11]. Furthermore, another impact of the FW
+is on network equivalents, potentially leading to inaccuracies in the
+system behavior at certain frequencies.
+    The investigation of the consequences of the FW in the simulation
+of electrical transients has been scarce in the specialized literature.
+                                                                                         Fig. 1. Frequency response of an inductor and a capacitor using TR.
+Therefore, this paper aims to fill this gap by presenting an analysis
+of the FW in a fourth-order RLC circuit, modeled with the combined
+nodal and SSE method [19], and its potential impact on the accuracy of
+the solution. This work will demonstrate that, even with a theoretically             In Fig. 1, the deviation of 𝐿𝐷𝑇 ∕𝐿 and 𝐶𝐷𝑇 ∕𝐶 is plotted against 𝜔.
+                                                                                 The plot shows that as 𝜔 approaches the Nyquist frequency, the devi-
+adequate time step size, the simulation can produce erroneous results
+                                                                                 ation increases non-linearly and becomes infinitely large. This result is
+due to FW. However, the key findings presented in this paper are not
+                                                                                 consistent with the limit of 𝛹 (𝜔), as given in (4), as 𝜔 approaches 𝜔𝑁𝑌 ,
+limited to the proposed circuit. The selection of such a circuit was
+                                                                                 such that
+motivated by its potential for scalability to larger circuits, as FW is                     (     ) (     )
+rooted in the discretization of L and C. The complexity of larger-scale                       𝜔ℎ      𝜔ℎ
+                                                                                   lim 𝑡𝑎𝑛         ∕        = ∞.                                       (6)
+                                                                                 𝜔→𝜔𝑁𝑌         2       2
+applications may hinder the isolation of this particular phenomenon.
+Furthermore, obtaining the analytical response of an RLC circuit for                 Likewise, no distortion in 𝐿𝐷𝑇 and 𝐶𝐷𝑇 is observed when 𝜔 ap-
+use as a benchmark is feasible. Achieving such a response for larger             proaches zero, such that
+                                                                                         (    ) (    )
+and more intricate circuits can be impractical.                                            𝜔ℎ     𝜔ℎ
+                                                                                  lim tan      ∕       = 1.                                    (7)
+    This paper is organized as follows. Section 2 provides a further             𝜔→0        2      2
+discussion on FW. Section 3 outlines the electrical circuit under con-               The representation of an analytic pole 𝑝 in the z-domain, 𝑧, is
+sideration and its analytical response. Section 4 describes the circuit
+                                                                                             1 + 𝑝ℎ
+modeling approach adopted in this study. Section 5 analyzes the impact           𝑧 = 𝑒𝑝ℎ ≈        2
+                                                                                                      .                                                               (8)
+of the FW on the proposed electric circuit using different solution                          1 − 𝑝ℎ
+                                                                                                  2
+methods and time step sizes. This section also presents the key findings
+                                                                                     The BLT is a first-order approximation of 𝑒𝑝ℎ . When mapping back
+of the study. Finally, Section 6 summarizes the main conclusions of this
+                                                                                 to the time domain, the original eigenvalue 𝑝 is not obtained, but a new
+work.
+                                                                                 (perturbed) pole 𝑃 , such that
+                                                                                      𝑙𝑛(𝑧)
+2. Frequency warping                                                             𝑃 =        .                                                        (9)
+                                                                                        ℎ
+                                                                                     The difference between 𝑝 and 𝑃 increases with ℎ. The numerical
+   The bilinear transformation (BLT) maps the continuous-time do-
+                                                                                 error resulting from FW can be perceived as a disturbance of the
+main to the discrete-time domain, using TR as the integration method.
+                                                                                 original eigenvalues.
+The relationship between the analog frequency (𝜔𝑎 ) and its correspond-
+                                                                                     The simulated constant of attenuation will deviate from its analyti-
+ing digital frequency (𝜔) is non-linear and can be described [4] as
+                                                                                 cal counterpart if the 𝑅𝑒{𝑝} is altered. Modifying the 𝐼𝑚{𝑝} will cause
+           (    )
+      2      𝜔ℎ                                                                  the natural oscillation frequency of the simulation to change. Further-
+𝜔𝑎 = 𝑡𝑎𝑛         ,                                                  (1)
+      ℎ       2                                                                  more, if the analytic solution has complex conjugate eigenvalues, the
+where ℎ is the integration or time step.                                         discrete-time solution will also exhibit complex conjugate eigenvalues.
+    An immediate consequence of the BLT frequency mapping is that the
+inductance (𝐿) and capacitance (𝐶) in the discrete-time domain become            3. Electrical circuit under consideration
+frequency-dependent, 𝐿𝐷𝑇 (𝜔) and 𝐶𝐷𝑇 (𝜔), respectively, [5] such that
+                                                                                     The FW-induced numerical error is evaluated by utilizing the electri-
+𝐿𝐷𝑇 (𝜔) = 𝛹 (𝜔)𝐿,                                                     (2)        cal circuit known as Test-case, depicted in Fig. 2. The circuit parameters
+                                                                                 are 𝑢(𝑡) = 𝑐𝑜𝑠(120𝜋𝑡) V, 𝑅1 = 0, 1 Ω, 𝐿1 = 𝐿2 = 1 μH, 𝐶1 = 100 μF and
+𝐶𝐷𝑇 (𝜔) = 𝛹 (𝜔)𝐶                                                      (3)        𝐶2 = 1 μF. The switch 𝑆1 has been open for a long time and closes at
+                                                                                 𝑡 = 0 s. This study focuses on the voltage at capacitor 𝐶1 , 𝑉𝐶1 (𝑡).
+and                                                                                  The analytical solution of 𝑉𝐶1 (𝑡) is
+              ( ) (    )
+            𝜔ℎ      𝜔ℎ
+𝛹 (𝜔) = 𝑡𝑎𝑛      ∕       ,                                       (4)             𝑉𝐶1 (𝑡) = 𝐾1 (𝑡) + 𝐾2 (𝑡) + 𝐾3 (𝑡),                                                (10)
+             2       2
+where 𝛹 (𝜔) is the FW effect. The mathematical derivation of (2)–(4)             where
+is presented in Appendix A.                                                                                         4
+    The Nyquist frequency [4] can be defined as                                  𝐾1 (𝑡) = 1.001 ⋅ 10−2 𝑒−4.9995⋅10 𝑡 ⋅
+
+          1        𝜋                                                               cos(1.003793 ⋅ 106 𝑡 − 2.907◦ ) V,                                               (11)
+𝑓𝑁𝑌 =       ∴ 𝜔𝑁𝑌 = ,                                                 (5)
+         2ℎ        ℎ
+where 𝑓𝑁𝑌 and 𝜔𝑁𝑌 are the Nyquist frequency, expressed in Hz and                 𝐾2 (𝑡) = 1.001 ⋅ 10−2 𝑒−4.998𝑡 ⋅
+rad/s, respectively.                                                               cos(0.099499 ⋅ 106 𝑡 + 179.43◦ ) V                                               (12)
+
+                                                                             2
+A.A. Kida et al.                                                                                                                         Electric Power Systems Research 223 (2023) 109657
+
+
+                                                                                               By using the convolution property in (15), it results in
+                                                                                                                            ∞
+                                                                                           𝑖(𝑡) = 𝑌 (𝑡) ∗ 𝑣(𝑡) =                𝑌 (𝜏)𝑣(𝑡 − 𝜏)𝑑𝜏.                                    (17)
+                                                                                                                       ∫0
+                                                                                               If the step response of a system can be approximated by exponen-
+                                                                                           tial functions, then it is possible to use a recursive solution for the
+                                                                                           convolution integral [18], which is
+                                                                                                                             ℎ
+                                                                                           𝑖(𝑡) = 𝑒𝑎ℎ 𝑖(𝑡 − ℎ) + 𝑟               𝑒𝑝𝜏 𝑣(𝑡 − 𝜏)𝑑𝜏.                                    (18)
+                                                                                                                        ∫0
+            Fig. 2. Lumped electrical circuit under consideration, Test-case.                 In the discrete-time domain, a generic pole-residue model can be
+                                                                                           rewritten [15] with SSE:
+
+                                                                                           𝑥(𝑛) = 𝛼𝑥(𝑛 − 1) + (𝛼𝜆 + 𝜇)𝑢(𝑛 − 1)                                                      (19)
+
+                                                                                           and
+
+                                                                                           𝑦(𝑛) = 𝑥(𝑛) + (𝐷 + 𝜆)𝑢(𝑛),                                                               (20)
+
+                                                                                           where 𝛼, 𝜆 and 𝜇 are constants and depend on the solution method, see
+                                                                                           Appendix B for more details.
+                                                                                               Given the terminal current, 𝑦(𝑛), and voltage, 𝑢(𝑛), the right-hand
+                                                                                           side of (20), denoted as 𝑥(𝑛), can be seen as a parallel association of a
+                                                                                           history current source, 𝐼ℎ𝑆𝑆 (𝑛), and a conductance, 𝐺𝑆𝑆 , similar to the
+                                                                                           companion circuit modeling approach. Thus,
+
+                                                                                                        ∑
+                                                                                                        𝑁
+                                                                                                          (                                    )
+                   Fig. 3. Companion circuits, suitable for nodal analysis.                𝐼ℎ𝑆𝑆 (𝑛) =      𝛼𝑖 𝑥(𝑛 − 1) + (𝛼𝑖 𝜆𝑖 + 𝜇𝑖 )𝑢(𝑛 − 1)                                      (21)
+                                                                                                        𝑖=1
+
+                

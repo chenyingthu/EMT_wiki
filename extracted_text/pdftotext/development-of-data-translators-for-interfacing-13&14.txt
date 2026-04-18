@@ -1,0 +1,209 @@
+1192                                                                                         IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 28, NO. 2, APRIL 2013
+
+
+
+
+   Development of Data Translators for Interfacing
+  Power-Flow Programs With EMTP-Type Programs:
+          Challenges and Lessons Learned
+                                    Task Force on Interfacing Techniques for Simulation Tools
+
+         Francisco de León, Dariusz Czarkowski, Vitaly Spitsa, Juan A. Martinez, Taku Noda, Reza Iravani,
+                    Xiaoyu Wang, Ali Davoudi, Gary W. Chang, Ali Mehrizi-Sani, and Ilhan Kocar
+
+
+
+   Abstract—This paper describes the challenges and lessons                             solutions. Finally, recommendations based on experience are made
+learned when developing industrial-grade data translators aimed                         to help future developers of interfacing tools.
+for the interfacing of power-flow programs with Electromag-
+netic Transients Program-type programs. It has been found that                            Index Terms—Electromagnetic transients, Electromagnetic
+the greatest challenges to overcome include: 1) the lack, in the                        Transients Program (EMTP), power flow.
+databases used in power-flow programs, of vital pieces of informa-
+tion necessary to perform transient studies; 2) inconsistency in the
+format of data files; 3) the presence of data entry mistakes in very                                           I. INTRODUCTION
+large databases; 4) the validation of the translated data; and 5)
+the analysis of the large amount of data that transient simulations
+provide. Several examples are presented to show the implemented
+
+
+   Manuscript received October 11, 2012; accepted November 01, 2012. Date
+of publication February 07, 2013; date of current version March 21, 2013. Paper
+                                                                                        T      IME domain simulations of large power systems
+                                                                                               using EMTP-type programs are becoming increasingly
+                                                                                        common. The need for electromagnetic transients programs
+no. TPWRD-01092-2012.
+                                                                                        is indispensable due to the requirement of a detailed model
+   Corresponding author: F. de León, Department of Electrical and Computer
+Engineering, Polytechnic Institute of New York University, Brooklyn, NY                 of control systems and nonlinear network elements. The push
+11201 USA (e-mail: fdeleon@poly.edu).                                                   comes from the smart grid technologies that require a large
+   D. Czarkowski is with the Department of Electrical and Computer Engi-
+                                                                                        number of switching operations for economical or reliability
+neering, Polytechnic Institute of New York University, Brooklyn, NY 11201
+USA (e-mail: dcz@poly.edu).                                                             reasons [1]. The pull comes from the continuous increase of
+   V. Spitsa is with the Electrical Engineering Department, San Jose State Uni-         computing power that has made possible the simulation of
+versity, San Jose, CA 95192 USA (e-mail: vitaly.spitsa@sjsu.edu).
+                                                                                        electromagnetic transients of large power systems [2]–[4].
+   J. A. Martinez is with the Department of Electrical Engineering, Universitat
+Politecnica de Catalunya, Barcelona 08028, Spain (e-mail: martinez@ee.upc.                 The objective of the translators is to perform automatically
+edu).                                                                                   the data conversion between two different databases [5]–[8]. In
+   T. Noda is with the Electric Power Engineering Research Laboratory, Yoko-
+                                                                                        many utilities, the available data are in power-flow program for-
+suka, Kanagawa 240-0196, Japan (e-mail: takunoda@ieee.org).
+   R. Iravani is with the Electrical and Computer Engineering Department,               mats (e.g., PSS/E). Therefore, data translators are required to
+Toronto, ON M5S 3G4 Canada (email: iravani@ecf.utoronto.ca).                            convert the power-flow program files to appropriate formats for
+   X. Wang is with the Electrical Engineering Department, Tsinghua University,
+                                                                                        EMTP type of programs. Several translators that have been de-
+Beijing 100084, China, (e-mail: xiaoyuw@ualberta.ca).
+   A. Davoudi is with the Electrical and Computer Engineering Department,               veloped in this work are intended to convert input data from
+University of Texas, Arlington, TX 76011 USA (e-mail: davoudi@uta.edu).                 power-flow (PF) programs into EMTP-type programs.
+   G. W. Chang is with the Electrical Engineering Department, National Chung
+                                                                                           An effective technique for building and maintaining time-do-
+Cheng University, Chia-Yi 621, Taiwan (e-mail: wchang@ee.ccu.edu.tw).
+   A. Mehrizi-Sani is with the School of Electrical Engineering and Computer            main models of large networks in the EMTP-RV was reported in
+Science, Washington State University, Pullman, WA 99164 USA (e-mail:                    [3] and [4]. This technique is based on an automatic translation
+mehrizi@eecs.wsu.edu).
+                                                                                        of text data into a graphical user interface (GUI) model using
+   I. Kocar is with the Electrical and Computer Engineering Department,
+École Polytechnique de Montréal, Montréal, QC H3T 1J4 Canada (e-mail:                   scripting (JavaScript). It was shown that the resulting model of
+i.kocar@polymtl.ca).                                                                    the network can serve as a unified framework for different types
+   Task Force members: S. Abhyankar, U. Annakkage, G. W. Chang, A.
+                                                                                        of power system studies. Frequently, transient analyses are re-
+Davoudi, F. de León, V. Dinavahi (Task Force Chair), M. O. Faruque, S.
+Filizadeh, J. Fuller, A. M. Gole, R. Iravani, J. Jatskevich, A. J. Keri, I. Kocar, J.   quired to supplement other studies for the investigation of elec-
+A. Martinez, A. Mehrizi-Sani, A. Monti, L. Naredo, T. Noda, A. Ramirez, M.              trical networks.
+Rioual, K. Schoder, V. Spitsa, M. Steurer, K. Strunz, X.Wang, and P. Zhang.
+                                                                                           In [6], PSCAD/EMTDC is linked to PSS/E through E-TRAN.
+   Task Force on Interfacing Techniques for Simulation Tools is with the
+Working Group on Modeling and Analysis of System Transients Using Digital               E-TRAN is a translator that performs a direct data conversion
+Programs, General Systems Subcommittee, T&D Committee. IEEE Power and                   between phasor-based power flow and stability simulation tools
+Energy Society.
+                                                                                        and electromagnetic tools. E-TRAN can initialize the machines
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                          and sources in PSCAD simulations based on the translated data
+   Digital Object Identifier 10.1109/TPWRD.2012.2227836                                 from the power-flow analysis in PSS/E [6], [9]–[11].
+
+                                                                     0885-8977/$31.00 © 2013 IEEE
+DE LEÓN et al.: DEVELOPMENT OF DATA TRANSLATORS FOR INTERFACING POWER-FLOW PROGRAMS WITH EMTP-TYPE PROGRAMS                         1193
+
+
+
+   An alternative method applicable to very large distribution       tion, not explored in the paper, is to have hybrid solutions, that
+networks was presented in [2]. The process of model deriva-          is, GUI combined with ASCII defined blocks/subnetworks.
+tion is fully automated and involves translation of input text          Power systems consist of a very large number of similar el-
+files extracted directly from databases into EMTP-RV netlists        ements. If a model of some particular element does not already
+using a MATLAB script. The proposed technique has been suc-          exist among the built-in blocks of EMTP type of program, it
+cessfully applied to various electrical distribution networks re-    can be built in the graphical user interface. To translate the
+sulting in very accurate three-phase time-domain models. Sim-        power-flow data into a netlist, the detailed prototype models for
+ilar methodologies have been used to translate data from the         each group of the network elements were developed first using
+proprietary power-flow to ATP [12], from EMTP-RV to ATP              the GUI. Then, each one of the prototype models was converted
+[13]–[15], and from ATP/EMTP to OpenDSS.                             into a short netlist which textually describes a particular type of
+   The data translator allows an electric power utility to per-      the network elements. Applying this technique, the following
+form calculations of overvoltages and other transients using         prototype models were derived:
+the power-flow database complemented with additional data.              • area substation transformer with tap changers;
+In particular, power distribution utilities can perform EMTP            • circuit breakers;
+simulations for the calculation of overvoltages due to faults           • overcurrent protection;
+and backfeeding, capacitor switching, ferroresonance, inrush            • overvoltage protection;
+currents, DG penetration, and to corroborate their smart grid           • undervoltage protection;
+technologies on full networks that have many switching opera-           • directional power protection;
+tions for network re-configuration.                                     • directional overcurrent protection;
+   In this paper, one-way data conversion has been developed            • network transformers;
+from proprietary and royalty-free (OpenDSS [16]) power-flow             • network protectors;
+programs, into EMTP-RV [17], and into ATP [18]. The paper               • unit substation transformers;
+presents the challenges and lessons learned when developing             • intermittent energy resources.
+industrial-grade data translators aimed for the interfacing of       In addition, some of the built-in EMTP models were adopted.
+power-flow programs with EMTP-type programs.                         They are:
+   The rest of the paper is organized as follows: Section II            • PI-sections;
+discusses the translation process form a power-flow program             • grounding zigzag transformers;
+to EMTP-RV. Section III gives the example on the necessary              • RLC branches;
+work for translating transmission lines. Section IV discusses           • ideal switches;
+the challenges associated with power flow to EMTP-type                  • electrical loads;
+program translators. Important challenges are to validate and           • synchronous machines;
+analyze the results obtained by the generated EMTP models.              • induction machines.
+The validation process for a simulation example is elaborated        The netlists of the custom prototype models and those of the
+in Section V, including the steady state and transient validation    relatively complex built-in models (such as the synchronous and
+process. In Section VI, important recommendations for the            induction machines) were placed together in a separate library
+future developers of translators are highlighted and finally,        folder.
+Section VII concludes the paper.                                        The data used by the power-flow to EMTP (PF-EMTP) trans-
+                                                                     lator are included in 27 different types of the text files. These
+        II. POWER-FLOW TO EMTP-RV TRANSLATOR                         files describe connectivity, ratings, specifications and, in some
+   EMTP-like programs regularly use a code written in a high-        cases, the geographical location of the network elements. The
+level descriptive language as an input for time-domain simu-         source database is very large since it contains more informa-
+lations. This code is called a netlist. Before the time-domain       tion than what is necessary for power-flow studies. Therefore,
+simulation starts, all models developed with the graphical user      the information needs to be filtered to extract only the signifi-
+interface are converted into the netlist. Although the GUI of the    cant data. On the other hand, the source database does not con-
+EMTP software has a complex multi-layer structure and can be         tain all the information needed to perform time-domain simula-
+used as a unified framework for different power system studies,      tions. The missing information frequently comes from different
+development of the models for very large networks cannot rely        databases, datasheets and even from field inspections. The fol-
+only on this tool. Indeed, it is impractical to build the entire     lowing parameters can be mentioned:
+model having hundreds of thousands of branches and nodes                • Nonlinear magnetizing curves of all the transformers (net-
+using only mouse-based functions of the GUI. In such a case,               work, unit substation, high-tension customers).
+a scripting approach should be used. An automatic script can            • Individual relay settings for overcurrent, overvoltage, un-
+create the network model from the input text files within a rela-          dervoltage, and reverse power.
+tively short period of time. An alternative is the use of dynamic-      • Individual settings of the network protectors.
+link libraries (DLL). It seems possible to link a DLL to custom         The PF-EMTP translator has been implemented in MATLAB.
+models. However, this has not been attempted in this paper be-       The software has been chosen due to its built-in capabilities of
+cause of the large variety of the custom models needed. It was       dealing with different types of variables. Frequently the trans-
+estimated that the development of custom DLLs required more          lation process involves some calculations, mostly for unit con-
+human-hours than developing GUI-based models. Another op-            version. A flowchart of the translation is shown in Fig. 1. As
+1194                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 28, NO. 2, APRIL 2013
+
+
+
+shown, the process of model assembly is fully automated and
+involves translation of input text files extracted directly from
+the databases into a netlist.
+   As it can be seen in Fig. 1, the translation starts by reading
+the power-flow and supplementary files (Blocks 2 and 3). Using
+these data, the parameters of the network elements are calcu-
+lated in Block 4. Block 5 checks whether the prototype model
+exists in the custom model library. The syntax of the simple
+built-in models, such as an ideal switch, a PI-section and a con-
+stant power load, are not stored in the library but written di-
+rectly into the netlist as shown in Block 6. For the more complex
+models, their prototypes are read from the library and copied
+into the netlist after all the parameters of the particular net-
+work element are updated (Blocks 7 and 8). The result of the
+POWER-FLOW to EMTP data translation shown in Block 9 is
+a text file describing the entire power system.
+   The work reported in this paper links two PF programs with
+two EMTP simulators. At the present stage, a one-way data con-
+version shown in Fig. 2 is considered. In this figure, Blocks 1
+and 2 correspond to the proprietary and commercial software
+whereas Blocks 3 and 4 are royalty free platforms. The main
+databases are related to the power-flow program of Block 1. Due
+to the space limitations, most of the discussion is devoted to the
+PF (power-flow) to EMTP translator described in the previous
+section.
+
+                         III. EXAMPLE
+   An example on the translation of the transmission line in-         Fig. 1. Flowchart of the data translation from a power-flow database to EMTP.
+formation (feeder sections) from the source databases into the
+EMTP netlist is presented. The information on connectivity and
+impedance specifications is contained in separate files. Fig. 3
+shows one data line of the connectivity and the specifications
+files.
+   One can see that in the connectivity file, in addition of the
+information on the “from” and “to” nodes and the length of the
+section, there is also information on cable rating. In the specifi-
+cations file we find the positive and negative sequence imped-
+ances and the line charging. The translator needs to perform, in      Fig. 2. Scheme of a one-way power-flow data translation.
+addition to operations for unit conversion, calculations to com-
+pute phase quantities from sequence quantities. The following
+formulas are utilized to compute the phase impedance matrix:          A. Inconsistencies in the Format of Source Data Files
+                                    Cable length(ft)                     Nowadays, the power industry lacks a unified representation
+                                                               (1)    of the network and device data. Although some standards were
+                                                                      suggested in the area [19], [20], they are not widely adopted
+                                                               (2)    in commercial applications. In addition, different stakeholders
+                                                                      in the industry design their databases for their particular needs.
+                                                               (3)    As a result, serious issues with data exchange arise even within
+                                                                      one organization using different software tools or considering
+                                                                      adopting a new one.
+                                                               (4)       It becomes extremely hard to maintain synchronized and con-
+                                                                      sistent data in numerous databases at different locations. More-
+                                                                      over, data formats of two versions of the same software can be
+                                                                      incompatible. For example, E-TRAN only generates files com-
+                       IV. CHALLENGES                                 patible with PSCAD version 4.2.1. Users of PSCAD version
+  The development of reliable data translators for large-scale        X4 have some difficulties using the generated data by E-TRAN
+power systems faces a number of technical and organizational          if the substitution library feature of E-TRAN is used [11]. The
+problems, which are discussed in this section.                        substitution library allows the users to employ detailed models
+DE LEÓN et al.: DEVELOPMENT OF DATA TRANSLATORS FOR INTERFACING POWER-FLOW PROGRAMS WITH EMTP-TYPE PROGRAMS                                 

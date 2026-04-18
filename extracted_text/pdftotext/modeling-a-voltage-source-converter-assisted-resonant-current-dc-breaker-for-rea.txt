@@ -1,0 +1,227 @@
+                                                              Electrical Power and Energy Systems 117 (2020) 105678
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                      Electrical Power and Energy Systems
+                                                         journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Modeling a voltage source converter assisted resonant current DC breaker                                                                                      T
+for real time studies
+Seyed Sattar Mirhosseinia,b, Siyuan Liua,c, Jose Chavez Muroa, Zhou Liud, Sadegh Jamalib,
+Marjan Popova,
+              ⁎
+
+a
+  Delft University of Technology, Faculty of EEMCS, Delft, the Netherlands
+b
+  Iran University of Science and Technology, School of Electrical Engineering, Tehran, Iran
+c
+  Xi’an Jiaotong University, Department of Electrical Engineering, State Key Laboratory of Electrical Insulation and Power Equipment, Xi’an, China
+d
+  Aalborg University, Department of Energy Technology, Aalborg, Denmark
+
+
+
+
+ARTICLE INFO                                                 ABSTRACT
+
+Keywords:                                                    In order to test protection performance of future multi-terminal HVDC grids where DC circuit breakers (DC CBs)
+VARC DC circuit breaker                                      play an important role, a DC CB model in real time test environment should be developed. It is well known that a
+MTDC grid                                                    DC CB needs to interrupt DC faults very quickly in order to avoid converter damages and to ensure security of
+Circuit breaker performance                                  supply. The total current interruption time consists of a fault detection time, which is needed for the DC pro-
+RTDS model
+                                                             tection to provide a trip command to the DC CB, and a DC CB interruption time. Thus, it is necessary to de-
+                                                             monstrate the performance of associated protective devices through real time simulations, before these devices
+                                                             can be implemented and commissioned in practice. This paper presents a detailed modeling of the voltage source
+                                                             converter assisted resonant current DC circuit breaker (VARC DC CB) in real time simulation environment based
+                                                             on RTDS. The proposed model provides sufficient representation of the circuit breaker for system level studies.
+                                                             External current-voltage characteristics of the proposed VARC DC CB models replicate the ones of the device in
+                                                             the real world. The proposed model of the breaker is tested in a simple test circuit including a DC voltage source
+                                                             and a T-scheme HVDC cable. Additionally, a case study has been presented by making use of a protection
+                                                             algorithm in a multi-terminal HVDC grid with frequency dependent parameters of the HVDC cables to show both
+                                                             protection performance and current interruption.
+
+
+
+
+1. Introduction                                                                                    breakers, (2) Hybrid DC CBs [6,7] and (3) Solid State DC CBs [8,9].
+                                                                                                       Mechanical HVDC CBs use an interrupter to interrupt the current at
+    Voltage source converter based Multi-Terminal HVDC (MTDC) grid                                 artificial current zero created by a current injection circuit. Hybrid
+is emerging as a prospective technology for interconnecting renewable                              HVDC CBs integrate controllable solid-state semiconductor-based
+energy resources especially offshore wind farms. It provides advantages                            switches with mechanical switches and disconnectors. Solid State
+such as independent control of active and reactive power, inter-                                   HVDC CBs interrupt the fault current by means of controllable solid-
+connection of weak AC systems, and it also improves the flexibility,                               state semiconductor-based switches. Compared to the solid state DC
+security and reliability of power transmission [1]. However, there are                             CBs, an advantage of mechanical DC CBs is lower cost and conduction
+several technical challenges for the development of the MTDC grid. The                             losses. However, the long operation time of spring based actuators
+protection system, which is responsible for the discrimination and the                             cannot meet the requirements of fast fault interruption in MTDC grids.
+isolation of faulted line/segment, is one of the main challenges. Re-                              Recently, the development of ultra-fast actuators based on electro-
+garding the protection system, one of the barriers is lack of reliable,                            magnetic repulsion mechanisms has made mechanical DC CBs capable
+fast, low loss and cost effective HVDC circuit breakers (DC CBs) [2].                              of clearing fault current within a few milliseconds [10,11]. The hybrid
+    Since there is no natural current zero in the DC current, the devel-                           DC CBs make a tradeoff between the advantages of fast fault interrup-
+opment of DC CBs is different from that of AC circuit breakers. Based on                           tion and low conduction losses. However, during the fault current in-
+the technology deployed, the DC CBs can be classified as: (1)                                      terruption, the semiconductor devices need to withstand a very high
+Mechanical DC CBs including active [3,4] and passive [5] circuit                                   voltage, which imply utilisation of expensive components for hybrid DC
+
+
+    ⁎
+        Corresponding author.
+        E-mail address: M.Popov@tudelft.nl (M. Popov).
+
+https://doi.org/10.1016/j.ijepes.2019.105678
+Received 20 July 2019; Received in revised form 31 October 2019; Accepted 3 November 2019
+0142-0615/ © 2019 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY license
+(http://creativecommons.org/licenses/BY/4.0/).
+S.S. Mirhosseini, et al.                                                                                     Electrical Power and Energy Systems 117 (2020) 105678
+
+
+CBs. The newly emerging VARC DC CB proposed in [12,13], is a pro-
+mising solution that make use of an ultra-fast actuator together with a
+voltage source converter (VSC) and a resonant circuit. It combines the
+advantages of mechanical and Hybrid DC CBs to achieve less operation
+time, low conduction loss and cost-effectiveness.
+    Some mechanical DC CB models have been proposed in [14]. The
+complexity level of these models changes based on their applications.
+More simplistic models, such as the model presented in [15,16], are
+conceived to be used for system level studies. The models proposed in
+[17,18] demonstrate the physical performance, the interactions and
+stresses between internal components.
+    An EMTP (electromagnetic transient program) based mechanical DC
+CB model for transmission applications is presented in [19,20]. The
+model includes the main hardware components (ideal switches with
+delay, resonant circuit, surge arrester) and the control logic. It also
+interlocks between sub-components, and implements self-protection
+feature in case of failures of the DC protection scheme. The model is
+proved to be robust for a large range of operating conditions including
+DC fault clearing, reclosing after fault clearance, reclosing into DC fault
+and self-protection.
+    All the aforementioned models are realized using different software
+                                                                                                    Fig. 1. The structure of VARC DC CB.
+packages that do not operate in real time. A system level real time
+model of an active current injection mechanical DC CB is presented in
+[21]. The model is realized using RTDS real time simulation environ-
+ment, and it is verified by comparative studies with the PSCAD model.
+The application of the model is demonstrated for DC fault interruption
+in an MTDC grid. Compared to the mechanical DC CB, the VARC DC CB
+includes a VSC, which implies different structure, operation principles
+and control logic. These features necessitate an individual real time
+model of VARC DC CB for real time system level studies.
+    In an MTDC grid, DC CBs must interrupt DC faults very quickly in
+order to avoid converter damages and to ensure security of supply. The
+total current interruption time consists of a fault detection time, a time
+needed for the DC protection to provide trip command, and DC CB
+interruption time. Thus, it is necessary to demonstrate the system
+performance with the associated protective devices before these devices
+can be implemented and commissioned in practice. Due to the needs for
+high voltage and current, it is not possible to use DC CB as a real
+equipment in MTDC grid studies. Therefore, the solution to test the
+performance of features such as protection schemes and relays in MTDC
+grids where DC CBs play an important role [19], is to use a real time
+model of a DC CB. This paper presents a robust system level detailed
+model for the VARC DC CB based on RTDS. The proposed model is
+demonstrated in a simple test circuit, and in an MTDC grid modeled in
+RTDS environment. The paper is organized as follows: The structure
+and operation principles of the VARC DC CB are described in Section 2.
+The implementation of the model in RTDS environment is explained in                             Fig. 2. The operation process of VARC DC CB.
+Section 3. The model verification is presented in Section 4. Section 5
+deals with the model application and finally, the model limitations and
+                                                                                      The operation process of VARC DC CB is illustrated in Fig. 2 using
+the conclusions are presented in Sections 6 and 7, respectively.
+                                                                                  typical waveforms. After receiving a trip signal from the protection
+                                                                                  system, successive changes take place on the voltage polarity at the
+2. VARC DC CB structure and operation principles
+                                                                                  output of the VSC. Besides, the amplitude of the oscillating current,
+                                                                                  IOSC, increases and passes through the resonant circuit and the MB.
+    The general structure of the VARC DC CB is depicted in Fig. 1. The
+                                                                                  Shortly after this, IOSC reaches the magnitude of the line/fault current,
+breaker contains a vacuum interrupter denoted as MB in the main
+                                                                                  and then creates a current zero inside the MB. Thereafter, the MB opens
+branch. The auxiliary branch includes a resonant LC circuit excited by
+                                                                                  and the fault current is commutated into the SA, where it is suppressed.
+an H-bridge VSC, and a surge arrester (SA). The SA determines the
+                                                                                  During a successful interruption, the breaker and the faulted line are
+maximum voltage across MB during current interrupting process. In
+                                                                                  fully disconnected by means of the RCB.
+order to force the line current down to zero, the SA clamping voltage is
+typically 1.5–1.6 times the nominal peak voltage of DC system. A re-
+                                                                                  3. Modelling and operational principles of VARC DC CB
+sidual circuit breaker (RCB), is connected in series with the main and
+auxiliary branches. It operates only at low or zero current, and it is
+                                                                                     The VARC DC CB RTDS model is composed of the following main
+deployed for physical separation and to eliminate the voltage across the
+                                                                                  parts:
+resonant circuit and the SA. A current limiting inductor LDC, which
+determines the rate of rise of the fault current is connected in series
+with the breaker.                                                                  • Electrical circuit of a VARC DC CB
+                                                                              2
+S.S. Mirhosseini, et al.                                                                                     Electrical Power and Energy Systems 117 (2020) 105678
+
+
+
+
+                                           Fig. 3. The VARC DC CB model in RTDS small time step environment.
+
+
+ • VSC voltage generator
+ • Control logic of VARC DC CB                                                                                    RL=2L/∆t
+                                                                                                L                                                IL
+   Fig. 3 shows the electrical circuit of the RTDS model of VARC DC CB
+with the associated control logic, VSC voltage generator and measure-
+ment blocks. A brief description of the model is given in the subsequent                                    a) On state
+parts.
+
+A. Electrical Circuit of VARC DC CB RTDS Model                                              R
+    As shown in Fig. 3, the VARC DC CB consists of a vacuum inter-                                          RRC=∆t/2C+RC                        I Rc
+rupter MB, a residual circuit breaker RCB, a resonance circuit, a SA and                    C
+a current limiting reactor L_DC. Both MB and RCB have open and close
+resistances of 108 Ω and 1 mΩ, respectively. All the electrical elements                                     b) Off state
+are identical to Fig. 1 except the VSC equivalent circuit, which is con-
+sidered to model the H-bridge VSC. This is due to the limitation of RTDS                      Fig. 4. Switch model in small time step in RTDS.
+in modelling IGBTs.
+                                                                                 in the inductor (LI2/2). This method does not allow using small values
+B. VSC Voltage Generator                                                         for R, C and L at the same time. In other words, a small value of L
+                                                                                 corresponds to a high value of C and vice versa.
+    In EMT software packages such as PSCAD, the switch is modelled as                Based on the above discussion, when the IGBT is in “on” state, it
+an ideal resistance switch, which changes the admittance matrix                  behaves as a small inductance, and when it is in “off” state, acts as a
+whenever the switch state changes. The response of such a model to               small capacitance in series with a resistance. These L and RC branches
+changing signals is smooth without any time delays. However, there are           affect the resonance circuit. In order to avoid this effect, the VSC is
+some limitations or assumptions for the method used in RTDS small                modelled using a voltage source branch instead of IGBTs. According to
+time step environment. As shown in Fig. 4, when the switch is in “on”            Fig. 5, the VSC Voltage Generator block is used to generate a square
+state, it is represented as an inductor (L) branch and when it is in “off”       voltage VG at the output of the VSC. While the deblock signal OscEn is
+state, it is represented as a series resistor-capacitor (RC) branch. This        high, the output voltage is generated by comparing the oscillating
+technique allows freely configurable circuit topology in small time step         current IOSC with zero. In order to attain the minimum possible time
+sub-network blocks, and the admittance matrix of the whole power                 step, this block is implemented using small time step elements.
+circuit does not need to be recalculated in order to obtain a nodal so-
+lution. The value of R in the RC branch should be carefully selected so          C. Control logic of VARC DC CB RTDS Model
+that when the RC branch is connected in series with the L branch, there
+will be a series RLC branch with a user-defined damping factor of δ. The             Based on the requirements of the switching sequence, the control
+parameters R, C and L are computed by RTDS based on user-defined                 logic of the DC CB is implemented in RTDS as shown in Fig. 6. The
+rated voltage, current and damping factor δ for the switch. In order to          implemented logic includes fault inception logic FAULT and a trip
+minimize the energy loss during transition between “off” and “on”                signal generation logic TRIP LOGIC. The SR flip-flop blocks are applied
+states, for the computation of R, C and L a constraint is also applied, so       to simulate the open/close status of the breakers and VSC output de-
+that the energy in the capacitor (CV2/2) should be equal to the energy           block signal OscEn. The fault is simulated by an ideal switch BKFAULT
+
+
+                                                                             3
+S.S. Mirhosseini, et al.                                                                                        Electrical Power and Energy Systems 117 (2020) 105678
+
+
+
+
+                                                                  Fig. 5. VSC Voltage Generator.
+
+
+                                                                                    connected to ground in the electrical circuit. During normal conditions,
+                                                                                    the breaker resistance is 109 Ω, whilst during a fault, is equal to the
+                                                                                    fault resistance. The fault duration can also be controlled by this switch.
+                                                                                    After starting the simulation using RTDS RUNTIME page, the vacuum
+                                                                                    interrupter MB and the residual circuit breaker switch RCB are closed
+                                                                                    by CLOSEALL push button and a load current flows through the system.
+                                                                                    In the next step, the fault is incepted by using an LG_FLT push button
+                                                                                    with a specified duration determined by LG_FTIME. After the fault in-
+                                                                                    ception, trip commands MB and RCB are sent to their corresponding
+                                                                                  

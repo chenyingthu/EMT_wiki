@@ -1,0 +1,185 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.3018651, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+                   Stability Evaluation of Interpolation, Extrapolation,
+                 and Numerical Oscillation Damping Methods Applied
+                in EMT Simulation of Power Networks with Switching
+                                       Transients
+                    Huanfeng Zhao, Student Member, IEEE, Shengtao Fan, Member, IEEE, Aniruddha M. Gole, Fellow, IEEE,
+
+               Abstract—For Electro-Magnetic-Transient (EMT) simulations                                       linearly. For instance, consider the diode turn-off problem
+           of power networks with switches, techniques such as linear                                          shown in Fig. 1, where the current crosses zero within the
+           interpolation and Critical Damping Adjustment (CDA) are widely                                      interval [0,∆𝑡], at time 𝛿𝑡 . The algorithm determines that the
+           used for improving numerical robustness. This paper analyzes the
+                                                                                                               crossing must lie in [0, ∆𝑡] because the current at ∆𝑡 is negative.
+           numerical stability of simulations with these techniques. Firstly, it
+           is mathematically shown that the interpolation or CDA step is                                       Subsequently, linear interpolation is applied to determine the
+           equivalent to the introduction of additional switching states.                                      zero crossing of the current to be at 𝛿𝑡 as shown in Fig. 1. The
+           Subsequently, Common Quadratic Lyapunov Function (CQLF)                                             tentative time-step solution at ∆𝑡 is disregarded in the
+           theory is used to investigate the numerical stability of the whole                                  simulation, and the interpolated solution at 𝛿𝑡 is retained as the
+           simulation considering these new switching states. It is proved that                                “true” solution. However, this creates the problem, that the next
+           the widely used strategies like linear interpolation and CDA
+                                                                                                               simulation point using the same time-step would be ∆𝑡 + 𝛿𝑡,
+           always result a stable simulation if the original switched system is
+           strictly passive in all switching states. Finally, it is shown that the                             which is not on the original time grid. Other ways to improve
+           developed approach can be used to determine the stability of other                                  the interpolation accuracy can be found in reference [6], where
+           practical interpolation methods. Examples are provided to verify                                    a two stage interpolation method is proposed which improves
+           the proposed technique.                                                                             the accuracy of interpolation to second order.
+
+              Index Terms—interpolation, critical damping adjustment                                                                                                       t          2t
+           (CDA), stability, CQLF, EMT simulation, power electronic
+           devices,                                                                                                                                                   iL
+                                                                                                                                                                 dt+t
+                                             I. INTRODUCTION                                                                                                 iL(dt)                         Time (t)
+                                                                                                                      Vs                      VL
+           I N power system studies [1, 2], electromagnetic transient
+             digital simulators like ATP, EMTP, PSCAD/EMTDC,
+             NETOMAC, RTDS, etc. are widely used for modeling
+                                                                                                                                        iL                  dt                  iL(dt+t)
+
+
+           networks with power electronic switches. In these programs,                                                                                            i'L(t) (disregarded)
+           the switches are typically modeled as bi-valued resistors or
+           ideal switches. The trapezoidal integration method is used to                                                                       Fig. 1. Interpolation example
+           generate the companion circuit elements, from which the
+           system response can be determined using admittance matrix                                             2) Consider the simulation of an inductor in series with a
+           based analysis [3]. For accurate representation of the switching,                                   diode as shown in Fig. 1. Let us ignore interpolation for the time
+           several factors must be considered as listed below.                                                 being and assume that the current goes to zero precisely at time
+             1) Firstly, the switching operation does not typically coincide                                   ∆t. The theoretical variation of inductor voltage is shown in the
+           with the time step grid. For example, while simulating a diode,                                     Fig. 2. Although the current is continuous during the switching
+           the zero current at which the device turns off may occur                                            operation, the voltage is not, i.e., the voltages 𝑣𝐿 (𝑡+ ) and
+           between time-steps. Forcing the switching to coincide with a                                        𝑣𝐿 (𝑡− ), just after and just before the switch operation differ
+           time-step in such cases results in additional transients due to                                     from each other. Now, the calculation of the history current
+           current chopping or non-characteristic harmonics [4, 5]. One                                        source by the trapezoidal method requires a knowledge of the
+           practical solution in many commercial EMT solvers (e.g.,                                            inductor voltage and current in the previous time step. Only one
+           NETOMAC, PSCAD, etc.) is to use linear interpolation to                                             of these, 𝑣𝐿 (𝑡+ ) will yield the correct history term for
+           locate the exact switching instant. From the start to the end of a                                  calculating the solution at 𝑡 = 2∆t. However, the companion
+           time-step, the currents and voltages can be presumed to vary                                        circuit method in EMT solvers cannot directly give 𝑣𝐿 (𝑡+ ), as
+                                                                                                               𝑣𝐿 (𝑡− ) is the last calculated voltage value.
+             This work is supported in part by the IRC program of NSERC, Canada, H.                              Three methods have been proposed to address this issue [7].
+           Zhao     (email:    huanfengzhao@gmail.com),         S.   Fan    (email:                            The first, used in programs such as NETOMAC applies one half
+           shengtaofan@gmail.com) and A. M. Gole (email: gole@umanitoba.ca) are                                time-step Backward Euler (BE) after the switching operation.
+           with the Department of Electrical and Computer Engineering, University of
+           Manitoba, MB, Canada.                                                                               In BE, the history current (for an inductor) is just the current in
+
+
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: University of Prince Edward Island. Downloaded on September 08,2020 at 10:51:20 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.3018651, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                                                    2
+
+           the previous time-step, i.e., 𝑖𝐿 (𝑡− ) . As voltage is not even                                     method at the instant of switching, and so the conclusions of
+           involved, the problem of using the incorrect voltage is avoided                                     [15] no longer directly apply. This paper addresses this gap by
+           entirely. The calculated new voltage is a good approximation of                                     extending the stability analysis to simulations that use CDA or
+           𝑣𝐿 (𝑡+ ) and is used in the calculation of the history current for                                  interpolation which are widely used approaches in modern
+           the new time step solution.                                                                         simulators.
+             Programs such as XTAP [8] use the 2s-DIRK method, which                                              In this paper, the stability analysis is based on state space
+           has the same order of accuracy as the Trapezoidal method [6].                                       equations. The equivalency of the state space approach and
+           Just like BE, 2S-Dirk only considers the previous time-step                                         Dommel’s nodal analysis approach was proved in reference
+           current for the history term of an inductor and avoids the                                          [16], and is exploited in this paper.
+           problem of using the incorrect voltage.                                                                Section II summarizes the background required for this
+             The third method, labelled “instantaneous solution method”                                        paper, i.e., Common Quadratic Lyapunov Function (CQLF)
+           [9], also recalculates an approximate history term after                                            theory, passivity and stability of numerical algorithms. Based
+           switching (e.g. 𝑣𝐿 (𝑡+ ) and 𝑖𝐿 (𝑡+ ) ) using the post-switching                                    on this, Section III shows that the application of linear
+           admittance matrix, and has been implemented in programs such                                        interpolation to locate the switching instant and get back to the
+           as PSCAD. It is seen to reduce spurious losses associated with                                      original time step grid does not contribute to instability. Section
+           a straightforward implementation of interpolation.                                                  IV analyzes the stability of EMT type simulations of lumped
+                                                       t            2t                                       strictly passive switched circuit (LSPSC) systems with CDA
+                                  iL                                                                           and also with interpolation. Section IV analyzes the
+                                                                                                               discontinuity problem and addresses the stability of the
+                                                                                                               simulation with re-initialization methods.
+                                                      iL(t)                Time (t)                             In Section V, the proposed technique is applied to study the
+                                                                                                               stability of other previously used interpolation methods [17,
+                                 VL                   t              2t                                      18].
+                                                                                                                                                                                          Switch operation
+                                                     VL(t+)
+                                                                            Time (t)
+                                                                                                                       switching instant
+
+
+                                                     VL(t-)
+                                                                                                                         Locating the
+
+
+
+
+                                                                                                                                                                                                                       ...
+                                                                                                                                                                      Interpolation
+
+                                                                                                                                                                      NETOMAC
+                           Fig. 2. Inductor current and voltage at switching instant                                                                                   PSCAD
+                                                                                                                               Re-initialization
+
+
+
+
+              3) Although the trapezoidal method is the most accurate
+
+
+
+
+                                                                                                                                                                                                                       ...
+                                                                                                                                                                     Instantaneous                    Half step
+           single stage method which is A-stable [10], it results in a                                                                                           Solution Interpolation     or     Backward Euler
+           spurious numerical oscillation known as “chatter” when the                                                                                                                             NETOMAC
+                                                                                                                                                                  PSCAD
+           switch’s off resistance is large [5, 11]. Several methods exist to
+           remove chatter, such as the use of artificial snubber circuits
+                                                                                                                                         Numerical oscillation
+
+
+
+
+           across switches [3, 7], interpolation [5], position dependent
+                                                                                                                                            suppression
+
+
+
+
+                                                                                                                                                                                           Two half step
+                                                                                                                                                                                   or Backward Euler or
+
+
+
+
+                                                                                                                                                                                                                              ...
+                                                                                                                                                                  Interpolation                                     2S-DIRK
+           control of the integration method [12], by applying two half-
+           time-step BE steps (referred to as Critical Damping Adjustment                                                                                         PSCAD                   EMTP                 XTAP
+
+           or CDA) [11, 13] or using an inherently L-stable method such
+           as 2s- DIRK [14].
+                                                                                                                       integer time step
+
+
+
+
+              4) A straightforward application of interpolation derails the
+                                                                                                                            Back to
+
+
+
+
+                                                                                                                                                                      Interpolation
+                                                                                                                                                                                                                      ...
+
+
+           simulation from the original time grid, as the new time grid
+                                                                                                                                                                      PSCAD
+           would now be 𝛿𝑡 + ∆𝑡, 𝛿𝑡 + 2∆𝑡… etc. (as shown in Fig. 1).
+           An additional linear interpolation step can be applied to re-
+           synchronize with original time grid [5].
+              The 4-steps discussed above are summarized in the flow                                                                                                                  Continue simulation
+           chart of Fig. 3.                                                                                           Fig. 3. Flow chart of procedures for accurately representing switching
+              It is known that A-stable or L-stable [6, 11, 12] methods
+           result in stable simulations of stable Linear Time Invariant                                                II. ENERGY FUNCTION BASED STABILITY ANALYSIS
+           (LTI) systems. It was believed that these methods would also
+                                                                                                                  This section summarizes Common Quadratic Lyapunov
+           result in stable simulations of stable swi

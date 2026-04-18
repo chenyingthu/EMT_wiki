@@ -1,0 +1,253 @@
+第 43 卷 第 6 期                                                电 网 技 术                                                 Vol. 43 No. 6
+ 2019 年 6 月                                              Power System Technology                                       Jun. 2019
+文章编号：1000-3673（2019）06-2039-10                       中图分类号：TM 721              文献标志码：A           学科代码：470·40
+
+
+
+                      多类型子模块 MMC 电磁暂态通用
+                          建模和实现方法
+                                   许建中 1，徐义良 2，赵禹辰 1，赵成勇 1
+                （1．新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206；
+      2．直流输电技术国家重点实验室(南方电网科学研究院有限责任公司)，广东省 广州市 510080)
+
+
+  Generalized Electromagnetic Transient Equivalent Modeling and Implementation of MMC
+                     With Arbitrary Multi-type Submodule Structures
+                             XU Jianzhong1, XU Yiliang2, ZHAO Yuchen1, ZHAO Chengyong1
+                   (1. State Key Laboratory of Alternate Electrical Power System With Renewable Energy Sources
+                          (North China Electric Power University), Changping District, Beijing 102206, China;
+                  2. State Key Laboratory of HVDC (Electric Power Research Institute, China Southern Power Grid),
+                                          Guangzhou 510080, Guangdong Province, China)
+
+
+ABSTRACT: The key issue of electromagnetic transient                    在 PSCAD/EMTDC 中分别以单端口和双端口 MMC 为例，
+(EMT) modelling of modular multilevel converters (MMC) is               对所介绍的等效建模算法进行了验证，结果表明所提出的算
+calculation of equivalent circuit of entire MMC arm containing          法具有很强的通用性。
+a large number of cascaded sub-modules (SM) with identical              关键词：模块化多电平换流器；电磁暂态；等效模型；多类
+structure. During this process, all internal information should         型子模块；子模块拓扑识别
+be preserved. This paper proposes a general EMT modelling
+                                                                        DOI：10.13335/j.1000-3673.pst.2018.2121
+approach for arbitrary multi-port MMC topologies, also
+suitable for traditional single-port MMC and emerging two-port          0 引言
+MMC. A submodule topology identification method is
+                                                                            由半桥、全桥等单端口子模块构成的模块化多
+proposed to minimize the efforts of the model users when they
+                                                                        电平换流器(modular multilevel converter，MMC)，
+have specific MMC topologies at hand. In addition, the model
+                                                                        已成为国内外各大柔性直流输电工程的首选换流
+codes can be inherited to a large extent. Finally, the approaches
+are validated in PSCAD/EMTDC with results of very good
+                                                                        器拓扑[1-5]。近来，新型双端口子模块 MMC 拓扑不
+applicability   of    the   general     algorithm     and    unified    断涌现[9-11]，这些拓扑通常具备直流故障穿越能力
+implementation method .                                                 和电容电压自平衡能力等优良特性。随着柔性直流
+                                                                        电网对快速清除直流故障的需求不断增强，这些新
+KEY WORDS: modular multilevel converter (MMC);
+electromagnetic transient (EMT); equivalent model; multi-port           型拓扑具有良好的应用前景。
+sub-module; submodule topology identification                               当前柔性直流输电工程正朝着高电平、大容
+                                                                        量、多端的方向快速发展。当电平数较高时，无论
+摘要：模块化多电平换流器(modular multilevel converter，
+MMC)电磁暂态高效建模的难点，在于对桥臂中大量结构相
+                                                                        是半桥、全桥等单端口子模块还是新型双端口子模
+同的级联子模块(sub-module，SM)进行等效的同时保证消去                                       块构成的 MMC 在进行电磁暂态仿真时，都将面临
+的节点信息都可以被精确反解。提出一种针对多类型 MMC                                             仿真速度难以满足研究需求的问题。针对 MMC 模
+的电磁暂态通用建模和实现方法，它对传统的单端口 MMC                                             型计算效率问题，国内外学者提出了大量电磁暂态
+和新近出现的双端口 MMC 都适用。同时提出一种 MMC 拓                                          等效模型[12-20]，这些模型针对单端口子模块 MMC
+扑自动识别方法，可以大幅降低模型用户在对特定拓扑建模                                              拓扑提出，算法适用前提是同一个桥臂内的子模块
+时候的工作量，同时绝大部分模型代码都可以继承。最后，                                              必须流过相同的桥臂电流。文献[21]提出了一种对
+    基金项目：国家自然科学基金资助项目(51607065)。
+                                                                        任意单端口 MMC 拓扑通用的等效建模方法，在求
+    Project Supported by National Natural Science Foundation of China   解子模块戴维南等效电路时无需获得符号解析解，
+(51607065).
+2040                          许建中等：多类型子模块 MMC 电磁暂态通用建模和实现方法                                      Vol. 43 No. 6
+
+可以极大提高新拓扑的建模效率。然而，文献[12-21]                           的快速自动识别方法。为了不失一般性，假定任意
+都要求桥臂电流流过全部子模块的正负端子，以便                                新型子模块拓扑中最多包含 2 个电容(本文提出方
+通过对子模块戴维南电路求和以获得桥臂的等效                                 法所涉及公式可以根据实际电容数量进行修改)，将
+电路。                                                   电容进行积分离散化为诺顿等效形式，并使用阻值
+       图 1 为本文将涉及到的双端口子模块构成的                          可变的电阻来代替开关器件，可得任意子模块的伴
+MMC 拓扑，相比于传统的单端口子模块拓扑，双                               随电路如图 2 所示。图 2 共含 n 个节点，
+                                                                             其中第 1~2m
+端口子模块兼具隔离直流故障和自均压等功能。随                                个节点为子模块的外部连接节点，其余均为子模块
+着新型子模块拓扑外部端子数目的增加，相邻子模                                内部节点，第 i~n 号节点为电容节点。
+块间电流流通路径多样化，两两端子之间不一定严
+格的满足成为端口的条件，传统的戴维南等效方法
+将不再适用于该种类型的子模块的建模。
+
+
+
+
+                                                                图 2 任意拓扑子模块对应的伴随电路
+                                                       Fig. 2   Companion circuit of the arbitrary sub-module
+                                                                             topology
+
+                                                            在 PSCAD/EMTDC 等电磁暂态仿真软件中对
+                                                      任意拓扑子模块构成的 MMC 进行建模编程时，传
+                                                      统方法需要由图 2 子模块的伴随电路预先计算出子
+                                                      模块节点电压方程中各矩阵对应元素的解析表达
+                                                      式，然后编入程序中。通常一旦子模块拓扑发生改
+                                                      变，所编程序将不再适用，需要根据新的子模块拓
+                                                      扑重新求解获得等效电路的符号解析解，然后将其
+              图 1 双端口子模块 MMC 示意图
+       Fig. 1 Schematic diagram of the two-port MMC
+                                                      编程到仿真软件当中，这大大限制了所编程序的通
+       为解决这一问题，文献[22]针对双端口 MMC                        用性。同时，当子模块拓扑较复杂时，由于涉及到
+提出了一种通用等效建模方法，该方法可以在实现                                矩阵求逆过程，符号解析解将非常冗长，不利于程
+对外部等效的同时，完整保留消去节点的全部信                                 序的实现。另外，虽然 MMC 子模块拓扑确定后用
+息。然而，文献[22]中方法针对的是对称双端口子                              户可以容易地自行列写出节点电压方程，但是却增
+模块结构，不适用于子模块外部端口数量大于二的                                加了用户地编程工作量，而且节点电压方程中的电
+多端口 MMC 或子模块两侧结构不对称的多端口                               导元素是每个步长都要改变的，这样将使得用户在
+MMC 情况。同时，文献[21]和[22]中的方法都无法                          编程时要将控制部分给触发信号的部分输出并且
+实现针对模型用户特定 MMC 拓扑的快速识别和通                              整合到程序中去，这无疑大大增加了用户的编程工
+用建模，对用户的编程能力要求较高。                                     作量。因此，本文将探索一种通用实现方法。
+       本文将在文献[21-22]工作的基础上，提出一                        1.1   适用任意端口 MMC 子模块拓扑的识别方法
+种多类型 MMC 拓扑等效模型的通用实现方法，                                     针对上述问题，本文提出一种任意拓扑 MMC
+用户只需输入表征新型子模块结构的拓扑识别矩                                 等效模型通用实现方法，用户只需要在程序界面输
+阵，就可以实现新拓扑的电磁暂态快速建模，最终实                               入相应子模块对应的关联矩阵、支路导纳矩阵和支
+现建模算法和编程实现的双通用。同时，本文所提建                               路电流源列向量，可以由仿真软件通过矩阵运算即
+模方法既可用于离线仿真，也可用于实时仿真。                                 可得到子模块对应的节点电压方程，无需预先求出
+                                                      节点电压方程中各矩阵对应元素的解析表达式，可
+1 多类型子模块 MMC 拓扑的自动识别方法                                以实现所编程序代码对任意拓扑子模块的通用。
+       本节将介绍本文提出的不同类型子模块拓扑                                  以图 2 为例，假设任意拓扑子模块伴随电路中
+第 43 卷 第 6 期                                           电     网   技    术                                                      2041
+
+共含 n 个节点、b 条支路(其中电容虽然被离散化为                                       用实现方法的具体应用。
+一个电导和电流源并联，但依然视为一条支路)。首                                          1.2      单端口 MMC 子模块拓扑识别
+先对子模块伴随电路中各节点和支路分别从 1~n、                                                  任意单端口子模块只含 2 个外部节点，由图 2
+1~b 进行编号，并规定各支路方向，其中电容支路                                         可知 m 的取值为 1，其对应的伴随电路示意图如
+的方向取电容的正方向、其余支路方向可任意取，                                           图 4 所示。子模块共含有 n 个节点，其中第 1、
+如此便可得到该子模块对应的有向图，进而构造子                                           2 个节点为子模块的外部节点，其他节点为内部节
+模块对应的 n 行 b 列关联矩阵 Aa，Aa 的行数对应有                                   点，其中第 i、i+1 和第 n1、n 个节点分别为 2 个
+向图的节点数、列数对应有向图的支路数，关联矩                                           子模块电容对应的端点。
+阵 Aa 的元素 aij 取值如图 3 所示。
+               +1, 表示支路 j与节点 i相连且支路 j的方向为远离节点 i
+              
+              
+              
+              
+   Aa : aij   -1, 表示支路 j与节点 i相连且支路 j的方向为指向节点 i
+              
+              
+              
+              
+                          0, 表示支路 j与节点 i不相连
+
+                  图 3 关联矩阵 Aa 的定义
+             Fig. 3 Definition of the matrix Aa
+                                                                               图 4 任意单端口子模块对应的伴随电路
+     除关联矩阵 Aa 外，还需基于有向图构造任意拓                                          Fig. 4    Companion circuit of the arbitrary single-port
+扑子模块对应的支路导纳矩阵 Yb 和支路电流源列                                                                   sub-module
+向量 IS，其中 Yb 为 b 阶对角矩阵，其元素为全部内                                             本 节 将 以 文 献 [21] 中 涉 及 的 双 半 桥 子 模 块
+部电流源置零后各支路导纳值，其表达式如式(1)                                          (double half-bridge sub-module，D-HBSM)构成的
+所示；IS 为 b 维列向量，其元素为各支路诺顿等效                                       MMC 为例，说明该拓扑识别方法对任意单端口
+电流源值，其表达式如式(2)所示。                                                MMC 的通用性。图 5(a)、5(b)分别为 D-HBSM 对
+      Yb  diag[G1 , G2 , GC1 , GC 2 , Gb ]       (1)   应的伴随电路和有向图，其中 G1~G8 为开关器件的
+   I =[ I
+        S       (t   T )  I
+                 CEQ1                 (t  T ) ]T
+                                   CEQ 2                   (2)   等效电导。
+     由任意拓扑子模块对应的关联矩阵 Aa、支路导
+纳矩阵 Yb 和支路电流源列向量 IS 根据式(3)(4)构造
+任意拓扑子模块对应的节点电压方程(以大地为参
+考节点)如公式(5)所示：
+                        Y  AaYb AaT                   (3)
+                         J  Aa I S                    (4)
+               YV  J  I  (5)
+        最终式(5)可以写为如下分块矩阵的形式：
+            Y11 Y12  VEX   J EX   I EX                                           图 5 双半桥子模块
+            Y Y   V    J    I                (6)
+             21 22   IN   IN   IN 
+                                                                                          Fig. 5 D-HBSM
+                                                                     由 图 5(b)根据 1.1 节 的相 关 内 容，可 得 到
+式中：Y、V、J、I 分别为任意拓扑子模块对应的 n
+                                                                 D-HBSM 对应的关联矩阵、支路导纳矩阵和支路电
+阶节点导纳矩阵、n 维节点电压列向量、n 维历史                                         流源列量分别如下
+电流源列向量、n 维节点注入电流列向量，其中 J、                                                  1 0 1 0 0 0 0 0 1 0 
+I 正方向规定：流入节点为正。式(6)中下标 EX 表                                                0 0 0 0 0  1 0  1 0  1 
+                                                                                                                           
+示外部节点，下标 IN 表示内部节点。                                                        0 1 0 1 0 0 0 0  1 0 
+                                                                      Aa                                                      (7)
+     当模型用户的新型拓扑通过本章所提出方法                                                   0 0 0 0  1 0  1 0 0 1 
+自动识别之后，就可以采用本文第 2 章提到的通用                                                    1  1 0 0 1 1 0 0 0 0 
+                                                                                                                           
+建模方法，在完全继承模型代码的前提下，实现对                                                     0 0  1  1 0 0 1 1 0 0 
+新拓扑的快速、精确仿真。本节将以单端口、双端                                             Yb  diag[G1 , G2 , G3 , G4 , G5 , G6 , G7 , G8 , GC1 , GC2 ] (8)
+口 MMC 为例，说明任意 MMC 拓扑等效模型的通                                           IS  [0 0 0 0 0 0 0 0 I CEQ1 (t  T ) I CEQ 2 (t  T )]T (9)
+2042                                   许建中等：多类型子模块 MMC 电磁暂态通用建模和实现方法                                                                  Vol. 43 No. 6
+
+       之后将式(7)—(9)分别代入式(3)和(4)中，从而
+得到 D-HBSM 对应的节点电压方程(以节点 2 为参
+考节点)如式(10)所示：
+  G1  G3  GC1     GC1            0            G1            G3         
+      GC1      G2  G4  GC1                    G2            G4         
+                                    0                                       
+        0             0       G5  G7  GC 2     G5            G7         
+                                                                           
+                                               G1  G2                    
+       G1           G2           G5         G5  G6                     
+                                                                 0         
+      G3           G4           G7             0     G3  G4  G7  G8 
+
+ V1   I CEQ1 (t  T )   I1 
+ V    I        (t  T )   0 
+  3   CEQ1                    
+ V4    I CEQ2 (t  T )    0                                    (10)
+                             
+ V5             0           0                                                                   图 7 并联全桥子模块
+ V6                                                                                             Fig. 7 P-FBSM
+                  0           0
+                                                                                          1 0 1 0 0 0 0 0 0
+       从上式出发，采用文献[21]中的单端口 MMC                                                            0 1 0 1 0 0 0 0 0
+                                                                                                                   
+拓扑通用建模方法，就可以实现由 D-HBSM 构成的                                                                 0 0 0 0 1 0 1 0 0  (11)
+                                                                                     Aa                           
+MMC 的快速、精确建模。                                                                             0 0 0 0 0 1 0 1 0
+1.3     双端口 MMC 子模块拓扑识别                                                                    1 1 0 0 1 1 0 0 1 
+                                                                                                                   
+       任意双端口子模块拓扑只含 4 个外部节点，由                                                              0 0 1 1 0 0 1 1 1
+图 2 可知 m 的取值为 2，其对应的伴随电路如图 6                                                          Yb  diag G1 , G2 ,G 3 , G4 , G5 , G6 , G7 , G8 , GC        (12)
+
+                                                                                 IS  0 0 0 0 0 0 0 0 I CEQ (t  T )  (13)
+                                                                                                                                                T
+所示。
+
+                                                                                     之后将式(11)—(13)分别代入式(3)(4)中，从而
+                                                                                 得到 P-FBSM 对应的节点电压方程(以大地为参考
+                                                                                 节点)如式(14)所示：
+                                                                                 G1  G3      0          0         0          G1         G3     
+                                                                                  0        G2  G4       0         0          G2         G4     
+                                                                                                                                                  
+                                                                                  0           0       G5  G7      0          G5         G7     
+                                                                                                                                                  
+                                                                                  0           0          0      G6  G8       G6         G8     
+                                                                                                                           G1  G2                
+                                                                                                                                                  
+            图 6 任意双端口子模块对应的伴随电路                                                   G1       G2        G5        G6      G5            GC 
+                                                                                                                           G6  GC               
+      Fig. 6 Companion circuit of the arbitrary two-port                                                                                          
+                       sub-module                                                                                                       G3  G4 
+                                                                                                                                                  
+                                                                                  G3       G4        G7        G8         GC       G7       
+       图 6 中子模块共包含 n 个节点，其中第 1~4 节                                               
+                                                                                                                                        G8  GC 
+点为子模块的外部节点，其它节点为内部节点，其
+                                                                                        VPA                       0                I PA 
+中第 i、i+1 和第 n1、n 个节点分别为 2 个子模块                                                                                                            
+                                                                                         V                          0          I   I PB 
+电容对应的端点。前一个子模块的 3、4 节点与后                                                           VIF   PB 
+                                                                                         VNA                     0           IF
+                                                                                                                                           I NA 
+一个子模块的 1、2 节点对应相连，N 个双端口子模                                                              V                                               
+                                                                                            NB                     0                 I NB 
+块级联构成双端口 MMC 桥臂。                                                                         VCA           I CEQ (t  T )              0 
+                                                                                   VIN          J IN                                       
+       本节将以文献[22]中涉及到的并联全桥子模块                                                            VCB          I CEQ (t  T )         0 
+(paralleled full-bridge sub-module，P-FBSM)构成的                                                             (14)
+MMC 为例(见图 1)，说明本文提出的拓扑识别方法                                                           从上式出发，采用文献[22]中的双端口 MMC
+对任意双端口子模块 MMC 具备通用性。图 7(a)、                                                      拓扑通用建模方法，就可以实现由 P-FBSM 构成的
+7(b)分别为 P-FBSM 对应的伴随电路和有向图。                                                      MMC 的快速、精确建模。
+       由图 7(a)可以获得图 7(b)中的有向图，进而根
+                                                                                 2 多类型子模块 MMC 通用等效建模方法
+据 1.1 节的相关内容，可得到 P-FBSM 对应的关联
+矩阵、支路导纳矩阵和支路电流源列向量分别如                                                                采用第 1 节方法获得新拓扑的结构信息之后，
+式(11)—(13)所示：                                                                    基于本节将提出的多类型子模块 MMC 通用建模方
+第 43 卷 第 6 期                                        电    网   技   术                                                

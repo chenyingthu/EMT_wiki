@@ -1,0 +1,183 @@
+1472                                                                       IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS, VOL. 19, NO. 4, JULY 2015
+
+
+
+
+          Retinal Area Detector From Scanning Laser
+         Ophthalmoscope (SLO) Images for Diagnosing
+                       Retinal Diseases
+                 Muhammad Salman Haleem, Liangxiu Han, Jano van Hemert, Baihua Li, and Alan Fleming
+
+
+   Abstract—Scanning laser ophthalmoscopes (SLOs) can be used
+for early detection of retinal diseases. With the advent of latest
+screening technology, the advantage of using SLO is its wide field
+of view, which can image a large part of the retina for better diag-
+nosis of the retinal diseases. On the other hand, during the imaging
+process, artefacts such as eyelashes and eyelids are also imaged
+along with the retinal area. This brings a big challenge on how to
+exclude these artefacts. In this paper, we propose a novel approach
+to automatically extract out true retinal area from an SLO image
+based on image processing and machine learning approaches. To
+reduce the complexity of image processing tasks and provide a
+convenient primitive image pattern, we have grouped pixels into
+different regions based on the regional size and compactness, called                 Fig. 1. Example of (a) a fundus image and (b) an SLO image annotated with
+superpixels. The framework then calculates image based features                      true retinal area and ONH.
+reflecting textural and structural information and classifies be-
+tween retinal area and artefacts. The experimental evaluation re-
+sults have shown good performance with an overall accuracy of                        preprocessing step before automated detection of features of
+92%.                                                                                 retinal diseases. In a retinal scan, extraneous objects such as
+   Index Terms—Feature selection, retinal artefacts extraction,                      the eyelashes, eyelids, and dust on optical surfaces may appear
+retinal image analysis, scanning laser ophthalmoscope (SLO).
+                                                                                     bright and in focus. Therefore, automatic segmentation of these
+                             I. INTRODUCTION                                         artefacts from an imaged retina is not a trivial task. The purpose
+      ARLY detection and treatment of retinal eye diseases is                        of performing this study is to develop a method that can exclude
+E     critical to avoid preventable vision loss. Conventionally,
+retinal disease identification techniques are based on manual
+                                                                                     artefacts from retinal scans so as to improve automatic detection
+                                                                                     of disease features from the retinal scans.
+observations. Optometrists and ophthalmologists often rely on                           To the best of our knowledge, there is no existing work re-
+image operations such as change of contrast and zooming to                           lated to differentiation between the true retinal area and the
+interpret these images and diagnose results based on their own                       artefacts for retinal area detection in an SLO image. The SLO
+experience and domain knowledge. These diagnostic techniques                         manufactured by Optos [2] produces images of the retina with a
+are time consuming. Automated analysis of retinal images has                         width of up to 200◦ (measured from the centre of the eye). This
+the potential to reduce the time, which clinicians need to look                      compares to 45◦ −60◦ achievable in a single fundus photograph.
+at the images, which can expect more patients to be screened                         Examples of retinal imaging using fundus camera and SLO are
+and more consistent diagnoses can be given in a time efficient                       shown in Fig. 1. Due to the wide field of view (FOV) of SLO
+manner [1].                                                                          images, structures such as eyelashes and eyelids are also imaged
+   The 2-D retinal scans obtained from imaging instruments                           along with the retina. If these structures are removed, this will
+[e.g., fundus camera, scanning laser ophthalmoscope (SLO)]                           not only facilitate the effective analysis of retinal area, but also
+may contain structures other than the retinal area; collectively                     enable to register multiview images into a montage, resulting in
+regarded as artefacts. Exclusion of artefacts is important as a                      a completely visible retina for disease diagnosis.
+                                                                                        In this study, we have constructed a novel framework for the
+   Manuscript received March 26, 2014; revised July 7, 2014; accepted August         extraction of retinal area in SLO images. The three main steps
+17, 2014. Date of publication August 26, 2014; date of current version July 23,      for constructing our framework include:
+2015. This work was supported by EPSRC-DHPA funded Project “Automatic                   1) determination of features that can be used to distinguish
+Detection of Features in Retinal Imaging to Improve Diagnosis of Eye Diseases”
+and Optos plc.                                                                              between the retinal area and the artefacts;
+   M. S. Haleem, L. Han, and B. Li are with the School of Computing, Mathemat-          2) selection of features which are most relevant to the clas-
+ics and Digital Technology, Manchester Metropolitan University, Manchester                  sification;
+M1 5GD, U.K. (e-mail: muhammad.s.haleem2@stu.mmu.ac.uk; l.han@mmu.
+ac.uk; b.li@mmu.ac.uk).                                                                 3) construction of the classifier which can classify out the
+   J. van Hemert and A. Fleming are with Optos plc, Dunfermline KY11 8GR,                   retinal area from SLO images.
+U.K. (e-mail: jvanhemert@optos.com; afleming@optos.com).                                For differentiating between the retinal area and the artefacts,
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       we have determined different image-based features which re-
+   Digital Object Identifier 10.1109/JBHI.2014.2352271                               flect grayscale, textural, and structural information at multiple
+2168-2194 © 2014 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution
+               requires IEEE permission. See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+HALEEM et al.: RETINAL AREA DETECTOR FROM SCANNING LASER OPHTHALMOSCOPE (SLO) IMAGES                                                  1473
+
+
+
+resolutions. Then, we have selected the features among the large      analysis, histogram analysis, sharpness, etc., [1], [11], [12]. Dias
+feature set, which are relevant to the classification. The feature    et al. [13] determined four different classifiers using four types
+selection process improves the classifier performance in terms        of features. They were analyzed for the retinal area including
+of computational time. Finally, we have constructed the classi-       colour, focus, contrast, and illumination. The output of these
+fier for discriminating between the retinal area and the artefacts.   classifiers were concatenated for quality classification. For clas-
+Our prototype has achieved average classification accuracy of         sification, the classifiers such as partial least square (PLS) [14]
+92% on the dataset having healthy as well as diseased retinal         and support vector machines (SVMs) [15] were used. PLS se-
+images.                                                               lects the most relevant features required for classification. Apart
+   The rest of this paper is organised as follows. Section II in-     from calculating image features for whole image, grid analysis
+troduces the previous work for feature determination and classi-      containing small patches of the image has also been proposed
+fication. Section III discusses our proposed method. Section IV       for reducing computational complexity [11]. For determining
+provides the quantitative and visual results of our proposed          image quality, the features of region of interest of anatomical
+method. Section V summarizes and concludes the method with            structures such as optic nerve head (ONH) and Fovea have also
+future work.                                                          been analyzed [16]. The features included structural similarity
+                                                                      index, area, and visual descriptor etc. Some of the above men-
+                                                                      tioned techniques suggest the use of grid analysis, which can
+                    II. LITERATURE SURVEY                             be an time effective method to generate features of particular
+   Our literature survey is initiated with the methods for de-        region rather than each pixel. But grid analysis might not be an
+tection and segmentation of eyelids and eyelashes applied on          accurate way to represent irregular regions in the image. There-
+images of the front of the eye, which contains the pupil, eyelids,    fore, we decided the use of superpixels [17]–[20], which group
+and eyelashes. On such an image, the eyelashes are usually in the     pixels into different regions depending upon their regional size
+form of lines or bunch of lines grouped together. Therefore, the      and compactness.
+first step of detecting them was the application of edge detection       Our methodology is based on analyzing the SLO image-based
+techniques such as Sobel, Prewitt, Canny, Hough Transform [3],        features, which are calculated for a small region in the retinal
+and Wavelet transform [4]. The eyelashes on the iris were then        image called superpixels. The determination of feature vector
+removed by applying nonlinear filtering on the suspected eye-         for each superpixel is computationally efficient as compared
+lash areas [5]. Since eyelashes can be in either separable form or    to feature vector determination for each pixel. The superpixels
+in the form of multiple eyelashes grouped together, Gaussian fil-     from the images in the training set are assigned the class of
+ter and Variance filter were applied in order to distinguish among    either retinal area or artefacts depending upon the majority of
+both forms of eyelashes [6]. The experiment showed that sepa-         pixels in the superpixel belonging to the particular class. The
+rable forms of eyelashes were most likely detected by applying        classification is performed after ranking and selection of features
+Gaussian filter, whereas Variance filters are more preferable for     in terms of effectiveness in classification. The details of the
+multiple eyelash segmentation [7]. Initially, the eyelash can-        methods are discussed in the following section.
+didates were localized using active shape modeling, and then,
+eight-directional filter bank was applied on the possible eyelash
+candidates. Kang and Park [8] used focus score in order to vary                             III. METHODOLOGY
+the size of convolution kernels for eyelash detection. The size          The block diagram of the retina detector framework is shown
+variation of the convolution kernels also differentiated between      in Fig. 2. The framework has been divided into three stages,
+separable eyelashes and multiple eyelashes. Min and Park [9]          namely training stage, testing and evaluation stage, and deploy-
+determined the features based on intensity and local standard         ment stage. The training stage is concerned with building of
+variation in order to determine eyelashes. They were thresh-          classification model based on training images and the annota-
+olded using Otsu’s method, which is an automatic threshold se-        tions reflecting the boundary around retinal area. In the testing
+lection method based on particular assumptions about intensity        and evaluation stages, the automatic annotations are performed
+distribution. All of these methods have been applied on CASIA         on the “test set” of images and the classifier performance is eval-
+database [10], which is an online database of Iris images. In an      uated against the manual annotations for the determination of
+image obtained from SLO, the eyelashes show as either dark or         accuracy. Finally, the deployment stage performs the automatic
+bright region compared to retinal area depending upon how laser       extraction of retinal area.
+beam is focused as it passes the eyelashes. The eyelids show as          The subtasks for training, testing, and deployment stages are
+reflectance region with greater reflectance response compared to      briefly described as follows:
+retinal area. Therefore, we need to find out features, which can         1) Image Data Integration: It involves the integration of im-
+differentiate among true retinal area and the artefacts in SLO               age data with their manual annotations around true retinal
+retinal scans. After visual observation in Fig. 1(b), the features           area.
+reflecting the textural and structural difference could have been        2) Image Preprocessing: Images are then preprocessed in
+the suggested choice. These features have been calculated for                order to bring the intensity values of each image into a
+different regions in fundus images, mostly for quality analysis.             particular range.
+   The characterisation of retinal images were performed in              3) Generation of Superpixels: The training images after
+terms of image features such as intensity, skewness, textural                preprocessing are represented by small regions called
+1474                                                         IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS, VOL. 19, NO. 4, JULY 2015
+
+
+
+                                                                      visualization, μtarget is set to 80. Finally, the Gamma adjustment
+                                                                      of the image is given as
+                                                                                                               γ
+                                                                                                             I
+                                                                                              Inorm =               .                (2)
+                                                                                                            255
+
+                                                                      B. Generation of Superpixels
+                                                                         The superpixel algorithm groups pixels into different regions,
+                                                                      which can be used to calculate image features while reducing the
+                                                                      complexity of subsequent image processing tasks. Superpixels
+                                                                      capture image redundancy and provide a convenient primitive
+                                                                      image pattern. As far as fundus retinal images are concerned,
+                                                                      the superpixels have been generated for analyzing anatomical
+                                                                      structures [21] and retinal hemorrhage detection [22]. For reti-
+                                                                      nal hemorrhage detection, the superpixels were generated using
+                                                                      watershed approach but the number of superpixels generated in
+                                                                      our case need to be controlled. The watershed approach some-
+                                                                      times generates number of superpixels of the artefacts more than
+Fig. 2.   Block diagram of retina detector framework.                 desired. The superpixel generation method used in our retina de-
+                                                                      tector framework is simple linear iterative clustering [17], which
+                                                                      was shown to be efficient not only in terms of computational
+      superpixels. The generation of the feature vector for each      time, but also in terms of region compactness and adherence.
+      superpixel makes the process computationally efficient as       The algorithm is initialized by defining number of superpixels
+      compared to feature vector generation for each pixel.           to be generated. The value was set to 5000 as a compromise
+   4) Feature Generation: We generate image-based features            between computational stability and prediction accuracy.
+      which are used to distinguish between the retinal area
+      and the artefacts. The image-based features reflect tex-        C. Feature Generation
+      tural, grayscale, or regional information and they were
+                                                                         After the generation of superpixels, the next step is to de-
+      calculated for each superpixel of the image present in the
+                                                                      termine their features. We intend to differentiate between the
+      training set. In testing stage, only those features will be
+                                                                      retinal area and artefacts using textural, grayscale gradient, and
+      generated which are selected by feature selection process.
+                                                                      regional based features. Textural and gradient based features are
+   5) Feature Selection: Due to a large number of features,
+                                                                      calculated from red and green channels on different Gaussian
+      the feature array needs to be reduced before classifier
+                                                                      blurring scales, also known as smoothing scales [23]. In SLO
+      construction. This involves features selection of the most
+                                                                      images, the blue channel is set to zero; therefore, no feature
+      significant features for classification.
+                                                                      was calculated for the blue channel. The regional features are
+   6) Classifier Construction: In conjunction with manual an-
+                                                                      determined for the image irrespective of the colour channel. The
+      notations, the selected features are then used to construct
+                                                                      details of these features are described as follows
+      the binary classifier. The result of such a classifier is the
+                                          

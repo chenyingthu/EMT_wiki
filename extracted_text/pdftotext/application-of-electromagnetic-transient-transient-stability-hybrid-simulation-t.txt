@@ -1,0 +1,174 @@
+2634                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 31, NO. 4, JULY 2016
+
+
+
+
+  Application of Electromagnetic Transient-Transient
+    Stability Hybrid Simulation to FIDVR Study
+                                Qiuhua Huang, Student Member, IEEE, and Vijay Vittal, Fellow, IEEE
+
+
+
+   Abstract—This paper deals with the development of a new                          of air conditioners (A/Cs) and the distribution network is
+electromagnetic transient (EMT)-transient stability (TS) hybrid                     critical for the accuracy of FIDVR simulation results, espe-
+simulation platform and its application to a detailed fault-induced                 cially under asymmetric fault conditions [5]–[7]. However,
+delayed voltage recovery (FIDVR) study on the WECC system.
+A new EMT-TS hybrid simulation platform, which integrates                           positive sequence transient stability (TS) simulators are unable
+PSCAD/EMTDC and the open source power system simulation                             to accurately model the A/C response to unbalanced faults.
+software InterPSS has been developed. A combined interaction                        Simulation of large power systems with associated detailed
+protocol with an automatic protocol switching control scheme                        modeling of large numbers of fast responding elements is
+is proposed. A multi-port three-phase Thévenin equivalent is                        too computationally burdensome for existing electromagnetic
+developed for representing an external network in an EMT sim-
+ulator. Correspondingly, the external network is represented in
+                                                                                    transient (EMT) simulators. While the scale of the system can
+three-sequence, and a three-sequence TS simulation algorithm is                     be reduced by modeling a large portion of the system with
+developed. These techniques allow simulation of unsymmetrical                       a Norton or Thévenin equivalent, the drawback is that the
+faults within the internal network without the constraint of phase                  nonlinear, dynamic response of the equivalenced portion of the
+balance at the boundary. The effectiveness of the proposed tech-                    system cannot be represented in the EMT simulation.
+niques is ﬁrst tested on the IEEE 9-bus system. Subsequently,
+                                                                                       The EMT-TS hybrid simulation approach has been found to
+the proposed hybrid simulation approach is applied to a detailed
+FIDVR study on a large WECC system. The study shows that a                          be practically feasible to meet such a simulation demand [1], [2],
+normally cleared single-line-to-ground (SLG) fault in the trans-                    [8]–[15]. Alternative methods include dynamic phasor [16] and
+mission system could lead to an FIDVR event, with compressor                        frequency adaptive [17] modeling approaches. The EMT-TS
+motors of the air conditioning units on the faulted phases stalling                 hybrid simulation approach is adopted in this paper, as this ap-
+ﬁrst, followed by a propagation of motor stalling to the unfaulted                  proach allows the ﬂexible integration of the existing and proven
+phase. Moreover, similar events are observed in simulations
+with a wide range of load compositions. Lastly, the effect of the                   EMT and TS simulators without “reinventing the wheel”. The
+point-on-wave (POW) at which a fault is applied on the occurrence                   portion of the system with a high penetration of A/C loads, re-
+of an FIVDR event is also analyzed.                                                 ferred to as the internal network, is modeled in an EMT simu-
+                                                                                    lator, whereas the rest of the system is regarded as the external
+  Index Terms—Electromagnetic transient, fault induced delayed
+                                                                                    network and represented by a phasor domain model.
+voltage recovery, hybrid simulation, interaction protocol, multi-
+port three-phase Thévenin equivalent, transient stability.                             Previous research on EMT-TS hybrid simulation mainly fo-
+                                                                                    cused on interfacing techniques [11], including network equiv-
+                                                                                    alents on both sides [1], [12], [18] and interaction protocols [9],
+                            I. INTRODUCTION                                         [13], [18]–[20] as well as the development of hybrid simulation
+                                                                                    programs [1], [2], [10], [14]- [15]. The external network equiva-
+                                                                                    lents used in previous research, with the exception of [12], were
+
+W      ITH the proliferation of converter based power elec-
+       tronic devices and small single-phase induction motors
+in power systems, the interaction of such fast responding
+                                                                                    developed based on positive-sequence network models. Conse-
+                                                                                    quently, if the resulting network equivalents were used in study
+                                                                                    cases with unbalanced conditions, the internal network would
+elements with the power systems over time spans as long as                          have to be extended substantially in the cases with a mesh net-
+20 seconds has become a subject of signiﬁcant interest [1],                         work topology, in order to comply with the three-phase bal-
+[2]. The fault-induced delayed voltage recovery (FIDVR)                             anced assumption, which would undermine the merits of hy-
+phenomenon [3]–[5] falls into this category of events. Detailed                     brid simulation. For the interaction protocol, either the serial
+modeling and simulation of single-phase compressor motors                           or the parallel protocol was used in previous research. The se-
+                                                                                    rial protocol has been found to be a limiting factor of simula-
+   Manuscript received October 24, 2014; revised March 23, 2015 and July 14,
+                                                                                    tion speed, whereas the parallel protocol could lead to accu-
+2015; accepted September 15, 2015. Date of publication September 28, 2015;          racy issues. Moreover, these programs, with the exception of [2]
+date of current version May 02, 2016. This work was supported by the Na-            and [10] are designed to run all simulations on only one com-
+tional Science Foundationunder Grant EEC-9908690 at the Power System En-
+gineering Research Center. Paper no. TPWRS-01475-2014.
+                                                                                    puter, thus they are potentially limited by the local computing
+   The authors are with the Department of Electrical, Computer and Energy           resources. References [2] and [10], however, did not provide
+Engineering, Arizona State University, Tempe, AZ 85281 USA (e-mail:                 implementation details of the commercial solution.
+qhuang24@asu.edu; vijay.vittal@asu.edu).
+   Color versions of one or more of the ﬁgures in this paper are available online
+                                                                                       The issues identiﬁed above are addressed in this paper
+at http://ieeexplore.ieee.org.                                                      with the development of a new hybrid simulation platform
+   Digital Object Identiﬁer 10.1109/TPWRS.2015.2479588                              integrating PSCAD/EMTDC [21] and an open source power
+
+                         0885-8950 © 2015 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                             See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:03:42 UTC from IEEE Xplore. Restrictions apply.
+HUANG AND VITTAL: APPLICATION OF ELECTROMAGNETIC TRANSIENT-TRANSIENT STABILITY HYBRID SIMULATION TO FIDVR STUDY                                         2635
+
+
+
+                                                                                  in [23], which has been enhanced to realize programming-lan-
+                                                                                  guage-neutral data exchange and facilitate data export and im-
+                                                                                  port through the same socket.
+                                                                                     It should be noted that with this architecture, only existing
+                                                                                  user interface functions of PSCAD and APIs of InterPSS are
+                                                                                  used for the development and no modiﬁcation of the PSCAD
+                                                                                  program itself is required. Therefore, the proposed approach and
+                                                                                  algorithms discussed in the following subsections can be seam-
+                                                                                  lessly extended to other similar EMT or TS simulators.
+Fig. 1. Schematic diagram of the architecture of the hybrid simulation plat-
+form.                                                                             B. A Combined Interaction Protocol
+                                                                                     The interaction protocol relates to how the two simulators
+                                                                                  interact with each other in exchanging the necessary network
+system simulation software InterPSS [22], based on a decou-                       equivalent parameters. There are mainly two types of interac-
+pled architecture. A socket-based communication framework                         tion protocols used in previous research, i.e., the serial and par-
+is developed to support this architecture. A combined inter-                      allel protocol [11]. With the serial protocol, one simulator must
+action protocol with an automatic protocol switching scheme                       wait until the other completes the simulation of one interac-
+is proposed to increase the speed of hybrid simulation while                      tion time step and transfers the equivalent data. To overcome
+maintaining accuracy. A multi-port three-phase Thévenin                           this performance issue, several types of parallel protocols have
+equivalent is proposed for representing the external network                      been proposed [11]. The parallel protocol proposed in [9] re-
+in PSCAD. Correspondingly, a three-sequence TS simulation                         quires data exchange for each iteration within one TS simulation
+algorithm is developed based on InterPSS for simulating the ex-                   time step. This requirement not only makes the data exchange
+ternal network. With these techniques, any type of fault within                   process complicated, but is also impractical for most existing
+the internal network can be analyzed without the three-phase                      commercial EMT simulators as the iteration times required are
+balance constraint at the boundary.                                               unknown a priori. The parallel protocol proposed in [10] is rel-
+   The remainder of this paper is organized as follows. In                        atively easy to implement. However, it could cause signiﬁcant
+Section II, the details of the development of the proposed hybrid                 errors when the internal system experiences large disturbances,
+simulation platform based on PSCAD/EMTDC and InterPSS                             as the equivalents of the external network are not updated in a
+are presented. Results of testing on the proposed approaches                      timely fashion to reﬂect the disturbances within the internal net-
+on a modiﬁed IEEE 9-bus system are given in Section III.                          work.
+A detailed FIDVR study on a large WECC system model is                               In an effort to combine the advantages of both types of pro-
+conducted based on the developed hybrid simulation platform                       tocols, a combined interaction protocol is proposed based on
+in Section IV. The conclusions are provided in Section V.                         the following observation: fast dynamics and signiﬁcant system
+                                                                                  changes usually occur during the faulted period and last for up
+      II. DEVELOPMENT OF A NEW HYBRID SIMULATION                                  to tens of cycles after the fault is cleared; in order to reﬂect the
+          PLATFORM BASED ON PSCAD AND INTERPSS                                    fast dynamic response of the internal network in the external
+                                                                                  network, or vice versa, in a timely manner, the serial protocol
+A. Architecture of the Hybrid Simulation Platform                                 should be used. For the rest of the simulation period, the parallel
+   The architecture of a hybrid simulation platform not only af-                  protocol can be used to achieve good efﬁciency, as the system
+fects the selection of the communication method and interaction                   mainly experiences slow dynamics.
+protocol, but also its extendibility in the future. A decoupled ar-                  First, both serial and parallel interaction protocols are imple-
+chitecture for integrating an EMT and TS program is proposed                      mented as shown in Figs. 2 and 3, respectively. In both ﬁgures,
+and implemented using the pipe technology in [13]. A similar                        denotes the start time for the processing step,        is TS sim-
+decoupled architecture is employed in this paper, as shown in                     ulation time step as well as the EMT-TS interaction time step,
+Fig. 1, but implemented using a socket-based communication                                  and                are the three-sequence current injec-
+framework, which is more ﬂexible and enables distributed sim-                     tion vectors sent from the PSCAD side at the present and pre-
+ulation over a local area network (LAN).                                          vious interaction time step, respectively.
+   PSCAD/EMTDC is adopted as the EMT simulator, and In-                              If a fast transient phenomenon within the internal network is
+terPSS is chosen for TS simulation. InterPSS not only provides                    detected, the serial protocol is used for this time step. As shown
+models and algorithms for power ﬂow, short circuit analysis and                   in Fig. 2, the operation involved is divided into 5 steps. The
+positive-sequence based transient stability simulation, but also                  ﬁrst step is data transfer via a socket and pre-processing. Then,
+deﬁnes the corresponding application programming interfaces                       in step (2),           is used as the input for the three-sequence
+(APIs).                                                                           TS simulation and the three-sequence voltages of the boundary
+   The socket communication framework, consisting of a socket                     buses                are updated. Subsequently, the three-phase
+component developed as a user-deﬁned model in PSCAD and                           Thévenin equivalent voltages                 are derived by the net-
+a socket server on the InterPSS side, is specially developed for                  work equivalent helper in step (3) and sent back to PSCAD in
+data exchange between the two simulators. The socket client in                    step (4). On receiving              , PSCAD continues to step (5),
+PSCAD is developed based on the socket component developed                        which usually consists of hundreds of EMT simulation steps.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:03:42 UTC from IEEE Xplore. Restrictions apply.
+2636                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 31, NO. 4, JULY 2016
+
+
+
+
+Fig. 2. The implementation of EMT-TS hybrid simulation with the serial type of interaction protocol.
+
+
+
+                                                                                  maximum rate of change for multiple monitored variables, can
+                                                                                  provide the necessary information. Thus the rate of change is
+                                                                                  adopted for controlling the protocol switching.
+                                                                                     2) Variable Selection for Detecting Fast Dynamics: In prin-
+                                                                                  ciple, current, voltage and power are good candidates for de-
+                                                                                  tecting transient events within the internal network. Consid-
+                                                                                  ering that the sequence current injections at the boundary have
+                                                                                  been used as the interfacing variables, reusing them for protocol
+                                                                                  switching control can reduce the communication overhead and
+                                                                                  simplify the interfacing design. Therefore, the three-sequence
+                                                                                  current injections are adopted for detecting fast dynamics.
+Fig. 3. One interaction step of the developed EMT-TS hybrid simulation with          3) Implementation: The detection is based on the maximum
+the parallel type protocol.                                                       rate of change of the three-sequence current injections at the
+                                                                                  boundary, which is denoted by               and deﬁned by (1).
+
+Considering the computational complexity of each step, it is ob-
+vious that step (2) and step (5) are the two most time-consuming
+steps.
+   Otherwise, the parallel protocol shown in Fig. 3 is used. The
+step for calculating the Thévenin equivalent (step (b)) is exe-
+cuted right after step (a), while the time-consuming step (d) is                                                                                        (1)
+the last step on the TS simulation side. With t

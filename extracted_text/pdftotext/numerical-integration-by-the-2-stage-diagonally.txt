@@ -1,0 +1,225 @@
+390                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 1, JANUARY 2009
+
+
+
+
+       Numerical Integration by the 2-Stage Diagonally
+      Implicit Runge-Kutta Method for Electromagnetic
+                   Transient Simulations
+                       Taku Noda, Member, IEEE, Kiyoshi Takenaka, and Toshio Inoue, Member, IEEE
+
+
+
+   Abstract—This paper proposes applying the two-stage di-                       which calculates a solution at the present time step only from
+agonally implicit Runge–Kutta (2S-DIRK) method of numerical                      values obtained at the previous time step. In spite of its simple
+integration to the calculation of electromagnetic transients (EMTs)              formula, the trapezoidal method has a second-order accuracy
+in a power system. The accuracy and the numerical stability of
+                                                                                 and is A-stable [2]. When an integration method is said to be
+2S-DIRK are almost the same as those of the trapezoidal method,
+while 2S-DIRK does not produce sustained numerical oscilla-                      A-stable, it does not diverge for any time step size. However, the
+tion due to a sudden change of an inductor current or a capacitor                trapezoidal method produces “fictitious” sustained numerical
+voltage unlike the trapezoidal method. First, this paper reviews the             oscillation for a sudden change of a variable. This numerical
+2S-DIRK integration scheme and derives the 2S-DIRK formulas                      oscillation appears when an inductor current or a capacitor
+of inductors and capacitors for both linear and nonlinear cases.                 voltage is suddenly changed, and this can be a serious drawback
+Then, analytical comparisons of 2S-DIRK with the trapezoidal,                    for EMT simulations including power electronics converters
+backward Euler, and Gear–Shichman methods are carried out,
+and numerical examples which verify the analytical comparisons                   which use semiconductor switches. To cope with this problem,
+are shown. Finally, 2S-DIRK is compared with critical damping                    critical damping adjustment (CDA) has been proposed and
+adjustment (CDA) implemented in Electromagnetic Transients                       implemented in some versions of EMTP [3], [4]. In CDA, the
+Program (EMTP) for some simulation cases.                                        trapezoidal method is basically used, and only at a moment a
+  Index Terms—Electromagnetic transient analysis, integration                    sudden change of a variable is detected the integration method
+(mathematics), numerical stability, power electronics, power                     is replaced by the backward Euler method. Since the backward
+semiconductor switches, power system simulation, power system                    Euler method does not produce sustained numerical oscillation,
+transients.                                                                      a favorable solution is obtained in most cases. In a practical im-
+                                                                                 plementation [4], switching events, sudden changes of voltage
+                                                                                 and current source values, and changes of the operating points
+                           I. INTRODUCTION                                       of nonlinear components represented by piece-wise linear
+                                                                                 curves are detected to switch to the backward Euler method.
+
+E     LECTROMAGNETIC TRANSIENT (EMT) simulations
+      are used for the studies of overvoltages, relay settings,
+inrush currents, abnormal resonances, harmonics, and so on.
+                                                                                 However, the detection of a sudden change of a variable is
+                                                                                 not always feasible. For instance, when a sudden change of
+                                                                                 a voltage or a current is transmitted to another place by a
+Studies including generators, motors, and power electronics                      distributed-parameter line, detecting the sudden change at the
+converters have become practically feasible by EMT simu-                         receiving end is difficult. A voltage or current source controlled
+lations owing to the developments of simulation techniques                       by a control system can produce a sudden change for instance
+and the recent progress of computers in terms of processing                      due to a limiter operation, but detecting this is also difficult.
+speed and memory capacity, and EMT simulations are now                           Detecting all types of sudden changes by programming is not
+extensively used also for these purposes.                                        practical and can be a serious overhead of execution time. Thus,
+   For such simulations, electromagnetic transients program                      an inherently “oscillation free” integration method is desired.
+(EMTP) has been used, and now other simulation programs                             Reference [5] has reported a study of numerical integration
+are also available. The original version of EMTP uses the                        methods for long-term dynamics simulations of a power system,
+trapezoidal method for the numerical integration of dynamic                      and it has been shown that the two-stage diagonally implicit
+circuit elements such as inductors and capacitors [1]. The                       Runge–Kutta (2S-DIRK) method [6] has a second-order accu-
+trapezoidal method is a simple one-step integration method                       racy and is A-stable like the trapezoidal method but does not
+                                                                                 produce sustained numerical oscillation. Taking advantage of
+   Manuscript received October 14, 2007; revised October 14, 2007. First pub-    this excellent property, this paper proposes the use of 2S-DIRK
+lished May 12, 2008; current version published December 24, 2008. Paper no.      for EMT simulations. At first, a brief review of the 2S-DIRK
+TPWRD-00611-2007.                                                                integration scheme is given, and the 2S-DIRK formulas of in-
+   T. Noda is with the Electric Power Engineering Research Laboratory, Central
+Research Institute of Electric Power Industry (CRIEPI), Yokosuka, Kanagawa       ductors and capacitors for both linear and nonlinear cases are de-
+240-0196, Japan (e-mail: takunoda@ieee.org).                                     rived. Then, analytical comparisons of 2S-DIRK with the trape-
+   K. Takenaka and T. Inoue are with the System Engineering Research             zoidal, backward Euler, and Gear–Shichman methods are car-
+Laboratory, Central Research Institute of Electric Power Industry (CRIEPI),
+Komae, Tokyo 201-8511, Japan (e-mail: takenaka@criepi.denken.or.jp;
+                                                                                 ried out, and numerical examples which verify the analytical
+inotoshi@criepi.denken.or.jp).                                                   comparisons are shown. Finally, 2S-DIRK is compared with
+   Digital Object Identifier 10.1109/TPWRD.2008.923397                           CDA implemented in EMTP for some simulation cases.
+                                                               0885-8977/$25.00 © 2008 IEEE
+NODA et al.: NUMERICAL INTEGRATION BY THE 2-STAGE DIAGONALLY IMPLICIT RUNGE-KUTTA METHOD                                                                      391
+
+
+
+                               II. 2S-DIRK
+
+A. 2S-DIRK Integration Scheme
+   Consider the differential equation
+
+                                                                           (1)
+
+where is time and is function of time and the variable . We                       Fig. 1. Equivalent circuit of linear inductors, linear capacitors, nonlinear in-
+                                                                                  ductors, and nonlinear capacitors obtained by applying the 2S-DIRK integration
+integrate this equation from the previous time step                               scheme.
+to the present time step          using the 2S-DIRK integration
+scheme [2]1, [5], [6]. The values of at                 and   are,
+respectively, denoted by          and . The 2S-DIRK scheme
+                                                                                  an implicit method which does not produce fictitious numer-
+consists of two stages. The first stage calculates an intermediate
+                                                                                  ical oscillation. To save computer memory, one step method
+value of at          which is between         and . The time
+                                                                                  is better than multistep methods. To this end, two-stage im-
+is given by
+                                                                                  plicit Runge–Kutta methods are appropriate. To decouple the
+                                                                                  two integration stages for efficiency as mentioned above, finally
+                                                                           (2)
+                                                                                  2S-DIRK has been chosen.
+where                 and                        is the time step size. If
+                                                                                  B. Linear Inductors
+the intermediate value at               is denoted by , the first stage
+formula is written by                                                               The relation between the current and the voltage of a linear
+                                                                                  inductor is
+                                                                           (3)
+                                                                                                                                                              (6)
+Next, we convert          to another intermediate value               using
+                                                                                  Comparison to (1) gives the following 2S-DIRK formulas that
+                                                                           (4)    correspond to (3), (4), and (5), respectively
+
+where              and                     . The second stage calculates
+                                                                                                                                                              (7)
+the final solution    at              by
+                                                                                                                                                              (8)
+                                                                           (5)
+                                                                                                                                                              (9)
+It should be noted that both (3) and (5) are in the same form
+as the backward Euler formula. Thus, code for 2S-DIRK can                         In the same way as in (1), a subscript added to and indicates
+be written in a way that the backward Euler method is applied                     a time step and a tilde symbol an intermediate value. Equations
+twice, and this may simplify coding. From an algorithmic point                    (7) and (9) lead to the same equivalent circuit shown in Fig. 1.
+of view, a notable point in common between 2S-DIRK and the                        For the first stage formula (7), the values of the conductance and
+trapezoidal method is that both are a one-step method which                       the current source are given by
+requires values at the previous step only to calculate a solution
+at the present time step. The major difference is that 2S-DIRK
+is a two-stage method while the trapezoidal method is a one-                                                                                                (10)
+stage one. Thus, 2S-DIRK additionally requires calculating an
+intermediate solution at        .                                                 Those for the second stage formula (9) are given by
+   When a general two-stage implicit integration method is used
+to solve a circuit resulting in circuit equations, it requires                                                                                              (11)
+solving a set of    simultaneous equations for obtaining the so-
+lution. This is because the two integration stages are coupled                    It should be noted that the conductance values of the first and
+with each other. On the other hand, 2S-DIRK is designed so as                     the second stage are the same. Because of this, the conductance
+to decouple the two stages, and thus, we can sequentially solve                   matrix of the whole circuit does not require refactorization due
+   simultaneous equations twice instead of solving a set of     si-               to linear inductors, when circuit equations are formulated by a
+multaneous equations. The word “diagonally” comes from the                        nodal analysis.
+fact that the two stages are decoupled in 2S-DIRK by setting
+the “diagonal” coefficients of the integration formula to equal                   C. Linear Capacitors
+values [2], [6].
+   The reason for choosing 2S-DIRK among many existing in-                          The relation between the voltage and the current of a linear
+tegration methods is as follows. To solve a stiff circuit, we need                capacitor is
+   1Section 4.7.2 of this book introduces 2S-DIRK as a two-stage, second-order
+example of diagonally implicit Runge-Kutta methods but does not explicitly call
+it “2S-DIRK.”                                                                                                                                               (12)
+392                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 24, NO. 1, JANUARY 2009
+
+
+
+Comparison to (1) gives the following 2S-DIRK formulas.
+
+
+
+                                                            (13)
+                                                            (14)
+                                                            (15)
+
+In the same way as linear inductors, both (13) and (15) lead to
+the equivalent circuit shown in Fig. 1. The values of the conduc-
+tance and the current source for the first stage formula (13) are
+given by
+
+
+                                                            (16)
+
+and those for the second stage formula (15) by
+                                                                    Fig. 2. Linearizations of nonlinear characteristics. (a) Linearization of a cur-
+                                                                    rent-flux curve and (b) that of a voltage-charge curve.
+                                                            (17)
+
+Since the conductance values of the first and the second stage      In the formulas above,               and      are calculated by
+are the same, linear capacitors also do not require refactorizing
+the conductance matrix of the whole circuit.
+                                                                                                                                              (26)
+D. Nonlinear Inductors
+                                                                                                                                              (27)
+  The dynamics of a nonlinear inductor is written by
+                                                                    where        and         are the slope and the intercept used at
+                                                            (18)    the previous time step            and and         are those used
+                                                                    at the intermediate time step        . Again, (23) and (25) lead
+                                                                    to the same equivalent circuit shown in Fig. 1. The values of the
+where and are the voltage and the current of the nonlinear in-      conductance and the current source for the first stage formula
+ductor. The second equation is a nonlinear relationship between     (23) are
+the current and the magnetic flux , so-called a current-flux
+curve. Comparison of the first equation to (1) gives the 2S-DIRK
+formulas with respect to                                                                                                                      (28)
+
+                                                            (19)    and those for the second stage formula (25) are
+                                                            (20)
+                                                            (21)                                                                              (29)
+
+where a subscript added to indicates a time step and a tilde        Unlike linear elements, the conductance values for the first and
+symbol an intermediate value. If the current-flux curve             the second stage are different. This is because the operating
+in (18) is linearized about the operating point      as shown by    point may change in transitions from            to and from
+the dashed line in Fig. 2(a), we obtain                                      to , and thus, the slope may change. As a result, the
+                                                                    conductance matrix of the whole circuit may require refactor-
+                                                            (22)    ization.
+
+where and      are the slope and the intercept. Substituting (22)
+into (19)–(21) gives the final 2S-DIRK formulas                     E. Nonlinear Capacitors
+                                                                       The dynamics of a nonlinear capacitor is expressed by
+                                                            (23)
+                                                                                                                                              (30)
+                                                            (24)
+                                                                    where and are the voltage and the current of the nonlinear ca-
+                                                            (25)    pacitor. The second equation is a nonlinear relationship between
+NODA et al.: NUMERICAL INTEGRATION BY THE 2-STAGE DIAGONALLY IMPLICIT RUNGE-KUTTA METHOD                                                         393
+
+
+
+the voltage and the charge . If the voltage-charge curve is lin-
+earized about the operating point       as shown by the dashed
+line in Fig. 2(b)
+
+                                                                (31)
+
+is obtained, where and are the slope and the intercept. Sim-
+ilar to nonlinear inductors, we obtain the following 2S-DIRK
+formulas from the first equation in (30) with (31)
+
+
+                                                                (32)
+                                                                (33)
+                                                                (34)
+
+In the formulas above,         and     are calculated by
+
+                                                                (35)
+                                                        

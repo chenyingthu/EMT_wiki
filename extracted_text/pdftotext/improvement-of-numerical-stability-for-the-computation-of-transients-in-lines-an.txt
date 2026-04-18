@@ -1,0 +1,191 @@
+1104                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 25, NO. 2, APRIL 2010
+
+
+
+
+           Improvement of Numerical Stability for the
+          Computation of Transients in Lines and Cables
+                    Ilhan Kocar, Student Member, IEEE, Jean Mahseredjian, Senior Member, IEEE, and
+                                            Guy Olivier, Senior Member, IEEE
+
+
+   Abstract—This paper discusses numerical stability problems of                     delays are not, in general, integer multiples of the simulation
+a frequency-dependent transmission-line and cable modeling ap-                       step in EMTP. In the modeling approach presented in [3] for
+proach used for electromagnetic transient analysis. Time-domain                      the universal line model (ULM), every modal time delay is
+numerical errors due to the discrete computation of convolution in-
+tegrals can be estimated in terms of transfer function parameters                    present in each element of ; therefore, the interpolation error
+for a given line or cable model. Based on this estimation, a method-                 may have an important effect.
+ology for the improvement of numerical stability is presented. The                      In this paper, and      are identified by using partial fraction
+numerical advantages of the new method are supported by demon-                       expansions (PFE) in the frequency domain, in conformity with
+strations and comparisons with existing models. The method pre-                      [3]. Then, the convolution integrals expressed with state-space
+sented in this paper is applicable to power cables and transmission
+lines.
+                                                                                     equations are used to estimate local numerical errors in terms of
+                                                                                     PFE variables. Based on this relation between errors and PFE
+  Index Terms—Electromagnetic transients, Electromagnetic                            variables, constraints are determined for residue/pole ratios so
+Transients Program (EMTP), fitting, wideband line and cable
+model.
+                                                                                     that time-domain errors are confined within a safe boundary.
+                                                                                     In the proposed approach, the identification in phase domain
+                                                                                     becomes a constrained linear least-squares problem.
+                             I. INTRODUCTION
+                                                                                                               II. BACKGROUND
+I    N the simulation of electromagnetic transients with the
+     method of characteristics (MoC), transmission lines and
+cables can be characterized by two matrix functions in the
+                                                                                     A. General Description of the Transient-Line Equations
+frequency domain: for the propagation function and             for                      The voltage and current relations of an arbitrary transmission
+characteristic admittance. Although many works are related to                        line or cable (transmission device) connected between arbitrary
+the meticulous fitting and modeling of transmission line and                         ends and         can be written in the frequency domain as (see
+cable functions in the frequency domain, numerical stability                         [5])
+problems of existing models in the time domain remain com-                                                                                         (1)
+plex and require further research.
+                                                                                     where and represent current and voltage column vectors of
+   Existing frequency-dependent line and cable models in the
+                                                                                     dimension      standing for the number of conductors. Matrices
+Electromagnetic Transients Program (EMTP) approximate
+                                                                                     and vectors are denoted with bold characters. The         by
+transmission system functions with rational transfer functions                       matrices for propagation and characteristic admittance are given
+over a range of frequencies in order to properly assess electro-                     by
+magnetic transients [1]–[3]. Rational function approximations                                                                                      (2)
+are preferred as they allow an efficient computation of convo-
+lution integrals in the time domain with a recursive scheme [4].                                                                                         (3)
+Convolution integrals are, in general, computed via numerical
+integration techniques in the time domain in accordance with                         where is the length of the transmission device,          is the
+the discrete timestep of the EMTP simulation.                                        shunt admittance matrix per-unit length, and      is the series
+   The numerical computation of convolution integrals, in-                           impedance matrix per-unit length. Both matrices are numeri-
+                                                                                     cally available from the geometry and electrical parameters of
+cluding      terms, is associated with two error conditions. The
+                                                                                     the line or cable [6], [7].
+first error is due to the conversion of the integral to difference
+                                                                                       The time-domain solution of (1) is obtained by applying con-
+equations (truncation error) and the second is due to the inter-
+                                                                                     volution
+polation on input as a result of modal time delays of . These
+                                                                                                                                                 (4)
+
+                                                                                     where
+   Manuscript received November 06, 2008; revised February 20, 2009, May
+24, 2009. First published February 02, 2010; current version published March                                                                             (5)
+24, 2010. Paper no. TPWRD-00833-2008.
+   The authors are with École Polytechnique de Montréal, Montréal H3T 1J4               A widely accepted approach in EMTP-type computations is
+QC, Canada (e-mail: jeanm@polymtl.ca).
+   Color versions of one or more of the figures in this paper are available online   to use rational transfer function approximations for and       in
+at http://ieeexplore.ieee.org.                                                       order to solve (4). The convolution integrals of (4) are computed
+   Digital Object Identifier 10.1109/TPWRD.2009.2037633                              at each discrete solution timepoint.
+                                                                  0885-8977/$26.00 © 2010 IEEE
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:19:13 UTC from IEEE Xplore. Restrictions apply.
+KOCAR et al.: IMPROVEMENT OF NUMERICAL STABILITY                                                                                                            1105
+
+
+
+B. Adopted Frequency-Domain Model
+   This paper is based on the ULM formulation [3]. For a mul-
+tiphase transmission system,     contains different propagation
+modes with different velocities. As explained in [3],    is first
+decomposed into modes, then a proper time delay is assigned to
+each mode. Finally, these modes are used for the identification
+of . The more detailed procedure for obtaining a phase-do-
+main model is summarized below for setting the stage for the
+following sections.
+   First, propagation modes are determined by using a fre-
+quency-dependent transformation matrix for a predefined range                   Fig. 1. Magnitude of PFE of delay groups forming      H    , the solid line is WB
+of frequencies at discrete frequency samples                                    fitting, and the dashed line is from calculated contributions.
+
+                                                                         (6)    residues. In other words, the influence of the transformation
+                                                                                matrix can be compensated with residues. Moreover, the pres-
+where the modal version of          is
+                                                                                ence of some modes may be weak in certain elements of
+                                                                         (7)    and residue/pole pairs of these modes may also improve the
+                                                                                phase-domain fitting. In general, the aforementioned assump-
+   is a diagonal matrix containing the eigenvalues of the expo-                 tion gives high-quality fitting results. It has been observed, how-
+nentiated term in (2), and is the matrix of eigenvectors. Then,                 ever, that in some cases, the WB model may encounter numer-
+each distinct propagation mode can be fitted with a PFE [8], [9]                ical instabilities in the time-domain solution.
+using the least-squares method                                                     Equation (9) is an overdetermined problem containing mul-
+                                                                                tiple delay groups, and the problem is solved by using the least-
+                                                                         (8)    squares method. The only criterion is the minimization of the
+                                                                                difference between fitted and calculated responses. Even though
+                                                                                the combination of delay groups fits H perfectly, the PFE of sep-
+where is the complex angular frequency and         is a constant
+time delay attributed to mode . Some propagation modes may                      arate delay groups in (9) does not necessarily match the isolated
+be identical or may become very close to each other. In this                    contribution of each mode which can be calculated through (6)
+case, these propagation modes can be lumped as one delay group
+before proceeding to the PFE approximation (8).                                                                                                            (11)
+   As the mathematical description of       in (6) suggests, all
+modes are present in all elements of    as their poles given in                 where          is a matrix containing only one nonzero diagonal
+(8). Thus, keeping the poles of propagation modes as known                      element for mode . Consequently, the solution may come up
+variables, the residues for phase-domain fitting of each matrix                 with delay groups having unexpectedly high magnitude curves
+element of can be calculated by                                                 with high residue pole ratios. This may lead to numerically un-
+                                                                                stable models in the time-domain solution. It is noticed that it is
+                                                                         (9)    usually the case when the time delays are not significantly apart
+                                                                                from each other, such as in short-length cables.
+                                                                                   Consider, for example, a 1-km cable with six phases for a
+where       is the number of propagation modes and          is the
+order of PFE corresponding to propagation mode . In this                        total of 12 conductors as detailed in [8]. The WB model accu-
+paper, this model is called the wideband (WB) model due to                      rately fits the and        matrices for this system, but as demon-
+its implementation in software used in the numerical examples                   strated later in this paper, it generates an unstable time-domain
+section.                                                                        model. In this case, there are seven distinct delay groups. The
+   The fitting problems related to the characteristic admittance                magnitude curves (right-hand side of inequality in (11)) of these
+matrix        are less stringent. It is recalled here that in the               delay groups present in          are shown in Fig. 1, together with
+WB model [3], the poles of            are obtained by fitting the               the calculated contributions of each delay group (left-hand side
+matrix trace and then residues are identified again with the                    of inequality in (11)). It is noticed that there is a magnification
+least-squares technique. Therefore, each element of        has the              effect when using the WB approach. Although the magnitude
+same set of poles                                                               curves are significantly different, the final result obtained from
+                                                                                the summations of the groups in each case provides a very close
+                                                                                match with an rms error of                  for the given frequency
+                                                                       (10)
+                                                                                range as seen in Fig. 2. Similar results are obtained for other el-
+                                                                                ements of . Fitting results for diagonal elements are shown in
+where      is the value at the infinite frequency.                              Fig. 3. A perfect match is also obtained for phase angles.
+                                                                                   It will be shown in this paper that the numerical instability
+C. Pitfalls in the Adopted Model                                                problem in the time-domain solution can be eliminated by
+  Equation (9) assumes that the frequency-dependent contri-                     scaling residues in terms of corresponding pole values. Then,
+bution of modes to each matrix element can be adjusted with                     (9) is solved as a constrained linear least-squares problem for
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 05:19:13 UTC from IEEE Xplore. Restrictions apply.
+1106                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 25, NO. 2, APRIL 2010
+
+
+
+
+Fig. 2. Magnitude of   H   , the solid line is the WB solution, the dashed line is   Fig. 4. Eigenvalues of   Y   .
+calculated solution (overlapped), and the difference (error) is magnified by 10.
+
+
+                                                                                     where      is the conjugate transpose of     . The eigenvalues of
+                                                                                          are plotted in Fig. 4 and no passivity violation is observed.
+                                                                                     Therefore, in this case, passivity is discarded as the cause of
+                                                                                     numerical instabilities in the time-domain solution.
+
+                                                                                     E. Alternative Frequency-Domain Models
+                                                                                        In the interest of justification of the selected frequency-do-
+                                                                                     main model (9), alternative models currently used in EMTP are
+                                                         H
+Fig. 3. Fitting performance for diagonal elements of , the solid line is the
+                                                                                     discussed here.
+                                                                                        If the transformation matrix is approximated as a constant
+WB solution and the dashed line (overlapped) is the calculated solution.
+                                                                                     and real matrix, the convolution of (4) can be efficiently calcu-
+                                                                                     lated in the modal domain as accomplished in the frequency-de-
+unknown residues and abnormal fitting schemes, such as in                            pendent (FD) line model in [1]. However, this approach does not
+Fig. 1, are avoided.                                                                 provide an accurate solution if there is a strong variation of
+                                                                                     with frequency.
+                                                                                        The full frequency-dependent FDQ cable model [2] solves
+D. Passivity Verification                                                            the problem of a strongly frequency-dependent by fitting the
+    It has been verified that for the system described before, there                 elements of this matrix with rational functions in the frequency
+are no unstable poles in the synthesized            and     matrices.                domain. The result is a large number of multiple recursive con-
+However, merely using unstable poles may not entail a stable                         volutions in the time domain which may induce numerical insta-
+time-domain simulation. Passivity should be also preserved                           bilities due to computational errors. Also, it is not always pos-
+since passivity violations may induce unreal numerical oscilla-                      sible to fit the elements of with stable poles.
+tions. Transmission devices are passive by definition. However,
+it is the time-domain model that may introduce passivity vi-                             III. STATE-SPACE REPRESENTATION OF CONVOLUTIONS
+olations due to improper selection of the frequency band for
+                                                                                        To present the method proposed in this paper, it is neces-
+fitting and/or poor fitting. It is shown in [10] that the ULM
+                                                                                     sary to recall the solution process for (1) and then perform error
+formulation can lead to large out-of-band passivity violations.
+                                                                                     analysis.
+The approach in [10] is considered in this paper in order to
+avoid out-of-band passivity violations.
+                                                                                     A. Definition of the Problem
+    The passivity of the MoC model of a transmission device re-
+quires

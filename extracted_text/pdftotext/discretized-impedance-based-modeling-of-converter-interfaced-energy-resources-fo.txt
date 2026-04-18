@@ -1,0 +1,207 @@
+                 Received 13 November 2024; revised 21 December 2024; accepted 27 December 2024. Date of publication 3 January 2025;
+                        date of current version 29 January 2025. The review of this article was arranged by Associate Editor Yingyi Yan.
+                                                               Digital Object Identifier 10.1109/OJPEL.2024.3525019
+
+
+
+
+        Discretized Impedance-Based Modeling of
+        Converter-Interfaced Energy Resources for
+             State-Variable-Based Real-Time
+                      EMT Simulators
+               TALEB VAHABZADEH                      1 (Member, IEEE), SEYYEDMILAD EBRAHIMI                                        2 (Member, IEEE),
+
+                                                      AND JURI JATSKEVICH                        3 (Fellow, IEEE)
+                                                             1
+                                                               Electric Power Engineers, LLC., Austin, TX 78735 USA
+                                 2
+                                   School of Electrical Engineering and Computer Science, Washington State University, Pullman, WA 99163 USA
+                               3
+                                 Electrical and Computer Engineering Department, University of British Columbia, Vancouver, BC V6T 1Z4, Canada
+                                          CORRESPONDING AUTHOR: SEYYEDMILAD EBRAHIMI (e-mail: s.ebrahimi@wsu.edu)
+                   This work was supported by the Natural Sciences and Engineering Research Council (NSERC) of Canada under the Collaborative Research and
+                                                                             Development Grant.
+
+
+
+
+         ABSTRACT      Modern power systems are experiencing high penetration of voltage-source converter (VSC)-
+         interfaced distributed energy resources and loads. Design, analysis, and reliable operation of such systems
+         require extensive offline and real-time electromagnetic transient (EMT) simulations. This paper proposes
+         discretized impedance-based modeling (DIBM) of VSCs for efficient time-domain transient analysis in
+         state-variable (SV)-based EMT simulators. Specifically, the VSC-based systems are first represented as
+         admittance-based models in Laplace domain, and then they are discretized and formulated to construct a
+         Thévenin equivalent impedance matrix and history voltages that can be interfaced seamlessly with external
+         systems in SV-based simulators. By replacing VSC subsystems with Thévenin equivalent circuits, the
+         proposed DIBM technique significantly reduces the number of states and eliminates the need for fictitious
+         snubbers that may be needed in SV-based EMT simulators for compatible interfacing. The effectiveness
+         of the proposed DIBM approach over the conventional method that uses average value models of VSCs is
+         demonstrated on a seven-bus VSC-based system in offline (MATLAB Simscape Electrical) and real-time
+         (OPAL-RT) EMT simulators. It is verified that the proposed method enables high accuracy and larger
+         simulation time steps while also significantly improving the overall computational performance.
+
+         INDEX TERMS Admittance-based modeling, average-value model (AVM), discretization, EMT simulation,
+         impedance-based modeling, interfacing, state-variable, voltage source converter (VSC).
+
+
+
+
+I. INTRODUCTION                                                                            dynamics and potential sub/super-synchronous converter-grid
+The adoption of renewable and distributed energy resources                                 interactions [5], [6]. With the increasing deployment of VSCs
+(R/DERs) has surged in modern electric power systems,                                      and the rapid evolution of grid dynamics, there is a need
+prompting significant changes in electricity generation, trans-                            for advanced simulation tools capable of analyzing modern
+mission, and distribution [1], [2]. The interfacing of such                                power-electronic-based systems efficiently and accurately [7].
+R/DERs into conventional power grids is mainly done using                                     The so-called state-variable-based (SV-based, e.g., MAT-
+power-electronic-based voltage-source converters (VSCs) [3].                               LAB Simscape Electrical, PLECS, OPAL-RT, Typhoon HIL
+While the increasing use of power electronics offers poten-                                [8], [9], [10], [11]) and nodal-analysis-based (NA-based, e.g.,
+tial benefits such as enhanced controllability, sustainability,                            PSCAD, MicroTran, EMTP, RTDS [12], [13], [14], [15])
+and overall efficiency, it also introduces new challenges [4].                             electromagnetic transient (EMT) programs are among the
+These challenges include, but are not limited to, faster system                            most common tools for studying modern power systems with
+       © 2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+212                                                                                                                                                               VOLUME 6, 2025
+fast transients. The SV-based programs utilize a differential-        simulation time steps, it introduces a time-varying conduc-
+algebraic modeling approach to represent all system compo-            tance matrix that requires additional calculations at every
+nents, from which the state-space equations are constructed.          simulation step. More recently, a constant-parameter DI-AVM
+These equations are subsequently discretized and numerically          (CP-DI-AVM) was proposed for more efficient simulations
+solved using ordinary differential equation (ODE) solvers             of VSC-based power-electronic systems in NA-based simu-
+[16], [17]. Although SV-based simulators are very effective           lators, which does not require re-calculation of the network
+for studying small-scale power systems and power electronics,         conductance matrix at each simulation time step [28]. This
+they are computationally expensive for the analysis of large-         was achieved through a numerical approximation. Although
+scale VSC-based systems [18]. The offline SV-based packages           both the DI-AVM [25] and the CP-DI-AVM [28] can ef-
+(e.g., MATLAB Simscape Electrical and PLECS) do not have              fectively eliminate the interfacing time-step delay in the
+time constraints and may offer variable time-step ODE solvers         implementation of VSC AVMs, they are specifically derived
+for enhanced simulation efficiency. The real-time SV-based            for NA-based simulators, such as PSCAD and RTDS. Al-
+simulators (e.g., OPAL-RT and Typhoon HIL) are constrained            though a direct translation of the method in [25] and [28]
+to fixed-time steps due to interfacing with hardware and the          to SV-based simulators (e.g., MATLAB, Opal-RT, etc.) is
+real-time simulation environment.                                     possible, it would offer only limited improvements due to
+   The NA-based programs, on the other hand, are based on             interfacing.
+the discretization of the differential equations at the compo-           Recent research efforts have been made to employ
+nent level (typically using the numerical trapezoidal rule of         admittance-based modeling (ABM) to improve the EMT sim-
+integration) [19]. This, in turn, results in a set of difference      ulations of VSC-based systems in SV-based programs [30],
+equations that are formulated in the nodal form and solved            [31], [32]. In ABMs, the converters are typically expressed
+at each time step. Employing the fixed simulation time steps          as transfer functions in Laplace domain, which are able to
+(which is the case in most non-iterative NA-based programs),          capture the dynamic behavior at the interfacing terminals but
+the nodal equations become time-invariant, resulting in signif-       without disclosure of the internal details. In [30], the ABMs
+icant computational efficiency [19]. Furthermore, in systems          of grid-following converter-based resources were represented
+with switching converters, the switching elements can be              as proper transfer functions and interfaced with external sys-
+modeled using a constant conductance and a current injection          tems using dependent current sources and snubbers in the
+to represent the off- and on-states of the switches [20]. This        MATLAB/Simulink environment. Although some noticeable
+modeling approach avoids the use of iterative methods to han-         computational advantages become achievable, the size of the
+dle switching events and ensures that the overall conductance         state space equations to be solved is not affected, resulting in
+matrix remains constant.                                              the same state count as the conventional AVMs of convert-
+   Using both SV- and NA-based programs, the time-domain              ers. Such representation also has some limitations regarding
+transients of VSC-based systems can be reproduced with rel-           numerical accuracy due to employing fictitious interfacing
+atively high accuracy by representing the power-electronic            snubbers, which increases the system’s numerical stiffness
+converters with their detailed switching models [21]. The             and introduces error.
+detailed switching models are discrete and event-driven, al-             In [31] and [32], a MATLAB/Simulink-based open-source
+lowing for the accurate reproduction of voltage and current           toolbox was introduced that utilizes the state space represen-
+waveforms. However, they necessitate small simulation time            tation of electrical components to perform dynamic stability
+steps that significantly slow down simulation studies. Al-            and sensitivity analysis of inverter-based resources via admit-
+ternatively, the average-value models (AVMs), which are               tance/ impedance modeling. For time-domain simulations, the
+non-switching, were developed to alleviate the computational          admittance models undergo discretization using the forward
+burden while preserving the slower dynamics [21], [22], [23],         Euler integration rule, and the resulting discretized equations
+[24]. Although the AVMs of converters are continuous and              are then integrated into the Simulink environment using de-
+generally allow using larger simulation time steps, the time          pendent sources and snubbers. The presence of a time-step
+step delay inherent in the interfacing of the AVMs [25], [26],        delay at the interface with external systems and the use of the
+[27] and the time step delay in the interfacing of control            Euler method limit the possible simulation time step size and
+systems with external networks [29] result in numerical in-           accuracy of this approach.
+accuracies or instabilities; thus, restricting the largest possible      Moreover, an ABM was recently proposed in [33] to im-
+time step size.                                                       prove the time-domain simulations of VSCs by reducing the
+   A directly interfaced AVM (DI-AVM) for VSCs was de-                effective network size and eliminating interfacing time step
+veloped to eliminate the simulation time-step delays in con-          delays. However, the method in [33], similar to [25], [26],
+ventional AVMs [25], [26], [27] for NA-based simulators.              [27], [28], has been developed for NA-based simulators. Al-
+This was achieved by formulating the AVM as a conduc-                 though the direct and brute-force translation of the method
+tance matrix integrated with the overall network nodal equa-          in [33] to the SV-based EMT programs may be possible, it
+tions for a simultaneous solution with external subsystems,           may also result in only limited improvements. For example,
+thereby avoiding latency. While the DI-AVM allows for larger          the implementation of the Norton equivalent circuit proposed
+
+
+
+VOLUME 6, 2025                                                                                                                     213
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+in [33] in SV-based programs necessitates fictitious snubbers,
+potentially impacting the numerical stability and accuracy of
+simulations.
+   To address some of the aforementioned challenges, this
+paper proposes a novel discretized impedance-based mod-
+eling (DIBM) of VSCs for time-domain transient analysis
+in SV-based programs. Specifically, the VSC-based systems
+with interfacing filters and controllers are first represented     FIGURE 1. A simplified single-line diagram of a three-phase
+                                                                   grid-connected VSC.
+as ABMs in the form of transfer functions in Laplace do-
+main. These ABMs are discretized, similar to the NA-type
+simulators, and then formulated to construct a Norton equiv-
+alent admittance matrix and current history sources at the
+interfacing terminals (nodes). The Norton circuit can be con-
+verted into a Thévenin equivalent circuit. The proposed DIBM
+method substitutes the VSC and its control system with a
+Thévenin equivalent impedance matrix and history voltage
+sources to interface with external systems in SV-based simula-
+tors. This approach substantially reduces the number of states
+and eliminates the need for fictitious snubbers that may be
+needed in SV-based EMT simulators for compatible interfac-
+ing.
+   The effectiveness of the proposed approach is demonstrated
+on a seven-bus VSC-based system simulated using offline
+MATLAB Simscape Electrical and real-time OPAL-RT sim-
+ulators. In the context of the examined VSC-based power
+system, the proposed approach offers several benefits:
+   r The proposed DIBM eliminates time-step delays in inter-
+                                                                   FIGURE 2. A simplified single-line diagram of a grid-connected VSC with
+      facing models of VSCs with control systems and external      dq vector PI-based control (the nonlinear elements of the controller are
+      networks while also avoiding the need for fictitious         highlighted in red).
+
+      snubbers, thus improving both accuracy and numerical
+      stability.
+   r The proposed DIBM enhances computational efficiency           and dq-vector control is used [34], [35]. In the second case,
+      and achieves up to four times computational improve-         the proportional-resonant (PR) controller in the stationary
+      ment (per time step) compared to conventional AVMs of        αβ-frame is used [36], [37]. The proposed DIBM technique
+      VSCs in real-time simulators.                                is formulated and implemented for both configurations to
+   r The proposed DIBM allows the use of larger simulation         demonstrate its applicability in cases where VSCs utilize
+      time steps, up to one millisecond (1 ms). In contrast, the   Park’s and Clark’s transformations for synchronization with
+      AVMs of VSCs are constrained to simulation time steps        the grid.
+      of approximately 80 microseconds (80 µs) to maintain
+      reasonable accuracy and numerical stability.                 A. ABM OF VSC WITH DQ-VECTOR PI-BASED CONTROL
+   r The proposed DIBM method is versatile and can be ap-
+                                                                   The VSC system with dq-vector PI-based control is shown
+      plied to most SV-based simulation environments without       in Fig. 2, where the voltages vm,abc are modulated from the
+      the need for additional add-on tools, making it easy to      dc bus voltage Vdc . As shown in Fig. 2, the VSC ac output
+      implement and use.                                           terminals are connected to an RL-filter, and the converter
+                                                                   is synchronized with the grid through a phase-locked-loop
+II. ADMITTANCE-BASED MODELING OF VSCS                              (PLL).
+A generic VSC-based system considered in this paper is                To derive the ABM, the VSC system physical variables in
+shown in Fig. 1. Herein, the VSC is assumed to have a com-         the abc-coordinates need to be transformed into the dq-frame
+mon two-level topology [21], where it is connected to the          using Park’s transformation as
+grid at the point of common coupling (PCC). Without loss
+of generality, a sinusoidal pulse-width modulation (SPWM)                  iVSC,dq = Ks iVSC,abc , vPCC,dq = Ks vPCC,abc ,                 (1)
+is assumed for the switching converter. The ac system is rep-
+resented by the Thévenin equivalent of the grid, as depicted       where
+                                                                                                                         
+in Fig. 1. In this paper, a grid-following VSC is considered               2 cos(θPLL ) cos(θPLL −2π /3) cos(θPLL +2π /3)
+                                                                   Ks =                                                     .
+with two commonly used control configurations. For the first               3 sin(θPLL ) sin(θPLL −2π /3) sin(θPLL +2π /3)
+case, the PI-based controller is implemented in the dq-frame                                                              (2)
+
+
+214                                                                                                                              VOLUME 6, 2025
+                                                                                 The physical variables of the VSC system in the abc-
+                                                                               coordinates can be transformed into the stationary αβ-frame
+                                                                               using Clarke’s transformation as
+                                                                                   iVSC,αβ = Tαβ iVSC,abc , vPCC,αβ = Tαβ vPCC,abc ,            (9)
+                                                                               where
+                                                                                                                     
+                                                                                                              −1 −1
+                                                                                                          1 2 √    √ .
+                                                                                                  Tαβ =                                        (10)
+                                                                                                          3 0   3 − 3
+                                                                               The equations describing the LCL filter shown in Fig. 3 can
+FIGURE 3. A simplified single-line diagram of a grid-connected VSC with
+                                                                               be expressed in the αβ-frame in Laplace domain as
+PR-based control (the nonlinear elements of the controller are highlighted                         1
+in red).                                                                          iout,αβ =                 (vm,αβ − vc,αβ + r3 iVSC,αβ ), (11)
+                                                                                              sL1 + r1 + r3
+                                              

@@ -1,0 +1,200 @@
+                                                               Electric Power Systems Research 253 (2026) 112493
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Modeling of cross-magnetization effects in saturated synchronous machines
+for electro-magnetic transient programs
+A.B. Dehkordi a,* , A.M. Gole b , T.L. Maguire c
+a
+  A. B. Dehkordi is with RTDS Technologies Inc., Winnipeg, Canada
+b
+  Ani Gole is with the University of Manitoba, Winnipeg, Canada
+c
+  T L. Maguire is retired from RTDS Technologies Inc. as a co-founder, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  The saturation of magnetizing paths in synchronous machines significantly impacts machine performance,
+Synchronous machine                                        including loading capability. In electromagnetic transient (EMT) programs, magnetic saturation is traditionally
+Generator                                                  modeled by adjusting the d-axis or q-axis magnetizing inductances (or flux linkages) [1-4]. A similar approach is
+Saturation
+                                                           applied in phasor-domain programs [5]. While these methods account for d- and q-axis saturation simulta­
+Cross-magnetizing effects
+Electro-magnetic transient programs
+                                                           neously, they overlook the rotor’s inherent structure and the angular displacement of the MMF wave in the
+Real-time digital simulation                               airgap.
+                                                              This paper presents the development and validation of an EMT synchronous machine model that incorporates
+                                                           cross-magnetizing effects into the saturation algorithm. The proposed method evaluates saturation based on the
+                                                           magnitude and angle of the MMF. Additionally, the paper examines the impact of various simplifications on the
+                                                           loading capability of synchronous generators.
+
+
+
+
+1. Introduction                                                                             group of power engineers. Moreover, the model effectively predicts
+                                                                                            essential behaviors of synchronous generators concerning the network,
+    Magnetic saturation in synchronous machines impacts both steady-                        including time constants, loading capability, short-circuit currents, and
+state loading and transient performance. Although the presence of an                        more.
+air gap in electric machines reduces the severity of saturation compared                        In the two-reaction theory, also known as the dq0 theory, the effects
+to power transformers, accurately modeling saturation effects in the                        of iron saturation in synchronous machines are modeled by adjusting the
+magnetizing path is essential for simulating networks containing electric                   D- and q-axis magnetizing inductances Lmd and Lmq (or reactances) in the
+machines. The most direct consequence of saturation is the alteration of                    machine’s equivalent circuit. This adjustment is typically based on the
+magnetizing reactances, which affects a machine’s capability to handle                      magnitudes of the magnetizing currents imd and imq, or the corresponding
+various loading conditions. Additionally, saturation can influence the                      flux linkages.
+rotor angle stability limit of synchronous generators.                                          The following assumptions are generally made when representing
+    The scope of this paper focuses on modeling saturation in synchro­                      magnetic saturation in synchronous machines using the two-reaction
+nous machines used as generators in power system networks. For such                         theory [6] and [7]:
+studies, an idealized machine model is sufficient. This model assumes
+sinusoidal magnetomotive force (MMF) distributions from the windings                         • Leakage inductances are independent of saturation. Since
+and sinusoidally distributed permeance, effectively ignoring space                             leakage fluxes flow predominantly through air, their path is mini­
+harmonics.                                                                                     mally influenced by the saturation of the iron portion. Consequently,
+    This assumption enables the use of the two-reaction theory [6] and                         only the magnetizing inductances in the equivalent circuit are
+[7] and the widely adopted D- and q-axis equivalent circuit for syn­                           affected by saturation.
+chronous machines in power system studies. One key advantage of the                          • Saturation does not deform the sinusoidal distribution of the
+dq equivalent circuit is its simplicity, making it accessible to a broader                     magnetic field. It is assumed that the magnetic field over the face of
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8-12, 2025.
+    * Corresponding author.
+      E-mail addresses: Ali.Dehkordi@ametek.com (A.B. Dehkordi), Aniruddha.Gole@umanitoba.ca (A.M. Gole).
+
+https://doi.org/10.1016/j.epsr.2025.112493
+Received 3 January 2025; Received in revised form 24 March 2025; Accepted 4 November 2025
+Available online 21 November 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A.B. Dehkordi et al.                                                                                               Electric Power Systems Research 253 (2026) 112493
+
+
+    a pole retains its sinusoidal distribution, ensuring that all in­            2.1. Macroscopic and microscopic view of synchronous machine open
+    ductances maintain their sinusoidal dependence on rotor position.            circuit characteristics
+
+    Given the above assumptions, the effect of saturation can be repre­              Open circuit characteristics are typically the primary data set
+sented by (1). In this equation, Lmdu and Lmqu are the unsaturated               available for modeling saturation in simulation studies. These charac­
+values of Lmd and Lmq respectively. Ksd and Ksq are called the satu­             teristics are obtained by operating the synchronous machine at open
+ration factors and identify the level of saturation in the D- and q- axes        circuit, running it at the rated rotor speed, and gradually increasing the
+respectively. These factors are functions of D- and/or q- axis magnetizing       field winding current. The terminal voltage is measured and recorded
+fluxes (or currents) referred to as saturation indices. In unsaturated           (usually in per-unit) as a function of the field current. This open circuit
+conditions these factors are equal to 1.0.                                       saturation characteristic is also referred to as the D-axis magnetization
+                                                                                 characteristic. To replicate this behavior in a numerical model of a
+Lmd = Ksd ⋅Lmdu
+                                                                      (1)        synchronous machine, it is sufficient to vary the D-axis magnetizing
+Lmq = Ksq ⋅Lmqu
+                                                                                 inductance as a function of the D-axis magnetizing current or flux
+    Minor differences between various approaches to modeling satura­             linkage.
+tion in the dq0 theory arise from how the dependency of these saturation             Now, let us examine this phenomenon from a more microscopic
+factors on magnetizing fluxes (or currents) is represented:                      perspective. Fig. 1 illustrates the simplified rotor structure for salient-
+    One method [1] and [8] assumes that both the D- and q-axes                   pole and cylindrical rotor synchronous machines. In both configura­
+magnetizing inductances Lmd and Lmq vary with saturation. Additionally,          tions, the average length of the air gap is shorter in the pole face area
+Ksd and Ksq are both functions of total air-gap flux linkage which is            compared to the interpole region, resulting in greater permeance in the
+defined in (2). These functions are identified by the saturation charac­         pole face area. This is depicted in Fig. 2a with the dotted line, repre­
+teristics of D- and q- axes [1] and [8–12].                                      senting the unsaturated permeance function (P) of a two-pole synchro­
+        √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                                  nous machine with a pole-arc expansion of βπ. The permeances in the
+ Ψat = Ψ2md + Ψ2mq                                                               pole-face and interpole regions are denoted as Pd = Ppoleface and Pq =
+ where :                                                             (2)         Pinterrpole = α⋅Pd , respectively. We will refer to α as the Permeance Sa­
+Ψmd = Lmd ⋅imd , Ψmq = Lmq ⋅imq                                                  liency Factor. The unsaturated permeance function is expressed in (3).
+                                                                                     As mentioned earlier, throughout this paper, we assume that the total
+    Transient stability programs like PSSE [5] and electromagnetic               magneto-motive force in the air-gap has a sinusoidal distribution, i.e. the
+transient programs like EMTP [1] use this approach to implement the              effects of winding space harmonics are ignored. This behaviour is rep­
+effects of saturation in the synchronous machine models. While this              resented by the following equation. Here, Imag or AT is the magnitude of
+method considers separate saturation curves for the D- and q-axes, it            the MMF and ξ is its angle. Magnitude and angle of the total MMF is a
+employs a single saturation index (ψat) for both axes. This assumption           function of loading conditions. This MMF wave interacts with the per­
+overlooks the angular displacement between the MMF fundamental                   meance distribution, altering its shape by saturating the iron in the
+component and the fundamental component of the flux density wave,                magnetizing path. The change in the permeance function at each
+making it more suitable for fully round rotors, such as those in induction       angular position depends on two factors:
+machines. In [10] and [11] a single-saturation factor approach is used to
+model magnetic saturation in salient pole synchronous machines. In this           • The magnitude of the MMF at that angular position.
+approach, the q-axis is re-scaled by the so-called saliency factor                • The unsaturated value of the permeance at that position.
+(Lmq/Lmd).                                                                                   ⃒
+    Other methods assume that saturation occurs in both the D- and q-                        ⃒                       π          π
+                                                                                             ⃒ Pd = Ppoleface − β ≤ ϕr ≤ β            polefacearea
+axes, with Ksd being a function of ψmd and Ksq being a function of ψmq.
+                                                                                             ⃒
+                                                                                             ⃒                      2           2
+                                                                                             ⃒                          ⃒
+The relation between Ksd and ψmd is identified from the D-axis saturation                    ⃒
+                                                                                    P(ϕr ) = ⃒
+                                                                                                                        ⃒
+                                                                                                                        ⃒ ϕr ≤ − β
+                                                                                                                                    π
+                                                                                                                                                                (3)
+characteristics, and the relation between Ksq and ψmq is defined based on                    ⃒                          ⃒           2
+                                                                                             ⃒ Pq = Pinterrpole = α⋅Pd ⃒⃒             interpoleregion
+the saturation characteristics of the q-axis. Existing models in the cur­                    ⃒
+                                                                                             ⃒                          ⃒ βπ ≤ ϕ
+                                                                                                                                   r
+rent commercial release of programs like EMTDC [2] and RTDS [4] use
+                                                                                             ⃒                          ⃒    2
+this approach of realizing saturation in synchronous machines. These
+programs, in addition to the above assumptions, introduce approxima­
+tion by ignoring the effects of q-axis saturation (i.e. Ksq=1). This
+assumption stems from the relatively large air-gap on the q-axis, which
+is not accurate, especially for non-salient pole synchronous machines.
+    This paper begins by explaining the phenomenon of cross-
+magnetization in saturated synchronous machines. It then outlines the
+procedure for implementing cross-magnetizing saturation effects in
+transient synchronous machine models. Since the aim is to incorporate
+the model into an electromagnetic transient program [13], the coupled
+electric circuit approach is used for modeling of this type of machine.
+The simulation results of a real-time EMT synchronous machine model
+are validated using experimental results. The paper also shows the
+sensitivity of simulation results to various saturation routines.
+
+2. The cross-magnetization phenomenon in saturated
+synchronous machines
+
+    This section describes the mechanism in which the loading condi­
+tions affect the saturation in various parts of magnetizing path and
+consequently causes the so-called cross-magnetization phenomenon.
+                                                                                     Fig. 1. Simplified representation of the salient and cylindrical rotors.
+
+                                                                             2
+A.B. Dehkordi et al.                                                                                                 Electric Power Systems Research 253 (2026) 112493
+
+
+                                                                                    waveform also peaks in the middle of the pole arc but contains spatial
+                                                                                    harmonics. Note that during the open-circuit test, the measured quan­
+                                                                                    tities are the winding voltages. The windings accumulate the flux den­
+                                                                                    sity waveform as flux linkage, and the time derivative of the flux linkage
+                                                                                    corresponds to the voltage measured in the open-circuit test. Depending
+                                                                                    on the spatial distribution of the windings, some flux wave spatial har­
+                                                                                    monics and their resulting time harmonics are filtered. Increasing the
+                                                                                    field excitation raises the magnitude of the resulting flux density, but not
+                                                                                    linearly, since the permeance decreases with saturation. This phenom­
+                                                                                    enon is reflected in the non-linear characteristics of the open-circuit
+                                                                                    saturation curve.
+                                                                                        Note that during the open-circuit test, the flux density wave is
+                                                                                    symmetrical with respect to the D-axis (or the axis of its peak). This
+                                                                                    means the flux density wave has a component only on the D-axis and not
+                                                                                    on the q-axis. Therefore, the phenomenon of saturation during the open-
+                                                                                    circuit test can be represented by varying the D-axis magnetizing
+                                                                                    inductance as a function of the saturation level. While saturation affects
+Fig. 2. The effect of MMF distribution on saturation of permeance in open
+circuit conditions.
+                                                                                    the q-axis magnetizing inductance, these effects are minimal because the
+                                                                                    MMF wave has low values in the interpole region, and the air gap is
+                                                                                    larger in this area. These effects vary depending on the pole-arc angle
+    F(ϕr , ξ) = Imag ⋅cos(ϕr − ξ)
+                   √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                          and the saliency ratio.
+                                                ( / )
+    Imag = AT = imd 2 + imq 2 , ξ = tan− 1 imq imd                       (4)
+            ∑                       ∑
+    imd =       idn , imq =                i qn
+            n=1,2..        n=1,2..
+                                                                                    2.2. Saturation of synchronous machine in loaded conditions
+
+                                                                                        Now, consider a situation where the machine is loaded. The appli­
+                                                                                    cation of load causes the peak of the total MMF to deviate from the
+     Consider a circular sector with an angular width dφr located at an             center of the pole arc, as shown in Fig. 3. In this case, one side of the pole
+angular position φr. If this sector is in the pole-face region, it contains a       face becomes more saturated than the other, and the saturated per­
+larger proportion of iron and a smaller air-gap, whereas in the interpole           meance function is no longer s

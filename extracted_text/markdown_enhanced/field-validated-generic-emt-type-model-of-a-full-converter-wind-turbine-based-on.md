@@ -1,0 +1,27 @@
+# Field Validated Generic EMT-Type Model of a Full Converter Wind Turbine Based on a Gearless Externally Excited Synchronous Generator
+
+**Aramis Schwanka Trevisan**, Student Member, IEEE, **Amgad A. El-Deib**, Member, IEEE, **Richard Gagnon**, **Jean Mahseredjian**, Fellow, IEEE, and **Martin Fecteau**, Member, IEEE
+
+**Abstract—** The integration of wind power plants introduces new dynamics into power systems, forcing reconsiderations of how they are studied, planned, and operated. High quality models are essential to these studies. Manufacturer-specific electromagnetic transient (EMT) wind turbine models are usually available only as black-boxes, which hinders analysis and research. To overcome this issue, this paper proposes a generic EMT-type model for a specific type-IV wind turbine system, which is validated against field measurements from a wind turbine of the same type. More precisely, it proposes a wind turbine model based on an externally excited synchronous generator system connected to a full converter composed of a six-pulse diode rectifier, a dc–dc boost stage and a two-level voltage source converter. The required control features and internal protection schemes are considered and described. Two different fault ride-through control strategies, in line with existing grid codes, are implemented. A corresponding EMT-type hybrid model representation is also developed based on newly proposed switched equivalent circuits and average models for the considered hardware, control, and power electronics stages. It allows for the use of larger simulation time steps, hence considerably improving computation times.
+
+**Index Terms—** Full Converter Wind Turbine, Wind Power Plants, Power system, Hybrid model, Average model, Switching function model, Real-time application, Field measurements.
+
+Manuscript received July 13, 2017; revised October 16, 2017 and April 19, 2018; accepted June 11, 2018. Date of publication June 26, 2018; date of current version September 25, 2018. Paper no. TPWRD-00926-2017. (Corresponding author: Aramis Schwanka Trevisan.)
+
+A. S. Trevisan is with the Department of Electrical Engineering, Ecole Polytechnique de Montreal, Montreal, QC H3T 1J4, Canada and with WRD Wobben Research and Development GmbH (ENERCON R&D) in Aurich, D-26607, Germany (e-mail: aramis.schwanka.trevisan@enercon.de).
+A. A. El-Deib is with the Electrical Power and Machines Department, Faculty of Engineering, Cairo University, Giza 12613, Egypt, on leave to the University of Science and Technology at Zewail City, Cairo 12588, Egypt (e-mail: aeldeib@zewailcity.edu.eg).
+R. Gagnon is with the Hydro-Quebec Research Institute (IREQ), Varennes, QC J3X 1S1, Canada (e-mail: Gagnon.Richard2@ireq.ca).
+J. Mahseredjian is with the Department of Electrical Engineering Ecole Polytechnique, Montreal, QC H3T 1J4, Canada (e-mail: jean.mahseredjian@polymtl.ca).
+M. Fecteau is with the System Studies, Hydro-Quebec TransEnergie, Montreal QC H5B 1H7, Canada (e-mail: Fecteau.Martin@hydro.qc.ca).
+
+## I. INTRODUCTION
+
+OPERATORS of modern power systems have been integrating inverter-based technologies at a fast pace, spurred on recently by the integration of wind turbines [1]. The increased complexity and new dynamics added by this new equipment are forcing reconsiderations in the way power systems are studied, planned and operated, thus yielding the need for more advanced modeling and analysis methods.
+
+As one consequence, the provision of manufacturer-specific electromagnetic transient (EMT) models has already become a requirement for the connection of new generating units in some grid areas [2]. However, due to confidentiality issues, these models are often provided as black-boxes, thus hindering the access to internal control systems and hardware parameters and, therefore, the use of specific analysis techniques.
+
+To overcome some of these difficulties in specific cases, generic transient stability type models (in phasor domain) have been proposed for different types of wind turbine systems [3]–[6]. Nevertheless, the intrinsic limited frequency bandwidth consideration of these models, as well as typical assumptions for grid model equations in phasor domain, limit the application range of such models.
+
+The present work aims at the development of generic EMT-type models. Several types of studies require the use of EMT models. The EMT-type models are circuit-based and can represent multiphase systems with accurate transmission line models, component nonlinearities, real controller blocks with high-bandwidth components, among others. Reference [7] addresses the need for EMT-type simulations to support the massive integration of wind power plants. Moreover, it also suggests a typical list of EMT-type power system studies to be performed in this context.
+
+In the specific case of wind turbine systems, some previous studies have introduced generic EMT models to represent different types of wind turbines. References [8]–[12] proposed detailed models for type-III (doubly-fed induction generator based) wind turbine systems. Valuable insights into specific full converter systems can also be obtained from references [13]–[17]. Notably, generic EMT-type model representations of types II, III and IV wind turbine systems were addressed in [7], although not to the same level of modeling detail presented in this paper. For example, protection systems and Fault

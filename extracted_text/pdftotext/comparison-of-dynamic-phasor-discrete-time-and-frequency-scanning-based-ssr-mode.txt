@@ -1,0 +1,204 @@
+                                                                 Electric Power Systems Research 196 (2021) 107237
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                            Electric Power Systems Research
+                                                              journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Comparison of dynamic phasor, discrete-time and frequency scanning
+based SSR models of a TCSC☆
+Kaustav Dey *, a, Mukesh Kumar Das b, A.M. Kulkarni a
+a
+    Department of Electrical Engineering, Indian Institute of Technology Bombay, Mumbai, India
+b
+    ELECTRANIX Corporation, Winnipeg, Manitoba, Canada
+
+
+
+
+A R T I C L E I N F O                                        A B S T R A C T
+
+Keywords:                                                    Sub-synchronous Control/Torsional Interactions occur in a power system due to adverse interactions between the
+Frequency scanning                                           electrical network, turbine-generators and power-electronic systems. The extraction of time-invariant models of
+Sub-synchronous resonance                                    the system for analysis and design is often an onerous task due to the complex dynamics associated with power-
+Sub-synchronous damping control
+                                                             electronic systems. The modelling techniques proposed in the literature include the use of discrete-time mapping,
+TCSC
+Dynamic phasors
+                                                             dynamic phasors and frequency scanning. Frequency scanning is a black-box approach, wherein a time-invariant
+Discrete-time modelling                                      model is extracted from the simulated response of the system to a probing signal. The first two techniques derive
+                                                             the model directly from the analytical equations (with several simplifying assumptions). This paper compares the
+                                                             accuracy of these models using the example of a SSR-vulnerable system which includes a TCSC. The presence of
+                                                             several poorly damped torsional modes and the use of a TCSC to damp them make this an excellent test case for
+                                                             modelling accuracy. It is seen that the frequency scanning based state-space model is quite accurate and its
+                                                             extraction using simulation and the vector fitting technique presents no significant difficulties, irrespective of the
+                                                             extent of modelling detail. The results demonstrate that this approach can be both convenient and accurate for
+                                                             sub-synchronous interaction studies.
+
+
+
+
+1. Introduction                                                                                  eigenvalue analysis are that (a) it provides insight into the participation
+                                                                                                 of the different states in different modes, and (b) it facilitates the se­
+    A power system consists of components like synchronous generators,                           lection of feedback signals, controller structure, and the design of
+loads, FACTS devices, HVDC converters, renewable sources and storage                             feedback controllers to alleviate instabilities, using well-established
+elements, which are connected to a transmission and distribution                                 techniques. This motivates us to seek accurate LTI models of power
+network. Sometimes, adverse interactions between these devices result                            system components.
+in oscillatory instabilities. Phenomena like Power Swings, Sub-                                      The models of Power Electronic Systems (PES) are time-variant in the
+Synchronous Resonance (SSR), Sub-synchronous torsional interactions                              phase variables due to switching action. However, they are also time-
+(SSTI), Sub-synchronous control interactions (SSCI), Induction Gener­                            periodic, which allows us to obtain LTI models by suitably transforming
+ator Effect and Harmonic Instability [1–4] are manifestations of such                            the variables. In situations where the lower-order switching harmonics
+adverse interactions. Power swings are of relatively lower frequency                             are very small and switching is done in a balanced fashion across the
+(0.1 − 2 Hz), and therefore can be analyzed using quasi-sinusoidal                               three phases, a fundamental frequency approximation of the switching
+steady-state (phasor) models. On the other hand, the other instabilities                         function may be used. It is then possible to obtain a LTI model using the
+mentioned here are of higher frequency (typically greater than 10 Hz),                           well-known D-Q transformation [5]. For thyristor based PES like HVDC
+and require higher bandwidth models.                                                             converters, TCSCs and SVCs, which have significant lower order har­
+    Eigenvalue analysis of a linear time-invariant (LTI) model of the                            monics that may overlap with the controller bandwidth, such approxi­
+system is often used to study these interactions. While detailed time                            mations may cause inaccuracies in the analysis of sub-synchronous
+domain simulations of the system using Electromagnetic Transients                                interactions and harmonic instabilities.
+(EMT) programs can also capture the instabilities, the advantages of                                 To overcome this problem, two general analytical techniques have
+
+
+    ☆
+      Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil, June 6–10, 2021.
+    * Corresponding author.
+      E-mail addresses: kaustavdey4@gmail.com (K. Dey), md@electranix.com (M.K. Das), anil@ee.iitb.ac.in (A.M. Kulkarni).
+
+https://doi.org/10.1016/j.epsr.2021.107237
+Received 30 November 2020; Received in revised form 24 February 2021; Accepted 6 April 2021
+Available online 15 April 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+K. Dey et al.                                                                                                     Electric Power Systems Research 196 (2021) 107237
+
+
+been developed for modelling time-periodic systems, namely, (a)                  where q is a switching function depending on thyristor status. q = 1
+discrete-time modelling [6–9] and (b) dynamic phasor modelling [10,              when any one thyristor is conducting, and q = 0 when none of the
+11]. The disadvantages of these analytically derived models are that (a)         thyristors are conducting.
+the derivations have to be customized to the specific PESs, whose con­               The steady state waveforms of the inductor current and the capacitor
+trollers may also be non-standard, and (b) the derivations invariably            voltage with respect to the line current are shown in Fig. 2. The con­
+involve several simplifying assumptions in order to make them conve­             duction period σ is symmetric about the peak of the line current in
+nient to incorporate in practical programs. Making these assumptions             steady state, but this may not be satisfied during transients.
+requires good engineering judgement, as the accuracy of the models for
+sub-synchronous interaction studies can be quite sensitive to how the
+control and synchronization schemes are represented. Notwithstanding
+these challenges, dynamic phasor modelling has been used recently for a
+variety of PESs [12–17], while discrete-time techniques have been
+mainly used for the modelling of TCSC [6–9] and LCC-HVDC schemes
+[18,19].
+    Frequency scanning is a numerical model identification technique
+[4], which uses a simulation model of the system. The frequency
+response of the system is obtained from the simulated response to a
+known small-amplitude, wide-band periodic probing signal. As this is a
+                                                                                                      Fig. 2. TCSC steady-state waveforms.
+black-box technique, there is no limitation on the extent of detail in the
+simulation model. Frequency scanning is being utilized as a screening
+                                                                                    A TCSC can be controlled using feedback controllers, as shown in
+tool for sub-synchronous interaction analyses [20–24], especially for
+                                                                                 Fig. 3, and may include an auxiliary SSR Damping Controller (SSDC) and
+wind farms. Typically these screening tools directly utilize the frequency
+                                                                                 a Power Swing Damping Controller (PSDC). The line current has lower
+domain information like impedance or damping and synchronizing
+                                                                                 harmonic distortion as compared to the voltage, and is usually used as
+torques. However, one can go a step further: the numerically obtained
+                                                                                 the input to the Phase Locked Loop (PLL). The firing angle controller and
+frequency response can be fitted to a rational transfer function using a
+                                                                                 PLL may be done at the individual phase level. The TCSC normally
+vector fitting algorithm [25], from which an equivalent state space
+                                                                                 operates in the capacitive vernier region, wherein the equivalent reac­
+model can be obtained. The state-space model can then be interfaced
+                                                                                 tance is capacitive and can be smoothly varied. It can also operate in the
+with the model of the rest of the system. This facilitates a quantitative
+                                                                                 bypass mode or the blocked mode (wherein q is one or zero throughout
+analysis of stability through the computation of the eigenvalues and
+                                                                                 the cycle respectively) under special conditions like faults.
+their sensitivities to various parameters, thus bringing the frequency
+scanning model on par with the analytically derived models.
+    Motivated by the foregoing discussion, this paper compares the ac­
+curacy of the frequency scanning and the analytically derived models
+using a detailed case study on the impact of a TCSC on a SSR-vulnerable
+system. The overall complexity of the system, coupled with the low
+damping ratios of multiple torsional modes make this an ideal “stress
+test” for evaluating the accuracy of the techniques.
+    The main contribution of this paper is to put the different models on
+the same level and compare their predictions in a rigorous, quantitative
+manner. The results indicate that the discrete-time and the frequency
+scanning models give good accuracy, which is confirmed by simulation                                        Fig. 3. TCSC controller.
+studies. The numerical extraction of the state-space model of the system
+through frequency scanning and vector fitting is found to be a feasible,
+                                                                                 3. Modelling techniques
+convenient and accurate approach for sub-synchronous interaction
+studies.
+                                                                                 3.1. Discrete-Time model
+
+2. TCSC: A brief description                                                         Consider a power system with an embedded PES. If the continuous-
+                                                                                 time model of the entire system is linearized around the steady-state
+   A TCSC consists of a fixed capacitor in parallel with a controllable          trajectory, then the resulting equations are generally time-periodic,
+reactor, as shown schematically in Fig. 1. The firing angle delay of the         that is, A(t) = A(t + T), where T is the time-period of the system. The
+thyristors can be adjusted to control the equivalent reactance offered by        response of the time-variant system can be represented by the state
+the device. The reactance is usually capacitive. Thus a TCSC can provide         transition matrix of the system [26], Φ, as follows:
+variable series compensation of a transmission line. The dynamical
+equations for one phase of a TCSC are:                                           Δx(t) = Φ(t, to )Δx(to )
+
+    dvT                     diT                                                  Since the system is time-periodic, it follows that Φ(t + T, t) is indepen­
+C       = (iL − iT ),   L       = qvT
+     dt                     dt                                                   dent of t. Therefore, the mapping between successive samples of Δx can
+                                                                                 be expressed as Δxk+1 = Ad Δxk , where Ad is sample-invariant (not
+                                                                                 dependent on k).
+
+                                                                                 3.1.1. Choice of sampling instants for a TCSC
+                                                                                     The model is generally derived in the synchronously rotating frame
+                                                                                 of reference (having a constant frequency), for which sample invariance
+                                                                                 can be achieved for a time period which is one-sixth of the fundamental
+                                                                                 period [27,28]. For this, the zero sequence variables (denoted by fo ) may
+                                   Fig. 1. A TCSC.                               either be neglected or transformed using the transformation fz k =
+
+                                                                             2
+K. Dey et al.                                                                                                                Electric Power Systems Research 196 (2021) 107237
+
+
+ (− 1)k fo k . The derivation assumes that the TCSC is in the capacitive                       〈 〉
+                                                                                     d〈x〉k      dx
+vernier operating mode with conduction angle limited to 60◦ . The                          =         − jkωs 〈x〉k                                                          (3)
+                                                                                      dt        dt k
+sampling instants are chosen such that the conduction period of the
+thyristors lie within the sampling intervals, as shown in Fig. 4.                    This may be re-written by separating out the real and imaginary terms to
+                                                                                     obtain a real state-space model.
+                                                                                        (b) If y(t) = u(t) v(t), then
+                                                                                                          ∑
+                                                                                                          ∞
+                                                                                     〈y〉k = 〈uv〉k =           〈u〉k− l 〈v〉l                                                (4)
+                                                                                                      l=− ∞
+
+
+                                                                                         (c) If x(t) is real, then 〈x〉− l = 〈x〉Hl , where ‘H’ indicates the complex
+                                                                                     conjugate of the variable.
+                                                                                         For time-periodic systems, dynamic phasors are constant in the
+                                                                                     steady-state. The dynamic phasor model of a system in terms of the
+                 Fig. 4. Timing diagram depicting sampling instants.
+                                                                                     dynamic phasor variables 〈x〉k , can be obtained from the original model
+                                                                                     which is in terms of x, using (3). The relationship given in (4) is useful if
+3.1.2. Modularity and interfacing issues                                             multiplicative switching functions (which are time-periodic in steady-
+   The derivation of Ad generally requires the evaluation of the state               state) are present in the original model. The presence of these multi­
+transition matrix of the entire system including the TCSC. Significant               plicative terms causes a coupling between the dynamic phasors corre­
+simplicity and convenience can be achieved if line currents in the syn­              sponding to the different harmonic components k. Since k varies from
+chronously rotating frame are assumed to be constant [8] or linearly                 − ∞ to ∞, a dynamic phasor model is a coupled system of infinite order.
+varying [27] between the samples. This is a reasonable assumption since              Therefore, reducing the model order by considering only a few values of
+the sampling interval is small. The TCSC model can then be derived                   k is necessary for practical studies. The order of reduction depends on
+independent of the rest of the system, i.e., in a modular fashion. The               the nature of study and requires good engineering judgement.
+general form of this model is as given in (1).
+Δzk+1 = Adt Δzk + Bdt Δuk + Bdc Δuck                                      (1)        3.2.1. Fundamental frequency dynamic phasor model
+                                                                                         The behaviour of a TCSC can be approximated (for each phase) by
+Here, zk = [vTDk vTQ k vTzk ]T denotes the TCSC capacitor voltages, while            the fundamental dynamical phasor equation given below [11].
+uk = [iLDk iLQ k iLzk ]T denotes the line currents. The ‘D’ and ‘Q’ subscripts          d〈vT 〉1
+                                                                                                   (
+                                                                                                                 1
+                                                                                                                        )
+indicate that the variables are in the synchronously rotating frame of                C
+                                                                                          dt
+                                                                                                = − jωs C +
+                                                                                         

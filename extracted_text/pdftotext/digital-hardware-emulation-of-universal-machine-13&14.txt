@@ -1,0 +1,206 @@
+ 1300                                                                    IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 59, NO. 2, FEBRUARY 2012
+
+
+
+
+        Digital Hardware Emulation of Universal Machine
+            and Universal Line Models for Real-Time
+              Electromagnetic Transient Simulation
+                          Yuan Chen, Student Member, IEEE, and Venkata Dinavahi, Senior Member, IEEE
+
+
+
+    Abstract—Real-time electromagnetic transient simulation plays                    concept that all types of machines can be represented by some
+ an important role in the planning, design, and operation of power                   coupled electrical coils and that the associated mechanical
+ systems. Inclusion of accurate and complicated models, such as                      system can be replaced by the equivalent electrical analog.
+ the universal machine (UM) model and the universal line model
+ (ULM), requires signiﬁcant computational resources. This paper                         The propagation of electromagnetic transients on a transmis-
+ proposes a digital hardware emulation of the UM and the ULM                         sion line is greatly inﬂuenced by the frequency dependence of
+ for real-time electromagnetic transient simulation. It features ac-                 its parameters, namely, its series impedance and shunt admit-
+ curate ﬂoating-point data representation, paralleled implementa-                    tance. Traditionally, the most accurate transmission line model
+ tion, and fully pipelined arithmetic processing. The hardware is                    is the frequency-dependent model built in the modal domain
+ based on advanced ﬁeld-programmable gate array (FPGA) using
+ VHDL. A power system transient case study is simulated in real                      [4]. The transformation matrix between the modal domain and
+ time to validate the design. On a 130-MHz input clock frequency                     the phase domain is real and constant. This model works well
+ to the FPGA, the achieved execution times for UM and ULM                            for symmetrical and transposed lines; however, for asymmetri-
+ models are 2.5 μs and 1.42 μs, respectively. The captured real-time                 cal and untransposed line conﬁgurations, the use of a constant
+ oscilloscope results demonstrate high accuracy of the emulator in                   modal transformation matrix causes error and numerical insta-
+ comparison to the ofﬂine simulation of the original system in the
+ EMTP-RV software.                                                                   bility, particularly for cable models. Although this deﬁciency
+                                                                                     can be overcome by taking the frequency dependence of the
+    Index Terms—Electrical machines, electromagnetic transient                       transformation matrix into account [5], the practical implemen-
+ analysis, ﬁeld-programmable gate arrays (FPGAs), hardware-in-
+ the-loop simulation, modeling, parallel algorithms, power system                    tation of the model is complicated. Phase-domain modeling
+ simulation, real-time systems, transmission lines.                                  avoids the transformation matrix by formulating the trans-
+                                                                                     mission line equations directly in the phase domain [6]–[8].
+                                                                                     Among these phase-domain line models, the universal line
+                             I. I NTRODUCTION
+                                                                                     model (ULM) [8] is considered numerically efﬁcient and robust
+
+ R     OTATING electric machineries are widely used in power
+       systems either as generators or industrial loads, and their
+ accurate modeling is paramount for electromagnetic transient
+                                                                                     for both overhead lines and underground cables.
+                                                                                        Ofﬂine electromagnetic transient simulation using software
+                                                                                     such as ATP, PSCAD/EMTDC, and EMTP-RV has been very
+ simulation. The machine itself can be of many different types                       successful for many years. Although execution time is still a
+ such as induction machine, synchronous machine, and dc ma-                          matter of concern in such ofﬂine tools, it is not as critical
+ chine. Each type of machine may have different electrical rep-                      as in a real-time digital simulator which has to interact with
+ resentation and custom interfaces between the machine and the                       external devices in a hardware-in-the-loop scenario. The main
+ network and between the machine and associated mechanical                           applications of real-time transient simulators include testing
+ system. It would be extremely cumbersome and time consum-                           of protective relays and controllers in power systems as well
+ ing to code each of them individually into the Electromagnetic                      as power electronic systems, and utility-speciﬁc studies in
+ Transient Program (EMTP) [1]. For this reason, the universal                        planning and operation of power systems. Accurate modeling
+ machine (UM) model was proposed [2], [3]. It is a uniﬁed                            of rotating machines and transmission lines is one of the most
+ generalized model which can be used to represent up to 12 types                     computationally demanding tasks for a real-time simulator.
+ of rotating machines. The UM model was established on the                           Moreover, a realistic reproduction of high-frequency transients
+                                                                                     often requires a very small simulation time step. Existing real-
+                                                                                     time simulators largely employ sequential processors such as
+    Manuscript received December 23, 2010; revised March 27, 2011; accepted          general-purpose CPUs or DSPs as their core computational
+ May 6, 2011. Date of publication May 23, 2011; date of current version              processors. To meet the stringent real-time step-size constraints,
+ October 18, 2011. This work was supported by the Natural Science and                a compromise is usually made between the size of the system
+ Engineering Research Council of Canada.
+    The authors are with the Department of Electrical and Computer Engi-             simulated and the complexity of the component models. For
+ neering, University of Alberta, Edmonton, AB T6G 2V4, Canada (e-mail:               example, a rotating machine is modeled by its Thevenin equiv-
+ yuanchen@ece.ualberta.ca; dinavahi@ece.ualberta.ca).                                alent or a low-order lumped machine model, and a transmission
+    Color versions of one or more of the ﬁgures in this paper are available online
+ at http://ieeexplore.ieee.org.                                                      line is modeled by a relatively simpler distributed parameter
+    Digital Object Identiﬁer 10.1109/TIE.2011.2157296                                traveling wave model instead of a frequency-dependent model,
+
+                                                                   0278-0046/$26.00 © 2011 IEEE
+978-1-4673-2729-9/12/$31.00 ©2012 IEEE
+CHEN AND DINAVAHI: HARDWARE EMULATION OF UM AND ULMs FOR ELECTROMAGNETIC TRANSIENT SIMULATION                                                      1301
+
+
+
+                                                                                                 TABLE I
+                                                                            E QUIVALENCE B ETWEEN M ECHANICAL AND E LECTRICAL
+                                                                                      Q UANTITIES FOR THE UM M ODEL
+
+
+
+
+Fig. 1.   Winding representations in the UM model.
+                                                                    paper. The voltage–current–ﬂux relationship in these coupled
+                                                                    windings can be described by
+when large systems need to be simulated in real time. Of course,
+sacriﬁcing the model complexity degrades the accuracy of the                                                          dλdq0
+                                                                                     v dq0 = − Ridq0 −                      +u                     (1)
+transients the real-time simulator is able to reproduce.                                                               dt
+   Owing to the fast developments in VLSI technology and                             λdq0 = Lidq0                                                  (2)
+concurrent advances in digital hardware design tools, ﬁeld-
+programmable gate arrays (FPGAs) are becoming the proces-           where
+sors of choice for many applications [9]–[31]. This is because
+                                                                            v dq0 = [vd    vq     v0       vf     0     0    0]T
+the FPGA has the intrinsic advantages of full hardware paral-
+lelism and user programmability. The digital hardware imple-                 idq0 = [id   iq     i0     if       iD1       iQ1   iQ2 ]T
+mentation of EMTP in real time is becoming highly attractive.
+In [23], a parallel EMTP algorithm was proposed to simulate                 λdq0 = [λd     λq     λ0       λf         λD1    λQ1         λQ2 ]T
+basic linear network elements, including the modal-domain                      u = [−ωλq         ωλd         0    0    0     0     0]T
+frequency-dependent transmission line model. Further devel-
+opment in [24] included an iterative Newton-based solver for        are vectors of voltages, currents, ﬂux linkages, and speed
+simulating nonlinear element in real time on the FPGA.              voltages of the windings
+   This paper proposes a digital hardware emulation of UM
+and ULMs for real-time electromagnetic transient simulation.             R = diag[Rd       Rq         R0         Rf    RD1       RQ1       RQ2 ]
+The machine equations are solved iteratively using the com-
+pensation method. The proposed FPGA-based hardware also             is a diagonal matrix of winding resistances, and
+includes other power system elements such as supply source,               ⎡                                                 ⎤
+                                                                             Ld      0      0 Mdf MdD1             0    0
+linear lumped RLC, and switch, which makes it a com-                      ⎢ 0       Lq      0     0        0     MqQ1 MqQ2 ⎥
+                                                                          ⎢                                                 ⎥
+plete real-time electromagnetic transient emulator. The whole             ⎢ 0        0     L0     0        0       0    0 ⎥
+                                                                          ⎢                                                 ⎥
+design is fully paralleled and deeply pipelined using ﬂoating-       L = ⎢ Mdf       0      0    Lf Mf D1          0    0 ⎥
+                                                                          ⎢                                                 ⎥
+point number representation to achieve high speed and ac-                 ⎢ MdD1     0      0 Mf D1 LD1            0    0 ⎥
+curacy requirement. Section II describes the UM model, its                ⎣                                                 ⎦
+                                                                              0    MqQ1 0         0        0      LQ1 MQ1Q2
+interfacing to the network, and detailed hardware implemen-                   0    MqQ2 0         0        0    MQ1Q2 LQ2
+tation on FPGA. Section III explains the ULM formulation
+and hardware implementation in detail. The overall hardware         is a symmetrical matrix of the winding leakage inductances
+framework for the network emulator and the simulation pro-          with L and M denoting the self- and mutual inductances,
+cedure are given in Section IV. A real-time transient sim-          respectively.
+ulation case study is presented in Section V. The real-time            The electromagnetic torque is calculated using
+simulation results have been validated using ofﬂine simulation
+                                                                                               Te = λd iq − λq id .                                (3)
+results from the EMTP-RV software. Conclusions are given
+in Section VI.                                                         Instead of a mechanical model of the mass-shaft system in
+                                                                    most machine models, the UM uses an equivalent electric net-
+                                                                    work with lumped R, L, C elements to represent the mechan-
+            II. UM M ODEL H ARDWARE E MULATION
+                                                                    ical part of machine [2]: This gives the greatest ﬂexibility to
+A. UM Model Formulation                                             model different mechanical systems using the existing electrical
+                                                                    models in the EMTP framework. By replacing the mechanical
+   The UM model is established on the synchronously rotating
+                                                                    parameters with their analog electrical quantities as shown in
+dq0 reference frame. It can have, at most, three stator windings,
+                                                                    Table I, the differential equation (4) describing the dynamics of
+any number of windings D1 , D2 , . . . , Dm on the rotor direct
+                                                                    the rotor can be modeled by an electrical circuit. Fig. 2 shows an
+axis (d-axis), and any number of windings Q1 , Q2 , . . . , Qn on
+                                                                    example of a single-mass mechanical system and its electrical
+the rotor quadrature axis (q-axis). Without loss of generality,
+                                                                    analog
+as shown in Fig. 1, three stator windings {a, b, c}, one ﬁeld
+winding f , one damper winding D1 on the d-axis, and two                                               dω
+                                                                                          Tm = J          + Dω + Te .                              (4)
+damper windings {Q1 , Q2 } on the q-axis are considered in this                                        dt
+1302                                                                    IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 59, NO. 2, FEBRUARY 2012
+
+
+
+
+Fig. 2. (a) Mechanical system of rotor and (b) its electrical analog.
+
+
+                                                                                 Fig. 4. UM module: FPGA implementation of the UM model.
+
+
+
+
+Fig. 3. Interfacing of the UM model to the network using the compensation
+method.
+
+B. Interfacing UM Model With EMTP
+   To interface the UM model to the existing EMTP framework,
+                                                                                 Fig. 5.   FSM of the iteration process of the UM model.
+the differential equation (1) is discretized using the trapezoidal
+rule of integration to give
+                                                                                 C. Real-Time FPGA Implementation of the UM Model
+                                2
+       v dq0 (t) = −Ridq0 (t) −    λdq0 (t) + u(t) + v hist                (5)      As shown in Fig. 4, a hardware module UM is designed to
+                                Δt
+                                                                                 implement the UM model in the FPGA. It mainly consists of
+where Δt is the time step and v hist is the history term ex-                     six functional units. The Speed and Angle unit is responsible
+pressed as                                                                       for predicting and calculating rotor speed (ω) and rotor angle
+                                                                                 (β). The FrmTran unit transforms the UM quantities between
+v hist = −v dq0 (t − Δt) − Ridq0 (t − Δt)
+                                                                                 the abc and dq0 frames. The Parallel GJE (Gauss–Jordan
+                           2
+                        +    λdq0 (t − Δt) + u(t − Δt).                    (6)   elimination) unit [24] is used to calculate the machine current
+                          Δt                                                     idq0 . This procedure involves solving a set of seven algebraic
+   The next step is to link the dq0 quantities of the machine with               equations for the seven winding representations of the machine.
+the abc phase quantities of the rest of the network. The Park’s                  The ﬂux linkages (λdq0 ) and torque (Te , Tm ) are solved in
+transformation matrix P is used for this purpose. For example                    the Flux and Torque unit. The Update unit updates machine
+                                                                                 history terms (v hist ) and the history terms of the equivalent
+                  [id    iq    i0 ]T = P [ia      ib   ic ]T               (7)   mechanical network. Finally, the ComVol unit calculates the
+where P is an orthogonal matrix deﬁned as                                        complete voltages of the network.
+                                                                                    To solve the nonlinear equations of the machine, iterations
+        ⎡ cos(β) cos(β − 1200 ) cos(β + 1200 ) ⎤                                are required. The number of iterations is generally small (1–3)
+         2⎣                       0             0 ⎦
+ P =          sin(β)
+                 √    sin(β −√120 ) sin(β + √120 )  (8)                          due to the relatively large inertia of machine. Fig. 5 shows the
+         3
+              1/ 2        1/ 2            1/ 2                                   ﬁnite-state machine (FSM) diagram of the iteration process.
+                                                                                 When the network is solved without machines for applying
+where β is the rotor angle.
+                                                                                 the compensation method [32], the UM procedure starts with
+  To incorporate the UM model into the EMTP solution, the
+                                                                                 the prediction of rotor speed ω using linear extrapolation in
+compensation method is employed. The network is ﬁrst solved
+                                                                                 state S1 . Then, in state S2 , the rotor angle β is calculated,
+without the machine and represented by a Thevenin impedance
+                                                                                 followed by Park’s transformation matrices P and P −1 (8). The
+Req and a voltage source v abc_0 expressed as
+                                                                                 P and P −1 matrices are calculated using a sinusoidal function
+                        v abc = Req iabc + v abc_0 .                       (9)   lookup table. Very high accuracy has been achieve

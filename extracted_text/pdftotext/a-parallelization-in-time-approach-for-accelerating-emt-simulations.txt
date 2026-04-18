@@ -1,0 +1,218 @@
+                                                                  Electric Power Systems Research 197 (2021) 107346
+
+
+                                                                        Contents lists available at ScienceDirect
+
+
+                                                            Electric Power Systems Research
+                                                               journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A parallelization-in-time approach for accelerating EMT simulations
+Ming Cai a, Jean Mahseredjian a, *, Ilhan Kocar a, Xiaopeng Fu b, Aboutaleb Haddadi a
+a
+    Polytechnique Montreal, Montreal, QC H3C 3A7, Canada
+b
+    Key Laboratory of Smart Grid of Ministry of Education, Tianjin University, Tianjin, China
+
+
+
+
+A R T I C L E I N F O                                         A B S T R A C T
+
+Keywords:                                                     This paper is related to research on parallelization techniques for the simulation of electromagnetic transients
+Electromagnetic transients                                    (EMTs). It presents a new approach based on a parallel-in-time equation grouping and reordering (PEGR)
+Equation grouping and reordering                              technique whose original theoretical formulation is modified, extended and generalized from state-space to the
+Parallelization-in-time
+                                                              modified-augmented-nodal analysis (MANA) formulation method. The highly efficient sparse linear solver KLU is
+OpenMP
+KLU
+                                                              incorporated in the approach for power system network matrix solution. The proposed approach is implemented
+                                                              with OpenMP Multithreading for CPU-based parallelization. Test results show that EMT simulations can be
+                                                              accelerated by exploiting the intrinsic independency of certain solution procedures using the PEGR technique.
+
+
+
+
+1. Introduction                                                                                 techniques on large-scale networks requires user intervention and re­
+                                                                                                mains complex to automate. Additionally, a co-simulation-based paral­
+    Thanks to its wideband nature, the electromagnetic transient (EMT)                          lel and multistep approach using the Functional Mock-up Interface
+solution approach has become an indispensable tool for power system                             standard was proposed in [13].
+engineers to perform a wide range of studies [1,2]. The EMT-type                                    Other techniques to enhance computational performance in EMT-
+simulation methods are circuit based and usually require significant                            type solvers include circuit reduction [14], frequency domain fitting
+computing time to solve large differential and algebraic equation (DAE)                         [15] and hybrid methods that interface EMT-type solvers with transient
+systems when compared to phasor domain methods due to higher ac­                                stability (TS) programs by exploring parallelism between the two types
+curacy and model complexity levels. Numerical integration time-step,                            of solvers [16].
+on the other hand, can also pose a constraint for simulation efficiency                             This paper uses an off-line approach based on the parallel-in-time
+even for smaller networks. All of these have prompted the research on                           equation grouping and reordering (PEGR) technique for large power
+computing time reduction for the simulation of EMTs.                                            system EMT simulations on conventional multi-core computers. This
+    Over the years, many techniques have been proposed to improve the                           approach automatically groups the network equations at different
+solution speed in EMT-type simulation methods, in which parallelization                         numbers of solution points, catering to the number of available logical
+and multistep solution methods have drawn a fair amount of interest                             processors on a PC, and recursively applies the PEGR technique (here­
+among researchers. The former includes approaches using waveform                                inafter labeled as PEGR) on the grouped network equations, thereby
+relaxation [3], and techniques implemented in real-time [4-6] as well as                        significantly reducing the actual number of forward and backward
+off-line [7-9] simulation tools. In these methods, parallelization is ach­                      substitution steps in the network equation solution process with the help
+ieved by taking advantage of the propagation delay at distributed                               of multithreading. Special treatment for topological changes and arbi­
+parameter transmission line and cable models for natural decoupling of                          trary numbers of simulation points is also included.
+networks. Parallelization can also be realized by identifying intrinsically                         The PEGR was first proposed and theorized in state-space formula­
+independent solution procedures using an equation grouping and reor­                            tion [10]. The approach presented in this paper modifies and extends its
+dering technique [10]. Multistep solution is attained by exploiting the                         original formulation from state-space to the more advantageous
+property of circuit latency [11], or through “data-smoothing” at line-bus                       modified-augmented-nodal analysis (MANA) formulation method [1].
+interfaces in a network [12]. Although computational speedup has been                           The highly efficient sparse linear solver KLU [17] is used as the network
+observed in some cases, the implementation of such multistep                                    matrix solver.
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6-10, 2021.
+    * Corresponding author.
+      E-mail addresses: jean.mahseredjian@polymtl.ca (J. Mahseredjian), fuxiaopeng@tju.edu.cn (X. Fu).
+
+https://doi.org/10.1016/j.epsr.2021.107346
+Received 27 November 2020; Received in revised form 28 March 2021; Accepted 29 April 2021
+Available online 13 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+M. Cai et al.                                                                                                       Electric Power Systems Research 197 (2021) 107346
+
+
+
+
+Fig. 1. Expanded network equations incorporating current history terms into the vector of unknowns, demonstrating interdependency of solutions at two consec­
+utive time-points.
+
+
+   This paper starts with the theoretical formulation of PEGR in MANA                 The vectors xt and bt denote the expanded vectors of unknown and
+and follows by its implementation using OpenMP Multithreading. Test               known variables (vector bt is now devoid of history terms) at the time-
+cases on power system benchmarks are presented to demonstrate the                 point t. It is also noted in Fig. 1 that the upper left part of matrix D is the
+accuracy and numerical performance advantages of the proposed                     original MANA coefficient matrix A of the system in (1), the upper right
+approach.                                                                         part of D consists of only zeros and the lower right part of D is a negative
+                                                                                  identity matrix. The expanded network equations with individual in­
+2. Formulation of the PEGR technique in MANA                                      ductors and capacitors can be derived accordingly.
+                                                                                      The equations in Fig. 1 depict interdependency between two
+2.1. Modified-augmented-nodal analysis (MANA) and PEGR                            consecutive time-points t and t − Δt. They can be written in a compact
+                                                                                  form
+   The new approach proposed in this paper is implemented based on
+                                                                                  Dxt − Oxt− Δt = bt ,                                                           (4)
+the modified-augmented-nodal analysis (MANA) formulation method
+[1]. This method offers several advantages [1,18] over classical nodal            to allow for the implementation of PEGR [10].
+analysis and state-space formulation. The general MANA equations of a
+power system network are given by
+Ax = b.                                                                 (1)       2.3. Grouping and recursive row and column reordering of expanded
+                                                                                  network equations
+    The sparse system of equations (1) is solved for x at each time-point
+in time-domain, after updating the non-symmetric coefficient matrix A                The original PEGR proposition restricts the total number of solution
+and the vector of known variables b. The vector b contains history terms          steps T of a simulation to be T = 2τ (τ is an integer) in order to solve the
+and other independent functions, such as independent sources. The                 simulation in log2 T steps using T/2 processors, which is unrealistic in
+system (1) is non-symmetric and can also accommodate generic                      practice. Hence, instead of grouping the solutions at all time-points to
+equations.                                                                        construct a huge matrix as in the original proposition, this section pre­
+                                                                                  sents the formulation of the new approach with an example showing the
+2.2. Expansion of network equations                                               grouping of expanded network equations at 16 consecutive time-points,
+                                                                                  thus solving the network for every 16 time-steps. The algorithm also
+    Since the solutions at two consecutive time-points are not directly           accommodates the solution of every 32, 64, …, T time-steps (T = 2τ+5 ,
+formulated into one single equation in the original MANA approach due             τ = 0, 1, 2, ...).
+to the need of updating the history terms of energy storage devices in b                              [           ]         [          ]
+at the solution of each time-point, it is needed to modify PEGR such that            Defining ̂    x = x1 , …, x16 and ̂
+                                                                                                                       b = b1 , …, b16 a large set of the
+it can be adapted into MANA formulation. Taking the multiphase pi-                expanded network equations consisting of solutions at the first 16 time-
+section as an example, using the trapezoidal rule, its discretized vector         points can therefore be constructed:
+equations are given by
+                                                                                  ⎡                    ⎤⎡     ⎤ ⎡       ⎤
+Svkm,t − iRL,t = − Svkm,t− Δt − SHiRL,t− Δt                             (2)         D                      x1       b1
+                                                                                  ⎢O D                 ⎥⎢     ⎥ ⎢
+                                                                                                           x2 ⎥ ⎢ b2 ⎥
+                                                                                                                        ⎥
+                                                                                  ⎢                    ⎥⎢
+                                                                                  ⎢     O   D          ⎥⎢
+                                                                                                        ⎢  x
+                                                                                                              ⎥ ⎢
+                                                                                                              ⎥ = ⎢ b
+                                                                                                                        ⎥
+                                                                                                                        ⎥                              (5)
+2              2                                                                  ⎢                    ⎥⎢   3         3
+   Cvt − iC,t = Cvt− Δt + iC,t− Δt ,                                    (3)       ⎣         ⋱ ⋱        ⎦⎣ ⋮ ⎥     ⎢
+                                                                                                              ⎦ ⎣ ⋮ ⎦
+                                                                                                                        ⎥
+Δt             Δt
+                                                                                                O D       x16       b16
+where S = [R + (2/Δt)L]− 1 and H = [(2 /Δt)L − R] and the subscripts k
+and m represent the nodes between which the component is connected.                   It is noted that initialization data from steady-state or load-flow are
+   Suppose the system (1) has n pi-sections. Incorporating these RL               included in b1 . The above network equations can also be written in a
+current terms iRL1 , …, iRLn and shunt current terms iC1 , …, iCn into the        compact manner
+vector of unknowns x, the expanded network equations (1) can be                   ̂x=̂
+                                                                                  Â b.                                                                          (6)
+rewritten as is shown in Fig. 1. It is noted that the terms Cn,1 , Cn,2
+represent the capacitances at the two sides of the nth RL section.                    After performing a one-time row and column reordering on A
+                                                                                                                                               ̂ by
+
+                                                                              2
+M. Cai et al.                                                                                                     Electric Power Systems Research 197 (2021) 107346
+
+
+renumbering all odd rows and columns ahead of all even rows and                   same fashion using 16, 32, …, S (S = 2τ+4 , τ = 0, 1, 2, ...) processors.
+columns and applying an LU factorization technique:
+                                                                                  3. Algorithm of the PEGR approach for time-domain simulations
+̂ x = LÛ
+Â           y=̂
+        x = L̂ b                                                       (7)
+
+    The lower triangular equations in the L side for forward substitution             The PEGR presented in this paper is implemented for sparse matrices
+to solve for ̂
+             y are given by                                                       and with OpenMP Multithreading [19]. The high-performance sparse
+                                                                                  matrix solver KLU [17] is used as the network matrix solver. The
+                                       ⎡     ⎤
+                                                  ⎡     ⎤                         expanded network equations are formulated and grouped based on the
+⎡                                    ⎤⎢
+  d                                          ⎥
+                                       ⎢ y1 ⎥ ⎢ b1 ⎥                              number of available logical processors on the PC to achieve maximal
+⎢     d                              ⎥⎢  y3 ⎥     ⎢
+                                             ⎥ ⎢ b3 ⎥
+                                                        ⎥                         parallelism. The computational burden on each parallel thread is opti­
+⎢                                    ⎥⎢⎢
+⎢
+⎢         ⋱                          ⎥
+                                     ⎥⎢
+                                             ⎥    ⎢
+                                          ⋮ ⎥ ⎢ ⋮ ⎥     ⎥                         mized in terms of maximizing numerical performance and minimizing
+⎢             d                      ⎥⎢  y   ⎥ ⎢        ⎥
+                                                  ⎢ b13 ⎥                         concurrency issues. Special measures are also taken in order to minimize
+⎢                                    ⎥⎢ 13 ⎥
+                                       ⎢
+                                             ⎥ ⎢        ⎥
+⎢                                    ⎥
+⎢                 d                  ⎥⎢  y15 ⎥    ⎢b ⎥
+                                             ⎥ = ⎢ 15 ⎥               (8)         false sharing, data race, as well as inconsistency between temporary
+⎢o                   d               ⎥⎢  y          b
+⎢
+⎢
+                                     ⎥⎢⎢   2
+                                     ⎥⎢ y4 ⎥
+                                             ⎥    ⎢
+                                                  ⎢   2 ⎥
+                                                        ⎥                         view and memory in OpenMP.
+      o               f  d                   ⎥    ⎢ b   ⎥
+⎢
+⎢
+                                     ⎥⎢
+                                     ⎥⎢ ⋮ ⎥       ⎢ 4⎥                                Since PEGR groups the expanded network equations at a certain
+          ⋱              f ⋱                 ⎥ ⎢ ⋮ ⎥
+⎢
+⎣
+                                     ⎥⎢
+                                     ⎦⎢ y14 ⎥ ⎢
+                                             ⎥          ⎥                         number of time-points and solves them together, a conventional
+               o            ⋱ d                   ⎢b ⎥
+                  o
+                                       ⎢
+                                         y
+                                f d ⎣ 16 ⎦
+                                             ⎥ ⎣ 14 ⎦
+                                                    b16                           sequential step-wise approach also employing the KLU solver to solve
+                                                                                  the original network MANA equations is hence incorporated in the al­
+                                                                                  gorithm to handle topological changes that happen at arbitrary time-
+   The d, o and f represent diagonal, off-diagonal and fill-in blocks             points. In the example of grouping the solutions at 16 time-points, the
+respectively (the numerical values of the same blocks are not necessarily         PEGR is used to solve equations between t = T and t = T + 16Δt (Fig. 2).
+identical). It is easy to observe that the first 8 equations in (8) become        Nonetheless, a topological change happens at t = T + nΔt which is
+independent and can be solved in parallel. However, the remaining 8               before t = T + 32Δt. The algorithm therefore switches to the conven­
+equations are still interdependent. Performing the same row and column            tional sequential step-wise approach to solve the steps between t = T +
+reordering scheme recursively first on the entire 16 equations, then on           16Δt and t = T + nΔt, and switches back to the PEGR afterwards.
+the remaining 8, 4 and 2 equations, aft

@@ -1,0 +1,203 @@
+Received January 13, 2022, accepted January 24, 2022, date of publication January 27, 2022, date of current version February 11, 2022.
+Digital Object Identifier 10.1109/ACCESS.2022.3146880
+
+
+
+
+Implementation of Modal Domain Transmission
+Line Models in the ATP Software
+JAIMIS SAJID LEON COLQUI 1 , LUIS CARLOS TIMANÁ ERASO2 ,
+PABLO TORREZ CABALLERO 1,3 ,
+JOSÉ PISSOLATO FILHO1 , (Senior Member, IEEE),
+AND SÉRGIO KUROKAWA 4 , (Member, IEEE)
+1 School of Electrical and Computer Engineering, State University of Campinas—UNICAMP, Campinas 13083-852, Brazil
+2 Department of Electronic and Telecommunications Engineering, Catholic University of Colombia, Bogotá 110231, Colombia
+3 Centro de Pesquisa e Desenvolvimento em Telecomunicações—CPQD, Campinas 13086-902, Brazil
+4 Department of Electrical Engineering, São Paulo State University—UNESP, Ilha Solteira 15385-000, Brazil
+
+Corresponding author: Jaimis Sajid Leon Colqui (jaimis.leon@unesp.br)
+This work was supported in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior—Brazil (CAPES)—Finance Code
+001, in part by the São Paulo Research Foundation (FAPESP) under Grant 2021/06157-5, and in part by the Centro de Pesquisa e
+Desenvolvimento em Telecomunicações (CPQD).
+
+
+
+
+  ABSTRACT Electromagnetic Transients Program make extensive use of transmission line models for
+  the simulation of electromagnetic transients. This paper proposes a circuit representation of the modal
+  transformation, more specifically Clarke’s matrix. The arrangement of ideal transformers we propose
+  allows modal transformation to be directly implemented in software such as Alternative Transient
+  Program - Electromagnetic Transients Program. We combined the proposed circuit with single-phase
+  transmission line models that consider frequency independent and frequency dependent parameters to
+  represent transposed three-phase transmission lines. The main advantage of the proposed approach is that
+  it allows the implementation of new transmission line models without depending on models provided in
+  applications. To show this capability, we included the frequency dependence of soil parameters in the
+  simulations. Results show that the proposed model is accurate both in the frequency domain and in the
+  time domain.
+
+  INDEX TERMS Transmission line model, Clarke transformation matrix, electromagnetic transients,
+  EMT-type programs.
+
+
+
+I. INTRODUCTION                                                                                They include specialized libraries containing state-of-the-
+Transmission line (TL) modeling had been widely studied                                        art models that represent power electronics, transmission
+in the last decades for fault detection [1], analysis of                                       lines, transformers, mechanical equipment, and many other
+electromagnetic transients in the frequency domain [2],                                        devices. The user may employ these models to perform
+fault prevention [3], medicine [4], and other applications.                                    time-domain simulations of power system networks. The
+Several TL models had been developed and implemented                                           software usually connects these models in the nodal admit-
+in software for the simulation of electromagnetic transients                                   tance matrix of the circuit and solves it in the time domain [5].
+such as Alternative Transient Program - Electromagnetic                                           TL models implemented in the ATP-EMTP software have
+Transients Program (ATP-EMTP), Power Systems Computer                                          their phase domain equations embedded in the nodal equa-
+Aided Design (PSCAD), Electromagnetic Transients Pro-                                          tions of the entire circuit. These equations implicitly contain
+gram - Restructured Version (EMTP-RV), and others. The                                         the equations of each propagation mode and the modal trans-
+ATP-EMTP, the PSCAD, and the EMTP-RV are specialized                                           formation matrix used to decouple the TL in its modes [5].
+software for the simulation of transient phenomena of elec-                                       One way to represent transposed and non-transposed
+tromagnetic and electromechanical nature in power systems.                                     TLs with vertical symmetry in the ATP software is to
+                                                                                               independently draw each mode and use an interface to
+   The associate editor coordinating the review of this manuscript and                         transform voltages and currents from the phase domain to the
+approving it for publication was Youngjin Kim            .                                     mode domain [6], [7].
+
+                     This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+15924                                                                                                                                                                 VOLUME 10, 2022
+J. S. L. Colqui et al.: Implementation of Modal Domain Transmission Line Models in ATP Software
+
+
+
+
+   One way to achieve this transformation is using ideal trans-                   II. REPRESENTATION OF A PERFECTLY TRANSPOSED TL
+formers. The polarity and turns ratio of each transformer is                      IN THE MODE DOMAIN
+associated with the components of the modal transformation                        The multiconductor transmission line theory complies
+matrix. Clarke’s matrix decouples a perfectly transposed TL                       with the Baum-Liu-Tesche equation formalism because it
+into its exact modes. The circuit representation of Clarke’s                      describes voltages and currents based on the observable
+matrix had been previously proposed in [7]. However, in [7],                      voltages and currents along the line [14]. For instance, in [15],
+the polarity of one of the transformers is reversed, two phases                   the Baum-Liu-Tesche equation formalism was included in the
+are switched, and the equations provided do not match the                         CRIPTE (Calcul sur Réseaux des Interactions Perturbatrices
+circuit representation. The authors presented the frequency                       en Topologie Electromagnétique/Calculation for Networks
+domain representation of modes α, β, and 0 using this model                       of Interference Interactions in Electromagnetic Topology)
+in [8] and applied it to double-circuit and DC lines in [9].                      software. The CRIPTE software performs a frequency
+However, in all three papers, no time domain validation of                        analysis of MTLs in the frequency domain in the presence
+the proposed circuit had been provided.                                           of different types of sources such as voltage sources, current
+   Power systems are designed to work close to balanced                           sources, and electromagnetic fields.
+conditions. For this purpose, in practice, transmission lines                        The longitudinal impedance matrix and transversal admit-
+are usually transposed at substations [10]. Considering that                      tance matrix of a transposed TL that has its ground wires
+transmission lines are usually transposed, we capitalize on                       embedded using Kron’s reduction [16] are, respectively,
+the fact that Clarke’s matrix is real and constant and use it                     given by
+to decompose three-phase transmission lines into their exact                                                                       
+modes directly in the simulations. In this paper, we propose                                       Zp Zm Zm               Yp Ym Ym
+to use an arrangement of ideal transformers to decouple                                    Z = Zm Zp Zm  , Y = Ym Yp Ym                     (1)
+transposed three-phase TLs into their exact modes. The turns                                      Zm Zm Zp                Ym Ym Yp
+ratio and polarity of each ideal transformer represent one                        where subscripts p and m represent, respectively, the diagonal
+component of Clarke’s matrix [11]. When combined with                             and non-diagonal elements of the impedance matrix Z and
+single-phase TL models, the proposed approach results in                          admittance matrix Y . We use Clarke’s matrix, which is given
+multiconductor TL models that can be implemented in any                           by
+EMTP-like simulation software. To show results, we combine
+                                                                                                          2
+                                                                                                                  0 √1
+                                                                                                                            
+the proposed approach with the Bergeron model (section                                                      √
+                                                                                                              6           3
+VI-B) and the JMarti model (section VI-C) and compare its                                                 1       1
+                                                                                                 T clk = − √6 √2 √3  ,
+                                                                                                                         1 
+                                                                                                                                             (2)
+results against those obtained using their built-in equivalents                                               1      1   1
+                                                                                                           −√ −√ √
+in the ATPDraw. Furthermore, the single-phase TL model                                                           6     2   3
+used to represent the modes can be fully customized,                              to decouple Z and Y into its modes as follows
+allowing the inclusion of customized line parameters. For                                                                    
+instance, in section VI-E, we consider the frequency depen-                                                         Zα 0 0
+dence of the soil parameters on the calculation of line                                              T
+                                                                                              Zm = T clk Z T clk =  0 Zβ 0                  (3a)
+parameters and include these customized parameters in the                                                            0 0 Z0
+simulations. Results show that the proposed approach is                                                            
+                                                                                                                     Yα 0 0
+                                                                                                                              
+accurate.                                                                                    Ym = T −1        −T    0 Yβ 0 
+                                                                                                     clk Y T clk =                            (3b)
+   Additional advantages of the proposed approach include:                                                            0 0 Y0
+   • Voltages and currents can be directly obtained in the
+     frequency domain. Therefore, by using a frequency                            where
+     sweep, we can check if new TL models are correct in
+     the frequency domain.                                                                        Zα = Zp − Zm Yα = Yp − Ym                   (4a)
+   • Voltages and currents are simultaneously available in the                                    Zβ = Zp − Zm , Yβ = Yp − Ym                 (4b)
+     phase and mode domain, eliminating the need to apply                                         Z0 = Zp + 2Zm , Y0 = Yp + 2Ym .             (4c)
+     a post-processing transformation stage.
+   • There is no coupling between modes. Single-phase TL                          Clarke’s matrix is frequency independent and decouples
+     models are easier to handle and faster to solve.                             perfectly transposed lines into its exact modes, irrespective
+   • The resulting multiconductor models inherit the benefits                     of its geometry, as shown in Fig. 1 [11]. Furthermore,
+     of models used to represent the modes. For instance,                         in transposed lines, modes α and β have the same impedance
+     the combination of the proposed approach with the                            and admittance.
+     Folded Line Equivalent [12] results in a multiconductor
+     TL model that works with time steps greater than the                         III. REPRESENTATION OF ELECTRICAL CIRCUITS IN THE
+     propagation time of the TL. Other TL models such as                          ATP SOFTWARE
+     the one presented in [13] can also be combined with the                      The ATP-EMTP software (version 7.0p7) discretizes ordi-
+     proposed approach.                                                           nary differential equations (ODE) into a set of algebraic
+
+VOLUME 10, 2022                                                                                                                              15925
+                                                            J. S. L. Colqui et al.: Implementation of Modal Domain Transmission Line Models in ATP Software
+
+
+
+
+FIGURE 1. Representation of a three-phase transmission line in the mode
+domain.
+
+
+
+
+                                                                               FIGURE 3. Addition of an ideal two-coil transformer to the nodal
+                                                                               admittance matrix (a) ideal two-coil transformer, and (b) their place in
+                                                                               the nodal admittance matrix G.
+
+
+                                                                                  The addition of a two-coil ideal transformer to the model
+                                                                               increases the size of the nodal admittance matrix by 1 as
+                                                                               shown in Fig. 3b.
+
+                                                                               IV. REPRESENTATION OF THE MODAL
+FIGURE 2. Addition of a TL model to the nodal admittance matrix:
+(a) Three-phase TL model, and (b) their place in the nodal admittance          TRANSFORMATION MATRIX WITH IDEAL
+matrix G.                                                                      TRANSFORMERS
+                                                                               Clarke’s transformation computes mode voltages and cur-
+                                                                               rents as a linear combination of phase voltages and currents.
+equations (known as network nodal equations) that are given                    Because this transformation is lossless, we represent Clarke’s
+by                                                                             matrix by an arrangement of ideal transformers. Due to
+                                                                               its nature, the proposed arrangement of ideal transformers
+                            Gv=i−I                                      (5)    can be implemented in any circuit simulation software such
+                                                                               as the ATP-EMTP. Including losses to each transformer
+where G is the nodal admittance matrix, v is the vector                        would detriment the accuracy of the transformation and add
+containing voltages at each node, i is the vector containing                   unnecessary complexity to the overall model. One advantage
+currents at each node at a given time step, and I is the vector                of using ideal transformers is that they can be represented
+containing historic currents at each node. Nodal admittance                    using resistors in the nodal admittance matrix. Therefore they
+matrix G is symmetrical and remains constant during the                        do not add discontinous nodes and can be embedded in the
+entire simulation because time steps are constant.                             addmitance matrix of Fig. 2 [5].
+   TL models represented by electric circuits (e.g. [12],                         Clarke’s matrix relates voltages and currents in the phase
+[13], [17]) are described by their ODEs. These ODEs relate                     domain and in the mode domain. We represent each of
+voltages and currents at the line terminals as shown in                        the components of Clarke’s matrix using an ideal two-coil
+Fig. 2a. For instance, the ODEs that describe the lumped                       transformer. The signs of the components of Clarke’s matrix
+parameter model (LPM) are calculated from the longitudinal                     determine the polarity of each transformer. Since Clarke’s
+resistance, inductance, and capacitance of the TL. The                         matrix contains 8 non-zero elements, then voltages and
+ATP-EMTP discretizes these ODEs and embeds them in                             currents are related by 8 transformers.
+the nodal admittance matrix as illustrated in Fig. 2b. The                        Fig. 4 shows the arrangement of transformers that rep-
+discretized equations that describe the JMarti model and                       resents Clarke’s matrix. Primary winding are connected in
+the Bergeron model are written in the phase domain.                            series, whereas secondary windings are connected in parallel.
+However, they implicitly contain information about the                            In Fig. 4, phase voltages and mode currents are given by
+propagation modes α, β, 0, and its modal transformation
+matrices.                                                                                va = va1 + va3 ,        iα = iα1 + iα2 + iα3                (6a)
+
+15926                                                                                                                                      VOLUME 10, 2022
+J. S. L. Colqui et al.: Implementation of Modal Domain Transmission Line Models in ATP Software
+
+
+
+
+                                                                                  FIGURE 5. Flowchart showing the testing methodology.
+
+
+                                                                                  transforms voltages and currents from the phase domain to
+                                                                                  the mode domain using circuit elements. To show results,
+                                                                                  we combine the Bergeron model and the JMarti model with
+                                                                                  the proposed arrangement of Fig. 4 to simulate three-phase
+                                                                                  TLs. The responses of each TL model were compared to the
+                                                                    

@@ -1,0 +1,27 @@
+# A Novel Decoupled EMT Approach and Parallel Simulation Framework for Modularized Solid-State Transformers
+Moke Feng, Chenxiang Gao, Jianzhong Xu, Senior Member, IEEE, Chengyong Zhao, Senior Member, IEEE, and Gen Li, Senior Member, IEEE
+
+**Abstract**—Electromagnetic transient (EMT) modeling for the modularized solid-state transformer (MSST) faces critical difficulties because the dynamics of the complex-structured submodules, which contain dual active bridges (DAB) and multiple active bridges (MAB), are hard to be described in analytical formulas. Existing models have problems of a narrow dynamic frequency band, insufficient simulation accuracy, or are unable to operate under fast transients. This paper proposes a parallel simulation framework for MSST that preserves the original model’s broadband characteristics and remarkably improves the simulation efficiency. The main novelty towards previous work is the detailed modeling of the multi-winding transformer, the decoupled modeling of the submodules, and the parallel design of simulation processes. Finally, the proposed framework is verified through the accuracy and efficiency analysis carried out in PSCAD/EMTDC. The simulation results verify that the proposed framework has excellent accuracy and time efficiency.
+
+**Index Terms**—Electromagnetic transient modeling, modularized solid-state transformer (MSST), multiple active bridge (MAB), decoupled modeling, parallel simulation framework.
+
+*Manuscript received 13 October 2022; revised 16 February 2023; accepted 20 April 2023. Date of publication 27 April 2023; date of current version 25 September 2023. This work was supported by Beijing Natural Science Foundation under Grant 3222059. Paper no. TPWRD-01519-2022. (Corresponding author: Jianzhong Xu.)*
+
+Moke Feng, Jianzhong Xu, and Chengyong Zhao are with the State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing 102206, China (e-mail: fengmoke1996@ncepu.edu.cn; xujianzhong@ncepu.edu.cn; chengyongzhao2@163.com).
+Chenxiang Gao is with the Department of Electrical Engineering, School of Electronic Information and Electrical Engineering, Shanghai Jiao Tong University, Shanghai 200240, China (e-mail: gaocx_22@sjtu.edu.cn).
+Gen Li is with the Electric Energy Group, Department of Engineering Technology and Didactics, Technical University of Denmark (DTU), 2750 Ballerup, Denmark (e-mail: genli@dtu.dk).
+
+## I. INTRODUCTION
+Solid-state transformer (SST), also called as power electronic transformer (PET), can interconnect systems with different voltage levels and achieve multi-directional power flow control [1], [2], [3], [4]. Due to the modular design, the modularized SST (MSST) can be used in high voltage and high power applications [5], [6]. MSST would be effective equipment to link the transmission system and distribution network [7], [8], [9].
+
+The multiple active bridge (MAB)-based MSST has higher power density, less transformers and submodules, and higher flexibility than the dual active bridge (DAB)-based MSST. Intensive studies of the topology and control sheme of MAB-based MSST have been made in recent years [10]. Fig. 1(a) illustrates a cascaded H-bridge MAB MSST (CHB-MAB-MSST) whose technology readiness has been validated by the successful installation in Hebei Province, China [11].
+
+The submodule of this novel MSST integrates the three-phase input ports to a multi-winding transformer. Consequently, the number of submodule is significantly reduced, and the H-bridges [DC-AC in Fig. 1(b)] in the three phases can use the same triggering signals to simplify the control scheme.
+
+However, the complex structure and control priciples make it difficult to analyze the dynamic behaviors of PETs:
+1) Difficult to obtain an accurate analytical expression of MSST: The submodule of the MSST contains a large number of non-linear power electronic switches (IGBTs and diodes), capacitors, inductors, and AC transformers, which will generate a large-scale state equation [12], [13]. It is difficult to obtain an accurate analytical expression in the wide frequency band.
+2) Complex structure results in a slow simulation speed: Another way to analyze the dynamics in the wide frequency band is to carry out electromagnetic transient (EMT) simulations [14], [15]. However, the node admittance matrix of MSST is very large. Time-domain simulations using detailed models will be very time-consuming. A simulation of several seconds would take hours, even days, which is not suitable for practical use.
+3) High operation frequency requires a small simulation time-step: The simulation speed is limited by the frequency of the AC transformer in submodules. To realize DC-DC conversion, the DC voltage is transformed into high-frequency square waves by the high-frequency AC transformer [16]. The carrier wave frequency is 1–20 kHz, requiring a small simulation time-step of 1.25 to 25 µs (assuming 40 samplings per cycle). For numerical stability and accuracy, the time-step should be minor. This will increase the computation burden.
+
+To address the above challenges, different modeling methods have been proposed:
+discrete circuits (ADC) [29], they are as accurate as the detailed

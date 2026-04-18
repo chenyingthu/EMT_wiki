@@ -1,0 +1,221 @@
+              Received 7 June 2020; revised 22 July 2020 and 2 August 2020; accepted 10 August 2020. Date of publication 13 August 2020;
+                     date of current version 23 August 2020. The review of this article was arranged by Associate Editor Zhixiang Zou.
+                                                             Digital Object Identifier 10.1109/OJPEL.2020.3016296
+
+
+
+
+       Hierarchical Device-Level Modular Multilevel
+           Converter Modeling for Parallel and
+          Heterogeneous Transient Simulation of
+                      HVDC Systems
+      NING LIN      (Member, IEEE), RUIMIN ZHU                            (Member, IEEE), AND VENKATA DINAVAHI                                        (Fellow, IEEE)
+                               Department of Electrical and Computer Engineering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada
+                                                  CORRESPONDING AUTHOR: NING LIN (e-mail: ning3@ualberta.ca)
+                                  This work was supported by the Natural Sciences and Engineering Research Council of Canada (NSERC).
+
+
+
+
+          ABSTRACT       System-level electromagnetic transient (EMT) simulation of large-scale power converters with
+          high-order nonlinear semiconductor switch models remains a challenge albeit it is essential for design pre-
+          view. In this work, a multi-layer hierarchical modeling methodology is proposed for high-performance com-
+          puting of the modular multilevel converter involving device-level IGBT/diode models. The computational
+          burden induced by converter scale and model complexity is dramatically alleviated following the proposal
+          of topological reconfiguration and network equivalence, which create a substantial number of identical
+          circuit units that facilitate massively parallel processing on the graphics processing unit (GPU), using the
+          kernel-based single-instruction multi-threading computing architecture. As the DC system brings significant
+          inhomogeneity which dilutes parallelism, heterogeneous computing is investigated and the computational
+          tasks are properly assigned to CPU and GPU to fully exploit their respective features. The separation of
+          nonlinear device-level models from the rest of the system enables multi-rate implementation for further
+          efficiency enhancement since the two parts allow distinct time-steps. A remarkable acceleration of over 50
+          times is achieved by the hybrid CPU/GPU platform over conventional CPU simulation, and the validity of
+          the proposed modeling and computing method is confirmed by commercial EMT tools ANSYS/Simplorer
+          and PSCAD/EMTDC.
+
+          INDEX TERMS Device-level modeling, electromagnetic transient, graphics processing unit, high-
+          performance computing, high-voltage direct current, modular multilevel converter, parallel processing.
+
+
+
+
+I. INTRODUCTION                                                                             When the power converter scales up to withstand a higher
+The electromagnetic transients (EMTs) of semiconductor                                   voltage and a larger current, the dozens or even hundreds of
+switches in a power converter are of increasing concern                                  power semiconductor switches easily overwhelm the simula-
+due to the need to develop efficacious control and protec-                               tion capacity, especially in applications such as high-voltage
+tion strategies, and consequently, intensive tests are con-                              direct-current (HVDC) transmission where the modular mul-
+ducted during the design stage to ensure their safe oper-                                tilevel converter (MMC) contains numerous insulated-gate
+ation once the converter is commissioned [1], [2]. Prior                                 bipolar transistors (IGBTs). As a result, it forces the adoption
+to prototype tests, commercial simulation tools with de-                                 of simpler models such as the Thévenin equivalent circuit
+tailed nonlinear device-level models such as Pspice and                                  based on two-state resistor model, or the average value model,
+Saber are frequently resorted to for preliminary studies [3]–                            which are largely adequate for system-level study following a
+[7], which offer a comprehensive insight into the con-                                   tradeoff between accuracy and efficiency [8]–[10].
+verter operation status that aids a proper selection of                                     Nevertheless, detailed full-scale power converter modeling
+devices.                                                                                 is still mandatory for design purposes and accurate system
+
+               This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+312                                                                                                                                                             VOLUME 1, 2020
+interaction study. Some alternatives were proposed in an en-
+deavor to reveal more device-level information, such as the
+curve-fitting model, which divides the overall IGBT switch-
+ing waveform into multiple piecewise linear segments, a few
+discrete numbers exhibiting nonlinearity or some continuous
+curves whose duration could be automatically adjusted ac-
+cording to several parameters [11]–[14]. Based on these mod-
+els, the power consumption can be estimated under normal
+operation. The fact that curve-fitting models are merely a
+rough approximation, rather than a substitution, of a power
+semiconductor switch and therefore could not reveal its ex-
+act spontaneous behaviors under various operating conditions
+in the EMT program manifests the significance of nonlinear
+high-order IGBT models [15], [16].
+   The MMC’s sheer scale also exacerbates the processors’
+burden, even though simpler device-level models are adopted
+in the simulation, due to a huge submodule (SM) quantity
+that requires repeated calculations conducted in a sequen-
+tial manner on the CPU, which is dominant in current com-
+mercial EMT-type solvers [17]–[19]. Therefore, focuses are
+diverted to multi-core CPU that supports parallel process-
+ing algorithms [20]. The graphics processing unit (GPU) is
+emerging in the massively parallel computation of electri-       FIGURE 1. Physics-based IGBT modeling: (a) Nonlinear high-order model,
+cal systems, and a remarkable speedup is desirable in some       (b) discrete time-domain EMT companion circuit.
+cases where an explicit homogeneity prevails [21], [22]. On
+the contrary, the CPU outperforms its many-core counterpart
+when the system is highly inhomogeneous, considering the         II. HIGH-ORDER NONLINEAR IGBT MODEL
+latter processor has a lower clock frequency. As a result, for   A. MATHEMATICAL DESCRIPTION
+a complex system such as the MMC-based multi-terminal DC         1) BASIC STATIC MODEL
+system which possesses both homogeneity and inhomogene-          The IGBT physical structure determines that it can be deemed
+ity, neither pure CPU or GPU could achieve the maximum           as a metal-oxide-semiconductor field-effect transistor (MOS-
+efficiency.                                                      FET) sharing its drain with the base of a bipolar junction tran-
+   In this work, a CPU/GPU co-simulation platform is pro-        sistor (BJT), as shown in Fig. 1(a). The classical Schichman-
+posed as a general solution for simulating complex device-       Hodges model [23] is used to describe the N-channel MOS-
+level electrical systems, noticing that nowadays GPU is          FET static characteristics in 3 different regions, namely the
+quite common in a workstation or a personal computer.            cutoff, linear, and saturation:
+The IGBT which has a huge quantity is proceeded by                                 ⎧
+                                                                                   ⎪
+                                                                                   ⎪                                    Vgs ≤ Vth
+the GPU, whilst the less repetitive tasks can be tack-                             ⎨0,                              
+                                                                                     Vds                         Vds
+led by the CPU. Topological reconfiguration (TR) using           Ids (Vgs , Vds ) = Vsat Isat (Vgs , Vds ) · 2 − Vsat , Vds ≤ Vsat
+                                                                                   ⎪
+                                                                                   ⎪
+coupled voltage and current sources is adopted to reduce                           ⎩I (V , V ),                         V >V
+                                                                                      sat   gs   ds                         ds      sat
+the corresponding admittance matrix dimension and con-
+                                                                                                                            (1)
+sequently improve circuit solution efficiency in addition
+                                                                 where Ids is the drain current, Vds denotes the drain-source
+to avoiding numerical divergence. Meanwhile, as the SM
+                                                                 voltage, Vgs , Vth represent the voltages of gate-source and
+still contains many nodes due to the high-order IGBT
+                                                                 the channel threshold, respectively, and variables relating to
+and its freewheeling diode (FWD) model, network equiv-
+                                                                 saturation are
+alence (NE) is proposed for further computational burden
+alleviation.                                                                   Isat = K (Vgs − Vth )NF E T · (1 + λVds ),           (2)
+   The rest of the paper is organized as follows: Section II
+introduces the high-order nonlinear IGBT model, including                     Vsat = AF E T (Vgs − Vth )MF E T ,                    (3)
+its freewheeling diode. The detailed MMC multi-layer mod-                              μnCox Weff
+eling is then specified in Section III, followed by Section IV                  K=                ,                                 (4)
+                                                                                         2 Leff
+where heterogeneous high-performance computing architec-
+ture design is illustrated. The CPU/GPU co-simulation re-        where λ and μn are channel length modulation parameter and
+sults are presented, analyzed, and validated by commercial       carrier mobility, Cox is the gate capacitance per unit area,
+simulation tools in Section V, and Section VI provides the       Weff and Leff are effective channel width and length, and the
+conclusions.                                                     remaining symbols with subscript F E T are constants.
+
+VOLUME 1, 2020                                                                                                                       313
+LIN ET AL.: HIERARCHICAL DEVICE-LEVEL MODULAR MULTILEVEL CONVERTER MODELING
+
+
+
+
+  In the PNP-BJT, with a current gain β, the collector current       where MD is an ideality factor, IDsat means saturation current,
+maintains a proportional relationship with the base current,         and VD is the forward-biased voltage between anode and cath-
+which takes the form of                                              ode. The current-dependent series resistor is calculated by
+                            V
+                                 be                                                                        RBk
+                 Ib = ISBJT e MBJT VT − 1 ,                (5)                                 Rb =                .                     (11)
+                                                                                                               ID
+                                                                                                         1 + INOM
+where Vbe is the base-emitter voltage, VT is the thermal volt-
+age, and ISBJT and MBJT are coefficients.                            In the above equation, RBk is the diode’s bulk resistance, and
+                                                                     INOM is the nominal collector current.
+2) PARASITIC DYNAMICS
+The distribution of holes and electrons in the semiconductor         B. EMT MODEL DERIVATION
+yields parasitic capacitance. Following the changes of junc-         The IGBT/FWD model is described in continuous time-
+tion bias, a dynamic process when the positive and nega-             domain and therefore, discretization prior to digital simulation
+tive charges accumulate or neutralize with each other con-           implementation on any processor is mandatory, as shown in
+tributes to switching transients. Therefore, stray capacitors        Fig. 1(b). Among a variety of integration methods, the 1st-
+should be included in an integral nonlinear high-order model         order implicit Backward Euler is preferred since it results in
+in Fig. 1(a).                                                        fewer computations without compromising accuracy due to a
+   The capacitors, including Cgc , Cce , Cds and Cge , are gener-    small time-step that is compulsory for device-level simulation.
+ally under either the enhancement or depletion state, depend-           Many internal components are determined by multiple fac-
+ing on how the junction is biased, i.e.,                             tors, e.g., (1)-(3) indicates that the MOSFET current is not
+                    ∗
+                                                                     only dependent on its own terminal voltage Vds , but also Vgs
+                  VJNC = Ms · Vdiff − VJNC ,                  (6)    that exerts between gate and source. Therefore, partial deriva-
+where Vdiff and VJNC are diffusion and junction voltages,            tives which lead to both conductance and transconductance
+respectively, Ms is a coefficient, and transition between the        respectively are performed, e.g., for the former,
+2 states occurs when VJNC ∗    crosses 0. Then, the capacitors,                        ⎧
+                                                                                       ⎪
+                                                                                       ⎪ 0,                                       Vgs ≤ Vth
+generally referred to as Cxy , can be written as [24]                                  ⎪
+                                                                                       ⎪                                           
+                                                                                     ⎨ ∂Isat 2Vsat Vds −Vds
+                                                                                                           2
+                                                                                                                         Vsat −Vds
+             ⎧                                ∗ (1−ρ)                       ∂Ids                            + 2Isat                 ,
+                                          α·VJNC                      Gds =         = ∂Vds
+                                                                                                      2
+                                                                                                    Vsat                       2
+                                                                                                                             Vsat
+             ⎪
+             ⎪ C    (κ −1)  ·   1−ex p   −               +1 ,                 ∂Vds     ⎪
+             ⎪
+             ⎪
+                 0                         (κ−1)Vdiff                                  ⎪
+                                                                                       ⎪                                          Vds ≤ Vsat
+             ⎨                                  ∗                                      ⎪
+                                                                                       ⎩ ∂Isat
+       ∗                                     VJNC ≥ 0
+                                                                                         ∂Vds = λK (Vgs − Vth )             . Vds > Vsat
+                                                                                                                    N
+Cxy (VJNC )=                                                                                                          F E T
+             ⎪
+             ⎪
+             ⎪C0 ρ + 1−ρ
+             ⎪                         ,        ∗ <0                                                                                        (12)
+             ⎩                 ∗
+                              VJNC
+                                   α
+                                              VJNC
+                                                                     The transconductance Gds,gs can also be derived by taking
+                          (1− V      )
+                              diff
+                                                       (7)           ∂Ids /∂Vgs in the same manner. Then, the companion current
+where C0 is the reference capacitance, and α, κ, and ρ are           in Branch F1 can be found as
+factors. Taking the form of                                                           Idseq = Ids − GdsVds − Gds,gsVgs .                  (13)
+                                  
+                      ∗              LC + LE                            Being nonreciprocal between 2 nodes is one distinct feature
+                Rs (VJNC ) = Dd p          ∗ ),        (8)
+                                    Cxy (VJNC                        of transconductance, e.g., other than Gds in F1 , Node 3 also
+                                                                     links to Node 4 and 5 with -Gds,gs and Gds,gs , respectively, but
+in which Dd p is a coefficient, some additional damping resis-
+                                                                     the latter 2 nodes do not have any transconductance pointing
+tances can be added in series to C-E and C-G capacitors so
+                                                                     to Node 3. Therefore, virtual nodes 4 and 5 are introduced
+as to avoid possible oscillation between them and the terminal
+                                                                     to reflect the unilateral relationship in branches F3 and F2 .
+parasitic inductance LC and LE .
+                                                                     Similarly, Node 5 also has Gds,gs in F4 whilst the reverse is
+   The diffusion capacitors Cbe between the BJT base-emitter
+                                                                     not the case.
+and CD in the freewheeling diode, on the other hand, can
+                                                                        The BJT companion model is conceptually the same, with
+uniformly be expressed as
+                                                                     its conductance expressed by
+                        i(t ) + K (Vgs − Vth )NF E T                                             ∂Ib
+              Cdiff = τ                              ,                                                  ISBJT      Vbe
+                                                          (9)                        GBJT =          =         e MBJT VT ,
+                                Mdiff · VT                                    

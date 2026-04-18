@@ -1,0 +1,186 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 36, NO. 4, AUGUST 2021                                                                                          1943
+
+
+
+
+          Compact Matrix Formulation for Calculating
+         Lightning-Induced Voltages on Electromagnetic
+                      Transient Simulators
+                                           Osis E. S. Leal           and Alberto De Conti , Member, IEEE
+
+
+   Abstract—In this paper, a compact matrix formulation that sim-                         In [12], a time-domain procedure was proposed to calculate
+plifies the calculation of the lumped sources necessary to estimate                    lightning-induced voltages using transmission line models avail-
+lightning-induced effects using transmission line models available                     able in EMT-type programs. It consists in adding lumped sources
+in electromagnetic transient programs is proposed. As opposed to                       representing the effect of the incident EM fields at both ends
+an existing solution strategy that requires the sequential calculation
+of the convolution integrals involving the horizontal component                        of the line. For a multiconductor line with Nf conductors and
+of the incident electric field along multiple segments along the                       length  parallel to the x axis, the sources are functions of u0 (t)
+line, the proposed matrix solution allows such convolutions to be                      and u (t) given by [14]
+performed at once. This not only increases the model efficiency,                           u0 (t) = ux,0 (t) − hez (0, t) + a (, t) ∗ hez (, t) ,
+but also simplifies the assembly of the solution in matrix-oriented                                                                                    (1)
+                                                                                           u (t) = ux, (t) − hez (, t) + a (, t) ∗ hez (0, t) ,
+simulation tools. The equations are described in both phase and
+                                                                                       where
+modal domains, with formulations that are compatible with the                                                       
+universal line model and the frequency-dependent transmission
+line model proposed by Marti. It is shown that both formulations                                   ux,0 (t) = −        a (x, t) ∗ ex (x, t) dx,
+                                                                                                                      0
+can be accurately used for calculating lightning-induced voltages
+                                                                                                                 
+on overhead lines.
+                                                                                                   ux, (t) =         a (x, t) ∗ex ( − x, t) dx.         (2)
+  Index Terms—Lightning-induced voltages, transmission line                                                      0
+models, numerical analysis, electromagnetic transient simulators.                         In these expressions, ez (0, t) and ez (, t) are the vertical com-
+                                                                                       ponents of the incident electric fields at the line ends, ex (x, t)
+                                                                                       is the horizontal electric field at coordinate x along the line, h is
+                             I. INTRODUCTION                                           a diagonal matrix containing the conductor heights, and a(x, t)
+      LECTROMAGNETIC transient (EMT)-type programs are                                 is the time-domain equivalent of the propagation function of
+E     usually preferred for the calculation of lightning-induced
+effects on realistic distribution networks [1]–[12]. The usual pro-
+                                                                                       a line segment of infinitesimal length. The dimensions of the
+                                                                                       matrices and vectors in (1) and (2) are, respectively, Nf × 1 and
+cedure consists in writing a separate code to solve telegrapher’s                      Nf × Nf .
+equations considering the effect of external electromagnetic                              In order to efficiently solve the convolution integrals in (1),
+(EM) fields. This code is then interfaced with the EMT simulator                       it suffices to represent a(, t) as a sum of exponential terms
+in order to update the voltages and currents at the line ends de-                      [15]. Dealing with the convolutions in (2) is less straightforward
+pending on the terminal conditions [1]–[11]. Although accurate,                        because different propagation functions must be fitted, con-
+this procedure does not take advantage of the transmission line                        volved with the incident electric field and integrated to determine
+models already available in EMT-type programs, which may                               ux,0 (t) and ux, (t). One possibility would be performing such
+reduce the model efficiency [13].                                                      calculation in the frequency domain [16]. However, this would
+                                                                                       require determining the horizontal component of the incident
+                                                                                       electric field at several points of the line in a large number
+   Manuscript received April 1, 2020; revised June 4, 2020; accepted July 24,
+2020. Date of publication August 17, 2020; date of current version July 23,            of frequencies, which would reduce the model efficiency. In
+2021. This work was supported in part by CNPq (National Council for Scientific         [12], a solution is proposed to this problem based on a recursive
+and Technological Development), grants 431948/2016-0 and 306006/2019-7,                expression that requires the fitting of the propagation function
+FAPEMIG (State of Minas Gerais Research Foundation), grant TEC-PPM-                    of a single line segment. However, the proposed solution is
+00280-17, and by Pró-Reitoria de Pesquisa (PRPq) of Universidade Federal
+de Minas Gerais (UFMG), which is the institution responsible for this work.            expressed in the form of multiple summation terms that, if
+Paper no. TPWRD-00492-2020. (Corresponding author: Alberto De Conti.)                  implemented directly, reduce the efficiency of the algorithm.
+   Osis E. S. Leal is with the Graduate Program of Electrical Engineering                 This problem is overcome in this paper, whose main contri-
+(PPGEE), Universidade Federal de Minas Gerais (UFMG), 31270-901 Belo
+Horizonte, Brazil, and also with the Universidade Tecnológica Federal do Paraná
+                                                                                       bution is to propose a compact matrix formulation for the calcu-
+(UTFPR), 84261-550 Pato Branco, Brazil (e-mail: osisleal@utfpr.edu.br).                lation of (2). As opposed to the strategy proposed in [12], which
+   Alberto De Conti is with the Department of Electrical Engineering, Univer-          requires the sequential calculation of the convolution integrals
+sidade Federal de Minas Gerais (UFMG), 31270-901 Belo Horizonte, Brazil                in (2), the proposed solution allows such convolutions to be per-
+(e-mail: conti@cpdee.ufmg.br).
+   Color versions of one or more of the figures in this article are available online
+                                                                                       formed at once. This significantly simplifies the calculation of
+at https://ieeexplore.ieee.org.                                                        the lumped sources necessary for estimating lightning-induced
+   Digital Object Identifier 10.1109/TPWRD.2020.3017149                                effects in EMT-type programs. As in [12], two different solution
+
+                           0885-8977 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:49:13 UTC from IEEE Xplore. Restrictions apply.
+1944                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 36, NO. 4, AUGUST 2021
+
+
+
+                              TABLE I                                            respectively, the poles and residues, it can be shown using a
+                 PARAMETERS OF INTEGRATION METHODS
+                                                                                 recursive convolution algorithm (e.g., [12], [15] and [17]) that
+                                                                                     v̄ x,n (t) =
+                                                                                           ⎧                                    ⎡               ⎤            ⎫
+                                                                                      NM ⎨ 
+                                                                                              Np
+                                                                                                                                    
+                                                                                                                                    Np                       ⎬
+                                                                                                                           
+                                                                                                      pm b̄kn,m (t − Δt) + ⎣              q k,m ⎦ f¯kn (t)       ,
+                                                                                            ⎩                                                                ⎭
+                                                                                      k=1       m=1                                 m=1
+
+                                                                                     b̄kn,m (t) = pm b̄kn,m (t − Δt) + q k,m f¯kn (t) ,                          (6)
+                                                                                 where
+                                                                                                                        
+strategies are proposed, one directly in the phase domain, and                           f¯kn (t) = v x,n t − τΔx
+                                                                                                               k
+                                                                                                                  + v x,n t − τΔx
+                                                                                                                               k
+                                                                                                                                  − Δt ,
+other based on modal-domain theory. The former is compatible
+with the universal line model (ULM) [18], while the latter is                                pm = (2 + βm Δt)/(2 − βm Δt),
+compatible with Marti’s model [17].                                                          i,j    i,j
+   This paper is organized as follows. Sections II and III describe                         qk,m = rk,m Δt/(2 − βm Δt).                                          (7)
+the matrix solutions proposed for (2) in the phase and modal do-                    This set of equations is the basis of the method proposed in
+mains, respectively. Section IV presents the simulation results,                 [12]. By performing the successive solution of (6) for each line
+followed by conclusions in Section V.                                            end and adding the term corresponding to n = Ns in (3), the
+                                                                                 cumulative effect of the incident horizontal electric field compo-
+                   II. PHASE-DOMAIN SOLUTION                                     nent at each line end is obtained. However, multiple summation
+                                                                                 terms and a sequential solution involving one segment at a time
+A. Original Formulation                                                          are required. It is shown in the next subsection that the same
+   Considering that the line can be subdivided into Ns segments                  result can be obtained in a single step using an alternative matrix
+of length Δx, the terms ux,0 (t) and ux, (t) in (2) can be                      representation.
+represented as [12]
+                      N                                            B. Proposed Matrix Solution
+                           s                                    
+                Δx 
+ux,0 (t) = −                   ρNs −n aΔx (t)Ns −n ∗ ex,Ns −n (t) ,       By changing the summation order in (6a), one can write
+                 ζ      n=0
+                  N                                                                               
+                                                                                                    Np
+                                                                                                            
+                                                                                                            NM
+                       s                            
+             Δx                                                                    v̄       (t) =       p       b̄kn,m (t − Δt)
+                            ρn aΔx (t)Ns −n ∗ ex,n (t) ,
+                                                                                      x,n                 m
+ux, (t) =                                                        (3)                              m=1      k=1
+              ζ      n=0                                                                                  ⎧⎡                  ⎤         ⎫
+                                                                                                      NM ⎨
+                                                                                                               
+                                                                                                                Np                      ⎬
+where ex,n (t) = ex (nΔx, t), aΔx (t) is a square matrix of order
+Nf containing the propagation function of a line segment, and                                      +         ⎣          q k,m ⎦ f¯kn (t) .          (8)
+                                                                                                          ⎩                             ⎭
+finally ρn and ζ are the constants given in Table I, which depend                                     k=1      m =    1
+on the integration method used to solve (2). In (3), aΔx (t)n̄            Then, by defining
+corresponds to successive matrix convolutions of aΔx (t), e.g.,
+                                                                                                             
+                                                                                                             NM
+aΔx (t)2̄ = aΔx ∗ aΔx [12], and aΔx (t)0̄ = δ(t), where δ(t)                              b̄n,m (t − Δt) =         b̄kn,m (t − Δt) ,                (9)
+is the Dirac delta function.                                                                                 k=1
+   Equation (3) is equivalent to (6) in [12], but written in a
+                                                                      equations (8) and (6b) are rewritten as
+different form. It indicates that the incident horizontal field
+vector is convolved multiple times from the point at which                 v̄ x,n (t) =
+it illuminates the line to each of the line ends, which can be                                                   ⎧⎡                   ⎤         ⎫
+                                                                            Np                             NM ⎨
+                                                                                                                        Np                    ⎬
+time consuming. To assure that each of the incident horizontal                                                       ⎣                ⎦  ¯
+                                                                                  p    b̄
+                                                                                    m n,m      (t − Δt)   +                    q k,m    f k
+                                                                                                                                            (t)   ,
+electric field vectors is convolved only once, thus significantly                                                ⎩                        n
+                                                                                                                                                ⎭
+                                                                            m=1                             k=1         m=1
+increasing the model efficiency, De Conti and Leal [12] proposed
+a recursive expression in which the inducing voltage v x,n (t) at                                                     
+                                                                                                                      NM
+                                                                                                                                          
+coordinate x = nΔx is a function of the incident electric field            b̄n,m (t) = pm b̄n,m (t − Δt) +                  q k,m f¯kn (t) .     (10)
+ex,n (t) and of v̄ x,n−1 (t), the contribution to the longitudinal                                                    k=1
+voltage at arriving from the adjacent segment at x = (n − 1)Δx,           In order to solve for all NM modes simultaneously, equation
+calculated using                                                      (10) can be written as
+                  v̄ x,n (t) = aΔx (t) ∗ v x,n (t) .              (4)
+                                                                                         Np
+   By representing each element of aΔx (t) as [18]                     v̄ x,n (t) =            pm b̄n,m (t − Δt)
+                    
+                    NM 
+                       Np
+                                              ) u t − τ k ,
+                                                                                                 m=1
+                                i,j βm (t−τΔx
+                                           k
+                                                                                                                             ⎡ ¯1        ⎤
+       ai,j
+        Δx (t) =               rk,m e                                     (5)
+                                                        Δx                                                                      f n (t)
+                    k=1 m=1                                                           N                                    ⎢ ¯2        ⎥
+where Np is the number of poles used in the fitting of the                             p        
+                                                                                                 Np              
+                                                     

@@ -1,0 +1,223 @@
+FEATURE
+
+
+ELECTROMAGNETIC TRANSIENT
+MODELING AND SIMULATION
+OF LARGE POWER SYSTEMS
+EMT Simulators for the Future Grid
+Shaahin Filizadeh , Jean Belanger, Flavio Fernandez , Paul Forsyth ,
+Jean Mahseredjian , Jesus Morales , and Genevieve Lietz
+
+
+
+
+                                                                                                                                                                ©SHUTTERSTOCK.COM/YAALAN
+
+
+
+
+WHILE SIMPLIFIED PHASOR MODELING                                                        kilohertz range, which calls for detailed models and
+has pro­ved adequate for the assessment of the tran-                                    advanced solution methods, and in part due to the
+sient stability of large-scale conventional power                                       diminishing system inertia that allows widespread
+systems (i.e., those dominated by large synchronous                                     impact from local dynamic events. Therefore, it has
+machines), extensive research and practical experi-                                     become necessary to conduct electromagnetic tran-
+ence have shown that doing so for large grids heavily                                   sient (EMT) simulations of more sophisticated and
+reliant on inverter-based resources (IBRs) is not ad-                                   increasingly larger networks, reaching unprecedent-
+equate. This is in part because IBRs use power elec-                                    ed numbers of nodes. There is a need for research,
+tronic converters with switching frequencies in the                                     development, and innovation in terms of both so-
+                                                                                        lution algorithms and computational platforms to
+                                                                                        modernize EMT simulators so that they can meet
+Digital Object Identifier 10.1109/MPE.2024.3515921
+Date of current version: 23 June 2025                                                   the modeling demands of modern networks.
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on
+    Authorized licensed                                                    April 13,2026
+                                                                         1540-7977 © 2025atIEEE.
+                                                                                             02:10:41    UTC
+                                                                                                 All rights     fromincluding
+                                                                                                            reserved, IEEE Xplore.
+                                                                                                                              rights forRestrictions
+                                                                                                                                         text and    apply.53
+                                                                              data mining, and training of artificial intelligence and similar technologies.
+   This article presents a number of such innova-                          can be achieved perfectly from a power-flow solu-
+tions that are being pursued by researchers, prac-                         tion. This also includes automatic initialization of
+ticing engineers, and simulation software and                              synchronous generator controls. Difficulties arise
+hardware manufacturers. It also addresses future                           in the presence of power electronic components
+challenges and potential solutions as EMT simula-                          or renewable energy resources (wind or photovol-
+tors continue to evolve.                                                   taic power plants, for example). Special techniques
+                                                                           must be used to accommodate converter circuits
+Parallel and Fast Computation                                              and force initial conditions found from power-flow
+Methods in EMT Simulations                                                 ­solutions.
+The basic principle of parallel computations in
+EMT-type solvers is based on the modeling of                               Cosimulation of Power System Dynamics
+transmission lines (or cables). Instead of the classic                     Cosimulation is a modular simulation approach that
+pi-section model, it is possible to use the more accu-                     has been widely used in many engineering fields.
+rate propagation delay-based model. Such a model                           It consists of decomposing a complex problem into
+creates a natural decoupling between the ends of the                       various subsystems that are solved individually. To
+line and allows the formulation of a block-diagonal                        compute the overall solution, the subsystems are
+solution matrix. Each block (or subcircuit) can be                         then coupled via the exchange of simulation results
+solved on a separate processor and in parallel. Dif-                       at discrete time intervals. In general, the subsys-
+ficulties arise when the transmission line needed                          tems may have drastically different physical charac-
+to split the network is short, thus forcing a small                        teristics and may require various types of modeling
+numerical integration time step smaller than the                           methods or modeling in different domains.
+propagation delay. Another issue is the potential ab-                          The advantages of cosimulation arise from the
+sence of delay-based transmission lines for network                        individual solution of each subsystem and are pri-
+splitting. Other techniques, such as bordered block-                       marily twofold. First, cosimulation allows for par-
+diagonal matrices, can be used in such cases. It has                       allel computation of the subsystems and, therefore,
+been recently demonstrated that the compensation                           could offer better overall computational perfor-
+method can be applied successfully, even in the                            mance in large-scale EMT simulation. Second, in-
+presence of nonlinear models. Another approach is                          dependent solvers with different degrees of model-
+that of the combined nodal and state-space analysis                        ing detail and different simulation step sizes can be
+methods, which enables the splitting of networks                           used for each subsystem. The latter allows custom-
+at arbitrary locations. Further research is required                       ization of modeling and solution methods for each
+to fully automate such methods and optimize the                            subsystem to achieve an optimal balance between
+blocks for efficient utilization of processors, thus                       accuracy and computational intensity.
+achieving the fastest computations possible with                               For instance, Figure 1 shows the combination of
+sparse matrix solvers.                                                     a detailed vendor-specific EMT model of a high-
+   Another crucial aspect of accelerating compu-                           voltage direct current (HVdc) system, typically ac-
+tations is the automatic initialization of network                         counting for internal dynamics ranging from a few
+models for starting the time-domain computations.                          microseconds to a few milliseconds, coupled with
+The objective is to reach steady-state conditions as                       a phasor-domain-type (PDT) model of the trans-
+soon as possible to avoid unnecessary computation-                         mission networks, which accounts for the system-
+al overhead. Lack of initialization may also lead to                       wide dynamics in the time range from a few mil-
+inappropriate operating modes or disconnection of                          liseconds to several seconds. PDT-type models in
+renewable energy resources due to protection sys-                          the context of this article are those in which the
+tem trips caused by start-up transients. The initial-                      dynamics of the network are ignored by using con-
+ization of networks with conventional generators                           ventional phasor representation. Such models are
+
+  54
+   Authorized
+             licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                        from POWER    & ENERGY
+                                                                                                             IEEE Xplore.           MAGAZINE
+                                                                                                                          Restrictions apply.
+                                                                    Subsystem 1 (EMT)
+
+
+
+
+                                                                                               Boundary
+                       Boundary
+
+
+
+
+                                                 Boundary
+
+
+
+
+                                                                                                                      Boundary
+                                                                                                Values
+                        Values
+
+
+
+
+                                                  Values
+
+
+
+
+                                                                                                                       Values
+     Subsystem                                                                                                                   Subsystem
+         3                        Interface                 ac/dc                  dc/ac                  Interface                  2
+       (PDT)                                                                                                                       (PDT)
+
+
+
+
+Figure 1. Application case of hybrid cosimulation of a power system. PDT: phasor-domain type.
+
+
+adequately accurate when the dynamic phenom-                    large portions of the grid where EMT-type model-
+ena under investigation do not cause large devia-               ing is not necessary, yet the frequency content of
+tions from the nominal frequency of the network,                the transients is such that PDT models fall short.
+and as such, modeling the network using quasi-                      The usage of DP models for large systems is
+static phasors leads to negligible discrepancies.               not without its challenges. While DP models of
+   Dynamic phasors (DPs) are mathematical arti-                 conventional circuit elements may be readily ob-
+facts that offer a highly flexible alternative to PDT-          tained, the development of high-fidelity DP models
+type models. DP models retain the dynamics of the               for machines and transmission lines, including
+network elements and thus provide accuracy over                 their nonlinear behavior (e.g., due to magnetic
+a much wider range of frequencies than PDT-type                 saturation) and the frequency dependence of pa-
+models. Their computational efficiency and hence                rameters (in the case of transmission lines) is chal-
+their appeal for modeling very large systems stem               lenging and requires extensive work. Fortunately,
+from the fact that DPs represent the variations of              research and model development work in this area is
+the envelope of waveforms and allow for the use of              abundant, giving a positive outlook for the increased
+much larger time steps than an EMT model. Com-                  usage of DP-based models in large system studies.
+pared to EMT models, DP models offer consider-                      Generic DP models are also available for sev-
+able computational gains when used for modeling                 eral high-power converter topologies, including
+                                                                                      line-commutated       converters
+                                                                                      and modular multilevel con-
+                                                                                      verters for both normal and
+                                                                                      abnormal operating conditions.
+         PDT
+                                                                                      In general, DP representation
+                                                                                      of systems such as converters
+                                                    EMT2
+                                                                                      and frequency-dependent trans-
+                                                                                      mission lines is mathemati-
+                       DP
+                                                              EMT1                    cally intensive and may require
+                                                                                      separate provisions for special
+                                                                                      modes of operation, e.g., when
+                                                                                      the converters are blocked.
+                                                                                         Figure 2 shows another ex-
+                                                                                      ample of cosimulation wherein
+                                              Frequency-Adaptive Solver               the system is split into several
+                                                                                      segments, each modeled with
+                                                                                      a specific solver. EMT1 and
+                                                                                      EMT2 include subsystems mod-
+Figure 2. Hybrid cosimulation of a large network with different solvers.              eled in EMT with different time
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.55
+    Authorized licensed
+steps. These are subsystems where high-frequency                           making their widespread use as replacements for
+dynamics/events are prevalent, e.g., in the vicinity of                    EMT models limited. Currently, EMT–EMT cosimu-
+power electronic converters. DP and PDT are sub-                           lation using the latency of long transmission lines to
+systems modeled using DP and PDT methods, re-                              segment a network is a widely popular approach.
+spectively. The DP subsystem may act as a bridging
+zone between the EMT and PDT areas because of its                          Coupling Methods
+frequency range. The subsystem labeled “frequency-               Figure 3 depicts the cosimulation of two subsys-
+adaptive solver” uses a specialized solver that switches         tems, illustratively of EMT and PDT types, with
+between EMT and DP solutions, depending on the                   the simulation step size in the EMT subsystem be-
+frequency contents of the waveforms. The decision                ing one fifth of that used in the PDT subsystem.
+to segment a large network into these subsystems is              The same applies in the case of two EMT sub-
+not unique and depends on several factors, including             systems being cosimulated simultaneously with
+the location of high-frequency components, the loca-             different time steps to enhance simulation perfor-
+tions where the study of interest is to be conducted,            mance. To compute the global solution, the inputs
+and the type(s) or disturbances to be studied. As the            and outputs of both systems are synchronized at
+subsystems in Figures 1 and 2 use different modeling             the discrete times of the PDT-type simulation, as
+domains, they are referred to as hybrid cosimulation.            indicated by the gray arrows in the figure.
+Hybrid cosimulation can play an important role in                   A necessary condition for the convergence of
+cases where an EMT model of the full network is not              the solution is the nonexistence of algebraic loops
+available, EMT-level modeling is not necessary for the           between both subsystems, i.e., in the coupling
+entire network, or as an interim solution toward pure            equations. In this case, the accuracy of the co-
+large-scale EMT simulation. Hybrid cosimulations                 simulation is equal to that obtained via the solu-
+need to be considered carefully as currently they allow          tion of the individual subsystems. This is the case
+an enhanced allotment of computational resources to              if the system is split at boundaries with inherent
+the subsystems of the network that require EMT-type              time delays, such as long transmission lines. If the
+modeling, while other parts of the network that do not           wave traveling time between the ends of the line
+require such detailed representation are modeled us-             belonging to different subsystems is longer than
+ing less computationally expensive methods, e.g., DPs.           the cosimulation synchronization time, there is no
+It must, however, be noted that pockets within a large           algebraic coupling equation because of the dead
+network may have to be represented using EMT mod-                time, and convergence of the solution is guaran-
+els as DP models are either unavailable or limited in            teed. Another example of an inherent system split
+terms of accuracy. For example, DP models for power              is that of digital controllers, where the synchro-
+electronic converters are cumbersome to develop and              nization time is smaller than the internal clock
+are often restricted to certain operating conditions,            of the controller, typically in the range of a few
+                                                                                      microseconds. While inher-
+                                                                                      ent system delays between the
+                       Δt
+                                                                                      subsystems impose an upper
+    EMT
+                                                                                      bound on the synchroniza-
+                                                                                      tion time of the cosimulation
+                 Synchronization
+                                                                                      and force the reduction of the
+                                                                                      simulation step size to a few
+    PDT
+                                                                                      microseconds, they allow for
+                                                     kΔT                (k+1)ΔT
+            (k–2)ΔT            (k–1)ΔT                                                a highly parallelized cosimu-
+Figure 3. Timeline for cosimulation of two subsys

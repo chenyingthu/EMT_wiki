@@ -1,0 +1,215 @@
+                                                               Electric Power Systems Research 233 (2024) 110444
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Time-domain modeling of a subsea buried cable✩ , ✩✩
+Felipe Camara a , Antonio C.S. Lima b ,∗, Maria Teresa Correia de Barros c , Filipe M. Faria da Silva d ,
+Claus L. Bak d
+a DNV, Oslo, Norway
+b Federal University of Rio de Janeiro (UFRJ), Rio de Janeiro, Brazil
+c
+    University of Lisbon (ULisboa), Lisbon, Portugal
+d
+    Aalborg University, Aalborg, Denmark
+
+
+
+ARTICLE                   INFO                             ABSTRACT
+
+Keywords:                                                  Traditionally, electromagnetic transient (EMT) programs in the time domain cannot deal with submarine cables
+Submarine cables                                           buried in the seabed, as available routines demand one medium to be lossless to derive per unit length
+Transient analysis                                         impedance and admittance matrices. This paper proposes a suitable approach for modeling of HVDC submarine
+Time-domain modeling
+                                                           cables, i.e., single-pole, single-core cables with thick armors, in EMT-type programs to allow an accurate
+HVDC
+                                                           representation of the seabed buried cables. The expressions for evaluating pul parameters are based on a quasi-
+                                                           transverse electromagnetic (quasi-TEM) approximation of a full-wave formulation. Two distinct approaches are
+                                                           considered for time-domain modeling. The first one is based on the Method of Characteristics (MoC) and relies
+                                                           on the main structure of the so-called universal line model (ULM), harnessing its implementation in an EMT
+                                                           program. The second approach is based on the rational fitting of the cable nodal admittance matrix using the
+                                                           Folded Line Equivalent (FLE). The time responses of both approaches are compared with the one obtained
+                                                           using the Numerical Laplace Transform (NLT), and an excellent agreement was found.
+
+
+
+1. Introduction                                                                            cable buried in the seabed represents a challenge as both media are
+                                                                                           lossy, and thick armor is involved.
+    There has been a growing interest in developing and analyzing                              Submarine cables buried in the seabed may share some common-
+submarine power systems. In the recent past, the focus has been on                         alities with underground facilities, some features are unique to such
+power interconnections [1] and submarine pumping of oil systems                            systems as specific bonding schemes, construction issues, surrounding
+based on voltage-source inverters [2]. The deployment of offshore wind                     medium, and trenching [13]. For instance, TenneT buried a cable
+farms [3] has drawn a renewed interest in the usage of submarine                           more than 5 m below the seabed to connect a new offshore wind
+cables and the concept of energy islands [4] being designed in some                        farm [14]. The majority of commercial offshore wind power plants
+countries, e.g., Denmark and Singapore. The latter has announced an                        that are operational to date has been installed at a maximum water
+intention to build a very long submarine transmission system, over                         depth of 30 m with an average of 17 m [15], while offshore oil
+                                                                                           exploitation units operate in water depths greater than 1000 m [16].
+3700 km, to harvest energy from a solar farm in Australia [5].
+                                                                                           Even for the average offshore windfarm scenario, and considering a
+    In recent years, there has been an expressive effort to improve
+                                                                                           burial depth of 1 m, the electromagnetic field decay is such that the
+the available routines for the calculation of the internal parameters
+                                                                                           external field generated by a cable buried below the seabed will fail to
+of cables to include twisting, proximity, and skin effects and a more
+                                                                                           reach the water surface (see Appendix for details). Thus, there is no
+detailed representation of the armor [6–11]. Unfortunately, with a few
+                                                                                           need for a 3-layer configuration. Nevertheless, one has to deal with a
+exceptions, most of the offshore wind farm studies present some rather
+                                                                                           structure where both media are lossy, affecting mainly the behavior of
+crude cable models [12] and this might be related to the fact that a
+                                                                                           the return impedance and admittance per unit of length. This scenario
+
+
+  ✩ This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant
+agreement No 101031088.
+✩✩ This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES), Finance Code 001. It also was partially
+supported by INERGE (Instituto Nacional de Energia Elétrica), Brazil, and CNPq (Conselho Nacional de Desenvolvimento Científico e Tecnológico), Brazil.
+   ∗ Corresponding author.
+     E-mail addresses: fcn@energy.aau.dk (F. Camara), acsl@coppe.ufrj.br (A.C.S. Lima), teresa.correiadebarros@tecnico.ulisboa.pt (M.T. Correia de Barros),
+ffs@energy.aau.dk (F.M. Faria da Silva), clb@energy.aau.dk (C.L. Bak).
+
+https://doi.org/10.1016/j.epsr.2024.110444
+Received 15 June 2022; Received in revised form 8 January 2024; Accepted 30 April 2024
+Available online 14 May 2024
+0378-7796/© 2024 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+F. Camara et al.                                                                                                             Electric Power Systems Research 233 (2024) 110444
+
+
+is distinct from those found in embedded cable parameters routines in                        and 𝐾(.) is a Bessel Function. In Appendix, we detail the procedure for
+EMT (Electromagnetic Transient) programs such as PSCAD, EMTP, or                             obtaining external media impedance and admittance expressions.
+even ATP, where one medium is assumed lossless.                                                  For an accurate representation of 𝐙𝑖𝑛 , in HVDC or HVAC cable,
+    Previously, a seabed buried cable was presented in [17] based on a                       a Finite-Element Method (FEM) would be preferred for the inclusion
+quasi-TEM (Transverse Electromagnetic) simplification of a full-wave                         of helical effects due to conductor twisting in screen and armor, al-
+modeling [18]. It relied on the frequency domain using the Numer-                            though recently, it was shown that the so-called MoM-SO could provide
+ical Laplace Transform (NLT) [19–23] to obtain the time responses.                           accurate results with considerable less computation time [8,10,11].
+This work investigates the challenges associated with the time-domain                        However, a common characteristic of these two approaches is that
+modeling of such cable configuration for transient analysis. A dis-                          a detailed representation of the cable conductors is needed, i.e., one
+cussion of the rational approximation and the numerical stability is                         must know the exact amount of wires and their spacing in the cable
+presented. A procedure detailing the implementation of such a model                          screen, and accurate information regarding the electrical and thermal
+in EMT-program is shown. Two distinct time-domain formulations are                           properties of the wires would also play an important aspect. For those
+evaluated. The first is based on the Method of Characteristics (MoC),                        dealing with earlier stages where there is no actual definition of the
+and the other is based on the rational approximation of the nodal                            characteristics of the cable to be used, and given the low accuracy of
+admittance matrix.                                                                           seabed data, for a first investigation of the behavior of a submarine
+    The paper is organized as follows: the mathematical modeling and                         cable either using MoM-SO or FEM seems that it would add more
+the associated evaluation of the external per-unit-length parameters are                     uncertainties to the analysis. Another issue would be the required
+discussed in Section 2. The rational approximation, together with the                        background to handle these special-purpose tools and the fact that any
+discussion of the time-delay identification is presented in Section 3. The                   EMT-type studies, e.g., Insulation Coordination, cannot be performed
+set of test cases are shown in Section 4 and the main conclusions of this                    using FEM. As the main focus here is to investigate the transient
+work are presented in Section 6.                                                             behavior of a submarine cable considering the two external media to
+                                                                                             be lossy, we adopted a more conservative approach for the inclusion of
+2. Mathematical modeling                                                                     the inner impedance. Here, we consider a modified version of the cable
+                                                                                             parameters routine available in commercial EMT programs should have
+2.1. Per-unit-length parameter determination                                                 checks and controls to avoid numerical instabilities in evaluating the
+                                                                                             internal impedance. This approach is similar to the one used in [17]
+   A key aspect in the assessment of the transient and steady-state                          for the transient evaluation considering the NLT.
+performance of any system involving overhead lines or cables is the de-
+termination of the per-unit-length parameters (pul-parameters), i.e., 𝐙
+                                                                                             2.2. Propagation parameters
+and 𝐘 matrices. Typically, we may write,
+
+𝐙 = 𝐙𝑖𝑛 + 𝐙0                                                                      (1)           The propagation parameters are the characteristic admittance 𝐘𝑐
+                                                                                             and the propagation function 𝐇 defined as
+where 𝐙𝑖𝑛 is the internal impedance matrix of the cable, with its                                     √
+dimensions defined by the number of conducting layers the cable might                        𝐘𝑐 = 𝐙−1 𝐙 ⋅ 𝐘
+                                                                                                     ( √        )                                            (6)
+present, and 𝐙0 is the external media impedance matrix. In the case of
+                                                                                              𝐇 = exp −𝓁 𝐘 ⋅ 𝐙
+a single-core armored cable or a pipe-type cable
+                                                                                             where 𝐙 and 𝐘 are the pul parameters defined in the previous section
+𝐙0 = 𝑧0 𝟏                                                                         (2)
+                                                                                             and 𝓁 is the total length of the circuit. Eigenvalue decomposition is
+where 𝟏 is a unit matrix [24] with a rank equal to the number of                             used to obtain the modal components of both matrices. The modal
+conductors in the cable. For the shunt admittance matrix, the procedure                      components for both 𝐇 and 𝐘𝑐 are obtained from
+is similar, i.e.,
+     (             )−1                                                                       𝐇 = 𝐓𝑣 ⋅ 𝐇𝑚 ⋅ 𝐓−1
+                                                                                                            𝑣      𝐘𝑐 = 𝐓𝑣 ⋅ 𝐘𝑐𝑚 ⋅ 𝐓𝑇𝑣                                    (7)
+               1
+𝐘 = 𝐘−1 𝑖𝑛  +     𝟏                                                 (3)                      where 𝐓𝑣 is the voltage transformation matrix obtained from the right
+               𝑦0
+                                                                                             eigenvector of 𝐙 ⋅ 𝐘. Alternatively, we could use 𝐓𝑖 which is current
+where 𝐘𝑖𝑛 is the admittance matrix associated with the insulation                            transformation matrix obtained from the right eigenvector of 𝐘 ⋅ 𝐙.
+layers. For an insulated cable, the number of conducting and insulating
+layers need to be identical, e.g., if a cable has a core, sheath, and armor,
+                                                                                             2.3. Nodal admittance formulation
+it also has three insulation layers: one separating the core conductor
+and sheath, the other between sheath and armor, and the last one
+                                                                                                The nodal admittance matrix 𝐘𝑛 can then be written as
+separates armor from external media. The expressions for 𝑧0 and 𝑦0                                [        ]
+are as follows, assuming a quasi-TEM (Transverse Electromagnetic)                                   𝐘𝑠 𝐘𝑚
+                                                                                             𝐘𝑛 =                                                                         (8)
+propagation                                                                                         𝐘𝑚 𝐘𝑠
+      𝑗𝜔𝜇 [        ]                                                                         where
+𝑧0 =        𝛬 + 𝑆1
+       2𝜋                                                                (4)                            (        ) (         )−1
+                     [     ]−1                                                               𝐘 𝑠 = 𝐘 𝑐 ⋅ 𝐈 𝑛 + 𝐇2 ⋅ 𝐈 𝑛 − 𝐇2
+𝑦0 = 2𝜋(𝜎1 + 𝑗𝜔𝜀1 ) 𝛬 − 𝑆3                                                                                     (       )−1                                                (9)
+                                                                                             𝐘𝑚 = −2𝐘𝑐 ⋅ 𝐇 ⋅ 𝐈𝑛 − 𝐇2
+where
+                  ( √           )
+       (     )                                                                               and 𝐈𝑛 is an identity matrix of order 𝑛 equal to the number of conduc-
+ 𝛬 = 𝐾0 𝛾1 𝑟𝑗 + 𝐾0 𝛾1 4ℎ2 + 𝑟2𝑗                                                              tors. Thus, for an armored single core cable 𝑛 = 3.
+         ∞ exp(−2ℎ𝑢̄ )                                                                           The direct fitting of 𝐘𝑛 typically leads to inaccurate results for
+                    1
+𝑆1 =                          exp(𝑗𝑟𝑗 𝜆)𝑑𝜆                                         (5)       the smallest eigenvalues at the lower frequency range. This can be
+       ∫−∞     𝑢̄ 1 + 𝑢̄ 2
+         ∞ 𝑢̄ exp(−ℎ𝑢̄ ) − exp(−2ℎ𝑢̄ )                                                       overcome if we consider the so-called Folded Line Equivalent proposed
+             2              1                 1
+𝑆3 =                                            exp(𝑗𝑟𝑗 𝜆)𝑑𝜆       .                         in [25] and later extended in [26] to allow latency exploitation. This
+     ∫−∞ 𝑢̄ 1              𝑛2 𝑢̄ 1 + 𝑢̄ 2
+              √                           √                                                  implies in rewriting (8) as
+                                                                                                       [          ]
+with 𝑢̄ 1 =        𝜆2 + 𝛾12 , 𝑢̄ 2 =       𝜆2 + 𝛾22 , 𝑛 = 𝛾2 ∕𝛾1 . 𝑆𝑖 is the so-called                  𝐘𝑜𝑐    𝟎
+Sommerfeld integrals, evaluated at the conductor coordinates (𝑟𝑗 , ℎ),                       𝐘𝑛 = 𝐊 ⋅               ⋅ 𝐊−1                                      (10)
+                                                                                                         𝟎    𝐘𝑠𝑐
+
+                                                                                         2
+F. Camara et al.                                                                                                               Electric Power Systems Research 233 (2024) 110444
+
+
+
+
+                   Fig. 1. Configuration of a 75 kV HVDC subsea cable.
+
+
+Table 1
+Data for 75 kV subsea cable.
+ Core conductor                     𝑅1 = 18.95 mm               𝜌𝑐 = 1.723 ⋅ 10−8 Ω m
+ Insulation layer 1                 𝑅2 = 28.95 mm               𝜀1 = 2.5
+ Sheath                             𝑅3 = 30.65 mm               𝜌𝑠 = 22 ⋅ 10−8 Ω m
+ Insulation layer 2                 𝑅4 = 33.15 mm               𝜀2 = 2.5
+ Armor (𝜇𝑎 = 90)                    𝑅5 = 35.65 mm               𝜌𝑎 = 11 ⋅ 10−8 Ω m
+ Armor insulation                   𝑅6 = 44.10 mm               𝜀3 = 2.5
+
+
+
+
+where 𝐘𝑜𝑐 = 𝐘𝑠 + 𝐘𝑚 is the admittance associated with the open circuit
+current response and 𝐘𝑠𝑐 = 𝐘𝑠 − 𝐘𝑚 stands for the admittance related
+to the short-circuit current response, and
+     [        ]
+       𝐈   𝐈𝑛
+𝐊= 𝑛                                                             (11)
+       𝐈𝑛 −𝐈𝑛
+                                                                                                Fig. 2. Fitting of characteristic admittance 𝐘𝑐 and propagation function 𝐇.
+where 𝐈𝑛 is the same as before. It should be pointed out that while 𝐘𝑛
+has a dimension 2𝑛 × 2𝑛, with 𝑛 being the number of conductors, 𝐘𝑜𝑐
+and 𝐘𝑠𝑐 are 𝑛 × 𝑛 matrices and can be fitted separately.
+
+3. Rational approximation and time-delay identification
+
+    If we consider the Method of Characteristics (MoC) for the conven-
+tional time-domain modeling of transmission lines and cables, we need
+to find a pole-residue realization of 𝐘𝑐 and 𝐇, and for the latter we
+need to fit the modal parameters and extract the time delays associ-
+ated with the modes. There are some alternatives for the frequency
+domain realization of the involved matrices such as the matrix pencil
+method [27] or the pole relocation algorithm is widely known as
+Vector Fitting (VF) [27–29]. Concerning the time-domain modeling
+exploiting the nodal admittance matrix 𝐘𝑛 , the FLE decomposition         

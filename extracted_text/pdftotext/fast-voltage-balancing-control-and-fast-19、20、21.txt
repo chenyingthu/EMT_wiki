@@ -1,0 +1,190 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                           1
+
+
+
+
+                  Fast Voltage-Balancing Control and Fast
+                   Numerical Simulation Model for the
+                       Modular Multilevel Converter
+             Feng Yu, Weixing Lin, Member, IEEE, Xitian Wang, Member, IEEE, and Da Xie, Member, IEEE
+
+
+
+   Abstract—A methodology of fast voltage-balancing control                             The large number of SMs (therefore power-electronic de-
+based on average comparison and a fast numerical simulation                          vices) in an MMC brings challenges to the simulation and con-
+model for the modular multilevel converter are proposed. In each                     trol of MMC as follows.
+control cycle, the average voltage of all the submodules (SMs)
+in an arm is calculated. The switching state of each SM will                           1) Electromagnetic transient simulation are usually adopted
+be determined by comparing the capacitor voltage of each SM                                to study the dynamic of MMCs. As the number of power-
+with this average value. Little sorting of the capacitor voltages is                       electronic switches increases, the simulation speed of the
+required; therefore, the calculation burden on the controller is                           MMC becomes extremely low, typically one week for 5-s
+significantly reduced. The previous switching state of each SM will                        dynamics for a 201-level MMC.
+be mostly retained. Two variables               and             are
+introduced to adjust the equivalent switching frequency of each                        2) Excessive computation is required in the controller of the
+SM. Simulation results verified the effectiveness of the proposed                          MMC if typical voltage-balancing control based on voltage
+voltage-balancing control in normal and fault conditions. A fast                           sorting is adopted.
+numerical simulation model for MMC on PSCAD/EMTDC is also                               A number of simplified/equivalent model of MMC have been
+proposed. The dynamics of each SM are sufficiently represented                       proposed in the literature [3]–[8] that could significantly in-
+in the proposed model. A hybrid simulation model is further de-
+veloped to incorporate the detailed switching dynamics of specific                   crease the simulation speed of MMC.
+interested SMs. The simulation results show that the proposed                           A continuous model was proposed in [3] where the total
+models give almost identical results as the detailed switching                       output voltage of the SMs in each arm is represented by a
+models while the simulation speed of the proposed model is ap-                       controlled voltage source. The output characteristics and the
+proximately 5000 times faster than the detailed switching model.                     circulating current could be well represented by the model of
+  Index Terms—Electromagnetic transients (EMT) simulation,                           [3]. However, the dynamics of each SM are not represented.
+HVDC transmission, modular multilevel converter (MMC),                                  Reference [4] presented a modeling method of MMC that
+nearest level control, voltage-balancing control.                                    is mathematically identical to the detailed switching models in
+                                                                                     PSCAD/EMTDC. Each arm of the MMC is modelled as a single
+                                                                                     2-node element and interfaced with the electromagnetic tran-
+                             I. INTRODUCTION
+                                                                                     sient (EMT) solver in order to solve the MMC and external net-
+                                                                                     works simultaneously. The drawback of this method in [4] is
+
+T     HE MODULAR multilevel converter (MMC) has been                                 that the method needs to change the source code of PSCAD/
+      making its way toward wide applications in medium-                             EMTDC to interface with the EMT solver, which is inaccessible
+and high-voltage fields [1]–[6]. The converter arm of an MMC                         to the public. Therefore, the method of [4] is not user friendly.
+is constructed by series connection of a number of submod-                           Users can only use the few preset functions of the modeling
+ules (SMs). The typical dc voltage rating for a half-bridge SM                       component set by the developers.
+(HBSM) is 2 kV. To make the dc voltage level of MMC suitable                            Reference [5] proposed an average value model of the MMC
+for HVDC transmission, hundreds of SMs are required to be                            that simplified each arm to a controlled voltage source. Similar
+connected in series [1]–[6]. The Trans Bay Cable Project, as an                      to the method of [3], the dynamics of each SM are also not
+example, employs 216 SMs per arm for 200-kV dc voltage.                              represented.
+                                                                                        Reference [6] proposed an accelerated model of MMC based
+                                                                                     on the idea that inverting several small matrices is much faster
+   Manuscript received December 26, 2013; revised July 10, 2014; accepted
+August 15, 2014. This paper was supported by the National Natural Science            than inverting one big matrix of the same dimension due to the
+Foundation of China (51277119). Paper no. TPWRD-01456-2013.                          total dimension of all small matrices [7]. In [6], each SM is mod-
+   F. Yu, X. Wang, and D. Xie are with the School of Electronic and Electrical       elled by an independent circuit supplied with the same current
+Engineering, Shanghai Jiaotong University, Shanghai 200240, China (e-mail:
+darall@sjtu.edu.cn; x.t.wang@sjtu.edu.cn; xieda@sjtu.edu.cn).                        source with the current magnitude equal to arm current. Since
+   W. Lin is with the School of Electrical and Electronic Engineering, Huazhong      each SM is still represented by a detailed switching model, sim-
+University of Science and Technology, Wuhan 430074, China, and also with the         ulation speed is slower than the model of [4].
+School of Engineering, University of Aberdeen, Aberdeen AB24 3UE, U.K.
+(e-mail: weixinglin@foxmail.com; weixinglin@abdn.ac.uk).                                Reference [8] gave a summary and comparison of the avail-
+   Color versions of one or more of the figures in this paper are available online   able simplified/equivalent model for MMC.
+at http://ieeexplore.ieee.org.
+   Digital Object Identifier 10.1109/TPWRD.2014.2351397
+
+                          0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+          This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+
+                                                                                    Fig. 2. Structure of a general half-bridge SM.
+
+
+
+                                                                                    verter arms. Each arm has       SMs (denoted as        -     ) in
+                                                                                    series. An upper arm and a lower arm comprise a phase unit.
+                                                                                       Fig. 2 shows the circuit diagram of the half-bridge SM
+                                                                                    (HBSM), which is comprised by two insulated-gate bipolar
+Fig. 1. Basic structure of the MMC.
+                                                                                    transistors insulated-gate bipolar transistors (IGBTs) ( and
+                                                                                       ), two antiparallel diodes (  and     ), and a dc capacitor.
+   This paper proposes further progress on this field, aiming at                    B. Working Principle of a Submodule
+developing a simplified model of MMC that is of similar accu-
+racy as detailed switching model, with simulation speed similar                        A switching state      is defined to determine the operating
+to [4] and in the meantime user friendly.                                           state of an SM. In steady state,        1 if the upper IGBT
+   Modulation methods of MMC can be classified into two                             is triggered and   is blocked. The output voltage of the SM in
+categories: 1) the pulsewidth modulation (PWM) at a high                            such casees is                           . Similarly,        0 if
+switching frequency and staircase modulation at the low                                 is blocked and   is triggered. The output voltage of the SM
+switching frequency [9]–[12]. Due to its lower equivalent                           becomes                          .
+switching frequency, the nearest-level modulation (NLM) is                             From the aforementioned analysis, we can use the following
+one of the preferred methods among the staircase modulations.                       equation to describe the switching state of an SM shown in
+   Voltage-balancing control is one of the key functions of a                       Fig. 2:
+controller for MMC. Most of the existing voltage-balancing
+algorithms are based on the capacitor voltage sorting [4]–[6],                                                                                               (1)
+[10]–[12]. The sorting of the capacitor voltages will consume
+a large amount of computation time on the central controller.
+To improve the efficiency of voltage-balancing control, the                            III. FAST NUMERICAL SIMULATION MODEL OF THE MMC
+voltage-balancing control is only executed once the required
+number of on-state SMs of an arm changes [8], [11], [12].                           A. Modeling of Power-Electronic Switches in the Proposed
+   There has been great interest in developing the dc/dc con-                       Model
+verter for use in future dc grids [13]–[15]. A general concept
+                                                                                       By linearizing the onstate characteristic curve of an IGBT or
+for the high-voltage dc/dc converter is to use dc/ac/dc conver-
+                                                                                    the forward characteristic curve of a diode, the voltage across a
+sion. The high-frequency ac circuit is likely to be used inside
+                                                                                    power-electronic switch can be approximated by [16] and [17]
+dc/ac/dc conversion to reduce the size of the dc/dc converter.
+   Because of its superior advantages over two- and three-level                                                                                              (2)
+VSC converters, the MMC will be likely to realize the ac/dc
+transformation in those dc/dc converters. The voltage sorting                       where        is the current through the semiconductor,           and
+in voltage-balancing control will become rather cumbersome in                              are the onstate threshold voltage and onstate resistance of
+MMC if the voltage sorting needs to be executed frequently in                       the power switch, and denotes the device type (i.e., IGBT or
+those high-frequency dc/dc converters with a frequency up to                        diode).
+several kilohertz [13]–[15].                                                           Equation (2) is quite similar to the modeling of the power-
+   To reduce the calculation burden on the controller of an                         electronic device in PSCAD/EMTDC. In PSCAD/EMTDC ,
+MMC, voltage-balancing control based on the average com-                            power-electronic devices are mainly represented as a two-state
+parison is proposed.                                                                resistive switch (        and        ) and a forward voltage drop
+                                                                                    (     ) in series[7]. The offstate resistance        is typically set
+          II. BASIC OPERATING PRINCIPLES OF MMC                                     to a much higher value, such as          compared with the typical
+                                                                                    value           of the onstate resistance      , so the power-elec-
+                                                                                    tronic switch can be simplified to an open circuit in the offstate
+A. Topology of MMC
+                                                                                    while        and        of the power-electronic modelling compo-
+   Fig. 1 shows the topology of a three-phase MMC. A                                nents provided in PSCAD/EMTDC are set by using exactly the
+three-phase MMC consists of three-phase units and six con-                          same methods as the             and         in (2).
+         This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+YU et al.: FAST VOLTAGE-BALANCING CONTROL AND FAST NUMERICAL SIMULATION MODEL                                                                               3
+
+
+
+   Other parameters, such as forward break over voltage, min-
+imum extinction time, etc. are also considered in the detailed
+switching modelling in PSCAD/EMTDC. However, these pa-
+rameters will not have a significant impact on the operation of
+a power-electronic switch from the grid point of view and will
+not be considered in the proposed model.
+
+B. Modeling of SMs and Arm in the Proposed Model
+  The voltage of the dc capacitor of an SM at time step can
+be calculated by [4]
+
+                                                                           (3)
+                                                                                  Fig. 3. Schematic of the proposed numerical simulation model.
+where      is the simulation step,       represents the capacitor
+voltage at the present time step , and             represents the
+capacitor voltage of the previous time step. Equation (3) will be                 PSCAD/EMTDC. Fig. 3 only displays the numerical calcula-
+solved using the trapezoidal integration method in the numerical                  tion component and the voltage-balancing control for the upper
+model, namely                                                                     arm of Phase A for convenience; the other five arms also include
+                                                                                  similar components.
+                                                                                     The voltage-balancing control takes the capacitor voltages
+                                                                           (4)
+                                                                                           , the arm current     , and the number (    ) of desired
+                                                                                  onstate SMs as inputs. The outputs of the voltage-balancing
+  The output voltage of an SM is then calculated by                               control are the switching state of each SM (         ).
+                                                                                     During dc faults, all of the IGBTs of the MMC should be
+                                                                           (5)    blocked and MMC functions as a three-phase diode bridge. To
+                                                                                  simulate the blocking situation, switches (      ) and thyristors
+where         is the operating state of the th SM defined in (1),                 ( ) are added in the numerical simulation model, referring to
+      is the capacitor voltage calculated by (4), and       is the                the modeling method presented in [5]. The controlled voltage
+voltage across the conducting power-electronic switch by (2).                     sources, which represent the output voltage of each arm, are
+   The voltage          varies with the switching state and direc-                disconnected by the series switches, while the parallel thyristors
+tion of arm current. It is summarized in the following equation                   are persistently triggered after the blocking of IGBTs to make
+for HBSM:                                                                         the MMC function as a three-phase diode bridge.
+                                                                                     Since the capacitor voltage and the firing pulses of each SM
+                                                                                  are retained in the proposed numerical calculation component,
+                                                          and                     the proposed model can be used extensively in fields, such as
+                                                        and                       research of voltage-balancing control, design of the modula-
+                                                        and                       tion methods, harmonic analysis, loss analysis, etc. We can en-
+                                                          and                     visage that the performance of the proposed model will be in
+                                                                           (6)    high accordance with the detailed switching model except the
+                                                                                  switching dynamic of each SM.
+  The output voltage of an arm is the sum of outputs of all SMs
+
+                                                                                  C. Hybrid Simulation Model
+                                                                           (7)
+                                                                                     To represent the detailed switching dynamics of specific in-
+                                                                                  terested SMs, a hybrid simulation model as shown in Fig. 4 is
+   Fig. 3 shows the schematic of the proposed numerical calcu-                    proposed. Fig. 4 shows an arm schematic of the proposed hy-
+lation model. Six numerical calculation components are used                       brid simulation model. Suppose we are interested in observing
+to calculate the dynamics of the SMs in six arms of a three-                      the detailed switching dynamics of an          , the      will be
+phase MMC. The numerical

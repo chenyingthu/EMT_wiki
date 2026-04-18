@@ -1,0 +1,189 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 25, NO. 2, APRIL 2010                                                                                   891
+
+
+
+
+                 Methods of Interfacing Rotating Machine
+                 Models in Transient Simulation Programs
+                                IEEE Task Force on Interfacing Techniques for Simulation Tools
+  L. Wang, J. Jatskevich, V. Dinavahi, H. W. Dommel, J. A. Martinez, K. Strunz, M. Rioual, G. W. Chang, and
+                                                 R. Iravani
+
+
+
+   Abstract—The electromagnetic transient programs (EMTP-like                        numerous models have been developed concurrently with the
+tools) are based on the nodal (or modified nodal) equations that                     development of digital computer programs. The modeling
+enable an efficient numerical solution and, subsequently, fast
+                                                                                     methods were influenced by many factors such as type and
+time-domain simulations. The state-variable-based simulation
+programs, such as Simulink, are also used for studying the                           size of the machine, objectives of the power system study,
+dynamics of electrical systems. Both the offline and real-time                       and the method of exchanging data between the machine and
+versions of these two types of simulation tools are widely used                      the network. While a large number of machine models may
+by the researchers and engineers in industry and academia to                         offer beneficial options to the user, it also creates challenges
+study the transient phenomena and dynamics in power systems
+with rotating electrical machines. This paper provides a summary                     in terms of proper model selection. For example, the same
+of the interfacing techniques that are utilized to integrate the                     machine modeled in two separate software programs would
+general-purpose models of electrical machines with the rest of the                   yield different results leading to much confusion during the
+power system network for these studies. The interfacing methods                      implementation and validation stages. Some researchers have
+are broadly classified as indirect and direct approaches. The
+paper also describes the numerical properties as well as limita-
+                                                                                     also questioned the applicability of the established   model to
+tions imposed by the interfacing of the commonly used machine                        unbalanced conditions [7]–[9]. The authors of [10], [11] made
+models that should be considered when selecting the simulation                       similar conclusions by comparing the simulation results of the
+parameters and assessing the final results.                                          classical    model and the coupled-circuit phase-domain (PD)
+  Index Terms—Electrical machines, electromagnetic transients,                       model under unbalanced operation. As the software programs
+Electromagnetic Transients Program (EMTP), interfacing tech-                         matured the root causes of the modeling differences were
+niques, simulation, state-variable approach.                                         eventually recognized and corrected [5], [12].
+                                                                                        The objective of this task force paper is to present to the
+                             I. INTRODUCTION                                         reader the various interfacing techniques used to integrate the
+                                                                                     machine models with the power system network in different
+
+R      OTATING electrical machines have been an integral
+       part of power systems for as long as the latter have
+existed. The electrical machines are used as generators and
+                                                                                     simulation programs. The Electromagnetic Transients Program
+                                                                                     (EMTP) [4], [13] approach and its many derivative programs
+                                                                                     (such as ATP [14], MicroTran [15], PSCAD/EMTDC [16],
+motors in numerous applications in power systems in a wide                           EMTP-RV [17], VTB [18], etc.) are based on nodal (or mod-
+range of voltage and power levels. This paper mainly con-                            ified nodal) equations and are widely used. The state variable
+siders the machine models that are based on the coupled                              (SV) approach is also used for the analysis of dynamic systems
+electric circuit approach, which leads to a relatively small                         including electric power systems. The examples of SV-based
+number of equations and have been very effectively utilized                          software packages include acslX [19], Easy5 [20], Eurostag
+for analyzing power systems transients [1]–[4]. The validity of                      [21], MATLAB/Simulink [22], etc. Within the EMTP and
+this type of models for both balanced and unbalanced power                           SV solution methodologies, this paper broadly classifies the
+system operations has been confirmed [5], [6]. Over time,                            methods of interfacing electrical machine models with power
+                                                                                     system network into indirect and direct approaches. This paper
+                                                                                     also provides numerous examples and studies that should
+   Manuscript received June 18, 2009; revised December 02, 2009. First pub-          help many engineers and researchers in correct use of various
+lished February 17, 2010; current version published March 24, 2010. Task Force
+on Interfacing Techniques for Simulation Tools is with the Working Group on          machine models and software packages.
+Modeling and Analysis of System Transients Using Digital Programs, IEEE                 Another important aspect of machine modeling is the rep-
+Power and Energy Society, T&D Committee. Paper no. TPWRD-00457-2009.
+   Task Force members: U. Annakkage, G. W. Chang, V. Dinavahi (Chair),
+                                                                                     resentation of magnetic saturation, which improves the accu-
+S. Filizadeh, A. M. Gole, R. Iravani, J. Jatskevich, A. J. Keri, P. Lehn,            racy and the range of applications of such models. Different
+J. Mahseredjian, J. A. Martinez, B. A. Mork, A. Monti, L. Naredo, T. Noda,           approaches have been considered for various machine model
+A. Ramirez, M. Rioual, M. Steurer, K. Strunz.
+   L. Wang and J. Jatskevich are with the Department of Electrical and Computer      structures (e.g., , PD) and/or simulation languages (EMTP or
+Engineering, University of British Columbia, Vancouver, BC V6T 1Z4, Canada           SV based). However, the saturation modeling methods for tran-
+(e-mail: liweiw@ece.ubc.ca; jurij@ece.ubc.ca).                                       sient simulation programs are not discussed here as this issue
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       requires more thorough literature survey which is beyond the
+   Digital Object Identifier 10.1109/TPWRD.2009.2039809                              scope of this paper.
+                                                                  0885-8977/$26.00 © 2010 IEEE
+892                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 25, NO. 2, APRIL 2010
+
+
+
+   The paper is organized as follows: Section II describes the       the self and mutual inductances are given in [3] and are not in-
+typical machine models used for power systems transients. Sec-       cluded here due to the limited space. The electromagnetic torque
+tions III and IV describe and demonstrate the interfacing ap-        is expressed in the machine variables as
+proaches used in the EMTP and the SV programs, respectively.
+The final conclusions are summarized in Section V. The param-                                                                        (5)
+eters of synchronous and induction machines used for simula-
+tion studies of this paper are summarized in the Appendix.              Although the model defined by (3)–(5) is relatively straight-
+                                                                     forward, it contains the terms (matrices) that depend on the
+          II. GENERAL-PURPOSE MACHINE MODELS                         rotor position (and, hence, changes with time), which results
+                                                                     in an additional computational burden and complexity of the
+   For the purpose of consistency and without loss of generality,    final model whether it is implemented in the EMTP or the SV
+this section considers a conventional general purpose syn-           approach.
+chronous machine model [2]–[6], whereas induction machine               To achieve a machine model with constant parameters, a
+model is somewhat similar. The dynamics of machine can               change of variables can be performed. In particular, in the case
+be represented by equations of corresponding electrical and          of synchronous machine, all variables are typically referred
+mechanical subsystems. Depending on the application and the          to the stator side (using appropriate turns-ratios) and then
+scope of studies (e.g., subsynchronous resonance, torsional          transformed (projected) onto the orthogonal coordinates that
+dynamics, etc.), the mechanical subsystem may be represented         are fixed on the rotor. This is known as the Park’s    transfor-
+as a lumped-parameter spring-mass system [23]. However,              mation [1], [3], wherein the axis of the rotor reference frame
+since the focus of this paper is on interfacing the machine          is assumed to be 90 leading the axis. The corresponding
+models with the solution of electrical network-system, a single      transformation matrix has the following form:
+rigid-body mechanical subsystem is assumed here. Specifically,
+the equations for mechanical subsystem for all models and
+studies presented are                                                                                                                (6)
+
+
+                                                              (1)    This transformation is applied to the stator circuit and variables
+                                                                            . The rotor circuit and variables          are already ex-
+                                                              (2)    pressed in the coordinates and need not be transformed. The
+                                                                     last row of (6) corresponds to the zero sequence (which produces
+where and        denote the rotor position and the angular elec-     the corresponding zero-sequence circuit on the stator side) and
+trical speed; is the number of poles, is the moment of in-           is needed to represent the unbalanced cases.
+ertia;    and are the mechanical torque and electromagnetic             The voltage equations of the machine model can be repre-
+torque, respectively. Motor convention is used for all models.       sented in terms of transformed variables as
+Throughout this manuscript, bold capital case is used to denote
+matrices and bold lower case is used to denote vectors.                                                                              (7)
+   The original coupled-circuit phase-domain (PD) model is
+commonly expressed in terms of the machine’s physical vari-          where vectors              and        denote the stator voltages,
+ables and phase coordinates. In particular, the voltage equation     currents, and flux linkages in     variables, respectively. Sim-
+is expressed as                                                      ilarly, vectors           and        denote the rotor voltages,
+                                                                     currents, and flux linkages in   variables. The quantity
+                                                              (3)    is the speed voltage term, where                                .
+                                                                     This term appears in the stator voltage equation only. The flux
+                                                                     linkage equations are given as
+and the flux linkages are represented as
+                                                                                                                                     (8)
+                                                              (4)
+                                                                     where the combined self and mutual inductance matrix          is
+The equations for the electrical subsystem are determined by         a constant, due to Park’s transformation. The electromagnetic
+the number of machine’s windings. A typical synchronous ma-          torque may be calculated in terms of the stator and/or the rotor
+chine model may include three stator windings          , one field   currents      and    , the flux linkages      and      , as well
+winding , and one damper winding            in the axis, and two     as in terms of the magnetizing flux linkages      and       [3].
+damper windings        and       in the axis. is a diagonal and      For example
+constant matrix containing the stator and rotor resistances. Vec-
+tors            , and        denote the stator voltages, current,
+and flux linkages, respectively. Similarly, vectors          , and
+      denote the rotor voltages, current, and flux linkages. The
+combined stator and rotor self and mutual inductance matrix
+       depends on the rotor position . The exact equations for                                                                       (9)
+WANG et al.: METHODS OF INTERFACING ROTATING MACHINE MODELS IN TRANSIENT SIMULATION PROGRAMS                                                    893
+
+
+
+  Implementing model (7)–(8), by itself, is much easier than
+implementing (3)–(4). Similarly, calculating the electromag-
+netic torque using (9) requires significantly less effort than
+using (5). However, the    model has to be interfaced with the
+external power network which is typically formulated in
+physical variables.
+
+        III. INTERFACING MACHINE MODELS IN EMTP
+   Although there are a number of software packages based
+on nodal analysis (or modified nodal analysis) including the
+EMTP-type and the Spice-type programs, the underlying solu-
+tion approach is based on discretizing the differential equations
+for each circuit component by usng a particular integration          Fig. 1. Example of discretized d axis equivalent circuit for the EMTP solution.
+rule. The EMTP [4], [13] uses an implicit trapezoidal rule for
+discretization and formulating the network nodal equation that
+has the following general form:                                      is shown in Fig. 1, where the conventional circuit elements are
+                                                                     replaced by the sources and resistances due to discretization.
+                                                             (10)    The axis discretized circuit is similar and not shown here.
+                                                                        Based on the discretized        circuit of Fig. 1, the machine’s
+where       is the network nodal conductance matrix, and the         Thevenin equivalent circuits are then formulated as depicted
+vector includes the so-called history current sources injected       in Fig. 2(a). As explained in [4], this step requires the pre-
+into the nodes. The nodal voltages       are unknown and calcu-      diction of electrical variables, such as the speed voltage terms
+lated by solving (10) at every time step. The solution of (10)                     and the field-winding voltage           , if the excita-
+is one of the key factors that has made the EMTP languages           tion is externally controlled. It is also observed from Fig. 2(a)
+so efficient and ultimately widely used. As the         matrix is    that the equivalent resistances in the and axes, and , are
+usually sparse, specially designed techniques, such as optimal       usually not equal due to the saliency effect. If this is the case,
+reordering schemes and partial LU factorization [24], [25], are      then direct transformation of the Thevenin equivalent circuits of
+often used to solve this linear system instead of inverting di-      Fig. 2(a) into the     coordinates will result in the time-variant
+rectly. Branches with variable parameters are typically ordered      conductance matrix which is not desirable. Instead, the resis-
+such that their equivalent conductance submatrices appear in         tances and may be averaged, and the new saliency terms
+the bottom-right corner of       to minimize the re-factorization                          and                        are then combined
+effort [4].                                                          with the back electromotive-force terms           and       as shown
+   In the EMTP formulation, the rotating machines are repre-         in Fig. 2(b). Thus, to formulate the saliency terms using this
+sented outside of the network, thus requiring a special interface.   method, the stator currents        and       are required to be pre-
+This interface also represents challenges for initialization and     dicted. Finally, the machine’s Thevenin equivalent circuits of
+the use of the program for harmonic analysis. A frequency-do-        Fig. 2(b) are transformed back to         coordinates using the in-
+main machine model was proposed for multiphase unbalanced            verse transformation (6) and the predicted rotor angle           .
+harmonic load flow program in [26]. The interface between ma-           Assuming that the system solution at            is known and the
+chine model and external network in frequency domain was             solution at the next time step, at time is required, the afore-
+achieved by harmonic Norton current source and admittance            mentioned requires the prediction of several mechanical and
+matrix. For time-domain machine models, significant efforts          electrical variables. The advantage of the prediction-based in-
+have been made by many researchers and software developers to        terfacing method resides in the fact that the resulting machine’s
+come up with computationally efficient and numerically robust        equivalent resistance submatrix is constant (assuming magnet-
+models and their respective interfaces for the network solution      ically linear machine model). This constant submatrix is then
+of the program. Based on the commonly used EMTP packages             used in (10) which also avoids re-factorization of the entire net-
+and the published literature, this paper discusses direct and in-    work conductance matrix at every time step. Programs, such
+direct interfacing methods as follows:                               as MicroTran (machine model Type 50) [15], EPRI/DCG EMTP
+                                                                     [30] and Alternate Transients Program (ATP) (machine model
+A. Indirect Approaches                                               Type 59) [14] utilize this met

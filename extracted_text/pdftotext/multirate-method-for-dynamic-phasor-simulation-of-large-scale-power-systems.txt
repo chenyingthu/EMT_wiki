@@ -1,0 +1,195 @@
+Received 9 January 2026, accepted 1 February 2026, date of publication 6 February 2026, date of current version 11 February 2026.
+Digital Object Identifier 10.1109/ACCESS.2026.3661338
+
+
+
+
+Multirate Method for Dynamic Phasor Simulation
+of Large-Scale Power Systems
+THIAGO JOSÉ BARBOSA DA ROCHA 1,2 , SERGIO GOMES JR. 1,2 , (Senior Member, IEEE),
+TIAGO SANTANA DO AMARAL 2 , AND LEONARDO PINTO DE ALMEIDA 2
+1 Universidade Federal Fluminense, Niterói, Rio de Janeiro 24210-240, Brazil
+2 Centro de Pesquisas de Energia Elétrica, Rio de Janeiro 21941-911, Brazil
+
+Corresponding author: Sergio Gomes Jr. (sergiogomes@id.uff.br)
+This work was supported in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior-CAPES (ROR identifier:
+00 × 0ma614) for the Article Processing Charge (APC), in part by the Conselho Nacional de Desenvolvimento Científico e
+Tecnológico (CNPq), and in part by the Centro de Pesquisas de Energia Elétrica (CEPEL).
+
+
+
+
+  ABSTRACT Dynamic phasor simulations can be used for the analysis of transient stability (TS) of power
+  systems, considering the influence of fast response equipment such as HVDC converters, FACTS and IBR
+  (Inverter Based Resources). For reliable simulation with fast response equipment, electromagnetic transients
+  (EMT) of the AC network must be accurately modeled. Dynamic phasor simulations are used to solve
+  tightly coupled dynamics from microsecond electromagnetic phenomena to second-scale electromechanical
+  oscillations. The single-rate time step requires the entire model to utilize the smallest interval necessary for
+  accuracy, which can substantially increase runtime. This work proposes a multirate method for a dynamic
+  phasor simulation, where the slowest machine variables and their controllers use a large time step, while the
+  remaining variables use the regular EMT time step. The proposed scheme does not require co-simulation
+  involving EMT and TS models. In fact, fast dynamics are considered for the entire system, with large
+  time steps for the variables and equations with slow dynamics. Coupling is performed by interpolation of
+  slow variables at the fast equations and averaging the fast variables at the slow equations. The mismatches
+  verification at slow steps decides whether to accept or undo the step and recalculate fast time steps with
+  improved estimates of slow variables. The method was incorporated into a dynamic phasor simulator and
+  validated on a benchmark of the Brazilian power system. The results demonstrate significant reductions in
+  runtime while maintaining high fidelity in capturing both slow and fast dynamics during transients.
+
+
+  INDEX TERMS Multirate, dynamic phasors, electromagnetic transients, computational efficiency, power
+  system simulation, power system dynamics.
+
+
+I. INTRODUCTION                                                                                 computational challenge: simulating these strongly coupled,
+Power systems consist of many interconnected components                                         multirate dynamics both efficiently and with fidelity.
+distributed over a wide area designed to convert primary                                           To address this fundamental challenge, power system
+energy into electricity and deliver it with high reliability,                                   dynamic simulations have traditionally been conducted using
+quality, and efficiency. Their dynamics are governed by                                         two main types of computational programs: electromagnetic
+coupled nonlinear differential-algebraic equations, spanning                                    transients (EMT) and transient stability (TS). EMT tools
+time scales from microseconds (electromagnetic transients,                                      model a region of interest in great detail, solving the network
+switching events) to seconds (electromechanical oscillations,                                   and device equations with a small time step to reproduce elec-
+governor responses). This disparity poses a fundamental                                         tromagnetic waveforms and fast interactions among devices
+                                                                                                and the transmission system [1]. TS tools, on the other hand,
+                                                                                                are used primarily to analyze the impact of low-frequency
+   The associate editor coordinating the review of this manuscript and                          dynamics on system stability. The power system is usually
+approving it for publication was Xiaodong Liang              .                                  fully represented, but the models are simplified omitting high
+                                                  2026 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+20126                                                    For more information, see https://creativecommons.org/licenses/by/4.0/                   VOLUME 14, 2026
+T. J. B. da Rocha et al.: Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems
+
+
+
+
+frequency dynamics, and the network is represented by alge-                           To alleviate this burden, multirate methods can be used.
+braic equations involving positive-sequence phasors. TS tools                      The mathematical foundations for applying these methods
+capture general slow dynamics including electromechanical                          to systems with components evolving at different speeds
+oscillations, while neglecting EMT [2].                                            were established in the 1970s [17] and later adapted for
+   However, the rapid growth of power electronics in modern                        power systems [18], [19], [20], [21]. However, in practice, the
+power systems – including HVDC transmission, flexible AC                           application of multirate concepts to DP models has largely
+transmission systems (FACTS), and inverter-based resources                         followed the co-simulation paradigm. Several frameworks
+(IBRs) based on wind and solar generation – has increased the                      combine DP and EMT models, solving DP subsystems with
+need for high-fidelity dynamic models in large-scale studies                       larger time steps and EMT subsystems with smaller ones [22],
+[3], [4]. In such systems, the simplified network represen-                        [23]. More recently, in [24] a multirate framework is proposed
+tation adopted in conventional TS programs is no longer                            that combines EMT, base-frequency DP, DP and TS solvers
+adequate, and three-phase EMT models become necessary to                           within a co-simulation architecture.
+accurately represent fast electromagnetic interactions.                               Collectively, these works embed dynamic phasors firmly
+   Hybrid EMT-TS simulations have therefore emerged as                             within the paradigm of hybrid multi-solver co-simulation,
+a compromise solution, initially proposed for simulation of                        which relies on explicit interfaces and model partitioning.
+AC/DC transmission [5]. In this approach, a region of inter-                       This stands in direct contrast to the unified multirate approach
+est is represented by an EMT model, while the external                             proposed in this paper, which operates entirely within a single
+network is modeled using TS-type phasor equations, with                            DP representation of the entire system. To the best of the
+appropriate interface conditions between the two domains.                          authors’ knowledge, there is currently no multirate scheme
+When the EMT and TS regions are implemented in different                           in the context of DP that (i) operates entirely within a DP
+programs or different solvers, the term ‘‘co-simulation’’ is                       representation of a large-scale power system and (ii) avoids
+often used. Hybrid approaches enable fast dynamics to be                           EMT-TS co-simulation or other hybrid partitioning.
+studied inside the detailed EMT region, including IBRs [6],                           The present work addresses this gap by applying a
+while preserving a large-scale representation for electrome-                       multirate algorithm directly to a DP model of the entire
+chanical behavior. Nevertheless, they face several difficulties:                   system. The EMT behavior of the network is fully represented
+maintaining the accuracy of interface variables at boundary                        within the DP formulation using the same small time step
+buses, ensuring consistent steady state initialization for both                    for the fast equations, while larger time steps are employed
+subsystems, and limiting fast dynamics to the EMT region.                          for slow equations associated with power plants and their
+When power electronic devices are widely distributed, the                          controllers, without significant loss of accuracy. This sub-
+EMT region must be extended over a large part of the system,                       stantially reduces the computational effort required for the
+which reduces the advantages of hybrid simulation.                                 machine and controller equations.
+   Dynamic phasor (DP) models offer an attractive alternative                         The paper makes two main contributions:
+for representing both EMT and electromechanical behav-
+                                                                                      • Methodological contribution: a multirate algorithm
+ior in a unified framework. Their theoretical foundations
+                                                                                        embedded in a DP formulation that captures electro-
+can be traced back to the Generalized Averaging Method
+                                                                                        magnetic and electromechanical transients throughout
+(GAM) proposed in [7], which represents a waveform
+                                                                                        a large-scale power system. This differs from previous
+x(t) by time-varying Fourier coefficients whose magnitudes
+                                                                                        DP-EMT co-simulations and multirate TS approaches,
+and phases encode the harmonic content within a sliding
+                                                                                        which rely on hybrid models or external interfaces.
+window. These complex coefficients, later called dynamic
+                                                                                      • Application and scalability: validation of the proposed
+phasors, extend the idea of conventional phasors by let-
+                                                                                        method on a 10,000+-bus real system (the Brazilian
+ting their magnitude and phase change over time, which
+                                                                                        national grid), demonstrating that the multirate DP for-
+allows them to follow slow changes in the underlying
+                                                                                        mulation scales to system sizes beyond those reported in
+waveforms. This framework was subsequently extended to
+                                                                                        existing DP-based or multirate power system studies.
+model unbalanced polyphase circuits [8]. Other work [9]
+develops a synchronous machine model using Shifted Fre-                            This paper is organized as follows: Section I introduces the
+quency Analysis (SFA), a dynamic phasor-based method                               paper; Section II provides a description of dynamic phasors;
+for efficient simulation of power system dynamics using                            Section III reviews the machine equations; Section IV classi-
+only the fundamental frequency phasor, without harmonics.                          fies the machine equations according to their dynamics; Sec-
+Over time, an increasing number of papers can be seen                              tion V explains the proposed multirate algorithm, illustrated
+delving into applications of dynamic phasors in power sys-                         with a simple example; Section VI describes the application
+tems, such as the modeling of FACTS devices, modular                               of the multirate method to a dynamic phasor computational
+multilevel converters (MMCs), and HVDC links, among                                program; Section VII presents results in a small test system;
+others [10], [11], [12], [13], [14], [15], [16]. However,                          Section VIII presents results in a large scale power system;
+applying uniformly a small time step to all DP variables                           and Section IX concludes. The Appendix provides the algo-
+in a large-scale system leads to a significant computational                       rithms for the single-rate and multirate methods presented in
+burden.                                                                            Section V.
+
+VOLUME 14, 2026                                                                                                                              20127
+                                                    T. J. B. da Rocha et al.: Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems
+
+
+
+
+II. DYNAMIC PHASORS                                                            In complex form, the original function can be obtained
+Classical (static) phasors are defined as complex values                    from the real projection of the dynamic phasors multi-
+representing a sinusoidal function with constant amplitude,                 plied by the exponential of jhωt, given in (4) [12], which
+angular frequency, and phase [25]. They are useful as an                    yields (2) [10].
+alternative way of representing the variables in the steady                                          nX∞ h                io
+state solution of linear ordinary differential equations with the                         f (t) = Re        F̃h (t) ejhωt          (4)
+                                                                                                                h=0
+input variables being sinusoids of time, such as in ac power
+                                                                               One should note that dynamic phasor representation
+system, thereby simplifying calculations.
+                                                                            transform each system variable in n phasors with real and
+    However, transients cannot be represented by static pha-
+                                                                            imaginary components, being n the number of harmon-
+sors. In this sense, phasors were not considered at all in the
+                                                                            ics considered. Therefore, the dynamic phasors cannot be
+first works regarding electromagnetic transients, although the
+                                                                            defined by a traditional algebraic transformation. From the
+concept of time variant phasors were used for TS considering
+                                                                            phasors, the original variable can be determined by (2),
+them as a sequence of steady state solutions along the time
+                                                                            but the reverse is not unique [10]. A possible approach for
+period of slow varying electromechanical oscillations [26].
+                                                                            defining the phasors is the integral of GAM applied to the
+    The classical work of Dommel proposed a companion
+                                                                            sliding window of the past fundamental period [7], [8]. In this
+model composed of a current source in parallel with a resis-
+                                                                            case, harmonics are considered, and the truncation of the
+tor to represent power system elements, including nonlinear
+                                                                            harmonics will introduce an approximation.
+and time-varying components, and using trapezoidal inte-
+                                                                               In linear systems no harmonics are present in steady state,
+gration [27]. The original model was developed in the time
+                                                                            and the FFDP can represent the dynamics without harmonic
+domain using the instantaneous values of variables, and the
+                                                                            truncation. The validity of representing the original variable
+methodology is used in production-grade software.
+                                                                            by a FFDP can be justified by the Hilbert Transform, as in [9]
+    An alternative to the traditional approach of Dommel is to
+                                                                            and [28], originating the SFA model.
+use the companion model with dynamic phasors [28], [29],                       Harmonics are generated by nonlinear elements that are
+[30]. This strategy also lies in the time domain, although                  supplied with alternating voltages, which is the case of power
+it uses a phasor representation instead of an instantaneous                 electronics. In general, the main dynamics of these devices
+one. Based on Fourier series, the variables of power system                 are usually well captured using FFDP models, with EMT
+steady state may be represented by periodic functions as                    of transmission system preserved without approximations.
+follows [31]:                                                               Including harmonics may enhance accuracy but adds signifi-
+           X∞ h             nπx i X∞ h                 nπx i
+  f (x) =           An cos           +           Bn sin                     cant computational burden. Therefore, their inclusion is only
+              n=0             L            n=1             L                justified when a detailed analysis of harmonic dynamics is
+                                                               (1)
+                                                                            specifically required.
+where An and Bn are constant coefficients.                                     The results presented in Sections VII and VIII of this paper
+   However, Equation (1) can be adapted to represent tran-                  are based exclusively on FFDP models. Under the classical
+sient condition, as shown in (2). It can be observed that the               sliding window implementation of GAM, even purely linear
+constant coefficients have become time-varying coefficients                 systems can exhibit harmonic dynamic phasors during tran-
+[7], [8] [10], [32].                                                        sient, because the Fourier expansion over a sliding window
+           X∞ 
+  f (t) =           FhRe (t) cos (hωt) − FhIm (t) sin (hωt) (2)             naturally generates harmonic components when a transient
+                        

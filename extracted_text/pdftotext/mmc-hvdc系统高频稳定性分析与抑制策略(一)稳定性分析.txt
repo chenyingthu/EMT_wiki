@@ -1,0 +1,227 @@
+      第 41 卷 第 17 期                             中    国 电 机 工 程 学                  报                Vol.41 No.17 Sep. 5, 2021
+ 5842 2021 年 9 月 5 日                                 Proceedings of the CSEE                      ©2021 Chin.Soc.for Elec.Eng.
+DOI：10.13334/j.0258-8013.pcsee.200362 文章编号：0258-8013 (2021) 17-5842-14 中图分类号：TM 73 文献标志码：A
+
+
+
+                   柔性直流输电系统高频稳定性分析及
+                     抑制策略(一)：稳定性分析
+                    李云丰 1，贺之渊 2，庞辉 2，阳岳希 2，季柯 2，黄伟颖 3
+                          (1．长沙理工大学电气与信息工程学院，湖南省 长沙市 410114；
+       2．先进输电技术国家重点实验室(全球能源互联网研究院有限公司)，北京市 昌平区 102200；
+              3．可再生能源电力技术湖南省重点实验室(长沙理工大学)，湖南省 长沙市 410114)
+
+
+                        High Frequency Stability Analysis and Suppression Strategy of
+                              MMC-HVDC Systems (Part I): Stability Analysis
+                    LI Yunfeng1, HE Zhiyuan2, PANG Hui2, YANG Yuexi2, JI Ke2, HUANG Weiying3
+      (1. School of Electrical & Information Engineering (Changsha University of Science and Technology), Changsha 410114,
+  Hunan Province, China; 2. State Key Laboratory of Advanced Power Transmission Technology (Global Energy Interconnection
+Research Institute Co., Ltd.), Changping District, Beijing 102200, China; 3. Laboratory of Renewable Energy Electric-Technology of
+           Hunan Province (Changsha University of Science and Technology), Changsha 410114, Hunan Province, China)
+
+
+ABSTRACT: The phenomena of high frequency resonances                    resonance; stability analysis; root locus; participation factors
+caused by large time delay in flexible MMC-HVDC systems
+                                                                        摘要：柔性直流输电系统因大链路延时导致的高频振荡现象
+have appeared in practical projects. To explore the mechanism
+                                                                        已经在实际工程出现。为探究高频振荡的机理及关键影响因
+of high frequency resonance and its key influencing factors, the
+                                                                        素，该文首先从换流站和交流系统 2 个方面分别建立高频状
+high frequency state space mathematical models of MMC and
+                                                                        态空间数学模型，换流站模型聚集 MMC 内部动态过程、控
+AC system were established. Firstly, the model of MMC
+                                                                        制内外环、锁相环、环流抑制及 Pade 函数模拟的大链路延
+integrated the internal dynamic process, outer and inner loop,
+                                                                        时环节，交流系统则是建立以多个模型来模拟线路分布
+phase-locked loop, circulating current suppression and Pade
+                                                                        式参数特性的通用状态空间模型；其次，采用参与因子分析
+approximation of large time delay, etc. The general state space
+                                                                        方法辨识出内环环节、延时大小、电压前馈、锁相环、稳态
+model of AC system was established, in which the high
+                                                                        运行点、交流线路长度、线路电容等因素是导致高频振荡的
+frequency characteristics of AC transmission line were
+simulated by using the multiple  models. Secondly, the key             关键影响环节；最后，以根轨迹方法为研究手段，阐述上述
+
+influencing factors such as inner loop, time delay, voltage feed        环节及其参数如何影响系统高频稳定性，并对相关环节进行
+forward channel, phase-locked loop, steady-state operation              电磁暂态仿真验证。
+point, AC line length, equivalent capacitance contributing to           关键词：柔性直流输电；模块化多电平换流器；状态空间模
+the high frequency resonance were identified by the                     型；高频振荡；稳定性分析；根轨迹；参与因子
+participation factor analysis method. Finally, the root locus
+method was used to study how the above factors affect the               0    引言
+high-frequency stability of the system, and the related links
+                                                                              基于模块化多电平换流器(modular multilevel
+were verified by electromagnetic transient simulation models.
+                                                                        converter ， MMC) 的 柔 性 直 流 输 电 (flexible high
+KEY WORDS: flexible high voltage direct current; modular                voltage direct current，HVDC)是新一代输电技术，
+multilevel convert (MMC); state-space model; high-frequency
+                                                                        具有可控性好、低次谐波含量低、增压扩容方便、
+    基金项目：湖南省自然科学基金项目(2021JJ40586)；可再生能源电                                适应于海上风电接入等优势，近 10 年来得到快速
+力技术湖南省重点实验室基金项目(2020ZNDL005)。                                           发展 [1-3] 。目前，国内在建和规划的柔性直流工程
+    Project Supported by Natural Science Foundation of Hunan Province
+(2021JJ40586); Key Laboratory of Renewable Energy Electric-Technology
+                                                                        以 500kV 交流主网接入，换流站的最大容量已经达
+of Hunan Province (2020ZNDL005).                                        到 800 万 kW[4]。工程的安全稳定运行对交流骨干
+第 17 期          李云丰等：柔性直流输电系统高频稳定性分析及抑制策略(一)：稳定性分析                                           5843
+
+网架的影响也越来越深刻，若柔性直流换流站因某                      献对考虑延时环节的影响进行大量研究，分析了延
+些扰动(如高频振荡)导致闭锁，由此产生的功率盈                     时环 节和控制 系统参数如何 影响高频 振荡的 机
+余/缺额将对接入的交流电网产生严重冲击                   。
+                                  [5-9]
+                                            理[23-25]。然而，这类电力电子装置的链路延时一般
+    柔性直流换流站与交流系统之间的高频振荡                     小于 200s，其模拟往往是一阶或二阶，相较于
+问题已在国内的鲁西工程和渝鄂工程中实际发生。                      550s 链路延时的柔性直流输电系统来说，二阶模
+2017 年 4 月，鲁西工程因接入的交流系统故障只有                 型难以精确模拟高频特性，所得结论可能不具有普
+单回线路运行，导致广西电网 500kV 母线出现                    遍性。关于柔性直流输电系统高频振荡问题，仅有
+1270Hz 的高频振荡，使得换流站闭锁[6-7]。2018 年            少量文献开展了相关研究。文献[6-7]基于两电平模
+12 月，渝鄂工程南通道施州换流站调试期间，在换                    型和阻抗法研究了鲁西工程高频振荡的影响因素
+流站 解锁升直 流电压过程中 ，湖北侧 出现了 约                   和抑制策略，起到了一定的抑制效果，并未从交流
+1.8kHz 的高频振荡，该高频振荡解决方案是在电压                  系统和换流站精细化模型方面进行建模，理论深度
+前馈环节加入 400Hz 的低通滤波器。然而，同样的                  还需进一步提升。文献[8]针对渝鄂工程高频振荡问
+方案应用于重庆侧时则失效，在不同时间段分别出                      题，以 dq 阻抗法建立了交流系统和换流站的数学
+现了 660Hz 和 700Hz 左右的高频振荡，由于高频振              模型，分析了关键因素对高频振荡的影响，然而这
+荡并未有消除的迹象，一段时间后，阀侧电流高频                      些影响仅仅局限于定性描述，没有做到定量描述。
+谐波保护动作，换流站闭锁跳闸[5]。因此，研究柔                    所采用的广义奈奎斯特判据是基于 2 个特征值实部
+性直流输电系统的高频振荡机理及其关键影响因                       与虚部相对于角频率的参数方程，通过判断曲线围
+素具有科学和工程意义。                                 绕(1，j0)进行稳定性判定，由于实部和虚部没有
+    柔性直流输电系统在大电网互联、新能源接                     体现具体角频率信息，在判断谐振频率时，较为繁
+入、城市供电等应用场景下的振荡问题属于小干扰                      琐且曲线变化较为复杂。状态空间建模方法是通过
+稳定性范畴[9-10]。该领域的研究方法主要是基于状                  求解系统的特征根直接判定稳定性和谐振频率，同
+态空间法和阻抗法，闭环系统在全频带范围内是否                      时也能采用参与变量方法定量识别关键影响因素
+具有负实部的特征根，或非负阻尼特性直接决定了                      及其影响程度，有利于实现高阶模型的可靠降阶。
+其稳定性[11-13]。随着这类问题研究的深入，控制系                     综上，本文以柔性直流工程高频振荡问题为切
+统中的锁相环(phase-locked loop，PLL)、外环及内          入点，从换流站控制系统、高精度延时和交流线路
+环、环流抑制控制器(circulating current suppression   模拟等环节出发，建立表征系统全部动态特性的状
+controller，CCSC)、控制模式、风电场输送功率及              态空间模型，通过求解特征根及参与因子分析，辨
+交流 电网阻抗 对稳定性的影 响机理也 逐渐被 揭                   识引起高频振荡的关键因素及其参与程度。采用根
+示[14-16]。文献[17-20]针对风电场接入柔性直流换流             轨迹方法，研究这些因素影响高频稳定性的规律，
+站的应用场景，以谐波状态空间法和阻抗法建立了                      从规划、设计、建设、运行等方面，为实际工程规
+多种理论分析模型，分析了引起次同步振荡问题的                      避和抑制高频振荡提供理论基础。
+关键因素，并通过优化控制系统架构、控制器参数
+                                            1   换流站数学模型及验证
+和增 加附加控 制策略等手段 抑制系统 振荡。 文
+献[21-22]针对张北直流电网稳定性问题，基于换流                      渝鄂工程接入系统示意图如图 1 所示，换流站
+站简化模型，建立闭环系统传递函数模型，研究低                      经换流变接入公共耦合点(point of common
+频谐振振荡的关键影响因素，提出了功率前馈和桥                      coupling，PCC)，再经交流线路与电网互联[5]。MMC
+臂串联虚拟阻抗的阻尼控制策略。然而，这些研究                      结构如图 2 所示，
+                                                     其框图可等效为如图 3 所示电路。
+绝大部分没有考虑柔性直流换流站采样、传输、计                      交流系统和 MMC 之间经过交流电压和交流电流耦
+算、执行等链路延时环节的影响，所得结论可能最                      合，直流侧与其它换流站经直流电压和直流
+                                                  等效     等效     交流         直流侧
+适用于百 Hz 以下的低频段，对于高频稳定性的影                          电源     阻抗     线路 接入点
+                                                                       换流变
+                                                                           MMC
+响研究还需进一步揭示。
+    针对高频稳定性的研究，在两电平换流器采用                               图 1 柔直系统主电路示意图
+LC/LCL 滤波器的并网稳定性研究上，已有相关文                       Fig. 1 Main circuit diagram of HVDC system
+5844                                                                         中     国   电   机   工     程       学       报                                                             第 41 卷
+
+                   SM                 SM         SM idc直流线路                                    电流对电容充电为正、直流电流流出为正。采用子
+                   SM                 SM         SM                                            模块平均开关函数 sw 进行建模，则对于单个子模块
+             Rarm                                                + +
+             Larm                                      +       C uc                            电容电压 uc 和桥臂输出电压 uarm 存在如下关系：
+                                                                 -
+
+
+
+
+                                                                             另一站
+             isa                isb        isc         -
+                             icir                                                                                duc    d(uc_dc  uc_ac1  uc_ac2 )
+              iarm
+                                                                      Es
+                                                                                                            C        C                              sw iarm                                (4)
+                                                                                                                  dt               dt
+             + SM                     SM         SM                    -
+            uarm               T                                                                              uarm  uarm_dc  uarm_ac1  uarm_ac2  Tsw uc                                  (5)
+             - SM                     SM         SM     直流线路
+                                                                                               式中：下标“dc”、“ac1”、
+                                                                                                              “ac2”分别为对应物理
+                             图 2 MMC 主电路
+           Fig. 2 Main circuit diagram of MMC                                                  量的直流、基波和二倍频分量；C 为子模块电容，
+
+              交         is
+                                                                idc    直                       T 为考虑冗余子模块后的总数；iarm 为桥臂电流。
+                                                                udc    流
+              流                        MMC本体
+              系
+                               us                                      侧                                  根据 MMC 运行原理可知，每相上下桥臂子模
+                                                                *
+                                                               ucir   icir
+              统                        udc 延时
+                        PLL                             e  *
+                                                           v          环流
+                                                                                               块电容电压和桥臂调制波中直流分量相等、基波分
+                                                 is*                  抑制
+                   us        R*       外环               内环                                      量幅值相等相位相反、二倍频幅值相等相位同相，
+                                             is                   
+                                                                                               以下桥臂为例进行分析，则有：
+                   图 3 柔性直流输电系统框图                                                                                           *
+                                                                                                                 duc    1 e    u*        i     i
+             Fig. 3            Diagram of MMC-HVDC                                                           C        (  vj  cirj )(  dc  sj  icirj )                                  (6)
+电流耦合。MMC 控制系统主要由 PLL、外环、内                                                                                         dt    2 udc udc         3 2
+环、CCSC 及延时等主要环节构成，本节将对各部分                                                                      式中：udc、idc 分别为直流电压和直流电流；isj 为 j(ja、
+进行建模。                                                                                          b、c)相电流；icirj 为 j 相环流；e*vj、u*cirj 分别为控制
+1.1 建模所用映射关系                                                                                   系统输出的基波和二倍频电压的参考值。
+       MMC 的建模一般是在 abc 自然坐标系或 dq 坐                                                                        子模块电容电压直流分量的动态方程为
+标系上进行，2 个坐标系之间的转换通过派克变换                                                                            duc_dc0        i   e* i     e* i   u* i        u* i
+                                                                                                                dc  vd sd  vq sq  cird cird  cirq cirq (7)
+实现。本文基于 dq 坐标系进行建模，且 q 轴超前 d                                                                         dt          6C 4Cudc 4Cudc 2Cudc              2Cudc
+轴 90°。为更加方便地推导出 MMC 在 dq 坐标系下
+                                                                                                          同理，电容电压基波分量的动态方程为：
+的数学模型，本文采用映射概念。假设 xabc1 和 yabc1
+                                                                                                           duc_ac1d                   i    i e*   u* i
+为 2 个正序基波量，两者在 dq 坐标系上可以表示                                                                                                uc_ac1q  sd  dc vd  cird sd 
+                                                                                                                dt                   4C 3Cudc 4Cudc
+为 xdq1xd1jxq1 及 ydq1yd1jyq1，下标含有“d”或“q”                                                                                *                                  *
+                                                                                                                          ucir  e* i
+                                                                                                                              q isq        evq icirq
+表示 d 轴或 q 轴分量，则三相物理量 xabc1 和 yabc1                                                                                              vd cird                                                    (8)
+                                                                                                                          4Cudc 2Cudc 2Cudc
+相乘之后表现为直流分量中叠加了二倍频负序分
+量，经过严格的数学推导，定义映射 1 为                                                                                       duc_ac1q                              isq         idc ev*q        *
+                                                                                                                                                                            ucird isq
+                                                                                                                       uc_ac1d                                                    
+                           x y         x y                                                                  dt                                4C          3Cudc           4Cudc
+  f1 : xabc1  yabc1  {Re( dq1 dq1 ),0, dq1 dq1 } (1)                                                                    *
+                               2            2                                                                            ucirq isd        ev*d icirq       ev*q icird
+                                                                                                                                                                                           (9)
+式中：{}中物理量依次为直流、基波和二倍频；Re(·)                                                                                              4Cudc            2Cudc            2Cudc
+为取实部；上标“”表示共轭量。
+                                                                                                          电容电压二倍频分量的动态方程为：
+       若 yabc2 表示二倍频负序分量，经过二倍频 dq
+                                                                                                   duc_ac2d                  i      i u*      e* i     ev*q isq
+坐标变换之后，可以表示为 ydq2yd2jyq2，则定义映                                                                                 2uc_ac2q  cird  dc cird  vd sd           (10)
+                                                                                                      dt                      2C 3Cudc 4Cudc 4Cudc
+射2为
+                                                       xdq1  ydq 2                                duc_ac2q                                     *
+                                                                                                                                      icirq idcucir    ev*d isq ev*q isd
+            f 2 : xabc1  yabc2  {0,                                    ,0}           (2)                        2uc_ac2d              
+                                                                                                                                                   q
+                                                                                                                                                                       (11)
+                                        2                                                             dt                              2C 3Cudc 4Cudc 4Cudc
+       若 xabc2 为二倍频负序分量，定义映射 3 为
+                                                                                                          MMC 内部二倍频环流的动态方程为
+                                   x y
+         f 3 : xabc2  yabc2  {Re( dq 2 dq 2 ),0,0} (3)                                                                                     Tuc_dc0ucird                     *
+                                        2                                                                    dicird             R
+                                                                                                                     2icirq  arm icird               
+       以上 3 个映射构成 MMC 建模的理论基础。                                                                                dt                Larm          Larmudc
+1.2 换流站本体数学模型                                                                                                         Tuc_ac2d            Tuc_ac1d ev*d            Tuc_ac1q ev*q
+                                                                                                                                                                                          (12)
+       假设功率参考方向为交流注入直流为正、桥臂                                                                                              2 Larm             2 Larmudc               2 Larmudc
+第 17 期                        李云丰等：柔性直流输电系统高频稳定性分析及抑制策略(一)：稳定性分析                                                                                               5845
+
+                                                                     *
+          dicirq         R            Tuc_dc0ucirq                                      1.3 MMC 控制系统模型
+               2icird  arm icirq               
+           dt            Larm          Larmudc                                          1.3.1 PLL 模型
+                   Tuc_ac2q       Tu         *
+                                              e           Tu          *
+                                                                         e                  为建立更加精确化系统模型，本文考虑锁相环
+                                                     
+                                      c_ac1d vq                c_ac1q vd
+                                                                                (13)
+                    2 Larm        2 Larmudc                   2 Larmudc                 的动态特性影响。柔性直流系统有 2 个 dq 坐标系：
+       MMC 交流侧电流动态方程为                                                                   电气系统坐标系、PLL 实现定向的控制系统 dq 坐
+                                          

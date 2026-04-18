@@ -1,0 +1,187 @@
+                                                               Electric Power Systems Research 251 (2026) 112203
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A computationally efficient approach for power semiconductor loss
+estimation of modular multilevel converters in EMT simulations
+Ajinkya Sinkar a,* , Chen Jiang b , Rohitha Jayasinghe b , Aniruddha M. Gole a
+a
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada
+b
+    Manitoba Hydro International, Winnipeg, MB R3R 1A3, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  This paper presents a computationally efficient approach for estimating the power semiconductor losses of a
+Electromagnetic Transient (EMT) Simulations                modular multilevel converter (MMC) in electromagnetic transient (EMT) simulations. Earlier approaches
+Modular Multilevel Converters (MMC)                        required the loss estimation to be carried out at the individual IGBT-diode component level. In contrast, this
+Power Loss
+                                                           paper extends this concept to the simulation of an entire MMC arm thus speeding up the simulation significantly.
+                                                           The proposed approach can accurately estimate the losses during steady state as well as transient operation with
+                                                           great speed. Furthermore, the loss estimates of each individual submodule can also be reported separately with
+                                                           the proposed approach, if needed. It is verified using a simulation test case of a two-terminal MMC-HVdc link and
+                                                           comparing the computed losses against the earlier (but much slower) approach of computing the losses at in­
+                                                           dividual switch level.
+
+
+
+
+1. Introduction                                                                                a lot of simplifying assumptions and typically are not able to quantify the
+                                                                                               impact of a converter’s controls on its power losses [4].
+    MODULAR multilevel converter (MMC) is a popular voltage source                                 On the other hand, simulation-based approaches can estimate the
+converter (VSC) topology commonly used for medium and high voltage                             losses under a wide range of operating scenarios (steady-state as well as
+applications due to its flexibility, scalability, modularity, and superior                     transient). Additionally, the impact of a converter’s controls on its
+harmonic performance [1]. Each phase leg of an MMC consists of an                              power losses can also be studied [2,4]. This makes such approaches an
+upper and lower arm (as shown in Fig. 1), each of which contains stacks                        attractive option for estimating the power losses of MMCs. Several
+of series-connected submodules (SM) for generating a stepped waveform                          simulation-based approaches have been proposed in the literature for
+that closely resembles a sinusoidal wave [2]. Typical SMs comprise of                          estimating the losses of VSCs [9–13]. However, these approaches
+power semiconductor switches (IGBT-diode pairs) and a capacitor as                             generally require device-level voltage and current information for esti­
+illustrated in Fig. 2. Power loss occurs in these switches in the ON state                     mating the losses. If applied directly for estimating the losses of an entire
+(i.e., conduction loss), the OFF state (i.e., blocking loss) and while                         MMC, these methods can make the simulation computationally
+transitioning between the ON and OFF state (i.e., switching loss). An                          burdensome. This is because each switch in an MMC would need to be
+accurate quantification of these losses under all operating scenarios                          modelled individually in order to obtain the required device-level in­
+(steady-state as well as transient) is essential to ensure that the switches                   formation. This increases the number of nodes in the simulated circuit,
+always operate within their limits as well as for effectively designing                        thereby significantly increasing the computational burden.
+their thermal management system [3].                                                               Modern electromagnetic transient (EMT) simulation programs typi­
+    For high-power applications, it is generally not feasible to evaluate                      cally combine an entire MMC arm into a single equivalent whose pa­
+these power losses experimentally [4]. Hence, one has to resort to                             rameters in each time-step are calculated from the individual firing
+analytical or simulation-based techniques for effectively estimating                           pulses and the initial conditions at the beginning of the time-step [14].
+them. Several analytical approaches for loss estimation of MMCs have                           This approach can improve the simulation time significantly [14].
+been proposed in the literature [5–8]. However, these approaches make                          However, as the switches are not individually modelled, it is not possible
+
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPT2025) in Guadalajara, Mexico, June 8-12, 2025.
+    * Corresponding author.
+      E-mail addresses: ajinkyasinkar@gmail.com (A. Sinkar), cjiang@mhi.ca (C. Jiang), jayas@mhi.ca (R. Jayasinghe), gole@umanitoba.ca (A.M. Gole).
+
+https://doi.org/10.1016/j.epsr.2025.112203
+Received 4 January 2025; Received in revised form 8 March 2025; Accepted 4 September 2025
+Available online 7 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A. Sinkar et al.                                                                                                  Electric Power Systems Research 251 (2026) 112203
+
+
+                                                                                  2. Semiconductor Power Loss Estimation in EMT Simulations
+
+                                                                                  2.1. Losses in Power Semiconductor Switches
+
+                                                                                      Losses in power semiconductor switches can be categorized as: (i)
+                                                                                  conduction loss, (ii) blocking loss, and (iii) switching loss. Conduction
+                                                                                  loss can be easily evaluated in an EMT simulation by multiplying the
+                                                                                  device’s ON state current with its ON-state voltage drop. Similarly,
+                                                                                  blocking loss can be evaluated by multiplying the OFF-state voltage
+                                                                                  across the device with its OFF-state leakage current. The challenge lies in
+                                                                                  estimating the switching loss. EMT simulators usually model a semi­
+                                                                                  conductor switch using a bivalued ON/OFF resistor [3]. However, such a
+                                                                                  simplified model by itself is not sufficient for estimating the switching
+                                                                                  loss.
+
+                                                                                  2.2. Switching Loss Estimation in EMT Simulations
+
+                                                                                      Switching loss in an IGBT-diode pair (such as the one used in MMCs –
+                                                                                  see Fig. 2) mainly consist of turn-on and turn-off losses of the IGBT as
+                                                                                  well as the reverse recovery loss of the freewheeling diode [3]. A
+                                                                                  device-level simulation model [17] of a power semiconductor switch
+                                                                                  can certainly be used for estimating its switching loss. However, such
+                                                                                  models require the use of a very small time-step (in the range of nano­
+                                                                                  seconds) for accurately capturing the switching phenomena [3]. It is
+                                                                                  generally not feasible to use such small time-steps in system-level EMT
+                                                                                  simulations (that typically use time-steps in the microsecond range)
+                                                                                  without significantly increasing the computational burden.
+                   Fig. 1. Modular Multilevel Converter (MMC).                        Reference [13] proposes an EMT simulation-based loss estimation
+                                                                                  approach that is not only accurate but also computationally efficient and
+                                                                                  simple to implement. In this approach, a device-level switch model is
+                                                                                  NOT used in the network simulation of an EMT simulation; instead, the
+                                                                                  network solution is still computed using the bivalued ON/OFF resistor
+                                                                                  model for the switches. Then, physics-based piecewise linear approxi­
+                                                                                  mations for the waveforms of the device voltage and current (as shown
+                                                                                  in Fig. 31) are obtained from the (larger time-step) EMT simulation using
+                                                                                  the following:
+
+                        Fig. 2. Typical MMC Submodules.                              (a). The pre- and post-switching device voltages and currents, which
+                                                                                     can be obtained from the network solution of the EMT simulation,
+to directly apply the loss estimation procedures that require device-level           (b). The precise time of switching (tsw ) for the devices which can be
+information (e.g., [9–13]).                                                          obtained from EMT simulations that support interpolated switching
+    In this paper we present a computationally efficient approach for                [18,19], and (c). the information about the device’s switching per­
+estimating the power losses of MMCs in EMT simulations. The loss                     formance, which can be obtained from physical tests or from its
+estimation is carried out using an arm-level detailed equivalent model               datasheet.
+(DEM) [14] of an MMC, thereby speeding up the overall simulation
+significantly. The approach proposed in [13] is utilized in this paper for            These waveforms are then multiplied and averaged to yield the
+estimating the power semiconductor losses. The device-level informa­              switching loss in that time-step. The time-step can be several times
+tion required for this approach is obtained by coalescing the algorithm           larger than the switching interval (although it must be sufficiently small
+used for updating the DEM in every simulation time-step with the loss             to capture each individual switching as a separate event) [3,13]. As the
+estimation approach of [13]. Note that even though an arm-level                   estimated waveforms adhere to the physics of the switching process,
+equivalent is utilized, the losses are not just estimated for the entire          they can be used for estimating the switching loss [3]. The detailed
+arm; the proposed approach also allows for reporting the loss estimates           equations used for computing the switching loss using the estimated
+of each individual MMC submodule separately, if needed. In order to               waveforms shown in Fig. 3 are given in [13]. As the device represen­
+make sure that the MMC’s losses are accurately evaluated during steady            tation in the network solution is still the simple ON/OFF resistor type,
+state operation as well as transient conditions, an enhanced DEM [15,             the incremental computational burden of this approach is very marginal
+16] of MMC is utilized.                                                           [3,13].
+    The paper begins with a brief discussion of the simulation-based loss             A number of parameters associated with the switching performance
+estimation approach proposed in [13]. Then, a brief review of the DEM             of a semiconductor device are required for obtaining the approximated
+[14–16] of an MMC is presented. The proposed approach for efficiently             switching waveforms (as in Fig. 3) in the approach of [13]. These are
+estimating the losses of an MMC is presented in detail after this. Finally,       given in Table 1 for the Toshiba ST1500GXH24 IGBT-diode power
+a simulation test case of a two-terminal MMC-based HVdc link is used for          module [20] rated at 4.5 kV, 1.5 kA (same as the one used in [2]). In­
+benchmarking the accuracy and computational efficiency of the pro­                formation on how to obtain these parameters can be found in [3,4,13].
+posed approach. Although the approach in this paper is discussed for an
+MMC that uses half-bridge SMs, it can be easily extended to other SM
+                                                                                    1
+topologies as well.                                                                   The switching duration has been deliberately magnified compared to the
+                                                                                  simulation time-step Δt for making the illustration clearer.
+
+                                                                              2
+A. Sinkar et al.                                                                                                     Electric Power Systems Research 251 (2026) 112203
+
+
+
+
+                                                                                      Fig. 5. Reduced order equivalent for an MMC arm in an EMT simulation.
+
+
+                                                                                    can be found in [3] and are not discussed here for the sake of brevity.
+
+                                                                                    3. Detailed Equivalent Model of MMC
+
+                                                                                    3.1. Basic Detailed Equivalent Model (DEM)
+
+                                                                                        As seen in Fig. 1, MMCs employ a large number of power semi­
+                                                                                    conductor switches to facilitate the required power conversion (AC to
+                                                                                    DC or vice versa). While simulating an MMC in an EMT simulator, if each
+                                                                                    of these switches is modelled explicitly, then the simulation can become
+                                                                                    computationally onerous. To overcome this bottleneck, a detailed
+                                                                                    equivalent model (DEM) of an MMC has been proposed in the literature
+                                                                                    [14].
+                                                                                        In this technique, firstly knowing the values of the firing pulses for
+                                                                                    each switch as well as the initial conditions at the beginning of a time-
+ Fig. 3. Piecewise linear switching waveforms used in the approach of [13].         step, an SM is replaced with its Thevenin equivalent. This is possible
+                                                                                    because in an EMT simulation, the switches are typically modelled as
+                                                                                    bivalued ON/OFF resistors and the capacitor is modelled using its
+Table 1
+                                                                                    discrete-time companion circuit equivalent [21]. Now, as all the SMs in
+Device parameters required for the approach of [13] (Toshiba ST1500GXH24
+                                                                                    each MMC arm are series-connected, the entire arm can be combined
+IGBT-diode module [20]).
+                                                                                    into a single Thevenin equivalent (as shown in Fig. 5). This
+  Parameter                                             Nominal Values
+                                                                                    reduced-order equivalent is then utilized for computing the network
+  IGBT on-state saturation voltage (Vces )              3.0 V                       solution of an EMT simulation. This drastically reduces the number of
+  Turn-on delay (td(on) ) and rise time (tr )           700.0 ns, 500.0 ns          nodes in the simulated circuit, and hence makes the simulation
+  Turn-on voltage tail time (tvtail )                   2500.0 ns
+                                                                                    computationally efficient [14].
+  Turn-off delay (td(off) ) and falling time (tf )      7500.0 ns, 2000.0 ns
+  Turn-off voltage rise delay factor (koff )            0.95
+                                                                                        Although this “basic” DEM technique is efficient, [15,16] have
+  Turn-off current tail time (titail )                  2000.0 ns                   shown that it is accurate only under steady-state operating conditions
+  Diode on-state saturation voltage (Vds )              3.2 V                       and fails to accurately model an MMC’s behavior when it is completely

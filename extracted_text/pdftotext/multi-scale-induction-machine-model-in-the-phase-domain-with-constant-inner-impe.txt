@@ -1,0 +1,146 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2019.2947535, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             1
+
+
+
+
+             Multi-scale Induction Machine Model in the Phase
+                  Domain with Constant Inner Impedance
+                                                                                        Yue Xia and Kai Strunz
+
+
+
+              Abstract—An efficient and accurate multi-scale induction ma-                                         Lrs (θr ), Lsr (θr )          Matrices of mutual inductances be-
+           chine model for simulating diverse transients in power systems is                                                                     tween stator and rotor windings.
+           developed and validated. Voltages, currents, and flux linkages are                                      Lss , Lrr                     Stator and rotor constant inductance
+           described through analytic signals that consist of real in-phase
+           and imaginary quadrature components, covering only positive                                                                           matrices.
+           frequencies of the Fourier spectrum. The stator is modeled in                                           p                             Number of poles.
+           the abc phase coordinates of an arbitrary reference frame whose                                         Req                           Equivalent resistance matrix.
+           rotating speed is adjusted by a simulation parameter called shift                                       Rs , Rr                       Stator and rotor diagonal constant resis-
+           frequency. When the reference frame is stationary at a zero                                                                           tance matrices.
+           shift frequency, then the model processes instantaneous signals
+           to yield natural waveforms. When the reference frame is set                                             Tm , Te                       Mechanical       and     electromagnetic
+           to rotate at the synchronous frequency of the electric network,                                                                       torques.
+           then the Fourier spectra of the analytic signals are shifted by this                                    vabcr , v abcr                Rotor voltages.
+           synchronous frequency to become dynamic phasors that allow for                                          vabcs , v abcs                Stator voltages.
+           efficient envelope tracking. The shift frequency can be adapted                                         α                             Ratio of present to previous time-step
+           during simulation. For any rotor position and independent of
+           the variation of the magnetizing inductances with saturation, the                                                                     sizes.
+           induction machine model appears as a Norton current source                                              λabcr , λabcr                 Rotor flux linkages.
+           with constant inner admittance in the abc phase domain to                                               λabcs , λabcs                 Stator flux linkages.
+           support the integration with simulators that represent the electric                                     θr                            Electrical rotor position.
+           network in the abc phase domain. The analysis of test cases                                             θ̃r                           Predicted electrical rotor position.
+           covering diverse transients substantiates the claims made in terms
+           of accuracy and efficiency across different time scales.                                                τ                             Time-step size.
+                                                                                                                   ωr                            Rotor electrical angular velocity.
+              Index Terms—Dynamic phasor, electromagnetic transients,
+           electromechanical transients, induction machine, modeling,
+           multi-scale, power system simulation, reference frame, shift                                                                         I. I NTRODUCTION
+           frequency.
+                                                                                                                     LGORITHMS for the simulation of transients in elec-
+                                             N OMENCLATURE
+                                                                                                               A     tric power systems are commonly classified into two
+                                                                                                               categories. For the simulation of electromagnetic transients,
+             Throughout this paper, an underscore is used to mark a                                            the algorithms of electromagnetic transients programs (EMTP)
+           quantity existing of real and imaginary parts, the symbol “∼”                                       process instantaneous signals to track natural waveforms [1]–
+           indicates predicted quantities.                                                                     [3]. For the simulation of electromechanical transients, algo-
+             eabcsh , eabcrh      Stator and rotor voltage history terms.                                      rithms that process dynamic phasor signals to track envelope
+             edq0rh               Rotor voltage history term in rotor ref-                                     waveforms are popular [4], [5]. If it is of interest to study
+                                  erence frame.                                                                both electromagnetic and electromechanical transients within
+             eoc                  Stator open circuit voltage.                                                 the same study, then the concept of frequency-adaptive simu-
+             fc                   Carrier frequency.                                                           lation of transients (FAST) [6]–[10] offers an efficient multi-
+             fref                 Shift frequency.                                                             scale simulation. The virtues of dynamic phasors and EMTP-
+             Geq                  Equivalent conductance matrix.                                               type modeling techniques are combined by representing all
+             iabcr , iabcr        Rotor currents.                                                              ac quantities through analytic signals and by introducing a
+             iabcs , iabcs        Stator currents.                                                             variable simulation parameter called the shift frequency. When
+             ĩabcs               Predicted stator currents.                                                   the shift frequency is set equal to the ac carrier frequency
+             idr , iqr            Direct and quadrature components of                                          of either 50 Hz or 60 Hz, the ac carriers are eliminated and
+                                  rotor currents.                                                              analytic signals are transformed into dynamic phasors. With
+             ids , iqs            Direct and quadrature components of                                          the shift frequency equal to 0 Hz, the ac carriers are preserved,
+                                  stator currents.                                                             allowing for the tracking of natural waveforms as in the EMTP.
+             j                    Short circuit current source injection.                                      By appropriate selection of the shift frequency, accurate and
+             J                    Moment of inertia of machine.                                                efficient multi-scale simulation is supported.
+             k                    Time-step counter.                                                              The focus of this paper is on the modeling of induction
+             Lls , Llr            Stator and rotor leakage inductances.                                        machines for multi-scale simulation. The dq0 transformation
+             Lms                  Magnetizing inductance of stator wind-                                       has been widely used in the modeling of induction machines.
+                                  ings.                                                                        The main motivation of modeling stator quantities in the
+
+
+                                   This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2019.2947535, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             2
+
+
+
+           rotating dq0 reference frame lies in the elimination of time-                                                                  |F[s(t)]|                                 |F[s(t)]|
+           varying inductances [11], [12]. However, when the dq0 models                                                                         s(t) = s(t) + j H[s(t)]
+           are connected to network models represented in the abc phase
+           domain, they do have indirect interfaces [2], [13], [14]. In [15],
+           a phase domain (PD) induction machine model that can be
+           directly interfaced with the network models was proposed for                                                      −fc                 fc∆f      f           −fc                 fc∆f       f
+           EMTP. In [12], the voltage-behind-reactance (VBR) induc-                                                                  (a) Application of the Hilbert transform.
+           tion machine model also providing direct machine-network                                                                       |F[s(t)]|                                 |F[E [ s(t) ]]|
+           interfacing was introduced. Both the described phase domain
+                                                                                                                                               E [ s(t) ] = s(t) e−j2πfc t
+           and VBR models have rotor-position-dependent equivalent
+           admittance matrices when discretized for EMTP-type solution.
+           A modification of the network nodal admittance matrix is
+           required as the rotor position changes.                                                                           −fc                 fc ∆f     f           −fc          ∆f     fc         f
+              In [16], a dimension reduction technique is applied to the                                                               (b) Shifting by the carrier frequency.
+           phase-domain induction machine model. The size of the equiv-                                        Fig. 1. Analytic signal processing and frequency shifting [6].
+           alent admittance matrix following the discretization for the nu-
+           merical solution is reduced. The electromagnetic quantities in                                      of numerical integration. So, generally (fc + ∆f ) τ  1 is
+           the difference equations are described through dynamic phasor                                       necessary to accurately track the disturbed bandpass signal.
+           calculus using shift frequency analysis. Although this allows                                          Through the application of the Hilbert transform, a quadra-
+           for larger time-step sizes in representing electromechanical                                        ture component H [s (t)] is created for s (t). An analytic signal
+           transients compared with the original EMTP-type solution, the                                       s(t) can be obtained by adding the quadrature component as
+           admittance matrix is dependent on the rotor position.                                               imaginary part [21]:
+              In [17] and [18], EMTP-type solutions were developed to                                                              s (t) = s (t) + jH [s (t)] .              (1)
+           keep the equivalent admittance matrices of the induction ma-                                        The effect of the creation of the analytic signal from an
+           chine models constant in the abc phase domain. This advantage                                       original bandpass signal s (t) is shown in Fig. 1(a). The Fourier
+           is combined with the capability to directly integrate with                                          spectrum of s(t) extends to negative frequencies, this is not
+           network models in the phase domain without transformation                                           the case for the corresponding analytic signal s(t). As shown
+           from the dq0 to the abc frame. The work presented here builds                                       in [6], the analytic signal s (t) can be shifted by the so-called
+           on these findings, but is to focus on the multi-scale modeling.                                     shift frequency fref giving the frequency of the considered
+              The contributions made in this paper are twofold. At first, a                                    reference frame:
+           multi-scale induction machine model with a Norton constant
+                                                                                                                                  S [s (t)] = s (t) e−j2πfref t .            (2)
+           admittance in the phase domain is developed. The multi-scale
+           functionality with the shift frequency as a simulation param-                                       If fref = 0 Hz is chosen, then the real part of the analytic
+           eter supports the integrative simulation of electromagnetic                                         signal allows for tracking of natural waveforms as in EMTP-
+           and electromechanical transients across diverse time scales.                                        type simulation. In the case of fref = 0 Hz, the carrier
+           Secondly, thanks to the modeling in the phase domain, direct                                        is present as shown on the right side of Fig. 1(a), and the
+           interfacing with a multi-scale power system model in the                                            condition (fc + ∆f ) τ  1 is to be respected. If the shift
+           phase domain is enabled [7] and so complements available                                            frequency is chosen to be equal to the carrier frequency
+           synchronous machine models [19]. Furthermore, a test case                                           of the ac synchronous power system fref = fc , then the
+           involving diverse transients is set up to demonstrate the                                           complex envelope E [s (t)] is obtained. The complex envelope
+           efficiency and accuracy of the proposed model.                                                      is equivalent to a dynamic phasor where the carrier oscillation
+              In Section II, the key characteristics of analytic signals                                       is eliminated. Since |e−j2πfref t | = 1, the magnitude is not
+           are reviewed. The development of the multi-scale induction                                          changed by the shifting. The condition for the time-step size
+           machine model is elaborated upon in Section III. Section IV                                         changes from (fc + ∆f ) τ  1 to (fc + ∆f − fref ) τ =
+           deals with validation. The application of the model in multi-                                       ∆f τ  1. Consequently, a larger time-step size can be
+           machine power systems is discussed in Section V. Conclusions                                        selected when tracking the complex envelope rather than the
+           are drawn in Section VI.                                                                            original bandpass signal. Details on the numerical integration
+                                                                                                               with analytic signals are introduced in [6].
+                           II. S HIFT F REQUENCY IN S IMULATION                                                    III. M ULTI - SCALE I NDUCTION M ACHINE M ODELING
+              All naturally generated signals are real. The left side of                                          In accordance with [11], a three-phase symmetrical induc-
+           Fig. 1(a) shows the Fourier spectrum of a real bandpass signal                                      tion machine is assumed with the stator and rotor windings
+           s (t), which is concentrated around the carrier frequency fc of                                     respectively being identical, sinusoidally distributed and sep-
+           either 50 Hz or 60 Hz in ac power systems. According to Shan-                                       arated by 120◦ . As in related works [13], [18], magnetic
+           non’s sampling theorem, the theoretical maximum time-step                                           saturation is not considered. In this section, the multi-scale
+           size is given by the Nyquist step size τNy = 1/ (2 (fc + ∆f )).                                     modeling of a three-phase induction machine is described.
+           As recommended in [20], the maximum time-step size should                                           The developed induction machine model supports the integra-
+           be limited to τmax = 1/(5τNy ) by considering the accuracy                                          tive simulation of both electromagnetic and electromechanical
+
+
+                                   This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2019.2947535, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             3
+
+
+
+           transients. In a first modeling step, multi-scale

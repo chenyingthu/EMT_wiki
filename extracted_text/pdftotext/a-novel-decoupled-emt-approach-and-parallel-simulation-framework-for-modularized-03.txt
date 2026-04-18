@@ -1,0 +1,181 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023                                                                                        3285
+
+
+
+
+       A Novel Decoupled EMT Approach and Parallel
+          Simulation Framework for Modularized
+                 Solid-State Transformers
+Moke Feng , Chenxiang Gao , Jianzhong Xu , Senior Member, IEEE, Chengyong Zhao, Senior Member, IEEE,
+                                 and Gen Li , Senior Member, IEEE
+
+
+   Abstract—Electromagnetic transient (EMT) modeling for the                         The multiple active bridge (MAB)-based MSST has higher
+modularized solid-state transformer (MSST) faces critical diffi-                  power density, less transformers and submodules, and higher
+culties because the dynamics of the complex-structured submod-                    flexibility than the dual active bridge (DAB)-based MSST. In-
+ules, which contain dual active bridges (DAB) and multiple active
+bridges (MAB), are hard to be described in analytical formulas. Ex-               tensive studies of the topology and control sheme of MAB-based
+isting models have problems of a narrow dynamic frequency band,                   MSST have been made in recent years [10]. Fig. 1(a) illustrates
+insufficient simulation accuracy, or are unable to operate under                  a cascaded H-bridge MAB MSST (CHB-MAB-MSST) whose
+fast transients. This paper proposes a parallel simulation frame-                 technology readiness has been validated by the successful in-
+work for MSST that preserves the original model’s broadband
+                                                                                  stallation in Hebei Province, China [11].
+characteristics and remarkably improves the simulation efficiency.
+The main novelty towards previous work is the detailed modeling                      The submodule of this novel MSST integrates the three-phase
+of the multi-winding transformer, the decoupled modeling of the                   input ports to a multi-winding transformer. Consequently, the
+submodules, and the parallel design of simulation processes. Fi-                  number of submodule is significantly reduced, and the H-bridges
+nally, the proposed framework is verified through the accuracy and                [DC-AC in Fig. 1(b)] in the three phases can use the same
+efficiency analysis carried out in PSCAD/EMTDC. The simulation                    triggering signals to simplify the control scheme.
+results verify that the proposed framework has excellent accuracy
+and time efficiency.                                                                 However, the complex structure and control priciples make it
+                                                                                  difficult to analyze the dynamic behaviors of PETs:
+   Index Terms—Electromagnetic transient modeling, modularized                       1) Difficult to obtain an accurate analytical expression of
+solid-state transformer (MSST), multiple active bridge (MAB),
+decoupled modeling, parallel simulation framework.                                       MSST: The submodule of the MSST contains a large
+                                                                                         number of non-linear power electronic switches (IGBTs
+                           I. INTRODUCTION                                               and diodes), capacitors, inductors, and AC transformers,
+                                                                                         which will generate a large-scale state equation [12], [13].
+      OLID-STATE transformer (SST), also called as power elec-
+S     tronic transformer (PET), can interconnect systems with
+different voltage levels and achieve multi-directional power
+                                                                                         It is difficult to obtain an accurate analytical expression in
+                                                                                         the wide frequency band.
+                                                                                     2) Complex structure results in a slow simulation speed: An-
+flow control [1], [2], [3], [4]. Due to the modular design, the                          other way to analyze the dynamics in the wide frequency
+modularized SST (MSST) can be used in high voltage and high                              band is to carry out electromagnetic transient (EMT) sim-
+power applications [5], [6]. MSST would be effective equipment                           ulations [14], [15]. However, the node admittance matrix
+to link the transmission system and distribution network [7], [8],                       of MSST is very large. Time-domain simulations using
+[9].                                                                                     detailed models will be very time-consuming. A simula-
+                                                                                         tion of several seconds would take hours, even days, which
+   Manuscript received 13 October 2022; revised 16 February 2023; accepted
+20 April 2023. Date of publication 27 April 2023; date of current version 25             is not suitable for practical use.
+September 2023. This work was supported by Beijing Natural Science Foun-             3) High operation frequency requires a small simulation
+dation under Grant 3222059. Paper no. TPWRD-01519-2022. (Corresponding                   time-step: The simulation speed is limited by the fre-
+author: Jianzhong Xu.)
+   Moke Feng, Jianzhong Xu, and Chengyong Zhao are with the State Key                    quency of the AC transformer in submodules. To re-
+Laboratory of Alternate Electrical Power System with Renewable Energy                    alize DC-DC conversion, the DC voltage is trans-
+Sources, North China Electric Power University, Beijing 102206, China                    formed into high-frequency square waves by the high-
+(e-mail: fengmoke1996@ncepu.edu.cn; xujianzhong@ncepu.edu.cn; chengy-
+ongzhao2@163.com).                                                                       frequency AC transformer [16]. The carrier wave fre-
+   Chenxiang Gao is with the Department of Electrical Engineering, School of             quency is 1–20 kHz, requiring a small simulation time-
+Electronic Information and Electrical Engineering, Shanghai Jiao Tong Univer-            step of 1.25 to 25 µs (assuming 40 samplings per cy-
+sity, Shanghai 200240, China (e-mail: gaocx_22@sjtu.edu.cn).
+   Gen Li is with the Electric Energy Group, Department of Engineering Tech-             cle). For numerical stability and accuracy, the time-step
+nology and Didactics, Technical University of Denmark (DTU), 2750 Ballerup,              should be minor. This will increase the computation
+Denmark (e-mail: genli@dtu.dk).                                                          burden.
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2023.3271027.                                          To address the above challenges, different modeling methods
+   Digital Object Identifier 10.1109/TPWRD.2023.3271027                           have been proposed:
+                         0885-8977 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:37 UTC from IEEE Xplore. Restrictions apply.
+3286                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023
+
+
+
+                                                                                discrete circuits (ADC) [29], they are as accurate as the detailed
+                                                                                model (DM). Compared to AVM, HEM is slower but much more
+                                                                                accurate and can be applied in both steady-state operations and
+                                                                                fault conditions.
+                                                                                   Considering the accuracy and acceleration capability, HEM
+                                                                                is a potential scheme to solve the modeling problems of MSST.
+                                                                                However, existing HEMs still have some shortcomings. In
+                                                                                [23], the submodule is decoupled at transformer windings.
+                                                                                The winding voltages are replaced with the history voltage
+                                                                                value of the last step. However, the winding voltages are
+                                                                                square waves. Therefore, the replacement will produce errors
+                                                                                when voltage jumps, which will cause numerical instability
+                                                                                and loss of accuracy. In [24], the submodule is modeled as
+                                                                                a whole without decoupling. The final equivalent circuit is
+                                                                                still complex, and the simulation burden is still heavy. More-
+                                                                                over, implementing HEM into MSST is still challenging be-
+                                                                                cause the programming is sophisticated and lacks a general
+                                                                                framework.
+                                                                                   To address the issues, this paper follows the principle of
+                                                                                HEM and proposes a novel decoupled EMT modeling approach
+                                                                                for parallel simulation of modularized SSTs. The proposed
+                                                                                approach is verified through the engineering project in Hebei
+                                                                                Province, China. The highlights of this paper include:
+                                                                                   1) Detailed modeling of the multi-winding transformer: This
+                                                                                       paper gives a detailed modeling and calculation processes
+                                                                                       for a multi-winding transformer using the unified magnetic
+                                                                                       equivalent circuit (UMEC) method, which can reflect the
+                                                                                       saturation of the iron core and complex electromagnetic
+                                                                                       coupling characteristics of the transformer.
+                                                                                   2) Decoupled modeling of MSST: A cut-set-based decoupling
+                                                                                       method is proposed, which can simplify the circuit of
+                                                                                       the power module. The bridge equivalent is consequently
+Fig. 1. Configuration of the CHB-MAB-MSST: (a) Topology; (b) submodule                 simplified. The decoupled equivalent circuit makes the
+structure.                                                                             simulation speed much faster than DM.
+                                                                                   3) Parallel simulation framework for MSST: A simulation
+A. Average Value Models                                                                framework using parallel calculation is proposed. In addi-
+                                                                                       tion to accomplishing the calculations of the UMEC trans-
+   References [17], [18], [19], [20] propose average value mod-
+                                                                                       former model, the submodule equivalents are assigned to
+els (AVM) for MSST. These models greatly simplify the circuit,
+                                                                                       different CPU cores to realize parallel computation. This
+and ignore the high-frequency switching actions and capacitor
+                                                                                       further increases the simulation speed.
+ripples. Therefore, it is easy to obtain MSST’s analytical ex-
+                                                                                   This paper is arranged as follows: Section II presents the
+pression in time-domain. AVMs are sufficient in system-level
+                                                                                UMEC modeling theory of multi-winding transformers. Sec-
+simulations wherein detailed dynamics of devices are not to be
+                                                                                tion III proposes the decoupled modeling method of the sub-
+concerned. The AVMs will be inaccurate when the operation
+                                                                                module and gives a parallel simulation framework for MSST.
+state or external environment changes and cannot be used for
+                                                                                Section IV applies the detailed modeling processes to the CHB-
+fault analysis.
+                                                                                MAB-MSST. Section V shows the simulation results in terms of
+                                                                                accuracy and time efficiency to validate the proposed method.
+B. High-Accuracy and High-Speed Equivalent Models                               Section VI concludes the paper.
+   Without relying on the analytical solution of the MSST, refer-
+ences [23], [24], [25], [26], [27] propose the high-accuracy and
+high-speed equivalent model (HEM) for MSSTs. This model                                  II. UNIFIED MAGNETIC EQUIVALENT CIRCUIT OF
+is based on the work from Kai Strunz [28], where the Ward                                        MULTI-WINDING TRANSFORMER
+equivalent eliminates the nodes inside the circuit. Taking the                     The multi-winding transformer is an essential interface in
+advantage of the linearization characteristics inherent in EMT                  MSST submodules that undertakes the vital task of power
+simulation, the circuit is dynamically simplified as time-varying               transfer. A multi-winding AC transformer is a crucial device
+Norton equivalents in each time-step. Since the HEM only pro-                   to realize voltage level conversion and power transfer inside the
+duces minor interpolation errors when generating the associated                 submodule. The unified magnetic equivalent circuit (UMEC)
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:05:37 UTC from IEEE Xplore. Restrictions apply.
+FENG et al.: NOVEL DECOUPLED EMT APPROACH AND PARALLEL SIMULATION FRAMEWORK                                                                              3287
+
+
+
+                                                                                  is related through flux Φ and winding current i, which is derived
+                                                                                  as follows.
+                                                                                     The relationship between the magnetomotive force (m.m.f)
+                                                                                  Mi , m.m.f drop Mdi and total m.m.f drop Mtdi is:
+                                                                                                  Mi − Mdi = Mtdi = Mf rom − Mto                         (1)
+                                                                                  where
+                                                                                                                   M i = Ni i i                          (2)
+                                                                                     Mfrom and Mto are the magnetic potentials of the terminals
+                                                                                  of the limb.
+                                                                                     Φi is influenced by the limb permeances:
+
+Fig. 2.   Geometry of the multi-winding transformer.                                                 Φi = Pi Mdi = Pi (Ni ii − Mtdi )                    (3)
+                                                                                  where
+                                                                                                      
+                                                                                                          Pi = HΦi Li i = BΦiiLµi = µLi Ai i
+                                                                                                                                                         (4)
+                                                                                                          µi = H
+                                                                                                               Bi
+                                                                                                                 i
+
+
+                                                                                     Pi is the limb permeance of limb i, µ is the magnetic perme-
+                                                                                  ability of the limb, which is a time-varying value determined by
+                                                                                  the instantaneous magnetic induction intensity Bi and magnetic
+                                                                                  field intensity Hi . The non-linear relationship between Bi and
+                                                                                  Hi is given in the manufacturer’s manual of the iron core.
+                                                                                     Considering all the circuits in the magnetic circuit, and rewrite
+Fig. 3.   UMEC of the multi-winding transformer.
+                                                                                  (3) in matrix form:
+                                                                                                                                           
+                                                                                            Φ(b×1) = P (b×b) N (b×b) i(b×1) − M td(b×1)            (5)
+                                               

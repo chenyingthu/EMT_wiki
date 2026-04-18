@@ -1,0 +1,193 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 4, JULY 2023                                                                                            3683
+
+
+
+
+       Real-Time Simulation of Power System
+Electromagnetic Transients on FPGA Using Adaptive
+            Mixed-Precision Calculations
+          Xin Ma , Conghuan Yang , Xiao-Ping Zhang , Fellow, IEEE, Ying Xue , Senior Member, IEEE,
+                                      and Jianing Li , Member, IEEE
+
+
+   Abstract—The massive integration of renewable energy sources                                               I. INTRODUCTION
+and power electronics into the power grid leads to the strong need of
+                                                                                           ITH the massive integration of renewable energy sources
+real-time Electromagnetic Transients (EMT) simulation of power
+system using field-programmable gate array (FPGA) platform
+due to its high efficiency and superior performance. FPGA based
+                                                                                  W        and power electronics into power grids [1], [2], Power
+                                                                                  System Electromagnetic Transients simulations tool has become
+EMT simulations – A key for Digital Twin were mainly based on                     one of the essential analysis tools for the testing and validation
+Single-Precision calculations, but ignored potential accumulation
+displacement. To address this problem, this paper proposes full
+                                                                                  of design, control and protection of power systems. This also
+Double-Precision and Mixed-Precision Floating-Point schemes to                    brings the strong needs of real-time Simulation of Power System
+achieve optimal balance between numerical accuracy and com-                       Electromagnetic Transients (EMT) on FPGA platform due to its
+putational resource cost in FPGA-based EMT simulation even                        efficiency and performance [3]. In the past, FPGA based EMT
+for long duration simulations. Furthermore, adjustable pipeline,                  simulations are mainly based on Single-Precision calculations
+address dynamic access and sequence controller techniques for
+solving high fanout and long datapath hardware implementation
+                                                                                  [4], [5]. With Single-Precision Floating-Point scheme, EMT
+are developed to optimize resource usage and timing constraints for               simulations were firstly implemented on a simple FPGA board
+all schemes. For non-rotating components, full Double-Precision                   based on parallel logic [5]. Then real-time modular multilevel
+and full Single-Precision both shows excellent convergence. For                   converter (MMC) high-voltage direct current (HVDC) model
+rotating components, extra Single-Precision iteration method and                  was implemented on FPGA [6]. In addition, a fast fault detection
+Mixed-Precision calculations are compared for Synchronous Ma-
+chines (SG) with strong nonlinearity, and it is found that only
+                                                                                  and classification in transmission lines by FPGA was introduced
+full Double-Precision could avoid phase shift problem. Based on                   in [7].
+component-level sensitivity analysis, proposed system-level Mixed-                   On the other hand, Double-Precision Floating-Point scheme
+Precision scheme is able to achieve close accuracy to that of full                has been widely adopted by off-line EMT simulation soft-
+Double-Precision scheme and additional average 20% resource                       ware packages for instance, PSCAD, EMTP and MATLAB.
+reduction for Kundur’s system.
+                                                                                  For FPGA based EMT simulations, now there is an emerging
+   Index Terms—Electromagnetic Transients simulations,                            demand for long duration simulation for complex power system
+Real-time simulations, Field Programmable Gate Arrays (FPGA),                     transients, which could last for tens of seconds or even longer [8],
+Digital Twin, Synchronous Machines, Data format classification,                   [9], [10]. It would be useful to investigate the accuracy and per-
+Single precision Floating-Point calculations, Double precision
+Floating-Point calculations, Mixed precision Floating-Point                       formance of EMT simulations using Double-Precision Floating-
+calculations.                                                                     Point scheme. It can be anticipated that more computational
+                                                                                  resources will be needed when using Double-Precision Floating-
+                                                                                  Point scheme than that using Single-Precision Floating-Point
+   Manuscript received 6 March 2022; revised 3 July 2022; accepted 8 August
+2022. Date of publication 17 August 2022; date of current version 22 June 2023.
+                                                                                  scheme. Therefore, it would be attractive to study whether a
+Paper no. TPWRS-00324-2022. (Corresponding author: Xiao-Ping Zhang.)              mixed Single-Precision/ Double-Precision scheme is feasible to
+   Xin Ma, Conghuan Yang, and Xiao-Ping Zhang are with the Department of          have a good balance between accuracy and required compu-
+Electronic, Electrical and Systems Engineering, School of Engineering, Univer-
+sity of Birmingham, B15 2TT Birmingham, U.K. (e-mail: xxm924@student.
+                                                                                  tation resources. Motivated by the above, this paper proposes
+bham.ac.uk; conghuanyang@foxmail.com; x.p.zhang@bham.ac.uk).                      full Double-Precision and Mixed-Precision schemes for FPGA-
+   Ying Xue is with the Department of Electronic, Electrical and Systems          based real-time EMT simulations and the main contributions of
+Engineering, School of Engineering, University of Birmingham, B15 2TT
+Birmingham, U.K., and also with the School of Electric Power Engineering,
+                                                                                  this paper are summarized as follows:
+South China University of Technology, Guangzhou, China (e-mail: dr.yingxue@          1) The limitations of Single-Precision Floating-Point calcu-
+foxmail.com).                                                                            lations on FPGA for nonlinear rotating machines have
+   Jianing Li is with the Department of Electronic, Electrical and Systems
+Engineering, School of Engineering, University of Birmingham, B15 2TT Birm-
+                                                                                         been analyzed in detail. Detailed error analysis shows how
+ingham, U.K., and also with the WSP U.K., The Mailbox, B1 1RQ Birmingham,                the error is accumulated over time when using Single-
+U.K. (e-mail: jianing.li@ieee.org).                                                      Precision Floating-Point calculations.
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3199181.
+                                                                                     2) Along with the existing Single-Precision Floating-Point
+   Digital Object Identifier 10.1109/TPWRS.2022.3199181                                  calculation scheme, two new schemes, namely Double-
+
+                         0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 12,2026 at 06:40:13 UTC from IEEE Xplore. Restrictions apply.
+3684                                                                                     IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 4, JULY 2023
+
+
+
+       Precision Floating-Point calculation scheme and Mixed-                   currents in accordance with transmission line propagation wave
+       Precision Floating-Point calculation scheme are proposed.                [11] is given by:
+       For Double-Precision Floating-Point calculation scheme,
+                                                                                                 1
+       all system component models and system calculations are                           is (t) =  vs (t) − Is (t − τ )                          (3)
+       carried out using Double-Precision format. For Mixed-                                     Z
+                                                                                                                                              
+       Precision Floating-Point calculation scheme, all non-                                        1+h        1
+                                                                                   Is (t − τ ) = −         ·     vr (t − τ ) + h · ir (t − τ )
+       rotating power system components are implemented using                                         2        Z
+       Single-Precision Floating-Point calculation scheme while                                                                              
+                                                                                                    1−h        1
+       rotating power system components – SGs are implemented                                    +         ·     vs (t − τ ) + h · is (t − τ ) (4)
+                                                                                                      2        Z
+       using Double-Precision scheme.
+   3) Hardware implementation of Mixed-Precision streaming                      where h is the constant parameter, τ is the transport delay, vr (t)
+       architecture with multiple types of data flow and bidirec-               and vs (t) are the terminal voltages of transmission line between
+       tional interface is proposed using combined short-path and               r bus and s bus at time t, ir (t) and is (t) are the real-time currents
+       long-path timing optimization in FPGA.                                   of transmission line between r bus and s bus at time t after delay
+   The rest of the paper is organized as follows. Section II shows              time τ , Is (t − τ ) is the history current source for s bus.
+briefly the basic power system EMT component models, then                          3) SG and Control System: As proposed in [10], [11], [12],
+analyzes the accumulation error of Single-Precision Floating-                   the discrete-time modelling of SG consists of electrical part and
+Point calculations and hence shows the limitation of Single-                    mechanical part as shown in (5)–(11):
+Precision Floating-Point calculations for the case of nonlinear
+                                                                                                                      2
+rotating components – SGs. Section III presents the subsystem                     vdq0 (t) = −Rdq0 idq0 (t) −            λdq0 (t) + u (t)
+classification, summary of different schemes, and proposes hard-                                                      Δt
+ware design and implementation of adaptive Mixed-Precision                                      + vhist (t − Δt)                                       (5)
+algorithm. Then Section IV compares the algorithms of full
+                                                                                  vhist (t − Δt) = −vdq0 (t − Δt) − Rdq0 idq0 (t − Δt)
+Single-Precision, full Double-Precision and Mixed-Precision
+in terms of resource cost, accuracy and data flow throughout                                                 2
+                                                                                                         −      λdq0 (t) + u (t − Δt)                  (6)
+aspects. Section V draws the conclusions.                                                                    Δt
+                                                                                  Rdq0 = P · Rabc · P −1                                               (7)
+  II. DETAILED SINGLE-PRECISION AND DOUBLE-PRECISION                                                  
+    ROUNDING-OFF AND TRUNCATION ERROR COMPARISON                                    2           Δt
+                                                                                       J +D+        K · ω (t)
+   In existing literature [4], [5], power system EMT models were                    Δt           2
+implemented on FPGA using Single-Precision Floating-Point                         = Tm (t) − Te (t) + hist (t − Δt)                                    (8)
+format. This section will introduce component models first,                                                         
+and then discuss the significant accumulated rounding-off error                                     2           Δt
+                                                                                  hist (t − Δt) =      J −D−        K · ω (t − Δt)
+due to the involvement of triangular function (i.e., cos and sin)                                   Δt           2
+calculations when solving rotating machine model, and finally                     − 2K · θ (t − Δt) + Tm (t − Δt) − Te (t − Δt)                 (9)
+propose advanced full Double-Precision and Mixed-Precision                                  ⎡                                              ⎤
+scheme.                                                                                                                2                  2
+                                                                                              cos (θ (t)) cos  θ (t) − 3 π cos  θ (t) + 3 π
+                                                                                         2 ⎣
+                                                                                  P =          sin (θ (t)) sin θ (t) − 23 π sin θ (t) + 23 π ⎦
+                                                                                         3         √1              √1                 √1
+A. Power System Component EMT Models for Real-Time                                                       2                 2                     2
+Simulations                                                                                                                                           (10)
+   1) RLC Circuit Branch: According to trapezoidal rule, the                      θ (t) = θ (t − Δt) + ω (t) · Δt                                     (11)
+history current source and updated current calculation for resis-
+tance, capacitance and inductance branch including transformer                  where Rdq0 is the resistance matrix, idq0 (t), λdq0 (t) and vdq0 (t)
+could be generally summarized as [11] follows:                                  are the current vector, flux vector and voltage vector of the
+                                                                                windings, u(t) is the speed voltages, J is the inertia, D is the
+        iRLC (t) = k1 (v1 (t) − v2 (t)) + k2 · IRLC (t − Δt)
+                                                                                damping coefficient, K is the stiffness coefficient, θ(t), ω(t),
+                                                          (1)
+                                                                                Tm (t) and Te (t) are electrical angle, angular speed, mechanical
+ IRLC (t − Δt) = k3 (v1 (t − Δt) − v2 (t − Δt))                                 torque and electrical torque, hist(t − Δt) is the history term for
+                                                                                net torque.
+                       + k4 · iRLC (t − Δt) ,                            (2)       In addition, the governor, excitation system and power system
+where Δt is the electromagnetic simulation time-step, k1 , k2 ,                 stabilizer are modelled in detail as shown in (12), (13) and (14)
+k3 , k4 are constant parameters based on simulation step and                    respectively. The multi-stage PID controllers and limiters with
+branch type, iRLC (t) is the RLC branch current at time t,                      feedback are considered in the model.
+IRLC (t − Δt) is the history current source for RLC branch.
+                                                                                    yhist (t − Δt) = m1 · y (t − Δt) + m2 · z (t − Δt)                (12)
+   2) Travelling Wave Model of Transmission Line: For a dis-
+tributed transmission line with losses, the calculation of terminal                             y (t) = m3 · z (t) + m4 · yhist (t − Δt)              (13)
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 12,2026 at 06:40:13 UTC from IEEE Xplore. Restrictions apply.
+MA et al.: REAL-TIME SIMULATION OF POWER SYSTEM ELECTROMAGNETIC TRANSIENTS ON FPGA USING ADAPTIVE                                                      3685
+
+
+
+                                                                                                              TABLE I
+                                                                                ITERATION ERROR COMPARISON OF SINE WAVE FUNCTION f = sin(δ + Δδ)
+                                                                                       BETWEEN SINGLE-PRECISION AND DOUBLE-PRECISION FORMAT
+
+
+
+
+Fig. 1. Bandwidth comparison between Single-Precision and Double-
+Precision floating-point.
+
+                   ⎧
+                   ⎨ g1 , y (t) < g1
+            x (t) = y (t) , g1 ≤ y (t) ≤ g2                            (14)
+                   ⎩
+                     g2 , g2 < y (t)
+where m1 , m2 , m3 , m4 are constant parameters based on
+simulation step and PID control block type, y(t) and z(t)is
+the output and input of PID control block, yhist (t − Δt) is the                   However, the numerical influence is unpredictable and ran-
+history injection, x(t) is the output of limiter, g1 and g2 is the              dom in scale axis when the summation result is related to limiter
+lower bound and upper bound of the given limiter.                               and triangular function, such as (7) and (14). Inaccurate limiter
+                                                                                feedback might cause sudden zero-crossing for control action.
+B. Single-Precision Floating-Point Scheme                                       As for triangular function, the accumulated error might exceed or
+                                                                                lag behind the expected position. For example, if electric angle
+   In the previous literature, power system EMT models in Sec-                  θ(t)in (10), (11) is assumed to increase along with time step
+tion A were implemented on FPGA using Single-Precision for-                     with a fixed-step angular speed increment, the matrix elements
+mat. In this section, the significance of accumulated rounding-                 including sin(θ(t)) might introduce accumulated phase shift.
+off error will be discussed. The error is mainly introduced by                  In addition, Table I gives accumulated Single-Precision and
+rotating machines involving triangular function (i.e., cos and                  Double-Precision sine wave function sin(θ(t)) simulation with
+sin) calculations.                                                     

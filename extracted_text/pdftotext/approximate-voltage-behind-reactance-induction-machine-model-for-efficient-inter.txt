@@ -1,0 +1,194 @@
+1016                                                                                        IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 25, NO. 2, MAY 2010
+
+
+
+
+           Approximate Voltage-Behind-Reactance
+       Induction Machine Model for Efficient Interface
+                With EMTP Network Solution
+                          Liwei Wang, Student Member, IEEE, and Juri Jatskevich, Senior Member, IEEE
+
+
+
+   Abstract—A so-called voltage-behind-reactance (VBR) in-                              Since power system networks are often represented in phys-
+duction machine model has recently been proposed for the                             ical       phase coordinates, the interface between machine
+Electro-Magnetic Transient Program (EMTP) solution as an                             models and the external physical network-circuit imposes
+advantageous alternative to the traditional    and phase-domain
+(PD) models. This paper focuses on achieving an efficient interface                  additional challenges. In MicroTran (Type-50) and ATP (Type
+of the machine models with the EMTP network. It is shown first                       59), the     machine models are interfaced using the Thevenin
+that a discretized PD model can be formulated to have a constant                     equivalent circuit of the machine in          coordinates and the
+machine conductance submatrix, which is a very desirable nu-                         predicted machine electrical and mechanical variables [6].
+merical property that allows avoiding the re-factorization of the                    The machine models in PSCAD/EMTDC are represented
+network conductance matrix at every time step. Furthermore, an
+approximate voltage-behind-reactance (AVBR) model is proposed                        as three-phase Norton current sources, which are predicted
+where the rotor-speed-dependent coefficients are neglected, thus                     according to the terminal voltages from the previous time step
+leading to a similar constant machine conductance submatrix and                      [7]. The main advantage of these methods is that they result in
+efficient interface. Case studies demonstrate that the new AVBR                      a constant machine conductance submatrix, and do not require
+model represents a significant improvement in terms of numerical                     re-factorization of the entire network conductance matrix at
+accuracy and efficiency over other established models used in
+EMTP.                                                                                every time step. However, predicting relatively fast electrical
+                                                                                     variables introduces interfacing errors that significantly reduce
+  Index Terms—Approximate voltage-behind-reactance model,
+constant conductance matrix, Electro-Magnetic Transient Pro-
+                                                                                     the numerical accuracy of the model, and may potentially cause
+gram (EMTP), G matrix, induction machine, phase-domain                               convergence problem [8]–[10]. In ATP, the Universal Machine
+model, voltage-behind-reactance model.                                               (UM) models are used to represent various types of machines
+                                                                                     [11]. These machines are treated as nonlinear devices and are
+                                                                                     interfaced with the Thevenin equivalent of the external network
+                             I. INTRODUCTION                                         in     coordinates. However, this interfacing method requires
+                                                                                     machines to be separated by transmission lines, or artificially
+
+E     FFICIENT and accurate machine models for the power
+      system Electro-Magnetic Transient Program (EMTP) [1]
+have received an extensive attention since the late 1970s. EMTP
+                                                                                     inserted “stub-lines” to avoid solving a system of nonlinear
+                                                                                     equations [1]. A newer package, EMTP-RV, eliminates this
+                                                                                     constraint by allowing the Newton iterations to achieve the
+and its derivative programs are used extensively by engineers                        simultaneous solution of machine and network variables [12],
+and researchers in industry and academia as powerful and stan-                       [13]. However, iterative solution of the machine and network
+dard simulation tools. Improving the numerical efficiency and                        equations at every time step generally reduces the overall
+accuracy of the induction machine models for EMTP-type so-                           simulation efficiency.
+lutions has been attractive for a long time and will potentially                        In order to achieve a direct interface between the machine
+have a very significant impact, since these models and tools are                     model and the external network, coupled-circuit phase-domain
+widely used. Numerous machine models have been proposed                              (PD) models have been proposed [14]–[16]. The direct interface
+and implemented in various software packages including Micro-                        of the PD model has definitely improved numerical accuracy
+Tran [2], ATP/EMTP [3], PSCAD/EMTDC [4], and EMTP-RV                                 and stability compared with the conventional model [8]–[10].
+[5], where     models are typically used.                                            However, the existence of rotor-position-dependent mutual in-
+                                                                                     ductances increases the computational burden.
+                                                                                        Recently, so-called voltage-behind-reactance (VBR) ma-
+   Manuscript received November 05, 2008; revised June 30, 2009. First               chine models have been proposed for the state-space approach
+published November 24, 2009; current version published April 21, 2010. This
+work was supported in part by the Natural Sciences and Engineering Research
+                                                                                     [17], [18] and EMTP-type solutions [19], [20]. The VBR model
+Council (NSERC) of Canada under the Discovery Grant, and in part by the              formulation represents the stator circuit in         phase coordi-
+Educational Grant from British Columbia Transmission Corporation and BC              nates and the rotor subsystem in        arbitrary reference frame.
+Hydro. Paper no. TPWRS-00910-2008.
+   The authors are with the Department of Electrical and Computer Engineering,       This formulation incorporates the advantages of the PD model,
+University of British Columbia, Vancouver, BC V6T 1Z4, Canada (e-mail: li-           in terms of its direct interface with the external network as well
+weiw@ece.ubc.ca; jurij@ece.ubc.ca).                                                  as its utilization of the numerically efficient model structure,
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       since the rotor subsystem is modeled in        coordinates. It was
+   Digital Object Identifier 10.1109/TPWRS.2009.2034526                              shown in [20] that due to its improved accuracy, the VBR model
+                                                                  0885-8950/$26.00 © 2009 IEEE
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:48:21 UTC from IEEE Xplore. Restrictions apply.
+WANG AND JATSKEVICH: APPROXIMATE VOLTAGE-BEHIND-REACTANCE INDUCTION MACHINE MODEL                                                                       1017
+
+
+
+also enables a non-iterative network solution for the mechanical
+and electrical variables, even at very large time steps.
+   However, the advantages of these PD [14], [15] and VBR
+[20] induction machine models come at the price of having a
+rotor-speed-dependent machine conductance submatrix, which
+generally requires re-factorization of the entire network conduc-
+tance     matrix at every time step as the rotor speed changes.
+The main focus and goal of this paper is to propose a new
+approximate voltage-behind-reactance (AVBR) induction ma-
+chine model that overcomes this problem. The properties of
+the proposed AVBR model and the overall contributions of the                    Fig. 1. Diagram depicting interface of machines and external network.
+paper are summarized as follows.
+  • This paper shows that the discretized PD model for the
+     symmetrical squirrel-cage induction machine can be for-                    where         is the equivalent resistance matrix and       is the
+     mulated to have a constant machine conductance subma-                      equivalent voltage history term.
+     trix (assuming a magnetically linear machine).                                In the paper, models of induction machines are derived based
+  • Similar to the VBR induction machine model [20], the new                    on the assumption that the rotor terminals are short-circuited
+     AVBR model achieves simultaneous solution of the ma-                       by end-rings, i.e., squirrel-cage machine. If the rotor terminals
+     chine-network electrical variables and enables a non-itera-                are required to be interfaced with the external circuit-network in
+     tive solution of the machine mechanical and electrical vari-                    phase coordinates to represent a doubly-fed induction ma-
+     ables.                                                                     chine, the interface (1) should be re-derived with both stator and
+  • To achieve a constant machine conductance submatrix in                      rotor voltages included. However, this is beyond the scope of
+     the AVBR model, the rotor-speed-dependent coefficients                     this paper. Thus, the machine branch voltage (1) is then replaced
+     in the equivalent resistance matrix of the machine inter-                  by the machine nodal equation to enable the machine-network
+     face equations are neglected. It is further shown that this                interface, as
+     approximation is very reasonable for a large range of ma-
+     chines (from 3 to 2250 HP), and that the resulting nu-
+     merical errors are relatively small, have a very tight error                                                                                       (2)
+     bound, and may be acceptable even for large integration
+     time-steps.                                                                where the machine equivalent conductance submatrix is
+  • The proposed AVBR model is demonstrated to be ap-
+     preciably more efficient (faster) than the previously
+     documented PD and VBR models. Meanwhile, the nu-                                                                                                   (3)
+     merical accuracy achieved by the AVBR model represents
+     a significant improvement over the established        and PD               and the current history term is
+     models.
+
+                                                                                                                                                        (4)
+       II. MACHINE-NETWORK CONDUCTANCE MATRIX
+   A detailed discussion of interfacing the machine models with                   The power system network is described by a nodal equation
+an external network for the EMTP solution may be found in                       that may be written as follows:
+[20]. An important step in interfacing the machine-network is
+the formulation of the so-called network conductance matrix ,
+which is discussed here. In a general framework shown in Fig. 1,                                                                                        (5)
+an arbitrary number of machine models may be connected to
+the network circuit to model a multi-machine power system. To                   Here,         denotes the overall network conductance matrix
+better understand the challenges of model interfacing, a single                 without incorporating the machine conductance submatrix;
+machine is singled-out in Fig. 1 as an example. To illustrate the               represents the nodal voltages;           represents the network’s
+formulation of the matrix for this machine, the stator voltages                 history current sources, assuming the machine is disconnected
+and currents are denoted by the vectors         and     , respec-               from the EMTP network. Therefore, the stator currents
+tively.                                                                         injected into the EMTP network represent the contribution
+   To achieve the EMTP solution, it is assumed that the machine                 from the machine’s discretized equivalent circuit.
+differential equations are discretized using the implicit trape-                    Solving (2) for the stator currents       and then substituting
+zoidal rule. The resulting discretized machine equation in phys-                it into (5), the final linear system of equations in terms of nodal
+ical variables and      coordinates has the following form [20]:                voltages        has the following standard form:
+
+
+                                                                         (1)                                                                            (6)
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:48:21 UTC from IEEE Xplore. Restrictions apply.
+1018                                                                                     IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 25, NO. 2, MAY 2010
+
+
+
+                                                                                 where the equivalent resistance matrix                 is expressed as
+
+
+
+
+                                                                                                                                                          (8)
+                                                                                 The history term              is represented as
+
+
+                                                                                                                                                          (9)
+
+Fig. 2. Network nodal equation including machine equivalent conductance             Other relevant matrices and variables in (8) and (9) are de-
+submatrix and history current source.
+                                                                                 fined in [20], and are less important for our discussion. How-
+                                                                                 ever, the machine equivalent resistance matrix           in (7) and
+The formulation of (6) is illustrated in Fig. 2, where it is shown               (8) is of our particular interest and will be investigated further.
+that      and      are modified by including the 3-by-3 machine                     Based on (8) it is noted that             is the result of the
+equivalent conductance submatrix            and the machine equiv-               summation of three terms: the stator resistance matrix ,
+alent history current sources       to the corresponding machine                 the stator inductance matrix term                  , and the third
+nodes.                                                                           term                                                   . The first
+   The solution of (6) is one of the key factors that has made the               two terms are constant, as the matrices               and        are
+EMTP languages so efficient and ultimately widely used. As the                   constant due to the symmetry of the induction machine
+   matrix in (6) is usually sparse, specially designed techniques                [23]. The third term involves the triple matrix product
+such as optimal reordering schemes and partial LU factoriza-                                                           , which may seem to be
+tion [21], [22] are often used to solve this linear system instead               time-variant as the mutual inductance matrices                  and
+of inverting the matrix       directly. Branches with variable pa-                       are rotor-position-dependent, as shown in (A1) and (A2)
+rameters are typically ordered in such a way that their equiva-                  of Appendix A.
+lent conductance submatrices appear in the bottom-right corner                      However, a careful examination of this triple matrix product
+of     to minimize to re-factorization effort [1]. The interested                reveals that it is independent of the rotor angle and therefore
+reader will find detailed discussions on this subject in classical               time-invariant, assuming that the machine’s three-phase wind-
+references [1], [21], [22].                                                      ings and associated parameters are symmetrical and the mag-
+   Generally speaking, if the machine submatrix                   is             netic saturation is ignored. These assumptions result in symmet-
+time-variant, the      matrix has to be re-factorized or partially               rical and constant rotor resistance and inductance matrices
+re-factorized at every time step, which will significantly in-                   and , respectively. Therefore, the second matrix in the triple
+crease overall computational overhead. Therefore, to maintain                    matrix product may be evaluated using the analytical inverse
+the efficient EMTP solution, it is highly desirable to formulate                 formula [24], as follows:
+the machine model such that its equivalent conductance sub-
+matrix       is constant. In this case, the LU factorization can be
+carried out only once outside of the main time-stepping loop.                                                                                          (10)
+This property is typically achieved for the        models [6], [7],
+but not for the models with a direct circuit interface, i.e., PD
+and VBR models.                                                                  Note that this matrix is also symmetric with only two distinct
+                                                                                 entries. Substituting (10) into (8) and using the trigonometric
+              III. DISCRETIZED MACHINE MODELS                                    identities (A3) and (A4) listed in Appendix A, the final form of
+   To give the reader a consistent view on the subject, the dis-                 the triple matrix product evaluates to the following:
+cretized PD model and VBR model are presented and discussed
+in this section. As usual, it is assumed that the rotor parameters
+and variables are all referred to the stator side using an appro-
+priate turns-ratio. The expressions for the induced electromag-
+netic torque and mechanical variables can be found in [20], and
+are not included here due to space limitation. Instead, the dis-                                                                                       (11)
+cussion focuses on the electrical part of the machine.
+
+A. Discretized Phase-Domain Model                                                which is also a constant and symmetric ma

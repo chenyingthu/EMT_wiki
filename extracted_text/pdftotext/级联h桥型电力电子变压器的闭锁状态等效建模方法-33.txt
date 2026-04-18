@@ -1,0 +1,280 @@
+         第 41 卷 第 5 期                        中    国 电 机 工 程 学                 报               Vol.41 No.5 Mar. 5, 2021
+         2021 年 3 月 5 日                           Proceedings of the CSEE                    ©2021 Chin.Soc.for Elec.Eng. 1831
+DOI：10.13334/j.0258-8013.pcsee.200319 文章编号：0258-8013 (2021) 05-1831-09               中图分类号：TM 46 文献标识码：A
+
+
+
+                           级联 H 桥型电力电子变压器的
+                             闭锁状态等效建模方法
+                                     丁江萍，高晨祥，许建中，赵成勇*
+                    (新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206)
+
+
+        Research on Equivalent Modeling Method of Cascaded H-bridge Based PET Under
+                                        Blocking State
+                         DING Jiangping, GAO Chenxiang, XU Jianzhong, ZHAO Chengyong*
+     (State Key Laboratory of Alternate Electrical Power System With Renewable Energy Sources (North China Electric Power
+                                       University), Changping District, Beijing 102206, China)
+
+
+ABSTRACT: Power Electronic Transformer (PET) is the key              是未来交直流混合配电网的关键设备，对其进行多工况高效
+equipment of future AC/DC hybrid power distribution network.         仿真的一个关键难点为闭锁等效建模。该文提出一种适用于
+One of the key difficulties for efficient simulation of PET’s        级联 H 桥型 PET(cascaded H-bridge based PET，CHB-PET)
+multiple working conditions is equivalent modelling under            闭锁状态的等效建模方法。首先，以一个实际算例说明闭锁
+blocking state. This paper put forward an equivalent modeling        状态的电路特征；其次，经过合理简化后，推导部分闭锁和
+method suitable for the blocking state of cascaded H-bridge          完全闭锁状态下的戴维南诺顿等效参数；然后，分析闭锁
+based PET (CHB-PET). First, a practical example was used to          等效模型的 3 种实施方式，提出一种与非闭锁模型共用状态
+explain the circuit characteristics of the blocking state. After
+                                                                     变量存储单元的集成方法；最后，在 PSCAD/EMTDC 软件
+the simplification, the Thévenin-Norton equivalent parameters
+                                                                     中搭建典型的 10kV/3kV 三相 CHB-PET 系统，并进行启动、
+in the partially blocking and totally blocking states were
+                                                                     电压暂降及直流故障闭锁工况仿真。结果表明，与详细模型
+derived. Then, three implementation methods of the blocking
+                                                                     相比，所提闭锁等效模型具有足够的仿真精度。
+equivalent model were analyzed, and an integrated method of
+sharing the state variable storage unit with the non-blocked         关键词：级联 H 桥型电力电子变压器；戴维南/诺顿等效建
+model is proposed. A typical 10 kV / 3 kV three-phase                模；闭锁；电磁暂态；启动；直流故障
+CHB-PET system was built in PSCAD / EMTDC, and the
+                                                                     0 引言
+blocking conditions during startup process, AC voltage sag,
+and DC fault were simulated. The results show that compared                随着大量分散性、间歇性、随机性的分布式可
+with the detailed model, the blocking methods proposed in this       再生能源发电并网，单端单源供电、电能单向流动
+paper have sufficient simulation accuracy. The work in this
+                                                                     的传统交流配网，正在向多端多源供电、电能多向
+paper can also provide a reference for the blocking modeling of
+                                                                     流动的交直流混合配电网快速发展[1-2]。电力电子变
+other modular converters containing multi-stage power
+                                                                     压器(power electronic transformer，PET)，也称为固
+transformation.
+                                                                     态变压器(solid state transformer，SST)，在完成传统
+KEY WORDS: cascaded H-bridge based power electronic
+                                                                     工频变压器电压变换功能的同时，可以实现对系统
+transformer(CHB-PET); Thévenin/Norton equivalent modeling;
+                                                                     中电压、电流的连续调节，综合控制以及智能管理
+blocking; electromagnetic transient; start-up; DC fault
+                                                                     等功能，是交直流混合配网实现电能互联共济的关
+摘要：电力电子变压器(power electronic transformer，PET)
+                                                                     键设备[3-5]。
+    基金项目：国家重点研发计划项目(2016YFB0900903)；国家自然科                                  PET 的闭锁状态是一种非正常工作状态，用于
+学基金项目(51607065)。                                                     启动预充电，或在严重的交直流故障下保护电力电
+    Project Supported by National Key R&D Program of China
+                                                                     子器件、子模块电容和高频变压器等[6-8]。PET 的部
+(2016YFB0900903); National Natural Science Foundation of China
+(51607065).                                                          分 或 全 部 的 绝 缘 栅 双 极 型 晶 体 管 (insulated gate
+1832                           中   国   电   机   工   程     学    报                                         第 41 卷
+
+bipolar transistor，GBT)闭锁后立即关断，而与 IGBT         的适用性。
+反并联的续流二极管将构成不控的二极管网络。在
+                                               1 CHB-PET 的戴维南诺顿等效模型
+闭锁阶段，PET 中的电容、电感和变压器等元件的
+储能状态会随着二极管的自然开断而发生变化，对                         1.1      拓扑结构
+于储能元件充放电特性的正确模拟，是 PET 闭锁状                              图 1 为三相 Y 接 CHB-PET 拓扑结果示意图，
+态电磁暂态精确仿真的关键。                                  包含三级电能变换环节，即级联 H 桥(cascaded
+                                               H-bridge，CHB)级、双有源桥变换器(dual active
+       PET 的设计通常考虑是否为模块化结构和电
+                                               bridge，DAB)级和 DC-AC 级。CHB-PET 的交流端
+能变换环节个数 [9] 。级联 H 桥型 PET(cascaded
+                                               口通过联接变压器与中压交流电网相连，CHB 级和
+H-bridge based PET，CHB-PET)以输入串联、输出
+                                               DAB 级共同构成 CHB-DAB 相单元，各相的直流输
+并联(input-series-output-parallel，ISOP)的连接方式
+                                               出端口并联连接在直流母线上。通过直流母线汇集
+进行模块组合，子模块通常包含两级变换环节[10]。
+经归纳发现，级联 H 桥型 PET 具备“高频”、                      的电能通过 DC-AC 变换器连接低压交流电网，或
+
+“隔离型”和“多模块”3 个典型特征，其中，                         供应直流负载。本文的建模对象为具有模块化结构
+
+“高频”和“多模块”使其电磁暂态详细模型的仿                         的 CHB-DAB 相单元，不包含 DC-AC 级。由于三
+
+真效率较低。基于节点拆分法或戴维南诺顿定理                         相具有完全相同的结构及参数，因此，本文将以 A
+的等效仿真模型可显著提升仿真效率[11-12]，但已有                    相为例进行分析。
+文献建立的 PET 等效模型均未考虑闭锁状态的                                CHB 级采用多个 H 桥级联的连接形式，可实
+开关支路等效方法，使其无法仿真闭锁阶段的暂态                         现交流侧多电平输出。DAB 级包含 2 个全控 H 桥、
+过程或从闭锁状态获得解闭锁后网络状态变量的                          1 个高频变压器及附加电感 L1，可实现功率的双向
+初值。                                            流动。单个 CHB-DAB 子模块中，S1—S12 为 IGBT
+       为解决诸如二极管等自然开断器件等效为二                     及续流二极管组成的开关模块，两级之间通过电容
+值电阻时，可能引起的数值振荡问题，常用电磁暂                         C1 连接，DAB 出口并联电容 C2。
+态离线 PSCAD/EMTDC 仿真平台，采用步长回溯                    1.2      CHB-PET 的戴维南等效建模方法
+插值的方法以精确计算开关动作时刻[13]，现有的实                              基于隔离变压器的解耦伴随电路，建立
+时仿真器大多采用并联电阻电容(RC)阻尼电路的                        CHB-PET 在非闭锁状态下的戴维南等效模型，可
+方法进行抑制[14-15]，可以较好地解决 PET 详细模型                 以很大程度地提高电磁暂态仿真的效率[18]。其建模
+的闭锁仿真问题。然而，插值功能或阻尼电路难以                         过程如下：
+直接与等效模型集成。文献0研究了模块化多电平                                 1）获得变压器解耦伴随电路。由互耦电路方
+换流器(modular multilevel converter，MMC)的闭锁       程可得变压器的端口电压电流方程：
+处理方法，通过整合 MMC 子模块内的二极管以应                                          U1   L11     L12  d  I1 
+                                                                  U    L            
+                                                                                  L22  dt  I 2 
+                                                                                                              (1)
+用离线仿真平台的插值功能方法，与之相类似的还                                             2   12
+有文献[17]提出的级联型静止同步补偿器提速模                                将电流 I1，I2 进行梯形离散化积分[18]，则端口
+型，但均只包含一级电能变换环节，未考虑通常为                         特性方程可表示为
+多级变换的 PET 结构。
+                                                       I (t )  YMAT  U (t )  YMAT  U (t  T ) 
+       本文在已建立非闭锁戴维南诺顿等效模型的
+                                                              I (t  T )  YMAT  U (t )  J TEQ (t  T )   (2)
+基础上，提出一种级联 H 桥型 PET 的闭锁状态等
+效建模及集成方法，在提升仿真效率的同时可计及                         式中：U[U1 U2]T；I[I1 I2]T；YMAT 为梯形离散化积
+多种闭锁工况。第 1 节简要介绍非闭锁状态的戴维                       分得到的等效导纳阵；T 为仿真步长。
+南诺顿等效电路获取方法；第 2 节提出了闭锁等                               变压器的解耦伴随电路如图 2 所示，对应的端
+效建模及与非闭锁电路的集成方法；第 3 节在                         口方程如式(3)所示。该解耦积分算法在梯形积分法
+PSCAD/EMTDC 仿真平台中搭建 10kV/3kV 级联 H              的基础上，采用 U(tT)对 U(t)进行部分代替，使
+桥型电力电子变压器测试系统，通过多个闭锁保护
+                                                   D
+                                               得 J TEQ (t  T ) 仅与上一时刻的状态量有关，且
+案例，对所提模型和详细模型进行仿真结果对比，                         I(1,1)仅与 U(1,1)有关，与 U(2,1)无关，实现变压器
+以验证所提模型的精确性；第 4 节分析该等效模型                       原副边的解耦。
+第5期                                                   丁江萍等：级联 H 桥型电力电子变压器的闭锁状态等效建模方法                                                              1833
+
+
+
+
+                                                                                                                                   MVAC
+                  CHB级
+
+
+
+
+                                                                                                                                          LVAC
+                                                                                                 B                    C
+
+                                                                                                                                           交流负载
+
+
+
+
+                                                                                                           ……
+
+
+
+
+                                                                                                                          ……
+                                                                                                                                    直流负载
+
+
+
+                         CHB-DAB子模块
+
+
+
+                   S1              S2                   S5            S6                       S9         S10
+                                                                                         N:1
+
+                                                 C1                                                              C2
+                   S3              S4                   S7            S8                       S11        S12
+
+
+
+
+                                                                               图1         三相 Y 接 CHB-PET 拓扑结构
+                                                              Fig. 1 Three-phase Y-connected CHB-PET topology
+         I1                                                                               I2                    模块的串联侧戴维南等效电路和并联侧诺顿等效电
+                  D
+              J         (1,1)                                          J   D
+                                                                                 (2,1)
+                  TEQ               (1,1)              (2, 2)            TEQ                                  路进行代数叠加后，即可得到整个 CHB 相单元的戴
+                        2( L11 L22  L21 L12 )        2( L11 L22  L21 L12 )
+ U1
+                              T  L22                      T  L11
+                                                                                                     U2         维南诺顿等效电路，仅包含对外的 4 个端子。
+
+                                                                                                                2 CHB-PET 的闭锁集成建模方法
+                         图2        变压器的解耦伴随电路
+                                                                                                                2.1   基本原理
+  Fig. 2      Decoupling companion circuit of transformer
+                                                                                                                      在 DC-DC 变换环节，所有 DAB 变换器闭锁后，
+I (t )    U (t )  (YMAT  λ )  U (t )  I TEQ (t  T ) 
+          U (t )  (YMAT  λ)  U (t  T )                                                                  流过开关模块 S5—S12 的电流会迅速降为 0，使其与
+        I TEQ (t  T )    U (t )  J TEQ
+                                          D
+                                             (t  T )         (3)                                              前级(CHB)和后级(DC-AC 变换器)分别解列，因此，
+                                                                                                                在 CHB-DAB 模块等效建模时，可进行相应的简化。
+式中为 YMAT 生成的对角矩阵。
+                                                                                                                以 DAB 出口短路故障引起闭锁保护动作为例进行
+      2）消去内部节点。建立 CHB-DAB 子模块的
+                                                                                                                分析，即图 1 中电容 C2 两端的电压降为 0，可以得
+伴随电路并采用 Ward 等值法获取外部等值电路，
+                                                                                                                到如图 4 所示的故障态波形(假设 DAB 输入侧电压
+仅保留外部 4 个端子。
+                                                                                                                恒定)。
+      3）消去模块间的连接节点。如图 3 所示，将子
+      AC1                   串联侧                                    并联侧                   DC1                          图 4 中，变压器(含附加电感)的端口电压电流
+                                                                                                                波形可分为 4 段：1）0~t1，DAB 处于基于单移相控
+                                  S
+                                 RCHBEQ                       P
+                                                             RCHBEQ                                             制，且输入、输出额定电压相同的正常工作状态[19]；
+                         S
+                        VCHBEQ      ﹢
+                                                                                 P
+                                                                               J CHBEQ                          2）t1~t2，出口电压跌落，但 DAB 仍处于解锁状态
+      AC2
+                                    ﹣
+                                                                                         DC2                    (t2 为换路时刻，t2为换路前一瞬间)；3）t2~t3，DAB
+           图3             CHB-PET 的戴维南-诺顿等效电路                                                                   闭锁，二极管 D5 和 D8 续流；4）t3 时刻及之后，续
+Fig. 3     Thévenin-Norton equivalent circuit for CHB-PET                                                       流结束，D5—D12 关断，DAB 退出运行。
+1834                                                                      中       国        电      机   工    程         学     报                                     第 41 卷
+
+                                                                                                      的附加电感电流峰值；Uin 为 DAB 输入侧额定电压。
+               Uout
+
+                                                                                  uout
+                                                                                                                可以看出，无论闭锁前开关模块的导通状态如
+                                                                                                      何，电感及变压器储存的能量都会通过续流二极管
+                                 T
+           Uin(Uout)                                                              uT1                 转移到 DAB 两端的电容上。CHB 连接的交流系统
+                                                                                  uT2
+                                                                                                      的频率(一般为工频)通常远低于 DAB 的开关频率，
+          -Uin(-Uout)
+                                                                                                      对闭锁等效建模而言，若忽略这一短暂的续流过程
+                                                                        iT1                           (图 4 中 t2 时刻之后的虚线部分，等效模型中电感电
+                                                                     近似处理
+                                                                          D5、D8续流                     流赋 0)，随后交流系统将继续对电容 C1 充电，电
+                                       t1                    (t2-)t2 t3
+                                                                                                      容电压的稳态分量在简化后的等效模型中仍然可
+                       图4        故障态的 DAB 输出电压、                                                       以精确获得，对后续电磁暂态仿真的影响几乎可以
+                      高频变压器端口电压和一次侧电流
+                                                                                                      忽略，本文第 4 节将进行仿真验证。
+ Fig. 4       DAB output voltage, high-frequency transformer
+                                                                                                      2.2        2 种闭锁模式下的 CHB-PET 等效电路
+    port voltage, and primary current in the fault state
+                                                                                                                考虑 CHB-PET 的 2 种闭锁模式：1）CHB 级和
+       图 5(a)—(d)分别为对应 4 个阶段中拐点的故障
+                                                                                                      DAB 级同时处于闭锁状态，
+                                                                                                                   以下简称为
+                                                                                                                       “完全闭锁”
+                                                                                                                            ；
+电流回路。附加电感两端电压近似为 uT1kuT2(k 为变
+                                                                                                      2）CHB 级解锁，DAB 级闭锁，以下简称为“部分
+比)，由图 5(b)、(c)可以看出，进入第 3 阶段后，附
+                                                                                                      闭锁”。以两侧有源时启动充电过程为例，在 DAB
+加电感两端电压翻转为 uin，因此，在 t2 时刻后，电
+                                                                                                      投入前，需要将电容 C1 和电容 C2 通过 CHB 级和
+感电流逐渐上升到 0，同时变压器副边电流过零，随
+                                                                                                      DC/AC 变换器充电至额定值。电容 C1 的充电过程包
+后二极管关断，电感和变压器储存的能量耗散完毕。
+                                                                                                      含不控充电(完全闭锁)和可控充电(部分闭锁)2 个阶
+             t1-
+                      S5    S6                 S9    S10                                              段，可用本节介绍的等效建模方法模拟。
+                                 iT1 L1      iT2
+    uin
+                      C1
+                                 uT1           uT2                 C2                    uout                   由 2.1 节分析可知，CHB-PET 子模块的闭锁简
+                      S7    S8                S11    S12                                              化电路，如图 6 所示。由图 6(a)可见，每个子模块
+             t2-                       (a) t1时刻                                                       的 AC2 与下一个子模块的 AC1 相连，即串联连接，
+                      S5    S6                S9     S10
+                                       L1                                                             因此，当流过相单元的电流大于 0 时，所有子模块
+                      C1                                           C2
+    uin                                                                    uout                       的电容正向接入，小于 0 时则反向接入。每个子模
+                      S7    S8                S11    S12
+                                                                                                      块的 DC1、DC2 分别相连，因此，相单元的右侧相
+             t2                        (b) t2-时刻                                                      当于多个电容并联连接。如图 6(b)所示，串联侧为
+                       D5   D6
+                                       L1
+                                                     D9    D10                                        结构更为简单的全控单端口电路，可用通用的单端
+                      C1                                           C2
+    uin                                                                    uout                       口戴维南等效方法建模[20]，并联侧与图 6(a)所示完
+                       D7   D8                       D11   D12
+                                                                                                      全一致。
+                                       (c) t2时刻
+             t3                                                                                                                          DC1                          DC1
+                                                          

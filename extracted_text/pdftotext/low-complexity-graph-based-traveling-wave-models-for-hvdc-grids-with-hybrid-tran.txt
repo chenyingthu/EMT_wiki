@@ -1,0 +1,193 @@
+                                                              Electric Power Systems Research 205 (2022) 107710
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Low-complexity graph-based traveling wave models for HVDC grids with
+hybrid transmission lines: Application to fault identification
+P. Verrax *, a, b, N. Alglave a, A. Bertinato a, M. Kieffer a, b, B. Raison a, c
+a
+  SuperGrid Institute, 23 rue Cyprian, BP 1321, Villeurbanne, Cedex 69611, France
+b
+  L2S, Univ Paris-Saclay, CNRS, CentraleSupelec, Gif-sur-Yvette F-91190, France
+c
+  Institute of Engineering Univ. Grenoble Alpes, CNRS, Grenoble INP*, G2Elab, Grenoble 38000, France
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 Faults affecting hybrid transmission lines comprising both overhead and underground parts, generate numerous
+Hybrid lines                                              traveling waves may be difficult to describe and evaluate. This paper proposes a combined knowledge-based and
+Fault location                                            behavioral modeling approach to represent the voltage and current waveform after the fault occurrence. The grid
+Graphs theory
+                                                          is reprensente as a graph which facilitates the selection of waves traveling through the grid for a finite time-
+Parametric model
+Identification
+                                                          horizon simulation. A relatively compact description of the waves is then derived. The obtained model de­
+                                                          pends explicitly on the characteristics of the grid and on the fault parameters. An application of the model to the
+                                                          identification of the faulty portion of an hybrid line within an HVDC grid is proposed.
+
+
+
+
+1. Introduction                                                                                 task. A brief literature overview on protection algorithms for hybrid
+                                                                                                lines is given in Section 2, showing the interest of model-based ap­
+    The integration of renewable electricity sources leads to the evolu­                        proaches. This paper proposes a systematic approach for the modeling of
+tion of the existing transmission and distribution power grids into a                           the traveling waves appearing after a fault using a graph description of
+more interconnected system. For high voltage transmission, direct cur­                          the grid. For each wave, the proposed parametric model combines a
+rent (HVDC) technology may outperform HVAC for long distance in­                                physical and a behavioral part, as detailed in Section 3. The physical part
+terconnections, in particular for underground or undersea cables [1].                           accounts for the propagation delays of the waves though the trans­
+The use of hybrid lines comprising portions of cables and overhead lines                        mission lines and the reflection and transmission occurring at the nodes
+permits a better adaption to different terrains and configurations                              of the grid. The behavioral part accounts for the distortion of the waves
+(offshore connection, populated areas, existing corridors, etc.), see for                       due to the soil resistivity and the cable resistance. The obtained model
+instance [2,3]. Such hybrid lines can be further integrated into larger                         depends explicitly on the parameters that characterize a fault, such as
+Multi-Terminal DC grids (MTDC) to increase the overall reliability while                        the fault distance and the fault resistance. An application example of the
+diminishing the investment costs [4,5]. An example of a four station                            model to identify the faulty segment within a hybrid line is presented in
+meshed HVDC grid comprising two overhead lines and two hybrid lines                             Section 4. Test results using a test grid simulated in EMTP-RV [7] soft­
+is depicted in Figure 1.                                                                        ware are provided in Section 5.
+    The protection of MTDC grids against faults remains a challenging
+topic, in particular when it comprises several portions of underground                          2. Literature overview
+cables (UGC) and overhead lines (OHL). The differences between UGC
+and OHL, for instance in terms of surge impedance, makes the use of                                 The selective clearing of faults by disconnecting only the affected
+traditional rate of change of voltage (ROCOV) and current (ROCOC)                               line is usually the preferred solution as it allows to operate the healthy
+algorithms ill-suited [6]. For hybrid lines, protection algorithm should                        parts of the grid continuously. This requires DC Circuit Breakers (DCCB)
+be able to identify the faulty section as faults on areal section are                           at the extremity of each line. Each DCCB is then controlled by the
+generally temporary and can lead to the auto-reclosing of the line.                             neighboring relay which, in case of a fault affecting the line it protects,
+Traditional protection algorithms are generally unable to perform this                          must send a tripping order as fast as possible (typically in less than 1 ms).
+
+
+
+    * Corresponding author at: SuperGrid Institute, 23 rue Cyprian, BP 1321, Villeurbanne, Cedex 69611, France.
+      E-mail address: paul.verrax@supergrid-institute.com (P. Verrax).
+
+https://doi.org/10.1016/j.epsr.2021.107710
+Received 15 April 2021; Received in revised form 9 November 2021; Accepted 4 December 2021
+Available online 18 December 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+P. Verrax et al.                                                                                                       Electric Power Systems Research 205 (2022) 107710
+
+
+
+
+Fig. 1. Example of a meshed HVDC grid comprising two hybrid lines and two overhead lines. DC circuit breakers located at the extremity of each line as well as at the
+output of the converters are omitted.
+
+
+The protection algorithm at the relay must thus differentiate faults                  more general case of an hybrid link embedded in a MTDC grid. The
+affecting the protected line (internal faults) from faults affecting other            primary protection is ensured by a differential current criterion evalu­
+parts of the grid (external faults). Furthermore, in the case of hybrid               ated at the junction points. Localization is then performed using the
+lines, the identification of the faulty segment is of interest. While faults          arrival time difference at the different sensors, measured using a wavelet
+affecting cables are usually permanent, faults affecting OHL are often                transform of the current. Nevertheless, the availability of sensors at each
+temporary and a re-closing of the line may be attempted. Nevertheless,                junction is costly and communication between those would lead to
+the identification of the faulty segment within an hybrid line is a difficult         additional delays.
+task. Many existing approaches involve distributed sensors at the junc­                   Model-based approaches representing the transient behavior of the
+tion between each portion and synchronized communication between                      grid are beneficial as they allow one to exploit the information contained
+distant sub-stations at the price of a higher communication delay, see                in the traveling waves appearing after a fault occurrence, see for
+[8]. On the other hand, single-ended algorithms only require sensors at               instance [14]. The evaluation of the different traveling waves may
+the extremity of each line and are thus less sensitive to communication               however be difficult in the case of hybrid lines due to the numerous
+issues.                                                                               discontinuities along the line.
+    In [9], a Support Vector Machine (SVM) algorithm is trained to
+classify the faults of a two segments hybrid line using single ended data.            3. Systematic fault modeling
+Voltage and current wavelet energies are used as inputs for the SVM.
+Once the faulty section is identified, a wavelet-based localization tech­                The modeling of the faults affecting hybrid transmission lines of an
+nique is applied. As it uses a binary classifier, this approach is limited to         MTDC grid with monopolar configuration is detailed in this section. The
+hybrid lines with only two segments. The SVM has also to be trained                   description of the faulty network as a graph is first introduced in Section
+with sufficient fault scenarios. For a Point-to-Point (P2P) hybrid line,              3.1. Elements of the TW theory are briefly recalled in Section 3.2 after
+[10] showed that the presence of oscillations in the current evolution                which the proposed approach for the systematic modeling of TW is
+after the operation of the AC circuit breakers (ACCB) is characteristic of            presented. In this physical part of the model, the distortion of the TW is
+a fault in the overhead part of the line. This kind of approach is not                neglected which allows us to derive explicit expressions for the different
+suited for meshed grid where ACCBs do not operate as primary                          TW. In a second stage, the behavioral part of the proposed model,
+protection.                                                                           whichrepresents the distortion due to the resistivity of the ground as
+    An HVAC line with an arbitrary number of junctions is considered in               well as the resistance of the cable is described in Section 3.3.
+[11]. Based on the detection time of the first traveling wave (TW) at both
+ends of the line, the method is able to locate the fault, taking into ac­             3.1. Graph description of the MTDC grid affected by a fault
+count the different propagation speeds as well as possible uncertainties
+in the line parameters. In [12], the arrival times of multiple TW at only                 The considered MTDC grid is described by an undirected graph G =
+one end of the line are extracted and compared to pre-determined times                 (Q ,E ). Each vertex q ∈ Q represents an interconnection between two or
+corresponding to known fault distances. Matching the extracted with the               more line segments. Nodes may correspond to bus-bars or junctions
+pre-defined arrival times allows one to locate the fault. The method to               between overhead line and underground cable segments. Each segment
+obtain the pre-determined arrival times is however not detailed. The                  is represented by an edge e ∈ E of the graph. The edge between the
+overall approach requires an observation window of 4 ms and cannot be                 nodes qi and qj is denoted eqi qj , or ei,j to lighten the notations. Since the
+considered as an ultra fast localization algorithm.                                   graph is undirected, ei,j = ej,i . The length of the segment represented by
+    The presence of sensors at the junction between the aerial and un­                the edge ei,j is di,j .
+derground parts is assumed in [13]. A differential protection criterion is
+                                                                                          We assume that at t = tf a fault occurs in edge ef = ei,j ∈ E . This fault
+then applied to identify the faulty section, assuming the primary pro­
+                                                                                      is modeled as a switch closing in series with the fault resistance Rf and a
+tection is ensured through the control of full-bridge Modular Multilevel
+                                                                                      constant voltage source. The voltage source accounts for the collapse of
+Converters (MMC). Distributed sensors are also considered in [8] in the
+                                                                                      voltage and is set to the opposite of the pre-fault voltage Vbf at the fault
+
+                                                                                  2
+P. Verrax et al.                                                                                                                      Electric Power Systems Research 205 (2022) 107710
+
+
+location.                                                                                           √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+       The fault leads to a modification of the graph G . A node qf is added to          Zs (s) =    Z(s)/Y(s)                                                                     (8)
+Q and the faulty edge ef = ei,j ∈ E is replaced by the edges ei,f and ef,j of
+                                                                                         is the surge (or characteristic) impedance. Similar computations can be
+lengths df,i and df,j . Formally, the graph G f = (Q f , E f ), once the fault has
+                                                                                         performed for the current.
+occurred, is such that Q f = Q ∪ {qf } and E f = E \{ef } ∪ {ei,f , ej,f }. The
+                                                                                              The assumption that losses are negligible compared to the inductive
+fault can thus be characterized by the vector of fault parameters p = (tf ,
+                                                                                         behavior of the line allows one to obtain explicit expressions of the surge
+ef , df,i , df,j , Rf ), where Rf is the fault resistance between the transmission       impedance and propagation function. Considering a low-loss approxi­
+line and the ground. The two fault distances df,i and df,j are linked                    mation, one has
+through the total length of the line df,i + df,j = di,j , which is known. Thus                    √̅̅̅̅(         )
+only one unknown fault distance is kept, for a fault located on the edge                 Zs (s) ≃
+                                                                                                    L
+                                                                                                         1+
+                                                                                                            1 R
+                                                                                                                   .                                             (9)
+ei,j , the fault distance is arbitrarily defined as                                                 C       2 sL
+        {                                                                                                                                     √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+df =
+            df,i if i < j
+                             .                                                 (1)       For the propagation constant γ(s) =                   Y(s)Z(s), the low-loss approxi­
+            df,j if j < i
+                                                                                         mation leads to
+                                                                                                        [      ]
+In what follows, Laplace domain or frequency domain variables are in                             √̅̅̅̅̅̅  1 R
+                                                                                         γ(s) ≃ s LC 1 +         .                                                               (10)
+capital letters, whereas continuous and discrete time domain variables                                    2 sL
+are in small letters. The convolution is represented by ⊗ . F and F − 1
+                                                                                             Considering the lossless approximation, one gets
+stand for the direct and inverse Fourier transform.
+                                                                                              √̅̅̅̅
+                                                                                                L
+                                                                                         Zs ≃                                                                                    (11)
+                                                                                               C
+3.2. Physical part of the parametric fault model
+                                                                                                √̅̅̅̅̅̅
+                                                                                         γ(s)≃ s LC.                                                                             (12)
+    A physical description of the transient evolution of the voltage and
+current after a fault is presented in this section. The main results on the              In that case, the surge impedance is real and the propagation function
+propagation of TW are first recalled in Section 3.2.1. The proposed                      H(s, d) = exp(− γ(s)d) is a pure delay.
+approach to describe any wave traveling from the fault through the grid                      In practice, the lossless approximations appears to be sufficient in the
+is presented in Section 3.2.2.                                                           considered fault localization context. Nevertheless, the characteristic
+                                                                                         impedance of underground cables still require a low-loss approximation
+3.2.1. Traveling waves                                                                   to provide results of sufficient accuracy.
+   Consider an edge ei,j belonging to a meshed grid as depicted in                           At the junction between a line and a station (or more generally at any
+Figure 1. The temporal evolution of the voltage and current at a given                   change of propagation medium), the forward wave Vf induces a trans­
+point of ei,j can be described using traveling waves, as shown in [15].                  mitted wave Vt and a reflected wave Vr . The associated voltage Vtot at
+Current and voltage along the line satisfy the telegraph equations,                      the junction is
+formulated in the Laplace domain as
+                                                                                         Vtot   = Vt = Vf + Vr
+∂2 V                                                                                            = (1 + K)Vf                                                                      (13)
+     = Z(s)Y(s)V(x, s),                                                       (2)
+∂x2                                                                                             = TVf .
+
+∂2 I                                                                                     The reflection and transmission coefficients K and T depend on the
+     = Y(s)Z(s)I(x, s),                                                       (3)
+∂x2                                                                      

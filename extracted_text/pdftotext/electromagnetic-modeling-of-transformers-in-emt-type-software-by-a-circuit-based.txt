@@ -1,0 +1,183 @@
+5402                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+         Electromagnetic Modeling of Transformers in
+        EMT-Type Software by a Circuit-Based Method
+             Sadegh Rahimi Pordanjani , Mohammed Naïdjate , Nicolas Bracikowski , Mircea Fratila ,
+                  Jean Mahseredjian , Fellow, IEEE, and Afshin Rezaei-Zare, Senior Member, IEEE
+
+
+   Abstract—This work proposes a fully circuit-based method for                  models employed in EMT-type software. In fact, existing topo-
+modelling electrical transformers. This method not only offers the               logical transformer models are best suited for situations where
+advantages of circuit-based methods and can be implemented in                    the model’s input data is test based, such as open-circuit and
+electromagnetic transient (EMT) type software, but it can also
+provide a detailed representation of transformers, comparable to                 short-circuit tests, for example. Despite the significant gains
+the finite element method (FEM). The proposed method enables a                   achieved to make these models more physically meaningful [6],
+detailed geometrical modelling, as well as representation of mag-                [7], they are unable to account in detail for internal behavior
+netic flux paths and consideration of iron core saturation. It can               of magnetic effects, including local magnetic saturation and
+be implemented in EMT-type software to see the effect of power                   local magnetic flux leakages, since they use a limited number of
+networks on transformers. In addition, the proposed method can
+represent internal faults in transformers. The problem is con-                   elements to represent flux paths.
+strained to a 2-D domain, which is often used in FEMs to represent                  A finite element method (FEM) [8] can accurately account
+the magnetic behavior of power equipment. Finite element analysis                for material nonlinearity, geometrical complexity, and material
+based on ANSYS Maxwell is used to verify the proposed method.                    anisotropy, making it ideal for representing completely the mag-
+  Index Terms—Transformer model, electromagnetic transients,                     netic device internal behavior [9]. Field solvers, on the other
+magnetic circuits, finite element method (FEM), winding fault.                   hand, lack the variety of power system components needed to
+                                                                                 simulate a practical power network comprising control systems,
+                           I. INTRODUCTION                                       surge arresters, circuit breakers, and multiphase transmission
+        AGNETIC devices such as transformers and rotating                        lines. To address this issue, the solutions of field equations and
+M       electrical machines play a critical role in power systems.
+In order to accurately simulate phenomena like inrush currents,
+                                                                                 circuit equations can be combined with each other. In the com-
+                                                                                 bination of circuit-based methods and FEM, 2-D FEM is usually
+internal faults, ferroresonance and harmonic generation, detailed                the method of choice for predicting magnetic behavior in power
+modelling of magnetic devices is a key issue in power system                     equipment, due to the difficulty of 3-D, which derives from the
+transient simulations. It is also critical for designers to exam-                complexity of the geometry and time-consuming challenges.
+ine how the external network affects magnetic device internal                       Two strategies are used to combine the solutions of field
+behavior. Circuit simulators and field solvers are two common                    equations and circuit equations: direct and indirect.
+tools used to carry out these analyses.                                             The direct method combines and solves simultaneously field
+   EMT-type software, such as EMTP [1], employ lumped pa-                        equations and circuit equations [10]. To solve the magnetic
+rameter approaches to model transformers. Topological trans-                     equations, a formulation involving the magnetic vector potential
+former models [2]–[5] are the most common lumped parameter                       is used. The conductor current is expressed in terms of current
+                                                                                 density, and the flux linkage is determined from the potential
+   Manuscript received 21 December 2021; revised 31 March 2022; accepted 9       vector to establish the coupling. Step-by-step numerical integra-
+May 2022. Date of publication 23 May 2022; date of current version 28 Novem-     tion is used to solve the time-dependent differential system that
+ber 2022. Paper no. TPWRD-01906-2021. (Corresponding author: Sadegh              results from coupling. A Newton–Raphson iterative approach is
+Rahimi Pordanjani.)
+   Sadegh Rahimi Pordanjani is with the Department of Electrical En-             utilized to account for the magnetic and electric nonlinearities.
+gineering, Polytechnique Montreal, H3T 1J4 Montreal, Canada (e-mail:             However, because it cannot provide enough network component
+sadegh.rahimi-pordanjani@polymtl.ca).                                            models, this strategy is not ideal for complicated and large power
+   Mohammed Naïdjate is with CRTT, University of Nantes, 44035 Saint
+Nazaire, France (e-mail: mohammed.naidjate@univ-nantes.fr).                      networks.
+   Nicolas Bracikowski is with IREENA Laboratory, Nantes University, 44035          The indirect method allows the FEM-based model and EMT
+Saint Nazaire, France (e-mail: nicolas.bracikowski@univ-nantes.fr).              circuit portions to be treated separately while maintaining con-
+   Mircea Fratila is with THEMIS, EDF Lab Paris-Saclay, 91120 Palaiseau,
+France (e-mail: mircea.fratila@edf.fr).                                          nection via coupling coefficients [11]. In contrast to direct meth-
+   Jean Mahseredjian is with Ecole Polytechnique, H3T 1J4 Montreal, Canada       ods, indirect methods can be used to study the behavior of mag-
+(e-mail: jean.mahseredjian@polymtl.ca).                                          netic devices in vast power networks with a variety of component
+   Afshin Rezaei-Zare is with the Electrical Engineering and Computer Science
+Department, York University-Keele Campus, M3J 2S5 Toronto, Canada (e-mail:       models. Because the solved equations are nonlinear, the indirect
+rezaei@yorku.ca).                                                                techniques require numerous iterations between the field and
+   Color versions of one or more figures in this article are available at        circuit sections, which significantly deteriorates computational
+https://doi.org/10.1109/TPWRD.2022.3177137.
+   Digital Object Identifier 10.1109/TPWRD.2022.3177137                          performance. Although both coupling-based approaches can be
+
+                        0885-8977 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                       5403
+
+
+
+quite accurate, their main disadvantages are extensive calcula-                 authors of [13] used a 3D RNM [14] for calculating leakage
+tion periods and numerous numerical challenges in implemen-                     inductances, however it kept the limitations explained above
+tation [11]. Other difficulties and performance issues arise with               for the 2D model. Although the methodology provided in this
+both direct and indirect coupling approaches when modelling a                   paper is in 2D, a method known as the double-2D method [17]
+circuit using FEM that contains multiple magnetic devices.                      may be used to represent the transformer in 3D by integrating
+   This paper presents a new strategy for coupling field and                    several 2D models in perpendicular planes, which the authors
+circuit equations using exclusively circuit-based methods. A                    will investigate further in future studies.
+meshed circuit-based method is proposed for modelling mag-                         Recently, [18] proposed mesh modelling of transformers us-
+netic devices in great detail and accuracy. The Hopkinson anal-                 ing MEC in EMTP by establishing virtual circuits to account
+ogy [12], commonly known as the magnetic equivalent circuit                     for magnetic flux distribution, which adds complexity to EMT-
+(MEC) or Reluctance Network Model (RNM), is used to create                      type software. In this paper, magnetic flux distribution is ac-
+this circuit-based technique. In fact, the meshed version of RNM                complished utilizing available elements in EMT-type software,
+is developed to provide a distributed circuit-based representation              which simplifies implementation.
+of magnetic devices which is called Distributed Reluctance Net-                    One of the most appealing aspects of DRNM presented in our
+work Model (DRNM). This paper also implements the proposed                      paper, is its ability to simulate internal faults in transformers.
+mesh models in EMT-type software, utilizing equivalent electric                 Existing circuit-based models used to model internal faults
+elements. Unlike existing topological approaches in EMT-type                    [19], [20], have limitations for accurately representing leakage
+software that use a limited number of flux paths to represent                   flux paths and inductances associated with them, as well as
+the field behavior of a magnetic device, the DRNM suggested                     accounting for the effect of the core, all of which are critical
+in this research is able to use a large number of flux paths. The               for investigating internal faults. The proposed method not only
+proposed new approach in this research is to discretize space                   represents leakage flux paths accurately, but it also considers the
+into electric/magnetic circuits. In addition, unlike topological                effect of the core, including saturation behavior.
+models, this paper employs meshing and like in FEM, it allows to                   This paper starts by describing the principles of the proposed
+adapt to accuracy requirements. In fact, the most important con-                method for a basic two-winding single-phase transformer in
+tribution of this research is the accurate incorporation of an effi-            Section II. Section III extends the proposed method to a real
+cient FEM-like approach in EMT-type software. The proposed                      two-winding three-phase transformer. Section IV shows how to
+method outperforms methods that combine FEM and circuit                         represent internal faults such as turn-to-turn and turn-to-ground
+methods in terms of computational performance while maintain-                   faults. Finally, in Section V, the results for normal operating
+ing accuracy. It is also possible to represent non-homogeneous                  conditions, internal fault conditions, and a transient phenomenon
+materials with magnetic saturation and incorporate all leakage                  are compared to those from FEM solution.
+and fringing flux paths.
+   An approach termed ‘reluctance network model’ [13] has                                                  II. METHODOLOGY
+been used to represent a meshed form of the transformer model
+using circuit elements (see also [14]–[16]). The proposed so-                      In this section, the proposed circuit-based method, DRNM,
+lution [13] is primarily for design purposes, whereas the one                   is explained for a single-phase shell-type transformer which is
+presented in our paper is for electromagnetic transient studies.                shown in Fig. 1. The primary winding is connected to the voltage
+Due to the design objective of [13], the number of nodes and                    source UP through resistance RP and the secondary winding is
+elements is minimized to allow for repeated iterations in op-                   connected to the resistive load RL through resistance RS . Imple-
+timization methods. The model has between 50 to 100 nodes.                      menting an electromagnetic model for the defined transformer,
+In our work, the number of elements in the models is ranging                    using DRNM, includes three main steps. Firstly, the space of
+from 1000 to 3000, to demonstrate all details of transformer                    the problem is meshed into suitable number of elements based
+geometry. In addition, [13] was originally presented for the                    on required accuracy. Secondly, Maxwell’s equations including
+purpose of calculating leakage inductances, and as such, aimed                  Ampere’s and Faraday’s are employed for the coupling parts.
+to distribute elements in the air that are crucial for leakage induc-           Finally, the boundary conditions are imposed.
+tance calculations, but not the core, particularly the columns. In                 In this section, as shown in Fig. 1(a), the problem space
+our contribution, the core, the air, the windings, and even the tank            is meshed into 24 elements. The magnetic flux paths in each
+are divided into elements (meshes) and detailed representations                 element are represented by two horizontal and two vertical
+of magnetic flux paths are provided for each of them. Due to                    reluctances. To impose the boundary conditions, reluctances
+the lack of coupling between the transformer model and the                      perpendicular to the outside sides of the problem space are elim-
+external circuit in [13], such a model cannot be utilized to study              inated. In Fig. 1(a), the eliminated reluctances are represented
+the transformer’s transient behavior in a network. Not only mag-                by dashed blue reluctances.
+netomotive force sources, but also electromotive force sources                     The values of the magnetomotive force sources are derived
+have been distributed in our research to enable coupling between                by applying Ampere’s law as follows
+the magnetic equivalent circuit and the external electric circuit.                                           F = NM M F I                              (1)
+Mutators have been used to achieve this coupling, whereas [13]
+distributed only magnetomotive force sources, not electromotive                 where F = [ℱ1 ℱ2 . . . ℱ12 ]T with [ℱ1 ℱ2 . . . ℱ12 ]
+force sources, implying the absence of mutators. Also, the                      as the values of the magnetomotive force sources indicated in
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+5404                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+Fig. 1.   (a) Distributed magnetic circuit with magnetomotive forces and (b) schematic of transformer winding turns and external circuit.
+
+
+
+Fig. 1(a). And I = [ ip is ]T which iP and iS are the primary
+and secondary winding currents, respectively. The components
+of NM M F which has been introduced to relate F and I are
+derived using curves of the magnetomotive force distribution
+along the x axis for the primary and secondary windings (ℱp (x)
+and ℱs (x)) presented below the transformer in Fig. 1(a). On
+each position in the x axis, the sum of the magnetomotive force
+sources displayed on the magnetic equivalent circuit must equal
+the sum of ℱs (x) and ℱp (x) at that point. For example, the sum
+of ℱ1 and ℱ7 in the circuit which are on the same position of
+x = X, equals the sum of ℱp (x) and ℱs (x) at that position,
+                                                                                  Fig. 2. DRNM for a transformer (magnetic and electric circuits, as well as
+which are ℱp (X) = 2ip and ℱs (X) = 0, and because the                            their coupling).
+circuit has horizontal symmetry, the values of ℱ1 and ℱ7 are
+the same, and their values equal ip . The other components of
+NM M F are derived using the same rule as follows.
+                                                                                  where
+                                                               T                                                                              
+                            12 22 21 12 22 21                                             EP               Eab + Ecd + Eef + Egh
+          NM M F =                                                         (2)         E=                =                                              (5)
+                            01 22 10 01 22 10                                             ES               EAB + ECD + EEF + EGH
+
+    Until now, only the magnetic circuit has been included. Fara-                      Φ = [ϕ1 ϕ2 ϕ3 ϕ4 ϕ5 ϕ6 ϕ7 ϕ8 ϕ9 ϕ10 ϕ11 ϕ12 ]T                   (6)
+day’s law is used to include the electric circuit and the coupling                      NEM F = NTM M F                                                 (7)
+of the electric and the magnetic circuits. Fig. 1(b) presents the
+schematic diagram for winding configuration demonstrating the                        In which EAB , ECD , EEF , EGH , Eab , Ecd , Eef and Egh
+total magnetic fluxes within each winding turn. The induced                       are the electromotive forces induced in the turns AB, CD, EF,
+voltage in each turn is determined by the fluxes that flow through                GH, ab, cd, ef, and gh respectively. Moreover ϕ1 , ϕ2 , ϕ3 , …,
+it. For instance, in the turn AB of the secondary winding which                   ϕ12 are the magnetic fluxes that pass through the winding turns
+encloses the fluxes ϕ9 and ϕ10 , the voltage EAB is induced                       which have been displayed in Fig. 1(a). And NEM F is the matrix
+which is derived by                                                               introduced to relate E and Φ.
+                                                                                     Finally, the interface between the magnetic and electric cir-
+                                      d                                           cuits is derived using the above-mentioned relations and rules,
+                        EAB = −          (ϕ9 + ϕ10 )                       (3)
+                                      dt                                          as shown in Fig. 2. The magnetic circuit is shown in black, while
+                                                                                  the primary and secondary winding electric circuits are shown
+   The voltages induced in other turns and the fluxes passing
+                                                                                  in blue and green, respectively. Coupling between the magnetic
+through them have the same relationship. Then, by adding the
+                       

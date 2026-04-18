@@ -1,0 +1,201 @@
+                                                              Electric Power Systems Research 252 (2026) 112402
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Simulation of electromagnetic transients with a family of implicit
+multi-step oscillation-free formulas ⋆
+Enrique Melgoza-Vázquez
+Tecnológico Nacional de México / I. T. Morelia, Av. Tecnológico 1500, Morelia, Mich, C P 58120, México
+
+
+
+
+a r t i c l e           i n f o                           a b s t r a c t
+
+Keywords:                                                 The backward diﬀerentiation formulas are a family of implicit integration rules which generalize the backward
+Time-domain simulation                                    Euler ﬁnite diﬀerence formula and may be used for electromagnetic transient simulation. These multi-step for-
+Numerical oscillations                                    mulas require a number of history terms, improving the precision as the order increases. This approach was
+                                                          used to implement a computation platform based on the modiﬁed nodal analysis, where the integration rule
+                                                          may be changed as desired. Integration rules of orders one to ﬁve were tested. The additional computer memory
+                                                          requirements are modest and are not an issue for modern computer equipment. The obtained response is free
+                                                          from numerical oscillations due to switching operations in all cases, without requiring additional checks or spe-
+                                                          cial control of the computation. Since the history terms enter the global equation only through the right hand
+                                                          vector, the scheme may be implemented in existing transients programs with only minor changes to the code
+                                                          base, providing a reliable simulation resource with ﬁxed or variable time step sizes.
+
+
+
+
+1. Introduction                                                                                 trapezoidal formula is prone to numerical oscillations when certain con-
+                                                                                                ditions are encountered in the simulation, such as the opening of an in-
+    The growing addition of inverter-based resources (IBR) into electri-                        ductive branch [13]. Therefore, some corrective measures have to be
+cal power systems demands the analysis of complex interaction issues                            taken in the implementation of time-stepping schemes based on the
+such as frequency and voltage stability, sub-synchronous resonances,                            trapezoidal formula, with techniques such as critical damping adjust-
+harmonic interactions and other phenomena. Due to the nonlinearity                              ment (CDA), and interpolation [13].
+and frequency dependence of such systems, a time-domain analysis is                                 In this paper, the use of multi-step formulas is explored with the
+required in many cases [1].                                                                     purpose of adding ﬂexibility to the time domain simulations of electrical
+    Time-domain simulations have thus become an important tool in the                           systems. We focus particularly on the backward diﬀerentiation formulas
+planning and operation of electrical power systems with high penetra-                           (BDF), a class of multi-step time discretization scheme which is a gen-
+tion of IBRs. The time scales of the analyzed phenomena often reach                             eralization of the backward Euler formula (BEF). It is known that the
+the order of minutes; on the other hand, the detailed representation of                         BEF is absolutely stable and immune to numerical oscillations; in fact,
+inverter commutation and control actions call for small time-steps, of                          in some implementations it replaces the trapezoidal rule for a few time
+the order of microseconds. As a result, the simulation of a complete                            steps in order to eliminate the numerical oscillation. The BEF, despite
+case takes a long time, generates huge data ﬁles and is cumbersome                              this desirable feature, is not generally used in EMT programs because of
+to handle. Several alternatives are being explored to circumvent the                            its low precision. However, when applied in its generalized form with
+aforementioned drawbacks, among them hybrid simulation [2], multi-                              multiple steps, its precision is improved. In this paper, the implemen-
+scale approaches [3], parallel simulations [4–10], and other approaches.                        tation and performance of the multi-step BDFs in the context of EMT
+New integration rules and optimized implementations are also of inter-                          programs is considered.
+est [2,3,11,12].
+    The so-called electromagnetic transients (EMT) programs currently                           2. Backward diﬀerentiation formulas
+available generally use a single-step time discretization formula, namely
+the trapezoidal formula, because it fulﬁlls the desirable characteristics                           For EMT analysis, the ordinary diﬀerential equation
+of absolute stability and good precision. However, it is known that the                         𝐂(𝐱, 𝑡)𝐱̇ + 𝐊(𝐱, 𝑡)𝐱 + 𝐟(𝐱, 𝑡) = 𝟎                                      (1)
+
+
+ ⋆ Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+
+    E-mail address: enrique.mv@morelia.tecnm.mx
+
+https://doi.org/10.1016/j.epsr.2025.112402
+Received 6 January 2025; Received in revised form 8 April 2025; Accepted 17 October 2025
+Available online 29 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+E. Melgoza-Vázquez                                                                                                                                    Electric Power Systems Research 252 (2026) 112402
+
+
+         Table 1                                                                                        2.2. Extension to nonlinear systems
+         The 𝛼𝑖 coeﬃcients for constant time step size.
+
+              BDF order           𝛼𝑖                                                                       Application of the BDF formula (2) to the system Eq. (1) results in
+                                                                                                        [20]:
+              1                   −1                1
+                                                                                                        ( 𝛼              )
+                                  −3/2                  −1/2
+                                                                                                         − 0 𝐂𝑛+1 + 𝐊𝑛+1 𝐱𝑛+1 +
+              2                                     2
+              3                   −11/6             3   −3/2      1/3                                      ℎ
+              4                   −25/12            4   −3        4/3        −1/4
+              5                   −137/60           5   −5        10/3       −5/4       1/5             [                                        ]
+                                                                                                             1     ∑𝑘
+                                                                                                            − 𝐂𝑛+1     𝛼𝑖 𝐱𝑛+1−𝑖 + 𝐟𝑛+1              = 𝟎.                                          (5)
+                                                                                                             ℎ     𝑖=1
+
+with initial condition 𝐱(𝑡0 ) = 𝐱0 must be solved; this kind of equation also                           Since this is an algebraic equation it is known as the time-discretized
+arises in other areas, such as in ﬁnite element methods [14]. A numeri-                                 form of (1). Eq. (5) is a nonlinear equation which has the form
+cal approximation instead of an analytical solution is generally sought,                                𝐅(𝐚) = 𝐊′ 𝐚 + 𝐟 ′ = 𝟎,                                                                     (6)
+in the form of a time-marching algorithm where the solution is approx-
+imated one step at a time. Aspects such as the stiﬀness of the equations,                               where 𝐚 = 𝐱𝑛+1 . The solution of this equation using the Newton-Raphson
+the stability of the numerical integration formula and the possibility of                               method requires the Jacobian, given by
+using step adaptation are important considerations when selecting the                                           𝜕𝐹𝑖    𝜕 [ ′        ]
+                                                                                                        𝐽𝑖𝑗 =       =     𝐊 𝐚 + 𝑓𝑖′
+numerical scheme. The backward diﬀerentiation formulas (BDF) oﬀer                                               𝜕𝑎𝑗   𝜕𝑎𝑗 𝑖
+good performance regarding these requirements: they are well suited to
+solve (1), they allow changing the order of the approximation and the                                                    𝜕𝐊′𝑖        𝜕𝑓𝑖′
+size of the time step, and can handle stiﬀ problems [15]. One important                                       = 𝐾𝑖𝑗′ +          𝐚+          .                                                      (7)
+                                                                                                                         𝜕𝑎𝑗         𝜕𝑎𝑗
+feature of the BDF family is that it is a single-stage scheme [16]. The
+                                                                                                        If the C matrix is constant, as it usually is in EMT simulations, (7) results
+BDF method can traced to Gear [17]. The formulation we use in this
+                                                                                                        in
+paper is based on [18].                                                                                        ( 𝛼            ) 𝜕𝐊          𝜕𝑓
+    Assume we know the 𝑥𝑛 , 𝑥𝑛−1 , … , 𝑥𝑛+1−𝑘 approximate solution to (1),                              𝐽𝑖𝑗 = − 0 𝐶𝑖𝑗 + 𝐾𝑖𝑗 +        𝑖
+                                                                                                                                       𝐚+ 𝑖.                                      (8)
+corresponding to the instants 𝑡𝑛 , 𝑡𝑛−1 , … , 𝑡𝑛+1−𝑘 . The ﬁrst derivative is                                     ℎ               𝜕𝑎𝑗       𝑎𝑗
+approximated using                                                                                         The time discretization (5) and its application to nonlinear systems
+                                                                                                        has been successfully implemented for fairly large circuit-ﬁeld problems
+             1∑
+                  𝑘
+                                                                                                        where the number of equations is in ther order of tens of thousands [20].
+𝑥̇ 𝑛+1 = −        𝛼𝑥                                                                          (2)
+             ℎ 𝑖=0 𝑖 𝑛+1−𝑖
+                                                                                                        3. EMT program implementation
+where ℎ is the time step size and only 𝑥𝑛+1 is unknown.
+                                                                                                            A brief review of the EMT implementation as used in this paper is
+                                                                                                        required in order to explain how the multi-step BDFs ﬁt into the formula-
+                                                                                                        tion. The general framework we have used is the modiﬁed nodal analysis
+2.1. Obtaining the 𝛼 coeﬃcients
+                                                                                                        (MNA), where circuit elements are represented by so-called stamps that
+                                                                                                        serve as the basis for the assembly of the network equations. It turns out
+   The 𝛼 coeﬃcients may be obtained solving the following equation in
+                                                                                                        that circuit element stamps take the form (1) and therefore are amenable
+the case of variable time steps [14]:
+                                                                                                        to discretization by the multi-step BDFs. The stamps of the basic circuit
+                                                                                                        elements are as follows [20].
+⎡   1    (        1     )         …        (        1     ) ⎤
+⎢   0
+          𝑡𝑛+1 −𝑡𝑛
+                                  …
+                                              𝑡𝑛+1 −𝑡𝑛+1−𝑘  ⎥     ⎡    𝛼0    ⎤ ⎡    0    ⎤
+⎢                                                           ⎥     ⎢          ⎥ ⎢         ⎥              3.1. Resistance
+⎢       ( ℎ )2                             (        ℎ
+                                                          ) ⎥     ⎢
+                                                                       𝛼1
+                                                                             ⎥ ⎢
+                                                                                    1
+                                                                                         ⎥
+         𝑡𝑛+1 −𝑡𝑛                            𝑡𝑛+1 −𝑡𝑛+1−𝑘 2
+⎢   0        ℎ
+                                  …                ℎ        ⎥     ⎢    𝛼2    ⎥=⎢    0    ⎥.   (3)
+                                                                                                           The terms contributed by resistive elements to the global circuit
+⎢   ⋮             ⋮               ⋱                ⋮        ⎥     ⎢    ⋮     ⎥ ⎢    ⋮    ⎥
+⎢       (               )𝑘                 (             ) ⎥      ⎢          ⎥ ⎢         ⎥              equations can be gathered by the stamp
+⎢            𝑡𝑛+1 −𝑡𝑛                        𝑡𝑛+1 −𝑡𝑛+1−𝑘 𝑘 ⎥     ⎣    𝛼𝑘    ⎦ ⎣    0    ⎦              [             ][     ]
+⎣   0           ℎ
+                                  …                ℎ        ⎦                                               𝐺    −𝐺       𝑒1
+                                                                                                                               ,                                         (9)
+                                                                                                          −𝐺       𝐺      𝑒2
+When a constant time step is used the 𝛼 coeﬃcients are obtained                                         where the element conductance is 𝐺.
+from:
+                                                                                                        3.2. Capacitance
+⎡   1   1         1          1         …       1    ⎤   ⎡   𝛼0   ⎤ ⎡     0   ⎤
+⎢   0   1         2          3         …       𝑘    ⎥   ⎢   𝛼1   ⎥ ⎢     1   ⎥
+⎢                                                   ⎥   ⎢        ⎥ ⎢         ⎥                               Terms corresponding to a capacitor may be grouped in the stamp
+⎢   0   1         4          9         …       𝑘2   ⎥   ⎢   𝛼2   ⎥=⎢     0   ⎥.               (4)       [              ][       ]
+⎢   ⋮   ⋮         ⋮          ⋮         ⋱       ⋮    ⎥   ⎢   ⋮    ⎥ ⎢     ⋮   ⎥                                𝐶   −𝐶       𝑒̇ 1
+⎢                                                   ⎥   ⎢        ⎥ ⎢         ⎥                               −𝐶
+                                                                                                                                  ,                                       (10)
+⎣   0   1         2𝑘         3𝑘        …       𝑘𝑘   ⎦   ⎣   𝛼𝑘   ⎦ ⎣     0   ⎦                                      𝐶      𝑒̇ 2
+                                                                                                        where the element capacitance is 𝐶.
+The 𝛼 coeﬃcients for the ﬁrst 5 orders with a constant time step are
+shown in Table 1. The available formulas will be designated as BDF-1,                                   3.3. Inductance
+BDF-2 and so on, depending on the selected order.
+   Regarding the stability of the BDF schemes, it is found that the                                          The contributions due to an inductance may be identiﬁed as:
+schemes BDF-1 and BDF-2 are A-stable irrespective of the time step size,
+whereas BDF-3 to BDF-6 are conditionally stable and formulas for orders                                 ⎡ 0       0       0     ⎤    ⎡ 𝑒̇ 1     ⎤ ⎡ 0         0      1   ⎤   ⎡ 𝑒1   ⎤
+                                                                                                        ⎢ 0       0       0     ⎥    ⎢ 𝑒̇       ⎥+⎢ 0         0     −1   ⎥   ⎢ 𝑒    ⎥,           (11)
+more than 6 are unconditionally unstable [16]. On the other hand, the                                   ⎢                       ⎥    ⎢ 2        ⎥ ⎢                      ⎥   ⎢ 2    ⎥
+local error of the BDF schemes is of order 𝑘 [19]. This means that the                                  ⎣ 0       0      −𝐿     ⎦    ⎣ 𝑖̇ 𝐿     ⎦ ⎣ 1        −1      0   ⎦   ⎣ 𝑖𝐿   ⎦
+BDF-2 scheme achieves a precision comparable to the trapezoidal rule                                    where the element inductance is 𝐿. Since inductances are not natural
+and higher order formulas will yield smaller local errors.                                              elements for nodal analysis, an equation for the branch current is added.
+
+                                                                                                    2
+E. Melgoza-Vázquez                                                                                                   Electric Power Systems Research 252 (2026) 112402
+
+
+3.4. Voltage source
+
+    A voltage source can be described by the relationships
+
+⎡   0    0        1   ⎤   ⎡ 𝑒1   ⎤ ⎡   0       ⎤
+⎢   0    0       −1   ⎥   ⎢ 𝑒    ⎥+⎢   0       ⎥,                      (12)
+⎢                     ⎥   ⎢ 2    ⎥ ⎢           ⎥
+⎣   1   −1        0   ⎦   ⎣ 𝑖𝑠   ⎦ ⎣ −𝑣𝑠 (𝑡)   ⎦
+Similarly to the case of the inductance, since the voltage source is not
+a natural element for nodal analysis, an extra equation representing the
+branch current is added.
+
+3.5. Assembled circuit equation
+                                                                                   Fig. 1. Test circuits for assessing the performance of the BDF schemes. a) Ener-
+                                                                                   gization of RL circuit with a dc voltage source. b) Switching oﬀ of an RL circuit
+    As can be seen in the previous sections, the stamps of circuit elements        with ac voltage source.
+take the form (1), albeit some of the arrays 𝐂, 𝐊, 𝐟 may be zero. Never-
+theless, once the stamp of a circuit element has been calculated, appli-
+cation of the time discretization 

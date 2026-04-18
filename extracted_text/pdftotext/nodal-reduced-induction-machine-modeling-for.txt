@@ -1,0 +1,216 @@
+1158                                                                                    IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 27, NO. 3, AUGUST 2012
+
+
+
+
+       Nodal Reduced Induction Machine Modeling for
+                 EMTP-Type Simulations
+                    Damian S. Vilchis-Rodriguez, Member, IEEE, and Enrique Acha, Senior Member, IEEE
+
+
+
+   Abstract—This paper presents two new induction machine                            for the entire network. However, the use of such a model in-
+models with a direct interface to an external power system, for                      creases considerably the computational burden required to at-
+EMTP-type simulations. The models’ improved efficiency and                           tain its numerical solution, since the magnetic coupling of the
+their overall superiority over existing formulations are shown by
+numerical simulations involving different machines. It is shown                      multiple machine windings is expressed by time varying induc-
+that models that use currents as output variables possess a high                     tances. This has led to the search of more efficient alternative
+degree of numerical accuracy at relatively large time steps making                   models.
+them competitive with a state-of-the-art model that uses the stator                     To improve on the numerical efficiency and accuracy of the
+currents and rotor fluxes as output variables. The use of a single                   PD model, several hybrid machine formulations, combining
+set of variables is shown to simplify considerably the models’
+representations, resulting in highly efficient formulations.                         phase and transformed variables, have been proposed [3]–[5].
+                                                                                     Notable among them is the so-called voltage-behind-reactance
+  Index Terms—EMTP, induction machine, nodal reduction,
+                                                                                     (VBR) model introduced in [4] using the state-space represen-
+phase-domain (PD) model, transient simulation, voltage-behind-
+reactance (VBR) model.                                                               tation for the synchronous machine. Subsequently, extensions
+                                                                                     were made for the induction motor [5], showing to be a very
+                                                                                     stable and efficient formulation. It uses physical stator currents
+                             I. INTRODUCTION                                         and transformed rotor fluxes as state variables, enabling a direct
+                                                                                     interface to the power system. In [6], an induction machine
+
+T      HE modeling of ac machines for transient analysis has
+       been an active topic of research for more than eight
+decades. The early success of the electricity supply industry
+                                                                                     model for EMTP-type solutions based on the VBR representa-
+                                                                                     tion is detailed and comparisons are drawn with the PD model
+                                                                                     showing to be vastly superior in terms of numerical accuracy
+was based, to a large degree, on the high reliability and effi-                      and computer efficiency. The stator currents and rotor fluxes are
+ciency of three-phase synchronous and induction machines,                            used as output variables, and, more importantly, the numerical
+to the point that even today they still are the basic building                       stability observed in the state-space representation of the VBR
+block of modern power systems; hence, much effort has been                           model is much preserved in its EMTP-type version, enabling
+invested in the elaboration of flexible and efficient formulations                   the use of larger time steps than those of the conventional PD
+of three-phase ac machines. The most popular representation                          model, further improving the efficiency of the VBR model.
+for ac machines for transient simulations is the so-called                           In [4], the performance gains in the VBR formulation are
+model, based on a series of mathematical transformations                             attributed to the enhanced numerical stability resulting from
+aiming at eliminating the time varying coefficients that exist                       a better conditioned set of eigen-values, as a consequence of
+in the physical representation of rotating ac machines [1].                          the use of a mixed set of state variables (current-flux) and a
+However, the use of only transformed quantities in the machine                       reduction in the number of equations required to model the
+representation makes difficult the interfacing with the rest of                      system, which is linked to a reduction in the number of nodes
+the network which is usually modeled in phase coordinates,                           and branches that describe the machine’s topology. Building
+given the incompatible reference frames.                                             on this result, two new models are presented in this paper,
+   To avoid interfacing problems and to improve on the numer-                        the so-called nodal reduced current-flux (NR-CF) and the
+ical stability of the network simulation, the preferred approach                     nodal reduced current-current (NR-CC) model of the induction
+has been to use the machine model on its native phase-domain                         machine, both of them having an overall superior performance
+(PD) representation [2], thus using a unified frame of reference                     than the VBR.
+                                                                                        The main thrust of this work is on the development of effi-
+   Manuscript received May 11, 2010; revised May 19, 2010; accepted January          cient EMTP-type three-phase induction machine models with
+28, 2012. Date of publication March 14, 2012; date of current version July 18,
+                                                                                     a direct interface to the external power system. The aim is to
+2012. The work of D. S. Vilchis-Rodriguez was supported by was CONACYT,
+Mexico. Paper no. TPWRS-00364-2010.                                                  avoid artificial restrictions on the integration step-size which
+   D. S. Vilchis-Rodriguez is with the School of Electrical and Electronic Engi-     some methods use in order to overcome error propagation con-
+neering, University of Manchester, M13 9PL Mancester, U.K. (e-mail: damian.
+                                                                                     cerns which, incidentally, has been the main weakness of the
+vilchis-rodriguez@manchester.ac.uk).
+   E. Acha is with the Department of Electrical Energy Engineering,                  otherwise very efficient       axis model. Two new and very ef-
+Tampere University of Technology, FI-33014 Tampere, Finland (e-mail:                 ficient formulations are presented in this paper. Their prowess
+enrique.acha@tut.fi).
+                                                                                     over existing formulations is emphasized by drawing attention
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       to their numerical properties and computer performance. It is
+   Digital Object Identifier 10.1109/TPWRS.2012.2186987                              also shown that the differences in accuracy between the VBR
+
+                                                                  0885-8950/$31.00 © 2012 IEEE
+VILCHIS-RODRIGUEZ AND ACHA: NODAL REDUCED INDUCTION MACHINE MODELING FOR EMTP-TYPE SIMULATIONS                                        1159
+
+
+
+and the PD model are considerably less significant than those          where          is a time-variant inductance matrix which de-
+reported in [6] and [7].                                               pends on rotor position and    ,     are the constant stator and
+                                                                       rotor inductance matrices, where the super script stands for
+                                                                       transpose. The mechanical motion equations can be expressed
+               II. INDUCTION MACHINE MODELS                            as
+   The choice of state variables gives rise to a number of dif-
+ferent PD, state-space formulations, each with distinct numer-                                                                        (4)
+ical properties [5]. For instance, to improve on the numerical                                                                        (5)
+efficiency of two PD formulations, one using stator and rotor
+fluxes and the other using stator currents and rotor fluxes as                                                                        (6)
+state variables, nodal reduction procedures are applied. The ap-
+plied NR procedure implies the combined use of physical and            where       is the mechanical torque,   is the electrical torque,
+transformed quantities, enabling the very efficient simulation of         is the rotor angular velocity, is the rotor position, is the
+sinusoidally distributed symmetrical three-phase induction ma-         inertia constant, and is the number of pole pairs.
+chines. It should be emphasized that the two new NR models in-
+troduced in this paper are derived directly from their respective      B. Machine Equations in the Rotor Reference Frame
+PD formulations, which are quite general. This contrasts with
+the VBR model, which is derived from the        formulation. The          The dynamic behavior of a symmetrical three-phase induc-
+NR-CF model uses current as its output variable and its name           tion machine may be formulated in the arbitrary reference frame
+stems from the state variables used in the differential equations      [8]. However, in this paper, the rotor reference frame is pre-
+from which it has been derived. On the other hand, the NR-CC           ferred, since this is the only transformation that has proved to
+model is derived from the classical EMTP-type PD representa-           improve on the model numerical accuracy for large time steps
+tion which uses currents as output variables. In turn, the clas-       in EMTP-type models [6]. The following equations show the
+sical EMTP-type PD model is derived from a state space repre-          voltage relationships in this reference frame:
+sentation that uses fluxes as state variables. A different numer-
+ical behavior would be expected from the NR-CF and NR-CC                                                                              (7)
+models since, as shown in [6], EMTP-type models derived from                                                                          (8)
+state-space representations that use a different set of state vari-
+ables have different numerical properties.                             where         ,      ,      , and       are vectors corresponding
+                                                                       to the flux linkages and currents of the stator and rotor circuits,
+A. Machine Equations in Phase Variables                                respectively.     relates the flux linkages to the rotor’s angular
+                                                                       velocity and for the stator arrangement being analyzed, and it is
+   The induction machine voltage equations in physical quanti-         defined as
+ties corresponding to a constant air-gap may be expressed as [8]
+
+                                                                (1)                                                                   (9)
+
+with
+                                                                         Application of the transformation to the flux linkages in phase
+                                                                       variables results in the following transformed flux linkages:
+
+                                                                                                                                     (10)
+                                                                                                                                     (11)
+
+                                                                          The inductance matrices        ,      ,       , and      are
+   In these expressions,        ,     ,        are vectors of stator   constant, owing to the applied transformation [8], and they are
+variables for voltages, currents, and fluxes, respectively, is the     detailed in Appendix A for completeness. The electromagnetic
+operator       ,       ,      , and       are vectors of variables     torque in the     reference frame is obtained by applying the
+for rotor voltages, fluxes and currents, respectively, and      and    reference frame transformation to (6), resulting in [8]
+    are diagonal matrices of stator and rotor resistances. The flux
+linkage for the stator and rotor circuits is                                                                                         (12)
+
+                                                                (2)
+                                                                       C. NR-CC Model
+with
+                                                                          The starting point to obtain the discrete NR-CC model is the
+                                                                       discrete PD model. The latter model is derived from the applica-
+                                                                (3)
+                                                                       tion of the trapezoidal rule of integration to the machine voltage
+1160                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 27, NO. 3, AUGUST 2012
+
+
+
+(1) combined with (2) as proposed in [2], resulting in the fol-        where
+lowing discrete representation:
+
+
+
+
+                                                               (13)
+                                                                                                                                    (24)
+with
+                                                                       with
+
+                                                               (14)                                                                 (25)
+                                                                                                                                    (26)
+where           may be expressed as
+
+                                                               (15)
+
+with
+                                                                       where      ,    , and   represent the machine magnetizing in-
+                                                                       ductance, leakage inductance, and rotor resistance respectively.
+                                                                       As noticed in (25) and (26), these are diagonal matrices. This
+                                                                       contrast with their PD counterparts (17) and (18), which are
+                                                                       full matrices. Hence, a considerably reduction in the number
+                                                               (16)    of mathematical operations required for the solution of (23)
+                                                                       and (24) compared with their PD equivalent (15) and (16), is
+                                                               (17)    achieved. Replacing (23) into (22) and transforming        back
+                                                                       to phase quantities gives
+                                                               (18)
+                                                                                                                                    (27)
+  Substituting (15) into (13) yields an EMTP-type compatible
+                                                                       with
+equation
+
+                                                               (19)
+
+where                                                                                                                               (28)
+
+                                                               (20)                                                                 (29)
+
+                                                               (21)       In (28)       ,     and        are diagonal matrices, thus the
+                                                                       various matrix products yield a diagonal matrix which has the
+   The computer performance of this model is expected to be            same form of as        , which after transformation into the phase
+relatively demanding in terms of CPU time, since all of the ma-        domain, remains a constant matrix. Hence, the third term in (28)
+trices involved are full matrices, thus reflecting the internal cir-   is a time invariant matrix, a fact that renders the whole of (28)
+cuits’ interaction. To improve on the model computer perfor-           to be time invariant. Further mathematical reduction and trans-
+mance the NR-CC model is obtained by combining physical and            formation into the phase domain leads to
+transformed quantities, hence, from here onwards a symmetrical
+sinusoidaly distributed machine is assumed. The second term in                                                                      (30)
+(13) is transformed to the rotor reference frame, yielding the fol-
+lowing expression:                                                     with
+
+
+                                                                                                                                    (31)
+                                                               (22)
+                                                                       where
+where         is the transformation matrix. The rotor currents
+vector in the rotor reference frame          may be expressed
+in the discrete time domain as follows:
+
+                                                               (23)
+VILCHIS-RODRIGUEZ AND ACHA: NODAL REDUCED INDUCTION MACHINE MODELING FOR EMTP-TYPE SIMULATIONS                                    1161
+
+
+
+   This result states that an induction machine with a sinu-         a mathematical transformation. Transforming (36) to the rotor
+soidally distributed symmetrical winding has a PD represen-          reference frame and further reduction leads to
+tation with a constant equivalent resistance matrix, a fact that
+has also been reported in [7]. Furthermore, it should be stated
+that, if an alternative reference frame were to be used instead to
+describe the rotor subsystem, time dependency would appear                                                                       (40)
+in the resistance matrix, increasing unnecessarily the model
+complexity and removing a key attribute of the model. The            with
+rotor currents are calculated using (23) and the electric torque
+is calculated using (12). Very considerable savings are obtained                                              

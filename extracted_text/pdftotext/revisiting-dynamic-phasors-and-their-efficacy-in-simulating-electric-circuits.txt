@@ -1,0 +1,234 @@
+                                                           Electric Power Systems Research 251 (2026) 112138
+
+
+                                                               Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                       journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Revisiting dynamic phasors and their efficacy in simulating electric
+circuitsI , II
+                                                       ∗
+Ramin Parvari, Shaahin Filizadeh                        , Dilsha Kuranage
+University of Manitoba, Winnipeg, MB R3T 5V6, Canada
+
+
+
+ARTICLE               INFO                             ABSTRACT
+
+Keywords:                                              In this paper, the theory and application of dynamic phasors (DPs) to model and simulate electrical circuits
+Dynamic phasors (DP)                                   are revisited. The paper reveals foundational conditions that must be in place so that DPs are able to offer
+Electromagnetic transient (EMT) simulations            computational benefits that are commonly, yet incorrectly, attributed to them as universal characteristics.
+Companion circuit
+                                                       Following a companion model-based approach using DPs, eigenvalue and steady-state analyses are conducted
+Eigenvalues
+                                                       to assess the precision of EMT and DP modeling methods as a function of the simulation time step. Through
+                                                       a case study of the IEEE 9-bus system, the effects of large time-steps on simulation accuracy are illustrated.
+                                                       The findings demonstrate that while DP-based modeling can accurately represent steady-state behavior of
+                                                       circuits with large time-steps, its accuracy is limited during transients conditions, highlighting the importance
+                                                       of judicious time-step selection for accurate simulations.
+
+
+
+1. Introduction                                                                         where 𝐗(𝑡) is the dynamic phasor, and 𝑒j𝜔0 𝑡 represents the sinusoidal
+                                                                                        signal of the base (i.e., shift) frequency 𝜔0 . Dynamic phasor analysis
+    Several methods with varying degrees of accuracy and computa-                       is based upon solving for the dynamic phasors of a network’s voltages
+tional complexity exist for modeling and simulation of power sys-                       and currents, whereas an EMT simulator solves the circuit for its natural
+tems [1–3]. For instance, transient stability (TS) programs ignore the                  quantities.
+fast dynamics of the electrical network, focusing instead on the rel-
+                                                                                            This approach has been applied to a wide range of systems, in-
+atively slow electromechanical interactions in large, interconnected
+                                                                                        cluding line-commutated and modular multilevel converters (LCCs and
+systems. TS-type solvers benefit from large simulation time-steps (in
+the milliseconds range), thereby reducing the run time. Electromag-                     MMCs) [8–10], flexible AC transmission systems (FACTS) [11,12],
+netic Transients (EMT) solvers, on the other hand, capture the fast                     induction machines [13,14], and hybrid simulations [15–18]. Dynamic
+dynamics of circuits, e.g., switching transients, in great detail [4,5].                phasors have also been utilized to expand the frequency bandwidth of
+EMT solvers typically require small time-steps (in the microseconds                     TS-type simulations [19].
+range), which significantly extend the run time, especially for large                       Dynamic phasors are widely believed to substantially reduce the
+power system with sophisticated components such as high-frequency                       computational burden of discrete-time EMT-type simulations. This be-
+power-electronic converters.                                                            lief stems from the notion that simulating circuits to find a low-
+    One approach to bridge the gap between the accuracy of an EMT                       frequency signal, i.e., the dynamic phasor or 𝐗(𝑡), does not require the
+solver and the computational efficiency of a TS solver is to use the                    small time-steps that an EMT solver needs to use to capture the natural
+concept of dynamic phasors, in which frequency-shifting is used to
+                                                                                        signal. Thus, larger time-steps can be used to speed up the simula-
+focus on the low-frequency content of a band-pass signal [6,7]. In
+                                                                                        tion [3,6,20,21]. However, as this paper demonstrates, this statement
+this approach, the circuit’s natural quantities, i.e., branch voltages and
+currents, are assumed to be sinusoidal but modulated with a low-                        is not universally valid and is subject to specific conditions that are
+frequency signal that characterizes the dynamics of the power system.                   imposed by the circuit that is modeled. In particular, the paper shows
+Mathematically, an arbitrary voltage or current, 𝑥(𝑡), is assumed to take               that the eigenvalues of the circuit play a crucial role in whether or not
+on the form                                                                             modeling in the DP domain may offer benefits without considerable
+                                                                                        loss of accuracy.
+𝑥(𝑡) = 𝐗(𝑡)𝑒j𝜔0 𝑡                                                              (1)
+
+
+ I This work was supported in part by the Natural Sciences and Engineering Research Council (NSERC) of Canada, and by the University of Manitoba, Canada.
+II Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+ ∗ Corresponding author.
+     E-mail addresses: parvarir@myumanitoba.ca (R. Parvari), shaahin.filizadeh@umanitoba.ca (S. Filizadeh), kuranagd@myumanitoba.ca (D. Kuranage).
+
+https://doi.org/10.1016/j.epsr.2025.112138
+Received 17 December 2024; Received in revised form 21 March 2025; Accepted 14 August 2025
+Available online 10 September 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+R. Parvari et al.                                                                                                         Electric Power Systems Research 251 (2026) 112138
+
+
+   A generalized theory of dynamic phasors is developed in Section 2                         Table 1
+using the concept of an integrating factor. It is demonstrated that the                      Basic elements in original and companion circuit domains.
+commonly-used term 𝑒j𝜔0 𝑡 is a special case where the shift frequency                            Original Circuit       Continuous-time Companion Circuit
+remains constant over time. Additionally, a generalized continuous-                                    𝑒(𝑡)
+                                                                                                                                                𝑡
+                                                                                                                                     𝑒(𝑡)e− ∫0 𝑠(𝜏)d𝜏
+time companion circuit is developed in this section. Section 3 presents
+
+
+
+
+                                                                                                       +
+                                                                                                       −
+
+
+
+
+                                                                                                                                          +
+                                                                                                                                          −
+the shift in eigenvalues using state-space analysis and the steady-state
+accuracy of both EMT and DP formulations are compared against the                                                                               𝑡
+                                                                                                       𝑗(𝑡)                          𝑗(𝑡)e− ∫0 𝑠(𝜏)d𝜏
+analytical solution of a second-order RLC circuit. In Section 4, a case
+study of the IEEE 9-bus system is presented, demonstrating the core
+contributions of this work. Section 5 concludes the paper.
+                                                                                                        𝑅                                   𝑅
+2. A general theory of dynamic phasors
+                                                                                                        𝐿                           𝐿               𝐿𝑠(𝑡)
+    Let 𝑥(𝑡) be a natural signal that represents a voltage or a current in
+a circuit. This signal can be written as the product of two signals as
+                                                                                                                                        1∕(𝐶𝑠(𝑡))
+follows:
+                                                                                                        𝐶
+𝑥(𝑡) = 𝜇(𝑡)𝐗(𝑡)                                                         (2)
+                                                                                                                                            𝐶
+where 𝜇(𝑡) is an arbitrary unit-less signal, and 𝐗(𝑡) is called a trans-
+formed version of 𝑥(𝑡). To ensure bounded signals both in the original
+and transformed domains, the multiplying signal 𝜇(𝑡) must satisfy the
+following conditions:
+
+𝜇(𝑡) ≠ 0, ±∞        ∀𝑡                                                  (3)
+Additionally, to maintain identical initial conditions for 𝑥(𝑡) and 𝐗(𝑡),
+the values of 𝜇(𝑡) at 𝑡 = 0 is considered to be unity:
+
+𝜇(0) = 1                                                                (4)
+Hereinafter, the following notation is used to show the correspondence
+between 𝑥(𝑡) and 𝐗(𝑡):                                                                                      Fig. 1. The transmission line model.
+
+𝑥(𝑡) ⟷ 𝐗(𝑡)                                                             (5)
+   An important feature of the above transformation is the derivative             2.2. Resistors
+property, which can be readily expressed as follows:
+d𝑥(𝑡)   d𝐗(𝑡) 𝜇′ (𝑡)                                                                  A resistor’s 𝑣 − 𝑖 characteristics can be simply transformed as given
+      ⟷      +       𝐗(𝑡)                                               (6)
+ d𝑡      d𝑡    𝜇(𝑡)                                                               in (10). It is important to note that the resistor may be time-varying;
+                                                                    ′
+                                                                    (𝑡)           however, its instantaneous resistance remains unaffected by the trans-
+where 𝜇 ′ (𝑡) is the time derivative of 𝜇(𝑡). Note that the term 𝜇𝜇(𝑡)  is
+                                                                                  formation.
+in Hz; accordingly a new variable, 𝑠(𝑡), which implies time-dependent
+frequency, may be defined as follows.                                             𝑣(𝑡) = 𝑅𝑖(𝑡)         ⟷            𝐕(𝑡) = 𝑅𝐈(𝑡)                                     (10)
+       𝜇 ′ (𝑡)
+𝑠(𝑡) ≜                                                                  (7)
+       𝜇(𝑡)                                                                       2.3. Inductors and capacitors
+Note that for a given 𝑠(𝑡), (7) may also be viewed as a differential
+equation to be solved for 𝜇(𝑡) with the initial condition stated in (4).              Inductors and capacitors in the original and companion circuits are
+The solution of this differential equation is expressed in (8), which is          affected by the derivative property of the transformation. Eqs. (11)
+commonly known as the integrating factor in the theory of differential            and (12) describe the behavior of inductors and capacitors in both the
+equations.                                                                        original and companion circuits, respectively.
+           𝑡
+𝜇(𝑡) = e∫0 𝑠(𝜏)d𝜏                                                       (8)                  d𝑖(𝑡)                        d𝐈(𝑡)
+                                                                                  𝑣(𝑡) = 𝐿            ⟷        𝐕(𝑡) = 𝐿         + 𝐿𝑠(𝑡)𝐈(𝐭)                          (11)
+                                                                                              d𝑡                           d𝑡
+   It is important to note that due to their linear nature the Kirchhoff’s
+Voltage and Current Laws (KVL and KCL) remain invariant under the                            d𝑣(𝑡)                        d𝐕(𝑡)
+                                                                                  𝑖(𝑡) = 𝐶            ⟷        𝐈(𝑡) = 𝐶         + 𝐶𝑠(𝑡)𝐕(𝐭)                          (12)
+transformation in (5), indicating that the transformed voltages and                           d𝑡                           d𝑡
+currents continue to satisfy the original KVL and KCL equations. The              These indicate that (i) an inductor is transformed into an inductor of
+transformed circuit retains the original topology but features elements           the same inductance in series with a resistor with a resistance of 𝐿𝑠(𝑡);
+whose characteristics are modified as a result of the transformation.             (ii) a capacitor is transformed into a capacitor of the same capacitance
+Hereinafter, such a transformed circuit is called a continuous-time com-
+                                                                                  in parallel with a resistor with a conductance of 𝐶𝑠(𝑡). Table 1 provides
+panion circuit. The behavior of elementary circuit elements in the
+                                                                                  a summary of the original and companion models.
+companion circuit is discussed in the following subsections.
+
+2.1. Independent voltage and current sources                                      2.4. Lossless transmission lines
+
+   For a voltage source, 𝑒(𝑡), or a current source, 𝑗(𝑡), the respective             Fig. 1 shows the model of a lossless line where 𝑍C and 𝜏d are the
+transformed signals 𝐄(𝑡) and 𝐉(𝑡) are as follows.                                 characteristic impedance and traveling time [22].
+       𝑒(𝑡)            𝑡                                                             The two current sources are determined using past values of volt-
+𝐄(𝑡) =      = 𝑒(𝑡)e− ∫0 𝑠(𝜏)d𝜏
+       𝜇(𝑡)                                                                       ages and currents, as follows.
+       𝑗(𝑡)            𝑡
+𝐉(𝑡) =      = 𝑗(𝑡)e− ∫0 𝑠(𝜏)d𝜏                                          (9)       𝑗k (𝑡) = −
+                                                                                                1
+                                                                                                  𝑣 (𝑡 − 𝜏d ) − 𝑖mk (𝑡 − 𝜏d )                                        (13)
+       𝜇(𝑡)                                                                                    𝑍C m
+
+                                                                              2
+R. Parvari et al.                                                                                                            Electric Power Systems Research 251 (2026) 112138
+
+
+
+
+              Fig. 2. The companion model of the transmission line.
+                                                                                              Fig. 3. An exemplar AC circuit with RLC elements.
+
+
+
+              1
+𝑗m (𝑡) = −      𝑣 (𝑡 − 𝜏d ) − 𝑖km (𝑡 − 𝜏d )                           (14)
+             𝑍C k
+   The DP model of the line is obtained by converting the circuit in
+Fig. 1 into its companion equivalent, as in Fig. 2.
+   The history current 𝐉k (𝑡) is calculated as follows.
+                    𝑡
+𝐉k (𝑡) = 𝑗k (𝑡)e− ∫0 𝑠(𝜏)d𝜏
+    (                                    )                                               Fig. 4. Continuous-time companion circuit model of Fig. 3.
+         1                                     𝑡
+ = −         𝑣m (𝑡 − 𝜏d ) − 𝑖mk (𝑡 − 𝜏d ) e− ∫0 𝑠(𝜏)d𝜏
+        𝑍C
+    (                                    ) ( 𝑡−𝜏         𝑡
+                                                             )
+         1                                 − ∫ d + ∫𝑡−𝜏 𝑠(𝜏)d𝜏
+ = −         𝑣m (𝑡 − 𝜏d ) − 𝑖mk (𝑡 − 𝜏d ) e 0              d
+        𝑍C
+    (                                    )       𝑡
+         1                                  −∫      𝑠(𝜏)d𝜏
+ = −         𝐕m (𝑡 − 𝜏d ) − 𝐈mk (𝑡 − 𝜏d ) e 𝑡−𝜏d                      (15)
+        𝑍C
+Similarly, the history current 𝐉m (𝑡) is calculated as follows.
+        (                                  )    𝑡
+             1                               −∫    𝑠(𝜏)d𝜏
+𝐉m (𝑡) = −     𝐕k (𝑡 − 𝜏d ) − 𝐈km (𝑡 − 𝜏d ) e 𝑡−𝜏d                    (16)                  Fig. 5. Discretized companion model of a basic element.
+            𝑍C
+   The companion circuit is generally time-varying, which increases
+                                                                                       Table 2
+the computational complexity of its solution. The only scenario where
+                                                                                       Parameters of discretized companion models.
+the circuit remains time-invariant occurs when 𝑠(𝑡) is a complex con-
+                                                                                        Element      𝑔                              𝑘I             𝑘V
+stant as follows:
+                                                                                                      1
+                                                                                        𝑅                                           0              0
+𝑠(𝑡) = 𝜎0 + j𝜔0                                                       (17)                            𝑅
+                                                                                                           𝛥𝑡                            j𝜔0 𝛥𝑡          𝛥𝑡
+where 𝜎0 and 𝜔0 are constant values. Given the conditions in (3), 𝜎0                                       2𝐿
+                                                                                                                                    1−
+                                                                                                                                           2             2𝐿
+                                                                                        𝐿
+must be zero to prevent 𝜇(𝑡) from becoming zero or reaching infinite                                        j𝜔0 𝛥𝑡                       j𝜔0 𝛥𝑡           j𝜔0 𝛥𝑡
+magnitude at any point in time. Thus, the integrating factor simplifies                               1+                            1+             1+
+                                                                                                                2                          2                  2
+to the following:                                                                                          (                 )     

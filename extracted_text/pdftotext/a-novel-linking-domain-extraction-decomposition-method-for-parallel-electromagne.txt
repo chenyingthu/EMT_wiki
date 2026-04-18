@@ -1,0 +1,172 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2998397, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+           A Novel Linking-Domain Extraction Decomposition
+             Method for Parallel Electromagnetic Transient
+              Simulation of Large-Scale AC/DC Networks
+                                                 Tong Duan, Student Member, IEEE, Venkata Dinavahi, Fellow, IEEE
+
+
+
+              Abstract—Domain decomposition of the network conductance                                         where the MMC converters composed of hundreds of submod-
+           matrix is one of the efficient approaches to solve large-scale                                      ules generate a large matrix. The essential problem is that the
+           networks in parallel, wherein the most commonly-used non-                                           computational complexity of direct matrix inversion or solving
+           iterative method is the Schur complement (SC) method. However,
+           the SC method could not obtain the network conductance matrix                                       linear algebraic equations using other related algorithms such
+           inversion directly, and the computational cost will increase fast                                   as the Gauss-Jordan elimination method is O(N 3 ), which
+           when the overlapping domain expands. In this work, a novel                                          result in an extremely high latency for large-scale networks.
+           Linking-Domain Extraction (LDE) based decomposition method                                          To deal with the complexity of simulating large-scale sys-
+           is proposed, in which the network matrix is expressed as the                                        tems, network domain decomposition [4] is a commonly-used
+           sum of a linking-domain matrix (LDM) and a diagonal block
+           matrix (DBM) composed of multiple block matrices in diagonal.                                       method that splits the large network into small subsystems
+           Through mathematical analysis over LDM, one lemma about the                                         to simulate them in parallel. One main challenge of using
+           nature of LDM and its proof are proposed. Based on this lemma,                                      domain decomposition is how to uncouple the inter-connected
+           the general formulation of the inverse matrix of the sum of LDM                                     subsystems, which leads to two representative categories of de-
+           and DBM can be found using the Woodbury matrix identity, and                                        composition methods [5]: overlapping domain decomposition
+           based on the formulation the network matrix inversion can be
+           directly computed in parallel to significantly accelerate the matrix                                and non-overlapping domain decomposition. In overlapping
+           inversion process. Test systems were implemented on both the                                        domain decomposition, the basic logic is to allocate the over-
+           FPGA and GPU parallel architectures, and the simulation results                                     lapping domain between two connected subsystems (multiple
+           and speed-ups over the SC method and Gauss-Jordan elimination                                       subsystems have the same procedure) into both subsystems, so
+           demonstrate the validity and efficiency of the proposed LDE                                         that each subsystem can compute the values of the overlapping
+           method.
+                                                                                                               domain simultaneously. However, to obtain the correct values
+              Index Terms—Circuit simulation, electromagnetic transients,                                      of the overlapping domain, data exchange and iteration are
+           field programmable gate arrays, graphics processors, inverse                                        required to guarantee the difference of results between the
+           matrix calculation, network decomposition, parallel processing.
+                                                                                                               two subsystems are smaller than a predetermined threshold.
+                                                                                                               In addition, when the number of decomposed subsystems
+                                            I. I NTRODUCTION                                                   increases, the convergence time will become much longer, and
+                                                                                                               thus the overlapping domain decomposition method is not the
+
+           E     LECTROMAGNETIC transient (EMT) simulation is a
+                 paramount tool to study the electrical system’s behavior
+           and reproduce the transient waveforms prior to manufacturing
+                                                                                                               scope of this work.
+                                                                                                                  In non-overlapping domain decomposition, the decomposed
+                                                                                                               subsystems have no overlapping domains thus they could be
+           and deployment [1]. Typically, in EMT simulation a specific                                         simulated in parallel while not requiring iteration to syn-
+           circuit can be formulated as a set of linear equations or                                           chronize the connected subsystems. For the non-overlapping
+           differential equations (when containing dynamic elements such                                       domain decomposition, the most widely-used methods are the
+           as inductors and capacitors) of unknown state variables [2],                                        transmission line modeling (TLM) [6], [7], latency insertion
+           [3]; solving these equations requires discretizing them (i.e.,                                      method (LIM) [8], [9] and Schur Complement (SC) method
+           modeling the dynamic circuit elements in discrete time) and                                         [5]. The TLM and LIM methods are latency-based decomposi-
+           solving the resulting linear algebraic equations.                                                   tion methods, which leverage the transmission latency between
+              Most EMT programs use Gaussian Elimination or LU fac-                                            two ends of a line or the latency produced by the LC circuits
+           torization method to solve the linear algebraic equations. How-                                     to decompose the network. Both methods need to consider
+           ever, the simulation process slows down significantly when the                                      the simulation time-step size. For example, if the transmission
+           circuit scale expands, especially for large-scale AC/DC grids                                       latency of a line is smaller than the time-step size, then the
+                                                                                                               two ends of the line could not be calculated simultaneously.
+             This work is supported by the Natural Science and Engineering Research                            For networks where transmission lines do not exist, the SC
+           Council of Canada (NSERC) and China Scholarship Council (CSC).                                      method is most commonly used [10], [11], which is a matrix-
+             T. Duan and V. Dinavahi are with the Department of Electrical and                                 based decomposition method. It moves all the overlapping area
+           Computer Engineering, University of Alberta, Edmonton, Alberta T6G 2V4,
+           Canada (e-mail: tduan@ualberta.ca; dinavahi@ualberta.ca).                                           in the network conductance matrix to the bottom right and
+                                                                                                               the remaining parts are diagonal block matrices that can be
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                       Authorized licensed use limited to: University of Canberra. Downloaded on June 07,2020 at 18:07:03 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2998397, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             2
+
+
+
+
+                                                        G1            Gd                                                               G1     E1
+                   G1     E1
+                                  Overlapping                                                  G1     E1
+                                                                                                                                                                                            Linking-
+                                   Domain                                                                                                               G1                                  Domain
+                                                               G2                E
+                   F1                                                                          F1                                       F1
+                                     F2                                                                        F2                                        F2           +
+
+
+
+
+                                                                     ...
+                     M12                                                                          M12                                                                           Ls12
+                                                                           Gm                            E2 G2                             G2
+                             E2                                                                                                                  E 2 G2
+                                     G2
+
+
+
+
+                                                                                                                                                               ...
+
+
+
+
+                                                                                                                                                                                                   ...
+                                                                 F              Dt
+
+
+
+
+                                                                                                                        ...
+                                                  G                                           G                                       Gd                        Gm          L
+                                            ...
+
+                                                (a)                                                                                                (b)
+
+           Fig. 1.      Example of matrix decomposition: (a) Schur decomposition method; (b) Proposed LDE method.
+
+
+
+           handled in parallel. However, the SC method could not obtain
+           the network matrix inversion directly, thus the corresponding
+                                                                                                                                                         G v = ieq                                       (1)
+           procedure need to be executed in each time-step. In addition,
+           the efficiency reduces quickly when the overlapping domain
+                                                                                                                  The SC method is a non-overlapping method, which means
+           expands.
+              Different from the SC method that ignores the special                                            the network conductance matrix G is decomposed into m
+           features of the overlapping part between decomposed block                                           uncoupled small block matrices (Ĝ1 , Ĝ2 , ..., Ĝm ). The over-
+           matrices, in this work, a novel linking-domain extraction                                           lapping domains between block matrices are moved to the
+           (LDE) based decomposition method is proposed. In LDE, the                                           overlapping domain matrix Dt , as shown in Fig. 1(a). The
+           linking-domain matrix (LDM) is extracted from the original                                          nodes located in Dt actually represent the interface nodes used
+           network conductance matrix, and the remaining matrix is a                                           to connect decoupled subsystems. Applying the block matrix
+           diagonal block matrix (DBM) composed of multiple block                                              multiplication, the following equations can be obtained:
+           matrices in diagonal. Through mathematical analysis over                                                                                                         
+                                                                                                                      Ĝ1        0      ···        0          E1    vg1      ig1
+           LDM, an important nature of LDM is found and formulated
+           in Lemma 1: the linking domain matrix can be transformed
+                                                                                                                     0
+                                                                                                                               Ĝ2     ···        0          E2  vg2   ig2 
+                                                                                                                                                                             
+                                                                                                                     .          ..                ..             ..   .. 
+                                                                                                                                                               ..
+           from a diagonal matrix through a transformation matrix that                                               ..          .                 .            .  =  . 
+                                                                                                                                                                .
+                                                                                                                                                                            
+           only contains elements with 0, 1, -1 values. Based on this                                                0         0       ···      Ĝm         Em   vgm   igm 
+           lemma, the general formulation of the matrix inversion of                                                     F1     F2      ···      Fm          Dt      vt       it
+           the sum of LDM and DBM can be found via the Woodbury                                                                                                                   (2)
+           matrix identity [12] in linear algebra, by which the network                                                                             −1                           −1
+           matrix inversion can be computed in parallel. If the network                                                               (Dt − FĜd E) vt = it − FĜd ig                                    (3)
+           conductance matrix does not change during the simulation,
+           the LDE method can compute the matrix inversion in advance                                                                            Ĝd vg = ig − E vt                                      (4)
+           to significantly accelerate the simulation process; if the con-
+           ductance matrix changes, the LDE method may also be more                                            where Ĝd , F and E are the combination of the corresponding
+           suitable than SC method in many cases. Compared to the                                              block matrices, and vg , ig are the combination of the corre-
+           LU factorization method that can also benefit from a constant                                       sponding node voltages and current injections.
+           conductance matrix, computing the matrix inversion makes a                                            The computation process is executed as follows:
+           certain sense because after the L, U matrices are computed, in                                                               −1               −1
+           the subsequent time slots solving LUx = b (assume solving                                             1) compute Ĝd and Ĝd ig ;
+                                                                                                                                 −1           −1
+           Ax = b) also occupies a longer time than only computing                                               2) compute FĜd ig and FĜd E;
+           A−1 b in parallel.                                                                                    3) solve equation (3) to get vt ;
+                                                                                                                                 −1        −1
+              The paper is organized as follows: Section II introduces the                                       4) solve vg = Ĝd ig − Ĝd E vt .
+           traditional SC method. Section III presents the proposed LDE
+                                                                                                                  Parallel computing can be exploited based on the com-
+           method, including the derivation of the important lemma and
+                                                                                                               putation that involves the diagonal block matrix Ĝd , such
+           the general formulation of the network matrix inversion, as                                

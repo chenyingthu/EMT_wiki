@@ -1,0 +1,202 @@
+                                                           Electrical Power and Energy Systems 113 (2019) 1002–1013
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                    Electrical Power and Energy Systems
+                                                        journal homepage: www.elsevier.com/locate/ijepes
+
+
+
+
+Electro-mechanical transient modeling of MMC based multi-terminal HVDC                                                                                       T
+system with DC faults considered
+Liang Xiao, Zheng Xu, Huangqing Xiao , Zheren Zhang, Guoteng Wang, Yuzhe Xu
+                                                                  ⁎
+
+College of Electrical Engineering, Zhejiang University, Hangzhou, Zhejiang 310027, PR China
+
+
+
+
+ARTICLE INFO                                               ABSTRACT
+
+Keywords:                                                  Modeling different types of DC faults in modular multilevel converter based multi-terminal HVDC (MMC-MTDC)
+DC fault simulation                                        systems for transient stability analyses has not been well studied. In this paper, an improved electro-mechanical
+Electro-mechanical transient model                         model of MMC-MTDC system which is feasible for a variety of DC fault simulations is proposed. Firstly, the
+Modular multilevel converter                               improved MMC electro-mechanical model with a second-order DC side circuit is derived theoretically. Then a
+Multi-terminal HVDC system
+                                                           method based on preset DC fault information for studying the impacts of DC faults on the stability of large-scale
+Transient stability
+                                                           AC/DC power systems is proposed, with which the DC faults can be handled efficiently without reconstructing
+                                                           the DC topology. Theoretical and simulation studies show that the DC-side equivalent circuit of the MMC should
+                                                           be established as a second-order circuit when DC faults are considered for transient stability studies. Simulations
+                                                           of various types of DC faults in the modified IEEE 39-bus system incorporating a four-terminal MMC-HVDC
+                                                           system are carried out on PSS/E for validating the proposed method.
+
+
+
+
+1. Introduction                                                                               application scenarios [11–16]. Extraordinarily, the CIGRE Working
+                                                                                              Group B4.57 released a guide for the development and usage of MMC
+    With the advancement and wide range application of power elec-                            models in the year 2014 [14]. According to its definition, there are
+tronics technology [1–8], MMC-based multi-terminal HVDC (MTDC)                                seven types of MMC models, varying from the most complex Full
+systems have drawn more and more attention both from academic and                             Physics Based Models with detailed semiconductor devices to the
+industrial fields. Currently, the four-terminal MMC-based HVDC grid                           computational efficient Average Value Models (AVM, Type 5) based on
+(Zhangbei Project) [9] adopting overhead lines is under construction in                       switching functions, etc. Among these models, the most widely used
+the North China Power Grid. Due to the high line fault rate, the impacts                      Detailed Equivalent Circuit Model (DECM, Type 4) was first proposed in
+of various types of DC faults on the stability of power systems should be                     [11]. The Type 4 DECM has the benefit of high efficiency as well as
+paid special attention. However, modeling different types of DC faults                        good accuracy but can only be implemented in electro-magnetic tran-
+in MMC-MTDC systems for transient stability analyses has not been well                        sient (EMT) tools. There are some common features in the Type 5 AVMs
+studied. The goal of this paper is to provide a method for modeling an                        and Type 6 Electro-mechanical Models (also called Phasor Models, RMS
+improved MMC-MTDC electro-mechanical model with DC faults con-                                Models, etc.), e.g. the large number of IGBTs are not explicitly modeled
+sidered, which is useful for transient stability studies of large-scale AC/                   and their DC and AC side circuits are modeled as controlled current and
+DC systems.                                                                                   voltage sources, thus both of them have the advantage of computational
+    Time-domain simulation method is widely used for transient stabi-                         efficiency. However, harmonic contents from the modulation control
+lity study of large-scale AC/DC power systems [10]. The basic process is                      are generally considered for the Type 5 AVMs [14]. The Type 6 Electro-
+to solve the system differential-algebraic equations (DAEs) with ap-                          mechanical Models are developed by neglecting all harmonics and are
+propriate numerical integration method, so as to obtain the dynamic                           implemented in phasor-frame electro-mechanical simulation tools.
+response of the power system under a specific disturbance. Conse-                             Obviously, for long time range and large-scale power system transient
+quently, developing a computationally efficient and accurate model to                         stability studies, the Electro-mechanical Models are preferred to the
+describe the dynamic characteristic of an equipment is the prime work                         EMT-type MMC models. This is because on one hand, in commonly used
+for transient stability study.                                                                transient stability simulation tools (e.g. PSS/E), the AC networks are
+    Researchers have developed plenty of MMC models for different                             represented by complex phasors without considering any harmonics; on
+
+
+
+  ⁎
+      Corresponding author.
+      E-mail address: xhqhz@zju.edu.cn (H. Xiao).
+
+https://doi.org/10.1016/j.ijepes.2019.06.003
+Received 13 October 2018; Received in revised form 5 May 2019; Accepted 3 June 2019
+Available online 25 June 2019
+0142-0615/ © 2019 Elsevier Ltd. All rights reserved.
+L. Xiao, et al.                                                                                                 Electrical Power and Energy Systems 113 (2019) 1002–1013
+
+
+the other hand, the interactions of the MMCs with the host AC grids are                    Ceq : equivalent capacitance of the MMC
+dominated by the external dynamic characteristics rather than the in-                      Csm : capacitance of the sub-module(SM)
+ternal dynamics of the MMCs.                                                               N : number of SM per arm
+                                                                                           idcs : controlled direct current source
+    The demand to analyze the stability of AC-MTDC systems has led to
+                                                                                           Larm , Rarm : inductance and resistance of each arm
+ongoing efforts in developing the MMC/VSC electro-mechanical model                         Lt , Rt : inductance and resistance of transformer
+with DC faults considered [17–26]. A generalized dynamic VSC MTDC                          uv : controlled AC voltage source
+model valid for arbitrary DC network topology was first developed in
+[17] and further addressed in [18] and [19]. The proposed model en-
+                                                                                                                                        1          1
+abled the simulations of events such as the loss of DC lines by re-                                    6Csm                                 Larm       Rarm Lt   Rt
+                                                                                               Ceq =                     idcs uv
+constructing DC bus admittance matrix, however, the DC grounding                                                                        2          2
+                                                                                                        N
+short-circuit faults were not considered. The interaction between AC
+system and a VSC-MTDC system and the stability of the combined AC-
+MTDC system were well studied in [20]. A new and general reference                                       (a)                                           (b)
+frame for dynamic solutions of VSC-MTDC systems using the Newton-                     Fig. 1. Equivalent circuit of the conventional MMC model. (a) DC-side
+Raphson method was proposed in [21], but the dynamics in the DC                       equivalent circuit of the MMC. (b) AC-side equivalent circuit of the MMC.
+network were ignored since only the DC line resistances were con-
+sidered. Although there are lots of works on the VSC dynamic models,
+                                                                                      where the DC and AC side circuits are modeled as controlled current
+the models developed are based on two-level or three-level VSC, which
+                                                                                      and voltage sources, as shown in Fig. 1.
+are mathematically different from the MMC. Also, different types of DC
+faults cannot be handled efficiently with existing methods.
+                                                                                      2.1. Limitation of the MMC DC-side equivalent circuit
+    Simplified steady-state and dynamic models of MMC were devel-
+oped in [22]. Nevertheless, the mathematical equations were not de-
+                                                                                           The main limitation of these MMC models lies in the DC-side equivalent
+tailed and DC faults were not considered. The first generalized electro-
+                                                                                      circuit, as shown in Fig. 1(a). The conventional DC-side model of the MMC
+mechanical MMC-MTDC model was then proposed in [23]. A simplified
+                                                                                      is established as a first-order model without exception, in which only the
+MMC model which could capture the average internal dynamic char-
+                                                                                      dynamic of the equivalent capacitor Ceq of the MMC is considered. How-
+acteristic was proposed in [24]. A generic RMS model of the MMC-
+                                                                                      ever, it is believed that an equivalent inductor and resistor should be in-
+MTDC system was developed in [25], based on which, a linearized
+                                                                                      cluded on the DC-side model since the DC current flows through the arm
+model for analytical analysis was also investigated. In [26], a point-to-
+                                                                                      inductor of the MMC. This limitation has been identified by [13] though, no
+point MMC-HVDC dynamic model was developed with an additional
+                                                                                      strict mathematical derivations are given. To fill this gap, an improved
+control method to improve the transient stability. However, the dy-
+                                                                                      MMC electro-mechanical model with a second-order circuit on the DC side
+namic of the equivalent inductor on the DC side of the MMC, as well as
+                                                                                      will be derived theoretically in Section 3.
+the modeling of DC faults were not considered in the above MMC
+electro-mechanical models. In summary, the following two aspects need
+                                                                                      2.2. Limitation of the DC fault modeling in MMC-MTDC systems
+to be further improved:
+
+ • The DC-side equivalent circuit of the MMC in electro-mechanical                        None of the aforementioned references [14,23,24,25,26] deal with
+                                                                                      the modeling and simulation of DC faults in MMC-MTDC electro-me-
+   field has not been well established.
+ • Modeling of different types of DC faults in an MMC-MTDC system                     chanical models, which impede a complete stability study of the AC/DC
+                                                                                      systems. It is believed that modeling different types of DC faults (e.g.
+    for electro-mechanical transient stability studies has not been well
+                                                                                      the outage of DC lines, DC grounding short-circuit faults as well as the
+    studied.
+                                                                                      combination of them) in a generic MMC-MTDC system, and the in-
+                                                                                      corporation of these functions into commercial-grade transient stability
+    To tackle these issues, an improved electro-mechanical model of
+                                                                                      simulation tools (e.g. PSS/E) are of enormous practical demands.
+MMC-MTDC system which is feasible for a variety of DC fault simula-
+tions is proposed. The contributions are summarized as follows:
+                                                                                      3. Improved electro-mechanical model of MMC-MTDC system for
+                                                                                      transient stability studies
+(1) An improved MMC electro-mechanical model with a second-order
+    circuit on the DC side is derived theoretically. It reveals that the DC-
+                                                                                          In this section, the general idea of modeling will be illustrated
+    side model of the MMC should be established as a second-order
+                                                                                      firstly; then the improved MMC electro-mechanical model will be de-
+    circuit when considering DC fault simulations, rather than a con-
+                                                                                      rived theoretically; lastly, the method for modeling a generic MMC-
+    ventional first-order circuit, which gives a guideline for the mod-
+                                                                                      MTDC system feasible for different types of DC faults analyses will be
+    eling of MMC in electro-mechanical field from a theoretical point of
+                                                                                      provided.
+    view.
+(2) After establishing the differential-algebraic equations of the MMC-
+                                                                                      3.1. General idea of modeling
+    MTDC system, a method based on preset DC fault information for
+    studying the impacts of DC faults on the stability of large-scale AC/
+                                                                                          Mathematically, to develop the MMC-MTDC electro-mechanical
+    DC power systems is proposed, with which different types of DC
+                                                                                      model is to establish the differential-algebraic equations describing its
+    faults can be handled efficiently without reconstructing the DC
+                                                                                      dynamic behaviors. The whole structure of the MMC-MTDC electro-
+    topology.
+                                                                                      mechanical model is shown in Fig. 2 (Note that all the symbols will be
+                                                                                      explained in subsequent sections and the subscript d/q denotes the d-
+2. Limitations of the conventional electro-mechanical model of
+                                                                                      axis /q-axis component of the signals under dq synchronous rotating
+MMC-MTDC system
+                                                                                      frame). The modeling tasks are mainly divided into three parts:
+    In this section, the limitations of the widely used conventional MMC
+electro-mechanical models proposed in [14,23,25,26] will be discussed.                 • Modeling of MMC: DC-side model, and AC-side model.
+These MMC electro-mechanical models are mathematically similar,                        • Modeling of a generic MTDC network.
+
+                                                                               1003
+L. Xiao, et al.                                                                                                                            Electrical Power and Energy Systems 113 (2019) 1002–1013
+
+
+          MTDC network +                              uvd + uvq                              upper and lower arm; j = a, b, c denotes the three phases throughout
+         MMC DC-side model                            ivd + ivq                  ug          this paper); ivj is the output current of the MMC; ugj is the AC system
+       uCeq                                           ugd + ugq                              voltage at the point of common coupling (PCC); Lt and Rt are the
+                                                                                             transformer leakage inductance and resistance.
+                  ivdref       uvdref                                                            Applying the Kirchhoff’s current law and voltage law, the differ-
+                                                      uvd MMC ivd
+                                                                                             ential equations describing the DC-side and AC-side dynamic behaviors
+
+
+                                         Modulation
+                                                                        [F] iv
+      Outer       Inner                                      AC-                             of the MMC are given in (1) and (2), respectively [28]. These are the
+                                                                       dq-RI
+      loop ivqref loop uvqref                         uvq     side ivq                       key equations to establish the electro-mechanical model of MMC.
+                                                             model
+                                                                                                     di cirj                             udc
+                                                                                             Larm                 + Rarm i cirj =                     ucomj
+                                     ivd + ivq                

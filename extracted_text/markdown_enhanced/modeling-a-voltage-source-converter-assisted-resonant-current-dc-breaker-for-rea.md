@@ -1,0 +1,28 @@
+## Modeling a voltage source converter assisted resonant current DC breaker for real time studies
+
+**Authors:** Seyed Sattar Mirhosseini$^{a,b}$, Siyuan Liu$^{a,c}$, Jose Chavez Muro$^{a}$, Zhou Liu$^{d}$, Sadegh Jamali$^{b}$, Marjan Popov$^{a,*}$
+
+**Affiliations:**
+$^{a}$ Delft University of Technology, Faculty of EEMCS, Delft, the Netherlands
+$^{b}$ Iran University of Science and Technology, School of Electrical Engineering, Tehran, Iran
+$^{c}$ Xi’an Jiaotong University, Department of Electrical Engineering, State Key Laboratory of Electrical Insulation and Power Equipment, Xi’an, China
+$^{d}$ Aalborg University, Department of Energy Technology, Aalborg, Denmark
+
+$^{*}$ Corresponding author. E-mail address: M.Popov@tudelft.nl (M. Popov).
+
+## Keywords
+VARC DC circuit breaker, MTDC grid, Circuit breaker performance, RTDS model
+
+## Abstract
+In order to test protection performance of future multi-terminal HVDC grids where DC circuit breakers (DC CBs) play an important role, a DC CB model in real time test environment should be developed. It is well known that a DC CB needs to interrupt DC faults very quickly in order to avoid converter damages and to ensure security of supply. The total current interruption time consists of a fault detection time, which is needed for the DC protection to provide a trip command to the DC CB, and a DC CB interruption time. Thus, it is necessary to demonstrate the performance of associated protective devices through real time simulations, before these devices can be implemented and commissioned in practice. This paper presents a detailed modeling of the voltage source converter assisted resonant current DC circuit breaker (VARC DC CB) in real time simulation environment based on RTDS. The proposed model provides sufficient representation of the circuit breaker for system level studies. External current-voltage characteristics of the proposed VARC DC CB models replicate the ones of the device in the real world. The proposed model of the breaker is tested in a simple test circuit including a DC voltage source and a T-scheme HVDC cable. Additionally, a case study has been presented by making use of a protection algorithm in a multi-terminal HVDC grid with frequency dependent parameters of the HVDC cables to show both protection performance and current interruption.
+
+## 1. Introduction
+Voltage source converter based Multi-Terminal HVDC (MTDC) grid is emerging as a prospective technology for interconnecting renewable energy resources especially offshore wind farms. It provides advantages such as independent control of active and reactive power, interconnection of weak AC systems, and it also improves the flexibility, security and reliability of power transmission [1]. However, there are several technical challenges for the development of the MTDC grid. The protection system, which is responsible for the discrimination and the isolation of faulted line/segment, is one of the main challenges. Regarding the protection system, one of the barriers is lack of reliable, fast, low loss and cost effective HVDC circuit breakers (DC CBs) [2].
+
+Since there is no natural current zero in the DC current, the development of DC CBs is different from that of AC circuit breakers. Based on the technology deployed, the DC CBs can be classified as: (1) Mechanical DC CBs including active [3,4] and passive [5] circuit breakers, (2) Hybrid DC CBs [6,7] and (3) Solid State DC CBs [8,9]. Mechanical HVDC CBs use an interrupter to interrupt the current at artificial current zero created by a current injection circuit. Hybrid HVDC CBs integrate controllable solid-state semiconductor-based switches with mechanical switches and disconnectors. Solid State HVDC CBs interrupt the fault current by means of controllable solid-state semiconductor-based switches. Compared to the solid state DC CBs, an advantage of mechanical DC CBs is lower cost and conduction losses. However, the long operation time of spring based actuators cannot meet the requirements of fast fault interruption in MTDC grids. Recently, the development of ultra-fast actuators based on electromagnetic repulsion mechanisms has made mechanical DC CBs capable of clearing fault current within a few milliseconds [10,11]. The hybrid DC CBs make a tradeoff between the advantages of fast fault interruption and low conduction losses. However, during the fault current interruption, the semiconductor devices need to withstand a very high voltage, which imply utilisation of expensive components for hybrid DC CBs.
+
+The newly emerging VARC DC CB proposed in [12,13], is a promising solution that make use of an ultra-fast actuator together with a voltage source converter (VSC) and a resonant circuit. It combines the advantages of mechanical and Hybrid DC CBs to achieve less operation time, low conduction loss and cost-effectiveness.
+
+Some mechanical DC CB models have been proposed in [14]. The complexity level of these models changes based on their applications. More simplistic models, such as the model presented in [15,16], are conceived to be used for system level studies. The models proposed in [17,18] demonstrate the physical performance, the interactions and stresses between internal components.
+
+An EMTP (electromagnetic transient program) based mechanical DC CB model for transmission applications is presented in [19,20]. The model includes the main hardware components (ideal switches with delay, resonant circuit, surge arrester) and the control logic. It also interlocks between sub-components, and implements self-prote

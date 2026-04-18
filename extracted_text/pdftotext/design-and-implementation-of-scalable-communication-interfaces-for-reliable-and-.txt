@@ -1,0 +1,101 @@
+                                                                                                                                                       Design and Implementation of Scalable
+                                                                                                                                                    Communication Interfaces for Reliable and Stable
+                                                                                                                                                      Real-time Co-Simulation of Power Systems
+                                                                                                                                                           Qi Xiao, Jongha Woo, Lidong Song, Ning Lu                                                       Victor Paduani
+2025 IEEE Power & Energy Society General Meeting (PESGM) | 979-8-3315-0995-8/25/$31.00 ©2025 IEEE | DOI: 10.1109/PESGM52009.2025.11225688
+
+
+
+
+                                                                                                                                                             NC State University, Raleigh, NC, USA                                            New York Power Authority, Albany, NY, USA
+                                                                                                                                                                    {qxiao3, nlu2}@ncsu.edu
+                                                                                                                                            Abstract—Co-simulation offers an integrated approach for modeling                    co-simulation offers advantages such as flexibility and scalability,
+                                                                                                                                            the large-scale integration of inverter-based resources (IBRs) into                  it also presents challenges, particularly in managing latency and
+                                                                                                                                            transmission and distribution grids. This paper presents a scalable                  synchronization when coordinating subsystems with varying time
+                                                                                                                                            communication interface design and implementation to enable                          steps, sampling rates, and control intervals. Overcoming these
+                                                                                                                                            reliable and stable real-time co-simulation of power systems with high
+                                                                                                                                            IBR penetration. The communication interface is categorized into two
+                                                                                                                                                                                                                                 challenges is crucial for ensuring simulation accuracy and
+                                                                                                                                            types: local and remote. In local scenarios, where subsystems are                    maintaining system stability.
+                                                                                                                                            connected within a single local area network (LAN), low-latency                          In our previous studies, we observed that the choice of co-
+                                                                                                                                            communication facilitates the seamless integration of electromagnetic                simulation communication interface is highly dependent on the
+                                                                                                                                            transient (EMT) and phasor-domain models, enabling efficient                         application. For instance, in [3], we investigated device-level co-
+                                                                                                                                            interactions with power and energy management algorithms. For                        simulation to integrate models like EMT and phasor models.
+                                                                                                                                            remote scenarios, data exchange is achieved via internet-based file                  Meanwhile, in [4]-[6], we focused on network-level co-simulation
+                                                                                                                                            sharing or VPN-enabled communication. The performance of both                        frameworks to analyze interactions resulting from DER
+                                                                                                                                            methods is evaluated using OPAL-RT as a real-time simulator,                         integration. Co-simulation with energy management systems is
+                                                                                                                                            demonstrating scalability, effectiveness, and challenges specific to
+                                                                                                                                            real-time co-simulation applications. To mitigate instability arising
+                                                                                                                                                                                                                                 also crucial for replicating real-world conditions [7], [8], though it
+                                                                                                                                            from data resolution mismatches in time-sensitive co-simulations, a                  inherently involves communication latencies. Effectively
+                                                                                                                                            real-time data extrapolation method is proposed. This approach                       addressing latencies with tailored data exchange methods is
+                                                                                                                                            significantly enhances stability and reliability, ensuring more                      crucial, especially for applications like cybersecurity analysis.
+                                                                                                                                            accurate simulation outcomes. The implementation code is available                       To address these challenges, this paper presents solutions
+                                                                                                                                            on GitHub, providing researchers the tools to replicate and expand                   developed for various co-simulation scenarios and introduces a
+                                                                                                                                            upon this work.                                                                      suite of communication interfaces that enable sharing real-time
+                                                                                                                                            Index Terms -- Communication interface design, co-simulation,                        simulator (RTS)-based testbeds developed at North Carolina State
+                                                                                                                                            inverter-based resources (IBRs), real-time simulation, data                          University (NCSU) with other institutions for collaborative real-
+                                                                                                                                            extrapolation.                                                                       time simulations. The communication interfaces are categorized
+                                                                                                                                                                                                                                 into two types: local and remote.
+                                                                                                                                                                        I.    INTRODUCTION                                           Local co-simulation connects subsystems within a shared
+                                                                                                                                                The large-scale integration of distributed energy resources                      environment, typically over a local area network (LAN), enabling
+                                                                                                                                            (DERs) and inverter-based resources (IBRs) has significantly                         low-latency communication. This setup is ideal for device-level
+                                                                                                                                            increased the scale and complexity of power systems [1]. This has                    simulations within transmission or distribution networks or for
+                                                                                                                                            necessitated electromagnetic transient (EMT) simulations at                          integrating power networks with local control systems. In contrast,
+                                                                                                                                            microsecond resolution to ensure grid stability, as well as                          remote       co-simulation     facilitates  collaboration      among
+                                                                                                                                            integrated transmission and distribution (T&D) simulations                           geographically dispersed teams and systems across institutions
+                                                                                                                                            capable of addressing both system levels. However, such                              (e.g., university campuses) via internet connections, addressing
+                                                                                                                                            simulations require substantial computational resources, often                       challenges posed by distance and network constraints. To support
+                                                                                                                                            surpassing the capabilities of a single modeling platform designed                   both time-sensitive and time-insensitive remote co-simulations,
+                                                                                                                                            for either EMT or phasor-domain simulations. Furthermore, IBR                        we develop file-sharing mechanisms and VPN-based TCP/IP
+                                                                                                                                            and DER power and energy management algorithms frequently                            socket communication. Our findings indicate that data resolution
+                                                                                                                                            rely on external solvers operating independently from the power                      mismatches in time-sensitive co-simulations can cause instability
+                                                                                                                                            system simulation platforms.                                                         in IBRs. To mitigate this issue, we propose a real-time data
+                                                                                                                                                In recent years, co-simulation has become a powerful approach                    extrapolation method, significantly enhancing stability and
+                                                                                                                                            for enabling the concurrent operation of multiple subsystems                         reliability, leading to more accurate simulation results.
+                                                                                                                                            within a unified environment. It supports the integration of diverse                     The performance is evaluated using OPAL-RT as the RTS,
+                                                                                                                                            modeling environments and control frameworks, enabling the                           demonstrating the scalability and challenges of real-time co-
+                                                                                                                                            exchange of monitoring signals and control commands to simulate                      simulation, as well as the effectiveness of the proposed
+                                                                                                                                            complex subsystem interactions accurately [2]. However, while                        extrapolation methods. To facilitate researchers to replicate and
+                                                                                                                                                This research is supported by the U.S. Department of Energy's Office of          expand upon our work, we published our code for the
+                                                                                                                                            Energy Efficiency and Renewable Energy (EERE) under the Solar Energy                 communication interface designed for both local and remote on
+                                                                                                                                            Technologies Office, Award Number DE-EE0008770 and NSF ECCS, PD 18-7607              our GitHub repository [9].
+                                                                                                                                            Energy, Power, Control, and Networks (EPCN), Award Number (FAIN): 2329536.
+
+
+
+
+                                                                                                                                                      979-8-3315-0995-8/25/$31.00 ©2025 IEEE
+                                                                                                                                                          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:02:15 UTC from IEEE Xplore. Restrictions apply.
+                            II.    METHODS
+    This section details the communication interface setup for the
+local and remote real-time co-simulation testbed, using a
+microgrid simulation testbed as an illustrative example.
+A. Local Communication Interface Design
+    We define local co-simulation as configurations where all
+subsystem models are connected within a single LAN, as
+illustrated within the dotted-line box in Fig. 1. In this setup, a
+microgrid control system (MCS) modeled on a networked
+personal computer (PC) can interact with a microgrid testbed
+                                                                                    Fig. 1. Layout of the local and remote real-time co-simulation testbed.
+modeled on a RTS using the simulated Modbus communication
+protocol over a LAN.                                                                     Once the simulation begins, the interface performs the
+    The microgrid testbed on the RTS platform can be further                       following tasks: 1) collect time-stamped measurements from RTS
+categorized into two model types: the EMT domain and the phasor                    via Modbus at a defined polling frequency; 2) log the data in the
+domain. For example, as shown in Fig. 1, high-power inverter-                      database and synchronize the system clock using the embedded
+based resources (IBRs), including a 3 MW PV farm, a 2 MWh                          simulation time, which acts as the global clock for the co-
+battery energy storage system (BESS), a 1 MVA diesel generator                     simulation testbed; 3) transmit measurements to the MCS at a
+(DG), and their device-level controllers, are modeled in the EMT                   predefined interval for generating control commands; and 4)
+domain using eMEGASIM with a 100-μs timestep. This approach                        receive time-stamped control commands from the MCS, log them
+captures microgrid frequency and voltage transients, enabling the                  in the database, and forward them to the RTS for execution. To
+evaluation of different IBR control modes, such as grid-forming                    ensure seamless communication and prevent command loss, the
+and grid-following. Simultaneously, the IEEE 123-bus distribution                  interface utilizes Python-based multi-threading, enabling
+network and associated loads are modeled in the phasor domain                      concurrent handling of upstream measurement collection (RTS to
+using ePHASORSIM with a 1-ms timestep. To ensure                                   MCS) and downstream command transmission (MCS to RTS).
+synchronized data exchange between the EMT and phasor                                    Figure 3 depicts the time sequence of the local co-simulation
+domains, phasor-domain signals are used to update EMT                              testbed. In the EMT and phasor co-simulation model on the RTS,
+waveforms through a first-order low-pass filter (LPF) with delay                   the system propagation delay (td1) can reach up to 2 ,            +
+compensation, eliminating the need for time interpolation. For                            , which corresponds to 2.1 ms in this configuration [2].
+                                                                                      ,
+more details on this approach, please refer to [3].                                Additionally, the delay (td2) between RTS and MCS includes: 1)
+    The MCS manages energy and power balancing for the                             round-trip commun

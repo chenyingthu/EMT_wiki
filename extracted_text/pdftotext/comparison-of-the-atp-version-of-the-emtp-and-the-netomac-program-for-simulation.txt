@@ -1,0 +1,191 @@
+~
+
+
+
+
+2048                                                                          IEEE Transactions on Power Delivery, Vol. 10, No. 4,October 1995
+           COMPARISON OF THE ATP VERSION OF THE EMTP AND THE NETOMAC PROGRAM FOR
+                                 SIMULATION OF HVDC SYSTEMS
+
+                        P. Lehn     J. Rittiger                                                       B. Kulicke
+                        Member                                                                         Member
+                             Siemens AG                                                      Technische Universitat Berlin
+                  Box 3220,91052 Erlangen, Germany                                      Einsteinufer 11, 10587 Berlin, Germany
+
+                              ABSTRACT                                            discussion presented however, is generally applicable to the
+                                                                                  other available EMTP versions (such as the EPRI an BPA ver-
+This paper investigates the capabilities and limitations of the                   sion numbers 2.x) as well.
+EMTP and the NETOMAC program as applied to HVdc system
+simulation. The fundamental differences between the two pro-                          THE EMTP AND THE NETOMAC PROGRAM
+grams and their effect on simulation results are described. Con-
+sistency of the results obtained from these programs is examined                  Both the EMTP and the NETOMAC program have been around
+through simulation of a test HVdc network. As expected, a very                    for over 2 decades. Although the programs were initially per-
+high degree of agreement between the two sets of simulation re-                   haps somewhat limited in their abilities, continual program de-
+sults proved to be achievable, but only when particular care was                  velopment and the rapid advance of computational facilities has
+taken to overcome intemal program differences. Finally, the                       transformed them into very powerful and flexible simulation
+new advanced stability feature of NETOMAC is briefly dis-                         packages. Currently, both packages are capable of representing
+cussed and then tested against the complex transient models es-                   an enormous variety of linear and nonlinear network elements,
+tablished in the EMTP and in the NETOMAC transients pro-                          as well as controls and the controlled switches (thyristors) which
+gram section.                                                                     are required for HVdc and SVC system modelling. They are also
+                                                                                  both capable of load flow and transient calculations and they of-
+    Keywords: HVdc simulation, ATP, EMTP, NETOMAC.                                fer a wide variety of advanced features such as inclusion of mac-
+                                                                                  ros, or "modules" in the EMTP, calculation of line constants, and
+                          INTRODUCTION                                            transmission line representation with the Marti Model. Of
+                                                                                  course certain features are peculiar to the individual programs.
+    Particularly in the last 10 years, a wide variety of HVdc control             The most significant of these features in the EMTP are SPY, for
+    strategies have been tested and optimized with the help of vari-              interactive execution, observation and control, as well as support
+    ous digital simulation programs. In 1985 the great interest in                programs for conversion of supplied nonlinear transformer and
+    HVdc system simulation led to the idea of establishing an HVdc                inductor data into EMTP input format. As for the NETOMAC
+    benchmark model [l]. In the following years a comparison of                   program, it offers a variable time step size, interpolation, and a
+    one simulator and four digital models was carried out and then                stability calculation feature which has recently been made even
+    documented by a Cigre Working Group [2]. Computed results                     more powerful.
+    from the various simulation programs all agreed quite well with
+    the reference simulator results (although completely calibrated                When looking more closely at the two programs, 3 rather signifi-
+    NETOMAC results were first documented somewhat later [3]).                     cant disadvantages of the present EMTP version can be seen
+    Since virtually every computer model was established at a differ-              w'lien siinulatiuii of I-IVdc ail3 SVC devices is considered. Firs:,
+    ent location, generally only discrepancies between results from                the fixed time step of the EMTP causes errors in switching times
+    the simulator and a particular program model were addressed.                   and can also cause the initiation of numerical oscillations [4][S].
+    Variations between the results obtained from different simula-                 Secondly, undesirable time delays occur between the solution of
+    tion programs therefore received little attention.                             the control equations (in TACS) and the network equations [SI.
+                                                                                   Finally, because TACS was originally designed for the represen-
+    A comparative study between the EMTP and the NETOMAC                           tation of analog controls, limitations become evident when mod-
+    program was therefore carried out by simulation of a common                    e m digital controls are to be modelled 161. While the newer
+    HVdc system with the two programs. Here, in contrast to the                    MODELS option of the ATP version of the EMTP overcomes
+    Cigre studies, particular attention was paid to minimizing all                 the problems of modelling digital controls and even reduces
+    possible differences and locating any remaining sources of error               some of the time delays between the controls and network solu-
+    which exist between the digital models. In addition, the study                 tions, a great many users still only employ TACS to ensure their
+    provided an ideal opportunity to demonstrate and test the abili-               data files remain compatible with other EMTP versions.
+    ties of the new advanced stability feature of NETOMAC, which
+    was designed for the inclusion of complex HVdc networks in ac                  In the case of the NETOMAC program, delays between the net-
+    stability simulations.                                                         work and controls solutions are eliminated for HVdc applica-
+                                                                                   tions, and switching operations employ an interpolation tech-
+    For the purpose of this study the ATP version of the E M V , sup-              nique [8,9]. The delays in thyristor firing that occur with TACS
+    plied by the Leuven EMTP Center (LEC), was employed. The                       and NETOMAC are shown graphically in fig. 1. (It should be
+                                                                                   noted that not necessarily all the EMTP versions function quite
+                                                                                   identically [7] and the figure only shows the typical delays that
+    95 WM 276-6 PWRD        A paper recommended and approved                       are to be expected.) As can be seen from the figure, the delay in
+    by t h e IEEE Transmission and D i s t r i b u t i o n Committee               the EMTP when TACS is employed is one time step plus errors
+    of t h e IEEE Power Engineering Society for p r e s e n t a t -                in zero crossing detection plus errors resulting from the fact that
+    i o n a t t h e 1995 IEEE/PES Winter Meeting, January 29,                      the time a is not an exact multiple of the time step. The accuracy
+    t o February 2, 1995, New York, NY. Manuscript sub-                            of the NETOMAC firing time is only limited by the precision of
+    mitted December 22, 1993; made a v a i l a b l e f o r p r i n t -             the linear interpolation routine used.
+    i n g November 30, 1994.
+                                                                             The modelling of controls is quite different in the two programs.
+                                                                             Both NETOMAC and MODELS in ATP employ a much larger
+                                                                             library of special functions than TACS and they also accepts true
+                                                                             FORTRAN input offering if ...then ...else structures and the like.
+                                                            0885-8977/95/$04.00 0 1995 IEEE
+              Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:16 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                                   2049
+                     true zero                  desired firing                                                      true zero                  tlcriretl firiiig
+                     crossing                      instant
+
+
+TACS \vaveform                                                  firing signal realized in TACS
+synchronized to
+                                                                   firing implement by EMTP
+
+
+
+
+                                               firing time desired                                                                            firing liiiic. itiiplc-
+                  realized in TACS                   by TACS                                                     realized using              iiieiited i n nct\vork
+                                                                                                                 interpolation“              using interi,olation’.
+                                                                                                        ”accurate to within the liinitatims of liilcar interpolalioll
+                                   Fig. 1: Thyristor firing in EMTP (left) and NETOMAC (right)
+They are therefore better suited to the representation of digital  cable section. These include changes in the controller gains, in-
+controls than T A U . All three environments, TACS, MODELS,        corporation of a VDCL characteristic at both the rectifier and in-
+and NETOMAC are equally capable in their abilities to model        verter and logic to ensure gradual recovery after engagement of
+analog controls.                                                   the VDCL.
+
+               SYSTEM CONFIGURATION                                                              THE EMTP AND NETOMAC MODELS
+                                                                                     As long as the electrical network consists of only linear elements,
+Since both the EMTP and the NETOMAC program are capable                              creation of identical models in the two programs is possible. Mi-
+of simulating virtually any conceivable electrical network, no                       nor discrepancies between the two models however, start to arise
+constraints were imposed on the configuration of the network to                      as soon as saturable transformers, time controlled switches and
+be used in the comparison study. In order to rigorously test the                     thyristors are introduced. The least problematic of these ele-
+capabilities of the new advanced stability model however, a sys-                     ments is the time controlled switch where, switching events must
+tem with a relatively complex dc circuit was chosen. The system                      occur at the same point on the voltage waveform, which is not
+model selected for the study is shown in fig. 2. Both ac systems                     necessarily at exactly the same instant in real time. Although
+operate at 50 Hz,and the networks are both strong with a SCR                         ideally the conditions are synonymous, in reality there can be a
+of 5.0. Each converter is compensated to about 80% of its reac-                      small phase shift between the two program outputs (in the order
+tive power demand by two ac filters producing 240 Mvar. The                          of several time steps). Also, since the EMTP does not interpo-
+HVdc monopole is rated at 600 M W and 400 kV. The dc line                            late to open switches precisely at zero current, the resulting
+consists of 2 transmission line sections separated by 66 km of                       chopped current can have a substantial effect on the system re-
+submarine cable. The two transmission line sections are mod-                         sponse. For the EMTF’ and NETOMAC models to respond simi-
+elled using T-sections that are about 20 km in length, while the                     larly to a given switching action, the elimination of these errors
+cable requires 13 T-sections, each approximately 5 km long.                          through careful examination and correction of the switching time
+Two rejection filters tuned to 50 and 100 Hz are included in the                     and adjustment of the EMTP switch current margin to control
+dc circuit to eliminate resonances of the combined dc network at                     the chopped current is required.
+these frequencies. The highly capacitive submarine cable sec-
+tion and the first and second harmonic resonances of the dc cir-                     In the case of the saturable transformer model, and similar non-
+cuit make the system very demanding on the advanced stability                        linear elements, care must obviously first be taken to ensure that
+model.                                                                               the given data is correctly converted for input into each of the
+                                                                                     two programs. While this process is simplified by support pro-
+Since the controls were all to be modelled in TACS, an analog                        grams in EMTP, it remains somewhat tedious in NETOMAC. It
+controller, based on the controller used by the FGH in their sim-                    should be noted however, that even once data is correctly con-
+ulation of the HVdc benchmark model [lo], was chosen. Certain                        verted and entered, slight discrepancies will still be evident in the
+modifications were, however, made necessary by the more com-                         operation of the device. For example, in the case of a piecewise
+plex dc circuit which included a highly capacitive submarine                         linear characteristic, the variable time step of NETOMAC al-
+
+
+
+
+                                                                                Cable
+                120oR                                                                                                                               1200 R
+                                                                                66. kin      42. klll
+
+          4090nF                 (C                                                                                                                      4090nF
+
+
+
+
+               4 0 0 ~
+                                                                                                 400R
+                                                                                                        qg$7
+                                                                                                         -
+                                                                                                         -. -
+                                                                                                            -.
+                                                                                                                 mH
+                                                                                                                      Em2’36&,l        4
+
+
+                                                                                                                                               15.6mH 9.05mH
+
+                                                                                                                                                       400R
+
+
+                                      6 4 3 X n ~ l 5 . 6 m H
+
+
+
+       ‘I 9.05mH 15.6m                                               Fig. 2: The System Model
+         - 1   4WQ                                                                                                                         I-=-        400 R
+
+
+
+        Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:16 UTC from IEEE Xplore. Restrictions apply.
+2050
+lows interpolation to the point of discontinuity and ensures that              Fig. 3 gives an overview of the solution technique used in the ad-
+the characteristic entered is strictly obeyed. Since this is not pos-          vanced stability model. This technique allows simulation of any
+sible in the EMTP, a slight overshoot at the discontinuity occurs              variety of dcline faults or switching events as well as symmetrical
+[5].The resulting discrepancy decreases with a decreasing time                 ac phenomena. Due to the single line representation of the ac
+step size in the EMTP.                                                         system, unsymmetrical faults can only be roughly approximated
+                                                                               by the model. Harmonic studies and representation of internal
+Finally there is the difficulty associated with the implementation             converter faults are not possible with the simplified model.
+of controllable switches, i.e. thyristors. Simply put, it is impossi-
+ble for a thyristor modelled in the EMTP and in I ‘ETOMAC to
+function identically. First, there are the inhere1 ! time delays
+which occur between the controls and network solutions in
+EMTP and are avoided in NETOMAC by interpolation to the
+exact switching time specified by the controls. This, however, as-
+sumes that the output of the controls themselves are identical,
+which is also not the case. Although the controls simulation in
+NETOMAC and TACS in EMTP perform the same function,
+they have very little else in common. It is therefore exceedingly                                                 dc Ilctwork:
+                                                                                      ac network 1 :             true trnnsieiit        iic net\\ 7rk 2:
+difficult for even simple blocks such as a PI controller to be iden-                 coiii plex ad iiii 1.                             coiiipley idiiiit
+                                                                                                                     Illode1
+tically represented in the two programs. In fact, even the PI con-                         model                                            I11o d e I
+troller must be broken down into its component P and I parts, if
+the limit handling in the two programs is to be carried out identi-                       Fig. 3: The NETOMAC Advanced St

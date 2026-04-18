@@ -1,0 +1,208 @@
+13632                                                                          IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+
+        Modeling Method for DFIG-Based Wind Farm in
+         High-Efficiency Real-Time Electromagnetic
+                 Transient (EMT) Simulations
+                         Yifan Liu, Jianzhong Xu , Senior Member, IEEE, Yiyang Zhu, Zhaoxuan Tian,
+                         Chengyong Zhao , Senior Member, IEEE, and Gen Li , Senior Member, IEEE
+
+
+   Abstract—With the increasing integration of renewable energy                       Electromagnetic transient (EMT) modeling and simulation
+into power systems, electromagnetic transient simulation has be-                   are pivotal technologies for analyzing electrical power systems
+come indispensable for accurate system analysis. However, the com-                 [4]. Real-time simulation of large-scale wind farms (WFs) holds
+plexity of wind turbine modeling, characterized by a large number
+of electrical nodes, poses significant challenges and necessitates                 significant engineering importance in supplier selection, valida-
+substantial real-time simulation hardware. Existing methods for                    tion of station design plans, investigation of grid connection
+reducing circuit complexity improve simulation efficiency, but are                 stability, and development of dispatch control strategies [5].
+each associated with inherent limitations. Aggregation methods                     However, the complex nature of WT core equipment, frequent
+sacrifice considerable internal station information, while existing                switching of converter groups, and high node count pose chal-
+decoupling techniques are constrained by specific requirements.
+This article proposes a real-time simulation model for a doubly                    lenges, leading to constraints in simulation step size and node
+fed induction generator-based wind farm (WF) using latency de-                     scalability issues—the so-called “dimensionality disaster” [6],
+coupling and a multilevel nested fast and simultaneous solution                    [7]. Consequently, there is a pressing need for research on
+approach, effectively reducing node count while preserving inter-                  real-time simulation modeling methods for large-scale WFs.
+nal details. A WF test model is implemented in real-time digital                   Current research on wind power modeling has focused on two
+simulator (RTDS) for validation. Results demonstrate highly accu-
+rate impedance characteristics and time-domain waveforms of the                    primary aspects: equipment-level and station-level modeling.
+proposed model, utilizing only 33.3% of the hardware resources                        The acceleration of modeling techniques for individual WT
+compared to the traditional detailed model.                                        primarily centers on simplifying core equipment components.
+   Index Terms—Doubly fed induction generator (DFIG),
+                                                                                   Notably, the mathematical models of DFIG and back-to-back
+electromagnetic transient (EMT) simulation, latency decoupling                     fully-rated converter (FRC) are intricate and offer opportunities
+method, multilevel nested fast and simultaneous solution                           for model optimization. Dommel [8] presents the state-space
+(M-NFSS), real-time simulation.                                                    equations of the DFIG model in the dq0 frame. A harmonic
+                                                                                   model for DFIG to analyze the spectral characteristics of DFIG
+                            I. INTRODUCTION                                        controller signals is developed in [9]. In [10], a noniterative
+                                                                                   method is proposed to compute steady-state operating condi-
+      HE development of an integrated energy system and a
+T     clean energy supply with a high proportion of renewables is
+crucial for energy and environmental strategies [1]. The doubly
+                                                                                   tions for DFIG-based WTs. Buragohain and Senroy [11] propos
+                                                                                   a reduced-order DFIG model to investigate grid synchronization
+                                                                                   stability. However, these models primarily rely on state-space
+fed induction generator (DFIG) based wind turbine (WT) is
+                                                                                   methods, often necessitating the integration of equations for
+recognized for its stable technical performance, mature supply
+                                                                                   other components solved using Matlab’s ode function.
+chains, and favorable economics, establishing itself as a promi-
+                                                                                      In contrast, the electromagnetic transient program (EMTP),
+nent type in commercial wind power applications [2], [3].
+                                                                                   employing nodal analysis, facilitates discrete component model-
+                                                                                   ing through a graphical interface, allowing intuitive component
+   Received 30 July 2024; revised 30 September 2024, 1 January 2025, and 30
+March 2025; accepted 30 April 2025. Date of publication 5 May 2025; date
+                                                                                   placement and interconnection [12]. Mainstream EMTP simula-
+of current version 30 June 2025. This work was supported by the National           tion tools like PSCAD/EMTDC and RTDS offer DFIG models
+Natural Science Foundation of China under Grant 52277094. Recommended              commonly used by researchers. However, the specific modeling
+for publication by Associate Editor B. Singh. (Corresponding author: Jianzhong
+Xu.)
+                                                                                   principles of these “black/gray box “models remain opaque
+   Yifan Liu, Jianzhong Xu, Yiyang Zhu, Zhaoxuan Tian, and Chengyong Zhao          and inaccessible to users, limiting the widespread adoption of
+are with the State Key Laboratory of Alternate Electrical Power System with        accelerated modeling approaches. Thus, it is timely to develop
+Renewable Energy Sources, North China Electric Power University (NCEPU),
+Beijing 102206, China (e-mail: xujianzhong@ncepu.edu.cn).
+                                                                                   a method for constructing a DFIG nodal model based on the
+   Gen Li is with the Energy Technology and Computer Science Section,              original state equations.
+Department of Engineering Technology and Didactics, Technical University              In large-scale WF simulations, emphasis typically shifts away
+of Denmark (DTU), 2750 Ballerup, Denmark (e-mail: genli@dtu.dk).
+   Color versions of one or more figures in this article are available at
+                                                                                   from individual switching devices towards output modeling
+https://doi.org/10.1109/TPEL.2025.3567136.                                         methods based on external characteristics, treating power elec-
+   Digital Object Identifier 10.1109/TPEL.2025.3567136                             tronic devices as unified entities [13]. Two predominant output
+      0885-8993 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: MODELING METHOD FOR DFIG-BASED WF IN HIGH-EFFICIENCY REAL-TIME EMT SIMULATIONS                                                             13633
+
+
+
+modeling methods currently exist: the averaging model and
+the switching function model. The averaging method has been
+extensively validated across diverse research scenarios includ-
+ing voltage and frequency stability [14], enabling enhanced
+simulation efficiency and larger time steps [15]. However, it
+overlooks high-frequency components [16]. In contrast, the
+switching function model preserves the original pulsewidth                      Fig. 1.   DFIG-based WT topology.
+modulation (PWM) characteristics [17], facilitating ac and dc
+circuit decoupling and proving advantageous in modeling WTs
+                                                                                  3) The M-NFSS method is proposed by using “multiple times
+postequipment integration [18].
+                                                                                      with low-order” instead of “one time with high-order,”
+   At the station level, mainstream equivalent modeling meth-
+                                                                                      which can further reduce the number of nodes and expand
+ods encompass single- and multimachine representations. The
+                                                                                      the scale of the WF that can be simulated.
+former commonly utilizes the capacity-weighted equivalent
+                                                                                  The rest of thos article is organized as follows: Section II
+method [19], [20]. Meanwhile, the latter categorizes WTs based
+                                                                                presents the circuit-based decoupling modeling method for the
+on specified criteria and aggregates each group into a single
+                                                                                core equipment of WTs. Section III introduces the M-NFSS
+equivalent machine [21], [22]. Recent research has incorporated
+                                                                                method in wind power collection systems. Section IV provides
+additional elements into fundamental aggregation principles for
+                                                                                comprehensive validation through tests conducted on RTDS.
+WF modeling, such as low voltage ride-through behavior [23]
+                                                                                Finally, Section V concludes this article.
+and impedance characteristics [24]. These advancements aim
+to enhance the accuracy of aggregation methods and broaden
+                                                                                              II. WIND TURBINE MODELING PRINCIPLES
+their applicability across a wider range of scenarios. However,
+while these methods can scale up WF simulations, they often                        Fig. 1 depicts the topology of a DFIG-based WT. The elec-
+sacrifice internal characteristics such as individual WT feeders.               trical components include four core devices: DFIG; FRC; trans-
+Developing a refined model that preserves all WTs and their                     former, and filter. The resistor-capacitor filter model discretizes
+associated feeders is essential to ensure comprehensive infor-                  the capacitor as described in [32]. The converter utilizes a
+mation integrity.                                                               switching function model, details of which are omitted here.
+   To address the “dimensionality disaster” issue in node-based                 Notably, the converter models feature a large capacitor in the dc
+simulations, network decoupling and nested fast and simultane-                  circuit and smoothing reactors in the ac circuit, ensuring smooth
+ous solution (NFSS) methods aim to reduce matrix dimensions                     transitions in dc voltage Vdc (t) and ac current Ii (t) (i = a,b,c)
+requiring direct inversion. Common network decoupling meth-                     between consecutive steps. To achieve this, a decoupling method
+ods include transmission-line (TL) natural decoupling [25], mul-                replaces Vdc (t) and Ii (t) with Vdc (t-Δt) and Ii (t-Δt), respectively.
+tiarea Thevenin equivalent (MATE) [26], and latency insertion                   This section introduces decoupling modeling methods for both
+method (LIM) [27]. TL methods are constrained by transmission                   the DFIG and transformer, reducing the WT model’s node count
+line lengths [25], while MATE involves node tearing or branch                   from 24 to just 3 nodes connected to the external circuit.
+segmentation, necessitating sequential network solution with
+lower computational efficiency [26]. LIM introduces additional                  A. DFIG Model by Decoupling Stator and Rotor
+inductors/capacitors and delays for mutual decoupling, altering
+                                                                                   Existing DFIG models face challenges in interfacing with
+system dynamics and imposing constraints on simulation step
+                                                                                other equipment and are cumbersome to program in simulation
+size [27]. NFSS, widely applied in modular multilevel converters
+                                                                                software, often necessitating direct circuit connections between
+[28], [29] and power electronic transformers [30], offers highly
+                                                                                the stator and rotor. To address these issues, a discretization-
+accurate speed-up modeling without numerical oscillation risks.
+                                                                                based modeling approach coupled with latency decoupling is
+Recent applications include direct-drive WT modeling [31].
+                                                                                proposed, establishing a singular electrical signal connection
+However, due to the complex structure of renewable energy
+                                                                                between the stator and rotor. The mathematical model of the
+generation, large internal node counts limit its acceleration
+                                                                                DFIG comprises voltage equations, flux-linkage equations, and
+benefits compared to smaller systems [28], [29]. Decoupling
+                                                                                the rotor mechanical equation, outlined as follows:
+and NFSS methods complement each other in scope and can be                             
+separately improved and combined for enhanced effectiveness.                             Uabcs = Rs Iabcs + dψdtabcs
+
+                                                                                                              dψabcr                         (1)
+   The main contributions of the algorithm are as follows:                               Uabcr = Rr Iabcr + dt
+   1) By employing discretization and latency decoupling, this                         
+                                                                                         ψabcs = (Lls + Lm )Iabcs + n1 Lm Iabcr ejθr
+       article establishes a node model for DFIG enabling sep-                                                                               (2)
+                                                                                         ψabcr = (Llr + n12 Lm )Iabcr + n1 Lm Iabcs e−jθr
+       arate handling of stator and rotor connections to external
+       circuits. This breakthrough addresses significant modeling                       dωr
+                                                                                          J   = T e − T m − KD ω r                           (3)
+       challenges of DFIG.                                                               dt
+   2) It decouples the core WT equipment into four parts, allow-                where U, I, and ψ denote the winding voltage, current, and flux-
+       ing three subnetworks to be independently solved with                    linkage; the subscripts abcs and abcr denote the stator winding
+       reduced matrix dimensions. This approach substantially                   and rotor winding in the abc frame; Rs and Rr represent the
+       lowers computational demands.                                            stator and rotor winding resistance; Lls and Llr represent the
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+13634                                                                       IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+leakage inductance of the stator and rotor; Lm is the excitation
+inductance; n denotes the turn ratio; θr is the rotor angle between
+a- and d- axis; ω r represents the rotor speed; Tm is the mechanical
+torque exerted by the prime mover on the motor shaft; Te is the
+electromagnetic torque; J is the rotational inertia; and KD is the
+mechanical damping coefficient.
+   The stator and rotor variables are converted by analogy be-                  Fig. 2.   DFIG equivalent circuit.
+tween the primary and secondary sides of the transformer. The
+conversion equations are as follows:
+              ⎧                
+              ⎨nψabcr = ψabcr
+                                                
+                 nUabcr = Uabcr       nIabcr = Iabcr   .         (4)
+              ⎩ 2
+                 n Rr = Rr           n2 Llr = Llr
+   To convert the mathematical model of the DFIG into a con-
+stant coefficient equation, the abc/dq0 transformation is utilized.             Fig. 3.   Transformer T-type equivalent circuit.
+Following this transformation, the voltage and flux-linkage
+equations in matrix form in the dq0 frame are expressed as
+follows:                                                                        in which
+                dψ                                                                           −1                                         −1            
+  U = RI +          +e                                          (5)                 G11 G12    P1                     0          Lss   Lsr           P1   0
+                                                                                             =
+                dt                                                                  G21 G22     0                    P −1
+                                                                                                                       2         Lsr   Lrr           0    P2
+  ψ = LI                                                     (6)                                                                                            (11)
+  ⎧                                 
+                                                 
+                                                T
+  ⎪U = Uds Uqs U0s Udr Uqr U0r
+  ⎪
+  ⎪
+                                                                                where P1 and P2 represent Park transformation matrices; trans-
+  ⎪
+  ⎪                                                                           formation angles are ϕ and (ϕ-θr ), respectively, and ϕ denotes
+  ⎪
+  ⎪ R = diag Rs Rs Rs R

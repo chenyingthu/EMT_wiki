@@ -1,0 +1,187 @@
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+IEEE TRANSACTIONS ON POWER DELIVERY                                                                                                                           1
+
+
+
+
+   The Reconfigurable-Hardware Real-Time and
+Faster-Than-Real-Time Simulator for the Analysis of
+   Electromagnetic Transients in Power Systems
+                              Mahmoud Matar, Senior Member, IEEE, and Reza Iravani, Fellow, IEEE
+
+
+
+   Abstract—The reconfigurable-hardware real-time power                                 The fact that EMT phenomena subject the power system to
+system simulator (RH-RTS) is a field-programmable gate-array                         excessive stresses, precludes their investigation and evaluation
+(FPGA)-based real-time simulator that is developed based on                          experimentally. In addition, due to the size and complexity
+the concept of simulators hardware reconfigurability (i.e., to
+change the underlying hardware architecture of the simulator to                      of power systems, it is almost impossible to have analytical
+accommodate various power system topologies). The uniqueness                         models that are suitable for the closed-form analysis of EMTs
+of the RH-RTS is the underlying hardware architecture. The                           of interconnected power systems. Hence, digital time-domain
+RH-RTS has a massively parallel customized hardware architec-                        simulation, either offline or real time, is the only practical
+ture that is tailored to the solution of the mathematical model of                   approach to conduct EMT studies. Moreover, a physical
+the power system under consideration. The RH-RTS enables the
+simulation of large power systems with a computation-time per                        control/protection platform also has to be tested and its func-
+simulation time-step in the range of tens of nanoseconds. Not only                   tionalities verified prior to installation and commissioning since
+does the RH-RTS provide a means for real-time operation (e.g.,                       prudent utility practice forbids experimentations with the power
+for closed-loop testing of physical control/protection platforms                     system. Thus, a real-time simulator is needed to test physical
+in hardware-in-the-loop (HIL) configuration), it also provides                       control/protection platforms in realistic conditions similar
+a means for faster-than-real-time operation (e.g., for statistical
+switching studies). This paper provides validation and evaluation                    to the actual power system operating conditions. Real-time
+of the performance of the RH-RTS. This paper presents a case                         simulators are also useful in conducting statistical switching
+study involving the simulation of a power system in both real time                   studies, requiring large number of simulation test cases, as it
+and faster than real time. The computation time per simulation                       substantially reduces the total run-time.
+time-step is as low as 24 ns, for realistic size systems, which is,                     Production grade real-time simulators do exist and have been
+by far, the lowest computation time reported in the technical
+literature.                                                                          widely used for EMT studies and for testing physical control/
+                                                                                     protection platforms. However, the existing real-time simula-
+  Index Terms—Electromagnetic transients, field-programmable                         tors have limitations on the minimum time-step size, the fre-
+gate array (FPGA), modeling, network equivalents, real-time sim-
+ulation.                                                                             quency bandwidth of the simulation results, and the accuracy
+                                                                                     of the adopted models. The bandwidth of the existing real-time
+                                                                                     simulators is limited to a relatively narrow frequency range [2],
+                             I. INTRODUCTION                                         approximately up to 10 kHz. The growing need for a wider fre-
+                                                                                     quency bandwidth inherently requires not only a smaller sim-
+                                                                                     ulation time-step but also more accurate models. On the other
+
+T     HE PHENOMENA of electromagnetic transients (EMTs)
+      in power systems include frequencies from dc to
+multi-MHz and occur due to sudden changes in the power
+                                                                                     hand, improving modeling accuracy based on the use of more
+                                                                                     elaborate apparatus models increases the simulator computa-
+                                                                                     tional time within each simulation time-step. These contradic-
+system conditions (e.g., faults and switching events). Although                      tory requirements necessitate a compromise between accuracy
+the EMTs last only for short periods of time, that is, limited                       and computation performance for real-time simulators [3], [4]
+to a few cycles, it, however, is vitally important to conduct                        and are the main impetus for further R&D in the field of real-
+EMT studies to obtain detailed information about the system                          time simulation.
+behavior during EMTs. Such studies are also required to ac-                             The reason behind these limitations is mainly the relatively
+curately evaluate the control/protection systems performance                         large computational time due to the utilization of hardware
+when the system is subject to abnormal operating conditions                          architectures based on multiprocessors or computer clusters
+due to EMTs [1].                                                                     as the computational engine. Currently, the typical range for
+                                                                                     simulation time-step is between 10 and 80 s, depending on
+                                                                                     model complexity and hardware availability. Recently, some
+   Manuscript received August 06, 2011; revised December 02, 2011 and March          real-time simulators adopt multirate simulation with time-steps
+25, 2012; accepted May 25, 2012. Paper no. TPWRD-00663-2011.
+   The authors are with the Electrical and Computer Engineering Department,
+                                                                                     in the range of tens of microseconds for the majority of the
+Energy Systems Group, University of Toronto, Toronto, ON M5S 3G4 Canada              system being simulated and hundreds of nanoseconds to few
+(e-mail: mahmatar@ieee.org; iravani@ecf.utoronto.ca).                                microseconds for a small fraction of the system; usually having
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.
+                                                                                     power electronic converters [5]–[7].
+   Digital Object Identifier 10.1109/TPWRD.2012.2229723
+
+                                                                  0885-8977/$31.00 © 2012 IEEE
+         This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+2                                                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY
+
+
+
+   The reconfigurable-hardware real-time power system simu-                         • scalability (i.e., can be expanded to accommodate
+lator (RH-RTS) addresses the limitations of existing real-time                         large power systems without impacting the simulation
+simulators. The main idea behind the RH-RTS is to flexibly                             time-step);
+change the hardware architecture of the computational engine to                     • reconfigurability (i.e., be able to change the underlying
+“map” the solution algorithm of the system under consideration.                        hardware architecture to accommodate various power
+The RH-RTS is designed to provide speed, scalability, recon-                           system topologies);
+figurability, and physical portability. These characteristics are                   • physical portability (i.e., have low power consumption,
+the main drivers for favoring the FPGA, over other digital pro-                        weight, volume, footprint, and cost).
+cessing structures, as the implementation medium for the pro-                       The philosophy behind the RH-RTS, to enable the achieve-
+posed simulator.                                                                   ment of the aforementioned operational characteristics, is to:
+   The rest of this paper is organized as follows. Section II                       • decompose the power system model into independent sets
+presents the strategy behind the RH-RTS and its main features.                         of equations suitable for parallel implementation;
+Section III describes the mathematical model and procedures                         • adopt computationally efficient models, albeit accurate, to
+to simulate electromagnetic transients in power systems.                               minimize the computational burden;
+Section IV analyzes the solution algorithm to identify the par-                     • represent those parts of the power system that have a sec-
+allelism inherent to it as a means for speeding up the required                        ondary impact on the ongoing simulation with a computa-
+computations. The hardware architecture of the RH-RTS is then                          tionally efficient equivalent model;
+designed to exploit all possible levels of parallelism, inherent                    • efficiently exploit fine-grained parallelism—parallelism at
+to the solution algorithm, Section V. Section VI provides                              the level of primitive operations—without imposing sever
+validation and evaluation of the performance of the developed                          communication overhead time that can limit the perfor-
+simulator. Section VII provides a comparison between the                               mance;
+developed RH-RTS and the existing state-of-the-art real-time                        • design a customized hardware architecture that is tailored
+simulators. Conclusions are stated in Section VIII.                                    to the solution of the mathematical model of the power
+                                                                                       system.
+
+                                                                                    III. ELECTROMAGNETIC TRANSIENTS SOLUTION ALGORITHM
+        II. STRATEGY AND FEATURES OF THE RH-RTS
+                                                                                      The relationship between voltages and currents of most of the
+                                                                                   power system components, for analysis of system-level EMTs,
+   Generally, the performance of a given processor in executing
+                                                                                   is governed by a set of ordinary differential equations (ODEs).
+an algorithm depends on the “matching” between the solution
+                                                                                   Numerical integration is used to transform the ODEs of each of
+algorithm, both the computations and the dataflow, and the hard-
+                                                                                   the power systems components into algebraic equations, with
+ware architecture of that processor. The processor manufac-
+                                                                                   time-dependent voltages/currents relationships, that involves
+turers almost always design processors to suit wide range of
+                                                                                   past (history) values of voltages and/or currents [9], [10]. For
+applications. Hence the adopted processors in the existing real-
+                                                                                   the sake of illustration, consider the simple first-order ODE
+time simulators are not tailored to the solution algorithms of
+the power system model, thus it cannot be expected for these
+processors to deliver ultimate performance with regard to real-                                                                                             (1)
+time simulation. Moreover, each processor generally executes
+each instruction through a sequence of three steps, i.e., Memory                   which can be written in the form of
+Read—Process—Memory Write, which impose additional de-
+lays due to the need to access memories. Also, the reduction in
+                                                                                                                                                            (2)
+computational-time based on the use of multiprocessors is not
+directly proportional to the number of processors as the commu-
+nication latency, synchronization, and the time to access mem-                     Based on numerical integration, (2) is transformed to the alge-
+ories impose additional overhead time that can limit the perfor-                   braic equation given by
+mance. With current state-of-the-art technologies, a communi-
+cation latency between 5 to 10      is imposed [8].                                                                                                         (3)
+   The RH-RTS is designed to overcome the limitations of
+processor-based real-time simulator. The main idea behind                          where      is a constant and is a history term that is a func-
+the RH-RTS is to have a system-dependent computational                             tion of the past values of and/or . The value of and the
+engine, that is to reconfigure the hardware circuitry of the                       mathematical expression of depends on the numerical method
+computational engine to achieve mapping with the solution al-                      used to discretize the differential equation and on the integration
+gorithm, both the computations and the dataflow, of the system                     time-step. Typically, takes the form of
+under consideration. The RH-RTS is designed to provide the
+following main operational characteristics:                                                                                                                 (4)
+  • speed, that is, a computation time in the range of tens to few
+     hundreds of nanoseconds, for real-time and faster-than-                       where and are constants and calculated from the compo-
+     real-time simulation of EMTs;                                                 nents parameters and the time-step.
+           This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+
+MATAR AND IRAVANI: RECONFIGURABLE-HARDWARE REAL-TIME AND FASTER-THAN-REAL-TIME SIMULATOR                                                                        3
+
+
+
+
+Fig. 1. Equivalent circuit corresponding to (3).
+
+                                                                                    Fig. 2. Transmission line decoupling a power system into two decoupled sub-
+                                                                                    systems.
+   With as a current and as a voltage, an equivalent circuit
+corresponding to (3) can be constructed, Fig. 1, which is com-
+posed of a current source, corresponding to , that represents                       the values of the history current sources are updated based on
+the history of the circuit and a parallel conductance . This cir-                   the calculated node voltages. The time is then advanced and the
+cuit is usually called the companion circuit [9], [10].                             process is repeated.
+   With all system components represented by their companion                           Based on the aforementioned discussion, one concludes that
+circuit models, the system is transformed into a system of resis-                   there exists a data-flow dependency [16] between the two sets
+tive elements and current sources. Nodal analysis is then used                      of equations. The second set of equations, that is., the one re-
+to solve for the node voltages at each time-step [9], [10]. The                     sponsible for updating the history current sources, must be exe-
+nodal equation is given by                                                          cuted after the first set of equations since it requires the voltages
+                                                                                    values computed by the first set. Thus, parallel execution of the
+                                                                             (5)    two sets is not possible. However, parallelism among each set
+                                                                                    of equations is feasible as will be demonstrated in the following
+where is the nodal admittance matrix,          is the vector of the
+                                                                                    subsections.
+node voltages,      is the vector of current sources, and is the
+vector of history current sources.                                                  A. Parallel Solution of the Nodal Equations
+  For a constant time-step, the right-hand side of (5) is updated
+                                                                                       The solution of the nodal (5) is the solution of the classical
+each simulation time-step, whereas the nodal admittance matrix
+                                                                                    linear problem
+   remains constant. For updating the history current sources,
+usually (4) is mathematically manipulated to be in the form of                                                                                                (7)
+                                                                             (6)    However, (7) exhibits a uniqueness in the context of EMT sim-
+                                                                                    ulation with respect to the structure of the A matrix. Typically,
+thus, only the voltages need to be determined to update .                           a power system includes multiple transmission lines and cables.
+   The size and complexity of a power system can be substan-                        For EMT studies, the lines and cables are modelled based on
+tially reduced by partitioning the system into two zones: 1) a                      travelling wave equations and do not introduce off-diagonal el-
+study zone and 2) an external zone [11]–[15]. The study zone,                       ements that couple both ends of a line in th

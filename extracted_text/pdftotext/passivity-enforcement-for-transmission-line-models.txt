@@ -1,0 +1,223 @@
+2286                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 23, NO. 4, OCTOBER 2008
+
+
+
+
+Passivity Enforcement for Transmission Line Models
+       Based on the Method of Characteristics
+                                                     Bjørn Gustavsen, Senior Member, IEEE
+
+
+    Abstract—The Universal Line Model (ULM) has been imple-                          This paper shows that the ULM formulation can easily lead to
+mented in several EMT programs for simulation of electromag-                      large out-of-band passivity violations and thus an unstable sim-
+netic transients. In some cases, instability problems have been                   ulation. A practical approach is introduced which prevents the
+encountered. This paper shows that the current approach for ra-
+tional function approximation adopted in ULM can lead to large                    occurrence of out-of-band passivity violations, and a remedy is
+out-of-band passivity violations, thereby causing an unstable sim-                provided for removing any remaining in-band violations. Ap-
+ulation. An approach is introduced which prevents the occurrence                  plication to a cable case is shown to mitigate an unstable simu-
+of large passivity violations. Low-frequency violations are avoided               lation.
+by adding an artificial shunt conductance to the diagonal elements                   In the examples, the calculation of per-unit-length cable pa-
+of the shunt admittance matrix while high-frequency violations
+are avoided by introducing artificial attenuation using a low-pass                rameters and the rational modeling is done using Matlab codes.
+filter. In addition, high-frequency asymptotic passivity is enforced              The resulting model parameters are exported to the PSCAD sim-
+for the characteristic admittance. Any remaining violations are                   ulation environment [11] and used within the existing ULM im-
+removed by adding a second-order correction term to the model                     plementation (phase domain line).
+ports. The approach is shown to mitigate instabilities from a cable
+system transient simulation, without impairing the quality of the
+model.                                                                                              II. UNIVERSAL LINE MODEL
+  Index Terms—Electromagnetic transients, instability, passivity,
+transmission line model, universal line model.                                    A. Method of Characteristics in the Phase Domain
+                                                                                     For a homogenous transmission line with ends and , the
+                            I. INTRODUCTION                                       relation between voltage and current at end is in the fre-
+                                                                                  quency domain given by the matrix-vector relations
+
+F     REQUENCY-DEPENDENT transmission line models
+      are widely applied in electromagnetic transients pro-
+grams. These models are usually based on the Method of
+                                                                                                                                                   (1)
+                                                                                                                                                   (2)
+Characteristics (traveling wave method) with rational approx-
+imation of the propagation function and the characteristic                        where indices and respectively denote incident and reflected
+impedance, leading to recursive convolution in the time domain                    wave. For a line of length , the matrices for surge admittance
+[1]. While the early line models were based on a constant                            and propagation function       are obtained from the series
+transformation matrix and modes [1], [2], several new line                        impedance and shunt admittance as
+models have been proposed that are based on a formulation in
+phase co-ordinates [3]–[9]. Since no assumption of a constant
+                                                                                                                                                   (3)
+transformation matrix is made, more accurate results can in
+general be achieved.                                                                                                                               (4)
+   One of the phase domain models, the so-called Universal Line
+Model (ULM) [8], [9], is based on obtaining poles and delays
+via mode fitting, while calculating the final residues in the phase               B. Rational Fitting
+domain. Although highly successful in most situations, some                          In the Universal Line Model (ULM) [8] as implemented in
+deficiencies have become apparent. Some cable cases have been                     PSCAD [9], the poles for         are obtained by fitting the matrix
+encountered where mode fitting will not produce suitable poles                    trace (5) using vector fitting (VF) [12], followed by a final fitting
+and delays. This problem was overcome in [10] by introduction                     of the residues      and proportional term in the phase domain
+of trace fitting. A more serious problem is that the ULM some-                    (6). The fitting can also be done by applying VF to the columns
+times gives an unstable simulation result.                                        of     as in the original formulation [8], giving a private pole set
+                                                                                  for each column
+   Manuscript received July 6, 2007; revised September 2, 2007. Current version
+published September 24, 2008. This work was supported by the Norwegian Re-
+search Council (PETROMAKS Programme) and by Deutsch, FMC Technolo-                                                                                 (5)
+gies, Framo, Norsk Hydro, Siemens, Statoil, Total, and Vetco Gray. Paper no.
+TPWRD-00380-2007.
+   The author is with SINTEF Energy Research, N-7465 Trondheim, Norway
+(e-mail: bjorn.gustavsen@sintef.no).                                                                                                               (6)
+   Digital Object Identifier 10.1109/TPWRD.2008.919034
+
+                                                                0885-8977/$20.00 © 2008 IEEE
+GUSTAVSEN: PASSIVITY ENFORCEMENT FOR TRANSMISSION LINE MODELS BASED ON THE METHOD OF CHARACTERISTICS                                   2287
+
+
+
+  Poles and delays for the fitting of       are obtained by fitting     frequency dependent line models, it was found that this uncon-
+the modes    of                                                         trolled behavior near dc may lead to simulation instabilities [17].
+                                                                        As a practical remedy, it was proposed to insert an artificial
+                                                                        shunt conductance to obtain a nonzero         at dc, an approach
+                                                                 (7)    that has been adopted by several EMT programs [18]. A recent
+                                                                        discussion can be found in [19]. Values for the shunt conduc-
+                                                                        tance that can occur in actual overhead line systems are dis-
+    Modes with nearly equal delays are lumped before doing the          cussed in [20].
+fitting. Finally, the residues     are calculated by solving (8)           Adding a conductance         to the diagonal elements of
+with (known) poles and delays obtained from the modes                   (14) causes        to approach a nonzero value (15) while
+                                                                        approaches a value smaller than unity (16)
+                                                                 (8)                                                                  (14)
+
+                                                                                                                                      (15)
+   In (8), denotes the number of (lumped) modes and            is
+the number of poles used for fitting the th mode.                                                                                     (16)
+   It is also possible to extract the poles by fitting the matrix
+trace of , as suggested in [10]                                            In the present work, it is proposed to choose the conductance
+                                                                        value such that the voltage in a trapped charge simulation will
+                                                                 (9)
+                                                                        discharge with a predefined time constant, , for instance 1 s.
+                                                                        This gives
+
+                          III. PASSIVITY                                                                                              (17)
+    The fitting of modes (or trace) and subsequent phase domain
+fitting of     and      is done within a user-defined band. Al-           This value gives for all diagonal terms                in (14) a
+though the fitting process ensures a high accuracy model within         zero (root)
+the band, there is no guarantee that the model behavior is accept-
+able outside this band. It will be shown that inaccurate out-of-                                                                      (18)
+band behavior can lead to large passivity violations and thus un-
+stable simulations.                                                       A zero appears for each diagonal term                 in (15) at
+    The fitting errors of     and      result in the nodal admit-
+tance matrix       becoming slightly unsymmetrical. Passivity of                                                                      (19)
+an unsymmetrical model entails that            in (10) has all of its
+eigenvalue positive [13] where superscript denotes Hermitian              In order to capture the modified low-frequency behavior, the
+(transpose and conjugate).        has all of its eigenvalues real       lower band limit for the rational fitting is taken as
+
+                                                                                                                                      (20)
+                                                        (10)
+   The admittance matrix can be calculated directly from the               In the case of coaxial cables, the core conductor does not have
+rational approximations for and     as follows [15]                     a direct coupling to ground and so adding a conductance to the
+                                                                        diagonal elements of       is unphysical. Therefore, the conduc-
+                                                                (11)    tance specification and the zeros calculation ( , ) is based on
+                                                                        the cable loop parameters [21] rather than phase parameters.
+where
+                                                                        B. High-Frequency Passivity Violations
+                                                                (12)       Asymptotic passivity for      is enforced by replacing (5) and
+                                                                (13)    (6) with
+
+ Algebraic tests for passivity checking of transmission line
+models are discussed in [16].                                                                                                         (21)
+     IV. AVOIDING OUT-OF BAND PASSIVITY VIOLATIONS
+A. Low-Frequency Passivity Violations                                                                                                 (22)
+  The magnitude of       approaches zero at DC when the shunt
+admittance     is purely capacitive,         . However, when              Thus, the constant term is taken as        , thereby ensuring
+calculating a rational approximation of     within a finite fre-        that the rational model for     is positive real at infinite fre-
+quency band, a nonzero dc response will result. With the early          quency. In the practical implementation, we use an approximate
+2288                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 23, NO. 4, OCTOBER 2008
+
+
+
+                                                                         in order to include the modified behavior of . As low-pass
+                                                                     filter, we propose the second-order filter (23) with           , see
+                                                                     Figs. 1 and 2. It is seen that within the original fitting band, the
+                                                                     impact of the filter is small. (This filter is slightly overdamped
+                                                                     as usage of critical damping            would give a double pole,
+                                                                     thereby causing difficulties for the fitting process). This choice
+                                                                     of filter response is somewhat arbitrary and better alternatives
+                                                                     may exist
+
+                                                                                                                                    (23)
+
+
+
+
+                                                                          V. REMOVAL OF REMAINING PASSIVITY VIOLATIONS
+                                                                        The presence of any remaining (small) passivity violations
+                                                                     is removed by adding a correction term to the model. For that
+                                                                     purpose, a rational model is connected externally to the trans-
+                                                                     mission line ports. Using the Simplistic Approach [14, Section
+Fig. 1. Filter response, magnitude (!   = 2 1 E 7 Hz).
+                                             1                       VII], [25], a correction matrix       is established by sweeping
+                                                                          in (10)over a band of frequency samples. At each frequency
+                                                                     sample,       is factored into two modal decompositions that re-
+                                                                     spectively contain the positive and negative eigenvalues.
+
+                                                                                                                                    (24)
+
+                                                                        By taking the negated value of the second term in (24) as a
+                                                                     correction term, one can ensure that all eigenvalues of          are
+                                                                     positive (or zero), at that frequency. Embedding this procedure
+                                                                     within a frequency sweep makes all eigenvalues non-negative at
+                                                                     all frequencies in the sweep. The procedure is shown in Fig. 3.
+                                                                     In this implementation, the (small) imaginary part of             is
+                                                                     discarded in order to obtain a real, symmetrical             . As a
+                                                                     result, the correction step may at a given frequency have to be
+                                                                     repeated a few times. The number of iterations is kept low by
+                                                                     using a factor in Fig. 3 slightly greater than unity. In this paper,
+                                                                     we used        1.1.
+                                                                        The correction          is in the form of a nodal conductance
+                                                                     matrix that gives an instantaneous coupling between all termi-
+                                                                     nals. The correction can be limited in bandwidth by multiplying
+Fig. 2. Filter response, phase angle.                                with a suitable band-pass filter. If the passivity violations are
+                                                                     located between frequencies              , it is proposed to use a
+                                                                     correction
+
+                                                                                                                                    (25)
+
+                                                                        In (25), the two poles are respectively placed at one decade
+                                                                     below and above        and , thus ensuring that the imaginary
+                                                                     part of the band-pass filter is negligible between and . The
+Fig. 3. Pseudo code for calculating correction term.                 factor 1.01 ensures that the real part of the bandpass filter is
+                                                                     greater than unity at the boundaries       and .
+                                                                        It is observed that (25) can be expanded into a sum of pole-
+value      , taken as           with      evaluated at a high-fre-   residue terms (26). The inclusion of (26) in an EMTP type sim-
+quency point above the upper band limit.                             ulation environment is a well established procedure, being done
+    The propagation function and its modes are multiplied by         via an equivalent electrical network [23], or via recursive con-
+a low-pass filter response. The cutoff frequency is placed one       volution [1] and a companion network—see Fig. 4.
+decade above the upper frequency limit that is to be used in the
+fitting process. The fitting band is extended one decade beyond                                                                     (26)
+GUSTAVSEN: PASSIVITY ENFORCEMENT FOR TRANSMISSION LINE MODELS BASED ON THE METHOD OF CHARACTERISTICS                                2289
+
+
+
+
+Fig. 4. Including passivity correction in EMT simulation.
+
+
+
+
+                                                                      Fig. 6. Rational approximation of   H.
+
+Fig. 5. Cable configuration. Cable length: 1000 m.
+
+
+                                 TABLE I
+                              SC CABLE DATA
+
+
+
+
+    VI. EXAMPLE: THREE SINGLE CORE COAXIAL CABLES
+
+A. Cable Geometry
+  Fig. 5 shows three 145-kV single-core coaxial cables with
+data given in Table I.
+
+B. Result With Original Modeling Procedure
+                                                                      Fig. 7. Wideband behavior of fitted   H.
+    The six modes of were lumped into four modes that were
+each fitted 

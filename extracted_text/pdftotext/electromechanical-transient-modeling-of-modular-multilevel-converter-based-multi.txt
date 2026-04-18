@@ -1,0 +1,196 @@
+72                                                                                     IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 29, NO. 1, JANUARY 2014
+
+
+
+
+                     Electromechanical Transient Modeling
+                    of Modular Multilevel Converter Based
+                        Multi-Terminal HVDC Systems
+         Sheng Liu, Zheng Xu, Member, IEEE, Wen Hua, Geng Tang, and Yinglin Xue, Student Member, IEEE
+
+
+   Abstract—This paper studies the techniques for modeling mod-                         MMC-MTDCs are regarded as grid shock absorbers. Al-
+ular multilevel converter (MMC) based multi-terminal HVDC                            though there is no MMC-MTDC system in practice at present,
+(MTDC) systems in the electromechanical transient mode. Firstly,                     several MMC-MTDC projects are being designed in China.
+the mathematical model of the MMC and its corresponding
+                                                                                     Therefore, studying the interaction between MMC-MTDC sys-
+equivalent circuit are established, which are similar to those of the
+two level converters. Then, a power flow calculation method for                      tems and AC systems has become an important task. However,
+AC/DC systems containing MMC-MTDC systems is developed.                              before this can be done, a valid model of the MMC-MTDC
+Two dynamic models for MMC-MTDC systems are developed in                             system needs to be developed at first.
+the paper. One is the detailed model, taking into account of the                        Research in the field of MMC modeling and control has be-
+AC side circuit, the inner controllers, the modulation strategies,                   come more and more active and some significant modeling ap-
+the outer controllers and the MTDC circuit. The other is the                         proaches have been proposed [5]–[10]. A continuous model to
+simplified model, which only reserves the outer controllers and
+partial dynamics of the MTDC circuit based on a quantitative                         describe the operation of the MMC system was derived and
+analysis of the detailed model’s dynamic processes, and it can be                    the principle allowing the control of the total energy and the
+used in electromechanical transient simulation with a larger step                    balance between the upper and lower arm of a phase was pre-
+size. Both the detailed and the simplified models are implemented                    sented in [5]. Furthermore, [6] evaluates four control methods
+on PSS/E and compared with the accurate electromagnetic tran-                        for the MMC together with an experimental comparison. Refer-
+sient models on PSCAD in a four terminal MMC-MTDC system;                            ence [7] develops a comprehensive mathematical model based
+the result proves the validity of the developed models. Lastly,
+a stability study of a modified New England 39-bus system is                         on the negative and positive sequence decomposition technique.
+executed, and the result shows that the AC fault can be isolated                     For modeling the switching behavior of the power electronic
+well in an MMC-MTDC asynchronously connected AC grid.                                devices in MMC-MTDC systems, simulation in electromag-
+  Index Terms—Electromagnetic transient, electromechanical
+                                                                                     netic transient mode is a convenient method, which can study
+transient, modeling, modular multilevel converter, multi-terminal                    the dynamic behavior of the MMC accurately [9]–[11]. Based
+HVDC (MTDC), simplified model.                                                       on the electromagnetic transient simulation, different control
+                                                                                     strategies for VSC-MTDCs [12]–[15] and applications of the
+                                                                                     VSC-MTDCs in wind farms [16], [17] have been studied. More-
+                             I. INTRODUCTION                                         over, there was a breakthrough on the efficient modeling of
+                                                                                     MMC in the electromagnetic transient simulation mode, which
+W        ITH the rapid development of high-voltage, high-power
+         and full-controlled power electronic devices,
+voltage source converter based high voltage direct current
+                                                                                     significantly increases the simulation speed and makes it pos-
+                                                                                     sible to simulate an MMC-MTDC system even if the converters
+                                                                                     contain hundreds of submodules (SM) [9].
+(VSC-HVDC) systems have become an attractive innovation
+                                                                                        However, electromagnetic transient simulation is still
+for their immunity against commutation failure and relatively
+                                                                                     not suitable for studying large-scale systems at present. To
+easy extension to multi-terminal (MTDC) configurations. There
+                                                                                     study the stability of large-scale AC/DC systems containing
+has been a variety of topologies for VSC, and the modular mul-
+                                                                                     MMC-MTDC systems, the electromechanical transient simula-
+tilevel converter (MMC), due to its low switching-frequency,
+                                                                                     tion is preferred. Therefore, the MMC-MTDC model suitable
+low losses, small harmonic components and other benefits
+                                                                                     for electromechanical transient simulation is necessary and
+[1]–[4], is gaining increasing attention.
+                                                                                     still needs further studies. Several steady-state VSC-MTDC
+                                                                                     models for power flow analysis were proposed [18], [19]. And
+   Manuscript received September 07, 2012; revised January 23, 2013, April 11,       a generalized dynamic VSC-MTDC model for power system
+2013, and June 08, 2013; accepted August 06, 2013. Date of publication August
+30, 2013; date of current version December 16, 2013. This work was supported
+                                                                                     stability studies has been derived and implemented on MatDyn
+by the National High Technology Research and Development Program of China            [20], [21], which presented a comprehensive analysis for the
+under Project 2012AA050205. Paper no. TPWRS-01035-2012.                              electromechanical transient modeling of the VSC-MTDC.
+   S. Liu, Z. Xu, G. Tang, and Y. Xue are with the Department of Elec-               Furthermore, based on the generalized dynamic model, a dis-
+trical Engineering, Zhejiang University, Hangzhou 310027, Zhejiang, China
+(e-mail: lszju@zju.edu.cn; xuzheng007@zju.edu.cn; tanggeng7@zju.edu.cn;              tributed DC voltage control strategy was proposed and tested
+yinglinxue@gmail.com).                                                               [22]. The generalized dynamic model was derived based on the
+   W. Hua is with the Zhejiang Electric Power Corporation Research Institute,        2-level VSC. Though the MMC and the 2-level VSC are sim-
+Hangzhou 310014, Zhejiang, China (e-mail: huawenpin@gmail.com).
+   Color versions of one or more of the figures in this paper are available online
+                                                                                     ilar, there are still some differences among their modeling. In
+at http://ieeexplore.ieee.org.                                                       the field of modeling the MMC for stability studies, a simplified
+   Digital Object Identifier 10.1109/TPWRS.2013.2278402                              two-terminal MMC-HVDC dynamic model was developed in
+
+                                                                      0885-8950 © 2013 IEEE
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:43:44 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: ELECTROMECHANICAL TRANSIENT MODELING OF MODULAR MULTILEVEL CONVERTER BASED MULTI-TERMINAL HVDC SYSTEMS                                       73
+
+
+
+                                                                                                             II. BASIC THEORY
+
+                                                                                     The MMC and other VSCs are similar in some aspects.
+                                                                                  The important structural differences for modeling between
+                                                                                  the MMC and the well-known 2-level converter are that: the
+                                                                                  former adopts arm series inductors and SM capacitors, while
+                                                                                  the latter adopts phase inductors and two DC capacitors. And
+                                                                                  these differences will be discussed in the following text.
+                                                                                     This section introduces the basic theory of the MMC and
+                                                                                  derives an equivalent circuit on the AC side, which is the basic
+                                                                                  model for the following steady-state analysis and dynamic
+                                                                                  modeling.
+                                                                                     The basic structure of an MMC is shown in Fig. 1, where
+                                                                                  is the series arm inductor and       is the equivalent resistor of
+                                                                                  each arm.
+                                                                                     The following equations can be derived:
+Fig. 1. Basic structure of an MMC.
+
+
+                                                                                                                                                        (1)
+
+
+                                                                                  where       and      are the upper and lower arm currents in
+                                                                                  phase-                , respectively,   is the corresponding line
+                                                                                  current,     is the DC current injected into the DC side and
+                                                                                  is the corresponding circulating current.
+                                                                                     Take phase- as an example, the voltages of point          and
+                                                                                  point            are
+
+
+
+                                                                                                                                                        (2)
+
+                                                                                                                                                        (3)
+
+Fig. 2. Equivalent model of the MMC on the AC side.
+                                                                                  The sum of (2) and (3) divided by 2 is
+
+
+PSLF [8] and applied in modeling the Trans Bay Cable Project                                                                                            (4)
+[23].
+   A proper MMC-MTDC electromechanical transient model                               Now introduce a new variable               , which can be regarded as
+will contribute to the stability study of large-scale AC/DC sys-                  a virtual potential [24]
+tems. However, there is no standard MMC-MTDC model in
+commercial electromechanical transient simulation software so
+                                                                                                                                                        (5)
+far, thus the aim of this paper is to develop a valid model on
+PSS/E.
+   This paper is organized as follows. In Section II, the                         Equation (4) for three phases                   can be written as
+basic theory about the MMC is described. In Section III, a
+power flow calculation method based on PSS/E for systems
+with MMC-MTDC is presented. In Section IV, a detailed
+MMC-MTDC electromechanical transient model is given,                                                                                                    (6)
+focusing on the modeling of the SM capacitors and the MTDC
+circuit. The limitation of the detailed model is also discussed.
+Section V discusses how to increase the simulation step size
+by simplifying the very fast dynamic processes in the detailed                       The equivalent circuit of the MMC on the AC side is shown
+model, and thus proposes a simplified model. In Section VI, the                   in Fig. 2, where     is the resistance of the converter transformer,
+validity of both the detailed and the simplified models is tested                     is the leakage inductance of the converter transformer.
+by their comparison with the accurate electromagnetic transient                      The above equivalent model of the MMC transforms the arm
+MMC-MTDC models on PSCAD, and then a stability study                              series inductors into phase inductors theoretically and is the fun-
+of a modified New England 39-bus system is implemented.                           damental for the following steady-state analysis and dynamic
+Conclusions are presented in Section VII.                                         modeling.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 03:43:44 UTC from IEEE Xplore. Restrictions apply.
+74                                                                                   IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 29, NO. 1, JANUARY 2014
+
+
+
+                                                                                   Step 3): Estimating the variable losses of the constant power
+                                                                                            converters                                     . Note
+                                                                                            that     does not include the fixed loss     . In this
+                                                                                            paper         is estimated by (7):
+                                                                                                                                                         (7)
+                                                                                            where “ ” denotes the element-by-element multi-
+Fig. 3. AC side steady-state equivalent circuit of MMC.                                     plication.                              and    is the
+                                                                                            coefficient of the variable loss.
+                                                                                   Step 4): Calculating      the    DC       powers     of    the
+                          III. STEADY-STATE                                                 constant     power      nodes
+                                                                                                                                   .         The
+   Power flow calculation is the basis of simulation. This section                          DC side powers of the constant power converters
+gives a method to calculate power flow on PSS/E. Since there                                                                     can be obtained
+is no power flow model for MMC-MTDC on PSS/E, each con-                                     by
+verter is modeled as a generator in the power flow.
+   The AC side steady-state equivalent circuit of the MMC is                                                                                             (8)
+shown as Fig. 3 where the positive conventions for active and
+reactive power are from AC side into the converter. In Fig. 3,                                   The injection powers of the joint buses in DC net-
+    is the voltage behind the transformer, is the voltage of the                                 work             are all zeros:
+virtual potential point,     is the equivalent phase resistor rep-                                                                                       (9)
+resenting the losses of the converter circuit and       denotes the
+fixed losses of the converter station. Each AC bus of the con-                                   Thus            can be obtained:
+verter can be regarded as a PQ or PV bus. A typical steady-state
+control strategy for the MMC-MTDC system is that one con-                                                                                               (10)
+verter regulates the DC voltage (slack converter) and the others
+control the AC side active power (constant power converters).                      Step 5): Calculating the DC voltages of the constant power
+Another control strategy is that some converters use DC voltage                             nodes                                        . The
+droop control (slack converters) and the others use active power                            equation set of the DC power flow can be repre-
+control. The two control strategies are essentially the same for                            sented as
+power flow calculation.
+   The method for power flow calculation takes the following
+steps:
+ Step 1): Ordering the DC nodes. Assume that there are                                                                                                  (11)
+                slack converters and joint nodes in an -ter-
+             minal MMC-MTDC system. The joint nodes refer                                        Equation (12) can be derived from (11):
+             to the nodes which are not connected directly to
+             converters. Let the 1st to the th nodes be slack
+             converters, the           th to the th nodes be con-                                                                                       (12)
+             stant power converters, and the              th to the
+                      th nodes be joint nodes. In fact, since the                           In (12), only          is unknown, and (12) can be
+             injection powers of the joint nodes are all zero,                              solved by the Newton-Raphson method, where the
+             they can also be regarded as constant power nodes.                             initia

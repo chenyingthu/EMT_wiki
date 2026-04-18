@@ -1,0 +1,205 @@
+464                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 35, NO. 2, APRIL 2020
+
+
+
+
+      Time-Domain Implementation of Damping Factor
+        White-Box Transformer Model for Inclusion
+              in EMT Simulation Programs
+                Bjørn Gustavsen , Fellow, IEEE, César Martin, and Álvaro Portillo , Senior Member, IEEE
+
+
+   Abstract—White-box detailed transformer models are used by                        model can at best represent the first (lowest) resonance fre-
+manufacturers for predicting internal overvoltages in transformer                    quency in a transformer, and it does not give any information
+windings during the lightning impulse test. One such model is the                    about the internal overvoltages [2]. Several works have proposed
+d-factor model, which is based on a lumped-parameter description
+based on winding discretization with the inclusion of losses via an                  the use of wide-band transformer models based on frequency
+empirical, frequency-dependent damping factor. This paper shows                      sweep measurements of the transformer’s terminal admittance,
+a procedure for direct inclusion of the d-factor model in electro-                   followed by a model extraction step [3]. Such models can often
+magnetic transients simulation programs for use in general studies                   give excellent accuracy for the transformer’s terminal behavior.
+of network overvoltages. Proper utilization of the model’s diago-
+                                                                                     One serious limitation is that the voltage inside the windings
+nal structure is utilized in combination with real-valued arithmetic
+for maximum speed in transient simulations, with optional initial-                   cannot be calculated, with the exception of taps in regulating
+ization from sinusoidal steady-state conditions. The model can be                    winding.
+used both as a terminal equivalent and for calculation of internal                      In order to simulate internal overvoltages, it has therefore
+voltages with use of an augmented input data set. The method is                      been proposed to make use of the white-box detailed transformer
+demonstrated for a single-phase three-winding transformer that is
+                                                                                     models [4]–[10] whose topology and parameters are calculated
+applied in a simulation study of transient resonant voltage buildup
+in the tertiary winding.                                                             based on detailed knowledge of the transformer design. This
+                                                                                     model category is being used by the manufacturers to predict
+ Index Terms—Transformer, white box model, damping factor,                           the internal overvoltages during the lightning impulse test in
+EMT, simulation, overvoltages.
+                                                                                     factory. For use in general network studies, these models are
+                                                                                     usually not directly compatible with EMT programs and some
+                             I. INTRODUCTION                                         adaptation may therefore be necessary.
+                                                                                        Reference [10] introduced one particular white-box model
+       RANSIENT overvoltages in the power system are one of
+T      the root causes of transformer dielectric failures [1]. The
+analysis of such situations requires the use of a proper elec-
+                                                                                     that makes use of a state-space model on diagonal form with an
+                                                                                     empirical damping function. In this d-factor model, the voltages
+                                                                                     on terminals are input and currents on the terminals are output,
+tromagnetic transients simulation software that can represent
+                                                                                     defining an admittance representation with respect to external
+all relevant components with adequate accuracy, including their
+                                                                                     terminals. In addition, the model gives out voltage on the in-
+frequency-dependent effects. In the case of transformers, the
+                                                                                     ternal nodes by providing additional rows in the output matrix
+available models in existing Electromagnetic Transients (EMT)
+                                                                                     of the state-space model. The model was in [10] included in an
+programs lack in good transformer models for simulation of
+                                                                                     EMT simulation environment by calculating frequency domain
+high-frequency transients. Typically, the user has to make use
+                                                                                     samples for a terminal admittance matrix and voltage transfer
+of a standard 50/60 Hz model with addition of a few lumped
+                                                                                     function matrix, both which were subjected to model extraction
+capacitive elements to capture the high frequency effects. Such
+                                                                                     by rational fitting. These steps of rational fitting are however
+                                                                                     inconvenient as there is a computational effort involved with
+   Manuscript received December 18, 2018; revised February 13, 2019; accepted        possible loss of accuracy.
+February 16, 2019. Date of publication March 1, 2019; date of current version           In the current work we show how to directly include the
+March 24, 2020. This work was supported by the consortium participants of the        d-factor model [10] in an EMT environment known as EMTP-
+SINTEF-led project “ProTrafo” (project no. 207160/E20). Paper no. TPWRD-
+01520-2018. (Corresponding author: Bjørn Gustavsen.)                                 RV, without the need for rational fitting. The implementation
+   B. Gustavsen is with SINTEF Energy Research, N-7465 Trondheim,                    considers the reading of input data from a text file in a prede-
+Norway (e-mail:,bjorn.gustavsen@sintef.no).                                          fined format being recommended in the ongoing CIGRE JWG
+   C. Martin is with RTE–Réseau Transport d’Electricité, CNER, 92 932 Paris
+La Défense CEDEX (e-mail:,cesar.martin@rte-france.com).                             A2/C4.52. The interfacing of the model with the electrical sys-
+   Á. Portillo is an Independent Consultant in Transformers, Brenda 5920,           tem is achieved via a Norton equivalent with the vector of his-
+11400, Montevideo, Uruguay (e-mail:,acport18@gmail.com).                             tory current sources updated from a subroutine (DLL code)
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       which in each time step calculates the current source for the
+   Digital Object Identifier 10.1109/TPWRD.2019.2902447                              next time step using the ODEs of the state-space model that
+
+                          0885-8977 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                        See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:18:04 UTC from IEEE Xplore. Restrictions apply.
+GUSTAVSEN et al.: TIME-DOMAIN IMPLEMENTATION OF DAMPING FACTOR WHITE-BOX TRANSFORMER MODEL                                                              465
+
+
+
+                              TABLE I                                             Consider the state equation associated with one complex (con-
+                          MATRIX DIMENSIONS
+                                                                                jugate) pair of poles, (a, a∗ ),
+                                                                                                                T 
+                                                                                               ẋ1        a 0      x1    b
+                                                                                                     =                 +       vext        (2a)
+                                                                                               ẋ2        0 a∗     x2    bH
+                                                                                                                   
+                                                                                                                 x1
+                                                                                                   y = c c∗                                (2b)
+                                                                                                                    x2
+results from the method. The inherent high efficiency implied                      By introduction of the similarity transformation x̃ = Tx with
+by the diagonal form of the state matrix is further enhanced by                                                         
+                                                                                                                1 1
+a transformation of variables that converts the complex-valued                                           T=                                  (3)
+                                                                                                                j −j
+variables and coefficients into real-only quantities. The model
+optionally calculates the voltage at internal nodes or a subset                 we obtain [11] for (2a) and (2b) with real-valued state-space
+of nodes, when the required model augmentation is part of the                   matrices and state vector,
+input file. The implementation includes automated initialization                                                               
+                                                                                  x̃˙ 1       Re{a}     Im{a}      x̃1    2Re{bT }
+from steady-state sinusoidal initial conditions as well as fre-                           =                            +                v
+                                                                                  x̃˙ 2       −Im{a} Re{a}         x̃2    −2Im{bT } ext
+quency scan. The model is complemented by an off-line tool
+                                                                                                                                         (4a)
+for assessment of internal voltage stresses. The application of
+                                                                                                              
+the model is demonstrated for analysis of potential internal res-                                          x̃1
+                                                                                        y = Re{c} Im{c}                                  (4b)
+onance overvoltages due to ground fault initiation on a feeding                                                x̃2
+cable.
+                                                                                   It is observed that for each complex pole pair the conversion
+                                                                                gives a 2 × 2 block on the diagonal of A and a modifica-
+                                                                                tion to the associated two columns of C and two rows of B.
+              II. D-FACTOR STATE SPACE MODEL
+                                                                                These conversions are applied to all complex pairs in (1a), (1b)
+   We briefly recall the admittance based state-space model for-                and (1c).
+mulation proposed in [10] (1). The model has n1 (external)
+terminals, n2 internal nodes, and n3 inductive branch currents,                                 IV. TIME DOMAIN IMPLEMENTATION
+giving a total of N = n1 + n2 + n3 states. The input vext is
+                                                                                A. Discretization
+voltage at terminals. The model output is partitioned into a first
+part iext corresponding to terminal currents and a second part                     In the following we use the bar symbol (overline) to denote
+vint corresponding to internal node voltages.                                   the transformed matrices and variables in (1).
+                                                                                   Consider one submatrix Ām of Ā that represents one real
+                                                                                pole, or one 2 × 2 real-valued block associated with a complex
+                          ẋ = Ax + Bvext                              (1a)     pole pair after the transformation by (3). Together with associ-
+                       iext = C1 x + D1 vext                           (1b)     ated rows(s) B̄m of B̄, and column(s) C̄1,m of C̄1 , and C̄2,m
+                                                                                of C̄2 we get by usage of the central difference equation the
+                      vint = C2 x                                      (1c)     following contribution to the output y,
+                                                                                            x̄m ,k − x̄m .k −1       x̄m ,k + x̄m ,k −1
+                                                                                                               = Ām
+   The system (1) is on diagonal form with A diagonal. The                                         Δt                        2
+elements of A are real or come in complex conjugate pairs.                                                             vext,k + vext,k −1
+Any conjugate pair in A is associated with a corresponding                                                       + B̄m                                 (5a)
+                                                                                                                                2
+complex conjugate pair of rows in B and columns in C. D1 is
+                                                                                                       iext,m ,k = C̄1,m x̄m ,k                        (5b)
+real. The matrix dimensions are shown in Table I. The model
+can be augmented with an additional matrix C3 to give the                                             vint,m ,k = C̄2,m x̄m ,k                         (5c)
+internal branch currents, but that will not be considered here as
+                                                                                where x̄m ,k is a vector of one or two real-valued elements. Sub-
+the branch currents are usually of little interest.
+                                                                                script k denotes the kth time step and Δt is the time step length
+                                                                                which is assumed to be fixed.
+                                                                                   By solving (5) for x̄m ,k and introducing a change of vari-
+       III. CONVERSION TO REAL STATE-SPACE MODEL                                able for the state variable [12] we get the final result for
+   The use of complex arithmetic leads to slower computations                   iext,m ,k and vint,m ,k by (6)–(8) with matrix dimensions given in
+in a time domain simulation based on discretization of the Ordi-                Table II with subscript i = 1, 2.
+nary Differential Equations (ODEs) (1). For instance, the mul-
+                                                                                                   x̄m ,k = αm x̄m ,k −1, + β m vext,k −1            (6a)
+tiplication of two complex numbers requires four real-valued
+multiplications and three summations. It is therefore advanta-                                  iext,m ,k = C̄1,m x̄m ,k + G1,m vext,k                (6b)
+geous to convert the system of equations into one involving
+real-valued parameters and variables only.                                                     vint,m ,k = C̄2,m x̄ m ,k + G2,m vext,k                (6c)
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:18:04 UTC from IEEE Xplore. Restrictions apply.
+466                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 35, NO. 2, APRIL 2020
+
+
+
+                            TABLE II
+ MATRIX DIMENSIONS FOR SINGLE POLE OR COMPLEX PAIR CONTRIBUTION
+
+
+
+
+where
+                                      −1                   
+                                 Δt                    Δt
+             αm =        I − Ām               I + Ām                  (7a)
+                                 2                     2
+             β m = (αm λm + μm )B̄m                                    (7b)
+          G1,m = (C̄1,m λm B̄m )                                        (7c)
+                                                                                Fig. 1. Interfacing model’s external terminals with host program electrical
+          G2,m = (C̄2,m λm B̄m )                                       (7d)     system via a Norton equivalent.
+
+with
+                                                  −1
+                                              Δt         Δt
+               λm = μ m =           I − Ām                              (8)
+                                              2          2
+
+B. Interfacing With Host Program
+   In the actual implementation the vector of state variables x̄k is
+in each time step established by including all m real and complex
+pair contributions (6a). The individual matrices Gi,m in (6a) and
+(6b) are summed and added to the feed-through matrices D1 and
+D2 = 0 in (1),                                                                  Fig. 2.   Time step loop with calculation of external and internal node voltages.
+                                   
+                      G1 = D1 +        G1,m                    (9a)
+                                        m                                       initialization) or at a list of frequencies (frequency scan). The
+                               
+                       G2 =          G2,m                              (9b)     robust calculation of Yn is done using (36a) in [10] and will
+                                m                                               not be repeated here. With use of the given Yn , the EMT host
+                                                                                program will solve the entire system in the frequency domain
+   The total output vectors yi,k from the individual output con-
+                                                                                and calculate all nodal voltages.
+tributions yi,m ,k can then be calculated as
+                                                 

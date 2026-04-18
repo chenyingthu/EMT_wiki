@@ -1,0 +1,198 @@
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 2, JUNE 2021                                                                                         789
+
+
+
+
+          Average-Value Model for a Modular Multilevel
+               Converter With Embedded Storage
+                   Nuwan Herath , Student Member, IEEE, and Shaahin Filizadeh , Senior Member, IEEE
+
+
+   Abstract—This article proposes an average-value model for a                         EMT simulations with each element represented as a companion
+modular multilevel converter with sub-module level battery energy                      model [8] produces highly accurate results at the expense of
+storage. The developed model is a computationally efficient repre-                     a massive computational burden, given the large number of
+sentative of the converter in system-level studies; it is also shown
+to be useful in analytical characterization of circulating currents                    switching elements and passive components in the converter.
+and sub-module capacitor voltage ripple both with and without                          To curtail computational complexity, detailed equivalent models
+circulating current suppression control. The model is then used                        (DEM) of both conventional and energy-storage MMCs have
+to investigate the sizing of converter components under different                      been developed [9], [10] that use Thevenin equivalents for
+operating regimes. The accuracy of the developed model is verified                     the MMC multivalve. In these models, all information at the
+against detailed EMT models as well as against experimental results
+on a converter prototype.                                                              SM level are retained. However, both the conventional EMT
+                                                                                       and DEM models are numerical in nature and do not readily
+  Index Terms—Average-value modeling, energy storage, modular                          lend themselves to analytical studies such as controller tuning,
+multilevel converters.
+                                                                                       small-signal analysis, investigation of circulating currents and
+                                                                                       capacitor voltage ripple, and component sizing. To address
+                             I. INTRODUCTION                                           these shortcomings, averaged value models (AVM) of MMC
+                                                                                       topologies have been developed.
+        ODULAR multilevel converters with embedded battery
+M       energy storage (MMC-ES) have attracted much attention
+as a means of integrating energy storage in an electrical grid
+                                                                                          An AVM for the conventional MMC multivalve was devel-
+                                                                                       oped in [11]. The same authors presented a more extensive study
+                                                                                       on the AVM in [12] with more simplifications for the MMC by
+[1]. Their dispersed nature enables control of individual battery
+                                                                                       representing the entire converter as a single black box. This
+currents, dynamic state-of-charge (SOC) balancing, better har-
+                                                                                       approach loses the concept of the converter multivalve. AVMs
+monic quality of ac voltage, and flexible power control [1]–[3].
+                                                                                       for a category of MMC-ES topologies have been developed in
+MMC-ES is viewed as a three-port converter [1], [3], [4] to
+                                                                                       [13] for both the multivalve and full converter levels. In this
+integrate battery storage to dc and ac grids from a single con-
+                                                                                       topology the energy storage unit is directly connected across
+verter. This type of application is popular in shipboard systems
+                                                                                       the sub-module capacitor. For better utilization and greater
+where both ac and dc systems exist [5]. The converter has also
+                                                                                       controllability of the energy storage units, it is common practice
+been studied for fault-ride-through applications in wind turbines
+                                                                                       to use an intermediate dc-dc converter. In [3] a VSC-level AVM
+using integrated energy storage [6]. The MMC-ES has also been
+                                                                                       is developed for the MMC-ES topology in Fig. 1; however, the
+modified to include both photovoltaic panels and energy storage
+                                                                                       model in [3] amalgamates the entire converter into controlled
+to mitigate the fluctuations of solar power plants [7]. Contem-
+                                                                                       voltage and current sources without SM-level information.
+porary literature clearly shows that MMC-ES is a promising
+                                                                                          This paper develops an explicit, computationally efficient,
+topology with many benefits.
+                                                                                       multivalve-level AVM for a MMC-ES with dc-dc converters in
+   Studies of complex converter topologies are primarily done
+                                                                                       each sub-module. The developed AVM is used for EMT-type
+using computer simulation programs such as electromagnetic
+                                                                                       simulations, analytical studies of the converter for characteri-
+transient (EMT) simulators. They help to understand the con-
+                                                                                       zation of the circulating currents and average capacitor voltage
+verter’s operation, control, and behavior during normal and
+                                                                                       ripple, and component sizing. Extensive simulation and experi-
+abnormal events. Detailed implementation of the MMC-ES for
+                                                                                       mental results are presented to assess and verify the accuracy of
+                                                                                       the AVM and the ensuing studies.
+   Manuscript received January 13, 2020; revised June 25, 2020; accepted
+August 2, 2020. Date of publication August 6, 2020; date of current version               The paper continues in Section II with an overview of the
+May 21, 2021. This work was supported in part by the University of Manitoba,           MMC-ES converter and its controls. The AVM is developed in
+and in part by the Natural Sciences and Engineering Research Council of Canada.        Section III. A detailed analysis of the circulating currents is given
+(Corresponding author: Shaahin Filizadeh.)
+   The authors are with the Department of Electrical and Computer Engi-                in Section IV. Section V presents model validation against EMT
+neering, University of Manitoba, Winnipeg, MB R3T 5V6, Canada (e-mail:                 simulations and experiments. State-of-charge (SOC) modeling
+heratnmh@myumanitoba.ca; shaahin.filizaeh@umanitoba.ca).                               and balancing is presented in Section VI. Converter parameter
+   Color versions of one or more of the figures in this article are available online
+at https://ieeexplore.ieee.org.                                                        sizing is described in Section VII, and is followed by conclusions
+   Digital Object Identifier 10.1109/TEC.2020.3014793                                  in Section VIII.
+
+
+                           0885-8969 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:06:15 UTC from IEEE Xplore. Restrictions apply.
+790                                                                                  IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 2, JUNE 2021
+
+
+
+
+                                                                                  Fig. 3.   DC-DC converter controller.
+
+
+
+
+Fig. 1.   Schematic diagram of the MMC-ES.
+
+
+                                                                                  Fig. 4.   Connection to an AC grid (single-phase diagram shown for brevity).
+
+
+
+                                                                                  B. DC-DC Converter Controller
+                                                                                      The dc-dc converter in each SM maintains the rated SM
+                                                                                  capacitor voltage. A controller can be designed using an aver-
+                                                                                  aged model for the dc-dc converter [15]. The capacitor voltage
+                                                                                  controller includes an inner inductor-current controller and an
+                                                                                  outer voltage controller. The outer voltage control loop creates an
+Fig. 2.   Sub-module topology.                                                    inductor current reference. This current reference is augmented
+                                                                                  to impose a power command (pBAT ) that is expected from the
+                                                                                  battery within the SM. The current control loop controls the
+                                                                                  current drawn from the battery, and allows to include limiters
+             II. CONVERTER SYSTEM CONFIGURATION                                   on the battery current. Fig. 3 shows the block diagram of the
+A. MMC-ES Structure                                                               controller. In this figure, vC,ref , vC , iL,ref , iL , vBAT , Tf , d, VC,o ,
+                                                                                  and Do represent capacitor voltage reference, capacitor voltage,
+   The structure of the MMC-ES is shown in Fig. 1. The con-
+                                                                                  inductor current reference, inductor current, battery voltage,
+verter is formed with six multivalves. A multivalve consists of
+                                                                                  filter time-constant, duty ratio, operating point capacitor voltage,
+N sub-modules in series. Arm currents are denoted as ikj (j ϵ
+                                                                                  and feedforward duty ratio, respectively.
+{a,b,c} and k ϵ {up,low}) and the ac line current and ac terminal
+                                                                                      The capacitor voltage is passed through a low-pass filter to
+voltage as ij and vj , respectively. A schematic diagram of a
+                                                                                  reject the line-frequency ripple component in it. Without this
+SM is shown in Fig. 2. Q1 and Q2 form a bi-directional dc-dc
+                                                                                  filter, a line-frequency component will appear in iL,ref , which
+converter. Complementary firing pulses are issued to Q1 and
+                                                                                  could undesirably induce the same ripple in the battery current.
+Q2 , and are used to control the inductor current iL or capacitor
+voltage vC . Operation of these two switches are typically done at
+                                                                                  C. AC Current Controller
+a high switching frequency (several kHz) to reduce the inductor
+current ripple, allow usage of smaller physical components, and                      The MMC-ES could be operated on the ac side by controlling
+obtain high control bandwidth. Switches Q3 and Q4 are issued                      its direct-axis and quadrature-axis currents (id and iq ) [16]. The
+complementary firing pulses and are used to insert or bypass the                  id,ref and iq,ref set-points are obtained using two outer loops to
+SM capacitor in the MMC multivalve. The SMs are inserted in a                     control the active power (PMMC ) and reactive power (QMMC )
+manner to generate a close approximation of a sinusoidal voltage                  or ac voltage at the point of common coupling (PCC). Fig. 4
+waveform of desired frequency at the output using nearest level                   shows a diagram of the MMC-ES connected to an ac grid and
+control (NLC) or pulsewidth modulation (PWM) methods [14].                        Fig. 5 shows the block diagram of the controller implemented.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:06:15 UTC from IEEE Xplore. Restrictions apply.
+HERATH AND FILIZADEH: AVERAGE-VALUE MODEL FOR A MODULAR MULTILEVEL CONVERTER WITH EMBEDDED STORAGE                                                        791
+
+
+
+
+                                                                                  Fig. 7.   States of dc-dc converter (a) state 1, (b) state 2.
+
+
+
+                                                                                     For state 1 (0 < t < dTs ):
+Fig. 5.   Decoupled controller.
+                                                                                                                diL    1
+                                                                                                                    =     vBAT                            (1)
+                                                                                                                 dt   LSM
+                                                                                                                dvC    1
+                                                                                                                    =     iout .                          (2)
+                                                                                                                 dt   CSM
+                                                                                     For state 2 (dTs < t < Ts ):
+                                                                                                         diL    1          1
+                                                                                                             =     vBAT −     vC                          (3)
+                                                                                                          dt   LSM        LSM
+                                                                                                        dvC    1        1
+                                                                                                            =     iL +     iout .                         (4)
+Fig. 6.   Circulating current suppression controller.                                                    dt   CSM      CSM
+                                                                                    Equations (1)–(4) may be combined into two weighted aver-
+                                                                                  aged equations as shown in (5) and (6). In these equations, the
+T represents the Park transformation matrix, LA is the arm                        horizontal line above variables indicates their average values
+inductance, Ltf is the interconnection transformer inductance,                    over a switching period.
+and isj and vsj (j ϵ {a,b,c}) are the ac line current and voltage at                               diL    1          1
+the PCC, respectively.                                                                                 =     vBAT −     (1 − d) vC                        (5)
+                                                                                                    dt   LSM        LSM
+                                                                                                  dvC    1                1
+D. Circulating Current Suppression Controller (CCSC)                                                  =     (1 − d) iL +     iout .                       (6)
+                                                                                                   dt   CSM              CSM
+   Circulating currents are created due to the voltage mismatch                      The SMs in the top and bottom arms are inserted in a sinu-
+in MMC-ES phase; they do not affect the ac line current as they                   soidal manner. The participation of each arm can be expressed
+do not leave the converter arms. Circulating currents, however,                   using arm modulating waveform, mup and mlow (see (7) and (8)),
+increase the arm current and may lead to excessive losses and                     that are obtained from the normalized reference waveform to
+large capacitor voltage ripple. The analysis in Section IV shows                  be generated at the converter’s ac terminals. The normalized
+that the fundamental-frequency circulating current can be used                    reference waveform (mref ) is sinusoidal with a magnitude of m
+to balance power from SMs within an arm and hence it is useful.                   (the modulation index of the converter).
+A controller can be designed to eliminate only the second har-
+                                                                                                                   1
+monic circulating current. This concept can be further extended                                              mup =   (1 − mref )                          (7)
+to eliminate or control high-order circulating currents and is used                                                2
+in SOC balancing in Section VI. Fig. 6 shows the block diagram                                                      1
+                                                                                                             mlow = (1 + mref )                           (8)
+of the circulating current controller.                                                                              2
+                                                                                                             mref = m cos (ωt) .                          (9)
+III. AVERAGE-VALUE MODEL OF THE MMC-ES MULTIVALVE
+                                                                                     Viewed over the dc-dc converter’s switching frequency, iout
+A. Average-Value Model of the DC-DC C

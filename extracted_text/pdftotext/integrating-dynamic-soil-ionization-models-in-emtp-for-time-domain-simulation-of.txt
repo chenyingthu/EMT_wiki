@@ -1,0 +1,199 @@
+                                                                Electric Power Systems Research 251 (2026) 112327
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Integrating dynamic soil ionization models in EMTP for time-domain
+simulation of grounding resistance
+Ruyguara A. Meyberg a,* , Maria Teresa Correia de Barros c , Jean Mahseredjian b
+a
+  RTE International, 69007, Lyon, France
+b
+  Polytechnique Montreal, Montreal, QC H3T 1J4, Canada
+c
+  Instituto Superior Tecnico, Universidade de Lisboa, 1049-001 Lisbon, Portugal
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   Soil ionization can have a significant impact on the surge characteristics of grounding electrodes and should be
+Electromagnetic transient simulation                        considered when assessing the lightning performance of concentrate arrangements of grounding electrodes in
+Grounding electrode                                         power systems. The dynamics of this phenomenon can be properly represented by the variation in soil resistivity,
+Simulation
+                                                            an approach successfully applied in finite-difference time-domain (FDTD) simulations. The FDTD method,
+Soil ionization
+Surge
+                                                            however, has a high computational cost, making it unsuitable for large scale cases. This article presents the
+                                                            integration of existing soil ionization models, based on the variable resistivity approach, into the Electromagnetic
+                                                            Transients Program (EMTP®) via a dynamic link library (DLL), for calculating grounding resistance. Three
+                                                            application examples are presented, and the results are compared with measurements and values calculated in
+                                                            the literature using FDTD. Single vertical rods and four parallel rods with bipolar or unipolar injected currents
+                                                            are covered. The results show good accuracy and remarkable agreement with FDTD results, demonstrating their
+                                                            equivalence and great potential in representing the phenomenon accurately in high-performance electromag­
+                                                            netic transients software.
+
+
+
+
+1. Introduction                                                                               simulation programs. The variable soil resistivity approach has been
+                                                                                              employed in finite-difference time-domain (FDTD) [14] simulations,
+    LIGHTNING performance of power systems depends greatly on the                             and shows good accuracy for various electrode configurations and
+surge characteristics of the grounding electrodes, whose representation                       surges, see [15–17]. In this approach, proposed in [15], the electric field
+can become particularly complex when the effects of soil ionization are                       strength and the resulting resistivity variation are calculated in each
+considered. This phenomenon occurs when large current densities flow                          FDTD cell depicting the soil, and the electrode resistance is modified due
+from the grounding electrode into the soil, leading to exceeding the                          to the local soil resistivity variations. This FDTD method, however, has a
+disruptive electric field of the soil. Corona-type discharges occur around                    high computational burden, as it requires the use of a refined mesh close
+the electrode and the conductivity of the ionized region increases,                           to the electrode, and a small simulation time-step, which is related to the
+reducing the electrode grounding resistance.                                                  smallest cell size used. Therefore, despite its accuracy and the impor­
+    Different approaches for representing the impact of soil ionization on                    tance of representing the phenomenon, the method has not been used in
+grounding resistance can be found in literature. Some authors represent                       larger-scale FDTD simulations, such as those involving lightning strikes
+it by increasing the electrode transversal dimensions [1–4]; others by                        on transmission towers, see [18–21]. In [22], a new method is proposed
+varying the soil resistivity [5,6]; or by empirical expressions [7–9].                        for representing the effect of soil ionization on grounding resistance in
+    Empirical models represent a conservative simplification of the                           FDTD simulations. The method is also based on the variable soil re­
+phenomenon [8] but are widely used (see [10–13]) due to their                                 sistivity approach, but avoids mesh refinement by using a dynamic soil
+simplicity and easy implementation in electromagnetic transient (EMT)                         ionization model ([5] or [6]), which assumes equipotential surfaces
+
+
+ This work was supported by NSERC IRC grant, Hydro-Quebec, EDF, Opal-RT and RTE.
+   Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+ * Corresponding author.
+   E-mail addresses: ruyguara.meyberg@rte-international.com (R.A. Meyberg), teresa.correiadebarros@tecnico.ulisboa.pt (M.T. Correia de Barros), jean.
+mahseredjian@polymtl.ca (J. Mahseredjian).
+
+https://doi.org/10.1016/j.epsr.2025.112327
+Received 5 January 2025; Received in revised form 28 April 2025; Accepted 30 September 2025
+Available online 9 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+R.A. Meyberg et al.                                                                                                   Electric Power Systems Research 251 (2026) 112327
+
+
+                                                                                          From the moment the electric field strength reaches the critical value
+                                                                                     Ec , the process of soil ionization begins and the value of the resistivity in
+                                                                                     the shell varies. In the widely used model [5], the variation in resistivity
+                                                                                     during soil ionization is represented by
+                                                                                     ρ(t) = ρ0 exp(− t / τi )                                                      (3)
+
+                                                                                     where τi is the ionization time constant. As can be seen, resistivity in (3)
+                                                                                     only varies as a function of time. In [6] it is proposed that resistivity also
+                                                                                     varies with the strength of the local electric field, assuming a critical
+Fig. 1. Scheme of cylindrical-hemisphere equipotential surface for a single
+                                                                                     value ρcj given by
+vertical rod.                                                                                 Ec
+                                                                                     ρcj =       Aj                                                                (4)
+                                                                                             i(t)
+around the electrode to calculate the electrode resistance and whose
+variation is represented in FDTD using an equivalent radius. The method                   Eq. (4) represents the restoration of the critical field value Ec by the
+[22] allows for simulations hundreds of times faster than those of [15]              charges resulting from the soil ionization, which in turn has its own
+while still accounting for soil ionization dynamics. However, the                    dynamics, that is represented by attributing an exponential variation to
+application of FDTD to large-scale networks remains unsuitable due to                ρc j as follows
+its computational cost.                                                                            (      )
+                                                                                     ρ(t) = ρ0 + ρcj − ρ0 [1 − exp(− t / τi )]                                 (5)
+    The calculations of electrode resistance following the same dynamic
+soil ionization models [5,6] can be integrated into the Electromagnetic                  Once the electric field in the ionized region becomes lower than Ec ,
+Transients Program (EMTP®) via the dynamic link library (DLL) [23],                  the deionization process begins, and the resistivity tends to return to its
+thus taking advantage of both the program’s high performance and ac­                 nominal value. Both [5] and [6] describe the variation in resistivity
+curacy of the variable soil resistivity approach. In this article, two               during deionization by the following expression
+existing dynamic soil ionization models based on the variation of soil                           (         )
+resistivity [5,6] are integrated into the EMTP® using a DLL. Three                   ρ(t) = ρij + ρ0 − ρi j [1 − exp(− t / τd )](1 − E/Ec )2                (6)
+experimental cases from the literature are used as application examples.
+The results obtained using the developed DLL are compared with the                   where τd is the deionization constant and ρcj is the lowest resistivity
+values measured and calculated in the literature using FDTD. The pro­                value reached in the shell j during the ionization process.
+posed approach could be realized in other EMT-type software. Note that                   The electrode resistance is calculated by integrating dR from its
+the representation of the soil ionization effect by a variable resistance is         surface to infinity.
+widely used in electromagnetic simulation tools (see [10–13]). How­                      Note that both models ([5] and [6]) rely on the value of Ec , which
+ever, the novelty of this work lies in applying variable soil                        depends on the dielectric properties and electrical conductivity of the
+resistivity-based models, rather than empirical ones, to represent the               soil, influenced by factors such as moisture, electrical resistivity, and
+grounding resistance variation - and in comparing results with those                 composition. Since these properties vary with actual soil conditions, Ec is
+obtained in the literature using the same approach implemented in                    typically adjusted through experimental measurements to ensure the
+FDTD simulations.                                                                    accuracy of the model. Furthermore, the values of τi and τd to be used
+    This article is organized as follows. A background on soil ionization            depend on the soil ionization model, as they are based on different as­
+models is presented in Section II. The implementation of two soil ioni­              sumptions and describe the ionization process differently. Model [6]
+zation models is described in Section III. Three application examples are            considers τi and τd to always be 0.5 µs, on the basis that the magnitude of
+presented in Section IV and then conclusions are drawn in Section V.                 the simulation parameters related to the basic physical phenomena
+                                                                                     should not vary drastically from one application to another. Model [5],
+2. Background on soil ionization modeling                                            on the other hand, assumes that these parameters can vary and are
+                                                                                     adjusted according to experimental results.
+2.1. The variable resistivity approach [5,6]
+                                                                                     2.2. Representation of soil ionization in FDTD simulations [15,22]
+    In this approach, the region around the electrode is considered to be
+composed of elementary shells of uniform thickness dr, defined by                        The concept of the FDTD method can be briefly described as the
+equipotential surfaces. For instance, Fig. 1 illustrates the cylindrical-            division of the space of interest into small cubic or rectangular cells, with
+hemispherical equipotential surfaces considered for the case of a sin­               electric field components tangential to their edges and magnetic field
+gle vertical rod.                                                                    components perpendicular to their surfaces. Each field component is
+    Each elemental shell j has a resistance dRj given by                             assigned the electrical parameters (conductivity, permeability, and
+        ρj                                                                           permittivity) of the medium the cell represents. At each time step, the
+dRj =        dr                                                           (1)        electric and then magnetic field components are calculated using Max­
+        Aj
+                                                                                     well’s equations approximated by finite difference.
+where ρj and Aj are the resistivity and surface area of the shell j,                     The method for representing soil ionization in FDTD simulations
+respectively. The formulations of the area of equipotential surfaces for             proposed in [15] is based on the variable resistivity approach, using the
+different configurations of vertical rods can be found in [5].                       expressions proposed by [5]. At each simulation time instant, the elec­
+    The resistivity in each shell is initially equal to its nominal value ρ0 .       tric field is evaluated in each cell representing the soil. If the electric
+At each time instant, the value of the electric field in the shell j is              field component is higher than the critical value Ec , the resistivity
+evaluated as follows                                                                 associated with this component varies according to (3), and if the
+                                                                                     electric field component reduces to a value lower than Ec , the variation
+              i(t)                                                                   in resistivity follows (6).
+Ej (t) = ρj                                                               (2)
+               Aj                                                                        The method proposed in [22] calculates the electrode resistance at
+                                                                                     each time instant using a dynamic soil ionization model ([5] or [6])
+where i(t) is the current injected into the electrode.
+                                                                                     described in Section II.A and represents this new resistance value by
+
+                                                                                 2
+R.A. Meyberg et al.                                                                                                    Electric Power Systems Research 251 (2026) 112327
+
+
+
+
+                Fig. 2. Circuit assembled in EMTP® with the developed DLL to represent the grounding electrode under the effect of soil ionization.
+
+
+
+
+                                           Fig. 3. Mask of the block containing the circuit with the dll, shown in Fig. 2.
+
+
+varying the electrode radius in FDTD using a thin wire formulation.                   of the assumption of equipotential surfaces and the equivalence of the
+Method [22] therefore evaluates the electric field and the corresponding              methods.
+variation in soil resistivity on each equipotential surface around the
+electrode, rather than on each cell in the soil, as in [15]. This approxi­            3. Integration of dynamic soil ionization models in EMTP
+mation makes it possible to avoid the cell refinement required in [15]
+and thus to carry out much faster simulations. Simulation speed gains of                 An object-oriented DLL written in Fortran was developed to calculate
+up to 539 times are obtained in [22]. The good agreement of the results               electrode resistance following the variable resistivity approach pre­
+in [22] with those obtained using method [15] demonstrate the validity                sented in section II.A. This approach allows the creation of an EMTP®
+
+
+                                                                                  3
+R.A. Meyberg et al.                                                                                                        Electric Power Systems Research 251 (2026) 112327
+
+
+                                                                                       Table I
+                                                                                       Soil and electrode configurations in each application example.
+                                                                                        Case            Parameters
+
+                                                                                                        ρ0 (Ωm)              Rods                r0 (mm)            l (m)
+
+                                                                                        I               43.5                 1                   25.0               1.0
+                                                                                        II              50.0                 1                   6.35               0.61
+                                                                                        III             93.0                 4                   12.7               3.0
+
+
+
+
+                                                                                       Table II
+                                                                                       Soil parameters considered in each application example.
+                                                                                        Case                   Model 2
+
+                                                                                                               EC (kV/m)                   τi (µs)                 τd (µs)
+                                                                                        I                      120                         0.5                     4.5
+                                                                                        II                     100                         2.0                     4.5
+                                                                           

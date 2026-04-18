@@ -1,0 +1,206 @@
+                                                               Electric Power Systems Research 219 (2023) 109248
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A phase-domain synchronous machine modeling technique by using
+magnetic circuit representation of armature and rotor windings
+R. Yonezawa
+Grid and Communication Technology Division, Grid Innovation Research Laboratory, CRIEPI (Central Research Institute of Electric Power Industry), 2-6-1, Nagasaka,
+Yokosuka, Kanagawa 240-0196, Japan
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  A phase-domain synchronous machine modeling technique by using only basic circuit components and applying
+Electromagnetic transient (EMT) analysis                   the magnetic circuit representation used for transformer modeling is proposed in this paper. The model based on
+Magnetic circuit representation                            the proposed technique is implemented into XTAP, one of the electromagnetic transient analysis programs, and
+Park’s equations
+                                                           the accuracy of the proposed model is validated through simulation in an infinite-bus case system by comparing
+Phase domain
+Spatial harmonics
+                                                           it with some conventional synchronous machine models in this paper.
+Synchronous machine
+
+
+
+
+1. Introduction                                                                                  approaches a sinusoidal one, and adopting this assumption does not pose
+                                                                                                 a major problem. In most of the analyses that have been conducted,
+    Although the number of synchronous machines has been decreasing                              Park’s model has been sufficiently accurate.
+owing to the recent increase in the utilization of renewable energy, they                            However, with the increase in the number of power conditioning
+are still a major source of energy in power systems and models that can                          systems and other power electronics equipment used in renewable en­
+accurately reproduce the electrical and mechanical behaviors of syn­                             ergy interconnection, the need for analysis that takes harmonics into
+chronous machines in power system simulation are needed.                                         account is expected to increase in the future. Accordingly, a synchronous
+    A synchronous machine consists of armature windings, a field                                 machine model that can appropriately take into account spatial har­
+winding, and one or more damper windings arranged spatially, and its                             monics in the magnetic field distribution, which has been ignored until
+electrical behavior (the relationship between voltage and current in                             now because it has no significant impact, is considered necessary. In the
+each winding) can be expressed by circuit equations composed of an                               design of synchronous machines, it is sometimes necessary to analyze a
+inductance matrix consisting of the self- and mutual inductances and a                           situation in which the machine parameters become three-phase unbal­
+resistance matrix to express the resistances of each winding [1]. How­                           anced, such as an internal short-circuit accident in an armature winding
+ever, the values of some elements of the inductance matrix change from                           [3]. Under such condition, Park’s model cannot be used as it is because it
+time to time depending on the rotor position (angle), which makes their                          does not satisfy the second assumption [4].
+handling complicated in transient analysis. Therefore, in the field of                               A method for solving the circuit equations of a synchronous machine
+power system analysis, a model based on Park’s equations (referred to as                         in the three-phase domain without using the dq0 transformation (called
+Park’s model in this paper), which eliminates the time-varying in­                               a phase-domain model) has been proposed to realize these analyses [5,
+ductances between windings by using the dq0 transformation on the                                6]. Therefore, for analyses where Park’s model cannot be used, users can
+inductance matrix, is the standard model for synchronous machines and                            create a phase-domain model of a synchronous machine according to the
+has been widely used for many years [2].                                                         type of analysis and perform their analysis using this model.
+    Park’s model assumes the following two points: (1) the magnetic                                  When performing analysis of a power system that includes syn­
+field distribution in the air gap is sinusoidal, and (2) the circuit constants                   chronous machines, it is not practical to create an analysis program,
+such as the inductances and resistances of each phase winding are                                including a synchronous machine model, from scratch. In the case of
+balanced among the three phases. Although the first assumption is not                            electromagnetic transient (EMT) analysis, EMTP (DCG-EMTP [7],
+strictly true, many synchronous machines use distributed armature                                EMTP-RV [8]), ATP [9], PSCAD [10], and XTAP [11] are the typical
+windings so that the spatial distribution of the magnetomotive force                             analysis programs used. Since the source codes of these programs are
+
+
+    E-mail address: yonezawa@criepi.denken.or.jp.
+
+https://doi.org/10.1016/j.epsr.2023.109248
+Received 9 December 2022; Received in revised form 11 February 2023; Accepted 21 February 2023
+Available online 4 March 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+R. Yonezawa                                                                                                          Electric Power Systems Research 219 (2023) 109248
+
+
+usually not disclosed, models that require incorporation into the pro­            and the induced electromotive voltage of the winding corresponds to the
+gram are not practically available except to the program developers.              magnetic flux. Depending on the method of connection between the
+However, the phase-domain models proposed so far have been imple­                 electric and magnetic circuits, both circuits can also be solved simulta­
+mented as models embedded in programs (black-box models where the                 neously [14,15]. Therefore, in this paper, the author proposes a tech­
+models cannot be edited). Therefore, it is virtually difficult for users to       nique to represent a synchronous machine by a combination of basic
+create a phase-domain model that can simulate spatial harmonics and               circuit elements by applying the magnetic-circuit-based method in
+internal faults. It was also practically impossible to improve or expand          transformer modeling described above to the circuit equations for a
+the existing model for research and development purposes, such as                 synchronous machine.
+simulating a dual-excited synchronous machine [12].
+    In this paper, the author proposes a phase-domain modeling tech­              2.1. Magnetic circuit modeling of the circuit equations for a synchronous
+nique for synchronous machines, which can be freely edited by the user.           machine
+The proposed modeling technique represents the relationship between
+the electromotive force and flux linkage in the armature, field, and                  First, the equations for the flux linkages in each of the windings due
+damper windings of a synchronous machine as magnetic circuits con­                to the currents flowing through the armature windings, field winding,
+sisting of a combination of basic circuit elements. Therefore, the pro­           and damper windings are considered. The flux linkages in each winding
+posed technique does not require implementation in the source code,               are obtained by the product of the inductance matrix between the
+and the model implemented by the proposed technique (proposed                     windings and the current vector, as shown in the following equation [1].
+model) can be easily modified by the user according to the analysis
+                                                                                   ⎡ ⎤ ⎡                             ⎤⎡ ⎤
+purposes, such as spatial harmonics and three-phase unbalanced con­
+                                                                                                              ′
+
+                                                                                    Φs            Lss (θ)    Lsr (θ)
+ditions. The proposed model is also superior in terms of analytical ac­            ⎣ ′⎦=⎢                            ⎥⎣ is ⎦
+                                                                                              ⎣ 2( ′      )T         ⎦ ′                                  (1)
+curacy and numerical stability because it is a phase-domain model
+                                                                                                                 ′
+                                                                                    Φr            L (θ)       Lrr       ir
+                                                                                                3 sr
+characterized by the fact that it is coupled with the external system of a
+synchronous machine.
+                                                                                   Φs = [ Φsa Φsb Φsc ]T
+    In the following sections, the phase-domain modeling technique for             ′   [ ′     ′   ′ ]T
+synchronous machines proposed in this paper is explained, and by using            Φr = Φfd Φkd Φkq
+                                                                                                                                                                  (2)
+the proposed technique, a synchronous machine model is implemented                       is = [ isa isb isc ]T
+on XTAP. The basic behavior of the proposed model is compared with                      ′    [ ′    ′   ′ ]T
+                                                                                       ir = ifd ikd ikq
+that of the conventional Park’s model by simulating the transient
+response of a synchronous machine to three-phase-to-ground fault using
+                                                                                  where Φsa, Φsb and Φsc are the flux linkages in the armature windings,
+an infinite-bus system.
+                                                                                  Φ′ fd, Φ′ kd and Φ′ kq are the flux linkages in the field and damper wind­
+                                                                                  ings, isa, isb and isc are the currents in the armature windings, i′ fd, i′ kd and
+2. Proposed phase-domain modeling technique for synchronous                       i′ kq are the currents in the field and damper windings, Lss (θ) and L′ rr are
+machines                                                                          respectively the inductance matrices of the armature and rotor (field and
+                                                                                  damper) windings, L′ sr (θ) is the inductance matrix between the arma­
+    In EMT analysis programs, basic circuit elements such as an inductor          ture and rotor windings, and θ is the electrical phase angle between the
+and a capacitor, which are used by program users to construct power               armature and rotor. For simplicity, we also assume that there is one
+systems and models, have the operation of discretization of the differ­           damper winding on the direct axis and one on the quadrature axis. In
+ential equations expressing the relationship between their voltage and            many references, "a" in armature is used as a subscript of armature
+current built into the program in advance. For this reason, power                 winding, but in this report, "s" meaning stator is used to avoid confusion
+equipment models such as a transformer model based on the basic                   with phase a.
+equivalent circuit and a transmission line model based on the π-type                    As shown in Fig. 1(a), when a current i flows through a resistor with
+equivalent circuit, whose dynamic characteristics can be expressed by             an inductance value L in the EMT analysis program, the voltage applied
+combining basic circuit elements without editing the program source               to the resistor becomes the flux linkage (= Li). Then, with a current-
+code, can be freely edited by changing some of their components and can           controlled current source (CCCS), which is a dependent source that
+also be easily modified to allow external manipulation of components’             controls its own current according to the current of any circuit compo­
+parameters during transient analysis by using controlled circuit com­             nent, the current isa of the armature winding of phase a is applied to the
+ponents that can change parameters from the control system. Similarly,            resistor whose value is set to the self-inductance value Laa of the arma­
+if the controlled switch that can be operated from the control system is          ture winding of phase a. The flux linkage in the phase a winding due to
+incorporated into the model, it is possible to simulate internal wiring
+breaks or ground faults during transient analysis. Therefore, from the
+standpoint of versatility, the equipment model should be composed of a
+combination of basic elements. Furthermore, such models are desirable
+from the standpoint of model reliability because the internal configu­
+ration of the model is not concealed. In the case of synchronous ma­
+chines, however, no phase-domain model composed of a combination of
+circuit elements has ever been created.
+    On the other hand, in the case of transformers, which are electrical
+equipment consisting of windings and an iron core similar to synchro­
+nous machines, it is sometimes desirable to precisely consider the
+magnetic coupling between the windings because of the iron core
+structure. In such cases, a technique is known to construct a magnetic
+circuit composed of the electromotive force, magnetic flux, and mag­
+netic resistance of multiple windings and the iron core on an EMT
+analysis program, and to solve it in combination with the electric                Fig. 1. Circuits for calculating flux linkage using a resistor component and
+winding circuits and external system [13]. In this technique, the current         dependent sources. (a) Circuit representation of flux linkage Φ. (b) Flux linkage
+flowing through the winding corresponds to the magnetomotive force,               Φsum attributable to currents in multiple windings.
+
+                                                                              2
+R. Yonezawa                                                                                                              Electric Power Systems Research 219 (2023) 109248
+
+
+the current isa of the armature winding of phase a can be obtained as a
+voltage. Similarly, if the current isb in the phase b armature winding
+flows through a resistor whose value is set to the mutual inductance
+value Lab of the armature windings between phases a and b, the flux
+linkage in the phase a winding due to the current isb in the phase b
+armature winding can be obtained as a voltage. To obtain the sum of the
+flux linkage Φ1, Φ2, …, Φn, first, convert each flux linkage obtained as a
+voltage into a current from a voltage-controlled current source (VCCS),
+which is a dependent source that controls its own current according to
+the voltage of any circuit component. Next, these are connected in
+parallel as shown in Fig. 1(b), and the total flux linkage Φsum is obtained
+as the resultant current. In the circuit shown in Fig. 1(a), the physical
+quantities corresponding to current, voltage, and resistance are elec­
+tromotive force, flux linkage (magnetic flux), and permeance,
+respectively.
+      Next, the induced electromotive force of each winding is determined.
+The induced electromotive force of a winding is related to the derivative
+of the flux linkage (Faraday’s law). Therefore, the induced electromotive
+force can be obtained using a differential circuit with a 1 H inductance as
+shown in Fig. 2. In other words, in the circuit shown in Fig. 2, by passing
+a current through a 1 H inductance using VCCS through the flux linkage
+obtained as the voltage at both ends of the resistor, the voltage becomes
+the derivative of the flux linkage. To obtain the induced electromotive
+force from the flux linkage due to the current flowing through multiple
+windings, a 1 H inductance is connected in parallel with VCCS in the
+circuit shown in Fig. 1(b).
+      Then, the obtained induced electromotive force is set as the induced
+electromotive force of the winding in the electric circuit. This can be
+achieved by using a voltage-controlled voltage source (VCVS), which is a
+component that controls its voltage according to the voltage of any
+circuit component. Thus, by using three types of dependent sources,
+namely, CCCS, VCCS, and VCVS, the relationship between the current
+and induced electromotive force in multiple windings (electric circuit)
+and the relationship between the current and the flux linkage (magnetic
+circuit) can be established simultaneously.
+      By the technique described above, one can obtain the induced elec­
+tromotive force esa in the armature winding of phase a by combining the
+multiple circuits shown in Fig. 3. In these circuits, the currents isa, isb, isc,         Fig. 3. Circuits for calculating induced electromotive force of a winding.
+i′ fd, i′ kd and i′ kq are taken as currents from CCCS and connected to a
+resistance (not exactly a resistance but a permeance) with an inductance                used to set the value using the control system based on θ. The induced
+value obtained from the inductance matrix in (1), and the flux linkages                 electromotive force of other windings can be obtained in the same way.
+Φsa-sa, Φsa-sb, Φsa-sc, Φ′ sa-fd,Φ′ sa-kd and Φ′ sa-kq of the armature winding of       The relationships among the flux linkages, currents, and induced elec­
+phase a due to the current in each winding are obtained. The voltages of                tromotive forces in each winding can now be expressed by combining
+each resistor (flux linkages in the armature winding of phase a due to the              the basic circuit elements.
+current in each winding) are extracted as a current from VCCS, and they                     In addition, considering the winding resistances, the terminal volt­
+are connected in parallel to obtain the resultant current (the flux link­               ages v of the armature and rotor windings are obtained. Here, the
+ages in the armature winding of phase a Φsa). This resultant current is                 leakage inductance, similar to the winding resistance, is an element
+then passed through a 1 H inductance to obtain the induced electro­                     related only to the current in its winding. The

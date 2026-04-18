@@ -1,0 +1,213 @@
+                                                             Electric Power Systems Research 189 (2020) 106799
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                       journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Simulation of electromagnetic transients with Modelica, accuracy and                                                                                    T
+performance assessment for transmission line models
+                                                                                                ⁎
+Alireza Masooma, Tarek Ould-Bachirb, Jean Mahseredjian ,a, Adrien Guironnetc, Ni Dingc
+a
+  Department of Electrical Engineering, Polytechnique Montréal, Canada
+b
+  Department of Computer Engineering and Software Engineering, Polytechnique Montréal, Canada
+c
+  R&D Department Réseau de Transport d’Electricité (RTE) Paris, France
+
+
+
+
+A R T I C LE I N FO                                       A B S T R A C T
+
+Keywords:                                                 Electromagnetic Transient (EMT) simulation tools are typically developed using an imperative language. It is
+EMT-type simulation                                       typically required to code the models using a speciﬁc numerical integration method and following existing
+Equation-based modeling                                   solution algorithms. On the other hand, modern high-level, acausal and equation-based programming languages,
+Modelica                                                  such as Modelica, allow to formulate models that are easy to read, understand and develop by expressing what
+Power system transients
+                                                          needs to be computed without stating how it should be computed. In this paper, the application of Modelica to
+                                                          EMT modeling is demonstrated and the beneﬁts of the language for EMT-type simulations is established. This is
+                                                          done by using the declarative language concept for the development of two models, namely the Constant
+                                                          Parameter (CP) and the Wide-Band (WB) models. Two case studies are presented and used to validate the models
+                                                          and to compare accuracy and performance.
+
+
+
+
+1. Introduction and motivation                                                                  computationally eﬃcient than the classic application coding ap-
+                                                                                                proaches, they help the researcher to develop models with diﬀerent
+    EMT simulation tools are intended for high frequency transient                              layouts, for interfacing with diﬀerent applications and for testing
+studies such as over-voltages, inrush currents, relay settings and in-                          modeling formulations.
+sulation coordination in power systems. For these studies, harmonics,                               Among various declarative languages, Modelica [4,5] has gained
+non-linearities and unbalanced network conditions must be taken into                            international recognition and is now one of the most used and advanced
+consideration [1]. EMT-type software tools, such as EMTP [2], use                               high-level modeling languages. Modelica is a multi-domain, equation-
+imperative programming languages (FORTRAN, C, C++...) for mod-                                  based, object-oriented, declarative language standardized for system-
+eling and simulation of power system transients. Such a program has a                           level modeling. Equations have no pre-deﬁned causality; so the simula-
+closed architecture and uses many cryptic code lines to meet the re-                            tion engine determines the order in which equations are solved. In
+quirements of actual solution mathematics which eventually become                               Modelica, a set of time-varying Diﬀerential-Algebraic Equations (DAE)
+almost impossible to visualize; moreover, the languages are ill-suited to                       and discrete equations are used to describe the dynamic behavior of a
+human abilities for dealing with complexity [3]. It must be noted that                          system [6]. Modelica is a language that needs environments to trans-
+the classical EMT-type software programming maintains signiﬁcant                                form it into executable code and run simulations: there exists diﬀerent
+computational performance advantages due to its speciﬁc programming                             ones - either commercial such as Dymola, Wolfram System Modeler or
+methods and mathematics.                                                                        open-source such as Open Modelica or Dynaωo; thus the repeatability of
+    Declarative programming approaches have been widely used in                                 simulation and decoupling of models from numerical solvers are
+such domains as automotive, buildings or thermal problems, for solving                          guaranteed.
+complex physical system simulations. The declarative programming                                    Several power system libraries such as iPSL, Open iPSL [7], Ob-
+paradigm allows to set the focus on what needs to be computed, instead                          jectStab [8] or PowerGrids [9] have been developed based on Modelica,
+of how it should be computed, and helps the modeler to concentrate on                           but their primary focus is on phasor-domain studies computations ap-
+modeling rather than problem-solving strategies. Although high-level                            plicable to the simulation of electromechanical transients. To our best
+modeling environments are currently expected to be less                                         knowledge, except for the PowerSystems library [10] which is intended
+
+
+    ⁎
+   Corresponding author.
+   E-mail addresses: alireza.masoom@polymtl.ca (A. Masoom), tarek.ould-bachir@polymtl.ca (T. Ould-Bachir), jean.mahseredjian@polymtl.ca (J. Mahseredjian),
+adrien.guironnet@rte-france.com (A. Guironnet), ni.ding@rte-france.com (N. Ding).
+
+https://doi.org/10.1016/j.epsr.2020.106799
+Received 4 October 2019; Received in revised form 22 March 2020; Accepted 2 August 2020
+Available online 12 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+A. Masoom, et al.                                                                                                         Electric Power Systems Research 189 (2020) 106799
+
+
+
+
+               Fig. 1. Schematic of transmission line with length ℓ.
+
+
+for modeling of electrical power system at transient and steady-state
+mode, there is almost no literature for the application of Modelica to
+the simulation of faster electromagnetic transients.
+    This paper investigates the implementation of Modelica based EMT-            Fig. 2. (a): Distributed parameter lossless CP line model for TD calculations (b):
+type simulation tool and explores the related challenges. Multiphase CP          Lossless CP line model with lumped resistance included.
+and WB line/cable models are implemented with the Modelica lan-
+guage. The models are tested and validated against EMTP for accuracy             2.1. Constant parameter line model
+and computational performance. The paper is organized as follows:
+Section 2 recollects WB and CP line model equations, Section 3 presents              One of the simplest approaches for line modeling is to neglect losses
+their implementation in Modelica and Section 4 presents test cases and           and frequency dependency. Applying inverse Laplace transformation to
+model validations.                                                               (6) yields the below equations for single-phase lossless TL in time do-
+                                                                                 main:
+2. Review of transmission line formulation
+                                                                                 ik      = yc vk − ihist
+                                                                                                    k
+                                                                                                    hist
+    Fig. 1 shows a Transmission Line (TL) of length ℓ. In frequency              im      = yc vm − im
+domain, the vector of phase currents Ik at end k is related to the vector        ihist
+                                                                                  k      = yc vm (t − τ ) + im (t − τ )
+of phase voltages Vk and the incident current wave Iki given by (1). The          hist
+                                                                                 im      = yc vk (t − τ ) + ik (t − τ )                                                (7)
+incident wave is equal to the reﬂected wave Imr (3) from the other line
+end, propagated to end k as represented by (2).                                      Fig. 2 (a) shows the Norton equivalent of lossless TL. In this ap-
+Ik = Yc Vk − 2Iki                                                      (1)       proach, line losses are modeled by adding quarter lumped resistance, R/
+                                                                                 4, into each end of halved lossless TL (see Fig. 2(b)).
+Iki = HImr                                                             (2)           Modal analysis is used for separating mutually coupled n phase line
+                                                                                 into n decoupled lines. In the CP line, the modal transformation matrix
+Imr = Imi + Im                                                         (3)       is a real and constant matrix evaluated at desired frequency. More
+                                                                                 details for equations of a lossy CP model can be found in [11].
+where Yc and H are the n × n matrices of characteristic admittance and
+propagation, respectively.
+                                                                                 2.2. Wide-band line model
+Yc =       YZ−1
+H = e− YZ ℓ                                                            (4)           The WB model [12,13] is a phase domain model which gives highly
+   Y and Z are n × n coupled per-unit-length frequency-dependent                 accurate results for aerial lines as well as underground cables since it
+shunt admittance and series impedance matrices respectively.                     considers the full frequency dependency of line/cable parameters.
+   Rearranging the above equations yields:                                           For solving (6), the most eﬃcient method is to use the recursive
+                                                                                 convolution algorithm. In this approach, the propagation as well as the
+Ik      = Yc Vk − Ihist
+                   k                                                             characteristic admittance matrices are directly ﬁtted in phase domain
+Ihist
+ k      = H (Yc Vm + Im) = HImu                                        (5)       using vector ﬁtting tool [12]. The approximation of these two matrices
+                                                                                 in a partial fraction form is given by (8) and (9).
+    In (5), the term Yc Vk is considered as a shunt current and Imu is the
+                                                                                                 Ny
+forward traveling current-wave vector from the m end. These equations                                   Gi
+                                                                                 Yc = G0 + ∑
+are valid for both underground cables and aerial TLs.                                                 s − qi                                                           (8)
+                                                                                                i=1
+    In this paper, bold characters are used to denote vectors and ma-
+trices, uppercase and lowercase letters are used for representing phase                  Ng Nh (k )
+domain and time domain respectively.                                                                    R k,i −sτ k
+                                                                                 H=∑ ∑                         e
+    A time domain solution can be obtained using convolutions invol-                     k=1   i=1
+                                                                                                      s − pk,i                                                         (9)
+ving the time domain counterparts of H and Yc , which are obtained via
+an inverse Laplace transform. The line equations in time domain are              where G0 is a constant residue at the inﬁnite frequency, qi represents ith
+given by:                                                                        pole, Gi is the corresponding matrix of residues, Ny is the order of ﬁt-
+                                                                                 ting, Ng is the number of modes, Nh (k ) denotes the number of poles used
+ik      = yc*vk − ihist
+                   k                                                             to ﬁt the kth modal propagation matrix, pk,i is the ﬁtting pole, τk is the
+ihist = h*(yc*vm + im) = h*imu                                         (6)       time delay of the kth mode and R k,i is the matrix of residues.
+ k
+                                                                                     The state space form of shunt and history current for k-end are re-
+    Expressions similar to (1)–(6) can be written for the m-end by in-           presented by (10) and (11). The same equations hold for the m-end of
+terchanging subscripts k and m.                                                  the line.
+
+                                                                             2
+A. Masoom, et al.                                                                                                   Electric Power Systems Research 189 (2020) 106799
+
+
+                               N
+Ish,k = G0 Vk + ∑i =y1 Wi
+          1
+Wi = s − q Gi Vk
+               i                                                     (10)
+and
+              N           N (k )
+Ihist
+ k    = ∑k =g 1 ∑i =h1 X k,i
+           R
+X k,i = s − k,i Imu e−sτ k
+            p      k,i                                               (11)
+   Therefore, the time domain solution of (10)–(11) can be evaluated
+by applying a fast-recursive algorithm to state space methods.
+                          Ny                                                     Fig. 3. Implementation of multiphase CP line model in Modelica: black diagram
+ish,k = G0 vk + ∑ wi                                                             denotes calculations in phase domain, red diagrams represents computations in
+                          i=1                                        (12)        modal domain. (For interpretation of the references to colour in this ﬁgure
+                                                                                 legend, the reader is referred to the web version of this article.)
+d wi
+     = qi wi + Gi vk
+ dt                                                                  (13)
+                                                                                      RN = T−i t Zmodified, md Ti                                              (17)
+and
+          Ng Nh (k )
+                                                                                      where Zmodified, md is a diagonal matrix involving the contribution of
+ihist =   ∑ ∑ xk,i                                                                    line resistance to characteristic impedance of lossless line; both in
+ k
+          k=1       i=1                                              (14)             modal domain.
+
+d x k,i                                                                           •   History Class: illustrated in Fig 3 by red, the history terms of current,
+                                                                                      ihist      hist
+                                                                                            and im    , are calculated in modal domain, then transferred into
+        = pk,i x k,i + R k,iimu (t − τk )                                              k
+ dt                                                                  (15)             phase domain. This class is an example of acausal programming, i.e.
+    In EMT-type programs, (13) and (15) need to be discretized using                  there is no input and output algorithm. It is noteworthy that the
+the trapezoidal integration method. This paper sets focus on the eva-                 calculation of history terms at each time point includes solving an
+luation of these equations in time domain using a declarative language.               implicit algebraic equation.
+
+3. Model implementation in Modelica                                              3.2. Implementation of WB model
+
+    This section explains how CP and WB models are implemented using                 As illustrated in Fig. 4, the model is composed of Norton equivalent
+Modelica. The code describing the transient state of the transmission            class to compute the voltage and current at line terminal as well as
+line is as close as possible to the original formulation of the equations        shunt current using (12) and (13), History class for calculation of history
+that are found in textbooks. As a strong point, the concrete im-                 current as formulated by (14) and (15).
+plementation of models in terms of equations is fully accessible, so that            The ﬁtting parameters are currently calculated by EMTP and are
+the exact behavior of each model is clearly and unambiguously deﬁned.            imported automatically into Modelica readable ﬁle. The function of
+This is often a weak point in closed-source simulation tools.                    each class are described as below:
+    Both line models consist mainly of two components: one calculating
+the history terms and one representing a Norton equivalent. These                 • Norton Equivalent Class: this class like what explained for CP model,
+component models are connected together using pin. Pin is a connector                 is coded as a one port electrical element. The description of each
+class containing a nonﬂow variable– voltage– and a ﬂow varia-                         equation is shown in Fig. 5.
+ble–current–. Pin ensures equality coupling for voltage based on                      As can be observed, the component is described strictly by its
+Kirchhoﬀ’s voltage law and sum-to-zero coupling for current                           equations. It is noted that the class is reusable and is used twice for
+(Kirchhoﬀ’s current law). Therefore, pin represents an acausal equation               modeling each line end.
+mathematically. Plug is a set of pins and denotes a mutilphase terminal.          •   History Class: this class is the most complicated class in the WB
+                                                                                      model and includes several diﬀerential equations. The equations
+3.1. Implementation of CP model                                                       deﬁne the relations between the forward traveling current-wave
+                                               

@@ -1,0 +1,211 @@
+                                 Received 1 November 2023; accepted 26 November 2023. Date of publication 30 November 2023;
+                         date of current version 4 January 2024. The review of this paper was arranged by Associate Editor Jennifer Bauman.
+                                                                 Digital Object Identifier 10.1109/OJPEL.2023.3337888
+
+
+
+
+    Numerically Efficient Average-Value Model for
+           Voltage-Source Converters in
+               Nodal-Based Programs
+   SEYYEDMILAD EBRAHIMI                            (Member, IEEE), TALEB VAHABZADEH (Graduate Student Member, IEEE),
+                                                      AND JURI JATSKEVICH (Fellow, IEEE)
+                                Electrical and Computer Engineering Department, The University of British Columbia, Vancouver, BC V6T 1Z4, Canada
+                                            CORRESPONDING AUTHOR: SEYYEDMILAD EBRAHIMI (e-mail: ebrahimi@ece.ubc.ca.)
+          This work was supported by the Natural Science and Engineering Research Council (NSERC) of Canada under the Collaborative Research and Development Grant.
+
+
+
+
+          ABSTRACT         Discrete detailed models of high-frequency switching voltage source converters (VSCs)
+          are accurate but computationally expensive in simulations of large power-electronics-based systems. For
+          fast/efficient studies, the average-value models (AVMs) of VSCs have proven indispensable, which conven-
+          tionally utilize controlled voltage/current sources to interface with external circuits. In nodal-analysis-based
+          electromagnetic transient (EMT) simulation programs with a non-iterative solution, the interfacing variables
+          are computed based on the values of input voltages/currents calculated at the previous time step. This
+          delay may cause numerical inaccuracy and/or instability at large simulation time steps. Recently, a so-called
+          directly-interfaced AVM (DI-AVM) has been developed for VSCs that avoids this delay. In this article, the
+          formulation of the DI-AVM is generalized for an arbitrary configuration of the interfacing nodes. This is
+          done by formulating the extended equivalent conductance matrix for the VSC AVM, assuming all nodes
+          are floating. The generalized conductance matrix is then merged into the overall network nodal equation.
+          The extended DI-AVM is verified in PSCAD/EMTDC against the traditional dependent-source-based AVMs
+          under both balanced and unbalanced conditions and is demonstrated to outperform the conventional AVMs
+          in terms of numerical accuracy at large time steps.
+
+          INDEX TERMS Average-value model (AVM), conductance matrix, interfacing, nodal, numerical,
+          PSCAD/EMTDC, simulation, voltage source converters (VSCs).
+
+
+
+
+I. INTRODUCTION                                                                              and/or to be able to simulate more extensive networks on a
+Voltage-source converters (VSCs) possess various advanta-                                    given computational hardware [5], [6].
+geous properties, including (but not limited to) independent                                    Depending on the power level, the VSCs may typically
+control of active and reactive power [1], low harmonic dis-                                  operate with switching frequency in the order of several kilo-
+tortions, etc. As a result, VSCs are dominantly utilized                                     Hertz (for high-power applications) to tens or hundreds of
+in many power-electronics-based applications, e.g., wind                                     kilo-Hertz (for low-power applications). The detailed switch-
+energy conversion systems, FACTS devices, HVDC light                                         ing models of VSCs capture every discrete switching event
+systems [2], modern vehicular, marine, aircraft systems,                                     and, therefore, accurately reconstruct the input and output
+etc.                                                                                         waveforms of voltages and currents. Such switching models
+   Design, study, and analysis of such systems rely on many                                  are also easy to build using conventional library components
+electromagnetic transient (EMT) simulations [3] that are con-                                that are available in many standard EMT simulators. How-
+ducted offline and/or in real-time, e.g., for stability analysis                             ever, switching models require accordingly small time steps
+[4], dynamic design/tuning of controllers, etc. In such stud-                                and/or interpolations for correctly handling the actual discrete
+ies, it is desirable to use time steps as large as possible for                              switching events [7], [8]. Processing all discrete switching
+simulations to conduct the studies in a shorter amount of time                               events puts a heavy computational burden on the simulators
+
+                 © 2023 The Authors. This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 License. For more information, see
+VOLUME 5, 2024                                                   https://creativecommons.org/licenses/by-nc-nd/4.0/                                                   93
+EBRAHIMI ET AL.: NUMERICALLY EFFICIENT AVERAGE-VALUE MODEL FOR VOLTAGE-SOURCE CONVERTERS
+
+
+
+
+and limits the size of systems that may be practically im-          power-electronic-based power systems. Implementing control
+plemented in a given EMT tool. Detailed switching models            feedback loops in VSC-based systems may also necessitate a
+are also not conducive to stability analysis of interconnected      time-step relaxation delay in non-iterative solutions [29].
+VSC-based power grids [9], [10].                                       Recently, a methodology for the so-called directly-
+   The average-value models (AVMs) have been developed              interfaced AVMs (DI-AVMs) has been developed in [30],
+for power-electronic converters to capture the slower aver-         [31], [32] for power-electronic converters implemented in
+age dynamics [10], [11]. This is achieved by formulating the        nodal-analysis-based simulators. The new approach avoids the
+AVMs based on the average values of the variables where the         artificial interfacing time-step delay inherent to the traditional
+discrete switching phenomena are neglected (averaged out)           dependent-source-based AVMs. However, the DI-AVMs in
+[10], [11]. Since the AVMs are independent of the switching         [30], [31], [32] have been formulated with simplifying as-
+events, they can be simulated with much larger time steps and       sumptions on the structure of the converter terminal nodes.
+are computationally more efficient than their switching model       Specifically, they require the negative terminal of the dc-side
+counterparts. The AVMs are also continuous models and can           system and the neutral point of the ac-side subsystem to
+be readily linearized for small-signal analysis [9], [10].          be grounded. This modeling limitation imposes constraints,
+   Generalized averaging methods [12], [13] were also devel-        requiring the ac subsystem not to have any zero-sequence volt-
+oped to include the switching ripples in addition to the average    ages; otherwise, unwanted zero-sequence currents can flow
+values while retaining the faster simulation speeds associated      due to the node structure of the DI-AVM. Additionally, the
+with AVMs. A piecewise state-space averaging method was             implementation of multiple AVMs of converters also becomes
+also developed in [14] with improved accuracy under large           more difficult.
+ripple and disturbance conditions.                                     Inspired by [30], [31], [32], in this article, an extended
+   The AVMs have also been developed for different types of         DI-AVM is developed for VSCs with a generalized and versa-
+VSC-based converters, including two-level [11], three-level         tile interfacing capability with external circuits in nodal-based
+neutral-point clamped [15], etc. An AVM for three-level VSC-        EMT programs. This is achieved by formulating the VSC
+based HVDC systems was presented in [16]. Average-value             AVM relations in the general nodal form, assuming all ac-side
+modeling for the VSC-based direct-driven permanent-magnet           and dc-side nodes as floating, and obtaining a generalized
+synchronous generator wind energy conversion systems was            conductance matrix for the VSC AVM. This generalized con-
+developed in [17]. An AVM for active front-end rectifiers           ductance sub-matrix of the DI-AVM is then merged into the
+based on VSCs was proposed in [18]. An enhanced time-               conductance matrix of the rest of the network nodal equation.
+average model was presented in [19] to account for distortions      As a result, the extended AVM relations are solved simul-
+and low-frequency harmonics due to the dead-times between           taneously as part of the overall network with the external
+the upper and lower switches. A universal converter model           system. This method avoids the need for a relaxation time-step
+has been developed by RTDS based on descriptor state-space          delay (as is the case when using dependent/controlled sources
+[20]; however, details of the formulations of the model are not     for the interface) without having any simplifying/limiting as-
+disclosed and remain proprietary.                                   sumptions on the structure of the terminal nodes. Due to its
+   The AVMs have also been established for modular multi-           versatile formulation, the proposed extended DI-AVM can
+level converters (MMCs) quite extensively. In [21], [22], [23],     be configured arbitrarily to accommodate any VSC circuit
+AVMs were developed for VSC-based MMC-HVDC systems.                 topology and combination of required terminal nodes. This
+The modified/unified AVMs were developed in [24], [25], and         has not been possible with the previous DI-AVM [30], [31],
+with embedded storage in [26] to consider blocking mode             [32].
+operation of MMCs. An AVM for power-electronic-based                   The numerical accuracy of the new extended DI-AVM is
+substations in hybrid ac–dc distribution systems was proposed       investigated under balanced and unbalanced transient con-
+in [27].                                                            ditions on a sample VSC-based energy conversion system
+   Despite having different formulations, features, and ap-         implemented in PSCAD/EMTDC where the effect of volt-
+plications, the typical widely-used AVMs of VSCs [11],              age/power/current control loops is also considered. It is
+[12], [13], [14], [15], [16], [17], [18], [19], [21], [22], [23],   demonstrated that the proposed generalized DI-AVM outper-
+[24], [25], [26], [27], [28] are conventionally implemented in      forms the alternative/classic AVM of VSCs, and it can be
+the EMT simulation programs using dependent cur-                    simulated with relatively large time steps while maintaining
+rent/voltage sources and/or ideal transformers [14] to interface    good accuracy and numerical stability without the need for
+with the external networks. In the EMT programs with a non-         simplifying/limiting constraints on the terminal nodes struc-
+iterative solution (e.g., PSCAD/EMTDC [8] or RTDS [5]),             ture of the VSC. This advancement is desirable for many
+a one-time-step relaxation delay is needed to compute the           offline and real-time EMT simulations of VSC-based systems.
+interfacing variables (based on the values of the calculated           It is worth mentioning that in this article, the proposed
+inputs from the previous time-step) [28]. This delay in the         DI-AVM is compared with the classic AVM and the detailed
+so-called indirect interfacing may lead to numerical inaccu-        switching models of VSCs to verify the numerical perfor-
+racy and/or instability for solutions at large time steps, which    mance and generality of the proposed methodology. It is noted
+defies the benefits of using AVMs for transient studies of          that these are industry-standard models of VSCs, which have
+
+94                                                                                                                       VOLUME 5, 2024
+FIGURE 1. Simplified power-electronic-based wind energy generation system.
+
+
+
+
+been experimentally verified and are widely used in many
+studies and simulations of power-electronics-based systems
+and are also available as standard library components in most
+commercially available simulation programs; therefore, they
+can be regarded as reference for verifications.
+
+
+II. VSC-BASED AC–DC SYSTEM
+In this article, a generic wind power generation system shown
+in Fig. 1 is considered without loss of generality. Therein, the
+ac-side subsystem electric grid is represented by its Thévenin
+equivalent circuit composed of the three-phase source volt-
+ages eabc and the series impedances rac and Lac (which may
+also represent the series filter of the converter). The dc-side
+terminals of the VSC are connected to a dc-link capacitor Cdc
+and a dc-side subsystem, which may be composed of ac–dc
+rectifiers (e.g., six-pulse diode bridges) fed by a cluster of
+three-phase generators (e.g., permanent magnet synchronous
+generator, induction generator, doubly-fed induction genera-
+tor, etc.) driven by wind turbines.                                          FIGURE 2. Schematic of the outer voltage/power and inner current control
+                                                                             loops for the voltage-source converter using four PI controllers.
+   As shown in Fig. 1, the ac- and dc-side variables of the
+VSC are measured and used in the controller block, which es-
+tablishes the input variables for the VSC gate signal generator
+                                                                                                         
+block. The controllers comprise outer active/reactive power                                              iq
+(and/or voltage-level) control loops and inner current control                                  iqd =       = [K(θs )] iabc ,                    (2)
+                                                                                                         id
+loops, typically implemented in the qd coordinates [33]. The
+schematic of the controllers is shown in Fig. 2, where (without              using Park’s transformation matrix K(θs ) defined as [36]
+loss of generality) the dc voltage and reactive power control                                                                             
+                                                                                        2 cos (θs ) cos (θs − 2π /3) cos (θs + 2π /3)
+loops are adopted.                                                            K(θs ) =                                                       .
+   VSCs are typically controlled with respect to their local                            3 sin (θs ) sin (θs − 2π /3) sin (θs + 2π /3)
+                                                                                                                                            (3)
+point-of-synchronization (POS) [34], [35]. The abc/qd trans-
+                                                                               The transformations are also graphically illustrated with
+formations in the controller block, as well as the gate signal
+                                                                             vector diagrams in Fig. 3. As seen in Fig. 3, the q-axis of the
+generator, require the angle of the fundamental frequency
+                                                                             qd frame is assumed to be aligned with the phase a source
+components of the voltages at POS, i.e., (eabc in Fig. 1) de-
+                                                                             voltage ea (at time zero), which results in having ed = 0.
+noted by θs , with respect to which the VSC output ac voltages
+                                                                             As seen in the control diagram in Fig. 2, the transformed
+are established. The angle θs is typically obtained using a
+                                                                             qd variables eqd and iqd are used along with the measured
+phase-locked-loop (PLL) [34], [35]. The abc/qd transforma-
+                                                                             currents/voltages as well as the set-points for the dc voltage
+tions are performed as                                                        ∗ and reactive power Q∗ to compute the set-points for the qd
+                                                                             vdc
+                                                                           voltages (i.e.,vq∗ and vd∗ ) through the four PI controllers. The
+                         e                                                                                             ∗ with high-frequency
+                   eqd = q = [K(θs )] eabc ,                       (1)       VSC produces the required voltages vqd
+                         ed                                                  switching. The fundamental frequency components of the
+
+VOLUME 5, 2024                                                                                                                                     95
+EBRAHIMI ET AL.: NUMERICALLY EFFICIENT AVERAGE-VALUE MODEL FOR VOLTAGE-SOURCE CONVERTERS
+
+
+
+
+FIGURE 3. Vector diagram of the three-phase ac voltages and currents in
+stationary and rotating qd reference frames.
+                                                                           FIGURE 4. Implementation of the conventional IDI-AVM of VSCs and its
+                                                                           circuit interface with external subsystems using dependent current/voltage
+                                                                           sources.
+
+VSC output ac voltages can be expressed as
+               ⎡ 1⎤       ⎡                      ⎤
+                va               cos (θs − δ)
+       vabc = ⎣vb1 ⎦ = A ⎣cos (θs − δ − 2π /3)⎦ ,
+        1
+                                                                     (4)   period Tsw as
+                vc1         cos (θs − δ + 2π /3)                                                         t
+                                                                                                   1                                 1
+                                                                                      x̄ (t ) =                  x (τ )dτ,   Tsw =         ,       (8)
+where                                                                                             Tsw    t−Tsw                       fsw
+                            
+                                      2              2                     where fsw is the switching frequency of the VSC; the variable
+                       A=       vq∗       + vd∗ ,                    (5)
+                                                                           x denotes the dc or transformed qd currents and/or voltages;
+and                                                                        and x̄ denotes the average value of x.
+                                                                              To establish the AVM, it is assumed that the (fundamental
+                       δ = t

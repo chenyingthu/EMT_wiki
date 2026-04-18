@@ -1,0 +1,238 @@
+                                                 Electric Power Systems Research 76 (2006) 582–591
+
+
+
+
+                   Hybrid-model transient stability simulation using dynamic
+                            phasors based HVDC system model
+                      Haojun Zhu a,∗ , Zexiang Cai a , Haoming Liu b , Qingru Qi c , Yixin Ni d,e
+                              a College of Electrical Engineering, South China University of Technology, Guangzhou 510640, China
+                                      b Department of Electrical Engineering, Southeast University, Nanjing 210096, China
+                                               c North China Power Engineering Co. Ltd., Beijing 100084, China
+                                      d Department of Electrical and Electronic Engineering, The University of Hong Kong,
+
+                                                                       Hong Kong, China
+                                         e Graduate School at Shenzhen, Tsinghua University, Shenzhen 518055, China
+
+                                 Received 4 April 2005; received in revised form 25 August 2005; accepted 25 September 2005
+                                                              Available online 21 November 2005
+
+
+
+Abstract
+   A novel hybrid-model transient stability simulation algorithm for ac/dc power systems is suggested in this paper, where dynamic phasors theory
+is applied for HVDC transmission system modeling, and traditional electromechanical transient models are used for ac system. A detailed dynamic-
+phasors-based HVDC system model is derived first, and the algorithm for interface of the dc dynamic phasors model to ac network is proposed
+next. Computer simulation results show that the HVDC dynamic phasors model has very good accuracy as compared with its electromagnetic
+transient model; the test results from a 2-area ac/dc power system and a multi-infeed HVDC power system show clearly that the suggested interface
+algorithm works effectively in system transient stability analysis. The proposed hybrid-model simulation algorithm provides a new approach for
+dynamic simulation of large-scale ac/dc power systems.
+© 2005 Elsevier B.V. All rights reserved.
+
+Keywords: Hybrid-model simulation; Dynamic phasors; Transient stability; HVDC transmission
+
+
+
+
+1. Introduction                                                                   faults and dc converter commutation failure impacts on transient
+                                                                                  stability for the model simplification.
+   HVDC transmission system plays an important role in mod-                           In recent years, dynamic phasors theory and relevant meth-
+ern large-scale interconnected power systems. In order to study                   ods [1] have been applied in modeling power electronic devices
+the impacts of HVDC system on large-scale ac/dc power system                      (PEDs). Based on the time-varying coefficients of dominant
+performance, developing a sophisticated HVDC system model is                      items in Fourier series, dynamic phasors method has the poten-
+significant. In traditional time-domain simulation programs, two                  tial to fill in the gap between the EMT and QSS models [2].
+types of HVDC system models are often used. One is the electro-                   By truncating unimportant higher order components and keep-
+magnetic transient (EMT) model with very small step length (no                    ing only those significant components, the dynamic phasors
+more than 0.1 ms), which considers detailed valve operation and                   model is capable of retaining the dominant dynamic features of
+their impacts on system transients. The other is the quasi-steady-                PEDs and suitable to power system transient stability study. This
+state (QSS) or average-value model widely used in transient                       approach has been successfully applied in the modeling of cer-
+stability simulation with larger step length (say 5 ms). In gen-                  tain FACTS devices, such as TCSC and UPFC, and ac machines
+eral the former is not suitable for large-scale ac/dc power system                with PED controllers [3–6]. In this paper, dynamic phasors
+transient stability analysis for its tiny time step and overall cpu               method has been extended to HVDC transmission system mod-
+time cost; while the latter is difficult to consider asymmetric ac                eling for large-scale ac/dc powers system transient stability
+                                                                                  simulation.
+                                                                                      In the paper, a detailed dynamic-phasors-based HVDC
+ ∗ Corresponding author. Tel.: +86 755 26036003; fax: +86 755 26036001.           model is derived first. Using switching functions to describe
+   E-mail address: zhuhaojun@vip.sina.com (H. Zhu).                               the switching status of each converter bridge and applying
+
+0378-7796/$ – see front matter © 2005 Elsevier B.V. All rights reserved.
+doi:10.1016/j.epsr.2005.09.017
+                                         H. Zhu et al. / Electric Power Systems Research 76 (2006) 582–591                                       583
+
+dynamic phasors method in converter modeling, the behaviors
+of the dc system can be described accurately. After that a novel
+hybrid-model simulation algorithm for ac/dc power systems
+transient stability analysis is suggested, where dc system is
+in dynamic phasors model and ac system is in traditional
+electromechanical transient model. The interface algorithm
+of ac and dc systems in each time step is proposed based on
+Newton–Raphson method for better convergence. Computer                                    Fig. 1. Schematic diagram of an HVDC system.
+test results show that HVDC dynamic phasor model has very
+good accuracy as compared with its electromagnetic transient
+model but uses much less cpu time in simulation; and the test                   Considering dynamic phasors as special state variables, the
+results from a 2-area ac/dc power system and a multi-infeed                 dynamic phasors based new state-space model can be estab-
+HVDC power system show clearly the effectiveness of the                     lished. By truncating those unimportant components, the model
+suggested interface algorithm in transient stability analysis.              is simplified with only dominant components remaining, which
+                                                                            is the key idea for dynamic phasor modeling. In general the
+2. HVDC modeling using dynamic phasors                                      physical characteristics of the studied problem determine which
+                                                                            components should be neglected or kept.
+2.1. Outline of the dynamic phasors method
+                                                                            2.2. Time-domain dynamic model of HVDC
+    The method of dynamic phasors [1] is based on the time-
+varying coefficients of Fourier series. An outline of the method                A schematic diagram of a single-pole HVDC transmission
+is given below. A time-domain waveform x(τ) can be expressed                system is shown in Fig. 1.
+over the time interval τ ∈ (t − T, t) using Fourier series as                   For the rectifier, the instantaneous values of ac phase voltages
+[1]:                                                                        are assumed to be:
+                                                                                                                       
+         ∞
+                                                                                      2                                   2
+x(τ) =        Xk (t) ejkωs τ                                       (1)       vra =       Er sin(ωt + 30◦ ),       vrb =      Er sin(ωt − 90◦ ),
+                                                                                       3                                   3
+         k=−∞                                                                       
+                                                                                       2
+where ωs = 2π/T and Xk (t) is the kth Fourier coefficient and                vrc =       Er sin(ωt + 150◦ )                                  (5)
+                                                                                       3
+named as a dynamic phasor. Jointly the dynamic phasors can
+describe the original waveform precisely.                                   where Er is the effective value of line to line voltage. Assume that
+   The kth dynamic phasor at time t can be determined by the                vrac = vra − vrc = 0 (vra > 0, vrc > 0) at the moment of t = tp ,
+following expression and denoted later on as xk (t):                      and tp is taken as the time reference of the dc phasor model.
+                                                                              Assume that Srv1 , Srv2 , . . . , Srv6 are the switching functions
+          1 t                                                               relevant to the status of rectifier valves V1 –V6 and the dc voltage
+Xk (t) =         x(τ) e−jkωs τ dτ = xk (t)               (2)
+         T t−T                                                              of rectifier can be described as:
+
+When the window (of length T) slides over the waveform x(τ) of              vdr = (vra Srv1 + vrb Srv3 + vrc Srv5 )
+interest, the phasor Xk (t) is changing accordingly. It is clear that
+                                                                                   − (vra Srv4 + vrb Srv6 + vrc Srv2 )                           (6)
+dynamic phasors are based on the time-varying Fourier series
+coefficients relevant to the sliding window over the real wave-             Taking the switching function of valve 1 as an example, Srv1 = 1,
+forms.                                                                      0, or 0.5 when the valve is turning on; or turning off; or in
+   There are two essential operations for dynamic phasors in                commutation [7]. Based on the rectifier operation principle, we
+addition to superposition operation, which are significant to               can derive the switching function Srvj for the period of 2π as
+dynamic phasors model derivations.
+
+• Differential operation. For the kth Fourier coefficient, the dif-
+  ferentiation operation satisfies the following formula:
+              
+  dXk           dx
+       (t) =         (t) − jkωs Xk (t)                          (3)
+   dt           dt k
+
+• Product operation. For two waveforms x(t) and q(t), the kth
+  phasor of their product can be obtained by
+          
+  xqk =     xk−i qi                                 (4)
+              i                                                                        Fig. 2. Waveform of switching functions Srv1 and Srv2 .
+584                                             H. Zhu et al. / Electric Power Systems Research 76 (2006) 582–591
+
+(see Fig. 2):
+         
+          1                  π                 π
+         
+                 α + (j − 1) , α + γ + (j − 1)
+         
+          2                  3                 3
+         
+         
+         
+                                 π       2π           π
+         
+                 α + γ + (j − 1) , α +      + (j − 1)
+         1                       3        3           3
+Srvj =
+         
+          1           2π           π          2π            π ,                  j = 1, 2, ..., 6                                                     (7)
+         
+                 α+      + (j − 1) , α + γ +      + (j − 1)
+         
+          2            3           3           3            3
+         
+         
+         
+                          2π           π                   π
+         
+         0       α+γ +        + (j − 1) , α + 2π + (j − 1)
+                            3           3                   3
+
+where γ is the commutation angle, and α is the lagging firing-
+                                                                                      Then the expression of the Srij for the period of 2π will be
+angle.
+                                                                                   (see Fig. 3):
+                                    
+                                     θ−α                                        π                 π
+                                    
+                                                                    α + (j − 1) , α + γ + (j − 1)
+                                     γ
+                                                                                3                 3
+                                    
+                                    
+                                    
+                                                                                    π       2π           π
+                                    
+                                                                    α + γ + (j − 1) , α +      + (j − 1)
+                                    1                                               3        3           3
+                           Srij =                                                                                 ,                 j = 1, 2, ..., 6   (10)
+                                    
+                                        θ − α − 2π/3                     2π           π          2π            π
+                                    
+                                     1−                             α+      + (j − 1) , α + γ +      + (j − 1)
+                                    
+                                              γ                           3           3           3            3
+                                    
+                                    
+                                    
+                                                                             2π           π                   π
+                                    0
+                                                                    α+γ +        + (j − 1) , α + 2π + (j − 1)
+                                                                               3           3                   3
+
+   Now we define current relevant switching functions. Assume                      The inverter (with subscript i) can be handled in the same way
+that Sri1 , Sri2 , . . . , Sri6 are current-relevant switching functions           and hence we can get (see Fig. 1):
+of the rectifier valves V1 –V6 , and i1 –i6 are currents that flow
+through the valves V1 –V6 . The ac currents of the rectifier ter-                  vdi = (via Siv4 + vib Siv6 + vic Siv2 )
+minal can be described as:                                                                  − (via Siv1 + vib Siv3 + vic Siv5 )                        (11)
+
+ira = i1 − i4 = id Sri1 − id Sri4 , irb = i3 − i6 = id Sri3 − id Sri6 ,            iia = id Sii1 − id Sii4 ,        iib = id Sii3 − id Sii6 ,
+irc = i5 − i2 = id Sri5 − id Sri2                                         (8)      iic = id Sii5 − id Sii2                                             (12)
+
+For simplicity we suppose the commutation current can be con-                      From Fig. 1, we also have:
+sidered to change linearly with the slopes of 1/γ and −1/γ (see                             did
+Fig. 3), where the commutation angle γ is calculated by an                         (2Ld )       + rd id = vdr − vdi                                    (13)
+                                                                                            dt
+approximate equation [8]:
+                                                                                   which is corresponding to the dc line.
+                                           
+                      2ωLγ id
+γ = −α + cos−1 cos α − √                                                  (9)      2.3. Dynamic phasors model of HVDC system
+                        2E
+                                                                                      In this paper, the HVDC system model is established for
+Eq. (9) will bring some error to the following Srij calculation,
+                                                                                   transient stability hybrid simulation. Therefore only the compo-
+but the error can be neglected in most cases.
+                                                                                   nent in HVDC system which is significant to generators rotor
+                                                                                   synchronous stability will be considered. As we all know the
+                                                                                   component of generator electromagnetic torque which strongly
+                                                                                   participates to the rotor synchronous stability is dominantly
+                                                                                   related to the fundamental-wave voltages and currents (k = 1) in
+                                                                                   ac network. Therefore for the HVDC system, assuming most of
+                                                                                   higher-order characteristic harmonics are filtered out by ac and
+                                                                                   dc filters, we shall only keep dc and fundamental frequency com-
+                                                                                   ponents in stability analysis. Nevertheless, truncating higher-
+                                                                                   order harmonics will inevitably bring error to the model, but
+                                                                                   we think the error is acceptable in the case of transient stabil-
+                                                                                   ity time-domain simulation, which is shown in computer test
+           Fig. 3. Waveform of switching functions Sri1 and Sri2 .                 results of Section 4. Hence for all the switching functions both
+                                            H. Zhu et al. / Electric Power Systems Research 76 (2006) 582–591                                                585
+
+dc and fundamental frequency components should be retained                         The dynamic phasors model of inverter can be derived in the
+in deriving dc system dynamic phasors model. Based on this                      same way except that the lagging firing-angle of the inverter
+assumption, we first consider the rectifier and have (see (8)):                 should be α = π − δ − γ, where δ is the extinction angel of the
+                                                                                inverter.
+ira 1 = Sri1 id 1 − Sri4 id 1 ,   irb 1 = Sri3 id 1 − Sri6 id 1 ,      For the dc line, we have the dynamic phasors relation (see
+irc 1 = Sri5 id 1 − Sri2 id 1 ,                                           (13)):
+
+Vdr0 = vra Srv1 0 + vrb Srv3 0 + vrc Srv5 0 − vra Srv4 0                dId0    1
+                                                                                     =     [Vdr0 − Vdi0 − rd Id0 ]                                         (16)
+                                                                                 dt    2Ld
+        −vrb Srv6 0 − vrc Srv2 0                                    (14)
+                                                                                Based on the above analysis, the overall dynamic phas

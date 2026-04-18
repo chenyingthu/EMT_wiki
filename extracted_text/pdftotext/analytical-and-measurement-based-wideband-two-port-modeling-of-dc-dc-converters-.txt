@@ -1,0 +1,205 @@
+                                                                Electric Power Systems Research 220 (2023) 109305
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Analytical and measurement-based wideband two-port modeling of DC-DC
+converters for electromagnetic transient studies✰
+H. Alameri a, P. Gomez b, *
+a
+    Computer Engineering Department, University of Baghdad, Baghdad, Iraq
+b
+    Department of Electrical and Computer Engineering, Western Michigan University, Kalamazoo, MI 49008 United States of America
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   Power-electronic converters are essential elements for the effective interconnection of renewable energy sources
+Black-box models                                            to the power grid, as well as to include energy storage units, vehicle charging stations, microgrids, etc. Converter
+DC-DC converters                                            models that provide an accurate representation of their wideband operation and interconnection with other
+Frequency domain analysis
+                                                            active and passive grid components and systems are necessary for reliable steady state and transient analyses
+Numerical Laplace transform
+Two-port models
+                                                            during normal or abnormal grid operating conditions. This paper introduces two Laplace domain-based ap­
+Wideband representation                                     proaches to model buck and boost DC-DC converters for electromagnetic transient studies. The first approach is
+                                                            an analytical one, where the converter is represented by a two-port admittance model via mode averaging and
+                                                            inclusion of switching effects. The second approach consists of reconstructing the two-port admittance model of
+                                                            the converter from terminal measurements for a series of tests. The performance of both approaches is evaluated
+                                                            against EMTP simulations, with very close results.
+
+
+
+
+1. Introduction                                                                                 which can result in prohibitive computational costs, especially for large
+                                                                                                systems [4]. In addition, results accuracy can be compromised by the
+    POWER electronic-based converters are the gateway for efficient and                         approximations required to introduce frequency dependence of power
+reliable integration of distributed energy resources (DER), energy stor­                        components, a crucial aspect for the correct prediction of dynamic and
+age units, electric vehicles, and other modern technologies, to the                             transient response of systems with wide frequency content [2].
+electric grid. Thus, accurate and practical modeling of these devices to                            Another challenge of the EMT simulation of power electronic-based
+evaluate their interaction with other active and passive power compo­                           power systems is the limited availability of generic models of power
+nents is critical for various power systems studies.                                            converters, which in many cases are provided as black boxes by manu­
+    Over the last decades, it has become clear that the dynamic simu­                           facturers due to technology proprietary issues [5]. Even when nominal
+lation of power systems with DER integration requires, in many cases, of                        models are provided by manufacturers, parameters may vary over time
+electromagnetic transient (EMT) models that can provide an accurate                             due to fluctuations in operating state, weather conditions, component
+response over a wide frequency range [1]. This is mainly due to the fast                        aging, etc [6].
+dynamics of modern power electronic components, which extend to a                                   Considering the drawbacks of utilizing time domain techniques,
+much wider frequency range above the nominal frequency [2]. Thus, the                           there have been recent efforts to develop models of power electronic
+use of EMTP (Electro Magnetic Transient Program)-type software tools is                         devices for dynamic studies based on the use of frequency domain rep­
+now a common practice by the power systems community for grid                                   resentations [7–9]. Recent studies have also showcased the advantages
+studies with converter-based DER integration [3].                                               of using impedance/admittance-based models for stability studies of
+    Although EMTP is a very valuable and robust tool for general EMT                            grid-connected inverters [10–12]. In addition, further work has
+studies, it can be ineffective for dynamic studies of power electronic-                         explored the generation of measurement-based converter models using
+based power systems given the combination of small time-steps and                               time and frequency domain methods [13–15].
+long simulation times to account for wideband transient behavior,                                   One of the salient features of an impedance/admittance-based
+
+
+
+    ✰
+       Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+    * Corresponding author.
+      E-mail address: pablo.gomez@wmich.edu (P. Gomez).
+
+https://doi.org/10.1016/j.epsr.2023.109305
+Received 1 December 2022; Received in revised form 3 February 2023; Accepted 7 March 2023
+Available online 16 March 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+H. Alameri and P. Gomez                                                                                             Electric Power Systems Research 220 (2023) 109305
+
+
+approach is the straightforward analysis of interoperability between
+converters from different vendors, which is regarded as a key issue for
+the reliability of future power systems [2]. Frequency domain ap­
+proaches are also well suited for design-oriented analysis [11], they are
+considered more computationally efficient and scalable than state-space
+representations, and they are also highly compatible with the use of
+reduction/partitioning techniques, which are “urgently demanded for the
+stability analysis of very large power-electronic-based power systems” [11].
+    Building upon the aforementioned work, as well as our preliminary
+work in [16], in this paper we aim to contribute to the state-of-the-art on
+converter modeling by proposing alternative analytical and
+measurement-based approaches for wideband representation of power
+converters, focusing on DC-DC buck and boost converters given their
+well-known topologies and extended use as part of DER-populated sys­
+tems. Our analytical approach is based on two-port representation of
+mode average converter models in the Laplace domain, with further
+addition of switching frequency, and time domain solution using the
+inverse numerical Laplace transform (INLT) [17]. On the other hand,                Fig. 1. Buck converter: (a) schematic, (b) admittance model for mode 1 with S:
+our measurement-based approach is based on performing a series of tests            ON and D:OFF, (c) admittance model for mode 2 with S:OFF and D:ON.
+under normal operating conditions, gathering the terminal voltages and
+currents from these tests, and using these measurements to reconstruct a
+                                                                                   where Vi and Vo are the input and output voltages, Ii and Io are the input
+wideband two-port model of the converter.
+                                                                                   and output currents, and s is the Laplace variable. Eqs. (1) and (2) can be
+    Although this model reconstruction approach is tested in our paper
+                                                                                   rewritten as the following two-port admittance model [16]:
+for DC-DC converters, it can be applied to other power components, or
+                                                                                   [ ] [                    ][ ]
+grid segments, for wideband two-port representation. Another salient                 Ii      dYL     − dYL      Vi
+                                                                                        =                           .                                      (3)
+feature of our modeling approach is that it allows straightforward                   Io     − dYL YL + YC Vo
+interconnectivity of the converter models with other power components
+                                                                                        The representation in (3) enables direct interconnection of the buck
+also defined by wideband admittance representations, either obtained
+                                                                                   converter model with other components also defined by admittance
+from analytical definitions or from measurements. This allows easily
+                                                                                   matrices. However, (3) does not consider the switching frequency
+introducing full-frequency dependent models for enhanced accuracy, as
+                                                                                   directly since it is based on mode averaging. Depending on the study to
+well as offering a comprehensive depiction of the dynamic behavior of
+                                                                                   be completed, e.g., harmonic stability, power quality, or transient
+converter-based systems, including both time and frequency domain
+                                                                                   resonance, including this feature can be relevant for accurate prediction
+features. In addition, the proposed measurement-based modeling
+                                                                                   of the system response. The Laplace modeling approach makes it
+approach sets the basis for data-driven models that consider variation of
+                                                                                   possible to include the buck converter switching frequency in a
+operational conditions of converters over time (extraction of operational
+                                                                                   straightforward manner, by means of the product of the DC input and a
+states) for a more realistic representation and potential application to
+                                                                                   switching function Fs (s). In order to preserve the relationship of inputs
+fault detection, predictive maintenance, asset life-cycle management,
+                                                                                   and outputs described previously, this is expressed below by modifying
+etc.
+                                                                                   the admittance two-port definition as follows:
+                                                                                   [ ] [                        ][ ]
+2. Analytical modeling approach                                                      Ii        dFs YL    − dYL    Vi
+                                                                                          =                           ,                                   (4)
+                                                                                     Io       − dFs YL YL + YC Vo
+    In this section we describe the approach followed for the analytical
+Laplace-domain modeling of buck and boost DC-DC converters for                     where Fs (s) is a switching function with duty cycle d and frequency 1/T,
+transient studies. This approach was initially described in [16], and is           defined as
+further refined here to allow a more direct comparison with the
+                                                                                               1 − e− s d T
+measurement-based approach described in Section 3.                                 Fs (s) =                 .                                                    (5)
+                                                                                              d(1 − e− s T )
+2.1. Buck converter                                                                    Please notice that the models given by (3) (average model) and (4)
+                                                                                   (switching model) are both based on admittance matrices. However,
+    The basic representation of a buck converter is shown in Fig. 1a.              while (3) can be represented by a π-circuit since the matrix is symmet­
+Switching devices S and D work in an alternate manner, i.e., when S is             rical, (4) cannot be directly represented in the same way since the matrix
+on, D is off, and vice versa; therefore, the buck converter operates in the        is asymmetrical. This feature is of particular importance when recon­
+two modes illustrated by Fig. 1b and 1c.                                           structing a converter model from terminal measurements, as explained
+    Mode 1 corresponds to the interval [0, dT], where d is the duty cycle          in Section 3.
+and T is the switching period. During this mode, semiconductive switch
+S is closed and diode D does not conduct. The frequency domain                     2.2. Boost converter
+admittance representation of this mode is shown in Fig 1b. On the other
+hand, mode 2 corresponds to the interval [dT, T], for which S is open and             Fig. 2a shows the basic representation of a boost converter. Similar to
+D conducts. The frequency domain admittance representation of this                 the buck converter, semiconductive switches S and D work in an alter­
+mode is shown in Fig 1c. Averaging these two modes results in the                  nate manner. These two modes of operation are illustrated by Fig. 2b
+following voltage and current equations in the Laplace domain:                     and c.
+Ii                                                                                    Following a similar procedure to that of Section 2.1, we can obtain a
+   = d(Vi − Vo ) + (1 − d)0,                                            (1)        two-port model of the boost converter by averaging the two modes of
+YL
+                                                                                   operation in the Laplace domain:
+YC Vo = d(Ii + Io ) + (1 − d)(Io − YL Vo ),                             (2)
+
+
+                                                                               2
+H. Alameri and P. Gomez                                                                                                       Electric Power Systems Research 220 (2023) 109305
+
+
+
+                                                                                      [vi (t) vo (t)] = NLT− 1 [Vi (s) Vo (s)],                                          (12)
+
+                                                                                      3. Measurement-based modeling approach
+
+                                                                                           The analytical approach initially proposed in [16], and further
+                                                                                      described and developed in Section 2, is applicable when the converter
+                                                                                      topology and its parameters are fully available, as well as for design
+                                                                                      purposes. In contrast, the approach described in this section is useful
+                                                                                      when the converter parameters and topology are not known, but its
+                                                                                      transient terminal measurements of voltage and current, viM (t), voM (t),
+                                                                                      iiM (t) and ioM (t), can be extracted, as shown in Fig. 3. Since the modeling
+                                                                                      approach is based on the Laplace domain, the first step after extracting
+                                                                                      the time-domain terminal measurements is to transform them to the
+                                                                                      Laplace domain, which is done by using the numerical Laplace trans­
+                                                                                      form [18]:
+                                                                                      [ViM (S) VoM (s)] = NLT[viM (t) voM (t)].                                          (13)
+
+Fig. 2. Boost converter: (a) schematic, (b) admittance model for mode 1 with S:       [IiM (s) IoM (s)] = NLT[iiM (t) ioM (t)].                                          (14)
+ON and D:OFF, (c) admittance model for mode 2 with S:OFF and D:ON.
+                                                                                          Then, we consider the relationship between the Laplace domain
+                                                                                      voltages and currents given above by means of an admittance (2-port)
+                                                                                      representation:
+                                                                                      [     ] [                ][   ]
+                                                                                        IiM     y (s) y12 (s) ViM
+                                                                                             = 11                    .                                (15)
+                                                                                        IoM     y21 (s) y22 (s) VoM
+
+                                                                                           Based on the consideration of an asymmetrical admittance for the
+                                                                                      switching converter models from Section 2, Eq. (15) assumes the exis­
+                                                                                      tence of 4 distinct admittance components: y11 (s), y12 (s), y21 (s) and
+     Fig. 3. Measurement arrangement for two-port converter modeling.                 y22 (s). Considering that the voltages and currents are known
+                                                                                      (measured), while the admittance matrix components are unknown, the
+                                                                                      system of equations in (15) can be rewritten as
+Ii
+   = dV

@@ -1,0 +1,157 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TSTE.2016.2614960, IEEE
+                                                                                               Transactions on Sustainable Energy
+
+                                                                                                                                                                                                                1
+
+
+
+
+                     A Hybrid Simulation Tool for the Study of PV
+                      Integration Impacts on Distribution Networks
+                                            Ali Hariri, Student Member, IEEE, M. Omar Faruque, Senior Member, IEEE
+
+
+             Abstract—This paper introduces a hybrid simulation tool that                                        event occurs. QSTS simulations are phasor-based solutions that
+          is used to study the impacts of integration of photovoltaic (PV)                                       are much faster and require less computational power than
+          systems on distribution networks. The tool is composed of an                                           EMT simulations. Consequently, QSTS simulation has gained
+          electromagnetic transient (EMT) simulation tool interfaced with                                        acceptance as a way to study the preliminary impacts of DG
+          an open-source phasor analysis tool, OpenDSS. The purpose                                              integration.
+          of this tool is to provide detailed modeling along with fast
+                                                                                                                    EMT simulation is required for protection design, insulation
+          and accurate simulation of electric systems with interconnected
+          PV systems. The developed tool models the PV energy system                                             coordination, fault rating, converter design, islanding detection,
+          using detailed EMTP-type algorithms, while the rest of the                                             etc. On the other hand, QSTS simulations can be used for
+          distribution system is modeled in phasor domain using OpenDSS.                                         voltage regulation studies, reactive power management, storage
+          This paper demonstrates some of the functions, applications, and                                       management, etc. For this purpose, it is not always necessary to
+          advantages of the hybrid tool. The tool has been tested with a                                         simulate the entire system in EMT; only the parts that require
+          real Florida-based distribution feeder with multiple PV energy                                         detailed study would require EMT simulation. Therefore, a hy-
+          systems. A full EMT model of the feeder has been developed                                             brid simulation tool would be very useful to perform different
+          in SimPowerSystems to compare and validate the results. The                                            types of studies where EMT is adopted with QSTS for certain
+          results suggest that the hybrid tool offers significant benefits and                                   parts of the network.
+          functionality over OpenDSS.
+                                                                                                                    The concept of hybrid simulation is based on splitting the
+            Keywords—Electromagnetic transients, Power system simulation,                                        system into two subsystems modeled in different simulation
+          Photovoltaic systems, Photovoltaic effects.                                                            engines based on the accuracy requirements of each part. The
+                                                                                                                 first digital hybrid simulator was proposed in 1981 by Heffer-
+                                 I. I NTRODUCTION                                                                nan et al. for AC/DC system simulation through combining
+                                                                                                                 transient stability analysis (TSA) and EMT programs [4]. Hy-
+             Power system simulations have always faced computational
+                                                                                                                 brid simulators involving TSA and EMT were first introduced
+          limitations due to the volume of the required mathematical
+                                                                                                                 for the analysis of power systems with high voltage direct
+          operations, especially in complex networks [1]. Different com-
+                                                                                                                 current (HVDC) links [5]. Different hybrid tools were then
+          putational tools and techniques have been developed to address
+                                                                                                                 developed to study transients in power systems involving flex-
+          these constraints [1]. The selection of a suitable simulation tool
+                                                                                                                 ible AC transmission system (FACTS) devices [6], static VAR
+          is generally dictated by the type of the study to be conducted.
+                                                                                                                 compensator (SVC) devices [7], and HVDC systems [8], [9].
+          While quasi-static time-series (QSTS) simulation is the most
+                                                                                                                 The development of hybrid simulation tools was accompanied
+          frequently used technique for integration of distributed gen-
+                                                                                                                 with advancements in research areas that would help improve
+          eration (DG) studies, the need for detailed study using EMT
+                                                                                                                 the accuracy and speed of hybrid simulation, for instance,
+          simulation is growing due to the complex dynamics introduced
+                                                                                                                 in introducing frequency-dependent network equivalents [10],
+          by the DG.
+                                                                                                                 [6] and improving network equivalent circuits for specific
+             EMT simulation using digital computers was first set forth
+                                                                                                                 applications [11]. Other improvements focused on the data
+          by H. W. Dommel [2] and it has been traditionally applied to
+                                                                                                                 interaction protocols [12], [13] such as introducing the parallel
+          power system transient analysis in circuits involving switching
+                                                                                                                 interaction protocols [14]. The most recent advancements in
+          events. EMT simulation tools provide accurate results, but
+                                                                                                                 hybrid simulation still mainly focus on HVDC systems using
+          they introduce some restrictions on the size of the modeled
+                                                                                                                 EMT-TS simulation platforms [13]. Some recent work has
+          system and the simulation time-step. EMT simulation of
+                                                                                                                 introduced a relaxation approach for co-simulation of EMT
+          modern power electronic-based DG requires time-steps in the
+                                                                                                                 and phasor models that is mainly concerned with transmission
+          range of a few microseconds or less. This makes the EMT
+                                                                                                                 systems [15]. Moreover, with the advancement of real-time
+          simulations computationally intensive, requiring both large
+                                                                                                                 simulation, some real-time hybrid simulators and techniques
+          processing power and long simulation time.
+                                                                                                                 are being researched [16]-[18]. Nearly all of these tools are
+             QSTS simulation produces sequential steady state power
+                                                                                                                 developed for transmission line analysis.
+          flow solutions where the converged state of one iteration is
+                                                                                                                    Hybrid simulation has not been applied yet to DG inter-
+          used as the initial state of the next [3]. The accuracy of the
+                                                                                                                 connection studies. There is a great potential for applying
+          QSTS analysis depends on the time period between the steady
+                                                                                                                 hybrid simulation to PV impact studies. Currently, there are no
+          state power flow solutions and the settling time after a dynamic
+                                                                                                                 hybrid simulation tools dedicated for PV penetration studies in
+            This work was supported by U.S. Department of Energy (DOE) under                                     distribution networks. This paper proposes a tool that integrates
+          contract No. DE-EE0004682                                                                              EMT and phasor solvers to perform QSTS and EMT-type
+
+
+
+
+ 1949-3029 (c) 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TSTE.2016.2614960, IEEE
+                                                                                               Transactions on Sustainable Energy
+
+                                                                                                                                                                                                                2
+
+
+                                                                                                                                TABLE I.           COMPARISON OF SIMULATION TYPES
+          studies simultaneously. This tool allows the simulation of
+          relatively large distribution systems with high PV penetration.                                          Simulation type               Advantages                          Disadvantages
+                                                                                                                                                     Fast                    Does not capture fast transients
+          The suggested hybrid tool provides detailed information about                                                QSTS
+                                                                                                                                           Captures slow dynamics
+          the behavior of the PV up to the point of common coupling                                                                                Accurate                        Long simulation time
+                                                                                                                       EMT
+          (PCC). The tool also offers faster simulation time and less                                                                      Captures fast transients            Computationally exhaustive
+                                                                                                                                              Faster than EMT                  Slightly lower accuracy than
+          computational complexity compared to a full blown EMTP                                                       Hybrid
+                                                                                                                                         Captures fast local dynamics                      EMT
+          solution.
+             This paper is organized as follows: Section II discusses the
+          need for the application of hybrid simulation in PV impact
+                                                                                                                 the simulations are separated at transmission line boundaries to
+          studies. Section III introduces the development of the proposed
+                                                                                                                 run at multiple processors [27]. DIgSILENT PowerFactory has
+          hybrid tool. Section IV focuses on testing the tool under
+                                                                                                                 developed interfaces that a user could take advantage of for co-
+          different scenarios and case studies. A comparison of solution
+                                                                                                                 simulation (Matlab/Simulink, DLL, OPC, RCOM, API, etc.)
+          accuracy and simulation time will be presented by comparing
+                                                                                                                 [28]. However, neither tool is made to handle large distribution
+          with a detailed EMT model that is simulated entirely in
+                                                                                                                 level systems with high PV penetration.
+          SimPowerSystems.
+                                                                                                                    Currently, there is no simulation tool available that can
+                                                                                                                 be used to do both studies at the same time while offer-
+           II.     T HE N EED FOR H YBRID S IMULATION IN PV I MPACT                                              ing reasonable accuracy and simulation speed. The hybrid
+                                     S TUDIES                                                                    simulation divides the network into two parts. It assigns the
+             The introduction of PV systems on the distribution side is                                          appropriate simulator to the respective zone based on the model
+          expected to have potential impacts on the network [19]. Some                                           accuracy and time-step [12]. This type of simulation will be
+          of these impacts require EMT simulation with a very small                                              very useful in PV integration studies that use multi-rate time-
+          time-step; while other impacts have slower dynamics and could                                          steps due to the inefficiency of using a single time-step for
+          be analyzed with larger time-steps. For instance, PV impacts                                           the entire simulation. In this technique, some parts of the
+          on power quality such as harmonic distortion [20], resonance                                           system that require detailed study (in this case the grid-tied
+          [21], and voltage sag [22], [23] require EMT studies with high                                         PV system) will be solved using a small time-step, while
+          accuracy to represent high frequency dynamics. Moreover,                                               other parts (distribution system) will be executed using a larger
+          EMT is also important for testing voltage and active/reactive                                          time-step. Hybrid simulation is very important for analyzing
+          power control algorithms using smart inverters which is an                                             large systems with high PV penetration that could be time-
+          important approach for networks with high PV penetration                                               consuming and computationally expensive to fully simulate in
+          [24], [25]. On the other hand, QSTS simulation is sufficient for                                       EMT. This paper applies the concept of hybrid simulation to
+          studying voltage fluctuation and flicker [3] caused by variations                                      develop a tool that is capable of performing QSTS and EMT
+          in the PV system output. It is also used for studying impacts on                                       studies at the same time. The tool offers faster simulation and
+          voltage regulation devices [26] and many other phenomena. It                                           very good accuracy compared to EMT simulation (as shown
+          is clear that the potential impacts span a wide range of impacts                                       in Section IV).
+          on a varying time scale.
+             EMT simulation offers the required accuracy, while, QSTS                                             III. D EVELOPMENT OF THE H YBRID S IMULATION T OOL
+          is adequate for studying some PV impacts caused by the                                                 A. Generalized Approach of Hybrid Simulation
+          variation in PV generation since it can capture slow dynamics.                                            The hybrid tool interfaces an EMT tool with a phasor tool.
+          In [20], impacts on power quality were studied using an EMT                                            The EMT tool solves the time-domain differential equations
+          tool, where a one hour off-line simulation required four hours                                         using the difference equations (discrete-time domain) approach
+          of simulation time with 2µs time-step. In [26], impacts on                                             with a very short time-step. The phasor tool uses phasor
+          voltage re

@@ -1,0 +1,192 @@
+                                                                 Electric Power Systems Research 168 (2019) 55–66
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                        journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Accelerated frequency-dependent method of characteristics for the                                                                                         T
+simulation of multiconductor transmission lines in the time domain☆
+Pablo Torrez Caballeroa, Sergio Kurokawaa, Behzad Kordib,
+                                                                                              ⁎
+
+a
+    São Paulo State University – UNESP, Ilha Solteira, Brazil
+b
+    University of Manitoba, Winnipeg, Manitoba, Canada R3T 5V6
+
+
+
+
+ARTICLE INFO                                              ABSTRACT
+
+Keywords:                                                 Simulation of transients in transmission lines can be time consuming and resource demanding when performed
+Transmission line modeling                                directly in the time domain using small time steps. This paper proposes an efficient implementation of the
+Electromagnetic transient analysis                        frequency-dependent method of characteristics. The proposed implementation exploits the circuit topology of
+Multiconductor transmission lines                         the system to reduce the number of state equations. State-space matrices are then grouped and sparsity tech-
+                                                          niques are used to solve the system of the ordinary differential equations faster. We post-process the calculated
+                                                          state variables to reduce the memory usage and the number of memory accesses needed in each iteration and
+                                                          propose a technique to correct the error due to the time discretization of the travel time along the transmission
+                                                          line. To decouple the multiconductor transmission line equations, the real part of the modal transformation
+                                                          matrix at a fix frequency is considered. Presented results demonstrate that the proposed approach is accurate for
+                                                          overhead transmission lines, and significantly reduces the overall computation time and memory consumption of
+                                                          the model.
+
+
+
+
+1. Introduction                                                                            modal analysis.
+                                                                                               A group of MTL models are based on the time-domain representa-
+    One of the most important aspects in transmission line modeling for                    tion of the frequency-domain equations of the MTL by using convolu-
+electromagnetic transient (EMT) studies is to take into account the                        tions [8–10]. Direct evaluation of the convolution integrals is compu-
+frequency dependence and the distributed nature of the transmission                        tationally expensive. To resolve this problem, fitting techniques, e.g.
+line parameters. Many simulation models have been proposed and en-                         Vector Fitting (VF) [11], have been employed. Fitting techniques pro-
+hanced over decades to accurately describe the frequency-dependent                         duce rational functions that represent the frequency-domain data.
+characteristics of multiconductor transmission lines (MTL) in the time                     These rational functions can be used to increase the performance of a
+domain.                                                                                    model by reducing the number of operations required to evaluate the
+    A number of EMT-simulator-compatible models have been devel-                           convolutions needed to solve the MTL equations directly in the time-
+oped based on the method of characteristics. The method of char-                           domain [12,13,8,10]. Fitting techniques can also be used to directly
+acteristics was first applied by Bergeron to solve hydraulic problems                      represent the frequency dependence of the MTL parameters in the time
+and later by Branin [1] to simulate transients in lossless transmission                    domain [14]. The resulting rational functions from the fitting process
+lines. Subsequently, Dommel implemented the lossy, lumped-element                          can be linked to frequency independent equivalent circuits [4,15,16].
+method of characteristics into the nodal admittance matrix method,                         Some models take advantage of this by lumping the losses into many
+which was incorporated in the MTL models of EMTP [2]. Many en-                             segments and present the resulting equations directly in the time-do-
+hancements were proposed to increase the performance of this model,                        main [17–19]. All models that use fitting techniques depend on the
+e.g. [3,4], and more recently in [5]. The method of characteristics has                    accuracy of the fitting method. Achieving higher accuracy requires a
+been modified to include the frequency-dependence of the line para-                        higher order of the rational function approximation which makes the
+meters of a single-phase transmission line [6] and a MTL [7] by in-                        simulation more complex. Therefore, high accuracy becomes expensive
+corporating losses as lumped elements into line segments and using                         in terms of processing power and memory.
+
+
+    This work was supported by the São Paulo Research Foundation – FAPESP, project 2014/17051-0 and 2017/08486-0, and by the Coordination for the
+    ☆
+
+Improvement of Higher Education Personnel – CAPES.
+  ⁎
+    Corresponding author.
+    E-mail addresses: pablotorrezcaballero@gmail.com (P. Torrez Caballero), kurokawa@dee.feis.unesp.br (S. Kurokawa), Behzad.Kordi@UManitoba.CA (B. Kordi).
+
+https://doi.org/10.1016/j.epsr.2018.11.006
+Received 4 June 2018; Received in revised form 5 October 2018; Accepted 9 November 2018
+0378-7796/ © 2018 Elsevier B.V. All rights reserved.
+P. Torrez Caballero et al.                                                                                                    Electric Power Systems Research 168 (2019) 55–66
+
+
+    This paper introduces an accelerated method of characteristics that         impedance Zm.
+incorporates the frequency dependence of the MTL parameters and                     An approach to represent frequency-dependent elements directly in
+addresses the computational complexity of the cascaded method of                the time-domain is to fit an electrical circuit that has similar frequency
+characteristics with the fitted equivalent circuits. This is achieved by        behavior. An equivalent circuit can be accurately determined as fol-
+exploiting the circuit properties of the model to reduce the number of          lows:
+equations, assemble a global solution matrix for the system, and en-
+hance accessing the historical current sources and correct the time             1. First, the circuit topology that is going to be fitted must be chosen.
+discretization truncation effect. The proposed technique presented in              Two circuit topologies that represent an impedance are shown in
+this paper accelerates the modeling by reducing the time it needs to               Fig. 1. For an impedance with an inductive reactance such as Zm(s),
+access the memory and by reducing the number of numerical opera-                   circuit topology of Fig. 1a has most of its electrical components with
+tions it needs to perform. As a result, the overall performance in terms           a negative sign, whereas circuit topology of Fig. 1b has most of its
+of speed and accuracy is increased.                                                electrical components with a positive sign. The function to be fitted
+                                                                                   F(s) depends on the circuit topology that was chosen as follows:
+2. Transmission line modeling using modal transformation                           Circuit of Fig. 1Figure 1a: the function to be fitted, F(s), is equal to
+                                                                                   the impedance Zm(s) as given by
+   Let us consider an (n + 1)-conductor (i.e., n conductors plus                   F ( s ) = Z m (s )                                                                          (5)
+ground) MTL that is described by the following equations in the fre-
+quency domain
+                                                                                   Circuit of Fig. 1Figure 1b: the function to be fitted, F(s), is derived
+dVph
+       =       ZIph                                                                from Zm(s) as given by [15]
+ dx                                                                (1a)
+                                                                                               Z m (s )        R dc
+dIph                                                                               F (s ) =
+       =    YVph                                                                                       s                                                                       (6)
+ dx                                                                (1b)
+where Z and Y are n × n per-unit-length (PUL) impedance and ad-                    where Rdc = Re{Zm(0)}.
+mittance matrices, respectively. Vph and Iph are the n × 1 voltage and          2. Accuracy of the fitting depends on the order and on the algorithm
+current vectors in the phase domain.                                               used to obtain the best fit possible. Low order could sometimes lead
+   Modal analysis has been used to decouple (1) that results in n de-              to a poor fitting whereas high order could lead to overfitting and to
+coupled single-conductor transmission line equations. Decoupling is                numerical instability. In this paper, Vector Fitting (VF) [11] has
+achieved by the usage of transformation matrices Tv and Ti as                      been used as the fitting algorithm that fits F(s) as
+Zm = Tv 1 ZTi ;       Ym = Ti 1 YTv                                (2a)                                                      NR     ck          NC        cp          cp*
+                                                                                   F (s )     Ffit (s ) = d + se +                      +                       + s
+           1                   1
+                                                                                                                             k = 1 s ak         p=1   s    ap           ap*    (7)
+Vm = Tv Vph;          Im = Ti Iph                                  (2b)
+                                                                                   where NR and NC are the number of real and pairs of complex-
+where the transformation matrices Tv and Ti are related by [20]
+                                                                                   conjugate poles respectively, d is the constant term, and e is the
+Tv 1 = TiT .                                                        (3)            constant in the linear term. Circuit of Fig. 1a requires d and e to be
+                                                                                   fitted because they are associated to the series resistor and inductor,
+    The major issue with modal analysis is that the transformation                 respectively. Circuit of Fig. 1b requires only d to be fitted because it
+matrices are frequency-dependent that makes the implementation of                  is associated to the series inductor. The series resistor of the circuit
+modal analysis in the time domain difficult. In this paper, an approach            of Fig. 1b is the DC resistance Rdc of Zm(s).In general, the PUL im-
+based on using a frequency-dependent modal transformation for the                  pedance Zm(s) is a smooth function and can be fitted using real poles
+PUL series impedance (2a) and a frequency-independent transformation               only. Circuit topology of Fig. 1a fits impedances with negative re-
+matrix for the phase voltages and current (2b) has been presented. We              actances, whereas circuit topology of Fig. 1b represents impedances
+will demonstrate that the proposed approach, although being an ap-                 with positive reactances such as the longitudinal impedance of a
+proximation, is very accurate and fast for overhead transmission lines.            transmission line.
+    The following subsection presents the details on the representation         3. The fitted function Ffit(s) is expressed as a fitted impedance using (5)
+of the modal impedance Zm using an equivalent electric circuit. The                or (6). Then, by comparison between the fitted impedance and the
+modal admittance Ym and the method of characteristics are in-                      impedance of the circuit topologies shown in Fig. 1, the circuit
+corporated to create a circuit model that represents a frequency-de-               elements are obtained as follows:
+pendent transmission line. This paper also introduces a fast im-                   Circuit of Fig. 1Figure 1a: each circuit branch is calculated as in [16]
+plementation of the resulting model using circuit simplification and
+numerical integration.                                                             R = d;            L =e                                                                     (8a)
+
+
+2.1. Representation of the frequency effects
+                                                                                              ck                      1
+                                                                                   Rr =          ;             Cr =      ;   k = 1, 2…NR
+    It is well known that the transmission line PUL impedance is fre-                         ak                      ck                                                      (8b)
+quency dependent. For overhead transmission lines, Z can be calculated
+as the sum of the impedances coming from the magnetic field in air
+assuming lossless conductors Zo, from the magnetic field in the con-                           1
+                                                                                   Cc =              ;         Gc =     Cc 2 (cp ap + cp*ap*)
+ductor Zi, and from the magnetic field in the ground ΔZ [21].                               cp + cp*                                                                          (8c)
+
+Z (s ) = Zo (s ) + Zi (s ) +   Z (s )                               (4)
+where s is the complex frequency.                                                                       1
+                                                                                                   cp cp*Cc3
+    The PUL impedance matrix Z is decoupled into its modes using (2a).             Lc =                        ;      Rc =     (cp ap* + cp*ap ) Lc Cc ;        p = 1, 2…NC
+As a result, each mode can be modeled as an individual single-phase                         (a p       ap*)2
+transmission line that has a frequency-dependent PUL longitudinal                                                                                                             (8d)
+
+                                                                           56
+P. Torrez Caballero et al.                                                                                                                               Electric Power Systems Research 168 (2019) 55–66
+
+
+
+
+                                       Fig. 1. Circuit topologies used to represent frequency-dependent impedances: (a) direct [16] and (b) indirect.
+
+
+
+
+                                                                                                        PUL shunt capacitance, C′, can be assumed constant and the PUL con-
+    Circuit of Fig. 1Figure 1b: each branch is calculated as                                            ductance can be neglected [9].
+                                                                                                            As an example, Fig. 2a shows the equivalent T-network using the
+    R = Rdc = Re{Zm (0)};                     L =d                                          (9a)
+                                                                                                        circuit of Fig. 1b to represent the series mode impedance [6]. Applying
+                                                                                                        the method of characteristics to the circuit shown in Fig. 2a results in
+                                       ck                                                               the circuit shown in Fig. 2b. The circuit of Fig. 2b can then be cascaded
+    R r = ck ;         Lr =               ;    k = 1, 2…NR                                              in b segments to reduce the effect of modeling the losses as lumped
+                                       ak                                                   (9b)
+                                                                                                        resistors. The circuit elements in Fig. 2 are calculated based on their
+                                                                                                        PUL values as follows
+                                                     cp*ap       cp ap*                                         ds                 ds                      ds
+            cp ap* + cp*ap                                   +                                          R=R        ;        L=L       ;         Rr = Rr
+    Lc =                           ;   Gc =
+                                                      ap*         ap
+                                                                                                                2b                 b                       2b                                     (10a)
+                 ap ap*                         Lc (cp ap* + cp*ap )                        (9c)
+                                                                                                                   ds                         ds                   ds
+                                                                                                        L r = Lr      ;     Rc1 = Rc1            ;   Lc = Lc
+                                                                                                                   2b                         2b                   2b                             (10b)
+                   1                                        cp + cp*
+    Rc =                       ;         Cc =                             ;   p = 1, 2…NC                            ds                       ds                   ds
+               1
+                          Gc                     Rc (cp ap* + cp*ap )                                   R c2 = Rc2      ;     Cc = Cc            ;   C=C
+            cp + cp*                                                                                                 2b                       2b                   b                              (10c)
+                                                                                            

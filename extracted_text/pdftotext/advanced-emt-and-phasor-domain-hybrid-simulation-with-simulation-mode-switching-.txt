@@ -1,0 +1,199 @@
+6298                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 33, NO. 6, NOVEMBER 2018
+
+
+
+
+    Advanced EMT and Phasor-Domain Hybrid
+   Simulation With Simulation Mode Switching
+Capability for Transmission and Distribution Systems
+                                   Qiuhua Huang , Member, IEEE, and Vijay Vittal , Fellow, IEEE
+
+
+   Abstract—Conventional electromagnetic transient (EMT) and                         interfaced with the grid through power electronic (PE) convert-
+phasor-domain hybrid simulation approaches presently exist for                       ers [1]. However, existing transient stability (TS) simulation
+transmission system level studies. Their simulation efficiency is                    tools cannot adequately represent PE devices in sufficient detail,
+generally constrained by the EMT simulation. With an increasing
+number of distributed energy resources and nonconventional loads                     particularly during the faulted period [2]–[7]. Additionally, these
+being installed in distribution systems, it is imperative to extend                  tools cannot adequately represent single-phase air-conditioner
+the hybrid simulation application to include distribution systems                    compressor motors [9], which account for an increasingly large
+and integrated transmission and distribution systems. Meanwhile,                     percentage of summer peak load in many power systems [10].
+it is equally important to improve the simulation efficiency as                      These modeling inadequacies can result in either an over- or
+the modeling scope and complexity of the detailed system in the
+EMT simulation increases. To meet both requirements, this paper                      under-estimate of the system reliable operation boundary and/or
+introduces an advanced EMT and phasor-domain hybrid simu-                            stability limits, which in turn results in systems operating under
+lation approach. This approach has two main features: first, a                       either higher risk or less efficient conditions. On the other hand,
+comprehensive phasor-domain modeling and simulation frame-                           EMT simulation tools can simulate PE and single-phase de-
+work which supports positive-sequence, three-sequence, three-                        vices in detail. However, they are not suitable for large system-
+phase, and mixed three-sequence/three-phase representations and
+second, a robust and flexible simulation mode switching scheme.                      level studies. Several different simulation methods, including
+The developed scheme enables simulation switching from hybrid                        EMT-TS hybrid simulation [2]–[8], frequency adaptive sim-
+simulation mode back to pure phasor-domain dynamic simula-                           ulation [11] and dynamic phasor based approach [12], were
+tion mode to achieve significantly improved simulation efficiency.                   proposed or developed to solve similar simulation challenges.
+The proposed method has been tested on integrated transmission                       Among them, the hybrid simulation approach has attracted the
+and distribution systems. The results show that with the developed
+simulation switching feature, the total computational time is sig-                   most attention from both industry and academia.
+nificantly reduced compared to running the hybrid simulation for                        Previous research and development efforts on hybrid simula-
+the whole simulation period while maintaining good simulation                        tion mainly focused on the following three aspects: 1) network
+accuracy.                                                                            equivalent, including fundamental frequency based equivalent
+  Index Terms—EMT and phasor-domain hybrid simulation,                               [6]–[8] and frequency dependent network equivalents [13]; 2)
+multi-area Thévenin equivalent, simulation mode switching.                          interaction protocols for improving efficiency and performance
+                                                                                     during fault periods [6]–[8]; 3) hybrid simulation program de-
+                             I. INTRODUCTION                                         velopment [13]–[16]. Except for [15], others were developed
+     OWER system dynamic analysis requirements are signif-                           only for transmission systems.
+P    icantly evolving due to the changing nature of generation
+and loads. A significant portion of newly installed generation
+                                                                                        Except for the real-time simulator-based hybrid simulation,
+                                                                                     the overall computational efficiency of hybrid simulation for
+resources and a variety of loads including induction motors are                      realistically large system applications is still not satisfactory,
+                                                                                     as shown in a recent study in [8]. It should be noted that the
+                                                                                     computational efficiency issue was not emphasized in previous
+   Manuscript received August 9, 2017; revised December 19, 2017 and April
+1, 2018; accepted April 28, 2018. Date of publication May 9, 2018; date of           studies mainly because the EMT (or detailed) systems in these
+current version October 18, 2018. Paper no. TPWRS-01232-2017. This work              studies were relatively small and simple [2], [3], [5]–[7]. Given
+was supported by the National Science Foundation under Grant EEC-9908690             the present trend of increasing application of non-conventional
+at the Power System Engineering Research Center. (Corresponding author:
+Qiuhua Huang.)                                                                       generation and loads as well as HVDC transmission [1], it is
+   Q. Huang is with the Electricity Infrastructure Group, Pacific Northwest          expected that a larger portion of the system with more complex
+National Laboratory, Richland, WA 99354 USA (e-mail:,qiuhua.huang@pnnl.              and detailed models needs to be modeled in the EMT simulator.
+gov).
+   V. Vittal is with the Department of Electrical, Computer and Energy Engi-         Consequently, the computational efficiency issue of the EMT
+neering, Arizona State University, Tempe, AZ 85287 USA (e-mail:,vijay.vittal@        simulator will constitute a significant bottleneck. While the per-
+asu.edu).                                                                            formance of EMT simulators are improving, the improvement is
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       not sufficient compared to the ever-increasing computational de-
+   Digital Object Identifier 10.1109/TPWRS.2018.2834561                              mands. One alternative to improve the computational efficiency
+
+
+                          0885-8950 © 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:53:27 UTC from IEEE Xplore. Restrictions apply.
+HUANG AND VITTAL: ADVANCED EMT AND PHASOR-DOMAIN HYBRID SIMULATION WITH SIMULATION MODE                                                                      6299
+
+
+
+of hybrid simulation is to enhance the simulation workflow.
+Previous studies in [2] and [3] showed that the overall simula-
+tion efficiency could be significantly improved by transitioning
+from the hybrid simulation mode back to TS simulation mode
+after the fast dynamics settle down. However, there are some
+outstanding limitations in the underlying assumptions and im-
+plementation in [2] and [3]. More detailed discussions will be
+                                                                                Fig. 1.   A schematic illustrating conventional 2-stage hybrid simulation.
+presented in Section II.
+   Furthermore, almost all the previous hybrid simulation re-
+search and development efforts focused on transmission systems
+only, and very few on distribution systems until recently [15],
+and none on integrated transmission and distribution (T&D)
+systems. With an increasing number of distributed energy re-
+sources (DER) and new types of loads being installed in the
+distribution systems, it is imperative to extend the hybrid sim-
+ulation application to distribution systems [15] and integrated                 Fig. 2.   Advanced hybrid simulation with simulation mode switching.
+T&D systems.
+   In this paper, an advanced hybrid simulation program has
+                                                                                these components modeled in the EMT simulator can be repre-
+been developed by extending the hybrid simulation program
+                                                                                sented by their corresponding phasor-domain dynamic or quasi-
+developed by the authors in [8], [14]. Compared to the earlier
+                                                                                steady-state (QSS) models. Therefore, it is theoretically feasible
+work in [8], [14], the new hybrid simulation program not only
+                                                                                to switch from EMT-TS hybrid simulation back to pure TS sim-
+has comprehensive phasor-domain modeling capabilities, sup-
+                                                                                ulation after the fast dynamics settle down without significantly
+porting three-phase, three-sequence and conventional positive-
+                                                                                compromising the simulation accuracy.
+sequence modeling, but also features a robust ability to switch
+                                                                                   The two-stage hybrid simulation (depicted in Fig. 1) provides
+from the hybrid simulation mode back to phasor-domain dy-
+                                                                                users the “zoom-in” capability. When the conventional hybrid
+namic simulation (DS) mode. The main contributions of the
+                                                                                simulation is enhanced with the simulation mode switching ca-
+paper include: 1) a comprehensive hybrid simulation program
+                                                                                pability, as shown in Fig. 2, users can “zoom-out” from the
+suitable for transmission, distribution as well as integrated T&D
+                                                                                detailed modeling and simulation by transitioning from hybrid
+systems, instead of separate hybrid simulation programs for each
+                                                                                simulation back to phasor-domain dynamic simulation after the
+domain; 2) a robust simulation mode switching scheme. To help
+                                                                                fast dynamics in the detailed system settle down. Such a “zoom-
+realize simulation mode switching, discrete events and/or con-
+                                                                                in/zoom-out” switching capability not only provides more flex-
+trol signals captured by the EMT simulation are utilized to
+                                                                                ibility to the users, but also reduces the simulation time signifi-
+reconcile the simulation results of the phasor-domain and EMT
+                                                                                cantly for hybrid simulation applications that involve a relatively
+representations of the detailed system.
+                                                                                large and/or complex detailed system. It should be noted that
+   The remainder of the paper is organized as follows: a review
+                                                                                the durations shown in the Figs. 1 and 2 are intended to give
+of hybrid simulation with simulation mode switching is pre-
+                                                                                users the basic idea regarding how long each stage usually lasts
+sented in Section II. Comprehensive phasor-domain modeling
+                                                                                in practical applications, thus they should not be treated as exact
+and dynamic simulation capabilities developed for hybrid sim-
+                                                                                numbers. The exact numbers vary from case to case.
+ulation are discussed in Section III. In Section IV, development
+                                                                                   Switching from stage 1 (TS) to stage 2 (hybrid simulation)
+of an advanced hybrid simulation program is presented in detail.
+                                                                                is relatively easy to achieve, since it is completed under the
+Test cases and results are shown in Section V. Additional dis-
+                                                                                pre-fault, normal steady state operating condition. In contrast,
+cussions and conclusions are provided in Sections VI and VII,
+                                                                                switching from stage 2 (hybrid simulation) to stage 3 (TS) is
+respectively.
+                                                                                more complicated and challenging since the system is operating
+                                                                                under a non-equilibrium, dynamic condition.
+II. HYBRID SIMULATION WITH SIMULATION MODE SWITCHING
+A. The Concept of Simulation Mode Switching                                     B. Previous Approaches and Key Issues
+   Conventional hybrid simulation consists of two stages, as il-                  In the approach proposed in [2], the detailed system has two
+lustrated in Fig. 1. It starts with the TS simulation stage, then               representations, i.e., an EMT representation and a phasor model
+switches to the hybrid simulation stage prior to the fault occur-               representation. During the stage 2 shown in Fig. 2, the phasor
+rence and remains in the mode till the end of simulation.                       model representation of the detailed system is simulated us-
+   The primary motivation behind switching from TS simula-                      ing TS simulation in parallel with the hybrid simulation. The
+tion to EMT-TS hybrid simulation is to take advantage of the                    switching operation is performed after the simulation results of
+detailed modeling and simulation capabilities of the EMT sim-                   both representations converge. A fundamental issue with this
+ulation. Fast dynamics in power systems usually settle down in                  approach lies in the implicit assumption that simulation re-
+a short time period after the fault is cleared. When the dom-                   sults of the two representations of the detailed system would
+inant dynamics in the system are in the low frequency range,                    converge at some point after the fast dynamics settle down.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:53:27 UTC from IEEE Xplore. Restrictions apply.
+6300                                                                               IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 33, NO. 6, NOVEMBER 2018
+
+
+
+                                                                                 simulation approach, the whole system can be partitioned into
+                                                                                 several subsystems. The subsystems are interconnected through
+                                                                                 link branches (as shown in Fig. 3 in [17]). The MATE approach
+                                                                                 is used to reconcile the individual solutions of subsystems into a
+                                                                                 full-system simultaneous solution at the network solution stage
+                                                                                 for each time step. More details of the MATE-based dynamic
+                                                                                 simulation can be found in [17].
+Fig. 3. Comprehensive phasor modeling capabilities are developed for trans-
+mission, distribution and integrated T&D systems.
+                                                                                     IV. PROPOSED HYBRID SIMULATION WITH AN IMPROVED
+                                                                                            SIMULATION MODE SWITCHING SCHEME
+However, the convergence is not guaranteed without reconcil-
+ing the simulation results, due to the inherent differences in the               A. Overview of the Proposed Hybrid Simulation Design
+modeling and simulation methods between EMT and TS sim-
+                                                                                    The proposed hybrid simulation solution for switching from
+ulations. Furthermore, the implementation was only discussed
+                                                                                 the hybrid simulation to the TS simulation extends the basic
+at a high level, with many important implementation details not
+                                                                                 idea of the approach discussed in [2]. In the proposed approach,
+provided in [2].
+                                                                                 the hybrid simulation program developed by the authors in [8],
+   Another simulation switching approach proposed in [3] di-
+                                                                                 the comprehensive modeling framework and the MATE-based
+rectly initializes a phasor model representation of the detailed
+                                                                                 dynamic algorithm presented in Section III are integrated. In
+system before switching back to the TS simulation. It was
+                                                                                 this research, PSCAD/EMTDC [21] is selected as the EMT
+achieved by simply assuming the states of the detailed sys-
+                                                                                 simulator and the open source power system simulation engine
+tem would fully recover to the pre-fault steady-state condition,
+                                                                                 InterPSS [22] is chosen as the phasor-domain simulator. Signifi-
+which obviously is too strong an assumption and thus unrealistic
+                                                                                 cant improvements have been made to address the drawbacks of
+for many hybrid simulation applications.
+                                       

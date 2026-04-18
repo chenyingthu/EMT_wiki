@@ -1,0 +1,190 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025                                                                                            2931
+
+
+
+
+    An Electromagnetic Transient Simulation Model of
+     MMC-BESS for Various Operating Conditions
+                 Shunliang Wang , Member, IEEE, Minghao Huang , Hao Tu , Senior Member, IEEE,
+             Rui Zhang , Graduate Student Member, IEEE, Junpeng Ma , Member, IEEE, Guangqiang Peng,
+                                      and Tianqi Liu , Senior Member, IEEE
+
+
+   Abstract—Existing electromagnetic transient (EMT) simulation
+models of the modular multilevel converter with an embedded
+battery energy storage system (MMC-BESS) often suffer from
+computational inefficiencies and difficulties in accurately simulat-
+ing fault behaviors. To address these issues, this paper proposes an
+efficient EMT model for the MMC-BESS. The proposed model im-
+proves the detailed equivalent model (DEM) by accounting for the
+complex scenarios where both switches in the same leg are simul-
+taneously turned off. The converter blocked state is simulated by
+incorporating auxiliary PSCAD switches and leveraging its built-in
+interpolation algorithms, while the battery disconnection is simu-
+lated by using supplementary decision formulas. Furthermore, a
+speedup calculation method is introduced to further optimize sim-
+ulation efficiency. Evaluation of the proposed model is performed
+in the context of an HVDC system in PSCAD/EMTDC simulation
+environment, encompassing steady-state operation, transient re-
+sponses, and faulted operating conditions. The results confirm the
+simulation accuracy and efficiency of the proposed model.
+   Index Terms—Electromagnetic transients (EMT) simulation,
+high-voltage direct current (HVDC) system, modular multilevel
+converter (MMC).                                                                   Fig. 1.   The topology of an MMC-BESS.
+
+
+                            I. INTRODUCTION
+   IN recent years, the world has witnessed a remarkable surge
+in the penetration rate of sustainable energy sources, includ-
+ing wind turbines and solar photovoltaics [1]. Owing to their
+inherent fluctuations and unpredictability [2], [3], the battery
+energy storage system (BESS), which possesses the capability of
+power smoothing, peak shaving, load balancing, and frequency
+regulation, has become an indispensable component in modern                        Fig. 2.   The topology of SMs in the MMC-BESS.
+power systems [4], [5], [6]. Among existing BESS technolo-
+gies, the modular multilevel converter with an embedded BESS                       advantages including high efficiency, large capacity, commend-
+(MMC-BESS) has emerged as one promising option, owing to its                       able modularity, and the flexibility of energy storage capacity
+                                                                                   adjustment [7], [8].
+   Received 20 January 2025; revised 14 June 2025; accepted 14 August 2025.           The topology of an MMC-BESS is depicted in Fig. 1, where
+Date of publication 18 August 2025; date of current version 25 September
+2025. This work was supported by Smart Grid-National Science and Technology        every phase leg comprises a multivalve and an arm inductor.
+Major Project under Grant 2024ZD0801600. Paper no. TPWRD-00095-2025.               Each multivalve is constructed by multiple series-connected
+(Corresponding author: Hao Tu.)                                                    submodules (SMs), whose topology is shown in Fig. 2 [9], [10],
+   Shunliang Wang, Minghao Huang, Hao Tu, Rui Zhang, Junpeng Ma,
+and Tianqi Liu are with the College of Electrical Engineering, Sichuan             [11], [12]. The battery is connected to the SM capacitor through
+University, Chengdu 610031, China (e-mail: slwang@scu.edu.cn; huang-               a Buck-Boost converter, reducing the DC filtering requirement,
+minghao2023@stu.scu.edu.cn; htu@ieee.org; rui_zhang@stu.scu.edu.cn;                enabling control of the battery current, and potentially increas-
+jma@scu.edu.cn; tqliu@scu.edu.cn).
+   Guangqiang Peng is with the China Southern Power Grid Extra High Volt-          ing the lifespan of the battery [13], [14]. The extensive use
+age Power Transmission Company, Guangzhou 510663, China (e-mail: peng-             of switching devices in the MMC-BESS poses challenges to
+guangqiang@ehv.csg.cn).                                                            electromagnetic transient (EMT) simulations, which are widely
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3599870.                                        used in practice to verify the MMC-BESS’s dynamic behaviors
+   Digital Object Identifier 10.1109/TPWRD.2025.3599870                            for various operating conditions, particularly during faults.
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2932                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+    Conventionally, the detailed switching model (DSM) of the                   does not cover scenarios involving converter blocking and bat-
+MMC-BESS is used for EMT simulations. In DSM, every                             tery disconnection. Therefore, it necessitates further extensions
+circuit component is modeled as a parallel combination of an                    of the DEM to accurately represent these additional operational
+admittance and a current source. The entire system is then                      conditions.
+represented as an admittance matrix and current source matrix,                     To address the above issues, an improved DEM (IDEM) of
+with which the node voltages are solved for each time step [15].                MMC-BESS is developed in this paper. Compared to existing
+To accurately simulate the switching operation of power elec-                   methods, the novelty and contribution of the proposed IDEM
+tronics devices, the admittance matrix must be updated whenever                 are summarized as follows.
+there is a change in the switching state, a process known as                       r A modeling framework is established for MMC-BESS,
+re-triangulation [16]. Owing to the numerous switching devices                        enabling the development of an EMT model for sim-
+and their high-frequency switching characteristics, conventional                      ulating MMC-BESS’s response under various operating
+EMT modeling methods become exceedingly time-consuming                                conditions.
+and inefficient for simulating power systems with the MMC-                         r The IDEM accounts for the complex scenarios where both
+BESS.                                                                                 switches in the same leg are simultaneously turned off: by
+    To mitigate computational complexity, efficient models in-                        leveraging auxiliary PSCAD switches and its built-in inter-
+cluding detailed equivalent models (DEM) and average-value                            polation algorithms, it enables simulation of the converter
+models (AVM) have been developed. The AVM simplifies the                              blocked state; by introducing supplementary decision for-
+model by treating the multivalve or the entire MMC as a closed                        mulas, it facilitates the simulation of battery disconnection.
+box. In [17], the AVM of MMC is incorporated into the EMT                          r A speedup calculation method is proposed based on the
+environment and validated in an existing HVDC system. In                              IDEM by simplifying the model considering the operation
+[18] and [19], a specialized module called Blocking Module                            condition, which significantly reduces the number of ad-
+(BM) is incorporated in the AVM, allowing it to simulate the                          dition and multiplication operations and thereby improves
+dynamics of a blocked MMC during DC faults. The author in                             simulation efficiency.
+[20] proposes an AVM of MMC-BESS that uses average SM                              r The simulation accuracy and efficiency of the IDEM are
+capacitor voltages and battery current, and models the multivalve                     demonstrated through MMC-BESS responses under AC
+as a controlled voltage source. By ignoring the internal dynamics                     faults, DC faults, and battery disconnection scenarios.
+of the multivalve and the switching characteristics of power                       The remainder of this paper is structured as follows. Sec-
+electronic devices, AVMs are unable to simulate the internal                    tion II presents the operation modes of MMC-BESS. Section III
+electrical variables of the SMs and could potentially lead to                   presents the modeling framework. Section IV presents the pro-
+inaccurate simulation results.                                                  posed IDEM. In Section V, results verify the acceleration ratio
+    The DEM models each multivalve as a Thevenin equivalent                     and accuracy of the IDEM. In Section VI, the conclusion is
+circuit, such that the system admittance matrix’s dimension is                  presented.
+significantly reduced. Further, it can preserve the SM internal
+information by back-calculating the electrical variables inside
+the equivalent model. This solution is widely used for modeling                              II. OVERVIEW OF MMC-BESS OPERATION
+the MMC [21] and solid-state transformers (SST) [22], [23]. In                     This section begins with an overview of the operating modes
+[24], the DEM is proposed for MMCs consisting of multi-port                     of an MMC-BESS. Then, it introduces the Dommel algorithm
+SMs based on generalized Norton Equivalents. The work in [25]                   for EMT simulation, emphasizing the challenges associated with
+merges the DEM and AVM in a universal arm equivalent circuit                    using the DSM of MMC-BESS in such simulations.
+and dynamically adjusts the models used for simulation.
+    In the DEMs of MMC proposed in the above literature, the
+internal parameters of the Thevenin equivalent are adjusted                     A. Operating Modes of the MMC-BESS
+based on the firing pulses of the switches, which remains valid                    As illustrated in Fig. 2, the battery is integrated into the SM
+if the firing pulses for the upper and lower switches are comple-               of the MMC-BESS through a Buck-Boost converter. According
+mentary. However, during fault conditions, emergency control                    to the IGBT firing pulse FP1-4 for the four switches T1-4 , the
+actions may result in both switches in a leg being simultaneously               operation conditions of the SM can be divided into 9 states,
+turned off, thereby invalidating the existing models. To address                as shown in Table I. When F PN = 1, it indicates that IGBT
+this issue, the work in [26] introduces an enhanced DEM of                      TN is turned on, while F PN = 0 indicates that it is turned off.
+MMC that incorporates additional switches to select appropriate                 To avoid shoot-through, T1 (T3 ) and T2 (T4 ) are not turned on
+model branches corresponding to different operating conditions.                 simultaneously.
+    In the MMC-BESS SM shown in Fig. 2, not only can both                          When the system operates under normal conditions, the firing
+T1 and T2 be switched off during faults, but also both T3 and T4                pulses for IGBTs of T1 and T2 are complementary, and the
+can be switched off simultaneously in the battery disconnection                 SM can be either inserted or bypassed. The battery operates
+scenarios, resulting in more complex operation modes. In [27],                  in one of the four modes: discharging, charging, freewheeling,
+the DEM of MMC-BESS that follows the idea of replacing SMs                      and disconnection. Fig. 2 shows the combination of the two
+by Thevenin circuits is proposed and validated against DSM                      operation states of the SMs with the four operation modes of the
+under normal operating conditions. However, this model also                     battery under system normal operation conditions with positive
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: ELECTROMAGNETIC TRANSIENT SIMULATION MODEL OF MMC-BESS FOR VARIOUS OPERATING CONDITIONS                                                     2933
+
+
+
+                               TABLE I                                            B. Challenges of Using the DSM of the MMC-BESS for EMT
+          OPERATION STATES OF SM BASED ON THE FIRING PULSES
+                                                                                  Simulation
+                                                                                     The nodal analysis method is the most common method for
+                                                                                  solving electromagnetic transient problems, with its foundation
+                                                                                  being the Dommel algorithm. This algorithm discretizes the
+                                                                                  system through numerical integration substitution and trans-
+                                                                                  forms each dynamic component into a Norton equivalent circuit
+                                                                                  comprising a conductance and a current source. Within each
+                                                                                  time step, the equivalent current source is updated, which is a
+                                                                                  function of the network’s historical values, while node voltage
+                                                                                  of the network is obtained by solving (1) using the nodal analysis
+                                                                                  method.
+
+                                                                                                                    YU =I                                (1)
+
+                                                                                     In (1), U denotes the nodal voltage vector, and I denotes the
+                                                                                  nodal current injection vector, which is composed of the inherent
+                                                                                  current sources in the circuit and the historical current sources
+                                                                                  obtained from discretization. Y denotes the system admittance
+                                                                                  matrix, whose dimension is identical to the node number.
+                                                                                     With the DSM, when there are switching actions in the sys-
+                                                                                  tem, the system topology and therefore its admittance matrix
+                                                                                  Y change accordingly. Consequently, it is necessary to perform
+                                                                                  the inverse operation (re-triangulation) on the new admittance
+                                                                                  matrix to solve for the voltage. In an MMC-BESS system, due
+                                                                                  to the large number of switches that operate at high frequencies,
+                                                                                  the admittance matrix changes frequently. Since the inversion of
+                                                                                  a large admittance matrix is computationally intensive and inef-
+                                                                                  ficient, the DSM of MMC-BESS poses significant computation
+                                                                                  burden on the EMT program, rendering it impractical for use in
+                                                                                  many cases.
+Fig. 3.   Normal operation states of SMs in MMC-BESS.
+
+
+current flowing into the SM. In Fig. 3, labels A-F correspond to                    III. DEVELOPMENT OF THE DETAILED EQUIVALENT MODEL
+the states A-F in Table I.                                                          This section first presents the proposed modeling framework
+   The operation mode of the battery is primarily controlled by                   based on the nodal analysis method. Then, by deriving the
+the connected Buck-Boost converter. Typically, the voltage of                     Thevenin equivalent for the multivalve and updating the inter-
+the capacitor exceeds that of the battery, with the Buck-Boost                    nal variables at each time step, the DEM of MMC-BESS is
+converter operating in boost mode. If F P3 = 1, F P4 = 0, the                     developed.
+battery is charging or discharging through the Buck-Boost con-
+verter. During charging, the current flows through the IGBT of
+                                                                                  A. The Proposed Modeling Framework
+T3 to charge the battery; during discharging, the current flows
+through the diode of T3 to discharge externally. When FP3 =0,                        Fig. 4 depicts the proposed modeling framework for MMC-
+F P4 = 1, the battery is in freewheeling mode, and the current                    BESS. It first partitions the original system into non-switching
+flows through the inductor and the IGBT of T4 .                                   subsystems and switching subsystems. The non-switching sub-
+   When F P3 = 0 and F P4 = 0, the battery becomes discon-                        system is characterized by a time-invariant admittance matrix,
+nected from the system, and the converter functions as a con-                     whereas the switching subsystem involves switches operating at
+ventional MMC. This operational mode is advantageous for                          high frequencies, resulting in a time-varying admittance matrix.
+minimizing switching losses during normal conditions or ac-                          For every simulation time step, the Thevenin equivalents of
+commodating scenarios such as battery failure or depletion.                       the switching subsystems are derived. Each switching subsystem
+   When F P1 = 0 and F P2 = 0, the IGBTs are turned off, and                      is represented as a combination of a time-varying resistor and a
+the switch pairs T1 and T2 act as diodes. The inserted and                        time-varying voltage source, simplifying it 

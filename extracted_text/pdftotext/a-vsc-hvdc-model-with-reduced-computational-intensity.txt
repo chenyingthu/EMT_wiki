@@ -1,0 +1,194 @@
+                                                                                                                                      1
+
+
+
+
+                           A VSC-HVDC Model with
+                         Reduced Computational Intensity
+                  Mohamed M. Z. Moustafa, Student Member, IEEE, S. Filizadeh, Senior Member, IEEE
+
+
+                                                                         components without adversely affecting computational
+     Abstract--The paper presents a simplified voltage-source            intensity. Several publications [8-12] presented different
+  converter (VSC) model to reduce the computational intensity of         approaches to model the VSC-HVDC systems. Dynamic
+  simulating a power system with embedded converters. This               average value modeling techniques for representing static
+  simplified model is based on the concept of dynamic average-
+                                                                         switching converters for system-level studies are presented in
+  value modeling and provides the ability to generate either the full
+  spectrum or the fundamental-frequency component of the VSC             an IEEE Task Force paper [13]. This paper also includes
+  voltage. The model is validated against a detailed model of a          different approaches used to develop such models for dc-dc
+  voltage-source converter based high voltage direct current (VSC-       and ac-dc converters. The dynamic model and control for the
+  HVDC) circuit and shows accurate matching during steady state          VSC-HVDC is presented in [14-17]. A generalized dynamic
+  and transient operation. Simulation and validation results are         model for multi-terminal applications of VSC-HVDC is
+  obtained using an electromagnetic transient simulation program
+                                                                         presented in [18]including a model of the converter and its
+  (PSCAD/EMTDC). A significant reduction in terms of central
+  processing unit (CPU) time consumption is also achieved with the       controllers, dc circuit equations and coupling equations.
+  proposed models.                                                       Despite the intensive modeling effort presented in the previous
+                                                                         research materials the possibility of modeling the VSC based
+     Index Terms-- Converter, VSC-HVDC, dynamic average                  on dependent current and voltage sources components and its
+  value, computational time.                                             relation with the transmitted dc power has not been discussed
+                                                                         in adequate length. In particular the CPU-time requirement
+                          I. INTRODUCTION                                associated with the proposed models has not been addressed in
+
+  S   tarting in the late 1990’s[1,2], the advances made in
+      semiconductor technology prompted the use of a new
+  generation of static switches for high power dc transmission.
+                                                                         detail. This has profound impact on repetitive simulation
+                                                                         studies such as multiple-run and optimization-based controller
+                                                                         tuning.
+  In the new scheme, high-speed self-commutated switches, e.g.              The objective of this paper is to present a dynamic model
+  IGBTs and GTOs, previously used for motor drive and other              of a three-level VSC in VSC-HVDC system. The three-level
+  similar applications, replace less rapid thyristors in an              VSC is modeled using dependent current and voltage sources.
+  arrangement known as a voltage-source converter (VSC)[3, 4].           The model presented herein has the ability to present the full
+  The VSC-based HVDC (VSC-HVDC) system came in service                   spectrum or the fundamental voltage behavior of the SPWM-
+  for the first time in Sweden in 1997 as a trial 3 MW scheme            generated voltage, depending on the user’s desire. Vector
+  [5]. Since then more VSC transmission schemes have been                control strategy is implemented in the simulation model in
+  built and several are currently in commercial operation.               order to control the VSC. Validation of the model is
+     The VSC-HVDC transmission system offers a unique                    performed during steady state and transient operation
+  advantage in its ability to either absorb or generate reactive         conditions. Model behavior under symmetrical and
+  power in an independent and rapid mode [2, 3, 6]. Also, the            unsymmetrical fault conditions is also presented. The
+  reactive power control in VSC transmission is independent of           beneficial use of the model in terms of simulation time is
+  real power control. This important feature is used when the            demonstrated as well.
+  converter is connected to a weak ac network or a network with
+  no generation [2, 3, 6, 7]. Moreover, there is no risk of                               II. MODELING OF THE VSC
+  commutation failure- an issue that is of significant importance            Modeling of the three-level VSC is a challenging issue, as
+  in conventional thyristor-based HVDC schemes [2, 3, 6, 7].             mentioned earlier. Due to factors such as power systems’
+     Synthesis of voltages at the ac terminals of a VSC is               expansion a larger presence of fast-acting controllers using
+  typically done using high-frequency pulse-width modulation             VSCs, either in the form of VSC based HVDC transmission or
+  (PWM) techniques. Modeling and simulation of VSC-HVDC                  in forms of FACTS devices, is expected. Simplicity as well as
+  systems has been a challenging task that requires a                    accuracy is expected from a VSC model in order to suitably
+  compromise among level of detail, simulation speed and the             represent it in studies where a large number of such devices
+  required data to fully represent the high-frequency switching          are used. However, a trade-off between both of these qualities
+                                                                         is required to be able to achieve the required accuracy with a
+     The authors are with the Department of Electrical and Computer      non-complicated model.
+  Engineering, University of Manitoba, Winnipeg, MB R3T 5V6 Canada (e-
+  mails: mmohamed@ee.umanitoba.ca; shaahin_filizadeh@ umanitoba.ca)
+
+
+978-1-4673-2729-9/12/$31.00 ©2012 IEEE
+                                                                                                                                                                                              2
+
+A. Configuration of VSC-HVDC System                                      bridge is shown in Fig. 2.
+   Fig. 1 shows a schematic diagram of a VSC-based HVDC                     The three-level NPC VSC with its three ac input terminals
+transmission system. The converters at the two ends of the dc            is used to connect to a split or center-tapped dc source, as
+line (VSC1 and VSC2) are supported on the dc side by dc-                 shown in Fig.2. Thus, each phase of the VSC can switch to
+capacitors. These capacitors maintain a relatively constant dc           three different voltage levels, i.e. the positive dc terminal
+voltage with minimum ripple and also serve as energy storage             (+Vc), the negative dc terminal (-Vc) and the mid-point voltage
+to supply or absorb a limited amount of energy during                    of zero as presented in Fig. 3. By adjusting the relative width
+transients if necessary.                                                 of positive, negative and zero pulses, the PWM techniques
+                                                                         crafts an output voltage of desired magnitude and harmonic
+                   VSC1            Dc Line          VSC2                 spectrum[24, 25]. The additional degree of freedom offered by
+                             +C                                          the zero output-voltage level provides flexibility in crafting
+            T1               - 1             C1+-          T2
+ AC1                                                              AC2    voltage waveform with a closer match to the reference ac
+                             +C
+                             - 2             C2+-                        sinusoidal voltage and leads to less harmonic content while
+    AC                                                           AC      avoiding increased switching frequencies.
+   Filter                                                       Filter
+
+                                                                                                                                S1a                   S1b                       S1c
+
+Fig. 1.Schematic diagram of the VSC-HVDC transmission scheme.
+                                                                                                         Vc1
+   Converter reactor or interface transformers (T1 and T2) are                                                                  S2a                   S2b                       S2c
+
+used to connect the ac side of the VSC and the terminating.
+The transformer/reactor has several beneficial features; it                                              Neutral                      ea                       eb                      ec
+serves as isolation and acts as a filter between the ac grid                                              Point
+                                                                                                                                S3a                   S3b                       S3c
+voltage and the VSC ac terminal voltage. Moreover, the
+transformer provides suitable ac voltage to permit the use of                                            Vc2
+an optimal converter voltage rating. Additionally, the
+reactance permits the VSC output to shift in phase and                                                                          S4a                   S4b                       S4c
+
+magnitude with respect to the ac system, which enable stable
+control of converter power output[1, 3, 6].
+   A small amount of filtering is required at both ends of the
+                                                                         Fig. 2. Three-level diode clamped converter.
+VSC-HVDC system to remove the high-frequency harmonics
+resulting from PWM switching of the converter [19, 20].                                                                                                              Actual phase voltage
+                                                                         VSC Output Phase Voltage [pu]
+
+
+
+
+                                                                                                         1.5
+Filters with higher tuning frequency are less expensive and                                                                                                          Fundamental component
+                                                                                                           1
+more compact than lower order filters used in conventional
+                                                                                                         0.5
+HVDC schemes [1, 3, 5].Compensation of the reactive power
+                                                                                                           0
+is not required as in conventional HVDC schemes leading to
+                                                                                                         -0.5
+an additional positive effect in reducing the ac filter size
+                                                                                                          -1
+   Converter controller, based on vector control strategy, is
+                                                                                                         -1.5
+implemented in order to provide a decoupled control for the                                                 0.135   0.14    0.145     0.15    0.155     0.16         0.165    0.17    0.175
+                                                                                                                                             Time [sec]
+converter parameters. This control methodologies described in
+detail in [21].                                                          Fig. 3.Three-levelVSC output voltage.
+
+B. VSC Configuration and Topology                                        C. Average Value Modeling of the VSC
+   The voltage source converter is one of the main                          Fig. 4 presents one end of the VSC-HVDC system, which
+components of any VSC transmission system, with the power                includes the ac source, converter transformer, VSC and the dc
+circuit consisting of IGBT valves for almost all the VSC                 link capacitors.
+transmission schemes. These valves function as static high-
+power high-frequency switches in order to achieve good                                                                                T                        +C
+                                                                                                                                                               - 1
+dynamic response and harmonic performance with a switching                                                                 AC                                           Vdc
+                                                                                                                                                               +C
+frequency of 1-2 kHz[3, 22, 23]. The switching frequency of                                                                                                    - 2
+
+the IGBT valves used in the simulation scheme in this paper is                                                                                  VSC
+1980 Hz. This high switching frequency enables the converter             Fig. 4.One end of the VSC-HVDC system.
+to be controlled on the PWM basis[23]. Sophisticated PWM
+methods allow eliminating critical harmonics using special                  The VSC is modeled as the previously described three-level
+optimized pulse patterns. The more programmed switching                  diode clamped converter shown in Fig. 2. Fig. 6 represents the
+that can be performed within each cycle, the more low-order              proposed simplified model that replaces the VSC and relies on
+harmonics that can be eliminated [1, 3, 23]. A three-phase               the dynamic average model methodology to represent the VSC
+three-level neutral point diode-clamped converter (NPC) VSC              [13-15, 18].
+                                                                                                                                                                                  3
+
+                                                                                 d c = m cos(ωt + δ + 120°)                            (6)
+                                                                             where m is the modulation index and δ is the phase shift angle
+                           +C                                                of the VSC output voltage. Both m and δ represent the outputs
+                           - 1                I1=P/Vc1
+                                                                             of the vector control system.
+                                                                                An independent current source is used to model the VSC to
+                  Vdc
+                                                                             account for the dynamic variations of the dc voltage caused by
+                           +C                                                sudden changes in the requested power order. Then,
+                           - 2                I2=P/Vc2                       neglecting the converter losses and using the power balance
+                                                                             between the ac and dc sides of the VSC. The current source
+                                                                             value is presented as:
+                                                                                        P
+                                      Full Spectrum      Fundamental             I dc =                                             (7)
+                                                                                        Vc
+                    Z ∠β         Xt                                          where P is the real power and Vc is the converter dc side
+           AC                                    SPWM                        capacitor voltage.
+                                                                                The dependent voltage source signal used in the model
+       AC Network           P                   VSC side                     allows the user to regenerate the fundamental component of
+          side
+                                                                             the output voltage; alternatively, the dependent voltage source
+                                                                             can generate the full spectrum of the PWM switching
+Fig. 5.Model of the VSC.                                                     waveform if such command is given to it. The current source
+                                                                             control signal is a result of the real power transmitted between
+   The sinusoidal PWM used to control the VSC is realized by                 the ac source and the dependent voltage source and the dc link
+comparing a high-frequency triangular carrier signal with a                  voltage, and will act accordingly regardless of what frequency
+low frequency sinusoidal reference. The intersections of the                 spectrum is generated at the output.
+two signals determine the switching instants of the IGBT                        The model is tested in a 100MW, 100kV VSC-HVDC
+valves through an interpolation procedure (in simulation) for                system with ac system equivalent short circuit ratio (ESCR)
+improved simulation accuracy. This allows for exact switching                for both sending and receiving end is set at 2.0 representing a
+between time steps based on a comparison between the                         relatively weak terminating ac terminal.
+sinusoidal reference and the high-frequency carrier signal.
+During one period of the triangular carrier signal, the low                                            III. MODEL VALIDATION
+frequency sinusoidal reference waveform can be assumed to
+have a nearly constant value. In the dynamic average                            The simulation results presented herein are based on
+modeling, the output waveform is represented only using its                  comparing the detailed VSC model including the valves
+dynamic average value, which is calculated during each                       switching with the proposed model (full spectrum and
+switching interval and varies depending on the local value of                fundamental) at the receiving end where the real and reactive
+the reference waveform.                                                      power are controlled. This is achieved through two operating
+   The VSC is modeled as controlled voltage source with             

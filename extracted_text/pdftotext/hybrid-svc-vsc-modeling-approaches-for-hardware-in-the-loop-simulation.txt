@@ -1,0 +1,218 @@
+                                                              Electric Power Systems Research 223 (2023) 109651
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Hybrid SVC-VSC modeling approaches for hardware-in-the-loop simulation
+P. Le-Huy *, O. Tremblay
+Power System Simulation group at IREQ, Hydro-Québec’s research center, 1800 boul. Lionel-Boulet, Varennes, Québec, J3 × 1S1, Canada
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 Hydro-Québec built two static var compensators at the 735-kV La Verendrye substation in 1985. Each has a
+Electromagnetic transient simulation                      capacity of +330/-110 Mvar to help regulate system voltage and power system dynamic. They exceeded their
+Hardware-in-the-loop                                      useful life, and their operation was becoming challenging due to the aging control technology. Spare part
+Modular multilevel converter
+                                                          availability and cost were also becoming an issue. A refurbishment project was thus undertaken. Due to design
+Real-time
+Static var compensator
+                                                          constraints, a hybrid SVC was selected: traditional thyristor-switched capacitors are used, but thyristor-
+                                                          controlled inductors are replaced by full-bridge modular multilevel converters.
+                                                             Throughout the ongoing project, hardware-in-the-loop real-time simulation was used for dynamic perfor­
+                                                          mance testing, factory acceptance tests and pre-commissioning studies. Two modeling approaches were used to
+                                                          represent the hybrid SVC: conventional electromagnetic transient simulation and small time-step approach. As
+                                                          this paper demonstrates, both approaches are valid in this case and produce matching results if simulation
+                                                          contrivances are not neglected.
+
+
+
+
+1. Introduction                                                                                current limitation of power electronic used in MMCs. Classical TSCs
+                                                                                               were thus added to the mix to reach the required capacitive Mvar
+    HYDRO-QUÉBEC (HQ) installed several reactive power compensa­                              capability. This hybrid SVC-VSC is also advantageous space-wise as the
+tors in the 1980s and 1990s to help power transmission between the La                          original layout didn’t include space for filtering, which would be
+Grande power generation complex and the load centers in the south of                           required today for optimal use of conventional TCRs.
+the Québec province [1–3] (see Fig. 1). Different technologies were                               Conventional SVC technology is well known and its modeling in real-
+explored and installed but most were static var compensators (SVC) with                        time (RT) electromagnetic transient (EMT) simulation tools for
+thyristor-controlled reactors (TCR) and thyristor-switched capacitors                          hardware-in-the-loop (HIL) testing is well mastered. However, MMC
+(TSC). In La Vérendrye 735-kV substation, two SVCs were built in 1985                         technology, despite generating significant scientific papers, is not yet as
+with a capacity of +330/− 110 Mvar each. The SVC coupling trans­                               widespread as thyristor-based apparatus. In fact, it is quite new at HQ:
+former secondary was selected to operate at 16 kV, and filtering of the                        the La Verendrye project is the first HQ equipment based on MMC
+TCR harmonics was not implemented at that time. As time went by,                               technology. Nevertheless, the HQ research center has been involved in
+operation of the twin SVCs became more challenging, and availability                           MMC modeling since the early 2010s to adapt and prepare its RT
+and cost of parts also became an issue.                                                        simulation capabilities to cope with this technology [5–6].
+    In the early 2010s, refurbishment projects for the La Grande corridor                          Throughout this ongoing project, control HIL was used in several key
+SVCs were initiated and pre-project work was done for the La Verendrye                         steps, such as the dynamic performance study (DPS), the factory
+SVCs. After careful consideration, it was decided to keep the SVC                              acceptance tests (FAT) and the pre-commissioning studies. The first two
+coupling single-phase transformers and perform a thorough overhaul on                          activities were conducted mainly by the manufacturer using RT EMT
+them. The selected refurbishment technology relies on voltage-source                           simulations with small time-steps (ts < 5 μs). Both the real control and
+converters (VSC), more precisely on modular multilevel converters                              protection system and the replica were tested with this approach.
+(MMC) using full-bridge (FB) submodules (SM) [4]. However, as the                              Following the FAT, both control systems were prepared for relocation:
+previous SVC was operating with a 16-kV secondary, providing the same                          the real system was prepared for site deployment while the replica was
+Mvar capacity with solely MMC technology was non-optimal due to the                            sent to the HQ research center (IREQ) for pre-commissioning testing,
+
+
+ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15, 2023.
+ * Corresponding author.
+   E-mail address: le-huy.philippe@ireq.ca (P. Le-Huy).
+
+https://doi.org/10.1016/j.epsr.2023.109651
+Received 10 December 2022; Received in revised form 1 April 2023; Accepted 21 June 2023
+Available online 1 July 2023
+0378-7796/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+P. Le-Huy and O. Tremblay                                                                                         Electric Power Systems Research 223 (2023) 109651
+
+
+
+
+                                                                                              Fig. 2. La Verendrye hybrid SVC one-line diagram.
+Fig. 1. HQ La Grande 735-kV transmission corridor and its SVC substations.
+Abitibi, the 735-kV substation west of Chibougamau has two synchronous
+condensers instead of SVCs.
+
+
+where it was connected to HQ RT simulator (RTS) using conventional RT
+EMT simulation (ts > 20 μs).
+    In recent years, HQ, through various HIL projects (both HVDC and
+compensation systems), was exposed to assertive and zealous promotion
+of the idea that the sole valid possibility for HIL is the small time-step
+approach, regardless of the project details and specifications. The pur­
+pose of this paper is to share HQ’s experience modeling this hybrid SVC
+and to demonstrate that these two modeling approaches, when used
+properly, are valid in this case, and generate matching results. This
+paper, through this demonstration, aims to bring a more nuanced view
+to the HIL time-step issue and shed light on the often neglected impact of
+the small time-step contrivances.
+    Section II gives more details on the La Verendrye hybrid SVC, while          Fig. 3. La Verendrye control system replica in the HQ RT simulation laboratory
+Section III concentrates on its control and protection system. Section IV        (in IREQ).
+further discusses the modeling approaches used in this project, and
+Section V presents comparative results. Finally, after a short summary,          3.1. Main control cabinet
+general remarks and future work are provided in Section VI.
+                                                                                     Responsible for all control functions, the control system replica is
+2. La Verendrye static var compensation                                          comprised of five cabinets: the human-machine interface (HMI) cabinet
+                                                                                 (second from the right in Fig. 3), the communication interface cabinet
+   Initially, the La Verendrye compensation was comprised of a single            (third from the right), the binary interface cabinet (in the middle) and
+TCR and three TSC for a total capacity of +330/− 110 Mvar per SVC. The           the main SVC control cabinet (second and third from the left).
+same capacity is retained with the hybrid SVC, but it is now provided by
+2 VSC branches and 2 TSC branches as shown in Fig. 2. Each TSC has a              • The HMI cabinet contains the operator’s console as well as all the
+95 Mvar capacity while each VSC branch is a delta-connected FB MMC                  computers (HMI computer, engineering workstation and digital
+sporting 22 SMs per phase. The current capacity is 1.45 kA, for a                   transient fault recorder data server).
+maximum contribution of 70 Mvar per branch. The SVC can be operated               • The communication interface cabinet contains switches and firewall
+with one or two VSCs. If all VSCs are in service, they always operate with          units as well as the GPS clock. Protocol converters are also in that
+the same current order. This ensures that no circulating current appears            cabinet.
+between the two VSCs as they synthesize the same voltage waveforms.               • The binary interface cabinet handles status for the cooling system,
+                                                                                    the switchyard and controller messages.
+3. Hybrid control system                                                          • The main SVC control cabinet houses the main control rack, IO
+                                                                                    modules and signal processing.
+    The La Verendrye control and protection system replica is comprised
+of 7 cabinets as illustrated in Fig. 3. To the complete right is the pro­
+                                                                                 3.2. MMCsim
+tection cabinet followed to its left by 5 main control cabinets and to the
+complete left is the low-level control housing the power module man­
+                                                                                    To simulate the MMCs, a special rack, called the MMCsim is used (see
+agement system (MMS) and the MMC simulator (MMCsim), a special
+                                                                                 Fig. 4). This rack is connected to the control system through fiber optics
+rack used to simulate the SMs.
+                                                                                 (FO) to the MMS: the MMS sends the gating signal to the MMCsim which
+                                                                                 sends back the SM capacitor voltages. The MMS is connected to the RTS
+
+                                                                             2
+P. Le-Huy and O. Tremblay                                                                                          Electric Power Systems Research 223 (2023) 109651
+
+
+
+
+                                                                                   Fig. 5. (A) EMT modeling of a FB-MMC delta branch and (B) RTS FO con­
+                                                                                   nections to MMS and MMCsim for VSC modeling.
+
+
+                                                                                   3.3. Control architecture
+
+                                                                                       For the simulation, the control system replica appears as a “physical
+                                                                                   black box”. As such, the control system’s exact architecture and imple­
+                                                                                   mentation details are undisclosed and unknown. However, the control
+                                                                                   system architecture can conceptually be illustrated as in Fig. 6. High
+                                                                                   level control functions (measurement, synchronization, voltage regula­
+                                                                                   tion and current limiter) are the same as classical thyristor-based SVC
+                                                                                   control. The main difference resides in the distribution unit, as it must
+                                                                                   manage reactive power output of the compensator with classical TSC
+                                                                                   branches and VSCs. The VSC branches are used in the same manners as
+                                                                                   classical TCRs: to produce inductive reactive power, to fine tune the
+                                                                                   overall reactive power output and to smooth TSC switch-in/out. Con­
+                                                                                   trary to TCRs, VSC branches can produce both inductive and capacitive
+                                                                                   reactive power: activation thresholds in the distribution unit are
+Fig. 4. MMCsim rack and its FO connections to the main control system. FO to
+                                                                                   adjusted accordingly.
+and from the RTS are also indicated (orange FO).
+
+                                                                                   4. Simulation approaches
+with FO to send the MMC equivalent voltages VOn and VBlock while a
+second FO carries the arm currents back from the RTS to the MMCsim                     As mentioned previously, the DPS and FAT control-HIL relied on
+(see Fig. 5B). The MMCsim refresh rate is 512 points per cycle, which              small time-step representation in the RTS. The following step in the
+gives a period of 32.5521 μs. The MMCsim was used for all HIL setup in             project, the pre-commissioning study, used the standard approach with
+both small and regular time-step. During FAT, the real control and                 larger time-step.
+protection system was connected to two MMCsim units while the control
+replica used a single MMCsim to emulate both VSC branches.
+    As illustrated in Fig. 5, the task of the MMCsim is to make the bridge
+between the RTS and the MMS without revealing the IGBT pulse pat­
+terns as everything is kept internal to the control system. The RTS re­
+ceives from the MMS equivalent voltages representing the VSC (Vconv
+and Vblk). The EMT simulation model that must be used in the RTS to
+represent each valve (or stack of 22 SMs in this case) of the VSC is also
+illustrated in Fig. 5. The diodes in the model allow the representation of
+the natural commutation phenomenon of the SMs, enabling the simu­
+lation of the charging sequence and their proper behavior during system
+over-voltages. The six arm currents (Iarm) flowing through the delta
+branches of the VSCs are sent back to the MMCsim. With the IGBT pulses
+sent from the MMS and arm currents from the RTS, the MMCsim is able
+to calculate each SM’s capacitor voltage, which are then sent to the
+MMS. Finally, the MMS calculates, from the updated capacitor voltages,
+the equivalent voltage-source values to send to the RTS, effectively
+closing the loop.                                                                              Fig. 6. Hybrid SVC conceptual control architecture.
+
+                                                                               3
+P. Le-Huy and O. Tremblay                                                                                        Electric Power Systems Research 223 (2023) 109651
+
+
+4.1. Dynamic performance simulations and factory acceptance tests
+
+    The simulation setup used for these two activities is illustrated in
+Fig. 7. The real control system was connected to two MMCsims while the
+replica only used one. Aside from this small difference, both HIL setups
+used the same approach. A time-step of 3 μs was used.
+    In order to execute with such small time-steps, the RTS imposes
+several constraints on the simulated power system. The first obvious
+constraint is that not all the components are supported in small time-step
+mode. Basic components are obviously supported, and several small
+time-step optimized super models are highly recommended (e.g., basic                        Fig. 8. Pejovic switch model for fast EMT simulations.
+converters, SVC branches, etc.). There is also a limitation on the number
+of simulated nodes: a maximum of 30 single-phase nodes can be simu­                  IOs are generated at the same time-step as the rest of the simulation,
+lated in one small time-step task. The third main limitation of the small        providing a very high refresh rate compared to the MMCsim, operating
+time-step mode is the representation of the power electronics: each small        at a time-step of 32.5521 μs.
+time-step task can only represent six standard Ron/Roff switches, the                At the end of the FAT, a series of benchmark tests are performed on
+others must be represented as Pejovic (also known as LC switches) [7].           the real control system. The purpose of these tests is to capture the
+As seen in Fig. 8, this modeling technique represents switches in con­           control system behavior in a set of known simulation conditions. All
+duction as a small inductor L and open switches as a series RC branch,           non-linearities are removed from the simulation to facilitate repeating
+both type of branch with equivalent resistance given by:                         the tests on the IREQ setup. Reproducing the benchmark tests on the
+                                                                                 IREQ replica is the final step for the validation and acceptation of the
+        2L     ΔT
+Req =      =R+    .                                                   (1)        replica as being an adequate representation of the real control system.
+        ΔT     2C
+
+Ihist is calculated according to the state of the switch following the           4.2. Pre-commissioning study
+original EMTP formulation [8]. The standard guideline to choose the
+Pejovic switch parameters are based on the time-step ΔT, the switched                A standard HIL simulation is used to perform the pre-commissioning
+current i and voltage v as well as a damping factor δ according to the           study (see Fig. 9). A time-step of 32.5521 μs is used. The simulation runs
+following equations [9–10].                                                      on an HP Z8 gen 4 workstation (dual Intel Scalable Gold 6244 but only
+                   

@@ -1,0 +1,189 @@
+IET Generation, Transmission & Distribution
+
+
+Research Article
+
+
+Large step size electromagnetic transient                                                                                  ISSN 1751-8687
+                                                                                                                           Received on 9th July 2019
+                                                                                                                           Revised 26th February 2020
+simulations by matrix transformation-based                                                                                 Accepted on 11th March 2020
+                                                                                                                           E-First on 12th June 2020
+shifted-frequency phasor models                                                                                            doi: 10.1049/iet-gtd.2019.1005
+                                                                                                                           www.ietdl.org
+
+Xiaohui Ye1,2, Yong Tang3, Dewu Shu1
+1Key Lab of Control, Power Transmission and Conversion, Department of Electrical Engineering, Shanghai Jiaotong University, Shanghai,
+
+People's Republic of China
+2Electrical Engineering, Tsinghua University, Beijing, People's Republic of China
+3China EPRI (CEPRI), Beijing, People's Republic of China
+
+  E-mail: shudewu@sjtu.edu.cn
+
+Abstract: To evaluate and improve the performances of control and protection strategies for large-scale AC grids, simulation
+models that can adopt a much larger time-step, provide instantaneous and wide frequency-band phasor values simultaneously
+are desirable. However, the traditional electromagnetic transient (EMT) model is numerically expensive and the transient
+stability (TS) model only preserves low-frequency dynamics. To resolve these issues, the shifted frequency phasor (SFP)
+modelling is generalised based on specific matrix transformations and SFP models of typical components in large-scale AC
+grids are derived hereafter. Unlike traditional models, the SFP models can produce instantaneous and wide frequency-band
+phasor waveforms simultaneously, while the latter matches the envelopes of the former exactly. Moreover, the simulation
+efficiency is dramatically improved by adopting a much larger time-step. The performance concerning the accuracy and
+efficiency is compared with the traditional EMT and TS models by simulating a practical large-scale AC grid under different
+scenarios.
+
+
+
+1 Introduction                                                                    only low-frequency dynamics. In other words, the high-frequency
+                                                                                  dynamics, which are aroused by non-linear characteristics of
+Dynamics of electromagnetic transients (EMTs), especially wide                    generators and frequency-dependent characteristics of transmission
+frequency-band interactions between individual components are                     lines, are totally neglected.
+important to evaluate and improve the performances of control and
+                                                                                  (iii) TS and EMT Hybrid simulations [7, 8]: The TS and EMT
+protection strategies for large-scale AC grids [1, 2]. Due to the
+                                                                                  hybrid simulations partition the whole system into separated TS
+non-linear dynamics of the generator (groups) and frequency-
+                                                                                  and EMT subsystems, respectively. Only wide-band dynamics
+dependent dynamics of transmission lines, AC voltage and current
+                                                                                  inside EMT subsystems are captured. However, the interface model
+signals contain wide frequency-band components with fast
+                                                                                  limits the frequency band under the fundamental frequency.
+amplitude and phase variations, especially at the occurrence or
+                                                                                  Consequently, wide frequency-band interactions between different
+clearance of the faults. Therefore, it is highly desirable to develop
+                                                                                  subsystems cannot be simulated by the interface model. Moreover,
+numerically accurate and efficient simulation models that are
+                                                                                  the overall simulation accuracy of hybrid simulations relies highly
+capable of (i) adopting a much larger time-step; (ii ) emulating
+                                                                                  on the partitioning strategy and the precision of the interface
+electromagnetic and electro-mechanical transients for a wide
+                                                                                  model. Therefore, it is not an easy task to guarantee the accuracy of
+frequency range. Many attempts have been made to improve the
+                                                                                  hybrid simulations at any fault scenarios and system
+efficiency of the target large-scale AC grids with satisfied
+                                                                                  configurations.
+accuracy, which are categorised as follows:
+                                                                                  (iv) State-space derived dynamic phasor (DP) simulations [9, 10]:
+(i) Trapezoidal-derived EMT simulations, e.g. EMTP-RV [3],                        These methods decompose time-varying voltage and current
+PSCAD/EMTDC: the traditional EMT model, derived by                                signals into harmonics of different frequencies based on state-space
+Trapezoidal algorithm, is generally considered the most accurate                  equations. Although the accuracy can be improved by including
+simulation tool to capture wide frequency-band dynamics.                          more orders of DPs, the computational burden will be dramatically
+However, the computational burden is sharply increased by its                     increased. For example, even if only two frequencies are
+small time-step (as small as 50 μs), which makes it                               considered, the number of equations will be expanded twice.
+computationally burdensome to simulate large-scale AC grids.                      Moreover, DP representations of large-scale AC grids are quite
+Although several techniques, such as system equivalents [4],                      complicated or even inapplicable when the system contains non-
+parallel processing [5], multi-rate simulations [6] etc. have been                linear or frequency-dependent components.
+proposed to accelerate the simulation speed, the overall efficiency               (v) Nodal analysis-based shifted frequency phasor (SFP)
+is still unsatisfactory for practical power systems. EMT models can               simulations [11–16]: These methods, which are also named as
+only trace the instantaneous values of all waveforms.                             shifted frequency analysis (SFA) [11, 12] or frequency-adaptive
+Unfortunately, they cannot produce wide frequency-band phasor                     simulation of transients (FASTs) [16], stems from signal processing
+waveforms simultaneously, which is important to demonstrate                       theory and the Hilbert transformation. It should be noted that
+wide-band frequency interactions of AC grids.                                     although several typical components based on the SFA concept
+(ii) Transient stability (TS) based simulations, e.g. PSS/E, PSD-                 have been proposed, the realisation of practical large-scale AC
+BPA (a commercial TS-based software first developed by                            grids with thousands of buses and hundreds of generators has never
+Bonneville Power Administration and now maintained by China                       been given before. This work also constitutes one of the targets of
+EPRI): The TS-based simulations are efficient to simulate large-                  our paper.
+scale AC grids. However, they suffer from an underlying limitation
+of TS-type modelling or conventional phasors, which preserves
+
+IET Gener. Transm. Distrib., 2020, Vol. 14 Iss. 15, pp. 2890-2900                                                                                           2890
+© The Institution of Engineering and Technology 2020
+
+
+         Authorized licensed use limited to: Carleton University. Downloaded on August 05,2020 at 01:33:40 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                  ^
+    To capture wide-frequency band interactions of large-scale AC                   where x^ (t), f (t) denotes state variables and the differential term; Δt
+grids, the SFP modelling is generalised and applied to simulate                     is the time-step.
+large-scale AC grids. The SFP modelling has the following striking                      Based on the following formula derived by the rotation
+features:                                                                           transformation Q(t),
+(1) The proposed matrix transformation-based SFP model is a new                                                  π                    π
+nodal analysis derivation of SFP models. It generalises the matrix                                      T −         Q(Δt) = − Q Δt −                      (6)
+                                                                                                                2ωs                  2ωs
+transformation-based SFP modelling for large-scale AC grids and
+provides physical insights into wide frequency-band phasors. Our                                                         cosωst   −sinωst
+SFP method can be implemented as an independent module,                                                         Q(t) =                                    (7)
+making it much more easily and flexibly for practical use. The                                                           sinωst    cosωst
+calculation burden can be reduced considerably by extending the
+time-step.                                                                             variables of SFP form in (5) are transformed back into their
+(2) Based on our proposed matrix transformation-based SFP                           time domain signals:
+models of large-scale AC grids, the wide-band phasors can capture
+both low-frequency and high-frequency dynamics accurately. More                              x(t) = Q(Δt)x(t − Δt)
+importantly, the wide-band phasors are the exact envelopes of the                                                           π
+instantaneous values of AC quantities, while the traditional TS                                          f (t) + ωsT −         x(t) +
+                                                                                                   Δt                      2ωs                            (8)
+models show significant errors.                                                                  +
+                                                                                                   2                                  π
+(3) The verifications of large-scale AC grids with 2232 nodes, 440                                       Q(Δt) f (t − Δt) − ωsQ Δt −     x(t − Δt)
+                                                                                                                                     2ωs
+generators are successfully made, which demonstrates that the
+matrix transformation-based SFP models can be applied to
+simulate large-scale AC grids.                                                            And (8) is rewritten in the real and imaginary parts separately
+                                                                                    as:
+    The rest of the paper is organised as follows: Section 2
+demonstrates the proposed SFP modelling. In Section 3, SFP                                              xR(t)              xR(t − Δt)
+                                                                                                                 = Q(Δt)
+models of typical AC components are derived. Section 4 details the                                      xI(t)              xI(t − Δt)
+respective efficiency improvement techniques for large-scale AC                                                                        R
+grids. Section 5 verifies the effectiveness of the proposed method                                                                 π x (t)
+                                                                                                                 f (t) + ωsT( −      )
+through simulations of a practical large-scale AC grid under                                                                      2ωs xI(t)               (9)
+different scenarios. Section 6 concludes this paper.                                                        Δt
+                                                                                                        +      +Q(Δt) f (t − Δt)
+                                                                                                            2
+                                                                                                                                 R
+2    Brief introduction of SFP modelling                                                                                     π x (t − Δt)
+                                                                                                               +ωsQ(Δt −       )
+                                                                                                                            2ωs xI(t − Δt)
+2.1 General mathematical formulation
+In a power system, the frequency bands of electrical variables are                  where xR(t) and xI(t) are the real and imaginary parts of x(t). It
+usually centred around the fundamental frequency ωs, which can be                   should be noted that the wide-band phasor is calculated by:
+represented in its shifted frequency form:
+                                                                                                                                  2         2
+                                                                                                            ∥ x(t) ∥ =      xR(t) + xI(t)                (10)
+                                  x(t) = x^ (t)e jωst
+                                                                          (1)
+                             x^ (t) = xI (t) + jxQ(t)                                   The differences between the proposed matrix transformation-
+                                                                                    based SFP models and the SFP [11, 12] or FAST models [16] lie in
+where x^ (t) is also called complex envelope of the time-domain                     the following aspects: the proposed method model the shifted
+signal x(t), which keeps its low-frequency dynamics. xI (t) and xQ(t)               frequency property in a unified way. For example, the unified
+are the real and imaginary parts of x^ (t), respectively.                           matrix Q(Δt − (π/2ωs)) can be easily calculated according to (7)
+   Suppose the dynamic equation of each component is written as:                    instead of two matrix multiplications, or Q(Δt) is multiplied by
+                                                                                    Q( − (π/2ωs)).
+                                    dx(t)                                               The SFP concept is adopted hereafter to develop the models of
+                                          = f (x, t)                      (2)       different components for AC grids according to (2)–(9). Based on
+                                     dt
+                                                                                    the derivations in Section 2, the differential equations of typical
+    Then, (2) is converted to its SFP form and after some rewriting,                components, such as synchronous machine, transmission line etc.
+the differential equation in the SFP form is derived based on the                   can be derived to obtain the desired matrix transformation-based
+transformation T(t):                                                                SFP based models. Further, with SFP models represented by their
+                                                                                    Norton equivalents, the whole system is formulated and then
+                       dx^                       π ^                                calculated by the corresponding nodal voltage equations of the
+                           = f (x^ , t) + ωsT −     x                     (3)       whole system.
+                       dt                       2ωs
+
+                                        −cosωst       sinωst                        2.2 Discussion on the time-step size of the proposed method
+                           T(t) =                                         (4)
+                                        −sinωst   −cosωst                           Normally, the time-step size of EMT models depends on the
+                                                                                    maximum frequency expected in the phenomena [17]. However, if
+    Adopting the trapezoidal algorithm, (3) is discretised as:                      non-linear components, such as the synchronous machines,
+                                                                                    transmission lines etc. are contained, the time-step will be limited
+    x^ (t) − x^ (t − Δt)                                                            under 50 μs due to the failure to converge [17]. For example, if the
+             Δt                                                                     saturation of transformers or the distributed characteristics of
+            ^                   π             ^                π                    transmission lines are considered, the latest PSCAD 4.6 will limit
+            f (t) + ωsT( − 2ω )x^ (t) + f (t − Δt) + ωsT( − 2ω )x^ (t − Δt)         the time-step less than 20 μs (Fig. 1). Otherwise, it will show error
+                                    s                              s
+       =
+                                                  2                                 information as follows. This is the motivation to the proposed new
+                                                                          (5)       method, which can extend the time-step of the traditional EMT
+                                                                                    models.
+
+
+
+IET Gener. Transm. Distrib., 2020, Vol. 14 Iss. 15, pp. 2890-2900                                                                                        2891
+© The Institution of Engineering and Technology 2020
+
+
+           Authorized licensed use limited to: Carleton University. Downloaded on August 05,2020 at 01:33:40 UTC from IEEE Xplore. Restrictions apply.
+                                                                                          respectively; Lss, Lsr, Lsr, Lrr are four individual elements of the
+                                                                                          inductance matrix L.
+                                                                                             Then, (11) is converted to its SFP form and aft

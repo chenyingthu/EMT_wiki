@@ -1,0 +1,9 @@
+## Real-Time MPSoC-Based Electrothermal Transient Simulation of Fault Tolerant MMC Topology
+
+Zhuoxuan Shen$^1$, Venkata Dinavahi$^2$
+
+$^1$ Electrical and Computer Engineering, University of Alberta  
+$^2$ Electrical and Computer Engg., University of Alberta
+
+### Abstract
+Among different modular multilevel converter (MMC) submodule (SM) topologies, the clamp double submodule (CDSM) has the capability of dc fault current limiting and utilizes a relatively small number of switching devices. Since CDSM has a more complex circuit structure than half-bridge or full-bridge SM, it is a significant challenge for the real-time electromagnetic transient (EMT) simulation for a multiterminal dc (MTDC) system containing CDSM MMC. This paper proposes the device-level electrothermal model of CDSM for real-time EMT simulation, which can accurately present the power losses, the junction temperatures, and the switching transient waveforms of individual switches consuming more computation resources. The individual insulated-gate bipolar transistors of the CDSM MMC during fault clearance transient are evaluated from both electromagnetic and thermal perspectives, which interact with each other dynamically. To ensure the real-time performance of the proposed model, the equivalent circuit model is combined with the device-level model. The system-level and device-level waveforms during normal operation and dc fault transient for a three-terminal dc system are both presented and compared with PSCAD/EMTDC and SaberRD. The simulation system was implemented on the Xilinx Zynq UltraScale+ ZCU102 multiprocessor system-on-chip (MPSoC) platform, and the results were captured by the oscilloscope in real-time.

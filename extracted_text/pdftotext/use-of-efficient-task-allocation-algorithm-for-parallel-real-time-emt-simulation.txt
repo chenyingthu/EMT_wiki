@@ -1,0 +1,184 @@
+                                                                  Electric Power Systems Research 189 (2020) 106604
+
+
+                                                                       Contents lists available at ScienceDirect
+
+
+                                                            Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Use of efficient task allocation algorithm for parallel real-time EMT                                                                                         T
+simulation
+Boris Bruneda, , Pierre Raulta, Sébastien Dennetièrea, Ian Menezes Martinsb
+                          ⁎
+
+a
+    RTE - Réseau de Transport d'Electricité, 69330 Jonage, France
+b
+    RTE - Réseau de Transport d'Electricité, 92800 Puteaux, Paris – La Défense, France
+
+
+
+
+A RT ICLE INFO                                                ABSTRACT
+
+Keywords:                                                     Real-time EMT (Electromagnetic Transients) simulation relies on multi-cores computers to accelerate the si­
+Graph partitioning                                            mulation through parallelization. It also increases simulation accuracy by allowing a lower time step. First, the
+Hardware-in-the-loop                                          network has to be split into several tasks using a separation technique. Then, each task has to be allocated/
+Optimization                                                  mapped to a processor. This paper focuses on this problem which can be formulated as a TAP (Task Allocation
+Parallel simulation
+                                                              Problem). To find optimal task allocation, operational research techniques can be used. Heuristics such as graph
+Real-time simulation
+Task allocation problem
+                                                              partitioning allow getting fast solutions. Their performances are asserted with very large networks and real-time
+                                                              simulator architectures, both from TSO (Transmission System Operator) grids. Exact resolution methods are used
+                                                              to verify solution quality. The validation of each task mapping strategy is done through a real EMT case study
+                                                              which involves real-time Hardware-in-the-Loop simulation.
+
+
+
+
+1. Introduction                                                                               task mapping. Indeed, if the time step is not respected after the map­
+                                                                                              ping, overruns can be a source of numerical instabilities.
+    The need for real-time EMT simulation has increased with the de­                              Previous works [2,5] have demonstrated the efficiency of graph
+velopment of power electronic devices in the transmission network                             partitioning algorithms [6] on some Software-in-the-Loop (SIL) ex­
+related to the high penetration of wind power farms and High Voltage                          amples. However, no full study has been done to assess performance on
+Direct Current (HVDC) links. Since 2011, the French TSO, RTE, has                             industrial cases and the optimality of found solutions. For the first time,
+created his own real-time laboratory SMARTE to study interaction be­                          this paper proposes a detailed analysis of the use of graph partitioning
+tween these new power devices. Hardware-In-the-Loop simulation,                               algorithms in EMT simulation in terms of performance and quality of
+which connects a real-time simulator to a replica of the on-site control                      the solution found. After formulating the Task Allocation Problem
+system, allows performing accurate EMT studies close to on-field phe­                         (TAP) [7] and presenting heuristic techniques, very large realistic
+nomena. Otherwise, the utility of replicas is various from maintenance                        network instances are tested with real architectures to verify algo­
+activities to real-time event studies which have occurred on the net­                         rithms’ performance. Then, a deep analysis of the whole graph parti­
+work [1]. To improve accuracy, detailed networks are used for EMT                             tioning algorithm allows understanding its advantages and limits.
+simulation [2] although interesting network reduction methods based                           Hyper parameter tuning helps to improve real-time performance. Ad­
+on frequency equivalent [3,4] help in certain cases to accelerate the                         ditionally, exact solutions from a linear programming formulation are
+simulation.                                                                                   first used in this paper to assert the quality of solutions found from the
+    To cope with large networks, real-time EMT tools take advantage of                        graph partitioning algorithms. Lastly, in complement to previous SIL
+the parallelization offered by multicore computers used as real-time                          examples, a Hardware-in-the-Loop (HIL) set-up of a three-terminal
+simulators [2]. Indeed, in the real-time environment, it will accelerate                      HVDC grid with DC Circuit Breakers validates the efficiency of the task
+the simulation but above all, it will respect the time constraints to be                      allocation algorithm and discussed the mapping strategy.
+able to interact with a hardware device such as a control replica. The                            All proposed algorithms have been tested on the real-time EMT tools
+parallelization is automatically performed in two steps. First, the net­                      HYPERSIM [8] which proposes a fully –automatic network paralleli­
+work is separated into several tasks. Then, each network task is mapped                       zation.
+to the simulator's processors before starting the parallel simulation. The
+stability of a real-time simulation depends strongly on the result of this
+
+
+
+    ⁎
+        Corresponding author.
+
+https://doi.org/10.1016/j.epsr.2020.106604
+Received 10 February 2020; Received in revised form 27 July 2020; Accepted 29 July 2020
+Available online 05 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+B. Bruned, et al.                                                                                                   Electric Power Systems Research 189 (2020) 106604
+
+
+2. Task allocation problem                                                           That means choosing the branch that locally minimizes the commu­
+                                                                                     nications.
+2.1. Task separation
+                                                                                     2.3.2. Graph partitioning
+    The first step of parallelization is to split the network into several               The second method is based on graph partitioning techniques [6].
+tasks which will be run in parallel on several cores. Two main separa­               These heuristics are commonly used to automatically parallelize EMT
+tion techniques are used for the split.                                              simulations [5,17,18]. The goal of the algorithm is to map a “Source
+    The first one relies on a decoupling element such as power lines. If             Graph”, SG, to a “Target Graph”, TG. It consists of partitioning the
+the propagation delay is greater than the simulation time step, tasks can            former and then mapping the resulting subsets of source vertices to a
+be separated through the lines. The line delay allows transmitting                   target vertex. Source edges i, on the other hand, are mapped to a
+computed value for the next time step. Based on this principle, for real-            subset ρi of edges in the TG. This subset is the smaller path between two
+time, a topology analysis split the network into sub-networks, each time             target vertices previously adjacent in the SG. The algorithm minimizes,
+a power line is detected. Otherwise, offline tools perform parallelization           as an objective function, the weighted sum of the cardinality of the
+directly on the nodal resolution [9,10].                                             subsets ρi the source edges i are mapped to:
+    When the decoupling is not possible through power lines like PI-lines,
+other techniques have to be used. The Compensation Method [11], ori­                 min       wi   i
+                                                                                           i                                                                     (1)
+ginally used for linear networks, combined with diakoptics [12] is well-
+known to allow the user to split the network without using the natural                   Where wi is the weight of the edge i and the operator | · | gives the
+delay of power lines. Lately, it has been rebranded as the Multi-Area                cardinality of the set ρi.
+Thévenin Equivalents (MATE) method [13]. The enhancement of the                          In other words, the algorithm agglomerates adjacent source vertices
+compensation method, Hybrid formulation [14], can both integrate                     with heavy connecting edges in target vertices close to each other, if not
+Nodal and State-Space formulation in the network splitting and solve it in           in the same. By doing so, it reduces the size of paths mapped to heavy
+parallel [15]. Other purely mathematical techniques, such as Node                    source edges. Furthermore, it keeps the balance of weights of the target
+Tearing [16,17], are based on transforming the admittance matrix into                vertices according to a constraint δ [29], the Load Imbalance Ratio, LIR,
+BBD (Bordered Bloc Diagonal) form. Both methods, Compensation and                    which will be discussed later. LIR is a weak constraint of the optimi­
+Node Tearing, can be fully automated [17,18].                                        zation problem (1). One can see the network of tasks as the SG and the
+    The second step of parallelization consists in assigning tasks to                “architecture”, the ensemble of processors and its connections, as the
+processors (Task Mapping Problem). It will be introduced in                          TG. The TAP is naturally formulated in this case.
+Section 2.2.                                                                             Graph partitioning heuristics [21] can be categorized as follow: the
+                                                                                     exact method based on mathematical programming, spectral techni­
+2.2. Task mapping problem formulation                                                ques, geometric ones, and multilevel method. Exact methods [7] are
+                                                                                     generally run on small instances to check the quality of other heuristics
+    The Task Allocation Problem, TAP, is a well-known problem in the                 (see Section 3.3.1). Geometric techniques [22] rely on coordinates
+literature of combinatorial optimization [7,19]. It consists of mapping a            which is not relevant to this TAP formulation. Spectral techniques [23]
+network of elements called “tasks” to a set of connected containers                  are based on the computation of the Fielder eigenvector [24] of the
+called here of “processors”. A task is said to be allocated to a processor           Laplacian matrix of the source graph. Its computation can be quite
+when it is mapped uniquely to it.                                                    demanding and it has been overcome by multilevel graph partitioning
+    Each task has ”a cost of allocation”/”an estimated execution time”               method. Those techniques are quite fast using multilevel and provide
+and each processor has a budget to it, the time-step constraint for real-            high-quality solutions. Multilevel RB (Recursive Bipartitioning) [6] has
+time simulation. A TAP solution is said to be valid if every task is al­             already demonstrated its efficiency in power systems instances. Re­
+located and there is no budget overflow, i.e., the time-step constraint is           cently, multilevel techniques have been enhanced [25] in local search
+respected. An optimal solution is a valid one that minimizes two cri­                algorithms or seed iteration. However, the multilevel evolutionary al­
+teria: the communications cost (the sum of the weighted connections                  gorithm [26] is the new trend. The combination of genetic algorithm
+between tasks allocated on different processors) and the load balance                principles and multilevel has produced solutions of very high quality.
+among processors. In practice, one of these criteria is kept in the ob­                  Nevertheless, the main drawback of those methods is that the time
+jective function (communication cost), the other one is treated as a                 constraint is not strict (a weakly imbalance ratio constraint). For real-
+weak constraint (load balancing).                                                    time case, this issue has been poorly addressed in the EMT literature.
+    Given the NP-complete complexity [18] of the problem, the use of                 Section 3.1.2 will analyze it.
+heuristic-based approaches becomes necessary to find good solutions to
+the problem using a small amount of time. Some of these approaches                   2.4. Performance tests on large instances
+are already well-known, as shown in [18]. Two of them [5] have been
+used in the real-time environment.                                                       To figure out the performance of both algorithms, they have to be
+                                                                                     tested on very large and realistic networks. It helps to set an upper
+2.3. Heuristic algorithms                                                            bound of the task mapping execution time. Large instances come from
+                                                                                     national transmission networks. For instance in Fig. 1, the whole French
+2.3.1. A* algorithm                                                                  transmission network (400kV + 225kV) is split into thousands of tasks
+    Based on the A* algorithm, the first method [20] follows a tree-                 (3486 buses, 1056 lines, and 274 transformers). Those networks are
+shaped scheme. Each separation is composed of ordered pairs (Ti, Pj)                 imported from planning simulation tools thanks to model exchange
+indicating that the task Ti is allocated to the processor Pj. This tree has          standard [27].
+as many levels as tasks and as many leaves as combinations of tasks and                  As the real-time simulation runs on a single supercomputer (no
+processors. At each level, a new task is allocated to a processor, as                cluster of pcs), the TG is often complete. All inter-processor commu­
+explained in [5], and it halts when all the tasks are allocated. The al­             nication links exist. However, the TG is not always homogenous (same
+gorithm tries to minimize the communication cost by choosing the pair                communication cost between each processor). The SGI UV100 archi­
+that increases the least the following two terms sum g (n) + h (n). g(n)             tecture [28] (96 processors in total) is a real-time simulator on RTE
+is the cost of all allocations until that point (allocation of the task n) . h       real-time laboratory. It contains 4 chassis alternatively with 1 or 2
+(n) is an estimation of the cost for allocated all remaining tasks [20].             blades each. A blade contains 2 sockets/CPUs with 8 cores/processors
+
+                                                                                 2
+B. Bruned, et al.                                                                                                   Electric Power Systems Research 189 (2020) 106604
+
+
+
+
+                                               Fig. 1. French 400 kV (on the left) and 225 kV grid (on the right)
+
+
+each. The inter-chassis communication cost is different from the inter-                The rest of the paper analyzes only multilevel RB (Scotch Solution)
+blade one. Then, inter-blade is different from the inter-socket commu­             in detail. It considers only homogeneous architecture in the real-time
+nication and the inter-core one as well. This architecture is hetero­              EMT case.
+geneous.
+    Two heuristics have been implemented in the real-time environ­
+ment: the A* algorithm and the multilevel RB integrated from the                   3. Multilevel graph partitioning for an efficient task mapping
+Scotch library [29]. Then, the multilevel RB will be compared to other
+graph partitioning heuristics, spectral methods (Chaco solver [30]),               3.1. A fast graph partitioning algorithm
+enhanced multilevel, and multilevel evolutionary algorithm (KaFFPa
+and KaFFPaE solvers from KaHIP tool suite [31]) using a homogenous                 3.1.1. Overview of the algorithm
+architecture.                                                                          The graph partitioning algorithm, implemented in Scotch [6,29],
+    Table 1 below presents the performance results for two very large              contains several routines. The main one is the Recursive Bipartitioning
+networks for A* heuristic and multilevel RB (Scotch with balance                   (RB). As the name suggests, this algorithm recursively bipartitions
+strategy and δ=0.01 as LIR) on the UV100 simulator with a 40μs time                subsets of both SG and TG. It starts with the whole graph until all
+step. To set up the performance the following criteria are used: NbTask,           subsets of the TG have exactly one vertex. A Greedy Graph Partitioning
+The number of tasks; NbProc, The number of processors used; Comm,                  algorithm (GPA) proceeds the bipartition. At each recursive step, a
+The total number of communication, i.e., the number of signals multi­              subset of the SG will be partially mapped to a subset of the TG. In the
+plying by the communication link cost (respectively 10, 16, 43, and 65             next recursive step, the resulting sub-subsets in both graphs will be
+respectively for inter-cores, sockets, blades, and chassis communication           mapped according to their parents’ mapping.
+links); Var, The processor load variance to measure the load balancing;                Other than the RB, more algorithms and post-processing methods
+Time, The execution time of the task mapping in seconds (run on a host             are available. The Multi-level method (ML) is important for perfor­
+with Intel i7-4910MQ CPU @ 2.90GHz).                                               mance. It has three distinct phases. First, a coarsening phase applies
+    On large network instances, the graph partitioning technique is                graph matching algorithms to reduce the graph to a smaller equivalent.
+faster than the A* algorithm. It also gives better solutions (lower                Then, a partition phase runs RB and GPA algorithms. Finally, an un­
+communication costs and better balancing). In absolute terms, the ex­              coarsening phase grows back the graph to its original size. Another
+ecution time is quite fast (no more than a few 

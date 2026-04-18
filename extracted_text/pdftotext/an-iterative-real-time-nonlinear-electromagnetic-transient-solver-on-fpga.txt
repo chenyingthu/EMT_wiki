@@ -1,0 +1,182 @@
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 6, JUNE 2011                                                                                    2547
+
+
+
+
+    An Iterative Real-Time Nonlinear Electromagnetic
+                Transient Solver on FPGA
+                         Yuan Chen, Student Member, IEEE, and Venkata Dinavahi, Senior Member, IEEE
+
+
+   Abstract—A real-time transient simulation of nonlinear ele-                       actually a specific linear element, such as a constant inductance,
+ments in transmission networks requires significant computational                    several of which can be used to represent, for example, the
+power. This paper proposes an iterative nonlinear transient solver                   saturation characteristic of a transformer. However, the compu-
+on a field-programmable gate array. The parallel solver, based
+on the compensation method and the Newton–Raphson algo-
+                                                                                     tational bottleneck occurs as the operating point switches from
+rithm (continuous and piecewise), is entirely implemented in Very                    one linear segment to the next, necessitating a recalculation of
+high speed integrated circuit Hardware Description Language.                         the system admittance matrix, which results in a substantially
+It also involves sparsity techniques, deeply pipelined arithmetic                    longer run time for a large network. The frequent switching
+floating-point processing, and parallel Gauss–Jordan elimination.                    between linear segments is also known to cause numerical
+To validate the new solver, two case studies are simulated in real                   oscillations. For a more accurate simulation of nonlinear ele-
+time: surge arrester transients in a series-compensated line and
+ferroresonance transients in a transformer, with time steps of 5                     ments, an iterative method based on Newton–Raphson (N–R)
+and 3 μs, respectively. The captured real-time oscilloscope results                  can be used. Within each simulation time step, several N–R
+demonstrate high accuracy of the simulator in comparison to the                      iterations are required for convergence, and each iteration en-
+offline simulation of the original system in the ATP version of                      tails a recalculation of the Jacobian matrix and solution of a
+electromagnetic transient program.                                                   set of linear equations. This process is very time consuming.
+   Index Terms—Electromagnetic transient simulation, field-                          In an offline simulator, the computational burden can perhaps
+programmable gate arrays (FPGAs), nonlinear networks, parallel                       be overlooked; however, it becomes quite cumbersome in a
+algorithms, real-time systems.                                                       real-time simulator. In a deterministic hard real-time system
+                                                                                     built using general-purpose CPU or DSP-based sequential hard-
+                            I. I NTRODUCTION                                         ware, an iterative nonlinear transient solution may not even be
+                                                                                     implementable using a requisite time step mainly due to the
+N      ONLINEAR elements play a significant role in the incep-
+       tion and propagation of transient overvoltages and over-
+currents in electrical power systems. The commonly occurring
+                                                                                     uncertainty of convergence of the iterations within the time step
+                                                                                     and the limited computational power of such hardware.
+                                                                                        The increasing need for higher computational bandwidth
+nonlinear phenomena in power systems include magnetic sat-
+                                                                                     for real-time electromagnetic transient simulation has been
+uration in transformers, ferroresonance, switching surges, and
+                                                                                     met by the field-programmable gate array (FPGA) [3]. The
+lightning strikes. An accurate simulation of nonlinear phenom-
+                                                                                     FPGA is a reconfigurable digital logic device which contains
+ena is vital from the perspective of such studies as insulation
+                                                                                     a variety of programmable logic blocks called logic elements
+coordination, protection system design, power quality, and,
+                                                                                     (LEs), which can be configured using a Hardware Descrip-
+in general, for maintaining the transmission and distribution                        tion Language (HDL). The main advantages of FPGA over
+infrastructure in a reliable working condition. In the offline                       sequential hardware are wide parallelism, deep pipelining, and
+electromagnetic transient program (EMTP), the nonlinear so-                          flexible memory architecture. With the dramatic increase in LE
+lution has been well analyzed and implemented. However, in                           density, clock frequency, and advanced Intellectual Property
+real-time simulators, accurate simulation of nonlinear elements                      (IP) cores such as floating-point arithmetics, FPGAs show great
+is very challenging due to its computational burden.                                 potential for real-time hardware emulation [4], [5] and control
+   In offline EMT-type software programs such as ATP, EMTP-                          applications [6]–[8].
+RV, and PSCAD/EMTDC, the representation of nonlinear el-                                This paper proposes an iterative real-time nonlinear transient
+ements is either through a piecewise linear approximation                            solver on the FPGA. The solution method is based on the
+method (also known as pseudo nonlinear method) or an iterative                       compensation method [9] together with N–R iterations [10].
+method [1], [2]. In the former, the nonlinearity is represented                      Sparse matrix methods and a parallel Gauss–Gordon elimina-
+by several linear segments. At each simulation time step, it is                      tion method [11] are employed for the linear solution. To take
+                                                                                     advantage of the inherent parallel architecture of FPGA, the
+   Manuscript received February 25, 2010; revised June 10, 2010; accepted            nonlinear solution algorithm is fully paralleled and pipelined
+July 11, 2010. Date of publication July 23, 2010; date of current version May        using a floating-point number representation. Although FPGA-
+13, 2011. This work was supported by the Natural Science and Engineering             based transient solvers currently exist for power networks
+Research Council of Canada.
+   The authors are with the Department of Electrical and Computer Engi-              including frequency-dependent elements [3], they address ex-
+neering, University of Alberta, Edmonton, AB T6G 2V4, Canada (e-mail:                clusively linear networks; an iterative nonlinear transient solver
+yuanchen@ece.ualberta.ca; dinavahi@ece.ualberta.ca).                                 in real time has not yet been reported in the literature. The
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       background on the nonlinear solution technique and on the
+   Digital Object Identifier 10.1109/TIE.2010.2060461                                N–R algorithm is described in Section II. Section III explains
+
+                                                                  0278-0046/$26.00 © 2010 IEEE
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:55:59 UTC from IEEE Xplore. Restrictions apply.
+2548                                                                       IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 6, JUNE 2011
+
+
+
+
+                                                                                 Fig. 2.   (a) Piecewise linear function. (b) Its implementation in PNR.
+Fig. 1. (a) Network with m nonlinear elements. (b) Illustration of compensa-
+tion method.
+                                                                                 where J is the Jacobian matrix; ik+1 and ik are the current
+the hardware framework of the FPGA-based iterative nonlinear                     vectors at the (k + 1)th and kth iterations, respectively. This
+transient solver and gives the implementation details. Two                       method is referred to as the continuous N–R (CNR) method in
+real-time transient simulation case studies are presented in                     this paper since the nonlinear function is a continuous analytical
+Section IV and validated using an offline ATP simulation.                        equation. The Jacobian matrix and nonlinear functions are
+Conclusions are given in Section V.                                              computed at each iteration using
+                                                                                             
+                                                                                               J = ∂F∂i(i) = Rthev + ∂f∂i(i)
+       II. N ONLINEAR N ETWORK T RANSIENT S OLUTION                                                                                             (5)
+                                                                                                  − F (ik ) = v o − Rthev ik − f (ik ).
+   With the inclusion of nonlinear elements, the power system
+network becomes a nonlinear system. In the EMTP, instead of                      The convergence criteria for the CNR iterations are defined as
+solving the entire nonlinear network, the compensation method                                                              
+is commonly used to reduce computational burden.                                            ik+1 − ik  < ε1 f (ik+1 ) < ε2               (6)
+
+                                                                                 with ε1 and ε2 set to sufficiently small values.
+A. Compensation Method                                                              If the nonlinear function is given by a piecewise linear curve,
+                                                                                 the method becomes piecewise N–R (PNR) [12]. As shown in
+   This method first separates the nonlinear elements from
+                                                                                 Fig. 2(a), each linear segment of the piecewise curve can be
+the network, as shown in Fig. 1(a), where the m nonlinear
+                                                                                 defined by
+elements have been extracted and connected to the linear
+m-port network. Then, the equations pertaining to the linear                                       v = ej + Rj i,            i ∈ [I j− , I j+ ]            (7)
+network (1) and those of the nonlinear elements (2) are solved
+simultaneously as illustrated graphically in Fig. 1(b)                           where ej and Rj are the intercept voltage and resistance of the
+                                                                                 jth segment of the curve, which falls within the interval I j−
+                           v = v o − Rthev i                              (1)    and I j+ . Applying the N–R method to nonlinear (8)
+                           v = f (i)                                      (2)
+                                                                                              F (i) ≡ (v o − Rthev i) − (ej + Rj i) = 0                    (8)
+where v and i are the vectors of m-port voltages and currents,
+respectively. v o is a vector of open-circuit voltages (without                  and using (4), we obtain
+the nonlinear branches) at those ports, and Rthev is an m × m
+                                                                                 (−Rthev − Rj )(ik+1 − ik ) = (ej + Rj ik ) − (v o − Rthev ik )
+Thévénin equivalent resistance matrix of the linear network.
+After the current i has been obtained, it is superimposed on                                 (Rthev + Rj )ik+1 = v o − ej .                                (9)
+the linear part of network as a current source injection to solve
+the entire network.                                                              It is important to observe that the term ik is canceled out in
+                                                                                 (9), which means that the calculation of Jacobian matrix J is
+                                                                                 not required in the PNR method. This is because Rj ’s, which
+B. N–R Method                                                                    are the derivatives of the piecewise linear curve, have been
+   The N–R method is widely used to solve the nonlinear equa-                    precalculated. The solution is then checked to see if it satisfies
+tions [substituting (2) into (1)] due to its quadratic convergence.              [I j− , I j+ ]; if it does, a valid solution has been found.
+The objective is to find solution i such that
+                                                                                      III. FPGA-BASED N ONLINEAR T RANSIENT S OLVER
+                 F (i) ≡ f (i) − v o + Rthev i = 0.                       (3)
+                                                                                 A. Hardware Architecture and Parallelism
+By applying the first-order Taylor series expansion for the
+nonlinear function F (i), the updated solution is obtained by                      As shown in Fig. 3, the hardware architecture of the nonlinear
+solving the following system of linear equations:                                solver consists of three main modules: a linear solver module,
+                                                                                 an N–R nonlinear solver module, and a global control module.
+                      J (ik+1 − ik ) = −F (ik )                           (4)    The linear solver module calculates the open-circuit voltages
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:55:59 UTC from IEEE Xplore. Restrictions apply.
+CHEN AND DINAVAHI: ITERATIVE REAL-TIME NONLINEAR ELECTROMAGNETIC TRANSIENT SOLVER ON FPGA                                                                  2549
+
+
+
+
+                                                                                   Fig. 5. Dedicated floating-point arithmetic unit for r = (a + b) ∗ c.
+Fig. 3.   Overall architecture of the nonlinear transient solver in the FPGA.
+
+
+
+
+                                                                                   Fig. 6. (a) Example sparse matrix. and (b) Its storage format.
+
+Fig. 4.   Finite-state machine of global control module.                           and multiplication. They can be chained to realize many other
+                                                                                   computations such as (a + b) ∗ c. This combination may re-
+v o before the N–R iteration starts and also solves the entire                     sult in a long computation latency. For example, the floating-
+network after the nonlinear solution is found. The detailed                        point adder unit and multiplier unit in the Altera Quartus II
+architecture of this module is presented in Section III-C. The                     software have a latency of seven and five cycles, respectively;
+N–R nonlinear solver module is the core of the design, which                       therefore, the overall latency for the aforementioned compu-
+contains the following three hardware submodules: 1) NLFunc                        tation is 12 cycles. To reduce the latency of such combined
+(evaluating nonlinear function f (i) and ∂f (i)/∂i; 2) CompJF                      computations, dedicated floating-point arithmetic units were
+(computing J and −F (i)); and 3) parallel Gauss–Jordan elim-                       designed in this work. Fig. 5 shows the data flow for r =
+ination (GJE).                                                                     (a + b) ∗ c. The overall latency in this arithmetic unit is only
+   The global control module controls all the sequential and                       five cycles. The saving in latency comes from deleting redun-
+parallel operations in the overall design. Fig. 4 shows the finite-                dant processes, such as normalization of intermediate result,
+state machine diagram for the global control module. The se-                       and from parallelizing possible operations. The collection of
+quential operations are clearly shown by state transitions S1 →                    dedicated floating-point arithmetic units developed involves
+S2 → S3 → S4 → S5 → S6 → S1 . The possible parallel op-                            both scalar and vector quantities and includes operations such
+erations, which take advantage of the hardware parallelism of                      as simple addition/subtraction, multiplication, conversion be-
+the FPGA, are also shown in Fig. 4. For example, in state                          tween floating- and fixed-point numbers, etc.: (a + b) ∗ c, a ∗
+S2 , the nonlinear function evaluations f (i) and ∂f (i)/∂i are                    b + c ∗ d, An×n ∗ B n×1 , C n×n ∗ (An×1 − B n×1 ).
+performed simultaneously. The computation of J and −F (i) in
+(5) is also processed concurrently in state S3 . Meanwhile, the
+GJE procedure is paralleled in state S4 , as discussed in more                     C. FSMxV Multiplication Unit
+details in Section III-E.                                                             Obtained using nodal analysis, the linear network equation is
+                                                                                   given as
+B. Dedicated Floating-Point Arithmetic Units
+                                                                                                                    YV =I                                  (10)
+   Choosing either fixed- or floating-point number representa-
+tion is the first step for any hardware design. Although the fixed-                where Y , I, and V are network admittance matrix, injected
+point number operation has the advantages of fast computation                      nodal current sources, and unknown node voltages, respec-
+and easy implementation, the floating-point number is widely                       tively. In the real-time electromagnetic transient simulation, the
+used in real number arithmetic due to its large dynamic data                       V can be obtained directly by multiplying I by the inverse
+range and higher accuracy. Due to the availability of FPGAs                        admittance matrix Y −1 , which is precalculated and stored in
+with a large capacity of logic resources, floating-point imple-                    the memory to save computation time. Since Y matrix is
+mentation is particularly useful for transient simulation. Con-                    usually quite sparse in power systems, sparsity techniq

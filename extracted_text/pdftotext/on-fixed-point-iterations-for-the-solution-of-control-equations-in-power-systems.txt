@@ -1,0 +1,210 @@
+G Model
+EPSR-3994; No. of Pages 6                             ARTICLE IN PRESS
+                                                         Electric Power Systems Research xxx (2014) xxx–xxx
+
+
+
+                                                            Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+On ﬁxed-point iterations for the solution of control equations in
+power systems transients
+C.F. Mugombozi a,b,∗ , J. Mahseredjian a , O. Saad b
+a
+    Ecole Polytechnique de Montréal, Canada
+b
+    IREQ/Hydro-Quebec, Montréal, Canada
+
+
+
+
+a r t i c l e          i n f o                        a b s t r a c t
+
+Article history:                                      This paper contributes toward the establishment of a formal analysis method of control system equations
+Received 14 November 2013                             solved through ﬁxed-point iterations. The success of ﬁxed-point iterations relies on contraction proper-
+Received in revised form 12 March 2014                ties of the function to be iterated. A convergence criterion is presented and accuracy is not sacriﬁced over
+Accepted 31 March 2014
+                                                      gain in computational performance.
+Available online xxx
+                                                         The presented algorithms are illustrated in EMTP-RV for practical control systems used in wind power
+                                                      generation and for a user deﬁned model case. Limitations and performances are discussed in relation to
+Keywords:
+                                                      the Newton method.
+Control system equations
+Fixed-point iterations                                                                                                    © 2014 Elsevier B.V. All rights reserved.
+Coates graph
+Feedback interconnection
+EMTP
+Nonlinear equations
+
+
+
+
+1. Introduction                                                                      compromising the physical behavior of the model. Speciﬁc tools are
+                                                                                     dedicated to achieve such elimination [3]. However, some cases
+   AN iterative Newton method for the solution of control sys-                       require algebraic constraints that cannot be easily eliminated. A
+tem equations in electromagnetic transient (EMT) type simulation                     possible solution consists in re-organizing blocks to eliminate alge-
+methods has been proposed in [1]. Although it represents a robust                    braic loops while still maintaining functionality, but as pointed out
+and systematic approach, there are some feedback based control                       in [3], this may become prohibitively difﬁcult.
+systems that can be also solved using the much simpler and some-                         Loop-breaking is valid for some classes of control system equa-
+times more efﬁcient ﬁxed-point (FP) method. The efﬁciency level of                   tions, but it was proven that it may fail for others, for instance, when
+the FP method can be very high since it only sequentially evaluates                  nonlinear (NL) blocks appear in the feedback path [1]. A highly accu-
+the control blocks and does not require time-consuming lineariza-                    rate algorithm should handle algebraic loops by solving a set of
+tion procedures and matrix formulations required in the Newton                       NL control equations simultaneously while maintaining computa-
+method. The difﬁculty is in the determination of whether or not                      tional performance, but this is not usually the case and iterative
+the FP method can converge for a given case, before it is actually                   solutions may require longer computing times.
+undertaken.                                                                              It is proposed in this paper to analyze control system equations
+   Moreover, in some classes of control system equations, the                        to formally display the contractive properties of loop paths. The
+model loops may lead to algebraic constraints. In such cases,                        success of the FP method relies on contraction properties of the
+the basic sequential evaluation of blocks is not applicable. Dif-                    iterated function [4–7]. It is proposed, in this paper, to study the
+ferent approaches can be undertaken to reformulate models in                         iterated functions by analyzing the Jacobian matrix in association
+order to apply a sequential solution. The approach proposed in [2]                   with the isolated variables representing the feedback loop path.
+consists of breaking algebraic loops. This approach is acceptable                    Graph theory techniques are used for that purpose. The consider-
+when the loop is artiﬁcial, i.e. when it can be eliminated without                   ation of such properties may widen the usage of FP methods. When
+                                                                                     the convergence criterion is established, solution accuracy is not
+                                                                                     sacriﬁced over reduction in computing time. Additional iterations
+  ∗ Corresponding author at: École Polytechnique de Montréal, C.P. 6079 succ.        permit achieving convergence for a predeﬁned tolerance.
+Centre-ville, Montréal, Québec, Canada H3C 3A7. Tel.: +1 450 652 8313.                   This paper contributes to the establishment of a formal analysis
+     E-mail addresses: chuma-francis.mugombozi@polymtl.ca,                           method of control system equations which permits safe usage of
+mugombozi.chuma-francis@ireq.ca (C.F. Mugombozi), jeanm@polymtl.ca
+                                                                                     the FP method.
+(J. Mahseredjian), saad.omar@ireq.ca (O. Saad).
+
+http://dx.doi.org/10.1016/j.epsr.2014.03.035
+0378-7796/© 2014 Elsevier B.V. All rights reserved.
+
+
+
+
+    Please cite this article in press as: C.F. Mugombozi, et al., On ﬁxed-point iterations for the solution of control equations in power systems
+    transients, Electr. Power Syst. Res. (2014), http://dx.doi.org/10.1016/j.epsr.2014.03.035
+G Model
+EPSR-3994; No. of Pages 6                      ARTICLE IN PRESS
+2                                          C.F. Mugombozi et al. / Electric Power Systems Research xxx (2014) xxx–xxx
+
+
+   The analysis proposed in this paper is illustrated for the sim-                           f1
+ulation of practical control systems in the study of power system
+transients. The test cases are for wind power generation and user
+                                                                                                  f3                 f4                     f5         f8             f9
+                                                                                             +_
+deﬁned model equations for an electrical machine.                                  Input u                          PROD                              ++             ++
+                                                                                                                                     f 6 300     f7
+                                                                                                                                                              f10            f2
+
+
+
+
+                                                                                                                                                                       c
+2. Theoretical background                                                                                     f11                     600                             377
+                                                                                                              SIN
+
+   The literature on theoretical and fundamental aspects related to
+the FP method is abundant [4]. We will thus restrict our review to                                                         f12                         500
+                                                                                                                                                                    f16
+                                                                                                                           COS                                      PROD
+the solution of the systems of equations of the form:                                                                              PROD
+                                                                                                                                       f13 f14          f15
+e = ␸(e)                                                                 (1)
+                                                                                                       Fig. 1. Phase-locked Loop (PLL) control system from [1].
+where ␸ is a vector function and e is the vector of unknowns. A
+solution ê of (1) is said to be a FP of ␸, since ␸ leaves ê invari-
+                                                                                   where u holds the vector of independent inputs, y is found using
+ant. The classical approach starts by setting an initial vector e0 and
+                                                                                   the application sequence G of the control diagram paths on e and
+computing e1 = ␸(e0 ) to continue iteratively (iteration counter is
+                                                                                   the Newton solution is based on:
+k) with successive evaluations ek+1 = ␸(ek ) until convergence. The
+contraction mapping theorem gives a sufﬁcient condition under                       = e − ␸(u, y) = 0                                                                       (6)
+which there is a ﬁxed point ê of (1). For more details, see, among
+                                                                                   where e holds for feedback variables associated with the cutset ␤.ˆ
+others [4–6]. Formally a vector-valued function ␸ is a contraction
+at a point ê if a constant  exists, with 0 ≤  < 1, in such a way that               For illustration purposes, let us consider a Phase-Locked Loop
+                                                                                   (PLL) control studied in [1] and presented in Fig. 1. There is a set
+␸(e) − ␸(ê) < e − ê,                                              (2)                                               ˆ The equivalent system of
+                                                                                   of two feedback functions {f3 , f4 } in ␤.
+                                                                                   equation is consequently given by:
+for all e sufﬁciently close to ê and where ||.|| is a speciﬁc norm
+to be deﬁned. The Euclidean norm can be used for control system                    e1 = u − G1 (e1 , e2 )
+                                                                                                                                                                             (7)
+simulations in power systems. Also, some assumptions are made                      e2 = 0 + G2 (e1 , e2 )
+including at least, that all elements of ␸ are piecewise-continuous
+and, also, that the derivatives of the control block functions are well            where the application sequences (sequential evaluations) are
+deﬁned and are not inﬁnite. Similar assumptions are made for the                   deﬁned by:
+Newton-like methods [6,8].
+                                                                                   G1 (e) = f16,15,14,13,12,10,9,8,7,6,5 (e)
+   The following condition of contraction [7] is used in this paper:                                                                                                         (8)
+                                                                                   G2 (e) = f11,10,9,8,7,6,5 (e)
+     
+␸ (ê)spectral < 1                                                     (3)
+                                                                                   and e = [e1 , e2 ] is the vector of new variables. The FP iterations are
+where  .  spectral is the spectral (induced) norm and ␸ is the Jaco-            now deﬁned as:
+bian matrix of ␸. The induced spectral norm of a matrix A is the
+                                                                                   ek+1 = ␸(G(ek ))                                                                          (9)
+square root of the largest eigenvalue of the matrix resulting from
+AT A.                                                                                  Successive FP iterations on (9) will converge for some classes of
+    The vector-valued ␸ is a mapping of vector-valued, possibly                    control systems complying with the contraction mapping theorem
+nonlinear functions, deﬁned through algebraic equations repre-                     recalled in section II. The convergence criterion adopted from [13]
+senting a discrete dynamical system. EMT-type simulations are                      is given by:
+based on the discretization of control system blocks (using the                     k              
+                                                                                      − k+1  
+trapezoidal rule, for example) and at a given time-step, all terms                                  ≤ ˚tol                                                                (10)
+including history, inputs and outputs of models can be expressed                           k
+                                                                                          
+                                                                                                    
+as (1).
+                                                                                   where tol is a relative tolerance on the objective function and ||.||
+                                                                                   is the Euclidian norm. The objective function (6) is rewritten as:
+3. Fixed-point iterations: formulation and applications                                k+1
+                                                                                            = ek+1 − ␸(G(ek ))                                                             (11)
+3.1. Functions in feedback paths
+                                                                                   3.2. Application cases
+   Simultaneous systems of equations can be represented as feed-
+back equations. Basically, a proper cutset is introduced on the graph                 The following simulations have been performed using the
+of control equations in such a way that all cycles are eliminated.                 EMTP-RV [14] engine with the added functionalities described in
+The set of variables pertaining to that cutset represent the feed-                 this paper.
+back variables ␤:ˆ the cycles which were removed by cutting the
+feedback variables represented by the feedback paths on the graph                  3.2.1. Phase-Locked Loop
+of the control system. The all-zero eigenvalues condition for the                      The method proposed in the previous section is applied to the
+adjacency matrix of the graph can be applied for testing the elim-                 PLL presented in Fig. 1. The contraction condition is respected for
+ination of all cycles [9,10]. This approach provides vector-valued                 a sufﬁciently small time-step (t = 1 ␮s) and the found solution
+functions G and ␸ for formulating the objective function  in the                  is identical to the one from the Newton method using the same
+application of the Newton method. For a generic case:                              t. For this particular test with a sine input having a jump in
+                                                                                   amplitude value at 125 ms, when the time-step increases, the FP
+e = ␸(u, y)                                                              (4)       method performs poorly especially near the jump. In fact, numer-
+                                                                                   ical derivatives of nonlinear functions of blocks (PROD, sine and
+y = G(e)                                                                 (5)       cosine) and the discretization by the trapezoidal rule (applied to
+
+
+    Please cite this article in press as: C.F. Mugombozi, et al., On ﬁxed-point iterations for the solution of control equations in power systems
+    transients, Electr. Power Syst. Res. (2014), http://dx.doi.org/10.1016/j.epsr.2014.03.035
+G Model
+EPSR-3994; No. of Pages 6                                      ARTICLE IN PRESS
+                                                        C.F. Mugombozi et al. / Electric Power Systems Research xxx (2014) xxx–xxx                                                                                               3
+
+Table 1                                                                                                                                                                         hi_limit
+Comparison of Newton and FP methods, PLL case.                                                                                                               hi_limit
+                                                                                                                                       Constants                                low_limit
+ Tolerance relative/absolute                  Gain in simulation time FP over Newton                          Input 1                                      low_limit
+
+ 1e−3/1e−8                                    0.96                                                                                                                              f(t)=hi_limit
+                                                                                                Ki
+ 1e−4/1e−9                                    1.00                                                                                                     1                rc rv
+                                                                                                                                                                                                FB
+                                                                                                                         PROD               0              select
+ 1e−5/1e−10                                   1.02                                                                                     c C6
+
+
+
+
+                                                                                                                                                                                                        f(t)
+                                                                                                u      Sig_u
+                                                                                                                                                       2                                   SUM                     lim1
+                                                                                                                                                           Sel1 f(t)=low_limit
+                                                                                                                         PROD                                                           f

@@ -1,0 +1,29 @@
+# Evaluation of time-domain and phasor-domain methods for power system transients
+
+**Reza Hassani** $^{a,*}$, **Jean Mahseredjian** $^{a}$, **Tshibain Tshibungu** $^{b}$, **Ulas Karaagac** $^{c}$
+
+$^{a}$ Department of Electrical Engineering, Polytechnique de Montréal, Montreal, Canada  
+$^{b}$ IREQ (Hydro-Quebec), Montreal, Canada  
+$^{c}$ Hong Kong Polytechnique, Honk Kong, China  
+
+**Keywords:** Dynamic phasors, Electromagnetic transients, Time-domain, Transient stability
+
+**Abstract:** The computational process of both time-domain and phasor-domain algorithms is evaluated in this work. The following methods are used: circuit-based time-domain (TD), dynamic phasors (DP), three-phase phasor-domain (3pPD), and classic positive sequence phasor-domain (PD). The IEEE-118 benchmark is used to test all solution approaches implemented on the same computational platform. Furthermore, the advantages and differences in modeling methodologies are examined for the IEEE-118 benchmark. The experiments demonstrate important new facts on phasor-domain methods and, more specifically, on dynamic-phasors compared to TD algorithms.
+
+## 1. Introduction
+
+The power system is experiencing radical transitions with significant integration of renewable energy sources. These changes require the development of powerful simulation methods. Different types of simulation methods exist and fulfill various application objectives. Transient simulation methods are divided into two major types: electromagnetic transient (EMT) and transient stability (TS). Circuit-based EMT models can account for both low and extremely high-frequency transients. The TS-type methods are designed for capturing the slower electromechanical transients.
+
+In TS-type algorithms, a critical approximation is to treat the network equations in quasi-steady-state (QSS), ignoring electromagnetic transients and harmonics. The classic PD techniques assume that the three phases are balanced and rely only on the positive sequence model of the network. The classic PD approach used in this paper is named phasor-domain (PD). It is, however, possible to account for unbalanced networks in full three-phase representation. The latter is named 3pPD in this paper.
+
+The dynamic phasors (DP) [1,2] technique is based on a mix of time-domain and phasor-domain modeling. Unlike the PD approach, the DP methodology can simulate electromagnetic transients. In fact, in theory, it contains numerical ability to navigate between EMT-type and TS-type methods by reducing or increasing numerical integration time-steps. Although, in theory, it may be expanded to include nonlinear components, it is typically used for linear circuits. Several publications are based on DP [2–9]. In [2], DP is used to model unbalanced distribution systems. References [3–5] introduce DP models of modular multilevel converter (MMC). A DP-based model is developed for line-commutated-converters in [6]. In [7], a multiscale induction machine model using the DP method is developed. Also, reference [8] presents an iterative solution for differential equations of DP method to simulate unbalanced distribution networks with nonlinear elements.
+
+Some studies compared the accuracy and computational performance for time-domain (TD) and DP methods[5–8,10–12]. For example, reference [10] compares EMT-type and DP methods and reports that the DP method is ten times faster. Reference [8] uses a test feeder to demonstrate that the DP method with a time-step of 500µs is 17 times faster than an EMT-type solution with 50µs. Reference [5] illustrates that for 400 identical submodules per arm in MMC, the DP model is approximately eight times faster than the detailed equivalent model (EMT-type) with the same simulation time-step.
+
+However, the reported efficiency comparisons are circumstantial and do not account for EMT-type solution method improvements in performance and stability for larger time-steps. The comparisons do not use the same numerical integration time-steps [5]. Also, [5] uses a simplified model of the detailed MMC which decreases accuracy for faster transients. The test cases are not simulated using the same platform for all assessed methods [8,12]. Therefore, accuracy is not analyzed thoroughly[10,11].
+
+An important aspect of the DP method is the computational performance. It is supposed to be faster than the EMT approach when larger numerical integration time-steps are used. It is also set to deliver better accuracy for electromechanical transients than the PD approaches. These two paradigms are verified and challenged in this paper for the IEEE-118 test system [13,14]. The emphasis is on synchronous machine (SM) modeling with its control systems in a linear network. This paper contributes new results on DP performance analysis using a practical/realistic benchmark named the IEEE-118 network [13,14].
+
+## 2. Simulation methods
+
+An overview of modules involved in the simulation process with emphasis on the synchronous generator model is shown in Fig. 1A similar diagram can be used for the presented TD, DP, 3pPD and PD methods. To establish comparisons on the same basis, the same numerical integration methods are used. The Trapezoidal and Backward Euler numerical integration methods are employed to discretize derivative equations. The Trapezoidal integration method is used as the main numerical solver, and two halved time-steps of Backward Euler integration are used to eliminate numerical oscillations following a discontinuity [18]. All methods are coded in MATLAB to establish the same computational environment for compar

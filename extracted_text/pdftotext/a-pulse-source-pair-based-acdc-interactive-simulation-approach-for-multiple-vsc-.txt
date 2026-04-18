@@ -1,0 +1,136 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2984275, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                            1
+
+
+
+                        A Pulse-Source-Pair-Based AC/DC Interactive
+                        Simulation Approach for Multiple-VSC Grids
+
+                                             Siqi Yu, Shuqing Zhang, Yingduo Han, Yingdong Wei and Sheng Zou
+
+             Abstract—With the increasing penetration of renewable                                             widely employed to study those problems.
+          energies in modern power grids, large amounts of voltage source                                         It is a fundamental difficulty for EMT programs (EMTP) to
+          converters (VSCs) have been installed, resulting in many new                                         deal with large numbers of switching devices. In mainstream
+          transient issues. Electromagnetic transient (EMT) simulation
+                                                                                                               EMTPs, switching devices such as IGBTs and diodes are seen
+          plays an essential role in investigating and solving the issues.
+          However, simulation efficiency plunges when object grids contain                                     as ideal switches and modeled by binary resistors [9-10], the
+          multiple VSCs, because each switching event incurs modification                                      values of which changes along with the switching state.
+          or re-decomposition of the network matrix in traditional EMT                                         Therefore, it is necessary to modify the network matrix or even
+          programs, which is very time-consuming. Thus, this paper                                             reform it. When the network contains a large number of
+          proposes a VSC model represented by pulse voltage-current                                            frequently acting switching devices, a surge of computation
+          source pairs. Accordingly, a unidirectional loosely-coupled solving                                  time may happen in certain timesteps.
+          algorithm is designed. Synthetically, the authors propose a novel
+          EMT simulation approach adaptive to systems with multiple VSCs.                                         This problem becomes critical for grids containing multiple
+          The proposed approach keeps the computational network                                                tightly-coupled VSCs. A typical three-phase two-level VSC can
+          invariable while sufficiently considers detailed switching events,                                   be reduced to a six-switch circuit if the microsecond-level
+          thereby significantly improving the simulation efficiency of the                                     internal transients are ignored. Such n VSCs bring a circuit
+          EMTP program without precision loss.                                                                 comprised of 6  n switch branches. The time-consuming
+             Index Terms—pulse pair sources, loosely-coupled solving,
+                                                                                                               matrix reconstruction and LU decomposition for circuit
+          multiple VSCs, EMT simulation, switching events
+                                                                                                               equations can cause severe overtime in certain single timestep.
+                                            I. INTRODUCTION                                                    This is extremely damaging to the efficiency of real-time
+                                                                                                               simulation, which is essential to hardware-in-the-loop (HIL)
+          I  N modern power systems, medium and low voltage
+             transmission/ distribution grids spring up with high
+                                                                                                               tests.
+                                                                                                                  There are three major solutions to this problem.
+          penetration of renewable energies. Applications of VSCs are
+          rapidly growing and largely determining the characteristics of                                          1) Use designed circuits to represent a switching device
+          partial or local power systems [1]. They act as main interfaces                                         Research [11-12] proposed an Associated Discrete Circuit
+          of renewable energy sources [2-3], and they are crucial to power                                     method to make the computational resistances of the switch
+          quality improvement [4], flexible AC/DC transmission &                                               device in ON/OFF states keep identical. The change of
+          distribution [5-6] and reactive power compensation. Besides,                                         switching state is expressed by current injection to avoid
+          more applications are reported in microgrids [26-27], DC                                             modification of the network matrix. However, the method
+          distribution systems [28], railway electrification systems [29],                                     requires a tiny simulation step (less than several microseconds)
+          etc. In all, VSC will inevitably become one of the essential                                         and has strict restrictions on parameter design. Besides, it incurs
+          equipment in future power grids.                                                                     extra intrinsic high-frequency oscillations and artificial power
+             In the Hawaiian power grid in the United States [8], most of                                      loss.
+          the 71.6% distributed energy sources are connected to the grid                                          2) Build average models (AVMs) of VSCs
+          through VSCs. National Renewable Energy Laboratory (NREL)                                               Traditional AVMs are built by averaging the VSC state
+          used the PSS/E software to simulate the electromechanical                                            equation in one switching cycle [13-15] so that the switching
+          transients of the system, focusing on solving system-level                                           actions can be ignored. However, this model only describes the
+          frequency control problem. However, electromechanical                                                average external characteristics of VSCs, ignoring all switching
+          transient simulation is insufficient in scenarios such as                                            frequency (SF)-dependent components in voltages and currents.
+          subsynchronous oscillation, fault ride-through and protection                                        Thus, AVMs have certain deficiencies in both simulation
+          design, harmonic analysis, dynamic coordination among                                                accuracy and adaptability to various scenarios [16-17].
+          multiple VSCs and potential new kinds of stability problems.                                            Improvements of AVMs have been made. In [18], with a SF-
+          Electromagnetic transient (EMT) simulation is proposed and                                           dependent correction term, the accuracy of steady-state
+
+             This paragraph of the first footnote will contain the date on which you                              S. Yu, S. Zhang, Y. Han and Y. Wei are with the Department of Electrical
+          submitted your paper for review. It will also contain support information,                           Engineering, Tsinghua University, Beijing 100084, China (e-mail: ysq15
+          including sponsor and financial support acknowledgment. For example, “This                           @mails.tsinghua.edu.cn). S. Zou is with State Grid Jiangsu Electric Power Co.,
+          work was supported in part by the U.S. Department of Commerce under Grant                            Ltd. Economic Research Institute, Nanjing 210008, China
+          BS123456.”
+
+
+
+  0885-8977 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                Authorized licensed use limited to: Auckland University of Technology. Downloaded on June 06,2020 at 13:17:54 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2020.2984275, IEEE
+                                                                                                  Transactions on Power Delivery
+          > REPLACE THIS LINE WITH YOUR PAPER IDENTIFICATION NUMBER (DOUBLE-CLICK HERE TO EDIT) <                                                                                                                                                                      2
+
+          simulation is improved. In [16], a first-order SF-based Fourier                                        For better illustration, the switching part of a VSC is shown
+          series is introduced to enable AVMs to consider switching                                            in Fig.2 (a). By ignoring the switching loss, we get
+          ripples. The above two models are only for DC-DC converters                                                     v j (t ) = S j (t )uC1 (t ) − S j (t )uC 2 (t ) , j = a, b, c (2)
+          and difficult to be generalized. In addition, the former does not
+                                                                                                                 By applying superposition theorem, the DC current can be
+          simulate switching ripples, and the latter has can only roughly
+                                                                                                               represented as
+          simulate ripples with a sinusoidal wave. In [19], a piecewise
+          linearized average model for the two-level VSC is proposed to                                                                                       I dc1 (t ) =  S j (t )i j (t )
+                                                                                                                                                                           j = a ,b , c
+                                                                                                                                                                                                                                                                      (3)
+          simulate ripples. However, the model is too complicated, and                                                                                       
+          the errors are still obvious.                                                                                                                       I dc 2 (t ) =  S j (t )i j (t )
+                                                                                                                                                                           j = a ,b , c
+             AVMs are simple and take low computational costs, but are
+          intrinsically inaccurate. Therefore, they are generally used for                                        Eq. (2) and (3) define the instantaneous constraint of voltage
+          system-level issues and are insufficient in fault analysis, HIL                                      and current across the arm switches of a VSC. An equivalent
+          testing, and other simulation scenarios requiring high precision.                                    circuit can be thus derived by representing (2) with controlled
+                                                                                                               voltage sources on the AC side and controlled current sources
+             3) Network partitioning and multi-rate simulation                                                 on the DC side, which is presented in Fig. 2(b). Similarly, the
+             The power grid can be decoupled into sub-grids by long                                            model of a VSC without DC neutral points and that of a single-
+          transmission lines if a condition is satisfied that the traveling                                    phase VSC can be derived, which are shown in Appendix A.
+          time of the electromagnetic wave across all the transmission                                            Note that the phase j AC voltage vj (t) is dependent on the DC
+          lines among sub-grids is larger than the solving step. The                                           voltages uC1 (t), uC2 (t) and the gate signal Sj (t) given by the VSC
+          separated subsystems can be calculated in parallel [20-21],                                          controller. If a model is capable of accurately calculating uC1 (t),
+          which enables pre-allocating network matrices under the                                              uC2 (t) and Sj (t) in every simulation timestep, it can give the
+          condition that no more than 6~12 switches are included in each                                       exact vj (t). The voltage source vj (t) fully represents the AC side
+          subsystem [24]. Besides, partitioning makes multi-rate                                               characteristics of the VSC. Correspondingly, if Ij (t) and Sj (t)
+          electromagnetic transient simulations possible [25].                                                 are accurate, exact IDC1 (t) and IDC2 (t) will be given, resulting a
+             However, the lines in medium/low voltage distribution                                             fully represent the DC side characteristics of VSC. By using the
+          networks or microgrids are so short that a minuscule timestep                                        voltage-current source pairs to represent VSCs, the coefficient
+          (e.g., less than 1us) is needed, which may lead to a plunge of                                       matrix of the grid containing VSCs can keep invariable, so that
+          simulation speed. Otherwise, if the condition is not satisfied,                                      the simulation efficiency can be significantly improved.
+          manual partitioning [22-23] can be applied, requiring additional                                        Therefore, an accurate calculation of uC1 (t), uC2 (t), Ij (t) and
+          interfaces between subsystems. If the network is improperly                                          Sj (t) is of much importance, which will be discussed and
+          partitioned or the solving method is not properly designed,                                          realized as follows.
+          numerical instability problems may occur [10].
+             This paper first proposes a VSC model represented by pulse                                        B. Computational interface between VSCs and controllers
+          voltage-current source pairs and accordingly designs a                                                 To make sure Sj (t) is accurate for the model, the requirements
+          unidirectional loose-coupled solving method. Analytical error                                        of the VSC control in simulations are discussed. In mainstream
+          estimation is then carried out, in comparison to the widely                                          EMTP software, the control system is modeled by Transient
+          adopted EMT method. Further, a solving algorithm for                                                 Analysis of Control Systems (TACS) programs [9][30] and are
+          multiple-VSC grids is given to link all VSCs as an entire gird                                       solved separately from the network functions in one timestep
+          and to solve them simultaneously. Finally, the model and                                                       r
+
+          methods are synthetically tested by various cases.                                                    udc                   +
+                                                                                                                                                 Sa     Sb    Sc
+                                                                                                                                                                        va          L1                                           ua       ia
+                                                                                                                                                                                                                                                               Bulk Grid
+                                                                                                                                                                                                                                                                uga
+                                                                                                                              C           uC1
+             By the proposed model, solving method and simulation                                                                     -
+                                                                                                                                                                        vb           L1        C1                                ub       ib                    ugb
+
+          approach, a grid containing multiple VSCs can stay as a whole                                                               +
+                                                                                                                                                                        vc           L1        C1       C1                       uc       ic                    ugc
+                                                                                                                udc           C           uC 2
+          and its topology can remain invariable while considering                                                                    -          Sa     Sb    Sc                                                 D/Yg                          External
+                                                                                                                                                                                                                                                System
+                                                                                                                         r                                                                LC Filter           Transformer
+          sufficiently accurate VSC switching events. Thereby, we can   

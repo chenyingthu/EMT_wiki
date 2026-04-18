@@ -1,0 +1,141 @@
+                                                                                                                                            Control and Simulation of a Grid-Forming Inverter
+                                                                                                                                             for Hybrid PV-Battery Plants in Power System
+                                                                                                                                                               Black Start
+                                                                                                                                                 Quan Nguyen, Mallikarjuna R. Vallem, Bharat Vyakaranam, Ahmad Tbaileh, Xinda Ke, Nader Samaan
+                                                                                                                                                                                             Pacific Northwest National Laboratory, WA
+
+
+                                                                                                                                              Abstract—Power system restoration is an important part of                    how different power control modes can help an inverter-based
+                                                                                                                                           system planning. Power utilities are required to maintain black                 PV power plant to provides a wide range of ancillary services.
+                                                                                                                                           start capable generators that can energize the transmission                     A summary of operational benefits and issues for a large-
+                                                                                                                                           system and provide cranking power to non-blackstart capable
+                                                                                                                                           generators. Traditionally, hydro and diesel units are used as                   scale PV power plant including power quality, power control,
+2021 IEEE Power & Energy Society General Meeting (PESGM) | 978-1-6654-0507-2/21/$31.00 ©2021 IEEE | DOI: 10.1109/PESGM46819.2021.9637882
+
+
+
+
+                                                                                                                                           black start capable generators. With the increased penetration                  protection, balancing and reliability under different loading
+                                                                                                                                           of bulk size solar farms, inverter based generation can play                    conditions are presented in [5].
+                                                                                                                                           an important role in faster and parallel black start thus en-                       Considering the advantageous properties such as fast ramp-
+                                                                                                                                           suring system can be brought back into service without the                      ing rates, power ratings of several hundreds MW, and ability
+                                                                                                                                           conventional delays that can be expected with limited black
+                                                                                                                                           start generators. Inverter-based photovoltaic (PV) power plants                 to coordinate with energy storages (ES), recent large-scale
+                                                                                                                                           have advantages that are suitable for black start. This paper                   inverter-based PV power plants can be considered as promising
+                                                                                                                                           proposes the modeling, control, and simulation of a grid-forming                BS resources. However, to the best knowledge of the authors,
+                                                                                                                                           inverter-based PV-battery power plant that can be used as a                     little focus has been given to explore such potential capability
+                                                                                                                                           black start unit. The inverter control includes both primary and                of a PV-ES power plant.
+                                                                                                                                           secondary control loops to imitate the control of a conventional
+                                                                                                                                           synchronous machine. The proposed approach is verified using                        A generation system needs several characteristics to be
+                                                                                                                                           a test system modified from the IEEE 9-bus system in the time-                  considered as a BS unit and several studies need to be
+                                                                                                                                           domain electromagnetic transient simulation tool PSCAD. The                     performed to assess them. These studies include power plant
+                                                                                                                                           simulation results shows voltage and frequency stability during                 modeling, grid-forming inverter control, effective coordination
+                                                                                                                                           a multi-step black-start and network energization process.                      between PV and ES during a black start process, voltage
+                                                                                                                                              Index Terms—Black start, PV power plant, Grid-forming
+                                                                                                                                           inverter, Photovoltaic integration, Energy storage.                             and frequency stability, and sizing of the PV and ES. Note
+                                                                                                                                                                                                                           that similar works might exist at distribution voltage level;
+                                                                                                                                                                                                                           however, the focus of this paper is on the transmission voltage
+                                                                                                                                                                     I. I NTRODUCTION
+                                                                                                                                                                                                                           level. In addition, case studies using multiple test systems with
+                                                                                                                                              Black start (BS) is a process of restoring a power system                    different topologies and parameters are required to thoroughly
+                                                                                                                                           following a major collapse or a system-wide blackout. This                      verify the modeling and control design of the grid-forming
+                                                                                                                                           process relies on one or multiple generation units that are able                inverters. Average (positive sequence) models for inverters do
+                                                                                                                                           to start without the support from the main power system. Such                   not capture all the characteristics and limitations of inverters.
+                                                                                                                                           units are also called BS units.                                                 A validation should be carried out using an electromagnetic
+                                                                                                                                              The characteristics of an ideal BS unit include small start-                 transient (EMTP) simulation tool and a high-fidelity inverter
+                                                                                                                                           up power requirement, fast ramping rate to quickly reach                        model to capture detailed dynamic responses.
+                                                                                                                                           the rated power, large real and reactive power capacity to                          In this paper, modeling, grid-forming control, conceptual
+                                                                                                                                           meet any needs during the black start process, and ability to                   design, and detailed simulation of an inverter-based PV-ES
+                                                                                                                                           stabilize system voltage and frequency due to the subsequent                    power plant that can be used as a reliable BS resource
+                                                                                                                                           energizations of the remaining non-black-start (NBS) units and                  during a black start are demonstrated. The paper is organized
+                                                                                                                                           transmission lines as well as load pickup [1]. In practice, a BS                as follows. Section II briefly describes current black-start
+                                                                                                                                           unit can be a hydro, natural gas or diesel units [2].                           practice using a conventional synchronous generator. Section
+                                                                                                                                              Regarding renewable energy sources (RES), solar energy                       III presents the proposed modeling, control, and operation of a
+                                                                                                                                           becomes more and more common as the photovoltaic (PV)                           PV-ES plant during a black start. In Section IV, the simulation
+                                                                                                                                           penetration in distribution feeders has been increasing rapidly                 results of a black-start process in a test system in the time-
+                                                                                                                                           in recent years. On the other hand, there are few current                       domain EMTP simulation tool PSCAD are discussed. Final
+                                                                                                                                           and planned large-scale PV power plants that are integrated                     conclusions and remarks are given in Section V.
+                                                                                                                                           directly to the transmission network. In [3], general procedures
+                                                                                                                                           for interconnection of large-scale PV plants and technical                          II. B LACK -S TART P ROCESS AND S TATE OF T HE A RT
+                                                                                                                                           requirements for plant performance are discussed. In [4], the                      Current practice of a black start process includes several
+                                                                                                                                           authors develop a demonstration concept and test plan to show                   steps [1], [6]. First, one or multiple black-start (BS) units such
+
+
+
+
+                                                                                                                                            978-1-6654-0507-2/21/$31.00          ©2021
+                                                                                                                                                   Authorized licensed use limited         IEEEUniversity. Downloaded on April 09,2026 at 13:39:16 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                                                   to: Tsinghua
+                Bus 2
+
+                 5                      4          Bus 4
+
+                                      BRK_24
+
+
+
+
+                                                       T5_4
+  NBS unit
+
+
+
+
+                                                   BRK_54
+                                        6                     3
+                     Main load
+                                               Bus 5                        2
+                                                              T3_5
+
+                 Hydro power plant model                               BRK_35
+                                                                                                                                           Pick up load at
+                                                                                         Bus 3                                                  Bus 5
+                                                                                                              1    2       3       4   5                       6
+
+
+
+                                                                                                 Fig. 2. Voltage profiles at Buses 1, 2, and 5 during the black-start process.
+
+
+
+                                                                                BRK_13
+                                                                                          1
+
+                                                                                         Bus 1
+
+
+                                                                                                               Pick up NBS unit                Pick up load
+                                                                  BS unit                                          at Bus 2                      at Bus 5
+
+Fig. 1. A test system for black-start demonstration using a conventional hydro
+generator as a BS unit.
+
+
+
+as hydro power plants start their own power without support
+from the grid. Next, main transmission lines and transformers
+are energized to form the backbone of the system. A small
+potion of load might be picked up during this process to                                                       1       2       3   4   5                        6
+assure voltage stability or handle transformer inrush current.
+Finally, non-black-start (NBS) units and the remaining loads
+are gradually picked up by energizing the rest of transmission                                   Fig. 3. Real power generation from BS unit at Bus 1 and NBS unit at Bus
+                                                                                                 2.
+lines while maintaining the voltage and frequency of the
+system.
+   Fig. 1 shows an example of the black-start process using                                      in parallel. The AC side consists of switching components
+a 5-bus system. The BS hydro power plant at Bus 1 and                                            that form an H-bridge, a low-pass LC filter, and a step-up
+circuit breakers to pick up a NBS unit at Bus 2 and the                                          transformer.
+main load at Bus 5. The simulation is conducted in the time-
+domain electromagnetic transient tool PSCAD [7]. The circles                                     A. Grid-Forming Inverter Control
+with numbers show the sequential order of the energizing and
+picking up transformers, transmission lines, generators, and                                        As shown in Fig. 4, the control of a grid-forming inverter-
+load.                                                                                            based PV-ES power plant includes both primary and secondary
+   Figs 2 and 3 show the resulting voltage at Buses 1, 2, and                                    control loops, which imitates the control of conventional
+5 as well as the power generation of the BS and NBS units at                                     synchronous machines. This control strategy is adapted from
+Buses 1 and 2, respectively, during the black-start process. As                                  the inverter control for microgrids at distribution level [8].
+expected, these simulation results show stable responses after                                      The primary control loop modifies the voltage magnitude
+each switching event of circuit breakers.                                                        and frequency at the point of common coupling (PCC) based
+                                                                                                 on a pre-defined droop curve and the measured real and
+    III. M ODELING , C ONTROL , AND O PERATION OF A                                              reactive power Pac and Qac injected to the grid. The resulting
+   G RID -F ORMING I NVERTER -BASED PV-ES PLANT FOR                                              voltage magnitude and frequency, both are deviated from the
+                       B LACK S TART                                    

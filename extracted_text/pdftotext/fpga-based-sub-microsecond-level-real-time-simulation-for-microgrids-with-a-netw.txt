@@ -1,0 +1,219 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 35, NO. 2, APRIL 2020                                                                                           987
+
+
+
+
+      FPGA-Based Sub-Microsecond-Level Real-Time
+           Simulation for Microgrids With a
+            Network-Decoupled Algorithm
+                      Jin Xu, Keyou Wang , Member, IEEE, Pan Wu, and Guojie Li, Senior Member, IEEE
+
+
+   Abstract—The real-time simulation based on the field pro-                           of the interpolation technique for power electronic switches in
+grammable gate array (FPGA) is receiving more and more at-                             real-time simulation [5]. However, the interpolation algorithm
+tention. However, up to now, the simulation scale for the power                        in the real-time simulation still has some problems to be solved,
+electronic system is not so satisfactory due to the real-time require-
+ment and the FPGA resource limitation. This paper proposes a                           such as multiple switching problem. Therefore, most of the
+sub-microsecond level real-time simulation method for microgrids.                      existing real-time simulators have to adopt small time-steps to
+The power converters are modeled with fixed-admittance models                          reflect the switching moments accurately [6]. For a switching
+and simulated with a compact electromagnetic transients program                        frequency of 20 kHz, a time-step smaller than 500 ns is usually
+(EMTP) algorithm. In the meanwhile, the distribution lines/cables
+                                                                                       required [7]. Achieving real-time simulations with such small
+are modeled with π-circuit models and simulated with a distributed
+circuit solution method, called the latency insertion method (LIM).                    time-steps requires not only the great computing power of hard-
+As a result, the distribution generation (DG) systems are decoupled                    ware platforms but also the high efficiency of simulation models
+with each other and can be simulated in parallel. The case study                       and simulation algorithms.
+shows that the proposed simulation method consumes much fewer                             Commercial real-time simulators, such as RTDS and RT-
+FPGA resources compared with the traditional one. Besides, the
+                                                                                       LAB, can reach a small time-step of 0.5 μs-2 μs by virtue
+time step can be much smaller and doesn’t need to increase with the
+simulation scale. With these advantages, the real-time simulation                      of their powerful FPGA modules. In recent years, more and
+of a microgrid consisting of three three-phase converters, three                       more researchers are trying to implement the simulation on the
+boost circuits and 21 three-phase lines can be achieved on the Xilinx                  FPGA, due to its high degree of parallelism and low latency
+Kintex-7 410T FPGA with a minmum time-step of 380 ns.                                  of communication. Reference [8], [9] develop the FPGA-based
+   Index Terms—Field programmable gate array (FPGA), latency                           real-time simulators for traditional power systems and elec-
+insertion method (LIM), microgrid, real-time simulation.                               trical machines. Reference [7], [10], [11] develop the FPGA-
+                             I. INTRODUCTION                                           based real-time simulators for power converters. Reference [12]
+                                                                                       achieves the real-time simulation of a microgrid with four FP-
+       HE microgrid is an efficient scheme of managing renew-
+T      able energy integration in the power distribution system
+[1], [2]. The control, protection and operation strategy of micro-
+                                                                                       GAs working in parallel. Reference [13] achieves the real-time
+                                                                                       simulation of the CIGRÉ DC grid on a Mpsoc-FPGA-Based
+                                                                                       platform. In most of the aforementioned real-time simulators for
+grids are technically required to pass the hardware-in-the-loop                        power electronic systems, an efficient switch model is adopted
+(HIL) test before being applied in actual projects [3], [4]. How-                      to meet the real-time requirement. It is known as the fixed-
+ever, as the real-time simulation techniques for power electronic                      admittance model, the associated discrete circuit (ADC) model
+systems are not so matured, few HIL tests of microgrids are                            [7], [14] or the small time-step model [15]. The authors also
+performed in practice. The challenges mainly come from the                             have made an improvement of this switch model to solve the
+fast discrete characteristic of power electronic switches, which                       virtual power loss problem [11].
+causes great computing burden in the electromagnetic simu-                                Despite the powerful hardware platform and the efficient
+lation. Some work has been done to minimize the operations                             switch model mentioned above, the real-time performance and
+                                                                                       hardware resource consumption of the FPGA-based real-time
+   Manuscript received January 21, 2019; revised April 25, 2019; accepted
+July 15, 2019. Date of publication August 19, 2019; date of current version            simulator will still come to an unacceptable level quickly as
+March 24, 2020. This work was supported in part by the National Natural                the simulation scale increases. As a result, few researchers or
+Science Foundation of China under Grants 51877133, 51477098, in part by                manufacturers, have ever achieved the real-time simulation of a
+the National Key R&D Plan under Grant 2016YFB0900601, and in part by the
+State Grid Corporation of China Science and Technology Project under Grant             normal scale microgrid on the sub-microsecond-level with one
+52094017000Z. Paper no. TPWRD-00094-2019. (Corresponding author: Keyou                 FPGA device. To realize this goal, this paper proposes a sub-
+Wang.)                                                                                 microsecond-level real-time simulation method for microgrids
+   The authors are with the Department of Electrical Engineering, School
+of Electronic Information and Electrical Engineering, Shanghai Jiao                    with a network-decoupled algorithm, which has the following
+Tong University, Shanghai 200240, China (e-mail: xujin20506@sjtu.edu.cn;               advantages:
+wangkeyou@sjtu.edu.cn; w20131501@163.com; liguojie@sjtu.edu.cn).                          1) Larger simulation scales: The proposed simulation
+   Color versions of one or more of the figures in this article are available online
+at http://ieeexplore.ieee.org.                                                                method consumes much fewer FPGA resources. Thus
+   Digital Object Identifier 10.1109/TPWRD.2019.2932993                                       more complicated microgrids can be simulated.
+                           0885-8977 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                         See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:08:23 UTC from IEEE Xplore. Restrictions apply.
+988                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 35, NO. 2, APRIL 2020
+
+
+
+   2) Smaller time steps: The time step can be smaller and
+       doesn’t need to increase with the simulation scale. Thus
+       simulation results can be more accurate especially in the
+       high switching frequency situations.
+   3) Better extendibility: The DG systems are decoupled with
+       each other and simulated in parallel. New DG integrations
+       can be easily achieved in the FPGA-based platform.
+   These advantages imply that the FPGA-based real-time sim-
+ulator is no longer limited to the device-level simulation, but
+also has the potential to perform the system-level simulation
+with a sub-microsecond-level time step. This work also provides
+the possibility of real-time simulation for much larger power
+systems, which can be achieved by the multi-FPGA-based sim-
+ulation or the co-simulation of FPGA modules and commercial
+simulators.
+   This paper is organized as follows. The basic idea of the
+network-decoupled simulation is illustrated in Section II and
+further elaborated in Section III. The resource/speed perfor-
+                                                                                 Fig. 1.    The basic idea of the network-decoupled simulation for microgrids.
+mance are discussed in Section IV. The simulation accuracy
+and simulation scale are discussed in Section V. The conclusion
+is given in Section VI.
+
+      II. BASIC IDEA OF NETWORK-DECOUPLED SIMULATION
+   As we know, the calculation quantity of the nodal analysis
+method (NAM) is of quadratic proportion to the simulation
+scale [16]. As a result, the actual execution time per step and
+the FPGA resource consumption will increase quickly as the
+simulation scale increases. That severely limits the simulation                  Fig. 2.    Basic units of the LIM network (a) LIM node (b) LIM branch.
+scale of the FPGA-based simulator. Then a distributed circuit
+solution method called the latency insertion method (LIM)
+comes into our sight [17], [18]. Different from the centralized
+                                                                                    1) Each node is represented by the parallel combination of
+NAM, the calculation quantity of the LIM is of linear proportion
+                                                                                        a current source Hi , a conductance Gi and a capacitance
+to the simulation scale. However, this distributed method has
+                                                                                        Ci to the ground as shown in Fig. 2(a), which is called the
+some limitations in modeling power converters, as the converter
+                                                                                        LIM node in this paper;
+models cannot be transformed into the topologies solvable for
+                                                                                    2) Each branch is represented by the serial combination of a
+this distributed method. Switch-level modeling of converters is
+                                                                                        voltage source Eij , a resistance Rij and an inductance Lij
+not compatible with the LIM for the moment.
+                                                                                        between two nodes as shown in Fig. 2(b), which is called
+   Therefore, we come up with a hybrid solution to realize
+                                                                                        the LIM branch in this paper.
+the real-time simulation for microgrids as shown in Fig. 1.
+                                                                                    The differential equations of the LIM nodes and LIM branches
+The power converters in distributed generation (DG) systems
+                                                                                 are discretized with a semi-implicit difference scheme called the
+(including the energy storage systems) are modeled with fixed-
+                                                                                 leap-frog method [19], which is second-order accurate [20]. The
+admittance switch model and solved with the NAM, thus called
+                                                                                 nodal voltage Vi is discretized at the n − 1/2 and n + 1/2 time-
+the NAM networks. The distribution lines/cables are modeled
+                                                                                 steps as shown in (1) while the branch current Iij is discretized
+with π-circuit model and solved with the LIM, thus called
+                                                                                 at the n and n + 1 time-steps as shown in (2):
+the LIM network. Both the LIM and the NAM are slightly
+modified for better efficiency when implemented on FPGA.                                                        
+                                                                                            n+1/2
+                                                                                           Vi       − Vi
+                                                                                                         n−1/2
+                                                                                                                         n+1/2
+                                                                                                                                                 
+The interfaces between the LIM network and NAM network                            Ci                                 Gi Vi        − Hin = −             n
+                                                                                                                                                       Iik
+are designed, and the numerical stability is discussed. Details                                     Δt
+                                                                                                                                                k∈Si
+about the LIM-NAM solution of microgrid circuit will be further                                                                        (1)
+elaborated in Section III.                                                             n+1      
+                                                                                              n
+                                                                                       Iij − Iij          n     n+1/2     n+1/2     n+1/2
+                                                                                  Lij              + Rij Iij − Eij    = Vi      − Vj
+      III. PROCEDURE OF NETWORK-DECOUPLED SIMULATION                                      Δt
+                                                                                                                                                             (2)
+A. LIM Network Solution
+  Before a network is solved with the latency insertion method                   where Δt is the time step, Si is the set of the LIM nodes
+(LIM), its topology is transformed into the form in Fig. 2.                      connected to Node i.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:08:23 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: FPGA-BASED SUB-MICROSECOND-LEVEL REAL-TIME SIMULATION FOR MICROGRIDS                                                                         989
+
+
+
+   From (1) and (2), we can obtain the updating expressions of
+the nodal voltage Vi and the branch current Iij :
+                             −1
+         n+1/2       Ci           Ci n−1/2
+       Vi       =       + Gi          V
+                     Δt           Δt i
+                                −1                   
+                        Ci                     n       n
+                   −       + Gi               Iik − Hi     (3)
+                        Δt
+                                        k∈Ni
+                                
+           n+1            Δt        n     Δt
+          Iij = 1 −          Rij Iij   +
+                         Lij              Lij
+                                                      
+                         n+1/2      n+1/2        n+1/2
+                   × Vi        − Vj        + Eij           (4)
+
+   Equation (3) and (4) can be rewritten in the vector-matrix                   Fig. 3.   Norton’s equivalent circuit in the EMTP.
+form as follows:
+    n+1/2            n−1/2
+ V nodal = P + V nodal−P− (M LIM I n
+                                   branch −H nodal ) (5)
+                                             n
+                                                                                   In this paper, the history current sources of all branch types
+                                                                              are represented in the unified form:
+                                      n+1/2    n+1/2
+ I n+1
+   branch = Q  I n
+              + branch +Q  −  M T
+                                LIM V nodal +E branch
+                                                                                                     n+1              n         n
+                                                                         (6)                        Ihistory = αYeq Vbranch + βIbranch                  (9)
+
+where V nodal is the Nn1 × 1 nodal voltage vector, I branch                     where Yeq is the equivalent admittance of the branch, α and β
+is the Nb1 × 1 branch current vector, H nodal is the Nn1 × 1                    are the voltage coefficient and current coefficient of the history
+current source vector of LIM nodes, and E branch is the Nb1 × 1                 current expression, respectively. For example, if the backward
+voltage source vector of LIM branches. Nn1 is the total number                  Euler method is adopted, for the inductance branch L, we have
+of LIM nodes and Nb1 is the total number of LIM branches.
+                                                                                                    α = 0, β = 1, Yeq = Δt/L                           (10)
+   The coefficient matrices P+ , P− , Q + , and Q− in (5) and (6)
+are defined as follows:                                                            For the capacitance branch C, we have
+                    −1                            −1
+             C               C                C                                                    α = −1, β = 0, Yeq = C/Δt
+    P+ =         +G                  P− =        +G           (7)                                                                                      (11)
+             Δt             Δt                Δt
+           −1                            −1                                 For the switch branch, which is regarded as a small inductance
+             L          L                      L                                Lsml when it’s ON, and regarded as a small capacitance Csml
+    Q+ =                   −R        Q− =                     (8)
+             Δt        Δt                     Δt                                when it’s OFF [7], we have
+where C, G are the Nn1 × N 1n diagonal matrices composed of
+                                                                                   α = 0, β = 1, Yeq = Δt/Lsml , when it s ON
+Ci , Gi . L, R are the Nb1 × Nb1 diagonal matrices composed of                                                                                         (12)
+Lij , Rij .                                                                        α = −1, β = 0, Yeq = Csml /Δt, when it s OFF
+  The Nn1 × Nb1 incidence matrix M LIM in (5) and (6) is
+                                                                        

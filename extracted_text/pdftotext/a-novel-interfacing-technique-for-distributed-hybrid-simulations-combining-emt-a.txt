@@ -1,0 +1,142 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2690145, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+               A Novel Interfacing Technique for Distributed
+             Hybrid Simulations Combining EMT and Transient
+                             Stability Models
+                                             Dewu Shu, Student Member, IEEE, Xiaorong Xie, Senior Member, IEEE,
+                                                 Qirong Jiang, Member, IEEE, Qiuhua Huang, Chunpeng Zhang
+
+
+
+              Abstract—The steady increase of power electronic devices                                         transients are required to be represented in details [7]. In
+           and nonlinear dynamic loads in large scale AC/DC systems                                            contrast, the Central-TS subsystem predominantly contains
+           desperately requires an efficient simulation method. However,                                       the AC grids, for which the electromechanical transients are
+           the traditional hybrid simulation, which incorporates various
+           components into a single EMT subsystem, causes great difficulty                                     of much more concern. Such different focuses on system
+           in network partitioning and significant deterioration in simu-                                      dynamics drive the Central-TS and EMT subsystems to be
+           lation efficiency. To resolve these issues, a distributed hybrid                                    simulated with separate TS and EMT programs. In this way,
+           simulation method is proposed in this paper. The key factor                                         the interactions among subsystems are conveyed through the
+           leading the success of this method is a distinct interfacing                                        interface models so that the overall dynamics of the power
+           technique, which includes: i) a new approach based on the two-
+           level Schur complement to update the interfaces by taking full                                      system could be analyzed.
+           consideration of the couplings between different EMT subsys-                                           In previous studies of the hybrid simulation, the scale of
+           tems; and ii) a combined interaction protocol to further improve                                    the EMT subsystem is usually small, thus all power electronic
+           the efficiency while guaranteeing the simulation accuracy. The                                      devices and nonlinear dynamic loads can be included in a
+           improved performances of the proposed method in terms of                                            single EMT subsystem [5]-[9]. However, as their numbers
+           efficiency and accuracy have been verified by the simulation
+           studies on the modified IEEE 39 system as well as a practical                                       increase rapidly in modern power systems, the EMT subsystem
+           AC/DC system, both of which consist of a two-terminal VSC-                                          needs to be expanded substantially in order to contain all
+           HVDC and nonlinear dynamic loads.                                                                   of them. Consequently, network partitioning becomes very
+              Index Terms—Distributed hybrid simulation, electromagnet                                         difficult. Inappropriate selection of partitioning location would
+           transient, two-level Schur complement, VSC-HVDC.                                                    cause numerical instability problems [2]. Moreover, the over-
+                                                                                                               all simulation efficiency and accuracy could be deteriorated
+                                            I. I NTRODUCTION                                                   significantly.
+                                                                                                                  To address the above challenges, the concept of distributed
+                 T present, many converter-based power electronic de-
+           A     vices are connected to the AC grids, and have greatly
+           changed the dynamic characteristics of the whole power sys-
+                                                                                                               hybrid simulation has been proposed [10]. In light of this con-
+                                                                                                               cept, the power electronic devices and nonlinear dynamic loads
+                                                                                                               are arranged into different EMT subsystems. Each subsystem
+           tems [1]-[4]. In order to accurately and efficiently analyze the                                    is simulated with its own EMT program, while the remaining
+           interactions between these power electronic devices and the                                         AC grids are placed in the Central-TS subsystem and simulated
+           AC grids, as well as to acquire the overall dynamics of the                                         with the TS program. The simulation program corresponding
+           power systems, the hybrid simulation combining electromag-                                          to each subsystem can be deployed in one or several com-
+           netic transient (EMT) and transient stability (TS) simulations                                      puters and executed in a parallel and coordinated way. The
+           is widely used [5]-[6]. In doing so, a procedure named network                                      variables and parameters of interface models between different
+           partitioning is carried out to partition the whole system into a                                    subsystems are updated and then transferred through a certain
+           Central-TS subsystem and multiple EMT subsystems. Notably,                                          communication protocol (e.g., TCP/UDP socket server[11]) in
+           the EMT subsystems incorporate power electronic devices                                             local area networks (LAN). The key to realize the distributed
+           and nonlinear dynamic loads, thereby the electromagnetic                                            hybrid simulation is the interfacing technique, which includes
+              This work was supported in part by the Major Program of the National                             three core issues, namely, TS/EMT models, interface models
+           Natural Science Foundation of China (51490683), the National Key Research                           their update strategy, and the interaction protocol [2], [10]. As
+           and Development Program of China (2016YFB0900104), and the Research                                 for the TS model, either positive-sequence [5], [9], [12] or
+           Project on Key Technologies and Demonstration Application of Flexible
+           Coordinated Control of Electromagnetic Loop Network in Metropolitan Power                           three-sequence [13]-[15] equivalent models are used. It worth
+           Grid with High Load Density under Grant GZHKJ 00000101 (Corresponding                               noting that the positive sequence model cannot reflect the
+           author: X. Xie)                                                                                     three-phase unbalance of the interfaces in the case of asymmet-
+              Dewu Shu , Xiaorong Xie, Qirong Jiang, Chunpeng Zhang are with the State
+           Key Lab. of Power System, Department of Electrical Engineering, Tsinghua                            ric faults and thus would cause significant simulation errors. In
+           University, Beijing, 100084, China (e-mail: shudw13@mails.tsinghua.edu.cn,                          order to maintain the assumption of the three-phase balance,
+           xiexr@tsinghua.edu.cn, qrjiang@tsinghua.edu.cn). Qiuhua Huang is with the                           some previous work extended the interface buses far into the
+           Electricity Infrastructure Group, Pacific Northwest National Laboratory, Rich-
+           land, Washington, USA, 99354. (Email: qiuhua.huang@pnnl.gov).                                       AC grids[13]. However in doing so, the simulation accuracy
+                                                                                                               cannot be satisfied and the simulation efficiency would be
+
+
+  0885-8977 (c) 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2690145, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             2
+
+
+
+           severely reduced. When the EMT model is concerned, the                                                                                                           EMT subsystem 1
+           state-space approach is widely used [14]. Nevertheless, the
+                                                                                                                                   Central-TS subsystem                                 ..
+           problem is that the size/scale of the electromagnetic system                                                                                                                  .
+
+           would be limited due to the high modelling complexity of                                                                     Transient-stability
+                                                                                                                                           simulation                       EMT subsystem N
+           the power electronics involved network. Recently, a frequency
+           dependent network equivalent (FDNE) model is developed to                                                                                           (a)
+           improve the accuracy of interfaces in the EMT subsystems                                                                         120                                  abc
+           without expanding the scale of the EMT subsystem [16].                                                                120       It,1                                 ie,1          abc
+                                                                                                                                                                                             ve,1 EMT
+                                                                                                                                Vt,1
+                                                                                                                                                                                ~            subsystem 1
+           However, its drawback lies in the low computational efficiency.                                                                                                     Z1abc
+                                                                                                                    Central-TS
+           This model would also arouse spurious transients during a                                                subsystem                                                                       ..
+                                                                                                                                               Y1120 I120
+                                                                                                                                                      1   Combined
+                                                                                                                                                                             + ~abc
+                                                                                                                                                                             - v1
+                                                                                                                                                                                                     .
+           switching operation in a new FDNE, which in turn affect                                                               120        120 .             Interaction         abc
+           the accuracy of interfaces dramatically [17]. As for the issue                                                       Vt,N       It,N ..
+                                                                                                                                                               protocol         ie,N      abc
+                                                                                                                                                                                         ve,N EMT
+           of updating interface models, the cases of a single EMT                                                                                                             ~             subsystem N
+                                                                                                                                                                               ZNabc
+           subsystem were extensively discussed [5]-[9]. Only reference
+                                                                                                                           Norton              YN120 IN120                   + ~abc
+                                                                                                                                                                             - vN              Thevenin
+           [13], [18] explored the strategy of updating the interface                                                    equivalents                                                          equivalents
+           models for multiple EMT subsystems by the hybrid simulation.                                                                                          (b)
+           Yet, the interactions among different EMT subsystems were
+           not taken into consideration. The errors caused by interaction                                      Fig. 1. (a) Framework of distributed hybrid simulation. (b) Interface model
+           protocols, especially the serial and parallel ones, were ana-                                       between different subsystems.
+           lyzed in [5], [6]. But, there was a lack of an efficient interaction
+           protocol for distributed hybrid simulation, which was actually
+           the important foundation for achieving the high precision and
+           efficiency of simulation.
+              In this paper, a distributed hybrid simulation method is
+           proposed to analyze large-scale AC/DC systems, which con-                                           partitioned into a Central-TS subsystem and several EMT
+           tain power electronic devices and nonlinear dynamic loads.                                          subsystems (1, 2...N). The PCCs (point of common couplings)
+           The contribution lies in the development of a new interfacing                                       of the power electronic devices and nonlinear dynamic loads
+           technique, which has the following important features:                                              are selected as the position for network partitioning. Once
+              i) The interfaces with the EMT subsystems are modelled                                           partitioned, different Central-TS and EMT subsystems are
+           as three-phase Thevenin equivalents, while those with the                                           simulated separately in one or several computers. In addition,
+           Central-TS subsystem are modelled as three-sequence Norton                                          the interactions among these subsystems are realized by the
+           equivalents. Consequently, the mandatory assumption of three-                                       interfacing technique, including interface models, their update
+           phase balance for the interfaces can be circumvented and the                                        strategy, and the interaction protocol. The three-sequence
+           difficulty for network partitioning is dramatically reduced.                                        models in the Central-TS subsystem are derived by the differ-
+              ii) A new strategy of updating interface model is developed                                      ential algebraic equations of all the dynamic elements in the
+           based on the two-level Schur complement, through which the                                          fundamental-frequency steady-state phasor form. Meanwhile,
+           obtained Thevenin equivalents for each EMT subsystem could                                          the models of each EMT subsystem are derived by the nodal
+           fully consider the couplings among different EMT subsystems.                                        analysis method in the three-phase instantaneous waveform
+           Thus, the proposed hybrid simulation method produces the                                            [19]. For each subsystem, the impact of other subsystems
+           more accurate results than the traditional one.                                                     is represented by the corresponding interface model, which
+              iii) In the implementation of the hybrid simulation method,                                      is shown in Fig. 1 (b). Therein, the interface model with
+           a combined interaction protocol is utilized to further improve                                      each EMT subsystem is represented by three-phase Thevenin
+           the efficiency and accuracy of simulation.                                                          equivalents, while that with the Central-TS subsystem is repre-
+              The rest of the paper is organized as follows: Section II                                        sented by three-sequence Norton equivalents. The parameters
+           outlines the proposed method of distributed hybrid simulation,                                      of the interface models are updated by the proposed strategy.
+           including the framework, the interfaces with TS and EMT                                             The interaction protocol determines the simulation sequence
+           subsystems, and the general simulation

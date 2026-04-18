@@ -1,0 +1,168 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X                                                                                                                               1
+
+
+
+
+            An Inverter Model Simulating Accurate Harmonics
+                   with Low Computational Burden for
+                  Electromagnetic Transient Simulations
+                      Shuntaro Horiuchi, Student Member, IEEE, Kenichiro Sano, Member, IEEE and Taku Noda, Senior
+                                                            Member, IEEE,
+
+
+
+             Abstract—The electromagnetic transient (EMT) simulation of                                       devices. The model which is called a switching (SW) model
+          a power system involving power-electronics converters requires a                                    in this paper can accurately simulate the harmonics produced
+          fairly small time-step size to consider switching of the converters,                                by the switching operation. However, the SW model needs
+          thus leading to a heavy computational burden. To accelerate
+          such simulations, this paper generalizes the time average method                                    a fairly small simulation time step (around 1/100 of the
+          (TAM), originally developed for real-time simulations, so that                                      switching cycle). Even if a single inverter is connected to the
+          it becomes suitable to off-line EMT simulations. For obtaining                                      power system, all the system has to be calculated with the
+          accurate current waveforms with a large time step, the TAM and                                      same small time step. Thus, the simulation takes considerable
+          the proposed method represent each leg of an inverter by voltage                                    computation time. One of the technical challenges in applying
+          sources, and its output voltage is modiﬁed by interpolation at
+          an instance of switching. The original TAM was intended for                                         the EMT simulations to power system analysis is satisfying
+          the primitive backward Euler method. This paper contributes                                         both adequate simulation accuracy and acceptable computation
+          to generalize it for the trapezoidal integration method which                                       time.
+          is widely used in off-line simulation programs. In addition, the                                       Linear interpolation methods [4]–[11] and variable/multiple
+          proposed method uses a simple formula to identify the switching                                     time-step simulations [12]–[14] are typical methods for the
+          instance for the implementation on off-the-shelf PCs, rather than
+          a hardware counter in an FPGA as used in the TAM. This                                              SW model to simulate the dynamics of inverters accurately
+          paper shows that the proposed method enables to extend the                                          with a relatively large simulation time step. However, the linear
+          time step by a factor of ﬁve without deteriorating the accuracy.                                    interpolation methods require multiple interpolation processes
+          A case study demonstrates reduction of computational time by a                                      if the system includes multiple inverters. The variable/multiple
+          factor of three for the off-line simulation of a single-phase grid-                                 time-step simulations require a re-formulation of the admit-
+          connected inverter with reasonable reproduction of harmonics.
+                                                                                                              tance matrix each time the time step changes. These may
+                                                                                                              increase a computational burden when simulating a large-scale
+             Index Terms—Electromagnetic transient (EMT) simulation,
+                                                                                                              power system with multiple inverters. The averaging method
+          grid-connected inverter, harmonic analysis, voltage interpolation.
+                                                                                                              [15] was extended for the modeling of grid-connected inverters
+                                                                                                              so as to achieve fast EMT simulations [16]–[19], which is
+                                I. I NTRODUCTION                                                              called a circuit average model. Although the model is able to
+                                                                                                              operate with a large time-step (as large as the switching cycle),
+          T    HE-widespread use of photovoltaic and wind power gen-
+               eration has increased grid-connected inverters in power
+          systems. Such inverters interact with the power system and
+                                                                                                              it cannot reproduce the harmonics produced by switching
+                                                                                                              operations. This is because the model is based on averaged
+                                                                                                              values over one switching cycle.
+          sometimes cause power quality issues related to harmonics
+                                                                                                                 The time average method (TAM) [20], [21] was originally
+          [1]–[3]. Since the dynamic characteristics of inverters can be
+                                                                                                              developed for real-time simulations in order to reproduce
+          dealt with time-domain circuit simulations such as EMTP or
+                                                                                                              the behavior of inverters including harmonics with a large
+          EMTDC, they have been used as a major tool to investigate
+                                                                                                              simulation time step. The method represents each leg of an
+          such interactions involving harmonics. The circuit simulation
+                                                                                                              inverter by voltage sources which apply the PWM voltage
+          is also referred to as an electromagnetic transient (EMT)
+                                                                                                              waveform to the ac side. At an instance of switching, the
+          simulation to distinguish it from phasor domain simulations
+                                                                                                              voltage is modiﬁed by interpolation to reduce the error in
+          or electromagnetic ﬁeld simulations.
+                                                                                                              the ac current waveform. The original TAM was intended
+             In EMT simulations, the inverter is often modeled by
+                                                                                                              for the primitive backward Euler method of integration and
+          ideal switches replicating switching operations of its power
+                                                                                                              implemented on a ﬁeld programmable gate array (FPGA).
+            S. Horiuchi and K. Sano are with the Department of Electrical and                                    This paper generalizes the TAM so that it becomes suitable
+          Electronic Engineering, Tokyo Institute of Technology, Tokyo 152–8552,                              to off-line EMT simulations [22]. The proposed voltage in-
+          Japan (e-mail: horiuchi.s@pel.ee.e.titech.ac.jp; sano@ee.e.titech.ac.jp).
+            T. Noda is with Energy Innovation Center, Central Research Institute of                           terpolation method is applicable to the trapezoidal method of
+          Electric Power Industry (CRIEPI), 2-6-1 Nagasaka, Yokosuka, Kanagawa                                integration which is widely used in off-line EMT simulation
+          240–0196, Japan (e-mail: takunoda@ieee.org).                                                        programs. In addition, the proposed method uses a simple
+            A part of this paper was presented at the IEEE Applied Power Electronics
+          Conference and Exposition (APEC), New Orleans, LA, March 15-19, 2020.                               formula to identify the switching instance for the implemen-
+          [22]                                                                                                tation on off-the-shelf PCs, rather than hardware counters
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          2                                                                                            IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X
+
+
+
+
+                                        Reference             SW model              VI model                                     DC+                       DC+                          iac-
+                      Vdc
+                                                                                                                                                                                               +
+                                                                                                                                                                                               _
+                vac _                                                                                                                                                                              s-Vdc
+                    sVdc                                                   Interpolation voltage
+                                                                                                                  s+                                                        s-iac-
+                                                                                                                                                                                                     iac
+                                                                                                                                                           Vdc
+                                                                                                                  s-
+                                                                                                                                                                                     s+iac+
+                                                                                                                                                                                                     vac
+                                                                                                                                                                                               +
+                iac                                                                                                                                                                            _ +
+                                                                                                                                                                                                 s V   dc
+                                         Ts                                                                                      DC-
+                                                                                                                                                             DC-                     iac+
+                        0                                                                          t
+                               tn-1                 tn         trise   tn+1                tn+2                         (a) SW model                               (b) Equivalent circuit model
+
+                                                                                                              Fig. 2. Equivalent circuit model of an inverter leg used for the TAM and the
+          Fig. 1. AC voltage and current waveforms in the inverter.                                           voltage interpolation method.
+
+                                                                                                                                                  Sfall_ref
+          implemented on an FPGA as used in the TAM. As a result,                                                               Vdc
+
+
+
+
+                                                                                                                   reference
+          the proposed method realizes fast and accurate off-line EMT
+
+
+
+
+                                                                                                                     vac_ref
+          simulations on general PCs. This paper compares the simula-
+          tion results of a single-phase grid-connected inverter obtained                                                        0                                                                     t
+          by the conventional SW model and the proposed method.                                                                                           tfall             trise
+          The comparison veriﬁes that the proposed method enables to                                                            Vdc
+                                                                                                                   TAM
+                                                                                                                   vac_int
+          extend the time step by a factor of ﬁve without deteriorating                                                        _                           Sfall_int
+          the accuracy, resulting in reduction of computation time by a                                                        sVdc
+          factor of three with reasonable reproduction of harmonics.                                                             0                                                                     t
+                                                                                                                                                   tn-1                tn             tn+1
+              II. OVERVIEW OF THE T IME AVERAGE M ETHOD (TAM)                                                 Fig. 3. AC voltage waveforms in the TAM for the backward Euler integration
+          A. Error Caused by the SW Model                                                                     method.
+
+             Fig. 1 shows the waveforms of ac voltage vac and ac current
+          iac in a half-bridge inverter at a switching event. Ts is a                                         B. Equivalent Circuit Model of an Inverter Leg
+          simulation time step, and tn−1 , tn , tn+1 , tn+2 are calculation
+                                                                                                                 Fig. 2 shows the equivalent circuit model of an inverter leg
+          points. The reference shows a theoretical waveform when vac
+                                                                                                              for the TAM [21]. It consists of voltage controlled voltage
+          rises at trise . Because digital simulations can hold the values
+                                                                                                              sources s+ Vdc , s− Vdc , current controlled current sources
+          only at the calculation points, the transition is reﬂected at                                                  − −
+                                                                                                              s + i+
+                                                                                                                   ac , s iac , and two ideal diodes. s
+                                                                                                                                                        +
+                                                                                                                                                          and s− correspond
+          tn+1 immediately after the switching instant trise . Because
+                                                                                                              to the switching signals for the inverter leg. If a PWM signal
+          vac is applied to the ac inductor of the inverter, iac changes
+                                                                                                              (0 or 1) is fed to s+ and s− , the model outputs the same
+          according to the integral of vac . The numerical integration by
+                                                                                                              voltages and currents as the SW model at each terminal. If an
+          the backward Euler method is explained as calculating the area
+                                                                                                              interpolation signal between 0 and 1 is fed to s+ and s− , the
+          under the dotted line of vac . Even if the SW model outputs
+                                                                                                              model outputs intermediate voltage between 0 and Vdc at the
+          the same voltage as the reference at each time step, the dotted
+                                                                                                              ac terminal like the circuit average models. The ideal diodes
+          line differs from the reference. It means that the integral of
+     

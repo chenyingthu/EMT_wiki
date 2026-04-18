@@ -1,0 +1,224 @@
+                                                               Electric Power Systems Research 197 (2021) 107311
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Implementation of the universal line model in the alternative
+transients program✰
+Felipe O.S. Zanon a, *, Osis E.S. Leal b, Alberto De Conti c
+a
+  Graduate Program of Electrical Engineering (PPGEE), UFMG, Brazil
+b
+  UTFPR – Federal University of Technology – Paraná, Pato Branco, Brazil
+c
+  Department of Electrical Engineering (DEE), Federal University of Minas Gerais (UFMG), Brazil
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  The universal line model (ULM) is a transmission line model developed directly in the phase domain that is
+Electromagnetic transients                                 recognized for its accuracy and generality. It is currently the reference model for transient studies, but is
+Transmission line models                                   exclusively found on commercial electromagnetic transients programs. This paper describes an implementation
+Phase-domain models
+                                                           of ULM in the Alternative Transients Program (ATP), which is free for licensed users, using the foreign models
+EMT-type programs
+Frequency-dependent soil parameters
+                                                           tool and the type-94 component available in this platform. The implemented model is validated through com­
+                                                           parisons with EMTP-RV. Then, it is used to investigate transients on overhead transmission lines considering a
+                                                           rigorous representation of the ground return impedance and ground admittance assuming frequency-dependent
+                                                           ground parameters.
+
+
+
+
+1. Introduction                                                                                       ULM circumvents the limitations of Marti’s model by solving teleg­
+                                                                                                  rapher’s equations directly in the phase domain. It has been successfully
+    The analysis of transients on realistic power systems is usually per­                         used to simulate transients on overhead transmission lines and under­
+formed in electromagnetic transient (EMT) simulators. For this, the                               ground cables [6]. The model is based on the fitting of both the char­
+correct modeling of the system components is crucial, especially the                              acteristic admittance matrix Y C and the propagation matrix H with
+solution of the transmission line equations in the time domain. The two                           complex poles and zeros [7]. The development of ULM is relatively
+most popular transmission line models currently available in EMT-type                             recent and the model has been continuously improved [8].
+tools are the frequency-dependent model proposed by Marti (JMarti) [1]                                Despite its advantages over Marti’s model, ULM is only available in
+and the Universal Line Model (ULM) [2].                                                           commercial EMT simulators (e.g., [9, 10]). Its absence in the Alternative
+    Marti’s model solves the transmission line equations in the modal                             Transients Program (ATP), which is free to licensed users, frequently
+domain considering a real and constant transformation matrix. The                                 poses difficulties to the analysis of transient phenomena for which
+magnitudes of the propagation function and characteristic impedance of                            Marti’s model is not sufficiently accurate. In principle, this problem
+each line mode are represented as rational functions using Bode’s                                 could be overcome with Noda’s phase-domain transmission line model
+asymptotic fitting [3]. The resulting model can accurately simulate a                             [11], which is available in ATP. However, this model is sensitive to the
+number      of    overhead     line   configurations    [4],   even     if                        selected time step and prone to fitting errors [12]. As a consequence, it is
+frequency-dependent ground parameters are considered [5]. However,                                often difficult for ATP users to deal with cases that require a
+it is not recommended to simulate underground cable systems and                                   phase-domain line model. This context has motivated this paper, which
+strongly asymmetric overhead transmission lines because the associated                            presents an implementation of ULM in ATP. In this proposal, the line
+eigenvectors present a strong variation with frequency. In this case, the                         parameters are first calculated and fitted in MATLAB. The fitted pa­
+assumption of a real and constant transformation matrix no longer                                 rameters are then used as input parameters of a code written in C lan­
+holds.                                                                                            guage that implements the ULM equations. The code is finally interfaced
+
+
+
+  This paper was supported by the National Council for Scientific and Technological Development (CNPq) (306006/2019-7) and by the State of Minas Gerais
+    ✰
+
+Research Foundation (FAPEMIG) (TEC-PPM-00280–17).
+ * Corresponding author.
+   E-mail addresses: felipeos.zanon@gmail.com (F.O.S. Zanon), osisleal@utfpr.edu.br (O.E.S. Leal), conti@cpdee.ufmg.br (A. De Conti).
+
+https://doi.org/10.1016/j.epsr.2021.107311
+Received 4 November 2020; Received in revised form 6 March 2021; Accepted 29 March 2021
+Available online 8 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+F.O.S. Zanon et al.                                                                                                          Electric Power Systems Research 197 (2021) 107311
+
+
+with ATP as a foreign model using a type-94 component [13].
+    This paper is organized as follows. Section II discusses ULM in brief.
+Section III presents its implementation in ATP. Section IV validates the
+implemented model using EMTP-RV as a reference. Section V evaluates
+the impact of considering more rigorous formulations for the calculation
+of the ground return impedance and per-unit-length admittance
+including frequency-dependent soil electrical parameters. Finally, Sec­
+                                                                                                    Fig. 2. Frequency-domain equivalent circuit of ULM.
+tion VI presents the conclusions.
+
+                                                                                    described in the next sections.
+2. ULM
+
+   ULM is presented in detail in [2]. This section aims to highlight the            2.2. Characteristic admittance matrix YC
+aspects of the model that are the most important for its implementation.
+                                                                                        The characteristic admittance matrix presents a smooth behavior and
+                                                                                    can be fitted directly in the phase domain with a relatively small number
+2.1. Model formulation                                                              of poles [14]. The poles of the approximate matrix Y   ̃ C are obtained by
+                                                                                    fitting the trace of Y C with the vector fitting technique [15]. Thereby, all
+    The currents and voltages at terminals k and m of a transmission line
+                                                                                    elements of Y
+                                                                                                ̃ C are represented using a single set of poles. The residuals
+of length ℓ with NC conductors (see Fig. 1) are related in the frequency
+                                                                                    associated with each element of Y ̃ C are obtained as the solution of a
+domain as [7]
+                                                                                    weighted least squares problem. The approximate matrix is represented
+Ik − Y c V k = − H(Im + Y c V m ),                                       (1)        as
+
+                                                                         (2)
+                                                                                                               NpY
+                                                                                                               ∑
+Im − Y c V m = − H(Ik + Y c V k ),                                                                                    kn
+                                                                                         ̃ C = k0 +
+                                                                                    YC ≈ Y                                                                              (11)
+                                                                                                               n=1
+                                                                                                                   s −  an
+where V k and Ik are the voltage and current vectors at the sending end of
+the line, V m and Im are the voltage and current vectors at the receiving           where s is the complex frequency, k0 is a real matrix, k1 : kNpY are real or
+end of the line, Y c is the characteristic admittance matrix, given by              complex matrices of residues associated with each element of Y C , and
+           √̅̅̅̅̅̅                                                                  a1 : aNpY are the NpY poles required for fitting Y C .
+Y C = Y − 1 YZ,                                                        (3)
+
+and H is the propagation function, given by                                         2.3. Propagation matrix H
+     √̅̅̅̅
+H = e YZℓ ,                                                              (4)           The fitting of the propagation matrix first requires H to be trans­
+                                                                                                                            √̅̅
+where Z and Y are respectively the per-unit-length series impedance and             formed to its modal domain equivalent e−  λℓ
+                                                                                                                                 as
+shunt admittance of the line, both square matrices of order NC.                       √̅̅
+                                                                                    e− λℓ = T −I 1 HT I                                                                 (12)
+    Eqs. (1) and (2) are the basis of ULM. They lead to the equivalent
+circuit shown in Fig. 2, where Bk and Bm are                                        where the columns of matrix T I contain the eigenvectors of YZ and λ is a
+Bk = H(Im + Y c V m ),                                                   (5)        diagonal matrix with the eigenvalues of YZ, both calculated using the
+                                                                                    Newton-Raphson method as in [16]. Eq. (12) can then be rewritten as
+Bm = H(Ik + Y c V k ).                                                   (6)        [2]
+
+    The time-domain equivalents of (1) and (2) read                                      Nmod
+                                                                                         ∑              √̅̅̅
+                                                                                    H=          Dj e−     λj ℓ
+                                                                                                                 ,                                                      (13)
+ik (t) − yC (t) ∗ vk (t) = − bk (t),                                     (7)             j=1
+
+
+im (t) − yC (t) ∗ vm (t) = − bm (t),                                     (8)        where the index j refers to the j-th transmission line mode, and Nmod is
+                                                                                    the total number of modes. Matrices Dj are obtained by multiplying the j-
+bk (t) = h(t) ∗ [im (t) + yc (t) ∗ vm (t)],                              (9)        th column of T I by the j-th row of (T I )− 1 [2]. Each exponential term in
+                                                                                    (13) corresponds to the propagation function associated with a given
+bm (t) = h(t) ∗ [ik (t) + yc (t) ∗ vk (t)],                             (10)        mode, whose fitting is performed indirectly by defining Pj as [1]
+                                                                                           √̅̅̅
+where the variables represented with lowercase letters are the time-                Pj = e− λj ℓ esτj ,                                                    (14)
+domain counterparts of the respective quantities in (1)-(6), and the
+symbol ‘*’ indicates the convolution operation. To solve the convolu­               where τj is the minimum time delay associated with j-th mode. The use
+tions in (7)-(10) efficiently, it is necessary to approximate yC (t) and h(t)       of the lossless propagation time delay for τj can lead to a significant loss
+as sums of exponentials [7]. In ULM, this process is performed in the               of accuracy in the fitting process. The procedure proposed in [8] was
+frequency domain by fitting Y C and H as sums of rational functions as              adopted in this paper to determine the time delay that generates the
+                                                                                    smallest fitting error for a given approximation order.
+                                                                                        The approximate matrix H   ̃ can then be represented as
+                                                                                              ⎛                        ⎞
+                                                                                         Nmod
+                                                                                         ∑      NpH
+                                                                                                ∑                  cij ⎠ − sτj
+                                                                                      ̃=
+                                                                                    H≈H       ⎝                         e ,                                             (15)
+                                                                                                  j=1       i=1
+                                                                                                                s − ai
+
+
+                                                                                    where a1 : aNpH are the NpH poles required for fitting Pj using the vector
+                                                                                    fitting technique, and cij are matrices of residuals that approximate Dj Pj
+                        Fig. 1. Transmission line of length ℓ.                      assuming the same poles of Pj [2].
+
+                                                                                2
+F.O.S. Zanon et al.                                                                                                  Electric Power Systems Research 197 (2021) 107311
+
+
+2.4. Time domain implementation
+
+    The numerical solution of (7)-(10) in the time domain using recur­
+sive convolutions results in the Norton-equivalent circuit shown in
+Fig. 3, where G is the conductance matrix defined as
+               NpY
+               ∑
+G = k0 +             qn ,                                                (16)
+               n=1
+
+
+and ikhist (t) is the historical current source calculated as
+ikhist (t) = − jkh (t − Δt) + bk (t).                                    (17)
+     The term jkh (t) is calculated as follows
+               NpY
+                                        (N      )
+               ∑                         ∑ pY
+
+jkh (t − Δt) =     [pn ⋅jkn (t − Δt)] +       rn vk (t − Δt).            (18)
+                     n=1                           n=1
+
+
+where
+jkn (t) = pn ⋅jkn (t − Δt) + qn ⋅vk (t) + rn ⋅vk (t − Δt).               (19)
+                                                                                      Fig. 4. Diagram of the strategy used in the implementation of ULM in ATP.
+    The constants pn , qn and rn are given by [17]
+pn = (2 + an Δt)/(2 − an Δt),                                            (20)        graphical interface developed in the GUIDE environment of MATLAB.
+                                                                                     The associated code is responsible for calculating the line parameters,
+qn = rn = kn Δt/2 − an Δt.                                               (21)        the time delays, and the functions Y c and H plus their fitting. In the end,
+                                                                                     a text file is generated containing the poles and residues of Y c and H, the
+where Δt is the simulation step. The term bk (t), in turn, is calculated as          elements of G, and the minimum time delays associated with each mode.
+follows                                                                              This file acts as a link between MATLAB and ATP, containing all infor­
+              NpH
+         Nmod ∑
+         ∑                          Nmod
+                                    ∑
+                                         [( N
+                                            ∑ pH
+                                                    )         ]                      mation necessary to perform the transient simulation in ULM.
+bk (t) =          pi bij (t − Δt) +              qij f k,j (t)         (22)              In the second stage, a foreign model implemented in ATP reads the
+           j=1   i=1                         j=1    i=1                              text file generated by MATLAB. In this model, the ULM Eqs. (16)-(27)
+                                                                                     were implemented in ANSI C language. The program initializes the
+where                                                                                variables necessary for calculating the transient in the first time step.
+bij (t) = pi bij (t − Δt) + qij f k,j (t),                               (23)        From the voltages and currents at the line terminals, the foreign model
+                                                                                     calculates the historical currents, feeding back a type-94 component in
+                 (      )       (           )                                        ATP at each time step. Since the communication of the foreign model
+f k,j (t) = f k,j t − τj + f k,j t − Δt − τj ,                           (24)
+                                                                                     with ATP occurs with a delay of one time step [13], this effect is
+                                 

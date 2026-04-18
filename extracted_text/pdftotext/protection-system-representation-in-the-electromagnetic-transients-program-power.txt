@@ -1,0 +1,216 @@
+700                                                           IEEE Transactions on Power Delivery, Vol. 9, No. 2, April 1994
+                             PROTECTION SYSTEM REPRESENTATION IN THE ELECTROMAGNETIC
+                                               TRANSIENTS PROGRAM
+
+
+
+            Arvind K. S. Chaudhary                                            Kwa-Sur Tam and Arun G . Phadke
+            Sargent & Lundy                                                   Bradley Department of
+            Chicago, IL                                                       Electrical Engineering
+                                                                              Virginia Tech
+                                                                              Blacksburg, VA
+
+
+     Abstract - This paper concerns the addition of the     dynamics of the interaction between the power system and
+few critical elements of a protection system to the         the protection system cannot be studied.       The time
+Electromagnetic Transients Program (EMTP), which is one     required for and the cost of such studies may also be
+of the most widely used programs for the simulation of      prohibitive.
+transients in power systems. It contains models for              The Electromagnetic Transients Program (EMTP) is a
+almost every major power system component. A protection     large computer program for simulating electromagnetic,
+system consists of instrument transformers, relays, and     electromechanical, and control system transients on
+circuit breakers.                                           multiphase electric power systems. This large (more than
+     Models for current transformers (CTs) and capacitor    100,000 lines) and complex FORTRAN code has been devel-
+voltage transformers (CVTs) are developed, validated, and   oped over the last 25 years by many individuals. Almost
+incorporated in the EPRI/DCG EMTP Version 2.0. The user     every major power system component is modeled, including
+can define the values of the CT and CVT parameters.         nonlinear elements such as circuit breakers and surge
+Total FORTRAN capability has been added to the EMTP; new    arresters. The capabilities of this program for conduct-
+subroutines and an inbuilt structure to allow the linking   ing engineering studies are enormous and include insula-
+of user-defined FORTRAN subroutines with the main EMTP      tion coordination, equipment ratings, and the ability to
+are explained. This capability is necessary to simulate     solve operating problems such as unexplained events or
+computer relay algorithms. The outputs of the algorithms    equipment failures. The EMTP is also one of the most
+can be passed to the EMTP, which enables the study of the   widely used packages in the electric utility industry
+dynamic interaction between the power system and the         [ll .
+protection system. The FORTRAN capability can also be            There is a need to study the transient response of
+used to develop models for relays.                          the protection system in conjunction with the transient
+     Models of specific relays, such as those for line      response of the power system, because of the strong
+protection    (CEY51A and     SLY12C)   and   transformer   interaction between the two systems. For example, a
+differential protection (D202 and BDD15B), are also         fault on one of the two parallel transmission lines leads
+available. The relay models can be used with different      to the opening of the faulted line, with the consequent
+settings.                                                   overload and opening of the unfaulted line, which in turn
+     These new features in the EMTP together constitute     leads to system overvoltages. It is indeed critical for
+the critical elements of a protection system. Thus, it      relays to isolate faults, but it is equally important
+is now possible to simulate the dynamic interactions        that only the desired relays operate and not the backup
+between a power system and a protection system.             relays. With the ever-growing importance of sophisti-
+                                                            cated computer relay algorithms, a technique must be
+     Kewords - current transformer (CT)model, capacitor     developed to allow the algorithms to process the power
+voltage transformer (CVT) model, distance relays,           system data and feed back the relay decisions concerning
+protection system simulation, Electromagnetic Transients    the state of the power system. There is no tool at
+Program (EMTP), CT simulation, CVT simulation.              present that can simulate the dynamic interactions
+                                                            between a power system and a protection system. This
+                      INTRODUCTION                          paper is a contribution to the effort to develop a few
+                                                            critical protection system components and to integrate
+     A protection system consists of instrument trans-      them within the EMTP, leading to an enhanced simulation
+formers, relays, and circuit breakers.         Protection   capability.
+systems are critical power system components, and their
+behavior often determines the response of a power system                RELAY AND PROTECTION SYSTEM TESTING
+to a transient event.
+     Power system response to faults and other sudden            The simplest method of testing relays consists of
+disturbances includes transient and          steady-state   supplying the relays with steady-state currents and
+components.    For low-speed protection systems, the        voltages and plotting the steady-state relay operating
+transient component is generally ignored; only the          characteristics and operating time. No dc offset or
+steady-state component is used for analysis.          For   reflection transients are applied to the relay. However,
+high-speed protection systems, the transient and            in the field a relay initially "sees" the normal power
+steady-state components must be considered, because the     system currents and voltages, and on the occurrence of a
+relays operate during the transient regime, which creates   fault lnsees"the changes in currents and voltages applied
+a serious risk to protection system security and            to it. Thus, the dynamic operating and not the steady-
+dependability.                                              state characteristics are applicable. The relay in the
+     Designers of protection equipment have developed       field is subjected to both the dc offset and the reflec-
+miniature system models to determine relay response under   tion transients. The actual field current and voltage
+selected system conditions. As with other studies using     waveforms are essential to testing the relay correctly.
+miniature system models, it is not possible to include           Fig. 1 is similar to Fig. 2 of [21 and lists some of
+substantial portions of the power system in the model.      the methods of the relay testing. One method of testing
+Also, it is not possible to easily vary parameters, such    the relay is to take the EMTP data case output, convert
+as the remanent flux in the current transformer, the        it to analog signals, amplify these signals through
+magnetization ccrve of the current transformer, or the      current and voltage amplifiers, and then feed the relay
+inertia of the machines in the system. Consequently, the    with them.     Another method consists of using the
+                                                            transient network analyzer (TNA).
+                                                                 These methods are useful for testing individual
+                                                            relays in relatively simple configurations. It is often
+ 93 SM 380-6 PWRD     A paper recommended and approved      desirable to test a complete protection system, within a
+ by the IEEE Power System Relaying Committee of the         complex multiterminal power system network, through a
+ IEEE Power Engineering Society for presentation at         series of events. It is extremely difficult to achieve
+ the IEEE/PES 1993 Summer Meeting, Vancouver, B.C.,         this capability using TNAs or digital computers, because
+ Canada, J u l y 18-22, 1993. Manuscript submitted          it involves the interactive modeling of both the power
+                                                            system and the protection system. This section shows one
+ September 1, 1992; made available for printing             approach to achieve this capability.
+ April 5 , 1993.                                                 As the speed of operation of modern relays becomes
+                                                            faster and the relay bandwidth increases, the dynamic or
+ PRINTED IN USA                                             transient response of all the elements of the protection
+                                                            system must be studied in greater detail. Thus, it is no
+                                                            longer valid to test the protection system or the relays
+                                                            under steady-statefault conditions. It is important to
+                                                            test not only the relays that operate, but also those
+                                            0885-8977/94/$04.00 0 1993 IEEE
+                                                                                                                                    701
+                                                               ReDreSentatiOn of a CT in the EMTP
+     Field            -                                             A good representation of a current transformer (CT)
+     Recording                                                 equivalent circuit for modeling purposes in the EMTP is
+                                                               shown in Fig. 2 . In this representation, the secondary
+                          Playback                             winding resistance and the secondary winding leakage
+                                                               inductance are included with the lead impedance and the
+                       -c System                               burden impedance. The nonlinear characteristics of the
+                                                               current transformer are represented by a Type 96
+     EMTP or                                                   pseudo-nonlinearhysteretic inductor. It is important to
+;*   other off-line                                            note that the model shown in Fig. 2 is strictly valid for
+                                                               low-reactancecurrent transformers only.
+;    programs
+                                v
+I
+
+                                                                           The EMTP representation of a current transformer is
+                                                               shown in Fig. 3. In this model, 2, is placed after Z,,,,
+                                                               in parallel with (Z,= + Z,, +Z,).             This representation
+                                                               is required because finite values must be given for Z,,,
+                                                               and .,,Z,.        More precisely, Lemfp must be non-zero, and %mIp
+                                                               can be zero; and either R,,,or L,,, can be zero, but not
+                                                               both. More details are given in [ll . This data require-
+                                                               ment of the EMTP transformer model can be satisfied by
+                                                               separating 2,          into two parts--Z,,, and Z',=.
+     Dynamic                                                              ,,
+                                                                           Z    should be small; however, very small values of
+     Portable                                                  Zemt give rise to very large values of the admittance
+     test system                                                (1/Ze,,,)      in the matrices [Yl and [GI, which are the
+                                                               steady-state complex matrix and the real coefficient
+                                                          I    matrix within the time-step loop, respectively. TOLMAT
+                                                               is a near-zero tolerance, which is used to check the
+                                                               singularity of the steady-state complex matrix [Yl .
+                                                               EPSILN is a near-zero tolerance, which is used to check
+                                                               the singularity of the real coefficient matrix [GI within
+                                                               the time-step loop, where [GI V node (t) = I node (t).
+                                                               If Zemtp is very small, then the EMTP will give the
+Fig. 1. Methods of relay testing.                              disconnected subnetwork error message in the steady-state
+                                                               solution or the floating network error message in the
+                                                               time-step solution.
+relays that see the fault but do not operate initially on
+it. And, most important, the relay decisions should be
+fed into the power system and initiate tripping or
+reclosing of the circuit breakers.                             Validation of the CT Model
+      Some of the important references in the field of
+relay testing and protection system testing are [31, [ 4 1 ,   Validation Method
+and [51. Different methods of testing the relays include
+both analog and digital simulation. In the references                 The CT model shown in Fig. 3 is included in a cir-
+mentioned above, the feedback loop between the relays and      cuit that contains a source, a transmission line, and a
+the power system is missing. Thus, sequential events           switch to create faults to validate the CT model. The
+cannot be simulated. A most important contribution to          secondary excitation curve of a 230-kV, 1200:s A ratio
+the field of protection system simulation is given in          current transformer is given in Fig. 12 of [ 7 ] . This
+ [6], in which closed-loop real-time testing is achieved,      excitation curve, the (V,,, - I,,,) curve, is converted by
+with the relay initiating tripping and reclosing of            the EMTP subroutine SATURATION into the peak flux linkage
+breakers. The main disadvantages of this approach are as       vs. Ipcrk curve, the (qWk- Ipmk)    curve. From the (q,,, -
+follows:                                                       Ipsak) curve, the coordinates of the saturation point ('k,,,,
+                                                               I,,,) are determined. These coordinates, (FLXSAT, CURSAT)
+          A finite number of components have been built--3     in EMTP parlance, are input into the EMTP subroutine
+          CTs, 3 CVTs, 3 two-windingtransformers, 1 three-     HYSDAT to determine the hysteresis loop of ARMCO M4
+          winding transformer, 4 loads, 4 series capaci-       oriented silicon steel. This hysteresis loop is included
+          tors, 7 transmission lines, and 11 circuit           in the current transformer model for the Type 96 non-
+          breakers. Thus, there are limits to the level of     linear inductance. The fault that occurs at an instant
+          complexity of the power system that can be           that produces the maximum dc offset is applied. The
+          simulated.                                           secondary current and the primary current transformed
+          The maximum short circuit level that can be          ideally to the secondary side are plotted.
+          simulated is 50,000 MVA.
+     The EMTP is one of the most powerful and widely
+accepted transient programs in use today. The ability to                 Zpri
+simulate accurately the transient behavior of most power
+
+
+
+
+                                                               3
+system components makes the EMTP the ideal candidate to
+implement a complete protection system representation.
+The protection system should include models for instru-
+ment transformers and relays and also total FORTRAN capa-
+bility to allow the simulation of computer relay
+algorithms.    The protection system decisions should
+initiate the tripping or reclosing of breakers. Thus, at
+each time step, the power system transient solution is
+obtained.    The currents and voltages at the relay
+location are supplied through instrument transformers,
+whose transient solution must be obtained. The relay
+dynamics must now be solved and relay decisions reflected
+in the possibly new (if a trip occurs) power system
+equations, which are solved for the next time step. This
+procedure is repeated until the end of the study period.
+                   INSTRUMENT TRANSFORMER MODELS                    Z pri :Transformer primary resistance and leakage inductance.
+      Instrumenttransformers--currenttransformers, elec-           Gec :Transformer secondary resistance and leakage inductance.
+tromagnetic voltage transformers, and capacitor voltage
+transformers--constitutethe first link of a protection               Z      :Transformer magnetizing impedance
+system.   The outputs of the instrument transformers
+supply the relays. The transient performance of the                Switch closes at T=O.O.
+instrument transformers affects the transient performance
+of the relays and the protection system. This transient         Fig. 2.     Representation of a CT model in the EMTP
+interaction has been studied in [71, [ 8 1 , and [91.
+--
+702
+
+       Zpri                            Zemtp            (      "C      +
+                                                          LEAD IMPEDANCE
+                                                                           greater thoroughness. For the present, with a linear
+                                                                           circuit to model the CVT for subsidence transients, there
+                                                                           are no known problems with EMTP components, which are
+                                                                           used to form the CVT model. Most important, the results
+
+
+
+
+                              i:
+                                                                           of the CVT model simulations are in accordance with the
+                                                                           results in Refs. 191, (111, and [121.
+
+
+                                    NONLINEAR                              L                               P
+                                    HYSTEREmC
+                                     INDUCTOR                                         Since no capacitances are included in the trans-
+                                                                                      former model, the CT model is valid up to a few
+                                                                                      kHZ     .
+                                                                                      It is not possible to predict the remanent flux
+               

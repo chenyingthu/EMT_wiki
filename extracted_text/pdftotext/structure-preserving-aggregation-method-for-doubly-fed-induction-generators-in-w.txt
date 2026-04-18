@@ -1,0 +1,188 @@
+IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 37, NO. 2, JUNE 2022                                                                                       935
+
+
+
+
+           Structure Preserving Aggregation Method for
+               Doubly-Fed Induction Generators in
+                      Wind Power Conversion
+   Wei Li , Member, IEEE, Iman Kaffashan, Graduate Student Member, IEEE, Aniruddha M. Gole, Fellow, IEEE,
+                                       and Yi Zhang , Fellow, IEEE
+
+
+   Abstract—An aggregation method is proposed that transforms                     Ls_g , Rs_g          GSC side inductance and resistance
+the multiple DFIGs into an equivalent DFIG model that retains                     Ls_r ,Rs_r           RSC side inductance and resistance
+the major collective dynamic characteristics of a group of DFIGs.                 rr , rs              Rotor and stator resistance of induction ma-
+It is intended for Electromagnetic Transients Simulation (EMT).
+The aggregated machine can take into account different speeds                                          chine
+and parameters of each of the individual DFIGs and the connecting                R, X                  Equivalent impedance resistance and reac-
+impedance of individual DFIGs. Starting with a State Variable (SV)                                     tance
+model of an individual DFIG, aggregation is carried out recursively,              Tm , Te              Prime mover and electromagnetic torque
+by combining two DFIGs at a time and then reducing the order of                   VH , VL , VT         Three-winding transformer high, low and ter-
+the aggregate to match the state variable equations of a single DFIG
+so that the steady state performances are identical. Validation is                                     tiary winding nominal voltage
+carried out by comparing the detailed electromagnetic transient                  V0 , θ0               PCC bus voltage magnitude and angle
+(EMT) simulation of the unreduced system with the reduced ag-                    ωr , ωs               Rotor and synchronous angular velocity
+gregate system. It is shown that the proposed aggregation method                 λdr , λqr             Rotor d and q-axis component flux linkage
+accurately matches the steady state response and also accurately re-             λds , λqs             Stator d and q-axis component flux linkage
+produces the dominant transient response of the unreduced system.
+As the aggregate DFIG has the same number of state variables as a
+single DFIG, the overall wind farm’s order is reduced significantly                                          I. INTRODUCTION
+to increase the modelling and simulation efficiency.
+                                                                                          IND power is the world’s fastest growing energy source
+ Index Terms—Aggregation method, DFIG, dynamic model,
+EMT simulation, structural preserving.                                           W        in the past decade. An even higher wind power penetra-
+                                                                                 tion demand is expected to arrive in a near future [1]. To date,
+                                                                                 the two most widely used large scale wind energy conversion
+                           NOMENCLATURE                                          systems are the doubly fed induction generator (DFIG) and the
+Ami , ωi ,αmi        Amplitude, frequency and angle modulation                   permanent magnet synchronous generator (PMSG) [2]. Aggre-
+                     indices of GSC                                              gation of DFIGs is the focus of this paper. The DFIG is a variable-
+Amo , ωo ,αmo        Amplitude, frequency and angle modulation                   speed wind turbine generation system, which can harness wind
+                     indices of RSC                                              power with higher efficiency compared with fixed-speed systems
+C, vdc               Back to back converter dc link capacitance and              [3]–[5]. Accumulated experience from installations over the
+                     its voltage                                                 world, demonstrates its many advantages. It increases the energy
+idi , iqi            GSC d and q-axis component current                          conversion efficiency, it has a large single-unit capacity and
+idr , iqr            Rotor d and q-axis component current                        reduced mechanical stress caused by wind gusts [6]. However,
+ids , iqs            Stator d and q-axis component current                       modern wind farms require an expensive power converter inter-
+Lls , Llr , Lm       Stator leakage, rotor leakage and mutual in-                face to capture the maximum power from the wind at different
+                     ductance of induction machine                               rotor speeds [7]. Nevertheless, the power converter makes an
+                                                                                 asynchronous connection between the induction machine and
+   Manuscript received February 21, 2021; revised June 11, 2021 and October      the grid, and enables independent control of active and reactive
+10, 2021; accepted November 3, 2021. Date of publication November 9, 2021;       power [8]. The converter only has to process the slip power in
+date of current version May 20, 2022. This work was supported by the IRC
+Program of the Natural Sciences and Engineering Research Council (NSERC)         the rotor circuits, which is approximately 30% of the generator’s
+of Canada. Paper no. TEC-00196-2021. (Corresponding author: Wei Li.)             total power, in comparison with Type 4 generators where power
+   Wei Li, Iman Kaffashan, and Aniruddha M. Gole are with the Univer-            electronic converters must have the full power rating [9].
+sity of Manitoba, Winnipeg, Manitoba R3T 2N2, Canada (e-mail: wei.li2@
+umanitoba.ca; kaffashi@myumanitoba.ca; aniruddha.gole@umanitoba.ca).                The proposed aggregate DFIG model of wind farm is intended
+   Yi Zhang is with RTDS Technologies Inc., Winnipeg, Manitoba R3T 2E1,          for representing the collective behavior of a group of DFIGs in a
+Canada (e-mail: yzhang@rtds.com).                                                power system for steady state and dynamic behaviors. Hence the
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TEC.2021.3126571.                                        model can be used for efficient EMT simulations of several phe-
+   Digital Object Identifier 10.1109/TEC.2021.3126571                            nomena such as faults, instability, SSR and so on with a fraction
+                        0885-8969 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:48:46 UTC from IEEE Xplore. Restrictions apply.
+936                                                                                IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 37, NO. 2, JUNE 2022
+
+
+
+of the computational resources of modelling the entire system
+in detail with multiple DFIGs. It is not intended for protection
+studies of individual DFIGs within the farm as the identity of
+individual machines is not retained. This is a feature desired by
+many system level modelers for studying very large systems. It
+is particularly important for real-time simulators, where hard-
+ware limitations may preclude a fully detailed representation.
+A large grid can have several wind farms, each with hundreds
+of DFIGs. If each DFIG were individually modelled in detail
+on an electromagnetic transients (EMT) simulation platform,
+the overall model order would become extremely large, and the
+                                                                                Fig. 1.   Schematic structure of DFIG.
+simulation would require a very large computation time [10], or
+in the case of real-time simulators, this would require increased
+number of processor cores. An accurate DFIG aggregation is an                   from the DFIG cluster, but with adjusted parameter values. As
+important step to reduce the computation burden of large scale                  multiple DFIGs are represented by a single DFIG, this results in
+power system studies that include windfarms [11].                               considerable computational efficiency. This method is capable
+   For power system aggregation, traditional power networks                     of aggregating DFIGs with different generator parameters and
+with synchronous generators commonly use a coherency based                      different incident wind speeds. To account for the power loss in
+aggregation approach [12]–[14], where closely coherent gen-                     impedances connecting individual DFIG to the collector system
+erators are clubbed into a single equivalent generator. How-                    an equivalent impedance is included. A modified transformer
+ever, “coherency” has a different meaning for DFIGs, as the                     model with the primary side current magnifying function is
+induction generators are inherently asynchronous [15]. The                      developed to implement the aggregate model in EMT simulation
+“single-machine” wind farm aggregation method is reported                       software.
+in [16]–[18], where it is assumed that the whole wind farm                         Using electromagnetic transient (EMT) simulation, it is
+operates uniformly in wind speed and power output terms, so                     shown that the proposed aggregate model is able to retain the
+an aggregated single wind turbine generator (WTG) is sufficient                 same steady state response and reproduce the essential transient
+to represent the entire wind farm [19]. However, as the wind farm               response of the full system with a comparatively high accuracy.
+spans a wide area, this model is too simplified as it ignores wake              EMT simulation examples of a two machine system and a
+effects, and type-differences between WTGs. To surmount these                   demonstration wind farm composed of 10 DFIGs is used to
+drawbacks, the multi-machine method [20]–[23], is proposed                      validate the effectiveness of the proposed aggregation method.
+and is gaining popularity. Here, WTGs within a wind farm are                       Following the introduction in Section I, a structurally com-
+clustered into different groups according to the similarity of                  plete dynamic model of a DFIG consisting of an induction ma-
+WTG types and operating conditions, and each group is rep-                      chine, a back to back converter and a three-winding transformer
+resented by an equivalent model [24]. Despite their popularity                  is developed in Section II. In section III, a generalized state
+in literature, the methods still have disadvantages. Because wind               space mathematical aggregation procedure is developed, which
+speeds continuously change, the initial WTG aggregation groups                  aggregates the multiple DFIGs into a single DFIG. Section IV
+may change as time progresses [25], and the transient simu-                     compares simulation results from detailed and aggregated mod-
+lation results from the aggregated equivalent and the original                  elling to validate the aggregation approach. Conclusions are
+unreduced model do not always match. There are also low order                   presented in Section V.
+models of type 3 wind turbine proposed in [26], [27] to study the
+system frequency response characteristics. In [28], a modelling
+method is proposed for the dynamic frequency response of type                                 II. DFIG STATE SPACE DYNAMIC MODEL
+3 wind turbines based on the mass-spring-damping concept,                          A DFIG wind power conversion system as shown in Fig. 1
+which provides a clear physical interpretation and mathematical                 includes an induction machine, a back to back converter and a
+description of type 3 wind turbine dynamics. Similar aggregated                 three-winding transformer [30]. The state space dynamic model
+equivalent models have been proposed for other studies such as                  of each component of the electrical components is presented in
+sub-synchronous resonance (SSR) [29].                                           this section. A simple mechanical system is also included in the
+   In this paper, a new aggregation method for time domain EMT                  model but is not described below due to space limitation. Using
+simulation that reproduces the transient voltages and currents                  a generalized combination method, these models are combined
+from the terminals of the windfarm when connected to an exter-                  to yield the structurally complete dynamic model.
+nal network is proposed for representing the collective dynamic
+behavior of a group of DFIGs with a single equivalent DFIG.
+It is intended for simulation studies concerning interactions                   A. Induction Machine Dynamic Model
+of the entire windfarm following events in the larger external                     The induction generator (IG) is the core of DFIG wind power
+network. Starting from the state space dynamic model of the                     conversion system. Ignoring the zero sequence, the dynamic
+wind turbine generator, an aggregated DFIG model is developed                   equations of the IG in the synchronous rotating (d-q) reference
+which retains the same block structure as an individual DFIG                    frame are as in (1) – (6) [31], [32].
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:48:46 UTC from IEEE Xplore. Restrictions apply.
+LI et al.: STRUCTURE PRESERVING AGGREGATION METHOD FOR DOUBLY-FED                                                                                         937
+
+
+
+                                                                                  side VSC (RSC) that interface the step-up transformer tertiary
+                                                                                  winding with the induction machine rotor terminal.
+                                                                                     Note that the frequency of voltages and currents on the grid
+                                                                                  side is the grid frequency ωs (nominally 50 Hz or 60 Hz in the
+                                                                                  steady state), and on the rotor side is ωs − ωr .
+                                                                                     In the paper, the converter dynamic model is derived in the
+                                                                                  abc frame using switching functions and then transformed from
+                                                                                  the abc to an appropriate dq0 frame [34].
+Fig. 2.   Schematic representation of a back to back converter.                      The ac terminal voltages of the VSCs can be expressed as
+                                                                                  functions of dc voltage vdc and modulation signals. Taking
+                                                                                  S1 , S2 , S3 as the switching functions of the GSC module, the
+   Stator voltage equations:
+                                                                                 GSC generated ac side fundamental frequency voltages vabc_g =
+                   vds = rs ids − ωs λqs + pλds                                   [vai , vbi , vci ]T are:
+                                                                           (1)                             ⎧
+                   vqs = rs iqs + ωs λds + pλqs
+                                                                                                           ⎨ vai = 12 vdc · S1
+   Rotor voltage equations:                                                                                  vbi = 12 vdc · S2                (7)
+                                                                                                           ⎩
+                                                                                                            vci = 12 vdc · S3
+              vdr = rr idr − (ωs − ωr ) λqr + pλdr
+                                                                           (2)      The corresponding switching functions of the converter mod-
+              vqr = rr iqr + (ωs − ωr ) λdr + pλqr
+                                                                                  ule are as in (8).
+  Flux-linkage equations:                                                                        ⎧
+  ⎧                                                                                              ⎨ S1 (t) = 12 Ami sin(θmi (t))
+  ⎪ λds = Lls ids + Lm (ids + idr ) = Ls ids + Lm idr
+  ⎪
+  ⎨                                                                                              ⎩
+                                                                                                    S2 (t) = 12 Ami sin(θmi (t) − 2π
+                                                                                                                                   3 )      (8)
+    λqs = Lls iqs + Lm (iqs + iqr ) = Ls iqs + Lm iqr                                               S3 (t) = 12 Ami sin(θmi (t) + 2π )
+                                                                           (3)                                                     3
+  ⎪ λdr = Llr idr + Lm (ids + idr ) = Lm ids + Lr idr
+  ⎪
+  ⎩
+    λqr = Llr iqr + Lm (iqs + iqr ) = Lm iqs + Lr iqr                                Where, θmi (t) = ωi t + αmi .
+                                                                                     Similar expressions as in (7) apply to the RSC voltages
+   Where, Ls = Lls + Lm , Lr = Llr + Lm .                                         vabc_r = [vao, vbo, vco ]T .
+   To combine (1), (2) and (3), circuit dynamic equations can be                     Assuming Vmsi and αi are amplitude and phase-angle of the
+derived as below.                                                                 voltage source phase-a, gives the GSC and RSC equations in abc
+ ⎡     ⎤
+   vds                                                                            frames as below.
+ ⎢ vqs ⎥
+ ⎢     ⎥
+ ⎣ vdr ⎦ =                                                                                   vabcs_g = Rs_g iabc_i + Ls_g p (iabc_i ) + vabc_g
+                                                                                                                                                          (9)
+                                                                                             vabcs_r = Rs_r iabc_o + Ls_r p (iabc_o ) + vabc_r
+ ⎡ vqr                                                          ⎤
+         rs          −Ls ωs             0          −Lm ωs                            Equation (9) is transformed to dq0 coordinates giving (10).
+ ⎢      Ls ω s          rs           Lm ω s            0        ⎥
+ ⎢                                                              ⎥                 Choosing the initial angle of the dq0 transformation as αi , results
+ ⎣        0      −Lm (ωs − ωr )         rr       −Lr (ωs − ωr ) ⎦                 in the q component

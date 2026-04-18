@@ -1,0 +1,199 @@
+                                                               Electric Power Systems Research 197 (2021) 107305
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Development of phase domain frequency-dependent transmission line
+model on FPGA for real-time digital simulator
+Jiadai Liu a, *, Yuan Chen a, Hui Ding a, Yi Zhang a
+a
+    RTDS Technologies Inc., Winnipeg, MB, R3T 2E1, Canada
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   The transmission line model is one of the most important components for the real-time digital simulator based on
+Electromagnetic transient analyses                          the electromagnetic transient (EMT) algorithm. In order to predict the behavior of power systems under both
+Real-time digital simulator                                 steady and transient states, the coupling and frequency dependence of the transmission line need to be precisely
+Field programmable gate arrays
+                                                            represented. This paper presents a frequency-dependent phase domain (FDPD) transmission line model on a field
+Frequency-dependent transmission line
+Parallel algorithm
+                                                            programmable gate array (FPGA) for an EMT type real-time digital simulator. The developed model has been
+Pipelining                                                  fully pipelined and parallelized in hardware to achieve the lowest time-step. All the hardware developments for
+                                                            this model depicted in this paper are carried out in VHDL, and a customized 48-bits floating-point data repre­
+                                                            sentation is used for hardware implementation to improve the accuracy. This developed FPGA-based line model
+                                                            can be interfaced to the rest of the network to perform real-time simulation.
+
+
+
+
+1. INTRODUCTION                                                                             several microseconds to hundreds of microseconds.
+                                                                                                Transmission lines are important components in power systems for
+    The real-time digital electromagnetic transient type power system                       transmission and distribution of electrical energy. The transient
+simulator is an important tool for the power system industry in the                         behavior of a transmission line, such as frequency-dependent impedance
+analyzing, design and development of new solutions to alleviate oper­                       characteristics and propagation, will have a great impact on the tran­
+ational challenges of complex grids, especially in transient conditions.                    sient overvoltage and overcurrent. This will need to be addressed when a
+Compared to mathematical models and analog simulators such as a                             transmission line model is developed for EMT type real-time digital
+transient network analyzer (TNA), the digital real-time simulator pro­                      simulation. Significant efforts have been put into studying the behavior
+vides a more comprehensive solution with lower cost, reduced space and                      of transmission lines and developing accurate models for steady-state
+flexibility to expand. This allows the digital real-time simulator to play                  and transient state simulation. Traditionally, the transmission line
+an important role in the testing of manufactured controller and pro­                        models can be classified into two categories: lumped parameter Pi sec­
+tective devices in a hardware-in-the-loop (HIL) configuration, in the                       tion models and travelling-wave models. The Pi section models consider
+planning of new grids such as determining component rating and                              both mutual and self resistances, inductances and capacitances at a
+isolating level, and in the training and education of operators. Digital                    single frequency but do not take into account the propagation of the
+real-time simulation requires all necessary calculations to be finished                     transmission line. The travelling wave models, also known as
+within a certain period of time, which is called a simulation time-step, as                 distributed-parameter models, consider transmission line propagation
+they happen in real world, to reproduce whatever happens in a real                          and can be further classified into two sub-categories: constant parameter
+power network. All simulations and tests are done in digital laboratory                     and frequency-dependent parameter transmission line models. The first
+conditions, so that the real-time digital simulator can be used to test a                   type of model represents the transmission line in the modal domain, and
+power system under extreme conditions such as overvoltage and over­                         the parameter is calculated at a single frequency, so this model can only
+current conditions under EMT states. The simulation time-step is a                          be applied within a very limited bandwidth. The second type of model
+critical factor in HIL simulation in order to reproduce the high frequency                  represents the transmission line by taking into account the frequency-
+transient and power electronic phenomenon. Depending on the appli­                          dependence nature when calculating its parameters, and this type of
+cation, the range of digital real-time simulation time-step size is from                    model is the most accurate model type for transient simulation. The
+
+
+
+    * Corresponding author.
+      E-mail addresses: jiadai@rtds.com (J. Liu), yuanchen@rtds.com (Y. Chen), hui@rtds.com (H. Ding), yzhang@rtds.com (Y. Zhang).
+
+https://doi.org/10.1016/j.epsr.2021.107305
+Received 25 November 2020; Received in revised form 20 February 2021; Accepted 23 April 2021
+Available online 11 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+J. Liu et al.                                                                                                           Electric Power Systems Research 197 (2021) 107305
+
+
+modal domain frequency-dependent model calculates transmission line
+                                                                                  ik (t) = G ∗ vk (t) − ihistk (t),                                                  (5)
+solutions in the modal domain and then transfers the solutions to the
+phase domain by performing a linear transformation. This model works
+                                                                                  im (t) = G ∗ vm (t) − ihistm (t).                                                  (6)
+well for symmetrical and transposed lines, however, not for asymmet­
+rical and untransposed lines since this model uses constant trans­                  The history current vectors ihistk (t), ihistm (t) and equivalent impedance
+formation matrices which cannot be guaranteed to always be accurate               matrix G are expressed as
+and which may cause error [1, 2, 3]. Phase domain models avoid the
+                                                                                  ihistk (t) = Y c ∗ vk (t − Δt) − 2H ∗ imr (t − Δt − τ),                            (7)
+transformation matrices by performing all calculations directly in the
+phase domain [4, 5, 6, 7, 8]. Among these models, the universal line              ihistm (t) = Y c ∗ vm (t − Δt) − 2H ∗ ikr (t − Δt − τ),                            (8)
+model (ULM) [8] is considered numerically efficient and robust for both
+underground cables and overhead lines. RTDS Technologies Inc. has                 and
+developed a processor-based large time-step ULM model for their own
+digital real-time simulator, and this model can handle up to 12 con­              G = d + rYc λYc                                                                    (9)
+ductors with a time-step size of around 50µs. An FPGA-based real-time
+                                                                                  where the symbol ‘*’ indicates the matrix-vector convolution. The co­
+model is also proposed; however, this model and the rest of the power
+                                                                                  efficient λYc , is defined as
+system network can only run on FPGA and is not able to interface with
+other real-time simulators [9].                                                          (Δt)/(            Δt)
+                                                                                  λYc =            1 − pYc                                         (10)
+    Nowadays, FPGA is being widely used to design computationally                         2                2
+intensive applications due to its inherent parallel architecture, pipe­
+lining computation and custom configuration. FPGA-based power sys­                where p, r and d are poles, residues and proportional terms, respectively.
+tem apparatus models for digital real-time simulation have also been              The equations indicate that the Norton equivalent circuit for the time-
+proposed in both academics and industry [10, 11, 12]. For HVDC-VSC                domain transmission line model can be represented as shown in Fig. 2.
+real-time simulation, the time-step is required to be relative small, for            To perform the convolution of Y c ∗ vk (t)andH ∗ imr (t − τ) two state
+example 3µs, to accurately simulate high frequency switching circuits             variables xYc and xH are defined as
+for capturing high frequency transients. As a result, there is a need to          xYc (t) = αYc xYc (t − Δt) + vk (t − Δt),                                        (11)
+develop a FDPD transmission line model for small time-step simulation.
+                                                                                  xH (t) = αH xH (t − Δt) + imr (t − τ − Δt).                                      (12)
+2. FPGA-BASED FREQUENCY-DEPENDENT TRANSMISSION LINE REAL-TIME MODEL
+                                                                                      The convolution then is computed using
+2.1. Phase-domain frequency dependent line model                                  Y c ∗ vk (t) = cYc xYc (t),                                                      (13)
+
+2.1.1. Time domain representation and formulation                                 H ∗ imr (t − τ) = cH xH (t) + GH imr (t − τ − Δt)                                (14)
+   The frequency domain solution for an n-phase transmission line as
+shown in Fig. 1 can be expressed as,                                              where the coefficients αYc , αH , cYc , cH and GH are expressed as
+                                                                                       (        Δt)/(         Δt)
+Ik = Y c V k − 2Iki = Y c V k − 2Hmr ,                                 (1)
+                                                                                  αYc = 1 + pYc       1 − pYc      ,                                               (15)
+                                                                                                2              2
+Im = Y c V m − 2Imi = Y c V m − 2Hkr                                   (2)               (         Δt)/(       Δt)
+                                                                                  αH = 1 + pH           1 − pH    ,                                                (16)
+where k and m stand for transmission line sending and receiving end                                2           2
+respectively. Ik , V k , Im and V m are n dimensional sending and receiving
+                                                                                  cYc = rYc (αYc + 1)λYc ,                                                         (17)
+end current and voltage vectors. Iki and Imi are the incident current
+vectors and Ikr and Imr are reflected current vectors. The two n ×n
+                                                                                  cH = rH (αH + 1)λH ,                                                             (18)
+matrices are the characteristic admittance matrix Y c and the propaga­
+tion matrix H (Hmr and Hkr ) expressed as,                                        GH = rH λH .                                                                     (19)
+     √̅̅̅̅̅̅̅̅̅
+Y c = Y/Z,                                                              (3)
+                                                                                  2.1.2. Hardware design
+            √̅̅̅̅
+                                                                                     Due to the natural traveling time delay of a transmission line, the
+H=e     −    YZl
+                                                                       (4)
+                                                                                  sending-end and receiving-end calculations can be computed in parallel
+where the two n × n matrices are shunt admittance matrix Y and series             and two identical hardware designs are implemented on FPGA to reduce
+impedance matrix Z per unit length, respectively. l is the line length.           the simulation time-step. In each simulation time-step, after receiving
+Transforming (1) and (2) into the time-domain equations by using in­              the transmission line node voltages V k and V m from the network solver
+verse Fourier Transformation gives
+
+
+
+
+                      Fig. 1. An n-phase transmission line.                        Fig. 2. Norton equivalent circuit for time-domain transmission line model.
+
+                                                                              2
+J. Liu et al.                                                                                                           Electric Power Systems Research 197 (2021) 107305
+
+
+module, the transmission line model is executed to carry out the history
+current term Ihistk and Ihistm as shown in Fig. 2. As shown in (7) and (8),
+two convolutions contribute the main computational burden for the
+transmission line calculation. In order to achieve the lowest latency for
+real-time simulation, (13) and (14) are rearranged into three parts ihistn1
+ = cYc xYc , ihistn2 = GH imr and ihistn3 = cH xH .
+     For better explanation of these computational modules, two con­
+cepts, "parallel dimension" and "pipeline dimension", are given. In
+hardware implementation, all necessary parameters are stored in RAMs.
+If the parameter is a matrix, then it will be stored in either row or column
+order. For example, if the entries are stored in row order that means the
+first RAM stores the first row entries, the second RAM stores the second
+row entries and so on. By arranging the parameters in this way, all the
+entries from the first column will be accessed simultaneously and go                                Fig. 4. Paralleled scheme for XYc update module.
+through the computation unit in parallel, so the column-wise is the
+"parallel dimension". The second column entries will be accessed next,                2.1.2.3. GH imr (t − τ) module. From (14), the calculation for the term
+and then the third column entries until the last column entries. In this              GH imr (t − τ) is only dependent on imr (t − τ). As such the GH imr (t − τ)
+way the entries in each row will go through the computation unit in a                 module is executed in parallel with the Update XH module as well as the
+pipelined manner, so that the row-wise is the "pipeline dimension". In                Convolution module which will be detailed later. The dimension of GH is
+the remainder part of this paper, the terms n, p and g are the number of              n × n × g, the parallel dimension is n and the pipeline dimension is n × g
+conductors, poles and delay groups of the simulated transmission line                 as shown in Fig. 5. An accumulate unit (ACC) is responsible for accu­
+model.                                                                                mulation operation.
+
+2.1.2.1. Ik/mr module. As shown in Fig. 1 and Fig. 2, the equation for Ikr            2.1.2.4. Convolution module. Once XYc or X H is updated, the convolu­
+and Imr can be expressed as                                                           tion of (13) or (14) can be carried out. Fig. 6 illustrates the parallel
+                                                                                      computation scheme in the Convolution module for (13) only. The
+Ikr (t) = GV k (t) − Ihistk(t) − Iki ,                                     (20)       parameter cYc is a p × n × n matrix and stored in RAMs with parallel
+                                                                                      dimension p and pipeline dimension n × n. So, the computing is done in
+Imr (t) = GV m (t) − Ihistm(t) − Imi ,                                     (21)
+                                                                                      p-path parallel and in every n FPGA clock cycles one entry of vector ihistn1
+     The Ik/mr module is responsible for calculating the above equations              is calculated. For the convolution of (14), the parameter cH is a four
+and Fig. 3 shows the parallel hardware scheme for (20) only. The RAMs                 dimensional matrix, n × p × n × g, so there will be massive computations
+contain the parameter of an n × n matrix G and the n ×1 voltage vector                and arithmetic hardware units involved if a full parallelism scheme is
+V k . When the module executes, the RAMs mentioned above are accessed                 implemented. Subject to the FPGA resource utilization, the hardware
+and send the data to the Matrix-Vector-Multiplication (MVM) unit par­                 design for XH convolution uses 2 × n × g parallel computing and the
+alleled and pipelined. Each MVM unit takes data from one row of the                   value of vector ihistn3 comes out sequentially in every p/2 FPGA clock
+matrix G and the vector V k to finish the multiply-accumulate operation.              cycles.
+
+2.1.2.2. Update XYc and update XH modules. As can be seen from (11)                   2.2. Bergeron interface transmission line
+and (12), the calculation for updating two state variables X Yc and XH are
+similar, so the paralleled hardware implementations are similar for these                 The simplest approach to interface the FPGA-based FDPD trans­
+two models as illustrated in Fig. 4. The matrices and signals shown in                mission line model to the rest of the small time-step network is to use a
+this figure are only for (11). Each column of XYc is accessed and calcu­              Bergeron travelling wave transmission line with a travel time of 1 small
+lated in parallel and the updated XYc is sent back to the RAMs which are              time-step. This provides a stable interface between the small time-step
+dual-port, supporting ’read’ and ’write’ operations simultaneously. The               network and the FPGA-based FDPD transmission line model. The Ber­
+hardware implementation for updating XH is the same as Fig. 4 except                  geron line injection current terms are updated separately and then sent
+that the matrix XH ’s dimension is n × n × g, which is a three dimensional            to the opposite side by an optical fiber ca

@@ -1,0 +1,153 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/JESTPE.2019.2947411, IEEE Journal
+                                                                                          of Emerging and Selected Topics in Power Electronics
+
+                                                                                                                                                                                                                  1
+
+
+
+
+                     Parallel-in-Time Simulation Algorithm for Power
+                              Electronics: MMC-HVdc System
+                                                                                   Suman Debnath, Member, IEEE
+
+
+
+                  Abstract—The complexity in simulating power electron-                                                                            I. I NTRODUCTION
+               ics like modular multilevel converters (MMCs) requires
+               simulation algorithms to speed-up the process. Existing
+               simulation algorithms exploit spatial parallelism to speed-
+               up simulation. With rise in complexity of power electronics
+                                                                                                                   M       ODULAR multilevel converters (MMCs) are be-
+                                                                                                                           ing used/researched in various applications like
+                                                                                                                   high-voltage direct current (HVdc) transmission systems,
+               and presence of increased number of states within them,
+                                                                                                                   flexible ac transmission systems (FACTS), industrial
+               there are limits in the speed-up using spatial parallelism.
+               In this paper, a temporal parallelism algorithm based
+                                                                                                                   motor drives, and others [1]. They compose of a very
+               on parallel-in-time methods is developed for simulation                                             large number of states and require small time-steps
+               of power-electronics-systems. The temporal parallelism                                              (∼ µs) to simulate them. The presence of non-linear
+               algorithm is based on computation of power-electronics-                                             switched systems in the MMCs introduces numerical
+               states on coarse and fine time-steps using different models.                                        stiffness in the differential algebraic expressions (DAEs)
+               The models of power-electronics-systems used in coarse                                              that represent the converter dynamics. This numerical
+               and fine time-steps are average-value and detailed models,                                          stiffness further complicates the simulation of MMCs
+               respectively. The updates to states on coarse time-step are                                         [2]. These converters have been modeled and simu-
+               computed serially and are used to initialize the states on
+                                                                                                                   lated using algorithms that utilize spatial parallelism
+               fine time-step. The updates on fine time-step are computed
+               in parallel. A translation method is proposed in this paper                                         [2]–[7]. The spatial parallelism is based on separation
+               to update the states on fine time-step from the simulations                                         of dynamics of individual arms in the MMC and is
+               in the coarse time-step, and vice-versa. The proposed                                               limited to 6 threads of parallelism, which is same as
+               algorithm is applied to simulate MMCs and is validated                                              the number of arms in the MMC. However, as the
+               with respect to a detailed reference MMC model. The                                                 number of submodules (SMs) increases in each arm
+               proposed algorithm recorded a speed-up of up to 3.47x                                               towards thousands, the computational burden imposed by
+               with 5 cores.                                                                                       the serial computations within each arm increases. The
+                 Index Terms—Electro-magnetic transient simulation,                                                serial computations within each arm are of the order of
+               non-linear non-autonomous switched systems, temporal                                                updating a large number of states (∼ 1000s) in very small
+               parallelism, parallel-in-time, multigrid reduction in time                                          time-steps (∼ µs). The limits to further applying spatial
+               (MGRIT).                                                                                            parallelism within each arm are imposed by the latencies
+                                                                                                                   associated in typical computational systems to access
+                                                                                                                   memory and retrieve data for computation purposes.
+                                                                                                                      The basic abstract mathematical concepts explored in
+                                                                                                                   parallel-in-time methods include parareal and multigrid
+                  Suman Debnath is with Oak Ridge National Laboratory, Knoxville,                                  reduction-in-time (MGRIT) methods. The corresponding
+               TN 37932, USA (email: debnaths@ornl.gov).                                                           theory to simulate power system dynamics have been
+                  This work was supported by the U.S. Department of Energy, Office                                 developed in [8], [9]. There has been no theoretical
+               of Electricity Delivery and Energy Reliability through its Transformer
+               Resilience and Advanced Components program.
+                                                                                                                   developments for parallel-in-time electro-magnetic tran-
+                  This manuscript has been authored by UT-Battelle, LLC under                                      sient (EMT) simulation of power electronics. The EMT
+               Contract No. DE-AC05-00OR22725 with the U.S. Department of                                          simulation of power electronics utilize non-linear non-
+               Energy. The United States Government retains and the publisher, by                                  autonomous hybrid switched system models [2] that
+               accepting the article for publication, acknowledges that the United
+               States Government retains a non-exclusive, paid-up, irrevocable,                                    are different from the models in the aforementioned
+               world-wide license to publish or reproduce the published form of this                               applications. The difference is introduced by the pres-
+               manuscript, or allow others to do so, for United States Government                                  ence of a large number of non-linear switches, analog-
+               purposes. The Department of Energy will provide public access to
+                                                                                                                   digital system implementations, and the very small time-
+               these results of federally sponsored research in accordance with
+               the DOE Public Access Plan(http://energy.gov/downloads/doe-public-                                  constants involved. Developing the theory on parallel-in-
+               access-plan).                                                                                       time EMT simulation of power electronics can speed-up
+
+      2168-6777 (c) 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/JESTPE.2019.2947411, IEEE Journal
+                                                                                          of Emerging and Selected Topics in Power Electronics
+
+                                                                                                                                                                                                                                                                                                                                2
+
+                                                     Legend
+                                                  Coarse Time-Step
+                                                  Fine Time-Step
+
+
+                                                                                 WindowͲ1
+                                                    Tcoarse
+                              ‫ܠ‬෤ ௜ [0]                                ‫ܠ‬෤ ௜[1]                 8Tfine           ‫ܠ‬෤ ௜ [2]                                 ‫ܠ‬෤ ௜[3]
+                                        ‫ܠ‬ො ௜[0,2]                              ‫ܠ‬ො ௜ [1,2]                              ‫ܠ‬ො ௜[2,2]
+                                      ‫ܠ‬ො ௜[0,1]                               ො ௜[1,1]
+                                                              ‫ܠ‬ො ௜ [0,Ns – 1] ‫ܠ‬                      ‫ܠ‬ො ௜[1,Ns – 1] ‫ܠ‬ො ௜ [2,1]                     ‫ܠ‬ො ௜[2,Ns – 1]
+
+                              ‫ܠ‬ො ௜[0]                                 ‫ܠ‬ො ௜[1]                                  ‫ܠ‬ො ௜[2]                                       ‫ܠ‬ො ௜ [3]
+                                                                                            Twindow
+
+                                                                                                                                                                                                                  WindowͲ2
+                                                                                                                                                               ‫ܠ‬෤ ௜[3]                                 ‫ܠ‬෤ ௜[4]                                         ‫ܠ‬෤ ௜[5]                                    ‫ܠ‬෤ ௜[6]
+
+                                                                                                                                                               ‫ܠ‬ො ௜ [3]                                ‫ܠ‬ො ௜[4]                                        ‫ܠ‬ො ௜[5]                                     ‫ܠ‬ො ௜[6]
+
+                                           Fig. 1: An example coarse and fine time-steps in a parallel-in-time simulation algorithm.
+
+               simulation where the speed-up limits are reached with                                                                                                                 Legend
+
+               spatial parallelism.                                                                                                                                              Coarse Time-Step
+
+                 In this paper, an algorithm is developed for the                                                                                                                Fine Time-Step
+
+               parallel-in-time simulation of power electronics systems                                                                                                                                                        FineOperation
+                                                                                                                                                                                   ‫ܠ‬ො ௜[0,2]
+               and validated with respect to a reference solution.
+                                                                                                                                                                    CoreͲ1:                                  ‫ܠ‬ො ௜[0,Ns – 1]
+                                                                                                                                                                                   ‫ܠ‬ො ௜[0,1]
+
+
+                     II. PARALLEL - IN -T IME S IMULATION OF P OWER                                                                                                           ො௜
+                                                                                                                                                                             ‫[ ܠ‬0]                                   ‫ܠ‬ො ௜[1]
+                                      E LECTRONICS                                                                                                                                                                             ‫ܠ‬ො ௜ [1,2]
+
+
+                                Legend                                                                                                                                                                     CoreͲ2:             ‫ܠ‬ො ௜ [1,1]               ‫ܠ‬ො ௜[1,Ns – 1]
+
+                             Coarse Time-Step                                                                                                                                                                        ‫ܠ‬ො ௜[1]                                      ‫ܠ‬ො ௜[2]
+                              Fine Time-Step                                                                                                                                                                                                                             ‫ܠ‬ො ௜ [2,2]
+
+                                                                                                                                                                                                                                                      CoreͲ3:             ‫ܠ‬ො ௜ [2,1]             ‫ܠ‬ො ௜[2,Ns – 1]
+                                 CoarseOperation                         CoarseOperation                    CoarseOperation
+                                                                                                                                                                                                                                                                   ො௜
+                                                                                                                                                                                                                                                                  ‫[ ܠ‬2]                                    ‫ܠ‬ො ௜ [3]
+                     ‫ܠ‬෤ ଴[0]=‫ ܠ‬଴ሾͲሿ                       ‫ܠ‬෤ ଴[1]                              ‫ܠ‬෤ ଴[2]                               ‫ܠ‬෤ ଴[3]
+
+
+                                                                                                                                                                                                                                                      (a)
+                                                      ‫ ܠ‬଴ ͳ ൌ  ‫ܠ‬෤ ଴[1]                     ‫ ܠ‬଴ ʹ ൌ ‫ܠ‬෤ ଴[2]                      ‫ ܠ‬଴ ͵ ൌ ‫ܠ‬෤ ଴[3]
+                                                                                                                                                                                                        CoarseandFinalStateUpdates
+                                                                                    (a)
+                                                                                                                                                                                                                                CoarseOperation                           CoarseOperation
+                                                                          Translation                                                                                ‫ܠ‬෤ ௜[0]=‫ܠ‬ො ௜ ሾͲሿ                 ‫ܠ‬෤ ௜[1]=‫ܠ‬ො ௜ ሾͳሿ                                  ‫ܠ‬෤ ௜[2]                                 ‫ܠ‬෤ ௜[3]
+                 ‫ܠ‬   ௜ିଵ         ො௜
+                           Ͳ ՜ ‫[ ܠ‬0]                ‫ ܠ‬௜ିଵ ͳ      ՜  ‫ܠ‬ො ௜ [1]            ‫ ܠ‬௜ିଵ ʹ     ՜  ‫ܠ‬ො ௜ [2]          ‫ ܠ‬௜ିଵ ͵        ՜  ‫ܠ‬ො ௜ [3]
+
+
+
+                                                                                                                                                                                          ‫ ܠ‬௜ ͳ =‫ܠ‬෤ ௜[1]+‫ܣ‬ୣ୰୰୭୰ ‫ܠ‬ො ௜ ͳ െ ‫ܠ‬෤ ௜ିଵ[1]       ‫ ܠ‬௜ ʹ =‫ܠ‬෤ ௜ [2]+‫ܣ‬ୣ୰୰୭୰ ‫ܠ‬ො ௜ ʹ െ ‫ܠ‬෤ ௜ିଵ[2]   ‫ ܠ‬௜ ͵ =‫ܠ‬෤ ௜[3]+‫ܣ‬ୣ୰୰୭୰ ‫ܠ‬ො ௜ ͵ െ ‫ܠ‬෤ ௜ିଵ[3]
+                                               (b)
+               Fig. 2: Parallel-in-time simulation algorithm in a simu-
+               lation window: (a) Initialization, and (b) Translation.                                                                                                                           (b)
+                  The parallel-in-time simulation algorithm to enable                                                                                               Fig. 3: Parallel-in-time simulation algorithm in a sim-
+               temporal parallelism in simulation of power electronics                                                                                              ulation window: (a) Fine Operation, and (b) Re-
+               is explained in this section. The basic abstract mathemat-                                                                                           initialization.
+               ical concept that describes MGRIT methods is described
+               in [8], [10]. In general, the MGRIT methods evaluate                                                                                                    In the proposed algorithm, there are three types of
+               simulation states in multiple levels with different update                                                                                           states defined on the power electronics system: (i) coarse
+               rates [10]. One special case of a MGRIT method is a                                                                                                  states (x̃), (ii) fine states (x̂), and (iii) final states (x).
+               two-level algorithm, also known as parareal method [10].                                                                                             The coarse states are based on the average-value model
+               The two-level MGRIT algorithm forms the basis of the                  

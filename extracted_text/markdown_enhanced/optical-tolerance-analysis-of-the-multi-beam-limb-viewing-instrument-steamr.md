@@ -1,0 +1,29 @@
+## Optical Tolerance Analysis of the Multi-Beam Limb Viewing Instrument STEAMR
+Arvid Hammar, Mark Whale, Member, IEEE, Per Forsberg, Axel Murk, Anders Emrich, and Jan Stake, Senior Member, IEEE
+
+**Abstract**—In this paper, we report on an optical tolerance analysis of the submillimeter atmospheric multi-beam limb sounder, STEAMR. Physical optics and ray-tracing methods were used to quantify and separate errors in beam pointing and distortion due to reflector misalignment and primary reflector surface deformations. Simulations were performed concurrently with the manufacturing of a multi-beam demonstrator of the relay optical system which shapes and images the beams to their corresponding receiver feed horns. Results from Monte Carlo simulations show that the inserts used for reflector mounting should be positioned with an overall accuracy better than $100~\mu\text{m}$ ($1/10$ wavelength). Analyses of primary reflector surface deformations show that a deviation of magnitude $100~\mu\text{m}$ can be tolerable before deployment, whereas the corresponding variations should be less than $30~\mu\text{m}$ during operation. The most sensitive optical elements in terms of misalignments are found near the focal plane. This localized sensitivity is attributed to the off-axis nature of the beams at this location. Post-assembly mechanical measurements of the reflectors in the demonstrator show that alignment better than $50~\mu\text{m}$ could be obtained.
+
+**Index Terms**—Limb viewing, Monte Carlo, multi-beam, quasi-optics, Stratosphere–Troposphere Exchange And climate Monitor Radiometer (STEAMR), submillimeter-wave instruments, tolerance analysis.
+
+Manuscript received April 08, 2014; revised September 12, 2014; accepted September 26, 2014. Date of publication October 14, 2014; date of current version October 30, 2014. This work was supported in part by the Swedish Research Council (VR) under Contract 2010-4040.
+
+A. Hammar is with the Terahertz and Millimetre Wave Laboratory, Department of Microtechnology and Nanoscience–MC2, Chalmers University of Technology, SE-412 96 Göteborg, Sweden, and also with Omnisys Instruments AB, SE-42132 Västra Frölunda, Sweden (e-mail: arvid.hammar@omnisys.se).
+M. Whale was with the Institute for Applied Physics (IAP), University of Bern, Bern, Switzerland. He is now with the Group for Advanced Receiver Development (GARD), Chalmers University of Technology, SE-412 96 Göteborg, Sweden.
+P. Forsberg and A. Emrich are with Omnisys Instruments AB, SE-42132 Västra Frölunda, Sweden.
+A. Murk is with the Institute for Applied Physics (IAP), University of Bern, Bern, CH 3012, Switzerland.
+J. Stake is with the Terahertz and Millimetre Wave Laboratory, Department of Microtechnology and Nanoscience–MC2, Chalmers University of Technology, SE-412 96 Göteborg, Sweden.
+
+## I. INTRODUCTION
+The sub-millimeter wave region of the electromagnetic spectrum can be used for detection of spectral lines of molecules, such as oxygen, nitrogen and water vapor, in the Earth’s atmosphere. Satellite-borne instruments for atmospheric research operating at these wavelengths are motivated by strong absorption in the Earth’s atmosphere, which complicates ground-based observations [1]. Odin [2], Cloudsat [3], and TRMM [4] are examples of satellite-borne instruments having a single beam for making such observations. Multiple beam instruments offer improved sensitivity [5] as well as increased temporal and spatial resolution by allowing for simultaneous observations at different locations on the sky and such applications are therefore becoming increasingly popular [6]–[8].
+
+The Stratosphere–Troposphere Exchange And climate Monitor Radiometer (STEAMR) is a satellite borne instrument for climate research that was part of the proposed ESA PREMIER mission [9]. It will utilize 14 polarization interleaved beams for observations in the frequency band $323\text{--}357$ GHz in order to understand processes that link trace gases ($\text{H}_2\text{O}$, $\text{O}_3$, CO, etc.), radiation and chemistry in the upper troposphere and lower stratosphere (UT/LS). Fig. 1 illustrates the optical train which is here divided into three sections: the antenna consisting of a carbon fiber reinforced plastic (CFRP) off axis Ritchey–Chrétien telescope, six aluminum off-axis reflectors in the relay optics and two focal plane arrays (FPA). The FPAs are composed of monolithically machined facet aluminum reflectors to achieve precise imaging from the elliptical far field beam patterns to the corresponding circular feed horns [10], [11].
+
+Knowledge of beam radiation pattern and pointing is crucial for the retrieval functions used when modeling the dynamics of the Earth’s atmosphere [12]. It is therefore of great importance to know how mechanical deviations in the optical train influence the performance, both from manufacturing and during observations. Previous tolerance analyses which included computer simulations and optical measurements have been made for single beam systems, e.g., [13], [14]. However, having multiple beams will increase complexity in manufacturing and possibly introduce requirements for relative beam pointing. To the author’s best knowledge, this study of the
+
+*Fig. 1. 2D layout of the complete optical train. All local coordinate systems for the reflectors, named M1–M6, are aligned in the analysis. FPA-T and FPA-R denote transmission and reflection in the wire grid polarizer (WGP) separating the two sets of receivers.*
+
+### TABLE I
+**OPTICAL REQUIREMENTS FOR STEAMR**
+| Parameter | Specification |
+|---|---|
+| *(Table data not provided in source excerpt)* | |

@@ -1,0 +1,196 @@
+                                                          Electric Power Systems Research 180 (2020) 106141
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Measurement-based frequency-dependent model of a HVDC transformer for                                                                                   T
+electromagnetic transient studies
+Bjørn Gustavsen*, Yannick Vernay
+SINTEF Energy Research, P.O. Box 4761 Sluppen, Trondheim, NO-7465, Norway
+
+
+
+
+A R T I C LE I N FO                                   A B S T R A C T
+
+Keywords:                                             A wide-band, frequency-dependent ﬁve-terminal model is developed that represents one HVDC transformer unit
+HVDC transformer                                      in the French-English IFA2000 HVDC interconnection. Three such interconnected 1-ph units constitute one 3-ph
+Measurements                                          transformer bank needed in 12-pulse conversion. The model is obtained via admittance frequency sweep
+Black box model                                       measurements on the transformer's terminals, including common-mode measurements to capture the high-im-
+Electromagnetic transients
+                                                      pedance coupling to earth at lower frequencies. The data set is modiﬁed to reduce the magnetizing current to a
+                                                      realistic level by a novel eigenvalue scaling procedure. The ﬁnal data set is subjected to modeling by a stable and
+                                                      passive rational model while utilizing a mode-revealing transformation to retain the accuracy of the small ei-
+                                                      genvalues that are related to the high-impedance coupling to earth. The paper describes details related to the
+                                                      measurements and modeling steps as well as the many intermediate accuracy validations that were done. Also is
+                                                      described challenges in the measurements that resulted due to interference of the measurements by a nearby 400
+                                                      kV overhead line. The model is applied in a time domain simulation of the complete HVDC link in normal
+                                                      operation where voltage waveforms resulting from line commutations are compared against those by a classical
+                                                      model with added stray capacitances.
+
+
+
+
+1. Introduction                                                                            To overcome the accuracy limitation of simpliﬁed transformer
+                                                                                       models, one must use of either a detailed white-box transformer model
+    HVDC transformers are together with thyristor valves the funda-                    [2–7] supplied by the manufacturer, or one may extract a black-box
+mental components in any LCC-type HVDC converter. The protection of                    model [8–12] of the transformer from terminal measurements. The
+these transformers is therefore essential for the reliable operation of the            latter is of course only possible if the transformer has already been
+HVDC link. Overvoltages due to switching events, lightning impulses                    built, or if there is a sister unit available. The use of black-box models is
+and in-station ﬂashovers on the AC side result in steep-fronted over-                  attractive because a high level of accuracy can often be achieved
+voltages that stress the transformer AC side insulation parts, and vol-                compared to a white-box models calculated from detailed design data.
+tages are also transferred to the DC-side where they stress and interfere                  In this work we demonstrate for the ﬁrst time the use of black-box
+the thyristor components [1]. Conversely, line faults and lightning                    modeling to an HVDC transformer. The transformer is a single-phase
+strokes to a DC overhead line may result in overvoltages that impose                   unit belonging to the French-English IFA2000 interconnection. Using a
+stresses on the transformer DC-side terminals. The protection of HVDC                  dedicated equipment for frequency sweep measurements of the trans-
+substation against overvoltages therefore requires insulation co-ordi-                 former's terminal voltage/current characteristics, we obtain a multi-
+nation studies to be performed to determine the appropriate location of                port admittance description under the assumption of linear behavior.
+surge arresters [1].                                                                   From the admittance description we extract a stable and passive ra-
+    Insulation co-ordination studies requires the use of models with                   tional model (state-space) which is amenable for inclusion in general
+adequate accuracy up to several hundred kHz in order to represent the                  simulation programs of electromagnetic transients such as EMTP-RV,
+actual waveshapes of the overvoltages. The representation of the HVDC                  PSCAD and ATP. We demonstrate the many steps in the measurement
+transformer is a main obstacle in such studies since frequency-depen-                  and modeling process, including the required validation of measure-
+dent transformer models are in general not available. Therefore, sim-                  ment accuracy and consistency in both frequency domain and time
+pliﬁed models are usually employed, often consisting of a 50 Hz model                  domain, as well as in the model extraction step. The challenges due to
+in combination with lumped capacitors.                                                 interference from a nearby 400 kV HVAC line are also demonstrated.
+
+
+  ⁎
+      Corresponding author.
+      E-mail address: bjorn.gustavsen@sintef.no (B. Gustavsen).
+
+https://doi.org/10.1016/j.epsr.2019.106141
+Received 12 August 2019; Accepted 2 December 2019
+Available online 14 December 2019
+0378-7796/ © 2019 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY license
+(http://creativecommons.org/licenses/by/4.0/).
+B. Gustavsen and Y. Vernay                                                                                       Electric Power Systems Research 180 (2020) 106141
+
+
+
+
+    Fig. 1. HVDC transformers utilized in bipolar 12-pulse conﬁguration.
+
+
+Two important contributions in this work are (1) handling of two un-
+grounded windings (which leads to widely diﬀerent modal components
+towards lower frequencies), and (2) a procedure to obtain a realistic
+magnetizing current at 50 Hz (since small-signal measurements give
+unrealistically large magnetizing currents). Finally, we demonstrate the                      Fig. 3. HVDC 1-ph transformer measurement object.
+application of the model in a simulation of the complete HVDC link
+where we compare the eﬀect of commutation induced voltage wave-
+                                                                                 3. Work strategy
+forms against those by a simpliﬁed model.
+                                                                                     The transformer was available for a total of ﬁve days. Within this
+2. HVDC transformer                                                              time frame, it was required to connect the measurement equipment,
+                                                                                 perform measurements, create a model, validate the model's accuracy,
+    The modeled transformer is a spare unit belonging to the French              and ﬁnally to disconnect all the measurement equipment. The limited
+station of the HVDC-LCC France-England link IFA2000. This inter-                 time frame made it necessary to measure, validate and model in a very
+connection was commissioned in 1986 and is composed of two HVDC                  eﬀective and disciplined manner. This was achieved by the following
+bipole ± 270 kV of 1000 MW each. A refurbishment of the converter                strategy.
+valves and of the control and protection system has been realized in
+2011/2012. However the other HV equipment of the HVDC station                     1 All measurements and required reconnections are performed on a
+including the transformer have been preserved. The transformer is a                 conveniently located “connection box” (Section 4.1). That way, one
+single-phase (1-ph) 206 MVA unit with rated voltage                                 avoids to do do any reconnections on the transformer's terminals
+400/ 3 , 118, 118/ 3 kV at 50 Hz. Three 1-ph-units are connected to                 which could only be accessed by a lift.
+form the required 3-ph YNyd unit needed in a 12-pulse converter, see              2 The modeling is based on admittance matrix frequency sweep
+Fig. 1.                                                                             measurements (Section 4.2). The accuracy of these measurements is
+    The winding conﬁguration of each 1-ph transformer is shown in                   checked by calculating a set of voltage transfer functions (on the
+Fig. 2. The high-voltage (HV) 400 kV winding has its end point                      connection box) that can be veriﬁed by use of (passive) voltage
+grounded while the two low-voltage (LV) windings are ungrounded.                    probe measurements. Necessary adjustments to the admittance
+The transformer core has four limbs with the secondary Y and D                      measurements are made until an acceptable validation is achieved.
+windings placed on the second and third limb, respectively. The ob-               3 A passive and stable model is “itted” to the measured admittance
+jective is to create a ﬁve-terminal model of the transformer that is valid          matrix frequency responses (Section 5). The approach permits to
+over a wide frequency band, including the mutual coupling between                   extract a suitable model in approximately one minute CPU time. The
+terminals. The terminal numbering is as shown in Fig. 2.                            model's terminal admittance matrix is used for calculating voltage
+    The 1-ph spare unit is located in the Les Mandarins (Calais) sub-               transfer functions that are compared against the measurements in
+station, in open air as shown in Fig. 3. A live 400 kV AC overhead runs             Step 2.
+in the vicinity of the transformer as can be observed in the ﬁgure. The           4 As a ﬁnal validation, a set of time domain step voltage measure-
+interference from this line caused diﬃculties in the measurements as                ments are performed (on the connection box) and compared against
+described in later sections.                                                        time domain simulations Section 6). The simulation program is a
+                                                                                    Matlab implementation that can read in the measurement ﬁles, run
+                                                                                    the simulation, and make comparative plots, all within a few sec-
+                                                                                    onds.
+
+
+                                                                                 4. Measurements, validation (frequency domain)
+
+                                                                                 4.1. Setup
+
+                                                                                     The measurement setup is similar to the one presented in Ref. [9]. It
+                                                                                 consists of a vector network analyzer (VNA) with gain-phase capability
+                                                                                 in combination with connection box that includes a wide-band current
+                                                                                 sensor. Additional equipment includes insulated conductors, coaxial
+                                                                                 cables and a ground reference plane. The insulated conductors were
+                                                                                 connected to the external terminals (bushing ends), strapped along the
+                                                                                 bushings and brought down to the artiﬁcial ground plane. The ground
+                                                                                 plane consisted of braided, ﬂat wires that were taped to the tank lid and
+            Fig. 2. 1-ph HVDC transformer windings and terminals.                connected to the neutral N-point in Fig. 2, as well as to several
+
+                                                                             2
+B. Gustavsen and Y. Vernay                                                                                            Electric Power Systems Research 180 (2020) 106141
+
+
+                                                                                            1
+                                                                                       Y→     (Y + Y T )
+                                                                                            2                                                                      (2)
+
+
+                                                                                       4.3. Common mode behavior
+
+                                                                                           It is well known that the presence of ungrounded windings poses an
+                                                                                       accuracy challenge in the admittance measurement. In each measure-
+                                                                                       ment, the voltage is applied to one terminal j with all other terminals
+                                                                                       grounded. Element Yij is obtained as the (measured) current in terminal
+                                                                                       i divided by the applied voltage on terminal j. Since the measurements
+                                                                                       are performed with grounded terminals, it follows that the information
+                                                                                       about the (small) capacitive charging currents at lower frequencies tend
+                                                                                       to become lost in the (large) short-circuit current component. The
+                                                                                       consequence is poor representation of the transformer behavior when
+               Fig. 4. Measurement equipment on top of transformer.                    applied with high-impedance terminations, including open terminals as
+                                                                                       the extreme case. A procedure for overcoming this problem has been
+                                                                                       demonstrated for a 1-ph 3-winding transformer where one of the
+grounding points on top of the transformer. The bottom ends of the
+                                                                                       windings was ungrounded [12]. In the following we extend the ap-
+insulated conductors were connected to the connection box (on top of
+                                                                                       proach in Ref. [12] to be applicable also for the given 1-ph 3-winding
+the transformer) via 3-m long coaxial cables whose shields were con-
+                                                                                       transformer which has two ungrounded windings.
+nected to the artiﬁcial ground plane at one end and the connection box
+                                                                                           The main idea is to measure the common-mode behavior of the two
+at the other end. That way, the transformer's terminals were available
+                                                                                       ungrounded windings and enforce this behavior into the original Y(5 ×
+on the connection box. The actual measurements were performed on
+                                                                                       5). To achieve this, we bond the two terminals of each ungrounded
+the connection box using the VNA instrument and the built-in current
+                                                                                       winding (on the connection box), giving a three-terminal component as
+sensor, with necessary grounding of terminals performed on the con-
+                                                                                       shown in Fig. 6.
+nection box. The setup permits measurements of individual terminal
+                                                                                           Using the same measurement procedure, the admittance matrix Y(3
+admittance measurements, as well as voltage transfer functions with the
+                                                                                       × 3) is measured as function of frequency and subjected to symmetry
+use of voltage probes. The actual use of the connection box is explained
+                                                                                       enforcement by (2). Fig. 7 shows with blue trace the nine magnitude
+in Ref. [9]. Fig. 4 shows the connection box and VNA instrument lo-
+                                                                                       functions of the direct measurements. All elements but element (1,1) of
+cated on top of the transformer. The ﬁve coaxial cables that connect to
+                                                                                       Y(3 × 3) tend to approach zero at low frequencies by a linear trace in the
+the transformer's external terminals are visible on the left side of the
+                                                                                       log-log plot, indicating the expected capacitive behavior. However, at
+connection box.
+                                                                                       low frequencies the magnitude functions become too small to be ac-
+                                                                                       curately measured, and they are aﬀected by 50 Hz interference from the
+                                                                                       400 kV AC line. At frequencies below 300 Hz we therefore replace these
+4.2. Admittance matrix measurements
+                                                                                       (noisy) elements with the expected capacitive behavior, Yij (ω) = jωCij
+                                                                                       with the capacitances chosen such that Im{Yij (ω)} = ωCij at 300 Hz. The
+   The admittance matrix Y(5 × 5) deﬁnes the relation between
+                                                

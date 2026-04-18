@@ -1,0 +1,164 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2749427, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                             1
+
+
+
+
+            Shifted Frequency Modeling of Hybrid Modular
+           Multilevel Converters for Simulation of MTDC Grid
+                                                         Dewu Shu, Venkata Dinavahi, Senior Member, IEEE,
+                                                   Xiaorong Xie, Senior Member, IEEE, Qirong Jiang, Member, IEEE
+
+
+
+              Abstract—When investigating voltage and current stresses in                                      of the MMC can be quite different from normal conditions
+           critical main-circuit components during faults of the converter, a                                  due to the nonlinear characteristics of freewheeling diodes
+           detailed equivalent model capable of representing the balancing                                     [6]. Notably, when investigating voltage and current stresses
+           control strategies of the capacitor voltages on the sub-module
+           level, along with blocking and de-locking, is always necessary.                                     during faults inside or immediately outside the converter,
+           Among previously proposed equivalent models of the MMC, only                                        quantities of each individual sub-module must be simulated in
+           sub-module averaged models (SAMs) can capture interested inner                                      detail. Therefore, in order to improve the simulation efficiency
+           dynamics inside each arm. However, the simulation accuracy of                                       without compromising the accuracy, it is still required to
+           SAMs is not always satisfactory, especially when the time step                                      propose more accurate and efficient methods of modeling,
+           is larger than 10 µs. In order to further improve the simula-
+           tion accuracy with guaranteed simulation efficiency, the shifted                                    which is capable of representing inner dynamics of each sub-
+           frequency modeling (SFM) of the half- and full-bridge hybrid                                        module as well as the dynamic characteristics of the diodes.
+           MMC is proposed in this paper. Therein, each sub-module is                                             Several models of the MMC have been previously proposed,
+           represented by Thévenin equivalents derived by dynamic phasors.                                    which are summarized in Table I. Specifically, the analytical
+           The arm of the MMC is represented by Norton equivalents                                             models of the MMC are based on mathematical models of
+           to guarantee the efficiency, considering both normal and dc-
+           blocking conditions. The effectiveness of the proposed model in                                     the MMC, which are represented in the form of state-space
+           terms of accuracy and efficiency is validated by simulating a                                       equations [7]-[9]. These models are accurate to represent
+           MMC based HVDC transmission.                                                                        system-level dynamics under normal conditions. However,
+              Index Terms—Dynamic phasors, electromagnetic transient                                           since the characteristics of the diodes are not taken into
+           (EMT), modular multilevel converter (MMC), MTDC grid,                                               consideration in these models, the MMCs in dc-fault blocking
+           shifted frequency modeling.                                                                         conditions cannot be represented accurately. More importantly,
+                                                                                                               the inner dynamics inside each arm, i.e., the specific dynamic
+                                            I. I NTRODUCTION                                                   characteristics of each sub-module, cannot be represented.
+                                                                                                               The arm-averaged models (AAMs), on the other hand, are
+                 S one of the most promising multilevel voltage source
+           A     converters (VSCs), the modular multilevel converter
+           (MMC) offers many merits such as smaller distortions, low
+                                                                                                               developed under the hypothesis that capacitor voltages inside
+                                                                                                               each arm are perfectly balanced, and therefore each arm can
+                                                                                                               be modeled as a Thévenin equivalent circuit [5], a controlled
+           switching losses, and smaller filter sizes [1]-[4]. To validate
+                                                                                                               voltage source [14], etc., accompanied by a series of diodes
+           the parameter design and the control scheme of the MMC-
+                                                                                                               or switches [18]. In [11], an AAM with a controlled voltage
+           based HVDC transmission, it is critical to simulate the MMC
+                                                                                                               source model was proposed to represent the half-bridge sub-
+           in electromagnetic transient (EMT) programs. However, the
+                                                                                                               module based MMC under blocking conditions. However, the
+           detailed simulation model of the MMC is inefficient due to
+                                                                                                               equivalent arm circuits adopting other types of sub-modules
+           the following reasons: 1) the detailed model should use a
+                                                                                                               were not comprehensively analyzed. Recently, the dynamic
+           small numerical integration time-step to accurately represent
+                                                                                                               phasor model of the MMC was derived in the form of state-
+           fast switching events; 2) the admittance matrix should be
+                                                                                                               space equations [16]-[17]. However, as no diode is represented
+           updated during every switching event, which will impose a
+                                                                                                               in this model, it can only be used to simulate dynamics under
+           significant computational burden for EMT simulations [5]. In
+                                                                                                               normal conditions, and dc-blocking conditions are omitted.
+           addition, when the MMC is under dc-fault blocking condition,
+                                                                                                               Moreover, from Table I, only sub-module averaged models
+           the IGBTs are all switched off and the dynamic behavior
+                                                                                                               (SAMs) can capture the inner dynamics inside each arm, while
+              This work was supported in part by the National Key Research and Devel-                          other models, such as analytical models and AAMs fail at this
+           opment Program of China (2017YFB0902002), in part by Natural Sciences                               task. Although the simulation efficiency has been improved
+           and Engineering Research Council of Canada (NSERC), and in part by the
+           National Natural Science Foundation of China (51737007). (Corresponding                             by SAMs, the accuracy is not always satisfactory, especially
+           author: X. Xie.)                                                                                    when the time-step is larger than 10 µs.
+              Dewu Shu, Xiaorong Xie, Qirong Jiang are with the State Key Lab.                                    In order to further improve the simulation accuracy with
+           of Power System, Department of Electrical Engineering, Tsinghua Uni-
+           versity, Beijing, 100084, China (e-mail: shudw13@mails.tsinghua.edu.cn,                             guaranteed efficiency, the shifted frequency modeling (SFM)
+           xiexr@tsinghua.edu.cn, qrjiang@tsinghua.edu.cn).                                                    of the MMC is proposed in this paper, where the circuit
+              Venkata Dinavahi is with Department of Electrical and Computer Engi-                             configuration of the hybrid MMC is a mixture of half-bridge
+           neering, University of Alberta, Edmonton, AB, Canada, T6G1H9 (e-mail:
+           dinavahi@ualberta.ca).                                                                              sub-modules (HBSMs) and full-bridge sub-modules (FBSMs).
+                                                                                                               Its salient features include:
+
+
+  0885-8977 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2017.2749427, IEEE
+                                                                                                  Transactions on Power Delivery
+                                                                                                                                                                                                                2
+
+
+
+                                                                                           TABLE I
+                                                                 C OMPARISON OF D IFFERENT M ODELING M ETHODS OF THE MMC S
+
+                                                                            Methods                                             Dynamics of Interest                                       Efficiency
+                                                                     steady-state model [7]                            System-level steady state (to validate the
+                                                                                                                                  parameter design)
+                     Analytical Models                                                                                                                                                Most efficient
+                                                         continuous-variable dynamic model [8]-[9]                       System-level dynamics under normal
+                                                                                                                                       condition
+                                                              Thévenin equivalent model [5]                          System-level dynamics between the MMCs
+                  Arm averaged models
+                                                               Controlled voltage model [10]                          and AC grid; capacitor voltages inside                          Very efficient
+                           (AAMs)                               Switch function model [11]                            each arm are assumed perfectly balanced
+                                                                Continuous model [12]-[13]
+                                                                                                                      System-level dynamics between the MMCs
+               Sub-module averaged models                     Thévenin equivalent model [5]
+                                                                                                                      and AC grid; inner dynamics inside each                         Less efficient
+                                                             Controlled voltage model [14]-[15]
+                            (SAMs)                                                                                    arm
+                                                                Switch function model [6]
+                                                                                                                      System-level dynamic under normal
+                                                              State space based dynamics
+                   Dynamic phasor model                                                                               conditions; dc-fault blocking condition                          Very efficient
+                                                              phasor model [16]-[17]
+                                                                                                                      cannot simulated
+
+
+
+              1) The SFM based MMC model has improved accuracy than                                                                    Im                                           S(t)
+                                                                                                                                                                                                Sˆ (t )
+           the traditional SAMs. This is due to the Thévenin equivalent
+           circuit derived by SFM is more accurate than the traditional
+           Trapezoidal-derived models.                                                                                                           
+              2) The arm model of the MMC is represented by one Norton                                                                                                                                    t
+
+
+           equivalent circuit, considering both normal and dc-blocking                                                      S               S          Re
+
+           conditions. As the number of nodes will not expand as the
+           number of sub-modules increases, the simulation efficiency is                                              Shifted frequency analysis                          Time domain analysis
+           guaranteed.
+              The rest of the paper is organized as follows: Section II                                        Fig. 1. Concept of Shifted Frequency Analysis.
+           introduces the principle of shifted frequency analysis (SFA);
+           Section III gives the SFM of the half-bridge and full bridge
+           MMCs, including the equivalent model of half-bridge and                                                b is also called complex envelope of the time-domain sig-
+                                                                                                                  S(t)
+           full-bridge sub-modules and the corresponding equivalent arm                                        nal s(t), which preserves the low frequency dynamics of s(t)
+           model. In Section IV, a MMC-based HVDC transmission is                                              around ωs . As a result, the above-mentioned representations of
+           used to prove the effectiveness of the SFM for the MMC.                                             signals are named as the “shifted frequency” representations.
+           Section V draw the conclusions.                                                                        (4) can be also expressed as follows [21]-[23]:
+
+                             II. S HIFTED F REQUENCY A NALYSIS                                                                               S(t) = s(t) + jH [s(t)] ,                                        (5)
+           A. Brief Introduction
+              A signal in power system (see Fig. 1), which typically has                                       where
+                                                                                                                                                           1        s(τ)
+                                                                                                                                                               Z ∞
+           a spectrum centered at the fundamental frequency ωs , can be                                                                     H [s(t)] =                    dτ                                  (6)
+           characterized as [19]-[20]                                                                                                                      π     −∞ t − τ
+                                                 ∞
+                           s(t) = lim      ∑ ai cos[(ωs + i∆ω)t + φi ],                               (1)      denotes the Hilbert transformation.
+                                      ∆ω→0    i=−∞                                                                From the above derivations, it can be concluded that the
+           where ∆ω is the frequency band around ωs . Using a trigono-                                         shifted frequency representation of each power system com-
+           metric formula, (1) can be reformulated as                                                          ponent can be achieved by either mathematical properties of
+                                                                                                               dynamic phasors, i.e., the product and the differential features
+                                  s(t) = sI (t)cosωst − sQ (t)sinωst,                                 (2)      of dynamic phasors [24]-[26] or the Hilbert transformation.
+           where                                                                                                  To demonstrate the application of the SFA in EMT simu-
+                                                 ∞                                                            lations, the capacitor is used as an illustrate example. Repre-
+                         sI (t) = lim
+                                                 ∑ ai cos[i∆ωt + φi ],                                        sented in the dynamic phasor form, the differential equation
+                                       ∆ω→0 i=−∞
+                                              ∞                                                       (3)      of the capacitor is given as [27]-[28]:
+                         sQ (t) = lim
+                       

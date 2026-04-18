@@ -1,0 +1,201 @@
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+ Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.
+ Digital Object Identifier 10.1109/ACCESS.2017.DOI
+
+
+
+
+ Efficient GPU-based Electromagnetic
+ Transient Simulation for Power Systems
+ with Thread-oriented Transformation and
+ Automatic Code Generation
+ YANKAN SONG1 , YING CHEN1 ,(Member, IEEE), SHAOWEI HUANG1 ,(Member, IEEE), YIN
+ XU2 ,(Member, IEEE), ZHITONG YU3 , AND WEI XUE4 ,(Member, IEEE)
+ 1
+   Dept. of Electrical Engineering, Tsinghua University, Beijing, 100084, China. (e-mail: huangsw@mail.tsinghua.edu.cn)
+ 2
+   School of Electrical Engineering, Beijing Jiaotong University, Beijing, 100044, China. (e-mail: xuyin@bjtu.edu.cn)
+ 3
+   Energy Internet Research Institute, Tsinghua University, Chengdu, 610213, China. (e-mail: yuzhitong@cloudpss.net)
+ 4
+   Dept. of Computer Science and Technology, Tsinghua University, Beijing, 100084, China. (e-mail: xuewei@tsinghua.edu.cn)
+ Corresponding author: Shaowei Huang (e-mail: e-mail: huangsw@mail.tsinghua.edu.cn).
+ This work was supported in part by the National Natural Science Foundation of China under Grant No. 51607100, No. 91530323, and
+ SGCC Research Project WBS. 5455HJ180004.
+
+
+
+
+     ABSTRACT Electromagnetic transients (EMT) simulation is the most accurate and intensive computation
+     for power systems. Past research has shown the potential of accelerating such simulations using graphics
+     processing units (GPUs). In this paper, an efficient GPU-based parallel EMT simulator is designed. Thread-
+     oriented model transformations are first proposed for the electrical and control systems. Following the
+     transformations, the electrical system is represented by connected networks of massive primitive electrical
+     elements, the computations of which can be constructed as massive fused multiply-add operations and
+     solutions to a linear equation. The control systems are represented by a layered directed acyclic graph with
+     primitive control elements that can be dealt with using SIMT groups. Finally, code automation tools are
+     designed to form the GPU kernels. Compared with past work, the proposed model transformations improve
+     the degree of parallelism. Most importantly, the code automation tools improve computational efficiency by
+     substantially reducing addressing and memory access, and render the implementation of the algorithm more
+     general and convenient. Test systems of different sizes were created by connecting multiple IEEE 33-bus
+     distribution systems and adding distributed generators. Simulations were performed on NVIDIA’s K20x
+     and P100 cards. The results indicate that the proposed method significantly accelerates EMT simulations
+     compared with a CPU-based program. Real-time performance was also achieved under certain conditions.
+
+
+     INDEX TERMS Electromagnetic Transients Simulation, EMTP, GPU, Parallel Computing, Power System
+
+
+
+ I. INTRODUCTION                                                                                      Consequently, EMT simulations for such systems are time
+       LECTROMAGNETIC transients (EMT) simulation [1]                                                 consuming. This restricts fast simulation-based applications,
+ E     is the most accurate tool to describe the fast dynamics of
+ power systems. The widely used EMT simulation algorithm,
+                                                                                                      such as real-time control strategy validations and closed-loop
+                                                                                                      simulations. A considerable amount of research has been
+ also known as the EMTP-type program, has been rapidly                                                invested in building parallel computing-based EMTP-type
+ developed in last few decades, and has been applied to several                                       programs using state-of-the-art multi-core processors [4], PC
+ simulation software, e.g., ATP-EMTP [2] and PSCAD [3].                                               clusters [5], and other heterogeneous platforms. These paral-
+ However, with the rapid development of smart grid technolo-                                          lel simulations are implemented mainly by network partition-
+ gies, complicated devices such as power electronic converters                                        ings [6], [7], and [8] that simulate different subsystems on
+ (PECs) and distributed energy resources (DERs), advanced                                             computing devices. However, the above parallel techniques
+ controls are integrated into power systems. Such integration                                         are coarse-grained ones, with limited degrees of parallelism
+ converts the grid into a large-scale, strongly coupled system.                                       inside each partition.
+
+ VOLUME 4, 2016                                                                                                                                                                                   1
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+    In recent years, owing to the insurmountable conflicts                                                •A thread-oriented normalized transformation is pro-
+ between increase in clock speed and heat removal [9], it                                                  posed to represent the electrical system as composed
+ has become challenging to maintain enhancements in the                                                    of a network with only primitive electrical elements,
+ performance of CPUs at pace with that predicted by Moore’s                                                the calculations of which are basic fused multiply-add
+ law. Growth in computing capability relies on many-core                                                   (FMA) operations, with the same instructions and equal
+ heterogeneous devices, such as graphics processing units                                                  amounts of computation for each threads. Therefore,
+ (GPUs). The GPU was originally designed for image pro-                                                    such transformation can further improve the degree
+ cessing. Since NVIDIA developed the Compute Unified De-                                                   of parallelism (DOP) of the electrical system without
+ vice Architecture (CUDA) [10], [11], and [12], GPUs have                                                  increasing computations.
+ been used for general-purpose scientific computing in many                                              • Code automation tools are designed to generate the
+ areas, such as biology, geology, and deep learning [13] [14].                                             kernels for both the electrical system and the control
+    In the area of power system simulations, the GPU was first                                             system according to a case study at runtime. Such tools
+ used to accelerate multi-scenario power flow-based contin-                                                reduce addressing and memory access significantly, and
+ gency analysis [15]. Since then, GPUs have been used to im-                                               obtain higher kernel efficiency.
+ prove the performance of many power system applications,                                                The proposed simulator was verified to induce significant
+ such as the parallel power flow solver [16], parallel transient                                      accelerations in both traditional power systems and AC-
+ stability analysis [17], and parallel EMTP-type simulators                                           DC hybrid grid simulations, and can be used as a real-time
+ [18] [19].                                                                                           simulator for power systems at certain scales.
+    Earlier GPU-based parallel EMTP-type simulators simply                                               The remainder of this paper is organized as follows: In
+ regarded the GPU as an efficient linear algebra equation                                             Section II, the challenges of designing a high-performance
+ solver for use during the network solution process while                                             GPU-based EMTP-type simulator are discussed. The pro-
+ the rest of the computations were still performed on the                                             posed thread-oriented parallel EMTP-type simulator is de-
+ CPU. However, frequent communication between the CPU                                                 scribed in Section III. A case study is presented and discussed
+ and the GPU is required, which limits overall performance.                                           in Section IV, and the conclusions of this work are given in
+ Researchers thus began developing full GPU-based EMTP-                                               Section V.
+ type simulators where all computations are performed on the
+ GPU, with minimal data exchange between it and the CPU.                                              II. CHALLENGES OF FULL GPU-BASED EMTP-TYPE
+ In [18], different GPU kernels were designed for various                                             SIMULATOR
+ electrical components, such as linear passive elements, the                                          A. GENERAL-PURPOSE COMPUTING ON GPUS
+ universal transmission line model, and the universal machine                                         A CUDA-enabled GPU is a many-core processor composed
+ model. A general offline EMTP-type program on a GPU                                                  of arithmetic logic units (ALUs), shared memory, and control
+ has been developed and verified as highly efficient without                                          units [10]. A parallel program executed on a GPU is referred
+ compromising accuracy, but there is still a lack of GPU-                                             to as a kernel, and usually launches a large number of threads.
+ based control system simulations. In our preliminary work                                            To better use computing resources on a GPU, a multi-level
+ [20], a full GPU-based EMTP-type simulator was designed                                              execution model has been widely used to schedule computa-
+ by considering the simulation of both electrical and large-                                          tional tasks on it, as shown in Fig. 1.
+ scale control systems. A layered directed acyclic graph based                                           A thread grid launched by a kernel is divided into thread
+ computational model was applied to process simulations for                                           blocks, each containing no more than 1,024 threads. Blocks
+ control systems. The algorithm in [20] has been applied to                                           are distributed to different streaming multiprocessors (SMs).
+ wind farm simulations and yielded considerable improve-                                              It should be noted that only threads within a block can
+ ment in computational speed [21].                                                                    exchange data through the shared memory. Blocks on an SM
+    The above work has made significant contributions to the                                          are split into thread warps, and each warp contains no more
+ design of a full GPU-based EMTP-type simulator. How-                                                 than 32 threads. Warp schedulers inside an SM allocate each
+ ever, two major drawbacks persist. First, past work has not                                          thread warp to a core array. Threads inside a warp execute
+ improved approaches to modeling power systems to render                                              in single-instruction-multiple-threads (SIMT) pattern. If the
+ them more compatible with GPU computing, which may lead                                              instruction diverges inside a warp, threads corresponding to
+ to load imbalance and thread heterogeneity while solving                                             different instructions are executed serially.
+ for electrical systems. Second, previously designed kernels                                             As a result of the above, the GPU is designed for data-
+ on GPUs [20] are inadequate as they are not applicable                                               intensive, fine-grained parallel computing tasks. The princi-
+ to all kinds of complex control systems. Moreover, multi-                                            ples of designing high-performance parallel algorithms on
+ layer addressing and a large number of memory accesses                                               GPUs can be found in [10] and [11]. The following are some
+ are introduced, and computational efficiency is thus severely                                        important principles that we followed in the design of the
+ limited by memory bandwidth.                                                                         full GPU-based EMTP-type simulator: 1) eliminating diver-
+    In this paper, a full GPU-based thread-oriented parallel                                          gences inside a warp to minimize latency; 2) avoiding condi-
+ EMTP-type simulator is designed, and makes two main con-                                             tional statements and memory access conflicts to maximize
+ tributions:                                                                                          instruction and memory throughputs; and 3) transforming
+ 2                                                                                                                                                                                VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                                                                                                           Start
+                  Device                                        Kernel
+                                                                                                                                    Initialization, T = 0
+                   GPU                                          Grid
+                   SM 1                                        Block 1                                                                   t < Tend ?     No        End
+          Core Array 1                                           Warp 1                                                                  Yes
+                                                                                                                                   Increase Time t by Δt
+                                  S1
+                                                               Block 1
+                 …
+
+
+
+
+                                                                                                                                                                Step 1. Solve control system to obtain
+                                                                                                                                  Solve Control System
+                                                                                                                                                                the inputs C(t) for electrical devices.
+
+
+
+
+                                                                    …
+                 …
+
+
+
+                                  …
+
+
+
+
+                                                                                                         One Integration Step
+                                                                                                                                    Update the Norton           Step 2. Update the status of electrical
+          Core Array n            Sk                             Warp w                                                          Equivalent Current Ine for     components.
+                                                                                                                                  Electrical Components             Step 2.1 Calculate Eq. (1) and (2)
+            Shared Memory
+                                                                    …                                                             Form Nodal Injecting              Step 2.2 Sum all the currents Ine
+                      …
+
+
+
+
+                                                                                                                                       Current I                    injecting to the same node to form I
+                                                               Block b
+                   SM s                                                                                                            Solve Nodal Voltage          Step 3. Solve YU = I using linear
+                                                                                                                                     Equation YU = I            algebraic solvers.
+                 Warp Scheduler                                     Thread
+                 CUDA Core
+                                                                                                                                FIGURE 2: Simulation of EMTP-type program.
+             FIGURE 1: Multi-level parallelism on GPU.
+                                                                                                      differential equations of an electrical component, discrete
+ computations into FMA operations, i.e., z = ax + y, which                                            Norton equivalent circuits are obtained [22]. Typically, an m-
+ is the most efficient operation on the GPU.                                                          port electrical component is modeled by
+                                                                                                                                              I (t) = GU (t) + Ine (t) ,                                 (1)
+ B. CHALLENGES OF DESIGNING GPU-BASED            

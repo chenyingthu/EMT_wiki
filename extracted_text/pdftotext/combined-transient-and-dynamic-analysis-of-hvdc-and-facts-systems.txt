@@ -1,0 +1,166 @@
+IEEE Transactions on Power Delivery, Vol. 13, No. 4, October 1998                                                                               1271
+
+                                    COMBINED TRANSIENT AND DYNAMIC ANALYSIS
+                                          OF HVDC AND FACTS SYSTEMS
+
+
+     M. Sultan                                            J. Reeve                                       R. Adapa
+      Member                                               Fellow                                     Senior Member
+   Hatch Associates                                 University of Waterloo                     Electric Power Research Institute
+  Mississauga, Ontario                                Waterloo. Ontario                               Palo Alto, CA
+
+
+ Abstract                                                                   A method to deal with the problem of waveform distortion was
+                                                                            introduced in [5][6]. The approach uses interactive execution of
+ A new approach to HVDC and FACTS transient/dynamic simula-                 EMTP for detailed transient analysis and TSP for extemal ac sys-
+ tion based on an interactive execution of an ac transient stability        tem representation. The problems of wave distortion and asym-
+ program (TSP) and the Electro-Magnetic Transients Program                  metry [4] were resolved by extending the interface location
+ (EMTP) is described. Through the integration of the detailed tran-         between the detailed and external systems further into the extemal
+ sient model of FACTS with the transient stability program,                 ac system.
+ authentic simulation is achieved without simplifications. Both
+                                                                            The interface of frequency domain program with the detailed
+ HVDC and Thyristor Controlled Series Capacitor (TCSC) systems              modeling of EMTP was presented in [7]. For validity of simula-
+ are used to validate the approach, under different coupling situa-         tion the extemal ac system must be linear time invariant, and
+ tions between both TSP arid EMTP.
+                                                                            should be connected to the detailed system through a transmission
+ Keywords: FACTS, HVDC, EMTP, Frequency Dependent Net-                      line. Fourier transforms provide the conversion from time domain
+ work Equivalents, Transient Stability Simulation.                          to frequency domain and vice versa. The major restrictions of this
+                                                                            approach are inherent in the assumptions - ac machines, controls,
+ I. INTRODUCTION                                                            etc are excluded.
+ The ac transient stability programs based on fundamental fre-              NETOMAC [8] is an altemative to EMTP with a built-in TSP
+ quency, single-phase, phasor modeling techniques cannot directly           capability. The program has two separate simulation modes. The
+ represent the faster transients characterizing the HVDC and                instantaneous mode models the system in three phase detail, while
+ FACTS systems. Nor can they accommodate the implied                        the transient stability mode models the system in a single phase
+ waveform distortion, phase imbalance, and discrete action of sem-          basis. The program can switch between the two modes as required
+ iconductor switches at different time instants. The current                while running. In either mode, however, the entire system has to
+ approach to dc system or FACTS modeling in an ac transient sta-            be modeled in the same way.
+ bility program is by a quasi steady-state model which is developed         The program described in [9] uses an interactive facility between a
+ for a particular disturbance, based upon physical simulation and/or        TSP and EMTDC. The implementation details and interaction phi-
+ detailed transient analysis.                                               losophy resemble that of [SI, with the major change of using a fre-
+ There is a need to use ;I transient stability program (TSP) for            quency dependent equivalent for the TSP system in the EMTDC.
+ extensive ac network modeling outside the domain of a distur-              The system faults are incorporated into the EMTDC and TSP solu-
+ bance and at the same time to represent the parts of the network           tions, a mechanism avoided in the work of this paper [lo].
+ vulnerable for a disturbance in greater detail for transient/dynamic       This paper describes new developments, performed at the Univer-
+ analysis. It is necessary to have a realistic interaction between the       sity of Waterloo, for enhanced integration of EMTP into a tran-
+ two simulations to predict the overall performance of the system.           sient stability program, as part of a research contract [lo] with
+ A new approach for acldc and FACTS transient studies based on              EPRI, in the context of FACTS controllers.
+ this concept is presented, relevant to the performance of current
+ developments and future high power electronic controllers in
+ power systems.                                                              111. NEW SIMULATION CONCEPT
+ 11. REVIEW OF DETAILED ANALYSIS TRENDS                                      General concept
+ One common approach to studying HVDC and FACTS systems is                   Variations in performing the HVDCFACTS transient analysis are
+ by modeling them in a detailed analysis environment such as
+                                                                             shown in Fig. 1. Fig. l(a) shows a detailed simulation of the
+ EMTP or EMTDC programs [1][2][3]. It is compromised by the                  HVDC/FACTS system along with an over simplified ac system. In
+ limited representation of the ac system.                                    other words, the entire ac system is reduced to a simple equivalent
+                                                                             for dynamic analysis[l]. In Fig. l(b) the detailed simulation is
+  PE-083-PWRD-0-1-1998 A paper recommended and approved by the               constrained to be within the terminal ac buses of the detailed sys-
+  IEEE Transmission and Clistribution Committee of the IEEE Power            tem model, while the ac system is modeled with a conventional
+  EngineeringSociety for publication in the IEEE Transactions on Power       transient stability program [4]. In this way, the gross impact of the
+  Delivery. Manuscript submitted Februaty 18, 1997; made available for       ac system on the detailed system is updated at regular time inter-
+  printing January 16, 1998.                                                 vals. The concept shown in Fig. l(c) was adopted in [SI. The
+                                                                             detailed system is extended outward to take into consideration
+                                                                             more ac system for 3-phase representation. This paper has selected
+                                                                             the new approach (indicated by the arrows marked 3PFDEM in
+                                                                             Fig. 1 (b) and (c)) as the most versatile and accurate method. The
+                                                                             approach uses a time varying Thevenin or Norton frequency
+                                                                             dependent equivalent for representation of the external ac system
+                                                                             into the detailed simulation. It has been developed with alternative
+                                                                             variations (A) and (B) as described in section (IV).
+                                                     0885-8977/98/$10.00 0 1998 IEEE
+
+
+
+
+        Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:47 UTC from IEEE Xplore. Restrictions apply.
+1272
+
+                                   Detailed System (EMTP)                                                                                          The methods for resolving these problems are discussed in the fol-
+                                                                                                                                                   lowing sections.
+
+
+
+   i
+        1 1
+   1i ReFdud  System
+                               u
+                                       ,,,,,,        1      ,,,,,,          1 I
+                                                                            I
+                                                                                 H F C
+                                                                                 FACTS                     j
+                                                                                                           j
+                                                                                                                                                   Representation of the External System in EMTP
+                                                                                                                                                   The interaction of the extemal system with the detailed system is
+                                                                                                                                                   most authentic if the external system can be reduced to a Thevenin
+   .................................................................................................                                               and/or Norton frequency dependent equivalents at the interface
+                                                   (a)                                                                                             buses. This is because frequency dependent equivalents of ac net-
+ External System (TSP)                                       Detailed System (EMTP)                                                                works are capable of representing the original ac system response,
+   .................................       ] pFFM        3PFFM i. ............................
+                                                                                                                                                   over a wide range of frequency spectrum [11][12]. Frequency
+                                                                                                                                                   dependent network equivalent methods are well established
+                                                                                                                                                   [ll][12], and the above requirements can be achieved by such
+                                                                                                                                                   methods as detailed in [lo].
+                                                                                                                                                   The general structure of the frequency dependent equivalent
+   i ...............................   i          3PFDEM               i ...............................   i                                       model, for an ac system with N series resonance points and N - 1
+                                                   (b)                                                                                             parallel resonance points, is shown in Fig. 2. The equivalent Nor-
+
+                                       -                                                                                                           ton source is connected to the circuit input nodes (i.e. the interface
+ External        System (TSP)                                                    Detailed System (EMTP)
+  .................................                            .............................................................................
+                                    i IPFFM              3PFFMi                                                                                    buses)
+                                                           -:
+                                       i            IB                 j
+   i            AC                     i                               j         Reduced                                  HVDC                 j
+   i           System                  ; '           1       ''r','    I           AC                                       or
+                                                                       :         System                                   FACTS                j
+                                                     .-
+   i ...............................   i          3 P F D E M I ........................................................................       :
+                                                        (C)
+          LEGEND
+          IPFFM : Single Phase Fundamental Frequency Model
+          3PFFM : Three Phase Fundamental Frequency Model
+          3PFDEM : Three Phase Frequency Dependent Equivalent Model
+          IB : Interface Bus (Single or Multiple)
+
+       Fig. 1: Variations for HVDCFACTS System Transient Analysis
+
+  Detailed and External Systems
+  Because of the computational problems involved in solving the                                                                                              Fig. 2: Frequency-Dependent Equivalent Model
+  entire power system network in detail, it is necessary to identify
+  the areas of concem for a particular disturbance as the 'detailed
+  system'. The remaining parts of the power network are named the                                                                                  Representationof the Detailed System in TSP
+  'extemal system'. The buses at which these two systems interact                                                                                  As the EMTP solution is on a 3-phase basis, any equivalent
+  are designated as 'interface buses'.                                                                                                             obtained from the detailed simulation has to be converted to a
+  The identification of a detailed system is completely dependent on                                                                               single-phase phasor equivalent. In a transient stability program,
+  the system configuration and the disturbance under study. For                                                                                    loads can be variously modeled starting from simple constant
+  example, to simulate an ac fault adjacent to the dc system, the dc                                                                               impedance representation to the more complex representations
+  system has to be modeled in detail, while the amount of ac system                                                                                (e.g. current source, exponential terms, etc.). In the TSP used for
+  to be included for detailed study depends upon factors such as                                                                                   this work two options are available. The first option represents the
+  Waveform distortion and phase imbalance at the interface buses.                                                                                  detailed system as decoupled loads at the interface buses. Fig. 3
+                                                                                                                                                   shows the TSP network for a general case with several interface
+  In the case of an addc system, if the interconnected ac systems are                                                                              buses. The second option is achieved by replacing the loads in
+  weak relative to the dc power rating, the harmonic distortion at the
+                                                                                                                                                   Fig. 3 by current sources.
+  converter buses is more prevalent which rules out the possibility
+  of taking the converter buses as interface buses. It has been found                                                                              The options require the fundamental phasor currents and voltages
+  that the same considerations apply to FACTS controllers.                                                                                         to be derived from the detailed solution of the waveforms at the
+                                                                                                                                                   interface buses. A least squares curve fitting technique extracts
+  For unsymmetrical faults at or near to the converter buses, the
+                                                                                                                                                   the fundamental magnitude and phase from the succession of data
+  problem of waveform distortion is compounded by phase imbal-
+                                                                                                                                                   points for all 3 phases at each interface bus. From these, positive
+  ance. EMTP analysis cannot therefore be interfaced with TSP
+                                                                                                                                                   sequence voltages and currents are computed conventionally.
+  through a fundamental frequency equivalent model.
+  On the other hand, TSP simulation can be satisfied by a positive
+  sequence, single phase equivalent, extracted from EMTP, since ac                                                                                 IV. COORDINATION OF TSP AND EMTP
+  dynamics are mainly dependent on variations in power at funda-                                                                                   A methodology for updating the TSP, using the EMTP solution
+  mental frequency.
+                                                                                                                                                   and vice versa under two different interaction scenarios, will be
+  Problems in achieving the proper interaction of the TSP with                                                                                     described in the following section.
+  EMTP detailed analysis are:
+  * Modeling of an equivalent for the extemal system in the                                                                                        InteractionMethodology (A)
+      detailed analysis.                                                                                                                           It is assumed that no dynamic study is required past the first swing
+   0
+      Modeling of an equivalent for the detailed system in the trar-                                                                               transient period and both TSP and EMTP will terminate simula-
+      sient stability program.                                                                                                                     tion at the same time. The TSP/EMTP time step 

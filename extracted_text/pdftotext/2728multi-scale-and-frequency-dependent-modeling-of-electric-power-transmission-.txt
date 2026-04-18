@@ -1,0 +1,169 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    1
+
+
+
+
+                  Multi-scale and Frequency-dependent Modeling of
+                          Electric Power Transmission Lines
+                                                                                            Hua Ye and Kai Strunz
+
+
+
+                 Abstract—A frequency-dependent transmission line model for                                       size in tracking of waveforms with Fourier spectra closely
+              multi-scale simulation of diverse transients over a wide range                                      centered about fc is possible, making the simulation more
+              of frequencies is developed, implemented, and validated. It                                         efficient. The derivations of [5] demonstrate that the error
+              makes use of the concept of frequency-adaptive simulation of
+              transients in which the Fourier spectra are adaptively shifted in                                   made in approximating capacitances and inductances is even
+              the frequency domain to reduce the discretization time-steps in                                     equal to zero at the carrier frequency fc .
+              the time domain. The transients are modeled through dynamic
+              phasors comprising the real and imaginary parts of analytic                                            Multi-scale modeling combines the virtues of simulation
+              signals to facilitate the frequency-shifting. In the proposed line                                  in the time domain as in EMTP and dynamic phasor calcu-
+              model, all mathematical operations such as numerical recursive                                      lus [5], [6]. When high-frequency transients are of interest,
+              convolutions are therefore expressed in terms of analytic signals.                                  then the multi-scale simulation processes instantaneous signals
+              A modal decomposition is performed to attain decoupled modes
+              for the multi-phase case. The transition from the representation                                    just like EMTP. For low-frequency transients, however, the
+              of electromagnetic traveling waves with time-steps below the wave                                   multi-scale simulation processes dynamic phasors. It is this
+              propagation time to the tracking of slower electromechanical                                        flexibility that allows to cover diverse transients with just
+              transients at time-steps above the wave propagation time is                                         one set of models that makes multi-scale modeling relevant.
+              achieved by the automatic insertion of a π-segment to represent                                     The efficiency of the multi-scale modeling also makes it
+              the galvanic coupling within one time-step. Accurate and efficient
+              simulation of both electromagnetic and electromechanical tran-                                      an interesting candidate for real-time simulation [7]. Multi-
+              sients within a simulation run is so supported. The validation is                                   scale models of power system components covering lumped-
+              verified through comparison with a staged field test covering the                                   parameter elements, transformers, synchronous machinery, and
+              diverse transients of line energization, transient recovery voltage,                                transmission lines were developed in [8]–[10]. Recent research
+              and steady state.                                                                                   has turned to the development of advanced machine models
+                 Index Terms—Analytic signal, dynamic phasor, electromag-                                         [11], [12].
+              netic transients, electromagnetic transients program (EMTP),
+              electromechanical transients, frequency dependence, multi-scale                                        A transmission line model for multi-scale simulation was
+              modeling, power system modeling, power system simulation,                                           developed in [8], but the latter does not account for frequency
+              transmission line modeling.                                                                         dependence of parameters [13]. While the improvement of
+                                                                                                                  frequency-dependent line modeling for EMTP simulation is
+                                               I. I NTRODUCTION                                                   still an active topic of research [14]–[18], the work performed
+                                                                                                                  for this paper resulted in the first frequency-dependent line
+                   IMULATION algorithms of the electromagnetic transients
+              S    program (EMTP) [1] process instantaneous signals to
+              sample natural waveforms at small time-step sizes that are
+                                                                                                                  model for multi-scale simulation of an overhead transmission
+                                                                                                                  line. It supports the integrative simulation of diverse transients
+                                                                                                                  from the steady state to high frequencies with the potential
+              typically of the order of microseconds [2]. The theoretically                                       of varying discretization time step sizes over a wide range
+              possible maximum time step size is given by the Nyquist step                                        of frequencies. The contributions made in this context are
+              size τNy = 1/(2f ) with f giving the maximum frequency                                              threefold. Firstly, shiftable analytic signals are proposed for
+              of interest in the simulation. Taking into account the accu-                                        processing the numerical recursive calculations that are es-
+              racy of numerical integration, a maximum time step size of                                          sential for developing frequency-dependent line models in the
+              τmax = 1/(10f ) was recommended in [3], thus generally                                              time domain. Secondly, a multi-scale and frequency-dependent
+              f τ ≪ 1 is necessary to accurately compute electromagnetic                                          multi-phase line model is created to support accurate and
+              transients. The computational efficiency of the simulation can                                      efficient simulation of both electromagnetic and electrome-
+              be improved if the Fourier spectra of the natural waveforms are                                     chanical transients as well as seamless transitions between
+              concentrated around the carrier frequency fc of either 50 Hz                                        both. Thirdly, the developed line model was implemented and
+              or 60 Hz in power systems and if dynamic phasor calculus                                            validated.
+              is applied [4]. The carrier frequency component at fc is so
+              eliminated and the above condition for the time step size is                                           Section II provides relevant background information on the
+              modified to | f − fs | τ ≪ 1, where fs = fc is called the                                           frequency shifting and frequency-dependent line modeling. In
+              shift frequency in [5]. Thus, a significantly larger time step                                      Section III, a multi-scale and frequency-dependent model of a
+                                                                                                                  single-phase line is developed. Section IV extends the single-
+                H. Ye and Professor K. Strunz are with the SENSE Laboratory, Department                           phase line model to the multi-phase form. The new line model
+              of Electrical Engineering and Computer Sciences, Technische Universität
+              Berlin, Berlin, Germany. (e-mail: kai.strunz@tu-berlin.de).                                         is validated against a field test in Section V. Conclusions are
+                Manuscript received April 30, 2016; revised August 8, 2016.                                       drawn in Section VI.
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    2
+
+
+
+                                            II. S TATE OF THE A RT                                                        real signal                  analytic signal                  dynamic phasor
+                                                                                                                           |F [s(t)]|                     |F [s(t)]|                       |F [E[s(t)]]|
+              A. Frequency Shifting
+                                                                                                                                   s(t) = s(t)+jH[s(t)]                E[s(t)] = s(t)e−jωc t
+                 An ac signal s(t) with a Fourier spectrum that is narrowly
+              concentrated on the angular carrier frequency ωc = 2πfc is
+              depicted on the left of Fig. 1 [5]. In an ac electric power grid,
+              fc = 50 Hz or fc = 60 Hz. By adding the Hilbert transform                                                −ωc          ωc ω              −ωc             ωc ω               −ωc           ωc ω
+              of s(t) as imaginary part, an analytic signal s(t) is created as
+                                                                                                                  Fig. 1. Application of Hilbert transform and frequency shift.
+              follows [19]:
+                                  s(t) = s(t) + j H[s(t)].                 (1)                                                  I 1 (ω) = I(0 km, ω)             I(χ, ω)             I 2 (ω) = −I(ℓ, ω)
+                                                                                                                                       1                                                         2
+              The effect of the creation of the analytic signal is shown                                                                                    Z ′ (ω)        Y ′ (ω)
+                                                                                                                               V 1 (ω)                                                  V 2 (ω)
+              from the left to the center of Fig. 1. While the spectrum of                                              = V (0 km, ω)                      V (χ, ω)                  = V (ℓ, ω)
+              s(t) extends to negative frequencies, this is not the case for
+              the corresponding analytic signal s(t). Therefore, the analytic
+              signal can be shifted by the so-called shift angular frequency                                                        χ = 0 km                           χ                     χ=ℓ
+              ωs :
+                                  S[ s(t) ] = s(t) e−jωs t .              (2)                                     Fig. 2. Current and voltage conventions for single-phase line in frequency
+                                                                                                                  domain.
+              For ωs = ωc , the complex envelope E[ s(t) ] [20] is obtained.
+              Through this operation, the spectrum is shifted by the carrier where the lowercase variables represent the time-domain
+              frequency ωc as shown on the right of Fig. 1. The complex version of their uppercase counterparts, and the symbol ∗
+              envelope is a low-pass signal whose maximum frequency is indicates convolution.
+              lower than the one of the original bandpass signal. In accor-
+                                                                                      Direct calculation of the convolutions in (7) and (8) would
+              dance with Shannon’s sampling theory [20], a lower sampling
+                                                                                  be time-consuming. To overcome the limitation, it is common
+              rate can therefore be chosen for tracking the complex envelope,
+                                                                                  practice to approximate Y ch (ω) and H(ω) with partial fraction
+              which corresponds to a dynamic phasor. If ωs is set to zero,
+                                                                                  expansions (PFEs) based on the fitting technique in [22]. The
+              then the real part of the analytic signal allows for tracking
+                                                                                  fitting of Y ch (ω) gives the poles pyn and residues yn of the
+              natural waveforms as in EMTP-type simulation. For multi-
+                                                                                  PFEs as well as a constant y0 , while the fitting of H(ω)
+              scale simulation, the shift frequency is set adaptively through
+                                                                                  yields the poles phn and residues hn of the corresponding
+              Frequency Adaptive Simulation of Transients (FAST) [8].
+                                                                                  PFEs. Through application of the inverse Laplace transform,
+                                                                                  the PFEs of approximating Y ch (ω) and H(ω) are converted
+              B. Frequency-Dependent Transmission Line                            into the time domain as follows:
+                 Fig. 2 depicts the current and voltage conventions for a                                                 Ny
+              single-phase line that takes into account the frequency de-                            y   (t) =y   δ(t) +
+                                                                                                                         X
+                                                                                                                              yn epyn t        (9)
+                                                                                                       c        0
+              pendence of line parameters. The quantities Z ′ (ω) and Y ′ (ω)                                            n=1
+              are the per-unit-length series impedance and shunt admittance,                                   Nh
+                                                                                                              X
+              respectively, and both parameters are functions of the angular                          h(t) =        hn ephn (t−Twp )          (10)
+              frequency ω = 2πf . In the frequency domain, the relationship                                   n=1
+              of currents and voltages at both ends 1 and 2 of the line can
+              be expressed as follows [2], [21]:                                  where δ(t) is the Dirac delta function and Twp is the time the
+                                                                                 fastest traveling wave needs to proceed from one end to the
+                I 1 (ω) = Y ch (ω)V 1 (ω)−H(ω) Y ch (ω)V 2 (ω)+I 2 (ω) (3) other end of the line. Herein, h(t) = 0 when t ≤ Twp .
+                                                                            
+                I 2 (ω) = Y ch (ω)V 2 (ω)−H(ω) Y ch (ω)V 1 (ω)+I 1 (ω) (4)            In (9) and (10), yc (t) and h(t) are expressed in terms of
+                                                                                  a sum of exponential functions; their convolutions with the
+              with
+                                             s                                    currents and voltages can be calculated recursively [23]. Using
+                                                  ′
+                                                Y (ω)                             the recursive solution, an efficient and accurate frequency-
+                                  Y ch (ω) =      ′                           (5) dependent line model for electromagnetic transient studies was
+                                                Z (ω)
+                                                q                                 developed in [13]. For the case of Nc phases, the modal
+                                              − Y ′ (ω)Z ′ (ω)ℓ                   domain analysis allows for the formulation through decou-
+                                    H(ω) = e                                  (6)
+                                                                                  pled single-phase line models using a transformation matrix
+              where I and V are the current and voltage at the terminals, re- described in Appendix A [24].
+              spectively; Y ch (ω) and H(ω) are the characteristic admittance
+              and propagation function, respectively; and ℓ is the length of
+                                                                                        III. M ULTI -S CALE M ODELING FOR S INGLE -P HASE
+              the line.
+                                                                                     T RANSMISSION L INE WITH F REQUENCY D EPENDENCE
+                 Transforming (3) and (4) into the time domain gives
+                                                                                     The multi-scale modeling starts by extending (7) and (8) to
+                    i1 (t) = yc (t) ∗ v1 (t)−h(t) ∗ yc (t) ∗ v2 (t)+i2 (t)    (7)
+                          

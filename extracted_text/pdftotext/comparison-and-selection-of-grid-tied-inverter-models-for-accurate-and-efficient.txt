@@ -1,0 +1,211 @@
+3462                                                                               IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 37, NO. 3, MARCH 2022
+
+
+
+
+  Comparison and Selection of Grid-Tied Inverter
+ Models for Accurate and Efficient EMT Simulations
+             Kenichiro Sano , Member, IEEE, Shuntaro Horiuchi , and Taku Noda , Senior Member, IEEE
+
+
+   Abstract—This article compares five modeling methods of grid-                   between positive, negative, and zero sequence components. In
+tied inverters for the electromagnetic transient simulation of power               addition, it is not easy to adequately model the behavior of the
+system, clarifies their differences, and discusses the suitable model              inverter including harmonics in the phasor domain simulation.
+for each simulation purpose. The comparison was made under the
+same conditions between the conventional switching model, and                      Therefore, the circuit simulation by three-phase instantaneous
+four simplified models—voltage interpolation, average-value, con-                  waveforms such as EMTP or EMTDC is often applied to ac-
+trolled current-injection, and simplified current-injection model.                 curately model and analyze the behavior of the inverters. The
+The comparison of the simulated waveforms clarifies the behaviors                  circuit simulation is also referred to as an electromagnetic tran-
+that can be simulated and cannot be simulated by each simplified                   sient (EMT) simulation to distinguish it from the phasor domain
+model. The comparison of the computing time reveals the signifi-
+cant decrease of the computing time by selecting the proper sim-                   simulations. Because the EMT simulation deals with three-phase
+plified modeling method. Based on these comparisons, this article                  instantaneous values, the control system of the inverter can be
+discusses the selection of the modeling methods for each simulation                modeled in the same way as the actual implementation. The EMT
+purpose to perform simulations accurately and efficiently.                         simulation has been applied to various power system analyses as
+   Index Terms—Average-value model, current-injection model,                       follows [1]. Harmonic analyses of the system with inverters [2],
+electromagnetic transient (EMT) simulation, grid-tied inverter,                    [3]. Stability analysis related to the inverter control [4]–[7].
+voltage interpolation (VI) model.                                                  Fault analyses influenced by the inverter’s transient behavior, the
+                                                                                   protection method, and fault-ride-through (FRT) operation [8]–
+                            I. INTRODUCTION                                        [11]. Transient stability and voltage analyses of the system with
+                                                                                   inverters implementing frequency and voltage support by active
+        ITH the penetration of renewable energy sources,
+W       inverter-based power sources are becoming dominant in
+power system. To simulate the transient behavior of such power
+                                                                                   and reactive power control, or grid-forming control [12]–[17].
+                                                                                   The EMT simulation is used not only for offline simulations but
+                                                                                   also for real-time simulations [18].
+system, the modeling of the grid-tied inverters is important.                         Switching (SW) model is the most straightforward modeling
+The phasor domain simulation is a major tool for power system                      method of the inverter for EMT simulations. It simulates the
+analysis, where all components are modeled in the phasor do-                       switching operation of power devices. Because the SW model
+main and the symmetrical coordinates. It is suitable to deal with                  emulates the detailed circuit operation, it can represent the
+the behavior of a large scale power system with synchronous                        dynamic behavior in most of the applications. However, the
+generators. On the other hand, general grid-tied inverters have a                  SW model requires to set the simulation time step to be small
+control system based on the instantaneous values of the detected                   enough to represent the switching transients. The major problem
+three-phase voltage and current waveforms. Modeling of the                         is its large computing time, especially when it is applied to the
+inverter in the symmetrical coordinates is not straightforward                     analysis of a large-scale power system.
+because characteristics of the inverter cannot be decoupled                           Advanced simulation methods have been proposed to reduce
+                                                                                   the computing burden. Dynamic phasor [19] enables to use a
+   Manuscript received June 11, 2021; revised September 5, 2021; accepted          larger simulation time step, whereas it can deal with dynamic
+September 30, 2021. Date of publication October 6, 2021; date of current version
+November 30, 2021. This work was supported in part by Hokkaido Electric
+                                                                                   behavior of the inverter. The EMT simulations are combined
+Power Co., in part by Tohoku Electric Power Co., in part by Tokyo Electric         with the dynamic phasor or the phasor domain simulation [20]–
+Power Co. Holdings, in part by Chubu Electric Power Co., in part by Hokuriku       [23] to incorporate the advantages of the both methods. Field
+Electric Power Co., in part by Kansai Electric Power Co., in part by Chugoku
+Electric Power Co., in part by Shikoku Electric Power Co., in part by Kyushu
+                                                                                   programmable gate array (FPGA) [24] or graphics processing
+Electric Power Co., and in part by Okinawa Electric Power Co. Recommended          units (GPU) [25], [26] is applied to accelerate the computation
+for publication by Associate Editor Y. Yang. (Corresponding author: Kenichiro      of the EMT simulations. Multirate simulation [27] divides the
+Sano.)
+   Kenichiro Sano and Shuntaro Horiuchi are with the Department of Electrical
+                                                                                   target system to multiple subsystems and calculates them with
+and Electronic Engineering, Tokyo Institute of Technology, Tokyo 152–8552,         different simulation time steps. Although these algorithms are
+Japan (e-mail: sano@ee.e.titech.ac.jp; horiuchi.s@pel.ee.e.titech.ac.jp).          promising methods, they have to be supported by the solver
+   Taku Noda is with Grid Innovation Research Laboratory, Central Research
+Institute of Electric Power Industry, Yokosuka 240–0196, Japan (e-mail: takun-
+                                                                                   of the simulation programs. Thus, most of the users cannot
+oda@ieee.org).                                                                     use them or have to wait for a while to be implemented
+   Color versions of one or more figures in this article are available at          in their familiar or commercially available EMT simulation
+https://doi.org/10.1109/TPEL.2021.3117633.
+   Digital Object Identifier 10.1109/TPEL.2021.3117633
+                                                                                   programs.
+
+       This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+SANO et al.: COMPARISON AND SELECTION OF GRID-TIED INVERTER MODELS FOR ACCURATE AND EFFICIENT EMT SIMULATIONS                           3463
+
+
+
+   This article focuses on the modeling methods for existing
+EMT simulation programs equipped with a conventional algo-
+rithm based on the nodal analysis and fixed time-step simulation.
+In the analysis of the grid-tied inverter, the simulated system is
+often a large-scale network including multiple inverters. Even
+if the network becomes large and complex, the nodal analysis
+can simply formulate the network according to a prescribed
+procedure, while the computational effort to generate state-space
+equations becomes excessive in the state-space analysis [28]. In
+addition, the variable time-step method [29]–[31] cannot effec-
+                                                                     Fig. 1.   Circuit configuration of the grid-tied inverter.
+tively reduce the computing burden in the analysis involving
+many inverters. Even with the existing EMT simulation method
+based on the nodal analysis and fixed time-step simulation, the                                      TABLE I
+                                                                                         COMPARISON OF THE INVERTER MODELS
+computing burden can be reduced by improving the modeling
+methods of the inverters. A typical method used in the power sys-
+tem analysis is an average-value (AV) modeling [32]–[36]. The
+modeling method enables to simulate the system with a larger
+simulation time step by neglecting the switching operation of
+the inverter. The AV model is based on the state space averaging
+method [37], [38] used for the analysis of power electronics
+equipment. The method has been improved to a highly versatile
+                                                                      (: included, no mark: excluded)
+model being applicable during both the switching operation and
+the gate-blocked state [39].
+   It is also a common practice in power system analyses that        which each model can or cannot represent by comparing the
+the inverter is modeled by a simple current source to reduce         simulated waveforms under various conditions. The computing
+the computing time [40]. Although the simplified current in-         time is compared in the Section V. Based on the results, the
+jection (SCI) model has limitations in simulating accuracy,          Section VI discusses the suitable model for each application.
+the recently proposed controlled current-injection model (CCI        Finally, Section VII concludes this article.
+model) has improved the accuracy while keeping almost the
+same computing burden as the SCI model [41]. The voltage
+interpolation model (VI model) can accurately represent the                       II. CONFIGURATION AND CONTROL OF THE
+harmonics caused by the inverters with lower computing burden                               GRID-TIED INVERTER
+than the SW model [42]–[45], whereas the AV and CCI models              Fig. 1 shows the circuit configuration of the grid-tied inverter
+cannot represent them.                                               to be simulated. This article deals with a general three-phase
+   Because there are various modeling methods with different         bridge inverter. The ac terminal is connected to the ac inductor
+characteristics, users have to select the appropriate model ac-      modeled by the inductance Lf and the equivalent series resis-
+cording to the applications by understanding its characteristics.    tance Rfl . The switching ripple filter consists of the capacitor Cf
+However, it is not straightforward to understand the difference      and the series resistor Rfc .
+between them and select the appropriate modeling method. This           Fig. 2 shows the control block diagram of the grid-tied in-
+is because the conventional studies verify the simplified (VI,       verter [48]. It is divided into three parts: (i) power controls;
+AV, CCI, and SCI) models one-to-one with the most detailed SW        (ii) current control; (iii) modulation. The power controls part
+model. In other words, there was no paper that directly compares     in (i) consists of the dc voltage controller, the reactive power
+these simplified models with each other. The difference between      controller, and phase locked loop (PLL). This part generates
+the SW and AV models was discussed in [32] and [46]; however,        the ac current references i∗d , i∗q . The current control part in (ii)
+the recent studies such as the CCI and VI models have not been       generates the ac voltage references va∗ , vb∗ , vc∗ according to the ac
+reflected yet. There is a similar study on modular multilevel        current references. The modulation part in (iii) generates the gate
+converters (MMCs) [47], but not on grid-tied three-phase bridge      signals of the inverter by the pulsewidth modulation (PWM).
+inverters.
+   This article aims to clarify the differences between the grid-
+tied inverter models for the EMT simulation. This article focuses                III. MODELING METHODS OF THE INVERTER
+on the five grid-tied inverter models, including the up-to-date         Table I summarizes the five models compared in this article.
+CCI and VI models. All the models were built and simulated           Each model contains different control parts and circuit compo-
+under the same conditions to clarify the difference. Based on        nents. The SW and VI models include all the control parts. The
+this evidence, this article shows how to select the appropriate      AV model excludes the modulation, and the CCI model further
+model for each application. Sections II and III introduce mod-       excludes the current control. The SCI model excludes all parts of
+eling methods and compares the range of components included          the controller. The power stage of the inverter consists of voltage
+in each model. Then, the Section IV confirms the behaviors           sources for the VI and AV models, and current sources for the
+3464                                                                         IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 37, NO. 3, MARCH 2022
+
+
+
+
+Fig. 2.   Control block diagram of the grid-tied inverter.
+
+
+
+
+Fig. 3.   AC voltage and current waveforms obtained by the SW model, VI model, and AV model.
+
+
+CCI and SCI models. The following sections explain the details               Therefore, the SW model needs to be used with the simulation
+of these models.                                                             time step that is sufficiently smaller than the switching period.
+                                                                             This increases the computing burden.
+A. Switching Model (SW Model)
+                                                                             B. Voltage Interpolation Model (VI Model)
+   The SW model consists of the inverter circuit shown in Fig. 1
+and the controller in Fig. 2. Each power device simulates the                   The voltage interpolation model (VI model) was proposed
+turn-ON and turn-OFF operations. There are several different                 for accurately simulating the harmonics caused by the inverter
+methods to represent the power device in EMT simulations:                    switching while using a larger simulation time step than the
+ideal switch, ideal switch with passive components, and vari-                SW model. The method was originally proposed as the time
+able resistor having an ON resistance and an OFF resistance.                 average method [42], or subcycle average method [43], [44] for
+Regardless of these modeling methods of the power device, this               real-time simulations. Then, it was generalized for the offline
+article treats them as the SW model. The SW model mimics all                 EMT simulations [45]. Configuration of the control system is
+circuit components and control systems as they are in the actual             the same as the SW model. The difference exists in the modeling
+converter. Therefore, it is the most detailed and complex among              of the inverter circuit.
+the five models, and it can simulate wide range of characteristics              The VI model in Fig. 3(b) simulates two-level PWM voltage,
+of the inverter.                                                             but it inserts the interpolated voltage at the calculation step
+   Fig. 3 shows the ac voltage and current waveforms of the                  just before or after the switching transition tfall and trise . The
+inverter obtained by each model. The solid line illustrates the              interpolated voltage is obtained by calculation as follows [45].
+theoretical waveform considering the actual switching opera-                 Fig. 4 shows the triangular carrier PWM with synchronous sam-
+tion, and the plots show the simulated result by each model.                 pling, which is commonly used in digital control. The voltage
+Fig. 3(a) depicts the result by the SW model. It simulates                   reference v ∗ is updated in synchronization with the triangular
+two-level PWM voltage and switching ripple current in the ac                 carrier vcarrier . The slope of the carrier h is determined by the
+terminal. The simulation time step determines the resolution of              amplitude and frequency of the carrier. The accurate switching
+the switching time in the SW model. If the SW model is used with             times tfall and trise are obtained at tn−1 and tn , respectively, by
+a large simulation time step, the resolution of the switching time           algebraic calculation regardless of the simulation time step Ts .
+degrades, resulting in the increase of the error of the ac current.          The areas ST and SVI in Fig. 3(b) correspond to the integral
+SANO et al.: COMPARISON AND SELECTION OF GRID-TIED INVERTER MODELS FOR ACCURATE AND EFFICIENT EMT SIMULATIONS                                        3465
+
+
+
+
+Fig. 4. Triangular carrier PWM with synchronous sampling. v ∗ is a sampled
+voltage reference and vcarrier is a triangular carrier signal.
+
+
+
+
+                                                                             Fig. 6. Current path of the VI model. The left side shows the actual inverter
+                                                                             leg, and the right side shows the VI model.
+Fig. 5.   Configuration of the VI model.
+
+
+of the ac voltage by the theoretical value (tfall and trise ) and by
+the VI model, respectively. The interpolated voltage s̄ is given
+to make SVI to be equal to ST in each calculation step. In the
+trapezoidal method of integration, such s̄ is available by the
+following:
+                               1 v ∗ − vcarrier
+                        s̄ =     +              .                     (1)
+                               2      hTs
+                                                                             Fig. 7.   Configuration of the AV model.
+   The method can eliminate the error due to the resolution of the
+switching time, which is the main reason to limit the simulation
+time step in the SW model. As a result, the VI model accurately
+simulates the ac current even with a larger simulation time step.            the case when the upper arm is ON-state and the lower arm is
+                                                                             OFF-state (s̄ap = 1, s̄an = 0). It is a symmetric operation as in
+   Fig. 5 shows the configuration of the VI model [43]. It consists
+of a controlled current source idc , six controlled voltage sources,         Fig. 6(a). At the calculation step before and after the switching
+and six ideal diodes. The idc operates to make the input power               events, s̄ is given between 0 and 1 to insert the interpolated
+on the dc side be equal to the output power on the ac side. The              voltage. The current path is th

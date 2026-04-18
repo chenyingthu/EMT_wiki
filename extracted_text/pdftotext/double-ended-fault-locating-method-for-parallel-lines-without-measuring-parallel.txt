@@ -1,0 +1,196 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025                                                                                           3191
+
+
+
+
+     Double-Ended Fault-Locating Method for Parallel
+      Lines Without Measuring Parallel Line Currents
+                                    Kanchanrao G. Dase , Senior Member, IEEE, and Connor Doyle
+
+
+   Abstract—This paper introduces a novel double-ended                             mSL        Estimated FL using modified Takagi method meant for
+impedance-based fault-locating method for parallel lines,                                     single line without zero-sequence mutual coupling.
+effectively addressing the challenges posed by mutual coupling.                    mPL        Estimated FL using modified Takagi method for parallel
+Instead of directly measuring the parallel line zero-sequence
+current, the proposed method estimates it using synchronized                                  lines with zero-sequence mutual coupling.
+currents and voltages from the local end of the faulted line                       SIR        Source-to-line impedance ratio.
+and remote zero-sequence current. The proposed approach                            V          Faulted phase loop voltage.
+addresses field constraints where numerical relays only have                       Z1L        Positive-sequence line impedance.
+this information for fault locating. The proposed phasor-based                     Z0L        Zero-sequence line impedance.
+fault-locating methodology, which uses filtered data, is applicable
+to various parallel line topologies and can handle any number of                   Z0LP       Zero-sequence impedance of parallel line.
+parallel lines. Depending on the parallel line configuration, the                  Z0M        Zero-sequence mutual coupling impedance.
+proposed algorithm may require zero-sequence source impedance                      Z0R        Zero-sequence remote-source impedance of faulted
+values. In case the source impedance values known to the user                                 line.
+are inaccurate, error mitigation techniques described in this                      Z0S        Zero-sequence local-source impedance of faulted line.
+paper can be applied. This paper demonstrates the accuracy of
+the proposed fault-locating method through fault simulations in                    Z0RP       Zero-sequence remote-source impedance of parallel
+various parallel line configurations modelled in electromagnetic                              line.
+transients program (EMTP) software.                                                Z0SP       Zero-sequence local-source impedance of parallel line.
+   Index Terms—Algorithms, communication channels, distance
+measurement, error correction, fault location, iterative methods,
+mutual coupling, power system faults, protective relaying,                                                     I. INTRODUCTION
+transmission lines.
+                                                                                          CCURACY of fault-locating methods in power systems
+
+                           NOMENCLATURE
+                                                                                   A      is essential for timely and successful restoration of the
+                                                                                   system. Using the modified Takagi fault-locating method for
+I          Faulted phase loop current.                                             parallel lines and not accounting for the zero-sequence mutual
+IFC        Fault current component polarizing quantity.                            coupling reduces FL accuracy [1], [2]. The greater the mutual
+IG         Residual or ground current.                                             coupling from the relay terminal to the FL, the more inaccurate
+I0F        Total zero-sequence fault current.                                      the FL results become. The mutual coupling issue can be avoided
+I0L        Local zero-sequence current in the faulted line.                        through traveling-wave fault-locating methods or methods that
+I0P        Parallel line zero-sequence current.                                    utilize voltage and current measurements from both ends of
+I0R        Remote zero-sequence current in the faulted line.                       the line [3], [4], [5], [6], [7], [8]. However, numerical relays
+k0         Zero-sequence compensation factor.                                      that do not have access to remote terminal voltages, like the
+L1         Line length of the faulted line.                                        one described in [9] cannot implement such algorithms. In case
+LP         Line length of the parallel healthy line.                               users cannot deploy such solutions, they must rely on traditional
+m          Actual fault location (FL) from the relay terminal.                     methods that require zero-sequence current of the parallel line
+mI         Estimated FL using iterative approach.                                  to compensate for the mutual coupling fault-locating errors. For
+mIavg      Estimated FL using iterative approach with averaging.                   such methods, zero-sequence current of the parallel line is either
+mQ         Estimated FL using quadratic approach.                                  directly measured or estimated [10], [11], [12], [13], [14], [15].
+mQavg      Estimated FL using quadratic approach with averaging.                      More commonly, the zero-sequence current or phase currents
+                                                                                   are directly measured from the parallel line and are used to
+   Received 22 November 2024; revised 7 April 2025 and 15 July 2025; accepted      mitigate the mutual coupling effect [10], [11], [12], [13], [14].
+29 August 2025. Date of publication 2 September 2025; date of current version      However, this requires the local relay to have dedicated connec-
+24 November 2025. Paper no. TPWRD-01761-2024. (Corresponding author:               tions to accommodate parallel line currents. In case the local
+Connor Doyle.)
+   The authors are with the Schweitzer Engineering Laboratories, Inc., Pull-       line is equipped with dual current transformers, or when the
+man, WA 99163 USA (e-mail: kanchanrao_dase@selinc.com; connor_doyle@               local line is in parallel with more than one power line, having
+selinc.com).                                                                       connections to access currents from all the parallel lines is
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3605244.                                        not always feasible. Sometimes the parallel line may not even
+   Digital Object Identifier 10.1109/TPWRD.2025.3605244                            originate from the same substation as the local line. This is where
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:19:43 UTC from IEEE Xplore. Restrictions apply.
+3192                                                                             IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+estimating the parallel line zero-sequence current can help avoid                   r Lines originating from a common bus but terminating on
+issues related to direct measurement, provided the estimations                         different buses
+are accurate.                                                                       r Lines originating from different buses but terminating on
+   References [13] and [14] describe such a fault locating method                      a common bus
+that estimates the fault location by determining the healthy par-                   r Lines originating and terminating on different buses (iso-
+allel line current using local voltage and current measurements,                       lated grounding)
+along with the remote current measurement of the faulted line.                      r Parallel line being out of service and grounded at both ends
+Reference [13] does not offer a closed-loop solution and may                           of the line
+not work for bolted faults with zero fault resistance. In contrast,                 r Parallel line originating from the same bus as the local line
+Reference [14] provides a closed-loop solution. However, both                         but of a different length than the local line
+methods in [13] and [14] are only applicable to double-circuit                     For each of the above parallel line connection configurations,
+parallel lines with common buses at both ends of the line.                      the paper derives appropriate equations to estimate the parallel
+   Reference [15] also describes a fault-locating method in                     line zero-sequence current and then the FL. The user, therefore,
+which the parallel line zero-sequence current is estimated using                needs to know the parallel line configuration before applying the
+the local and remote positive-sequence source impedances, local                 proposed method. The proposed methodology can be extended
+currents and voltages of the faulted line, and line parameters. In              to any other case having parallel line configuration that is not
+[15], the accuracy of the estimated FL relies on the user-provided              listed above.
+positive-sequence source impedance values, which may not be                        For all the parallel line configurations apart from parallel
+accurate for a given fault. This is especially true with changing               lines with common buses, the proposed method requires source
+system conditions or when inverter-based resources are included                 impedances of the zero-sequence network to be known. It is un-
+in the system. It must also be noted that the fault-locating method             derstood that the user-provided zero-sequence source impedance
+described in [15] assumes the parallel line to be of the same                   values may have errors. Therefore, the paper provides ways
+length as the local line, which may not always be the case.                     to mitigate fault-locating errors because of source impedance
+   Reference [16] outlines a fault locating method for parallel                 inaccuracies.
+lines that relies solely on voltage data from both local and remote                The proposed fault locating method can be extended to hybrid
+terminals. Whereas Reference [17] describes a fault locating                    lines, requiring zero-coupling mutual impedance for both over-
+algorithm that uses local and remote currents, as well as the                   head and underground sections. It is also applicable for systems
+parallel line current. However, both methods in [16] and [17]                   with inverter-based resources that have a known and constant
+are only applicable to parallel line configurations that originate              zero-sequence impedance or a common coupling transformer
+and terminate at a common bus.                                                  that bypasses the source zero-sequence impedance.
+   In summary, the connection topology of the parallel lines                       The remainder of this paper is structured as follows. Sec-
+in the power system network and the zero-sequence mutual                        tion II introduces the proposed fault location algorithm, with
+coupling among the parallel lines makes fault locating using                    a focus on estimating the zero-sequence current in the healthy
+traditional methods more complex [1], [2].                                      parallel line and incorporating it into the fault location equation.
+   Various other factors can affect fault locating accuracy, includ-            An alternative iterative method, also based on estimating the
+ing the accuracy of line parameters, transients during faults, fault            zero-sequence current in the parallel line, is presented as well.
+resistance along with network non-homogeneity, zero-sequence                    Section III provides simulation results for various parallel line
+mutual coupling, etc. This paper aims to develop a fault locating               configurations to validate the approach. Since the accuracy of the
+algorithm that addresses the impacts of mutual coupling without                 proposed method depends on the known values of zero-sequence
+requiring parallel line current measurement, is applicable to                   source impedances, which may not always be precisely known,
+various parallel line configurations, and operates without relying              Section IV discusses techniques to mitigate errors arising from
+on remote voltages.                                                             inaccurate source impedance values. Finally, Section V con-
+   This paper proposes a fault-locating methodology that can                    cludes the paper.
+be applied to multiple parallel lines of any length and any
+parallel line configuration. The paper describes two methods for
+estimating FL: a quadratic form derived from the fault-locating                             II. PROPOSED FAULT-LOCATING ALGORITHM
+equation and an iterative approach that solves for FL over                         This section describes two approaches to estimate FL. The
+multiple iterations. Along with the line parameters, the proposed               first one is a quadratic form, which is obtained by substituting
+method requires local currents and voltages of the faulted line                 the expression of the parallel line zero-sequence current (IOP )
+and synchronized zero-sequence current of the faulted line from                 as a function of FL (m) in the fault-locating equation. The other
+the remote end. Depending on the connection configuration of                    form is an iterative approach where IOP as a function of m and the
+the parallel lines, the proposed algorithm may require source                   presumed FLs are iteratively solved for a set number of iterations
+impedances of the zero-sequence network. This paper demon-                      to get the estimated FL. Except for a few cases where the iterative
+strates the application of the proposed fault-locating methodol-                form does not converge, the quadratic and iterative forms yield
+ogy for the following configurations of parallel lines.                         the same results. However, both the approaches require IOP
+    r Lines having common buses                                                 to be expressed as a function of m. The following subsection
+
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:19:43 UTC from IEEE Xplore. Restrictions apply.
+DASE AND DOYLE: DOUBLE-ENDED FAULT-LOCATING METHOD FOR PARALLEL LINES WITHOUT MEASURING PARALLEL LINE CURRENTS                                              3193
+
+
+
+
+Fig. 1. (a) Parallel line configuration with common buses. (b) Zero-sequence
+network for an unbalanced ground fault in Line 1 of (a) network.                 Fig. 2. (a) Parallel line configuration with lines originating from a common bus
+                                                                                 but terminating on different buses. (b) Zero-sequence network for an unbalanced
+                                                                                 ground fault in Line 1 of (a) network.
+
+summarizes IOP as a function of m, zero-sequence currents,
+and zero-sequence impedances for parallel line configurations,
+described from Figs. 1 through 7.
+
+A. Estimation of Parallel Line Zero-Sequence Current
+  In general, the parallel line zero-sequence current (IOP ) can
+be expressed as shown in (1).
+
+                           I0P = m · p + q                                (1)
+
+Here, p and q are constants for a given unbalanced ground
+fault and are a function of zero-sequence network currents and
+impedances. For each of the parallel configurations from Fig. 1
+through 7, the expression for IOP can be derived in multiple
+ways but, for simplicity, only one way is presented here. For
+the parallel line configurations described in Figs. 1, 2, 3, 6,
+and 7, the corresponding constants p and q are derived by
+equating the zero-sequence voltage drop from the start of the
+local source through Line 1 until the end of the remote source to
+the zero-sequence voltage drop from the start of the local source
+through Line 2 until the end of the remote source. For parallel
+line configurations described in Figs. 4 and 5 , the corresponding
+constants p and q are derived by equating the zero-sequence                      Fig. 3. (a) Parallel line configuration with lines originating from different
+                                                                                 buses but terminating in a common bus. (b) Zero-sequence network for an
+voltage drop through the Line 2 path to zero. Table I summarizes                 unbalanced ground fault in Line 1 of (a) network.
+the constants p and q for different parallel line configurations.
+                                                                                   Note, for an A-phase-to-ground (AG) fault, I = IA + k0 · IG
+B. Estimation of FL (Quadratic Form)                                             and V = VAG . Substituting IOP from (1) in (2), we get,
+   For a forward single-line-to-ground fault, the voltage at the                   V = m2 (p · Z0M ) + m (q · Z0M + I · Z1L ) + IF · RF (3)
+relay terminal can be expressed as shown in (2).
+                                                                                   Multiplying both sides of (3) by the conjugate of the fault
+           V = m (I · Z1L + I0P · Z0M ) + IF · RF                         (2)    current component (IFC ), having the same angle as fault current
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:19:43 UTC from IEEE Xplore. Restrictions apply.
+3194                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+
+                                                                                  Fig. 6. (a) Parallel line configuration with lines of different lengths originating
+                                                                                  from a common bus but terminating on different buses. (b) Zero-sequence
+                                                                                  network for an unbalanced ground fault in Line 1 of (a) network (fault within
+                                                                                  the parallel line section).
+Fig. 4. (a) Parallel line configuration with lines originating and terminating
+from different buses (isolated grounding). (b) Zero-sequence network for an
+unbalanced ground fault in Line 1 of (a) network.
+                                                                                                                 TABLE I
+                                                                                        CONSTANTS P AND Q FOR PARALLEL LINE CONFIGURATIONS (PLCS)
+                                                                                                    DESCRIBED FROM FIGS. 1 THROUGH 7
+
+
+
+
+                                                  

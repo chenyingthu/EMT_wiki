@@ -1,0 +1,210 @@
+                                                                Electric Power Systems Research 212 (2022) 108335
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Evaluation of time-domain and phasor-domain methods for power
+system transients
+Reza Hassani a, *, Jean Mahseredjian a, Tshibain Tshibungu b, Ulas Karaagac c
+a
+  Department of Electrical Engineering, Polytechnique de Montréal, Montreal, Canada
+b
+  IREQ (Hydro-Quebec), Montreal, Canada
+c
+  Hong Kong Polytechnique, Honk Kong, China
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   The computational process of both time-domain and phasor-domain algorithms is evaluated in this work. The
+Dynamic phasors                                             following methods are used: circuit-based time-domain (TD), dynamic phasors (DP), three-phase phasor-domain
+Electromagnetic transients                                  (3pPD), and classic positive sequence phasor-domain (PD). The IEEE-118 benchmark is used to test all solution
+Time-domain
+                                                            approaches implemented on the same computational platform. Furthermore, the advantages and differences in
+Transient stability
+                                                            modeling methodologies are examined for the IEEE-118 benchmark. The experiments demonstrate important
+                                                            new facts on phasor-domain methods and, more specifically, on dynamic-phasors compared to TD algorithms.
+
+
+
+
+1. Introduction                                                                             TS-type methods by reducing or increasing numerical integration
+                                                                                            time-steps. Although, in theory, it may be expanded to include nonlinear
+    The power system is experiencing radical transitions with significant                   components, it is typically used for linear circuits. Several publications
+integration of renewable energy sources. These changes require the                          are based on DP [2–9]. In [2], DP is used to model unbalanced distri­
+development of powerful simulation methods. Different types of simu­                        bution systems. References [3–5] introduce DP models of modular
+lation methods exist and fulfill various application objectives. Transient                  multilevel converter (MMC). A DP-based model is developed for
+simulation methods are divided into two major types: electromagnetic                        line-commutated-converters in [6]. In [7], a multiscale induction ma­
+transient (EMT) and transient stability (TS). Circuit-based EMT models                      chine model using the DP method is developed. Also, reference [8]
+can account for both low and extremely high-frequency transients. The                       presents an iterative solution for differential equations of DP method to
+TS-type methods are designed for capturing the slower electromechan­                        simulate unbalanced distribution networks with nonlinear elements.
+ical transients.                                                                                Some studies compared the accuracy and computational perfor­
+    In TS-type algorithms, a critical approximation is to treat the                         mance for time-domain (TD) and DP methods[5–8,10–12]. For example,
+network equations in quasi-steady-state (QSS), ignoring electromagnetic                     reference [10] compares EMT-type and DP methods and reports that the
+transients and harmonics. The classic PD techniques assume that the                         DP method is ten times faster. Reference [8] uses a test feeder to
+three phases are balanced and rely only on the positive sequence model                      demonstrate that the DP method with a time-step of 500µs is 17 times
+of the network. The classic PD approach used in this paper is named                         faster than an EMT-type solution with 50µs. Reference [5] illustrates
+phasor-domain (PD). It is, however, possible to account for unbalanced                      that for 400 identical submodules per arm in MMC, the DP model is
+networks in full three-phase representation. The latter is named 3pPD in                    approximately eight times faster than the detailed equivalent model
+this paper.                                                                                 (EMT-type) with the same simulation time-step.
+    The dynamic phasors (DP) [1,2] technique is based on a mix of                               However, the reported efficiency comparisons are circumstantial and
+time-domain and phasor-domain modeling. Unlike the PD approach, the                         do not account for EMT-type solution method improvements in perfor­
+DP methodology can simulate electromagnetic transients. In fact, in                         mance and stability for larger time-steps. The comparisons do not use
+theory, it contains numerical ability to navigate between EMT-type and                      the same numerical integration time-steps [5]. Also, [5] uses a
+
+
+
+   Abbreviations: EMT, Electromagnetic transient; TD, Time domain; TS, Transient stability; DP, Dynamic phasor; PD, Phasor domain; 3pPD, Three-phase phasor
+domain; SM, Synchronous machine.
+ * Corresponding author.
+   E-mail address: reza.hassani@polymtl.ca (R. Hassani).
+
+https://doi.org/10.1016/j.epsr.2022.108335
+Received 6 October 2021; Received in revised form 5 March 2022; Accepted 2 July 2022
+Available online 14 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+R. Hassani et al.                                                                                                  Electric Power Systems Research 212 (2022) 108335
+
+
+simplified model of the detailed MMC which decreases accuracy for                  2. Simulation methods
+faster transients. The test cases are not simulated using the same plat­
+form for all assessed methods [8,12]. Therefore, accuracy is not                       An overview of modules involved in the simulation process with
+analyzed thoroughly[10,11].                                                        emphasis on the synchronous generator model is shown in Fig. 1A
+    An important aspect of the DP method is the computational perfor­              similar diagram can be used for the presented TD, DP, 3pPD and PD
+mance. It is supposed to be faster than the EMT approach when larger               methods. To establish comparisons on the same basis, the same nu­
+numerical integration time-steps are used. It is also set to deliver better        merical integration methods are used. The Trapezoidal and Backward
+accuracy for electromechanical transients than the PD approaches.                  Euler numerical integration methods are employed to discretize deriv­
+These two paradigms are verified and challenged in this paper for the              ative equations. The Trapezoidal integration method is used as the main
+IEEE-118 test system [13,14]. The emphasis is on synchronous machine               numerical solver, and two halved time-steps of Backward Euler inte­
+(SM) modeling with its control systems in a linear network. This paper             gration are used to eliminate numerical oscillations following a
+contributes new results on DP performance analysis using a practi­                 discontinuity [18]. All methods are coded in MATLAB to establish the
+cal/realistic benchmark named the IEEE-118 network [13,14]. The                    same computational environment for comparison purposes. EMTP [19]
+proposed methods (TD, DP, 3pPD, and PD) are meticulously pro­                      is used to validate the implemented TD method.
+grammed in the same computational environment to evaluate accuracy                     The solution steps are as follows:
+and performance for a span of numerical integration time-steps. More­
+over, the DP method is compared to other phasor domain techniques,                     1 Load-flow solution and initialization of all state variables.
+such as the classic phasor domain solution using the 3-phase network                   2 Advance time: t = t + Δt.
+model (3pPD) and the positive network model (PD). An important new                     3 Calculate SM Norton equivalent circuit (all SMs): eqZabc and eqiabc .
+conclusion is the fact that the DP method is computationally less effi­                4 Update the Norton equivalent in network equations (NE).
+cient for large time-steps than the TD solution. The referenced                        5 Solve complete system of NE using sparse-matrix solver: Ax = b.
+time-domain method (TD) of EMT-type uses an iterative solver [15] for                  6 Update SM equations and SM Norton equivalent.
+synchronous generator equations, which allows the TD method, to                        7 If any SM Norton equivalent exceeds given convergence toler­
+remain comparatively accurate to simulate power systems when the                         ance, go to step 4 for next iteration, if not, go to step 8.
+numerical integration time-step is increased. In fact, iterative solvers are           8 If t > tmax , exit.
+used for all methods tested in this paper to achieve the best accuracy and             9 Predict SM variables and store history terms.
+establish common comparison basis.                                                    10 Calculate all history terms.
+    This paper is based on fixed time-step comparisons for all methods. It            11 Go to step 2 until the last simulation time-point.
+would have been also possible to test variable time-step solvers for both
+TD [16] and PD [17] approaches, but that should not logically affect the
+presented conclusions.                                                             2.1. Time domain method: TD
+    Although the DP and 3pDP solutions represent the network in three-
+phases, this paper demonstrates that their accuracies deteriorate for                  The time-domain (TD) method used in this paper is similar to [15]. In
+unbalanced conditions.                                                             TD the SM equations and NE are solved in time-domain using the
+    Section 2 introduces the TD, DP, 3pPD, and PD methods used in this             circuit-based approach. Components with differential equations are
+paper emphasizing synchronous machine modeling. Finally, in Section                discretized using the classic companion circuit approach.
+3, the study case of the IEEE-118 power system is presented for accuracy               The classic SM equations in dq0-domain of 6th order are recalled
+and performance analysis.                                                          here for convenience. There is one damper on D-axis and two dampers on
+                                                                                   q-axis.
+
+
+
+
+                                                           Fig. 1. Synchronous machine modeling.
+
+                                                                               2
+R. Hassani et al.                                                                                                              Electric Power Systems Research 212 (2022) 108335
+
+
+         X ′′ d did   1 dE′′ q ωr ( ′′           )                                        italic letters are used for instantaneous variables, uppercase letters for
+vd = −              +         +    X q iq + E′′ d − Ra id                      (1)
+         ωs dt ωs dt            ωs                                                        dynamic phasors coefficients, and bold uppercase letters for classic
+                                                                                          phasor coefficients.
+vq = −
+         X ′′ q diq
+                    −
+                      1 dE′′ d ωr ( ′′
+                              −
+                                                 )
+                                   X d id − E′′ q − Ra iq                      (2)            The DP method employs the EMT-type approach to discretize the
+         ωs dt ωs dt            ωs                                                        derivative term of the network component. Thus, for a given, inductance
+                                                                                          L, for example:
+         (Xl + 3Xn ) di0
+v0 = −                   − (Ra + 3Rn )i0                                       (3)               1      Z∗         1
+             ωs      dt                                                                   It =      Vt + L It− Δt + Vt− Δt                                                (13)
+                                                                                                 ZL     ZL         ZL
+     ′        [                            ′
+dEq   1          Xd − Xl ′ Xd − Xd ′′
+    = ′ Efd − ′            Eq + ′        E q                                              where ZL = (2L /Δt) + jωL and ω is the solution frequency. In this pre­
+ dt  Td0         Xd − Xl         Xd − Xl
+                                                                               (4)        sentation, the NEs are solved only at fundamental frequency.
+         (       ′ )                ]
+           Xd − Xd (X ′′ d − Xl )                                                            The DP model of SM is derived from converting symmetrical
+      −          ′               id                                                       component to dq0-axes. The Park’s transform (xdq0 = T(θ)xabc ) gives dq0
+                Xd − Xl
+                                                                                          components from abc frame. The vector x can be voltage or current, and
+dE′′ q   1 [
+                                                              ′
+                                              ] X ′′ d − Xl dE q                          Park’s transform matrix is:
+                                                                               (5)
+                        ′      ′
+       = ′′  − E′′ q + E q − (X d − X ′′ d )id + ′                                                ⎡             (        )       (       ) ⎤
+ dt     T do                                    X d − Xl dt                                                           2π              2π
+           [                                                                                      ⎢ cos(θ)   cos θ −
+                                                                                                                       3
+                                                                                                                              cos θ +
+                                                                                                                                       3 ⎥
+    ′                               ′                                                             ⎢                                        ⎥
+dEd     1      Xq − Xl ′ Xq − Xq ′′                                                               ⎢              (        )       (      )⎥
+      = ′ − ′          Ed + ′         E d                                                         ⎢                    2π              2π ⎥
+ dt    Tq0     Xq − Xl      Xq − Xl                                                               ⎢
+                                                                                          T(θ) = ⎢ − sin(θ) − sin θ −        − sin θ +     ⎥                  (14)
+                                                                                                  ⎢                     3               3 ⎥⎥
+        (       ′
+                   )(         ) ⎤                                              (6)                ⎢                                        ⎥
+          Xq − Xq X ′′ q − Xl                                                                     ⎣ 1              1                1      ⎦
+       +         ′             iq ⎦                                                                      2             2                   2
+               Xq − Xl
+                                                                                             The matrix for transformation from symmetrical component to abc
+dE′′ d   1 [                ( ′          ) ] X ′′ q − Xl dE′ d                            frame is:
+                                                                               (7)
+                        ′
+       = ′′  − E′′ d + E d + X q − X ′′ q iq + ′                                              ⎡                    ⎤
+ dt     T qo                                  X q − Xl dt                                         1        1     1
+                                                                                              ⎢ − j2π              ⎥
+                                                                                                                                                        (15)
+                                                                                                            2π
+ψ d = − Xd′′ id + Eq′′                                                         (8)        A=⎢ ⎣e
+                                                                                                      3  ej 3 1 ⎥  ⎦
+                                                                                                  j23π    − j23π
+                                                                                                e       e        1
+ψ q = − Xq′′ iq − Ed′′                                                         (9)
+                                                                                             Then, by applying the combined matrices of T and A− 1 to a sym­
+          (
+Tem = − ψ q id − ψ d iq
+                          )
+                                                                              (10)        metrical component of the kth Fourier coefficient gives:
+                                                                                          ⎡     ⎤ ⎡ − jδ              ⎤⎡        ⎤
+                                                                                            Xdk       je     − jejδ 0    Xpk+1
+J
+    dωm
+        = Tem − Tm − KD (ωm − ωs )                                            (11)
+                                                                                          ⎣ Xqk ⎦ = ⎣ e − jδ
+                                                                                                               e jδ
+                                                                                                                    0 ⎦⎣ Xnk− 1 ⎦                        (16)
+     dt                                                                                     X0k         0       0   1    Xzk
+
+where generator states, vd , vq , v0 , id , iq and i0 are stator voltages and                 Eq. (16) results into: the positive sequence of the kth harmonic
+currents on dq0-axes. Ed , E′′d , Eq and E′′q are rotor transient and sub-
+                              ′       ′
+                                                                                          causes the (k + 1)th harmonic component on the D- and q- axes; the
+transient voltages on the d and q axes. The d and q-axis fluxes are                       negative sequence of the kth harmonic causes the (k + 1)th harmonic on
+given by ψ d and ψ q , respectively. Efd is generator field excitation v

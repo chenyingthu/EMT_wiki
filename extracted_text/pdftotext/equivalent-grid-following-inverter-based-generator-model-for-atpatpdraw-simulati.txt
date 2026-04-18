@@ -1,0 +1,214 @@
+                                                                Electric Power Systems Research 223 (2023) 109624
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Equivalent grid-following inverter-based generator model for ATP/ATPDraw
+simulations✩
+M.B. Luchini a ,∗, O.E. Batista a , F.V. Lopes b , R.L.A. Reis b , B.A. Souza c
+a
+    Department of Electrical Engineering, Federal University of Espírito Santo, Vitória, ES, Brazil
+b
+    Department of Electrical Engineering, Federal University of Paraiba, João Pessoa, PB, Brazil
+c
+    Department of Electrical Engineering, Federal University of Campina Grande, Campina Grande, PB, Brazil
+
+
+
+ARTICLE                  INFO                               ABSTRACT
+
+Keywords:                                                   This paper presents an equivalent time-domain grid-following inverter-based generator model, which can
+ATP                                                         be used in Electromagnetic Transients Programs (EMTP). It is developed in the Alternative Transients
+EMTP                                                        Program (ATP) using the ATPDraw graphical interface. A complete benchmark photovoltaic model available
+Electromagnetic transients
+                                                            in ATP/ATPDraw environment is taken as reference to evaluate the proposed model under steady-state and
+Grid faults
+                                                            fault scenarios. The obtained results showed that the proposed model is simpler and less time-consuming than
+IBR
+Time-domain modeling
+                                                            the complete model, being capable of easily consider the implementation of different components/controls of
+                                                            Inverter-Based Resources (IBR) in EMTP. The settings used in the implemented control schemes proved to be
+                                                            effective, resulting in an average error of about 2.33% during fault conditions. Also, a reduction of about 70
+                                                            % in the execution time was achieved when compared to the analyzed benchmark one, attesting its usefulness
+                                                            for power system studies with high presence of grid-following IBRs.
+
+
+
+1. Introduction                                                                                 resulting in complex and time/computational-consuming simulations.
+                                                                                                It has motivated developments in power system modeling area to obtain
+    Electrical power networks have experienced several changes due to                           simplified, but representative IBR models.
+the insertion of new generation technologies, among which both con-                                 The equivalent IBR models available in the literature are often
+centrated and distributed renewable resources such as wind and pho-                             phasor-based and consider only steady-state response [4,6,7]. This lim-
+tovoltaic power plants stand out [1]. Some of these generations have                            its pre-operational and operational time-domain studies, since possible
+been widely referenced to as Inverter-Based Resources (IBRs), since                             impacts of IBRs are not adequately emulated during transient events.
+their interface with the grid is based on inverters. As a result, the IBR                       Dynamic models can be found in the literature. However, they often
+dynamic during faults or even during some normal operation conditions                           disregard faulty conditions [8] or do not make comparisons in EMTP
+does not follow the well-known behavior of synchronous generators,                              platforms for a better parameter adjustment, as reported in [9]. More-
+posing difficulties on system protection and control applications [2].                          over, the mentioned models are developed in computational programs
+    Historically, most power flow and short-circuit simulation tools                            which require paid licenses, and their implementation details are not
+have been developed for steady-state evaluations in phasor-domain.                              fully provided, leading potential model users to face difficulties in
+Although these models allow the representation of most important                                reproducing the IBR models and their results. Also, the lack of informa-
+features of traditional synchronous power systems, limitations have                             tion about the implementation and of explanations about ways to adapt
+been found to emulate the dynamic behavior of IBRs [3], especially
+                                                                                                the models to different scenarios is another limiting factor, especially
+when faults or any other disturbances take place. Hence, detailed full
+                                                                                                when one desires to test different control strategies. In addition, most
+models have been proposed for time-domain simulations, leading EMTP
+                                                                                                works do not even mention concerns about the computational burden
+to gain importance in the context of IBR studies. However, as reported
+                                                                                                of the simulations, which is becoming an important aspect as the
+in [4,5], although full time-domain IBR models are realistic, they
+                                                                                                penetration of IBRs in existing systems increase.
+emulate switching components and their respective control schemes,
+
+
+  ✩ The authors thank National Council for Scientific and Technological Development (CNPq) and Espírito Santo Research Foundation (Fapes) for the financial
+support. This work was also sponsored by the São Francisco Hydroelectric Company (Chesf) within the scope of the R&D project PD-0048-0317/2020.
+  ∗ Corresponding author.
+    E-mail addresses: matheus.luchini@edu.ufes.br (M.B. Luchini), oureste.batista@ufes.br (O.E. Batista), felipelopes@cear.ufpb.br (F.V. Lopes),
+raphael.leite@cear.ufpb.br (R.L.A. Reis), benemar@dee.ufcg.edu.br (B.A. Souza).
+
+https://doi.org/10.1016/j.epsr.2023.109624
+Received 8 December 2022; Received in revised form 20 February 2023; Accepted 21 June 2023
+Available online 5 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+M.B. Luchini et al.                                                                                               Electric Power Systems Research 223 (2023) 109624
+
+
+    Considering the above-mentioned context, this paper proposes an
+equivalent grid-following IBR model for EMTP, which is developed in
+ATP/ATPDraw environment. The model is able to represent the dy-
+namic of IBRs during steady-state and under balanced and unbalanced
+fault conditions, allowing the representation of different power in-
+jection dynamics. A straightforward implementation in ATP/ATPDraw
+(which can be expanded for other EMTP) with computational burden
+lower than those of full EMTP IBR models is achieved. The proposed
+model software implementation is detailed, providing to experienced
+and beginning ATP/ATPDraw users a reference guide to simulate equiv-
+alent IBR models. For validation purposes, a benchmark grid-following
+photovoltaic power plant model available in ATP/ATPDraw is taken
+as reference. The obtained results show that the proposed model prop-                             Fig. 1. Block diagram of the proposed model.
+erly represents the IBR operation, revealing that the implementation
+methodology facilitate the adoption of different control strategies or
+model components.
+
+2. Review on IBR models
+
+    Full time-domain IBR models can be already found in EMTP. How-
+ever, as mentioned earlier, they require complex and time-consuming
+simulations [5]. Hence, simplified IBR average models have been also
+reported, but most of them cannot emulate the IBR response under                                   Fig. 2. Block diagram of the LPF and PLL.
+fault conditions [3]. Generally, full time-domain IBR models include the
+source (often photovoltaic or wind generators, with maximum power
+point tracking), power converters (PC) with their associated controls,           3. Fundamentals of IBR modeling
+and AC filters at the connection point to the grid. As this type of model
+simulates the system at the switching level [10], very small time steps              In this work, a time-domain equivalent IBR model (EIBR) is devel-
+are required in EMTP, resulting in high simulation times [11].                   oped for EMTP. It is capable of representing grid-following technologies
+    Several works have also proposed the simplification of IBR models            in a simplified way, overcoming computational issues usually verified
+by considering only its steady-state phasor response over the time.              in full IBR models. The ATP/ATPDraw platform is chosen to implement
+In [4], for instance, accurate IBR phasor-domain simulations are pre-            the proposed EIBR model, especially because it is a friendly and free-
+sented. A three-phase steady-state model of a three-wire current-                license software, widely used worldwide. The main goal is to obtain
+controlled voltage-source converter-interfaced distributed generator is          an EIBR model that can represent different IBRs (like photovoltaic,
+reported in [6]. In addition, [7] presents a simplified IBR model, aiming        wind power and storage resources), being easily adapted to emulate IBR
+to evaluate the impact of transmission network faults on its steady-             control schemes, such as fault ride-through strategies and associated
+state response. In these papers, the Matlab/Simulink platform is used
+                                                                                 grid codes. The proposed EIBR model is implemented considering the
+to analyze steady-state phasor responses over the time. However, in
+                                                                                 grid-following power converters described in [12], being the model
+some of these papers, implementation details are not completely de-
+                                                                                 overview shown in Fig. 1.
+scribed or computational burden aspects are not addressed. Moreover,
+                                                                                     As a typical grid-following technology, the proposed EIBR model
+steady-state phasor-based models limit pre-operational and operational
+                                                                                 takes the grid voltages 𝑉𝑎𝑏𝑐 as reference to synthesize output currents
+studies, since they are insufficient to completely emulate the impacts
+                                                                                 𝐼𝑎𝑏𝑐 . It allows the model to deliver user-defined active power 𝑃 and
+of IBRs into the grid, especially under fault conditions when fault
+                                                                                 reactive power 𝑄 levels (see Fig. 1). During normal operation, grid
+ride-through and transient stability aspects must be represented.
+                                                                                 quantities are well-defined, so that 𝐼𝑎𝑏𝑐 can be synthesized in a stable
+    Intermediate dynamic models can be found in the literature as well.
+                                                                                 way. If power flow conditions change abruptly, the IBR generates
+In [9], a positive sequence converter model is developed. It allows the
+                                                                                 outputs accordingly to its control schemes, such that dynamic behav-
+use of longer time steps, reducing the computational efforts required in
+                                                                                 iors must be considered. In a more critical scenario, during faults,
+large-scale simulations. The proposed model is compared with an av-
+erage model developed in a point on wave simulation program, called              for instance, grid voltages significantly change, so that the IBR fault
+PLECS, and with a boundary current representation converter model.               ride-through strategies are activated. The transition period between
+Although a satisfactory result is observed, no significant reduction in          pre-fault and fault steady-state may lead the IBR outputs to present con-
+the execution time were obtained and implementation details are not              trol actions that can affect several system monitoring algorithms (for
+provided. Also, a comparison with EMTP simulations in order to obtain            instance, protection elements). Therefore, emulating the IBR dynamic
+a better parameter adjustment is not carried out, being suggested for            is of paramount importance to properly represent the behavior of IBR
+future works.                                                                    output power, voltages and currents.
+    In [8], a simplified phasor-domain Matlab/Simulink model is devel-               As grid-following IBRs require grid synchronization, a Phase-Locked
+oped, whose computational burden is lower than those of full models.             Loop (PLL) is used in the proposed EIBR model. Also, as the EIBR
+To do so, the dc-side is represented by a Norton equivalent. The power           current synthesis utilizes the grid voltages as reference, to obtain 𝐼𝑎𝑏𝑐
+balance is then used to obtain the behavior of the ac-side, such that            waveforms as clean as possible, it is necessary to attenuate harmonics in
+the grid injected current synthesized is based on: power, power factor           the measurements taken from the grid. The PLLs used in the model are
+and grid voltage. However, in [8], the goal is to demonstrate the                implemented in the Grid Synchronization (GS) block shown in Fig. 1,
+impacts of the high insertion of distributed generators in distribution          being two different solutions used in this work. In the first one, a low-
+networks. Furthermore, the scope of such a reference neither include             pass filter (LPF) and a conventional PLL is used (Fig. 2), as considered in
+faulty conditions nor the analysis of voltages, currents, grid injected          the model taken as reference. As it can be seen, the required reference
+power over the time, i.e., it does not meet the expectations for transient       frame transforms are also represented in the GS block.
+studies via EMTP. Also, as most references, detailed guidelines about                To demonstrate the EIBR model implementation with different com-
+the software IBR modeling are not provided, which is critical for EMTP           ponents, the DSOGI-PLL approach proposed in [13] is also applied,
+users.                                                                           which is described in Fig. 3. It provides simplicity and good response
+
+                                                                             2
+M.B. Luchini et al.                                                                                               Electric Power Systems Research 223 (2023) 109624
+
+
+
+
+                       Fig. 3. Block diagram of the DSOGI-PLL.
+                                                                                                          Fig. 4. Proposed EIBR model.
+
+
+
+against distorted grid reference signals, resulting in a reliable frequency
+reference to the current synthesis process, as well as to the frequency-
+adaptive positive-sequence detector, which is explained later on in this
+section. The parameters of the PI controller in the SRF-PLL are defined
+according to [14], with minor adjustments, being 𝑘𝑝 = 0.8 and 𝑘𝑖 =
+61.69, where 𝑘𝑝 and 𝑘𝑖 are the gains of the proportional and integrator
+controllers, respectively.                                                                               Fig. 5. LPF-PLL implementation.
+    The filtering task is, in this case, accomplished by extracting the
+positive sequence fundamental component from grid voltages 𝑉𝑎𝑏𝑐 by
+using instantaneous symmetrical components, as reported in [15]. Con-
+sidering that this work proposes the analysis of the grid behavior
+under fault conditions, frequency variations are expected to take place.
+Therefore, adaptations in the positive-sequence calculator (PSC) were
+required.
+    The main adaptation in PSC regards the need to make it frequency-
+adaptative. To do so, the DSOGI-based quadrature signals generator
+(DSOGI-QSG) proposed in [16] is applied, being combined with the
+SRF-PLL. The DSOGI-QSG is capable to provide a filtered version of
+voltages in the 𝛼𝛽 reference frame, which are then used as inputs in                                   Fig. 6. DSOGI-PLL implementation.
+the PSC function, which is in turn responsible to extract the positive
+sequence component from grid voltages. Implementation details of the
+solutions in ATP/ATPDraw are addressed in the next sections.                      is used, such that this section explains the applied functional blocks. By
+    The last component of the model is the block responsible for syn-             doing so, we cover a relevant gap in the literature. Indeed, as stated in
+thesizing the EIBR output currents. From the instantaneous power                  Sections 1 and 2, it is intended to guarantee the complete description
+theory, 𝑃 (active power) and 𝑄 (reactive power) can be obtained in                of the proposed EIBR model, allowing readers to straightforwardly
+𝑑𝑞 synchronous reference frame as [17]:                                           reproduce it, using this work as a reference guide for the ATPDraw EIBR
+       3                                                                          implementation. Such a detailed description facilitates the proposed
+𝑃 =      (𝑣 𝑖 + 𝑣𝑞 𝑖𝑞 ),                                               (1)
+       2 𝑑 𝑑                                                                      model simulation with different components and control strategies,
+     3                                                                            which can be adapted, as desired by the model user, given that control
+𝑄=     (𝑣 𝑖 − 𝑣𝑑 𝑖𝑞 ).                                             (2)            variables are internally available.
+     2 𝑞 𝑑
+                                                                                      A general view of the proposed EIBR model is shown in Fig. 4. Main
+   Taking 𝑣𝑞 = 0 as reference and rearranging (1) and (2), one can
+                                                                                  functional blocks are numbered to facilitate the identification in the
+obtain 𝑖𝑑 and 𝑖𝑞 currents on the 𝑑𝑞 reference frame as functions of 𝑃 ,
+                                                                                  ATP/ATPDraw libraries. Details on the interconnected power grid will
+𝑄 and voltage 𝑣𝑑 (in turn obtained from grid voltages), one obtains:
+                                                

@@ -1,0 +1,193 @@
+                                                                Electric Power Systems Research 251 (2026) 112232
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Calculation of lightning-induced voltages on a large-scale distribution
+network using the JMarti modelI , II , H
+Alberto De Conti a                 ,∗, Osis E.S. Leal b
+a
+    Department of Electrical Engineering, Universidade Federal de Minas Gerais (UFMG), Belo Horizonte, MG, 31270-901, Brazil
+b
+    Institute of Engineering, Science and Technology, Universidade Federal dos Vales do Jequitinhonha e Mucuri (UFVJM), Janaúba, Brazil
+
+
+
+ARTICLE                  INFO                               ABSTRACT
+
+Keywords:                                                   This paper illustrates the application of a recently proposed time-domain method in the calculation of lightning-
+Distribution networks                                       induced voltages by nearby cloud-to-ground lightning strikes on a realistic, large-scale distribution network
+Electromagnetic transients                                  using the JMarti model in the Alternative Transients Program (ATP). In this method, the effect of the incident
+Lightning-induced voltages
+                                                            electromagnetic fields on the illuminated lines is accounted for entirely in terms of independent current
+Overhead lines
+                                                            sources that are calculated only once for a given lightning event using data obtained from the built-in fitting
+Time-domain methods
+                                                            tool available in ATP. The simulated large-scale network includes laterals, grounding points, surge arresters,
+                                                            transformers, and loads. It is shown that frequency-dependent line losses may have a significant effect on the
+                                                            voltages induced on different parts of the simulated network, and that they should not be neglected in this
+                                                            type of study.
+
+
+
+1. Introduction                                                                                 stable computation of lightning-induced voltages on complex systems
+                                                                                                including nonlinear elements [2].
+    One of the most important features of a computer code dedicated                                  Another possibility for dealing with the coupling of lightning-
+to the calculation of lightning-induced voltages on transmission lines                          generated fields with overhead lines is to resort to strategies based
+is the possibility of integration with electromagnetic transient (EMT)                          on the method of the characteristics [3–5]. However, most of the
+simulation tools. The usual approach consists in writing an indepen-                            available methods rely either on the frequency-domain solution of the
+dent code to compute the incident electromagnetic fields on the line                            transmission line equations [3] or on a time-domain solution based
+and solve the line equations in the time domain accounting for the                              on a lossless line [4–6]. The former approach requires the use of
+influence of these fields. The line model is then interfaced with the                           a numerical transform for enabling the interface with time-domain-
+EMT simulation tool via a Norton-type equivalent. At each time step,                            based EMT simulation tools, while the latter is too restrictive for a
+information coming from the external code is transferred into the EMT                           rigorous analysis of the phenomenon. When line losses are included in
+tool and vice-versa, so that the transients on the line and on the rest of                      lightning-induced voltage calculation strategies based on the method of
+the system are updated on an incremental basis [1].                                             characteristics (e.g., [7]), the solution of the transmission line equations
+    Given the distributed nature of the incident lightning electromag-                          is performed externally to the EMT tool. This does not take advantage
+netic fields, the preferred approach for the solution of the transmis-                          of the line models already implemented in the EMT simulation tool and
+sion line equations including the influence of external fields is gen-                          is likely to reduce the efficiency of the solution.
+erally based on the finite-difference time-domain (FDTD) method [1,                                  To circumvent the difficulties listed above, an innovative time-
+2]. However, despite the convenience of this approach, it requires                              domain approach was proposed by the authors in which lightning-
+careful treatment of the line terminations for the interfacing with the                         induced voltages can be calculated in any EMT simulation tool using
+EMT simulation tool. In addition, the need to satisfy the Courant–                              the frequency-dependent line models already available in its library
+Friedrichs–Lewy condition often poses challenges for the efficient and                          of components [8–10]. The idea is to represent the effect of the in-
+                                                                                                cident electromagnetic fields in terms of independent current sources
+
+ I This article is part of a Special issue entitled: ‘IPST 2025’ published in Electric Power Systems Research.
+II This paper was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES), and by the National Council for
+Scientific and Technological Development (CNPq) (304157/2022-8).
+ H Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+  ∗ Corresponding author.
+     E-mail addresses: conti@cpdee.ufmg.br (A. De Conti), osis.leal@ufvjm.edu.br (O.E.S. Leal).
+
+https://doi.org/10.1016/j.epsr.2025.112232
+Received 30 December 2024; Received in revised form 9 March 2025; Accepted 4 September 2025
+Available online 17 September 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A. De Conti and O.E.S. Leal                                                                                                     Electric Power Systems Research 251 (2026) 112232
+
+
+
+                                                                                     𝒖̄ 𝓁 (𝑡) = 𝒖𝓁 (𝑡) − 𝒂 (𝑡) ∗ 𝒖̄ 0 (𝑡) .                                                  (4)
+                                                                                                                                     {    }
+                                                                                         In (3) and (4), 𝒂(𝑡) = (𝒕−1
+                                                                                                                  𝐼
+                                                                                                                     )𝑡 −1 𝑨𝑚 𝒕𝑡𝐼 is the propagation function
+                                                                                     of the  line, −1 is the inverse Laplace transform operator, 𝑨 = 𝑑𝑖𝑎𝑔
+                                                                                     [    ( √          )]                                            𝑚
+                                                                                      exp − 𝑍𝑚 𝑌𝑚 𝓁        is a diagonal matrix containing the propagation
+                                                                                     function of each of the line modes, 𝑍𝑚 and 𝑌𝑚 are the frequency-
+                                                                                     dependent modal series impedance and shunt admittance of the line per
+Fig. 1. Incorporation of the influence of external electromagnetic fields on a       unit length, and 𝒕𝐼 is a real and frequency-independent transformation
+lossy multiconductor transmission line with 𝑁𝑐 conductors through indepen-           matrix calculated at frequency 𝑓0 . Finally, the voltage sources 𝒖0 (𝑡) and
+dent current sources [8].                                                            𝒖𝓁 (𝑡) in (3) and (4) are given by
+                                                                                                         𝓁
+                                                                                     𝒖0 (𝑡) = −              𝒂𝑥 (𝑡) ∗ 𝑬𝑥 (𝑥, 𝑡) 𝑑𝑥
+                                                                                                   ∫0
+connected to the line ends. These sources are calculated only once
+for a given lightning event, and they do not depend on the load                                 −𝒉𝑬𝑧 (0, 𝑡) + 𝒂 (𝑡) ∗ 𝒉𝑬𝑧 (𝓁, 𝑡) ,                                           (5)
+connected at the line ends. This means that systematic studies can
+                                                                                                     𝓁
+be conveniently performed (e.g., by changing grounding impedance
+                                                                                     𝒖𝓁 (𝑡) =            𝒂𝑥 (𝑡) ∗ 𝑬𝑥 (𝓁 − 𝑥, 𝑡) 𝑑𝑥
+values, including or removing surge arresters etc.) in a very efficient                         ∫0
+way because the effect of the external fields on the line was already                           −𝒉𝑬𝑧 (𝓁, 𝑡) + 𝒂 (𝑡) ∗ 𝒉𝑬𝑧 (0, 𝑡) ,                                           (6)
+computed. The proposed method, which is compatible with both the
+universal line model (ULM) [11] and the JMarti model [12] (also                      where 𝒂𝑥 (𝑡) is the propagation function of an infinitesimally short line
+known as fd-line), has been extensively validated through compar-                    segment, 𝑬𝑥 (𝑥, 𝑡) is the horizontal component of the incident electric
+isons with measured data and other solution techniques [8–10,13].                    field calculated along the line at the height of the line conductors,
+The method, which is called either EPD (Extended Phase-Domain) or                    𝑬𝑧 (0, 𝑡) and 𝑬𝑧 (𝓁, 𝑡) are the vertical electric fields calculated at ground
+EMD (Extended Modal-Domain) model depending on the transmission                      level at the line ends, and 𝒉 is a diagonal matrix containing the
+line model taken as reference, provides stable, reliable and efficient               conductor heights.
+calculations that have the advantage of making use of line models that                    For the calculation of (1) and (2), it is necessary to fit the char-
+are already implemented in EMT simulation tools.                                     acteristic admittance and the propagation function of the line. If the
+    In this paper, the feasibility of the approach proposed in [8–10] is             ULM model is used as reference for the lightning-induced voltage
+further demonstrated with the calculation of lightning-induced voltages              calculation, both parameters can be readily obtained from the built-in
+on a large-scale distribution network comprising both medium-voltage                 fitting tool available in the EMT simulation software [14]. However,
+(MV) and low-voltage (LV) lines, transformers, surge arresters, ground-              the JMarti model is originally based on the fitting of the modal charac-
+ing points, and consumer loads modeled in the Alternative Transients                 teristic impedance, not the characteristic admittance. This means that,
+Program (ATP). The JMarti transmission line model is used as the                     in principle, the calculation of (1) and (2) for use with the JMarti
+framework for the EMD model in the calculation of the inducing current               model would depend on an additional code for calculating and fitting
+sources that incorporate the effect of the incident electromagnetic fields           the characteristic admittance of the line. To avoid this, the approach
+generated by nearby cloud-to-ground lightning strikes on the illumi-                 proposed in [10] can be used. In this approach, the rational fitting of
+nated lines. It is demonstrated that neglecting the frequency-dependent              the characteristic admittance is no longer needed for the calculation
+line losses in the calculation of lightning-induced voltages can lead to             of the inducing sources required for the lightning-induced voltage
+significant errors in case of large-scale systems. It is also demonstrated           calculation with the JMarti model. Consequently, the rational fitting of
+that lightning-induced voltage calculations can be accurately performed              the modal characteristic impedance and propagation function already
+with the JMarti model in ATP using the fitting data obtained from the                available in EMT tool is all that is needed for determining the inducing
+built-in fitting tool already available in the software.                             current sources. The equivalency of this approach with the one based
+    This paper is organized as follows. Section 2 gives an overview of               on the characteristic admittance of the line was demonstrated in [10]
+the technique that enables the calculation of lightning-induced voltages
+                                                                                     for simple distribution line configurations. In this paper, the same
+with the JMarti model. Section 3 presents the details of the simu-
+                                                                                     approach is used to simulate a large-scale distribution system. Details
+lated distribution network. Section 4 presents the results and analyzes,
+                                                                                     of the proposed formulation and of the numerical solution of (1)–(6)
+followed by conclusions in Section 5.
+                                                                                     can be found in [8–10]. The validity of the EPD and EMD models is
+                                                                                     demonstrated in [8,13] through comparisons with the solution of the
+2. Overview of the calculation method
+                                                                                     transmission line equations in the presence of external lightning elec-
+    For calculating lightning-induced voltages on a lossy multiconduc-               tromagnetic fields considering the FDTD method. They are also shown
+tor line of length 𝓁 using the approach proposed in [8,9], it is necessary           in [9,15] to produce results that are equivalent to the well-known LIOV
+to determine the independent current sources shown in Fig. 1. Both the               (lightning-induced overvoltage) code [1]. Finally, validation through
+universal line model (ULM), for the EPD model, and the JMarti model,                 comparisons with experimental data obtained from both reduced- and
+for the EMD model, can be used as reference for such a task. As both                 real-scale lightning-induced voltage experiments are found in [9,13].
+models lead to nearly equivalent results in terms of lightning-induced
+voltage calculations [14], the latter is preferred for being more efficient          3. System modeling
+in computational terms.
+    The current sources 𝒋0 (𝑡) and 𝒋𝓁 (𝑡) shown in Fig. 1 are calculated as          3.1. System description
+
+𝒋0 (𝑡) = 𝒚𝑐 (𝑡) ∗ 𝒖̄ 0 (𝑡),                                               (1)            The distribution network considered in this study is shown in Fig.
+                                                                                     2. It consists of a three-phase 13.8 kV medium-voltage (MV) line with
+𝒋𝓁 (𝑡) = 𝒚𝑐 (𝑡) ∗ 𝒖̄ 𝓁 (𝑡).                                               (2)        a length of 1.26 km extending from poles P1 to P9, with a 540 m
+                                                                                     lateral derived from its midpoint at pole P5. The MV line is formed
+where 𝒚𝒄 (𝑡) is the time-domain equivalent of the characteristic impe-
+                                                                                     by horizontally displaced phase conductors with 4.17 mm radius and
+dance of the line, ‘*’ is the convolution integral, and
+                                                                                     DC resistance of 0.83862 Ω/km, and a multi-grounded neutral with
+𝒖̄ 0 = 𝒖0 (𝑡) − 𝒂 (𝑡) ∗ 𝒖̄ 𝓁 (𝑡),                                         (3)        2.325 mm radius and DC resistance of 2.60440 Ω/km. The neutral is
+
+                                                                                 2
+A. De Conti and O.E.S. Leal                                                                                           Electric Power Systems Research 251 (2026) 112232
+
+
+
+
+                                                                                                            Fig. 3. Transformer model [16].
+
+
+
+
+Fig. 2. Evaluated system, with coordinates in meters. Transformers are located
+at poles P4, P6, P10, and P12. Consumer loads are represented as solid gray
+circles.
+Source: Adapted from [5].
+
+
+
+                                                                                                            Fig. 4. Grounding model [17].
+grounded in intervals of 180 m with a single vertical grounding rod,
+except at poles P4, P6, P10 and P12, where three-phase distribution
+transformers are located. At these poles, three parallel vertical rods                         Table 1
+with 3-m separation are used.                                                                  Parameters of the grounding models [17].
+    Four three-phase low-voltage (LV) distribution networks with phase-                         Parameter              1 rod                    3 rods
+
+to-neutral voltage of 127 V are connected to the MV lines. LV lines 1,                          𝑅𝑔 (Ω)                 0.346𝜌𝑔                  0.119𝜌𝑔
+                                                                                                𝐶𝑔 (nF)                0.0256𝜀𝑟𝑔                0.0743𝜀𝑟𝑔
+2 and 3 contain 13 consumer loads each, while line 4 contains a single
+                                                                                                𝐿𝑡 (μH)                7.2                      7.2
+consumer load. The conductors and the neutral of LV lines 1, 2, and 3
+are vertically displaced and have 2.325 mm radius and DC resistance
+of 2.60440 Ω/km. In LV line 4, the load is connected directly to the
+transformer secondary through a service drop. All loads are three phase,             and interfaced with ATP using a MODELS code. For each line section,
+y-connected, and each is grounded through a single grounding rod.                    four current sources (three phases plus neutral) need to be included at
+The neutral of the MV and LV lines is continuous, multi-grounded, and                each of the line ends. A similar approach was followed for the modeling
+interconnected at the transformer poles. Poles P1 and P9 are connected 

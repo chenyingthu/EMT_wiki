@@ -1,0 +1,197 @@
+                                                                Electric Power Systems Research 251 (2026) 112226
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An EMT based dynamic frequency scanning tool for stability analysis of
+inverter based systems
+Chen Jiang a,* , Zhiqiang Liu a, Rohitha Jayasinghe a , Dharshana Muthumuni a ,
+Aniruddha M. Gole b
+a
+    Manitoba Hydro International, Winnipeg, Canada
+b
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, Canada
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   This paper introduces an automated dynamic frequency scanning tool designed to predict stability in power
+Bode plot                                                   systems. The tool integrates frequency scanning and stability analysis into a single, user-friendly platform, which
+Electromagnetic transients (EMT) simulation                 is validated through Electromagnetic Transients (EMT) simulations and traditional small-signal stability tech­
+Frequency scanning
+                                                            niques. Case studies involving a modular multi-level converter (MMC) system are conducted using two grid-
+Grid forming (GFM) converter
+                                                            forming (GFM) controller strategies: voltage-source type and current-source type virtual synchronous genera­
+Modular multilevel converter (MMC)
+                                                            tors (VSGs). The effectiveness of the tool is demonstrated by comparing stability predictions from the scanning
+                                                            method with results from root locus analysis and EMT simulations, showing that it provides a reliable and
+                                                            efficient approach for predicting system stability. A key contribution of this paper is the comparative analysis of
+                                                            the two GFM controller types, offering valuable insights into their performance and stability characteristics. The
+                                                            results highlight that the current-source type VSG can operate effectively in a strong ac system, which is a
+                                                            challenge typically faced by the voltage-source type VSG.
+
+
+
+
+1. Introduction                                                                                   magnitude and phase adjusted to meet the required active and reactive
+                                                                                                  power. This approach does not rely on an external PLL, making it
+    THE global focus on combating climate change and addressing en­                               inherently more flexible for operation in isolated or weak grid condi­
+ergy shortages has led to a rapid increase in the integration of renewable                        tions [3]. One common GFM strategy is the virtual synchronous gener­
+energy sources (RES) into the power grid. As a result, voltage source                             ator (VSG), where the converter mimics the behavior of a synchronous
+converters (VSCs), which are primarily used to interface these resources                          generator (SG) to provide stable voltage and frequency control.
+with the grid, have seen a significant rise in deployment, and these                                  The concept of VSG was introduced in [4], based on the
+systems are referred to as inverter-based resources (IBR) [1]. Among the                          electro-mechanical swing equation and a fundamental damping mech­
+various VSC topologies, the Modular Multi-Level Converter (MMC),                                  anism. Various enhanced VSG configurations have been proposed to
+originally proposed in 2001 by Prof. R. Marquardt [2], has emerged as a                           improve performance. For instance, an adaptive VSG (AVSG) control,
+preferred choice due to its high efficiency, and the ability to generate                          which utilizes online grid impedance estimation, has been proposed to
+near-sinusoidal output waveforms which eliminates the need for addi­                              ensure robust operation [5]. Additionally, a fast current loop has been
+tional filtering.                                                                                 incorporated to mitigate harmonic distortion [6], and energy shaping
+    VSCs can generally be classified into two control modes: grid-                                techniques have been integrated to include a complete physical imple­
+following (GFL) and grid-forming (GFM). In GFL mode, the converter                                mentation of a SG into the controller’s behavior [7], among other im­
+synchronizes with the grid by tracking the system voltage’s phase using                           provements. Since the controller outputs are voltages signals which can
+a Phase-Locked Loop (PLL) to generate reference signals for controlling                           be directly generated by the converters, this kind of VSG can be classi­
+the switching of power electronics devices, such as IGBT, etc. In                                 fied as voltage source type VSG. However, one limitation of these
+contrast, GFM converters generate their own output voltage, with                                  voltage source type VSG models is that their power-electronic switches
+
+
+
+    Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    * Corresponding author.
+      E-mail address: cjiang@mhi.ca (C. Jiang).
+
+https://doi.org/10.1016/j.epsr.2025.112226
+Received 31 December 2024; Received in revised form 28 February 2025; Accepted 4 September 2025
+Available online 10 September 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+C. Jiang et al.                                                                                                     Electric Power Systems Research 251 (2026) 112226
+
+
+cannot handle the large fault currents typical with synchronous gener­               [16].
+ators, necessitating the inclusion of current-limiting controls. These                   In the past frequency scanning methods have been applied to various
+current limiters rely on a decoupled current loop with Proportio­                    domains while achieving acceptable results. For example, the sequence
+nal–Integral (PI) controllers to restrict the current references, thereby            admittance model of a STATCOM is derived using simulation-based
+preventing overcurrent conditions. Unfortunately, as demonstrated in                 frequency scanning techniques [12]. Similarly, dynamic phasor-based
+[8], the introduction of these PI controllers can lead to instability in VSG         scanning has been used to model single-phase converter systems [13].
+systems, particularly when connected to a strong ac network.                         Frequency scanning in the dq0 domain has been demonstrated in the
+     Alternatively, the current source type VSG, which more accurately               context of a CIGRE DCS1 system [14]. In the αβ frame, it has also been
+models the mechanical and electrical dynamics of a real SG [9]. This                 applied to a Doubly-Fed Induction Generator (DFIG) wind farm, where it
+strategy does not require a PI controller for current limiting, since the            facilitates a faster scanning process while maintaining similar accuracy
+current reference itself generated by the VSG can be directly con­                   [15]. Due to its flexibility and robustness, this paper utilizes frequency
+strained. This approach has been shown to provide stable operation even              scanning in the d-q frame, which eliminates frequency coupling effects
+in both weak and strong ac systems [10].                                             to perform analysis on state-of-the-art GFM technology.
+     The integration of MMCs with these advanced control strategies into                 This paper introduces an automated tool for dynamic frequency
+power systems can have significant effects on system stability. In the               scanning and stability analysis, which simplifies the frequency scanning
+worst-case scenario, improper integration may lead to system insta­                  process and integrates stability prediction into a single workflow. While
+bility. Predicting and analyzing such instability is a critical task, and this       EMT-based frequency scanning is not a new concept, it has not yet been
+process is generally referred to as stability analysis. Different methods of         applied to the gamut of emerging GFM technologies widely. The tool
+investigating the system stability are shown in Fig. 1 below.                        developed here combines multiple steps of the process, making it more
+     One common approach to stability analysis is the use of Electro­                accessible and efficient. Two GFM control strategies are used as case
+magnetic Transient (EMT) simulations, which provide time series out­                 studies to highlight the tool’s application, which are voltage source type
+puts of quantities such as instantaneous phase voltages, currents etc.               VSG and current source type VSG. The critical short-circuit ratio (CSCR)
+This method can identify stable or unstable operating conditions by                  is determined through impedance scanning and Bode plot analysis. The
+simulation but cannot directly provide insights into the stability. For              CSCR is the critical value of the SCR at which the system is on the
+example, indices such as stability margins can only be obtained by                   borderline of stability. Results from EMT simulations and root locus
+conducting a very large number of simulations and inspecting the                     analysis validate the approach. The key contribution of this paper lies in
+parameter boundary at the onset of instability.                                      comparing the two VSG control strategies, offering new insights into
+     Another method involves developing linearized mathematical                      their stability and performance. This comparison provides a more
+models of the system which are accurate for small variations around an               thorough understanding of their behavior, which has not been exten­
+operating point. Using these models, it becomes easy to use linear-                  sively covered in prior studies.
+system theory (such as eigenvalue analysis, Nyquist plots, etc.) to
+determine the stability margins and oscillation frequencies.                         2. System layout
+     However, often the manufacturers only provide access to black
+boxed models where the controller structure and parameters are not                       The proposed EMT-based dynamic frequency scanning method will
+available to the end user. In such cases, an alternative approach is fre­            be tested using a VSC of the MMC type, consisting of 20 submodules
+quency scanning [11], in which a multi-sine current or voltage signal                (SMs) per arm. It is connected to an ac network through an equivalent RL
+containing a range of frequencies is injected at a suitable point in the             branch, as shown in Fig. 2 below.
+network. The current or voltage entering a network element (e.g., a                      Two types of VSG control structures are implemented to the MMC to
+VSG) is recorded and after applying a Discrete Fourier Transform (DFT),              validate the accuracy of the dynamic frequency scanning method and its
+its spectrum can be obtained. Using this, the impedance (or admittance)              subsequent stability analysis, which are voltage source type VSG and
+response of the network element can be obtained without a complete                   current source type VSG. The general control configurations for each
+knowledge of the component’s internal structure. Once the impedance                  VSG type are shown in Figs. 3 and 4 separately, with main parameters
+response is obtained, the stability of the system can be determined by               listed in Tables 1–3. Additional details for these VSG control strategies
+several different approaches. One is to fit the impedance with a rational            can be found in [8,10].
+function representation and use linear system theory directly. Alterna­                  Additionally, a circulating current suppression controller (CCSC) is
+tively, graphical approaches such as Nyquist or Bode plots can be used               required to mitigate circulating current harmonics in the MMC’s arms
+
+
+
+
+                                                         Fig. 1. Different methods for stability studies.
+
+                                                                                 2
+C. Jiang et al.                                                                                                 Electric Power Systems Research 251 (2026) 112226
+
+
+
+
+                                                                 Fig. 2. System layout.
+
+
+
+
+                                                    Fig. 3. Voltage source type VSG control structure.
+
+
+[17]. A widely used nearest level control (NLC) algorithm is also applied       a specific operating point [11]. It is important to note that this response
+to determine the appropriate number of steps for the MMC operation              is dependent on the system’s operating conditions, with the assumption
+[17].                                                                           that the system behaves linearly around its steady state operating point.
+                                                                                Any change in the operating point requires a new scan to capture the
+3. Frequency scanning methodology                                               system’s response under the new conditions.
+                                                                                    The process of dynamic frequency scanning involves the following
+    This section introduces the basic theory and challenges of dynamic          steps:
+frequency scanning of non-linear systems, e.g., non-linear loads, power
+electronics systems (PES), etc.                                                    i. First, the system is ensured to reach a steady state.
+                                                                                   ii. Once stable, a small multi-sine disturbance signal (voltage or
+3.1. Dynamic frequency scanning                                                    current) with a wide frequency range is injected into the system.
+                                                                                   iii. Waveforms of voltage and current are captured for the steady
+    EMT simulations are well-suited for impedance scanning due to their            state operation, i.e., after the transients die out.
+ability to model non-linearities and transient dynamics in detail. This            iv. Using Discrete Fourier transformation (DFT), the magnitudes and
+allows the small-signal frequency response of a system to be obtained at           phase angles of the frequency components are extracted.
+
+                                                                            3
+C. Jiang et al.                                                                                                                      Electric Power Systems Research 251 (2026) 112226
+
+
+
+
+                                                                    Fig. 4. Current source type VSG control structure.
+
+
+                                                                                                      In the phase coordinates, the impedance matrix Zabc is typically full
+Table 1
+                                                                                                 rather than diagonally dominant. In order to capture the full set of data
+Main system parameters.
+                                                                                                 in the abc domain, three distinct injections (current or voltage) are
+  Dc side voltage               ±150 kV             System frequency               60 Hz         required separately, each in a different phase (i.e., a, b or c).
+  MMC Power Rating              270MVA              MMC Voltage Rating             180 kV
+                                                                                                      As an illustrative example, the case of a current injection ΔIDis at the
+  Ac system SCR                 2.5                 Submodule per arm              20
+                                                                                                 at the Point of Common Coupling (PCC) of the MMC-ac system of Fig. 2
+                                                                                                 is presented in Fig. 5. The MMC side impedance Zabc        MMC is given in (1)
+                                                                                                 below. As previously mentioned, three separate injections are required,
+Table 2
+                                                                                                 each for a different phase. The first injection is applied to phase ‘a’ only.
+Parameters of voltage source type VSG controller.
+                                                                                                 After allowing sufficient time for the transient to die out, the voltage at
+  VSG parameters (J, D)                                                        (0.04, 1.0)
+                                                                                                 the PCC bus vabc  PCC (t) and the current entering the MMC iMMC (t) are
+                                                                                                                                                                        abc
+  Ac controller gains (Kp ac , Ki ac )                                         (2.5, 10)
+  Droop settings (Dv )                                                         0.0               measured. A DFT is then applied to convert the time-domain measure­
+  Voltage loop controller gains (Kp vd = Kp vq , Ki vd = Ki vq )               (1.0, 10)         ments into their corresponding frequency-domain representation
+  Current loop controller gains (Kp id = Kp iq , Ki id = Ki iq ))              (0.8, 10)           a1
+                                                                                                 VPCC        b1
+                                                                                                       (f), VPCC       c1
+                                                                                                                 (f), VPCC          a1
+                                                                                                                           (f) and IMMC       b1
+                                                                                                                                        (f), IMMC       c1
+                                                                                

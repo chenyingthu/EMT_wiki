@@ -1,0 +1,200 @@
+928                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+
+        A Combined State-Space Nodal Method for the
+           Simulation of Power System Transients
+   Christian Dufour, Member, IEEE, Jean Mahseredjian, Senior Member, IEEE, and Jean Bélanger, Member, IEEE
+
+
+   Abstract—This paper presents a new solution method that com-                      large networks, and for large numbers of states in some model
+bines state-space and nodal analysis for the simulation of electrical                equations.
+systems. The presented flexible clustering of state-space-described                     Some variations of the nodal approach are based on the con-
+electrical subsystems into a nodal method offers several advantages
+for the efficient solution of switched networks, nonlinear functions,                cept of group separation for increasing efficiency and flexibility.
+and for interfacing with nodal model equations. This paper ex-                       In [9], the use of groups provides a technique for diminishing
+tends the concept of discrete companion branch equivalent of the                     the number of nodal points and, consequently, the size of the
+nodal approach to state-space described systems and enables nat-                     system matrix for real-time computations [10]. In [11], the com-
+ural coupling between them. The presented solution method is si-                     pensation method allows separating circuits and solving them
+multaneous and enables benefitting from the advantages of two dif-
+ferent modeling approaches normally exclusive from one another.                      independently. The compensation method is noniterative when
+                                                                                     the solved circuits are linear. A similar idea is used in [12]
+  Index Terms—Electromagnetic transients, nodal analysis, real
+                                                                                     for reducing the number of nodal connection points. In [13],
+time, state space.
+                                                                                     state-space equations are also used for this purpose.
+                                                                                        The inclusion of state-space equations into nodal equations
+                             I. INTRODUCTION                                         has been applied in [14] (see also [15]) for the purpose of model
+                                                                                     circuit synthesis from fitted measurements.
+
+T      HE computation of electromagnetic transients can be
+       based on various numerical methods for the formulation
+and solution of network equations. The most widely used
+                                                                                        This paper presents a general methodology for the simul-
+                                                                                     taneous interfacing of nodal equations with state-space equa-
+                                                                                     tions for arbitrary network topologies. This interfacing allows
+methods fall into two categories: 1) the state-space and 2)                          eliminating several modeling limitations in state-space-based
+nodal-analysis formulations. State-space equations are used,                         solvers. This interfacing allows creating state-space groups that
+for example, in [1] for inserting electrical circuit equations into                  can be maintained independently for efficient computation of
+the Simulink [2] solver. Nodal equations are widely used in                          switching events. In addition, each state-space group uses its
+Electromagnetic Transients (EMT)-type applications, such as                          own automatic formulation of state-space matrices which obvi-
+[3] and [4]. The modified-augmented-nodal analysis method is                         ously reduces the formulation time when compared to unique
+used in [5] and [6] for eliminating topological restrictions from                    state-space equations of the complete system without grouping.
+the nodal-analysis approach.                                                            The discrete state-space solvers are inefficient for handling
+   The nodal equations are assembled after discretizing all cir-                     switching events, especially in real-time applications, where
+cuit devices with a numerical integration rule, such as trape-                       precalculation methods must be used. The massive precalcu-
+zoidal integration. These equations are particularly powerful                        lation of state-space matrix sets for all switch combinations
+and efficient for simulating very large networks through sparse                      becomes problematic in terms of the required memory for large
+matrix methods. Some real-time simulator technologies are also                       numbers of coupled switches [16].
+based on the nodal formulation [7], [8].                                                The method proposed in this paper contributes to the im-
+   In the case of state-space equations, the numerical integration                   provement of state-space-based power system simulation
+technique can be selected after formulation, which simplifies                        solvers. It notably offers important advantages for real-time
+the programming of variable time-step integration techniques.                        applications.
+In addition, state-space representation can be particularly pow-                        This paper starts with a theoretical presentation and follows
+erful for controller design methods [1]. The main disadvantage                       with demonstration cases. The reference state-space and nodal
+is the computing time required for the automatic synthesis of                        analysis solvers used in this paper are those presented in [1] and
+state-space matrices. Other complications can arise for the si-                      [17], respectively.
+multaneous solution of nonlinear models, for the simulation of
+                                                                                                    II. STATE-SPACE NODAL METHOD
+   Manuscript received March 05, 2010; revised July 03, 2010 and September
+13, 2010; accepted October 25, 2010. Date of publication December 13, 2010;             The state-space nodal (SSN) method described in this sec-
+date of current version March 25, 2011. Paper no. TPWRD-00152-2010.
+   C. Dufour and J. Bélanger are with Opal-RT Technologies, Montréal, QC
+                                                                                     tion uses arbitrary size clusters (groups) of electrical elements
+H3K 1G6, Canada.                                                                     and combines them into a single nodal admittance matrix.
+   J. Mahseredjian is with the École Polytechnique de Montréal, Montréal, QC         The cluster equations are discretized state-space equations.
+H3T 1J4, Canada (e-mail: jeanm@polymtl.ca).                                          The trapezoidal integration rule is used in the discretization
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       process. The clusters include implicitly unknown node voltages
+   Digital Object Identifier 10.1109/TPWRD.2010.2090364                              at their nodal connection points. These voltages are at common
+                                                                  0885-8977/$26.00 © 2010 IEEE
+DUFOUR et al.: COMBINED STATE-SPACE NODAL METHOD                                                                                        929
+
+
+
+connection points and must be solved simultaneously using             sources           and        is an admittance matrix. This is called
+nodal analysis.                                                       hereinafter a V-type SSN group and it is a Norton equivalent.
+   Finally, in the proposed SSN method, the cluster equations            When       represents voltages and       holds currents entering
+are not limited to state-space equations. The clusters can be         a group, then          represents history voltage sources           ,
+also derived from nodal analysis and combined with state-space        and        is an impedance matrix. This is referred to hereinafter
+clusters.                                                             as a I-type SSN group and it is a Thevenin equivalent.
+                                                                         In general, it is possible to have both types of groups (V-type
+A. State-Space Groups                                                 and I-type) by rewriting (6) as follows:
+  Any given group of circuit elements can be given the state-
+space equations                                                                                                                        (8)
+
+                                                                      where the superscripts I and V denote I-type and V-type rela-
+                                                               (1)    tions, respectively, and where the notation has been simplified
+                                                                      by dropping the subscripts and in             . This equation is
+where bold characters are used to denote vectors and matrices.        referred to as a mixed-type group. It can be straightforwardly
+The column vectors and are the state variable and input               transformed into a nodal representation by regrouping all cur-
+vectors, respectively. The state variables are capacitor voltages     rent vectors (        and      ) on the left-hand side
+and inductor currents. They are independent and found from the
+proper tree of the circuit. The column vector is the vector of                                                                         (9)
+outputs. The state-space matrices       ,   ,    , and     corre-
+spond to the th permutation of switches and piecewise linear
+device segments. Automatic formulation methods for (1) are of         The admittance matrix      derived from a group (of any type)
+out the scope of this paper and can be found in many references,      is mapped though its nodes and inserted into the global nodal
+such as [18] and [19].                                                admittance matrix     of
+  The discretization of state equations in (1) results in
+                                                                                                                                      (10)
+                                                               (2)
+                                                                      where the vector       contains known nodal injections, and the
+where       is the integration time step and the hatted matrices      vector      is the vector of all unknown node voltages. The
+result from the discretization process using trapezoidal integra-     matrix does not change if switch positions do not change and
+tion. This step is also known as the numerical integrator substi-     piecewise linear devices represented in (3) remain on previous
+tution [19] with the trapezoidal integrator. In this paper, (2) and   time-step segments. The negative of the first term after the
+the output equations in (1) are refined as follows:                   equality sign in (9) contributes to the vector .
+                                                                         If in the system of (1), the equation for is modified to in-
+                                                               (3)    clude the differential of , then
+
+                                                                                                                                      (11)
+                                                               (4)
+                                                                      and the I-type groups can be avoided. However, (11) with the
+The subscript character refers to internal sources (injections)       capability to use I-type groups, remains more generic since in
+and the subscript refers to external nodal injections. The com-       many state-space solvers, such as in [1], the matrix      is not
+bination of the lower row of (4) with (3) gives                       readily available.
+                                                                         It is noticed that if the modified-augmented-nodal analysis
+                                                                      (MANA) method [5] is used, the upper part of (8) can be inserted
+                                                                      directly, thus avoiding matrix inversions. In the MANA method,
+                                                               (5)
+                                                                      (10) is written as
+It is apparent that (5) has an independent term (known variables
+                                                                                                                                      (12)
+before solving for           ) and can be written as
+                                                                      where the subscript denotes MANA matrices (not state-space
+                                                               (6)
+                                                                      matrices) and vectors, the vector      can hold unknown voltages
+Here, the subscript       (“history”) has been used to denote         and currents, and        becomes a submatrix in        . In (8), the
+known variables for the solution of this equation and                 variables          and         can be regrouped on the right-hand
+                                                                      side and listed in     with coefficients inserted in equation rows
+                                                               (7)    of      . The history (or known) terms participate in       .
+                                                                         It is also noticed that it is not necessary to assume that all
+  Two different interpretations can be made from (7).                 groups are using state-space equations. In fact, any given group
+  When      represents current injections (entering a group) and      can also use nodal equations, in which case, these equations can
+   is for node voltages, then         represents history current      be included directly into (10) or in MANA equations. Moreover,
+930                                                                            IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+these equations can contain nonlinear devices solved through an
+iterative process and independently from state-space equations.
+
+B. Solution Steps
+   The complete solution algorithm is defined through the fol-
+lowing steps:
+ Step 1) Find the steady-state solution.                                 Fig. 1. Three-phase system example.
+ Step 2) Advance to the next time-point.
+ Step 3) Determine all switch positions ( th permutation) and
+            formulate state-space (3) and (4).
+ Step 4) Determine all history terms and update (9).
+ Step 5) Update (if necessary) the global nodal admittance
+            matrix        that contains contributions from all
+            groups.
+ Step 6) Update        from group contributions.
+ Step 7) Solve the system of nodal (10) to determine all node
+                                                                         Fig. 2. Simple-switched RLC circuit.
+            voltages. This can be done using LU factorization
+            and a sparse matrix-based solver for efficiency in
+            larger systems.
+                                                                         the number of precalculated matrix sets for switching topolo-
+ Step 8) Use (3) and (4) to compute the state-space solutions
+                                                                         gies can become substantially reduced.
+            at the current time-point       .
+                                                                            In the three-phase example shown in Fig. 1, two arbitrary net-
+ Step 9) Go back to Step 2) if the simulation did not reach the
+                                                                         works, S1 and S2, are interconnected using two switches and
+            last time-point.
+                                                                         two pi-sections. If the state-space method is used for the entire
+Similar steps can be written for MANA. It also is noticed that
+                                                                         system, it will result into     state variables. If the state-space
+the individual state-space groups can be solved in parallel. It
+                                                                         solver precomputes (particularly useful for real-time applica-
+means that it is possible to program the parallel implementa-
+                                                                         tions) the matrix sets for all switch position permutations, it
+tion (on separate processor cores) of Steps 3)–6) and Step 8).
+                                                                         will require saving in memory           64 matrices for the entire
+Depending on the relative size of the groups, this can lead to re-
+                                                                         system.
+duced computational time.
+                                                                            The same system can be solved using SSN by separating into
+   The steady-state solution is found by replacing the differen-
+                                                                         two groups (Group 1 and Group 2 shown in Fig. 1). Since the
+tial operator by Laplace         , with being the complex op-
+                                                                         three-phase capacitors at the separation point will now count
+erator and as the steady-state solution frequency in radians
+                                                                         as separate states, the number of state variables in each group
+per second. Thus, the complex version of (1) for the solution of
+                                                                         becomes               . The size of        in (10) is 3 3. Also,
+state variables becomes
+                                                                         the number of precalculated matrix sets now reduces to
+                                                                                     from        64. The created groups are linked only
+                                                                 (13)
+                                                                         through the nodal interfacing equations. This allows a parallel
+                                                                         setup and calculations on two independent CPUs or CPU cores.
+                                                                 (14)    The computational burden of (10) is negligible when compared
+                                                                         to much larger group equations.
+
+                                                                 (15)
+                                                                           

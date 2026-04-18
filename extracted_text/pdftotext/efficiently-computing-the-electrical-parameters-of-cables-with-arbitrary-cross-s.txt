@@ -1,0 +1,185 @@
+                                                              Electric Power Systems Research 162 (2018) 37–49
+
+
+
+                                                                Contents lists available at ScienceDirect
+
+
+                                                     Electric Power Systems Research
+                                                   journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Efﬁciently computing the electrical parameters of cables with
+arbitrary cross-sections using the method-of-moments
+M. Shaﬁeipour a,∗ , Z. Chen b , A. Menshov c , J. De Silva a , V. Okhmatovski b
+a
+    Manitoba Hydro International Ltd., Winnipeg, Canada
+b
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, Canada
+c
+    Department of Electrical and Computer Engineering, The University of Texas at Austin, USA
+
+
+
+
+a r t i c l e          i n f o                            a b s t r a c t
+
+Article history:                                         In a recent work, a proximity- and skin-effect aware formulation known as the surface-volume-surface
+Received 15 December 2017                                electric ﬁeld integral equation discretized with 2-D method-of-moments (MoM) was optimized to
+Received in revised form 30 March 2018                   efﬁciently extract the frequency dependent series impedance matrix of cables with arbitrary shapes.
+Accepted 17 April 2018
+                                                         However, it was only applied to sector-shaped and coaxial cables due to the constraints on comput-
+Available online 24 May 2018
+                                                         ing the shunt admittance matrix using closed-form approximations. This work presents formulation,
+                                                         discretization, and optimization techniques, for fast computation of the shunt admittance matrix of
+Keywords:
+                                                         arbitrary-shaped cables by discretizing the problem of the quasi-electrostatics using 2-D MoM. With
+Cable modeling
+Per-unit-length (p.u.l.) electrical
+                                                         the proposed MoM techniques and optimization strategies, it is possible to accurately compute all the
+parameters                                               electrical parameters of arbitrary-shaped cables required in electromagnetic transient programs (EMTP)
+Surface-volume-surface electric ﬁeld                     using today’s typical computer power and with reasonable computational times. This provides an efﬁcient
+integral equation (SVS-EFIE)                             modeling tool for any desired cable design. Frequency domain solutions of the proposed technique are
+Method-of-moments (MoM)                                  compared against the ﬁnite-element method as well as the classical approximate formulas available for
+Electromagnetic transient program (EMTP)                 pertinent cable models. The resulting time domain transient simulations in EMTP are also investigated.
+Inductance and capacitance extraction                                 © 2018 The Author(s). Published by Elsevier B.V. This is an open access article under the CC
+                                                                                          BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+
+
+1. Introduction                                                                            the proximity-effect is a valid assumption. On the other hand
+                                                                                           when modeling underground cables, the aforementioned assump-
+    Electromagnetic transient programs (EMTP) rely on transmis-                            tions may not be valid as a function of the considered frequency
+sion line models [1–3] for representing the frequency dependent                            and/or the cable design. Underground cables usually consist of sev-
+behavior of multiconductor transmission lines (MTLs) such as over-                         eral closely situated conductors which are separated by insulation
+head lines and underground cable systems. In order to account for                          materials as exempliﬁed in Fig. 1. At higher frequencies, this can
+the geometry and material properties of such systems over the                              cause the proximity-effect to have a large impact on the [Z] and [Y]
+power system frequencies spanning from DC to several MHz, these                            matrices of the system [8,10,11]. Furthermore, underground cables
+models require the per-unit-length (p.u.l.) series impedance matrix                        have been introduced and used with various types of geometri-
+[Z] and the shunt admittance matrix [Y] of the system at different                         cal shapes such as pipe-type [7] (Fig. 1(a)), sector-shaped [5,19]
+frequency points. This makes computation of the electrical param-                          (Fig. 1(b) and (c)), umbilical [8], and other practical examples such
+eters of cables and transmission lines an integral part of any EMT                         as the one shown in Fig. 1(d) [9]. Thus assuming circular cross-
+analysis involving transmission and distribution of electric power.                        section can lead to errors more than 5% in computing [Y] and [Z]
+    In the case of overhead lines, computationally efﬁcient closed-                        matrices where the cable cross-section is not conﬁned to circu-
+form approximations [4] are accurate as they assume a symmetrical                          lar boundaries [8,10]. Such error levels in computing the electrical
+distribution of current which models the skin-effect while neglect-                        parameters of the cable system may result in modeling of the trans-
+ing the proximity-effect. This is because overhead lines can be                            mission line with unacceptable EMT simulations1 as reported in
+represented in symmetrical canonical form (i.e. circular cross-                            [11] and shown in this paper.
+section) and are typically located far enough apart that neglecting
+
+                                                                                             1
+                                                                                               As a general rule suggested by Prof. A. Ametani [12], the following average error
+                                                                                           levels are tolerable in power systems. In simulations about 0.1%, in magnitude of
+    ∗ Corresponding author.                                                                measurement results about 5%, and in wave-shape of the measurement results 10%
+      E-mail address: mshaﬁeipour@mhi.ca (M. Shaﬁeipour).                                  to 30%.
+
+https://doi.org/10.1016/j.epsr.2018.04.013
+0378-7796/© 2018 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/
+4.0/).
+38                                                  M. Shaﬁeipour et al. / Electric Power Systems Research 162 (2018) 37–49
+
+
+
+
+Fig. 1. The 2-D cross-section of the cables under study drawn to scale. All conductors are copper with resistivity of  = 1.68e−8 ·m, and all insulators are made of cross-linked
+polyethylene (XLPE) with dielectric constant of r = 2.3 and negligible dielectric loss (tanı = 0). In (a) and (b), adjacent core conductors (circular or sector-shaped) are 120◦
+apart with respect to the center of the cable while in (c) and (d) 90◦ rotation is performed. No ferromagnetic material is used and so the relative permeability is r = 1
+everywhere. Cable conductors are numbered ˛ = 1, 2, . . ., 5, in accordance with the results presented in Section 5.
+
+
+    Since underground cables are increasingly being preferred over                          (1) there is no full-wave phenomena in the cross-sections outside
+the traditional overhead lines due to political and environmental                           the conductors, (2) longitudinal component of the magnetic ﬁeld is
+constraints, there has been a growing interest in accurate and com-                         neglected, (3) inside the conductors, only the longitudinal current
+putationally efﬁcient techniques to extract parameters of various                           component (i.e. ﬂowing along the direction of the conductors) is
+types of underground cables where both the proximity and skin                               present, and (4) longitudinal currents in the dielectrics surrounding
+effects are considered. Closed-form approximations such as [11] are                         the conductors are neglected (transversal currents are present and
+fast but limited to certain canonical geometries. Numerical meth-                           accounted for by the imaginary part of the capacitance matrix, i.e.
+ods such as the partial sub-conductor equivalent circuit method                             conductance matrix). These assumptions are typically referred to as
+[6,13–15], the ﬁnite element method (FEM) [8,16], and the method-                           the quasi-transverse electromagnetic (TEM)2 approximation [18,16].
+of-moments (MoM) [10,17,18] are applicable to cables with any                               In this work we also assume low-frequency regime (  0 ω), in
+desired geometry but suffer from long computational times. Such                             which the conduction current E in the conductors is substan-
+computations are required to be done only once for a speciﬁc type                           tially larger than the displacement current j0 ωE. This leads to the
+of cable system and the resulting [Y] and [Z] matrices can be saved                         assumption of constant electric potential in the transmission line
+in a lookup table and used in subsequent EMT simulations. Nev-                              cross-sections. Note, that this assumption is violated in the high-
+ertheless, an EMTP is expected to compute such parameters in                                frequency regime  ∼ = 0 ω and the electric potential can no longer
+reasonable time and with commonly available computer power.                                 be assumed to remain constant in the cross-sections. Therefore, the
+Therefore, it is important to investigate optimization techniques                           proposed methodology may not be applicable to studies with very
+for numerically-based impedance and admittance extraction tech-                             high-frequency transients which typically occur at several MHz fre-
+niques.                                                                                     quencies such as the oscillating frequency of the switching surges
+    In our previous work [19], optimization techniques for the MoM                          in gas insulated systems [27].
+solution of the surface-volume-surface electric ﬁeld integral equa-                             The above assumptions reduce the Maxwell’s Equations to the
+tion (SVS-EFIE) [17] for efﬁciently computing the impedance matrix                          Telegrapher’s Equations accompanied by two scalar 2-D problems,
+[Z] of arbitrary-shaped cables was introduced but was only applied                          each of which can be solved independently [26]. One, is the 2-
+to model coaxial and sector-shaped cables. The restriction on the                           D problem of quasi-electrostatics with respect to the transversal
+shape of the cable was stemmed from the fact that the [Y] matrix                            components of the electric ﬁeld Et outside the conductors, gov-
+was left to be computed using closed-form approximations based                              erned by the following Laplace equation for the electric potential 
+on certain geometrical aspects of the studied cables. However,                              and transversal gradient relationship of the transversal ﬁeld com-
+as was mentioned earlier, underground cables may be investi-                                ponents Et
+gated and/or manufactured with various types of geometry. In this
+                                                                                            ∇ 2t () = 0,     E t = −∇ t ,      ∈ S∞ ,                                     (1)
+paper, we apply the integral equation of the quasi-electrostatics
+discretized with the MoM for modeling arbitrary-shaped cables and                           where S∞ denotes the entire cross-section of the transmission line
+we introduce optimization techniques analogous to that of [19]                              including conductor cross-sections area and the area outside the
+for extracting the admittance matrix [Y] of underground cables.                             conductors. The other, is the 2-D problem of quasi-magnetostatics
+Along with [19], this work can be used as an efﬁcient and accurate                          with respect to the longitudinal component of the electric ﬁeld Ez
+technique to provide all electrical parameters (i.e. [Z] and [Y]) of                        inside the conductors governed by the Helmholtz equation
+arbitrary-shaped cables required in EMTP.
+                                                                                            ∇ 2t Ez () − jω0 Ez () = 0,        ∈ S˛ ,     ˛ = 1, . . ., n,               (2)
+
+2. Use of computational electromagnetic (CEM) techniques                                    where S˛ denotes the cross-section of the ˛th conductor, and n
+in power systems cable modeling                                                             denotes the total number of conductors (excluding the reference
+                                                                                            conductor).
+   Differential and integral equation techniques of CEM such as the                            The above 2-D differential equations of quasi-electrostatics and
+ﬁnite-difference time-domain (FDTD) [20], FEM [21], MoM [23],                               quasi-magnetostatics can be either discretized directly using FEM
+and the Nyström scheme [24], can be used to numerically solve a                             or FDTD method, or converted to the equivalent integral equa-
+general electromagnetic (scattering) problem in the 3-D medium
+based on the set of four Maxwell’s Equations with prescribed accu-
+                                                                                              2
+racy [25]. Depending on the engineering needs and the assumptions                               From the assumption (1) it is realized that no magnetic ﬁeld in the direction
+made, these methods can also be used to model other (simpler)                               of propagation is considered, but from assumption (3) one realizes that a form
+                                                                                            of electric ﬁeld in the direction of propagation is considered due to longitudinal
+problems of electromagnetics.                                                               current. Therefore, as suggested in [26], it may be more appropriate to use quasi-
+   In the transmission line models used in EMTP [1–3] the fol-                              transverse magnetic (TM) approximation instead of quasi-TEM when describing the
+lowing assumptions are made for the electromagnetic ﬁelds [26].                             propagation approximation in the transmission line model.
+                                                   M. Shaﬁeipour et al. / Electric Power Systems Research 162 (2018) 37–49                                                  39
+
+
+tions [26] and solved using MoM or the Nyström method. The                               by simply multiplying their values computed in the absence of the
+solution of the quasi-electrostatics problem produces the admit-                         dielectric [Ci,e ] (i.e. in free-space) with the dielectric permittivity as
+tance matrix [Y] and its corresponding p.u.l. conductance [G] and                        follows
+capacitance [C] matrices, i.e. [Y] = [G] + jω[C]. The solution of the                                                                
+                                                                                                                               i,e
+quasi-magnetostatics problem, produces impedance matrix [Z] and                          [C i,e ] = [C i,e ]       i,e +                 .                                (4)
+its corresponding resistance [R] and inductance [L] matrices, i.e.
+                                                                                            ˆ                               jω0
+[Z] = [R] + jω[L]. Hence, computing accurate results for [Z] and [Y]
+                                                                                         Furthermore, due to the fact that the internal region of the cable
+matrices of power cable systems can be done through CEM meth-
+                                                                                         Si is decoupled from the external region of the cable Se by the
+ods for which commercial software (e.g. [28]) are available. The
+                                                                                         sheath conductor (˛ = n), the surface charge over the internal region
+computational time, however, becomes a challenge, as for a cable
+                                                                                         Si is independent of the surface charge in the external region Se .
+with ˛ conductors, one needs to run ˛ CEM experiments and over
+                                                                                         Hence, as shown in Fig. 2, the problem of capacitance extraction
+multiple (typically about 100) frequencies.3 This gives motivation
+                                                                                         decomposes into the following two independent problems. (1) The
+to optimize CEM techniques for extracting parameters of power
+                                                                                         internal capacitance problem corresponding to the charge storage
+cable systems as presented in the subsequent sections.
+                                                                                         on the inner surface of the sheath conductor n and the surfaces of
+                                                                                         the inner conductors 1 , . . ., n−1 (Fig. 2(b)). (2) The external capac-
+3. Numerical evaluation of the quasi-magnetostatics
+                                                                                         itance problem corresponding to the charge storage on the outer
+problem
+                                                                                         surface of the sheath conductor (Fig. 2(c)). In Fig. 2, qe and qi are
+                                                                                         the charges corresponding to the external and internal problems,
+    In this work, we adopt the MoM discretization of the quasi-
+                                                                                         respectively.
+magnetostatics derived from the single-source SVS-EFIE [17]. Due
+to the frequency dependent nature of the solution, it was shown
+in [19] that such numerical computations need to be optimized for                        4.1. The internal capacitance extraction problem
+desired efﬁciency. Further, is was found that an analogous opti-
+mized Volume-EFIE (V-EFIE) [29] can be more efﬁcient

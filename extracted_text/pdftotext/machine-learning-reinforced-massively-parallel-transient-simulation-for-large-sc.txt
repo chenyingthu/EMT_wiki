@@ -1,0 +1,188 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025                                                                                        983
+
+
+
+
+      Machine-Learning-Reinforced Massively Parallel
+           Transient Simulation for Large-Scale
+       Renewable-Energy-Integrated Power Systems
+                Tianshi Cheng , Member, IEEE, Ruogu Chen , Graduate Student Member, IEEE,
+       Ning Lin , Senior Member, IEEE, Tian Liang , Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—Renewable energy systems (RESs) are pivotal in the                   ECS       Entity-component-system.
+transition to eco-friendly smart grids. The complexity and uncer-                EMT       Electromagnetic transient.
+tainty of RESs, driven by uncontrollable natural forces like sun-                GPU       Graphical processing unit.
+light and wind, bring challenges to integrating RESs into modern
+power systems. Electromagnetic transient (EMT) simulation is an                  GRU       Gated recurrent unit.
+effective method for studying the integration of RESs. Currently,                GSC       Grid side converter.
+the EMT simulation of RESs is limited to small-scale and lumped                  MLP       Multi-layer perceptron.
+RES models due to the model complexity and nonlinearity, which                   MSE       Mean squared error.
+cannot reflect the detailed characteristics of large-scale RESs in               PV        Photovoltaic.
+practice. This paper introduces a data-oriented, machine learning-
+enhanced approach to achieve massively parallel EMT simulation                   RES       Renewable energy system.
+on CPU-GPU, designed to efficiently model and simulate large-                    RNN       Recurrent neural network.
+scale, detailed RES. It incorporates data-driven machine learning                RSC       Rotor side converter.
+modeling of RES via artificial neural networks and integrates these
+models using a data-oriented entity-component-system framework.
+The model training was based on reliable model data produced by                                              I. INTRODUCTION
+traditional physical EMT models and the results were validated
+                                                                                        ENEWABLE energy systems (RESs) are pivotal in the
+with MATLAB/Simulink. The RES components are grouped into
+a microgrid connected to a synthetic AC/DC system based on the
+IEEE 118-Bus system, achieving an acceleration performance of
+                                                                                 R      transition to eco-friendly smart grids. Yet, the inherent
+                                                                                 complexity and uncertainty of these systems, arising from the
+400 times faster than traditional CPU nonlinear iterative compu-                 unpredictability of natural forces such as sunlight and wind,
+tations with 2 million RES entities.
+                                                                                 present significant challenges in power system control and oper-
+   Index Terms—Artificial neural networks, data-oriented                         ation [1]. Detailed electromagnetic transient (EMT) simulation
+programming, entity-component-system, energy storage, electrom-                  plays an important role in the analysis of control and operation
+agnetic transients, gated recurrent units, graphical processors,                 for RES integrating power systems [2], [3]. However, there
+solar farms, wind farms, machine learning, renewable energy
+systems, parallel processing.                                                    are more than 300,000 PV panels in a 100MW solar power
+                                                                                 farm [4], while each module may have an impact on the entire
+                                                                                 solar farm performance in partial shading scenarios [5], [6]. The
+                    NOMENCLATURE                                                 same problem also exists for battery groups where the battery
+ANN Artificial neural network.                                                   management system needs to take care of inconsistencies within
+CPU Central processing unit.                                                     the series battery array to maintain the optimal performance [7].
+DFIG Doubly-fed induction generator.                                             The traditional approach of detailed EMT simulations to address
+                                                                                 these challenges faces scalability issues due to the computational
+   Manuscript received 8 December 2023; revised 5 March 2024 and 25 April        burden of modeling extensive RES components. For example,
+2024; accepted 1 June 2024. Date of publication 5 June 2024; date of current     the nonlinearity of the PV model requires the Newton-Raphson
+version 27 December 2024. This work was supported in part by the Natural
+Science and Engineering Research Council of Canada (NSREC), in part by           method to assemble a huge global Jacobian matrix in each
+Mitacs, and in part by RTDS Technologies Inc. Paper no. TPWRS-01920-2023.        iteration, adding prohibitive computational complexity for large-
+(Corresponding author: Tianshi Cheng.)                                           scale power systems with many PV arrays.
+   Tianshi Cheng, Ruogu Chen, and Venkata Dinavahi are with the Department
+of Electrical and Computer Engineering, University of Alberta, Edmonton,            A common solution is to utilize massively parallel hardware:
+AB T6G 2V4, Canada (e-mail: tcheng1@ualberta.ca; ruogu@ualberta.ca; di-          Graphical Processing Unit (GPU) to solve large groups of RES
+navahi@ualberta.ca).                                                             components concurrently [8], [9]. However, the nonlinearity
+   Ning Lin is with Powertech Labs Inc., Surrey, BC V3W 7R7, Canada (e-mail:
+ning3@ualberta.ca).                                                              of these models limited the solution methods and parallel ef-
+   Tian Liang is with RTDS Technologies Inc., Winnipeg, MB R3T 2E1, Canada       ficiency as GPUs are not good at complex logics such as branch
+(e-mail: tian.liang@ualberta.ca).                                                predictions; nonlinear methods such as the Newton-Raphson
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2024.3409729.                                      method are iterative and needs frequent data exchange between
+   Digital Object Identifier 10.1109/TPWRS.2024.3409729                          host and device memory, which brings significant overheads.
+                        0885-8950 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+984                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+Furthermore, it is challenging to adapt and reimplement complex                     r This paper employs data-oriented entity-component-
+RES EMT models to highly efficient and scalable GPU codes,                            system (ECS) architecture and GPU instancing strategies
+making it difficult to keep pace with rapidly evolving new energy                     to incorporate the ANN model of RES into the EMT power
+and power storage technologies.                                                       grid simulation program, achieving a highly pragmatic and
+   Therefore, this paper proposed to utilize ANN technologies to                      scalable CPU-GPU massively parallel computing solution.
+increase the efficiency of EMT simulation of large-scale systems                      The importance of efficient implementation and integration
+with RES. ANN is a machine learning technology that can be                            of machine learning models is often underestimated. This
+conceptualized as a mathematical approach to multivariate non-                        oversight may obstruct the full realization of the models’
+linear regression [10], which is suitable to reflect the nonlinear                    potential impact on both theoretical advancements and
+RES behaviors including partial shading of a PV array and bat-                        practical applications. Compared to previous research, the
+tery charging/discharging behaviors. The recent breakthroughs                         proposed design not only establishes a complex multi-
+and significant successes of artificial intelligence and machine                      variate ANN model for photovoltaic panel arrays but also
+learning in many areas such as weather forecasting [11], where                        elevates the application of the model to a practical level.
+the ANN-based model provides more accurate predictions and                            The integration of ANN models via ECS and plugin-based
+significantly accelerates the forecast process compared to the                        architectures enables seamless substitution for traditional
+traditional numerical solutions. These machine-learning tech-                         RES models.
+nologies have attracted significant attention from power system                   The model training was based on reliable model data pro-
+researchers as well. The deep-learning methods are popular                      duced by traditional physical EMT models and the results were
+for long-term and steady-state power system analysis such as                    validated with MATLAB/Simulink. The RES components are
+power output forecast, stability assessments, and control [12],                 grouped into a microgrid connected to a synthetic AC/DC system
+[13], [14]. The ANN technologies are also popular for transient                 based on the IEEE 118-Bus system, achieving an acceleration
+stability analysis: [15] proposed an ANN-based method to ap-                    performance of 400 times faster than traditional CPU parallel
+proximate the nonlinear Lyapunov function which can simplify                    nonlinear iterative computations with more than 2 million RES
+the control design for complex power systems; [16] proposed                     entities.
+novel graph neural network structures with data-driven frame-
+works for transient stability assessments. However, the adop-                   II. RENEWABLE ENERGY SYSTEMS NEURAL-NETWORK-BASED
+tion of machine learning technologies in power system EMT                                            MODELING
+simulation is still in its early stages. Some research works such
+                                                                                   Traditional EMT models of RESs are mostly nonlinear and
+as [17], [18], [19] have demonstrated the benefits of using ANN
+                                                                                require Newton-Raphson’s nonlinear iterative method to solve a
+and RNN technologies to accelerate real-time EMT models on
+                                                                                nonlinear differential-algebraic equation system. Such nonlinear
+FPGAs. However these works are early explorations aimed to
+                                                                                characteristics not only bring heavy computational burden and
+deal with traditional components in small-scale power systems
+                                                                                convergence problems but also limit the efficiency of parallel
+for specific scenarios, and such research hasn’t been extended
+                                                                                computing. Machine-learning techniques such as neural net-
+to RES modeling. Moreover, the integration of the ANN models
+                                                                                works can effectively capture the nonlinearity of the physics
+into conventional EMT solvers is important for practical large-
+                                                                                in RESs and provide an accurate approximation to reduce the
+scale simulation applications but it was not comprehensively
+                                                                                complexity. It is a fully data-driven process without many hu-
+explained in previous research works.
+                                                                                man decisions. Moreover, compared to hand-crafted nonlinear
+   To apply machine learning ANN techniques in accelerating
+                                                                                or linearized equivalent models, which have various internal
+the simulation of large-scale renewable energy models and to
+                                                                                structures and complex computational processes, models trained
+extend the previous machine learning EMT model research
+                                                                                using neural networks present a consistent matrix computation
+towards a broader and more practical vision, this paper primarily
+                                                                                structure. This uniformity is particularly suited for GPU parallel
+elucidates two key propositions:
+   r The development and training strategies for neural net-                    computations. Thus, machine-learning reinforced RES models
+                                                                                can efficiently leverage optimized GPU-accelerated linear alge-
+      work modeling of renewable energy generation and energy
+                                                                                bra libraries such as CUBLAS and CUDNN, without concern
+      storage systems. Nonlinear time-variant components are
+                                                                                for their varying types or internal structures. In addition, the
+      modeled with the gated-recurrent unit (GRU) and time-
+                                                                                ANN models use Float32 numbers which is faster than Float64
+      invariant components such as PV arrays are modeled with
+                                                                                required by the Newton-Raphson method on GPUs. The fol-
+      the feed-forward network which is also called multi-layer
+                                                                                lowing subsections introduced the basic concept of MLP and
+      perceptron (MLP). The main focus is on modeling a PV
+                                                                                GRU neural networks used to model RESs and the training
+      array with multiple independent solar irradiance input vari-
+                                                                                strategies of PV arrays, doubly-fed induction generator (DFIG)
+      ables since solar farms contain a lot of PV panels and
+                                                                                wind farms, and batteries.
+      each input irradiance may cause significant performance
+      differences under partial shading scenarios. A Monte-Carlo
+      method is proposed to serve as an effective and practical                 A. Multi-Layer Perceptron
+      solution to generate sufficient data for training an accurate                The MLP is one of the simplest forms of feed-forward ANNs.
+      machine-learning model for these multivariate nonlinear                   It serves as a foundational technique in modern neural network
+      components under simulation environments.                                 machine learning, yet is sufficiently powerful to address many
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+CHENG et al.: MACHINE-LEARNING-REINFORCED MASSIVELY PARALLEL TRANSIENT SIMULATION FOR LARGE-SCALE                                                       985
+
+
+
+                                                                                 B. Gated Recurrent Unit
+                                                                                   GRU networks are based on MLP but have a more complex
+                                                                                 and specific structure for time-series inputs and outputs. As
+                                                                                 shown in Fig. 1(b), the typical GRU is expressed by
+                                                                                                   z t = σ(Wxz xt + Uhz ht−1 )                          (6)
+                                                                                                   r t = σ(Wxr xt + Uhr ht−1 )                          (7)
+
+                                                                                                  h̃t = tanh(W xt + U (r t  ht−1 ))                    (8)
+
+Fig. 1. Neural network structures: (a) MLP neural network structure; (b) GRU
+                                                                                                  ht = (1 − z t )  ht−1 + z t  h̃t                    (9)
+neural network structure.
+                                                                                 where z t is the update gate output; r t is the reset gate output;
+                                                                                 h̃t is the output candidate hidden; ht is the GRU unit out-
+                                                                                 put; Wxz , Wxr , W are the input weights which are considered;
+real-world nonlinear fitting problems. As shown in Fig. 1(a), it                 Uhz , Uhr , U are the recurrent weights and σ is the sigmoid
+contains one input layer, multiple hidden layers, and one output                 function. The update gate controls the degree to which the hidden
+layer. The state variables between hidden layers are connected                   state from the previous time step, ht−1 , should be updated with
+by activation functions which must be nonlinear functions such                   the new candidate hidden state, h̃t . It is computed using the
+as tanh, sigmod, or ReLU . MLP can be expressed by                               sigmoid function, which scales the output between 0 and 1.
+                           z = f (W x + b)                                (1)    The reset gate is responsible for determining the amount of
+                                                                                 information from the previous hidden state, ht−1 , that should
+where x is the input state vector, b is the bias vector, W is                    be retained when computing the output candidate, h̃t . Similar
+the weight matrix, f is an activation function and z is the                      to the update gate, it also employs the sigmoid function. The
+output vector of each layer. Although the structure is simple,                   output candidate represents a new hidden state based on the
+it is enough to approximate many nonlinear functions of EMT                      input xt and the previous hidden s

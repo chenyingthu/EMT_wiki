@@ -1,0 +1,176 @@
+1498                                                                                IEEE Transactions on Power Systems, Vol. 10, No. 3. August 1995
+     COMPUTATION OF THE PERIODIC STEADY STATE IN SYSTEMS WITH NONLINEAR COMPONENTS
+                USING A HYBRID TIME AND FREQUENCY DOMAIN METHODOLOGY
+
+                                                      Adam Semlyen                     Aurelio Medina
+                                                      Department of Electrical and Computer Engineering
+                                                                    University of Toronto
+                                                             Toronto, Ontario, Canada M5S 1A4
+
+
+          -
+Abstract The basic principles of an eficient new methodology for the                Reference 171 has presented results along the ideas outlined above.
+calculationof the non-sinusoidal periodic steady state in system with nonlinear     There the iterative procedure consists of injecting harmonic current
+and timevarying components are described. All linear parts, including the           phasors into the network and using the resultant voltages,
+network and part of he loads. are represented in the frequency domain, while        converted to the time domain, as inputs to a nodinear element
+nonlinear and time-varying components, mainly loads, are represented in the         yielding a periodic current as output, with all the required harmonic
+time domain. This hybrid procegp b iterative, with periodic, non-sinusoidal, bus    components. This is a fixed point (successive replacement)
+voltages U inputs for both fiqumcy domain solutions and time domain                 iteration [g]. The convergence of the process m a y however be very
+simulations: a current mismatch is calculated at each bus and used to update the    slow, first, because the network impedance increases with
+voltages until convergence is reached. Thus the process, but not the solution, is   frequency and resonance phenomena may occur [9] and, second,
+decoupled for the individual harmonics. Its efficiency is enhand by the use of      because the time domain simulation for the load must reach the
+Newton type algorithms for fast convergence lo the periodic stcady stale in the     periodic steady state condition of a limit cycle, a process that can
+time domain simulations. Potential applications of this methodology are in the      take excessive time in the case of lightly damped circuits.
+oomputation of a HannoNc Power Flow and in the Steady State Initialization          Therefore, the present paper incorporates the following features
+needed in the calculationof electromagnetic transients.                             that assure a very efficient overall solution (see Figure 1):
+Keywordr: Periodic steady state, Harmonic power flow. Initialization for            (1) Fundamentally, frequency domain methods are used for the
+transients, Hybrid solution, Decoupled solution, Newton's method.                       linear parts where they are computationally most efficient and
+                                                                                        intrinsically accurate (as in the case of transmission lines with
+                           1. INTRODUCTION                                              distributed, frequency dependent parameters); and time
+                                                                                        domain simulation is used for the nonlinear parts (normally
+     Nonlinear and time-varying elements are the main source of
+                                                                                        loads) where it is the only natural approach.
+harmonics in power systems. With a periodic single frequency
+input, the output will in general contain harmonics of many                         (2) The iterative process is not cyclical in the fixed point iteration
+frequencies. Thus, nonlinear elements (time-varying included) are                       sense of [7].Instead, it is based on the calculation of a current
+responsible for having all harmonics coupled in the system. This                        mismatch A I , for all harmonics, followed by a voltage update              '
+phenomenon of harmonic coupling is explicitly represented in                             AV,. The mismatch computation is accurate: for tlie linear
+detailed a.c. models of power network components 11J and of their                       part it obtains I , = Y,,V, for all harmonics / I , and for each
+interaction [2]. Accordingly, a program for the calculation of the                      load it performs a time domain simulation to obtain the
+non-sinusoidal Periodic Steady State of the system (Harmonic                            periodic steady state solution i ( r ) , with v ( r ) as input. The
+Power Flow) may be of very high dimension [2-6].                                        mismatch vector AI, (comprising all load buses) is then used
+                                                                                        with an appropriate iteration matrix 5 , equal or close to U,,
+     The intrinsic harmonic coupling produced by a nonlinear                            to calculate the update increment AV, from GAV, = A I , .
+element is itself nonlinear. Only by a linearization around a                           This process always converges.
+particular opemting point is a linear relation between harmonic
+domain voltages and currents possible [1-21,[91 and it is of course                 (3) The time domain simulation is accelerated by noting that the
+accurate only in a close neighborhood of that point. Not only is the                    dynamics of cycles in the neighborhood of a limit cycle is
+calculation of such a harmonic Norton equivalent computationally                        almost linear [l I], so that the intercepts with a Poincari plane
+difficult but, for accurate results, it has to be iteratively updated.                  can be used to extrapolate to the limit cycle by Newton's
+The computational burden is thus further increased in direct                            Method, possibly with numerical diflercntiation. The latter
+proportion with the size of the system and the number of harmonics                      has the advantage that it can be applied to nondifferentiable
+represented. Nevertheless, improvements in computational                                nonlinear load characteristics.
+efficiency can be achieved by the following actions:
+                                                                                    The above fundamental principles for the calculation of the non-
+(a) Replace the harmonic domain calculations for nonlinear                          sinusoidal Periodic Steady State in a system with both linear and
+    elements by direct time domain computations followed by                         nonlinear components are described and validated in this paper.
+    Fourier transforms.                                                             They can be applied to the development of a full-fledged, three-
+                                                                                    phase Harmonic Power Flow Program or for the particular
+(b) Dccouple thc harmonics but recovcr thc accuracy of the                          application of Steady State Initialization needed in an Elcclro-
+    coupling by an itcrativc process.                                               Magnelic Transients Program (EMTI'). It is bcyond Uic objectives
+                                                                                    of this paper to deal with the dctails of either application.
+95 WM 146-1 FWRS A paper recommended and approved
+by t h e IEEE Power System Engineering Committee of the
+IEEE Power Engineering Society for presentation a t                                            (Network)
+t h e 1995 IEEE/PES Winter Meeting, January 29, t o                                                                                        (Load)
+February 2, 1995, New York, NY. Manuscript submitted
+J u l y 21, 1994; made a v a i l a b l e for p r i n t i n g
+January 3, 1995.                                                                                                         Ai
+                                                                                     Figure 1 . The system as seen from the load buses. The voltages Vare inputs.
+
+                                                              0885-8950/95/$04.00 Q 1995 IEEE
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:13:39 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                                  1499
+
+                  2. THE HYBRID APPROACH                                         (from this base cycle) to A X " ' ; see Figure 2. All mappings close
+                                                                                 to the limit cycle are quasi-linear so that Newton's method or its
+     Figure 1 gives a conceptual representation of the system. The               approximation can be used for obtaining the point x m for the limit
+input points are those buses where nonlinear components are                      cycle. This is possible irrespective of its stability.
+connected (essentially, load buses) With voltages Vthe unknowns in
+the computation. For the linear part of the system (mainly the                     -
+                                                                                 A The Brute Force Approach
+network and possibly generators) these voltages are viewed as the
+set of their harmonic components and the currents I , are                        We could find the limit cycle by straightforward simulation of (2)
+calculated for each harmonic h using Y,. For the nonlinear part                  using some integration routine as for instance a fourth order Runge-
+(usually loads) Vis considered in the time domain as the periodic                Kutta (R-K) algorithm. The convergence of this "brute force"
+function v ( r ) , and i(r) is obtained by time domain simulation; it is         approach is however usually very slow, especially in components
+then transformed back to I , in the harmonic domain. Physically,                 &ith light damping, for instance in the case of nonlinear
+we expect to have A I = I , +IN equal to zero. However, before                   inductances [7]; the method can locate stable limit cycles only and
+convergence, V is not yet accurately known so that a mismatch                    the steady state is not generally reached without difficulty [lo].
+ A I = I , +IN will result. As seen from the bus, the system has the             Therefore, time domain methods have not been used in the past for
+admittance U,, plus the admittance of the nonlinear part. We can                 the calculation of the periodic steady state condition in the presence
+use as voltage correction AV* the solution of the equation                       of harmonics, although in [12] an acceleration method based on a
+                                                                                 Newton-Raphson formulation [13] is used. We shall show that
+                            AJfh = AZh                                   (1)     convergence can be si-gnificantly speeded up by the use of Newton
+with an appropriate approximation for       E.                                   type methods.
+                                                                                 B - Conwraence Speed-Up
+             2.1. Calculation of the Current Mismatch
+                                                                                 In order to take advantage of the lmearity in the neighborhood of a
+2.1.1. Network: Freauencv Donrain                                                base cycle, we linearize (2) around a solution x(r) from rl to
+                                                                                  r, + T . This results in the variational problem
+The calculation of the currents I , of Figure 1 is a simple, sparse
+matrix-vector multiplication, performed separately for each                                      A i = A / ( x ( r ) , f ) = 0, f ( x , , t ) A x = J ( t ) A X    (3)
+harmonic.
+                                                                                 where J(r) is the (T-periodic) Jacobian matrix. The initial
+2.1.2. Loah: Time Donrain                                                        condition is
+As mentioned, the computations for nonlinear components, or                                                            AX(^,) = A X *                              (4)
+loads, are performed in the time domain. Their general description               This is a linear, time-varying ODE [14] with the closed form
+is in terms of the differential equation                                          solution
+                                 f = f( x , t )                         (2)                                                   I
+
+
+where x is the state vector of m elements xk . The driving force is                                         Ax(i)=exp(lJ(t)dt) x Ax'                               (5)
+                                                                                                                             I,
+periodic so that f ( - , r ) is a T-periodic vector. The steady state
+solution x(t> is also 7-periodic and can be represented as a limit               It clearly satisfies (3). For t = r, + T ,(5) gives
+cycle for xk in terms of another periodic element of x or in terms of                                                  Ax"' = BAx'                                 (6)
+an arbitrary T-periodical function, e.g., shot ;see Figure 2. Other
+variabIes, such as r ( t ) , are obtained from x ( t ) via algebraic output       with
+equations.                                                                                                                    I , +T
+
+                                                                                                                  B=exp( J ' J ( t > d t )                         (7)
+                                                                                                                                  4
+                                                                                       We note here that B results almost the same for any r, as the
+                                                                                  mapping near the limit cycle is close to linear. The differences
+                                                                                  however matter in the application ofB to the calculation of the limit
+                                                                                  cycle by Newton's method, to be discussed below.
+                                                                                      Equation (6) shows that input segments (to a cycle) are
+                                                                                  mapped to the corresponding output segments by the (almost) fixed
+                                                                                  matrix B. Because of the overall linear relations on the Poincare
+                                                                                  map of Figure 2, we expect to identify also the matrix C defined by
+                                                                                                                xm - x i =   c (XI+' - x ' )                       (8)
+                                                                                       The relation between matrices C and B can be derived as
+                                                                                  follows. In Figure 2 take A x ( = x ~ - x ' . Then we have
+                                                                                   AXI+l -
+                                                                                         -X
+                                                                                            - xi*l. Their substitution in (6) and solution for xmgives
+                                                                                             0
+
+
+
+
+                                                                                                                xm = x'    + c (X'+' - x ' )                       (9)
+                                                                                  This is an estimate for the location of the limit cycle Hith
+                     Figure 2 . Orbit of state vector x.                                                      C=(z-B)-'                         (10)
+     Before reaching the limit cycle, the cycles of the transient orbit                Equation (9) leads to a Newton process if B and C are updated
+are close to it. Their position is conveniently described by their                at each iteration step using (7) and (10). It becomes a linearly
+trace on the Poincare plane P.A single cycle maps its starting point              convergent process if C is kept constant after its f m t evaluation
+XI to its end point xi+' and maps a perturbation segment           AX^            using ( 10).
+
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:13:39 UTC from IEEE Xplore. Restrictions apply.
+
+                                                            I
+1500
+
+     The main problem thus for efficiently finding the limit cycle is                             2.2. Calculation of Voltage Updates
+the identification of the B matrix. In the following we shall present
+three methods of identification. They all require having initially                    To update the voltages we use equation (1) where A 1, is the
+calculated the base cycle x(r) over a period T, starting from x';                current mismatch vector for harmonic h. Actuaily, the voltage
+see Figure 2.                                                                    correction is -AV,, obtained from (1). Ideally, Y, should be the
+                                                                                 exact value of the admittance seen from the buses. This, of course,
+B. 1. Matrix Exponential                                                         is not just impractical but actually impossible, because nonlinear,
+                                                                                 as opposed to linear, elements do not respond with a single
+This approach is based directly on equation (7). After the numerical             harmonic output to the input AI, of harmonic h. To make the
+integration over a cycle, we calculate the matrix exponential in the             computations decoupled and simple in terms of harmonics, we
+usual way by resorting to an intermediate similarity transformation              represent oiily a singlc harmonic h in each of the harmonic domain
+of the malrix to diagonal form.                                                  input/output relations of the nonlinear loads. Consequently, Y, can
+B.2. Direct Approach                                                             only be approximate and the convergence of process (1) is only
+                                                                                 linear.
+The eigenvaludvector calculation used for the computation of the
+matrix exponential is not needed if B is calculated directly from (3)            2.2.1. Structural Cotwiderations
+as follows. Consider the initial vector Ax' to be a column of the                At power frequency the admittance Y, of the linear part of the
+identity m

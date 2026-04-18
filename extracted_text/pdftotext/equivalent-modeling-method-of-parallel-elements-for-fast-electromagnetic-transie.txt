@@ -1,0 +1,241 @@
+第 47 卷 第 7 期                                             电 网 技 术                                                Vol. 47 No. 7
+ 2023 年 7 月                                           Power System Technology                                       Jul. 2023
+文章编号：1000-3673（2023）07-2829-11                      中图分类号：TM 721           文献标志码：A             学科代码：470·40
+
+
+
+     电力电子变压器电磁暂态并行仿真等效建模方法
+                                                      孙昱昊，许建中
+                   （新能源电力系统国家重点实验室(华北电力大学)，北京市 昌平区 102206）
+
+
+          Equivalent Modeling Method of Parallel Electromagnetic Transient Simulation for
+                                 Power Electronic Transformer
+                                                    SUN Yuhao, XU Jianzhong
+                     (State Key Laboratory of Alternate Electrical Power System With Renewable Energy Sources
+                         (North China Electric Power University), Changping District, Beijing 102206, China)
+
+
+1
+    ABSTRACT: Power electronic transformer (PET) has the            摘要：电力电子变压器(power electronic transformer，PET)
+characteristics of modularity, multiple nodes, and high             具有模块化、多节点、频率高的特点，其详细模型的电磁暂
+frequency. However, the inefficient electromagnetic transient       态仿真(electromagnetic transient，EMT)效率低下，仿真提速
+simulation (EMT) of its detailed model poses an urgent need         需求迫切。从模型自身提速与提高 CPU 计算效率两方面入
+for simulation acceleration. In this paper, starting from           手，提出了 PET 电磁暂态并行仿真等效建模方法，并以级
+speeding up the model and improving the CPU computation             联 H 桥 型 PET(cascaded H-bridge type power electronic
+efficiency, an equivalent modeling method of parallel               transformer，CHB-PET)为例进行了理论推导与仿真验证。
+electromagnetic transient simulation for the power electronic       首先，以导纳是否可定为标准，将功率模块(power module，
+transformer is proposed. Taking the cascaded H-bridge type          PM)划分为不同导纳单元电路的组合；其次，从有载二端口
+power electronic transformer (CHB-PET) as an example, the           的角度出发，推导出 H 桥单元对外仅含 2 种等效导纳，可
+theoretical derivation and simulation verification are carried      简化为二值导纳单元；将各单元的导纳参数预存，利用叠加
+out. Firstly, on the condition that an admittance is fixed, the     定理求取端口短路电流，即可快速获取 PM 诺顿等效电路参
+power module (PM) is divided into circuits of different             数，聚合形成 CHB-PET 串行等效模型；最后，结合该模型
+admittance units. Secondly, from the perspective of the loaded      的高度并行性构建了并行仿真框架。在 PSCAD/EMTDC 中
+two ports, it is deduced that the H-bridge element contains only    进行仿真验证，该模型实现了对详细模型的多工况高度拟合，
+2 equivalent admittances, which can be simplified as a              最大误差小于 3%。当单相模块数为 48 时，最佳并行等效
+two-value admittance unit. By prestoring the admittance             模型可实现对详细模型 10000 多倍的仿真提速。
+parameters of each unit and calculating the port short-circuit      关键词：电力电子变压器；级联 H 桥型；导纳单元预存；
+current with the superposition theorem, the PM Norton               并行等效建模；多线程并行计算
+equivalent circuit parameters are quickly obtained and
+                                                                    DOI：10.13335/j.1000-3673.pst.2022.0432
+aggregated to form a CHB-PET serial equivalent model.
+Finally, a parallel simulation framework is constructed in          0 引言
+combination with the high parallelism of the model. Through
+                                                                         电力电子变压器(power electronic transformer，
+simulation verification on the PSCAD/EMTDC, the result shows
+that the model highly fits the detailed model under various
+                                                                    PET)因兼具多端口电能汇集与综合功率调控等功
+working conditions with the maximum error as less than 3%.          能，已逐渐成为大规模交直流混联和新能源并网的
+When the number of the single-phase modules is 48, the optimal      关键设备[1-5]。目前国内外针对 PET 的控制器设计、
+parallel equivalent model is able to achieve a simulation speedup   性能优化、样机研发和示范工程建设方兴未艾，总
+over the detailed model by more than 10000 times.                   体呈现电压等级、容量不断提高，功率端口与拓扑
+KEY WORDS: power electronic transformer; cascaded                   结构日渐灵活，工作频率不断上升的趋势[6-11]。
+H-bridge; admittance unit prestorage; parallel equivalent                为准确反映 PET 高频开关动作引起的瞬态过
+modelling; multithreaded parallel computing                         程，电磁暂态(electromagnetic transient，EMT)仿真
+                                                                    已成为辅助样机参数设计、性能测试等方面的重要
+       基金项目：北京市自然科学基金项目(3222059)。
+                                                                    工具。但是，由于 PET 高矩阵阶数和小仿真步长的
+       Project Supported by Natural Science Foundation of Beijing
+Municipality (3222059)．                                             特点，基于分立元器件的 EMT 详细仿真模型面临
+2830                        孙昱昊等：电力电子变压器电磁暂态并行仿真等效建模方法                                                              Vol. 47 No. 7
+
+大量高阶矩阵的重构与求逆运算，仿真效率极低，                                                                           正极直流母线
+                                                            U c Lc
+                   [5,12]                       Ub                                                       +
+严重影响了研究效率               。                                   Lb
+                                                                                                 +
+                                                   La
+       针对上述问题，目前已有较多学者开展了关于                   Ua                                             +
+
+PET 电磁暂态加速仿真方法的研究，主要呈现两大                                                                                             交直流变换器
+                                                                                                                        LT
+趋势。一方面，着重提高模型自身求解速率，即从
+                                                                                                         -
+数学原理或等效机制出发，提高模型串行解算速                         PM                                                 -
+                                                        -                                    -   负极直流                  高频隔离
+率，但在仿真精度制约下，串行速率将趋于极值；                                                                             母线                   变压器
+另一方面，关注模型的并行性以提高计算机计算效                                                 图 1 CHB-PET 系统示意图
+率，最大限度挖掘处理器计算潜力，从而实现仿真                               Fig. 1           Schematic diagram of CHB-PET system
+提速。                                          侧并联(input-series-output-parallel，ISOP)方式连接
+       在串行提速方面，文献[13-15]建立了 PET 平均           而成。单个 PM 由输入侧的 AC/DC 变换器以及含
+值模型，可实现高速率仿真，但忽略了换流器内部                       高频隔离变压器的双有源桥(dual active bridge，
+特性，仿真工况受到限制，使得应用场景受限。文                       DAB)型 DC/DC 变换器组成，可实现 AC-DC-AC-
+献[16]基于 RT-LAB 开发了 PET 纳秒级实时仿真模              DC 四级电能变换。PM 输出侧可直接接入直流负载，
+型，利用 L/C 等效电路模拟电力电子开关获取定导                    或通过 DC/AC 换流器接入交流负载。
+纳模型，但其本质上仍是一种详细模型，需占用大                       1.1.1          PM 伴随电路形成
+量仿真资源，且仿真时会产生虚拟功率，仿真精度                               针对上述 PM 电路，可采用文献[17]的方法，
+较差。文献[17-19]采用变压器端口解耦思路建立了                   对 IGBT-二极管开关组电路采用二值电阻等值，电
+通用的 PET 串行等效模型，利用嵌套快速同时求解                    容元件与高频隔离变压器采用梯形积分法
+法降低系统节点数，有明显提速效果。但由于导纳                       (trapezoidal rule，TR)离散化，可得到 PM 伴随电路
+不定，消去过程中每步长须进行矩阵求逆更新导纳                       如图 2 所示，其中的参数由式(1)计算获得。
+值，模块数较多时会影响仿真效率。                               UAUHB1           FAUC1         UAUHB2             FAUT              UAUHB3      FAUC2
+                                                                                                 GT12
+       探 索 并 行 性 方 面 ， 文 献 [20-22] 提 出 基 于      GA3 GA1                   GH1 GH3               GT12                GL3 GL1
+                                                              jC1      GC1             jT1   GT11 GT22       jT2              GC2   jC2
+Bergeron 线路模型的电气网络接口(electric network              GA4 GA2                GH2 GH4               GT12                GL4 GL2
+                                                                                                 GT12
+interface，ENI)技术，实现了不同子系统的并行仿
+真，但受限于电路结构，该方法仅适用于含传输线                                                         图 2 PM 伴随电路
+                                                                     Fig. 2    Companion circuits of PM
+网络。文献[23]以 MAB 为例，先建立 PET 单模块
+                                                      2Ci
+串行等效模型，再进行模块间并行提速，但其单模                        GCi  t , i  1,2
+块等效方法与文献[17-19]相同，由于拓扑复杂，每                    
+                                               jCi  GCi uCi (t  t )  iCi (t  t ), i  1,2
+个步长内矩阵求逆次数更多，有较大提速空间。                                                                                 1
+                                                G  GT11 GT12   t  L1  LT  Lm Lm / N  (1)
+       本文从模型自身提速与提高 CPU 计算效率两                   T G G  2  L / N L  L / N 2 
+                                                      T21 T22                  m           2    m 
+方面入手，提出一种 PET 电磁暂态并行仿真等效建
+                                                      jT1      uT1 (t  t )  iT1 (t  t ) 
+模方法，以级联 H 桥型 PET(cascaded H-bridge type        J T =    G                                 
+                                                     jT2      uT2 (t  t ) iT2 (t  t )
+power electronic transformer，CHB-PET)为例进行了
+理论推导与仿真验证。首先，以导纳是否可定划分                       式中：下标 A、H 和 L 分别表示交流侧、直流高压
+功率模块伴随电路，并求取各单元电路导纳参数；                       侧和直流低压侧；Δt 为仿真步长；GCi 与 jCi 分别为
+
+预存所有导纳单元参数后，快速获取 PM 诺顿等效                     电容等效导纳与等效历史电流源；GT11、GT22，GT12、
+                                             GT21 分别为变压器端口的输入导纳、转移导纳；jT1、
+电路，聚合后形成 CHB-PET 串行等效模型；最后，
+                                             jT2 为端口等效历史电流源；L1 和 L2 为变压器原、
+结合该模型的高度并行性构建了并行仿真框架，且
+                                             副边漏电感；Lm 为励磁电感；LT 为附加电感。考虑
+对并行提速效果进行了仿真验证与分析。
+                                             到在系统级仿真中，主要关注变压器正常工作状态
+1 功率模块导纳单元建模                                 下的外特性，且设计时通常会预留足够的饱和余
+1.1    导纳单元划分                                量，可忽略饱和特性与磁滞效应的影响。
+       图 1 为 CHB-PET 系统示意图，其每相由若干            1.1.2          导纳单元划分
+功率模块(power module，PM)采用输入侧串联输出                       由式(1)可知，在仿真步长、积分方法及变压器
+第 47 卷 第 7 期                                                        电   网   技   术                                              2831
+
+参数确定时，PM 伴随电路中的变压器与电容导纳                                                             在 4 种导通状态下分别求取 H 桥单元的短路导
+参数均为定值。然而，由于高频控制信号的施加，                                                      纳参数矩阵，其各元素定义如式(2)所示：
+开关组导纳具有不确定性。                                                                                 Y   Y           i
+                                                                                         Y =  11 12  , Yij  i                 (2)
+      为分析 PM 伴随电路导纳参数的变化规律，按                                                                 Y21 Y22        uj u
+                                                                                                                  k 0,k  j
+照导纳参数是否可定，将 PM 网络划分为 6 个子单
+                                                                            式中：Y11、Y22 表示端口的输入导纳；Y12、Y21 表示
+元，如图 2 所示。其中，灰色部分(电容单元 1、2，
+                                                                            转移导纳。
+高 频 隔 离 变 压 器 单 元 ) 表 示 定 导 纳 单 元 (fixed
+                                                                                    1）T1T3 时。
+admittance unit，FAU)，绿色部分(H 桥单元 1、2、
+                                                                                    该状态下 H 桥任意相邻开关组导通状态互补，
+3) 表 示 不 定 导 纳 单 元 (unfixed admittance unit ，
+                                                                            短路导纳参数矩阵可表示为
+UAU)，下标 HB、C、T 分别表示 H 桥、电容、变
+                                                                                    GON  GOFF     G  GON 
+压器。                                                                                              K OFF       
+                                                                                Y       2             2
+1.2     H 桥二值导纳单元推导                                                                                                             (3)
+                                                                                    K GOFF  GON  GON  GOFF 
+      二值电阻的引入，使得任意开关组导纳含 2 种                                                              2          2      
+取值，作用到单个 H 桥则含 24=16 种组合，对于含                                                式中 K 表示由 T1、T3 控制的符号函数，满足下式：
+3 个 H 桥的 PM 伴随电路，其网络导纳参数含                                                               1,  T1  1且T3  0
+                                                                                    K                    (4)
+242424=4096 种组合，这使得 PM 等值电路构建十
+                                                                                        1, T1  0且T3  1
+分复杂。若能减少 UAU 导纳参数变化的可能性，                                                            2）T1=T3 时。
+将大大提高模型的解算效率。                                                                       此时 H 桥单元两桥臂同位置的开关组导通状
+      本节将从二端口输入导纳的角度出发，推导出                                                  态相同，短路导纳参数矩阵为
+H 桥 UAU 对外输入导纳仅含 2 种，可转化为二值                                                           2GON GOFF             
+                                                                                     G  G           0      
+导纳单元(two-values admittance unit, TAU)。
+                                                                                 Y   ON     OFF                               (5)
+1.2.1   短路导纳参数矩阵                                                                                 GON  GOFF 
+      由于高频隔离变压器的存在，PM 网络满足严                                                              0                  
+                                                                                                     2      
+格的二端口条件。对于单个 H 桥单元，其有载二端                                                            由式(3)—(5)可知，H 桥单元的短路导纳参数矩
+口网路如图 3 所示。                                                                 阵均满足 Y12=Y21，为互易二端口网络。值得注意的
+                         Ys   1 i1      T1     T3   i2 2                    是，当 T1=T3 时还满足 Y11=Y22，此时该网络为严格
+                   +          +       G1 G 3           +                    的对称二端口网络，输入输出端口可不加区别，无
+              us              u1                      u2    YL
+                   _
+                                      G2 G 4          _
+                                                                            论从哪个端口观察，其电气性能完全相同。
+                              _
+                              1'                      2'                    1.2.2    有载二端口输入导纳
+                                Yin                                                 为研究 H 桥对外的导纳特性，可从输入导纳的
+                       图 3 H 桥有载二端口电路                                       角度切入。假设在有载情况下，如图 3 所示，可求
+        Fig. 3         Loaded two port circuit of H-bridge
+                                                                            取 H 桥二端口的输入导纳。
+      在非闭锁运行状态下，由 CHB 的控制方式可
+                                                                                    1）T1T3 时。
+知，PM 的 H 桥单元导通信号满足同桥臂互补，可
+                                                                                    由于对称性，从两个端口观察的输入导纳相
+用控制信号 T1、T3 表示全桥单元的导通状态(导通
+                                                                            等。假设从端口 1、1看，联立端口导纳方程，可
+为 1，关断为 0)，如表 1 所示。其中，GON 和 GOFF
+                                                                            求得输入导纳为
+为 二 值 导 纳 值 ( 导 通 时 取 GON=100S ， 关 断 时                                                                Y12Y21
+GOFF=106S)。                                                                           Yin  Y11             
+                                                                                                     YL  Y22
+                        表 1 H 桥单元导通状态
+                                                                                                      GOFF  GON 2
+         Table 1         Working mode of H-bridge unit                                                      K2( )
+                                                                                          GON  GOFF       2
+                                       开关组导纳取值                                                                    (6)
+  导通信号                                                                                        2        G  GOFF
+                        G1             G2             G3         G4                               YL  ON
+                                                                                                             2
+ T1=1, T3=0            GON            GOFF           GOFF        GON
+                                                                                              2
+ T1=0, T3=1            GOFF            GON           GON         GOFF               式(6)中，满足 K =1，当负载 YL 为定值时，输
+  T1=T3=1              GON            GOFF           GON         GOFF       入导纳 Yin 也必为定值。因此，当 T1=T3 时，无论从
+  T1=T3=0              GOFF            GON           GOFF        GON        哪个端口看，H 桥单元对外的等效导纳均为定值。
+2832                                孙昱昊等：电力电子变压器电磁暂态并行仿真等效建模方法                                                                                   Vol. 47 No. 7
+
+       2）T1=T3 时。                                                               此时 PM 伴随电路可由图 4(a)表示，变压器高
+       类似式(6)可求得两端口的输入导纳分别如下：                                          低压侧解耦为 2 个诺顿电路，分别与各侧 H 桥单元
+       从端口 1、1看，则                                                     相连。PM 网络则被分割为 2 个单端口电路，仅由
+                     Y Y     2GON GOFF                                 FAU 与 TAU 构成，导纳参数均确定且有限。
+         Yin  Y11  12 21              Y11                   (7)
+                    YL  Y22 GON  GOFF                                      TAUHB1      FAUC1         TAUHB2         FAUT1        FAUT2      TAUHB3   FAUC2
+                                                                                         H1                                                               L1
+       从端口 2、2看，则                                                        A1 GA3 GA1                 GH1 GH3
+                                                                                                                   jT1 1   GT11        jT22
+                                                                                                                                               GL3 GL1
+
+                            G  GOFF
+                                                                                        jC1    GC1                            GT22                   GC2    jC2
+                    Y Y
+        Yin  Y22  12 21  ON        Y22
+                                                                          A2 GA4 GA2                 GH2 GH4                                   GL4 GL2
+                                                                (8)
+                   YL  Y11    2                                        Yin_A
+                                                                                          H2
+                                                                                       Yin_H
+                                                                                                                                                           L2
+                                                                                                                                                                Yin_L
+                                                                                                           (a) PM解耦伴随电路
+       由于转移导纳 Y12=Y21=0，两个端口彼此独立，
+此时，H 桥单元表现为两个单端口电路，端口导纳
+                                                                                                 JEQ_A     GEQ_A           GEQ_L      JEQ_L
+值唯一确定，分别为 Y11、Y22。
+       经过上述证明可得，在考虑控制方式后，无论
+从哪个端口观察，H 桥对外表现出的输入导纳仅含                                                                                   (b) PM诺顿等效电路
+
+
+2 种情况，具体计算值整理为表 2 所示。                                                                图 4 PM 解耦伴随电路及等效电路
+                                                                   

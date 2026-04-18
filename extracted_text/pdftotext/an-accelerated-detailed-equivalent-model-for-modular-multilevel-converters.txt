@@ -1,0 +1,211 @@
+                                                           Electric Power Systems Research 223 (2023) 109648
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                         journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An accelerated detailed equivalent model for modular multilevel converters✩
+Ramin Parvari a , Shaahin Filizadeh a ,∗, Dharshana Muthumuni b
+a
+    University of Manitoba, Winnipeg, MB R3T 5V6, Canada
+b
+    Manitoba Hydro International, Winnipeg, MB R3P 1A3, Canada
+
+
+
+ARTICLE                INFO                             ABSTRACT
+
+Keywords:                                               Detailed Equivalent Models (DEMs) of Modular Multilevel Converters (MMCs) are generally developed based
+Modular multilevel converters                           on Thevenin equivalent circuits with a time-varying resistor. This approach may become computationally
+Detailed equivalent models                              inefficient, specifically for the simulation of large power systems with many nodes, where the network
+Electromagnetic transient simulation
+                                                        admittance matrix needs to be frequently re-inverted every time a switching event occurs. This paper proposes
+                                                        a novel strategy to eliminate admittance matrix re-inversions during the converter’s normal operation and
+                                                        restrict it only to when the converter undergoes blocking. The proposed DEM thus yields marked reductions
+                                                        in the simulation time of MMC circuits, and is particularly useful in studies wherein repetitive simulations
+                                                        are necessary. Models are implemented for MMCs with half-bridge (HBSM) and full-bridge (FBSM) sub-
+                                                        modules in the PSCAD/EMTDC simulator, and their accuracy is thoroughly validated for normal and blocked
+                                                        operating conditions. It is shown that the developed models are 30% and 60% more computationally efficient,
+                                                        respectively, for HBSM and FBSM MMCs in comparison to existing DEMs.
+
+
+
+1. Introduction                                                                         in [5,6] is a popular model, which is suitable for low-frequency analysis
+                                                                                        of MMCs in normal mode of operation. This model has been used
+    Modular multilevel converters are widely used in HVDC transmis-                     for system-level and controller design studies, e.g., for suppression
+sion systems. In comparison to two- or three-level converters [1],                      of circulating currents [7,8]. It is also useful for the analysis of the
+they have important advantages such as modularity, scalability, low                     voltage ripple in capacitors and sizing them [9]. Although AVMs are
+harmonics, and reduced switching losses [2,3]. MMCs generate output                     generally intended to study the terminal behavior of the MMCs, several
+voltage waveforms with low harmonics by stacking building blocks,
+                                                                                        works [10–14] have introduced improved AVMs that include the block-
+known as sub-modules (SMs), which make it possible to closely follow
+                                                                                        ing mode as well (see Table 1). The main drawback of AVMs is that a
+the reference waveform. Half-Bridge and Full-Bridge sub-modules (HB-
+                                                                                        single equivalent capacitor is used to characterize the stack of SMs in
+SMs and FBSMs) are by far the most commonly used sub-module types
+for they consist of a relatively small number of switches and have an                   the arm, which prevents the study of individual capacitor voltages.
+inherent ability to block DC fault currents, respectively.                                  Detailed Equivalent Models (DEMs), on the contrary, efficiently
+    Computer simulation models of MMCs play critical rules in power                     represent MMCs in full detail and with an accuracy equal to a DSM. The
+system studies. The model needs to both accurately and efficiently                      core idea in a DEM is to replace the stack of SMs with a Thevenin or
+represent the dynamics of the converter under normal and faulted                        Norton equivalent circuit, which reduces its hundreds of nodes to two
+operating conditions. However, the large number of switches in MMCs                     or three, thus diminishing the size of the network admittance matrix
+imposes a significant computational burden for EMT-type simulators if                   by many orders of magnitude. The Thevenin or Norton resistor and
+the MMC were to be modeled with connection of individual switches,                      source parameters are affected by the numerical integration method
+known as a Detailed Switching Model (DSM). In such a case, a pro-                       employed for discretizing the voltage and current of the SM capacitors.
+hibitively large network admittance matrix must be inverted every                       Using trapezoidal integration method, Refs. [15–22] have developed
+time a switching event occurs. Thus DSMs are usually used for very                      DEMs with Thevenin and Norton equivalent circuits. Although these
+specific applications or MMCs with a low number of SMs, e.g., as in [4].
+                                                                                        models offer remarkable computational efficiency compared with a
+To overcome this, several equivalent models have been introduced
+                                                                                        DSM, the network admittance matrix must still be modified frequently,
+that represent the dynamic response of the MMC while alleviating
+                                                                                        which makes re-triangularization of the admittance matrix, albeit a
+its computational burden. The Averaged-Value Model (AVM) proposed
+
+
+    ✩ This work was supported in part by the Natural Sciences and Engineering Research Council (NSERC) of Canada, and by the University of Manitoba, Canada.
+    ∗ Corresponding author.
+       E-mail addresses: parvarir@myumanitoba.ca (R. Parvari), shaahin.filizadeh@umanitoba.ca (S. Filizadeh), dharshana@mhi.ca (D. Muthumuni).
+
+https://doi.org/10.1016/j.epsr.2023.109648
+Received 16 November 2022; Received in revised form 31 March 2023; Accepted 21 June 2023
+Available online 8 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+R. Parvari et al.                                                                                                       Electric Power Systems Research 223 (2023) 109648
+
+Table 1
+Summary of MMC models in the literature.
+ Ref.         Model type                    SM type(s)        Ability for blocked            Focus of study
+                                                              mode simulation
+              DSM           DEM    AVM
+ [4]          ✓                             HBSM              ✓                              Dynamic performance of MMC with 6 SM per arm
+ [5]                               ✓        N/A                                              Simplified HVDC model for analysis of MMC’s dynamic behavior
+ [6]                               ✓        HBSM                                             Dynamics of MMCs based on terminal behavioral model
+ [10]                              ✓        HBSM              ✓                              Improved AVM model for simulation of DC fault condition
+ [11]                              ✓        HB,FB,MB-SM       ✓                              AVM model for the MMC operating at both blocked and normal mode
+ [12]                              ✓        HB,FB,CD-SM       ✓                              AVM model for the MMC operating at both blocked and normal mode
+ [13]                              ✓        HBSM              ✓                              401-Level MMC–HVDC System
+ [14]         ✓             ✓      ✓        HBSM              ✓                              Comparison of MMC Models
+ [15]         ✓             ✓               HBSM              ✓                              First introduction to DEM. 24 SMs for validation of DEM against DSM
+ [16]                       ✓               HBSM              ✓                              Multi-terminal DC system
+ [17]                       ✓               HBSM              ✓                              Enhanced equivalent model
+ [21]         ✓             ✓               Two-port          ✓                              Multi-port SM structures. 8 SMs per arm for validation of DEM against DSM
+ [22]                       ✓               HBSM              ✓                              Current source MMCs. The dual circuit of conventional HBSM is used
+ [18]                       ✓               HBSM-BESS         ✓                              MMCs with embedded energy storage systems
+ [19]                       ✓      ✓        HB,FB,CD-SM       ✓                              Combination of DEM and AVM models for fast and accurate simulation
+ [20]                       ✓      ✓        HBSM-BESS         ✓                              MMCs with embedded energy storage systems
+
+
+
+smaller one, unavoidable at every switching instant. In a large power
+network, this is highly problematic as the admittance matrix of the
+entire network needs to be inverted frequently only because of the
+presence of even one MMC. This is further aggravated in networks
+wherein several MMCs are present, e.g., in modern renewable-intensive
+systems. Even if a network with long transmission lines is split into
+different areas to reap the benefit of braking the conductance matrix of
+the large network into independent sub-matrices, each sub-matrix still
+needs to be re-factorized frequently if the MMC model is constructed
+with the time-varying resistance.
+    To overcome this major drawback, this paper proposes an approach
+to achieve a constant network admittance matrix that is re-inverted
+only when the converter blocking mode is invoked, e.g., in a DC
+fault. Since converter blocking is a rare event, the resulting converter
+model yields significant computational gains over existing DEMs, while
+retaining the ability to represent the converter during both normal and
+blocked conditions. The important contribution of this paper is the
+development of accelerated DEMs for MMCs with both HB and FB sub-
+                                                                                    Fig. 1. (a): Stack of submodules in the arm, (b): Half-Bridge Sub-Module, and (c):
+modules that significantly reduce the EMT simulation time of networks               Full-Bridge Sub-Module.
+with several MMCs. Furthermore, the proposed approach can be readily
+adopted for modeling emerging topologies of sub-modules as well.
+    The paper proceeds with continuous-time modeling of MMCs in
+                                                                                    SM are operated in a complementary manner. If the switching function
+Section 2, and their discretization in Section 3. An algorithm is then
+                                                                                    for the 𝑘th SM is defined as
+introduced by which the model can be implemented in an EMT solver.                           {
+Model validation and results of simulation studies are presented in                            1 𝑇1𝑘 : on, 𝑇2𝑘 : off
+                                                                                    𝑆𝑘 (𝑡) =                                                         (2)
+Section 4, followed by the conclusion in Section 5.                                            0 𝑇1𝑘 : off, 𝑇2𝑘 : on
+
+                                                                                    then the current of the 𝑘th capacitor, 𝑖c𝑘 (𝑡), can be written as
+2. Modeling of the converter’s arm
+                                                                                    𝑖c𝑘 (𝑡) = 𝑆𝑘 (𝑡)𝑖(𝑡)                                                             (3)
+   As shown in Fig. 1, the arm in an MMC is a series connection of SMs              where 𝑖(𝑡) is the current of the inserted SMs, which is equal to the
+carrying the arm current 𝑖arm (𝑡). The arm voltage 𝑣arm (𝑡) is equal to the         arm current 𝑖arm (𝑡) in the normal mode. Note that the 𝑖(𝑡) and 𝑖arm (𝑡)
+summation of the SM voltages:                                                       represent different currents in the blocked mode even though they are
+             ∑
+             𝑁                                                                      the same in the normal mode of operation. The total voltage created
+𝑣arm (𝑡) =         𝑣𝑘 (𝑡)                                               (1)         by the inserted HBSMs in the arms has a component, 𝑣ntot (𝑡), which is
+             𝑘=1
+                                                                                    contributed by the SM capacitors and depends on the SM’s switching
+where 𝑣𝑘 (𝑡) is the voltage of the 𝑘th SM. The voltage produced by each             function, and may be expressed as follows:
+SM is dependant upon the SM’s topology, switching state, and capacitor
+voltage. In this paper, the most common types of SMs, i.e., HBSM and                              ∑
+                                                                                                  𝑁
+                                                                                    𝑣ntot (𝑡) =         𝑆𝑘 (𝑡)𝑣c𝑘 (𝑡)                                                (4)
+FBSM, shown in Fig. 1(b) and (c), are considered.                                                 𝑘=1
+
+                                                                                    where superscript ‘n’ denotes the normal mode of operation and sub-
+2.1. Analysis of the MMC with HBSM                                                  script ‘tot’ represents the total voltage created. Additionally, in the path
+                                                                                    of the arm current through each SM, there is one resistor, either from
+    In normal mode of operation SMs are inserted or bypassed according              the top or the bottom switch-diode combination. Therefore, the total
+to a modulation waveform, and the upper and lower switches of each                  voltage across the arm is obtained by adding a resistive voltage drop
+
+                                                                               2
+R. Parvari et al.                                                                                                                 Electric Power Systems Research 223 (2023) 109648
+
+
+
+
+   Fig. 2. Arm stack model with HBSM, (a): normal mode and (b): blocked mode.            Fig. 4. Arm stack model with FBSM, (a): normal mode and (b): blocked mode.
+
+
+
+
+                                                                                      2.2. Analysis of the MMC with FBSM
+
+                                                                                          Two switching functions are required to model the behavior of each
+                                                                                      FBSM in the normal mode of operation. These switching functions are
+                                                                                      defined as follows, where 𝑇1𝑘 − 𝑇4𝑘 refer to the corresponding switches
+                                                                                      in Fig. 1(c).
+                              Fig. 3. Arm stack model with HBSM.                                {
+                                                                                                  1 𝑇1𝑘 : on, 𝑇2𝑘 : off
+                                                                                      𝑆1𝑘 (𝑡) =                                                          (11)
+                                                                                                  0 𝑇1𝑘 : off, 𝑇2𝑘 : on
+                                                                                                {
+to (4):                                                                                           1 𝑇3𝑘 : on, 𝑇4𝑘 : off
+                                                                                      𝑆3𝑘 (𝑡) =                                                          (12)
+𝑣arm (𝑡) = 𝑁𝑅on 𝑖(𝑡) + 𝑣ntot (𝑡)                                            (5)                   0 𝑇3𝑘 : off, 𝑇4𝑘 : on
+
+where 𝑅on is an equivalent on-state resistance of a switch, and is                    The current of the 𝑘th capacitor may be expressed as:
+considered to be the same for IGBTs and anti-parallel diodes, as is                   𝑖c𝑘 (𝑡) = (𝑆1𝑘 (𝑡) − 𝑆3𝑘 (𝑡))𝑖arm (𝑡)                                                  (13)
+commonly done in EMT-type models.
+                                                                                      and the total voltage produced by the arm stack is
+   In the blocked mode, all IGBTs are turned off and only the free-
+wheeling diodes conduct the current. The arm stack may be viewed                                    ∑
+                                                                                                    𝑁
+
+as a half-bridge diode rectifier with a series connection of all SM                   𝑣ntot (𝑡) =         (𝑆1𝑘 (𝑡) − 𝑆3𝑘 (𝑡))𝑣c𝑘 (𝑡)                                         (14)
+                                                                                                    𝑘=1
+capacitors. The total voltage across the capacitors is the summation of
+                                                                                      Taking the on-state resistance of each switch into account, the equiva-
+the individual voltages of the capacitors, shown in Fig. 2, which share
+                                                                                      lent circuit of the arm stack is derived as depicted in Fig. 4(a). In the
+the same current 𝑖(𝑡). Therefore,
+                                                                                      blocked state, all IGBTs are turned off and the arm stack is reduced
+𝑖c𝑘 (𝑡) = 𝑖(𝑡)          ;     ∀𝑘                                            (6)       to a full-bridge diode rectifier whose capacitor is the series connection
+                                                                                      of the individual sub-module capacitors, as shown in Fig. 4(b), where
+                                                                                      the capacitor is equivalently shown with a dependent voltage source
+              ∑
+              𝑁
+𝑣btot (𝑡) =         𝑣c𝑘 (𝑡)                                                 (7)       𝑣btot (𝑡). The total voltage across the capacitors is the summation of the
+              𝑘=1                                                                     individual voltage of the capacitors, which share the same current 𝑖(𝑡).
+where superscript ‘b’ denotes the blocked mode. It must be noted that                 Therefore,
+the equivalent diodes depicted in Fig. 2 are ideal.        

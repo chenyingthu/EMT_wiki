@@ -1,0 +1,214 @@
+                                                                Electric Power Systems Research 252 (2026) 112367
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An enhanced K-means two-step clustering method for dynamic equivalent
+modeling of DFIG wind farms based on LVRT characteristics
+Junhua Xu * , Jiyuan Shen , Xinyu You , Chunwei Wang , Bin Liu
+School of Electrical Engineering, Guangxi University, located in Nanning, China
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   To enhance the accuracy of dynamic equivalent models for wind farms utilizing doubly-fed induction generators
+DFIG wind farms                                             (DFIGs), an enhanced k-means two-step clustering method for dynamic equivalent modeling of DFIG wind farms
+Dynamic equivalent modeling                                 based on low-voltage ride-through (LVRT) characteristics is proposed in this study. First, the entire turbine fleet
+LVRT characteristics
+                                                            is divided into two categories based on their active power output and LVRT response: those exhibiting clustering
+Two-step clustering
+Enhanced k-means clustering
+                                                            characteristics and those that do not. For the latter, an enhanced k-means algorithm is applied. This approach
+                                                            optimizes initial center selection through probabilistic selection, improves search efficiency by utilizing a (K-
+                                                            Dimensional Tree) KD tree (reducing data search time by approximately 75% compared to traditional k-means),
+                                                            and determines the ideal cluster count using the Davies-Bouldin Index (DBI). The method overcomes the limi-
+                                                            tations of existing algorithms that require manual specification of initial centers and cluster numbers. Simulation
+                                                            results demonstrate that the equivalent model accurately corresponds to the detailed model during faults.
+                                                            Notably, the simulation time is reduced by about 90% while maintaining high precision, providing an efficient
+                                                            and accurate modeling approach for power system stability analysis with high wind power penetration.
+
+
+
+
+1. Introduction                                                                              responses–essential for wind farm equivalent modeling–remains a
+                                                                                             distinct, unresolved technical problem. Thus, while adjacent fields
+    The large-scale integration of renewable energy into the power grid                      provide valuable context, they emphasize the need for domain-specific
+poses severe challenges to system stability and reliability [1]. The                         innovations.
+intermittency and volatility of wind power further complicate the                                As a mainstream equivalent modeling approach, clustering still faces
+analysis of system dynamic behavior [2]. Against this backdrop, the                          challenges. Early methods reduced computational load [21], quantified
+DFIG has been widely adopted due to its excellent performance [3], and                       turbine contributions [22], incorporated kinetic energy [23], or used
+its dynamic response during LVRT is critical for system stability analysis.                  fuzzy C-means for output characteristics [24]. Despite these advances,
+    Dynamic simulation of large wind farms is computationally intensive                      two key limitations remain: dependence on subjective parameters and
+[4], necessitating dynamic equivalent modeling to balance accuracy and                       neglect of LVRT analysis, reducing model reliability during faults.
+efficiency [5]. Equivalent modeling methods include single-machine                               To integrate LVRT characteristics, Crowbar-based binary models
+and multi-machine approaches [6,7]. The former cannot reflect                                were developed [25,26], yet their oversimplified "switch" behavior
+turbine-specific dynamics arising from geographical and equipment                            reduced accuracy. Later three-step methods [27,28] offered improve-
+variations [8–10], making the latter the main research focus.                                ments but still assumed uniform LVRT responses across turbines, over-
+    While energy system optimization has advanced in areas like                              looking output-dependent variations. Although [29] analyzed LVRT
+distributed coordination [11], multi-stage techno-economic modeling                          control strategies’ impact on output and compared results with exten-
+[12], demand response privacy [13], bidding systems [14], robust                             sive field data, the absence of quantitative clustering indices hindered
+optimization [15], risk management [16], stochastic frameworks [17],                         effective clustering.
+decentralized self-healing [18], and storage-response synergy [19,20],                           Thus, a clear gap remains for a clustering method that incorporates
+these efforts focus on system-level and market challenges, whereas the                       LVRT characteristics for equivalent modeling during faults. To address
+core    task    of    accurately    aggregating     unit-level    dynamic                    this gap, this paper proposes an improved LVRT-based k-means two-step
+
+
+
+ * Corresponding author.
+   E-mail address: minghuxjh@126.com (J. Xu).
+
+https://doi.org/10.1016/j.epsr.2025.112367
+Received 30 August 2025; Received in revised form 24 September 2025; Accepted 11 October 2025
+Available online 15 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+J. Xu et al.                                                                                                                      Electric Power Systems Research 252 (2026) 112367
+
+
+clustering method, with these key contributions: (1) a novel two-step
+framework pre-classifying units by active power and LVRT response;
+(2) an automated algorithm integrating K-Means++ initialization, KD-
+trees (75% faster search), and DBI for optimal cluster count; and (3) a
+high-fidelity model replicating detailed dynamics (>98% accuracy),
+reducing simulation time by 90%, and outperforming existing methods.
+    The paper is structured as follows: Section 2 analyzes DFIG LVRT
+response; Section 3 details clustering method; Section 4 presents case
+tests; Section 5 concludes and outlines future work.
+
+2. LVRT response characteristics of DFIGs
+
+2.1. DFIG topology and response characteristics                                                                      Fig. 2. Control diagram of RSC.
+
+
+     The typical topology of a DFIG is depicted in Fig. 1 [30]. The stator                 By aligning the d-axis with the stator flux linkage direction, the ex-
+windings are directly connected to the electrical grid, while the rotor                 pressions for stator active and reactive power can be derived:
+windings are linked via a back-to-back converter. The rotor-side con-                   ⎧
+                                                                                               3Lm
+verter (RSC) utilizes a vector control approach oriented to the stator                  ⎪
+                                                                                        ⎨ Ps = 2Ls ω1 ψ s irq
+                                                                                        ⎪
+                                                                                        ⎪
+flux, and the grid-side converter (GSC) uses a control strategy based on                                   (           )                                      (3)
+grid voltage orientation.                                                               ⎪
+                                                                                        ⎪       3Lm ω1 ψ s          ψ
+                                                                                        ⎩ Qs =
+                                                                                        ⎪                     ird − s
+     During operation, the GSC ensures the stability of the DC-link                                2Ls              Lm
+voltage, while the RSC manages the regulation of power output.                              As indicated by Eq. (3), the vector control strategy oriented toward
+     As shown in Fig. 2, the RSC uses a dual-loop control structure with                the stator flux achieves decoupling of active and reactive power in the
+outer power and inner rotor current loops. The outer power loop oper-                   DFIG.
+ates in two modes: steady-state control and fault ride-through control,                     Furthermore, wind farms are required to provide dynamic reactive
+which are selected based on the terminal voltageUs1 . When the LVRT                     power support during fault conditions [32]. The dynamic reactive cur-
+detection signal (LF) triggers (LF = 1), the control system switches from               rentIQ must respond to fluctuations in voltage levels at the Point of
+steady-state (LF = 0) to LVRT mode. The control output from the outer                   Common Coupling (PCC) and satisfy [33]:
+power loop functions as the reference values (i∗rd ,i∗rq ) for the inner rotor d-       {
+and q-axis current loop control, thereby regulating the power output of                   IQ = K1 (0.9 − Us1 )IN
+                                                                                                                                                             (4)
+the DFIG [31]. Key references includeP∗s (stator active power),                           0.2p.u. ≤ Us1 ≤ 0.9p.u.
+id1 /iq1 (steady-state d/q-axis currents), andid2 /iq2 (LVRT d/q-axis
+                                                                                        WhereIN is the rated turbine current; andK1 is the reactive current sup-
+currents).
+                                                                                        port coefficient (typically 1.5–3 per grid codes).
+     During steady-state operation, neglecting the zero-sequence
+                                                                                            Therefore, during turbine faults, the benchmark values for the rotor
+component, the voltage and magnetic flux linkage equations of the
+                                                                                        current d-axis componenti∗rd and reactive power outputQfault are given by:
+DFIG in the d- and q-axis coordinate system are derived by decoupling
+                                                                                        ⎧
+the coefficient matrix through coordinate transformation [31]:
+                                                                                        ⎨ i∗ = ψ sd + Ls [K1 (0.9 − Us1 )IN ]
+                                                                                        ⎪
+⎧
+   usd = Rs isd + pψ − ω1 ψ
+                                                                                           rd
+                                                                                                   Lm Lm                                                       (5)
+⎪
+⎨ u = R i + pψ sd + ω ψ sq
+⎪                                                                                       ⎪
+                                                                                        ⎩Q
+     sq      s sq    sq    1 sd                                                              fault = Us1 K1 (0.9 − Us1 )IN
+                                                                             (1)
+⎪
+⎪  urd = Rr ird + pψ rd − S1 ψ rq
+⎩
+   urq = Rr irq + pψ rq + S1 ψ rd                                                       To enhance LVRT voltage support, the RSC’s control prioritizes reactive
+⎧                                                                                       power by constraining rotor currents, preventing overcurrent while
+⎪ ψ = Ls isd + Lm ird                                                                   supplying the required reactive power. The q-axis current refer-
+⎨ ψ sd = L i + L i
+⎪
+     sq        s sq   m rq
+                                                                             (2)        encei∗rq and active powerPfault are calculated as follows [34].
+⎪ ψ = Lm isd + Lr ird
+⎩ rd
+⎪                                                                                                   {[                         ∫ (               ) √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+                                                                                                                                                                 ( )2̅
+                                                                                                                                                                             ]}
+  ψ rq = Lm isq + Lr irq                                                                ⎧                  (           )
+                                                                                        ⎨ irq = min Kppr Ps fault − Ps + Kipr
+                                                                                        ⎪
+                                                                                        ⎪
+                                                                                           ∗                  ∗
+                                                                                                                                   P∗s fault − Ps dt, i2r lim − i∗rd
+whereusd andusq are the stator d- and q-axis voltages;urd andurq are the                              (               √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ )
+                                                                                        ⎩ Pfault = min P0 , 3Lm ω1 ψ i2 − ( i∗ )2
+                                                                                        ⎪
+                                                                                        ⎪
+rotor d- and q-axis voltages;isd andisq are the stator d- and q-axis                                                s
+                                                                                                            2Ls         r lim           rd
+currents;ird andirq are the rotor d- and q-axis currents;ψ sd andψ sq are the
+                                                                                                                                                                               (6)
+stator d- and q-axis flux linkages;ψ rd andψ rq are the rotor d- and q-axis
+flux linkages;Rs andRr are the stator and rotor resistances;ω1 is the syn-              Where,Kppr andKipr represent the proportional and integral coefficients of
+chronous speed;S1 is the slip;pis the differential operator;Ls andLr are the            the rotor-side PI controller, respectively;P∗s fault is the active power
+stator and rotor inductances; andLm is the mutual inductance.                           reference value during the fault period; P0 is the output active power
+                                                                                        before the fault; andir lim is the current limit value of the RSC.
+
+
+                                                                                        2.2. DFIG LVRT active power characteristics analysis
+
+                                                                                           Due to varying wind speeds, the LVRT dynamic responses of wind
+                                                                                        turbines differ [27]. To investigate these characteristics of a DFIG under
+                                                                                        varying output power conditions, a detailed electromagnetic transient
+                                                                                        (EMT) model of a 2.25-MW DFIG was built in PSCAD/EMTDC (v4.6.2).
+                                                                                        The characteristics of the induction machine and converter controls
+                                                                                        involved are listed in Table 1.
+                             Fig. 1. DFIG topology.                                        This study proposes a two-step clustering method. First, wind tur-
+
+                                                                                    2
+J. Xu et al.                                                                                                                        Electric Power Systems Research 252 (2026) 112367
+
+
+Table 1
+Induction machine and converter control parameters.
+  Component             Parameter      Description                        Value
+                                                                          (Unit)
+
+  Induction machine     S              Rated power                        2.25(MW)
+                        UN             Rated voltage                      690(V)
+                        H              Inertia constant                   78(Kg*m2)
+                        Rs             Stator resistance                  0.022(p.u.)
+                        Rr             Rotor resistance                   0.026(p.u.)
+                        Ls             Stator inductance                  0.177(p.u.)
+                        Lr             Rotor inductance                   0.116(p.u.)
+                        Lm             Magnetizing inductance             4.68(p.u.)
+  Converter control     Kppr,Kipr      Active power control (PI) in RSC   2,0.02
+                        Kpqr,Kiqr      Reactive power control (PI) in     2,0.05
+                                       RSC
+                        KpIr,KiIr      Current control (PI) in RSC        2,0.025
+                        Kpug,Kiug      DC voltage control (PI) in GSC     2,0.01                            Fig. 4. Dynamic response of active power at PCC.
+                        KpIg,KiIg      Current control (PI) in GSC        2,0.01
+                        Kppll,Kipll    PLL control (PI)                   500,2000
+                        ir lim         current limit value of the RSC     1.6(p.u.)         across operational zones, this paper proposes an enhanced k-means two-
+  Crowbar               Rcrowbar       Crowbar resistor                   0.25(p.u.)        step clustering method for dynamic equivalent modeling of DFIG wind
+    protection          Icrowbar on    Activation current threshold       1.5(p.u.)         farms based on LVRT characteristics.
+    parameters          Vcrowbar off   Deactivation voltage threshold     0.9(p.u.)
+                                                                                                As shown in Fig. 5. First, by establishing an electromagnetic transient
+                                                    

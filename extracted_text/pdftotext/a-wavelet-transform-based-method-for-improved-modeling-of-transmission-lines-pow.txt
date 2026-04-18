@@ -1,0 +1,200 @@
+1432                                                                         IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 18, NO. 4, NOVEMBER 2003
+
+
+
+
+   A Wavelet Transform-Based Method for Improved
+          Modeling of Transmission Lines
+                                     Ali Abur, Fellow, IEEE, Omer Ozgun, and F. H. Magnago
+
+
+
+    Abstract—This paper is concerned about the accurate represen-            quency dependent parameters. One approach is to start with the
+tation of transmission lines for electromagnetic transients simula-          general form of the multiconductor transmission line partial dif-
+tion studies. The frequency dependent (FD) line model (also known            ferential equations, for the voltages and currents along the line,
+as the J. Marti model) which is currently used in most electro-
+magnetic transient programs [1], has been a major contribution               expressed in terms of the spatial distance and time . Then,
+to the power system transient simulations. However, despite its ac-          use the wavelet transform to convert them into large sparse al-
+curacy and computational efficiency for most simulation cases, it            gebraic equations whose solutions will yield coefficients of the
+still requires improvement due to the approximation it makes in              wavelet transform of the voltages and currents of interest. How-
+                                                 T
+choosing the modal transformation matrix v . This matrix is, in              ever, integration of such a computational procedure into an ex-
+general, frequency dependent and used in transforming variables
+between the phase and modal domains at each simulation time                  isting transients simulator may not be trivial. Instead, a fairly
+step. Currently, it is approximated as a constant matrix which may           simple modification of the well known, constant but distributed
+not hold true for certain tower configurations and/or conductor              parameter line model, or the so called the Bergeron’s model [2],
+types where line parameters vary drastically with frequency. In              is proposed by the authors in [3] and [4]. This model makes use
+this paper, a wavelet-based alternative solution, which incorporates         of the discrete wavelet transform to account for the frequency
+frequency dependence of transformation matrices into the simula-
+tion process, is proposed. Simulation results, illustrating the effects      dependence of the line parameters. In [3], the method is de-
+of using the proposed model versus the existing FD line model, are           veloped for single-phase lines only. On the other hand, simu-
+also presented.                                                              lation of transients along multiphase transmission lines has the
+  Index Terms—Electromagnetic transients simulations, fre-                   additional drawback, that the line equations ought to be decou-
+quency dependent transmission line parameters, modal transfor-               pled into independent modal equations, so that each one can
+mations, wavelet transform.                                                  be solved easily in the respective modal domain. This decou-
+                                                                             pling is done through a linear transformation matrix, which will
+                          I. INTRODUCTION                                    in general be a function of frequency due to the frequency de-
+                                                                             pendent line parameters. In time domain simulations, a constant
+
+S    IMULATION of transients along transmission lines can be
+     best performed in the frequency domain, since the line pa-
+rameters are known to vary significantly as a function of fre-
+                                                                             transformation matrix, which is typically evaluated at a chosen
+                                                                             frequency, is used as an approximation. So, even when using
+                                                                             the advanced frequency dependent (FD-model) model of [5],
+quency. However, most of the power systems include compo-                    modal transformation matrix will have to be approximated. The
+nents with time varying and/or nonlinear operating characteris-              simulation method, which is presented in this paper, provides
+tics such as solid state rectifiers, saturated transformers, surge           a rather simple avenue to improve this approximation by using
+arresters, metal-oxide varistors, etc. whose models are best re-             the wavelet transform.
+alized in the time domain.                                                      The paper is organized such that a review of the discrete-time
+   Therefore, simulations are preferably carried out in the time             wavelet transform (DWT) implementation along with the
+domain when studying events involving the overall system with                FD-model and the Bergeron’s constant parameter (CP-model)
+switching operations and nonlinear devices.                                  distributed line model are presented first. The proposed
+   Reconciling the simulation and modeling requirements of this              wavelet-based method for the simulation and modeling of
+mixed set of components has been one of the challenges faced in              transmission lines with frequency dependent parameters are
+the analysis of transients so far. This paper addresses this chal-           discussed next. Simulation results of some power system
+lenge by presenting an alternative simulation method, which is               transients are then shown, followed by their discussion and
+motivated by the unique properties of the wavelet transform.                 conclusions.
+   Direct application of the wavelet transform is one way to
+accomplish the modeling of lossy transmission lines with fre-
+                                                                                II. IMPLEMENTATION OF THE DISCRETE-TIME WAVELET
+                                                                                               TRANSFORM (DWT)
+   Manuscript received February 7, 2003. This work was supported by NSF
+Grant ESC-9821090.                                                              Even though the main ideas that lead to the development of
+   A. Abur is with the Texas A&M University, College Station, TX 77843 USA
+(e-mail: abur@ee.tamu.edu).                                                  the Wavelet transform (WT) have been known for some time, it
+   O. Ozgun is with Applied Materials, Inc., Santa Clara, CA 94086 USA       has been introduced in mathematics relatively recently. Similar
+(e-mail: omer_ozgun@amat.com).                                               to the case of Fourier analysis, wavelet analysis is based on ex-
+   F. H. Magnago is with the Universidad Nacional de Río Cuarto, 5800, Ar-
+gentina (e-mail: fhmagnago@arnet.com.ar).                                    pansions in terms of a set of basis functions. These functions are
+   Digital Object Identifier 10.1109/TPWRS.2003.814846                       generated in the form of translations and dilations of a particular
+                                                           0885-8950/03$17.00 © 2003 IEEE
+ABUR et al.: A WAVELET TRANSFORM-BASED METHOD FOR IMPROVED MODELING OF TRANSMISSION LINES                                          1433
+
+
+
+
+Fig. 1.   Implementation of the DWT.
+
+
+function referred to as the mother wavelet, which satisfies cer-
+tain necessary conditions [7], [8].                                   Fig. 2.   CP-model of a lossless transmission line.
+   Continuous WT of a function          is defined by the inner
+product between       and a family of wavelets. For a given scalar    matrix for the Daubechies mother wavelet with four coefficients
+  (dilation) and location (translation), the continuous wavelet          , , ,         is shown below: See equation at the bottom of
+transform is defined as                                               the next page.
+                                                                         Given a vector of sampled signal      , its discrete wavelet
+                                                               (1)    transform will be obtained by
+
+where
+
+                                                               (2)       The signal reconstruction procedure can be similarly imple-
+                                                                      mented using the same MRA approach where the coefficients
+Hence                                                                 are represented by another matrix IDWT. If the chosen wavelet
+                                                                      is orthogonal as is the case for the Daubechies, then
+                                                               (3)
+
+where is the base function known as the mother wavelet, and
+   and are the dilation and the translation parameters, respec-       Note that the matrix DWT is very sparse, making the numerical
+tively. The factor       is used to ensure energy preservation.       implementation of the wavelet transform very fast.
+WT of sampled waveforms can be obtained by implementing
+the discrete wavelet transform DWT, which is given by                                      III. REVIEW OF LINE MODELS
+                                                                         Multiconductor transmission lines usually run distances long
+                                                               (4)
+                                                                      enough to make their lumped parameter modeling inaccurate.
+                                                                      Approximate models that can fake the distributed nature of
+where the parameters and are replaced by              and      , ,    the line parameters can be obtained by using several cascaded
+and     being integer variables. In a standard DWT, the coeffi-       lumped parameter pi section models. A more accurate model,
+cients are sampled from the continuous WT on a dyadic grid            which is referred to as the constant parameter (CP-model) line
+(i.e.,        and         ), yielding         ,             , …etc.   model, can be obtained by lumping the resistance and modeling
+and            , being an integer variable.                           the remaining loss-less part, by using the method of Bergeron
+   The actual implementation of the DWT involves successive           [6]. This model incorporates traveling wave delays via a simple
+pairs of high-pass (HPF) and low-pass filters (LPF) at each           equivalent circuit containing a current source and a constant
+scaling stage of the wavelet transform as shown in Fig. 1. This       resistance (line’s characteristic impedance) at each end of the
+can be thought of as successive approximations of the same            line. The current sources depend upon the voltage and current
+function, each approximation providing the incremental infor-         values from the remote end of the line, with a certain time delay
+mation related to a particular scale (frequency range). The first     that is determined by the traveling wave velocity and the line
+scale covers a broad frequency range at the high frequency end        length. This model is illustrated in Fig. 2.
+of the spectrum. The higher scales cover the lower end of the            Variations of line parameters, such as , , and            as a
+frequency spectrum however with progressively shorter band-           function of frequency, are simply ignored when building the
+widths. Conversely, the first scale will have the highest time res-   CP-model of the line. In order to address this deficiency, a
+olution, while the higher scales will cover increasingly longer       frequency dependent line model (FD-model) is developed by
+time intervals.                                                       J. Marti in [5]. FD-model essentially uses the same equivalent
+   The DWT can be implemented using multiresolution analysis          circuit as the CP-model shown in Fig. 2, except for the fact
+(MRA), where the decomposition can be done multiplying the            that the characteristic impedance , appearing at each end of
+sampled signal by a matrix containing the wavelet filter coef-        the line, is replaced by a properly chosen network equivalent
+ficients. The contents and structure of this matrix will depend       having approximately the same frequency spectrum as that of
+on the chosen mother wavelet, the number of coefficients, and            . In addition, the current source values are no longer simple
+the scales used for the decomposition. For example, the DWT           time delayed functions of remote line end variables, but involve
+1434                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 18, NO. 4, NOVEMBER 2003
+
+
+
+more complicated convolutions [5]. Provided that the required        to make use of the unique properties of the wavelet transform,
+accuracy of the fitting functions that approximate the frequency     as it facilitates time domain decomposition of signals into a
+response of        and the propagation function are attained,        subband of frequency ranges [7]. This implies that the entire
+FD-model of the line can be used in transient simulation of          simulation can be decomposed into subbands each of which
+single phase lines very satisfactorily. When multiphase con-         can be calculated independent of the rest, at a given simulation
+ductors are considered, one is faced with the additional burden      time step. The advantage of this approach will however be
+of decomposing the line equations via a modal transformation         that the line parameters as well as the modal transformation
+matrix     , which is itself frequency dependent. In the current     matrices used in a particular subband of frequencies can be
+implementation of FD-model,            is computed at a suitable     properly chosen as the ones corresponding to that frequency
+frequency and maintained constant throughout the simulation          band. These bands of frequencies are referred to as scales of
+period. While for some tower configurations and conductor            the wavelet transform due to their special logarithmic structure
+types, this approximation is quite valid, certain other cases may    [8]. Frequency dependence of the line parameters , , and
+require accurate incorporation of frequency effects on          in   as well as the resulting transformation matrices which are func-
+the time domain simulations.                                         tions of these parameters, can be approximated by substituting
+   Direct extension of [5] to the solution of this problem is pre-   representative values calculated for each wavelet scale.
+sented in [10], where the elements of       are synthesized using       In each mode, this will result in as many line models as
+rational functions and modal transformations are approximated        the number of chosen scales for a given line. Following the
+by numerical convolutions. Another approach is taken by others       CP-model of Fig. 2, the line model for scale           and mode
+[11]–[14] where the modal transformations are avoided alto-           , will look identical to the circuit in Fig. 2, except for the
+gether and the simulations are carried out in the phase domain.      fact that all variables, parameters, and current source values
+The idea of using time series models to represent frequency de-      will correspond to that mode and scale. The transformation
+pendent networks in time domain simulations is presented in          matrix used to obtain the terminal currents and voltages for
+[15] and [16] where network equivalents are obtained directly        this mode will be different for each scale. While this is still
+in the time domain, however using fixed modal transformation         an approximation due to the choice of discretely rather than
+matrices. Time series (ARMA)-based line modeling is carried          continuously changing matrices from one wavelet scale to the
+out in the phase domain in [17].                                     next, proper choice of scales based on the observed variations in
+   In the next section, an alternative method based on the dis-      the line parameters will improve this approximation drastically.
+crete wavelet transform, will be presented for line modeling and     Also, the line resistance will still be modeled as two lumped
+simulation of transients. The proposed method will maintain the      components, yet assuming different values for each scale. This
+basic discrete time circuit model of Fig. 2, but use multiple such   will account for their frequency dependence but not for their
+circuits as will be described below.                                 distributed nature along the length of the line.
+                                                                        In [4], the procedure for simulating transients involving lines
+                                                                     with frequency dependent parameters is discussed. However,
+            IV. WAVELET-BASED FD LINE MODEL
+                                                                     the proposed method is only applied to a simple case that in-
+   Time domain solutions of power systems are simply achieved        cludes just one transmission line. The application to the overall
+by numerical integration of the network differential equations.      network solution by using nodal analysis is not undertaken.
+Instead of direct application of numerical integration, dis-         In this paper, a detailed account of the implementation of the
+crete-time domain equivalents of each network components are         wavelet-based simulation method for large power systems is
+evaluated first, which yields a purely resistive network. Then,      given. The proposed approach follows the general pattern of
+these resulting purely resistive nodal network equations are         most electromagnetic transients simulation programs that are
+solved in discrete-time at each simulation time step. However,       in use today, in order to facilitate easy modification of existing
+this approach cannot be used for networks, which include             simulation code to implement the proposed changes. The entire
+components like transmission lines whose parameters change           simulation procedure for networks with frequency dependent
+with operating frequency. One way to overcome this problem is        parameter lines, is itemized as follows:
+
+
+
+
+                                         ..    ..                           ..
+                                          .     .                                .
+ABUR et al.: A WAVELET TRANSFORM-BASED METHOD FOR IMPROVED MODELING OF TRANSMISSION LINES                                                   1435
+
+
+
+   • In each time step, solve
+                                                               (5)
+     Where is the discrete time model conductance matrix,
+     is the net current injection, is the history term vector, and
+              is the voltage solution vector. If any of the entries
+     in are not known, that means the voltage at that node is
+     known, and therefore, the equation set can be reduced by
+     eliminating this entry in . is initially not known, either
+     assumed zero or calculated based on steady state phasor
+     solution.
+   • Calculate the line parameters as a function of frequency
+     and select frequency ranges (scales) to properly discretize
+     the parameters. The number

@@ -1,0 +1,209 @@
+                                                              Electric Power Systems Research 235 (2024) 110766
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Modelling of electromagnetic transients in multi-unit high-voltage
+circuit-breakers
+Antoine Mailhot a, * , Ryszard Pater a , Sébastien Poirier a , Jean Mahseredjian b , René Doche c
+a
+  Institut de recherche d’Hydro-Québec (IREQ), Varennes, Canada
+b
+  Polytechnique Montréal, Montréal, Canada
+c
+  Hydro-Québec, Montréal, Canada
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Keywords:                                                 High-voltage (HV) circuit-breakers (CBs) often consist of several making and breaking units (MBUs) in series. A
+Circuit-breakers                                          multi-unit circuit-breaker EMTP® model is proposed to analyse the effects of non-simultaneity between MBUs of
+Electromagnetic transients                                the same pole. The model allows for simulations of high-frequency voltage and current transients during opening
+Grading capacitors
+                                                          or closing operations. The simulations include the non-simultaneity of MBUs of the same pole or differences in
+Multi-unit
+Switching transients
+                                                          dielectric withstand characteristics for vacuum circuit-breakers (VCBs) and SF6 CBs. According to simulation
+                                                          results, the maximum non-simultaneity of MBUs of the same pole, as permitted per international standards, can
+                                                          lead to multiple re-ignitions during opening or excessive overvoltages during closing operations. These phe­
+                                                          nomena are rarely simulated with conventional CB models. The simulations also highlight the important chal­
+                                                          lenges facing high-voltage VCB design due to the inherent characteristics of vacuum bottle technology. The
+                                                          proposed models serve as useful tools for understanding and studying the effect of multi-unit CBs in various
+                                                          system studies and advanced diagnostics.
+
+
+
+
+1. Introduction                                                                               Many HV CB technologies exist, such as oil, air, sulphur hexafluoride
+                                                                                          (SF6) and vacuum circuit-breakers (VCB). The last two categories are the
+    A high-voltage (HV) circuit-breaker (CB) is a mechanical switching                    most common today. The VCBs are mainly applied for voltages below
+device used in transmission grids, capable of making and breaking                         145 kV, but efforts are being made to apply this technology to higher
+currents under normal and abnormal circuit conditions. Amongst other                      voltages. Moreover, recent research has focused on alternative media to
+functions, the HV CB ensures the reliability of a transmission grid. CB                   replace SF6, the most prominent greenhouse gas (GHG) [3].
+currents can be normal load currents, capacitive or inductive currents or                     HV CBs above 245 kV are often composed of several making and
+short-circuit currents. The main functions of a HV circuit-breaker are as                 breaking units (MBUs) in series per pole. The term MBU is defined in IEC
+follows:                                                                                  62271-100 [2]. MBUs are also called “interrupter units.” The grading
+                                                                                          capacitors installed in parallel with MBUs allow the uniform voltage
+    • Connect or isolate parts of the electrical grid by making or breaking               distribution between the units [4].
+      load currents [1]                                                                       In the Electromagnetic Transients Program (EMTP®), the basic
+    • In the open position, maintain excellent insulating properties to                   model of a CB is an ideal switch that makes the current instantaneously
+      ensure dielectric strength [1]                                                      and breaks it at a zero crossing [5]. A more complete model of CB is
+    • In the closed position, maintain excellent conductive properties, with              available, which integrates the transient recovery voltage (TRV) enve­
+      a contact resistance of the order of a few tens of microohms, to avoid              lope [6].
+      heat loss or damage [1]                                                                 Mayr and Avdonin arc models are available in EMTP® [7-9]. How­
+    • Interrupt a short-circuit current, as per the rated characteristics of              ever, Mayr and Avdonin electric arc models require a considerable
+      the device (ranging from 40 kA to 80 kA, depending on the case [2])                 number of parameters to accurately simulate current quenching. These
+    • Establish a short-circuit current according to the rated characteristics            non-linear models of the arc necessitate precise and challenging deter­
+      of the device [2]                                                                   mination of physical parameters to simulate various dielectric media
+
+
+    * Corresponding author.
+      E-mail address: Mailhot.Antoine2@hydroquebec.com (A. Mailhot).
+
+https://doi.org/10.1016/j.epsr.2024.110766
+Received 7 October 2023; Received in revised form 15 March 2024; Accepted 17 June 2024
+Available online 28 June 2024
+0378-7796/© 2024 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A. Mailhot et al.                                                                                                     Electric Power Systems Research 235 (2024) 110766
+
+
+such as oil, air, SF6, vacuum, and alternative gases as well as different
+contact geometries. Avdonin and Mayr models are not usually used in
+CB operation analysis and simulation.
+    Electromagnetic phenomena occurring during CB operation, such as
+prestrike, restrike or re-ignition, involve interactions between different
+MBUs. Reference [10] details a CB diagnostic method using the mea­
+surement of transient electromagnetic emissions (TEEs) occurring dur­
+ing CB operation. This diagnostic tool, which is particularly useful for
+multiple MBU (multi-unit) CBs, allows the detection of prestrikes, re­
+strikes or re-ignitions in individual units. As an example, multiple pre­
+strikes in one MBU during a closing operation of an SF6 CB were
+observed [11].
+    The work in [12] studied the effects of very fast transient phenomena
+including lightning impulse on an assembly of several pairs of contacts
+in series, showing the complexity of such a system. Their conclusion
+underlines the challenges related to the multi-contact breakdown                    Fig. 1. Voltage transients caused by mechanical non-simultaneity in CB with
+voltage modelling, depending on the streamer integral, volume-time                  two MBUs.
+criteria and precise modelling of contact geometry.
+    In this manuscript, we propose novel multi-unit electromagnetic                 does not address the impact for CBs with multiple units. The authors of
+transient (EMT) simulation models that integrate both thermal and                   [14] experimentally tested a VCB with two MBUs per pole, but do not
+dielectric recovery curves for each CB unit on opening, as well as in­              propose a theoretical EMT simulation model that considers arc
+dependent dielectric decrease curve on closing. The coupling between                quenching as previously mentioned. Simulation results showing suc­
+the individual MBU is modelled by discrete parameters (lumped-                      cessive re-ignitions for a single unit VCB can be seen in Fig. 2.
+element model). This approach enables accurate simulation of transient
+phenomena occurring between individual units. Unlike the majority of                3. Models of multi-unit CB
+existing EMT models found in the literature, which typically employ a
+single MBU per pole and rely on characteristic recovery curves from                     Two models of CB are developed to represent the current making
+electrotechnical standards, our opening and closing models offer a more             during closing and current breaking during opening of a multi-unit CB.
+comprehensive and versatile structure. Furthermore, the models can be               The disruptive discharges such as prestrike, re-ignition and restrike have
+adapted for different dielectric media.                                             a stochastic nature [12]. Weibull or normal distribution functions can be
+    Section II underlines some challenges for multi-unit HV CB operation            defined from breakdown voltage tests experimental data for different
+modelling. Section III presents EMTP models for an HV CB comprising                 insulating media. An average breakdown voltage value Ub can be
+several MBUs. Section IV contains the analysis of some case studies using           determined and modelled as deterministic [15,16]. The models pre­
+the proposed models and presents some of the challenges in applying                 sented here use Ub voltage to simulate prestrikes during closing and
+VCB for high voltage. Section V provides some potential applications of             re-ignitions or restrikes during opening operation.
+the proposed models.                                                                    Paschen’s law gives the approximation of the breakdown voltage for
+                                                                                    a given gas pressure and a distance between the electrodes having uni­
+2. Challenges for operation modelling                                               form distribution of the electric field [17,18]. The breakdown voltage,
+                                                                                    for a given pressure, can be expressed as the product of Eb, the dielectric
+2.1. Closing operation                                                              strength (in V/m) and dc, the contact gap (in m) which change in time (t)
+                                                                                    during the CB operation, as stated in Eq. (1).
+    Considering the phenomenon of multiple prestrikes, three probable
+scenarios are possible: simultaneous prestrikes in all MBUs of the CB               Ub (t) = Eb (t) dc (t)                                                         (1)
+pole, early prestrike in one MBU with lasting pre-arc current and the
+                                                                                       During closing operation, the breakdown voltage envelope can be
+case of a pre-arc current which extinguishes itself quickly in one of the
+                                                                                    defined for each MBU in the form of a rate of decrease of the breakdown
+MBUs.
+                                                                                    voltage (RDBV) and corresponds to the opposite of the slope of the
+    The last case necessarily leads to multiple prestrikes during the
+closing operation. An initial pre-arc current will occur in a single unit
+due to the mechanical non-simultaneity of the MBUs in a pole. The high-
+frequency current is non-sustained and lasts a few microseconds. When
+the pre-arc current is initiated, an impulse overvoltage appears on the
+second MBU as shown in Fig. 1. This results in a trapped charge in the
+grading capacitor and will cause a temporary imbalance in the voltage
+distribution during the shaded zone in Fig. 1.
+
+2.2. Opening operation
+
+    During the opening operation, re-ignitions or restrikes may occur,
+which may be challenging for current interruption. The presence of re-
+ignition and restrikes can potentially cause damage to critical compo­
+nents in the CB. These current discharges, being often non-sustained, are
+difficult to see using traditional diagnostic tools, particularly in CBs with
+several contacts in series.
+    In the case of an opening operation of a VCB, successive re-ignitions
+can occur due to the rapid interruption of the electric arc in vacuum
+medium. Reference [13] explains how successive re-ignitions occur but               Fig. 2. Simulation results showing successive re-ignitions in a single MBU VCB.
+
+                                                                                2
+A. Mailhot et al.                                                                                                             Electric Power Systems Research 235 (2024) 110766
+
+
+breakdown voltage, as stated in Eq. (2).1
+                                                                                                    d(do (t))
+                                                                                        RRBV(t) =             Eb (t) λ(do )                                                (5)
+          − d                                                                                          dt
+RDBV(t) ≡     Ub (t)                                                         (2)
+           dt
+                                                                                            In the equation, the do parameter is the spacing between the opening
+               − d(dc (t))                                                              contacts. Eb cannot be assumed constant on opening because of the
+RDBV(t) =                  Eb λ(dc )                                         (3)        forced gas flow in SF6 and air CB.
+                   dt
+                                                                                            There are two possible stages during the arc extinction: thermal
+             1                                                                          interruption and dielectric interruption, as stated in section 3.5 of [22].
+λ(dc ) =                                                                     (4)
+           β(dc )                                                                       In this model, they are represented as the “thermal” and “dielectric”
+                                                                                        breakdown voltages (Ub,th and Ub,di). An unsuccessful thermal or
+    In (3), the first factor represents the constant contact speed, while the
+                                                                                        dielectric recovery can cause re-ignitions or restrikes, which occur when
+dielectric strength Eb remains approximately constant due to the con­
+                                                                                        the MBU voltage reaches one or the other breakdown voltage. Regarding
+stant pressure during closing operation. The specific value of Eb used for
+                                                                                        the Fig. 4, when the voltage Uu reaches one or other of the breakdown
+each simulation depends on the dielectric medium to be simulated. The
+                                                                                        voltages (Ub,th or Ub,di), the model logic will generate the re-ignition or
+factor λ is the geometric factor (dimensionless quantity) considering the
+                                                                                        the restrike following the logical toggle signalint. This solution considers
+geometry of arcing contacts of CB and their effect on the electric field
+                                                                                        in a simple way both the thermal and the dielectric recovery.
+[19]. The factor λ in Eq. (3) has a value from 0 to 1 and can be different
+                                                                                            In Fig. 4, Ub+,th is the thermal breakdown voltage in positive polarity,
+for positive or negative polarity. It can be evaluated using Eq. (4) from β,
+                                                                                        Ub+,di is the dielectric breakdown voltage in positive polarity. Ub+,di and
+the field enhancement factor, which depends on the macroscopic ge­
+                                                                                        Ub+,th are ramps calculated from dielectric and thermal RRBV (RRBVdi
+ometry as well as the microscopic roughness of the contacts [20]. In the
+                                                                                        and RRBVth), which are held constant for each study case. The O.SCA
+model, RDBV is a parameter that can have different values depending on
+                                                                                        input is the moment of separation of the arcing contacts of a CB unit (s)
+the applied voltage polarity. RDBV is approximated and assumed to be
+                                                                                        [21]. After this event, the positive and negative ramps of dielectric
+constant for each polarity in the studies conducted in section IV.
+                                                                                        breakdown voltages begin based on RRBVdi. The thermal breakdown
+    Applying a constant RDBV to approximate the breakdown voltage
+                                                                                        voltage, on his hand, begins after the current extinction (zero crossing),
+decrease during a closing operation, an ideal switch is used and
+                                                                                        based on RRBVth. This approach should not be misperceived with the
+controlled by switching logic, shown in Fig. 3. The toggle signal of this
+                                                                                        4-parameter envelope method stated in IEC 62271 standards.
+switch for each MBU, is signalint, a logical value. The signalarc logical
+                                                                                            The equivalent circuit used in the model is presented in Fig 5, it is
+value allows inserting or not an arc impedance in series with each
+                                                                                        inspired by [10,11,25]. The number of MBUs can be modified by
+switch. The F.MCA input is the instant of arcing contacts touching [21].
+                                                                                        adjusting the number of units and grading capacitors in the circuit. US is
+The current i0 is the current chopping, iu is the MBU current, di/dtext is              the source voltage, LS and CS compose the source impedance, the indexes
+the limit of the current derivative that the MBU can quench and diu/dt is               b concern the bus bars, the indexes p are the lumped-element parameters
+the derivative of the current iu. The voltage Ub+ is the breakdown                      of the grading capacitor. The CCT is the intrinsic (parasitic) capacitance
+voltage in positive pol
