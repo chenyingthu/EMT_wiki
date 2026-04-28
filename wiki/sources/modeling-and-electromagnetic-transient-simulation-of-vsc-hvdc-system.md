@@ -1,9 +1,9 @@
 ---
 title: "Modeling and electromagnetic transient simulation of VSC-HVDC system"
 type: source
-authors: ['CNKI']
+authors: ['Zeng 等']
 year: 2022
-journal: ""
+journal: "中国电机工程学报"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/26/Zeng 等 - 2010 - Modeling and electromagnetic transient simulation of UHV autotransformer.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/26/Zeng 等 - 2010 - Modeling and electromagnetic transient s
 
 # Modeling and electromagnetic transient simulation of VSC-HVDC system
 
-**作者**: CNKI
+**作者**: Zeng 等
 **年份**: 2022
 **来源**: `26/Zeng 等 - 2010 - Modeling and electromagnetic transient simulation of UHV autotransformer.pdf`
 
 ## 摘要
 
-To correctly apply transformer differential protection in the environment of ultra high voltage (UHV), it is necessary to model the UHV power transformer reasonably and carry out the corresponding electro-magnetic transient simulations. According to the equivalent circuit of three winding autotransformer, we set up the three winding autotransformer model by means of unified magnetic equivalent circuit (UMEC) transformer model provided by EMTDC software. The parameters of UHV transformer are converted to those of the UMEC model. By this way, the UHV transformer model is built. Under the UHV environment, the excitation and internal fault current of UHV power transformer are simulated, and the simulated data are utilized to investigate the operation reliability of the well-applied differentia
+为了在特高压环境下正确应用变压器差动保护，需要对特高压变压器进行合理建模，并进行相应的电磁暂态仿真。根据三绕组自耦变压器星型等值电路的原理，用电磁暂态仿真软件 EMTDC 中的统一电磁等效电路 (unified magnetic equivalent circuit，UMEC)普通三绕组变压器模型来模拟 1 000 MVA/1 050 kV 三绕组自耦变压器，将特高压变压器参数折算成 UMEC 模型参数，形成特高压变压器模型。在特高压环境下，分别进行励磁涌流和故障电流仿真，并用于考察应用得最为广泛的 2 次谐波闭锁的变压器差动保护的动作可靠性。分析表明：当合闸角和剩磁满足一定条件时，特高压变压器三相励磁涌流的 2 次谐波含量都会在 10%以下，即使采用一相制动三相的 2 次谐波闭锁策略，如果 2 次谐波门槛值维持在 15%~20%，也不能避免差动保护误动；另外，在某些轻微故障的情况下，故障初期故障电流的 2 次谐波含量成分较高，会使保护动作短暂延迟。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：在特高压交流系统中，变压器差动保护仍需可靠地区分励磁涌流与内部故障电流，但传统二次谐波闭锁判据通常按普通电压等级变压器经验设置，直接用于特高压自耦变压器可能误动或延时。研究对象是1 000 MVA/1 050 kV三绕组单相特高压自耦变压器及其空载合闸、匝间短路、匝地短路、引出线短路等电磁暂态过程。难点在于：特高压变压器多为自耦结构，高压与中压绕组既有磁耦合又有电气连接；EMTDC中没有现成的三绕组自耦变压器模型；铁心非线性、剩磁、合闸角和特高压线路分布参数都会影响涌流谐波成分。本文贡献不是提出新的保护判据，而是给出一种可在EMTDC中落地的建模方法：利用UMEC普通三绕组变压器模型，通过绕组首尾相接和参数折算来模拟三绕组自耦变压器，并在特高压环境下考察二次谐波闭锁差动保护的适用风险。
+
+### 2. 模型、算法与实现技术
+
+本文模型以三绕组自耦变压器的三端星型等值电路为基础。原自耦变压器被分解为串联绕组、公共绕组和低压绕组，接口量是各绕组端电压、电流以及折算到公共绕组或低压绕组基准下的漏阻抗。式(1)给出忽略励磁电流时的电压平衡关系：高压侧串联绕组与公共绕组、串联绕组与低压绕组之间的电压差，分别由对应支路电流与漏阻抗决定。这个方程的作用是把自耦变压器的电气连接关系转化为可由三端星型漏阻抗网络表达的参数关系，从而可以用普通三绕组变压器实验参数求得等值支路阻抗。实现上，作者在EMTDC中调用UMEC三绕组变压器模型：第1绕组模拟低压绕组，第2绕组模拟串联绕组，第3绕组模拟公共绕组，并将第2、第3绕组首尾相接，形成高压端和中压端，以保留自耦变压器高、中压侧之间的电联系；同时UMEC模型用于表示磁路耦合和铁心非线性。输入主要包括额定容量、电压等级、短路阻抗、空载参数、饱和特性、剩磁、合闸角和故障位置；输出则是各侧电流、差流及其二次谐波含量，用于分析差动保护动作。
+
+### 3. 验证、优势与不足
+
+作者的有效性验证主要是仿真应用验证：在PSCAD/EMTDC环境中建立1 000 MVA/1 050 kV特高压自耦变压器模型，并将其放入特高压电磁环境中，进行空载合闸励磁涌流和内部故障电流仿真。工具基线是EMTDC提供的UMEC普通三绕组变压器模型；建模基线是三绕组自耦变压器的三端星型等值电路。评价指标不是运行速度，而是各相差流波形及二次谐波含量是否揭示差动保护的动作风险。原文摘要明确报告：在某些合闸角和剩磁条件下，特高压变压器三相励磁涌流二次谐波含量均低于10%；若二次谐波制动门槛仍取15%~20%，即使采用“一相制动三相”策略，也不能避免差动保护误动；在某些轻微内部故障初期，故障电流二次谐波含量较高，会造成保护短时延迟。优势在于模型同时考虑自耦变压器高、中压侧电气联系、磁耦合和铁心非线性，并把变压器暂态放入特高压系统环境而非孤立元件中考察。从验证范围看，论文主要验证二次谐波闭锁在所设UHV模型和工况下的风险，并未证明该模型对所有特高压变压器结构、所有保护算法、所有饱和曲线和实时仿真步长均适用。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于：特高压自耦变压器的励磁涌流谐波特征可能不同于传统经验，二次谐波含量并不必然高于15%~20%，因此按常规门槛配置差动保护存在误动风险；同时，轻微内部故障初期也可能出现较高二次谐波，导致保护延时。该页面适合作为后续研究的建模入口，用于复用UMEC三绕组模型构造自耦变压器、开展UHV变压器空载合闸和内部故障EMT仿真、评估二次谐波闭锁保护边界。不适合外推为通用保护整定结论，也不能直接替代现场录波校核、厂家详细铁心参数模型或其他换流变、VSC-HVDC设备模型。
+
+### 证据边界
+
+- 原文证据明确来自《特高压自耦变压器的建模和电磁暂态仿真》，而用户给出的元数据标题为“Modeling and electromagnetic transient simulation of VSC-HVDC system”、年份为2022，二者明显不一致；本说明按提供的UHV自耦变压器原文内容整理。
+- 原文摘要直接支持的量化结论包括：某些合闸角和剩磁条件下三相励磁涌流二次谐波含量均低于10%，以及传统15%~20%门槛可能导致误动；更细的相别百分比若未回到原文表图，不应作为已核验证据使用。
+- UMEC绕组首尾相接、参数折算、三端星型等值电路和式(1)来自原文方法描述；关于内部故障中短路匝具体建模细节若未见完整章节和图表，应视为需复核的实现细节。
+- 原文验证以EMTDC电磁暂态仿真为主，未在提供证据中看到现场录波、实物试验或硬件实时仿真验证，因此结论边界应限定在仿真模型和所设工况内。
+- 论文关注的是特高压自耦变压器差动保护中的励磁涌流与内部故障电流问题，不应据此推断VSC-HVDC控制、换流器暂态或直流保护性能。
+- 从提供文本看，作者没有给出对多种铁心磁滞模型、不同厂家变压器结构、不同保护判据的系统对比，因此模型准确性和保护整定建议仍需结合具体工程参数复核。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于UMEC模型构建特高压三绕组自耦变压器电磁暂态仿真模型
-- 提出利用第四绕组模拟变压器内部匝间与匝地短路故障的建模方法
-- 揭示特高压环境下励磁涌流与轻微故障电流的二次谐波分布特性
-
+- 问题定位：为了在特高压环境下正确应用变压器差动保护，需要对特高压变压器进行合理建模，并进行相应的电磁暂态仿真。根据三绕组自耦变压器星型等值电路的原理，用电磁暂态仿真软件 EMTDC 中的统一电磁等效电路 (unified magnetic equivalent circuit，UMEC)普通三绕组变压器模型来模拟 1 000 MVA/1 050 k。
+- 方法机制：本文提出了一种基于统一电磁等效电路(UMEC)的特高压(UHV)三绕组自耦变压器电磁暂态建模方法。该方法通过将三绕组自耦变压器等效为三端星型电路，利用EMTDC软件中的UMEC普通三绕组变压器模型，将其中两个绕组首尾相接形成高压和中压绕组，从而模拟自耦变压器的电气联系和磁耦合特性。模型充分考虑了铁心非线性饱和特性（采用分段线性U-I曲线描述）和绕组间的电磁耦合关系。
+- 验证证据：对比验证（Benchmark验证）与现场工程参数验证相结合；中国晋东南—南阳—荆门1000kV交流特高压试验示范工程系统，包含：1000kV/1000MVA单相自耦变压器、晋东南—南阳和南阳—荆门两段特高压输电线路（具有分布参数）、高压并联电抗器（960Mvar/720Mvar/600Mvar）、电抗补偿器（240Mvar）和电容补偿器（240Mvar）；
+- 量化与结论：特高压变压器三相励磁涌流的2次谐波含量可低至6.1%（传统认为应大于15%~20%）；在最严重合闸条件下（剩磁0.9Bm/0/-0.9Bm，合闸角30°），三相差流2次谐波含量均低于13%，最小仅6.1%；当采用'一相制动三相'策略时，需将2次谐波制动比调整至10%以下才能避免误动；
+- 适用边界：适用于理解本文 Modeling and electromagnetic transient simulation of VSC-HVDC system （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 统一电磁等效电路-umec、参数折算、三端星型等值电路 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[统一电磁等效电路-umec|统一电磁等效电路(UMEC)]]
 - [[参数折算|参数折算]]
@@ -36,9 +64,7 @@ To correctly apply transformer differential protection in the environment of ult
 - [[分段线性插值法|分段线性插值法]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 涉及的模型
-
 
 - [[特高压自耦变压器|特高压自耦变压器]]
 - [[三绕组变压器|三绕组变压器]]
@@ -47,9 +73,7 @@ To correctly apply transformer differential protection in the environment of ult
 - [[高压并联电抗器|高压并联电抗器]]
 - [[内部短路故障模型|内部短路故障模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[变压器差动保护|变压器差动保护]]
@@ -59,15 +83,11 @@ To correctly apply transformer differential protection in the environment of ult
 - [[特高压电网|特高压电网]]
 - [[谐波分析|谐波分析]]
 
-
 ## 主要发现
-
 
 - 特高压变压器三相励磁涌流二次谐波含量可低于10%易致差动保护误动
 - 轻微内部故障初期故障电流二次谐波含量较高会导致保护装置短暂延时动作
 - 传统15%至20%二次谐波制动门槛在特高压环境下无法可靠区分涌流与故障
-
-
 
 ## 方法细节
 
@@ -77,16 +97,13 @@ To correctly apply transformer differential protection in the environment of ult
 
 ### 数学公式
 
-
 **公式1**: $$\begin{cases} \dot{U}_S' - \dot{U}_Q' = \dot{I}_S' Z_S' + \dot{I}_Q' Z_Q \\ \dot{U}_S' - \dot{U}_T' = \dot{I}_S' Z_S' + \dot{I}_T' Z_T' \end{cases}$$
 
 *三绕组自耦变压器三端星型等值电路的电压平衡方程，其中$Z_S'$为串联绕组折算到公共绕组的漏阻抗，$Z_Q$为公共绕组漏阻抗，$Z_T'$为低压绕组折算到公共绕组的漏阻抗*
 
-
 **公式2**: $$\begin{cases} X_2 + X_3 = X_s \\ X_2 / X_3 = (N_2 / N_3)^2 \end{cases}$$
 
 *内部故障模型中短路匝（第2绕组）与非短路部分（第3绕组）的漏电抗分配关系，$X_s$为串联绕组总漏电抗，$N_2/N_3$为匝数比，近似等于额定电压比*
-
 
 ### 算法步骤
 
@@ -106,7 +123,6 @@ To correctly apply transformer differential protection in the environment of ult
 
 8. 进行电磁暂态仿真：在包含分布参数特高压输电线路和高压并联电抗器的完整系统模型中进行空载合闸和故障仿真
 
-
 ### 关键参数
 
 - **变压器额定容量**: 1000 MVA（高压、中压绕组），334 MVA（低压绕组）
@@ -122,8 +138,6 @@ To correctly apply transformer differential protection in the environment of ult
 - **铁心剩磁**: 0.9Bm（最大值），-0.9Bm（反向最大值）
 
 - **2次谐波制动门槛**: 传统15%~20%，建议调整至10%以下
-
-
 
 ## 仿真结果
 
@@ -143,8 +157,6 @@ To correctly apply transformer differential protection in the environment of ult
 
 | 模型验证对比（100MVA两绕组自耦变压器benchmark） | 高压侧电流波形在空载合闸和低压端短路两种工况下，自耦变压器模型与普通变压器首尾相接模型的波形完全一致，电流幅值偏差小于0.5% | 验证了将普通变压器绕组首尾相接构建自耦变压器模型的等效性和准确性 |
 
-
-
 ## 量化发现
 
 - 特高压变压器三相励磁涌流的2次谐波含量可低至6.1%（传统认为应大于15%~20%）
@@ -154,7 +166,6 @@ To correctly apply transformer differential protection in the environment of ult
 - 特高压变压器绕组间短路阻抗比普通变压器大得多（高压-中压18%，高压-低压62%）
 - 单相变压器容量达1000MVA，空载电流仅0.07%，空载损耗155kW
 - 模型验证显示，自耦变压器与普通变压器首尾相接模型的电流波形偏差小于0.5%，证明了建模方法的准确性
-
 
 ## 关键公式
 
@@ -170,11 +181,34 @@ $$\begin{cases} X_2 + X_3 = X_s \\ \frac{X_2}{X_3} = \left(\frac{N_2}{N_3}\right
 
 *用于计算内部短路故障模型中短路匝（第2绕组）与非短路部分（第3绕组）的漏电抗分配，通过设置不同的额定电压比$U_{N2}/U_{N3}$来模拟不同比例的匝间短路*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（Benchmark验证）与现场工程参数验证相结合
 - **测试系统**: 中国晋东南—南阳—荆门1000kV交流特高压试验示范工程系统，包含：1000kV/1000MVA单相自耦变压器、晋东南—南阳和南阳—荆门两段特高压输电线路（具有分布参数）、高压并联电抗器（960Mvar/720Mvar/600Mvar）、电抗补偿器（240Mvar）和电容补偿器（240Mvar）
 - **仿真工具**: PSCAD/EMTDC电磁暂态仿真软件，使用UMEC（统一电磁等效电路）变压器模型
 - **验证结果**: 通过构建100MVA两绕组自耦变压器的对比模型（EMTDC自带benchmark模型vs普通变压器首尾相接模型），在空载合闸和短路故障两种工况下验证了电流波形的一致性（偏差<0.5%）。在特高压完整系统仿真中，揭示了传统2次谐波制动策略（15%~20%门槛）在特高压环境下的失效风险，定量给出了不同剩磁和合闸角组合下的谐波分布特性（最低6.1%），证明了所提建模方法在特高压电磁暂态仿真中的有效性和必要性
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modeling and electromagnetic transient simulation of VSC-HVDC system`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 统一电磁等效电路-umec、参数折算、三端星型等值电路 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于UMEC模型构建特高压三绕组自耦变压器电磁暂态仿真模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/26/Zeng 等 - 2010 - Modeling and electromagnetic transient simulation of UHV autotransformer.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

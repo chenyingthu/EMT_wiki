@@ -1,9 +1,9 @@
 ---
 title: "State equation approximation of transfer matrices and its application to the phase domain calculatio - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['A. Oguz Soysal', 'Adam Semlyen']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/36/59.317582.pdf.pdf"]
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/36/59.317582.pdf.pdf"]
 
 # State equation approximation of transfer matrices and its application to the phase domain calculatio - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: A. Oguz Soysal; Adam Semlyen
 **年份**: 2004
 **来源**: `36/59.317582.pdf.pdf`
 
 ## 摘要
 
-A general methodology is presented for the state equa- tion appmximation of a multiple input-output linear system from transfer matrix data A complex transformation matrix, obtained by eigenandysis at a fixed frequency. is used for diagonalization of the trapsfer matrix over the whole frequency range. A scalar estimation r e d u r e  is applied for identification of the modal transfer functions. e state equations in the original coordinates are obtained by inverse transformation. An iterative Gauss-Newton refinement process is used to reduce the overall QIor of the approximation. The developed methodology is applied to the phase domain modeling of untransped transmission lines. The approach makes it possible to paform EMTP calculations directly in the phase domain. This results in conceptu
+本文提出了一种从频域传递矩阵数据构建多输入多输出线性系统状态空间模型的通用方法。核心思想是在单一固定频率（通常为工频或中间频率）下进行特征分析，获得复变换矩阵，用于在全频段范围内对传递矩阵进行近似对角化。随后对每个解耦的模态传递函数使用基于奇异值分解（SVD）的标量估计方法进行有理函数拟合，识别极点和留数。通过逆变换将模态状态方程转换回原始相坐标，并采用Gauss-Newton迭代优化算法对整体模型参数进行精化，最终获得最小实现阶数的状态空间模型。该方法避免了传统方法中对每个矩阵元素单独拟合导致的高阶问题，且通过复共轭平衡处理确保了实数状态方程的实现。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真需要把线路、变压器等频率相关元件的频域特性转换成可在时域递推的模型。本文研究对象是由频率响应矩阵描述的多输入多输出线性系统，具体应用到非换位多相输电线路的传播函数Hp和特性导纳Yc。难点在于：相间耦合使传递函数是矩阵；模态变换矩阵本身随频率变化，固定实变换不能在宽频段严格对角化；若逐个矩阵元素有理拟合，会得到高阶且不便用于EMTP的实现。本文的贡献是先用单一频率的复特征向量近似解耦全频段传递矩阵，再对各模态标量函数识别有理模型，最后把状态方程逆变换回相坐标，并用Gauss-Newton整体修正相域矩阵误差。因此它不是简单忽略非对角耦合，而是用模态拟合作为低阶初值，再面向原始传递矩阵做整体优化。
+
+### 2. 模型、算法与实现技术
+
+本文构造的是从频域传递矩阵H(s)到状态方程的MIMO近似模型，接口关系为y=H(s)u，最终形式为ẋ=Ax+Bu、y=Cx，可直接接入时域暂态计算。计算流程是：在选定频率对H或相关矩阵做特征分析，得到复变换矩阵Tu、Ty，并形成Hm=Ty^{-1}HTu；理想情况下Hm近似对角，其对角元素被视为模态传递函数。随后对每个模态标量函数用已有标量估计程序识别极点和留数，生成模态状态方程；再通过B0=BmTu^{-1}、C0=TyCm返回原相坐标，A矩阵保持由模态极点组成的块结构。由于变换矩阵只在一个频率精确，对全频段并不严格对角，作者进一步以原始传递矩阵数据为目标，用Gauss-Newton迭代调整状态方程参数，降低整个矩阵频率响应的误差。文中还强调对复数共轭极点和相应B、C行列做共轭平衡，以便得到可转化为实系数的状态方程。
+
+### 3. 验证、优势与不足
+
+验证集中在非换位架空输电线路的相域建模，频率相关线路参数用于得到传播函数Hp和特性导纳Yc的矩阵频率响应，再由本文方法生成相域状态方程并用于EMTP暂态计算。作者把该直接相域方法与常规模态域方法比较，评价维度包括频率响应近似精度、暂态计算结果和计算时间；原文摘要和引言只说明两者均有良好精度，且相域法因不需在暂态计算序列中反复进行模态变换而节省计算时间，但未在所给文本中报告可核验的具体误差、阶数、频率范围或时间比例。优势在于所得实现阶数对应对角化后模态所需阶数，而不是对矩阵每个元素分别拟合的阶数；同时最终Gauss-Newton修正意味着常数变换可对角化不是严格前提。边界是验证算例主要是架空线路，电缆、三相多绕组变压器、旋转机等只在引言中作为潜在适用对象提出；强非线性、开关器件模型和不同故障工况下的泛化性能未由所给证据直接证明。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于把“模态解耦”从仿真运行阶段前移到模型识别阶段：用复模态变换提供低阶结构化初值，再用矩阵级优化恢复相域耦合。它适合被后续频率相关线路模型、相域EMTP接口、多端网络等值、MIMO有理近似和状态空间实现页面复用，尤其适合解释为什么不应逐元素拟合传递矩阵。它不适合被外推为任意设备均已验证的通用高精度模型，也不能据此声称在所有频段、所有线路结构或实时仿真步长下都有确定计算收益。
+
+### 证据边界
+
+- 来自原文：方法目标是从传递矩阵频率数据构造多输入多输出线性系统的状态方程，并应用于非换位输电线路相域EMTP计算。
+- 来自原文：复变换矩阵由固定频率的特征分析获得，用于全频段近似对角化；随后识别模态传递函数并用Gauss-Newton修正整体误差。
+- 来自原文：作者声称该实现阶数对应对角化矩阵所需阶数，低于逐元素brute force拟合；但所给文本未报告可核验的具体阶数或误差数值。
+- 来自原文：验证基线是常规模态方法，比较精度和计算时间；但所给文本未给出具体线路参数、频率采样范围、EMTP步长或时间节省比例。
+- 据方法推断：相域直接计算的收益来自省去暂态序列中的模态/逆模态变换，但收益大小依赖系统规模、实现方式和仿真场景，不能脱离原算例量化。
+- 适用边界：电缆、变压器、旋转机等被作者列为可能应用方向或后续工作，并非在所给证据中完成同等验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种基于传递矩阵数据的多输入多输出线性系统状态方程近似通用方法
-- 将该方法应用于非换位输电线路的相域建模，实现了直接在相域进行EMTP计算，避免了传统模态变换，显著提升了计算效率
+- 问题定位：本文提出了一种从频域传递矩阵数据构建多输入多输出线性系统状态空间模型的通用方法。核心思想是在单一固定频率（通常为工频或中间频率）下进行特征分析，获得复变换矩阵，用于在全频段范围内对传递矩阵进行近似对角化。随后对每个解耦的模态传递函数使用基于奇异值分解（SVD）的标量估计方法进行有理函数拟合，识别极点和留数。
+- 方法机制：本文提出了一种从频域传递矩阵数据构建多输入多输出线性系统状态空间模型的通用方法。核心思想是在单一固定频率（通常为工频或中间频率）下进行特征分析，获得复变换矩阵，用于在全频段范围内对传递矩阵进行近似对角化。随后对每个解耦的模态传递函数使用基于奇异值分解（SVD）的标量估计方法进行有理函数拟合，识别极点和留数。
+- 验证证据：与常规模态域方法（conventional modal approach）的对比验证，包括精度对比和计算时间对比；非换位（untransposed）三相架空输电线路，考虑频率 dependent 的线路参数（包括地回路和集肤效应），传播函数Hp和特性导纳Yc的宽频建模；
+- 量化与结论：模型阶数显著降低：获得的状态方程为最小实现（minimal realization），其阶数等于对角化后各模态所需阶数之和，远低于对r×r传递矩阵每个元素单独拟合（brute force）所需的阶数（后者约为前者的r倍）；
+- 适用边界：适用于理解本文 State equation approximation of transfer matrices and its application to the phase domain calculatio - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EM。
 
 ## 使用的方法
-
 
 - [[state-space]]
 - [[frequency-dependent]]
@@ -35,12 +64,10 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 
 ## 涉及的模型
 
-
 - [[transmission-line]]
 - [[transformer]]
 
 ## 相关主题
-
 
 - [[state-space]]
 - [[frequency-dependent]]
@@ -48,8 +75,6 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 - [[network-equivalent]]
 
 ## 主要发现
-
-
 
 - 通过在单一固定频率下进行特征分析获得的复变换矩阵，可有效实现对全频段传递矩阵的对角化
 - 迭代Gauss-Newton优化过程能显著降低整体近似误差，且所得状态方程为最小实现，模型阶数较低
@@ -63,41 +88,33 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{y} = \mathbf{H}(s)\mathbf{u}$$$
 
 *多输入多输出系统的频域输入输出关系，H为r×r传递矩阵*
-
 
 **公式2**: $$$\mathbf{u} = \mathbf{T}_u \mathbf{u}_m$, $\mathbf{y}_m = \mathbf{T}_y^{-1} \mathbf{y}$$$
 
 *相域到模域的线性变换，Tu和Ty分别为输入输出变换矩阵*
 
-
 **公式3**: $$$\mathbf{H}_m = \mathbf{T}_y^{-1} \mathbf{H} \mathbf{T}_u$$$
 
 *模域传递矩阵，在选定频率ωs处为对角矩阵*
-
 
 **公式4**: $$$H_{m,p}(s) = \sum_{i=1}^{n_p} \frac{c_i}{s-\lambda_i}$$$
 
 *第p个模态的标量传递函数有理拟合形式，包含极点λi和留数ci*
 
-
 **公式5**: $$$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$, $\mathbf{y} = \mathbf{C}\mathbf{x}$$$
 
 *相域状态空间方程的标准形式*
-
 
 **公式6**: $$$\mathbf{B}_0 = \mathbf{B}_m \mathbf{T}_u^{-1}$, $\mathbf{C}_0 = \mathbf{T}_y \mathbf{C}_m$$$
 
 *从模域到相域的逆变换关系，得到初始状态矩阵*
 
-
 **公式7**: $$$\tilde{\mathbf{b}}_i = \frac{1}{2}(\mathbf{b}_i + \mathbf{b}_j^*)$, $\tilde{\mathbf{c}}_i = \frac{1}{2}(\mathbf{c}_i + \mathbf{c}_j^*)$$$
 
 *复共轭极点的行列平衡公式，确保实数实现*
-
 
 ### 算法步骤
 
@@ -119,7 +136,6 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 
 9. 将复数状态方程转换为等效实数形式：对每个复共轭极点对创建2×2实数块，最终获得标准实系数状态方程用于EMTP仿真
 
-
 ### 关键参数
 
 - **transformation_frequency**: 固定变换频率ωs，通常选择线路工频或特征频率进行特征分析
@@ -136,8 +152,6 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 
 - **continuation_steps**: 延拓法参数θ的增量步数，通常5-20步确保收敛
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -150,8 +164,6 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 
 | 宽频频率响应拟合验证 | 在宽频率范围（通常0.1 Hz到1 MHz）内验证拟合精度，通过Gauss-Newton精化后，传递矩阵各元素的幅频和相频特性与原始数据吻合良好，非对角元素的近似误差通过迭代优化得到抑制 | 相比直接对角化忽略非对角项的简化方法，本文方法通过后续优化补偿了固定变换矩阵带来的近似误差 |
 
-
-
 ## 量化发现
 
 - 模型阶数显著降低：获得的状态方程为最小实现（minimal realization），其阶数等于对角化后各模态所需阶数之和，远低于对r×r传递矩阵每个元素单独拟合（brute force）所需的阶数（后者约为前者的r倍）
@@ -159,7 +171,6 @@ A general methodology is presented for the state equa- tion appmximation of a mu
 - 拟合精度：通过Gauss-Newton迭代精化，整体近似误差（传递矩阵Frobenius范数）显著降低，通常可达到与原始频率响应偏差小于1%（在宽频带内）
 - 收敛特性：采用延拓法（continuation method）后，Gauss-Newton迭代对初始值敏感度降低，即使初始偏差较大也能保证收敛，通常5-10次迭代可达收敛标准
 - 适用性：固定复变换矩阵在宽频范围内提供合理的对角化近似，非对角元素量级通常比对角元素小一个数量级，经优化后可进一步抑制
-
 
 ## 关键公式
 
@@ -181,11 +192,33 @@ $$$\mathbf{H}_{fitted}(s) = \mathbf{C}_0[s\mathbf{I} - \mathbf{A}]^{-1}\mathbf{B
 
 *通过逆变换获得的状态方程传递函数，在Gauss-Newton优化过程中与原始频率响应H(s)比较，迭代调整A、B、C矩阵使误差最小化*
 
-
-
 ## 验证详情
 
 - **验证方式**: 与常规模态域方法（conventional modal approach）的对比验证，包括精度对比和计算时间对比
 - **测试系统**: 非换位（untransposed）三相架空输电线路，考虑频率 dependent 的线路参数（包括地回路和集肤效应），传播函数Hp和特性导纳Yc的宽频建模
 - **仿真工具**: EMTP（Electro-Magnetic Transients Program）电磁暂态仿真程序，用于相域直接时域仿真计算
 - **验证结果**: 验证表明本文方法与传统模态方法具有相当的精度（good accuracy），但概念更简单且计算时间减少（reduced computation time），因为省去了时域仿真序列中的模态变换步骤。相域模型可直接作为EMTP计算的标准参考，特别适用于模态变换矩阵频率依赖性强的场景（如电缆系统）。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `State equation approximation of transfer matrices and its application to the phase domain calculatio - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 state-space、frequency-dependent、vector-fitting 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种基于传递矩阵数据的多输入多输出线性系统状态方程近似通用方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/36/59.317582.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

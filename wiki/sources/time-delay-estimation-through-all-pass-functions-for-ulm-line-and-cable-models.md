@@ -3,7 +3,7 @@ title: "Time-delay estimation through all-pass functions for ULM line and cable 
 type: source
 authors: ['S. Loaiza-Elejalde']
 year: 2026
-journal: "Electric Power Systems Research, 252 (2026) 112414. doi:10.1016/j.epsr.2025.112414"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/38/Loaiza-Elejalde 等 - 2026 - Time-delay estimation through all-pass functions for ULM line and cable models.pdf"]
@@ -17,35 +17,60 @@ sources: ["EMT_Doc/38/Loaiza-Elejalde 等 - 2026 - Time-delay estimation through
 
 ## 摘要
 
-Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo a, Martin G. Vega-Grijalva b, O. Ramos-Lea˜nos c Traveling-wave line models, such as the ULM, are widely used in time-domain EMT simulations for power systems. These models require the rational approximation of both the characteristic admittance matrix Yc, and the propagation matrix H. Rational fitting of H is challenging due to the inclusion of a mix of modal delays in all
+本文提出了一种基于全通滤波器（All-Pass Filter, APF）和延迟均衡的迭代时延估计方法，用于ULM（Universal Line Model）线路和电缆模型中传播矩阵H的模态时延识别。该方法通过有理拟合和全通分解，确保合成模型具有因果性和最小相位特性。与传统基于均方根误差（rms-error）最小化的方法（如Golden Section搜索）不同，本方法通过迭代提取全通分量并计算其群延迟修正量，逐步逼近真实的模态时延，直至所有零点位于复平面左半平面（LHP），从而严格保证最小相位条件。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT时域仿真中的ULM线路/电缆模型需要把特性导纳矩阵Yc和传播矩阵H拟合成有理函数，以便在时域中高效卷积或递推实现。难点集中在H：其各元素混合了多个传播模态的时延，若不先识别并提取这些模态时延，Vector Fitting得到的有理近似会阶数高、相位不正确，甚至破坏因果性。已有Bode积分法依赖截止频率Ω的选择，且H模态幅值不一定在分析频带内衰减到指定阈值；基于Golden Section的rms-error搜索虽然可改进频域拟合误差，但最小rms-error对应的延迟不一定保证时域暂态最优，也可能给出非因果的传播速度。本文研究对象是ULM中传播矩阵H的模态时延估计与提取。核心贡献是把“正确延迟”转化为“提取延迟后剩余函数应为最小相位”的判据：通过全通滤波器识别剩余函数中的右半平面零点，并用全通群延迟对延迟估计作迭代均衡，直到合成的H模型满足因果和最小相位要求。
+
+### 2. 模型、算法与实现技术
+
+本文算法的输入是频域传播矩阵H或其模态传播函数，以及线路/电缆长度、频率采样点和初始延迟估计；输出是每个模态或延迟组的时延τ，以及剥离纯延迟后的最小相位有理函数。物理分解基础是Hm,i=exp[-(αi+jβi)l]，并将相位项拆成最小相位部分和纯延迟项：Hm,i=Hmin,i exp(-jωτi)。算法先用Bode积分或物理速度给出τ的初值，再构造辅助函数Haux=H exp(jωτest)，相当于从原始传播函数中移除当前估计的纯延迟。随后对Haux进行Vector Fitting并检查零点位置；若存在右半平面零点，说明被移除的延迟不足或不恰当，剩余函数仍含有全通成分。此时把这些右半平面零点与其镜像左半平面极点组成全通函数Hap。全通函数幅值为1但贡献相位，其群延迟τap(ω)=-d∠Hap/dω反映当前辅助函数中仍隐藏的延迟量。作者将全通群延迟转换为延迟修正量并更新τest，重复拟合、零点检查和延迟均衡，直到所有零点位于左半平面。这样，延迟估计不是以频域rms误差最小为唯一目标，而是由最小相位条件约束，机制上直接服务于ULM传播函数的因果实现。
+
+### 3. 验证、优势与不足
+
+作者用三个算例验证方法：一是具有已知延迟的合成传递函数，用来检查全通迭代能否恢复预设时延；二是地下电缆系统，包含三根电缆且每根具有芯线、护套、铠装和大地回路等多层导体，用来考察复杂多导体电缆中的混合模态延迟；三是架空线路的EMT暂态响应，用Numerical Laplace Transform作为参考解，并与Bode积分法和基于Golden Section的rms-error延迟搜索进行对比。评价重点包括拟合精度、迭代次数、是否保持因果性、是否得到最小相位的H模型，以及时域暂态响应与参考解的一致性。原文摘要给出的结论是：所提全通滤波器方法在保持因果性的同时，可达到与当前rms-error最小化方法相近的精度，并使用更少迭代；同时避免Golden Section方法在某些情况下可能给出的因果性违反。需要注意，当前抽取文本未提供可核验的具体误差数值、迭代次数表或运行时间，因此不能把“更少迭代”量化为固定比例。验证范围也主要限于作者选取的合成函数、一个地下电缆系统和一个架空线路暂态算例；尚不能据此断言该方法对所有频率范围、所有线路拓扑、所有拟合阶数选择或实时仿真步长都同样可靠。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于：ULM中H的时延估计不应只看频域拟合误差，而应同时满足传播函数剥离延迟后的最小相位结构；全通分量提供了一个可计算的“剩余延迟”指示器。它适合被后续涉及ULM、FD/TD线路模型、有理拟合、传播矩阵延迟分组、因果性检查的页面复用，也适合用于解释为什么某些rms-error更小的延迟反而会导致非因果时域响应。工程上，它可作为线路和电缆宽频模型参数生成流程中的延迟识别模块。但它不应被外推为通用优化器，也不应替代对Yc拟合、频率采样、拟合阶数、数值稳定性和具体EMT平台实现误差的独立校核。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象是ULM线路/电缆模型中传播矩阵H的模态时延估计，关键词包括all-pass filters、minimum phase、rational fitting、time delays和traveling waves。
+- 来自原文的确定信息：作者明确列出三个测试案例，即合成传递函数、地下电缆系统和架空线路EMT响应；对比方法包括Bode积分思路和基于rms-error最小化的Golden Section类方法。
+- 来自原文摘要的确定结论：所提方法在保持因果性的同时取得与state-of-the-art rms-error方法相似的精度，并使用更少迭代；但当前抽取文本未报告可核验的误差、迭代次数或运行时间数值。
+- 算法细节中关于右半平面零点、全通分解和群延迟修正的机制与最小相位判据一致，但具体平均群延迟的权重、频率采样策略、拟合阶数选择和收敛容差需以论文完整方法段和表图为准。
+- 从验证范围看，结论尚未覆盖所有电缆结构、线路长度、极端频带、强频变参数、非典型接地条件、实时仿真平台或大规模网络级批量建模场景。
+- 当前页面没有给出软件实现细节、代码、完整参数表和所有图表数据，因此该页可作为理解论文贡献的入口，不能替代对原PDF实验设置和数值结果的逐项复核。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种基于全通函数与延迟均衡的迭代时延估计方法，用于改进ULM线路与电缆模型的传播矩阵有理拟合
-- 该方法在拟合过程中严格保证了合成模型的因果性与最小相位特性，且相比传统均方根误差最小化方法具有更高的计算效率
+- 问题定位：本文提出了一种基于全通滤波器（All-Pass Filter, APF）和延迟均衡的迭代时延估计方法，用于ULM（Universal Line Model）线路和电缆模型中传播矩阵H的模态时延识别。该方法通过有理拟合和全通分解，确保合成模型具有因果性和最小相位特性。
+- 方法机制：本文提出了一种基于全通滤波器（All-Pass Filter, APF）和延迟均衡的迭代时延估计方法，用于ULM（Universal Line Model）线路和电缆模型中传播矩阵H的模态时延识别。该方法通过有理拟合和全通分解，确保合成模型具有因果性和最小相位特性。
+- 验证证据：仿真对比验证：与数值拉普拉斯变换（NLT）参考解对比，以及与现有方法（Bode积分法、Golden Section搜索法）的对比分析；1) 单输入单输出合成传递函数；2) 三根地下电缆系统（每根电缆包含4层导体：芯线、护套、铠装、大地回路）；3) 架空输电线路（aerial line）的EMT暂态响应；
+- 量化与结论：计算效率：所提方法比基于Golden Section (GS)的均方根误差最小化方法需要更少的迭代次数（fewer iterations）即可收敛；因果性保证：所提方法严格确保所有模态的传播速度不超过光速（speed of light），而GS方法在某些情况下会产生因果性违反（causality violations）；
+- 适用边界：适用于理解本文 Time-delay estimation through all-pass functions for ULM line and cable models （2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 vector-fitting 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[vector-fitting]]
 
 ## 涉及的模型
-
 
 - [[transmission-line]]
 - [[cable]]
 
 ## 相关主题
 
-
 - [[frequency-dependent]]
 - [[passivity]]
 
 ## 主要发现
-
-
 
 - 所提方法通过全通滤波器提取模态时延，成功解决了传统Bode积分法在截止频率选取上的局限性，确保了有理近似的因果性
 - 在合成传递函数、地下电缆系统及架空线路EMT响应测试中，新方法在保持拟合精度与现有方法相当的前提下，显著降低了迭代次数
@@ -58,31 +83,25 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 
 ### 数学公式
 
-
 **公式1**: $$$H_{m,i} = e^{-(\alpha_i + j\beta_i)l}$$$
 
 *第i个模态的传播函数，其中$\alpha_i$为模态衰减，$\beta_i$为模态相位，$l$为线路长度*
-
 
 **公式2**: $$$H_{m,i} = e^{-(\alpha_i + j\beta_{min,i})l} e^{-j\omega\tau_i} = H_{min,i} e^{-j\omega\tau_i}$$$
 
 *将模态传播函数分解为最小相位部分$H_{min,i}$和纯延迟部分$e^{-j\omega\tau_i}$，其中$\tau_i$为第i个模态的时延*
 
-
 **公式3**: $$$H(j\omega) = H_{min}(j\omega)H_{ap}(j\omega)$$$
 
 *任意有理系统分解为最小相位系统$H_{min}$和全通系统$H_{ap}$的乘积，全通系统的零点位于右半平面（RHP），与$H_{min}$的极点呈镜像对称*
-
 
 **公式4**: $$$\tau_i = \frac{l}{v(\Omega_i)} + \frac{\phi_{min,i}(\Omega_i)}{\Omega_i}$$$
 
 *基于Bode积分的传统时延估计公式，其中$v(\Omega_i)$为在截止频率$\Omega_i$处的模态速度，$\phi_{min,i}$为最小相位角*
 
-
 **公式5**: $$$H \approx \sum_{i=1}^{N_g} \sum_{k=1}^{N_{H,i}} \frac{R_{i,k}}{j\omega - p_{i,k}} e^{-j\omega\tau_i}$$$
 
 *传播矩阵的有理近似表达式，其中$N_g$为延迟组数，$N_{H,i}$为第i组的近似阶数，$R_{i,k}$和$p_{i,k}$分别为留数矩阵和极点*
-
 
 ### 算法步骤
 
@@ -102,7 +121,6 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 
 8. 收敛输出：输出最终时延估计$\tau_{est}$和对应的最小相位函数$H_{min}$，用于后续的EMT仿真
 
-
 ### 关键参数
 
 - **收敛准则**: 有理拟合后的所有零点位于复平面左半平面（LHP），即系统满足最小相位条件
@@ -112,8 +130,6 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 - **全通函数分解**: 将高阶全通函数分解为一阶和二阶级联，以准确计算群延迟
 
 - **延迟分组**: 将具有相似延迟的模态归为一组（delay group），每组共享一个代表时延$\tau_i$
-
-
 
 ## 仿真结果
 
@@ -129,8 +145,6 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 
 | 架空线路EMT瞬态响应 | 使用Numerical Laplace Transform (NLT)技术作为参考基准（采用$2^{15}$个采样点，精度 tuned to $10^{-8}$），对比了Bode积分法、GS法和所提APF方法的线路暂态响应精度 | 所提APF方法与GS方法达到相似的拟合精度（similar accuracies），但APF方法严格保证因果性和最小相位特性，而GS方法在某些情况下会产生非因果响应 |
 
-
-
 ## 量化发现
 
 - 计算效率：所提方法比基于Golden Section (GS)的均方根误差最小化方法需要更少的迭代次数（fewer iterations）即可收敛
@@ -138,7 +152,6 @@ Time-delay estimation through all-pass functions for ULM line and , J.L. Naredo 
 - 相位特性：通过全通滤波器迭代修正，最终合成模型严格满足最小相位（minimum-phase）条件，即所有零点位于复平面左半平面
 - 参考精度：在架空线路测试中，使用Numerical Laplace Transform作为参考解，采样点数为$2^{15}$，数值精度设置为$10^{-8}$
 - 截止频率问题：传统Bode积分法在截止频率$\Omega$的选取上存在局限性（原文指出magnitude may not decay to 0.1 within the frequency range），所提方法通过迭代全通补偿克服了这一问题
-
 
 ## 关键公式
 
@@ -160,11 +173,34 @@ $$$\Delta\tau = \text{mean}\left(-\frac{d\angle H_{ap}(j\omega)}{d\omega}\right)
 
 *所提方法的关键计算步骤，通过计算全通函数群延迟的平均值作为下一次迭代的时延修正量*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比验证：与数值拉普拉斯变换（NLT）参考解对比，以及与现有方法（Bode积分法、Golden Section搜索法）的对比分析
 - **测试系统**: 1) 单输入单输出合成传递函数；2) 三根地下电缆系统（每根电缆包含4层导体：芯线、护套、铠装、大地回路）；3) 架空输电线路（aerial line）的EMT暂态响应
 - **仿真工具**: 基于Vector Fitting (VF)算法实现有理拟合，使用MATLAB或类似数值计算环境；EMT仿真采用时间域仿真工具（与ULM模型兼容的仿真平台）
 - **验证结果**: 所提APF方法在保证因果性和最小相位特性的前提下，实现了与Golden Section方法相当的拟合精度，但收敛速度更快（迭代次数更少）。在地下电缆和架空线路测试中，成功提取了正确的模态时延，避免了GS方法可能出现的超光速因果性违反问题
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Time-delay estimation through all-pass functions for ULM line and cable models`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 vector-fitting 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种基于全通函数与延迟均衡的迭代时延估计方法，用于改进ULM线路与电缆模型的传播矩阵有理拟合
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/38/Loaiza-Elejalde 等 - 2026 - Time-delay estimation through all-pass functions for ULM line and cable models.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "Noda | A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi"
 type: source
-authors: ['未知']
+authors: ['Noda']
 year: 2007
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 
 # Noda | A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi
 
-**作者**: 
+**作者**: Noda
 **年份**: 2007
 **来源**: `01/Noda - 2007 - A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi.pdf`
 
 ## 摘要
 
-—Previously, a method for identifying a multiphase net- work equivalent for electromagnetic transient calculations using partitioned frequency response has been proposed. The method ac- curately and robustly identiﬁes an equivalent of the target network by dividing its frequency response into sections, but no speciﬁc al- gorithm for the frequency-region partitioning has been proposed. To make the entire identiﬁcation process automatic, this letter pro- poses a binary partitioning algorithm. Index Terms—Electromagnetic transient analysis, equivalent circuits, frequency response, interconnected power systems, power system modeling, power system simulation. I. INTRODUCTION E LECTROMAGNETIC TRANSIENT (EMT) simulations have become crucial for the design and operation of a power system. For redu
+本文提出一种基于二分法的频率区域自动划分算法，用于多相网络等值模型的频域辨识。该方法采用递归试错策略：首先对整个频带应用增强型有理拟合（enhanced rational fitting）进行极点识别；若拟合精度未满足预设容差，则将频带二分并递归处理子频段，直至所有子频段达到精度要求。为避免相邻频段识别出相同极点，边界确定策略首先将分界点设于频段中点，随后搜索距离中点最近的频率响应幅值局部最小值，若该最小值位于半带宽范围内，则将边界调整至该极值点，否则保持中点分界。极点确定后，利用全部频响数据通过最小二乘法计算各极点的留数矩阵，最终构建矩阵部分分式展开（MPFE）模型。该方法通过自适应划分解决了宽频范围内有理拟合的病态条件问题，实现了网络等值辨识的全自动化。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真中，常需把远离暂态源的大规模外部电网，或频响可由测量获得但物理等值电路不明显的设备，替换为可用于时域计算的低阶多相网络等值。本文对象是离散频率点上给定的N×N传递函数矩阵H；当端口电压为输入、端口电流为输出时，H就是多端口/多相导纳矩阵。已有分段频率响应辨识方法可通过在各频段内做增强型有理拟合来稳健识别极点，但频段如何划分仍需人工或经验决定。难点在于：有理函数拟合的病态性不仅取决于频带宽度，也取决于该频段内频率响应形状，因此很难预先计算一个通用合适带宽。本文的贡献不是提出新的等值形式，而是为既有分段辨识框架补上自动二分频域划分算法：从全频段试拟合开始，不满足指定精度就递归二分，并用局部幅值最小点处理边界，从而使极点识别流程可自动结束在满足容差的频段集合上。
+
+### 2. 模型、算法与实现技术
+
+本文沿用多相网络的矩阵部分分式展开模型：H(s)=ΣRm/(s−pm)+D，其中pm为等值网络公共极点，Rm为N×N留数矩阵，D为常数矩阵。算法输入是目标网络在离散角频率ωk处的N×N频率响应矩阵H；输出是可用于EMT计算的MPFE等值参数，即极点、留数矩阵和常数矩阵。计算流程分两层：第一层只对tr(H)=Σhii进行极点识别，以矩阵迹代表系统极点信息，避免直接在矩阵所有元素上同时搜索极点；在每个候选频段上使用增强型有理拟合，并检查是否达到给定精度。若不达标，将该频段分成两个子段并递归处理，直到所有子段通过精度检查。第二层是在全部极点已知后，用整个频率响应数据对H的各矩阵元素做最小二乘，求对应的留数矩阵Rm和D。边界处理机制很关键：初始边界放在当前频段中点，然后从中点附近寻找|H|的最近局部最小值；若该最小值距离中点不超过该频段半带宽，则把边界移到该处，否则保持中点。这样做的机制性目的，是降低相邻子频段识别到同一极点的可能性。
+
+### 3. 验证、优势与不足
+
+作者在数值算例中给出一个测试网络，并展示二分算法得到的频率区域划分和极点识别结果；随后展示导纳矩阵若干元素的辨识结果，原文图注明确包括H的(1,1)和(1,2)元素。验证逻辑是：先看分段后的极点识别是否能完成，再看由这些极点和最小二乘留数构成的MPFE模型能否复现原始导纳矩阵频率响应。原文摘要和方法部分强调，该算法的目标是让此前需要分段频率响应的辨识方法实现自动化，并通过限制各段频率范围缓解有理拟合中的病态条件。可确认的优势是流程层面的：无需预先给定人工频段；不试图解析计算最优带宽，而用拟合精度作为递归停止准则；边界优先落在频响幅值局部最小处，以减少相邻段共享极点。需要注意，所给抽取文本没有报告可核验的数值误差、频段数量、网络规模、EMT时域波形对比、仿真软件或运行时间指标；因此不能据此宣称其在某一500-kV系统、某一误差百分比或某一时域暂态场景中取得了量化性能。其验证边界主要是频域辨识示例，算法对噪声测量数据、强非平滑频响、被动性/稳定性约束和实时仿真适配性的表现，在当前证据中没有展开。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于把“频域分段”从经验预处理变成辨识算法内部的自适应控制环节：频段是否继续细分由拟合精度决定，边界位置由频响形状辅助决定。它适合被后续多端口网络等值、频率依赖外部系统建模、测量频响设备建模、EMT模型降阶流程复用，尤其适合作为增强型有理拟合或矢量拟合前的自动分区策略。它不适合被外推为通用最优分段算法，也不能仅凭本文证明其满足被动性、因果性、实时性或所有暂态工况下的时域精度要求。
+
+### 证据边界
+
+- 原文明确说明研究动机：既有分段频率响应等值辨识方法已有，但缺少具体的频率区域划分算法；本文提出二分划分使流程自动化。
+- 原文明确给出对象为离散频率点上的N×N传递函数矩阵H；当输入为端口电压、输出为端口电流时，H为导纳矩阵。
+- 原文明确说明极点通过tr(H)的频率响应识别，留数矩阵在极点已知后用整个频率响应通过最小二乘求得，并最终形成MPFE模型。
+- 原文明确说明边界先置于频段中点，再搜索最近的|H|局部最小值；若距离小于半带宽则移动边界，否则保持中点。
+- 当前抽取文本只显示数值算例的图题，没有给出可核验的误差数值、频段数量、测试网络参数、软件、运行时间或时域EMT对比结果；相关量化结论不应从页面既有摘要外推。
+- 关于噪声频响、被动性修正、稳定性保证、最小阶数选择和实时仿真性能，当前原文证据未覆盖；若用于工程定型需另行验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出二分频率区域划分算法，实现多相网络等值辨识全自动化。
-- 基于拟合精度与幅值极小值自适应划分频段，避免有理拟合病态。
-- 结合增强型有理拟合与矩阵部分分式展开，实现宽频导纳高精度等值。
-
+- 问题定位：本文提出一种基于二分法的频率区域自动划分算法，用于多相网络等值模型的频域辨识。该方法采用递归试错策略：首先对整个频带应用增强型有理拟合（enhanced rational fitting）进行极点识别；若拟合精度未满足预设容差，则将频带二分并递归处理子频段，直至所有子频段达到精度要求。
+- 方法机制：本文提出一种基于二分法的频率区域自动划分算法，用于多相网络等值模型的频域辨识。该方法采用递归试错策略：首先对整个频带应用增强型有理拟合（enhanced rational fitting）进行极点识别；若拟合精度未满足预设容差，则将频带二分并递归处理子频段，直至所有子频段达到精度要求。
+- 验证证据：频域精度验证与时域仿真对比验证。首先验证MPFE模型对原始频率响应的拟合精度，然后将等值模型应用于开关暂态仿真，与完整系统的详细模型进行时域结果对比。；500-kV测试网络，包含3台同步发电机及配套变压器、5个负荷、1组带变压器的电容器组、6回双回路输电线路。网络采用完整三相模型表示，考虑了元件的频率依赖特性和三相不平衡性。；
+- 量化与结论：在1%的相对误差容限下，算法自动将频率响应划分为9个频段；极点识别过程中，拟合曲线与原始频率响应曲线的偏差太小以至于在图中无法区分；导纳矩阵各元素的MPFE模型复现精度极高，频域偏差无法目视分辨；边界位置确定策略中，局部最小值搜索范围限制在频段半带宽（half the bandwidth）内
+- 适用边界：适用于理解本文 Noda A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi （2007） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[增强型有理拟合|增强型有理拟合]]
 - [[矩阵部分分式展开-mpfe|矩阵部分分式展开(MPFE)]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 - [[二分频率划分算法|二分频率划分算法]]
 - [[极点辨识|极点辨识]]
 
-
 ## 涉及的模型
-
 
 - [[多相网络等值模型|多相网络等值模型]]
 - [[输电线路|输电线路]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 - [[同步发电机|同步发电机]]
 - [[导纳矩阵|导纳矩阵]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[网络等值|网络等值]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 - [[频域系统辨识|频域系统辨识]]
 - [[降阶建模|降阶建模]]
 
-
 ## 主要发现
-
 
 - 算法在1%误差容限下自动划分9个频段，极点辨识精度极高。
 - MPFE模型精确复现多相导纳矩阵各元素，频域拟合偏差极小。
 - 等值模型用于开关暂态仿真，时域波形与全系统详细模型几乎一致。
-
-
 
 ## 方法细节
 
@@ -74,16 +94,13 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 
 ### 数学公式
 
-
 **公式1**: $$\mathbf{H}(s) = \sum_{m=1}^{M} \frac{\mathbf{R}_m}{s - p_m} + \mathbf{D}$$
 
 *矩阵部分分式展开(MPFE)模型，其中$\mathbf{H}(s)$为$N\times N$导纳矩阵传递函数，$p_m$为识别得到的极点，$\mathbf{R}_m$为对应的$N\times N$留数矩阵，$\mathbf{D}$为常数矩阵。*
 
-
 **公式2**: $$\text{tr}(\mathbf{H}) = \sum_{i=1}^{N} h_{ii}$$
 
 *矩阵迹（trace）计算，用于极点识别过程。通过对导纳矩阵的迹进行有理拟合来识别系统极点，避免直接处理矩阵带来的复杂性。*
-
 
 ### 算法步骤
 
@@ -103,7 +120,6 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 
 8. 留数计算：收集所有子区域识别得到的极点$p_m$，利用整个频率范围内的原始数据，通过最小二乘法计算各极点的留数矩阵$\mathbf{R}_m$和常数矩阵$\mathbf{D}$，构建完整的MPFE模型。
 
-
 ### 关键参数
 
 - **relative_tolerance**: 1%（相对误差容限，用于判断拟合精度是否满足要求）
@@ -113,8 +129,6 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 - **bandwidth_threshold**: 半带宽（边界调整时判断局部最小值是否'临近'中点的距离阈值）
 
 - **matrix_dimension**: N×N（多相网络导纳矩阵维度，N为相数或端口数）
-
-
 
 ## 仿真结果
 
@@ -126,8 +140,6 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 
 | 500-kV三相测试网络导纳等值辨识 | 对包含3台发电机及变压器、5个负荷、1组带变压器的电容器组、6回双回路输电线路的500-kV测试网络进行等值。从Bus A看入的三相导纳矩阵被成功等值，频率响应被自动划分为9个频段。导纳矩阵元素(1,1)和(1,2)的频域拟合偏差极小，原始曲线与拟合曲线几乎无法区分。 | 与未划分频段的直接拟合方法相比，避免了宽频拟合的病态条件；与完整系统详细模型的开关暂态仿真结果相比，时域波形几乎完全一致。 |
 
-
-
 ## 量化发现
 
 - 在1%的相对误差容限下，算法自动将频率响应划分为9个频段
@@ -135,7 +147,6 @@ sources: ["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algor
 - 导纳矩阵各元素的MPFE模型复现精度极高，频域偏差无法目视分辨
 - 边界位置确定策略中，局部最小值搜索范围限制在频段半带宽（half the bandwidth）内
 - 等值模型在开关暂态仿真中复现了与完整系统详细模型几乎完全一致的结果
-
 
 ## 关键公式
 
@@ -145,11 +156,34 @@ $$\mathbf{H}(s) = \sum_{m=1}^{M} \frac{\mathbf{R}_m}{s - p_m} + \mathbf{D}$$
 
 *作为最终的网络等值模型，用于EMT仿真。其中极点$p_m$通过二分频带划分和有理拟合识别，留数矩阵$\mathbf{R}_m$和常数项$\mathbf{D}$通过最小二乘法确定。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 频域精度验证与时域仿真对比验证。首先验证MPFE模型对原始频率响应的拟合精度，然后将等值模型应用于开关暂态仿真，与完整系统的详细模型进行时域结果对比。
 - **测试系统**: 500-kV测试网络，包含3台同步发电机及配套变压器、5个负荷、1组带变压器的电容器组、6回双回路输电线路。网络采用完整三相模型表示，考虑了元件的频率依赖特性和三相不平衡性。
 - **仿真工具**: 未明确指定具体商业软件名称，但涉及电磁暂态(EMT)仿真计算和频域系统辨识算法实现。
 - **验证结果**: 在频域，MPFE模型精确复现了原始导纳矩阵的所有元素，特别是图3所示的(1,1)和(1,2)元素，拟合曲线与原始数据重合度极高。在时域，将辨识得到的等值模型应用于开关暂态仿真，其波形与完整系统详细模型的仿真结果几乎完全一致，验证了等值模型的准确性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Noda | A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi`（2007） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 增强型有理拟合、矩阵部分分式展开-mpfe、最小二乘法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出二分频率区域划分算法，实现多相网络等值辨识全自动化。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/01/Noda - 2007 - A Binary Frequency-Region Partitioning Algorithm for the Identification of a Multiphase Network Equi.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

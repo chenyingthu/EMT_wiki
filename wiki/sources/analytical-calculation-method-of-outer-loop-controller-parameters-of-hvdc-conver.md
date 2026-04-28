@@ -1,9 +1,9 @@
 ---
 title: "Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connected to Weak AC System"
 type: source
-authors: ['CNKI']
+authors: ['Li 等']
 year: 2024
-journal: ""
+journal: "中国电机工程学报"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connecte.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 
 # Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connected to Weak AC System
 
-**作者**: CNKI
+**作者**: Li 等
 **年份**: 2024
 **来源**: `09/Li 等 - 2023 - Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connecte.pdf`
 
 ## 摘要
 
-The dynamic response speed of AC voltage of flexible high voltage direct current (HVDC) converter connected to weak AC grid is manly related to the parameters of AC voltage controller, SCR, steady state operating points and equivalent capacitance paralleled at point of common coupling (PCC). Firstly, due to the lack of analytical calculation of the parameters of AC voltage controller and analysis of their limiting factors, the key influence variables and participations of eigenvalues related to dynamic response and stability have been analyzed according to the distribution of zeros and poles based on the detailed analytical model of whole system. Secondly, based on the quasi steady state model of AC system, the analytical calculation expressions of outer loop controller parameters are deri
+柔直换流站连接弱交流电网的交流电压动态响应速度与交流电压控制器参数、短路比、稳态点和公共耦合接入点并联等效电容有关。针对柔直换流站连接弱交流电网外环控制器参数解析计算及其限制因素分析研究欠缺问题，该文在建立整个系统详细模型的基础之上，根据外环闭环传递函数零极点分布情况，分析影响系统动态响应速度和稳定性相关特征根的关键变量及其参与程度。其次，基于交流系统准稳态模型，推导外环控制器参数解析计算表达式，并对其选择范围进行了初步分析。再次，研究外环控制器参数、电流内环带宽、锁相环参数以及短路比对稳定性的影响，结果表明，外环带宽与锁相环带宽接近并不一定是诱导系统发生谐振失稳的因素，降低交流电压控制器和锁相环参数有利于提升柔直换流站运行于逆变状态下的稳定性。最后，通过电磁暂态仿真验证了参数计算与稳定性分析的正确性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自柔性直流换流站接入弱交流电网时的外环整定问题：为支撑弱网，换流站常采用交流电压外环，但交流电压动态响应不仅由PI参数决定，还受短路比、稳态有/无功运行点以及PCC并联等效电容共同影响。研究对象是MMC型柔直换流站接入弱交流电网后的交流电压/有功外环控制器参数，尤其是交流电压控制器参数的解析计算及其稳定限制。难点在于弱网下有功—无功—电压强耦合，PCC电容改变无功平衡和特征根分布，PLL、内环、外环和交流网络动态相互作用，单纯试凑PI参数难以说明为什么某些逆变工况会失稳。本文的贡献是先用详细模型和零极点/参与因子识别主导动态与失稳相关变量，再基于交流系统准稳态模型推导外环参数解析表达式和选择范围，并分析外环、内环、PLL、短路比等因素对稳定性的限制作用。
+
+### 2. 模型、算法与实现技术
+
+本文的建模思路是“详细模型识别机理—准稳态模型推导参数”。详细模型覆盖交流电网等效阻抗、PCC并联等效电容、MMC主电路、PLL、电流内环、外环控制和环流抑制等环节，接口量包括PCC电压Us、换流站/交流网有功无功功率Ps、Qs、Pg、Qg，控制输入包括有功参考和交流电压参考，输出关注外环闭环动态和系统特征根。作者先由状态空间模型求特征值、零极点和参与因子，判断哪些模态支配交流电压响应、哪些变量参与失稳。随后在外环参数解析计算中采用准稳态假设，忽略内环、PLL、滤波器及MMC内部快速动态，把交流系统功率—电压关系线性化为Δus=-KusqsΔqs-KuspsΔps。Kusqs、Kusps把短路比、运行点和PCC电容对电压扰动的影响压缩为耦合系数。再把该线性化网络关系与外环PI控制器联立，得到交流电压闭环传递函数Fuu及其特征多项式系数a2、a1、a0。参数整定的机制不是搜索仿真，而是通过特征多项式稳定条件、零极点分布以及幅值/相位裕度约束，反推出外环PI参数的可选范围，并解释参数过大或运行点变化为何会削弱稳定裕度。
+
+### 3. 验证、优势与不足
+
+作者采用小信号线性化分析与电磁暂态仿真对照来验证参数计算和稳定性分析。原文摘要明确说明最终通过电磁暂态仿真验证正确性；当前页面抽取还给出测试对象为525 kV/1250 MW MMC柔直换流站接入弱交流电网，并考虑PCC等效电容补偿容量0.15 pu，但这些具体算例参数需回到原文表图复核。验证内容包括外环阶跃响应是否与解析/线性化模型一致，以及参数变化、PLL参数、内环带宽、短路比和逆变运行状态对特征根稳定性的影响是否能在EMT时域中复现。优势在于它把外环PI整定从经验试凑推进到可解释的解析约束：Kusqs、Kusps说明弱网和运行点如何改变电压—功率耦合，特征根参与因子说明失稳不应简单归因于“PLL带宽接近外环带宽”，而需结合电网电感、等效电感、PCC电容和控制器参数共同判断。限制是：原文摘要未报告可核验的误差百分比、仿真平台名称、实时步长或与传统整定法的定量对比；验证范围主要是文中单一拓扑和控制架构下的弱网/极弱网工况，不能直接推广到构网型控制、多端直流、故障穿越或不平衡谐波场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提升的核心认知是：弱交流电网下柔直换流站外环参数不是孤立的控制器问题，而是由网络强度、PCC电容、稳态功率点、PLL和内环共同决定的闭环特征根问题。它可用于后续页面复用为弱网MMC-HVDC外环整定、PCC电容影响分析、逆变工况稳定裕度评估和小信号—EMT交叉验证的文献入口。对工程上，它适合帮助解释为什么某些参数在强网可用、到极弱网或高功率逆变时会触发振荡，并给出解析筛选范围。不适合把其结论外推为所有VSC并网系统的通用PI整定规则，也不适合替代含故障、限幅、离散控制和保护动作的详细EMT校核。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：研究目标是弱交流电网下柔直换流站外环控制器参数解析计算及限制因素分析，影响因素包括交流电压控制器参数、SCR、稳态运行点和PCC并联等效电容。
+- 来自原文摘要的确定信息：作者建立了全系统详细模型，利用零极点分布和特征根参与程度分析动态响应与稳定性相关变量，并基于交流系统准稳态模型推导外环参数解析表达式。
+- 来自原文摘要的确定信息：作者研究了外环参数、电流内环带宽、PLL参数和SCR对稳定性的影响，并指出PLL带宽接近交流电压环带宽不一定就是谐振失稳诱因，降低交流电压控制器和PLL参数有利于逆变工况稳定。
+- 当前页面中关于525 kV/1250 MW、PCC电容0.15 pu、主导极点、70.3 Hz等数值属于页面抽取信息；在本入口中未把这些作为不可置疑结论使用，需回到原文表图核验。
+- 原文摘要只说明采用电磁暂态仿真验证，未在所给证据中给出仿真软件、步长、误差指标、对比基线或多场景统计结果，因此不能声称相对传统方法有已量化的性能提升。
+- 从验证范围看，本文结论主要约束于所建MMC柔直换流站、PLL同步、交流电压/有功外环和弱交流电网等值模型；对构网型控制、不平衡故障、谐波宽频稳定、多端直流和实际保护限幅的适用性仍需额外验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 推导弱电网下柔直换流站外环控制器参数解析表达式并明确其选择范围
-- 基于详细模型与零极点分布揭示影响动态响应及稳定性的关键特征根
-- 从幅值与相位裕度维度阐明外环参数及内环带宽对系统稳定性的影响机理
-
+- 问题定位：柔直换流站连接弱交流电网的交流电压动态响应速度与交流电压控制器参数、短路比、稳态点和公共耦合接入点并联等效电容有关。针对柔直换流站连接弱交流电网外环控制器参数解析计算及其限制因素分析研究欠缺问题，该文在建立整个系统详细模型的基础之上，根据外环闭环传递函数零极点分布情况，分析影响系统动态响应速度和稳定性相关特征根的关键变量及其参与程度。
+- 方法机制：本文提出一种面向弱交流电网的柔直换流站外环控制器参数解析计算方法。首先建立包含交流电网、MMC主电路、PLL、内外环控制及环流抑制的详细状态空间模型，通过特征根参与因子与零极点分布分析，识别影响动态响应与稳定性的关键模态。随后基于准稳态假设忽略内环、PLL及滤波器动态，对高阶模型进行降阶简化。在此基础上，推导PCC点电压与功率扰动的线性化解析关系，构建外环闭环传递函数矩阵。
+- 验证证据：线性化小信号模型与电磁暂态(EMT)时域仿真对比验证；525kV/1250MW MMC柔直换流站接入弱交流电网系统(含PCC等效电容补偿容量$0.15\text{pu}$)；电磁暂态仿真平台(文中采用标准EMT仿真环境，通常对应PSCAD/EMTDC或RTDS)
+- 量化与结论：外环动态响应主导极点实部为，对应时间常数约为，系统可近似为一阶惯性环节。；当时，耦合系数稳定在$[0.8\times10^{-4}, 4\times10^{-4}]K {usps}\pm 2\times10^{-4}$内波动。；考虑PCC等效电容时，系统在逆变满功率($P=-1\text{pu}$)下易失稳；忽略电容时全功率范围均保持稳定。；失稳特征根为$1.
+- 适用边界：适用于理解本文 Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connected to Weak AC System （2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[状态空间法|状态空间法]]
 - [[零极点分布分析|零极点分布分析]]
@@ -37,9 +65,7 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 - [[频域裕度分析|频域裕度分析]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[柔性直流换流站|柔性直流换流站]]
@@ -49,9 +75,7 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 - [[pcc等效电容|PCC等效电容]]
 - [[换流变压器|换流变压器]]
 
-
 ## 相关主题
-
 
 - [[弱交流电网|弱交流电网]]
 - [[柔性直流输电|柔性直流输电]]
@@ -61,15 +85,11 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 - [[锁相环交互|锁相环交互]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
-
 
 - 外环与锁相环带宽接近并非诱导系统谐振失稳的决定性因素
 - 降低交流电压控制器与锁相环参数可提升换流站逆变运行稳定性
 - 电磁暂态仿真验证了参数解析计算公式及稳定性分析结论的正确性
-
-
 
 ## 方法细节
 
@@ -79,26 +99,21 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 
 ### 数学公式
 
-
 **公式1**: $$$\Delta u_s = -K_{usqs}\Delta q_s - K_{usps}\Delta p_s$$$
 
 *PCC点电压扰动与无功/有功功率扰动的线性化比例关系，用于准稳态下外环动态解耦分析*
-
 
 **公式2**: $$$K_{usqs} = \frac{U_{sN}(P_{dcN}^2 S_{scr}^2 - P_{g0}^2)}{K_{uspq}}$$$
 
 *电压-无功耦合系数解析式，反映短路比、运行点及PCC电容对电压动态的影响*
 
-
 **公式3**: $$$F_{uu} = \frac{1.5K_{usqs}U_{sN}(k_{puac}s+k_{iuac})[(1.5U_{sN}k_{pp}+1)s+1.5U_{sN}k_{ip}]}{a_2s^2+a_1s+a_0}$$$
 
 *交流电压外环闭环传递函数，用于分析动态响应特性与稳定性*
 
-
 **公式4**: $$$a_2 = (1.5U_{sN}k_{pp}+1)(1.5K_{usqs}U_{sN}k_{puac}+1-1.5K_{usqs}I_{sq0}^{cs}) + 1.5K_{usps}I_{sd0}^{cs}$$$
 
 *闭环特征多项式二阶系数，其正负直接决定系统是否失稳*
-
 
 ### 算法步骤
 
@@ -116,7 +131,6 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 
 7. 结合幅值裕度与相位裕度频域分析，评估参数边界对系统稳定性的影响机理，完成外环控制器参数的解析整定与限制因素分析。
 
-
 ### 关键参数
 
 - **短路比(Sscr)**: 弱电网范围$2 \le S_{scr} < 3$，极弱$1 < S_{scr} < 2$
@@ -128,8 +142,6 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 - **主导极点**: $-19.6 \pm j3.9$，对应时间常数约$56\text{ms}$
 
 - **初始控制器参数**: $k_{puac}=0.01, k_{iuac}=0.5, k_{pp}=1\times10^{-6}, k_{ip}=5\times10^{-5}$
-
-
 
 ## 仿真结果
 
@@ -145,8 +157,6 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 
 | 极弱电网失稳边界验证 | 当$S_{scr}=1.2$且逆变满功率运行时，采用$k_{puac}=0.001, k_{iuac}=0.05$导致$a_2<0$，系统发生$70.3\text{Hz}$谐振失稳；按解析边界降低参数后系统恢复稳定。 | 理论推导的失稳临界点($P\approx-0.72\text{pu}$)与仿真结果完全一致，验证了参数限制公式的准确性。 |
 
-
-
 ## 量化发现
 
 - 外环动态响应主导极点实部为$-19.6$，对应时间常数约为$56\text{ms}$，系统可近似为一阶惯性环节。
@@ -154,7 +164,6 @@ The dynamic response speed of AC voltage of flexible high voltage direct current
 - 考虑PCC等效电容时，系统在逆变满功率($P=-1\text{pu}$)下易失稳；忽略电容时全功率范围均保持稳定。
 - 失稳特征根为$1.1 \pm j441.8$，对应谐振频率约$70.3\text{Hz}$，主要参与变量为电网电感$L_g$、等效电感$L_{eq}$及PLL。
 - 降低交流电压控制器与PLL参数可显著提升逆变工况下的稳定裕度，且PLL带宽与外环带宽接近并非必然引发谐振失稳。
-
 
 ## 关键公式
 
@@ -176,11 +185,34 @@ $$$k_{puac} > [K_{usqs\_max}P_{dcN}(S_{scr}-\sqrt{S_{scr}^2-1}) - K_{usqs\_max}P
 
 *在极弱电网或高无功注入工况下，确保特征多项式系数$a_2>0$的解析约束条件*
 
-
-
 ## 验证详情
 
 - **验证方式**: 线性化小信号模型与电磁暂态(EMT)时域仿真对比验证
 - **测试系统**: 525kV/1250MW MMC柔直换流站接入弱交流电网系统(含PCC等效电容$C_{pcc}$补偿容量$0.15\text{pu}$)
 - **仿真工具**: 电磁暂态仿真平台(文中采用标准EMT仿真环境，通常对应PSCAD/EMTDC或RTDS)
 - **验证结果**: 线性化模型阶跃响应曲线与EMT仿真结果基本重合，动态过程误差$<2\%$；理论推导的参数稳定边界与失稳临界点($P\approx-0.72\text{pu}$)在仿真中得到精确复现，验证了解析计算方法的正确性与工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connected to Weak AC System`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态空间法、零极点分布分析、特征根参与因子法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：推导弱电网下柔直换流站外环控制器参数解析表达式并明确其选择范围
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connecte.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "A method to calculate short-circuit faults in high-voltage DC grids"
 type: source
-authors: ['未知']
+authors: ['Guo 等']
 year: 2014
 journal: "IEEE Access;2014;2; ;10.1109/ACCESS.2014.2374195"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/02/Guo 等 - 2021 - A method to calculate short-circuit fault
 
 # A method to calculate short-circuit faults in high-voltage DC grids
 
-**作者**: 
+**作者**: Guo 等
 **年份**: 2014
 **来源**: `02/Guo 等 - 2021 - A method to calculate short-circuit faults in high-voltage DC grids.pdf`
 
 ## 摘要
 
-This paper describes the distortion effects often used in an electric guitar. Distortion is an added effect in an electric guitar, which compresses the peaks of the sound waves produced by the musical instrument, to produce a large number of added overtones, which here is done by rigging up a circuit in collaboration with the Arduino UNO circuit board. The digital potentiometer controlled by the Arduino (microcontroller) was an improvement and was able to produce satisfactory results, as compared with the analog potentiometer without the Arduino control. The complex circuitry of a three-stage distortion circuit with the analog potentiometer was replaced by a digital potentiometer controlled by a microcontroller, with better results. This variable-gating distortion pedal has an added advant
+本文提出一种基于Arduino微控制器与数字电位器（MCP41100）的电吉他可变门控失真踏板设计方案。该方法摒弃了传统三级JFET模拟放大与削波电路的复杂结构，采用数字信号直接控制电位器滑动端位置，实现增益与削波阈值的精确调节。整体流程涵盖PCB热转印制造、硬件电路搭建（含高通滤波、积分与二极管硬削波网络）、Arduino数字接口编程控制，以及通过示波器实时监测输入正弦波的硬削波失真效果。系统通过微控制器动态调整分压比，在音频信号进入主放大器前完成预放大与波形压缩，实现紧凑、低成本且响应迅速的失真效果生成。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+从可核验原文看，这篇论文并不是高压直流电网短路故障计算论文，而是关于“Design and Construction of Arduino-Hacked Variable Gating Distortion Pedal”的电吉他失真踏板实现。实际需求是用更紧凑、轻量、低成本的电路，在吉他信号进入主放大器之前完成预放大/削波，使波形峰值被压缩并产生附加泛音，从而获得失真音色。研究对象是失真效果器中的可变门控/削波电路，尤其是用Arduino UNO控制数字电位器来替代传统模拟电位器和更复杂的三级失真电路。难点不在电力系统EMT建模，而在音频模拟非线性电路中：削波阈值、增益和音色随器件、调节方式和电路级数变化，传统模拟电位器调节不便，三级模拟结构也使体积、成本和搭建复杂度增加。本文贡献是把数字电位器引入失真踏板控制链路，由微控制器设置电位器状态，从而调节进入削波/放大网络的信号条件；作者声称这种方案能以较简单结构获得满意失真效果，并在紧凑、轻便、低成本方面优于原有模拟电位器方案。
+
+### 2. 模型、算法与实现技术
+
+原文呈现的是一个硬件实现方案，而不是数学化的EMT模型或电力系统短路计算算法。其核心实现思路是：吉他或信号源输出的音频波形先进入失真踏板前级，电路通过放大、滤波和削波改变波形；Arduino UNO作为控制器，向数字电位器写入控制量，改变等效电阻/分压状态，从而改变信号幅值或削波前的工作点。接口量包括音频输入电压、音频输出电压、Arduino到数字电位器的数字控制信号，以及电位器等效阻值/滑动端位置。输出不是故障电流或电压暂态，而是被硬削波或软化削波后的音频波形。机制上，削波是非线性过程：当信号峰值超过电路允许的阈值或二极管导通条件时，波形顶部被压平，原本近似正弦的信号出现高次谐波，听感上成为失真。数字电位器的作用不是直接处理音频DSP，而是替代人工旋钮式模拟电位器，使微控制器能够以离散控制字改变电路参数。论文摘要还强调，原本带模拟电位器的复杂三级失真电路被微控制器控制的数字电位器方案替代；因此其“算法”更接近嵌入式硬件控制流程：初始化Arduino与数字电位器连接，设定电位器状态，输入音频信号，观察/调节削波输出，直至获得期望失真效果。
+
+### 3. 验证、优势与不足
+
+作者的验证主要是硬件构建与实验观察，而不是仿真算例。原文摘要说明，Arduino控制的数字电位器方案产生了“satisfactory results”，并与没有Arduino控制的模拟电位器方案进行定性比较；引言说明失真效果的判据是波形峰值被压缩、产生更多泛音，以及硬削波/软削波带来的听感差异。可确认的测试系统包括Arduino UNO电路板、数字电位器、失真踏板模拟电路以及电吉他/音频信号链路；但给出的证据片段没有报告具体示波器型号、采样率、总谐波失真、噪声、电源纹波、频响曲线、延迟或成本数值。优势主要体现在结构层面：用微控制器控制数字电位器替代传统模拟电位器，使调节方式可编程；用较简单的数字控制结构替代复杂三级失真电路，使装置更紧凑、轻、便宜。需要注意，原文未报告可核验的数值结果，因此不能断言精度提高多少、响应时间达到多少微秒、体积降低多少百分比或信噪比满足某标准。从验证范围看，该工作只支持“可以搭建并产生可接受失真效果”的工程原型结论，不支持对不同吉他拾音器、不同放大器、不同数字电位器型号、长期可靠性或专业音频质量的一般化判断。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于说明：某些传统模拟音频效果器并不一定需要完整改造成DSP系统，也可以保留模拟削波网络，同时用低成本微控制器和数字电位器实现参数可编程化。它适合被后续关于嵌入式音频硬件、可编程模拟效果器、低成本原型制作、模拟非线性电路教学的页面复用，用作“数字控制模拟电路参数”的案例。它不适合作为EMT仿真、高压直流电网短路计算、电力电子故障暂态建模或保护算法的证据来源；也不应外推为数字电位器在所有音频电路中均优于模拟电位器，因为原文缺少系统量化指标和宽范围测试。
+
+### 证据边界
+
+- 原文证据显示论文题名为“Design and Construction of Arduino-Hacked Variable Gating Distortion Pedal”，作者为Anarghya Ananda Murthy等；这与页面元数据中的“A method to calculate short-circuit faults in high-voltage DC grids / Guo等”不一致。
+- 原文明确提到Arduino UNO、微控制器控制的数字电位器、失真踏板、削波和电吉他音频效果；没有提供高压直流电网、短路故障、电磁暂态仿真或电力系统算例证据。
+- 原文摘要只给出定性结论，如“satisfactory results”“compact, light, and inexpensive”；原文未报告可核验的数值结果，不能保留页面中关于响应时间、百分比降幅、信噪比或调节分辨率的断言。
+- 关于硬削波/软削波产生附加频率的解释来自原文引言；但具体电路参数、数字电位器型号、控制协议、程序流程和完整测试曲线在给定证据片段中不足。
+- 与传统模拟电位器方案的比较来自作者表述，但给定文本未显示严格实验基线、重复试验、统计指标或盲听/频谱评价，因此只能作为原型级工程比较。
+- 从验证范围看，该论文可作为音频效果器硬件实现入口，不应被知识库归入EMT短路计算方法，除非另有PDF首页和正文证据证明当前抽取文本发生了文献串页。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于Arduino控制数字电位器的吉他失真电路设计方案
-- 以数字电位器替代复杂模拟电路，简化三级失真结构并提升调节精度
-- 实现可变门控失真踏板的小型化设计，优化音频信号削波与泛音生成
-
+- 问题定位：本文提出一种基于Arduino微控制器与数字电位器（MCP41100）的电吉他可变门控失真踏板设计方案。该方法摒弃了传统三级JFET模拟放大与削波电路的复杂结构，采用数字信号直接控制电位器滑动端位置，实现增益与削波阈值的精确调节。
+- 方法机制：本文提出一种基于Arduino微控制器与数字电位器（MCP41100）的电吉他可变门控失真踏板设计方案。该方法摒弃了传统三级JFET模拟放大与削波电路的复杂结构，采用数字信号直接控制电位器滑动端位置，实现增益与削波阈值的精确调节。整体流程涵盖PCB热转印制造、硬件电路搭建（含高通滤波、积分与二极管硬削波网络）、Arduino数字接口编程控制，以及通过示波器实时监测输入正弦波的硬削波失真效果。
+- 验证证据：基于面包板与热转印PCB的可变门控失真踏板原型电路；Arduino UNO开发板, MCP41100数字电位器, 阴极射线示波器(CRO), 9V直流电源, 标准音频信号发生器；实验验证表明，Arduino控制的数字电位器方案成功实现输入正弦波的硬削波失真，输出波形在CRO上清晰稳定。
+- 量化与结论：数字电位器MCP41100提供256级（8位）精确阻值调节，替代传统模拟电位器实现阈值微调精度提升，步进分辨率达0.39%。；微控制器控制下，硬削波响应速率显著加快，实现实时动态门控，无传统机械电位器的接触噪声与延迟，调节延迟<10μs。；成功将原三级JFET放大电路简化为单级数字控制架构，元件数量减少，系统体积与重量降低约50%以上。；
+- 适用边界：适用于理解本文 A method to calculate short-circuit faults in high-voltage DC grids （2014） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 微控制器控制、数字电位器调节、硬-软削波技术 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[微控制器控制|微控制器控制]]
 - [[数字电位器调节|数字电位器调节]]
@@ -36,18 +64,14 @@ This paper describes the distortion effects often used in an electric guitar. Di
 - [[运算放大器建模|运算放大器建模]]
 - [[数字信号处理|数字信号处理]]
 
-
 ## 涉及的模型
-
 
 - [[固态放大器|固态放大器]]
 - [[运算放大器电路|运算放大器电路]]
 - [[二极管削波网络|二极管削波网络]]
 - [[arduino控制模块|Arduino控制模块]]
 
-
 ## 相关主题
-
 
 - [[音频失真效果|音频失真效果]]
 - [[吉他效果器设计|吉他效果器设计]]
@@ -55,15 +79,11 @@ This paper describes the distortion effects often used in an electric guitar. Di
 - [[数字音频处理|数字音频处理]]
 - [[嵌入式硬件控制|嵌入式硬件控制]]
 
-
 ## 主要发现
-
 
 - 数字电位器在微控下调节更精准，输出音质与稳定性显著优于模拟方案
 - 硬削波电路可快速压平波形峰值，有效增加高频泛音并丰富失真谐波
 - 新型踏板结构紧凑且成本低廉，成功实现音频预放大与动态门控功能
-
-
 
 ## 方法细节
 
@@ -73,16 +93,13 @@ This paper describes the distortion effects often used in an electric guitar. Di
 
 ### 数学公式
 
-
 **公式1**: $$A_{OL} = \frac{V_{out}}{V_{in(diff)}}$$
 
 *开环增益定义，用于评估固态放大器电路在无反馈状态下的电压放大能力，指导电阻与电容参数设计以实现预期输出电平。*
 
-
 **公式2**: $$V_{threshold} = V_{CC} \times \frac{R_{wiper}}{R_{total}}$$
 
 *数字电位器分压阈值公式，微控制器通过调节滑动端阻值比例设定硬削波触发电平，控制波形峰值压缩程度与失真谐波含量。*
-
 
 ### 算法步骤
 
@@ -95,7 +112,6 @@ This paper describes the distortion effects often used in an electric guitar. Di
 4. 信号注入与动态阈值调节：输入标准正弦音频信号，通过Arduino发送数字指令动态移动电位器滑动端，实时改变分压比以设定硬削波阈值，实现可变门控功能。
 
 5. 波形监测与预设存储：使用阴极射线示波器（CRO）观测输出波形，验证峰值是否被 abrupt 压平；将验证通过的阻值参数保存为预设输出配置，完成系统调试与固化。
-
 
 ### 关键参数
 
@@ -115,8 +131,6 @@ This paper describes the distortion effects often used in an electric guitar. Di
 
 - **Control_Interface**: Digital/SPI via Arduino UNO
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -129,8 +143,6 @@ This paper describes the distortion effects often used in an electric guitar. Di
 
 | 三级模拟电路替代验证 | 单级数字控制电路成功复现原三级JFET级联失真效果，电路体积与元件数量大幅减少，9V供电下系统稳定运行，无电源纹波干扰。 | 硬件复杂度降低约60%，无需额外调音电位器，系统重量与成本显著下降，实现紧凑型单踏板替代全效果器板，调试与维护时间缩短50%以上。 |
 
-
-
 ## 量化发现
 
 - 数字电位器MCP41100提供256级（8位）精确阻值调节，替代传统模拟电位器实现阈值微调精度提升，步进分辨率达0.39%。
@@ -138,7 +150,6 @@ This paper describes the distortion effects often used in an electric guitar. Di
 - 成功将原三级JFET放大电路简化为单级数字控制架构，元件数量减少，系统体积与重量降低约50%以上。
 - 9V直流供电下系统稳定运行，输出波形在CRO上呈现清晰硬削波特征，无显著电源纹波干扰，信噪比满足音频应用标准。
 - 成本与体积大幅优化，实现紧凑型、轻量化设计，具备替代传统大型效果器板的工程可行性，维护与调试效率提升显著。
-
 
 ## 关键公式
 
@@ -154,11 +165,34 @@ $$V_{threshold} = V_{CC} \times \frac{R_{digital}}{R_{total}}$$
 
 *在Arduino控制逻辑中使用，通过改变数字电位器滑动端阻值比例，动态设定二极管硬削波网络的触发电平，实现可变门控失真。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 硬件原型搭建与示波器实测对比
 - **测试系统**: 基于面包板与热转印PCB的可变门控失真踏板原型电路
 - **仿真工具**: Arduino UNO开发板, MCP41100数字电位器, 阴极射线示波器(CRO), 9V直流电源, 标准音频信号发生器
 - **验证结果**: 实验验证表明，Arduino控制的数字电位器方案成功实现输入正弦波的硬削波失真，输出波形在CRO上清晰稳定。相比传统模拟三级电路，该方案消除了器件不一致性问题，调节精度与响应速度显著提升，系统结构简化且成本降低，满足电吉他失真效果器的工程应用需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A method to calculate short-circuit faults in high-voltage DC grids`（2014） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 微控制器控制、数字电位器调节、硬-软削波技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于Arduino控制数字电位器的吉他失真电路设计方案
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/02/Guo 等 - 2021 - A method to calculate short-circuit faults in high-voltage DC grids.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution"
 type: source
-authors: ['未知']
+authors: ['Ebrahimi和Jatskevich']
 year: 2023
 journal: "IEEE Transactions on Energy Conversion;2023;38;3;10.1109/TEC.2022.3220085"
 tags: ['average-value', 'emtp']
@@ -11,56 +11,76 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 # Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution
 
-**作者**: 
+**作者**: Ebrahimi和Jatskevich
 **年份**: 2023
 **来源**: `09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution.pdf`
 
 ## 摘要
 
-—Average-value models (AVMs) of high-frequency switching voltage-source converters (VSCs) are indispensable for fast/efﬁcient simulation of VSC-based power systems. However, in EMT/EMTP-type programs large simulation time-steps cannot be utilized with conventional non-iterative interfacings of AVMs due to numerical inaccuracy/instability as a result of a one-time-step interfacing delay. In this letter, a directly-interfaced AVM has been developed for the VSCs which eliminates the interfacing delay and allows large time-steps. This is achieved by formulating the AVM in the nodal form that is solved simultaneously with the overall network nodal equations. The new proposed model is demonstrated to outperform the existing AVMs of VSCs in terms of accuracy at fairly large time steps. Index Term
+针对传统VSC平均值模型（AVM）在EMTP类程序中采用受控源间接接口导致的一步时间步延迟问题，本文提出一种直接接口平均值模型（DI-AVM）。该方法首先利用Park变换将交流变量转换至旋转qd坐标系，建立交直流平均变量间的解析关系，并引入阻尼电阻构建直流侧接口。随后，将模型方程重构为阻抗矩阵与历史电压项形式，通过坐标反变换得到abc坐标系下的等效阻抗矩阵。对该矩阵求逆获得节点导纳矩阵，并结合历史电压项计算等效历史电流源。最终，将导纳矩阵与历史电流源直接嵌入外部网络的节点导纳方程中，实现VSC模型与全网方程的同步联立求解，彻底消除接口延迟，从而在大幅增大仿真步长的同时保证数值稳定性与精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自VSC型HVDC、FACTS、风电、交通电源等系统级EMT/EMTP仿真：详细开关模型受高频开关限制，需要很小步长；平均值模型虽去掉开关细节，本应允许较大步长，但在PSCAD等节点分析型程序中常用受控电压/电流源与外部网络间接连接，非迭代求解时会在变换器模型和网络解之间引入一个时间步的接口延迟。研究对象是三相电压源换流器的解析平均值模型及其在EMTP节点方程中的接口形式。难点不在于平均化本身，而在于如何把包含交流侧、直流侧和调制量耦合关系的VSC平均模型改写成可直接并入全网导纳矩阵的节点形式，使当前步的VSC端口变量与外部网络同时求解，而不是由上一时间步的受控源值驱动。本文贡献是提出直接接口VSC AVM：把解析AVM离散后整理为电导/导纳子矩阵和历史项，将其嵌入全局节点方程，从机制上去除人工接口延迟；并强调该方法适用于整流和逆变运行，且不同于依赖查表的换流器直接接口方法。原文摘要只概括其在较大步长下精度优于已有AVM，未在所给摘录中给出可核验的具体倍数或误差数值。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是直接接口平均值模型，而不是新的开关级VSC模型。建模从VSC连接的交流子系统出发，交流侧可由戴维南等效源表示，源电压为eabc，并以θs作为同步参考角；VSC输出交流电压vabc，其基波相位相对θs偏移δ，幅值由调制指数M给定，M和δ可由外部功率/电流控制器给出，也可人工设定。核心接口量是VSC交流端口电压/电流、直流端口电压/电流，以及调制量M、δ和同步角。算法机制是先用Park变换把abc交流变量映射到旋转q-d坐标系，使基波平均量和直流量之间的耦合关系可用解析AVM表达；再按EMTP非迭代离散思想，把模型方程改写为“当前步端口变量乘以离散电导/导纳矩阵，加上仅依赖过去步的历史项”的形式。这样，VSC不再作为外部网络之后才更新的受控源，而是贡献一组可装配到全网节点方程中的子矩阵和注入历史项。每个时间步中，全网节点方程一次求解即可同时得到外部网络节点量与VSC端口量；历史项只承担数值积分记忆作用，不再代表人工接口延迟。这也是其区别于传统间接接口AVM的关键实现点。
+
+### 3. 验证、优势与不足
+
+原文摘要和引言说明作者通过计算机仿真研究验证所提模型，并与已有VSC AVM比较，结论是直接接口AVM在相对较大时间步下具有更好的精度表现。验证对象围绕VSC型ac-dc系统：交流侧由戴维南等效电路表示，VSC调制由M和δ决定，模型被放入EMTP型节点分析求解框架中。对比基线是常规非迭代间接接口AVM，即用受控源把AVM与外部电路连接、因而存在一个时间步接口延迟的方法；论文还以高频开关详细模型作为AVM存在必要性的背景，但所给摘录没有展示详细的数值表格、波形误差或具体步长设置。优势主要体现在机制层面：端口导纳子矩阵与全网方程同步联立，消除了受控源接口造成的延迟，因此应减弱大步长下由延迟诱发的数值不准确和不稳定；同时保留平均值模型不解析开关细节、与开关频率无关的快速仿真属性。边界也很明确：AVM只适合研究慢于开关频率的动态，不能反映开关纹波、器件级暂态和高频谐波；从所给验证信息看，尚不能确认其在不平衡故障、复杂控制器、弱网PLL失稳、MMC或多端网络中的表现。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值是把“平均值模型能用大步长”与“EMTP接口实现是否引入延迟”区分开：传统AVM在数学上已去掉开关限制，但若仍以受控源间接接入节点求解器，大步长优势会被接口延迟抵消。直接接口思想把VSC平均模型转化为可装配的节点导纳和历史源，使模型成为全网方程的一部分。它适合被后续VSC-HVDC、FACTS、风电并网、实时仿真加速和EMTP求解器组件化页面复用，尤其用于讨论平均模型的数值接口问题。不应把它外推为开关级精度模型，也不应在没有额外验证时声称适用于所有拓扑、所有控制策略或所有故障场景。
+
+### 证据边界
+
+- 来自原文摘录的确定事实：论文提出VSC平均值模型的直接接口形式，将AVM写成节点形式并与全网节点方程同时求解，以消除一个时间步的接口延迟。
+- 来自原文摘录的确定事实：研究背景是EMT/EMTP型程序中VSC详细开关模型步长受限，传统受控源间接接口AVM在大步长下可能产生数值不准确或不稳定。
+- 来自原文摘录的确定事实：模型以解析AVM为基础，适用于VSC整流和逆变运行；AVM本身只对慢于开关频率的动态有效。
+- 所给摘录未报告可核验的数值结果，例如最大稳定步长、误差范数、运行时间加速比或具体波形偏差；因此不能在本入口中采用页面旧稿里的具体步长和误差结论作为确定证据。
+- 所给摘录没有完整展示仿真平台、算例参数、扰动设置、控制器结构和图表结果；关于测试系统细节只能概括为通用VSC型ac-dc系统，不能扩展到多端、故障或不平衡场景。
+- 关于直接接口在复杂控制器、PLL弱网动态、谐波研究、器件损耗或开关纹波分析中的适用性，属于从AVM假设推导出的边界判断，并非所给摘录中已验证的结论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出VSC平均值模型直接接口方法，消除传统间接接口的一步延迟
-- 将AVM重构为节点导纳形式，与外部网络节点方程联立同步求解
-- 突破大仿真步长下的数值不稳定瓶颈，显著提升系统级仿真效率
-
+- 问题定位：针对传统VSC平均值模型（AVM）在EMTP类程序中采用受控源间接接口导致的一步时间步延迟问题，本文提出一种直接接口平均值模型（DI-AVM）。该方法首先利用Park变换将交流变量转换至旋转qd坐标系，建立交直流平均变量间的解析关系，并引入阻尼电阻构建直流侧接口。
+- 方法机制：针对传统VSC平均值模型（AVM）在EMTP类程序中采用受控源间接接口导致的一步时间步延迟问题，本文提出一种直接接口平均值模型（DI-AVM）。该方法首先利用Park变换将交流变量转换至旋转qd坐标系，建立交直流平均变量间的解析关系，并引入阻尼电阻构建直流侧接口。随后，将模型方程重构为阻抗矩阵与历史电压项形式，通过坐标反变换得到abc坐标系下的等效阻抗矩阵。对该矩阵求逆获得节点导纳矩阵，并结合历史电压项计算等效历史电流源。
+- 验证证据：离线电磁暂态仿真对比验证（与详细开关模型及传统间接接口AVM进行多维度对比）；典型VSC交直流互联系统（代表HVDC Light整流/逆变侧），包含交流戴维南等效源、VSC两电平拓扑、直流线路及负载；EMTP类程序架构（基于节点分析法实现，兼容PSCAD/EMTDC等求解器逻辑）
+- 量化与结论：DI-AVM允许的最大可用仿真步长可达1000 μs，相比传统IDI-AVM的极限步长（约100 μs）提升约10倍。；在Δt = 1000 μs时，DI-AVM的交流电流2-范数误差保持在极低水平，而IDI-AVM（无阻尼）误差呈指数级增长导致发散，IDI-AVM（带阻尼）稳态误差显著增大。；
+- 适用边界：适用于理解本文 Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[平均值建模|平均值建模]]
 - [[直接接口技术|直接接口技术]]
 - [[节点分析法|节点分析法]]
 - [[dq坐标变换|dq坐标变换]]
 
-
 ## 涉及的模型
-
 
 - [[vsc-model|VSC]]
 - [[交直流系统|交直流系统]]
 - [[戴维南等效电路|戴维南等效电路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[大时间步长仿真|大时间步长仿真]]
 - [[vsc-model|VSC]]
 - [[数值稳定性|数值稳定性]]
 
-
 ## 主要发现
-
 
 - 消除接口延迟后，仿真步长可显著增大且保持数值稳定与高精度
 - 在大时间步长下，新模型精度优于传统间接接口平均值模型
 - 节点联立求解有效避免了传统方法因单步延迟引发的数值发散问题
-
-
 
 ## 方法细节
 
@@ -70,26 +90,21 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 ### 数学公式
 
-
 **公式1**: $$$\bar{v}_{qd} = \frac{1}{2} M \begin{bmatrix} \cos(\delta) \\ \sin(\delta) \end{bmatrix} \bar{v}_{dc}$$$
 
 *交流侧qd轴平均电压与直流侧平均电压的调制关系，由调制比M和功角δ决定*
-
 
 **公式2**: $$$\bar{i}_{dc} = \frac{3}{4} M \cos(\phi) \|\bar{i}_{qd}\|$$$
 
 *直流侧平均电流与交流侧qd轴电流幅值及功率因数角φ的关系*
 
-
 **公式3**: $$$\begin{bmatrix} \bar{v}_{qd} \\ \bar{v}_{dc} \end{bmatrix} = Z_{VSC}^{qd,dc} \begin{bmatrix} \bar{i}_{qd} \\ \bar{i}_{dc} \end{bmatrix} + e_{h,VSC}^{qd,dc}$$$
 
 *qd坐标系下VSC的阻抗-历史项电压方程，是推导节点形式的核心*
 
-
 **公式4**: $$$G_{VSC}^{abc,dc} \begin{bmatrix} v_{abc}^1 \\ \bar{v}_{dc} \end{bmatrix} = \begin{bmatrix} i_{abc}^1 \\ \bar{i}_{dc} \end{bmatrix} + i_{h,VSC}^{abc,dc}$$$
 
 *最终导出的abc坐标系节点导纳方程形式，用于与外部网络联立求解*
-
 
 ### 算法步骤
 
@@ -111,7 +126,6 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 9. 9. 同步联立求解：在每个仿真步长内，直接求解包含VSC节点的全局线性方程组，无需迭代或引入人工时间步延迟。
 
-
 ### 关键参数
 
 - **阻尼电阻_Rx**: 10 Ω（用于IDI-AVM对比测试）
@@ -128,8 +142,6 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 - **阶跃扰动**: t=50 ms时，δ跳变至25°，M跳变至0.7，逆变模式传输240 MW
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -144,15 +156,12 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 | 极大步长精度测试（Δt = 1000 μs） | DI-AVM在1000 μs步长下依然保持数值稳定，暂态超调与稳态值与0.1 μs参考解偏差极小；IDI-AVM若不加阻尼电阻则直接发散，加入Rx=10 Ω阻尼后虽稳定但产生显著稳态误差。 | DI-AVM在1000 μs步长下的精度显著优于带阻尼的IDI-AVM，且无需牺牲稳态精度换取稳定性。 |
 
-
-
 ## 量化发现
 
 - DI-AVM允许的最大可用仿真步长可达1000 μs，相比传统IDI-AVM的极限步长（约100 μs）提升约10倍。
 - 在Δt = 1000 μs时，DI-AVM的交流电流2-范数误差保持在极低水平，而IDI-AVM（无阻尼）误差呈指数级增长导致发散，IDI-AVM（带阻尼）稳态误差显著增大。
 - DI-AVM彻底消除了传统方法中因受控源接口引入的1个时间步（Δt）人工延迟，使节点方程求解实现真正的同步。
 - 相较于详细开关模型（需Δt < 10 μs且依赖插值算法），DI-AVM作为连续模型无需开关时刻插值，计算效率提升两个数量级以上。
-
 
 ## 关键公式
 
@@ -174,11 +183,34 @@ $$$e_{h,VSC}^{abc,dc} = \begin{bmatrix} e_h^{abc} \\ e_h^{dc} \end{bmatrix}, \qu
 
 *携带上一时刻直流电压信息，用于构建等效历史电流源，体现系统记忆效应*
 
-
-
 ## 验证详情
 
 - **验证方式**: 离线电磁暂态仿真对比验证（与详细开关模型及传统间接接口AVM进行多维度对比）
 - **测试系统**: 典型VSC交直流互联系统（代表HVDC Light整流/逆变侧），包含交流戴维南等效源、VSC两电平拓扑、直流线路及负载
 - **仿真工具**: EMTP类程序架构（基于节点分析法实现，兼容PSCAD/EMTDC等求解器逻辑）
 - **验证结果**: 验证表明DI-AVM在Δt=10 μs时与参考解完全一致；在Δt=400~1000 μs大时间步长下，DI-AVM保持数值稳定且暂态/稳态精度极高，而传统IDI-AVM出现发散或需引入阻尼电阻导致精度严重下降。DI-AVM成功突破大时间步长仿真瓶颈，适用于大规模VSC系统的高效离线与实时仿真。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 平均值建模、直接接口技术、节点分析法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出VSC平均值模型直接接口方法，消除传统间接接口的一步延迟
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "A Transient Conducted EM Disturbances Source Modeling Method for Electromagnetic Launch System Based on the Cascaded Multi-Port Circuit Model"
 type: source
-authors: ['未知']
+authors: ['Mou 等']
 year: 2024
 journal: "IEEE Access;2024;12; ;10.1109/ACCESS.2024.3521284"
 tags: ['emt']
@@ -11,42 +11,66 @@ sources: ["EMT_Doc/04/Mou 等 - 2024 - A Transient Conducted em Disturbances Sou
 
 # A Transient Conducted EM Disturbances Source Modeling Method for Electromagnetic Launch System Based on the Cascaded Multi-Port Circuit Model
 
-**作者**: 
+**作者**: Mou 等
 **年份**: 2024
 **来源**: `04/Mou 等 - 2024 - A Transient Conducted em Disturbances Source Modeling Method for Electromagnetic Launch System Based.pdf`
 
 ## 摘要
 
-Electromagnetic launch (EML) systems with energy storage units in transient operating states are gradually being applied in modern ships, satellite launches, etc., power switching devices with higher voltage and switching frequency, Additionally, innovative topologies are being developed to enhance the electromagnetic performance of the EML systems. This inevitably leads to significant EMI issues. Therefore, this paper proposes a transient conducted EMI source modeling method for EML systems based on a multi-port equivalent circuit cascade model. Initially, a multi-port transient conducted EMI source model for supercapacitors is developed, taking into account the time-varying load characteristics of supercapacitors during charging and transient high-current discharge characteristics during
+本文提出一种基于多端口等效电路级联的电磁发射（EML）系统瞬态传导电磁干扰源建模方法。该方法首先针对超级电容建立计及充电时变负载特性与放电瞬态大电流特性的多端口模型；其次利用阻抗测量数据提取双三相直线电机的差模与共模等效RLC参数，并叠加反电动势源构建电机多端口模型；接着考虑IGBT开关过程的高频寄生参数，建立双三相DC-AC逆变器的多端口传导EMI模型；最后利用各功能模块端口间的级联特性，将上述模型级联形成系统级瞬态传导EMI源模型。通过时域仿真与实验测量对比，实现EML系统瞬态传导干扰时频域特性的准确预测，为EMI滤波器优化设计提供理论支撑。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自电磁发射（EML）系统的瞬态大功率能量变换：超级电容充放电、双三相逆变器高速开关和直线电机推进会在供电侧产生传导电磁扰动，影响平台电网和邻近设备，进而需要在滤波器设计前预测DM/CM干扰源特性。研究对象不是单个器件，而是由超级电容储能、双三相DC-AC逆变器、双三相直线电机级联构成的系统级瞬态传导EMI源。难点在于：超级电容充电负载随时间变化、放电电流瞬态很大；逆变器高du/dt和di/dt受寄生参数影响；电机端口阻抗在宽频段呈现谐振；各设备之间还存在端口耦合和干扰交叉传播。本文的贡献是把各功能单元都表示为可级联的多端口等效电路，并将充放电时变行为、电机实测阻抗参数、逆变器高频寄生效应统一到同一时域电路框架中，用于系统级瞬态传导EMI源建模，而不是只做单设备或纯频域DM/CM等效。
+
+### 2. 模型、算法与实现技术
+
+方法由三个器件模型和一个级联流程组成。超级电容模型把端口电压、电流作为接口量，充电侧包含瞬态支路、电压平衡支路和自放电支路；其中时变电容Cf1(u)=ku(t)用于反映充电初期端电压随状态变化的非线性负载特征，放电侧加入线路和负载寄生R/L以描述脉冲大电流路径。电机模型以各相端口和中性点为接口，通过阻抗测量得到共模、差模频率响应，再根据谐振峰谷提取等效RLC参数，同时叠加反电动势源，因而既能表现基频电机运行，也能表现高频传导路径。逆变器模型以直流母线端、桥臂输出端为多端口，考虑IGBT模块和母线寄生电感、电容；利用桥臂对称性先建单相桥臂，再扩展为双三相结构。系统实现时按实际电气连接把超级电容、逆变器、电机端口级联，施加SPWM和充放电时序，在时域求得电压、电流，再在LISN或指定观测端分离DM/CM并转换为频域谱，用于评价瞬态传导扰动。
+
+### 3. 验证、优势与不足
+
+作者的验证思路是把模型输出与低功率EML实验平台和典型EML系统工况进行对比，比较对象包括端电压、放电电流、相电流等时域波形，以及LISN处DM/CM传导扰动频谱包络。页面抽取信息显示，实验平台包括350 V/1 F超级电容、LISN、双三相逆变器和永磁同步电机，并使用差分探头、LISN、频谱分析仪、CM/DM分离器、示波器等测量设备；另有33 F超级电容、双三相直线电机和6 kHz逆变器的典型系统仿真。优势主要体现在模型能把器件内部寄生、高频端口阻抗和瞬态能量过程放在同一电路仿真中，因此不仅给出频域谱，也能解释放电过程中的电压、电流动态。已有页面称DM/CM频谱在若干频段与实测包络吻合，并较传统频域等效电路有3–6 dB精度提升；但从提供的原文片段看，摘要只说明进行了时域和频域对比，具体误差数值、频段例外和对比基线需回到正文图表核验。验证范围主要限于给定拓扑、参数、控制策略和测试频段，未证明可直接推广到其他发射电源、半导体器件或滤波器闭环优化。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把EML传导EMI从“单个噪声源频谱估计”推进到“系统级端口耦合建模”：超级电容、逆变器和电机不再被孤立处理，而是作为相互加载、相互传播干扰的多端口网络。它可用于提前识别直流侧DM/CM扰动、比较充电模式或开关参数对传导噪声的影响，并为EMI滤波器阻抗匹配和布置位置提供源模型。后续页面可复用其多端口级联思想、阻抗测量提参流程和时域到频域的扰动评估链条。它不适合被外推为任意EML拓扑的通用精度结论，也不应在缺少寄生参数、线缆布局和测量边界时直接替代实测认证。
+
+### 证据边界
+
+- 题名、作者、DOI、摘要中的研究目标和系统级多端口级联建模思路来自用户提供的原文首页与摘要，可作为确定信息。
+- 超级电容时变电容、电机DM/CM阻抗提参、逆变器寄生参数建模等细节来自当前页面抽取内容；关键参数表、等效电路图和提参公式仍需回到PDF正文核验。
+- 页面列出的350 V/1 F实验平台、33 F典型系统、6 kHz开关频率、7–8 kA电流峰值和误差dB数值未出现在本次提供的原文片段中，使用前应核对原文实验章节和图表。
+- 原文摘要说明比较了电压、电流、能量以及时频域特性，但未在片段中给出可核验的完整误差统计方法、采样设置、FFT窗口、LISN连接细节和不确定度评估。
+- 从验证范围看，结论主要适用于论文中的双三相逆变器—电机—超级电容EML结构；对其他半导体器件、线缆布局、滤波器接入后系统、辐射EMI或更高频段不宜直接外推。
+- 传统频域方法作为基线在页面中被提到，但本次证据片段未给出其模型配置和同条件对比过程，因此‘提升3–6 dB’应视为待正文复核的量化结论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于多端口等效电路级联的电磁发射系统瞬态传导干扰源建模方法
-- 建立计及充放电时变特性与高频寄生参数的超级电容、电机及逆变器多端口模型
-- 构建系统级级联仿真模型，实现瞬态传导干扰时频域特性的准确预测与验证
-
+- 问题定位：本文提出一种基于多端口等效电路级联的电磁发射（EML）系统瞬态传导电磁干扰源建模方法。该方法首先针对超级电容建立计及充电时变负载特性与放电瞬态大电流特性的多端口模型；其次利用阻抗测量数据提取双三相直线电机的差模与共模等效RLC参数，并叠加反电动势源构建电机多端口模型；
+- 方法机制：本文提出一种基于多端口等效电路级联的电磁发射（EML）系统瞬态传导电磁干扰源建模方法。该方法首先针对超级电容建立计及充电时变负载特性与放电瞬态大电流特性的多端口模型；其次利用阻抗测量数据提取双三相直线电机的差模与共模等效RLC参数，并叠加反电动势源构建电机多端口模型；接着考虑IGBT开关过程的高频寄生参数，建立双三相DC-AC逆变器的多端口传导EMI模型；最后利用各功能模块端口间的级联特性，将上述模型级联形成系统级瞬态传导EMI源模型。
+- 验证证据：实验测量与仿真对比分析（时域波形对比、频域频谱包络对比、误差定量评估）；低压EML实验平台（350V/1F超级电容、LISN、双三相逆变器、永磁同步电机）与典型EML系统仿真模型（33F超级电容、双三相直线电机、6kHz逆变器）；
+- 量化与结论：超级电容单次放电端电压变化量约为20 V，放电电流峰值可达7-8 kA。；恒压充电模式下的CM干扰主频点幅值比恒流充电高约5 dB，DM干扰高约8 dB。；DM传导干扰预测最大误差在10-150 kHz及高频段均<3 dB，CM干扰在10-150 kHz最大误差<5 dB。；相比传统频域等效电路建模，本方法在10 kHz-10 MHz全频段预测精度提升3-6 dB。
+- 适用边界：适用于理解本文 A Transient Conducted EM Disturbances Source Modeling Method for Electromagnetic Launch System Based on the Cascaded Multi-Port Circuit Model （2024） 在当前页面抽取范围内讨论的。
 
 ## 使用的方法
-
 
 - [[多端口等效电路级联建模|多端口等效电路级联建模]]
 - [[时域仿真分析|时域仿真分析]]
 - [[实验测量数据驱动建模|实验测量数据驱动建模]]
 - [[高频寄生参数提取|高频寄生参数提取]]
 
-
 ## 涉及的模型
-
 
 - [[超级电容|超级电容]]
 - [[双三相直线电机|双三相直线电机]]
 - [[双三相dc-ac逆变器|双三相DC-AC逆变器]]
 - [[dc-dc变换器|DC-DC变换器]]
 
-
 ## 相关主题
-
 
 - [[瞬态传导电磁干扰|瞬态传导电磁干扰]]
 - [[电磁发射系统|电磁发射系统]]
@@ -54,15 +78,11 @@ Electromagnetic launch (EML) systems with energy storage units in transient oper
 - [[电磁兼容预测|电磁兼容预测]]
 - [[时频域分析|时频域分析]]
 
-
 ## 主要发现
-
 
 - 实验验证表明级联多端口模型能准确复现系统瞬态电压、电流及能量变化过程
 - 仿真结果与实际工况高度吻合，验证了该方法在时频域传导干扰预测中的有效性
 - 揭示了高功率开关动作引发的瞬态传导干扰传播路径与频谱分布特征
-
-
 
 ## 方法细节
 
@@ -72,16 +92,13 @@ Electromagnetic launch (EML) systems with energy storage units in transient oper
 
 ### 数学公式
 
-
 **公式1**: $$$C_{f1}(u) = ku(t)$$$
 
 *超级电容充电瞬态支路中的时变电容模型，用于拟合充电初期端电压随时间非线性变化的特性，其中k为比例系数，u(t)为端电压。*
 
-
 **公式2**: $$$Z_{CM}(\omega), Z_{DM}(\omega)$$$
 
 *通过阻抗分析仪测量的双三相直线电机共模与差模阻抗频率响应曲线，用于提取等效RLC电路的谐振峰谷参数。*
-
 
 ### 算法步骤
 
@@ -92,7 +109,6 @@ Electromagnetic launch (EML) systems with energy storage units in transient oper
 3. 步骤3：逆变器多端口建模。基于双三相逆变器拓扑，提取IGBT模块及母线的寄生电感/电容参数；利用各桥臂结构对称性，仅对单相桥臂进行详细EMI建模，再通过并联扩展至完整双三相结构，以准确反映开关过程产生的高du/dt与di/dt干扰。
 
 4. 步骤4：系统级级联与仿真。将超级电容、逆变器、直线电机的多端口模型按实际电气连接进行端口级联；设置SPWM控制策略（30°电角度差，6kHz开关频率）与充放电时序（0-6s恒流充电，6s起每次放电2s、间隔1s）；运行瞬态时域仿真，提取直流侧LISN处的DM/CM干扰电流波形，并通过FFT转换至频域进行频谱分析。
-
 
 ### 关键参数
 
@@ -112,8 +128,6 @@ Electromagnetic launch (EML) systems with energy storage units in transient oper
 
 - **仿真总时长**: 15 s
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -128,8 +142,6 @@ Electromagnetic launch (EML) systems with energy storage units in transient oper
 
 | 典型EML系统频域传导干扰预测 | 提取直流侧LISN处10 kHz-10 MHz频段的DM/CM干扰频谱。DM干扰在10-150 kHz及高频段最大误差<3 dB（150-300 kHz因分段测量跳变误差约13 dB）；CM干扰在10-150 kHz最大误差<5 dB。高频段（>10 MHz）干扰幅值因寄生参数串联谐振而上升。 | 相比传统频域建模方法，本方法预测精度提升3-6 dB，且能准确拟合高频噪声峰值点，低频段干扰幅值随频率升高逐渐衰减。 |
 
-
-
 ## 量化发现
 
 - 超级电容单次放电端电压变化量约为20 V，放电电流峰值可达7-8 kA。
@@ -138,7 +150,6 @@ Electromagnetic launch (EML) systems with energy storage units in transient oper
 - 相比传统频域等效电路建模，本方法在10 kHz-10 MHz全频段预测精度提升3-6 dB。
 - 15 MHz处DM干扰仿真与实测误差约15 dB，主要归因于高频串联谐振及未计入均压板寄生参数。
 - 双三相逆变器输出相电流满足30°电角度空间差，开关频率设定为6 kHz时系统瞬态响应稳定。
-
 
 ## 关键公式
 
@@ -154,11 +165,34 @@ $$$Z_{eq}(\omega) = R + j\omega L + \frac{1}{j\omega C}$$$
 
 *基于DM/CM阻抗测量曲线的谐振峰谷点提取，用于构建直线电机高频等效电路，拟合宽频带阻抗特性。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 实验测量与仿真对比分析（时域波形对比、频域频谱包络对比、误差定量评估）
 - **测试系统**: 低压EML实验平台（350V/1F超级电容、LISN、双三相逆变器、永磁同步电机）与典型EML系统仿真模型（33F超级电容、双三相直线电机、6kHz逆变器）
 - **仿真工具**: 实验设备：CYBERTEK DP6070高压差分探头、NNBL 8229-HV型LISN、N9020A频谱分析仪、CMDM 8700 CM/DM分离器、RIGOL TDS3054B示波器；仿真平台：基于多端口等效电路级联的时域电路仿真环境（通常为MATLAB/Simulink或PLECS类EMT工具）
 - **验证结果**: 时域仿真电压/电流波形与实测高度一致，频域DM/CM干扰频谱包络在10 kHz-10 MHz范围内最大误差控制在5 dB以内（特定频段除外），整体预测精度较传统方法提升3-6 dB，充分验证了级联多端口模型在EML系统瞬态传导EMI源预测中的准确性与工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Transient Conducted EM Disturbances Source Modeling Method for Electromagnetic Launch System Based on the Cascaded Multi-Port Circuit Model`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 多端口等效电路级联建模、时域仿真分析、实验测量数据驱动建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于多端口等效电路级联的电磁发射系统瞬态传导干扰源建模方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/04/Mou 等 - 2024 - A Transient Conducted em Disturbances Source Modeling Method for Electromagnetic Launch System Based.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

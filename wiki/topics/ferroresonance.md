@@ -68,7 +68,7 @@ created: "2026-04-14"
 
 | 论文 | 年份 |
 |------|------|
-| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-voltage-transformer-13&14|Digital Time-Domain Investigation of Transient Behavior of C]] | 1998 |
+| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Digital Time-Domain Investigation of Transient Behavior of C]] | 1998 |
 | [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Saturable reactor hysteresis model based on Jiles-Atherton f]] | 2024 |
 
 ## 深度增强内容

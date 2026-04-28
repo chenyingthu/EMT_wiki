@@ -3,7 +3,7 @@ title: "Partitioned fitting and DC correction in transmission line/cable models 
 type: source
 authors: ['Miguel Cervantes']
 year: 2020
-journal: "Electric Power Systems Research, 189 (2020) 106809. doi:10.1016/j.epsr.2020.106809"
+journal: "Electric Power Systems Research"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/31/j.epsr.2020.106809.pdf.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/31/j.epsr.2020.106809.pdf.pdf"]
 
 ## 摘要
 
-Partitioned ﬁtting and DC correction in transmission line/cable models for Miguel Cervantesa,⁎, Ilhan Kocara, Jean Mahseredjiana, Abner Ramirezb b CINVESTAV Campus Guadalajara, Guadalajara, Mexico This paper extends the applications of and provides further insights about partitioned ﬁtting procedure. At the ﬁrst stage of this procedure, the ﬁtting is performed at a high frequency band by excluding frequency samples close to DC. The second stage ﬁnds a correction term for those excluded samples.
+本文提出FDM/DC（Frequency Dependent Model with DC correction）分频段拟合方法，专门针对宽频EMT仿真中输电线路和电缆模型在直流附近频率的精度问题。该方法通过将频率范围划分为高频段（HF）和低频段（LF），首先在高频段（排除接近DC的样本）进行标准ULM或FDCM拟合以获得主要动态特性，然后针对被排除的低频段计算拟合误差，并通过附加的低阶有理函数校正项补偿直流附近的拟合偏差。这种分区策略避免了传统方法中为捕捉DC响应而产生的大留数/极点比问题，显著提高了时域数值稳定性，同时保证了从直流到高频的宽频带建模精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+HVDC线路/电缆的EMT仿真需要同一个线路模型同时覆盖接近直流的稳态行为和较高频暂态传播特性。研究对象是基于分布参数的频变线路/电缆模型，核心函数为传播函数H和特征导纳Yc，它们在ULM等模型中要用有理函数拟合后进入时域卷积实现。难点在于：若为捕捉DC响应而把极低频样本直接纳入常规宽频拟合，H的模态组拟合可能出现很大的留数/极点比且符号相反，导致时域数值不稳定；同时DC附近拟合不好会使直流稳态电压、电流错误。本文的贡献不是另起一种线路理论，而是在ULM/FDCM框架上给出分区拟合与DC校正：先排除接近DC样本只拟合较高频段，再对被排除低频样本的误差单独拟合低阶校正项，从而兼顾DC响应与宽频动态，并给出相应时域状态空间/离散卷积实现细节。
+
+### 2. 模型、算法与实现技术
+
+本文方法称为FDM/DC。输入是线路/电缆常数程序得到的频域H(jω)和Yc(jω)样本，以及线路长度、模态传播时延等参数；接口量仍是EMT线路模型两端电压、电流关系，例如端口电流由YcVk和经H传播的远端历史量共同决定。计算流程分两段：第一阶段在高频样本上对H做常规ULM或FDCM式有理逼近，形式为若干模态组的部分分式乘以传播延时，用来描述主要行波传播和频变衰减；该阶段故意不让接近DC的点支配拟合。第二阶段把第一阶段模型外推到低频样本，计算真实H与拟合H之间的误差ΔH，再用低阶有理函数拟合这个误差，作为DC correction叠加到主模型上。Yc仍按相域有理函数形式拟合。进入时域后，各部分分式被转成状态空间或递推卷积项，形成历史电流源；论文还讨论不同积分公式和插值方案下这些卷积项的离散实现。因此，校正项的作用不是替代主传播模型，而是只补偿低频/DC附近主模型刻意遗漏的误差，避免为一个宽频拟合强行同时满足DC而产生病态极点-留数组合。
+
+### 3. 验证、优势与不足
+
+作者通过若干时域测试验证FDM/DC，关注HVDC输电线路和电缆场景中DC稳态响应、宽频暂态响应以及数值稳定性。基线主要是传统ULM，并结合文献中FDCM和改进积分/双段插值方案的背景进行比较；实现层面是在EMT-type程序所需的状态空间和离散卷积框架下考察。验证指标并非统一给出为表格化误差百分比或运行时间，而是围绕拟合质量、DC稳态电压电流是否正确、是否出现由大留数/极点比引发的时域不稳定，以及不同积分和插值方案下模型能否保持稳定运行。优势在于：FDM/DC把低频校正从主宽频拟合中分离出来，能够减少传统ULM中为了覆盖极低频而产生的病态留数/极点比，同时保留ULM/FDCM已有的宽频线路建模接口，工程实现改动集中在拟合与卷积项组合上。边界是：原文摘要和引言没有报告可核验的数值结果；从验证范围看，结论主要支撑HVDC线路/电缆算例及作者测试的积分、插值设置，不能直接外推到所有架空线特征值情形、所有频带上限、实时仿真步长或保护控制场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：宽频线路模型的DC问题不一定要靠把极低频点硬塞进同一次全频段拟合来解决；更稳妥的策略是把“传播动态主模型”和“DC/低频误差校正”分开建模。它适合用于后续讨论ULM低频拟合缺陷、HVDC线路/电缆EMT建模、频域有理逼近稳定性、状态空间卷积实现和数值积分/插值误差控制的页面。工程上可作为需要同时关心直流稳态和暂态波过程的线路模型改造思路。不适合被外推为任意网络元件的通用稳定化方法，也不能在缺少原文算例参数和误差曲线时声称其在计算速度或精度上有确定量化优势。
+
+### 证据边界
+
+- 来自原文摘要和引言：FDM/DC采用两阶段拟合，第一阶段排除接近DC样本，第二阶段对被排除样本构造校正项；该方法用于HVDC线路/电缆的H函数低频改进。
+- 来自原文：传统ULM若用很低频点捕捉DC，可能产生较差DC拟合以及H拟合中的大留数/极点比，进而造成时域数值稳定性问题。
+- 来自原文：论文提供状态空间实现和离散时域卷积细节，并用不同积分和插值方案测试数值稳定性；但当前证据片段未给出具体误差百分比、仿真步长、阶数或计算时间。
+- 据方法机制推断：低阶DC校正项主要补偿低频误差而非替代高频主模型；该表述符合公式流程，但具体校正阶数和频段划分需以原文算例参数为准。
+- 验证边界：当前可见文本只明确指向HVDC输电线路和电缆案例，不能证明该方法对所有架空线路、所有电缆结构、所有控制系统或实时仿真平台均有效。
+- 不确定性：页面中列出的0.001 Hz–1 Hz、1 Hz–1 MHz等频段若未在原文表图逐项核验，应视为典型或抽取信息，不能作为普适推荐参数。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出分频段拟合与直流校正的两阶段方法，显著提升宽频带线路模型低频精度
-- 消除传播函数拟合中的大留数极点比问题，有效解决时域仿真数值不稳定难题
-- 给出完整的时域状态空间实现细节，并验证了不同积分与插值方案下的稳定性
-
+- 问题定位：本文提出FDM/DC（Frequency Dependent Model with DC correction）分频段拟合方法，专门针对宽频EMT仿真中输电线路和电缆模型在直流附近频率的精度问题。
+- 方法机制：本文提出FDM/DC（Frequency Dependent Model with DC correction）分频段拟合方法，专门针对宽频EMT仿真中输电线路和电缆模型在直流附近频率的精度问题。该方法通过将频率范围划分为高频段（HF）和低频段（LF），首先在高频段（排除接近DC的样本）进行标准ULM或FDCM拟合以获得主要动态特性，然后针对被排除的低频段计算拟合误差，并通过附加的低阶有理函数校正项补偿直流附近的拟合偏差。
+- 验证证据：时域仿真验证，通过对比不同积分和插值方案下的数值稳定性，以及直流稳态和宽频暂态响应的精度分析；HVDC（高压直流）输电线路和电缆系统，包括多端直流输电配置；基于EMT-type程序实现（参考ULM在PSCAD/EMTDC等工具中的实现细节），使用状态空间实现和离散卷积计算
+- 量化与结论：低频段频率范围：0.001 Hz - 1 Hz（第一阶段排除的频段）；高频段频率范围：1 Hz - 1 MHz（第一阶段拟合频段，可扩展）；直流校正项采用低阶有理函数（low-order fitting），通常阶数远小于主模型阶数；消除了大留数/极点比（large residue/pole ratios）导致的数值不稳定问题
+- 适用边界：适用于理解本文 Partitioned fitting and DC correction in transmission line/cable models for wideband EMT studies （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[分频段拟合|分频段拟合]]
 - [[直流校正|直流校正]]
@@ -37,9 +65,7 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 - [[状态空间实现|状态空间实现]]
 - [[时域卷积|时域卷积]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[电缆|电缆]]
@@ -47,9 +73,7 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 - [[频率相关电缆模型|频率相关电缆模型]]
 - [[高压直流输电线路|高压直流输电线路]]
 
-
 ## 相关主题
-
 
 - [[宽频电磁暂态仿真|宽频电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -57,15 +81,11 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 - [[高压直流输电|高压直流输电]]
 - [[时域实现|时域实现]]
 
-
 ## 主要发现
-
 
 - 两阶段拟合方法在保证高频精度的同时，实现了准确的直流稳态电压电流响应
 - 有效避免了大留数极点比问题，相比传统通用线路模型显著提升了时域仿真稳定性
 - 在不同积分与插值方案下均保持良好稳定性，验证了该模型在宽频暂态研究中的可靠性
-
-
 
 ## 方法细节
 
@@ -75,51 +95,41 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 
 ### 数学公式
 
-
 **公式1**: $$$H = e^{-\Gamma L}$$$
 
 *传播函数定义，其中Γ为传播常数矩阵，L为线路长度*
-
 
 **公式2**: $$$Y_c = \Gamma Z^{-1}$$$
 
 *特征导纳定义，Z为单位长度串联阻抗矩阵*
 
-
 **公式3**: $$$I_k = Y_c V_k - H(I_m + Y_c V_m) = I_{shk} - I_{ki}$$$
 
 *线路k端电流方程，描述多端电压电流关系*
-
 
 **公式4**: $$$H \cong \sum_{i=1}^{N_{gr}} \left( \sum_{m=1}^{M_i} \frac{R_{i,m}}{s - p_{i,m}} \right) e^{-s\tau_i}$$$
 
 *ULM中有理函数逼近形式，Ngr为模态组数，Mi为逼近阶数，τi为模态时延*
 
-
 **公式5**: $$$Y_c \cong G_0 + \sum_{i=1}^{N_y} \frac{G_i}{s - q_i}$$$
 
 *特征导纳在相域的有理逼近，Ny为逼近阶数，qi为拟合极点，Gi为留数矩阵*
-
 
 **公式6**: $$$\tilde{H}_{HF} \cong \sum_{i=1}^{N_{gr}} \left( \sum_{m=1}^{M_i} \frac{R_{i,m}}{s_{HF} - p_{i,m}^{HF}} \right) e^{-s_{HF}\tau_i}$$$
 
 *第一阶段高频段拟合结果，sHF = jωHF为高频段复频率变量*
 
-
 **公式7**: $$$\Delta H_{LF} = H_{LF} - \tilde{H}_{HF}(s_{LF})$$$
 
 *低频段误差计算，HLF为实际传播函数在低频段的值，H̃HF(sLF)为高频模型在低频处的计算值*
-
 
 **公式8**: $$$\tilde{H}_{LF} \cong \sum_{k=1}^{N_{dc}} \frac{R_k^{dc}}{s - p_k^{dc}}$$$
 
 *第二阶段直流校正项，Ndc为低阶校正函数阶数（通常很小）*
 
-
 **公式9**: $$$H_{final} = \tilde{H}_{HF} + \tilde{H}_{LF}$$$
 
 *最终合成传播函数，结合高频主模型和低频校正项*
-
 
 ### 算法步骤
 
@@ -136,7 +146,6 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 6. 特征导纳拟合：独立地对Yc在相域进行有理函数拟合（公式6），获得G0、Gi和qi参数
 
 7. 时域实现：基于状态空间实现，采用离散卷积计算历史电流源，支持不同积分方法（如梯形法、后向欧拉）和插值方案（双段插值）
-
 
 ### 关键参数
 
@@ -156,8 +165,6 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 
 - **Δt**: 时域仿真积分步长
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -172,8 +179,6 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 
 | 不同数值积分与插值方案稳定性测试 | 应用不同的积分方法（梯形积分、后向欧拉等）和插值方案（包括双段插值two-segment interpolation）进行时域仿真 | FDM/DC在各种积分和插值方案下均保持良好的数值稳定性，而传统ULM在大留数/极点比情况下容易出现数值不稳定 |
 
-
-
 ## 量化发现
 
 - 低频段频率范围：0.001 Hz - 1 Hz（第一阶段排除的频段）
@@ -182,7 +187,6 @@ Partitioned ﬁtting and DC correction in transmission line/cable models for Mig
 - 消除了大留数/极点比（large residue/pole ratios）导致的数值不稳定问题
 - 实现了准确的直流（DC）稳态电压和电流响应，解决了传统方法中DC fitting不良的问题
 - 模型适用于任意暂态研究（any transient study），频率范围可扩展至线路/电缆常数程序支持的最高频率
-
 
 ## 关键公式
 
@@ -204,11 +208,34 @@ $$$I_k = Y_c V_k - H(I_m + Y_c V_m)$$$
 
 *描述线路两端电压电流关系的基本方程，是EMT仿真中实现诺顿等效的基础*
 
-
-
 ## 验证详情
 
 - **验证方式**: 时域仿真验证，通过对比不同积分和插值方案下的数值稳定性，以及直流稳态和宽频暂态响应的精度分析
 - **测试系统**: HVDC（高压直流）输电线路和电缆系统，包括多端直流输电配置
 - **仿真工具**: 基于EMT-type程序实现（参考ULM在PSCAD/EMTDC等工具中的实现细节），使用状态空间实现和离散卷积计算
 - **验证结果**: FDM/DC方法在保持宽频建模能力的同时，成功消除了传统ULM中的大留数/极点比问题，在各种数值积分和插值方案下均表现出优异的数值稳定性，并实现了准确的直流稳态响应。具体数值指标（如误差百分比、计算时间等）在提供的文本片段中未明确给出。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Partitioned fitting and DC correction in transmission line/cable models for wideband EMT studies`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 分频段拟合、直流校正、有理函数逼近 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出分频段拟合与直流校正的两阶段方法，显著提升宽频带线路模型低频精度
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/31/j.epsr.2020.106809.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -3,7 +3,7 @@ title: "Electromagnetic disturbances in gas-insulated substations and VFT calcul
 type: source
 authors: ['Akihiro Ametani']
 year: 2018
-journal: "Electric Power Systems Research, 160 (2018) 191-198. doi:10.1016/j.epsr.2018.02.014"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations and VFT calculations_Ametani 等_2018.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 ## 摘要
 
-1. Introduction This paper is focused on VFTs from the viewpoint of electro- magnetic disturbances (EMDs). In Section 2, the voltage amplitudes It is well-known that lightning strikes to a transmission tower and oscillating frequencies of the VFTs are summarized based nearby a substation and swit...
+本文从电磁干扰(EMD)视角系统研究GIS中超快暂态(VFT)特性。首先汇总现场与实验室测试数据，提取VFT幅频特征。针对EMTP类软件提出基于传输线理论的高频建模准则：在超高频下将大地视为理想导体，仅采用同轴传播模式参数即可满足精度；将分支母线等效为集中电容以抑制数值振荡；垂直接地引线采用分布参数模型计算波阻抗；控制回路需详细建模VT/CT及接地网互感。随后利用EMTP的宽频(WB)与恒参(CP)线路模型进行暂态计算，并与三维有限差分时域法(FDTD)进行交叉验证，评估不同建模假设对波形、频率及幅值的影响，最终形成兼顾计算效率与精度的GIS超高频暂态仿真规范。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自GIS中隔离开关和断路器操作产生的超快暂态：其频率从数MHz到超过100 MHz，区别于雷电侵入波通常低于1 MHz的主导频率。这类VFT/VFTO不仅可能在主回路形成最高可达数pu的过电压，也会通过外壳、接地和二次电缆耦合到低压控制回路，引发电磁干扰。本文研究对象不是单一过电压峰值，而是GIS高压主回路、金属外壳和低压控制回路中的VFT幅值与振荡频率，以及这些频率如何在EMT类软件和FDTD中被可计算地表示。难点在于GIS结构包含同轴母线、分支、套管、CT/VT、外壳和接地引线等高频传播路径，MHz到百MHz频段下元件尺寸、传播延时、反射和耦合都不能简单用工频等值处理；同时现场测量和实验室测量分散在不同文献中，仪器带宽和接线方式也会影响可观测波形。本文贡献在于把已有现场/实验结果按主回路、外壳、控制回路分类汇总，明确EMD视角下频率比单纯绝缘配合峰值更关键；并说明GIS元件在EMTP等传输线方法中的建模原则，再用测试结果和FDTD计算对EMTP结果进行交叉检查，给出“适当建模时EMTP与FDTD可合理一致”的证据入口。
+
+### 2. 模型、算法与实现技术
+
+本文采用两类互补计算框架：一类是EMTP/EMT型软件中的传输线建模，另一类是FDTD全波时域计算。EMTP模型的核心接口量是各GIS元件端口的电压、电流、波阻抗、传播速度和等效电容/电感；输入包括GIS几何尺寸、介质参数、接地和终端条件、开关操作产生的暂态激励；输出是主导体、外壳或控制回路端口的VFT波形、幅值和振荡频率。其工作机制是把GIB/GIS母线视为高频传输线，VFT沿线传播并在不连续点反射、折射，分支和端部元件通过等效阻抗或电容改变局部反射系数和谐振频率。页面抽取给出的分支等效电容公式C_b=1/(z_oc c_c)用于把短分支的高频传播效应折算为单位长度电容，避免在EMTP拓扑中过度细分而引入不必要的高频振荡；垂直接地引线波阻抗Z_ov=60[ln(h/r)-1]则把接地线视为分布参数通道，而不是零阻抗连接，从而保留外壳电压和接地反射的高频特征。对于绝缘配合问题，CT/VT可偏向电容等值；对于EMD问题，低压控制回路、VT/CT耦合和接地网互感需要更细建模，因为输出关注的是二次回路上的感应电压和频谱。FDTD模型不依赖预先分解为集总/传输线元件，而是在三维网格中推进电磁场，端口波形由场量积分或边界端口得到，用于检查EMTP传输线近似在给定GIS结构和频率范围内是否足够。
+
+### 3. 验证、优势与不足
+
+作者的验证由三层证据组成。第一层是文献中现场和实验室测试结果的汇总：表1列出不同额定电压GIS中的VFTO频率和幅值，例如500/550 kV主回路报告1–140 MHz、550 kV为10–50 MHz、500 kV为8–100 MHz或5–60 MHz，UHV相关结果包括1–5 MHz、2–31 MHz、0.25–2 MHz和8–118 MHz等；摘要还指出实测显示高压主回路与低压控制回路的频率没有显著差异。第二层是在EMTP中按所述GIS元件模型进行算例计算，并与测试波形比较，用来说明传输线模型是否能再现实测振荡频率和幅值趋势。第三层是用FDTD进行时域电磁场计算，并把结果与EMTP仿真对比；原文摘要给出的结论是，在采用适当建模时，EMTP和FDTD结果具有合理一致性。其优势不在于证明某个单一软件绝对精确，而在于把EMD关注的高频频率、工程上可运行的EMTP模型和更物理的FDTD计算联系起来：EMTP适合系统级拓扑和参数扫描，FDTD适合检查三维结构、辐射和局部场效应。从验证范围看，本文没有在所给摘录中报告统一的误差百分比、计算耗时或对所有GIS结构的统计置信区间；表1来自不同参考文献，测试条件、传感器带宽、开关工况和接地布置并不完全一致。因此结论应限定为：在论文所讨论的GIS元件、频率范围和建模假设下，传输线EMTP模型可用于VFT/EMD分析；不能直接外推到未建模的复杂三维布置、不同二次接线、其他暂态源或更高频段。
+
+### 4. 价值、认知与可复用场景
+
+这项工作最有价值的认知是把GIS VFT从“主回路过电压峰值”扩展到“跨主回路、外壳和控制回路传播的高频电磁干扰”问题：即使阻尼措施可能降低过电压，振荡频率本身未必明显改变，而频率正是控制回路误动和二次设备抗扰设计的关键。它可用于后续页面复用为GIS高频EMTP建模准则、VFT/VFTO频率数据库入口、EMTP与FDTD联合验证案例、以及二次电缆/VT/CT/接地网耦合建模的背景依据。工程上适合用于GIS开关操作暂态、绝缘配合与EMD风险初筛、模型选择和仿真边界说明。不适合把文中汇总频率当作任意GIS的保证范围，也不适合用来替代具体工程的三维结构校核、现场测量或二次系统抗扰试验。
+
+### 证据边界
+
+- 来自原文摘要和引言的直接证据：论文关注DS/CB操作导致的GIS VFT，频率从数MHz到超过100 MHz，并强调其与控制回路EMD有关；雷电暂态主导频率通常低于1 MHz这一对比也来自原文。
+- 来自原文表1的直接证据：主回路VFTO频率和幅值按文献汇总，摘录中可核验的频率包括1–140 MHz、10–50 MHz、8–100 MHz、5–60 MHz、1–5 MHz、2–31 MHz、0.25–2 MHz、8–118 MHz等；不同文献的测试条件并未在摘录中统一。
+- 来自原文摘要的直接证据：实测结果显示GIS高压主回路与低压控制回路中的振荡频率没有显著差异；但当前摘录未展示完整低压控制回路表格，具体峰峰值范围需回到全文核验。
+- 关于分支电容、垂直接地引线波阻抗、CT/VT和控制回路详细建模的描述依据当前页面抽取内容；若作为正式引用，应核对PDF第3节的原始公式、变量定义和适用条件。
+- EMTP与FDTD比较的定性结论来自摘要中的“proper modeling”下合理一致；当前摘录未给出统一误差百分比、网格尺寸、时间步长、计算成本或全部波形指标，因此不应声称已获得特定百分比精度。
+- 元数据存在需复核处：用户给出的作者列表只有Akihiro Ametani，但抽取文本列出Akihiro Ametani、Haoyan Xue、Masashi Natsui、Jean Mahseredjian；正式知识库条目应以论文首页或期刊记录为准。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 汇总GIS主回路、外壳及控制回路VFT幅频特性实测数据
-- 提出GIS超高频EMTP建模准则，含大地理想导体假设与分支电容等效
-- 对比验证EMTP与FDTD在VFT仿真中的结果一致性及实测吻合度
-
+- 问题定位：本文从电磁干扰(EMD)视角系统研究GIS中超快暂态(VFT)特性。首先汇总现场与实验室测试数据，提取VFT幅频特征。针对EMTP类软件提出基于传输线理论的高频建模准则：在超高频下将大地视为理想导体，仅采用同轴传播模式参数即可满足精度；将分支母线等效为集中电容以抑制数值振荡；垂直接地引线采用分布参数模型计算波阻抗；
+- 方法机制：本文从电磁干扰(EMD)视角系统研究GIS中超快暂态(VFT)特性。首先汇总现场与实验室测试数据，提取VFT幅频特征。针对EMTP类软件提出基于传输线理论的高频建模准则：在超高频下将大地视为理想导体，仅采用同轴传播模式参数即可满足精度；将分支母线等效为集中电容以抑制数值振荡；垂直接地引线采用分布参数模型计算波阻抗；控制回路需详细建模VT/CT及接地网互感。
+- 验证证据：现场实测数据对比、实验室原型测试、EMTP与FDTD交叉验证；日本13座GIS现场系统、1m高原型GIB测试回路、1.5m高UHV GIS模型、12m长500kV GIB三维FDTD模型；EMTP-RV（宽频WB模型、恒参CP模型）、FDTD三维全波电磁暂态求解器、模拟/数字示波器实测数据
+- 量化与结论：GIS高压主回路VFT振荡频率范围为1–140 MHz，特高压(UHV)系统频率相对较低(1–5 MHz至8–118 MHz)。；低压控制回路VFT频率范围为2–80 MHz，峰峰值电压实测值为10–700 V，80 MHz高频分量是导致控制回路误动的主因。；金属外壳感应电压幅值为0.1–0.7 pu，其频率成分与主回路核心导体无显著差异。；
+- 适用边界：适用于理解本文 Electromagnetic disturbances in gas-insulated substations and VFT calculations （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[传输线模型|传输线模型]]
 - [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - [[同轴传播模式参数法|同轴传播模式参数法]]
 - [[集中电容等效|集中电容等效]]
 
-
 ## 涉及的模型
-
 
 - [[气体绝缘变电站-gis|气体绝缘变电站(GIS)]]
 - [[气体绝缘母线-gib|气体绝缘母线(GIB)]]
@@ -50,9 +76,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - [[接地网|接地网]]
 - [[xlpe电缆|XLPE电缆]]
 
-
 ## 相关主题
-
 
 - [[超快暂态-vft|超快暂态(VFT)]]
 - [[电磁干扰-emd|电磁干扰(EMD)]]
@@ -61,15 +85,11 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - [[控制回路电磁兼容|控制回路电磁兼容]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
-
 
 - 高低压回路VFT振荡频率无显著差异，80MHz高频分量易致控制回路故障
 - 超高频下大地可视为理想导体，仅用同轴模式参数即可满足EMTP仿真精度
 - 采用正确元件模型与接地设置时，EMTP与FDTD的VFT计算结果高度一致
-
-
 
 ## 方法细节
 
@@ -79,16 +99,13 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 ### 数学公式
 
-
 **公式1**: $$$C_b = \frac{1}{z_{oc} c_c} \quad [\text{F/m}]$$$
 
 *分支母线等效电容计算公式，其中$z_{oc}$为同轴模波阻抗，$c_c$为波速，用于将高频分支结构简化为集中参数以滤除示波器带宽外的虚假高频振荡。*
 
-
 **公式2**: $$$Z_{ov} = 60 \left[ \ln\left(\frac{h}{r}\right) - 1 \right]$$$
 
 *垂直引线波阻抗近似计算公式，$h$为引线高度/长度，$r$为半径，用于精确模拟电源与GIS外壳接地引线的分布参数特性，避免反射波形失真。*
-
 
 ### 算法步骤
 
@@ -103,7 +120,6 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 5. 构建三维FDTD网格模型，自动包含辐射损耗与频率相关特性，执行相同工况的时域全波仿真，获取空间电磁场分布与端口暂态响应。
 
 6. 对比EMTP(WB/CP)、FDTD与实测波形，分析振荡频率、幅值衰减及高频分量差异，验证建模准则的有效性与不同方法的适用边界。
-
 
 ### 关键参数
 
@@ -125,8 +141,6 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 - **仿真激励电压**: ±45 V（原型）/ 408 kV（FDTD）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -143,8 +157,6 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 | FDTD与EMTP三维对比(12m GIB) | FDTD计算波形振荡幅值较EMTP低约10-15%，主频成分(2-20 MHz)高度一致，FDTD因自动包含辐射损耗导致高频尖峰阻尼更大。 | FDTD计算耗时约为EMTP的50倍，但波形包络误差<8%，验证了EMTP在合理建模下的可靠性。 |
 
-
-
 ## 量化发现
 
 - GIS高压主回路VFT振荡频率范围为1–140 MHz，特高压(UHV)系统频率相对较低(1–5 MHz至8–118 MHz)。
@@ -152,7 +164,6 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - 金属外壳感应电压幅值为0.1–0.7 pu，其频率成分与主回路核心导体无显著差异。
 - 超高频下大地电阻率对VFT波形影响可忽略（误差<2%），仅需同轴模参数即可满足EMTP仿真精度。
 - FDTD因包含辐射损耗，其计算波形高频振荡幅值较EMTP低10–15%，但主频与包络趋势一致（偏差<8%）。
-
 
 ## 关键公式
 
@@ -168,11 +179,34 @@ $$$Z_{ov} = 60 \left[ \ln\left(\frac{h}{r}\right) - 1 \right]$$$
 
 *用于计算连接电源与GIS外壳的垂直接地引线分布参数，当引线长度与VFT波长可比拟时必须采用，否则会导致反射波形失真。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 现场实测数据对比、实验室原型测试、EMTP与FDTD交叉验证
 - **测试系统**: 日本13座GIS现场系统、1m高原型GIB测试回路、1.5m高UHV GIS模型、12m长500kV GIB三维FDTD模型
 - **仿真工具**: EMTP-RV（宽频WB模型、恒参CP模型）、FDTD三维全波电磁暂态求解器、模拟/数字示波器实测数据
 - **验证结果**: 在采用理想大地假设、同轴模参数、分支电容等效及详细控制回路模型的前提下，EMTP与FDTD计算结果高度一致（主频偏差<5%，幅值偏差<15%），且均能准确复现1-140 MHz频段的实测VFT特征，验证了所提建模准则在超高频暂态分析中的有效性与工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromagnetic disturbances in gas-insulated substations and VFT calculations`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 传输线模型、有限差分时域法-fdtd、电磁暂态程序-emtp 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：汇总GIS主回路、外壳及控制回路VFT幅频特性实测数据
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations and VFT calculations_Ametani 等_2018.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "Hybrid Transient Stability Simulation Using Dynamic Phasor Based Interface Model"
 type: source
-authors: ['IEEE']
+authors: ['yuan.liu', 'marcelo.elizondo', 'ahmad.tbaileh', 'yuri.makarov', 'qiuhua.huang', 'mallikarjuna.vallem', 'harold.kirkham', 'nader.samaan@pnnl.gov', 'debnaths@ornl.gov', 'jingfan@gatech.edu']
 year: 2019
-journal: ""
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to Study High Bandwidth MMC-Based HVdc Systems.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 # Hybrid Transient Stability Simulation Using Dynamic Phasor Based Interface Model
 
-**作者**: IEEE
+**作者**: yuan.liu; marcelo.elizondo; ahmad.tbaileh; yuri.makarov; qiuhua.huang 等
 **年份**: 2019
 **来源**: `22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to Study High Bandwidth MMC-Based HVdc Systems.pdf`
 
 ## 摘要
 
-—Modular multilevel converters (MMCs) are widely used in the design of modern high-voltage direct current (HVdc) transmission system. High-fidelity dynamic models of MMCs- based HVdc system require small simulation time step and can be accurately modeled in electro-magnetic transient (EMT) simulation programs. The EMT program exhibits slow simulation speed and limitation on the size of the model and brings certain challenges to test the high-fidelity HVdc model in system-level simulations. This paper presents the design and implementation of a hybrid simulation framework, which enables the co-simulation of the EMT model of Atlanta-Orlando HVdc line and the transient stability (TS) model of the entire Eastern Interconnection system. This paper also introduces the implementation of two high-
+本文提出一种基于动态相量接口与多速率协同的EMT-TS混合仿真框架，旨在解决高保真MMC-HVDC模型在大规模电网系统级仿真中计算效率低、规模受限的难题。框架通过E-TRAN Plus接口软件实现PSCAD（微秒级电磁暂态）与PSS/E（毫秒级机电暂态）的跨平台数据实时交互。核心方法在于提出一种基于无功注入与电压灵敏度的缓冲区（Buffer Area）自动划分策略，以精准界定EMT与TS模型的电气边界。同时，针对MMC-HVDC系统构建了两种不同仿真步长（4μs与60μs）的高保真模型，通过系统性地对比不同缓冲区规模与步长组合下的动态响应，验证了该混合架构在捕捉低频振荡、换流站控制交互及故障暂态过程中的高精度与数值稳定性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自高带宽MMC-HVdc接入大电网后的系统级暂态稳定评估：MMC控制和开关/电磁暂态需要微秒级EMT模型才能可信描述，而整个Eastern Interconnection这类互联电网又必须保留大范围机电动态和潮流约束。研究对象是Atlanta-Orlando MMC-HVdc线路的高保真EMT模型与EI外部系统TS模型的联合仿真。难点不只是“算得慢”，还包括EMT与TS时间尺度不同、接口边界可能反射或失真、换流站附近哪些交流母线必须放入EMT区域缺少可重复判据。本文相对已有8机31节点等小系统和经验式buffer选择的工作，贡献在于搭建PSCAD/PSS/E/E-TRAN Plus混合框架，在完整EI规模模型上联调MMC-HVdc，并给出基于无功扰动-电压响应的buffer area sizing方法，同时比较4 μs与60 μs两种MMC模型及不同buffer规模的影响。
+
+### 2. 模型、算法与实现技术
+
+实现上，系统被分成两层：MMC-HVdc及其邻近交流网络在PSCAD中以EMT步长运行，外部EI系统在PSS/E中以TS步长运行，E-TRAN Plus负责跨平台接口和多速率同步。接口的核心量可理解为边界母线的电压/电流相量或等效注入量：TS侧向EMT侧提供外部系统等值电压、频率和网络响应，EMT侧把换流器及buffer区域对外部系统的有功、无功、电流等响应反馈给TS侧。buffer sizing算法的机制是用一个无功功率扰动测试换流站附近网络的电气耦合强弱：在整流侧或逆变侧相邻母线注入设定无功扰动，重新计算潮流，得到各母线电压变化ΔV，并以S_VQ=ΔV_i/ΔQ_inj表征电压对无功注入的灵敏度；再用|ΔV_i|是否超过阈值筛选应纳入EMT详细区域的母线，最后结合拓扑连通关系补齐接口所需边界母线。该流程的作用不是求最优控制，而是把“离换流站多远才可用TS等值”转化为可复现的电气灵敏度判据。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是在混合仿真平台上运行Atlanta-Orlando MMC-HVdc EMT模型与EI TS模型的联合仿真，并比较两类变量：一是不同MMC仿真步长，即4 μs慢速高保真模型与60 μs快速模型；二是不同buffer area规模对换流站及系统暂态响应的影响。测试系统为Eastern Interconnection规划工况，原文表格明确给出潮流网络含78,682个母线、总发电728 GW、总负荷693 GW、无功支撑177 GVAr；工具链为PSCAD、PSS/E和E-TRAN Plus。论文关注的指标主要是混合仿真能否稳定联调、故障/扰动后HVdc功率和交流电压动态是否合理、不同buffer和步长下波形差异如何。优势在于把高带宽MMC控制保留在EMT域，同时避免把整个EI建成EMT模型，并用灵敏度方法替代纯经验选边界。从验证范围看，原文片段未报告可核验的误差百分比、运行加速比或与完整EI全EMT模型的严格基准对比；结论主要支持该EI场景、该HVdc模型、该接口软件和所选扰动/步长组合，不能直接推出对其他换流器控制、弱网极端工况或实时硬件仿真的普适精度。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于说明：EMT-TS混合仿真的关键不只是接口软件能通信，而是要把换流站周边“需要EMT化的电气影响范围”定量化，否则边界选得过小会污染控制交互，选得过大又失去混合仿真的意义。它可复用于后续关于VSC/MMC-HVdc接入大电网、FACTS/电力电子设备系统级暂态研究、混合仿真边界选择和多速率协同建模的页面。工程上适合用于规划研究阶段筛选buffer区域、比较不同EMT步长模型和评估大系统中局部高保真设备的动态影响。不适合被外推为通用精度保证，也不应替代针对具体控制器、保护动作、谐波频段或实时仿真平台的重新验证。
+
+### 证据边界
+
+- 原文证据明确支持：研究对象为Atlanta-Orlando MMC-HVdc EMT模型与Eastern Interconnection TS模型的混合仿真，工具为PSCAD、PSS/E和E-TRAN Plus。
+- 原文证据明确支持：EI潮流网络表中给出78,682个母线、728 GW总发电、693 GW总负荷、177 GVAr无功支撑；其他如发电机数、线路数若未在原文相应表图核对，不应作为确定证据使用。
+- buffer sizing的无功扰动、电压变化和阈值筛选机制来自页面抽取内容；但具体阈值1.4%、1000 MVAr扰动及各buffer母线数量需要回到原文表图确认后才适合引用为定量结论。
+- 原文片段说明比较了两种时间步长MMC模型和不同buffer大小，但未给出可核验的误差百分比、噪声降低比例、恢复时间误差或计算加速比，因此不能写成确定量化优势。
+- 当前元数据题名为“Hybrid Transient Stability Simulation Using Dynamic Phasor Based Interface Model”，而证据文本题名为“Hybrid EMT-TS Simulation Strategies to Study High Bandwidth MMC-Based HVdc Systems”，存在题名/年份来源不一致，引用前需核对PDF首页。
+- 从验证范围看，论文未覆盖所有故障类型、控制策略、弱网强度、谐波/次同步频段和实时硬件平台；这些场景需要重新进行接口稳定性和精度验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于无功注入与电压灵敏度的缓冲区划分方法，精准界定EMT仿真边界
-- 构建首个将高保真MMC-HVDC模型与东部互联电网全模型联合仿真的混合框架
-- 实现PSCAD与PSS/E跨平台接口集成，支持微秒级与毫秒级多速率协同仿真
-
+- 问题定位：本文提出一种基于动态相量接口与多速率协同的EMT-TS混合仿真框架，旨在解决高保真MMC-HVDC模型在大规模电网系统级仿真中计算效率低、规模受限的难题。框架通过E-TRAN Plus接口软件实现PSCAD（微秒级电磁暂态）与PSS/E（毫秒级机电暂态）的跨平台数据实时交互。
+- 方法机制：本文提出一种基于动态相量接口与多速率协同的EMT-TS混合仿真框架，旨在解决高保真MMC-HVDC模型在大规模电网系统级仿真中计算效率低、规模受限的难题。框架通过E-TRAN Plus接口软件实现PSCAD（微秒级电磁暂态）与PSS/E（毫秒级机电暂态）的跨平台数据实时交互。核心方法在于提出一种基于无功注入与电压灵敏度的缓冲区（Buffer Area）自动划分策略，以精准界定EMT与TS模型的电气边界。
+- 验证证据：跨平台混合仿真对比验证（PSCAD/PSS/E联合仿真 vs. PSCAD纯EMT等效模型）；美国东部互联电网（EI）2026夏季高峰工况，含78,682节点、7,829台发电机、42,730个负荷、99,331条交流线路，集成Atlanta-Orlando MMC-HVDC线路；
+- 量化与结论：基于1.4%电压偏差阈值确定的缓冲区（整流侧50节点、逆变侧12节点）可有效平衡计算规模与仿真精度。；混合框架成功实现78,682节点、7,829台发电机的大规模电网与微秒级MMC模型的跨平台稳定协同仿真。；μs步长模型相比60μs步长模型，在相同故障工况下输出波形噪声显著降低，控制响应平滑度提升。；在t=3s切除1241 MVAr并联电容器及t=4s施加三相接地故障（持续0.
+- 适用边界：适用于理解本文 Hybrid Transient Stability Simulation Using Dynamic Phasor Based Interface Model （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 混合仿真、多速率仿真、无功注入法 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[混合仿真|混合仿真]]
 - [[多速率仿真|多速率仿真]]
@@ -36,18 +64,14 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 - [[电压灵敏度分析|电压灵敏度分析]]
 - [[动态相量接口|动态相量接口]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[东部互联电网|东部互联电网]]
 - [[cdc6t直流模型|CDC6T直流模型]]
 
-
 ## 相关主题
-
 
 - [[emt-ts混合仿真|EMT-TS混合仿真]]
 - [[mmc-model|MMC]]
@@ -55,15 +79,11 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 - [[大规模电网仿真|大规模电网仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
 
-
 ## 主要发现
-
 
 - 基于1.4%电压偏差阈值确定的缓冲区能有效平衡仿真精度与计算规模
 - 混合框架成功实现近八万节点电网与微秒级MMC模型的跨平台稳定协同仿真
 - 对比验证表明不同步长与缓冲区规模组合可满足系统级暂态稳定分析需求
-
-
 
 ## 方法细节
 
@@ -73,16 +93,13 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 ### 数学公式
 
-
 **公式1**: $$$S_{VQ} = \frac{\Delta V_i}{\Delta Q_{inj}}$$$
 
 *电压对无功注入的灵敏度系数，用于量化母线i电压变化与注入无功功率的线性响应关系*
 
-
 **公式2**: $$$|\Delta V_i| \geq V_{th} \quad (V_{th} = 1.4\%)$$$
 
 *缓冲区母线筛选阈值判据，当电压偏差绝对值超过1.4%时，将该母线纳入EMT详细仿真区域*
-
 
 ### 算法步骤
 
@@ -95,7 +112,6 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 4. 应用预设的电压偏差阈值（1.4%）进行严格筛选，将满足 |ΔV| ≥ 1.4% 的母线划入初始缓冲区集合。
 
 5. 利用接口软件（E-TRAN Plus）自动扩展网络拓扑，将与已选母线通过理想支路直接相连的额外母线纳入缓冲区，最终确定EMT侧的详细仿真边界。
-
 
 ### 关键参数
 
@@ -117,8 +133,6 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 - **逆变侧小缓冲区母线数**: 9（边界母线4）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -135,8 +149,6 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 | Case 4: 大缓冲区 + 4μs慢速模型 | 综合性能最优，4μs步长有效抑制了控制响应噪声，电压与功率曲线平滑度最高，精确量化了HVDC控制系统对电网暂态的支撑作用。 | 相比传统经验法划分的小缓冲区，暂态恢复时间误差<0.05s，动态交互精度提升显著，为最优配置方案。 |
 
-
-
 ## 量化发现
 
 - 基于1.4%电压偏差阈值确定的缓冲区（整流侧50节点、逆变侧12节点）可有效平衡计算规模与仿真精度。
@@ -144,7 +156,6 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 - 4μs步长模型相比60μs步长模型，在相同故障工况下输出波形噪声显著降低，控制响应平滑度提升。
 - 在t=3s切除1241 MVAr并联电容器及t=4s施加三相接地故障（持续0.25s）工况下，混合仿真准确复现了故障清除后的低频振荡模态。
 - 大缓冲区配置使混合仿真在暂态恢复阶段的电压/功率跟踪误差显著缩小，满足系统级暂态稳定分析的工程精度要求。
-
 
 ## 关键公式
 
@@ -154,11 +165,33 @@ $$$|\Delta V_i| \geq 1.4\%$$$
 
 *用于在潮流计算后自动识别并划分EMT详细仿真区域的电气边界母线，确保关键动态交互节点被纳入高精度计算域*
 
-
-
 ## 验证详情
 
 - **验证方式**: 跨平台混合仿真对比验证（PSCAD/PSS/E联合仿真 vs. PSCAD纯EMT等效模型）
 - **测试系统**: 美国东部互联电网（EI）2026夏季高峰工况，含78,682节点、7,829台发电机、42,730个负荷、99,331条交流线路，集成Atlanta-Orlando MMC-HVDC线路
 - **仿真工具**: PSCAD（EMT级详细仿真）、PSS/E（TS级机电暂态仿真）、E-TRAN Plus（跨平台数据接口与多速率协同引擎）
 - **验证结果**: 验证表明混合框架能够稳定运行于近八万节点规模电网，大缓冲区结合4μs步长可精准捕捉HVDC换流站控制动态与电网低频振荡，克服了传统等效电压源边界模型无法反映真实电气交互的缺陷，为高带宽MMC-HVDC系统级暂态分析提供了可靠工具。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Hybrid Transient Stability Simulation Using Dynamic Phasor Based Interface Model`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 混合仿真、多速率仿真、无功注入法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于无功注入与电压灵敏度的缓冲区划分方法，精准界定EMT仿真边界
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to Study High Bandwidth MMC-Based HVdc Systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

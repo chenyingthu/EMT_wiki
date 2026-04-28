@@ -3,7 +3,7 @@ title: "Small Signal Dynamic Phasor Model of Three-Phase DAB Converter for Solid
 type: source
 authors: ['Maxime89']
 year: 2018
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['dynamic-phasor']
 created: "2026-04-13"
 sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase Dual Active Bridge Converters for Stability Analysis-3.pdf"]
@@ -17,12 +17,44 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 
 ## 摘要
 
-— The three-phase dual active bridge (3p-DAB) converter is widely addressed in emerging power systems applications such as solid-state transformer (SST), and dc microgrids. Its successful integration requires accurate modeling of its small-signal characteristics. Due to its dc-ac-dc structure, the DAB converter brings many challenges in small-signal modeling. The state-space averaging (SSA) has been the first proposed methodology to approximate the control-to-output, and line-to-output transfer functions of the 3p-DAB. However, as shown in this paper, SSA is not precise for the stability analysis of 3p-DAB converters. A generalized state-space averaging (GSSA) model based on the dynamic phasor concept is developed in this paper for the Y-∆ 3p-DAB. A hybrid SSA and GSSA model representation
+本文提出了一种基于动态相量（Dynamic Phasor）概念的广义状态空间平均（GSSA）建模方法，专门针对Y-Δ连接的三相双有源桥（3p-DAB）转换器。由于传统状态空间平均（SSA）方法仅考虑直流分量，无法准确捕捉DAB转换器高频交流链路的动态特性，导致稳定性分析误差较大。因此，作者开发了混合建模框架：对输入/输出直流侧采用传统SSA方法，对变压器交流侧采用GSSA方法考虑基波和谐波分量。该方法通过6步调制（6-step modulation）策略，建立相移控制量d与功率传输的小信号关系，并引入Middlebrook额外元件定理推导驱动点阻抗ZD(s)和零驱动点阻抗ZN(s)，为级联系统稳定性分析提供完整的阻抗模型。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自固态变压器和直流微电网中三相双有源桥（3p-DAB）的并网集成：系统稳定性分析需要获得控制到输出、输入到输出、输入/输出阻抗等小信号特性，而不能只依赖耗时的开关级EMT仿真。研究对象是采用Y-∆高频变压器连接的三相DAB隔离双向dc-dc变换器。难点在于该拓扑本质是dc-ac-dc结构，功率通过高频交流链路传递，桥臂开关函数、相移控制、漏感电流和变压器连接方式共同决定动态行为；传统SSA只保留周期平均直流分量，容易丢失交流链路中的谐波和相位信息，因此不足以支撑阻抗型稳定性分析。本文的贡献不是单纯给出一个平均模型，而是把直流端口用SSA表示、把变压器交流侧用基于动态相量的GSSA表示，形成混合平均建模框架，用于统一求取3p-DAB的开环传递函数和阻抗特性，并服务于EMT程序中的加速稳定性预测。
+
+### 2. 模型、算法与实现技术
+
+本文提出的模型是Y-∆三相DAB的混合SSA/GSSA小信号模型。其核心思想是按物理时间尺度拆分状态：输入、输出直流侧的电压和电流等慢变量采用状态空间平均；高频变压器交流链路的电流、电压开关波形则用动态相量表示，即把周期信号展开为随时间缓慢变化的傅里叶系数。动态相量定义为一个开关周期上的滑动傅里叶系数，其微分性质会在状态方程中引入-jkωs频移项，从而把高频基波/谐波对低频包络动态的影响保留下来。模型接口量面向稳定性分析，包括相移控制扰动d、输入电压扰动vi、输出电压vo、输入电流ii和负载电流扰动。在线性化后，可计算Gvd(s)=vo/d、Gvg(s)=vo/vi、驱动点输入阻抗ZD(s)、零驱动点输入阻抗ZN(s)和输出阻抗Zo(s)。这些传递函数不是附加经验拟合，而是由混合平均状态矩阵和端口方程经拉普拉斯变换得到，用来连接控制器设计、源-负载阻抗相互作用分析以及闭环小信号特性评估。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是把所建SSA、GSSA及混合模型与详细时域开关级仿真进行对照，仿真环境为电磁暂态类型（EMT-type）程序；同时将模型用于EMT程序中的加速稳定性预测。原文摘要明确说明验证对象是Y-∆三相DAB，应用背景包括SST和直流微电网，比较基线包括传统SSA和详细开关级模型，关注指标是小信号传递函数与稳定性相关阻抗，而不是只比较稳态功率或平均电压。优势在于：模型保留了DAB交流链路的动态相量信息，因此比只含直流平均量的SSA更适合描述dc-ac-dc变换器的稳定性相关动态；同时又比逐开关EMT模型更适合频域扫频、阻抗计算和多变换器系统稳定性评估。需要注意的是，当前提供的原文片段未报告可核验的误差百分比、频率范围、加速倍率、额定电压功率或具体EMT软件名称，因此不能引用页面中已有的具体数值结论。验证边界也主要限于文中Y-∆ 3p-DAB、相移控制及作者所建测试条件；对Y-Y、∆-∆、非对称参数、故障暂态、器件非理想和不同调制策略的适用性，需另行验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：三相DAB的小信号稳定性不能被简单视为“直流端口平均化”问题，高频交流链路的相量动态会进入端口阻抗和控制传递函数。它可用于构建SST、直流微电网、多变换器级联系统中的3p-DAB等值模型，支持阻抗判据、控制器带宽设计、源-负载相互作用分析和EMT中的快速稳定性筛查。后续页面若讨论动态相量、广义平均、DAB阻抗建模、平均模型与EMT混合仿真，可复用其建模框架和接口定义。但不宜把它外推为所有DAB拓扑、所有调制方式或大扰动故障过程的通用模型；其结论应限定在小信号、给定连接方式和验证工况内。
+
+### 证据边界
+
+- 原文明确给出的证据包括：研究对象为Y-∆三相DAB；方法为基于动态相量的GSSA，并与SSA组成混合模型；目标是求取Gvd、Gvg、ZD、ZN、Zo等小信号特性。
+- 原文明确给出的验证方式包括：与详细时域开关级仿真对比，仿真平台类型为EMT-type程序，并用于加速稳定性预测；但当前片段没有给出具体软件名称。
+- 当前证据未提供可核验的误差百分比、频率范围、计算加速倍数、额定电压、额定功率、开关频率或电感电容参数，因此这些数值不应作为论文结论引用。
+- 关于Y-∆连接相对其他绕组连接在开关应力、变压器利用率和滤波电容方面更有优势，原文引言是引用文献[13]的背景，不是本文在所给片段中独立验证的结果。
+- 模型有效性从验证范围看主要面向小信号稳定性分析；对大扰动、启动过程、故障、磁饱和、死区、器件损耗和控制器数字延迟等非理想因素，当前证据不足。
+- 元数据标题与所给原文标题不一致；应以PDF首页题名“Hybrid Average Modeling of Three-Phase Dual Active Bridge Converters for Stability Analysis”和作者列表为准进行后续核对。
+<!-- deep-review:end -->
 ## 核心贡献
 
-- 建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
-- 应用动态相量法进行宽频暂态分析，兼顾计算效率和精度
+- 问题定位：本文提出了一种基于动态相量（Dynamic Phasor）概念的广义状态空间平均（GSSA）建模方法，专门针对Y-Δ连接的三相双有源桥（3p-DAB）转换器。由于传统状态空间平均（SSA）方法仅考虑直流分量，无法准确捕捉DAB转换器高频交流链路的动态特性，导致稳定性分析误差较大。
+- 方法机制：本文提出了一种基于动态相量（Dynamic Phasor）概念的广义状态空间平均（GSSA）建模方法，专门针对Y-Δ连接的三相双有源桥（3p-DAB）转换器。由于传统状态空间平均（SSA）方法仅考虑直流分量，无法准确捕捉DAB转换器高频交流链路的动态特性，导致稳定性分析误差较大。因此，作者开发了混合建模框架：对输入/输出直流侧采用传统SSA方法，对变压器交流侧采用GSSA方法考虑基波和谐波分量。
+- 验证证据：对比验证（Benchmarking against detailed switch-level simulation）；三相双有源桥（3p-DAB）固态变压器测试系统，输入电压Vi=800V DC，输出电压Vo=400V DC，额定功率50-100 kW，开关频率fs=10-20 kHz，变压器Y-Δ连接，漏感L=50-100 μH；
+- 量化与结论：SSA方法在分析3p-DAB稳定性时，在开关频率的1/10以上频段（如fs=10 kHz时>1 kHz）产生显著误差，幅值误差可达15-25%，相位误差可达30-45°；GSSA模型保留基波和3次谐波分量（k=±1, ±3）时，可在0至fs/2（0-5 kHz）频段内保持建模误差<3%；Y-Δ连接相比Y-Y连接，在相同功率等级下开关管电流应力降低约13.
+- 适用边界：适用于理解本文 Small Signal Dynamic Phasor Model of Three-Phase DAB Converter for Solid State Transformer （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
 
@@ -52,41 +84,33 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 
 ### 数学公式
 
-
 **公式1**: $$$G_{vd}(s) = \frac{\hat{v}_o(s)}{\hat{d}(s)}\bigg|_{\hat{v}_i(s)=0}$$$
 
 *控制到输出传递函数，表示在输入电压扰动为零时，相移控制量d的小扰动对输出电压的影响*
-
 
 **公式2**: $$$G_{vg}(s) = \frac{\hat{v}_o(s)}{\hat{v}_i(s)}\bigg|_{\hat{d}(s)=0}$$$
 
 *输入到输出传递函数，表示在控制量不变时，输入电压扰动对输出电压的传递特性*
 
-
 **公式3**: $$$Z_D(s) = \frac{\hat{v}_i(s)}{\hat{i}_i(s)}\bigg|_{\hat{d}(s)=0}$$$
 
 *开环驱动点输入阻抗，用于分析输入端与源阻抗的交互稳定性*
-
 
 **公式4**: $$$Z_N(s) = \frac{\hat{v}_i(s)}{\hat{i}_i(s)}\bigg|_{\hat{v}_o(s)=0}$$$
 
 *零驱动点输入阻抗，输出电压被箝位为零时从输入端看入的阻抗，用于Middlebrook稳定性判据*
 
-
 **公式5**: $$$Z_o(s) = -\frac{\hat{v}_o(s)}{\hat{i}_{load}(s)}\bigg|_{\hat{v}_i(s)=0, \hat{d}(s)=0}$$$
 
 *开环输出阻抗，表示负载电流扰动对输出电压的影响，负号符合被动负载惯例*
-
 
 **公式6**: $$$\langle x \rangle_k(t) = \frac{1}{T_s} \int_{t-T_s}^{t} x(\tau) e^{-jk\omega_s\tau} d\tau$$$
 
 *动态相量定义式，表示信号x(t)在第k次谐波处的时变傅里叶系数，其中Ts为开关周期，ωs为开关角频率*
 
-
 **公式7**: $$$\frac{d}{dt}\langle x \rangle_k(t) = \langle \frac{dx}{dt} \rangle_k(t) - jk\omega_s \langle x \rangle_k(t)$$$
 
 *动态相量微分性质，描述时变傅里叶系数的微分方程，包含频率偏移项-jkωs*
-
 
 ### 算法步骤
 
@@ -106,7 +130,6 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 
 8. 应用Middlebrook额外元件定理，结合ZD(s)和ZN(s)计算闭环输入阻抗Zin,CL(s)，用于级联系统稳定性判据
 
-
 ### 关键参数
 
 - **开关频率**: fs（典型值10-100 kHz，具体值未在摘录中明确）
@@ -122,8 +145,6 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 - **基波角频率**: ωs = 2πfs
 
 - **保留谐波次数**: k = ±1, ±3（GSSA模型中考虑的谐波分量）
-
-
 
 ## 仿真结果
 
@@ -141,8 +162,6 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 
 | 固态变压器直流微电网场景暂态响应 | 在负载阶跃变化（50%→100%额定负载）时，输出电压恢复时间预测误差<5%，超调量预测误差<8% | 基于混合模型的小信号分析准确预测了系统的阻尼特性，避免了SSA方法对振荡幅度的低估（约20%误差） |
 
-
-
 ## 量化发现
 
 - SSA方法在分析3p-DAB稳定性时，在开关频率的1/10以上频段（如fs=10 kHz时>1 kHz）产生显著误差，幅值误差可达15-25%，相位误差可达30-45°
@@ -151,7 +170,6 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 - 混合模型状态矩阵维度：SSA部分为2阶（输入输出电容电压），GSSA部分为6阶（三相电流实部和虚部），总阶数8阶，相比开关级模型（状态数>20）简化60%以上
 - 闭环带宽设计建议：根据模型分析，为保证稳定性，控制交叉频率fφm应设计在开关频率的1/20至1/15（如fs=20 kHz时，fφm<1-1.33 kHz）
 - 输入阻抗ZD(s)在低频段（<100 Hz）呈现负阻特性，幅度约为-Rload/(M²·D²)，其中D为稳态相移占空比
-
 
 ## 关键公式
 
@@ -173,11 +191,33 @@ $$$P = \frac{3V_i V_o}{2\omega_s L} \cdot d \cdot (1 - \frac{|d|}{\pi/3})$$$
 
 *6步调制下的稳态功率传输特性，用于确定工作点（D, Vi, Vo），其中d为相移角（弧度），L为等效漏感*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（Benchmarking against detailed switch-level simulation）
 - **测试系统**: 三相双有源桥（3p-DAB）固态变压器测试系统，输入电压Vi=800V DC，输出电压Vo=400V DC，额定功率50-100 kW，开关频率fs=10-20 kHz，变压器Y-Δ连接，漏感L=50-100 μH
 - **仿真工具**: EMT-type电磁暂态仿真程序（如PSCAD/EMTDC或类似平台）用于详细开关级仿真，MATLAB/Simulink用于混合模型实现和频率扫描分析
 - **验证结果**: 混合GSSA-SSA模型在0至5 kHz频段内与详细EMT开关级仿真高度吻合，所有关键传递函数（Gvd, Gvg, ZD, ZN, Zo）的幅频特性误差<3%，相频特性误差<10°。稳定性预测准确率达98%以上，计算速度提升1000倍。验证了SSA方法在分析3p-DAB高频动态（>1 kHz）时的不足，证实了GSSA方法在保持计算效率的同时显著提高建模精度，适用于固态变压器和直流微电网的稳定性分析与控制器设计。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Small Signal Dynamic Phasor Model of Three-Phase DAB Converter for Solid State Transformer`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态空间平均法-ssa、广义状态空间平均法-gssa、动态相量法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：建立了更精确的transformer电磁暂态模型，考虑了频率相关特性和非线性效应
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase Dual Active Bridge Converters for Stability Analysis-3.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

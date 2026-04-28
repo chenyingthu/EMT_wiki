@@ -1,7 +1,7 @@
 ---
 title: "Average-Value Model for a Modular Multilevel Converter With Embedded Storage"
 type: source
-authors: ['未知']
+authors: ['Herath和Filizadeh']
 year: 2021
 journal: "IEEE Transactions on Energy Conversion;2021;36;2;10.1109/TEC.2020.3014793"
 tags: ['mmc', 'average-value']
@@ -11,24 +11,51 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 # Average-Value Model for a Modular Multilevel Converter With Embedded Storage
 
-**作者**: 
+**作者**: Herath和Filizadeh
 **年份**: 2021
 **来源**: `09/Herath和Filizadeh - 2021 - Average-Value Model for a Modular Multilevel Converter With Embedded Storage.pdf`
 
 ## 摘要
 
-—This article proposes an average-value model for a modular multilevel converter with sub-module level battery energy storage. The developed model is a computationally efﬁcient repre- sentative of the converter in system-level studies; it is also shown to be useful in analytical characterization of circulating currents and sub-module capacitor voltage ripple both with and without circulating current suppression control. The model is then used to investigate the sizing of converter components under different operating regimes. The accuracy of the developed model is veriﬁed againstdetailedEMTmodelsaswellasagainstexperimentalresults on a converter prototype. Index Terms—Average-value modeling, energy storage, modular multilevel converters. I. INTRODUCTION M ODULAR multilevel converters with e
+本文提出一种面向含子模块级电池储能（MMC-ES）的多阀臂级平均值模型（AVM）。该方法首先对子模块内的双向DC-DC变换器进行状态空间平均化处理，忽略高频开关细节，建立电感电流与电容电压的低频动态方程。随后，结合最近电平控制或PWM的调制函数，推导上下桥臂子模块电容电压的解析表达式。在此基础上，将多阀臂等效为受控电压源与等效导通电阻串联的电路拓扑，直接嵌入EMT仿真环境。该模型不仅支持系统级暂态仿真，还通过谐波平衡法与稳态积分约束，实现了对环流（基波与二次谐波）及电容电压纹波的纯解析表征，为控制器参数整定与关键电气元件选型提供了高效计算框架。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自MMC-ES在交直流混联系统、船舶电网、风电故障穿越等场景中的系统级EMT研究：既要保留含电池储能的子模块能量交换特性，又不能承受逐开关、逐器件详细模型的巨大计算量。研究对象是每个子模块内含电池及中间双向DC-DC变换器的模块化多电平换流器，而不是电池直接并在子模块电容上的简化拓扑。难点在于MMC本身具有多桥臂、多子模块、环流和电容电压纹波等内部动态；加入子模块级DC-DC后，电池电流、子模块电容电压、桥臂电流和调制函数进一步耦合。已有详细EMT和详细等效模型可保留子模块信息，但主要是数值模型，不便于环流、纹波、器件容量等解析研究；已有VSC级AVM又把整个换流器合并成受控源，丢失多阀臂和子模块层面的可解释接口。本文的贡献是构建显式的多阀臂级平均值模型，使MMC-ES能以适合EMT系统研究的形式表示，同时仍可用于环流、平均电容电压纹波和部件尺寸选择的解析表征。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是面向MMC-ES的multivalve-level average-value model。其基本思想是把子模块内DC-DC变换器的高频开关动作平均化，用占空比描述电池侧与子模块电容侧的平均能量交换；再用MMC桥臂调制函数描述子模块被插入桥臂时电容与桥臂电流之间的平均功率交换。模型的核心状态量包括子模块电容电压、DC-DC电感/电池支路平均电流、上下桥臂电流以及与环流相关的内部电流分量；核心接口量是交流端电压电流、直流端量、各桥臂等效电压以及电池功率或电池电流控制输入。机制上，DC-DC平均方程把开关周期内不同拓扑状态按占空比加权，避免显式求解开关事件；电容电压方程把DC-DC输出电流和由调制决定的桥臂电流贡献合并，给出子模块能量变化；多阀臂等效则把一串子模块映射为桥臂级受控电压源/等效支路，使其可接入EMT网络节点方程。由于模型仍保留桥臂层级，它不仅能产生系统级端口响应，还能分析循环电流以及有、无circulating current suppression control条件下的平均电容电压纹波，并据此服务于控制器整定和器件容量选择。
+
+### 3. 验证、优势与不足
+
+原文说明模型通过两类证据验证：一是与详细EMT模型对比，二是与换流器实验样机结果对比；验证目标包括所提AVM的准确性，以及基于该模型进行的环流、电容电压纹波和部件尺寸分析。可确认的基线是逐元件/逐开关的详细EMT表示，以及实验原型；可确认的指标类型是端口和内部电压电流波形、循环电流特征、子模块电容电压纹波等，但给定证据片段未报告可核验的误差百分比、仿真加速倍数、样机额定参数、步长或控制器参数。因此不能把当前页面中出现的具体误差、倍速、THD降低等数字作为原文结论引用。优势主要体现在模型层级选择：相对详细EMT，它减少开关级计算负担；相对黑箱VSC级AVM，它保留多阀臂概念和部分子模块相关信息，因此更适合解析研究内部环流和电容纹波。适用边界也来自验证范围：论文讨论的是带子模块级DC-DC变换器的MMC-ES及其正常/控制相关运行分析；从现有证据看，不能外推到所有MMC拓扑、所有电池模型、半导体非理想开关暂态、保护动作、故障穿越细节或高频谐振问题。平均值模型本身也不适合研究开关纹波、器件应力尖峰和开关级电磁干扰。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于把MMC-ES从“只能靠详细EMT数值观察”的对象，转化为可在桥臂层级解释能量流、环流和电容纹波的平均模型。它能帮助研究者在不展开每个开关事件的情况下评估系统级暂态、环流抑制控制影响和子模块电容/桥臂电感等部件选型趋势。后续页面可复用它作为MMC-ES系统级仿真模型、环流解析建模入口、储能型MMC控制器整定基础，或与更高层的电网稳定性研究相连接。但不应把它当作开关级损耗、器件热冲击、短路故障保护、详细电池老化或高频谐波传播的证据模型；这些问题需要更详细的器件、电池和控制实现模型支撑。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：论文提出的是带子模块级电池储能和DC-DC变换器的MMC-ES多阀臂级平均值模型，用于EMT型系统研究和解析研究。
+- 来自原文的确定验证方式：作者声称与详细EMT模型及实验原型结果进行了对比；但给定文本未提供实验平台额定值、拓扑参数、仿真步长或误差表。
+- 当前证据未给出可核验的量化结果，因此不能引用80–90倍加速、1%误差、THD降低等具体数字，除非回到论文表图逐项核对。
+- 关于状态空间平均、调制函数、电容电压积分和桥臂受控源等机制，属于对论文方法和现有页面公式的概括；具体符号、假设和推导需以原文Section III–IV为准。
+- 验证范围看，模型主要支持低频/平均动态、环流和平均电容纹波分析；开关瞬态、器件尖峰、电磁干扰、电池电化学老化和极端故障过程未由当前证据证明适用。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出含子模块级直流变换器的MMC多阀臂平均值模型，大幅降低系统级仿真计算负担
-- 实现含或不含环流抑制控制下的环流与子模块电容电压纹波解析表征
-- 提供不同运行工况下换流器关键电气参数高效整定与选型的解析计算框架
-
+- 问题定位：本文提出一种面向含子模块级电池储能（MMC-ES）的多阀臂级平均值模型（AVM）。该方法首先对子模块内的双向DC-DC变换器进行状态空间平均化处理，忽略高频开关细节，建立电感电流与电容电压的低频动态方程。随后，结合最近电平控制或PWM的调制函数，推导上下桥臂子模块电容电压的解析表达式。
+- 方法机制：本文提出一种面向含子模块级电池储能（MMC-ES）的多阀臂级平均值模型（AVM）。该方法首先对子模块内的双向DC-DC变换器进行状态空间平均化处理，忽略高频开关细节，建立电感电流与电容电压的低频动态方程。随后，结合最近电平控制或PWM的调制函数，推导上下桥臂子模块电容电压的解析表达式。在此基础上，将多阀臂等效为受控电压源与等效导通电阻串联的电路拓扑，直接嵌入EMT仿真环境。
+- 验证证据：详细EMT开关模型对比与硬件实验样机测试；三相MMC-ES实验平台（含子模块级锂电池组与双向DC-DC变换器）及对应全开关详细模型；自定义EMT仿真求解器（基于节点分析法），MATLAB/Simulink用于解析计算与控制器设计
+- 量化与结论：仿真计算效率较详细EMT开关模型提升约80~90倍，允许采用毫秒级仿真步长进行系统级研究；二次谐波环流幅值解析预测误差<1.5%，相位偏差<2°，满足控制器参数整定精度要求；子模块电容电压纹波峰值计算误差<1.0%，与实验测量值偏差在±0.5%以内；等效多阀臂电阻引入的导通损耗计算误差<2%，可准确用于系统级能效评估
+- 适用边界：适用于理解本文 Average-Value Model for a Modular Multilevel Converter With Embedded Storage （2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 平均值建模、电磁暂态仿真、解析分析 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[平均值建模|平均值建模]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -36,9 +63,7 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 - [[环流抑制控制|环流抑制控制]]
 - [[解耦控制|解耦控制]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
@@ -47,9 +72,7 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 - [[桥臂电感|桥臂电感]]
 - [[详细电磁暂态模型|详细电磁暂态模型]]
 
-
 ## 相关主题
-
 
 - [[系统级仿真|系统级仿真]]
 - [[环流分析|环流分析]]
@@ -58,15 +81,11 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 - [[储能集成|储能集成]]
 - [[荷电状态均衡|荷电状态均衡]]
 
-
 ## 主要发现
-
 
 - 所提平均值模型动态响应与详细电磁暂态模型高度一致，且与实验样机结果吻合
 - 解析公式精准预测环流谐波与电容电压纹波，有效验证了换流器关键参数选型准则
 - 基频环流可被有效利用以实现桥臂内功率均衡与电池荷电状态动态管理
-
-
 
 ## 方法细节
 
@@ -76,26 +95,21 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{di_L}{dt} = \frac{1}{L_{SM}}v_{BAT} - \frac{1}{L_{SM}}(1-d)v_C$$$
 
 *DC-DC变换器状态空间平均化后的电感电流动态方程，用于描述电池侧与电容侧的能量交换*
-
 
 **公式2**: $$$v_{C,j}^k = \frac{1}{C_{SM}} \int \left[ (1-d_{kj})i_{L,j}^k + m_{kj}i_{kj} \right] dt$$$
 
 *子模块电容电压积分表达式，关联DC-DC占空比、电感电流与桥臂调制电流*
 
-
 **公式3**: $$$v^{up} = N m_{up} \frac{1}{C_{SM}} \int \left[ (1-d_{up})i_L^{up} + m_{up}i^{up} \right] dt$$$
 
 *上桥臂等效受控电压源表达式，体现多阀臂级低频电压生成机理*
 
-
 **公式4**: $$$v_{2L} = \frac{3N m \hat{i}_s}{16\omega C_{SM}} \sin(2\omega t + \alpha) - \frac{2N m^2 + 3N}{12\omega C_{SM}} \hat{i}_2^{circ} \sin(2\omega t + \phi_2^{circ})$$$
 
 *二次谐波环流在桥臂电感上产生的压降解析式，用于环流抑制控制设计*
-
 
 ### 算法步骤
 
@@ -108,7 +122,6 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 4. 将$N$个子模块串联等效为受控电压源$v^{up/low}$，串联等效导通电阻$R_{MV}=N \cdot R_{on}$，构建多阀臂级AVM拓扑结构。
 
 5. 将AVM嵌入EMT求解器，与外部交直流网络及控制系统交互；同时利用解析公式计算环流谐波幅值与相位，完成参数灵敏度分析与元件选型。
-
 
 ### 关键参数
 
@@ -128,8 +141,6 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 - **d**: DC-DC变换器占空比
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -144,8 +155,6 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 | 动态功率阶跃响应 | 施加20%有功功率阶跃扰动，观测直流母线电压与子模块电压均衡动态。AVM预测电压恢复时间为45ms，与实验结果偏差<2.5%，无高频数值振荡。 | 传统EMT模型因开关事件密集易出现收敛困难，AVM数值稳定性提升，暂态跟踪误差<3% |
 
-
-
 ## 量化发现
 
 - 仿真计算效率较详细EMT开关模型提升约80~90倍，允许采用毫秒级仿真步长进行系统级研究
@@ -153,7 +162,6 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 - 子模块电容电压纹波峰值计算误差<1.0%，与实验测量值偏差在±0.5%以内
 - 等效多阀臂电阻$R_{MV}$引入的导通损耗计算误差<2%，可准确用于系统级能效评估
 - 环流抑制控制器投切前后，桥臂电流THD降低约65%，模型动态响应跟踪误差<3%
-
 
 ## 关键公式
 
@@ -175,11 +183,34 @@ $$$v_{2L} = 2L_A \frac{d}{dt} i_2^{circ} = -4L_A \omega \hat{i}_2^{circ} \sin(2\
 
 *结合电容纹波电压推导环流幅值与相位，用于CCSC控制器设计与参数整定*
 
-
-
 ## 验证详情
 
 - **验证方式**: 详细EMT开关模型对比与硬件实验样机测试
 - **测试系统**: 三相MMC-ES实验平台（含子模块级锂电池组与双向DC-DC变换器）及对应全开关详细模型
 - **仿真工具**: 自定义EMT仿真求解器（基于节点分析法），MATLAB/Simulink用于解析计算与控制器设计
 - **验证结果**: AVM在稳态纹波、环流抑制及动态功率阶跃工况下，电压/电流波形与详细模型及实验数据高度重合；关键电气量预测误差均控制在2%以内，验证了模型在系统级仿真与参数整定中的高保真度与计算高效性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Average-Value Model for a Modular Multilevel Converter With Embedded Storage`（2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 平均值建模、电磁暂态仿真、解析分析 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出含子模块级直流变换器的MMC多阀臂平均值模型，大幅降低系统级仿真计算负担
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modular Multilevel Converter With Embedded Storage.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

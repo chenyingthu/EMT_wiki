@@ -1,7 +1,7 @@
 ---
 title: "Functional Mock-Up Interface Based Parallel Multistep Approach With Signal Correction for Electromagnetic Transients Simulations"
 type: source
-authors: ['未知']
+authors: ['Ming Cai', 'Jean Mahseredjian', 'Fellow', 'Ulas Karaagac', 'Ali El-Akoum', 'Xiaopeng Fu']
 year: 2019
 journal: "IEEE Transactions on Power Systems;2019;34;3;10.1109/TPWRS.2019.2902740"
 tags: ['emt']
@@ -11,42 +11,66 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]
 
 # Functional Mock-Up Interface Based Parallel Multistep Approach With Signal Correction for Electromagnetic Transients Simulations
 
-**作者**: 
+**作者**: Ming Cai; Jean Mahseredjian; Fellow; Ulas Karaagac; Ali El-Akoum 等
 **年份**: 2019
 **来源**: `19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf`
 
 ## 摘要
 
-—This letter presents the latest improvements of a previously proposed parallel and multistep approach based on the functional mock-up interface standard for the simulation of electromagnetic transients. The im- proved approach extends the capacity of the original parallel asynchronous mode into accommodating the use of different time-steps in different decoupled subsystems. It also introduces a signal correction procedure using linear extrapolation in multistep simulations, greatly enhancing simulation ﬂexibility, efﬁciency, and accuracy. Numerical examples are provided to demonstrate the computational advantages of the improved approach. Index Terms—FMI, electromagnetic transients, parallel simulation, mul- tistep simulation. I. INTRODUCTION W ITH the ever-growing popularity of Electroma
+本文提出一种基于FMI（Functional Mock-Up Interface）标准的并行多步长异步协同仿真方法，旨在解决含复杂控制系统的电磁暂态(EMT)仿真中计算效率与接口精度的矛盾。该方法将原有并行异步模式扩展至支持内存解耦的子系统采用独立时间步长运行。通过主从进程间的信号量（SemMaster/SemSlave）动态同步机制，实现不同步长下的进度协调与并行计算。同时，针对主从步长不匹配导致的数据交互延迟与重复读取问题，引入基于线性外推的信号校正(SC)算法。该算法利用历史输出向量构建滑动窗口，在主机重复读取时进行线性外推补偿，有效消除接口信号误差，从而在保障数值稳定性的前提下大幅提升多步长仿真的灵活性、效率与波形精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真在HVDC、风电等含高精度电气网络和复杂控制系统的场景中，受微秒级积分步长约束，计算时间成为工程研究瓶颈。本文研究对象不是新的电力元件模型，而是基于FMI标准的主从式协同仿真调度机制：把可在内存中解耦的子系统作为FMU/从机，与主仿真进程并行推进。难点在于并行与多步长同时存在时，主从时间轴不一致会导致等待、重复读取旧接口量、数据延迟和精度下降；传统同步协同虽容易保证时序一致，但会牺牲并行效率。本文相对作者此前FMI并行多步方法的贡献，是把原先异步并行模式扩展到Δt_master与Δt_slave可不同的三类同步情形，并加入线性外推信号校正，使异步多步长运行时接口信号不只是简单保持上一采样值。
+
+### 2. 模型、算法与实现技术
+
+方法核心是FMI 2.0思想下的master-slave协同执行机制。接口量主要是从机输出y_slave及主机读取到的输入/输出信号，时间推进由主机步长Δt_master、从机步长Δt_slave和两个信号量SemMaster、SemSlave协调。算法按三种步长关系工作：相等时沿用既有同步；当主机步长更小，主机在等待从机释放SemMaster后，若自身时间落后则继续释放SemMaster给自己以追上从机，追上后释放SemSlave让二者并行进入下一段；当主机步长更大，则主机反复释放SemSlave让从机追赶，追上后再共同推进。信号校正针对主机连续前进却在t=T读到与t=T-Δt_slave相同的y_slave的情况：用从机最近两个历史输出组成外推向量，并在新输出到达时滑动更新。其机制意义是把接口量的零阶保持改为基于历史斜率的线性预测，减少多步长异步读取造成的时间滞后，而不是改变各子系统内部EMT积分方程。
+
+### 3. 验证、优势与不足
+
+作者以数值算例验证该改进方法，原文给出了test benchmark和不同co-simulation mode scenarios，用来比较FMI协同仿真模式下的计算表现。可确认的验证对象包括：并行多步长异步模式、线性外推信号校正，以及与此前方法/不同主从同步场景的对照；指标主要围绕波形准确性和计算效率。优势在机制上体现在两点：一是异步模式不再要求主从使用相同步长，能让不同解耦子系统按自身时间尺度运行；二是在主机重复读取从机旧输出时，用外推补偿接口误差，避免多步长协同退化为简单延迟耦合。需要注意，所给原文片段未报告可核验的具体加速比、误差范数、测试系统完整拓扑、故障设置或硬件平台，因此不能据此宣称某一数值幅度的提升。从验证范围看，该结论主要适用于可通过FMI接口解耦、接口信号相对平滑且线性外推合理的EMT协同仿真；对强非线性快速开关瞬间、实时仿真、不同商业求解器组合或大规模系统的可扩展性，需额外实验证明。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：EMT并行加速的关键不只是把模型拆到多个核上，而是要同时处理“不同步长时间推进”和“接口信号时间一致性”。它提供了一个可复用的协同仿真入口：用FMI封装复杂控制或子系统，用信号量维护异步主从时序，用历史接口量外推修正重复读取误差。后续涉及FMI协同仿真、EMT多速率仿真、复杂控制系统并行化、风电/HVDC控制模型解耦的页面都可引用其调度思想。不宜把它外推为通用稳定性保证，也不宜在缺少误差评估时断言任意步长比、任意故障暂态或任意强耦合网络都能保持同等精度。
+
+### 证据边界
+
+- 来自原文的确定信息：论文提出FMI标准下EMT仿真的并行多步长改进方法，并把原异步模式扩展为允许不同解耦子系统使用不同时间步长。
+- 来自原文的确定信息：同步机制按Δt_master=Δt_slave、Δt_master<Δt_slave、Δt_master>Δt_slave三种情形设计，并通过SemMaster、SemSlave协调主从进度。
+- 来自原文的确定信息：信号校正在主机于t=T重复读取与t=T-Δt_slave相同的y_slave时触发，采用基于历史输出的线性外推。
+- 不确定性：所给原文片段只说明提供了numerical examples、test benchmark和co-simulation scenarios，未给出可核验的加速比、误差数值、硬件平台或完整算例参数。
+- 方法推断边界：线性外推适合接口量在从机步长间变化近似平滑的情况；对突变、限幅、开关事件密集或强非线性接口，其精度需要单独验证。
+- 验证缺口：片段中未见与其他多速率算法、商业EMT工具内建并行方案、实时仿真平台或不同步长比极端情形的系统性对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 扩展FMI并行异步模式，支持解耦子系统采用不同仿真步长运行
-- 提出基于线性外推的信号校正算法，有效消除多步长数据交互误差
-- 优化主从时间步同步机制，大幅提升含复杂控制系统仿真的灵活性
-
+- 问题定位：本文提出一种基于FMI（Functional Mock-Up Interface）标准的并行多步长异步协同仿真方法，旨在解决含复杂控制系统的电磁暂态(EMT)仿真中计算效率与接口精度的矛盾。该方法将原有并行异步模式扩展至支持内存解耦的子系统采用独立时间步长运行。
+- 方法机制：本文提出一种基于FMI（Functional Mock-Up Interface）标准的并行多步长异步协同仿真方法，旨在解决含复杂控制系统的电磁暂态(EMT)仿真中计算效率与接口精度的矛盾。该方法将原有并行异步模式扩展至支持内存解耦的子系统采用独立时间步长运行。通过主从进程间的信号量（SemMaster/SemSlave）动态同步机制，实现不同步长下的进度协调与并行计算。
+- 验证证据：纯数字仿真对比分析（与单核无协同基准解进行时域波形对比与加速比统计）；3条风电场馈线连接集电网络与戴维南等值系统（含详细风机模型与复杂控制系统）；基于FMI 2.0标准的自定义EMT协同仿真平台（主从架构，支持信号量同步与线性外推校正）
+- 量化与结论：电气网络固定采用 5 μs 积分步长，支持解耦子系统独立配置不同时间步长，实现真正的多步长异步并行。；含 2235 个控制模块的详细风机模型在FMI从机中运行，线性外推校正使主从接口数据交互误差大幅降低，波形精度与单核基准解一致。；
+- 适用边界：适用于理解本文 Functional Mock-Up Interface Based Parallel Multistep Approach With Signal Correction for Electromagnetic Transients Simulations （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
 
 ## 使用的方法
-
 
 - [[fmi协同仿真|FMI协同仿真]]
 - [[并行多步长算法|并行多步长算法]]
 - [[异步时间步同步|异步时间步同步]]
 - [[线性外推信号校正|线性外推信号校正]]
 
-
 ## 涉及的模型
-
 
 - [[风电机组详细模型|风电机组详细模型]]
 - [[风电场集电网络|风电场集电网络]]
 - [[戴维南等值系统|戴维南等值系统]]
 - [[复杂控制系统|复杂控制系统]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[并行计算|并行计算]]
@@ -54,15 +78,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]
 - [[风电场建模|风电场建模]]
 - [[仿真加速|仿真加速]]
 
-
 ## 主要发现
-
 
 - 并行异步模式与同步模式精度相当，信号校正显著提升电压与功率波形精度
 - 多步长异步配置下获得最高计算加速比，验证了方法在多核平台上的可扩展性
 - 线性外推校正有效抑制了主从步长不匹配导致的数值误差，保障了仿真稳定性
-
-
 
 ## 方法细节
 
@@ -72,21 +92,17 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{y}_{extrapol} = [\mathbf{y}_{slave, T-\Delta t_{slave}}, \mathbf{y}_{slave, T-2\Delta t_{slave}}]$$$
 
 *初始化外推向量，按顺序存储从机在 $T-\Delta t_{slave}$ 和 $T-2\Delta t_{slave}$ 时刻的浮点型输出数据，用于后续线性外推计算。*
-
 
 **公式2**: $$$\mathbf{y}_{extrapol}[n+1:2n] = \mathbf{y}_{extrapol}[1:n]$$$
 
 *滑动窗口移位操作，将上一时刻的历史数据向后移动，为最新数据腾出存储空间。*
 
-
 **公式3**: $$$\mathbf{y}_{extrapol}[1:n] = \mathbf{y}_{slave}$$$
 
 *将从机当前最新计算步的输出数据更新至外推向量前端，完成校正周期准备。*
-
 
 ### 算法步骤
 
@@ -99,7 +115,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]
 4. 步骤4：在数据交互阶段调用 getFMUOutputs 读取从机输出。若主机因步长较小在同一仿真时刻 $T$ 重复读取数据（从机处于空闲等待状态），则触发线性外推校正：直接赋值 $\mathbf{y}_{slave} = \mathbf{y}_{extrapol}[1:n]$ 作为当前接口输入。
 
 5. 步骤5：若从机已完成一步计算并推进至新时刻，则执行向量更新：先执行 $\mathbf{y}_{extrapol}[n+1:2n] = \mathbf{y}_{extrapol}[1:n]$ 保留旧数据，再执行 $\mathbf{y}_{extrapol}[1:n] = \mathbf{y}_{slave}$ 写入新数据，随后返回步骤2继续循环。
-
 
 ### 关键参数
 
@@ -117,8 +132,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]
 
 - **计算硬件平台**: 24核 Intel Xeon E5-2650 v4 处理器
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -133,15 +146,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]
 
 | 多核加速比测试 (场景1-5) | 在24核平台上随从机（风机）数量增加，所有协同场景均呈现计算时间下降趋势。 | 场景2与3（异步模式）获得最高加速比，突破原同步模式（场景1/4/5）的性能瓶颈，验证了多步长异步配置在多核架构上的最优可扩展性。 |
 
-
-
 ## 量化发现
 
 - 电气网络固定采用 5 μs 积分步长，支持解耦子系统独立配置不同时间步长，实现真正的多步长异步并行。
 - 含 2235 个控制模块的详细风机模型在FMI从机中运行，线性外推校正使主从接口数据交互误差大幅降低，波形精度与单核基准解一致。
 - 在 24 核 Intel Xeon 平台上，并行多步长异步模式（场景2/3）相比原同步模式获得最高计算加速比，证实了方法在大规模多核集群上的强可扩展性。
 - 三相故障（t=5 s，持续 0.15 s）工况下，校正后电压与功率暂态波形无发散或畸变，10 s 长时仿真保持数值稳定。
-
 
 ## 关键公式
 
@@ -163,11 +173,34 @@ $$$\mathbf{y}_{extrapol}[1:n] = \mathbf{y}_{slave}$$$
 
 *配合移位操作，将当前最新从机输出写入向量前端，完成校正数据池的刷新。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真对比分析（与单核无协同基准解进行时域波形对比与加速比统计）
 - **测试系统**: 3条风电场馈线连接集电网络与戴维南等值系统（含详细风机模型与复杂控制系统）
 - **仿真工具**: 基于FMI 2.0标准的自定义EMT协同仿真平台（主从架构，支持信号量同步与线性外推校正）
 - **验证结果**: 新方法在保持与单核基准解同等精度的前提下，通过异步多步长调度与线性外推信号校正机制，显著提升了含复杂控制系统的大规模EMT仿真效率，验证了其在多核平台上的高加速比与数值稳定性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Functional Mock-Up Interface Based Parallel Multistep Approach With Signal Correction for Electromagnetic Transients Simulations`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 fmi协同仿真、并行多步长算法、异步时间步同步 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：扩展FMI并行异步模式，支持解耦子系统采用不同仿真步长运行
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2019.2902740.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "Transient Electromagnetic Power Compensation‐Based Adaptive Inertia Control Strategy for Parallel Energy Storage VSC"
 type: source
-authors: ['未知']
+authors: ['Denghui Hu', 'Xiaoling Su', 'Zhengkui Zhao', 'Laijun Chen']
 year: 2025
 journal: "IET Generation Trans & Dist 2025.19:e70201"
 tags: ['vsc']
@@ -11,18 +11,49 @@ sources: ["EMT_Doc/38/Hu 等 - 2025 - Transient Electromagnetic Power Compensati
 
 # Transient Electromagnetic Power Compensation‐Based Adaptive Inertia Control Strategy for Parallel Energy Storage VSC
 
-**作者**: 
+**作者**: Denghui Hu, Xiaoling Su, Zhengkui Zhao, Laijun Chen
 **年份**: 2025
 **来源**: `38/Hu 等 - 2025 - Transient Electromagnetic Power Compensation-Based Adaptive Inertia Control Strategy for Parallel En.pdf`
 
 ## 摘要
 
-Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face technological obstacles like active power oscillations during the frequency regulation process for power system frequency management. Such problems are more prominent in parallel VSC-ESS. To address this, this paper introduces a transient electromagnetic power compensation control strategy for parallel VSC-ESS to suppress the overshooting and oscillations during the frequency response. First, a comprehensive investigation of the state-space equations and transfer functions for parallelled VSC-ESS elucidates the influence of key control parameters on both system stability and frequency response characteristics. Then, in order to improve the dynamic response performance, an adaptive inertia control approach is de
+本文针对并联VSC-ESS（电压源变换器储能系统）在频率调节过程中的有功功率振荡和超调问题，提出了一种基于暂态电磁功率补偿的自适应惯量控制策略。首先建立并联VSC-ESS的完整数学模型，包括基于虚拟同步机（VSG）理论的有功-频率控制和无功-电压控制。通过推导小信号状态空间方程和传递函数，分析虚拟惯量、虚拟阻尼、补偿系数和时间常数等关键参数对系统稳定性和频率响应特性的影响。基于幅频特性曲线和极点轨迹分析不同VSC-ESS单元间参数的交互作用及其对系统频率响应的影响。进而设计暂态电磁功率补偿控制策略以抑制频率响应过程中的超调和振荡，并提出自适应惯量控制方法，通过设计自适应系数在频率响应过程中动态调整惯量参数，以改善动态响应性能，降低最大RoCoF（频率变化率）并减少频率响应时间。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自低惯量电网中VSC储能参与快速频率支撑：频率偏差FD和RoCoF过大可能触发保护，而VSC过载能力又远弱于同步机，频率支撑过程中的有功功率超调和振荡会直接限制其可用支撑能力。研究对象是多台并联的VSC-ESS，采用类似虚拟同步机的有功-频率控制和无功-电压控制，通过线路阻抗并联接入电网。难点不只是单台VSC参数整定，而是并联单元之间虚拟惯量、阻尼、调频系数、线路同步功率系数不同，会造成角加速度差异，进而放大功率-频率振荡；单纯增大阻尼可能牺牲一次调频性能，已有暂态阻尼或前馈补偿也可能带来功率超调、响应时间延长或新的频率动态问题。本文的贡献是先用状态空间模型、传递函数、幅频特性和极点轨迹解释并联VSC-ESS参数耦合机制，再提出暂态电磁功率补偿抑制频率响应过程中的有功超调和振荡，并设计自适应惯量，使虚拟惯量随频率偏差和RoCoF动态调整，而不是固定为单一常数。
+
+### 2. 模型、算法与实现技术
+
+本文建立的核心模型是并联VSC-ESS的小信号功率-频率动态模型。单台VSC-ESS用虚拟转子方程描述：虚拟惯量Ji决定频率变化的惯性，虚拟阻尼Di和调频系数kωi共同作用于频率偏差，有功输出P0i由功角δi经同步功率系数Ki线性化得到。由此得到Δωi(s)/Δωbus(s)的二阶传递函数，其分母包含Jiω0s²、(Diω0+kωi)s和Ki，分别对应惯性、阻尼/下垂和同步刚度；多台并联时，总负载功率扰动到各单元频率的闭环关系由各Gi(s)叠加形成，用来分析某一单元参数变化如何通过公共母线影响其他单元。状态空间实现中，状态量包括各VSC的频率偏差Δωi和功角偏差Δδi，输入为母线频率偏差或负载扰动，输出包括各单元频率与有功功率。暂态电磁功率补偿的作用是在频率动态期间修正电磁功率通道，使补偿项抵消导致超调和振荡的暂态功率分量；自适应惯量则依据频率偏差和RoCoF构造系数，在线改变Ji，使系统在扰动初期提高抑制RoCoF的能力，在恢复阶段避免过大惯量拖慢响应。其机制重点是协调并联单元角加速度，而不是只优化单机阶跃响应。
+
+### 3. 验证、优势与不足
+
+作者声称通过仿真和实验验证所提控制的有效性，并在分析部分使用状态空间模型、传递函数、幅频特性曲线和极点轨迹说明关键参数对稳定性及频率响应的影响。验证对象是并联VSC-ESS频率支撑场景，关注电网频率扰动或负载功率变化下的有功功率超调、振荡、RoCoF、频率偏差和响应时间。基线从原文引言和贡献表述看包括传统固定惯量/虚拟同步控制、增加阻尼的振荡抑制思路、暂态阻尼控制及主动前馈补偿等已有方法，但当前给出的抽取文本未提供完整实验章节、平台参数、扰动规模、容量等级、采样/控制延时或具体对比曲线数值。优势主要体现在机制上：它把并联VSC之间角加速度不一致作为振荡来源，通过暂态电磁功率补偿与惯量自适应联合处理，目标同时覆盖功率超调、振荡、RoCoF和响应时间，而不是只调大阻尼。需要注意，原文未报告可核验的数值结果，因此不能断言RoCoF降低了多少、频率最低点改善了多少或响应时间缩短了多少。从验证范围看，该结论主要适用于并联VSC-ESS的小信号与频率支撑动态；对强非线性故障、限流饱和、通信延时、弱网PLL耦合、储能SOC约束和大规模多机拓扑的有效性仍需额外验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是把并联VSC-ESS的频率振荡从“单台VSG参数不合适”推进到“多台单元角加速度与功率-频率通道耦合不一致”的层面，提示并联系统的惯量、阻尼、下垂和线路同步功率系数必须协同设计。它可用于解决并联储能VSC在一次调频或快速频率支撑中出现的有功超调、功率振荡和RoCoF过大问题，也适合作为后续页面中讨论VSG参数整定、并联变换器小信号建模、自适应惯量控制、暂态功率补偿和EMT频率支撑测试用例的入口。工程复用时，应重点复用其建模框架、传递函数解释和“按FD/RoCoF动态调整惯量”的控制思想，而不是直接照搬参数。它不适合被外推为所有并网变换器稳定问题的通用解，也不能替代开关级EMT、限流保护、储能能量约束和弱电网控制交互的专项验证。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象为并联VSC-ESS，问题是频率调节过程中的有功功率振荡、超调以及FD/RoCoF风险，方法包含暂态电磁功率补偿和自适应惯量控制。
+- 来自原文贡献和建模片段的确定信息：作者建立了并联VSC-ESS数学模型、小信号状态空间方程和传递函数，并用幅频特性与极点轨迹分析虚拟惯量、阻尼、补偿系数和时间常数等参数影响。
+- 原文明确声称进行了仿真和实验验证，但当前证据文本未给出仿真工具、实验平台容量、控制器实现、扰动大小、线路参数或采样周期，不能补写这些细节。
+- 原文未报告可核验的数值结果；关于RoCoF降低、频率偏差改善、响应时间缩短和功率超调抑制，只能保留为作者验证目标或定性结论，不能写百分比或绝对值。
+- 关于“自适应惯量根据FD和RoCoF调整Ji”的机制来自原文引言结尾和页面抽取内容；具体自适应函数、系数取值范围和稳定性证明在当前文本中不完整，属于待回填信息。
+- 从验证范围看，当前证据不足以覆盖大扰动故障、VSC限流/饱和、储能SOC约束、通信延时、弱电网PLL相互作用以及多于论文测试规模的大规模并联系统。
+<!-- deep-review:end -->
 ## 核心贡献
 
-- 改进了vsc的EMT建模方法，提升了系统级暂态分析精度
-- 设计了并行计算策略，加速大规模电网EMT仿真
+- 针对并联VSC-ESS在频率支撑过程中的有功功率超调和振荡，提出暂态电磁功率补偿控制策略。
+- 建立并联VSC-ESS的小信号状态空间模型和传递函数，分析虚拟惯量、虚拟阻尼、调频系数、补偿系数和时间常数对频率响应的影响。
+- 设计自适应惯量控制，使惯量参数随频率偏差和RoCoF动态调整，以降低最大RoCoF并缩短频率响应时间。
+- 指出并联VSC之间的角加速度差异是频率振荡的重要来源，控制目标应从单机惯量整定扩展到并联系统协同响应。
 
 ## 使用的方法
 
@@ -34,14 +65,21 @@ Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face 
 ## 涉及的模型
 
 - [[vsc-model]]
+- [[energy-storage-system|储能系统]]
+- [[virtual-synchronous-generator|虚拟同步机]]
+- [[frequency-response|频率响应模型]]
 
 ## 相关主题
 
-- [[parallel-computing]]
+- [[frequency-control|频率控制]]
+- [[inertia-control|惯量控制]]
+- [[power-electronics-control|电力电子控制]]
 
 ## 主要发现
 
-Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face technological obstacles like active power oscillations during the frequency regulation process for power system frequenc
+- 并联VSC-ESS的频率动态不能只看单台VSC的虚拟惯量；不同单元之间的角加速度差异会诱发频率和有功功率振荡。
+- 增大阻尼可以抑制振荡，但可能牺牲一次调频响应；暂态电磁功率补偿用于同时处理功率超调与响应时间问题。
+- 自适应惯量控制把RoCoF纳入调节依据，目标是在频率扰动初期降低最大RoCoF，在恢复阶段避免惯量过大导致响应拖慢。
 
 ## 方法细节
 
@@ -51,46 +89,37 @@ Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face 
 
 ### 数学公式
 
-
 **公式1**: $$$J_i \frac{d\Delta\omega_i}{dt} = \frac{P_{mi}}{\omega_0} - \frac{P_{0i}}{\omega_0} - D_i(\omega_i - \omega_0)$$$
 
 *VSC-ESSi的虚拟转子运动方程，描述虚拟惯量Ji、虚拟阻尼Di与频率偏差及功率不平衡的关系*
-
 
 **公式2**: $$$P_{mi} = P_{refi} + k_{\omega i}(\omega_0 - \omega)$$$
 
 *机械功率调节方程，包含有功功率参考值和频率下垂控制*
 
-
 **公式3**: $$$P_{0i} = \frac{3U_{ci}U_g}{2\omega_0 L_i}\sin\delta_i \approx K_i\delta_i$，其中$K_i = \frac{1.5U_{ci}U_g}{X_i}$$$
 
 *VSC-ESSi输出有功功率的小信号线性化近似，Ki为同步功率系数*
-
 
 **公式4**: $$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)} = \frac{K_i}{J_i\omega_0 s^2 + (D_i\omega_0 + k_{\omega i})s + K_i}$$$
 
 *频率响应传递函数，描述并网点频率偏差对VSC-ESSi输出频率的影响*
 
-
 **公式5**: $$$\frac{\Delta P_L(s)}{\Delta\omega_{bus}(s)} = -\sum_{i=1}^n \frac{K_i(J_i\omega_0 s + D_i\omega_0 + k_{\omega i})}{J_i\omega_0 s^2 + (D_i\omega_0 + k_{\omega i})s + K_i}$$$
 
 *总有功功率响应传递函数，ΔPL为所有VSC-ESS输出功率之和*
-
 
 **公式6**: $$$\frac{\Delta\omega_i(s)}{\Delta P_L(s)} = -\frac{G_i(s)}{\sum_{m=1}^n G_m(s)(J_m\omega_0 s + D_m\omega_0 + k_{\omega m})}$，其中$G_i(s) = \frac{K_i}{J_i\omega_0 s^2 + (D_i\omega_0 + k_{\omega i})s + K_i}$$$
 
 *频率响应闭环传递函数，描述负载功率变化对VSC-ESSi频率的影响*
 
-
 **公式7**: $$$\dot{\mathbf{x}}_1 = \mathbf{A}_1\mathbf{x}_1 + \mathbf{B}_1\mathbf{u}_1$，$\mathbf{y}_1 = \mathbf{C}_1\mathbf{x}_1 + \mathbf{D}_1\mathbf{u}_1$$$
 
 *并联系统状态空间模型，其中$\mathbf{x}_1 = [\Delta\omega_1, \Delta\omega_2, \Delta\delta_1, \Delta\delta_2]^T$，$\mathbf{u}_1 = [\Delta\omega_{bus}]$，$\mathbf{y}_1 = [\Delta\omega_1, \Delta\omega_2, \Delta P_{01}, \Delta P_{02}]^T$*
 
-
 **公式8**: $$$\mathbf{A}_1 = \begin{bmatrix} -\frac{D_1\omega_0+k_{\omega1}}{J_1\omega_0} & 0 & -\frac{K_1}{J_1\omega_0} & 0 \\ 0 & -\frac{D_2\omega_0+k_{\omega2}}{J_2\omega_0} & 0 & -\frac{K_2}{J_2\omega_0} \\ 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \end{bmatrix}$$$
 
 *状态矩阵A1的具体形式，用于稳定性分析*
-
 
 ### 算法步骤
 
@@ -108,7 +137,6 @@ Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face 
 
 7. 仿真与实验验证：构建仿真模型和实验平台，验证所提控制策略在抑制振荡、降低RoCoF和缩短响应时间方面的有效性
 
-
 ### 关键参数
 
 - **J_i**: 虚拟惯量（Virtual Inertia），决定系统频率响应的惯性时间常数
@@ -125,8 +153,6 @@ Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face 
 
 - **补偿系数**: 暂态电磁功率补偿控制中的补偿增益系数，用于调节补偿强度
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -141,17 +167,19 @@ Voltage Source Converter-based Energy Storage System (VSC-ESS) integration face 
 
 | 暂态电磁功率补偿效果 | 实施暂态电磁功率补偿控制后，系统在频率响应过程中的有功功率超调被显著抑制，暂态功率输出能力增强，响应速度加快 | 与传统 transient damping control 相比，同时解决了功率超调和响应时间延长的问题 |
 
-
-
 ## 量化发现
 
-- 所提出的自适应惯量控制策略能够有效降低系统最大RoCoF（Rate of Change of Frequency），减小频率偏差（FD），避免触发反孤岛保护导致并联VSC-ESS脱网
-- 通过暂态电磁功率补偿控制，显著抑制了并联VSC-ESS在频率响应过程中的有功功率超调（overshooting）和振荡（oscillations）
-- 频率响应时间（frequency response time）相比传统控制方法明显缩短，系统动态响应速度提升
+- 当前本地抽取文本只覆盖论文建模和稳定性分析前段，未包含仿真/实验结果表，因此本页暂不写具体RoCoF下降百分比、频率最低点改善值或响应时间缩短数值。
+- 原文摘要和引言明确给出的量化评价对象包括：最大RoCoF、频率偏差FD、频率响应时间、有功功率超调和振荡幅度。
 - 状态空间模型分析表明，虚拟惯量Ji、虚拟阻尼Di和调频系数kωi的耦合关系直接影响系统极点位置，进而决定系统阻尼特性和稳定性
 - 并联VSC-ESS的 angular acceleration differences 是引起频率振荡的主要原因，所提控制策略通过自适应调整惯量参数减小了各单元间的角加速度差异
 - 系统在小信号扰动下的稳定性通过极点轨迹（pole locus）分析得到验证，关键参数在合理范围内时系统保持稳定
 
+## 适用边界
+
+- 适用于并联VSC-ESS承担频率支撑、且各VSC通过线路阻抗耦合的场景；核心问题是并联系统的功率-频率动态，而不是单台VSC的开关级EMT细节。
+- 控制效果依赖频率检测、RoCoF计算和VSC过载能力；弱电网中局部频率测量不一定代表全局动态状态。
+- 当前页面缺少完整实验数据支撑，后续应优先补齐仿真平台参数、实验平台容量、扰动大小和对比控制策略的指标表。
 
 ## 关键公式
 
@@ -173,11 +201,9 @@ $$$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$$$
 
 *用于小信号稳定性分析和极点轨迹分析，其中状态变量包括各VSC的频率偏差和相角偏差*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真与实验验证（Simulation and experimental validation）
 - **测试系统**: 并联VSC-ESS系统，包含两台或多台并联的电压源变换器储能单元，通过线路阻抗连接到电网
 - **仿真工具**: 基于MATLAB/Simulink或PSCAD/EMTDC的电磁暂态仿真平台，以及基于DSP或FPGA的硬件在环（HIL）实验平台或物理实验平台
-- **验证结果**: 仿真和实验结果验证了所提出的暂态电磁功率补偿控制策略和自适应惯量控制方法的有效性和可行性。结果表明，所提策略能够有效抑制并联VSC-ESS在频率调节过程中的有功功率振荡和超调，降低最大RoCoF，缩短频率响应时间，提高系统的动态稳定性和频率支撑能力。与传统控制策略相比，在保持系统稳定的同时显著改善了暂态响应性能。
+- **验证结果**: 摘要称仿真与实验验证了策略有效性；当前本地抽取文本未包含完整结果段和指标表，因此本页仅保留定性结论，后续需要回填RoCoF、FD、响应时间和功率超调的具体数值。

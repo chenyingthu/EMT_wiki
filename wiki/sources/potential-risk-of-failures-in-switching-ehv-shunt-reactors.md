@@ -1,9 +1,9 @@
 ---
 title: "Potential risk of failures in switching EHV shunt reactors"
 type: source
-authors: ['未知']
+authors: ['B. Khodabakhchiana', 'J. Mahseredjianb', 'M.-R. Sehatic', 'M. Mir-Hosseinic']
 year: 2006
-journal: ""
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/31/j.epsr.2005.12.018.pdf.pdf"]
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/31/j.epsr.2005.12.018.pdf.pdf"]
 
 # Potential risk of failures in switching EHV shunt reactors
 
-**作者**: 
+**作者**: B. Khodabakhchiana; J. Mahseredjianb; M.-R. Sehatic; M. Mir-Hosseinic
 **年份**: 2006
 **来源**: `31/j.epsr.2005.12.018.pdf.pdf`
 
 ## 摘要
 
-This paper reports the case of some EHV circuit-breaker repetitive failures during the opening of a 100 MVAR shunt reactor in a 400 kV substation in central part of Iran. By taking advantage of the simulation capabilities of EMTP-RV, the restructured version of the DCG-EMTP and its new GUI, major understanding of arc-circuit interaction phenomena was achieved. Simulation results show without any doubt that opposite-polarity high frequency arc-instability-dependant oscillations caused mainly by current transformers on each side of the breaker were responsible for its thermal failures and thus the non-interruption of the low 50 Hz reactor current by the 50 kA circuit-breaker. This paper represents a major contribution to the ﬁeld of shunt reactor circuit-breaker applications. It is expected 
+采用EMTP-RV（DCG-EMTP重构版本）及其图形界面EMTPWorks建立400kV变电站完整电磁暂态仿真模型。方法核心在于结合频率相关参数建模与动态电弧黑盒模型（Cassie-Mayr），通过频域扫描确定高频等效电路，详细模拟电弧-电路相互作用。针对300km输电线路，通过频率扫描验证可用350Ω电阻等效替代以保留30kHz以上信息。电弧模型采用非线性电阻实现，考虑Mayr冷却功率调整（增加130%以反映SF6断路器喷嘴压力效应），并详细建模电流互感器高频特性（等效电感及高频电阻）以捕捉由CT引发的电弧不稳定振荡。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自伊朗Yazd-1 400 kV一又二分之一断路器接线变电站中，100 MVAR并联电抗器投切时BR 9832断路器多年重复爆炸失效。对象不是一般短路开断，而是低50 Hz电抗器电流开断过程中，SF6断路器电弧、两侧CT、CVT、均压电容、母线和线路高频参数共同形成的电弧-电路相互作用。难点在于故障发生在近电流零点，电流幅值低但di/dt和高频反极性振荡可能很大；传统理想开关或工频等值难以解释为何50 kA等级断路器不能开断小电流，也难以区分制造商设计缺陷、操作原因和站内高频网络原因。本文贡献是用EMTP-RV/EMTPWorks建立包含频率相关参数和动态Cassie-Mayr电弧的完整站内暂态模型，通过频域扫描和时域仿真把重复失效归因于断路器两侧电流互感器主导的高频电弧不稳定振荡，而非单一断路器制造缺陷。
+
+### 2. 模型、算法与实现技术
+
+实现上，作者在EMTP-RV中建立Yazd-1站的详细EMT模型，包括100 MVAR五柱芯并联电抗器、BR 9832/BR 9432两台SF6断路器、每室均压电容、CT、CVT、母线和300 km线路。核心接口量是断路器电弧两端电压、电弧电流、电弧电阻以及从电弧端口看进去的频率相关等效阻抗。电弧用Cassie-Mayr黑盒动态模型表示：高电流阶段由Cassie方程描述电弧电阻随电压能量输入变化，近电流零点由Mayr方程描述热恢复和冷却功率平衡；在EMTP中表现为随时间更新的非线性电阻。频域扫描用于识别电弧两侧网络的零阻抗/谐振点，并指导把长线路在高频段等值为电阻以降低模型复杂度。CT不是简单理想测量元件，而按其高频等效电感和损耗进入主电路，使其能与CVT电容、均压电容及杂散电容形成高频回路。当电弧的负阻尼特性抵消网络阻尼时，近零点电流会出现反极性增长振荡，导致高di/dt和热开断失败。
+
+### 3. 验证、优势与不足
+
+验证主要是工程事故复现与机理一致性验证。测试系统为Yazd-1 400 kV变电站一又二分之一断路器接线，故障对象为BR 9832在BR 9432已断开时最终切除100 MVAR并联电抗器的动态失效；工具为EMTP-RV及EMTPWorks。作者还用kilometric fault情形校核断路器电弧模型的热开断能力，并结合现场故障记录判断近零点di/dt是否落入成功或失败范围。基线不是系统性的多软件对比，而是与无法产生动态截流和热失效过程的理想开关/静态等值思路形成对照。优势在于模型能把现场中两家制造商断路器、不同CT配置和同一站址重复失效联系到同一高频电弧不稳定机理，并解释低电抗器电流为何可导致高等级断路器非开断。限制是原文只针对一个变电站和特定设备布置；若CT参数、CVT、电抗器、断路器电弧参数或线路等值变化，结论需重新频扫和仿真。论文没有给出可推广到所有EHV并联电抗器开断的统计验证，也没有证明Cassie-Mayr参数能在所有SF6断路器结构上通用。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要价值在于把“并联电抗器小电流开断风险”从单纯关注截流过电压，推进到关注近零点电弧负阻尼与站内高频网络耦合。它提示工程上CT、CVT、均压电容和母线布置可成为断路器热失效的关键参与者，因此适合被后续EMT页面用于断路器动态电弧建模、站内高频等值、并联电抗器开断风险评估和故障复盘。它不适合被直接外推为某类CT或某型号断路器必然危险，也不能替代具体工程中的设备参数测量、频域扫描和现场开断校核。
+
+### 证据边界
+
+- 原文明确给出研究对象、站名、400 kV Yazd-1、一又二分之一断路器接线、100 MVAR并联电抗器、EMTP-RV/EMTPWorks以及重复断路器失效背景；这些可作为确定性证据。
+- 原文摘要明确声称高频反极性电弧不稳定振荡主要由断路器两侧CT引起，并导致热失效和非开断；这是论文核心结论，但仍基于该站仿真和事故分析。
+- 页面中列出的部分具体数值如CT等效电感、97 kHz振荡、3.0 pu过电压、di/dt阈值等需要回到全文图表逐项核验；若当前抽取文本未显示相应图表，不应作为独立可审计证据。
+- Cassie-Mayr模型、频率扫描和线路高频电阻等值的工作机制符合页面描述，但具体参数整定过程、时间步长、数值稳定性和灵敏度范围在给定摘录中不完整。
+- 论文验证集中在Yazd-1少数历史故障和特定开断工况，没有覆盖不同站型、不同电压等级、不同断路器介质、受控开断策略或大规模统计样本。
+- 与传统理想开关模型的差异主要是机理层面对照；原文摘录未显示严格的误差指标、统一基线算例或多工具交叉验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 揭示了断路器两侧电流互感器引发的高频电弧不稳定振荡是导致热失效的主因
-- 基于EMTP-RV建立含动态电弧模型与频率相关参数的完整变电站暂态仿真模型
-- 阐明了超高压并联电抗器开断过程中电弧-电路交互作用引发断路器热失效的机理
-
+- 问题定位：采用EMTP-RV（DCG-EMTP重构版本）及其图形界面EMTPWorks建立400kV变电站完整电磁暂态仿真模型。方法核心在于结合频率相关参数建模与动态电弧黑盒模型（Cassie-Mayr），通过频域扫描确定高频等效电路，详细模拟电弧-电路相互作用。
+- 方法机制：采用EMTP-RV（DCG-EMTP重构版本）及其图形界面EMTPWorks建立400kV变电站完整电磁暂态仿真模型。方法核心在于结合频率相关参数建模与动态电弧黑盒模型（Cassie-Mayr），通过频域扫描确定高频等效电路，详细模拟电弧-电路相互作用。针对300km输电线路，通过频率扫描验证可用350Ω电阻等效替代以保留30kHz以上信息。
+- 验证证据：伊朗Yazd-1 400kV变电站一个半断路器接线系统，包含100MVAR并联电抗器、BR 9832和BR 9432两台SF6断路器（分别来自Manufacturer A和B）、两侧电流互感器（150VA和500VA混装）、母线CVT和线路CVT；EMTP-RV（电磁暂态程序重构版本）及EMTPWorks图形界面，采用Cassie-Mayr动态电弧模型和频率相关参数建模；
+- 量化与结论：电流互感器等效电感：150VA CT为55 μH，500VA CT为200 μH，这些电感与CVT电容形成97kHz振荡回路；电弧不稳定频率：第一零点阻抗频率81kHz（实际振荡97kHz），第二零点400kHz（仅a、c相可见）；截断电流水平：长燃弧时间下约25A，仿真中观察到27A截断；过电压幅值：3.
+- 适用边界：适用于理解本文 Potential risk of failures in switching EHV shunt reactors （2006） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 动态电弧建模、频率相关建模、频域扫描分析 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[动态电弧建模|动态电弧建模]]
 - [[频率相关建模|频率相关建模]]
 - [[频域扫描分析|频域扫描分析]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 涉及的模型
-
 
 - [[并联电抗器|并联电抗器]]
 - [[sf6断路器|SF6断路器]]
@@ -46,9 +72,7 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 - [[电容式电压互感器|电容式电压互感器]]
 - [[均压电容|均压电容]]
 
-
 ## 相关主题
-
 
 - [[电弧不稳定|电弧不稳定]]
 - [[断路器热失效|断路器热失效]]
@@ -57,15 +81,11 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 - [[电弧-电路交互|电弧-电路交互]]
 - [[并联电抗器投切|并联电抗器投切]]
 
-
 ## 主要发现
-
 
 - 断路器两侧电流互感器引发反极性高频振荡，导致电弧不稳定并造成断路器热失效
 - 动态电弧模型与频率相关参数仿真准确复现了低工频电流无法开断的物理过程
 - 远端输电线路在高频下可等效为电阻，简化模型不影响电弧交互现象的仿真精度
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 
 ### 数学公式
 
-
 **公式1**: $$$$\frac{1}{R}\frac{dR}{dt} = \frac{1}{\tau}\left(1 - \frac{u \cdot i}{P_0}\right)$$$$
 
 *Mayr电弧模型微分方程，描述电弧电阻R随时间变化率，其中u为电弧电压，i为电弧电流，P0为冷却功率，τ为电弧时间常数。用于模拟低电流区域（近电流零点）的电弧热特性。*
-
 
 **公式2**: $$$$\frac{1}{R}\frac{dR}{dt} = \frac{1}{\tau}\left(\frac{u^2}{U_c^2} - 1\right)$$$$
 
 *Cassie电弧模型微分方程，描述高电流区域电弧电阻变化，其中Uc为电弧电压常数。与Mayr模型结合形成Cassie-Mayr混合模型，分别处理高电流和低电流区域。*
 
-
 **公式3**: $$$$i(t) = e^{-\alpha t}\cos(\omega t), \quad \alpha < 0$$$$
 
 *电弧不稳定时电流振荡增长表达式，其中α为衰减系数（负值表示增长），ω为振荡角频率。当电弧引入的负电阻抵消电路总频率相关电阻时，产生此 negatively damped 振荡。*
 
-
 **公式4**: $$$$f_0 \approx \frac{1}{2\pi\sqrt{L_{eq}C_{eq}}}$$$$
 
 *电弧不稳定频率估算公式，其中Leq为断路器两侧 seen by the arc 的等效电感（约660μH，含母线260μH和CT 400μH），Ceq为等效电容（CVT+电抗器电容与线路CVT）。计算得第一零点阻抗频率约81kHz，对应97kHz振荡频率。*
-
 
 ### 算法步骤
 
@@ -111,7 +126,6 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 6. 瞬态仿真执行：设置断路器开断时序，模拟BR 9832断路器在BR 9432断开状态下执行最终电抗器开断操作，记录电弧电流、电压及电阻波形，特别关注近电流零点的高频振荡（di/dt）。
 
 7. 热开断能力验证：通过kilometric fault测试验证电弧模型热强度，确定成功开断与失败的di/dt阈值（28.9 A/μs vs 31 A/μs），并与实际故障波形对比确认模型准确性。
-
 
 ### 关键参数
 
@@ -139,8 +153,6 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 
 - **main_pole_resonance**: 7 kΩ @ 210 kHz
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -155,8 +167,6 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 
 | Frequency scan with line equivalent validation | 频率扫描显示，在30kHz以上频段，两条300km 400kV线路可用350Ω电阻精确等效，阻抗特性误差可忽略。第一零点阻抗位于81kHz（由约660μH电感与CVT电容产生），第二零点位于400kHz（仅a、c相，与CT相关）。 | 与完整分布参数线路模型相比，350Ω等效电阻在>30kHz范围内保持相同阻抗特性，计算速度显著提升 |
 
-
-
 ## 量化发现
 
 - 电流互感器等效电感：150VA CT为55 μH，500VA CT为200 μH，这些电感与CVT电容形成97kHz振荡回路
@@ -169,7 +179,6 @@ This paper reports the case of some EHV circuit-breaker repetitive failures duri
 - 断路器两侧CT配置：BR 9832每侧各有一个CT（共两个），总电感约400-440μH，与CVT电容（约0.8nF grading capacitor及杂散电容）形成高频振荡回路
 - 均压电容差异：Manufacturer A为500 pF/室，Manufacturer B为1600 pF/室，影响电弧 seen 的阻抗特性
 - 电弧增长时间常数：由电弧引入的负电阻导致电流按$e^{-\alpha t}$增长，α<0，增长速率取决于电弧V-I特性和电路频率相关电阻的匹配程度
-
 
 ## 关键公式
 
@@ -185,11 +194,34 @@ $$$$i(t) = I_0 e^{-\alpha t}\cos(\omega t), \quad \alpha < 0$$$$
 
 *当电弧引入的负电阻抵消电路电阻时，描述电弧电流振荡增长导致热失效的表达式，用于解释BR 9832的Type II故障*
 
-
-
 ## 验证详情
 
 - **验证方式**: 现场故障数据对比验证与参数敏感性分析
 - **测试系统**: 伊朗Yazd-1 400kV变电站一个半断路器接线系统，包含100MVAR并联电抗器、BR 9832和BR 9432两台SF6断路器（分别来自Manufacturer A和B）、两侧电流互感器（150VA和500VA混装）、母线CVT和线路CVT
 - **仿真工具**: EMTP-RV（电磁暂态程序重构版本）及EMTPWorks图形界面，采用Cassie-Mayr动态电弧模型和频率相关参数建模
 - **验证结果**: 仿真成功复现了1987-2002年间BR 9832断路器5次故障中的2次Type II动态热失效。通过建立 detailed arc-circuit interaction 模型，确定断路器两侧CT引发的81kHz/97kHz高频振荡是导致 Manufacturer A和B两种不同设计断路器热失效的根本原因。仿真显示的27A截断电流、3pu过电压及di/dt>30A/μs热失效条件与现场故障特征完全吻合，解释了为何两种不同制造商的断路器在同一位置均发生失效。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Potential risk of failures in switching EHV shunt reactors`（2006） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态电弧建模、频率相关建模、频域扫描分析 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：揭示了断路器两侧电流互感器引发的高频电弧不稳定振荡是导致热失效的主因
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/31/j.epsr.2005.12.018.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

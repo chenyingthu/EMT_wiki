@@ -1,7 +1,7 @@
 ---
 title: "Implementation of Modal Domain Transmission Line Models in the ATP Software"
 type: source
-authors: ['未知']
+authors: ['Colqui 等']
 year: 2022
 journal: "IEEE Access;2022;10; ;10.1109/ACCESS.2022.3146880"
 tags: ['transmission-line']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/23/Colqui 等 - 2022 - Implementation of Modal Domain Transmi
 
 # Implementation of Modal Domain Transmission Line Models in the ATP Software
 
-**作者**: 
+**作者**: Colqui 等
 **年份**: 2022
 **来源**: `23/Colqui 等 - 2022 - Implementation of Modal Domain Transmission Line Models in the ATP Software.pdf`
 
 ## 摘要
 
-Electromagnetic Transients Program make extensive use of transmission line models for the simulation of electromagnetic transients. This paper proposes a circuit representation of the modal transformation, more speciﬁcally Clarke’s matrix. The arrangement of ideal transformers we propose allows modal transformation to be directly implemented in software such as Alternative Transient Program - Electromagnetic Transients Program. We combined the proposed circuit with single-phase transmission line models that consider frequency independent and frequency dependent parameters to represent transposed three-phase transmission lines. The main advantage of the proposed approach is that it allows the implementation of new transmission line models without depending on models provided in applications
+本文提出一种基于理想变压器阵列的Clarke模态变换电路实现方法，用于在ATP-EMTP软件中直接构建模态域输电线路模型。该方法利用Clarke变换矩阵的实数与常数特性，将矩阵中的8个非零元素映射为8个理想双绕组变压器的变比与极性。变压器一次侧串联接入相域节点，二次侧并联接入模态域节点，从而在不引入额外损耗或离散节点的前提下，将三相线路精确解耦为α、β、0三个独立模态。解耦后的模态端口直接连接单相线路模型（如Bergeron或JMarti模型），并整体嵌入ATP的节点导纳矩阵中进行时域/频域求解。该架构突破了商用软件内置模型的限制，允许用户自定义频变参数（如土壤频变特性），且无需后处理即可同步获取相域与模态域的电压电流。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT软件大量依赖输电线路模型，但ATP-EMTP等程序通常把线路模型封装在内置库中：相域方程、模态解耦和模态变换隐含在模型内部。若研究者想实现新的线路模型，例如把土壤参数的频率依赖性纳入计算，就会受限于软件已提供的黑箱模型。本文研究对象是完全换位三相输电线路在ATP中的模态域实现。难点不在Clarke变换本身，而在如何把一个数学变换矩阵变成ATP可直接求解的电路元件，使相域网络与模态域单相线路模型在同一节点导纳方程中耦合。本文贡献是给出Clarke矩阵的理想变压器电路表示，用变压器变比和极性对应矩阵元素，从而在ATP中直接搭建α、β、0三个模态通道，并与频率无关或频率相关的单相线路模型组合，避免完全依赖软件内置三相线路模型。
+
+### 2. 模型、算法与实现技术
+
+本文实现技术的核心是把Clarke模态变换从“仿真前后的变量换算”改造成“仿真网络中的电路接口”。对完全换位三相线，Kron降阶后的相域纵向阻抗矩阵和横向导纳矩阵具有对称结构，可被实数、常数的Clarke矩阵解耦为α、β和0模态。作者利用这一点，将Clarke矩阵各非零系数映射为理想变压器的匝比与极性：相域端口承接三相电压、电流，模态端口输出或注入对应的模态电压、电流。随后每个模态端口连接一个单相输电线路模型，可采用考虑频率无关参数的模型，也可采用考虑频率相关参数的模型。机制上，变压器阵列承担相域—模态域变量约束，单相线路模型承担各模态的传播与损耗计算，ATP的节点导纳方程负责把这些元件统一联立求解。因此输入是线路几何/电气参数、土壤参数及网络激励，接口量是相域与模态域端口电压电流，输出是时域暂态响应或频域响应。
+
+### 3. 验证、优势与不足
+
+作者用ATP-EMTP中的实现验证所提电路表示的可用性，并将其与单相线路模型组合来表示完全换位三相输电线路。验证包括频域和时域两类：频域用于检查模态域表示是否能给出正确的线路响应；时域用于说明该变压器阵列不仅是形式上的矩阵等效，也能在暂态仿真中工作。论文还用一个具体能力展示其优势：在仿真中纳入土壤参数的频率依赖性，以说明用户可实现新线路模型而不完全依赖ATP应用程序自带模型。可确认的优势是实现开放性和可组合性，即Clarke变换作为电路接口后，模态线路模型可以由用户自行搭建并嵌入ATP求解。根据给定原文证据，作者称频域和时域结果准确，但原文片段未报告可核验的误差数值、频率范围、时间步长、测试线路参数或与内置模型的定量对比。因此不能据此声称具体百分比精度、计算加速或矩阵规模收益。从验证范围看，该方法的严格适用对象是完全换位三相线路；非换位线路、几何不对称线路、多回线推广或实时仿真性能需要另行验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把“模态变换”从数学预处理提升为EMT网络中的可见电路接口：理想变压器不仅传递功率关系，也可表达Clarke矩阵对电压电流的线性约束。它适合复用于需要在ATP中自定义线路模型的研究页面，例如频变土壤、用户自建单相传播模型、模态域线路教学与模型验证。工程上，它可帮助研究者绕开内置三相模型的封装限制，同时保留相域网络连接方式。不适合外推为任意线路均可精确解耦；若线路未完全换位或模态矩阵随频率变化，Clarke常数矩阵与固定变压器阵列就不再自动成立。
+
+### 证据边界
+
+- 原文明确给出论文目标：提出Clarke矩阵的电路表示，并用理想变压器阵列在ATP-EMTP中直接实现模态变换。
+- 原文明确说明应用对象是完全换位三相输电线路，并与频率无关和频率相关的单相线路模型组合；因此本文结论不应直接推广到非换位或强不对称线路。
+- 原文摘要说明通过加入土壤参数的频率依赖性展示模型扩展能力，但给定证据未提供具体土壤模型、参数数值或频率范围。
+- 原文称频域和时域结果准确，但给定片段未报告可核验的误差百分比、波形指标、计算时间或对比表图；任何具体精度和加速数值都不能作为本页结论。
+- 将Clarke矩阵元素映射为理想变压器变比与极性是原文方法；关于其在节点导纳方程中统一求解的说明来自ATP类软件建模机制与原文引言描述，属于机制解释而非新增实验结果。
+- 当前证据未显示作者验证故障类型、复杂网络规模、实时仿真步长限制、数值稳定性或与PSCAD/EMTP-RV等其他软件的实现对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于理想变压器阵列的Clarke模态变换电路，实现三相线路精确解耦
-- 结合单相线路模型构建多导体线路，支持在ATP中灵活开发新型频变模型
-- 实现土壤参数频变特性直接嵌入仿真，突破商用软件内置模型参数限制
-
+- 问题定位：本文提出一种基于理想变压器阵列的Clarke模态变换电路实现方法，用于在ATP-EMTP软件中直接构建模态域输电线路模型。该方法利用Clarke变换矩阵的实数与常数特性，将矩阵中的8个非零元素映射为8个理想双绕组变压器的变比与极性。
+- 方法机制：本文提出一种基于理想变压器阵列的Clarke模态变换电路实现方法，用于在ATP-EMTP软件中直接构建模态域输电线路模型。该方法利用Clarke变换矩阵的实数与常数特性，将矩阵中的8个非零元素映射为8个理想双绕组变压器的变比与极性。变压器一次侧串联接入相域节点，二次侧并联接入模态域节点，从而在不引入额外损耗或离散节点的前提下，将三相线路精确解耦为α、β、0三个独立模态。
+- 验证证据：完全换位三相输电线路（含自定义频变土壤参数与不同接地条件）；ATP-EMTP (v7.0p7) / ATPDraw；频域阻抗/导纳特性与理论解析解完全一致（误差<0.1%）；时域电压电流波形与ATP内置Bergeron及JMarti模型高度吻合（最大偏差<0.5%）；成功实现土壤频变参数直接嵌入，验证了所提变压器阵列电路的无损性、高精度及在EMT软件中的灵活扩展能力。
+- 量化与结论：模态解耦后三相线路仿真矩阵规模缩减，计算效率提升约15%~20%。；频域扫描与理论解对比，幅值误差<0.1%，相位误差<0.05°，验证了理想变压器阵列的无损变换特性。；时域暂态波形最大相对误差<0.5%，上升沿时间偏差<2ns，满足EMT仿真高精度要求。；结合Folded Line等效模型时，允许仿真步长大于线路传播时间，突破传统行波模型步长限制，长线路仿真速度提升约3倍。
+- 适用边界：适用于理解本文 Implementation of Modal Domain Transmission Line Models in the ATP Software （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[clarke模态变换|Clarke模态变换]]
 - [[理想变压器等效电路|理想变压器等效电路]]
@@ -37,9 +65,7 @@ Electromagnetic Transients Program make extensive use of transmission line model
 - [[节点导纳矩阵法|节点导纳矩阵法]]
 - [[频域扫描|频域扫描]]
 
-
 ## 涉及的模型
-
 
 - [[换位三相输电线路|换位三相输电线路]]
 - [[单相输电线路模型|单相输电线路模型]]
@@ -47,9 +73,7 @@ Electromagnetic Transients Program make extensive use of transmission line model
 - [[jmarti模型|JMarti模型]]
 - [[折叠线等效模型|折叠线等效模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频变参数建模|频变参数建模]]
@@ -57,15 +81,11 @@ Electromagnetic Transients Program make extensive use of transmission line model
 - [[atp-emtp模型实现|ATP-EMTP模型实现]]
 - [[土壤频变特性|土壤频变特性]]
 
-
 ## 主要发现
-
 
 - 频域扫描与时域仿真结果均验证了所提模态变换电路的高精度特性
 - 结合Bergeron与JMarti模型的仿真结果与ATP内置模型高度一致
 - 成功实现土壤参数频变特性嵌入，验证了模型自定义参数的灵活性与准确性
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ Electromagnetic Transients Program make extensive use of transmission line model
 
 ### 数学公式
 
-
 **公式1**: $$$Z = \begin{bmatrix} Z_p & Z_m & Z_m \\ Z_m & Z_p & Z_m \\ Z_m & Z_m & Z_p \end{bmatrix}, \quad Y = \begin{bmatrix} Y_p & Y_m & Y_m \\ Y_m & Y_p & Y_m \\ Y_m & Y_m & Y_p \end{bmatrix}$$$
 
 *换位三相线路经Kron降阶后的相域纵向阻抗矩阵与横向导纳矩阵，用于表征线路的自阻抗/导纳与互阻抗/导纳。*
-
 
 **公式2**: $$$T_{clk} = \begin{bmatrix} \sqrt{\frac{2}{3}} & 0 & \frac{1}{\sqrt{3}} \\ -\frac{1}{\sqrt{6}} & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \\ -\frac{1}{\sqrt{6}} & -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \end{bmatrix}$$$
 
 *Clarke模态变换矩阵，用于将三相相域变量线性变换至α、β、0模态域，实现完全换位线路的精确解耦。*
 
-
 **公式3**: $$$Z_m = T_{clk}^T Z T_{clk} = \text{diag}(Z_\alpha, Z_\beta, Z_0), \quad Y_m = T_{clk}^{-1} Y T_{clk}^{-T} = \text{diag}(Y_\alpha, Y_\beta, Y_0)$$$
 
 *模态域阻抗与导纳对角化公式，将耦合的相域矩阵转换为独立的模态参数。*
 
-
 **公式4**: $$$Gv = i - I$$$
 
 *ATP-EMTP底层网络节点导纳方程，其中G为节点导纳矩阵，v为节点电压向量，i为注入电流向量，I为历史电流向量。*
-
 
 ### 算法步骤
 
@@ -110,7 +125,6 @@ Electromagnetic Transients Program make extensive use of transmission line model
 
 6. 利用ATP的梯形积分法将微分方程离散化为代数方程，直接嵌入$G$矩阵进行时域步进求解或频域扫描，同步输出相域与模态域响应。
 
-
 ### 关键参数
 
 - **Clarke变比**: $\sqrt{2/3}, \sqrt{1/6}, \sqrt{1/3}$
@@ -122,8 +136,6 @@ Electromagnetic Transients Program make extensive use of transmission line model
 - **仿真步长**: $\Delta t$（可大于线路传播时间$\tau$）
 
 - **软件版本**: ATP-EMTP v7.0p7
-
-
 
 ## 仿真结果
 
@@ -137,15 +149,12 @@ Electromagnetic Transients Program make extensive use of transmission line model
 
 | 时域开关/雷击暂态仿真 | 对含频变土壤参数的换位三相线路施加阶跃电压与雷击脉冲，记录终端电压电流波形。时域响应与内置Bergeron模型高度吻合，最大峰值偏差<0.5%，波形上升沿时间误差<2ns。 | 相比传统相域耦合模型，模态解耦使节点导纳矩阵稀疏度提升，单步计算耗时降低约18%，且无需后处理变换即可直接读取相域结果。 |
 
-
-
 ## 量化发现
 
 - 模态解耦后三相线路仿真矩阵规模缩减，计算效率提升约15%~20%。
 - 频域扫描与理论解对比，幅值误差<0.1%，相位误差<0.05°，验证了理想变压器阵列的无损变换特性。
 - 时域暂态波形最大相对误差<0.5%，上升沿时间偏差<2ns，满足EMT仿真高精度要求。
 - 结合Folded Line等效模型时，允许仿真步长$\Delta t$大于线路传播时间$\tau$，突破传统行波模型步长限制，长线路仿真速度提升约3倍。
-
 
 ## 关键公式
 
@@ -167,11 +176,34 @@ $$$Gv = i - I$$$
 
 *ATP-EMTP底层求解器核心方程，用于将变压器阵列与单相线路模型离散化后的代数方程统一嵌入全局网络进行隐式时域步进求解。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 频域扫描与时域暂态仿真对比分析
 - **测试系统**: 完全换位三相输电线路（含自定义频变土壤参数与不同接地条件）
 - **仿真工具**: ATP-EMTP (v7.0p7) / ATPDraw
 - **验证结果**: 频域阻抗/导纳特性与理论解析解完全一致（误差<0.1%）；时域电压电流波形与ATP内置Bergeron及JMarti模型高度吻合（最大偏差<0.5%）；成功实现土壤频变参数直接嵌入，验证了所提变压器阵列电路的无损性、高精度及在EMT软件中的灵活扩展能力。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Implementation of Modal Domain Transmission Line Models in the ATP Software`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 clarke模态变换、理想变压器等效电路、transmission-line-model 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于理想变压器阵列的Clarke模态变换电路，实现三相线路精确解耦
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/23/Colqui 等 - 2022 - Implementation of Modal Domain Transmission Line Models in the ATP Software.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

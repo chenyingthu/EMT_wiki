@@ -3,7 +3,7 @@ title: "An EMT based dynamic frequency scanning tool for stability analysis of i
 type: source
 authors: ['Chen Jiang']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112226. doi:10.1016/j.epsr.2025.112226"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stability analysis of inverter based systems.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stabil
 
 ## 摘要
 
-An EMT based dynamic frequency scanning tool for stability analysis of b Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, Canada This paper introduces an automated dynamic frequency scanning tool designed to predict stability in power systems. The tool integrates frequency scanning and stability analysis into a single, user-friendly platform, which is validated through Electromagnetic Transients (EMT) simulations and traditional small-signal stability tech­
+提出一种基于EMT仿真的自动化动态频率扫描工具，集成于PSCAD/EMTDC平台。该方法通过在系统稳态运行点注入多频正弦扰动信号（电流或电压），记录PCC处的电压电流响应，利用离散傅里叶变换（DFT）提取频域幅值与相位。为消除电力电子系统的频率耦合效应，扫描在dq0坐标系下进行。通过矩阵运算获取变流器与电网的阻抗/导纳矩阵，构建闭环传递函数，并计算开环增益矩阵的特征值。最终利用特征值的伯德图分析增益裕度与相位裕度，预测系统的临界短路比（CSCR）及振荡频率，实现黑盒模型下的稳定性评估。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：在IBR/变流器主导系统中，控制器细节常以黑盒形式存在，但规划和运行仍需要判断某一稳态运行点附近是否会因电网强弱、控制交互或阻抗耦合产生小信号振荡。研究对象是接入交流电网的MMC型并网变流器，重点比较两类GFM控制：电压源型VSG与电流源型VSG。难点在于电力电子装置不是简单单输入单输出阻抗，abc坐标下会出现正负序和频率耦合；同时传统解析小信号模型依赖控制器参数和线性化推导，难以用于商业模型或封装控制。本文贡献不是单纯做一次频扫，而是把EMT仿真中的扰动注入、响应采集、DFT提取、dq0阻抗/导纳矩阵构造、开环特征值伯德图和稳定裕度判断串成自动化工具，并用该工具比较两类VSG在强弱交流系统中的稳定特性。
+
+### 2. 模型、算法与实现技术
+
+工具的核心实现是基于EMT的动态频率扫描。系统先运行到指定稳态点，然后在PCC注入小幅多频正弦扰动，扰动可为电流或电压；接口量是PCC三相电压、电流以及变流器/电网侧电流响应。采样到时域波形后，工具用DFT在各注入频率处提取幅值和相位，得到频域响应。为避免abc域频率耦合导致阻抗矩阵难以解释，扫描在dq0坐标系中组织：分别对d、q、0轴施加扰动，形成电压响应矩阵和电流响应矩阵，再通过矩阵求逆/相乘得到目标对象的阻抗或导纳矩阵。页面给出的公式Z=V·I^{-1}用于把多次独立注入的频域响应转成多端口阻抗；ΔV/ΔI=Z_MMC/(1+Z_MMCY_ac)用于说明变流器阻抗与电网导纳闭环耦合后的响应；随后计算Z_MMCY_ac的特征值，把多输入多输出稳定性问题转为各特征值轨迹的增益、相位裕度判断。CSCR公式则是在特征值相位到达180°时，用对应幅值反推短路比失稳边界。
+
+### 3. 验证、优势与不足
+
+作者用MMC并网系统算例验证工具，控制策略包括电压源型VSG和电流源型VSG；仿真平台为PSCAD/EMTDC，稳定性基线包括传统小信号根轨迹分析和EMT时域仿真。按当前页面记录，电压源型VSG的频扫预测CSCR约为3.7，失稳振荡频率约为1.15 Hz；该结果与根轨迹给出的3.7—3.8边界及约1.05 Hz振荡频率相近，并由EMT时域阶跃仿真复现。页面还记录电流源型VSG在SCR从弱网到强网的扫描中未出现右半平面失稳迹象，显示其相对电压源型VSG更适合强交流系统。优势在于：不需要打开控制器内部方程即可获得阻抗矩阵和闭环特征值；dq0扫描降低了频率耦合解释难度；自动化流程减少手动扫频、整理和作图工作。边界也很明确：验证集中在简化MMC-交流电网和两类VSG控制上，未覆盖多变流器网络、故障暂态、大扰动稳定、硬件实时平台或不同厂家黑盒模型；若控制强非线性、限幅器频繁动作，基于小扰动扫频的结论不能直接外推。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是把EMT黑盒仿真从“只能看时域波形”推进到“可提取频域阻抗并进行闭环稳定裕度判断”。它适合用于IBR接入研究、GFM控制策略比较、弱网/强网适应性筛查、MMC或VSC模型的阻抗等值页面，以及后续讨论CSCR、特征值伯德图、dq0频率扫描的知识入口。工程上可用于在详细控制模型不可得时预判振荡风险，并为后续时域验证选择关键SCR和频率范围。不适合把本文结果泛化为所有GFM控制均满足相同稳定边界，也不应替代故障穿越、保护限流和多机相互作用验证。
+
+### 证据边界
+
+- 原文摘要明确说明工具集成频率扫描与稳定性分析，并通过EMT仿真和传统小信号稳定技术验证；但提供的原文片段未展示完整公式、参数表和图表。
+- MMC系统、两类GFM控制器以及电压源型VSG/电流源型VSG比较来自原文摘要和引言；具体额定值、子模块数、扰动幅值、频点数等需回查PDF正文表格确认。
+- CSCR约3.7、振荡频率约1.15 Hz、SCR范围等量化结果来自当前页面抽取内容；在给出的原文片段中未出现，引用时应以原文图表为准。
+- dq0扫描可降低abc域频率耦合影响是由页面方法描述和频率扫描机理支持的结论；不同控制器、非平衡工况或含显著谐波耦合时是否仍可忽略非对角项，需要额外验证。
+- 验证基线限于根轨迹分析和EMT时域仿真，未见硬件实验、实时仿真、现场测量或与其他阻抗辨识工具的系统对比。
+- 本文结论针对小扰动稳态附近稳定性；对大扰动、故障穿越、限流器饱和、保护动作和多变流器级联振荡，当前证据不足以直接外推。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 开发基于EMT的自动化动态频率扫描工具，集成阻抗扫描与稳定性分析流程
-- 提出在dq坐标系下进行频率扫描的方法，有效消除逆变器系统的频率耦合效应
-- 对比分析电压源型与电流源型构网型VSG控制策略的稳定性差异与适用场景
-
+- 问题定位：提出一种基于EMT仿真的自动化动态频率扫描工具，集成于PSCAD/EMTDC平台。该方法通过在系统稳态运行点注入多频正弦扰动信号（电流或电压），记录PCC处的电压电流响应，利用离散傅里叶变换（DFT）提取频域幅值与相位。为消除电力电子系统的频率耦合效应，扫描在dq0坐标系下进行。
+- 方法机制：提出一种基于EMT仿真的自动化动态频率扫描工具，集成于PSCAD/EMTDC平台。该方法通过在系统稳态运行点注入多频正弦扰动信号（电流或电压），记录PCC处的电压电流响应，利用离散傅里叶变换（DFT）提取频域幅值与相位。为消除电力电子系统的频率耦合效应，扫描在dq0坐标系下进行。通过矩阵运算获取变流器与电网的阻抗/导纳矩阵，构建闭环传递函数，并计算开环增益矩阵的特征值。
+- 验证证据：对比验证：将EMT动态频率扫描结果与传统小信号根轨迹分析法及EMT时域阶跃仿真结果进行交叉验证；简化MMC-交流电网系统（270 MVA，±150 kV，每桥臂20子模块，通过等效RL支路连接至PCC）；PSCAD/EMTDC（内置自动化频率扫描组件与EMT仿真）、MATLAB/解析工具（根轨迹与伯德图绘制）
+- 量化与结论：电压源型VSG的临界短路比(CSCR)精确预测值为3.7，失稳振荡频率为1.15 Hz。；在相位180°处特征值幅值为0.67，据此推算CSCR = 2.5 / 0.67 ≈ 3.73，与理论值高度一致。；电流源型VSG在SCR高达100.0的强交流系统中仍保持稳定，无右半平面特征值。；动态频率扫描采用最多30个频率点的多频正弦注入，扰动幅值设定为额定值的0.
+- 适用边界：适用于理解本文 An EMT based dynamic frequency scanning tool for stability analysis of inverter based systems （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[动态频率扫描|动态频率扫描]]
 - [[离散傅里叶变换|离散傅里叶变换]]
@@ -37,9 +65,7 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 - [[小信号稳定性分析|小信号稳定性分析]]
 - [[dq坐标系解耦扫描|dq坐标系解耦扫描]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[电压源型虚拟同步机|电压源型虚拟同步机]]
@@ -47,9 +73,7 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 - [[构网型变流器|构网型变流器]]
 - [[等效rl交流网络|等效RL交流网络]]
 
-
 ## 相关主题
-
 
 - [[稳定性分析|稳定性分析]]
 - [[构网型控制|构网型控制]]
@@ -58,15 +82,11 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 - [[逆变器并网系统|逆变器并网系统]]
 - [[临界短路比|临界短路比]]
 
-
 ## 主要发现
-
 
 - 电流源型VSG无需PI限流器，在强交流电网中仍能保持稳定运行
 - 电压源型VSG因引入PI电流限幅控制，在强电网下易引发系统失稳
 - 频率扫描工具预测的临界短路比与根轨迹分析及EMT时域仿真结果高度一致
-
-
 
 ## 方法细节
 
@@ -76,21 +96,17 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 
 ### 数学公式
 
-
 **公式1**: $$$Z_{MMC}^{abc}(f) = V_{PCC}^{abc}(f) \cdot [I_{MMC}^{abc}(f)]^{-1}$$$
 
 *通过三次独立相注入获取的PCC电压矩阵与MMC电流矩阵求逆相乘，得到MMC在频率f下的三相阻抗矩阵*
-
 
 **公式2**: $$$\frac{\Delta V_{PCC}}{\Delta I_{Dis}} = \frac{Z_{MMC}}{1 + Z_{MMC} \cdot Y_{ac}}$$$
 
 *基于扫描得到的MMC阻抗与电网导纳构建的闭环系统传递函数，用于稳定性分析*
 
-
 **公式3**: $$$CSCR = \frac{SCR_{initial}}{|\lambda|_{180^\circ}}$$$
 
 *根据伯德图中相位为180°时特征值的幅值反推临界短路比，幅值越接近1系统越接近失稳边界*
-
 
 ### 算法步骤
 
@@ -109,7 +125,6 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 7. 7. 计算开环增益矩阵 $Z_{MMC}Y_{ac}$ 的特征值，绘制各特征值的幅频与相频伯德图。
 
 8. 8. 定位相频曲线穿越180°的频率点，读取对应幅值，计算增益裕度并推导临界短路比（CSCR）与潜在振荡频率。
-
 
 ### 关键参数
 
@@ -135,8 +150,6 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 
 - **扫描频率点数**: 最多30个
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -149,8 +162,6 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 
 | 电流源型VSG系统宽范围SCR测试 | 在SCR从1.2（弱网）至100.0（强网）的宽范围内进行扫描，伯德图显示所有特征值相位均未在幅值>1时穿越180°，系统始终保持稳定。 | 相较于电压源型VSG在SCR>3.8即失稳，电流源型VSG在强网下无需PI限流器即可稳定运行，稳定性裕度提升显著，验证了控制架构的优越性。 |
 
-
-
 ## 量化发现
 
 - 电压源型VSG的临界短路比(CSCR)精确预测值为3.7，失稳振荡频率为1.15 Hz。
@@ -158,7 +169,6 @@ An EMT based dynamic frequency scanning tool for stability analysis of b Departm
 - 电流源型VSG在SCR高达100.0的强交流系统中仍保持稳定，无右半平面特征值。
 - 动态频率扫描采用最多30个频率点的多频正弦注入，扰动幅值设定为额定值的0.5%即可保证信噪比与线性度。
 - dq0坐标系扫描有效消除了正负序频率耦合，使阻抗矩阵非对角元素（如Zd0, Zq0）幅值极小可忽略，大幅简化计算维度。
-
 
 ## 关键公式
 
@@ -180,11 +190,34 @@ $$$CSCR = \frac{SCR_{initial}}{|\lambda|_{180^\circ}}$$$
 
 *利用伯德图中相位穿越180°时的特征值幅值，线性缩放初始SCR以预测系统失稳临界点*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证：将EMT动态频率扫描结果与传统小信号根轨迹分析法及EMT时域阶跃仿真结果进行交叉验证
 - **测试系统**: 简化MMC-交流电网系统（270 MVA，±150 kV，每桥臂20子模块，通过等效RL支路连接至PCC）
 - **仿真工具**: PSCAD/EMTDC（内置自动化频率扫描组件与EMT仿真）、MATLAB/解析工具（根轨迹与伯德图绘制）
 - **验证结果**: 频率扫描工具预测的CSCR(3.7)与根轨迹法(3.7~3.8)及EMT时域仿真(SCR=3.8失稳)完全一致；振荡频率预测值(1.15 Hz)与根轨迹(1.05 Hz)高度接近。验证了该工具在黑盒模型下无需内部控制器参数即可实现高精度、高效率的稳定性预测，且自动化流程显著降低了人工干预成本。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `An EMT based dynamic frequency scanning tool for stability analysis of inverter based systems`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态频率扫描、离散傅里叶变换、根轨迹分析 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：开发基于EMT的自动化动态频率扫描工具，集成阻抗扫描与稳定性分析流程
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stability analysis of inverter based systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

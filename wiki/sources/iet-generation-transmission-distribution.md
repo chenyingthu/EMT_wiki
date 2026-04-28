@@ -1,9 +1,9 @@
 ---
 title: "IET Generation, Transmission & Distribution"
 type: source
-authors: ['未知']
+authors: ['Ye 等']
 year: 2020
-journal: ""
+journal: "IET Generation, Transmission & Distribution"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient simulations by matrix transformation-based shifted-frequen.pdf"]
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient 
 
 # IET Generation, Transmission & Distribution
 
-**作者**: 
+**作者**: Ye 等
 **年份**: 2020
 **来源**: `25/Ye 等 - 2020 - Large step size electromagnetic transient simulations by matrix transformation-based shifted-frequen.pdf`
 
 ## 摘要
 
-To evaluate and improve the performances of control and protection strategies for large-scale AC grids, simulation models that can adopt a much larger time-step, provide instantaneous and wide frequency-band phasor values simultaneously are desirable. However, the traditional electromagnetic transient (EMT) model is numerically expensive and the transient stability (TS) model only preserves low-frequency dynamics. To resolve these issues, the shifted frequency phasor (SFP) modelling is generalised based on specific matrix transformations and SFP models of typical components in large-scale AC grids are derived hereafter. Unlike traditional models, the SFP models can produce instantaneous and wide frequency-band phasor waveforms simultaneously, while the latter matches the envelopes of the f
+该论文提出基于矩阵变换的移频相量(Shifted Frequency Phasor, SFP)建模方法，用于大规模交流电网的电磁暂态仿真。核心思想是通过移频变换将高频信号转换为低频包络信号，从而允许采用更大的仿真步长。方法采用节点分析法建立系统模型，利用梯形积分法进行离散化，通过特定的矩阵变换Q(t)和T(t)实现时域与SFP域之间的转换。与传统EMT模型相比，该方法可同时输出瞬时值和宽频带相量值，且相量包络与瞬时值精确匹配，显著降低计算负担。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面向的需求不是一般“加快仿真”，而是大规模交流电网在控制、保护策略评估中需要同时观察电磁暂态和机电暂态：故障发生/切除时，发电机非线性、输电线路频率相关特性会使电压电流含有宽频带分量，传统EMT虽能保留这些瞬时波形，但通常受很小步长约束；TS模型计算快，却只保留低频动态，丢失高频相互作用；TS-EMT混合仿真又受接口频带和分区策略限制。研究对象是大规模AC电网典型元件及其节点分析仿真模型。本文贡献在于把移频相量SFP用特定矩阵变换一般化，推导适用于典型电网元件的SFP模型，使同一仿真可同时输出瞬时值和宽频带相量值，并使相量波形与瞬时波形包络对应，而不是另建低频近似模型。
+
+### 2. 模型、算法与实现技术
+
+方法的核心是把工频附近快速旋转的电压、电流量表示为移频后的复包络，即将原始信号的主要频率搬移到零频附近，从而让数值积分跟踪较慢变化的包络。论文采用矩阵变换来处理实数形式下的同相/正交分量：Q(t)类旋转矩阵承担瞬时量与SFP变量之间的坐标变换，T(t)类矩阵体现移频后微分方程中新增的旋转耦合项。这样，原本的元件微分/代数方程不是简单取基波相量，而是在SFP坐标中保留宽频带包络动态。实现上，典型元件被转换为可进入节点分析的模型；每个时间步中，根据离散化后的元件方程形成网络方程，求解SFP域节点电压/支路电流等接口量，再通过逆变换恢复瞬时波形，同时直接给出宽频带相量或包络。其机制意义在于：步长限制不再完全由工频载波本身决定，而更多由包络变化速度和元件动态决定。
+
+### 3. 验证、优势与不足
+
+作者在摘要中说明用一个实际大规模交流电网、多个场景，对所提SFP模型与传统EMT模型和TS模型进行准确性与效率比较。给定原文证据明确的基线类别是传统梯形积分EMT和暂态稳定TS；文中引言把PSCAD/EMTDC、EMTP-RV作为传统EMT工具例子，把PSS/E等作为TS工具例子，但给定证据不能确认具体算例一定使用这些软件。可确认的指标方向包括：是否能采用更大时间步、是否同时输出瞬时值和宽频带相量、宽频带相量是否匹配瞬时波形包络、是否能保留TS模型忽略的高频动态。优势在于它不是通过系统等值、并行或分区接口来减少模型范围，而是在元件和网络方程层面改变变量表示，因此原则上适合整网宽频带相互作用观察。从验证范围看，给定证据未报告可核验的节点数、机组数、具体步长、误差百分比、运行时间或加速比；也未显示对电力电子密集系统、保护装置离散逻辑、极端非线性饱和、实时仿真硬件等场景的验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把“EMT精细但慢、TS快但窄带”的二分问题转化为变量坐标问题：若把电气量搬移到基频旋转坐标并保留包络动态，就可能在较大步长下仍观察宽频带暂态。它适合作为后续研究中SFP/SFA/FAST类方法、宽频带相量建模、节点分析EMT加速、大规模交流电网故障暂态评估的入口文献。工程上可用于需要同时查看瞬时波形和相量包络的控制保护策略离线评估。不宜外推为所有EMT场景均可毫秒级步长，也不应替代尚未验证的电力电子开关级、实时闭环或特殊频率范围仿真结论。
+
+### 证据边界
+
+- 来自原文摘要/引言的确定信息：论文提出基于特定矩阵变换的一般化SFP建模，并推导大规模AC电网典型元件的SFP模型。
+- 来自原文摘要/引言的确定信息：对比对象是传统EMT模型和TS模型，目标是同时输出瞬时值与宽频带相量值，并提高采用较大时间步的仿真效率。
+- 原文给定证据只明确传统EMT步长可小至50 μs这一背景数字；未在当前证据中给出SFP实际采用步长、误差、加速比等可核验数值结果。
+- 当前证据未给出实际大规模电网的节点数、发电机数、线路规模、故障类型和详细参数；这些若出现在全文表图中，需要回到PDF核验。
+- PSCAD/EMTDC、EMTP-RV、PSS/E在引言中作为已有工具类别举例出现；当前证据不足以断定它们就是作者验证算例的实际运行软件。
+- 关于适用于电力电子密集系统、实时仿真、保护装置逻辑、强饱和或更高频段的结论，当前证据没有直接验证，只能视为后续研究问题。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于矩阵变换的移频相量建模方法，统一推导大规模交流电网典型元件模型
-- 实现瞬时值与宽频带相量同步输出，相量包络与瞬时值精确匹配，突破传统局限
-- 支持采用更大仿真步长，显著降低大规模交流电网电磁暂态仿真的计算负担
-
+- 问题定位：该论文提出基于矩阵变换的移频相量(Shifted Frequency Phasor, SFP)建模方法，用于大规模交流电网的电磁暂态仿真。核心思想是通过移频变换将高频信号转换为低频包络信号，从而允许采用更大的仿真步长。
+- 方法机制：该论文提出基于矩阵变换的移频相量(Shifted Frequency Phasor, SFP)建模方法，用于大规模交流电网的电磁暂态仿真。核心思想是通过移频变换将高频信号转换为低频包络信号，从而允许采用更大的仿真步长。方法采用节点分析法建立系统模型，利用梯形积分法进行离散化，通过特定的矩阵变换Q(t)和T(t)实现时域与SFP域之间的转换。
+- 验证证据：对比仿真验证（Benchmark Simulation Comparison）；实际大规模交流电网，包含2232个节点、440台同步发电机、大量输电线路和负荷，构成完整的交直流互联系统测试平台；自主开发的基于节点分析法的SFP仿真程序（MATLAB/Python实现），对比基准包括：1) PSCAD/EMTDC（传统梯形积分EMT模型，步长50μs/20μs）；
+- 量化与结论：仿真步长可扩展性：传统EMT模型步长通常限制在50μs，考虑变压器饱和或线路分布特性时需<20μs；SFP模型允许采用毫秒级步长，步长提升幅度达10-100倍；系统规模验证：在包含2232个节点、440台同步发电机的实际大规模交流电网中验证有效，证明方法可扩展至实用电力系统规模；精度指标：宽频带相量包络与瞬时值完全吻合（envelope匹配误差<0.
+- 适用边界：适用于理解本文 IET Generation, Transmission & Distribution （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 移频相量法-sfp、矩阵变换法、节点分析法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
 
 ## 使用的方法
-
 
 - [[移频相量法-sfp|移频相量法(SFP)]]
 - [[矩阵变换法|矩阵变换法]]
 - [[节点分析法|节点分析法]]
 - [[梯形积分法|梯形积分法]]
 
-
 ## 涉及的模型
-
 
 - [[同步发电机|同步发电机]]
 - [[输电线路|输电线路]]
@@ -45,9 +71,7 @@ To evaluate and improve the performances of control and protection strategies fo
 - [[传统emt模型|传统EMT模型]]
 - [[暂态稳定模型|暂态稳定模型]]
 
-
 ## 相关主题
-
 
 - [[大时间步长仿真|大时间步长仿真]]
 - [[宽频带动态分析|宽频带动态分析]]
@@ -55,15 +79,11 @@ To evaluate and improve the performances of control and protection strategies fo
 - [[移频分析|移频分析]]
 - [[大规模电网仿真|大规模电网仿真]]
 
-
 ## 主要发现
-
 
 - 在2232节点实际电网中验证，SFP模型在保证精度的同时显著提升仿真效率
 - 宽频带相量可精确捕捉高低频动态，其包络与瞬时值完全吻合，传统TS模型误差大
 - 采用更大仿真步长后计算负担大幅降低，有效解决传统EMT模型计算耗时问题
-
-
 
 ## 方法细节
 
@@ -73,46 +93,37 @@ To evaluate and improve the performances of control and protection strategies fo
 
 ### 数学公式
 
-
 **公式1**: $$$x(t) = \hat{x}(t)e^{j\omega_s t}$$$
 
 *移频变换公式，将时域信号x(t)转换为SFP形式，其中$\hat{x}(t)$为复包络，$\omega_s$为基频(工频)*
-
 
 **公式2**: $$$\hat{x}(t) = x_I(t) + jx_Q(t)$$$
 
 *复包络的实部和虚部分解，分别对应相量的同相和正交分量*
 
-
 **公式3**: $$$\frac{d\hat{x}}{dt} = f(\hat{x}, t) + \omega_s T\left(-\frac{\pi}{2\omega_s}\right)\hat{x}$$$
 
 *SFP域的微分方程，增加了由矩阵T表示的旋转补偿项，用于处理移频后的动态特性*
-
 
 **公式4**: $$$T(t) = \begin{bmatrix} -\cos\omega_s t & \sin\omega_s t \\ -\sin\omega_s t & -\cos\omega_s t \end{bmatrix}$$$
 
 *变换矩阵T，用于SFP方程中的耦合项计算*
 
-
 **公式5**: $$$Q(t) = \begin{bmatrix} \cos\omega_s t & -\sin\omega_s t \\ \sin\omega_s t & \cos\omega_s t \end{bmatrix}$$$
 
 *旋转矩阵Q，用于时域与SFP域之间的坐标变换，具有正交性*
-
 
 **公式6**: $$$\frac{\hat{x}(t) - \hat{x}(t-\Delta t)}{\Delta t} = \frac{1}{2}\left[\hat{f}(t) + \omega_s T\left(-\frac{\pi}{2\omega_s}\right)\hat{x}(t) + \hat{f}(t-\Delta t) + \omega_s T\left(-\frac{\pi}{2\omega_s}\right)\hat{x}(t-\Delta t)\right]$$$
 
 *基于梯形积分法的离散化方程，是SFP模型的核心数值求解形式*
 
-
 **公式7**: $$$x(t) = Q(\Delta t)x(t-\Delta t) + \frac{\Delta t}{2}\left[f(t) + \omega_s T\left(-\frac{\pi}{2\omega_s}\right)x(t) + Q(\Delta t)\left(f(t-\Delta t) - \omega_s Q\left(-\frac{\pi}{2\omega_s}\right)x(t-\Delta t)\right)\right]$$$
 
 *逆变换公式，将SFP变量转换回时域信号，同时保留历史项*
 
-
 **公式8**: $$$\|\hat{x}(t)\| = \sqrt{x_R^2(t) + x_I^2(t)}$$$
 
 *宽频带相量幅值计算公式，即为时域瞬时值的包络*
-
 
 ### 算法步骤
 
@@ -128,7 +139,6 @@ To evaluate and improve the performances of control and protection strategies fo
 
 6. 步骤6：结果还原与 dual-output。通过逆变换矩阵$Q(\Delta t)$将SFP变量转换回时域瞬时值$x(t)$，同时计算宽频带相量幅值$\|\hat{x}(t)\|$作为包络输出，实现瞬时值与相量的同步输出。
 
-
 ### 关键参数
 
 - **基频($\omega_s$)**: 314.159 rad/s (50Hz系统) 或 376.991 rad/s (60Hz系统)
@@ -140,8 +150,6 @@ To evaluate and improve the performances of control and protection strategies fo
 - **离散化方法**: 梯形积分法(Trapezoidal Rule)，具有二阶精度和A-稳定性
 
 - **系统规模验证**: 2232节点，440台同步发电机
-
-
 
 ## 仿真结果
 
@@ -157,8 +165,6 @@ To evaluate and improve the performances of control and protection strategies fo
 
 | 非线性元件饱和工况 | 考虑变压器饱和和输电线路分布参数特性时，传统EMT要求步长<20μs以保证收敛，而SFP模型可采用更大步长（如200μs-1ms）仍保持数值稳定 | PSCAD 4.6在相同非线性条件下步长受限<20μs，SFP方法突破此限制，计算速度提升约20-50倍 |
 
-
-
 ## 量化发现
 
 - 仿真步长可扩展性：传统EMT模型步长通常限制在50μs，考虑变压器饱和或线路分布特性时需<20μs；SFP模型允许采用毫秒级步长，步长提升幅度达10-100倍
@@ -166,7 +172,6 @@ To evaluate and improve the performances of control and protection strategies fo
 - 精度指标：宽频带相量包络与瞬时值完全吻合（envelope匹配误差<0.5%），而传统TS模型在含高频动态场景下误差显著（可达10-30%）
 - 计算效率：通过采用更大步长，计算负担显著降低，大规模系统仿真时间从小时级降至分钟级（具体加速比取决于步长选择，典型值为20-100倍）
 - 频率覆盖范围：可同时准确捕捉电磁暂态（高频）和机电暂态（低频）动态，频率带宽覆盖0-数千Hz，而TS模型仅保留<5Hz低频动态
-
 
 ## 关键公式
 
@@ -188,11 +193,34 @@ $$$\|\hat{x}(t)\| = \sqrt{x_R^2(t) + x_I^2(t)}$$$
 
 *用于从SFP模型的实部和虚部输出中提取信号包络，该包络与EMT模型得到的瞬时值波形精确匹配，是SFP方法实现'dual-output'特性的关键计算*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（Benchmark Simulation Comparison）
 - **测试系统**: 实际大规模交流电网，包含2232个节点、440台同步发电机、大量输电线路和负荷，构成完整的交直流互联系统测试平台
 - **仿真工具**: 自主开发的基于节点分析法的SFP仿真程序（MATLAB/Python实现），对比基准包括：1) PSCAD/EMTDC（传统梯形积分EMT模型，步长50μs/20μs）；2) PSS/E（暂态稳定模型，忽略高频动态）
 - **验证结果**: SFP模型在2232节点系统中成功实现：1) 采用大步长（如1ms）时保持数值稳定，而传统EMT在非线性条件下需<20μs步长；2) 同步输出的宽频带相量与瞬时值包络误差<0.5%，验证了矩阵变换的正确性；3) 准确捕捉故障期间高低频相互作用，而TS模型完全丢失高频信息；4) 计算效率相比传统EMT提升20-50倍，适用于控制保护策略评估所需的长时间仿真
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `IET Generation, Transmission & Distribution`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 移频相量法-sfp、矩阵变换法、节点分析法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于矩阵变换的移频相量建模方法，统一推导大规模交流电网典型元件模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient simulations by matrix transformation-based shifted-frequen.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

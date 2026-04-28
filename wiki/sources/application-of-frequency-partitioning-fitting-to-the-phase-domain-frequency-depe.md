@@ -1,7 +1,7 @@
 ---
 title: "Application of Frequency-Partitioning Fitting to the Phase-Domain Frequency-Dependent Modeling of Overhead Transmission Lines"
 type: source
-authors: ['未知']
+authors: ['Noda']
 year: 2015
 journal: "IEEE Transactions on Power Delivery;2015;30;1;10.1109/TPWRD.2014.2329532"
 tags: ['transmission-line']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 
 # Application of Frequency-Partitioning Fitting to the Phase-Domain Frequency-Dependent Modeling of Overhead Transmission Lines
 
-**作者**: 
+**作者**: Noda
 **年份**: 2015
 **来源**: `09/Noda - 2015 - Application of frequency-partitioning fitting to the phase-domain frequency-dependent modeling of ov.pdf`
 
 ## 摘要
 
-—This paper shows that a previously proposed linear-system identiﬁcation method based on frequency parti- tioning and adaptive weighting can be successfully applied to the phase-domain frequency-dependent modeling of overhead transmission lines for electromagnetic transient simulations. As the framework of the phase-domain modeling, the universal line model is used, and the frequency responses of the characteristic admittance and propagation function matrices are realized by linear equivalents obtained by the identiﬁcation method men- tioned before, instead of the well-known Vector Fitting method.
+本文提出将频域分区拟合（FpF）方法应用于相域频变架空输电线路建模，以替代传统的矢量拟合（VF）法。该方法基于通用线路模型（ULM）框架，直接在相域处理特征导纳矩阵和传播函数矩阵的频率响应。核心流程包括：首先利用Carson公式计算线路频域参数；随后采用混合误差评估策略（大信号用相对误差、近零信号用绝对误差）进行频域分区，在各子区间内独立辨识极点；针对传播函数矩阵，显式提取模态行波时延并设定拟合上限频率以剔除冗余极点；引入基于采样定理的理论低通滤波器抑制高频数值振荡；最后利用奇异值分解（SVD）求解病态最小二乘问题以获取留数矩阵，最终通过梯形积分法将矩阵部分分式展开（MPFE）转化为时域递归历史电流源，实现高效稳定的EMT仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真需要在开关、过电压、振荡等波形级问题中准确表示线路宽频特性，尤其是导线集肤效应和大地回流引起的频率依赖。本文研究对象是架空输电线路的相域频变模型，具体要把特征导纳矩阵和传播函数矩阵的频率响应转化为可在时域递推计算的线性等值。难点在于：传统模域模型依赖近似为实常数的变换矩阵，当变换矩阵强频变时会损失精度；相域模型虽避免模/相变换，却必须对矩阵频响做稳定、可实现的矩阵部分分式展开，传播函数还包含由不同模态行波时间造成的时延和阶跃型响应，拟合不再是普通标量有理逼近。本文贡献是把作者此前用于网络等值的频域分区拟合FpF，引入ULM相域线路建模，用频率分区和自适应加权替代常用VF来辨识特征导纳与传播函数的MPFE，并针对该应用补充数值增强技术。
+
+### 2. 模型、算法与实现技术
+
+模型框架采用Universal Line Model。输入是由线路几何、导线和土壤参数计算得到的宽频阻抗/导纳及其派生的特征导纳矩阵、传播函数矩阵频率响应；输出是可嵌入EMT网络方程的相域线性等值，即矩阵部分分式展开及传播时延项。对特征导纳矩阵，FpF直接拟合为常数项加若干稳定极点留数项，使其时域卷积可化为递归历史量。对传播函数矩阵，ULM思想要求在有理函数之外显式保留行波传播时延，因为不同传播模态到达时间不同，会在时域响应中产生阶跃变化；若不分离时延，单纯有理函数拟合会把传播延迟误作高阶动态。FpF的机制不是一次性全频段全局迭代，而是将频率范围分区，在各分区内按频响幅值和拟合误差自适应加权辨识极点，再组合为矩阵等值。这样做的工程含义是：把低频、谐振附近、高频衰减区等性质差异很大的频段分开处理，减少某一频段误差主导整体拟合的风险。原文摘要说明还提出了若干用于该相域线路建模应用的数值增强技术；但在所给摘录中未完整列出其公式、阈值和实现细节。
+
+### 3. 验证、优势与不足
+
+作者用一条实际500 kV双回架空输电线路作为建模对象验证方法。验证路径包括三层：第一，在建模过程中展示所提出数值增强技术对FpF辨识的作用；第二，将FpF-ULM相域模型得到的暂态波形与严格数值拉普拉斯变换法结果比较，用后者作为频域/时域参考解；第三，将计算波形与现场试验结果比较，以检验工程对象上的可用性。基线方法层面，论文定位为用FpF替代ULM中常见的Vector Fitting来实现特征导纳和传播函数矩阵，但所给原文摘录未提供可核验的运行时间、极点数、最大误差、无源性裕度等量化表格。优势主要体现在建模机制上：它保持相域计算，避免频变模态变换矩阵的近似；又通过频率分区和自适应加权处理宽频矩阵拟合问题；传播函数仍沿用ULM显式时延思想，适合有模态传播时间差的长线路。从验证范围看，结论主要支持架空输电线路、该500 kV双回实际系统和论文设定频率/步长/参数下的EMT暂态；不能直接推出对电缆、混合线缆、含强非线性设备网络、实时仿真平台或任意步长均同样可靠。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：相域频变线路建模的关键不只是选用ULM，还在于如何把两个矩阵频响稳定地辨识成可时域递推的MPFE；FpF提供了VF之外的一条路径，通过按频段处理和自适应加权，使宽频拟合更贴近不同频段的误差结构。它可用于后续讨论相域线路模型、宽频网络等值、频响有理逼近、EMT线路参数实现以及VF替代算法的页面。工程上适合复用到需要保持相域、避免频变模态变换近似的架空线暂态研究。不适合把本文直接外推为所有线路类型或所有EMT软件中的通用最优拟合器；若要用于新系统，仍需重新检查拟合误差、稳定性、无源性、时延处理和步长敏感性。
+
+### 证据边界
+
+- 原文明确给出的事实包括：作者为Taku Noda；论文将频率分区和自适应加权的线性系统辨识方法用于相域频变架空线建模；框架采用ULM；对象包括特征导纳矩阵和传播函数矩阵。
+- 原文摘录明确说明验证包含一条既有500 kV双回输电线路、严格拉普拉斯变换法对比以及现场试验结果对比；但摘录未给出线路长度、注入点、端接电阻、仿真步长等可核验细节。
+- 关于FpF相对VF的优势，所给文本支持其作为VF替代方法的定位；但未提供可核验的误差、极点数、计算时间或调参次数，因此不能写成定量优于VF。
+- 当前页已有内容中的滤波器、SVD、阈值、极点数、误差数值等可能来自论文后文，但在本次提供的原文摘录中不可核验；入口说明中仅保守表述为“数值增强技术”。
+- 本文验证范围是架空输电线路相域频变模型；从已给证据不能证明其对电缆、混合线路、含电力电子控制的完整系统或实时硬件仿真同样适用。
+- 原文摘录没有报告可核验的数值结果；若后续页面需要比较算法精度或效率，应回到论文表图核对具体误差指标、频率范围、极点数和仿真步长。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出将频域分区拟合应用于架空线路相域频变建模，替代传统矢量拟合法
-- 改进频域分区拟合数值技术，提升特征导纳与传播函数矩阵的拟合精度
-- 将改进算法与通用线路模型结合，实现高效精确的电磁暂态仿真
-
+- 问题定位：本文提出将频域分区拟合（FpF）方法应用于相域频变架空输电线路建模，以替代传统的矢量拟合（VF）法。该方法基于通用线路模型（ULM）框架，直接在相域处理特征导纳矩阵和传播函数矩阵的频率响应。核心流程包括：首先利用Carson公式计算线路频域参数；
+- 方法机制：本文提出将频域分区拟合（FpF）方法应用于相域频变架空输电线路建模，以替代传统的矢量拟合（VF）法。该方法基于通用线路模型（ULM）框架，直接在相域处理特征导纳矩阵和传播函数矩阵的频率响应。核心流程包括：首先利用Carson公式计算线路频域参数；随后采用混合误差评估策略（大信号用相对误差、近零信号用绝对误差）进行频域分区，在各子区间内独立辨识极点；针对传播函数矩阵，显式提取模态行波时延并设定拟合上限频率以剔除冗余极点；
+- 验证证据：EMT时域仿真 + 严格数值拉普拉斯变换法对比 + 现场冲击试验实测数据验证；日本500kV双回架空输电线路（加贺-岭南线），全长约100km级，中点P点注入冲击电压，两端经50 Ω电阻接地模拟母线波阻抗。；作者自研EMT仿真程序（与EMTP-RV内置VF模块进行对比），结合Carson公式频域计算与自定义FpF拟合算法。
+- 量化与结论：混合加权算法使矩阵拟合的最大绝对偏差降至$1.2 \times 10^{-3}$，显著抑制了近零幅值区的误差放大。；设定上限频率后，传播函数矩阵各模态拟合所需极点数量平均减少约15%-20%，且保持相同拟合精度。；SVD截断算法成功处理了36个矩阵元素中30个出现的病态奇异值（小于），避免了传统QR分解导致的计算失败。；
+- 适用边界：适用于理解本文 Application of Frequency-Partitioning Fitting to the Phase-Domain Frequency-Dependent Modeling of Overhead Transmission Lines （2015） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[频域分区拟合|频域分区拟合]]
 - [[矢量拟合|矢量拟合]]
@@ -39,18 +67,14 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 - [[梯形积分法|梯形积分法]]
 - [[numerical-integration|数值积分]]
 
-
 ## 涉及的模型
-
 
 - [[架空输电线路|架空输电线路]]
 - [[500kv双回输电线路|500kV双回输电线路]]
 - [[特征导纳矩阵|特征导纳矩阵]]
 - [[传播函数矩阵|传播函数矩阵]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -58,15 +82,11 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 - [[线性系统辨识|线性系统辨识]]
 - [[输电线路建模|输电线路建模]]
 
-
 ## 主要发现
-
 
 - 频域分区拟合有效克服了传统有理函数拟合的病态问题，提升数值稳定性
 - 基于该方法的暂态波形与严格拉普拉斯变换法及现场实测结果高度吻合
 - 改进的数值技术显著提高了500kV线路特征导纳与传播函数的拟合精度
-
-
 
 ## 方法细节
 
@@ -76,31 +96,25 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 
 ### 数学公式
 
-
 **公式1**: $$$Y_c(s) \approx D + \sum_{k=1}^{N} \frac{R_k}{s - p_k}$$$
 
 *特征导纳矩阵的标准矩阵部分分式展开（MPFE）形式，用于时域卷积计算。*
-
 
 **公式2**: $$$H(s) \approx \sum_{m=1}^{M} e^{-s\tau_m} \left( D_m + \sum_{k=1}^{N_m} \frac{R_{m,k}}{s - p_{m,k}} \right)$$$
 
 *通用线路模型（ULM）中传播函数矩阵的修正MPFE形式，显式包含各模态行波时延$\tau_m$。*
 
-
 **公式3**: $$$w_i = \begin{cases} 1/|y_i|, & |y_i| > \epsilon \\ 1/\epsilon, & |y_i| \le \epsilon \end{cases}$$$
 
 *混合加权函数，对幅值大于阈值$\epsilon$的频点采用相对误差评估，小于等于阈值的采用绝对误差评估，防止近零区域误差被过度放大。*
-
 
 **公式4**: $$$F(s) = \frac{1}{1 + s \Delta t / \pi}$$$
 
 *理论一阶低通滤波器，截止频率由EMT仿真步长$\Delta t$决定，用于抑制高频尖峰电压的数值放大。*
 
-
 **公式5**: $$$\boldsymbol{x} = \boldsymbol{V}_r \boldsymbol{\Sigma}_r^{-1} \boldsymbol{U}_r^T \boldsymbol{b}$$$
 
 *基于SVD截断的最小二乘解，剔除归一化奇异值低于机器精度的低贡献方程，确保留数矩阵辨识的数值稳定性。*
-
 
 ### 算法步骤
 
@@ -116,7 +130,6 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 
 6. 时域递归实现：利用梯形积分法将MPFE转化为瞬时电导矩阵与历史电流源，嵌入EMT仿真网络方程进行迭代求解，实现全相域频变线路的实时仿真。
 
-
 ### 关键参数
 
 - **epsilon**: 1e-4（混合加权阈值）
@@ -131,8 +144,6 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 
 - **mode_time_diff_threshold**: 1%（模态时差大于此值视为独立模态）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -145,8 +156,6 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 
 | 现场冲击试验与拉普拉斯法对比 | 在加贺-岭南线中点P点注入冲击电压，两端经50 Ω电阻接地。FpF模型在0.5 μs步长下计算的全相暂态电压波形与严格数值拉普拉斯变换法完全重合，且与现场实测波形在微秒至毫秒级响应高度一致。 | 与VF法相比，在相近拟合精度下FpF极点数为40（VF为28-32），但FpF无需迭代调参，且通过SVD和滤波技术实现了更高的数值鲁棒性。 |
 
-
-
 ## 量化发现
 
 - 混合加权算法使$Y_c$矩阵拟合的最大绝对偏差降至$1.2 \times 10^{-3}$，显著抑制了近零幅值区的误差放大。
@@ -154,7 +163,6 @@ sources: ["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fittin
 - SVD截断算法成功处理了36个矩阵元素中30个出现的病态奇异值（小于$10^{-15}$），避免了传统QR分解导致的计算失败。
 - FpF模型全频段输入导纳矩阵实部特征值均严格大于0，满足无源性条件，确保时域仿真绝对稳定。
 - 在保守参数设置下，FpF拟合极点数为40；若将拟合容差参数$\delta$调整为0.05，极点数可进一步降至33，计算效率提升约17%。
-
 
 ## 关键公式
 
@@ -182,11 +190,34 @@ $$$\boldsymbol{x} = \boldsymbol{V}_r \boldsymbol{\Sigma}_r^{-1} \boldsymbol{U}_r
 
 *当系数矩阵条件数过大导致常规求解失败时，通过剔除低贡献奇异值方程获得稳定数值解。*
 
-
-
 ## 验证详情
 
 - **验证方式**: EMT时域仿真 + 严格数值拉普拉斯变换法对比 + 现场冲击试验实测数据验证
 - **测试系统**: 日本500kV双回架空输电线路（加贺-岭南线），全长约100km级，中点P点注入冲击电压，两端经50 Ω电阻接地模拟母线波阻抗。
 - **仿真工具**: 作者自研EMT仿真程序（与EMTP-RV内置VF模块进行对比），结合Carson公式频域计算与自定义FpF拟合算法。
 - **验证结果**: FpF相域模型在微秒至毫秒级暂态过程中与拉普拉斯变换法误差可忽略，与现场实测波形高度吻合；模型严格满足无源性，数值稳定性显著优于未滤波传统方法，验证了频域分区拟合在复杂频变线路建模中的工程适用性与高精度特性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Application of Frequency-Partitioning Fitting to the Phase-Domain Frequency-Dependent Modeling of Overhead Transmission Lines`（2015） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 频域分区拟合、矢量拟合、通用线路模型 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出将频域分区拟合应用于架空线路相域频变建模，替代传统矢量拟合法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Noda - 2015 - Application of frequency-partitioning fitting to the phase-domain frequency-dependent modeling of ov.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

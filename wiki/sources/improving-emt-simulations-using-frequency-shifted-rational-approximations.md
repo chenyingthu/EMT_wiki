@@ -3,7 +3,7 @@ title: "Improving EMT simulations using frequency-shifted rational approximation
 type: source
 authors: ['A.A. Kida']
 year: 2025
-journal: "Electric Power Systems Research, 252 (2026) 112395. doi:10.1016/j.epsr.2025.112395"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/23/Kida 等 - 2026 - Improving EMT simulations using frequency-shifted rational approximations.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/23/Kida 等 - 2026 - Improving EMT simulations using frequenc
 
 ## 摘要
 
-Improving EMT simulations using frequency-shifted rational b Department of Electrical Engineering, COPPE/UFRJ, Federal University of Rio de Janeiro, Rio de Janeiro, Brazil c Department of Electrical and Computer Engineering, Federal University of Bahia, Salvador, BA, Brazil Accurate electromagnetic transient (EMT) simulations require accounting for the frequency-dependent behavior of system components and equivalents. Rational approximations derived from curve-ﬁtting techniques such as
+提出一种基于复矢量拟合（CVF）与频移解析信号的电磁暂态（EMT）仿真新框架。传统矢量拟合（VF）强制模型满足共轭对称性以生成实值冲激响应，限制了其在基带仿真中的应用。本方法通过CVF解除该约束，允许极点和留数独立存在，从而构建非厄米对称的有理逼近模型。结合希尔伯特变换将实值激励转换为解析信号，并引入频移因子Δf将频谱中心移至0Hz，实现基带（频移）仿真。模型通过状态空间形式实现，并采用梯形积分法进行时域离散。该框架在保持甚至提升精度的同时，显著放宽了EMT仿真步长限制，并揭示了CVF与VF在无源性评估上的本质差异。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真要把线路、网络等外部系统的频率相关导纳等值纳入时域计算，否则高频暂态响应会失真；但若对大系统逐元建模，计算量又不可接受。本文研究对象是由频域采样得到的N端口导纳矩阵及其在EMT中的时域实现。传统矢量拟合（VF）可把导纳矩阵拟合成极点-留数有理模型，并已被EMT软件采用，但它内在要求冲激响应为实值，即频谱满足Hermitian共轭对称。这一约束适合物理实信号模型，却不利于把窄带高频暂态下变频到基带后仿真，因为基带解析信号本身是复信号且不再需要正负频率对称。本文的创新在于把通信领域的复矢量拟合（CVF）引入电力系统EMT：解除VF的共轭对称约束，使极点和留数可独立构成非Hermitian有理逼近；再用解析信号和频率平移把目标高频成分搬移到0 Hz附近，从而在同一导纳等值框架下进行频移EMT仿真。相对已有CVF用于电力导纳建模的工作，本文进一步加入时域仿真、频移机制，并比较了CVF与VF在拟合误差和无源性评估上的差异。
+
+### 2. 模型、算法与实现技术
+
+核心模型仍是N端口导纳矩阵的有理逼近：Y(s)≈ΣRi/(s−pi)+D。VF中极点、留数按共轭成对组织以保证实值冲激响应；CVF则允许复极点和复留数不按共轭对出现，因此可拟合只含非负频率或经频移后的复频域响应。拟合结果被转成状态空间形式Y(s)=C(sI−A)^{-1}B+D，接口量是端口电压与端口电流，输入为电压激励，输出为导纳等值产生的电流响应。为了进入频移仿真，实值激励u(t)先通过Hilbert变换构造解析信号uA(t)=u(t)+jH{u(t)}，其作用是去除负频率镜像，只保留可下变频处理的复包络。随后乘以exp(−j2πΔf t)得到频移解析信号，把以Δf附近为中心的频谱搬到基带；若Δf与激励主频匹配，高频正弦在基带中接近直流或低频分量。时域求解时，对CVF状态空间方程采用梯形积分离散迭代，得到频移后的复电流响应，再经逆频移并取实部恢复物理电流。无源性方面，因CVF模型不具备VF的Hermitian结构，不能使用VF可用的半尺寸奇异性/无源性测试，而需按非Hermitian系统采用全尺寸Hamiltonian相关测试流程。
+
+### 3. 验证、优势与不足
+
+作者用两个电力系统算例验证：一个是132 kV三相输电线路，文摘页给出的参数包括长度12 km、相导线直径21.66 mm、地线直径12.33 mm；另一个是配电网络等值。基线是传统VF，比较对象包括未频移CVF、频移CVF，以及VF模型。指标主要是频域导纳拟合相对均方根误差、时域仿真精度、在给定目标精度下允许的时间步长，以及无源性特征差异。原文摘要明确报告：CVF相对VF的误差最多降低8个数量级；在CVF框架内加入频率平移后，精度最多再改善2个数量级；在相同目标精度下，频移使时间步长可放大2.33到5.5倍。优势不是简单来自降低模型阶数，而是来自两点：一是CVF不强制正负频率镜像对称，因而能更灵活地逼近目标频带的复响应；二是解析信号加频移降低了时域输入/状态响应的有效带宽，使梯形积分在较大步长下仍可捕捉基带包络。从验证范围看，结论主要支撑输电线路和配电网频率相关导纳等值的EMT场景；原文摘要未给出实时仿真、非线性设备、大规模多控制器系统、故障类型全覆盖或不同积分算法下的可核验结果，因此不宜外推为所有EMT模型均可获得相同步长增益。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于指出：EMT中的频率相关等值不一定必须绑定“实冲激响应—Hermitian频谱”的传统VF结构；当研究对象是窄带或可搬移到基带的暂态成分时，复解析信号和非共轭有理模型可以成为更合适的计算表示。它可用于后续关于频率相关网络等值、基带EMT、宽频导纳拟合、CVF无源性处理、以及高频激励下步长放宽策略的页面。工程上适合被复用于外部网络等值、线路/配电网频域数据建模和需要比较VF/CVF的仿真流程设计。不适合直接外推到未验证的非线性暂态、开关强不连续过程、保护控制闭环稳定性或任意频段宽带仿真；这些场景仍需重新检查拟合、无源性、步长和时域误差。
+
+### 证据边界
+
+- 原文摘要直接给出CVF相对VF误差最多降低8个数量级、频移后最多再改善2个数量级、时间步长放大2.33到5.5倍；这些数字可作为文献声称，但具体对应表图、频点和误差阈值需回查正文。
+- 原文明确说明CVF取消VF中的复共轭对称约束，并结合analytic signals与frequency shifts用于EMT；关于Hilbert变换构造解析信号和频移后逆变换恢复实信号属于该方法机制的直接解释。
+- 测试对象来自原文摘要和页面抽取：传输线与配电网；传输线详细几何参数、MATLAB 2018a和硬件信息在当前页面中出现，但用户提供的原文片段未完整展示对应实验段落，引用时应核对PDF表格。
+- 无源性差异是原文摘要和引言明确声称的发现；但具体哪些频段、哪些模型更接近无源、是否经过无源性强制修正，当前证据片段不足以详细判断。
+- 本文验证的是频率相关导纳等值的数值仿真框架；原文片段未显示对实时仿真平台、硬件在环、非线性元件、故障工况族或多种积分格式的系统比较。
+- 元数据中期刊/年份与原文首页信息存在潜在不一致：用户元数据写Electric Power Systems Research、2025，而首页片段写submitted to IPST2025，且作者列表包含四位作者；作为source page应保留复核边界。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于复矢量拟合与解析信号的频移有理逼近框架，打破传统VF共轭对称约束
-- 揭示CVF与VF模型在无源性评估上的差异，完善频变等值模型的稳定性分析
-- 引入频移技术优化基带仿真，在保持精度前提下显著放宽EMT仿真步长限制
-
+- 问题定位：提出一种基于复矢量拟合（CVF）与频移解析信号的电磁暂态（EMT）仿真新框架。传统矢量拟合（VF）强制模型满足共轭对称性以生成实值冲激响应，限制了其在基带仿真中的应用。本方法通过CVF解除该约束，允许极点和留数独立存在，从而构建非厄米对称的有理逼近模型。
+- 方法机制：提出一种基于复矢量拟合（CVF）与频移解析信号的电磁暂态（EMT）仿真新框架。传统矢量拟合（VF）强制模型满足共轭对称性以生成实值冲激响应，限制了其在基带仿真中的应用。本方法通过CVF解除该约束，允许极点和留数独立存在，从而构建非厄米对称的有理逼近模型。结合希尔伯特变换将实值激励转换为解析信号，并引入频移因子Δf将频谱中心移至0Hz，实现基带（频移）仿真。模型通过状态空间形式实现，并采用梯形积分法进行时域离散。
+- 验证证据：Case A: 132 kV三相输电线路（长12 km，相导线直径21.66 mm，地线直径12.33 mm）；Case B: 配电网系统；MATLAB 2018a, 梯形积分法离散化, 硬件: Intel i5-1240P/16GB RAM；
+- 量化与结论：CVF拟合误差较传统VF降低最高达8个数量级（10^8倍）；频移技术使CVF框架精度再提升最高达2个数量级（10^2倍）；在相同目标精度下，EMT仿真步长可扩大2.33至5.5倍；CVF模型因解除共轭对称约束，无法使用VF的半尺寸无源性测试，需采用全尺寸哈密顿矩阵奇异值测试
+- 适用边界：适用于理解本文 Improving EMT simulations using frequency-shifted rational approximations （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 复矢量拟合-cvf、矢量拟合-vf、解析信号 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[复矢量拟合-cvf|复矢量拟合(CVF)]]
 - [[矢量拟合-vf|矢量拟合(VF)]]
@@ -38,18 +66,14 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 - [[状态空间实现|状态空间实现]]
 - [[无源性评估|无源性评估]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[配电网|配电网]]
 - [[频变等值模型-fde|频变等值模型(FDE)]]
 - [[导纳矩阵|导纳矩阵]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -58,15 +82,11 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 - [[无源性评估|无源性评估]]
 - [[计算效率优化|计算效率优化]]
 
-
 ## 主要发现
-
 
 - CVF模型拟合误差较传统VF降低达八个数量级，且无源性特征存在显著差异
 - 频移技术使CVF框架精度再提升两个数量级，并允许仿真步长扩大2.33至5.5倍
 - 所提框架在输电线路与配电网验证中有效平衡了仿真精度与计算效率
-
-
 
 ## 方法细节
 
@@ -76,26 +96,21 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{Y}(s) \approx \sum_{i=1}^{N_p} \frac{\mathbf{R}_i}{s - p_i} + \mathbf{D}$$$
 
 *导纳矩阵的极点-留数有理逼近形式，用于频域建模*
-
 
 **公式2**: $$$u_A(t) = u(t) + j\mathcal{H}\{u(t)\}$$$
 
 *解析信号定义，通过希尔伯特变换将实信号转换为仅含非负频率分量的复信号*
 
-
 **公式3**: $$$u_{A,sh}(t) = \exp(-j2\pi\Delta f t)u_A(t)$$$
 
 *频移解析信号公式，将频谱中心平移至基带（0Hz）以降低仿真带宽需求*
 
-
 **公式4**: $$$Y_E = \sqrt{\frac{\sum_{m=1}^N \sum_{q=1}^N \sum_{k=1}^{N_s} |Y_{mq}(s_k) - \hat{Y}_{mq}(s_k)|^2}{N_s \sum_{m=1}^N \sum_{q=1}^N \sum_{k=1}^{N_s} |Y_{mq}(s_k)|^2}}$$$
 
 *相对均方根误差（RRMSE），用于量化频域拟合精度*
-
 
 ### 算法步骤
 
@@ -115,7 +130,6 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 
 8. 信号还原：对仿真输出的复电流进行逆频移操作并提取实部，恢复为物理可观测的实值时域电流i(t)。
 
-
 ### 关键参数
 
 - **频移量_Δf**: 0 Hz, 50 kHz, 90 kHz
@@ -127,8 +141,6 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 - **积分方法**: 梯形积分法
 
 - **硬件环境**: Intel i5-1240P, 16GB RAM
-
-
 
 ## 仿真结果
 
@@ -142,8 +154,6 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 
 | Case B: 配电网系统 | 验证了CVF在复杂网络等值中的适用性。CVF模型展现出与VF显著不同的无源性特征，部分频段无源性表现更优。频移仿真同样实现精度提升与步长放宽。 | 在配电网场景下复现了Case A的精度与效率优势，证明框架具有通用性 |
 
-
-
 ## 量化发现
 
 - CVF拟合误差较传统VF降低最高达8个数量级（10^8倍）
@@ -151,7 +161,6 @@ Improving EMT simulations using frequency-shifted rational b Department of Elect
 - 在相同目标精度下，EMT仿真步长可扩大2.33至5.5倍
 - CVF模型因解除共轭对称约束，无法使用VF的半尺寸无源性测试，需采用全尺寸哈密顿矩阵奇异值测试
 - 频移量Δf与激励频率f_e匹配时（如Δf=f_e），频移后信号退化为直流分量，极大降低高频动态仿真带宽需求
-
 
 ## 关键公式
 
@@ -173,11 +182,34 @@ $$$\mathbf{H} = \begin{bmatrix} \mathbf{A} - \mathbf{B}(\mathbf{D}+\mathbf{D}')^
 
 *用于解析识别有理逼近模型的无源性违规频段，确保时域仿真稳定性*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真与对比分析（基于公开基准数据）
 - **测试系统**: Case A: 132 kV三相输电线路（长12 km，相导线直径21.66 mm，地线直径12.33 mm）；Case B: 配电网系统
 - **仿真工具**: MATLAB 2018a, 梯形积分法离散化, 硬件: Intel i5-1240P/16GB RAM
 - **验证结果**: 在输电线路与配电网两个标准测试系统中，CVF框架在拟合精度上全面超越传统VF（误差降低8个数量级），且频移技术进一步将精度提升2个数量级。在同等精度要求下，仿真步长成功扩大2.33~5.5倍，显著降低计算成本。同时揭示了CVF与VF在无源性特征上的本质差异，验证了所提框架在电力系统EMT分析中的高效性与可靠性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Improving EMT simulations using frequency-shifted rational approximations`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 复矢量拟合-cvf、矢量拟合-vf、解析信号 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于复矢量拟合与解析信号的频移有理逼近框架，打破传统VF共轭对称约束
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/23/Kida 等 - 2026 - Improving EMT simulations using frequency-shifted rational approximations.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

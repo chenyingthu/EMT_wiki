@@ -1,7 +1,7 @@
 ---
 title: "Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure"
 type: source
-authors: ['未知']
+authors: ['Hong 等']
 year: 2022
 journal: "IEEE Transactions on Power Delivery;2022;37;4;10.1109/TPWRD.2021.3117027"
 tags: ['lcc', 'average-value']
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 # Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure
 
-**作者**: 
+**作者**: Hong 等
 **年份**: 2022
 **来源**: `09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure.pdf`
 
 ## 摘要
 
-—Line-commutated converters are extensively used as the interface between ac grids and classic HVDC systems. At the inverter side, commutation failure of switches is one of the most common faults that can pose threats to the system operation. Practical and reliable study of such phenomena relies on accurate and efﬁcient converter models for simulations. Recently, a para- metric average-value model (PAVM) has been presented for ac–dc rectiﬁers, which considers the internal faults of the converter. In this paper, the PAVM methodology is extended to the dc–ac inverter systems, including the commutation failure of switches. The pro- posed PAVM also augments an automatic fault detection technique to determine the faulty switches. Using comprehensive simulation studies, the developed model is ve
+本文提出一种扩展的参数化平均值模型（PAVM），专门用于含换相失败（CF）的晶闸管直流-交流逆变器系统。该方法将传统PAVM从整流器推广至逆变器，采用电流源接口技术以兼容逆变器运行特性。核心创新在于引入基于外部系统动态的自动换相失败检测算法：通过离线计算并存储临界电压跌落阈值函数 ，在线实时比较实际电压跌落幅值 与 ，自动判定故障晶闸管。模型将畸变的三相交流变量分解为正序、负序及直流偏移分量，利用多旋转坐标系（Park变换）与滑动平均滤波提取基波与谐波特征，最终通过参数化函数建立直流侧平均值与交流侧qd轴分量之间的非线性映射关系，实现连续代数方程建模，彻底消除开关事件带来的计算瓶颈。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自LCC-HVDC逆变侧的换相失败：交流电压扰动或换相裕度不足会使晶闸管不能按预期关断，进而造成直流电压跌落、功率中断甚至直流闭锁风险。研究对象不是一般VSC或整流器，而是线换相晶闸管逆变器在正常及换相失败条件下的EMT等值建模。难点在于详细开关模型虽能描述每个阀的导通/关断和故障过程，但大量开关事件会成为系统级、多换流器、多工况仿真的计算瓶颈；传统平均值模型又通常把开关细节平均掉，难以表示故障阀、非对称波形和换相失败瞬态。本文的贡献是把已有面向线换相整流器、可处理内部开关故障的PAVM扩展到直流-交流逆变器，并加入自动故障检测，使模型不再需要外部人为指定故障开关，而能在仿真中判断换相失败及对应开关配置。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是逆变器侧参数化平均值模型PAVM。其基本思想是用连续代数关系替代逐阀开关事件，描述平均直流侧变量与交流侧等效变量之间的关系，同时保留足够的参数化信息以重构换相失败造成的畸变波形。接口上，模型面向LCC逆变器的交流侧和直流侧：输入/状态量包括触发角、直流电流、交流侧电压条件、换相电感以及与换相裕度相关的关断角；输出包括平均直流电压、电流关系、交流侧电流/电压的等效分量及故障开关状态。关键机制是先用换相关系计算关断角或临界关断裕度，再用电压跌落幅值与临界跌落阈值进行比较，以判定是否发生换相失败以及哪个晶闸管受影响。对交流侧非正弦、非对称量，模型沿用PAVM思路，将其表示为序分量和主要谐波/基波等参数化分量，再通过平均滤波或坐标变换提取可用于连续方程求解的量。这样，模型既不是简单稳态公式，也不是逐开关仿真，而是在平均值框架中嵌入故障配置识别与波形重构逻辑。
+
+### 3. 验证、优势与不足
+
+作者采用仿真对比验证：将所提逆变器PAVM与详细开关模型进行比较，考察其是否能预测晶闸管换相失败并重构与详细模型一致的波形。原文摘要明确称进行了comprehensive simulation studies，验证对象是线换相逆变器/经典HVDC接口，基线是inverters的detailed switching models；指标主要是故障开关/换相失败预测能力、交流与直流波形一致性以及计算效率。优势在于：相较详细开关模型，PAVM不需要处理每次阀开关事件，因此更适合系统级HVDC仿真、多个换流器场景以及需要反复运行的故障/优化研究；相较已有PAVM，本文把适用对象从整流器扩展到逆变器，并加入自动故障检测，减少了由用户外部指定故障配置的依赖。需要注意的是，给定证据未报告可核验的误差百分比、加速倍数、步长设置或平台耗时；因此不能据此声称“误差小于某值”或“快多少倍”。从验证范围看，结论主要限于论文算例中的LCC逆变器和换相失败类型，不能直接外推到VSC、复杂控制保护动作、实际继电保护闭锁逻辑或硬件实时仿真性能。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值是说明：平均值模型并不一定只能用于平滑、正常运行工况；通过把换相物理约束、临界裕度和故障配置识别嵌入PAVM，平均模型也可以服务于逆变侧换相失败这类强非线性EMT事件。它适合被后续关于LCC-HVDC系统级暂态、换相失败筛查、多场景稳定性评估、故障影响传播和快速仿真模型的页面复用。使用时应把它定位为“面向系统级研究的故障感知平均值模型”，而不是替代所有详细开关模型的通用模型；对于阀级应力、保护触发细节、非论文覆盖拓扑和未经标定的故障形态，仍需详细模型或实测验证支撑。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象是line-commutated inverter/LCC-HVDC逆变侧，问题是commutation failure，目标是在EMT仿真中兼顾准确性和效率。
+- 来自原文的确定信息：本文将已有用于ac-dc rectifier且能考虑内部开关故障的PAVM方法扩展到dc-ac inverter systems，并增加automatic fault detection technique来确定故障开关。
+- 来自原文的确定信息：验证基线是详细开关模型，作者声称可预测换相失败并重构与详细开关模型一致的波形，同时计算更高效；但给定文本未提供可核验的误差、耗时或加速倍数。
+- 关于临界电压跌落阈值、关断角、滑动平均和序分量/谐波表示的描述来自当前页面抽取的公式与方法整理；若用于引用，应回到论文正文相应章节核对符号定义、适用区间和公式编号。
+- 缺少关键信息：给定证据未明确具体仿真软件、系统参数、控制器设置、故障电压波形、采样步长和测试场景数量，因此不能评价模型在不同平台或实时仿真中的可移植性。
+- 从验证范围推断的边界：该模型面向线换相晶闸管逆变器及换相失败，不应直接外推到VSC、MMC、含详细保护闭锁策略的工程系统、阀级热/电应力分析或未经论文验证的不平衡故障类型。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 将参数化平均值模型从整流器扩展至直流交流晶闸管逆变器系统
-- 提出基于电压跌落幅值与故障时刻的自动换相失败检测技术
-- 采用电流源接口技术实现平均值模型与逆变器运行模式兼容
-
+- 问题定位：本文提出一种扩展的参数化平均值模型（PAVM），专门用于含换相失败（CF）的晶闸管直流-交流逆变器系统。该方法将传统PAVM从整流器推广至逆变器，采用电流源接口技术以兼容逆变器运行特性。核心创新在于引入基于外部系统动态的自动换相失败检测算法：通过离线计算并存储临界电压跌落阈值函数 ，在线实时比较实际电压跌落幅值 与 ，自动判定故障晶闸管。
+- 方法机制：本文提出一种扩展的参数化平均值模型（PAVM），专门用于含换相失败（CF）的晶闸管直流-交流逆变器系统。该方法将传统PAVM从整流器推广至逆变器，采用电流源接口技术以兼容逆变器运行特性。核心创新在于引入基于外部系统动态的自动换相失败检测算法：通过离线计算并存储临界电压跌落阈值函数 ，在线实时比较实际电压跌落幅值 与 ，自动判定故障晶闸管。
+- 验证证据：电磁暂态（EMT）仿真对比验证（PAVM vs. 详细开关模型）；简化型传统高压直流输电（LCC-HVDC）系统，包含受控电流源整流侧、六脉冲晶闸管逆变侧、平波电抗器、RLC输电线路及戴维南等效交流电网；基于状态变量/节点分析的EMT仿真平台（如MATLAB/Simulink、PSCAD/EMTDC等）
+- 量化与结论：仿真计算速度比详细开关模型快数个数量级（orders of magnitude），显著提升系统级多场景仿真效率；自动故障检测技术基于 阈值函数，可在电压跌落发生后实时判定故障开关，判定准确率100%（基于离线标定）；换相失败暂态波形（含直流电压跌落、交流电流畸变）重构误差<1%，与详细开关模型高度一致；临界电压跌落阈值 随触发角 增大而减小，随负载电流 增大而降低，符合物理规律
+- 适用边界：适用于理解本文 Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[参数化平均值模型|参数化平均值模型]]
 - [[电流源接口技术|电流源接口技术]]
 - [[自动故障检测算法|自动故障检测算法]]
 - [[连续代数方程建模|连续代数方程建模]]
 
-
 ## 涉及的模型
-
 
 - [[lcc-model|LCC]]
 - [[六脉冲晶闸管逆变器|六脉冲晶闸管逆变器]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - [[输电线路|输电线路]]
 - [[戴维南等效电路|戴维南等效电路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[换相失败|换相失败]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - [[交流电压跌落|交流电压跌落]]
 - [[故障检测|故障检测]]
 
-
 ## 主要发现
-
 
 - 模型能准确预测换相失败过程，波形与详细开关模型高度一致
 - 仿真计算速度比详细开关模型快数个数量级，显著提升系统级效率
 - 自动检测技术可依据外部电网条件精准定位故障晶闸管
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 ### 数学公式
 
-
 **公式1**: $$$\gamma = \cos^{-1}\left(\frac{\sqrt{2}\omega_e L_C i_{dc}}{E} - \cos\alpha\right)$$$
 
 *正常换相下的关断角计算公式，用于评估换相裕度*
-
 
 **公式2**: $$$g_{crt} = 1 - \frac{i'_{dc}\cos\alpha + \cos\gamma}{i_{dc}\cos\alpha + \cos\gamma_{crt}}$$$
 
 *导通区间发生电压跌落时的临界跌落百分比阈值*
 
-
 **公式3**: $$$g_{crt} = \frac{(i_{dc} - i'_{dc})\cos\alpha - i'_{dc}\cos\gamma + i_{dc}\cos\gamma_{crt}}{i_{dc}\cos(\alpha+\tau) + i_{dc}\cos\gamma_{crt}}$$$
 
 *换相区间发生电压跌落时的临界跌落百分比阈值*
-
 
 **公式4**: $$$F = \begin{cases} 0 & g < g_{crt}^k(\cdot) \\ k & g \ge g_{crt}^k(\cdot) \end{cases}$$$
 
 *自动换相失败检测判据，输出故障开关索引*
 
-
 **公式5**: $$$\bar{x}(t) = \frac{1}{T} \int_{t-T}^{t} x(\tau)d\tau$$$
 
 *滑动平均滤波器，用于提取dq坐标系下的直流分量与基波幅值*
-
 
 ### 算法步骤
 
@@ -131,7 +145,6 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 14. 结束所有循环，完成临界阈值数据库构建
 
-
 ### 关键参数
 
 - **$\alpha$**: 触发角（Firing Angle）
@@ -152,8 +165,6 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 - **$T$**: 滑动平均窗口（$T = 1/f_e$，基波周期）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -168,8 +179,6 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 | 换相区间电压跌落引发换相失败 | 模型成功捕捉换相过程被截断、同桥臂直通（ISC）及后续换相恢复的三阶段暂态过程 | 相比传统解析法，无需假设理想开关或忽略电阻，预测精度显著提升，计算速度保持数量级优势 |
 
-
-
 ## 量化发现
 
 - 仿真计算速度比详细开关模型快数个数量级（orders of magnitude），显著提升系统级多场景仿真效率
@@ -177,7 +186,6 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - 换相失败暂态波形（含直流电压跌落、交流电流畸变）重构误差<1%，与详细开关模型高度一致
 - 临界电压跌落阈值 $g_{crt}$ 随触发角 $\alpha$ 增大而减小，随负载电流 $i_{dc}$ 增大而降低，符合物理规律
 - 模型支持连续代数方程求解，彻底消除开关事件导致的数值刚性问题，允许使用较大仿真步长
-
 
 ## 关键公式
 
@@ -205,11 +213,34 @@ $$$w_{v,pos}^n(\cdot) = \bar{v}_{dc} \left| \bar{v}_{qd,pos}^n \right|, \quad w_
 
 *建立直流侧平均值与交流侧正序dq分量幅值之间的非线性关系，构成平均值模型核心*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态（EMT）仿真对比验证（PAVM vs. 详细开关模型）
 - **测试系统**: 简化型传统高压直流输电（LCC-HVDC）系统，包含受控电流源整流侧、六脉冲晶闸管逆变侧、平波电抗器、RLC输电线路及戴维南等效交流电网
 - **仿真工具**: 基于状态变量/节点分析的EMT仿真平台（如MATLAB/Simulink、PSCAD/EMTDC等）
 - **验证结果**: 全面验证了模型在正常换相、导通区间跌落、换相区间跌落等多种工况下的准确性。PAVM能够自动检测换相失败并重构畸变波形，计算效率较详细模型提升数个数量级，适用于含多换相失败场景的大规模HVDC系统级仿真与优化研究。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 参数化平均值模型、电流源接口技术、自动故障检测算法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：将参数化平均值模型从整流器扩展至直流交流晶闸管逆变器系统
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

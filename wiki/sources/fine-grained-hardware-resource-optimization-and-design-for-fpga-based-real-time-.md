@@ -3,7 +3,7 @@ title: "Fine-grained hardware resource optimization and design for FPGA-based re
 type: source
 authors: ['Yanfei Li']
 year: 2025
-journal: "International Journal of Electrical Power and Energy Systems, 169 (2025) 110754. doi:10.1016/j.ijepes.2025.110754"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['real-time', 'fpga', 'renewable']
 created: "2026-04-13"
 sources: ["EMT_Doc/19、20、21/EMT_task_19/Li 等 - 2025 - Fine-grained hardware resource optimization and design for FPGA-based real-time simulation of large-.pdf"]
@@ -17,36 +17,60 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Li 等 - 2025 - Fine-grained hardwar
 
 ## 摘要
 
-Fine-grained hardware resource optimization and design for FPGA-based real-time simulation of large-scale renewable energy generations a Key Laboratory of Smart Grid of Ministry of Education, Tianjin University, Tianjin 300072, China b China Southern Power Grid Electric Power Research Institute, Guangzhou 510663, China Real-time simulation of renewable energy generations (REGs) is essential for the development and testing of
+本文提出一种面向FPGA的新能源控制系统实时仿真细粒度硬件资源优化与设计方法。该方法首先在算术运算级建立硬件资源需求模型，以自适应逻辑模块(ALM)和块存储器位(BMB)为量化指标，精确刻画浮点运算单元、多路复用器及数据缓冲FIFO的资源消耗。通过引入Floyd-Warshall算法计算控制子系统间的最短求解路径，将最小求解时间作为约束条件，结合硬件资源上限构建优化模型。在此基础上，设计自动硬件描述语言(HDL)生成技术，根据优化后的资源调度方案与时空并行计算架构，自动映射并生成控制系统的功能硬件模块，实现从数学模型到FPGA底层逻辑的快速转换，有效解决大规模新能源并网仿真中控制求解计算量大、手动设计效率低及资源利用率不足的问题。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自大规模新能源并网的实时EMT仿真：集中调度控制器、逆变器控制器和边缘计算设备需要在硬件在环环境中接受微秒级暂态测试。研究对象不是整个电网求解器的通用加速，而是REG实时仿真中规模快速扩张、资源消耗突出的控制系统求解，尤其包括详细建模的光伏阵列、风机、并网变流器及其控制逻辑在FPGA上的实现。难点在于：高频电力电子要求几到几十微秒步长；大量新能源设备使控制系统包含大量浮点运算、数据依赖、缓冲和多路选择；若按传统手工HDL或粗粒度模块复制方式设计，容易出现运算单元闲置、ALM/BMB资源耗尽、开发周期长等问题。本文的贡献是把资源优化下沉到算术运算级，建立浮点运算单元、多路复用器和FIFO等硬件资源需求模型，在最小求解时间和FPGA资源上限共同约束下进行时空并行调度，并进一步给出自动HDL生成方法，使REG控制系统从数学/运算图到可综合硬件模块的生成更系统化。
+
+### 2. 模型、算法与实现技术
+
+方法首先把REG控制系统拆成浮点算术运算节点及其数据依赖关系，核心输入包括控制系统数学模型、运算类型与数量、各运算延迟、端口连接、FPGA可用ALM和BMB资源；输出是满足实时步长约束的运算启动时刻、运算单元复用方案、FIFO/多路选择资源配置和对应HDL模块。资源模型以ALM和BMB为主要量化指标，目标函数类似 R = w_ALM R_ALM + w_BMB R_BMB，用权重把逻辑与存储资源合成为可优化的硬件代价。时序约束通过运算开始时间、运算延迟和数据传递延迟描述前驱输出到后继输入的可达性，避免流水线中读写次序错误；大M和二进制变量用于表达某条依赖或某个算术单元分配是否生效。Floyd-Warshall递推 D[u,v]=min(D[u,v],D[u,w]+D[w,v])用于在控制子系统或运算节点间计算最短数据传递路径/关键路径，从而确定最小求解时间约束。随后优化器在该时间约束下决定哪些运算并行展开、哪些运算共享硬件，并据此生成面向FPGA的时空并行结构。自动HDL生成部分的作用是把调度表、资源分配表和数据通路映射为功能硬件模块，减少手写Verilog/VHDL造成的重复设计和资源不可控问题。
+
+### 3. 验证、优势与不足
+
+作者用两个REG实时仿真算例验证：一个集成15台详细建模光伏阵列，另一个集成15台风力发电机，均在单块FPGA上运行；离线基准为商业暂态仿真软件PSCAD/EMTDC，比较指标包括实时仿真步长、FPGA硬件资源利用/占用变化以及关键电气量和控制信号相对误差。原文报告PV-REG系统步长为9 μs，WT-REG系统步长为10 μs；相对传统硬件设计，硬件资源利用/占用约降低30%；与PSCAD/EMTDC结果相比，相对误差小于0.5%。这些结果说明该方法在所测规模下可以把较复杂REG控制系统放入单FPGA并满足微秒级实时约束，优势主要体现在细粒度复用运算资源、控制ALM/BMB消耗、以及通过自动HDL生成降低大规模控制系统硬件实现难度。边界也很明确：验证只覆盖15台PV和15台WT两个系统，且基线描述为传统硬件设计，页面证据未给出更多CPU/GPU实时平台或商业实时仿真器对比；结果也不等同于证明任意拓扑、任意控制策略、任意故障工况或更大规模REG系统都能在同一FPGA上达到相同步长和误差。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于把REG实时EMT仿真的瓶颈从“单纯提高FPGA并行度”具体化为“控制系统算术运算级资源、时序与数据通路的联合优化”。它可用于解决大规模新能源控制模型在FPGA上手工实现困难、资源复制过多、实时步长受限的问题，也适合被后续关于FPGA实时仿真编译、控制系统自动代码生成、运算图调度、硬件资源估算和硬件在环测试平台的页面复用。工程上，它更适合作为REG控制子系统硬件化求解的设计框架，而不是电力网络节点导纳矩阵求解、保护通信系统仿真或通用CPU并行仿真的直接证据。不能把15台PV/WT上的结果外推为无限规模可扩展，也不能把PSCAD一致性验证等同于物理装置实测验证。
+
+### 证据边界
+
+- 原文明确报告的量化结果包括：PV-REG实时步长9 μs、WT-REG实时步长10 μs、相对传统硬件设计资源约降低30%、与PSCAD/EMTDC相对误差小于0.5%。
+- 原文明确说明研究重点是REG控制系统在FPGA上的细粒度资源优化和自动HDL生成；本文并未证明该方法对所有电气网络求解环节同样有效。
+- Floyd-Warshall用于计算最短求解路径/数据传递关系的机制可由页面公式和方法描述支持，但具体距离矩阵定义、节点规模和优化求解器细节需回到原文表格与算法段核验。
+- 验证系统仅覆盖15台详细建模光伏阵列和15台风机两个案例；从验证范围看，尚缺少更大规模、混合PV-WT、多拓扑、多故障和不同控制策略下的系统性结果。
+- 基线为“traditional hardware design”和PSCAD/EMTDC离线仿真；页面证据未显示与CPU、GPU、商用实时仿真器或其他FPGA自动编译框架的全面对比。
+- 硬件平台的具体FPGA型号、时钟频率、ALM/BMB绝对占用量、FIFO深度和综合布局布线约束在当前抽取文本中不完整，若用于工程选型必须核对原PDF。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出面向FPGA的细粒度硬件资源优化方法，实现新能源控制系统实时仿真
-- 建立算术运算级资源需求模型，综合优化最小求解时间与硬件资源约束
-- 提出自动硬件描述语言生成技术，快速构建控制系统求解的功能硬件模块
-
+- 问题定位：本文提出一种面向FPGA的新能源控制系统实时仿真细粒度硬件资源优化与设计方法。该方法首先在算术运算级建立硬件资源需求模型，以自适应逻辑模块(ALM)和块存储器位(BMB)为量化指标，精确刻画浮点运算单元、多路复用器及数据缓冲FIFO的资源消耗。
+- 方法机制：本文提出一种面向FPGA的新能源控制系统实时仿真细粒度硬件资源优化与设计方法。该方法首先在算术运算级建立硬件资源需求模型，以自适应逻辑模块(ALM)和块存储器位(BMB)为量化指标，精确刻画浮点运算单元、多路复用器及数据缓冲FIFO的资源消耗。通过引入Floyd-Warshall算法计算控制子系统间的最短求解路径，将最小求解时间作为约束条件，结合硬件资源上限构建优化模型。
+- 验证证据：离线商业软件对比验证与FPGA硬件在环测试；集成15台详细建模光伏阵列的新能源并网系统；集成15台详细建模风力发电机的新能源并网系统；PSCAD/EMTDC（离线基准仿真工具），自研FPGA实时仿真平台
+- 量化与结论：单FPGA成功实现15台详细建模光伏/风机系统的实时仿真，突破传统CPU串行计算瓶颈。；光伏系统实时仿真步长达到9 μs，风电系统实时仿真步长达到10 μs，满足高频电力电子变换器的微秒级仿真需求。；细粒度资源优化使FPGA硬件资源（ALM/BMB）占用量较传统设计降低约30%。；与PSCAD/EMTDC离线电磁暂态仿真结果对比，关键电气量与控制信号的相对误差严格小于0.5%。
+- 适用边界：适用于理解本文 Fine-grained hardware resource optimization and design for FPGA-based real-time simulation of large-scale renewable energy generations （2025） 在当前页面抽取范围内讨论的 EMT/电力。
 
 ## 使用的方法
-
 
 - [[fpga时空并行计算|FPGA时空并行计算]]
 - [[算术运算级资源调度|算术运算级资源调度]]
 - [[自动hdl代码生成|自动HDL代码生成]]
 - [[细粒度硬件资源优化|细粒度硬件资源优化]]
 
-
 ## 涉及的模型
-
 
 - [[光伏阵列-pv|光伏阵列(PV)]]
 - [[风力发电机-wt|风力发电机(WT)]]
 - [[并网变流器|并网变流器]]
 - [[控制系统详细模型|控制系统详细模型]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[fpga硬件加速|FPGA硬件加速]]
@@ -54,15 +78,11 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 - [[自动代码生成|自动代码生成]]
 - [[大规模新能源并网|大规模新能源并网]]
 
-
 ## 主要发现
-
 
 - 单FPGA实现15台光伏与风机系统实时仿真，步长分别达9μs与10μs
 - 相比传统设计硬件资源占用降低约30%，显著提升FPGA并行计算效率
 - 仿真结果与PSCAD对比相对误差小于0.5%，验证了模型的高精度
-
-
 
 ## 方法细节
 
@@ -72,21 +92,17 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 
 ### 数学公式
 
-
 **公式1**: $$$R = w_{ALM} R_{ALM} + w_{BMB} R_{BMB}$$$
 
 *硬件资源加权消耗目标函数，用于综合评估ALM与BMB的总占用量，指导资源最小化分配*
-
 
 **公式2**: $$$t_{l,i}^{STA} \geq t_{m,j}^{STA} + t_{m}^{LAT} + d_{m,j,l,i} - M(1-\delta_{m,j,l,i}^{AU})$$$
 
 *数据依赖与时序约束方程，确保第l类第i个运算的输入数据在第m类第j个运算输出延迟后正确到达，防止流水线冲突*
 
-
 **公式3**: $$$D_{FW}[u,v] = \min(D_{FW}[u,v], D_{FW}[u,w] + D_{FW}[w,v])$$$
 
 *Floyd-Warshall最短路径递推公式，用于计算控制运算节点间的最小数据传递延迟与关键路径*
-
 
 ### 算法步骤
 
@@ -99,7 +115,6 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 4. 在$T_{min}$与硬件资源约束下，执行细粒度时空并行调度优化，动态分配运算单元复用策略与数据缓冲深度，生成最优资源映射与时序分配方案。
 
 5. 调用自动HDL代码生成引擎，将优化后的调度时序、数据流路径及资源分配表自动转换为Verilog/VHDL硬件描述代码，完成功能模块的综合、布局布线与比特流生成。
-
 
 ### 关键参数
 
@@ -115,8 +130,6 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 
 - **t_m_LAT**: 第m类浮点运算单元的计算输出延迟
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -129,15 +142,12 @@ Fine-grained hardware resource optimization and design for FPGA-based real-time 
 
 | 15台风力发电机(WT)并网系统 | 在单块FPGA上实现15台详细建模风力发电机控制系统的实时仿真，仿真步长达到10 μs，准确捕捉了风机气动-机械-电气耦合动态及变流器高频开关暂态。 | 相比传统设计方法，硬件资源利用率显著提升，资源消耗减少约30%，同时保持高精度实时求解能力。 |
 
-
-
 ## 量化发现
 
 - 单FPGA成功实现15台详细建模光伏/风机系统的实时仿真，突破传统CPU串行计算瓶颈。
 - 光伏系统实时仿真步长达到9 μs，风电系统实时仿真步长达到10 μs，满足高频电力电子变换器的微秒级仿真需求。
 - 细粒度资源优化使FPGA硬件资源（ALM/BMB）占用量较传统设计降低约30%。
 - 与PSCAD/EMTDC离线电磁暂态仿真结果对比，关键电气量与控制信号的相对误差严格小于0.5%。
-
 
 ## 关键公式
 
@@ -153,11 +163,34 @@ $$$t_{l,i}^{STA} \geq t_{m,j}^{STA} + t_{m}^{LAT} + d_{m,j,l,i} - M(1-\delta_{m,
 
 *用于细粒度调度中确保数据流在流水线中的正确传递，防止读写冲突并确定最小求解时间*
 
-
-
 ## 验证详情
 
 - **验证方式**: 离线商业软件对比验证与FPGA硬件在环测试
 - **测试系统**: 集成15台详细建模光伏阵列的新能源并网系统；集成15台详细建模风力发电机的新能源并网系统
 - **仿真工具**: PSCAD/EMTDC（离线基准仿真工具），自研FPGA实时仿真平台
 - **验证结果**: FPGA实时仿真波形与PSCAD/EMTDC离线仿真结果高度一致，关键节点电压、电流及控制信号的相对误差均小于0.5%，验证了细粒度资源优化模型与自动HDL生成方法在大规模新能源实时仿真中的高精度、低延迟与高资源效率。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Fine-grained hardware resource optimization and design for FPGA-based real-time simulation of large-scale renewable energy generations`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 fpga时空并行计算、算术运算级资源调度、自动hdl代码生成 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出面向FPGA的细粒度硬件资源优化方法，实现新能源控制系统实时仿真
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_19/Li 等 - 2025 - Fine-grained hardware resource optimization and design for FPGA-based real-time simulation of large-.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

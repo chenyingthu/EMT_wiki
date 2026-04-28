@@ -1,9 +1,9 @@
 ---
 title: "Wave Function and Multiscale Modeling of MMC-HVdc System for Wide-Frequency Transient Simulation"
 type: source
-authors: ['未知']
+authors: ['Hua Ye', 'Feng Gao', 'Wei Pei', 'Li Kong']
 year: 2021
-journal: "IEEE Journal of Emerging and Selected Topics in Power Electronics;2021;9;5;10.1109/JESTPE.2021.3051647"
+journal: "IEEE Journal of Emerging and Selected Topics in Power Electronics"
 tags: ['mmc']
 created: "2026-04-13"
 sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of MMC-HVdc System for Wide-Frequency Transient Simulation.pdf"]
@@ -11,30 +11,59 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 # Wave Function and Multiscale Modeling of MMC-HVdc System for Wide-Frequency Transient Simulation
 
-**作者**: 
+**作者**: Hua Ye, Feng Gao, Wei Pei, Li Kong
 **年份**: 2021
 **来源**: `40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of MMC-HVdc System for Wide-Frequency Transient Simulation.pdf`
 
 ## 摘要
 
-—The detailed modeling of power electronic (PE) devices poses challenging problems to an efﬁcient transient simulation of large-scale PE-dominated power systems. As PE paradigm, a multiscale modeling methodology of the modular multilevel converter (MMC) for simulating diverse transients from low-frequency oscillations up to high-frequency switching events in an MMC high-voltage direct current (HVdc) system is developed, implemented, and validated. The novelty lies in the creation of a wave propagation function (WPF) that describes the MMC submodule (SM) transient behavior, and then, the SM Fourier series-based shifted-frequency phasor (SFP) is developed to accelerate the computation speed of the system-level dynamics. These efforts serve as the basis for multiscale modeling of the MMC wher
+本文提出了一种基于波传播函数（WPF）和移频相量（SFP）的MMC多尺度建模方法，用于宽频带瞬态仿真。该方法通过WPF描述子模块（SM）的开关瞬态行为，避免使用传统的二元电阻开关模型；利用基于傅里叶级数的移频技术将高频分量移至基带，从而允许在系统级动态仿真中使用更大的时间步长；最终实现多频率解耦和移位，构建能够同时处理从低频振荡到高频开关事件的统一仿真框架，并与控制系统实现无缝接口。验证信息：对比验证（Comparative Validation）；MMC-HVDC输电系统，包括风电场并网场景，具体拓扑包含三相MMC换流器、桥臂电抗器、直流线路和交流电网接口
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自MMC-HVDC和新能源并网系统的宽频暂态研究：同一系统中既有IGBT/二极管开关、直流短路等微秒级电磁暂态，也有功率振荡、风电波动等秒级甚至更慢的系统动态。研究对象是MMC-HVDC输电系统中的MMC子模块、桥臂、交直流网络及其控制接口。难点在于：全EMT模型能保留开关细节但需要很小步长，含大量子模块时计算量高；平均值模型适合低频动态但丢失单个SM开关和内部故障行为；DEM等二元电阻等效仍涉及随开关状态变化的网络重构。本文的贡献是把SM开关暂态用波传播函数WPF表示，再基于其傅里叶展开构造移频相量SFP，将高频分量搬移到基带进行包络求解，从而形成面向MMC-HVDC的多频率移位、多尺度建模框架，而不是单纯的平均模型或单一频段EMT加速模型。
+
+### 2. 模型、算法与实现技术
+
+方法由两层机制组成。第一层是SM级WPF：用带上升时间的分段波形描述子模块输出电压在开通、关断过程中的传播行为，例如以斜坡到阶跃的函数近似器件开关边沿，避免把每个SM都建成随状态切换的二值电阻网络。其核心输入是SM开关命令、器件状态和电容/桥臂电气量，输出是可参与桥臂等效的SM瞬态电压电流关系。第二层是SFP移频：先把实信号构造成解析信号s(t)+jH[s(t)]，再乘以e^{-jω_s t}把选定中心频率附近的带通信号移到零频附近，形成复包络。对MMC而言，交流侧、直流侧和子模块开关相关分量采用不同移频设置：直流或低频量可保持ω_s=0，载波或高频分量按相应频率平移。这样系统级求解跟踪的是慢变包络而非每个高频振荡周期；控制系统则通过论文声称的seamless interface与多尺度主电路交换控制量和测量量。整体计算流程是：由WPF生成SM宽频等效，展开并选择频率分量，进行多频移位，组装桥臂和MMC-HVDC网络，再与控制器联合仿真。
+
+### 3. 验证、优势与不足
+
+作者在摘要中说明通过四类算例验证：直流故障、MMC内部故障、功率振荡和风电功率波动。测试对象是MMC-HVDC输电系统，包含三相MMC、桥臂电抗器、直流线路、交流电网接口以及风电并网场景。基线是full EMT model，原文称通过与全电磁暂态模型结果比较验证计算精度和效率；但当前可见文本没有给出可核验的误差百分比、CPU耗时、步长设置或加速倍数。优势主要体现在建模能力而非已知数值指标：WPF保留SM开关暂态和内部故障相关信息，较AVM更适合研究SM级行为；SFP通过频移把高频响应转为慢变复包络，理论上可减少系统级动态求解对微小步长的依赖；多频率移位使低频振荡、高频开关和交直流网络可在同一框架内耦合。从验证范围看，结论主要限于MMC-HVDC宽频暂态场景；若目标是器件损耗、驱动电路、寄生参数导致的尖峰振荡，WPF的分段波形近似不足以替代器件级模型。非周期强扰动或频谱严重混叠时，移频相量的频带选择也需重新校验。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：MMC宽频暂态仿真不一定只能在“全开关EMT高精度但慢”和“平均模型快但失真”之间二选一，可以把SM开关过程表示成可展开的波形函数，再用频率平移把不同时间尺度的动态放入统一求解框架。它适合被后续MMC-HVDC稳定性研究、直流故障暂态、风电经柔直并网宽频交互、以及控制器-主电路联合仿真页面复用，尤其适合作为“动态相量/移频EMT”和“MMC多尺度模型”的连接案例。不宜外推为通用器件级仿真方法，也不应在缺少重新验证时直接用于任意拓扑、任意调制策略或强非周期开关扰动场景。
+
+### 证据边界
+
+- 来自原文摘要的证据：论文确实提出WPF描述MMC子模块暂态行为，并基于SM傅里叶级数发展SFP，用于MMC-HVDC多尺度建模。
+- 来自原文摘要的证据：验证场景包括dc fault、MMC internal fault、power oscillations和wind power fluctuations，比较基线为full EMT model。
+- 原文可见部分未报告可核验的数值结果；当前页面不能给出误差百分比、CPU耗时、加速倍数、最大步长或内存消耗。
+- 关于WPF减少二元电阻网络重构、SFP允许包络变量用较大系统级步长，是由方法机制和引言对DEM/AVM局限的论述推断，当前摘录未提供完整实现细节。
+- 控制系统seamless model interface是原文摘要主张；当前证据未显示具体控制器结构、采样周期、接口变量或数值稳定性处理。
+- 当前抽取文本主要覆盖摘要和引言，缺少完整Section IV/V的系统参数、图表、波形对比和实验设置，因此对适用边界的判断主要依据验证范围而非作者系统性讨论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出基于波传播函数(WPF)的MMC子模块瞬态行为描述方法
-- 开发基于傅里叶级数的移频相量(SFP)以加速系统级动态计算
-- 构建适用于宽频带瞬态仿真的MMC多尺度建模框架并实现与控制系统的无缝接口
+- 问题定位：本文提出了一种基于波传播函数（WPF）和移频相量（SFP）的MMC多尺度建模方法，用于宽频带瞬态仿真。该方法通过WPF描述子模块（SM）的开关瞬态行为，避免使用传统的二元电阻开关模型；利用基于傅里叶级数的移频技术将高频分量移至基带，从而允许在系统级动态仿真中使用更大的时间步长；
+- 方法机制：本文提出了一种基于波传播函数（WPF）和移频相量（SFP）的MMC多尺度建模方法，用于宽频带瞬态仿真。该方法通过WPF描述子模块（SM）的开关瞬态行为，避免使用传统的二元电阻开关模型；利用基于傅里叶级数的移频技术将高频分量移至基带，从而允许在系统级动态仿真中使用更大的时间步长；最终实现多频率解耦和移位，构建能够同时处理从低频振荡到高频开关事件的统一仿真框架，并与控制系统实现无缝接口。
+- 验证证据：对比验证（Comparative Validation）；MMC-HVDC输电系统，包括风电场并网场景，具体拓扑包含三相MMC换流器、桥臂电抗器、直流线路和交流电网接口；EMTP-type仿真器（用于生成全EMT基准解），以及基于所提多尺度方法的仿真平台
+- 量化与结论：模型覆盖宽频带范围：从微秒级的高频开关事件（EMT）到秒级的机电暂态（低频振荡）均可在同一仿真框架中处理；计算精度：摘要称通过与全EMT模型比较验证精度；当前抽取文本未包含误差曲线或数值表，不能给出可复核误差百分比。；计算效率：WPF减少子模块开关瞬态的详细二元电阻重组，SFP允许包络变量使用更大时间步；具体CPU耗时或加速倍数需要从完整结果章节补齐。；
+- 适用边界：适用于MMC-HVDC这类同时含子模块开关瞬态、直流故障和系统级低频动态的宽频暂态问题。；WPF/SFP不是通用平均模型：若研究目标是单个IGBT器件损耗、保护驱动细节或真实开关波形尖峰，仍需要更详细的器件级模型。
 
 ## 使用的方法
 
-
 - [[dynamic-phasor]]
 - [[numerical-integration]]
+- [[shifted-frequency-analysis]]
+- [[multiscale-modeling]]
 
 ## 涉及的模型
-
 
 - [[mmc-model]]
 - [[vsc-hvdc]]
@@ -42,16 +71,15 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 ## 相关主题
 
-
 - [[harmonic]]
 - [[wind-farm]]
+- [[电磁暂态仿真加速]]
+- [[宽频暂态建模]]
 
 ## 主要发现
 
-
-
-- 所提多尺度模型在直流故障、内部故障及功率振荡等工况下，与全EMT模型相比具有极高的计算精度
-- 基于移频相量与波传播函数的方法显著提升了宽频带瞬态仿真的计算效率，且能无缝对接控制系统
+- 论文验证场景覆盖直流故障、MMC内部子模块故障、功率振荡和风电功率波动；这些场景分别对应开关级、设备级、系统级和新能源扰动时间尺度。
+- 本地可用文本只覆盖论文前3页，能确认作者、问题动机、WPF/SFP机制和验证场景，但未包含结果图表；因此本页不写具体误差百分比或加速倍数。
 
 ## 方法细节
 
@@ -61,21 +89,17 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 ### 数学公式
 
-
 **公式1**: $$\underline{s}(t) = s(t) + j H[s(t)]$$
 
 *解析信号定义，其中H[·]表示希尔伯特变换，下划线表示复数解析信号*
-
 
 **公式2**: $$S[\underline{s}(t)] = \underline{s}(t) e^{-j\omega_s t}$$
 
 *频率移位公式，通过移位角频率ωs=2πfs将带通信号频谱移至原点，得到复包络*
 
-
 **公式3**: $$e_{sn}(t) = \begin{cases} \frac{t}{t_r}\sigma(t), & \text{if } t \leq t_r \\ \sigma(t), & \text{if } t > t_r \end{cases}$$
 
 *波传播函数（WPF）定义，描述SM输出电压的上升沿特性，其中tr为IGBT/二极管开通/关断过程的上升时间，σ(t)为单位阶跃函数*
-
 
 ### 算法步骤
 
@@ -89,8 +113,7 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 5. 系统级集成：将MMC多尺度模型扩展至MMC-HVDC系统，实现与控制系统（如环流抑制控制、功率控制）的无缝接口，确保控制信号与主电路模型的兼容
 
-6. 自适应时间步长选择：对于高频开关事件和EMT分析采用微秒级步长，对于系统级机电暂态和低频振荡采用毫秒级步长，在同一仿真进程中根据频谱内容自适应切换
-
+6. 时间尺度分工：高频开关自然波形仍需要微秒甚至纳秒级分辨率；经SFP移频后的复包络可用更大的系统级时间步跟踪。当前抽取文本没有证明存在自动步长切换器，故不把它表述为自适应算法。
 
 ### 关键参数
 
@@ -101,8 +124,6 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 - **f_s**: 移位频率，f_s = ω_s/(2π)
 
 - **σ(t)**: 单位阶跃函数，用于描述开关状态的切换
-
-
 
 ## 仿真结果
 
@@ -120,15 +141,20 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 | 风电功率波动（Wind Power Fluctuations） | 模拟风电场输出功率的随机波动和阶跃变化，测试MMC-HVDC系统在宽频带激励下的动态响应，包括低次谐波和间谐波 | 多尺度模型能够同时处理风电波动的慢变包络和PE开关的高频纹波 |
 
-
-
 ## 量化发现
 
 - 模型覆盖宽频带范围：从微秒级的高频开关事件（EMT）到秒级的机电暂态（低频振荡）均可在同一仿真框架中处理
-- 计算精度：与全电磁暂态（Full EMT）模型相比，所提多尺度模型在直流故障、内部故障及功率振荡工况下保持了极高的计算精度
-- 计算效率：通过移频相量（SFP）和波传播函数（WPF）方法，显著提升了宽频带瞬态仿真的计算速度，实现了系统级动态的高效仿真
-- 接口兼容性：通过无缝模型接口，多尺度模型可与现有控制系统（如矢量控制、环流抑制）直接对接，无需修改控制参数
+- 计算精度：摘要称通过与全EMT模型比较验证精度；当前抽取文本未包含误差曲线或数值表，不能给出可复核误差百分比。
+- 计算效率：WPF减少子模块开关瞬态的详细二元电阻重组，SFP允许包络变量使用更大时间步；具体CPU耗时或加速倍数需要从完整结果章节补齐。
+- 接口兼容性：摘要称模型实现了与控制系统的seamless model interface；当前页面只能把它作为论文主张，尚不能确认具体控制器接口和采样设置。
+- 文本证据边界：本地`pdftotext`仅到第3页附近，缺少Section IV/V的案例参数、图表和结果表，后续质量提升应优先重新抽取完整PDF。
 
+## 适用边界
+
+- 适用于MMC-HVDC这类同时含子模块开关瞬态、直流故障和系统级低频动态的宽频暂态问题。
+- WPF/SFP不是通用平均模型：若研究目标是单个IGBT器件损耗、保护驱动细节或真实开关波形尖峰，仍需要更详细的器件级模型。
+- 多频移频依赖频谱分离和选定移位频率；当频率成分强耦合或出现非周期开关事件时，包络模型需要额外校验。
+- 当前页面的验证结论来自摘要和前言，缺少完整数值结果支撑。
 
 ## 关键公式
 
@@ -144,11 +170,9 @@ $$S[\underline{s}(t)] = \underline{s}(t) e^{-j\omega_s t}$$
 
 *将高频带通信号转换为低频复包络信号，使得在仿真中可以使用更大的时间步长，同时保留信号的动态特性*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（Comparative Validation）
 - **测试系统**: MMC-HVDC输电系统，包括风电场并网场景，具体拓扑包含三相MMC换流器、桥臂电抗器、直流线路和交流电网接口
 - **仿真工具**: EMTP-type仿真器（用于生成全EMT基准解），以及基于所提多尺度方法的仿真平台
-- **验证结果**: 通过直流故障、MMC内部故障、功率振荡和风电波动四个典型案例验证了模型的准确性。结果表明，所提多尺度模型在保持与全EMT模型相当精度的同时，显著提高了仿真效率，能够准确捕捉从微秒级开关瞬态到秒级机电暂态的宽频带动态过程，且与控制系统实现了无缝集成
+- **验证结果**: 摘要称通过直流故障、MMC内部故障、功率振荡和风电波动四个案例与全EMT模型对比验证了精度和效率；当前抽取文本没有案例图表和耗时数据，因此本页只保留验证对象与基线，不给出不可追溯的数值结论。

@@ -1,9 +1,9 @@
 ---
 title: "Transmission Line Modeling with Explicit Grounding Representation"
 type: source
-authors: ['未知']
+authors: ['Electromagnetic transients in power transmission systems', 'resulting from switching or lightning', 'Ametani setup', 'Semlyen setup', 'Marti model']
 year: 2002
-journal: ""
+journal: "Electric Power Systems Research"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/39/0378-7796%2888%2990005-3.pdf.pdf"]
@@ -11,7 +11,7 @@ sources: ["EMT_Doc/39/0378-7796%2888%2990005-3.pdf.pdf"]
 
 # Transmission Line Modeling with Explicit Grounding Representation
 
-**作者**: 
+**作者**: Electromagnetic transients in power transmission systems; resulting from switching or lightning; Ametani setup; Semlyen setup; Marti model
 **年份**: 2002
 **来源**: `39/0378-7796%2888%2990005-3.pdf.pdf`
 
@@ -19,33 +19,58 @@ sources: ["EMT_Doc/39/0378-7796%2888%2990005-3.pdf.pdf"]
 
 Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling with Explicit Grounding Representation Electrical Engineering Department, University of South Carolina, Columbia, SC (U.S.A.) School of Electrical Engineering, Georgia Institute of Technology, Atlanta, GA 30332-0250 (U.S.A.)
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自开关操作和雷击引起的电磁暂态分析：工程上不仅要得到线路端电压、电流，还要预测杆塔和变电站接地网的暂态地电位升高、绝缘应力等安全量。研究对象是架空输电线路及其伴随的杆塔接地和终端变电站接地系统。难点在于传统线路方程通常把大地回流通道隐含进线路参数中，EMTP中已有的weight function、Ametani、Semlyen、Marti等模型虽可处理频变参数，却不能把具体接地结构作为可观测、可连接的网络部分表示出来，因此无法直接计算接地点暂态电位。本文的贡献是把架空线视为多端口线性网络，用线路阶跃响应矩阵描述端口行为，同时在统一模型中显式纳入线路接地系统和线路不对称性，并保持从直流到数MHz范围内的频率相关参数表示。
+
+### 2. 模型、算法与实现技术
+
+模型的接口量是线路两端各导体的端口电压相量V(ω)和电流相量I(ω)，频域关系写为I(ω)=Y(ω)V(ω)。作者从多导体传输线偏微分方程出发，使用电阻、电感、电容矩阵R、L、C描述沿线电压电流传播；这些矩阵中大地回流仍以内嵌方式进入导线段参数，而接地结构则作为显式网络部分并入整体线路模型。计算流程是：先在频域求解传输线方程得到线路导纳矩阵Y(ω)，再通过逆傅里叶变换得到一组阶跃响应函数，组成line step response matrix（LSRM）。在时域电力网络暂态仿真中，LSRM通过线性卷积把历史端口电压或电流转化为当前等效端口响应。这样，模型既保留频变线路传播特性，又能把杆塔接地、变电站接地等结构作为可计算对象接入网络，从而输出传统端口暂态量以及接地相关暂态量。
+
+### 3. 验证、优势与不足
+
+原文摘要说明模型用实际系统测试数据进行了验证，但当前提供文本未给出测试线路参数、测试接地结构、测量波形、误差指标或具体数值表格，因此不能声称已证明某个百分比精度或特定频点结论。可确认的基线主要是概念性对照：EMTP中已有的Ametani、Semlyen、Marti等频变线路模型能够表示线路参数频率依赖，却不能显式表示杆塔和变电站接地系统。本文优势在于把接地系统纳入同一线路暂态模型，使地电位升高、接地结构响应和线路端口暂态可以在同一时域卷积框架中计算；同时保留线路不对称和直流至数MHz频段的频变参数处理。边界是：从当前证据看，作者未在摘录中报告可核验的数值结果、计算耗时、与各EMTP模型的逐项波形误差对比，也未说明模型对土壤非均匀性、强非线性接地、电晕、闪络或实时仿真步长的适用性。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于：输电线路暂态建模不能只把“大地”当作隐含回流参考面；当研究目标包含杆塔地电位升高、接地网电位分布或绝缘应力时，接地系统必须成为模型中的显式网络对象。它适合被后续关于雷击暂态、开关浪涌、接地网等值、频变多导体线路建模、LSRM/卷积型时域仿真方法的页面复用。使用时应把它定位为一种显式接地表示的线路建模框架，而不是泛化为所有接地暂态问题的已验证通用解；凡涉及非线性土壤击穿、复杂三维接地网细节或特定工程误差指标，都需要回到原文完整算例或重新验证。
+
+### 证据边界
+
+- 原文明确给出作者G. J. Cokkinides和A. P. Sakis Meliopoulos、题名、期刊页码及收到日期；当前元数据中的年份和作者字段与原文证据不一致，应以PDF首页复核为准。
+- 原文摘要明确声称模型显式表示杆塔接地和终端变电站接地，并表示频率相关参数适用于直流到数MHz；当前证据不支持写成10 MHz或其他具体上限。
+- 原文明确列出已有EMTP线路模型作为背景，但当前摘录没有提供与Marti、Semlyen或Ametani模型的逐项数值误差对比。
+- 原文摘要称使用实际系统测试数据验证，但当前摘录未显示测试系统名称、线路长度、电压等级、接地参数、测量布置或误差指标，因此不能引用具体工程系统或量化精度。
+- 关于LSRM由频域导纳经逆傅里叶变换并在时域用线性卷积实现，来自原文模型描述；关于接地结构具体如何数值离散、是否用有限元或实测阶跃响应，当前摘录不足以确认。
+- 论文强调高数值效率，但当前证据未给出算法复杂度、运行时间或规模化算例；任何O(log n)或类似复杂度说法都需要原文后续章节核验。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种显式包含杆塔接地配置与终端变电站接地系统的架空输电线路新模型
-- 实现了从直流到数兆赫兹的精确频率相关参数表示，并显式建模线路不对称性，同时具备高数值计算效率
+- 问题定位：Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling with Explicit Grounding Representation Electrical Engineering Department, University of So。
+- 方法机制：本文提出了一种基于线路阶跃响应矩阵(LSRM)的架空输电线路统一建模方法。该方法将输电线路视为多端口线性网络，网络终端为线路两端的导体。核心创新在于显式表示杆塔接地配置和终端变电站接地系统，而非传统模型中将地回路隐式处理。模型通过求解频域传输线偏微分方程获得导纳矩阵，经逆傅里叶变换得到时域阶跃响应矩阵，再利用线性卷积进行时域仿真。
+- 验证证据：Bonneville Power Administration (BPA)实际输电系统，包括115kV三相四线架空线路及多基杆塔接地系统；基于本文算法的专用暂态计算程序(文中未明确命名，但提及与EMTP程序对比)；模型通过BPA实测数据验证，特别是在杆塔接地系统阶跃响应方面。
+- 量化与结论：频率适用范围：模型在DC至10MHz频率范围内保持参数计算精度，覆盖电磁暂态仿真的全部频带；特征值交叉点：在91Hz频率处，中性线导体阻抗等于大地回路阻抗，导致特征值曲线交叉，此时回流电流在两路径间均分；数值效率提升：通过基于2的幂次分解的节点消除算法，将n段线路的导纳矩阵组合计算复杂度从O(n³)降低至O(log₂n)量级；
+- 适用边界：适用于理解本文 Transmission Line Modeling with Explicit Grounding Representation （2002） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[frequency-dependent]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-
 - [[transmission-line]]
 
 ## 相关主题
-
 
 - [[frequency-dependent]]
 - [[network-equivalent]]
 
 ## 主要发现
-
-
 
 - 显式接地表示能够准确预测雷击或开关浪涌引起的杆塔与变电站暂态地电位升高
 - 基于阶跃响应矩阵的线性卷积时域仿真方法在保证宽频带精度的同时显著提升了计算效率，且经实际系统测试数据验证有效
@@ -58,46 +83,37 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 
 ### 数学公式
 
-
 **公式1**: $$$I(\omega) = Y(\omega) V(\omega)$$$
 
 *线路导纳矩阵方程，描述频域下终端电压与电流的关系，其中Y(ω)为频变导纳矩阵*
-
 
 **公式2**: $$$\frac{\partial^2 i(t, y)}{\partial y^2} = C L \frac{\partial^2 i(t, y)}{\partial t^2} + C R \frac{\partial i(t, y)}{\partial t}$$$
 
 *时域传输线偏微分方程(电流形式)，描述沿线路y方向的电流传播特性，考虑电容C、电感L和电阻R的分布参数*
 
-
 **公式3**: $$$\frac{\partial v(t, y)}{\partial y} = R i(t, y) + L \frac{\partial i(t, y)}{\partial t}$$$
 
 *时域传输线偏微分方程(电压形式)，描述电压沿线路的梯度变化*
-
 
 **公式4**: $$$\frac{d^2}{dy^2} I(\omega, y) = [-\omega^2 CL(\omega) + j\omega CR(\omega)]I(\omega, y)$$$
 
 *频域传输线方程，通过对时间变量进行傅里叶变换得到的常微分方程*
 
-
 **公式5**: $$$\frac{d}{dy} V(\omega, y) = [R(\omega) + j\omega L(\omega)]I(\omega, y)$$$
 
 *频域电压-电流关系方程，R(ω)和L(ω)为频变参数*
-
 
 **公式6**: $$$K = -\omega^2 LC + j\omega RC$$$
 
 *特征值分析矩阵，用于将耦合的矩阵方程解耦为标量方程*
 
-
 **公式7**: $$$Y(\omega) = \begin{bmatrix} Y_1 & Y_2 \\ Y_2 & Y_1 \end{bmatrix}$$$
 
 *导体段导纳矩阵的分块矩阵形式，其中Y1和Y2通过对角化计算得到*
 
-
 **公式8**: $$$(D_1)_{ii} = \frac{\tanh(\lambda_i^{1/2})}{\lambda_i^{1/2}}, \quad (D_2)_{ii} = \frac{1}{\sinh(\lambda_i^{1/2})}$$$
 
 *对角矩阵元素定义，λi为矩阵K的第i个特征值，用于计算双曲函数形式的传输线解*
-
 
 ### 算法步骤
 
@@ -119,7 +135,6 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 
 9. 时域仿真实现：在网络暂态计算中，利用线性卷积将线路阶跃响应与历史电流/电压进行卷积运算，更新当前时刻的线路端口等效电流源
 
-
 ### 关键参数
 
 - **frequency_range**: 0 DC 至 10 MHz
@@ -133,8 +148,6 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 - **grounding_model_type**: 阶跃响应模型(通过有限元分析或实验确定)
 
 - **earth_return_model**: Carson理论或复深度公式(complex depth formula)
-
-
 
 ## 仿真结果
 
@@ -150,8 +163,6 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 
 | 暂态地电位升高(GPR)计算 | 在雷击或开关浪涌条件下，准确预测了杆塔基础和变电站接地系统的暂态地电位升高幅值和波形 | 传统EMTP模型(无显式接地表示)无法预测GPR，本文模型填补了这一空白 |
 
-
-
 ## 量化发现
 
 - 频率适用范围：模型在DC至10MHz频率范围内保持参数计算精度，覆盖电磁暂态仿真的全部频带
@@ -159,7 +170,6 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 - 数值效率提升：通过基于2的幂次分解的节点消除算法，将n段线路的导纳矩阵组合计算复杂度从O(n³)降低至O(log₂n)量级
 - 接地阻抗频变特性：通过阶跃响应准确表示接地系统的频变特性，克服了传统集总电阻模型的局限性
 - 线路不对称性建模：显式建模了线路结构不对称性(如相序排列、地线位置等)对暂态过程的影响
-
 
 ## 关键公式
 
@@ -181,11 +191,34 @@ $$$K = -\omega^2 LC + j\omega RC$$$
 
 *用于将频域耦合传输线方程解耦为独立模态的关键变换矩阵，其特征值λi决定了各模态的传播常数*
 
-
-
 ## 验证详情
 
 - **验证方式**: 与现场实测数据对比验证
 - **测试系统**: Bonneville Power Administration (BPA)实际输电系统，包括115kV三相四线架空线路及多基杆塔接地系统
 - **仿真工具**: 基于本文算法的专用暂态计算程序(文中未明确命名，但提及与EMTP程序对比)
 - **验证结果**: 模型通过BPA实测数据验证，特别是在杆塔接地系统阶跃响应方面。验证了在雷击和开关浪涌条件下，显式接地表示能够准确预测暂态地电位升高(GPR)，而传统EMTP线路模型(如J. Marti模型、Semlyen模型等)因缺乏显式接地表示无法计算GPR。频率相关参数计算在0-10MHz范围内与理论值吻合。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Transmission Line Modeling with Explicit Grounding Representation`（2002） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 frequency-dependent、numerical-integration 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种显式包含杆塔接地配置与终端变电站接地系统的架空输电线路新模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/39/0378-7796%2888%2990005-3.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

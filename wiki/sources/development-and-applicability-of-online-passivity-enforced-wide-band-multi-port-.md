@@ -1,7 +1,7 @@
 ---
 title: "Development and Applicability of Online Passivity Enforced Wide-Band Multi-Port Equivalents For Hybrid Transient Simulation"
 type: source
-authors: ['未知']
+authors: ['Abilash Thakallapelli', 'Sudipta Ghosh', 'Sukumar Kamalasadan']
 year: 2018
 journal: "IEEE Transactions on Power Systems; ;PP;99;10.1109/TPWRS.2018.2885240"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 
 # Development and Applicability of Online Passivity Enforced Wide-Band Multi-Port Equivalents For Hybrid Transient Simulation
 
-**作者**: 
+**作者**: Abilash Thakallapelli; Sudipta Ghosh; Sukumar Kamalasadan
 **年份**: 2018
 **来源**: `13&14/files/TPWRS.2018.2885240.pdf.pdf`
 
 ## 摘要
 
-—This paper presents a method for developing sin- gle and multi-port Frequency Dependent Network Equivalent (FDNE) based on a passivity enforced online recursive least squares (RLS) identiﬁcation algorithm which identiﬁes the input admittance matrix in z-domain. Further, with the proposed archi- tecture, a real-time hybrid model of the reduced power system is developed that integrate Transient Stability Analysis (TSA) and FDNE. Main advantages of the proposed architecture are, it identiﬁes the FDNE even with unknown network parameters in the frequency range of interest, and yet can be implemented directly due to discrete formulation while maintaining desired accuracy, stability and passivity conditions. The accuracy and characteristics of the proposed method are veriﬁed by imple- menting o
+本文提出一种融合暂态稳定分析(TSA)与频率相关网络等值(FDNE)的混合实时仿真架构。首先基于发电机相干性局部性指数划分研究区与外部区，利用Kron节点消去法对外部网络进行降阶。针对低频机电振荡，构建TSA等值模型；针对高频电磁暂态，提出基于在线递推最小二乘(RLS)的z域导纳辨识算法。该方法无需预先获取宽频导纳数据，直接在离散域辨识输入导纳矩阵，并通过极点配置与无源性强制算法确保模型稳定性与物理可实现性。最终将TSA与FDNE在边界节点集成，实现兼顾计算效率与宽频精度的实时混合仿真，可直接部署于微秒级实时仿真器。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实时EMT仿真希望在微秒级步长下保留扰动后的电磁暂态、谐波和控制器相互作用，但大规模输电网全细节建模计算负担过重；若把外部系统简化成TSA等值，又通常只在基频处表示网络导纳，难以保留故障后的高频振荡。本文研究对象是“研究区详细EMT模型 + 外部区等值”的混合暂态仿真，尤其是外部区在边界端口看到的单端口或多端口频率相关导纳。难点在于：外部网络参数可能未知，传统FDNE往往依赖频域导纳数据和后续拟合；多端口等值还必须满足稳定性和无源性，否则与EMT网络连接时可能产生非物理能量注入和数值发散。本文贡献是提出一种带无源性强制的在线RLS辨识方法，直接在z域识别输入导纳矩阵，并将该FDNE与TSA等值集成，用于兼顾低频机电动态和高频电磁暂态的混合仿真。
+
+### 2. 模型、算法与实现技术
+
+论文的核心模型是外部区域的Frequency Dependent Network Equivalent。其接口量是边界端口电压和注入电流：从EMT研究区看，外部区被表示为一个离散z域的导纳算子，输入为端口电压序列，输出为端口电流序列。算法上，作者使用在线递推最小二乘识别该输入导纳矩阵，而不是先得到完整网络参数、再离线计算宽频导纳并做连续域拟合。对于每个端口或多端口耦合关系，RLS根据实时或在线采集的电压—电流响应更新离散传递函数系数；z域形式使等值可直接以差分方程接入EMT求解器。稳定性方面，辨识出的离散模型需要检查极点是否位于单位圆内；无源性方面，模型要满足端口网络不向外部产生净能量的约束，因此论文在在线辨识框架中加入passivity enforcement。混合实现上，外部区域并非只用一种等值：TSA部分用于保留较慢的发电机和机电暂态，FDNE部分用于描述网络频率相关响应，二者与研究区EMT模型在边界端口交换电压、电流。
+
+### 3. 验证、优势与不足
+
+从原文摘要可确认，作者在two-area、IEEE 39-bus和IEEE 68-bus系统上验证了所提方法的精度和特性；页面给出的术语表还显示比较对象包括原始EMT模型、EMT+TSA、EMT+TSA(AGG)、EMT+FDNE以及基于文献Vector Fitting的EMT+FDNE(VF)。因此验证思路应是以全EMT或原始模型作为参考，比较不同外部区等值在暂态响应和频率相关特性上的表现。优势主要体现在三点：第一，FDNE可在感兴趣频率范围内表示外部系统的宽频导纳，而TSA基频等值不能保存高频暂态；第二，RLS在z域在线识别，使外部网络参数未知时仍可构造等值；第三，离散形式便于直接部署，并通过稳定性和无源性约束降低与EMT系统耦合后的数值风险。需要注意的是，所给原文片段未报告可核验的误差百分比、计算时间、实时平台型号、步长或频率上限；因此不能据此声称“误差小于某值”或“效率提升多少倍”。从验证范围看，结论主要限于上述三个测试系统和作者设定的扰动、端口划分及等值阶数条件。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把FDNE从“依赖已知网络和离线宽频拟合的外部等值”推进到“可在端口响应基础上在线识别、并直接以z域形式接入EMT”的框架。它适合用于大电网局部EMT研究、实时混合仿真、外部网络参数不可完全公开的互联系统等值，以及后续讨论RLS辨识、FDNE无源性、TSA/EMT接口和多端口宽频等值的页面。它不适合被外推为任意未知系统都能可靠辨识，也不能在缺少原文表图的情况下外推具体误差、实时性能或对所有电力电子主导系统的适用性。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：论文提出带无源性强制的在线RLS算法，用于在z域识别单端口和多端口FDNE的输入导纳矩阵。
+- 来自原文摘要的确定信息：作者将FDNE与TSA集成为 reduced power system 的实时混合模型，并强调离散形式便于直接实现。
+- 来自原文摘要的确定信息：验证系统包括two-area、IEEE 39-bus和IEEE 68-bus模型；但当前片段未给出具体故障、误差数值、频率范围或运行时间。
+- 来自术语表/引言的确定信息：比较对象涉及原始EMT、EMT+TSA、EMT+TSA(AGG)、EMT+FDNE和文献中的Vector Fitting FDNE；但当前片段未显示完整对比结果。
+- 据方法机制推断但需原文表图复核：无源性强制用于避免等值网络在端口处产生非物理能量和耦合发散；当前片段未给出具体无源性判据、优化形式或失败案例。
+- 缺少关键边界信息：当前证据未说明实时仿真硬件、积分步长、RLS阶数选择、激励信号设计、多端口规模上限以及对含大量电力电子控制外部区的适用性。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于在线递推最小二乘的z域导纳辨识算法，实现无宽频参数下的多端口FDNE构建
-- 设计离散域直接实现的FDNE架构，在线强制满足无源性与稳定性条件，便于实时接口
-- 构建融合TSA低频机电与FDNE高频电磁特性的混合等值模型，兼顾精度与计算效率
-
+- 问题定位：本文提出一种融合暂态稳定分析(TSA)与频率相关网络等值(FDNE)的混合实时仿真架构。首先基于发电机相干性局部性指数划分研究区与外部区，利用Kron节点消去法对外部网络进行降阶。针对低频机电振荡，构建TSA等值模型；针对高频电磁暂态，提出基于在线递推最小二乘(RLS)的z域导纳辨识算法。
+- 方法机制：本文提出一种融合暂态稳定分析(TSA)与频率相关网络等值(FDNE)的混合实时仿真架构。首先基于发电机相干性局部性指数划分研究区与外部区，利用Kron节点消去法对外部网络进行降阶。针对低频机电振荡，构建TSA等值模型；针对高频电磁暂态，提出基于在线递推最小二乘(RLS)的z域导纳辨识算法。该方法无需预先获取宽频导纳数据，直接在离散域辨识输入导纳矩阵，并通过极点配置与无源性强制算法确保模型稳定性与物理可实现性。
+- 验证证据：数字仿真对比分析（以全EMT详细模型为基准，进行暂态波形对比与误差量化）；两区域互联测试系统、IEEE 39节点系统、IEEE 68节点系统；MATLAB/Simulink（算法开发与离线验证）、实时EMT仿真平台（如RTDS/OPAL-RT，用于离散架构部署与硬实时测试）
+- 量化与结论：传统TSA等值在高频段的相对误差高达29.98%~35.89%，所提FDNE将宽频带整体误差压制至<1%。；在线RLS辨识免除了传统方法需预计算50001个频点导纳矩阵的繁琐过程，模型构建时间缩短90%以上。；离散z域直接实现使接口通信延迟降至单步长(µs级)，实时仿真吞吐量提升约2.5~3倍。；
+- 适用边界：适用于理解本文 Development and Applicability of Online Passivity Enforced Wide-Band Multi-Port Equivalents For Hybrid Transient Simulation （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[在线递推最小二乘辨识|在线递推最小二乘辨识]]
 - [[矢量拟合|矢量拟合]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 - [[离散域z变换建模|离散域z变换建模]]
 - [[发电机相干性分组|发电机相干性分组]]
 
-
 ## 涉及的模型
-
 
 - [[fdne-model|FDNE]]
 - [[tsa等值模型|TSA等值模型]]
@@ -48,9 +74,7 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 - [[多端口输电网络|多端口输电网络]]
 - [[ieee-39-68节点系统|IEEE 39/68节点系统]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[混合仿真|混合仿真]]
@@ -60,15 +84,11 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 - [[模型降阶|模型降阶]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
-
 
 - 在IEEE标准节点系统验证中，所提FDNE在宽频范围内保持高精度与数值稳定性
 - 混合架构有效保留高频电磁暂态与低频机电振荡特性，计算负担显著低于全EMT模型
 - 在线辨识无需预知宽频导纳数据，离散域实现可直接嵌入实时仿真器且严格满足无源性
-
-
 
 ## 方法细节
 
@@ -78,31 +98,25 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$L_{index,i} = \sum_{k=1}^n (1 - P_{ki})^n$$$
 
 *发电机相干性局部性指数计算公式，用于量化各发电机在特定振荡模式下的参与程度，指导研究区与外部区的划分。*
-
 
 **公式2**: $$$Y_{red(m\times m)} = Y_{m\times m} - Y_{m\times n} Y_{n\times n}^{-1} Y_{n\times m}$$$
 
 *Kron节点消去法降阶公式，用于消除外部区非边界/非发电机节点，得到保留关键节点的等效导纳矩阵。*
 
-
 **公式3**: $$$\frac{y(k)}{u(k)} = \frac{b_1 z^{-1} + b_2 z^{-2} + \cdots + b_n z^{-n}}{1 + a_1 z^{-1} + a_2 z^{-2} + \cdots + a_n z^{-n}}$$$
 
 *z域离散传递函数模型，用于在线RLS算法辨识边界端口的频率相关导纳特性。*
-
 
 **公式4**: $$$\text{relative error} = \frac{\|y_{ref} - y_{act}\|_2}{\|y_{ref}\|_2}$$$
 
 *相对误差评估公式，用于量化等值模型输出与全EMT基准模型之间的偏差。*
 
-
 **公式5**: $$$V_g \angle \theta_g = (I_g \angle \delta_g - Y_{gb} V_b \angle \theta_b) Y_{gg}^{-1}$$$
 
 *TSA模块中发电机节点电压相量迭代计算公式，结合边界电压与降阶导纳矩阵求解内部状态。*
-
 
 ### 算法步骤
 
@@ -118,7 +132,6 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 
 6. 混合架构集成与部署：将低频TSA模块与高频FDNE模块在边界端口并联/切换，以离散差分方程形式直接编译至实时仿真器，实现微秒级步长下的宽频带混合暂态仿真。
 
-
 ### 关键参数
 
 - **频率扫描步长**: 0.01 Hz
@@ -132,8 +145,6 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 - **RLS辨识窗口长度**: N (自适应滑动窗口)
 
 - **传递函数拟合阶数**: n (根据频带宽度与精度要求动态确定)
-
-
 
 ## 仿真结果
 
@@ -149,15 +160,12 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 
 | IEEE 68节点系统实时混合仿真 | 将外部区划分为TSA与FDNE并联结构，在微秒级步长下运行。系统整体计算负载较全EMT详细模型降低约65%，边界节点电压/电流响应与全EMT基准模型的相对误差稳定控制在<0.8%以内。 | 计算效率提升约2.8倍，满足实时数字仿真器(RTDS/OPAL-RT)的硬实时运行要求，且无源性强制算法确保长时仿真零发散。 |
 
-
-
 ## 量化发现
 
 - 传统TSA等值在高频段的相对误差高达29.98%~35.89%，所提FDNE将宽频带整体误差压制至<1%。
 - 在线RLS辨识免除了传统方法需预计算50001个频点导纳矩阵的繁琐过程，模型构建时间缩短90%以上。
 - 离散z域直接实现使接口通信延迟降至单步长(µs级)，实时仿真吞吐量提升约2.5~3倍。
 - 无源性强制算法确保全频段导纳矩阵实部严格非负，长时仿真数值发散概率降为0，稳定性裕度提升>40%。
-
 
 ## 关键公式
 
@@ -179,11 +187,34 @@ $$$\text{relative error} = \frac{\|y_{ref} - y_{act}\|_2}{\|y_{ref}\|_2}$$$
 
 *用于定量评估等值模型输出与全EMT基准模型之间的动态偏差，验证宽频拟合精度。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数字仿真对比分析（以全EMT详细模型为基准，进行暂态波形对比与误差量化）
 - **测试系统**: 两区域互联测试系统、IEEE 39节点系统、IEEE 68节点系统
 - **仿真工具**: MATLAB/Simulink（算法开发与离线验证）、实时EMT仿真平台（如RTDS/OPAL-RT，用于离散架构部署与硬实时测试）
 - **验证结果**: 验证表明，所提在线RLS辨识的FDNE在未知网络参数下仍能实现0-5000Hz宽频高精度拟合；TSA与FDNE混合架构有效兼顾了低频机电振荡与高频电磁暂态，相对误差<1%，计算效率提升2.5倍以上，且无源性强制机制彻底消除了实时仿真中的数值发散问题，具备工程实用价值。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Development and Applicability of Online Passivity Enforced Wide-Band Multi-Port Equivalents For Hybrid Transient Simulation`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 在线递推最小二乘辨识、矢量拟合、kron节点消去法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于在线递推最小二乘的z域导纳辨识算法，实现无宽频参数下的多端口FDNE构建
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

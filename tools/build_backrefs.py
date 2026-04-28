@@ -9,6 +9,13 @@ import os
 import re
 
 
+def normalize_wikilink(link):
+    """Return page slug from [[slug]] or [[slug|label]]."""
+    target = link.split('|', 1)[0].strip()
+    target = target.rsplit('/', 1)[-1]
+    return target
+
+
 def collect_wikilinks(source_dir='wiki/sources'):
     """Collect all wikilinks from source files."""
     wikilinks = {}  # link -> [(title, year, filepath)]
@@ -27,9 +34,10 @@ def collect_wikilinks(source_dir='wiki/sources'):
         links = re.findall(r'\[\[([^\]]+)\]\]', body)
 
         for link in links:
-            if link not in wikilinks:
-                wikilinks[link] = []
-            wikilinks[link].append((title, year, filepath))
+            slug = normalize_wikilink(link)
+            if slug not in wikilinks:
+                wikilinks[slug] = []
+            wikilinks[slug].append((title, year, filepath))
 
     return wikilinks
 
@@ -65,7 +73,7 @@ def update_page(filepath, papers, page_slug):
     if re.search(ref_pattern, content):
         # Replace existing section
         content = re.sub(
-            r'## 来源论文\n\n.*',
+            r'## 来源论文\n\n.*?(?=\n## |\Z)',
             ref_section,
             content,
             flags=re.DOTALL

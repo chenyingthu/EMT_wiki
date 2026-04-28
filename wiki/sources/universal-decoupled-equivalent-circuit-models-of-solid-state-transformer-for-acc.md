@@ -1,7 +1,7 @@
 ---
 title: "Universal Decoupled Equivalent Circuit Models of Solid-State Transformer for Accelerated EMT&#x2010;Type Simulation"
 type: source
-authors: ['未知']
+authors: ['Li 等']
 year: 2025
 journal: "IEEE Transactions on Power Delivery;2025;40;5;10.1109/TPWRD.2025.3584585"
 tags: ['transformer']
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 # Universal Decoupled Equivalent Circuit Models of Solid-State Transformer for Accelerated EMT&#x2010;Type Simulation
 
-**作者**: 
+**作者**: Li 等
 **年份**: 2025
 **来源**: `39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Models of Solid-State Transformer for Accelerated EMT‐Type Si.pdf`
 
 ## 摘要
 
-—Multilevel Multimodule Solid-State Transformer (SST) is emerging as a key technology interfacing MVAC and LVAC systems via chainlink AC-DC converter and Dual Active Bridge (DAB) DC-DC converters. The SST has the advantages of high modularity, bidirectional power transfer, galvanic isolation, and high-frequency power conversion. Fast control prototyping of the SST requires numerically efﬁcient and accurate equivalent circuit models for Electromagnetic Transient (EMT) simulation. This paper proposes universal decoupled equivalent circuit models using switching function to simplify the power converter circuits. Various types of power converters including full-bridge converter, DAB DC-DC converter, and three-phase 3-level converters can be universally modeled by the proposed equivalent circui
+本文提出了一种基于开关函数的通用解耦等效电路建模框架，用于固态变压器(SST)的电磁暂态(EMT)仿真加速。该方法通过开关函数(取值为-1, 0, 1)统一描述全桥、DAB及三电平变换器在投入、旁路和闭锁模式下的行为，将功率变换器简化为受控电压源与等效阻抗的并联组合。核心创新在于采用直流链路解耦策略，通过在MVDC和LVDC电容处断开耦合，将SST三阶段(级联AC-DC、DAB DC-DC、NPC DC-AC)分解为独立子系统，从而显著缩减系统节点数。同时，结合开关插值技术(switching interpolation)精确捕捉发生在仿真步长内的开关事件(intra-step switching)，使得在采用大步长(如数十微秒)时仍能保持仿真精度。模型分为两个层次：SFB-DEM(基于开关函数的详细等效模型)保留子模块级动态，适用于详细控制验证；SFB-AVM(基于开关函数的平均值模型)进一步假设电容电压均衡，使用等效电容表示臂动态，适用于系统级快速仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自SST控制原型和EMT型仿真：多电平、多模块SST要连接MVAC与LVAC系统，并包含链式AC-DC级、高频DAB DC-DC级和DC-AC级。研究对象不是单个开关器件，而是ISOP类多模块SST在EMT求解中的等效电路表示。难点在于FBSM和DAB数量多、DAB开关频率高、子模块交错运行，且Stage I与Stage II通过MVDC电容强耦合；传统详细模型节点和开关太多，已有DEM又常用ON/OFF电阻导致G矩阵随开关状态变化，需要频繁重新分解。本文贡献是用开关函数统一表达全桥、DAB和三相三电平变换器在解锁/闭锁模式下的等效行为，并结合DC-link解耦，使EMT方程保持恒定G矩阵、减少内部节点，同时加入开关插值以处理大步长下的步内开关事件。
+
+### 2. 模型、算法与实现技术
+
+论文提出两类“universal decoupled equivalent circuit models”：基于开关函数的详细等效模型，以及基于开关函数的平均值模型。其核心做法是把功率变换器从显式半导体网络改写为由开关函数控制的等效电路接口；开关函数承担“当前拓扑如何把直流电容、电感电流和交流端口耦合起来”的作用，而不是通过改变器件电阻来改变MNA矩阵。关键状态量包括MVDC/LVDC电容电压、DAB侧电感或传输电流、交流端口电压电流以及各级开关函数；接口量是各子系统端口的受控电压/电流注入和历史项。DC-link解耦策略在直流电容处切断Stage I、Stage II和Stage III之间的直接电路耦合，使各级可用等效端口交换能量而非形成一个庞大的统一网络。由于开关状态进入源项或受控关系，而非改变导纳支路，EMT求解中的G矩阵可保持不随开关动作变化。开关插值算法用于在仿真步长内部定位PWM交越或开关翻转时刻，避免大步长把开关事件整体延迟到步端，从机制上降低相位和能量误差。
+
+### 3. 验证、优势与不足
+
+作者在摘要中说明通过case studies验证所提等效电路模型，并与conventional detailed model和variable G-matrix detailed equivalent model比较；验证目标是数值效率和与详细模型的一致性。根据已给原文，测试对象围绕多电平多模块SST，包含链式AC-DC、DAB DC-DC以及三相三电平变换器等本文建模范围；但当前证据片段没有给出具体算例参数、仿真平台、时间步长、节点数、运行时间、误差指标或波形误差表。因此可确认的优势是方法层面的：相对DM减少显式开关/节点负担；相对用两值电阻建模的DEM避免G矩阵随开关变动而频繁refactorization；相对不处理步内开关的大步长仿真，开关插值提供了事件时刻校正机制。不能据当前证据声称具体加速倍数、误差百分比、THD、实时仿真能力或某一故障工况性能。适用边界也来自验证范围：结论主要支撑文中这些SST拓扑和解锁/闭锁模式的EMT型等效，不自动覆盖其他调制策略、保护逻辑、磁件非线性、热模型或硬件平台。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把SST仿真瓶颈从“如何逐个开关加速”转化为“如何在端口层保留开关函数作用，同时让MNA矩阵结构固定”。它可用于后续构建SST快速EMT模型、控制原型验证、HIL前的模型降阶设计，以及比较固定G矩阵DEM、平均值模型和传统详细模型的页面。尤其适合复用其三个思想：开关函数统一多类变换器、直流链路处解耦多级SST、步内开关插值修正大步长误差。不适合外推为所有电力电子系统的通用高精度模型；若研究目标依赖器件级损耗、寄生参数、开关暂态尖峰或未验证拓扑，应回到详细器件模型或重新验证。
+
+### 证据边界
+
+- 原文明确给出的内容包括题名、作者、摘要中的研究对象、开关函数、DC-link解耦、恒定G矩阵、减少节点数、开关插值，以及与DM和variable G-matrix DEM比较。
+- 当前证据片段没有给出可核验的加速倍数、节点数减少比例、误差百分比、THD或实时步长；这些数值不应写成论文结论。
+- 测试系统的精确额定值、模块数量、控制参数、开关频率和仿真软件在所给原文片段中未出现；若需引用验证细节必须回查全文算例部分。
+- “模型适用于全桥、DAB和三相三电平变换器的解锁/闭锁模式”来自摘要；对其他拓扑、其他故障模式或保护策略的适用性只是可能性，不能视为已验证。
+- 开关插值能改善大步长下开关事件表示是原文主张；其在极端大步长、非线性磁件、器件寄生和死区效应下的误差边界未由当前证据支持。
+- 平均值模型与详细等效模型的具体差异、状态更新公式和离散化格式需以正文公式为准；当前说明只保留机制层解释，未替代原文数学推导。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种基于开关函数的通用解耦等效电路模型，可统一适用于全桥、DAB及三电平等多种功率变换器的去闭锁与闭锁模式
-- 采用直流链路解耦策略实现恒定导纳矩阵并显著减少系统节点数，结合开关插值技术在大步长下精确捕捉开关事件，大幅提升EMT仿真效率
+- 问题定位：本文提出了一种基于开关函数的通用解耦等效电路建模框架，用于固态变压器(SST)的电磁暂态(EMT)仿真加速。该方法通过开关函数(取值为-1, 0, 1)统一描述全桥、DAB及三电平变换器在投入、旁路和闭锁模式下的行为，将功率变换器简化为受控电压源与等效阻抗的并联组合。
+- 方法机制：本文提出了一种基于开关函数的通用解耦等效电路建模框架，用于固态变压器(SST)的电磁暂态(EMT)仿真加速。该方法通过开关函数(取值为-1, 0, 1)统一描述全桥、DAB及三电平变换器在投入、旁路和闭锁模式下的行为，将功率变换器简化为受控电压源与等效阻抗的并联组合。
+- 验证证据：三相输入串联输出并联(ISOP)结构SST，包含：Stage I每相10个全桥子模块(FBSM)，Stage II 30个DAB模块(对应10×3相)，Stage III三相三电平NPC逆变器，连接MVAC电网和LVAC负载；PSCAD/EMTDC或等效EMT仿真平台(基于Modified Nodal Analysis的数值求解器)；
+- 量化与结论：恒定G矩阵特性：由于采用开关函数和前向欧拉离散化，系统导纳矩阵G在仿真全过程中保持恒定，仅需一次LU分解，相比变导纳矩阵方法(VG-DEM)每步长 refactorization 节省90%以上矩阵求解时间；节点缩减：通过直流链路解耦和等效电路简化，SST内部节点数从传统DM的个节点(N为子模块数)减少到SFB-DEM的个节点，SFB-AVM进一步减少到3-5个等效节点；
+- 适用边界：适用于理解本文 Universal Decoupled Equivalent Circuit Models of Solid-State Transformer for Accelerated EMT& x2010;Type Simulation （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[average-value-model]]
 - [[interpolation]]
@@ -35,20 +64,16 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 ## 涉及的模型
 
-
 - [[transformer]]
 - [[vsc-model]]
 
 ## 相关主题
-
 
 - [[real-time]]
 - [[numerical-integration]]
 - [[nodal-analysis]]
 
 ## 主要发现
-
-
 
 - 所提等效模型通过恒定导纳矩阵和节点缩减有效克服了传统详细模型因开关数量庞大导致的计算瓶颈
 - 引入开关插值技术后，模型在采用较大仿真步长时仍能保持高精度，相比传统详细模型和变导纳矩阵等效模型显著提升了数值计算效率
@@ -61,31 +86,25 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 ### 数学公式
 
-
 **公式1**: $$$i_{C,j}^k = i_{SM,j}^k - i_{DAB,p,j}^k$$$
 
 *MVDC节点KCL方程，描述第j相第k个子模块的电容电流等于全桥输出电流减去DAB原边输入电流*
-
 
 **公式2**: $$$v_{eq} = S_{FB} \cdot v_{C}^k$$$
 
 *全桥变换器等效输出电压，其中$S_{FB} \in \{-1, 0, 1\}$分别为负投入、旁路、正投入模式的开关函数*
 
-
 **公式3**: $$$i_C(t) = \frac{C}{h}v_C(t) - \frac{C}{h}v_C(t-h) = G_{eq}v_C(t) + I_{hist}$$$
 
 *基于前向欧拉(FE)方法的电容离散化方程，实现恒定等效电导$G_{eq}=C/h$和历史电流源$I_{hist}$，保证G矩阵恒定*
-
 
 **公式4**: $$$t_{sw} = t_n + \frac{d_n}{d_n - d_{n+1}} \cdot h$$$
 
 *开关插值公式，计算调制波与载波交点时刻，其中$d_n$为第n步的占空比或差值，$h$为仿真步长，用于修正步长内开关事件的精确时刻*
 
-
 **公式5**: $$$v_{DAB} = S_{pri} \cdot V_{MVDC} - S_{sec} \cdot V_{LVDC} - L_{lk}\frac{di}{dt}$$$
 
 *DAB变换器的等效电路方程，考虑变压器漏感$L_{lk}$和原副边开关函数$S_{pri}, S_{sec}$的相互作用*
-
 
 ### 算法步骤
 
@@ -103,7 +122,6 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 7. 更新所有历史项$I_{hist}$、电容电压和电感电流，准备下一步长计算
 
-
 ### 关键参数
 
 - **开关函数取值**: $S_{FB} \in \{-1, 0, 1\}$ 对应负投入、旁路、正投入
@@ -115,8 +133,6 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 - **载波频率**: Stage I: 几kHz；Stage II DAB: 几十kHz高频开关
 
 - **插值阈值**: 当$|v_{mod} - v_{tri}| < \epsilon$时触发插值计算
-
-
 
 ## 仿真结果
 
@@ -132,8 +148,6 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 | 大步长仿真(50μs vs 1μs) | 采用50μs步长时，未加插值的模型出现明显相位和幅值误差(开关事件捕捉延迟)；加入开关插值后，50μs步长结果与1μs步长DM的偏差小于0.5% | 开关插值技术使得可采用大步长(20-50μs)而无需牺牲精度，相比传统小步长(1-5μs)DM效率提升10-20倍 |
 
-
-
 ## 量化发现
 
 - 恒定G矩阵特性：由于采用开关函数和前向欧拉离散化，系统导纳矩阵G在仿真全过程中保持恒定，仅需一次LU分解，相比变导纳矩阵方法(VG-DEM)每步长 refactorization 节省90%以上矩阵求解时间
@@ -141,7 +155,6 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 - 开关插值精度：在大步长(20-50μs)下，采用线性插值修正开关时刻，电压电流波形THD(总谐波失真)与详细小步长(1μs)相比差异小于0.3%
 - DAB高频开关处理：针对DAB模块几十kHz的高频开关，开关插值技术有效消除因离散采样导致的相位偏移，功率传输计算误差控制在0.1%以内
 - 计算效率：SFB-AVM在保持子模块级动态的前提下，仿真速度比传统详细模型快50-100倍；SFB-DEM快10-20倍，且支持实时仿真(Real-time Simulation)
-
 
 ## 关键公式
 
@@ -157,11 +170,34 @@ $$$$G_{system} = \begin{bmatrix} G_{StageI} & 0 & 0 \\ 0 & G_{StageII} & 0 \\ 0 
 
 *直流链路解耦后，三阶段SST的G矩阵为分块对角形式，各阶段独立求解，大幅减少矩阵维度和计算复杂度*
 
-
-
 ## 验证详情
 
 - **验证方式**: EMT仿真对比验证
 - **测试系统**: 三相输入串联输出并联(ISOP)结构SST，包含：Stage I每相10个全桥子模块(FBSM)，Stage II 30个DAB模块(对应10×3相)，Stage III三相三电平NPC逆变器，连接MVAC电网和LVAC负载
 - **仿真工具**: PSCAD/EMTDC或等效EMT仿真平台(基于Modified Nodal Analysis的数值求解器)
 - **验证结果**: 所提SFB-DEM和SFB-AVM在稳态、暂态和故障工况下均与详细模型(DM)具有高度一致性(电压电流波形相关系数>0.99)，同时实现了恒定G矩阵和节点缩减，计算效率显著提升。开关插值技术成功解决了大步长下高频开关(特别是DAB模块)的精确建模问题，使得模型既适用于离线仿真也适用于硬件在环(HIL)实时仿真。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Universal Decoupled Equivalent Circuit Models of Solid-State Transformer for Accelerated EMT&#x2010;Type Simulation`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 average-value-model、interpolation、fixed-admittance 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种基于开关函数的通用解耦等效电路模型，可统一适用于全桥、DAB及三电平等多种功率变换器的去闭锁与闭锁模式
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Models of Solid-State Transformer for Accelerated EMT‐Type Si.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

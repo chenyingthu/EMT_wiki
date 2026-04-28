@@ -3,7 +3,7 @@ title: "Electromagnetic transient modeling and surge analysis of overhead power 
 type: source
 authors: ['A.G. Martins-Britto']
 year: 2025
-journal: "Electric Power Systems Research, 250 (2026) 112142. doi:10.1016/j.epsr.2025.112142"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/16/Martins-Britto 等 - 2026 - Electromagnetic transient modeling and surge analysis of overhead power lines above two-layer earth.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/16/Martins-Britto 等 - 2026 - Electromagnetic transient mode
 
 ## 摘要
 
-Electromagnetic transient modeling and surge analysis of overhead power a KU Leuven, division Electa & the Etch Competence Hub of EnergyVille, Genk, Belgium b School of Electrical & Computer Engineering, Aristotle University of Thessaloniki, 54124, Thessaloniki, Greece c R&D Department, Hellenic Cables, Maroussi, 15125 Athens, Greece Accurate modeling of earth conduction effects on line parameters is important for electromagnetic transient
+本文提出一种基于等效均匀大地模型（EHEM）的架空输电线路电磁暂态建模方法，以替代传统双层大地模型中易引发数值不稳定的复杂半无限积分。研究首先推导了严格双层大地的阻抗与导纳解析表达式，随后引入等效传播常数（）与等效电导率（）两种近似策略，将分层土壤参数映射为单一均匀大地参数。结合频域（FD）拉普拉斯变换模型与时域（TD）宽带/通用线路模型（WB/ULM），在MATLAB开源工具箱LineCableLab中实现参数计算与ATP/EMTP兼容的暂态仿真。通过对比不同土壤分层工况下的波传播特性与雷击浪涌响应，验证了EHEM在宽频带内的精度与工程适用性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自架空线雷击浪涌和EMT计算中的“大地回流”建模：线路单位长度阻抗、导纳中的大地项会改变地模传播速度、衰减和回路间感应过电压。研究对象是位于水平双层大地上方的双回架空线路，比较严格双层大地公式、等效均匀大地模型（EHEM）以及把土壤简单取为上层或下层电阻率的均匀模型。难点在于，双层大地的阻抗和导纳项包含复杂半无限积分，频率扫描和时域暂态建模时容易带来数值积分稳定性、计算负担和工程软件接口问题；而真实土壤又不能总被单一均匀电阻率代表。本文的贡献不是重新发明线路暂态模型，而是把已有严格双层解析式、等效电阻率/等效传播常数EHEM和简化均匀模型放在同一EMT流程中比较，考察它们对传播特性和浪涌波形的影响，并在LineCableLab中形成可用于FD分析和ATP/EMTP宽带线路模型的参数计算链路。
+
+### 2. 模型、算法与实现技术
+
+模型层面，论文先使用双层大地的严格阻抗和导纳表达式构造频率相关的单位长度参数矩阵Z和Y，其中大地回流阻抗项和电位系数项分别通过积分项修正导体镜像距离下的均匀空间贡献。EHEM的机制是把双层土壤的电磁响应压缩为一个频率相关的等效均匀大地参数：一种接口量是等效传播常数γeq，另一种是等效电导率或电阻率近似；随后把该等效参数代入均匀大地公式，从而避免每个频点都直接求解双层复杂积分。输入包括线路几何、导体材料、土壤两层电阻率/电磁参数和上层厚度；输出是频率相关的Z、Y、模态传播常数、特征导纳以及可进入暂态求解的线路模型参数。实现上，LineCableLab负责生成不同大地表示下的线路参数，并支持两类仿真接口：频域模型直接利用频率采样参数求解浪涌响应；时域宽带/通用线路模型则把传播函数和特征导纳拟合为有理函数，供ATP-EMTP或EMTP使用。关键公式的作用在于把“双层边界反射/渗透”对地回流路径的影响折算进等效均匀介质，而不是简单选用上层或下层土壤电阻率。
+
+### 3. 验证、优势与不足
+
+验证采用同一双回架空线路和多个双层土壤案例，对比四类基线：严格双层大地公式、EHEM等效传播常数方法、EHEM等效电阻率/电导率方法，以及仅取上层或下层电阻率的简化均匀模型。指标包括频域传播特性以及浪涌暂态电压波形，工具链包括LineCableLab，并与ATPDraw 7.5中的ATP-EMTP和EMTP宽带/通用线路模型结果交叉比较。原文证据表明，EHEM在所测试案例中能复现严格双层模型的传播趋势和感应过电压波形，而简化均匀模型可能偏离双层土壤响应；频域模型、ATP和EMTP之间的波形整体一致，可用于检查参数生成和宽带线路接口是否可靠。优势主要体现在：在保留双层土壤主要影响的同时，减少对复杂半无限积分的依赖；并能嵌入工程常用EMT软件流程。需要注意，当前抽取文本未给出全部图表中的可核验误差数值，不能把“接近”“一致”解读为通用定量精度保证。从验证范围看，结论限于文中双回架空线、给定土壤案例、频率范围、浪涌激励和软件实现；未验证多层任意土壤、非水平分层、长线路复杂终端、塔脚接地网络耦合或实时仿真步长约束。
+
+### 4. 价值、认知与可复用场景
+
+这项工作给出的主要认知是：在架空线EMT中，土壤分层对地模和回路间感应浪涌的影响不能用“任选一个均匀电阻率”可靠替代；但严格双层积分也未必是工程仿真的唯一选择，频率相关EHEM可作为严格模型与工程软件之间的折中接口。它适合被后续关于线路参数计算、雷击感应过电压、LineCableLab/ATP/EMTP模型生成、双层土壤等值方法的页面复用。复用时应保留其对象限定：架空线、大地回流、水平双层土壤、宽带线路模型参数生成。不适合外推为所有多层土壤、接地网安全评估、地下电缆、非线性电弧或保护动作仿真的通用结论。
+
+### 证据边界
+
+- 原文明确给出研究对象为双回架空线在双层大地上的EMT建模，并比较严格双层公式、EHEM和简化均匀土壤表示；但当前抽取文本未完整呈现全部案例参数表和图中误差数值。
+- 原文明确提到LineCableLab，并说明分析采用不同土壤案例和仿真模型；ATPDraw 7.5、ATP-EMTP、EMTP等工具信息来自当前页面既有抽取，需回到PDF图表或方法节核对。
+- EHEM通过等效传播常数或等效电阻率/电导率替代双层复杂积分这一机制有原文引言和公式支撑；其计算效率和稳定性优势在机制上合理，但当前证据未报告统一的运行时间或收敛失败统计。
+- 原文摘要和引言只定性说明复杂积分可能导致数值问题，当前抽取未提供具体发散案例、积分算法设置或失败频段，因此不能量化“数值稳定性提升”。
+- 暂态浪涌验证限于文中线路、土壤工况和激励设置；未见对故障电弧、开关操作、接地网耦合、非水平土层或三层以上土壤的验证。
+- 元数据存在需复核处：用户给出的作者列表仅含A.G. Martins-Britto、年份为2025且期刊为Electric Power Systems Research，而抽取首页显示三位作者并含IPST2025投稿说明；正式出版信息应以PDF首页或期刊记录为准。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出等效均匀大地模型近似双层大地复杂积分，提升电磁暂态计算效率。
-- 开发开源MATLAB工具箱LineCableLab，支持线路参数计算与ATP/EMTP兼容仿真。
-- 系统对比严格双层大地、等效均匀及简化模型对架空线传播特性与过电压的影响。
-
+- 问题定位：本文提出一种基于等效均匀大地模型（EHEM）的架空输电线路电磁暂态建模方法，以替代传统双层大地模型中易引发数值不稳定的复杂半无限积分。研究首先推导了严格双层大地的阻抗与导纳解析表达式，随后引入等效传播常数（）与等效电导率（）两种近似策略，将分层土壤参数映射为单一均匀大地参数。
+- 方法机制：本文提出一种基于等效均匀大地模型（EHEM）的架空输电线路电磁暂态建模方法，以替代传统双层大地模型中易引发数值不稳定的复杂半无限积分。研究首先推导了严格双层大地的阻抗与导纳解析表达式，随后引入等效传播常数（）与等效电导率（）两种近似策略，将分层土壤参数映射为单一均匀大地参数。
+- 验证证据：对比分析（严格双层解析法 vs EHEM vs 简化均匀模型）与多平台仿真交叉验证；110 kV双回架空输电线路（1000 m长，含相导线与地线，4种典型双层土壤工况Case I-IV）；LineCableLab (MATLAB开源工具箱), ATPDraw 7.5 (ATP-EMTP), EMTP
+- 量化与结论：频率>500 kHz时，上层土壤电磁特性对地模波速的影响显著增强，趋肤深度缩减至与上层厚度相当量级。；在0.1 Hz至1 MHz全频带内，EHEM()计算的传播常数与严格双层积分结果的最大偏差可忽略不计（文中定性为“small differences”/“generally agree”）。；
+- 适用边界：适用于理解本文 Electromagnetic transient modeling and surge analysis of overhead power lines above two-layer earth （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[等效均匀大地模型-ehem|等效均匀大地模型(EHEM)]]
 - [[严格双层大地解析法|严格双层大地解析法]]
@@ -37,18 +65,14 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 - [[等效电阻率近似|等效电阻率近似]]
 - [[等效传播常数法|等效传播常数法]]
 
-
 ## 涉及的模型
-
 
 - [[架空输电线路-ohl|架空输电线路(OHL)]]
 - [[双回架空线|双回架空线]]
 - [[双层大地模型|双层大地模型]]
 - [[均匀大地模型|均匀大地模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[过电压分析|过电压分析]]
@@ -56,15 +80,11 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 - [[波传播特性|波传播特性]]
 - [[分层土壤建模|分层土壤建模]]
 
-
 ## 主要发现
-
 
 - 等效均匀大地模型能有效替代严格双层积分，避免数值不稳定且保持较高精度。
 - 土壤分层参数显著改变线路波传播特性，简化均匀模型在高频段易产生较大误差。
 - 所提工具箱验证了不同大地模型对架空线浪涌响应的影响，为工程选型提供依据。
-
-
 
 ## 方法细节
 
@@ -74,26 +94,21 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 
 ### 数学公式
 
-
 **公式1**: $$$Z_{gij} = \frac{j\omega\mu_0}{2\pi}\ln\frac{D_{ij}}{d_{ij}} + \frac{j\omega\mu_0}{\pi}M_{ij}$$$
 
 *双层大地互阻抗解析式，包含复杂半无限积分项$M_{ij}$，用于计算导体间的大地返回阻抗*
-
 
 **公式2**: $$$P_{gij} = \frac{1}{2\pi\varepsilon_0}\ln\frac{D_{ij}}{d_{ij}} + \frac{1}{\pi\varepsilon_0}Q_{ij}$$$
 
 *双层大地互电位系数解析式，包含积分项$Q_{ij}$，用于构建导纳矩阵*
 
-
 **公式3**: $$$\gamma_{eq} = \gamma_{e1} \frac{\gamma_{e1} + \gamma_{e2} - (\gamma_{e1} - \gamma_{e2})e^{-2d\gamma_{e1}}}{\gamma_{e1} + \gamma_{e2} + (\gamma_{e1} - \gamma_{e2})e^{-2d\gamma_{e1}}}$$$
 
 *等效传播常数公式，将双层土壤的电磁特性等效为单一均匀大地的传播常数*
 
-
 **公式4**: $$$\sigma_{eq} = \sigma_1 \frac{\sqrt{\sigma_1} + \sqrt{\sigma_2} - (\sqrt{\sigma_1} - \sqrt{\sigma_2})e^{-2d\sqrt{\pi f \mu_1 \sigma_1}}}{\sqrt{\sigma_1} + \sqrt{\sigma_2} + (\sqrt{\sigma_1} - \sqrt{\sigma_2})e^{-2d\sqrt{\pi f \mu_1 \sigma_1}}}$$$
 
 *忽略位移电流时的等效电导率近似公式，用于快速估算等效电阻率*
-
 
 ### 算法步骤
 
@@ -108,7 +123,6 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 5. 时域（TD）仿真：提取频域传播函数与特征导纳，采用矢量拟合（Vector Fitting）算法进行有理函数逼近，生成ATP/EMTP兼容的WB/ULM模型参数文件（XML/MAT/dat）。
 
 6. 暂态分析：在发送端施加1.2/50 $\mu$s双指数雷击浪涌源（1 p.u.幅值），设置线路终端匹配阻抗，计算各相端电压与跨回路感应过电压，对比不同大地模型的波形差异。
-
 
 ### 关键参数
 
@@ -130,8 +144,6 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 
 - **土壤工况**: 4组不同$\rho_1, \rho_2, d_1$组合（Case I-IV）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -146,8 +158,6 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 
 | L2回路感应过电压（不同大地模型对比） | L2回路感应电压受地模主导，简化均匀$\rho_1$模型在Case I-IV中均出现明显波形畸变与幅值低估。EHEM($\gamma_{eq}$)与EHEM($\sigma_{eq}$)计算的瞬态波形与严格双层模型几乎完全重叠。 | EHEM方法在感应过电压计算中误差可忽略，成功替代了易发散的严格双层积分，计算效率与数值稳定性大幅提升。 |
 
-
-
 ## 量化发现
 
 - 频率>500 kHz时，上层土壤电磁特性对地模波速的影响显著增强，趋肤深度缩减至与上层厚度$d$相当量级。
@@ -155,7 +165,6 @@ Electromagnetic transient modeling and surge analysis of overhead power a KU Leu
 - 采用20点/十倍频采样与拉普拉斯变换FD模型，可直接从原始频域参数求解时域响应，避免了WB/ULM有理拟合引入的RMS误差与极点/残差阈值选择偏差。
 - 线路匹配阻抗设定为相导线600 $\Omega$、地线660 $\Omega$时，L1相受端过电压峰值>1 p.u.，L2相感应电压幅值<1 p.u.，地模主导的感应电压对土壤分层参数敏感度远高于空间模。
 - ATP与EMTP的WB/ULM实现因矢量拟合算法、最优延迟提取策略及极点/残差阈值选择不同，导致主导峰值存在边际幅值差异，但整体波形一致性满足工程精度要求。
-
 
 ## 关键公式
 
@@ -177,11 +186,34 @@ $$$Z_{gij} = \frac{j\omega\mu_0}{2\pi}\ln\frac{D_{ij}}{d_{ij}} + \frac{j\omega\m
 
 *严格双层大地模型的核心公式，包含复杂半无限积分项$M_{ij}$，作为评估EHEM精度的基准参考*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比分析（严格双层解析法 vs EHEM vs 简化均匀模型）与多平台仿真交叉验证
 - **测试系统**: 110 kV双回架空输电线路（1000 m长，含相导线与地线，4种典型双层土壤工况Case I-IV）
 - **仿真工具**: LineCableLab (MATLAB开源工具箱), ATPDraw 7.5 (ATP-EMTP), EMTP
 - **验证结果**: FD模型、ATP-ULM与EMTP-ULM在时域暂态响应上高度一致，验证了仿真流程的可靠性；EHEM($\gamma_{eq}$)与EHEM($\sigma_{eq}$)在宽频带内精确复现了严格双层大地的传播特性与感应过电压，显著优于单一均匀土壤近似，且避免了复杂积分的数值不稳定问题，具备工程实用价值。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromagnetic transient modeling and surge analysis of overhead power lines above two-layer earth`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 等效均匀大地模型-ehem、严格双层大地解析法、频域分析法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出等效均匀大地模型近似双层大地复杂积分，提升电磁暂态计算效率。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/16/Martins-Britto 等 - 2026 - Electromagnetic transient modeling and surge analysis of overhead power lines above two-layer earth.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

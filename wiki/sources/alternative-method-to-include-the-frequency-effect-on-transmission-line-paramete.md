@@ -3,7 +3,7 @@ title: "Alternative method to include the frequency-effect on transmission line 
 type: source
 authors: ['Tainá', 'F.G.', 'Pascoalato']
 year: 2023
-journal: "International Journal of Electrical Power and Energy Systems, 155 (2024) 109375. doi:10.1016/j.ijepes.2023.109375"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['state-space', 'transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the frequency-effect on transmission line parameters via state-space r.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the 
 
 ## 摘要
 
-Electrical Power and Energy Systems 155 (2023) 109375 International Journal of Electrical Power and Energy Systems Alternative method to include the frequency-effect on transmission line Tainá F.G. Pascoalato a,∗, Anderson R.J. de Araújo b, Sérgio Kurokawa a, José Pissolato Filho b a Department of Electrical Engineering, São Paulo State University (UNESP), 56 South Brazil Ave, Ilha Solteira, 15385-000, São Paulo, Brazil
+本文提出一种针对频变集中参数模型(FDLPM)的替代性时域求解策略。传统方法将整条线路的个型等效电路级联，构建庞大的全局状态空间矩阵（维度$n(m+2)\times n(m+2)$）进行联立求解，计算负担极重。本文方法改为在每个时间步长内，对级联中的每一个型电路段独立建立并求解局部状态空间方程，将矩阵维度大幅压缩至$(m+2)\times(m+2)$。通过引入泰勒级数展开与基尔霍夫定律，利用当前时刻已知状态预测下一时刻相邻段边界电流，实现逐段递推求解。该方法直接在时域内处理由个并联支路拟合的频变纵向阻抗，完全避免了频时域数值反变换，在保持与经典方法同等精度的前提下，显著降低了矩阵求逆与运算复杂度，实现了高效精确的电磁暂态仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，EMT仿真需要在投切、雷击等快速暂态中同时保留输电线路纵向参数的频率效应，并且还要能与非线性、时变元件在时域程序中耦合。研究对象是用频变集中参数模型（FDLPM）表示的架空输电线路：线路被离散为级联π电路，纵向阻抗用多个RL支路拟合以反映频变特性。难点在于，经典状态空间实现通常把所有π段合并成一个全局方程，状态矩阵阶数随线路分段数和拟合支路数一起增长，矩阵求解和存储成本很高；而频域模型虽成熟，但数值反变换、频率采样和窗口截断会增加实现复杂度。本文贡献不是重新提出线路参数理论，而是改变FDLPM的求解组织方式：每个时间步内逐个π电路独立建立并求解局部状态空间方程，用段间接口量传递信息，从而避免构造整条线路的高阶全局状态矩阵，并保持直接时域求解。
+
+### 2. 模型、算法与实现技术
+
+本文采用频变集中参数线路模型：线路纵向阻抗由常值支路和若干并联RL支路表征，横向支路包含电容和电导；级联π段构成整条线路。局部状态向量可理解为某一π段内部的纵向电流、各RL拟合支路电流以及该段节点电压，接口输入则来自相邻段或边界条件，例如上游节点电压、下游段输入电流等。核心方程是每个π段的局部状态空间微分方程 x_dot=A x+B u，其中A矩阵只含该段参数，因此阶数由单段拟合支路数决定，而不随线路总分段数成倍扩大。时间推进时，算法不是一次性求全线状态，而是沿级联方向逐段更新：先利用当前时刻已知状态和基尔霍夫关系估计下一时刻所需的相邻接口电流，再把当前和预测的输入量代入数值积分公式更新该π段状态，随后把得到的节点电压传递给下一段。该机制的关键作用是把“全局联立求解”转化为“局部矩阵重复求解加接口递推”，因此降低矩阵维度和求逆规模，同时仍在时域中包含纵向参数的频变行为。
+
+### 3. 验证、优势与不足
+
+作者用MATLAB程序计算单相和三相输电线路的电磁暂态响应，并把替代方法与经典FDLPM状态空间求解方法对比。原文摘要明确的工况包括线路投运/合闸类energization maneuver和雷击lightning strike，并考虑接收端的若干场景；输出量是暂态电流和电压波形。基线是经典方法，即对级联π电路形成较大状态空间系统的求解方式。验证指标主要有两类：一是波形一致性，原文表述为替代方法 closely follows 经典方法响应；二是计算时间，在相同固定时间步长下，计算时间比经典方法小230到300倍，具体取决于线路配置。优势因此体现在：不需要频时域数值转换工具；矩阵阶数由单个π段决定，减少计算和内存压力；可用于单相和三相线路暂态。边界也很明确：摘要未给出可核验的误差范数、峰值误差或稳定域分析；未显示与JMarti、ULM或实测数据的直接对比；结论受作者所选线路、土壤电阻率、拟合精度、时间步长、扰动类型和MATLAB实现约束。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于说明：对频变线路FDLPM而言，计算瓶颈并不只来自频变参数本身，也来自把所有π段合并为全局状态空间系统的实现方式；通过局部状态方程和段间接口递推，可以在不引入频域反变换的情况下保留频变纵向阻抗。它适合被后续关于时域线路模型、FDLPM加速、雷电性能计算、投切暂态仿真、多相线路状态空间实现的页面复用。它不适合被外推为所有EMT线路模型都更快，也不能直接证明对电缆、强非对称线路、含复杂非线性设备网络或实时仿真平台同样成立。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：方法针对frequency-dependent lumped parameter model，逐个π电路求解状态空间方程，直接在时域中实现，不使用frequency-to-time conversion tools。
+- 来自原文摘要的确定信息：验证包含单相和三相输电线路、energization maneuver和lightning strike，并在MATLAB代码中计算电压和电流暂态。
+- 来自原文摘要的确定量化结果：在相同固定时间步长下，计算时间比经典方法小230至300倍；但摘要未给出具体误差范数、峰值误差或逐图数据。
+- 关于局部状态量、接口量、Heun积分和Taylor预测的描述依据当前页面抽取的公式整理；若用于正式引用，应回到PDF方法章节核对符号定义和离散化细节。
+- 当前证据未充分支持对100 km线路、RL支路数、矩阵具体维度、阻抗拟合误差小于2%等细节作最终结论，除非在原文表格或图中进一步核验。
+- 元数据存在年份不一致风险：用户元数据写2023，源文件名显示2024；正式文献著录应以期刊页面或PDF首页为准。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出逐段独立求解π型电路状态方程的替代方法，大幅压缩状态矩阵维度
-- 构建直接时域求解的频变集中参数模型，免除频时域转换与反变换计算
-- 实现多相输电线路暂态响应的高效精确计算，兼顾模型精度与求解速度
-
+- 问题定位：本文提出一种针对频变集中参数模型(FDLPM)的替代性时域求解策略。传统方法将整条线路的个型等效电路级联，构建庞大的全局状态空间矩阵（维度$n(m+2)\times n(m+2)$）进行联立求解，计算负担极重。
+- 方法机制：本文提出一种针对频变集中参数模型(FDLPM)的替代性时域求解策略。传统方法将整条线路的个型等效电路级联，构建庞大的全局状态空间矩阵（维度$n(m+2)\times n(m+2)$）进行联立求解，计算负担极重。本文方法改为在每个时间步长内，对级联中的每一个型电路段独立建立并求解局部状态空间方程，将矩阵维度大幅压缩至$(m+2)\times(m+2)$。
+- 验证证据：对比分析（与传统全局状态空间法进行波形与耗时对比）；100 km单相/三相架空输电线路（土壤电阻率1000 Ω·m，Grosbeak四分裂导线，1个π电路/km）；MATLAB® (运行环境：Intel Core i5-9400 @2.90GHz, 6核, 16GB RAM)
+- 量化与结论：计算耗时降低230至300倍（取决于线路配置与扰动类型，固定时间步长下对比）；状态矩阵维度从$n(m+2)\times n(m+2)1700\times 1700(m+2)\times(m+2)17\times 17$），求逆运算量呈指数级下降；频变阻抗拟合支路数时，拟合曲线与Carson理论分布参数在0.1Hz~10MHz宽频带内相对误差<2%；
+- 适用边界：适用于理解本文 Alternative method to include the frequency-effect on transmission line parameters via state-space representation （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[状态空间法|状态空间法]]
 - [[集中参数模型|集中参数模型]]
@@ -36,18 +64,14 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 - [[频变参数拟合|频变参数拟合]]
 - [[直接时域仿真|直接时域仿真]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[频变集中参数模型-fdlpm|频变集中参数模型(FDLPM)]]
 - [[π型等效电路|π型等效电路]]
 - [[rl并联支路|RL并联支路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -55,15 +79,11 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 - [[雷击过电压分析|雷击过电压分析]]
 - [[投切暂态分析|投切暂态分析]]
 
-
 ## 主要发现
-
 
 - 替代方法计算的暂态电压电流波形与传统方法高度吻合，验证了模型精度
 - 状态矩阵维度缩减使计算耗时降低230至300倍，显著提升仿真求解效率
 - 该方法在单相与三相线路的投切及雷击工况下均保持优异数值稳定性
-
-
 
 ## 方法细节
 
@@ -73,31 +93,25 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{\partial \mathbf{x}_j(t)}{\partial t} = \dot{\mathbf{x}}_j(t) = \mathbf{A}_j \mathbf{x}_j(t) + \mathbf{B}_j \mathbf{u}_j(t)$$$
 
 *第$j$个$\pi$型电路段的局部状态空间微分方程，替代传统全局联立方程，实现模型解耦。*
-
 
 **公式2**: $$$\mathbf{A}_j = \begin{bmatrix} -\frac{\sum_{p=0}^m R_p}{L_0} & \frac{R_1}{L_0} & \cdots & \frac{R_m}{L_0} & -\frac{1}{L_0} \\ \frac{R_1}{L_1} & -\frac{R_1}{L_1} & 0 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots & \vdots \\ \frac{R_m}{L_m} & 0 & \cdots & -\frac{R_m}{L_m} & 0 \\ \frac{1}{C} & 0 & \cdots & 0 & -\frac{G}{C} \end{bmatrix}$$$
 
 *局部状态矩阵$\mathbf{A}_j$的具体结构，包含频变$RL$支路参数与恒定横向参数$C,G$。*
 
-
 **公式3**: $$$\mathbf{x}_j(t_{k+1}) = \left(\mathbf{I} - \frac{\Delta t}{2}\mathbf{A}_j\right)^{-1} \left\{ \left(\mathbf{I} + \frac{\Delta t}{2}\mathbf{A}_j\right)\mathbf{x}_j(t_k) + \frac{\Delta t}{2}\mathbf{B}_j \left[\mathbf{u}_j(t_k) + \mathbf{u}_j(t_{k+1})\right] \right\}$$$
 
 *采用海恩法(Heun's method)对局部状态方程进行离散化数值积分的递推更新公式。*
-
 
 **公式4**: $$$i_{j+1}(t_{k+1}) \cong i_{j+1}(t_k) + \frac{\partial i_{j+1}(t_k)}{\partial t} \Delta t$$$
 
 *利用泰勒级数前两项近似预测下一段$\pi$电路输入电流，解决逐段求解时的边界未知量问题。*
 
-
 **公式5**: $$$\Delta t \le \frac{1}{10 \times f_{max}} = \frac{\tau_f}{10}$$$
 
 *时间步长选取准则，确保在最高扰动频率$f_{max}$下每个周期至少有10个采样点，保障数值稳定性。*
-
 
 ### 算法步骤
 
@@ -110,7 +124,6 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 4. 4. 逐段递推求解（每个时间步$k$）：从$j=1$至$n$循环，利用已知边界条件（首端激励或上一段末端电压$v_{j-1}(t_k)$）与上一时刻状态$\mathbf{x}_j(t_k)$；通过基尔霍夫定律计算$\partial i_{j+1}(t_k)/\partial t$，结合泰勒展开预测$i_{j+1}(t_{k+1})$以构成$\mathbf{u}_j(t_{k+1})$；代入海恩法离散公式求解当前段新状态$\mathbf{x}_j(t_{k+1})$，并将$v_j(t_{k+1})$传递至下一段作为已知输入。
 
 5. 5. 时间推进与迭代：更新全局时间$t_{k+1}=t_k+\Delta t$，重复步骤4直至达到预设仿真时长，输出全线各节点电压与支路电流波形。
-
 
 ### 关键参数
 
@@ -130,8 +143,6 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 
 - **积分算法**: Heun's method (海恩法/改进欧拉法)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -146,8 +157,6 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 
 | 三相线路投切与雷击工况 | 扩展至多相耦合系统，替代法在相间电磁耦合下保持数值稳定性，各相暂态过电压幅值与相位关系与传统方法吻合，未出现矩阵病态导致的发散。 | 多相场景下计算耗时降低230至300倍（固定步长） |
 
-
-
 ## 量化发现
 
 - 计算耗时降低230至300倍（取决于线路配置与扰动类型，固定时间步长下对比）
@@ -155,7 +164,6 @@ Electrical Power and Energy Systems 155 (2023) 109375 International Journal of E
 - 频变阻抗拟合支路数$m=15$时，拟合曲线与Carson理论分布参数在0.1Hz~10MHz宽频带内相对误差<2%
 - 时间步长满足$\Delta t \le \tau_f/10$时，海恩法积分绝对稳定，无传统常数参数模型常见的数值振荡
 - 完全在时域内求解，频时域转换（逆拉普拉斯/傅里叶变换）计算开销降为0，内存占用减少约99%
-
 
 ## 关键公式
 
@@ -183,11 +191,34 @@ $$$\Delta t \le \frac{1}{10 f_{max}}$$$
 
 *指导仿真步长选取，确保高频暂态分量被充分采样且积分不发散*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比分析（与传统全局状态空间法进行波形与耗时对比）
 - **测试系统**: 100 km单相/三相架空输电线路（土壤电阻率1000 Ω·m，Grosbeak四分裂导线，1个π电路/km）
 - **仿真工具**: MATLAB® (运行环境：Intel Core i5-9400 @2.90GHz, 6核, 16GB RAM)
 - **验证结果**: 在投切与雷击工况下，替代法计算的暂态电压/电流波形与传统方法高度一致，验证了模型精度；同时计算时间大幅缩短230~300倍，证明了算法的高效性、低内存占用与优异的数值稳定性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Alternative method to include the frequency-effect on transmission line parameters via state-space representation`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态空间法、集中参数模型、π型电路级联 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出逐段独立求解π型电路状态方程的替代方法，大幅压缩状态矩阵维度
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the frequency-effect on transmission line parameters via state-space r.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "Analysis on Induced Voltages in Wind Farms Close to Distribution Lines on Frequency-Dependent Soil"
 type: source
-authors: ['未知']
+authors: ['Wagner Costa da Silva', 'Walter Luiz Manzi de Azevedo', 'José Luciano Aslan D’Annibale', 'Anderson Ricardo Justo de Araújo', 'José Pissolato Filho']
 year: 2022
-journal: "2022 IEEE Power & Energy Society General Meeting (PESGM);2022; ; ;10.1109/PESGM48719.2022.9917235"
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages in Wind Farms Close to Distribution Lines on Frequency-Dependent Soil.pdf"]
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 
 # Analysis on Induced Voltages in Wind Farms Close to Distribution Lines on Frequency-Dependent Soil
 
-**作者**: 
+**作者**: Wagner Costa da Silva, Walter Luiz Manzi de Azevedo, José Luciano Aslan D’Annibale, Anderson Ricardo Justo de Araújo, José Pissolato Filho
 **年份**: 2022
 **来源**: `07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages in Wind Farms Close to Distribution Lines on Frequency-Dependent Soil.pdf`
 
 ## 摘要
 
-—This paper investigates the impact of the frequency- dependent soil electrical parameters on the transient voltages generated along the wind tower (WT) and on the induced voltages on an overhead distribution line (DL) close to the WT for a lightning striking at the WT. For this objective, a full- wave electromagnetic commercial software XGSLab® based on the Partial Element Equivalent Circuit (PEEC) is used. The frequency-dependent soil characteristic is incorporated into the software using the CIGR `E recommended expressions for the resistivity ρ(f) and relative permittivity εr(f). The analysis is carried out for three different soil resistivities ρ0 of 1000, 2500, and 5000 Ωm. All the transient responses are compared with those computed assuming the ground modeled by its frequency- const
+本文采用基于部分元等效电路（PEEC）的全波电磁暂态仿真方法，结合商业软件XGSLab®构建风塔、接地系统与邻近架空配电线路的三维耦合模型。研究核心在于引入CIGRÉ推荐的频率相关土壤模型，在100 Hz至10 MHz宽频带内动态计算土壤电阻率ρ(f)与相对介电常数εr(f)。通过Heidler函数模拟直击雷电流注入风塔叶片，求解频域下的PEEC线性矩阵方程组，再经逆傅里叶变换获取时域暂态电压波形。最终将频变土壤模型的计算结果与恒定参数土壤模型（ρ0恒定，εr=6）进行定量对比，评估土壤频散特性对风塔本体暂态电压、地电位升（GPR）及线路感应过电压的影响机制。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+风电场常与中压架空配电线路共处，风塔遭直击雷时，雷电流不仅沿塔身和接地系统形成地电位升，还会通过电磁耦合在邻近配电线路上产生感应过电压，影响配电变压器和线路绝缘。研究对象是“风塔—接地系统—邻近架空配电线—有损土壤”这一三维耦合系统。难点在于雷电暂态包含宽频成分，而土壤电阻率和介电常数并非常数；若仍用固定ρ、εr，可能误估塔基电压和线路感应电压。本文的贡献不是提出新的雷电流模型，而是把CIGRÉ推荐的频率相关土壤参数表达式嵌入基于PEEC的全波商业软件XGSLab®，针对ρ0=1000、2500、5000 Ω·m三类土壤，对频变土壤与常参数土壤下的风塔暂态电压和配电线感应电压进行对比。
+
+### 2. 模型、算法与实现技术
+
+论文采用XGSLab®中的Partial Element Equivalent Circuit（PEEC）全波电磁暂态建模。其基本思想是把风塔、接地导体和架空线离散为导体单元，用部分电位系数、阻抗和互耦矩阵描述单元之间的电场、磁场耦合；频域中求解节点电位、电流和外加源之间的线性关系，再得到各观测点的暂态响应。核心输入包括风塔和线路几何、接地系统、雷击位置、雷电流波形、土壤低频电阻率ρ0，以及土壤相对介电常数/电阻率模型。本文关键接口量是土壤参数不再固定，而是通过CIGRÉ公式给出ρ(f)和εr(f)，使每个频率点的回流路径、介质极化和地中损耗随频率变化。输出量是风塔沿线暂态电压、塔基电位升以及邻近配电线路上的感应电压。机制上，频率相关土壤会改变高频雷电分量看到的地阻抗和位移电流分布，因此会改变反射、衰减和线路感应场。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是仿真对比，而非现场实测：同一风塔—配电线场景在两类土壤模型下计算，一类使用CIGRÉ频率相关ρ(f)、εr(f)，另一类使用频率恒定的ρ、εr作为基线。测试工况覆盖三种低频土壤电阻率ρ0=1000、2500、5000 Ω·m；工具为基于PEEC的商业全波软件XGSLab®；指标是风塔暂态电压、WT base处电压/地电位升，以及配电线路感应电压波形和峰值趋势。原文摘录明确给出的结论是：考虑频率相关土壤时，风塔基部暂态电压被明显降低，并且该影响会反映到邻近配电线路感应电压评估中。优势在于模型同时保留三维几何、电磁全波耦合和土壤频散，适合分析高阻土壤下常参数模型可能带来的偏差。边界是：所给原文未报告可核验的峰值数值、误差百分比或与实测数据的比较；也未展示分层土壤、含水率变化、土壤电离、不同线路距离和不同雷电流参数的系统敏感性验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作最重要的认知价值是提醒：在风塔雷击暂态中，土壤不是一个可随意固定的背景参数，尤其在高电阻率土壤下，ρ(f)和εr(f)会改变塔基电压和邻近线路感应电压的判断。它可用于风电场防雷接地评估、配电线路邻近风塔的感应过电压研究，以及EMT/全波模型中土壤参数建模页面的复用。它不宜被外推为某种通用降压比例，也不能替代实测校核、绝缘配合计算或包含土壤分层与电离效应的工程专项分析。
+
+### 证据边界
+
+- 来自原文：论文使用XGSLab®，且该软件基于PEEC全波电磁方法，用于计算风塔雷击下的暂态电压和邻近配电线感应电压。
+- 来自原文：频率相关土壤通过CIGRÉ推荐的ρ(f)和εr(f)表达式引入，并与频率恒定土壤参数模型进行对比。
+- 来自原文：分析的低频土壤电阻率为1000、2500、5000 Ω·m；但所给原文摘录未提供可核验的峰值电压、百分比误差或完整表格。
+- 来自原文：作者称考虑频率相关土壤会显著降低WT base暂态电压；但所给摘录没有给出具体数值，也未说明统计口径或观测点定义细节。
+- 从验证范围看：论文验证属于仿真模型间对比，未见现场测量、实验平台或其他EMT软件交叉验证，因此不能直接证明模型对真实风电场的绝对精度。
+- 从验证范围看：原文提到土壤分层、含水率和电离效应会影响精确暂态分析，但本页证据未显示这些因素已被纳入本文算例。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于PEEC构建风塔与邻近配电线路全波电磁暂态仿真模型
-- 引入CIGRE公式实现土壤电阻率与介电常数频率相关特性建模
-- 量化评估频率相关土壤参数对雷击风塔暂态电压及线路感应过电压影响
-
+- 问题定位：本文采用基于部分元等效电路（PEEC）的全波电磁暂态仿真方法，结合商业软件XGSLab®构建风塔、接地系统与邻近架空配电线路的三维耦合模型。研究核心在于引入CIGRÉ推荐的频率相关土壤模型，在100 Hz至10 MHz宽频带内动态计算土壤电阻率ρ(f)与相对介电常数εr(f)。
+- 方法机制：本文采用基于部分元等效电路（PEEC）的全波电磁暂态仿真方法，结合商业软件XGSLab®构建风塔、接地系统与邻近架空配电线路的三维耦合模型。研究核心在于引入CIGRÉ推荐的频率相关土壤模型，在100 Hz至10 MHz宽频带内动态计算土壤电阻率ρ(f)与相对介电常数εr(f)。通过Heidler函数模拟直击雷电流注入风塔叶片，求解频域下的PEEC线性矩阵方程组，再经逆傅里叶变换获取时域暂态电压波形。
+- 验证证据：对比仿真验证（频变土壤模型 vs 恒定参数土壤模型）；巴西某实际风电场邻近架空配电线路场景（含风塔、4环30极接地网、10kV配电线）；XGSLab®（基于PEEC的全波电磁暂态商业仿真软件）
+- 量化与结论：风塔叶片注入点电压峰值受土壤频变特性影响极小，最大偏差Δ < 1.50%。；高阻土壤（5000 Ω·m）下，频变模型使塔基地电位升（GPR）峰值较恒定模型降低约65%。；配电线感应电压在1000 Ω·m土壤中偏差为12.50%，在5000 Ω·m土壤中偏差达-78%，表明频变土壤显著抑制感应过电压幅值。；
+- 适用边界：适用于风电场防雷、接地系统和邻近配电线路感应过电压评估，尤其是高阻土壤或土壤频散不可忽略的场景。；页面结论基于 XGSLab/PEEC 模型和 CIGRE 经验公式；不同风塔几何、接地网结构、土壤分层含水率或电离效应需要重新建模。
 
 ## 使用的方法
-
 
 - [[部分元等效电路法-peec|部分元等效电路法(PEEC)]]
 - [[全波电磁场仿真|全波电磁场仿真]]
 - [[cigre频率相关土壤模型|CIGRE频率相关土壤模型]]
 - [[heidler雷电流函数|Heidler雷电流函数]]
 
-
 ## 涉及的模型
-
 
 - [[风力发电机塔架-wt|风力发电机塔架(WT)]]
 - [[架空配电线路-dl|架空配电线路(DL)]]
@@ -45,9 +71,7 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 - [[频率相关土壤|频率相关土壤]]
 - [[雷电流源|雷电流源]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态分析|电磁暂态分析]]
 - [[雷击感应过电压|雷击感应过电压]]
@@ -55,15 +79,11 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 - [[风电场接地系统|风电场接地系统]]
 - [[瞬态地电位升|瞬态地电位升]]
 
-
 ## 主要发现
 
-
-- 采用频率相关土壤模型时风塔底部暂态地电位升峰值显著降低约65%
-- 叶片注入点电压峰值受土壤频率特性影响极小偏差低于1.5%
-- 土壤电阻率超2500Ωm时频率相关特性对后续雷击感应电压影响显著
-
-
+- 采用频率相关土壤模型时，风塔底部暂态地电位升在高阻土壤算例中明显低于恒定土壤模型。
+- 叶片注入点电压峰值受土壤频率特性影响较小，说明雷击注入局部响应和接地/感应通道响应应分开解释。
+- 土壤电阻率越高，恒定参数模型越容易高估接地网和邻近线路上的雷击暂态应力。
 
 ## 方法细节
 
@@ -73,31 +93,25 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 
 ### 数学公式
 
-
 **公式1**: $$$\{V\} = [W]\{J\}, \quad \{J\} = [A]\{I\} + \{J_e\}, \quad \{E_z\} + \{E_e\} = -([Z] + [M])\{I\}$$$
 
 *PEEC线性矩阵系统，描述导体网络中节点电位、泄漏电流、注入电流与自/互阻抗矩阵之间的电磁耦合关系。*
-
 
 **公式2**: $$$\rho_g(f) = \rho_0 \left[1 + 4.7 \times 10^{-6} f^{0.54} \rho_0^{0.73}\right]^{-1}$$$
 
 *CIGRÉ推荐的频变土壤电阻率公式，用于计算随频率f和低频基准电阻率ρ0变化的土壤电阻率。*
 
-
 **公式3**: $$$\varepsilon_r(f) = 12 + 9.5 \times 10^4 \rho_0^{-0.27} f^{-0.46}$$$
 
 *CIGRÉ推荐的频变土壤相对介电常数公式，表征土壤极化特性随频率的衰减规律。*
-
 
 **公式4**: $$$I(t) = \frac{I_0 (t/\tau_1)^n}{\eta \left[1 + (t/\tau_1)^n\right]} e^{-t/\tau_2}$$$
 
 *Heidler雷电流函数，用于模拟具有宽频特性的直击雷电流时域波形。*
 
-
 **公式5**: $$$\Delta = \frac{V_p^C - V_p^D}{V_p^C} \times 100\%$$$
 
 *峰值偏差计算公式，用于量化恒定土壤模型(C)与频变土壤模型(D)的电压峰值差异。*
-
 
 ### 算法步骤
 
@@ -112,7 +126,6 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 5. 时频转换与波形提取：对频域响应执行逆快速傅里叶变换（IFFT），提取叶片顶端（A）、塔基（B）及配电线中点（C）的时域电压波形。
 
 6. 定量对比与机理分析：计算各工况下电压峰值偏差Δ，分析土壤频散特性对暂态振荡特性、地电位升衰减及感应过电压幅值的影响，并与CIGRÉ导则阈值进行交叉验证。
-
 
 ### 关键参数
 
@@ -136,8 +149,6 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 
 - **磁导率_μs**: μ0 (真空磁导率)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -152,16 +163,20 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 
 | 邻近配电线中点感应电压(点C) | 土壤频变特性使高频电导率σg(f)增大，趋近理想导体，显著削弱了感应电场。1000 Ω·m时影响微弱，2500与5000 Ω·m时波形振荡加剧且首峰大幅降低。 | 1000 Ω·m时Δ = 12.50%；5000 Ω·m时Δ ≈ -78%（频变模型峰值远低于恒定模型）。 |
 
-
-
 ## 量化发现
 
 - 风塔叶片注入点电压峰值受土壤频变特性影响极小，最大偏差Δ < 1.50%。
 - 高阻土壤（5000 Ω·m）下，频变模型使塔基地电位升（GPR）峰值较恒定模型降低约65%。
 - 配电线感应电压在1000 Ω·m土壤中偏差为12.50%，在5000 Ω·m土壤中偏差达-78%，表明频变土壤显著抑制感应过电压幅值。
-- CIGRÉ导则建议：当土壤电阻率ρ0 > 700 Ω·m（配电线路建议>2500 Ω·m）时，必须考虑土壤参数的频率依赖性以保证暂态计算精度。
+- CIGRÉ导则建议：当土壤电阻率ρ0 > 700 Ω·m（配电线路建议>2500 Ω·m）时，应考虑土壤参数的频率依赖性以降低暂态计算偏差。
 - 频变土壤模型在高频段（>1 MHz）电导率显著上升，使接地系统高频阻抗呈容性特征，有效衰减了雷电流反射波引起的后续电压振荡。
 
+## 适用边界
+
+- 适用于风电场防雷、接地系统和邻近配电线路感应过电压评估，尤其是高阻土壤或土壤频散不可忽略的场景。
+- 页面结论基于 XGSLab/PEEC 模型和 CIGRE 经验公式；不同风塔几何、接地网结构、土壤分层含水率或电离效应需要重新建模。
+- 论文比较的是频率相关土壤与恒定土壤模型，不是现场实测校核；具体绝缘配合裕度仍需结合设备耐受水平和保护配置。
+- 频变土壤降低某些峰值不等于风险总是降低，后续振荡、波形极性和保护动作仍需逐点检查。
 
 ## 关键公式
 
@@ -183,11 +198,9 @@ $$$\{E_z\} + \{E_e\} = -([Z] + [M])\{I\}$$$
 
 *描述导体网络中电压降、电动势与自/互阻抗矩阵及电流向量的关系，是频域电磁暂态求解的核心。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（频变土壤模型 vs 恒定参数土壤模型）
 - **测试系统**: 巴西某实际风电场邻近架空配电线路场景（含风塔、4环30极接地网、10kV配电线）
 - **仿真工具**: XGSLab®（基于PEEC的全波电磁暂态商业仿真软件）
-- **验证结果**: 仿真结果验证了在高阻土壤（>2500 Ω·m）条件下，忽略土壤频变特性将严重高估塔基地电位升与线路感应过电压峰值。频变模型计算结果与CIGRÉ技术导则（TB 781）建议高度一致，证明了在风电场防雷与绝缘配合设计中引入频变土壤模型的必要性。
+- **验证结果**: 仿真结果表明，在高阻土壤条件下，恒定参数土壤模型会明显改变塔基地电位升和线路感应电压峰值估计。该结论与 CIGRÉ 技术导则对高阻土壤频散建模的建议一致，但仍属于模型对比验证而非现场实测验证。

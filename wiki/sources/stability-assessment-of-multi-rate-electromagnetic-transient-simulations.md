@@ -1,7 +1,7 @@
 ---
 title: "Stability Assessment of Multi-Rate Electromagnetic Transient Simulations"
 type: source
-authors: ['未知']
+authors: ['Sinkar 等']
 year: 2025
 journal: "IEEE Transactions on Power Delivery;2025;40;6;10.1109/TPWRD.2025.3590630"
 tags: ['emt']
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Ele
 
 # Stability Assessment of Multi-Rate Electromagnetic Transient Simulations
 
-**作者**: 
+**作者**: Sinkar 等
 **年份**: 2025
 **来源**: `35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Electromagnetic Transient Simulations.pdf`
 
 ## 摘要
 
-—Multi-rate Electromagnetic Transient (EMT) simu- lations use smaller time-steps for parts of the network requiring greater accuracy, and larger time-steps for the rest of the network. This paper presents an analytical approach for evaluating the stability of multi-rate EMT simulations of linear time-invariant (LTI) networks. It is shown that their resulting discrete time sys- tem is inherently time-periodic. Leveraging this characteristic, a sampled-data time-invariant representation of the simulated net- work is derived. The overall simulation’s numerical stability can then be assessed through eigenvalue analysis. The paper shows that contrary to popular belief, a multi-rate EMT simulation may become unstable even if the well-known A-stable trapezoidal rule is used. The proposed approach
+该论文提出了一种基于离散时间周期性提升（lifting）技术的解析方法，用于评估线性时不变（LTI）网络多速率电磁暂态（EMT）仿真的数值稳定性。方法核心在于识别多速率仿真（快速子网络采用小步长Δt，慢速子网络采用大步长ΔT=NΔt）在离散时间域呈现周期性时变特性（周期为ΔT）。通过将周期性时变离散系统转换为等效的采样数据时不变表示（sampled-data time-invariant representation），利用特征值分析判断整体仿真的数值稳定性。该方法适用于非迭代式多速率仿真算法（如基于MATE的方法），可检测即使在使用A稳定梯形积分法则时仍可能出现的不稳定现象。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+多速率EMT仿真的工程需求来自一个矛盾：网络中只有部分区域含快速暂态、需要小步长，但传统单速率会让全网都用该小步长，计算负担随网络规模和仿真时长增加。本文研究对象是可划分为快、慢子网络的线性时不变（LTI）电力网络多速率EMT仿真，尤其是非迭代式方案中快区用Δt、慢区用ΔT=NΔt并通过上采样/下采样交换接口量的情形。难点不在连续系统本身，而在离散仿真算法：慢网在小步之间休眠，接口变量通过冻结、插值、外推、取末值或平均等规则传递，使整体离散系统不再是单一固定状态转移矩阵，而是随小步序号周期变化。本文贡献是把这种多速率离散系统明确识别为时间周期系统，并用lifting构造采样数据时不变表示，从而用特征值判定整体数值稳定性；这直接挑战了“梯形法A稳定即可保证多速率仿真稳定”的常见理解。
+
+### 2. 模型、算法与实现技术
+
+方法从连续LTI自治系统状态方程ẋ=Ax出发。单速率梯形法可写成x(t+Δt)=Gx(t)，其中G=(I−AΔt/2)^{-1}(I+AΔt/2)，稳定性可直接看G的特征值。多速率情形中，ΔT=NΔt；在一个大步长周期内，快、慢子网络的激活顺序以及接口变量的上采样/下采样规则导致每个小步的等效转移矩阵不同，形成x_{k+1}=G_k x_k，k=0,…,N−1，并在下一个周期重复。本文的核心实现技术是离散时间lifting：把一个周期内的状态堆叠为X^L(t)=[x(t),x(t+Δt),…,x(t+(N−1)Δt)]^T，将原来的N周期时变递推改写成M^L X^L(t+ΔT)=H^L X^L(t)。其中H^L把各G_k和相邻小步约束组织进块矩阵，M^L负责跨周期采样关系。随后求矩阵对(H^L,M^L)的广义特征值；若全部位于单位圆内，则该多速率离散仿真稳定，否则即使原连续网络稳定、各子步使用梯形法，也可能产生数值发散。
+
+### 3. 验证、优势与不足
+
+原文摘要明确称所提方法通过example simulations验证，但当前提供的抽取文本只包含首页、摘要和引言前半部分，未给出具体验证算例、网络参数、仿真软件、时间步长组合、接口采样策略或特征值与时域波形的对应图表。因此可确认的验证逻辑是：作者用解析特征值稳定性预测多速率EMT仿真的稳定/不稳定，并以示例仿真进行核对；但原文未在当前证据中报告可核验的数值结果。相对传统经验选步长或只检查子网络离散积分稳定性的做法，本文优势在于把快慢网耦合、休眠、采样保持/插值等算法因素纳入统一状态空间判据，可解释“单个子网络看似稳定而整体多速率仿真不稳定”的机制。边界也很清楚：理论对象是LTI网络和整数步长比ΔT=NΔt；结论针对所建模的非迭代多速率算法及其接口规则。对强非线性电力电子开关、控制器限幅、故障切换、变步长、多分区非整数采样比或实时硬件执行抖动，当前证据不足以直接外推。
+
+### 4. 价值、认知与可复用场景
+
+这项工作最重要的认知价值是：多速率EMT的不稳定不只是积分公式本身的问题，而可能由周期性耦合算法产生；A稳定梯形法在单速率LTI系统中的安全感，不能自动迁移到多速率分区仿真。它可用于后续多速率EMT方法页、MATE分区仿真页、接口采样策略比较页和步长选择工具页，作为“先做稳定性筛查再谈加速”的理论入口。工程上适合用来评估给定分区、步长比和接口处理规则是否会引入数值不稳定。不适合把它直接当作精度评价方法，也不应在缺少对应建模的情况下推广到非LTI、非周期、非整数步长或未验证的商用/实时平台场景。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：研究对象为LTI网络的多速率EMT仿真，方法是利用离散时间周期性和sampled-data time-invariant表示，通过特征值分析稳定性。
+- 来自原文引言的确定信息：多速率仿真存在快、慢子网络，接口传递包括down-sampling和up-sampling；可选规则包括平均、取末值、冻结、插值和外推，且这些规则会影响仿真结果。
+- 来自原文摘要的确定信息：作者声称即使使用A-stable梯形法，多速率EMT仿真仍可能不稳定，并称方法用示例仿真验证。
+- 当前抽取文本未给出具体算例、网络拓扑、参数、时间步长、软件平台、特征值数值、误差或耗时，因此原文未报告可核验的数值结果这一判断仅针对当前页面证据。
+- lifting矩阵构造和单位圆特征值判据是根据页面已有公式和摘要方法整理；不同多速率实现的G_k如何具体形成，必须回到原文方法章节核对。
+- 适用范围从验证范围看限于LTI、周期性整数步长比和被建模的非迭代多速率算法；对非线性开关系统、控制饱和、故障拓扑切换、变步长或硬件实时仿真不能直接推断。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种评估线性时不变（LTI）网络多速率电磁暂态（EMT）仿真稳定性的解析方法
-- 推导了多速率仿真网络的采样数据时不变表示，并建立了基于特征值分析的数值稳定性评估框架
+- 问题定位：该论文提出了一种基于离散时间周期性提升（lifting）技术的解析方法，用于评估线性时不变（LTI）网络多速率电磁暂态（EMT）仿真的数值稳定性。方法核心在于识别多速率仿真（快速子网络采用小步长Δt，慢速子网络采用大步长ΔT=NΔt）在离散时间域呈现周期性时变特性（周期为ΔT）。
+- 方法机制：该论文提出了一种基于离散时间周期性提升（lifting）技术的解析方法，用于评估线性时不变（LTI）网络多速率电磁暂态（EMT）仿真的数值稳定性。方法核心在于识别多速率仿真（快速子网络采用小步长Δt，慢速子网络采用大步长ΔT=NΔt）在离散时间域呈现周期性时变特性（周期为ΔT）。
+- 验证证据：基于LTI系统特征值分析的解析验证方法（文中提及将在后续章节通过示例仿真验证，但提供的文本片段未包含具体验证细节）；针对线性时不变（LTI）网络的理论分析框架，适用于任意可划分为快速和慢速子网络的LTI系统（具体测试系统如IEEE标准系统或自定义电路在提供的片段中未明确）；理论推导涉及状态空间分析和矩阵计算；
+- 量化与结论：时间步长必须满足整数倍关系：ΔT = NΔt，其中N为严格大于1的整数（N ∈ ℤ+, N > 1），这是应用lifting技术和周期性分析的前提条件；离散系统呈现N周期性：在一个大步长周期ΔT内，系统经历N个不同的状态转移矩阵G0, G1, ..., GN-1，形成周期为N的时变离散系统；
+- 适用边界：适用于理解本文 Stability Assessment of Multi-Rate Electromagnetic Transient Simulations （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[multirate]]
 - [[numerical-integration]]
@@ -36,18 +65,14 @@ sources: ["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Ele
 
 ## 涉及的模型
 
-
 - [[network-equivalent]]
 
 ## 相关主题
-
 
 - [[multirate]]
 - [[numerical-integration]]
 
 ## 主要发现
-
-
 
 - 多速率EMT仿真生成的离散时间系统本质上是时间周期性的
 - 即使采用A稳定的梯形积分法则，多速率EMT仿真仍可能出现数值不稳定现象
@@ -61,26 +86,21 @@ sources: ["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Ele
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x} = Ax$$$
 
 *连续时域自治LTI系统的状态空间方程，其中A为系统矩阵，x为状态向量*
-
 
 **公式2**: $$$x(t + \Delta t) = Gx(t)$$$
 
 *单速率离散化后的状态转移方程，G为单步长状态转移矩阵*
 
-
 **公式3**: $$$G = (I - A\Delta t/2)^{-1}(I + A\Delta t/2)$$$
 
 *采用梯形积分法则（Trapezoidal Rule）时的状态转移矩阵计算式，I为单位矩阵*
 
-
 **公式4**: $$$\Delta T = N\Delta t, \quad N \in \mathbb{Z}^+, N > 1$$$
 
 *多速率时间步长关系，N为大步长与小步长的整数比*
-
 
 **公式5**: $$$x(t + \Delta t) = G_0 x(t)$
 $x(t + 2\Delta t) = G_1 x(t + \Delta t)$
@@ -89,22 +109,18 @@ $x(t + N\Delta t) = G_{N-1} x(t + (N-1)\Delta t)$$$
 
 *多速率仿真在一个周期ΔT内的分段状态转移，Gk为第k个小步长间隔的时变转移矩阵（因快慢子网络交替更新和采样保持/插值而随k变化）*
 
-
 **公式6**: $$$X^L(t) = \begin{bmatrix} x(t) \\ x(t + \Delta t) \\ \vdots \\ x(t + (N-1)\Delta t) \end{bmatrix}$$$
 
 *提升（lifting）操作定义的扩展状态向量，将N个连续小步长的状态堆叠，将周期性时变系统转化为时不变系统*
-
 
 **公式7**: $$$M^L X^L(t + \Delta T) = H^L X^L(t)$$$
 
 *提升后的时不变离散时间系统表示，ML和HL为常数矩阵，用于特征值稳定性分析*
 
-
 **公式8**: $$$M^L = \begin{bmatrix} I & 0 & \cdots & 0 \\ 0 & I & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & 0 \end{bmatrix}, \quad
 H^L = \begin{bmatrix} 0 & 0 & \cdots & G_{N-1} \\ -I & 0 & \cdots & G_{N-2} \\ \vdots & \ddots & \ddots & \vdots \\ 0 & \cdots & -I & G_0 \end{bmatrix}$$$
 
 *提升技术中的结构矩阵，ML为选择矩阵（最后一行为零向量），HL包含各子周期转移矩阵Gk和负单位矩阵-I，建立跨周期ΔT的状态映射*
-
 
 ### 算法步骤
 
@@ -120,7 +136,6 @@ H^L = \begin{bmatrix} 0 & 0 & \cdots & G_{N-1} \\ -I & 0 & \cdots & G_{N-2} \\ \
 
 6. 特征值稳定性判定：计算矩阵(ML)^(-1)HL（或广义特征值问题det(HL - λML) = 0）的特征值，若所有特征值位于复平面单位圆内（|λ| < 1），则多速率仿真数值稳定
 
-
 ### 关键参数
 
 - **N**: 大步长与小步长之比，必须为正整数且N > 1，决定系统周期性和提升向量的维度
@@ -135,8 +150,6 @@ H^L = \begin{bmatrix} 0 & 0 & \cdots & G_{N-1} \\ -I & 0 & \cdots & G_{N-2} \\ \
 
 - **A**: 连续系统状态矩阵，决定原LTI网络的动态特性
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -147,8 +160,6 @@ H^L = \begin{bmatrix} 0 & 0 & \cdots & G_{N-1} \\ -I & 0 & \cdots & G_{N-2} \\ \
 
 | 提供的文本片段未包含具体仿真测试案例的详细数值结果 | 论文摘要和引言部分指出，所提方法通过特征值分析可预测多速率仿真的数值稳定性，并发现即使采用A稳定梯形法则仍可能出现不稳定现象，但具体验证案例的数值数据（如误差百分比、仿真耗时等）在提供的Section I-II片段中未展示 | 方法对比了传统单速率仿真（全网络使用Δt）与多速率仿真（分区使用Δt和ΔT）的稳定性特征，指出多速率引入的周期性时变特性可能导致单个子网络稳定但整体仿真不稳定的情况 |
 
-
-
 ## 量化发现
 
 - 时间步长必须满足整数倍关系：ΔT = NΔt，其中N为严格大于1的整数（N ∈ ℤ+, N > 1），这是应用lifting技术和周期性分析的前提条件
@@ -157,7 +168,6 @@ H^L = \begin{bmatrix} 0 & 0 & \cdots & G_{N-1} \\ -I & 0 & \cdots & G_{N-2} \\ \
 - 矩阵HL具有特定的块下Hessenberg结构：包含负单位矩阵-I在主次对角线下方，以及转移矩阵Gk在最后一列块
 - 稳定性判据：多速率仿真系统稳定的充要条件是矩阵对(ML, HL)的广义特征值均位于单位圆内，即|λ(HL, ML)| < 1
 - 与单速率仿真的关键差异：单速率使用固定G矩阵，而多速率使用周期性变化的Gk序列，这破坏了单速率下梯形法则A稳定性保证整体稳定的性质
-
 
 ## 关键公式
 
@@ -173,11 +183,34 @@ $$$x(t + (k+1)\Delta t) = G_k x(t + k\Delta t), \quad k = 0, 1, \ldots, N-1$$$
 
 *描述在一个大步长ΔT = NΔt周期内，由于快慢子网络交替求解和接口采样保持/插值策略，状态转移矩阵Gk随步数k变化，体现多速率仿真的本质时变特性。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 基于LTI系统特征值分析的解析验证方法（文中提及将在后续章节通过示例仿真验证，但提供的文本片段未包含具体验证细节）
 - **测试系统**: 针对线性时不变（LTI）网络的理论分析框架，适用于任意可划分为快速和慢速子网络的LTI系统（具体测试系统如IEEE标准系统或自定义电路在提供的片段中未明确）
 - **仿真工具**: 理论推导涉及状态空间分析和矩阵计算；仿真实现提及基于MATE（Multi Area Thevenin Equivalent）的多速率EMT仿真方法，但未明确指定商用仿真软件（如PSCAD/EMTDC、MATLAB/Simulink或RTDS）的具体版本
 - **验证结果**: 理论分析表明：1) 多速率EMT仿真产生周期性时变离散系统；2) 通过lifting技术可获得等效时不变表示；3) 即使各子网络使用A稳定的梯形法则且原连续系统稳定，多速率仿真仍可能因周期性耦合而数值不稳定。具体数值算例结果在提供的Section I-II文本中未包含。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Stability Assessment of Multi-Rate Electromagnetic Transient Simulations`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 multirate、numerical-integration、state-space 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种评估线性时不变（LTI）网络多速率电磁暂态（EMT）仿真稳定性的解析方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Electromagnetic Transient Simulations.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

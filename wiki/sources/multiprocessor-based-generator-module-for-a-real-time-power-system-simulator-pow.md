@@ -1,9 +1,9 @@
 ---
 title: "Multiprocessor based generator module for a real-time power system simulator - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['Y. Kokai', 'I. Matori', 'J. Kawakami']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['real-time']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Multiprocessor based generator module for a real-time power system simulator.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/27&28/Multiprocessor based generator module for a real-time p
 
 # Multiprocessor based generator module for a real-time power system simulator - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: Y. Kokai; I. Matori; J. Kawakami
 **年份**: 2004
 **来源**: `27&28/Multiprocessor based generator module for a real-time power system simulator.pdf`
 
 ## 摘要
 
-A new geneeator simulation module was developed for an electrical power system simulator. This simulator is on an analog simultaneous base. Therefore the module has to simulate a generator behavior precisely. Furthermore, it is required to be able to use the analog simulator as easily as an off- line simulation program. To meet the requirement, the developed generator module adopts a multiprocessor consisting of microprocessors and an analog three-phase sinusoidal oscillator. Any type of generator can be easily simulated only by changing the program of the microprocessors.
+该研究提出了一种基于多处理器（4个Intel 8086/8087微处理器）的同步发电机实时仿真模块，采用模拟-数字混合架构。核心思想是通过并行处理技术将电磁暂态仿真的计算步长缩短至模拟同步基（analog simultaneous base）可接受的范围（<5ms）。系统包含一个模拟三相正弦振荡器（0.1ms更新周期），用于生成平滑的三相电压波形（20V额定电压，0.2A额定电流）。数值求解采用梯形积分法（Trapezoidal method）配合浮点运算，以避免定点运算的极限环效应（limit cycle effect）。通过将发电机微分方程组（包含转子电路、AVR、调速器和运动方程）分配到多个处理器并行求解，并允许使用前一时步的变量值作为部分输入的近似，实现了计算加速。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的是混合式实时电力系统仿真器中的同步发电机模块问题：线路、变压器等可用模拟电路实时联立运行，但发电机若仍用运放式模拟模块，参数修改和初始条件整定耗时；若改用微处理器数字计算，又会受到仿真步长和数值精度限制。研究对象不是完整数字EMT平台，而是接入“analog simultaneous base”的低电压实时仿真器中的发电机单元。难点在于发电机动态包含转子电路、励磁、调速和机械运动等多组微分方程，必须在模拟网络实时推进的时间尺度内完成计算，并输出可连续接入模拟网络的三相量。本文贡献是用4个微处理器构成多处理器发电机模块，并配合模拟三相正弦振荡器：发电机模型通过程序修改获得灵活性，微分方程并行求解缩短时间间隔，浮点运算用于降低定点数值误差，最终以EMTP离线结果作为精度参照。
+
+### 2. 模型、算法与实现技术
+
+实现上，发电机行为由微处理器数字求解，电气网络接口仍通过模拟量连接。核心输入包括发电机端电压、电流、控制给定和来自主机的初始条件；内部状态包括d-q轴相关电流/磁链、励磁系统状态、调速系统状态、转速和功角等；输出则转换为发电机内部电势幅值、频率和相角，并送入模拟三相正弦振荡器生成三相电压。数值机制是把连续状态方程离散为逐步更新形式，当前页面抽取显示其采用梯形积分法，即用当前步和下一步输入共同参与状态更新，以改善稳定性和误差积累。并行机制不是简单复制计算，而是将发电机动态方程组拆分给多个8086/8087处理器并行计算；为降低同步等待，部分耦合量可使用上一时步值近似。模拟振荡器承担“数字慢更新—模拟平滑输出”的桥接作用，使微处理器只需周期性更新幅值、相角或频率参考，模拟端仍能向实时网络提供连续三相正弦波。主机计算潮流并下装初值，使发电机模块能与断路器、线路、变压器等模拟模块按预定序列运行。
+
+### 3. 验证、优势与不足
+
+作者的有效性验证是将新发电机模块的仿真结果与离线EMTP进行比较，EMTP被用作电磁暂态/发电机动态计算的基线工具。原文明确说明该模块用于一个实时电力系统仿真器，已开发组件包括4个发电机单元、交流/直流线路、变压器、换流器、滤波器和负荷等；当前页面抽取还给出低电压额定接口为20 V、0.2 A，以及单处理器约13 ms、四处理器目标小于5 ms等时间信息。优势主要体现在三点：一是相对全模拟发电机模块，模型和参数可通过程序修改；二是相对单微处理器，方程并行求解使数字步长更适合模拟实时基；三是浮点运算避免了作者所担心的定点极限环和数值误差问题。从验证范围看，论文证明的是该硬件模块在特定模拟同步基仿真器中的可用性，而不是现代全数字EMT仿真器的通用最优方案。原文摘要未给出可核验的误差范数、故障场景清单、长时间稳定性统计或并行近似误差上界，因此“精度足够”应理解为经EMTP波形对比支持，而非已由完整指标体系量化证明。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知在于：早期实时EMT/电力系统仿真并不只有“全模拟”或“全数字”两条路，发电机这类参数复杂、模型常变的部分可以数字化，而网络接口和三相输出仍由模拟硬件承担。它解决的是实时模拟仿真器中发电机模块难调、难扩展与微处理器算力不足之间的矛盾。后续研究可复用其思想：按物理子系统拆分并行计算、用上一时步量处理弱耦合、用专用接口硬件平滑数字输出、用离线EMTP作基准验证。它不适合直接外推为现代FPGA/多核实时仿真的性能结论，也不能据此断言所有发电机模型、故障类型或大系统规模下均满足同等精度。
+
+### 证据边界
+
+- 原文明确证据：模块用于analog simultaneous base实时电力系统仿真器，发电机由多处理器和模拟三相正弦振荡器组成，精度通过与EMTP比较验证。
+- 原文明确证据：系统低压低流设计为20 V和0.2 A，主机可先计算潮流并向微处理器设置初始值，其他网络元件多由模拟电路构成。
+- 当前页面抽取给出但在所附原文片段中未展开的细节包括：8086/8087、4个微处理器、单处理器13 ms、并行后小于5 ms、振荡器0.1 ms更新、梯形积分公式；使用时应回查论文正文图表确认。
+- 原文摘要只说与EMTP比较验证精度，未在所附片段中报告可核验的误差指标、波形偏差百分比、故障类型、仿真时长或统计结果。
+- 并行计算中使用上一时步耦合量属于当前页面抽取的方法解释；其误差“可忽略”需要依赖步长和工况，原文片段未给出严格误差界。
+- 从验证范围看，结论适用于该低电压模拟同步基硬件平台；不能直接推广到现代全数字实时EMT、HIL接口、高频电力电子暂态或大规模多机系统。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出多微处理器发电机仿真模块架构，结合模拟三相振荡器实现平滑波形输出
-- 采用四微处理器并行求解微分方程，显著缩短仿真步长以满足实时性要求
-- 引入浮点运算避免数值误差，结合梯形积分法实现高精度电磁暂态动态求解
-
+- 问题定位：该研究提出了一种基于多处理器（4个Intel 8086/8087微处理器）的同步发电机实时仿真模块，采用模拟-数字混合架构。核心思想是通过并行处理技术将电磁暂态仿真的计算步长缩短至模拟同步基（analog simultaneous base）可接受的范围（<5ms）。系统包含一个模拟三相正弦振荡器（0.
+- 方法机制：该研究提出了一种基于多处理器（4个Intel 8086/8087微处理器）的同步发电机实时仿真模块，采用模拟-数字混合架构。核心思想是通过并行处理技术将电磁暂态仿真的计算步长缩短至模拟同步基（analog simultaneous base）可接受的范围（<5ms）。系统包含一个模拟三相正弦振荡器（0.1ms更新周期），用于生成平滑的三相电压波形（20V额定电压，0.2A额定电流）。
+- 验证证据：对比验证（与行业标准离线仿真程序EMTP进行结果比对）；包含同步发电机、励磁系统（AVR，含三个一阶滞后环节）、调速系统（GOV，含一个一阶滞后环节）、传输线路和变压器的电力系统仿真器；EMTP (Electro Magnetic Transients Program) - 作为基准离线仿真工具
+- 量化与结论：单处理器（8086/8087）执行单步仿真耗时：13ms；四处理器并行处理后目标步长：<5ms（满足模拟同步基实时性要求）；模拟三相振荡器波形更新周期：0.1ms（产生平滑正弦波，即使参考信号在仿真步长内保持恒定）；系统额定电气参数：20V电压，0.2A电流（低电压设计便于操作）
+- 适用边界：适用于低电压、低电流模拟同步基实时仿真器中的同步发电机模块替代，目标是让发电机模型像离线程序一样可编程。；该方案依赖 8086/8087 时代的多微处理器并行和模拟振荡器接口，工程价值主要是实时仿真架构思想；不应直接等同于现代 EMT 数字仿真器的实现方式。
 
 ## 使用的方法
-
 
 - [[多处理器并行计算|多处理器并行计算]]
 - [[梯形积分法|梯形积分法]]
@@ -36,9 +64,7 @@ A new geneeator simulation module was developed for an electrical power system s
 - [[dq坐标变换|dq坐标变换]]
 - [[数模混合仿真|数模混合仿真]]
 
-
 ## 涉及的模型
-
 
 - [[同步发电机|同步发电机]]
 - [[励磁控制系统-avr|励磁控制系统(AVR)]]
@@ -46,9 +72,7 @@ A new geneeator simulation module was developed for an electrical power system s
 - [[模拟三相正弦振荡器|模拟三相正弦振荡器]]
 - [[输电线路与变压器|输电线路与变压器]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[混合仿真|混合仿真]]
@@ -56,15 +80,11 @@ A new geneeator simulation module was developed for an electrical power system s
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[发电机动态建模|发电机动态建模]]
 
-
 ## 主要发现
 
-
-- 四微处理器并行架构有效缩短计算耗时，使仿真步长满足模拟同步基实时要求
-- 浮点运算结合梯形法显著抑制数值误差，模块输出与EMTP离线结果高度吻合
-- 仅修改微处理器程序即可灵活模拟各类发电机，大幅降低传统模拟模块调参时间
-
-
+- 单处理器难以把完整发电机微分方程组压到模拟同步基所需步长内，4 微处理器并行是为缩短数字计算间隔服务。
+- 与纯模拟模块相比，参数和模型类型可通过修改微处理器程序调整，初始条件也可由主机潮流计算后写入。
+- 模块精度依赖仿真时间间隔和浮点运算实现；论文通过与 EMTP 离线程序对比验证，而不是声称对所有发电机模型天然精确。
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ A new geneeator simulation module was developed for an electrical power system s
 
 ### 数学公式
 
-
 **公式1**: $$$$x(t+\Delta t) = Cx(t) + D[u(t) + u(t+\Delta t)]$$$$
 
 *梯形积分法离散化形式，用于求解状态空间微分方程dx/dt=Ax+Bu。其中x为状态向量，u为输入向量，C和D为离散化系数矩阵。*
-
 
 **公式2**: $$$$C = \left(I - \frac{\Delta t}{2}A\right)^{-1}\left(I + \frac{\Delta t}{2}A\right), \quad D = \frac{\Delta t}{2}\left(I - \frac{\Delta t}{2}A\right)^{-1}B$$$$
 
 *梯形法的系数矩阵计算公式，I为单位矩阵，Δt为仿真步长，A和B为连续系统状态矩阵。*
 
-
 **公式3**: $$$$E_a'' = E''\sin(2\pi ft + \theta), \quad E_b'' = E''\sin(2\pi ft + \theta - 2\pi/3), \quad E_c'' = E''\sin(2\pi ft + \theta + 2\pi/3)$$$$
 
 *模拟三相正弦振荡器生成的内部电压参考值，f为频率参考值，θ为相角参考值，E''为内电势幅值。*
-
 
 **公式4**: $$$$\psi_{ad} = X_{ad}''(I_d + I_{fd} + I_{1d}), \quad \psi_{aq} = X_{aq}''(I_q + I_{1q})$$$$
 
 *d轴和q轴气隙磁链方程，X''为次暂态电抗，I_d、I_q为电枢电流，I_fd为励磁电流，I_1d、I_1q为阻尼绕组电流。*
 
-
 **公式5**: $$$$E_{fd} = R_{fd}I_{fd} + \frac{d\psi_{fd}}{dt}, \quad E_{1d}' = R_{1d}I_{1d} + \frac{d\psi_{1d}}{dt}, \quad E_{1q}' = R_{1q}I_{1q} + \frac{d\psi_{1q}}{dt}$$$$
 
 *转子绕组（励磁绕组和d、q轴阻尼绕组）的电压方程，R为绕组电阻，ψ为磁链。*
 
-
 **公式6**: $$$$M\frac{d\omega}{dt} = T_m - T_e - P_d(\omega - \omega_0), \quad \frac{d\delta}{dt} = \omega - \omega_0$$$$
 
 *转子运动方程（摇摆方程），M为转动惯量，ω为角速度，δ为相角，T_m为机械转矩，T_e为电磁转矩，P_d为机械阻尼系数，ω_0为额定角速度。*
-
 
 ### 算法步骤
 
@@ -118,7 +131,6 @@ A new geneeator simulation module was developed for an electrical power system s
 5. 转子动态计算：使用梯形法求解运动方程，更新角速度ω和相角δ
 
 6. 内电势计算：根据磁链和电流计算d-q轴次暂态电势E''_d和E''_q，合成内部电压幅值E''和参考信号送至模拟振荡器
-
 
 ### 关键参数
 
@@ -142,8 +154,6 @@ A new geneeator simulation module was developed for an electrical power system s
 
 - **arithmetic_type**: floating point (to avoid fixed point limit cycle effect)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -156,8 +166,6 @@ A new geneeator simulation module was developed for an electrical power system s
 
 | 与EMTP离线仿真精度验证 | 将多处理器发电机模块的仿真结果与离线电磁暂态仿真程序EMTP（Electro Magnetic Transients Program）进行对比验证。采用浮点运算替代定点运算，有效消除了定点运算的极限环效应（limit cycle effect），在长时间动态仿真中保持了数值稳定性。梯形积分法的使用确保了较小的数值误差积累。 | 与EMTP结果高度吻合，浮点运算显著抑制了数值误差，避免了定点运算的长时漂移问题 |
 
-
-
 ## 量化发现
 
 - 单处理器（8086/8087）执行单步仿真耗时：13ms
@@ -168,7 +176,6 @@ A new geneeator simulation module was developed for an electrical power system s
 - 处理器架构：16位Intel 8086微处理器配合8087浮点协处理器
 - 数值方法：梯形积分法（Trapezoidal method）具有优良的数值稳定性和精度
 - 并行策略：采用前一时步变量替代当前输入的近似，误差可忽略（因Δt很小，状态变量偏差极小）
-
 
 ## 关键公式
 
@@ -190,11 +197,16 @@ $$$$\begin{bmatrix} \psi_d \\ \psi_q \end{bmatrix} = \begin{bmatrix} X_{ad}'' & 
 
 *在d-q坐标系下计算发电机气隙磁链，用于确定内部电压和电磁转矩*
 
+## 适用边界
 
+- 适用于低电压、低电流模拟同步基实时仿真器中的同步发电机模块替代，目标是让发电机模型像离线程序一样可编程。
+- 该方案依赖 8086/8087 时代的多微处理器并行和模拟振荡器接口，工程价值主要是实时仿真架构思想；不应直接等同于现代 EMT 数字仿真器的实现方式。
+- 精度受仿真时间间隔、并行近似（使用前一时步变量作为部分输入）和浮点实现影响，模型修改后应重新与离线 EMT/EMTP 基准比较。
+- 模拟三相振荡器提供平滑输出，但也意味着电气接口、额定 20V/0.2A 等硬件尺度与实际电网物理量之间存在缩放和接口约束。
 
 ## 验证详情
 
 - **验证方式**: 对比验证（与行业标准离线仿真程序EMTP进行结果比对）
 - **测试系统**: 包含同步发电机、励磁系统（AVR，含三个一阶滞后环节）、调速系统（GOV，含一个一阶滞后环节）、传输线路和变压器的电力系统仿真器
 - **仿真工具**: EMTP (Electro Magnetic Transients Program) - 作为基准离线仿真工具
-- **验证结果**: 多处理器发电机模块的输出与EMTP离线仿真结果高度一致，验证了并行处理结合浮点运算的精度。浮点运算有效避免了定点运算在长时间仿真中出现的极限环效应和数值误差积累问题，证明了该实时仿真模块在精度和速度上的有效性。
+- **验证结果**: 多处理器发电机模块通过与 EMTP 离线仿真结果比较验证精度；浮点运算用于避免定点运算数值误差，4 微处理器并行用于把仿真时间间隔压缩到模拟同步基可接受范围。

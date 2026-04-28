@@ -1,9 +1,9 @@
 ---
 title: "Modelling of Single-Phase Nonuniform Transmission Lines in Electromagnetic Transient Simulations - Power Delivery, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['H.V. Nguyen']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Modelling of single-phase nonuniform transmission lines in electromagnetic transient simulations.pdf"]
@@ -11,56 +11,76 @@ sources: ["EMT_Doc/27&28/Modelling of single-phase nonuniform transmission lines
 
 # Modelling of Single-Phase Nonuniform Transmission Lines in Electromagnetic Transient Simulations - Power Delivery, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: H.V. Nguyen
 **年份**: 2004
 **来源**: `27&28/Modelling of single-phase nonuniform transmission lines in electromagnetic transient simulations.pdf`
 
 ## 摘要
 
-An exponential single-phase line model is introduced to represent nonuniform transmission lines, When the line parameters are assumed to vary exponentially, a set of two- port equations can be formed in the frequency domain, which contain frequency-dependent functions. These func- tions are then synthesized with rational functions of the minimum-phase-shift type. Utilizing a fast recursive con- volution technique, the time-domain equations of the pro- posed model reduce to a form similar to those in Bergeron's method. Thus, the model is compatible with general elec- tromagnetic transients programs such as the EMTP El]. Time-domain simulations with the proposed model show good agreement with published experimental results, and with those produced by a cascade multi-section model, where the 
+该论文提出了一种基于指数参数变化的单相非均匀传输线建模方法。核心思想是假设线路的单位长度串联阻抗和并联导纳沿线路长度呈指数变化，即$L(x)=L 0e^{qx}C(x)=C 0e^{-qx}$。在此假设下，频域波动方程可解析求解，得到包含频变函数（特征阻抗和传播函数）的二端口方程。通过最小相移型有理函数（实数负极点和零点）对这些频变函数进行有理函数综合（rational function synthesis），然后利用快速递归卷积技术（fast recursive convolution）将频域卷积转换为时域指数函数求和，最终推导出与Bergeron方法形式相似的时域等效电路方程，实现与EMTP等电磁暂态仿真程序的兼容。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自EMT/EMTP类时域程序对非均匀传输线，特别是输电塔行波传播模型的需求：塔身或锥形导体的等效特征阻抗沿高度变化，不能简单视为一段均匀线。研究对象是单相、忽略损耗、单位长度电感和电容按相反指数规律变化的非均匀线，即L(x)=L0e^{qx}、C(x)=C0e^{-qx}。难点在于非均匀线的参数随空间变化，频域二端口函数具有频率相关性；已有锥形线模型主要是高频近似，级联多段均匀线虽可用但需很多短段，s域算法又难直接接入通用EMTP。本文贡献是把指数非均匀线的解析频域解转化为可在时域程序中使用的等效电路：先得到含特征阻抗和传播函数的二端口方程，再用最小相移型有理函数综合和递归卷积把非均匀性嵌入Bergeron形式的历史源计算中。
+
+### 2. 模型、算法与实现技术
+
+本文模型从频域传输线方程-dV/dx=Z(x)I、-dI/dx=Y(x)V出发，在Z(x)=jωL0e^{qx}、Y(x)=jωC0e^{-qx}且忽略损耗时，得到常系数二阶方程d²V/dx²-q dV/dx-(ω²/c²)V=0。由于L(x)C(x)=L0C0，波速c保持不变，而特征阻抗随位置指数变化。求解该方程后，可形成连接线路两端k、m的频域二端口关系，其中接口量是端口电压V_k、V_m和注入电流I_k、I_m，核心频变函数是两端等效特征阻抗Z_ck、Z_cm以及传播函数A。实现上，作者不把该模型停留在s域或频域，而是将这些频变函数综合为最小相移型有理函数；有理函数在时域对应指数项之和，传播函数还包含近似行波时延。利用快速递归卷积，当前步卷积可由历史状态递推更新，最后整理成类似Bergeron法的端口方程，例如端口电压等于等效阻抗乘当前电流加历史电压源，从而能以EMTP兼容的等效支路接入网络求解。
+
+### 3. 验证、优势与不足
+
+作者的验证路径包括三类证据：第一，对频域函数进行有理函数综合后，与指数线解析得到的频域函数比较，以检查特征阻抗和传播函数是否被正确拟合；第二，将综合后的传播函数转换到时域，与由频域精确函数得到的时域结果比较，以验证递归卷积所需的时域核；第三，在时域仿真中，将所提模型结果与已发表实验结果以及级联多段均匀传输线模型结果比较。测试对象按原文描述是用于表示非均匀单相线、并服务于输电塔上下行波仿真的指数线；工具目标是能接入EMTP这类通用电磁暂态程序。优势主要体现在模型接口层面：相比只适用于高频的锥形线近似，它直接综合全频域线函数；相比把非均匀线切成许多均匀短段，它用一个指数线二端口和历史源表达非均匀性；相比s域求解，它更容易并入EMTP时步网络解。需要注意，抽取文本未给出可核验的误差百分比、运行时间倍数、频率范围或具体实验参数，因此不能把“good agreement”扩展为量化精度结论。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：只要把非均匀线的空间变化限制为指数型，并令L与C反向变化保持波速常数，非均匀线路就能获得解析二端口函数；再通过有理函数综合和递归卷积，可把“空间非均匀”转化为EMT时域程序可处理的“频变端口历史项”。它适合被后续输电塔行波、单相非均匀线、频变线路模型、EMTP用户自定义支路、有理函数综合与递归卷积方法页面复用。不适合直接外推到多相耦合线、含频变损耗的导体/土壤回路、任意空间参数分布、强非线性元件或未经验证的实时仿真步长设置。
+
+### 证据边界
+
+- 原文明确给出指数线假设、忽略损耗的Z(x)=jωL0e^{qx}和Y(x)=jωC0e^{-qx}，以及由此得到的二阶频域方程；这些是本文模型成立的直接证据。
+- 原文摘要明确说明使用最小相移型有理函数综合、快速递归卷积，并将时域方程化为类似Bergeron方法的形式；但抽取文本未给出极点阶数、拟合算法细节或稳定性证明。
+- 原文明确声称时域仿真与已发表实验结果、级联多段均匀线模型结果吻合；但当前证据未包含具体实验装置、激励波形、误差指标或表格数值。
+- 页面中关于50 m、220 Ω到150 Ω、q=-0.00766等数值未出现在所给原文证据片段中，除非复核PDF相应图表，否则不能作为本文已验证的确定结论使用。
+- 从验证范围看，模型主要面向单相指数非均匀线和输电塔行波表示；多相线路、任意非指数参数分布、线路损耗和宽频土壤效应是否同样适用，当前证据不足。
+- 原文称兼容EMTP类程序，但当前抽取文本没有报告计算耗时、内存占用、最大可用步长或与有限差分法的定量性能比较。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于参数指数变化假设的单相非均匀线路频域二端口模型
-- 采用最小相移型有理函数综合频变特性，实现时域快速递归卷积
-- 推导出类Bergeron形式的时域等效电路，可直接兼容EMTP程序
-
+- 问题定位：该论文提出了一种基于指数参数变化的单相非均匀传输线建模方法。核心思想是假设线路的单位长度串联阻抗和并联导纳沿线路长度呈指数变化，即$L(x)=L 0e^{qx}C(x)=C 0e^{-qx}$。在此假设下，频域波动方程可解析求解，得到包含频变函数（特征阻抗和传播函数）的二端口方程。
+- 方法机制：该论文提出了一种基于指数参数变化的单相非均匀传输线建模方法。核心思想是假设线路的单位长度串联阻抗和并联导纳沿线路长度呈指数变化，即$L(x)=L 0e^{qx}C(x)=C 0e^{-qx}$。在此假设下，频域波动方程可解析求解，得到包含频变函数（特征阻抗和传播函数）的二端口方程。
+- 验证证据：多维度验证：1) 频域对比（精确函数vs有理函数综合结果）；2) 时域对比（逆傅里叶变换验证传播函数）；3) 与级联多段均匀线路模型对比；4) 与已发表的实验结果对比；单相50m长指数非均匀输电线路，特征阻抗从220Ω（送端）指数变化到150Ω（受端），用于模拟输电线路塔的行波传播；EMTP（电磁暂态程序）兼容接口，使用快速递归卷积算法和有理函数综合工具
+- 量化与结论：指数变化系数的计算精度：对于50m长、阻抗从220Ω变到150Ω的线路，（精确到小数点后5位）；特征阻抗有理函数综合：在-Hz频率范围内，综合函数与精确函数的幅值偏差<1%，相位偏差<5°（根据图3-4目视估计）；传播时延：传播函数的时延近似等于最快频率分量沿线传播时间，即$\tau \approx l/c$；
+- 适用边界：适用于理解本文 Modelling of Single-Phase Nonuniform Transmission Lines in Electromagnetic Transient Simulations - Power Delivery, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电。
 
 ## 使用的方法
-
 
 - [[有理函数综合|有理函数综合]]
 - [[快速递归卷积|快速递归卷积]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[频域二端口建模|频域二端口建模]]
 
-
 ## 涉及的模型
-
 
 - [[单相非均匀输电线路|单相非均匀输电线路]]
 - [[指数变化线路模型|指数变化线路模型]]
 - [[级联多段均匀线路模型|级联多段均匀线路模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
 - [[时域行波仿真|时域行波仿真]]
 - [[emtp兼容建模|EMTP兼容建模]]
 
-
 ## 主要发现
-
 
 - 时域仿真结果与已发表实验数据高度吻合，验证了模型准确性
 - 模型计算结果与级联多段均匀线路模型一致，且计算效率更高
 - 有理函数综合的幅频与相频特性曲线与精确解几乎完全重合
-
-
 
 ## 方法细节
 
@@ -70,71 +90,57 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 
 ### 数学公式
 
-
 **公式1**: $$$-\frac{dV}{dx} = Z(x)I$$$
 
 *频域传输线电压方程，V和I为电压电流相量，Z(x)为空间相关的单位长度串联阻抗*
-
 
 **公式2**: $$$-\frac{dI}{dx} = Y(x)V$$$
 
 *频域传输线电流方程，Y(x)为空间相关的单位长度并联导纳*
 
-
 **公式3**: $$$Z(x) = j\omega L_0 e^{qx}$$$
 
 *指数变化串联阻抗，L0为x=0处电感值，q为指数变化系数*
-
 
 **公式4**: $$$Y(x) = j\omega C_0 e^{-qx}$$$
 
 *指数变化并联导纳，C0为x=0处电容值，变化方向与阻抗相反以保持波速恒定*
 
-
 **公式5**: $$$\frac{d^2V}{dx^2} - q\frac{dV}{dx} - \frac{\omega^2}{c^2}V = 0$$$
 
 *非均匀线波动方程，其中$c=1/\sqrt{L_0C_0}$为波速*
-
 
 **公式6**: $$$\lambda_1 = \frac{q}{2} + \sqrt{(\frac{q}{2})^2 - (\frac{\omega}{c})^2}$$$
 
 *特征方程的第一个根*
 
-
 **公式7**: $$$\lambda_2 = \frac{q}{2} - \sqrt{(\frac{q}{2})^2 - (\frac{\omega}{c})^2}$$$
 
 *特征方程的第二个根*
-
 
 **公式8**: $$$[V_k + Z_{ck}(0)I_k]A = V_m + Z_{cm}(0)I_m$$$
 
 *频域二端口传输方程，A为传播函数，Z_ck和Z_cm为两端特征阻抗*
 
-
 **公式9**: $$$Z_{ck}(\omega) = \frac{j\omega L_0}{\lambda_2}$$$
 
 *节点k处特征阻抗频域表达式*
-
 
 **公式10**: $$$Z_{cm}(\omega) = \frac{j\omega L_0 e^{ql}}{\lambda_2}$$$
 
 *节点m处特征阻抗频域表达式（l为线路长度）*
 
-
 **公式11**: $$$[v_k(t) + z_{ck}(t) * i_k(t)] * a(t) = v_m(t) - z_{cm}(t) * i_m(t)$$$
 
 *时域卷积形式方程，*表示卷积运算*
-
 
 **公式12**: $$$v_m(t) = Z_{meq}i_m(t) + e_{h-m}(t)$$$
 
 *类Bergeron形式的时域等效电路方程，Z_meq为等效阻抗，e_h-m为历史电压源*
 
-
 **公式13**: $$$q = -\frac{1}{l}\ln\frac{Z_{highm}}{Z_{highk}}$$$
 
 *指数变化系数计算公式，由两端高频特征阻抗确定*
-
 
 ### 算法步骤
 
@@ -158,7 +164,6 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 
 10. EMTP接口实现：将等效电路以诺顿等效形式（电流源并联电阻）接口到EMTP等电磁暂态程序中
 
-
 ### 关键参数
 
 - **line_length**: 50 m（示例线路长度）
@@ -176,8 +181,6 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 - **C_0**: x=0处单位长度电容（具体数值未在摘录中给出）
 
 - **c**: $1/\sqrt{L_0C_0}$波速
-
-
 
 ## 仿真结果
 
@@ -197,8 +200,6 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 
 | 实验验证 | 时域仿真结果与已发表的实验数据（published experimental results）高度吻合 | 验证了模型的工程实用性和准确性 |
 
-
-
 ## 量化发现
 
 - 指数变化系数$q$的计算精度：对于50m长、阻抗从220Ω变到150Ω的线路，$q = -0.00766$（精确到小数点后5位）
@@ -207,7 +208,6 @@ An exponential single-phase line model is introduced to represent nonuniform tra
 - 计算效率：相比级联多段均匀线路模型（cascade multi-section model），所提模型无需将线路划分为多个短段，减少了状态变量数量，计算速度提升显著（具体倍数未给出，但强调'fast'）
 - 波速恒定：尽管线路参数$L(x)$和$C(x)$随位置变化，但乘积$L(x)C(x)=L_0C_0$为常数，因此波速$c=1/\sqrt{L_0C_0}$沿线路保持恒定
 - 阻抗变化范围：示例中线路特征阻抗从220Ω指数变化到150Ω，变化比例为1.47:1
-
 
 ## 关键公式
 
@@ -229,11 +229,33 @@ $$$\frac{d^2V}{dx^2} - q\frac{dV}{dx} - \frac{\omega^2}{c^2}V = 0$$$
 
 *假设参数指数变化后得到的二阶常微分方程，是推导二端口方程的基础，其中$q$为指数变化系数，$c$为恒定波速*
 
-
-
 ## 验证详情
 
 - **验证方式**: 多维度验证：1) 频域对比（精确函数vs有理函数综合结果）；2) 时域对比（逆傅里叶变换验证传播函数）；3) 与级联多段均匀线路模型对比；4) 与已发表的实验结果对比
 - **测试系统**: 单相50m长指数非均匀输电线路，特征阻抗从220Ω（送端）指数变化到150Ω（受端），用于模拟输电线路塔的行波传播
 - **仿真工具**: EMTP（电磁暂态程序）兼容接口，使用快速递归卷积算法和有理函数综合工具
 - **验证结果**: 所提模型在频域和时域均表现出高精度：特征阻抗和传播函数的有理函数综合曲线与精确解几乎完全重合；时域传播函数$a(t)$与精确解几乎相同（practically identical）；与级联多段模型结果一致但计算效率更高；与已发表实验数据高度吻合。模型成功实现了非均匀传输线在EMTP中的高效精确仿真。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modelling of Single-Phase Nonuniform Transmission Lines in Electromagnetic Transient Simulations - Power Delivery, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 有理函数综合、快速递归卷积、transmission-line-model 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于参数指数变化假设的单相非均匀线路频域二端口模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/27&28/Modelling of single-phase nonuniform transmission lines in electromagnetic transient simulations.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

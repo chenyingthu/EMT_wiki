@@ -1,9 +1,9 @@
 ---
 title: "Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En"
 type: source
-authors: ['未知']
+authors: ['Xu 等']
 year: 2025
-journal: ""
+journal: "CSEE Journal of Power and Energy Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En.pdf"]
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 # Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En
 
-**作者**: 
+**作者**: Xu 等
 **年份**: 2025
 **来源**: `35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En.pdf`
 
 ## 摘要
 
-—Due to the advanced features of multidirectional power transfer and fast smoothing of the power ﬂuctuation in renewable energy systems, the multiple-active-bridge based power-electronic-transformer (MAB-PET) with integrated energy storage units is becoming popular. However, the accurate elec- tromagnetic transient simulation of the MAB-PETs is extremely time-consuming due to the large number of circuit nodes and small time-step. This paper proposes a simpliﬁed EMT modeling approach for the MAB-PETs by employing the generalized state- space averaging method. First, the switching function method and Dommel algorithm are used to build the equivalent model of each power module. Further, the PET equivalent model is presented in a multi-port PM polymerization mode. The system is simpliﬁed by ap
+本文提出基于广义状态空间平均法(GSSA)的MAB-PET简化电磁暂态建模方法。该方法首先采用开关函数法构建级联H桥(CHB)交直流端口的电气变量桥接，消除器件级开关过程；其次利用Dommel算法和二元电阻法建立储能子模块(ESS)的Thevenin等效模型，保留混合储能接口；随后对MAB系统应用傅里叶分解进行状态函数谐波分析，忽略高次谐波分量，仅保留直流和基波分量；最终将各功率模块(PM)聚合为四端口等效电压源电路，通过多端口级联模式构建完整的输入串联输出并联(ISOP)型MAB-PET简化等效模型。该方法避免了传统Thevenin等效中的内部节点消除和高频链路解耦，适用于含多端口功率传输和储能集成的复杂PET拓扑。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自含新能源和储能的配电网：PET不仅要完成多端口、双向/多向功率传输，还要借助集成储能平滑功率波动，因此在系统接入前需要可用于EMT分析的动态模型。研究对象是带集成能量存储单元的multiple-active-bridge based power electronic transformer，即由级联H桥、MAB高频链路、多个功率模块和储能接口组成的MAB-PET。难点不只是开关频率高，而是每个PM内部含高频变压器、复杂端口耦合和大量电路节点，详细开关模型需要很小步长，计算代价很高；传统AVM会丢失较多动态信息，动态相量模型在效率上受限，Thevenin等效依赖预处理、内部节点消除和高频链路解耦，面对高电压、大功率、复杂MAB拓扑时建模复杂度上升。本文贡献是把GSSA用于MAB-PET简化EMT建模：先对PM建立等效，再以多端口PM聚合方式形成PET模型，并通过状态函数傅里叶分解忽略高阶谐波，最终得到四端口等效电压源电路，同时用Dommel和二元电阻方法保留可接入单一或混合储能的ESS接口。
+
+### 2. 模型、算法与实现技术
+
+该方法的核心是把含开关器件和高频链路的MAB-PET，从逐开关、逐节点的详细电路，改写为端口等效的简化EMT模型。对每个功率模块，开关函数方法用于描述桥臂开关状态与端口电压、电流之间的映射，使CHB/MAB端口变量可以通过连续或分段函数连接，而不是显式求解每个器件的导通关断。Dommel算法把电感、电容等动态元件离散为等效电导/电阻和历史电流源，便于嵌入EMT节点方程；二元电阻方法用于构造储能子模块等效，使ESS对外仍表现为可计算的端口电压、电流关系，并预留混合储能接口。对MAB高频链路，GSSA将状态变量表示为傅里叶系数，即直流、基波及高次谐波分量的慢变量；再通过忽略高阶谐波，把原本随开关周期快速变化的时变系统降为只保留主要分量的等效系统。最后，各PM不是简单并联替换，而是按多端口PM polymerization mode聚合，形成与输入串联、输出并联等PET连接关系相容的四端口等效电压源电路。模型输入/输出关注外部端口电压、电流、功率以及ESS端口量，目标是在系统级EMT中保留端口动态和功率交换，而省去内部开关细节。
+
+### 3. 验证、优势与不足
+
+作者用PSCAD/EMTDC将所提simplified equivalent model与detailed model进行对比验证。原文摘要明确给出的基线是详细模型，工具是PSCAD/EMTDC，指标包括端口电气量的一致性和仿真耗时；可核验的量化结论是SEM比DM快2–3个数量级，并具有excellent accuracy，但摘要未给出逐变量误差百分比、步长设置或算例参数。当前页面还描述了稳态、功率波动、充放电切换等工况以及河北崇礼实际MAB-PET系统，但这些细节在所给原文片段中未完全展开，作为证据使用时应回到论文算例和图表核对。优势在于：一方面，GSSA谐波截断降低了状态维度，避免显式模拟高频开关；另一方面，Dommel/二元电阻处理让模型可接入储能接口，而多端口PM聚合避免了传统Thevenin等效对复杂内部节点消除和高频链路解耦的强依赖。从验证范围看，结论主要支持正常或给定扰动工况下的端口级EMT等效和仿真加速；尚不能据此断言该模型适用于器件级损耗、开关暂态过电压、保护动作、故障穿越细节、控制器极限非线性或任意MAB拓扑。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把MAB-PET的仿真问题从“复现全部开关细节”转化为“保留端口能量交换与主要谐波动态”的等效建模问题。它提示：对于含多端口高频链路和储能接口的PET，系统级EMT研究不一定需要完整开关模型，可用GSSA加端口聚合在精度和效率之间建立工程可用折中。该页面适合被后续关于PET系统级EMT仿真、AC/DC混合配电网、多PET接入、储能接口等效、平均模型与动态相量模型比较的页面复用。不适合外推到需要器件应力、EMI、高频谐波谱、保护闭锁细节或硬件实时仿真可行性证明的场景；若用于新拓扑或新控制策略，应重新与详细模型校核。
+
+### 证据边界
+
+- 原文摘要明确给出：方法采用generalized state-space averaging、switching function method、Dommel algorithm、Fourier decomposition、multi-port PM polymerization，并得到four-port equivalent voltage source circuit。
+- 原文摘要明确给出：验证工具为PSCAD/EMTDC，对比基线为detailed model，速度提升为2–3 orders of magnitude；但所给片段未报告逐变量误差、仿真步长、节点数量或计算机配置。
+- 当前页面中关于河北崇礼配电网络、稳态/功率波动/充放电切换、最大相对误差小于1%的说法，未在所给原文片段中直接出现，若要引用应核对论文正文图表。
+- 保留直流和基波、忽略高阶谐波是模型简化机制；其误差大小取决于拓扑、调制、控制和工况，不能自动推广到高频谐波或强非线性暂态分析。
+- ESS接口适合单一或混合储能的系统级等效是原文引言和方法动机支持的结论，但所给片段未展示不同储能类型、老化模型、SOC约束或电池内部电化学动态验证。
+- 论文对比主要是简化等效模型与详细模型；所给证据未显示与AVM、动态相量模型或传统Thevenin模型的同平台定量横向比较。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出基于广义状态空间平均法的MAB-PET简化电磁暂态（EMT）建模方法
-- 构建多端口功率模块聚合等效模型，通过傅里叶分解忽略高次谐波，导出四端口等效电压源电路
+- 问题定位：本文提出基于广义状态空间平均法(GSSA)的MAB-PET简化电磁暂态建模方法。该方法首先采用开关函数法构建级联H桥(CHB)交直流端口的电气变量桥接，消除器件级开关过程；其次利用Dommel算法和二元电阻法建立储能子模块(ESS)的Thevenin等效模型，保留混合储能接口；
+- 方法机制：本文提出基于广义状态空间平均法(GSSA)的MAB-PET简化电磁暂态建模方法。该方法首先采用开关函数法构建级联H桥(CHB)交直流端口的电气变量桥接，消除器件级开关过程；其次利用Dommel算法和二元电阻法建立储能子模块(ESS)的Thevenin等效模型，保留混合储能接口；随后对MAB系统应用傅里叶分解进行状态函数谐波分析，忽略高次谐波分量，仅保留直流和基波分量；
+- 验证证据：中国河北省崇礼区配电网络中实际运行的MAB-PET系统，具有输入串联输出并联(ISOP)拓扑结构，包含CHB、MAB和集成储能子模块(ESS)；所提简化等效模型在稳态运行、功率波动、充放电切换等工况下均表现出与详细模型极高的一致性，关键电气量波形几乎完全重合。
+- 量化与结论：仿真速度提升：所提简化等效模型(SEM)比详细模型(DM)快2至3个数量级(即100倍至1000倍加速)；模型精度：在PSCAD/EMTDC平台验证中，关键电气量(端口电压、电流、功率)的波形误差极小，具有极高精度(excellent accuracy)；谐波截断：仅保留直流分量和基波分量(N=1)，忽略k≥2的高次谐波，实现状态空间维度大幅降低；
+- 适用边界：适用于理解本文 Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[state-space]]
 - [[average-value-model]]
@@ -35,20 +64,16 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 ## 涉及的模型
 
-
 - [[transformer]]
 - [[mmc-model]]
 
 ## 相关主题
-
 
 - [[harmonic]]
 - [[network-equivalent]]
 - [[dynamic-phasor]]
 
 ## 主要发现
-
-
 
 - 所提简化等效模型在PSCAD/EMTDC中与详细模型对比具有极高的仿真精度
 - 该模型通过状态平均与谐波忽略策略，使仿真速度比详细模型快2至3个数量级，有效克服了MAB-PET节点多、步长小导致的计算瓶颈
@@ -61,26 +86,21 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 ### 数学公式
 
-
 **公式1**: $$$$\frac{d}{dt}\langle x \rangle_k = A\langle x \rangle_k + B\langle u \rangle_k + \sum_{l \neq k} C_{l}\langle x \rangle_l$$$$
 
 *广义状态空间平均法(GSSA)的第k次谐波状态方程，其中$\langle x \rangle_k$为状态变量第k次谐波分量的时变复系数，$A$为系统矩阵，$B$为输入矩阵，$C_l$表示不同谐波分量间的耦合项。当忽略高次谐波时(k>1)，系统维度显著降低。*
-
 
 **公式2**: $$$$u_{dc} = \sum_{j=a,b,c} s_j(t) \cdot u_{ac,j}$$$$
 
 *开关函数法描述的CHB交直流电压关系，其中$s_j(t) \in \{-1, 0, 1\}$为第j相开关函数，$u_{ac,j}$为交流侧相电压，$u_{dc}$为直流侧电容电压。通过平均化处理消除高频开关细节。*
 
-
 **公式3**: $$$$I_{bat}(t) = G_{eq}U_{C4}(t) + I_{hist}(t-\\Delta t)$$$$
 
 *基于Dommel算法的ESS等效电路方程，$I_{bat}$为电池端口电流，$G_{eq}$为等效电导，$U_{C4}$为LVDC端口电压，$I_{hist}$为历史电流源项，由上一时步状态计算得到，实现储能系统的电磁暂态等效。*
 
-
 **公式4**: $$$$\langle x(t) \rangle_0 + \sum_{k=1}^{N} \langle x(t) \rangle_k e^{jk\omega_s t} \\approx \langle x(t) \rangle_0 + \langle x(t) \rangle_1 e^{j\omega_s t}$$$$
 
 *傅里叶分解简化表达式，将状态变量$x(t)$分解为直流分量($k=0$)和基波分量($k=1$)，忽略$k \geq 2$的高次谐波分量，实现模型简化。$\omega_s$为开关角频率。*
-
 
 ### 算法步骤
 
@@ -94,7 +114,6 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 5. 通过多端口PM聚合模式将各功率模块等效模型级联，构建输入串联输出并联(ISOP)型MAB-PET完整简化模型，实现端口电压电流特性的精确等效
 
-
 ### 关键参数
 
 - **开关频率**: 高频链路(HFL)工作频率，决定GSSA谐波分析基频$\omega_s$
@@ -106,8 +125,6 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 - **CHB子模块数**: 每相级联H桥子模块数量，影响开关函数维度
 
 - **MAB端口数**: m输入1输出(m-to-1)结构，支持多端口功率流动
-
-
 
 ## 仿真结果
 
@@ -121,8 +138,6 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 | 大规模AC-DC混合电网适应性测试 | 验证所提简化模型在含多个PET和储能系统的复杂电网中的适用性。由于模型消除了内部高频开关细节，可采用更大的仿真步长(微秒级提升至数百微秒级)，显著降低计算负担 | 相比传统Thevenin等效方法，建模难度降低且避免了内部节点消除带来的数值稳定性问题，适用于高压大功率PET拓扑 |
 
-
-
 ## 量化发现
 
 - 仿真速度提升：所提简化等效模型(SEM)比详细模型(DM)快2至3个数量级(即100倍至1000倍加速)
@@ -130,7 +145,6 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 - 谐波截断：仅保留直流分量和基波分量(N=1)，忽略k≥2的高次谐波，实现状态空间维度大幅降低
 - 拓扑适应性：适用于SAB、DAB、QAB、CHB-DAB、CHB-MAB等多种拓扑结构，特别是m-to-1结构的多主动桥
 - 仿真步长：由于消除高频开关细节，可采用比详细模型大得多的仿真步长，克服PET仿真步长远小于MMC的技术瓶颈
-
 
 ## 关键公式
 
@@ -146,11 +160,34 @@ $$$$G_{eq} = \frac{2C}{\Delta t} + \frac{1}{R_{bat}}, \\quad I_{hist}^{n} = -G_{
 
 *基于Dommel算法和二元电阻法的储能子模块离散化等效，用于构建保留储能接口的Thevenin等效模型，支持混合储能系统的电磁暂态仿真*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比验证(与详细开关模型对比)
 - **测试系统**: 中国河北省崇礼区配电网络中实际运行的MAB-PET系统，具有输入串联输出并联(ISOP)拓扑结构，包含CHB、MAB和集成储能子模块(ESS)
 - **仿真工具**: PSCAD/EMTDC电磁暂态仿真软件
 - **验证结果**: 所提简化等效模型在稳态运行、功率波动、充放电切换等工况下均表现出与详细模型极高的一致性，关键电气量波形几乎完全重合。仿真耗时比详细模型减少2-3个数量级，有效解决了MAB-PET因节点数多、步长小导致的计算瓶颈问题，适用于含多PET和混合储能的大规模AC-DC混合电网仿真
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 state-space、average-value-model、nodal-analysis 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于广义状态空间平均法的MAB-PET简化电磁暂态（EMT）建模方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transformer with Integrated En.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

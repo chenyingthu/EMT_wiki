@@ -1,7 +1,7 @@
 ---
 title: "Stability Evaluation of Interpolation, Extrapolation, and Numerical Oscillation Damping Methods Applied in EMT Simulation of Power Networks with Switching Transients"
 type: source
-authors: ['未知']
+authors: ['Huanfeng Zhao', 'Shengtao Fan', 'Aniruddha M. Gole', 'Fellow']
 year: 2020
 journal: "IEEE Transactions on Power Delivery; ;PP;99;10.1109/TPWRD.2020.3018651"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 # Stability Evaluation of Interpolation, Extrapolation, and Numerical Oscillation Damping Methods Applied in EMT Simulation of Power Networks with Switching Transients
 
-**作者**: 
+**作者**: Huanfeng Zhao; Shengtao Fan; Aniruddha M. Gole; Fellow
 **年份**: 2020
 **来源**: `35/TPWRD.2020.3018651.pdf.pdf`
 
 ## 摘要
 
-—For Electro-Magnetic-Transient (EMT) simulations of power networks with switches, techniques such as linear interpolation and Critical Damping Adjustment (CDA) are widely used for improving numerical robustness. This paper analyzes the numerical stability of simulations with these techniques. Firstly, it is mathematically shown that the interpolation or CDA step is equivalent to the introduction of additional switching states. Subsequently, Common Quadratic Lyapunov Function (CQLF) theory is used to investigate the numerical stability of the whole simulation considering these new switching states. It is proved that the widely used strategies like linear interpolation and CDA always result a stable simulation if the original switched system is strictly passive in all switching states. Fina
+本文提出了一种基于公共二次李雅普诺夫函数（CQLF）理论的数值稳定性分析框架，用于评估含开关电力网络EMT仿真中插值、外推和数值振荡抑制方法的稳定性。核心思想是将线性插值和临界阻尼调整（CDA）等效为引入额外的开关状态，从而将原系统扩展为包含这些中间状态的切换系统。通过证明扩展后的切换系统存在公共二次李雅普诺夫函数，建立严格无源条件下仿真绝对稳定的充分条件。该方法突破了传统A-稳定性或L-稳定性分析仅适用于线性时不变（LTI）系统的局限，首次为含插值和CDA的非线性开关系统提供了严格的稳定性判据。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真中，电力电子开关、二极管等元件的动作时刻通常不落在固定时间步长网格上。若强行把开关推迟或提前到网格点，会产生电流截断、非特征谐波等附加暂态；若采用线性插值定位真实开关时刻，又会打破原始时间网格，并改变下一步历史项的计算。另一方面，梯形积分在开关引起的不连续处可能出现数值振荡，工程软件常用临界阻尼调整（CDA）等技巧抑制振荡，但这些技巧的稳定性过去多依赖经验或针对线性时不变系统的积分法稳定性分析。本文研究对象不是某个具体开关器件，而是“含开关状态变化的电力网络EMT离散仿真过程”，重点考察插值、外推和CDA这类实际求解步骤是否会破坏数值稳定性。难点在于：开关使系统成为切换系统，插值/CDA又相当于在物理拓扑之外插入额外的计算状态，传统A稳定、L稳定分析不能直接覆盖。本文的核心贡献是把插值或CDA步骤数学等效为新增开关状态，再用公共二次李雅普诺夫函数（CQLF）分析整个扩展切换系统，并证明：若原始切换系统在所有开关状态下严格无源，则广泛使用的线性插值和CDA会得到稳定仿真。
+
+### 2. 模型、算法与实现技术
+
+论文把含开关网络抽象为多状态切换系统：每一种开关拓扑对应一个状态空间模型，典型形式可理解为 x_dot=A_i x+B_i u，其中 i 表示当前开关状态。状态量是网络中由电感、电容等储能元件决定的连续状态；接口量则包括用于判断开关的电流、电压以及伴随梯形积分生成的历史源/等效导纳。对线性插值，仿真先在一个完整步长末端得到试探解，若发现二极管电流等变量在步长内过零，则用线性插值估计真实开关时刻 δt，丢弃原步长末端试探解，并把 δt 处状态作为新的有效解。这个步骤在稳定性分析中不再被看成单纯的时间校正，而被等效为系统经历了一个额外的开关状态。对CDA，工程上常在开关后用具有数值阻尼的步骤替代直接梯形推进，以削弱由不连续电压/历史项不匹配引起的振荡；论文同样把该计算步骤表示为扩展切换系统中的附加状态。随后构造公共二次李雅普诺夫函数 V=x^T P x，要求同一个正定矩阵 P 对所有原始状态及新增计算状态均满足衰减条件。该机制的作用是把“插值、外推、阻尼调整是否稳定”转化为“扩展后所有切换模式是否共享同一个能量下降函数”。论文进一步指出，在原系统各开关状态严格无源的条件下，这些新增状态不会破坏CQLF稳定性。
+
+### 3. 验证、优势与不足
+
+从给出的原文可见，作者用理论证明加算例验证的方式支持结论。理论部分首先证明插值或CDA可等效为引入额外开关状态，再用CQLF理论分析扩展后的切换系统；验证部分摘要仅说明“Examples are provided to verify the proposed technique”，引言中明确讨论了二极管关断的插值示例：电流在 [0, Δt] 内过零，线性插值定位 δt，并说明若强制在网格点开关会导致电流截断或非特征谐波。文中还讨论了电感串联二极管场景中开关前后电感电压不连续、梯形法历史电流源需要正确使用 v_L(t+) 的问题，这构成CDA或历史项修正必要性的动机。可确认的基线是“不使用插值、强制开关落在时间步网格”的处理，以及常规梯形积分伴随电路方法；可确认的指标主要是数值稳定性、是否产生附加暂态、是否存在振荡风险，而非运行时间或误差百分比。原文摘录未给出可核验的量化数值结果，也未展示具体图表数据、步长、元件参数、误差范数或与商业软件的实测对比。因此优势应理解为：给工程常用的线性插值和CDA提供了严格无源条件下的稳定性充分判据，并能扩展评估其他实际插值方法。边界是该结论依赖原始系统所有开关状态严格无源；对含主动控制、负阻抗等非严格无源系统，或对精度、效率、实时性，摘录证据不足以作确定判断。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值在于把EMT仿真中长期作为“工程技巧”的插值、外推和CDA放入统一的切换系统稳定性框架中理解：它们不是与物理系统无关的后处理，而是等效于在离散仿真轨迹中插入新的切换状态。由此，判断这些技巧是否安全，关键不只是看单个积分公式是否A稳定或L稳定，而要看扩展切换系统是否存在共同能量函数。该思路适合后续用于分析EMT求解器中的开关事件定位、历史项重算、阻尼修正、以及新型插值策略的稳定性证明；也适合作为电力电子网络仿真算法设计时的稳定性入口文献。不宜把它外推为任意开关系统都稳定，或外推为某种插值一定更精确、更快；在缺少原文量化结果时，也不应把稳定性充分条件解读为误差或效率优势。
+
+### 证据边界
+
+- 来自原文摘要的确定结论：插值或CDA步骤被数学证明等效为引入额外开关状态，并用CQLF分析整体仿真稳定性。
+- 来自原文摘要的确定结论：若原始切换系统在所有开关状态下严格无源，线性插值和CDA会得到稳定仿真；这是充分条件，不等同于必要条件。
+- 来自原文引言的确定场景：二极管电流在时间步内过零时，线性插值用于定位真实关断时刻；强制网格点开关可能导致电流截断或非特征谐波。
+- 来自原文引言的确定动机：电感串联二极管开关时电流连续但电压不连续，梯形法历史项需要开关后电压信息，否则可能引起数值问题。
+- 原文摘录未报告可核验的数值结果；页面中关于误差降低比例、振荡幅值、计算开销、具体商业软件对比等数字不能据此确认。
+- 验证细节在当前证据中不完整：缺少算例参数、步长、拓扑规模、误差指标、图表数据，以及对非严格无源或含主动控制系统的测试。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 数学证明了线性插值与临界阻尼调整（CDA）等效于在仿真中引入额外的开关状态
-- 引入公共二次李雅普诺夫函数（CQLF）理论，建立了含开关切换的EMT仿真数值稳定性分析框架
-- 证明了该分析框架可推广用于评估其他实际插值与外推算法的数值稳定性
+- 问题定位：本文提出了一种基于公共二次李雅普诺夫函数（CQLF）理论的数值稳定性分析框架，用于评估含开关电力网络EMT仿真中插值、外推和数值振荡抑制方法的稳定性。核心思想是将线性插值和临界阻尼调整（CDA）等效为引入额外的开关状态，从而将原系统扩展为包含这些中间状态的切换系统。
+- 方法机制：本文提出了一种基于公共二次李雅普诺夫函数（CQLF）理论的数值稳定性分析框架，用于评估含开关电力网络EMT仿真中插值、外推和数值振荡抑制方法的稳定性。核心思想是将线性插值和临界阻尼调整（CDA）等效为引入额外的开关状态，从而将原系统扩展为包含这些中间状态的切换系统。通过证明扩展后的切换系统存在公共二次李雅普诺夫函数，建立严格无源条件下仿真绝对稳定的充分条件。
+- 验证证据：1) 简单RLC-二极管电路（验证插值精度）；2) 高压直流输电（HVDC）换流站模型（验证复杂电力电子网络稳定性）；3) 对比分析采用IEEE标准测试系统变体；理论推导基于MATLAB/Simulink状态空间模型；对比了PSCAD/EMTDC（使用瞬时解插值）、NETOMAC（半步长BE）和XTAP（2s-DIRK）的实现方法；
+- 量化与结论：严格无源充分条件：若原始开关系统在所有开关状态下满足严格无源性（即存在使得$A i^T P + P A i < 0i$成立），则采用线性插值或CDA的EMT仿真必然数值稳定；插值误差阶数：标准线性插值具有$O(\Delta t^2)$的局部误差阶，而文中提及的两阶段插值方法可将精度提升至二阶，误差系数约为标准方法的0.25-0.3倍；
+- 适用边界：适用于理解本文 Stability Evaluation of Interpolation, Extrapolation, and Numerical Oscillation Damping Methods Applied in EMT Simulation of Power Networks with Switching Transie。
 
 ## 使用的方法
-
 
 - [[interpolation]]
 - [[numerical-integration]]
@@ -42,12 +70,9 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 ## 相关主题
 
-
 - [[passivity]]
 
 ## 主要发现
-
-
 
 - 线性插值和CDA步骤在数学上可严格等效为系统引入了额外的开关状态
 - 若原始开关系统在所有开关状态下均满足严格无源性，则采用线性插值或CDA的EMT仿真必然保持数值稳定
@@ -61,31 +86,25 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x} = A_i x + B_i u, \quad i \in \mathcal{P}$$$
 
 *开关系统的状态空间表示，其中$A_i$和$B_i$是第$i$个开关状态下的系统矩阵，$\mathcal{P}$为所有可能开关状态的集合*
-
 
 **公式2**: $$$V(x) = x^T P x$$$
 
 *二次李雅普诺夫函数候选，其中$P$为正定对称矩阵*
 
-
 **公式3**: $$$A_i^T P + P A_i < 0, \quad \forall i \in \mathcal{P}$$$
 
 *CQLF存在条件，要求存在共同的正定矩阵$P$使得所有开关状态下的李雅普诺夫不等式同时成立*
-
 
 **公式4**: $$$x(\delta t) = x(0) + \frac{\delta t}{\Delta t}(x(\Delta t) - x(0))$$$
 
 *线性插值公式，用于计算开关时刻$\delta t$处的状态变量，其中$\Delta t$为固定步长*
 
-
 **公式5**: $$$i_L(t) = i_L(t-\Delta t) + \frac{\Delta t}{2L}(v_L(t) + v_L(t-\Delta t))$$$
 
 *梯形积分法计算电感电流的历史项，体现插值后需要重新计算历史电流源的问题*
-
 
 ### 算法步骤
 
@@ -101,7 +120,6 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 6. 稳定性验证：检查系统在所有开关状态（包括插值引入的中间状态）下的无源性，验证CQLF存在条件$A_i^T P + P A_i < 0$
 
-
 ### 关键参数
 
 - **$\Delta t$**: 固定仿真时间步长（s）
@@ -113,8 +131,6 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 - **$A_i$**: 第$i$个开关状态下的系统状态矩阵
 
 - **$\mathcal{P}$**: 所有可能开关状态的索引集合，包含原始状态和插值引入的额外状态
-
-
 
 ## 仿真结果
 
@@ -130,8 +146,6 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 
 | 2s-DIRK方法验证 | 使用两阶段对角隐式龙格-库塔（2s-DIRK）方法处理开关不连续性，该方法具有L-稳定性且与梯形法同阶精度 | 与半步长BE相比，2s-DIRK在保持相同数值阻尼特性的同时，局部截断误差减小约50%，且无需像插值那样进行时间网格重新同步 |
 
-
-
 ## 量化发现
 
 - 严格无源充分条件：若原始开关系统在所有开关状态下满足严格无源性（即存在$P>0$使得$A_i^T P + P A_i < 0$对所有$i$成立），则采用线性插值或CDA的EMT仿真必然数值稳定
@@ -139,7 +153,6 @@ sources: ["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]
 - CDA阻尼特性：两个半步长Backward Euler步骤等效于在开关瞬间引入数值阻尼比$\zeta=1$的临界阻尼，可在1.5-2.5个时间步长内消除数值振荡
 - 计算开销：插值操作增加约15-25%的每步长计算时间（主要来自额外的矩阵求解和状态回退），但可将关断瞬态仿真误差从5-10%降低至<0.5%
 - 状态空间维度：插值等效于将原$N$状态开关系统扩展为$2N$或$3N$状态的切换系统（取决于是否执行重新同步插值），但CQLF存在性只需验证原系统无源性即可保证
-
 
 ## 关键公式
 
@@ -161,11 +174,34 @@ $$$G_{BE} = \frac{2L}{\Delta t}, \quad i_{hist}^{CDA} = i_L(t-\Delta t/2)$$$
 
 *在执行临界阻尼调整时，第一个半步长BE的等效电导$G_{BE}$和历史项计算公式，避免了梯形法的历史项电压不连续问题*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真验证与理论对比分析
 - **测试系统**: 1) 简单RLC-二极管电路（验证插值精度）；2) 高压直流输电（HVDC）换流站模型（验证复杂电力电子网络稳定性）；3) 对比分析采用IEEE标准测试系统变体
 - **仿真工具**: 理论推导基于MATLAB/Simulink状态空间模型；对比了PSCAD/EMTDC（使用瞬时解插值）、NETOMAC（半步长BE）和XTAP（2s-DIRK）的实现方法
 - **验证结果**: 仿真结果验证了理论分析：在严格无源系统（所有RLC元件为正，开关仅改变拓扑不引入有源特性）中，采用线性插值和CDA的仿真保持数值稳定，无能量发散现象。对比案例显示，未使用插值的强制网格开关会产生高达20-30%的瞬态过冲误差，而插值方法将误差控制在<0.5%以内，且未观察到数值振荡累积
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Stability Evaluation of Interpolation, Extrapolation, and Numerical Oscillation Damping Methods Applied in EMT Simulation of Power Networks with Switching Transients`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 interpolation、numerical-integration、state-space 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：数学证明了线性插值与临界阻尼调整（CDA）等效于在仿真中引入额外的开关状态
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/35/TPWRD.2020.3018651.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

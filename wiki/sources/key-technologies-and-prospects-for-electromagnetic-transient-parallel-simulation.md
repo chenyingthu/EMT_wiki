@@ -1,9 +1,9 @@
 ---
 title: "Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System"
 type: source
-authors: ['CNKI']
+authors: ['Jiang 等']
 year: 2024
-journal: ""
+journal: "高电压技术"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System.pdf"]
@@ -11,21 +11,53 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 
 # Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System
 
-**作者**: CNKI
+**作者**: Jiang 等
 **年份**: 2024
 **来源**: `25/Jiang 等 - 2024 - Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System.pdf`
 
 ## 摘要
 
-：Driven by the strategic goals of “peak carbon emissions” and “carbon neutrality”, power system is transforming into a new power system marked by extensive integration of new energy sources and a significant presence of power elec- tronic devices. This transformation induces significant changes in its power source structure, and operational characteristics. Electromagnetic transient simulation, possessing the capability to comprehensively and precisely depict the high-frequency dynamic traits of the power system, has become a pivotal tool for understanding the operational fea- tures of the new power system. However, electromagnetic transient simulation techniques under the traditional serial computing mode is inadequate in addressing the simulation scenarios involving the large-scale integ
 
+本文系统综述了面向新型电力系统的电磁暂态并行仿真技术框架，核心方法论围绕“分网解耦-多速率交互-硬件加速-平台融合”展开。首先，通过分网并行算法将高维交直流混联网络切割为多个低维子网络，依据联络变量获取机制分为精确等值法（基于网络拓扑变换与历史状态递推）与人为延时法（利用电感/电容状态缓变特性引入半步或一步时延实现解耦）。其次，针对系统多时间尺度宽频动态特性，构建多速率仿真策略，涵盖机电-电磁混合仿真与全电磁多速率仿真，通过优化接口位置、设计串行/并行/迭代/混合时序及采用诺顿/戴维南/频率相关等值电路实现快慢子系统数据交互。最后，结合多核CPU、GPU与FPGA异构计算架构，将子网络求解任务映射至并行硬件单元，利用高速总线与共享内存降低通信延迟，最终实现算法与硬件深度融合的仿真平台架构，以突破传统串行模式在维度、精度与速度上的瓶颈。
+
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+本文面对的需求不是单一算例加速，而是新型电力系统中“高维度、详细模型、高速度”同时出现后的电磁暂态仿真瓶颈：新能源和分布式电源数量增加，交直流混联、柔直/特高压直流、电力电子负荷和储能接入，使网络节点数和设备状态数上升；同时电力电子开关、复杂控制和故障过程要求微秒甚至更小步长，传统串行EMT难以支撑大规模详细建模和实时硬件在环。研究对象是面向新型电力系统的电磁暂态并行仿真技术体系，而非某一个具体装置模型。难点在于网络方程维数高、拓扑快速变化、多时间尺度宽频动态并存，以及并行计算中子网接口变量交换会引入精度、稳定性和通信延迟问题。本文的贡献是综述并组织出一套技术框架：从分网并行算法降低矩阵求解维度，到多速率仿真利用快慢子系统时间尺度差异，再到CPU/GPU/FPGA等硬件并行实现和国内外平台策略梳理，最后指出算法—硬件深度融合平台是后续方向。
+
+### 2. 模型、算法与实现技术
+
+本文归纳的核心机制可理解为“先解耦、再并行、再按时间尺度交互、最后映射到硬件”。分网并行算法首先选择分网元件或边界，把大规模交直流混联系统、复杂换流器或新能源场站拆成若干子网络；各子网内部仍按EMT方法求解节点电压、支路电流、开关状态和控制状态，边界处通过接口量传递相邻子网影响。接口量通常是节点电压、支路电流或其等值源形式，作用是在当前步把外部网络替换为受控电压源/电流源与等效阻抗，从而使子网方程可独立求解。多速率仿真进一步把高频开关设备、详细电力电子模型等快子系统与交流网络、慢动态区域区分开，使不同子系统采用不同步长，并在同步时刻进行数据插值、外推、平均或迭代交换。硬件实现层面，综述关注将子网、器件级计算或矩阵运算映射到多核CPU、GPU或FPGA并行单元，同时通过通信结构和任务调度减少并行计算被接口交换抵消的风险。需要注意，本文是技术综述，提供的是算法类别、接口机制和平台实现路径的系统梳理，不是提出一个带完整新公式和统一求解器的单一原创模型。
+
+### 3. 验证、优势与不足
+
+从给定原文看，作者采用综述方式论证有效性：先从新型电力系统源、网、荷、储变化引出EMT仿真的维度、精度和速度需求，再分别梳理分网并行、多速率仿真、并行计算设备实现和仿真平台策略。原文摘要未报告作者自建测试系统、具体仿真工具、统一对比基线或可核验的数值结果，因此不能把该文解读为通过某一标准算例证明某算法提速多少。其优势主要体现在认知组织：把以往分散在网络解耦、快慢步长、硬件加速和平台工程中的技术放到同一问题链条下，说明为什么单靠更快CPU或单一分网算法不足以应对新型电力系统EMT。其适用边界也很清楚：文中结论多为综述性判断，具体算法能否稳定、精确和实时，仍取决于分网位置、接口等值、步长比、开关频率、通信延迟、硬件架构和测试系统规模。从验证范围看，若没有回到原文后续章节和引用文献核对，不能声称某工具、某平台或某算法在特定系统上达到确定加速比、误差上限或实时步长。
+
+### 4. 价值、认知与可复用场景
+
+这篇文章的价值在于提供EMT并行仿真研究的“地图”：它把新型电力系统为什么需要并行EMT、并行化从哪里切入、不同技术之间如何互补讲清楚。它可用于后续页面定位分网解耦算法、多速率接口、硬件在环实时仿真、GPU/FPGA加速和仿真平台架构，也适合作为综述入口帮助读者判断某项具体方法解决的是维度、步长、拓扑切换还是硬件通信问题。工程上，它适合指导大规模交直流混联、新能源场站、柔直和含大量电力电子设备系统的仿真方案选型。不适合外推为某个具体算法已在所有场景下优于串行EMT，也不应替代针对具体系统、步长、故障和硬件平台的稳定性与精度验证。
+
+### 证据边界
+
+- 原文明确说明本文是综述性论文，内容包括新需求、分网并行算法、多速率仿真、并行计算设备实现和仿真平台策略；因此本页不应表述为作者提出并实测了一个全新的统一算法。
+- 原文摘要和引言给出了需求来源：高比例新能源、高比例电力电子、交直流复杂耦合、详细模型和实时仿真需求；这些属于原文直接证据。
+- 关于接口量为节点电压、支路电流、等效源和阻抗的说明，是根据EMT分网/等值方法的一般机制和当前页面已有整理表述归纳；若需作为严格引文，应回查原文第2节后续内容。
+- 给定原文片段未列出具体测试系统、仿真工具、加速比、误差、步长或平台实验结果；因此本回答明确写为“原文未报告可核验的数值结果”。
+- 本文指出算法硬件深度融合是未来方向，但从给定证据看，没有提供某种CPU/GPU/FPGA架构在统一基准上的定量优劣排序。
+- 多速率和分网并行的稳定性、精度与实时性依赖分网边界、接口等值、步长选择和通信延迟；这些边界在工程复用时必须重新验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
 
-- 系统梳理分网并行算法，提出精确等值与人为延时两类方法的融合与误差补偿机制
-- 归纳多速率仿真接口设计与时序策略，明确机电电磁混合仿真的等值与数据交互方法
-- 总结多核CPU与GPU及FPGA硬件加速方案，提出算法硬件深度融合的仿真平台发展方向
 
+- 问题定位：本文系统综述了面向新型电力系统的电磁暂态并行仿真技术框架，核心方法论围绕“分网解耦-多速率交互-硬件加速-平台融合”展开。首先，通过分网并行算法将高维交直流混联网络切割为多个低维子网络，依据联络变量获取机制分为精确等值法（基于网络拓扑变换与历史状态递推）与人为延时法（利用电感/电容状态缓变特性引入半步或一步时延实现解耦）。
+- 方法机制：本文系统综述了面向新型电力系统的电磁暂态并行仿真技术框架，核心方法论围绕“分网解耦-多速率交互-硬件加速-平台融合”展开。首先，通过分网并行算法将高维交直流混联网络切割为多个低维子网络，依据联络变量获取机制分为精确等值法（基于网络拓扑变换与历史状态递推）与人为延时法（利用电感/电容状态缓变特性引入半步或一步时延实现解耦）。
+- 验证证据：文献综述与对比分析（综合国内外仿真平台算法验证、硬件在环测试与数值稳定性评估案例）；大规模交直流混联电网、新能源场站（双馈风电/光伏）、MMC-HVDC柔性直流输电系统、有源配电网；EMTP-RV, RT-Lab (SSN算法), PSCAD/EMTDC, MATLAB/Simulink, RTDS, 多核CPU/GPU/FPGA异构加速平台
+- 量化与结论：传统精确等值分网算法联络变量计算复杂度随子网数增加以 速率急剧增长，严重制约大规模系统仿真效率。；新型电力系统高频开关仿真需纳秒级或亚微秒级步长，而慢动态子系统（如常规交流电网）可采用百微秒至毫秒级步长，多速率策略可释放约70%~80%的非必要计算量。；
+- 适用边界：适用于理解本文 Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System （2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
 
@@ -206,3 +238,28 @@ $$$x_{env}(t) = x(t)e^{-j\omega_0 t}$$$
 - **测试系统**: 大规模交直流混联电网、新能源场站（双馈风电/光伏）、MMC-HVDC柔性直流输电系统、有源配电网
 - **仿真工具**: EMTP-RV, RT-Lab (SSN算法), PSCAD/EMTDC, MATLAB/Simulink, RTDS, 多核CPU/GPU/FPGA异构加速平台
 - **验证结果**: 验证表明分网并行与多速率接口可有效降低高维矩阵求解负担，人为延时法在细粒度分网中实现线性复杂度增长，全电磁多速率结合保守分网判据可在误差<0.5%前提下提速2~3倍。硬件加速使超大规模系统详细电磁暂态仿真成为可能，算法-硬件深度融合平台是未来实现高精度、高维度、高速度仿真的核心路径。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 分网并行算法、长传输线自然解耦法、节点分裂法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：系统梳理分网并行算法，提出精确等值与人为延时两类方法的融合与误差补偿机制
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation in New Power System.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -26,6 +26,16 @@ EMTP（Electromagnetic Transients Program）是最经典的电力系统电磁暂
 - 多速率仿真支持
 - FLUX3D耦合（磁场有限元）
 
+## 定义与边界
+
+EMTP / EMTP-RV 在本 wiki 中作为 EMT 仿真工具与算法生态入口，而不是单一论文方法。页面应连接到 [[numerical-integration|数值积分]]、[[nodal-analysis|节点分析]]、[[state-space-method|状态空间方法]]、[[transmission-line-model|输电线路模型]]、[[transformer-model|变压器模型]]、[[vsc-model|VSC 模型]] 和 [[network-equivalent|网络等值]]，用于说明具体模型如何进入 Dommel 型时域求解。
+
+其边界是工具平台本身不等于技术贡献。若来源只说明“使用 EMTP-RV 仿真”，还需要识别实际贡献是模型、积分器、接口、参数辨识还是验证工况；强非线性器件、宽频等值和实时移植还需要额外说明步长、无源性、初始化和接口延迟。
+
+## 代表性来源与内部链接
+
+代表性来源包括 [[creating-an-electromagnetic-transients-program-in-matlab-matemtp-power-delivery-|Creating an electromagnetic transients program in MATLAB]]、[[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic transient simulation]]、[[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies|A link between EMTP-RV and FLUX3D for transformer energization studies]] 和 [[analysis-and-estimation-of-truncation-errors-in-modeling-complex-resonant-circui-fix|EMTP 截断误差分析]]。相关实体包括 [[polytechnique-montreal]]、[[mahseredjian]]、[[atp-emtp]] 和 [[pscad-emtdc]]。
+
 ## 相关实体
 - [[polytechnique-montreal]]
 - [[atp-emtp]]
@@ -36,7 +46,7 @@ EMTP（Electromagnetic Transients Program）是最经典的电力系统电磁暂
 
 ---
 
-# EMTP / EMTP-RV 深度技术文档
+## EMTP / EMTP-RV 深度技术文档
 
 ## 1. 核心原理详解
 

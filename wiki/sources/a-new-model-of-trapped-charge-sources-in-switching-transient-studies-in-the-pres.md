@@ -1,7 +1,7 @@
 ---
 title: "A New Model of Trapped Charge Sources in Switching Transient Studies in the Presence of Shunt Reactors"
 type: source
-authors: ['未知']
+authors: ['Akafi-Mobarakeh 等']
 year: 2025
 journal: "IEEE Access;2025;13; ;10.1109/ACCESS.2025.3544109"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge
 
 # A New Model of Trapped Charge Sources in Switching Transient Studies in the Presence of Shunt Reactors
 
-**作者**: 
+**作者**: Akafi-Mobarakeh 等
 **年份**: 2025
 **来源**: `02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge Sources in Switching Transient Studies in the Presence of Shunt Reacto.pdf`
 
 ## 摘要
 
-Insulation coordination studies are of great importance in power grid reliability. In this paper, a new method is proposed for modeling trapped charge sources (TCS) in switching transient studies. The TCS is used to take into account the voltage stored in line capacitors during reclosing operation after fault occurrence. The proposed model is designed based on the active filter concept, thus overcoming the limitations of conventional TCS for simulating transient states in EMTP/ATPDraw. Given the natural frequencies of a transmission line to which the proposed TCS (PTCS) is connected, it injects the appropriate frequencies and eliminates voltage oscillations which limit the use of TCS. To verify the efficiency of the PTCS, it is implemented in a real system with a shunt reactor, and the res
+提出一种基于有源滤波概念的陷落电荷源（PTCS）新模型，用于解决含末端并联电抗器线路在重合闸仿真中传统TCS引发的电压振荡问题。该方法首先利用EMTP/ATP的LCC子程序提取输电线路的J-Marti频率相关模型参数（波阻抗与权函数），结合并联电抗器的阻抗特性，在拉普拉斯域推导注入电流源的传递函数。该传递函数通过配置零极点抵消线路与电抗器耦合产生的自然频率振荡，使断路器合闸前线路侧电压保持平滑直流。由于ATP的MODEL模块对高阶传递函数支持有限，研究在MATLAB中预先计算时域电流波形，并以100 kHz采样率提取43,000个数据点，通过ATP内置的MODEL编程块在每一步仿真中注入，从而实现高精度统计开关仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自超/特高压线路重合闸绝缘配合：故障切除后线路电容可能保留陷落电荷，断路器在不利相角重合时会产生最大操作过电压，设计者需要在EMT仿真中可靠复现这一最恶劣初始条件。研究对象是带末端并联电抗器的输电线路重合闸TCS建模。难点在于，并联电抗器与线路分布参数耦合后形成自然振荡频率，传统ATP陷落电荷源或简单直流电压源会在合闸前激发非物理电压振荡，使“预设的平滑陷落电压”变成振荡初值，进而污染统计合闸过电压。本文贡献不是重新提出线路模型，而是把TCS改造成具有有源滤波含义的PTCS：根据线路频率相关参数和电抗器阻抗计算应注入的电流频率成分，用源侧补偿抵消线路—电抗器自然振荡，使合闸前线路侧电压保持目标直流幅值。
+
+### 2. 模型、算法与实现技术
+
+本文提出的PTCS本质上是一个受控注入电流源，其输入是目标陷落电压幅值V0、J-Marti频率相关线路模型给出的波阻抗Zc(s)和传播/权函数A(s)、以及并联电抗器等值阻抗R+Ls；输出是在合闸前注入线路端口的电流Is(t)。机制上，作者先设定期望端电压Vk(s)=V0/s，表示线路断路器合闸前应呈现平滑直流陷落电压；再把线路历史项、波阻抗和电抗器支路写入拉普拉斯域网络方程，得到Is(s)=V0/[s(1+A²FZc)]·[1/Zc−A²F]，其中F(s)把电抗器阻抗与线路波阻抗组合起来。该传递函数的作用是让注入源包含会抵消自然振荡的频率成分，而不是单纯施加直流源。实现上，作者利用EMTP/ATPDraw的LCC例程提取J-Marti模型的有理函数零极点参数，在MATLAB中对高阶传递函数预计算时域电流波形，再通过ATP的MODEL编程块按仿真步长注入；这样绕开ATP MODEL对高阶传递函数直接实现能力有限的问题。
+
+### 3. 验证、优势与不足
+
+作者采用两类验证：一是在含并联电抗器的实际输电系统中比较PTCS仿真与现场录波，二是在EMTP/ATPDraw中进行统计合闸仿真，考察最大操作过电压分布。页面抽取给出的系统包括伊朗南部400 kV线路SA913，末端装设121 MVAr并联电抗器；另有AEP 765 kV Lakeville–Kammer线路案例，含300 MVAr电抗器和350 Ω合闸电阻。工具链为EMTP/ATPDraw、LCC、MODEL模块与MATLAB预处理。基线主要是传统TCS/ATP默认陷落电荷表示在含电抗器线路中产生的合闸前振荡，以及无电抗器或不同补偿度工况。优势体现在：合闸前电压被约束为期望陷落电压，避免把非物理振荡带入统计过电压；页面抽取称765 kV案例最大过电压仿真2.0 p.u.、实测1.96 p.u.，约2%偏差。边界是：验证集中在线路重合闸和末端并联电抗器场景；未证明该PTCS可直接用于复杂多端线路、可控电抗器、非线性电抗器饱和、实时仿真或其他暂态类型。
+
+### 4. 价值、认知与可复用场景
+
+这项工作强化了一个重要认知：在含并联电抗器的线路重合闸EMT研究中，陷落电荷初值不能只看作静态直流电压源，因为它会与线路频率相关特性和电抗器形成动态耦合；若TCS模型不处理这些自然频率，统计合闸结果可能受模型伪振荡支配。PTCS可用于绝缘配合、线路重合闸最恶劣工况、并联电抗器容量整定、统计开关仿真等页面作为“陷落电荷建模”入口。它不适合被外推为通用过电压抑制装置模型，也不应在未重新提取线路零极点和电抗器参数时跨线路直接复用。
+
+### 证据边界
+
+- 原文摘要明确说明：PTCS基于有源滤波概念，用于克服传统TCS在EMTP/ATPDraw暂态仿真中的电压振荡限制，并通过含并联电抗器的实际系统与现场测量对比验证。
+- J-Marti参数、LCC提取、MATLAB预计算、MODEL注入、100 kHz和43000个样本等实现细节来自当前页面抽取内容；若作为正式引用，应回到论文方法章节和图表核验。
+- 2.0 p.u.与1.96 p.u.约2%偏差、400 kV SA913和765 kV Lakeville–Kammer案例等数值来自页面抽取；用户提供的原文片段中未完整展示相应表图。
+- 本文验证基线主要是传统TCS在含并联电抗器时的振荡问题；未看到与其他可替代初值设置方法、状态初始化算法或商业EMT软件实现的系统对比。
+- 从验证范围看，结论适用于线性等值电抗器和J-Marti频率相关线路模型下的重合闸研究；未验证电抗器磁饱和、避雷器强非线性主导、复杂互联系统或实时仿真步长下的稳定性。
+- 页面给出了统计开关结果和补偿度优化结论，但原文片段未显示完整样本规模、随机合闸时间分布、置信区间等统计细节，因此不宜据此外推概率风险精度。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于有源滤波概念的陷落电荷源模型，消除并联电抗器引发的仿真电压振荡
-- 实现含末端并联电抗器线路的最恶劣工况统计开关仿真，提升绝缘配合计算精度
-- 突破传统电磁暂态软件局限，支持重合闸暂态过电压的精确建模与计算
-
+- 问题定位：提出一种基于有源滤波概念的陷落电荷源（PTCS）新模型，用于解决含末端并联电抗器线路在重合闸仿真中传统TCS引发的电压振荡问题。该方法首先利用EMTP/ATP的LCC子程序提取输电线路的J-Marti频率相关模型参数（波阻抗与权函数），结合并联电抗器的阻抗特性，在拉普拉斯域推导注入电流源的传递函数。
+- 方法机制：提出一种基于有源滤波概念的陷落电荷源（PTCS）新模型，用于解决含末端并联电抗器线路在重合闸仿真中传统TCS引发的电压振荡问题。该方法首先利用EMTP/ATP的LCC子程序提取输电线路的J-Marti频率相关模型参数（波阻抗与权函数），结合并联电抗器的阻抗特性，在拉普拉斯域推导注入电流源的传递函数。该传递函数通过配置零极点抵消线路与电抗器耦合产生的自然频率振荡，使断路器合闸前线路侧电压保持平滑直流。
+- 验证证据：现场实测数据对比分析 + 统计开关仿真验证；伊朗南部实际400 kV电网（线路SA913，末端接121 MVAr并联电抗器）；美国AEP 765 kV线路（Lakeville至Kammer站，330英里，300 MVAr电抗器，350 Ω合闸电阻）；EMTP/ATPDraw（含LCC例程与MODEL编程块）、MATLAB（时域波形预计算）
+- 量化与结论：仿真最大过电压与现场实测值偏差仅约2%（2.0 p.u. vs 1.96 p.u.）。；引入PTCS后，含并联电抗器线路的统计过电压均值降至1.573 p.u.，较无电抗器工况（1.632 p.u.）降低约3.6%。；倍标准差从1.899显著降至0.976，表明过电压分布离散度大幅收敛，绝缘配合评估更可靠。；将电抗器补偿度从75%优化至53%时，最大过电压幅值进一步改善2%。
+- 适用边界：适用于理解本文 A New Model of Trapped Charge Sources in Switching Transient Studies in the Presence of Shunt Reactors （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[有源滤波法|有源滤波法]]
 - [[j-marti频率相关模型|J-Marti频率相关模型]]
@@ -36,9 +64,7 @@ Insulation coordination studies are of great importance in power grid reliabilit
 - [[戴维南等值法|戴维南等值法]]
 - [[emtp-atpdraw|EMTP/ATPDraw]]
 
-
 ## 涉及的模型
-
 
 - [[陷落电荷源|陷落电荷源]]
 - [[并联电抗器|并联电抗器]]
@@ -46,9 +72,7 @@ Insulation coordination studies are of great importance in power grid reliabilit
 - [[统计开关|统计开关]]
 - [[系统等值阻抗|系统等值阻抗]]
 
-
 ## 相关主题
-
 
 - [[开关暂态|开关暂态]]
 - [[绝缘配合|绝缘配合]]
@@ -56,15 +80,11 @@ Insulation coordination studies are of great importance in power grid reliabilit
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[并联补偿|并联补偿]]
 
-
 ## 主要发现
-
 
 - 新模型有效消除重合闸前电压振荡，仿真波形平滑且幅值符合预期
 - 仿真结果与现场实测数据高度吻合，验证了模型在含电抗器系统中的准确性
 - 准确计算线路最大开关过电压，为输电线路绝缘设计提供可靠技术依据
-
-
 
 ## 方法细节
 
@@ -74,26 +94,21 @@ Insulation coordination studies are of great importance in power grid reliabilit
 
 ### 数学公式
 
-
 **公式1**: $$$V_k(s) = \frac{V_0}{s}$$$
 
 *设定断路器合闸前线路侧期望的平滑直流陷落电压目标，$V_0$为陷落电压幅值（最恶劣工况取1 p.u.）。*
-
 
 **公式2**: $$$I_s(s) = \frac{V_0}{s[1 + A^2(s)F(s)Z_c(s)]} \left[ \frac{1}{Z_c(s)} - A^2(s)F(s) \right]$$$
 
 *PTCS注入电流的拉普拉斯域传递函数，用于计算消除线路-电抗器自然频率振荡所需的补偿电流。*
 
-
 **公式3**: $$$F(s) = \frac{-2Z_c^2(s)}{R + Ls + Z_c(s)} + Z_c(s)$$$
 
 *辅助阻抗函数，结合并联电抗器阻抗$(R+Ls)$与线路波阻抗$Z_c(s)$，构建传递函数的分母项。*
 
-
 **公式4**: $$$Z_c(s) = H \frac{(s + z_1)(s + z_2) \dots (s + z_{n1})}{(s + p_1)(s + p_2) \dots (s + p_{n2})}$$$
 
 *J-Marti模型波阻抗的有理分式拟合表达式，用于将频域参数转换为拉普拉斯域多项式以便解析推导。*
-
 
 ### 算法步骤
 
@@ -108,7 +123,6 @@ Insulation coordination studies are of great importance in power grid reliabilit
 5. 将离散电流数据写入ATP的MODEL模块脚本（Type 60接口），利用类FORTRAN语法定义数组与条件判断逻辑，在断路器合闸前持续向线路注入补偿电流，合闸后自动切换至主电源。
 
 6. 配置统计开关（STAT）模块，设定合闸时间概率分布，执行大规模蒙特卡洛仿真以获取绝缘配合最恶劣工况下的过电压统计分布。
-
 
 ### 关键参数
 
@@ -126,8 +140,6 @@ Insulation coordination studies are of great importance in power grid reliabilit
 
 - **线路模型**: J-Marti频率相关模型 (LCC例程)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -142,8 +154,6 @@ Insulation coordination studies are of great importance in power grid reliabilit
 
 | 765kV实际线路现场数据验证（Lakeville至Kammer站） | 仿真计算最大过电压为2.0 p.u.，现场实测为1.96 p.u.；PTCS初始电压0.645 p.u.与合闸前瞬时电压完全吻合，振荡波形趋势高度一致。 | 与现场录波数据对比，最大过电压计算误差仅约2%，显著优于传统方法在含电抗器工况下的发散结果。 |
 
-
-
 ## 量化发现
 
 - 仿真最大过电压与现场实测值偏差仅约2%（2.0 p.u. vs 1.96 p.u.）。
@@ -151,7 +161,6 @@ Insulation coordination studies are of great importance in power grid reliabilit
 - 2.05倍标准差从1.899显著降至0.976，表明过电压分布离散度大幅收敛，绝缘配合评估更可靠。
 - 将电抗器补偿度从75%优化至53%时，最大过电压幅值进一步改善2%。
 - 模型采用100 kHz采样率与43,000个预计算样本，在ATP MODEL模块限制下实现高精度时域注入，无额外数值振荡。
-
 
 ## 关键公式
 
@@ -173,11 +182,34 @@ $$$F(s) = \frac{-2Z_c^2(s)}{R + Ls + Z_c(s)} + Z_c(s)$$$
 
 *结合并联电抗器阻抗与线路波阻抗，构建传递函数的分母项，决定滤波器的零极点配置。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 现场实测数据对比分析 + 统计开关仿真验证
 - **测试系统**: 伊朗南部实际400 kV电网（线路SA913，末端接121 MVAr并联电抗器）；美国AEP 765 kV线路（Lakeville至Kammer站，330英里，300 MVAr电抗器，350 Ω合闸电阻）
 - **仿真工具**: EMTP/ATPDraw（含LCC例程与MODEL编程块）、MATLAB（时域波形预计算）
 - **验证结果**: PTCS模型成功消除传统方法在含并联电抗器线路中引发的合闸前电压振荡，生成平滑的陷落电荷电压。统计仿真结果与现场录波数据高度吻合，最大过电压计算误差控制在2%以内，验证了该模型在绝缘配合最恶劣工况评估中的高精度与工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A New Model of Trapped Charge Sources in Switching Transient Studies in the Presence of Shunt Reactors`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 有源滤波法、j-marti频率相关模型、统计开关仿真 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于有源滤波概念的陷落电荷源模型，消除并联电抗器引发的仿真电压振荡
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge Sources in Switching Transient Studies in the Presence of Shunt Reacto.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

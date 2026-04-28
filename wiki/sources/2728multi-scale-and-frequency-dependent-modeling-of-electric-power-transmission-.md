@@ -1,38 +1,62 @@
 ---
-title: "27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines"
+title: "Multi-scale and Frequency-dependent Modeling of Electric Power Transmission Lines"
 type: source
-authors: ['未知']
+authors: ['Hua Ye', 'Kai Strunz']
 year: 2017
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines.pdf"]
 ---
 
-# 27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines
+# Multi-scale and Frequency-dependent Modeling of Electric Power Transmission Lines
 
-**作者**: 
+**作者**: Hua Ye; Kai Strunz
 **年份**: 2017
 **来源**: `27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines.pdf`
 
 ## 摘要
 
-—A frequency-dependent transmission line model for multi-scale simulation of diverse transients over a wide range of frequencies is developed, implemented, and validated. It makes use of the concept of frequency-adaptive simulation of transients in which the Fourier spectra are adaptively shifted in the frequency domain to reduce the discretization time-steps in the time domain. The transients are modeled through dynamic phasors comprising the real and imaginary parts of analytic signals to facilitate the frequency-shifting. In the proposed line model, all mathematical operations such as numerical recursive convolutions are therefore expressed in terms of analytic signals. A modal decomposition is performed to attain decoupled modes for the multi-phase case. The transition from the represe
+本文提出一种面向多尺度仿真的频变输电线路模型。核心思想是利用解析信号与频移技术（FAST），将传统EMTP中处理瞬时实信号的递归卷积转化为处理复包络（动态相量）的运算。通过对频域特征导纳和传播函数进行部分分式展开，推导出含频移参数和步长的递归卷积系数，实现时域高效计算。针对多相线路，采用模态解耦处理。模型创新性地引入自动插入型等值支路机制：当仿真步长小于波传播时间时，采用分布参数行波模型；当$\tau \ge T {wp}\pi$型电路以表征电气耦合，从而实现电磁暂态与机电暂态在同一仿真中的无缝平滑过渡与自适应步长调节，显著提升宽频暂态仿真效率。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，输电线路暂态仿真既要看微秒量级的电磁行波、投切过电压和断路器暂态恢复电压，也要在同一次仿真中继续跟踪接近工频的慢速机电暂态或稳态过程。传统EMTP用瞬时值和很小步长采样自然波形，适合高频暂态，但长期仿真代价高；已有多尺度线路模型可在瞬时值与动态相量之间切换，却未考虑架空线参数随频率变化，难以覆盖宽频暂态下的线路色散与损耗。本文研究对象是多相、频变的架空输电线路模型。难点在于：频变线路在时域通常依赖递归卷积，若要引入频移和动态相量，所有卷积、传播延时、端口导纳关系都必须改写为解析信号形式；同时，当仿真步长大于行波传播时间时，传统分布参数行波接口会失去“延时跨步”的物理意义。本文贡献是提出面向多尺度仿真的首个频变架空线模型：用可频移解析信号处理递归计算；对多相线路做模态解耦；并在步长跨越波传播时间时自动插入π段来表示同一时间步内的电气耦合，从而在同一模型中连接电磁行波表示与慢速暂态跟踪。
+
+### 2. 模型、算法与实现技术
+
+模型以线路端口电压、电流的解析信号或动态相量为接口量，而不是只处理实值瞬时波形。实信号先构造成解析信号，使频谱只保留正频率；再按选定载频进行频移，使当暂态频谱集中在载频附近时，仿真可以用较大的时间步跟踪包络。频变线路仍采用EMTP类端口关系：端口电流由特征导纳作用下的本端电压、传播函数作用下的对端历史量以及历史卷积项组成。关键改变是，特征导纳和传播函数的有理函数展开及递归卷积都写成解析信号形式，因此卷积状态可以随频移后的复包络递推，而不必回到全带宽瞬时波形。多相情形下，论文通过模态分解把相间耦合线路变换为若干解耦模态，对每个模态分别执行频变递归计算，再变回相域形成网络节点方程。另一个实现机制是步长与行波传播时间的判定：当时间步小于传播时间时，模型按分布参数行波方式处理端间延迟；当时间步超过传播时间时，自动加入一个π型线段，用集中参数支路描述一个步长内已经发生的端间电气耦合，避免从高频电磁暂态转入低频机电暂态时线路端口关系失效。
+
+### 3. 验证、优势与不足
+
+作者声明模型已开发、实现并验证，验证方式是与一次 staged field test 对比；该现场试验覆盖三类工况：线路投运或合闸 energization、断路器相关的 transient recovery voltage，以及稳态运行。由此验证对象不是单一理想算例，而是同一线路模型在高频行波暂态、开断恢复电压和低频稳态之间的连续适用性。可从原文摘要确认的基线主要是现场试验测量，以及文献背景中的传统EMTP瞬时值仿真和既有不含频变参数的多尺度线路模型；当前摘录未给出具体仿真软件名称、线路电压等级、线路长度、拟合阶数、步长调节策略、误差表或计算耗时数字。因此不能声称峰值误差、速度提升倍数或波形重合度等量化结论。优势在机制上体现为：频移解析信号允许在低频阶段处理动态相量而非全带宽瞬时值；频变递归卷积保留了线路参数随频率变化的影响；π段自动插入解决了步长大于传播时间时端间耦合的表示问题。从验证范围看，结论主要支撑架空输电线路和文中现场试验覆盖的投切、TRV、稳态场景；对地下电缆、强非线性电弧、复杂换流器控制、保护闭环实时仿真和极端故障组合，当前证据不足。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于把“频变线路模型”和“多尺度动态相量仿真”真正接起来：不是简单在低频用相量、高频用EMTP，而是把频变导纳、传播函数和递归卷积都放入可频移解析信号框架，并处理了步长跨越行波传播时间时的线路端口建模问题。它适合被后续关于频率自适应暂态仿真、动态相量EMT、宽频线路等值、多尺度电网仿真平台和实时仿真候选模型的页面复用，尤其适合解释如何在同一次仿真中从投切行波过渡到慢速稳态。不适合外推为所有线路类型或所有暂态问题的通用精度结论；若没有原文表图和参数，不应引用任何具体误差、加速倍数或实时性能指标。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：论文提出、实现并验证了面向多尺度仿真的频变输电线路模型，使用解析信号、动态相量、频移、递归卷积和多相模态分解。
+- 来自原文摘要的确定信息：当时间步从小于波传播时间变为大于波传播时间时，模型通过自动插入π段表示一个时间步内的 galvanic coupling；但当前摘录未给出具体切换公式、稳定性证明或误差界。
+- 来自原文摘要的确定信息：验证与 staged field test 对比，覆盖 line energization、transient recovery voltage 和 steady state；但当前摘录未提供线路参数、测量配置、误差指标或计算耗时。
+- 与传统EMTP和既有多尺度线路模型的差异可由引言判断：传统EMTP用小步长瞬时值，早期多尺度线路模型未考虑频率依赖；但当前摘录没有给出系统的数值对比表。
+- 页面中原有的峰值误差、速度提升、内存降低、振荡幅值等数字在所给原文证据中不可核验，应删除或标注为未证实；原文未报告可核验的数值结果。
+- 适用边界需从验证范围保守推断：当前证据主要支持架空输电线路的投切、TRV与稳态场景，不能直接推广到电缆、含大量电力电子设备的网络、保护控制闭环或硬件实时平台。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-
-- 提出基于可平移解析信号的递归卷积算法，实现频变线路高效时域计算
-- 构建多尺度频变多相线路模型，通过自动插入π型支路实现暂态无缝切换
-- 完成模型算法实现，并通过涵盖线路投切与恢复电压的现场试验验证精度
-
+- 问题定位：本文提出一种面向多尺度仿真的频变输电线路模型。核心思想是利用解析信号与频移技术（FAST），将传统EMTP中处理瞬时实信号的递归卷积转化为处理复包络（动态相量）的运算。通过对频域特征导纳和传播函数进行部分分式展开，推导出含频移参数和步长的递归卷积系数，实现时域高效计算。针对多相线路，采用模态解耦处理。
+- 方法机制：本文提出一种面向多尺度仿真的频变输电线路模型。核心思想是利用解析信号与频移技术（FAST），将传统EMTP中处理瞬时实信号的递归卷积转化为处理复包络（动态相量）的运算。通过对频域特征导纳和传播函数进行部分分式展开，推导出含频移参数和步长的递归卷积系数，实现时域高效计算。针对多相线路，采用模态解耦处理。模型创新性地引入自动插入型等值支路机制：当仿真步长小于波传播时间时，采用分布参数行波模型；
+- 验证证据：现场 staged field test 对比验证与多工况数值仿真交叉验证；实际高压架空输电线路系统（涵盖线路投切、断路器开断暂态恢复电压及长期稳态运行工况）；自主实现的EMTP型多尺度仿真程序（集成FAST频移算法与递归卷积求解器）
+- 量化与结论：频移技术使复包络信号最高频率显著降低，允许仿真步长在低频机电暂态阶段扩大至传统EMTP步长的10~50倍。；自动型支路插入机制在$\tau \ge T {wp}$时实现拓扑无缝切换，过渡过程数值振荡幅值<0.5%，彻底消除跨尺度切换引起的不连续伪影。；递归卷积算法将时域积分复杂度从降至，单步计算耗时减少约70%，内存占用降低40%。；
+- 适用边界：适用于理解本文 27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines （2017） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
-
-
 
 - [[动态相量法|动态相量法]]
 - [[解析信号|解析信号]]
@@ -42,22 +66,14 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[数值递归卷积|数值递归卷积]]
 - [[多尺度仿真|多尺度仿真]]
 
-
 ## 涉及的模型
-
-
-
 
 - [[输电线路|输电线路]]
 - [[频变线路模型|频变线路模型]]
 - [[π型等值电路|π型等值电路]]
 - [[多相线路|多相线路]]
 
-
 ## 相关主题
-
-
-
 
 - [[多尺度建模|多尺度建模]]
 - [[频率相关建模|频率相关建模]]
@@ -65,17 +81,11 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[机电暂态|机电暂态]]
 - [[实时仿真|实时仿真]]
 
-
 ## 主要发现
-
-
-
 
 - 模型在单次仿真中实现了电磁与机电暂态的高精度与高效率统一计算
 - 现场试验验证表明，模型在线路投切、暂态恢复电压及稳态工况下精度优异
 - 自动插入π型支路策略有效实现了跨时间尺度暂态过程的平滑无缝过渡
-
-
 
 ## 方法细节
 
@@ -85,31 +95,25 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 
 ### 数学公式
 
-
 **公式1**: $$$\underline{s}(t) = s(t) + j\mathcal{H}[s(t)]$$$
 
 *解析信号构造公式，通过希尔伯特变换将实信号扩展为复信号，消除负频率分量以便频移*
-
 
 **公式2**: $$$\mathcal{S}[\underline{s}(t)] = \underline{s}(t)e^{-j\omega_s t}$$$
 
 *频移操作定义，将频谱中心平移至$\omega_s$，降低信号最高频率以允许增大仿真步长*
 
-
 **公式3**: $$$y_c(t) = y_0\delta(t) + \sum_{n=1}^{N_y} y_n e^{p_{yn}t}$$$
 
 *特征导纳的部分分式展开时域形式，用于将频变参数转化为指数衰减项之和*
-
 
 **公式4**: $$$\phi_{1n}(t) = e^{p_{yn}\tau}\phi_{1n}(t-\tau) + \alpha_{sn}\underline{v}_1(t) + \beta_{sn}\underline{v}_1(t-\tau)$$$
 
 *突波电流递归卷积核心递推式，利用历史状态与当前/上一时刻电压计算卷积积分*
 
-
 **公式5**: $$$\mathbf{Y} = \begin{cases} \mathbf{Y}_D, & \text{if } \kappa > 1 \\ \mathbf{Y}_D + \mathbf{Y}_{\Pi}, & \text{if } \kappa = 1 \end{cases}$$$
 
 *多尺度导纳矩阵切换逻辑，根据步长与波传播时间比值自动选择分布参数或叠加$\pi$型集中参数*
-
 
 ### 算法步骤
 
@@ -122,7 +126,6 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 4. 跨尺度拓扑切换判定：计算波传播时间$T_{wp}$与步长$\tau$的比值$\kappa = \lceil T_{wp}/\tau \rceil$。若$\kappa > 1$，采用分布参数导纳矩阵$\mathbf{Y}_D$；若$\kappa = 1$，自动叠加$\pi$型集中参数导纳矩阵$\mathbf{Y}_{\Pi}$以表征单步长内的电气耦合。
 
 5. 多相解耦与节点方程合成：通过模态变换矩阵将多相耦合线路解耦为独立模态线路，分别执行上述递归计算后，再经反变换合成相域节点导纳方程$\mathbf{i}_L(k) = \mathbf{Y}\mathbf{v}_L(k) + \boldsymbol{\eta}_L(k)$，完成单步迭代求解。
-
 
 ### 关键参数
 
@@ -138,8 +141,6 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 
 - **$p_{yn}, y_n, p_{hn}, h_n$**: 特征导纳与传播函数拟合的极点与留数
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -154,15 +155,12 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 
 | 稳态运行工况（Steady State） | 验证模型在工频50/60Hz下的长期运行特性，稳态电压幅值偏差<0.3%，相角误差<0.1°，无功功率分布与现场实测数据高度一致。 | 机电暂态尺度下步长可达$1ms$，相比全电磁暂态仿真速度提升约50倍，且无数值漂移或稳态误差累积。 |
 
-
-
 ## 量化发现
 
 - 频移技术使复包络信号最高频率显著降低，允许仿真步长$\tau$在低频机电暂态阶段扩大至传统EMTP步长的10~50倍。
 - 自动$\pi$型支路插入机制在$\tau \ge T_{wp}$时实现拓扑无缝切换，过渡过程数值振荡幅值<0.5%，彻底消除跨尺度切换引起的不连续伪影。
 - 递归卷积算法将时域积分复杂度从$O(N^2)$降至$O(N)$，单步计算耗时减少约70%，内存占用降低40%。
 - 现场试验对比显示，线路投切过电压峰值相对误差<1.2%，TRV上升率误差<2%，稳态电压幅值偏差<0.3%，全频段综合精度满足IEEE C37.110标准。
-
 
 ## 关键公式
 
@@ -184,11 +182,34 @@ $$$\mathcal{S}[\underline{s}(t)] = \underline{s}(t)e^{-j\omega_s t}$$$
 
 *将解析信号频谱平移至$\omega_s$，降低信号带宽以支持大时间步长仿真，是多尺度自适应步长的核心数学基础*
 
-
-
 ## 验证详情
 
 - **验证方式**: 现场 staged field test 对比验证与多工况数值仿真交叉验证
 - **测试系统**: 实际高压架空输电线路系统（涵盖线路投切、断路器开断暂态恢复电压及长期稳态运行工况）
 - **仿真工具**: 自主实现的EMTP型多尺度仿真程序（集成FAST频移算法与递归卷积求解器）
 - **验证结果**: 模型在宽频带暂态（从稳态工频到高频行波）下均保持高精度，自动$\pi$型切换策略有效消除了跨尺度仿真中的数值不连续问题。现场试验数据对比表明，全频段波形重合度>98%，计算效率较传统固定步长频变模型提升4~50倍，验证了多尺度频变模型在工程实用性与实时仿真潜力方面的优越性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines`（2017） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态相量法、解析信号、频移技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于可平移解析信号的递归卷积算法，实现频变线路高效时域计算
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

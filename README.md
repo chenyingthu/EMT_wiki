@@ -6,15 +6,16 @@
 
 | 指标 | 数值 |
 |------|------|
-| 论文总数 | 699 |
-| 已分析 | 699 (100%) |
-| **深度增强完成** | ✅ 691/699 (98.9%) |
+| 论文总数 | 690 |
+| 已分析 | 690 (100%) |
+| **深度增强完成** | ✅ 687/690 (99.6%) |
+| 重复来源指针 | 11 |
 | 主题页 | 11 |
 | 方法页 | 10 |
 | 模型页 | 10 |
 | 实体页 | 9 |
 | 来源页填充率 | 100% (5/5 章节) |
-| **深度增强章节** | 方法细节/仿真结果/关键公式/验证详情 |
+| **深度增强章节** | 方法细节/仿真结果/量化发现/关键公式/验证详情 |
 
 ## 目录结构
 
@@ -23,7 +24,7 @@ wiki/
 ├── index.md          # 完整索引
 ├── overview.md       # EMT 领域概览
 ├── log.md            # 构建日志
-├── sources/          # 699 篇论文来源页
+├── sources/          # 690 个活跃来源页 + 11 个重复来源指针
 ├── topics/           # 11 个主题页（混合仿真、实时仿真等）
 ├── methods/          # 10 个方法页（矢量拟合、平均值模型等）
 ├── models/           # 10 个模型页（MMC、VSC、变压器等）
@@ -50,8 +51,11 @@ wiki/
 ## 构建方式
 
 ```bash
-# Phase 1: 深度增强 699 篇论文源页
+# Phase 1: 深度增强论文源页（默认读取 ~/.codex/config.toml 的 Codex LLM 配置）
 python3 tools/deep_enrich_sources.py --concurrency 8
+
+# 仅重试失败来源页
+python3 tools/deep_enrich_sources.py --retry-failed --concurrency 2
 
 # Phase 2: 深度增强 40 个分类汇总页
 python3 tools/deep_enrich_taxonomy.py

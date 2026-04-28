@@ -1,9 +1,9 @@
 ---
 title: "Modular Multilevel Converter Models"
 type: source
-authors: ['未知']
+authors: ['EMT-type programs', 'HVDC transmission', 'switching function']
 year: 2013
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['mmc']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic Transients.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 # Modular Multilevel Converter Models
 
-**作者**: 
+**作者**: EMT-type programs; HVDC transmission; switching function
 **年份**: 2013
 **来源**: `27&28/Modular Multilevel Converter Models for Electromagnetic Transients.pdf`
 
 ## 摘要
 
-—Modular multilevel converters (MMCs) may contain numerous insulated-gate bipolar transistors. The modeling of such converters for electromagnetic transient-type (EMT-type) simula- tions is complex. Detailed models used in MMC-HVDC simula- tions may require very large computing times. Simpliﬁed and av- eraged models have been proposed in the past to overcome this problem. In this paper, existing averaged and simpliﬁed models are improved in order to increase their range of applications. The models are compared and analyzed for different transient events on an MMC-HVDC system. Index Terms—Average-value model (AVM), EMT-type pro- grams, HVDC transmission, modular multilevel
+论文提出了四种复杂度递减的MMC电磁暂态仿真模型：Model 1（详细IGBT模型，包含理想开关、非线性二极管及缓冲电路）、Model 2（等效电路模型，用ON/OFF电阻替代IGBT并引入迭代算法处理闭锁状态）、Model 3（桥臂开关函数模型，基于半桥开关函数概念聚合子模块）和Model 4（平均值模型AVM）。核心创新在于Model 2采用迭代过程处理子模块闭锁状态下的二极管导通逻辑，并在检测到状态突变时将梯形积分切换为后向欧拉法以消除数值振荡。Model 3通过假设电容电压平衡，将N个子模块等效为单一桥臂电路，显著降低节点数量。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自MMC-HVDC电磁暂态仿真：实际换流器每桥臂含大量半桥子模块，每个子模块又含两个IGBT及反并联二极管。若在EMT程序中逐器件建模，需要处理成千上万的开关器件、二极管非线性和频繁同步开关事件，导致很小步长和很长计算时间。研究对象是用于MMC-HVDC暂态事件分析的MMC模型，而不是新的控制策略或拓扑。本文的贡献不是单一“快速模型”，而是把模型按保真度分层：详细IGBT模型作为参考；用ON/OFF电阻替代IGBT的等效电路模型，并补上以往未处理的子模块闭锁状态；提出按桥臂应用开关函数的聚合模型；同时给出改进平均值模型。其关键创新点在于扩大简化/平均模型可用场景，尤其是让等效电路模型能处理闭锁时二极管导通逻辑，并系统比较不同模型在暂态事件中的适用性。
+
+### 2. 模型、算法与实现技术
+
+论文讨论四类MMC模型。详细模型显式表示半桥子模块中的IGBT、反并联二极管、电容和相关支路，适合作为波形参考。等效电路模型用导通/关断电阻表示受门极信号控制的开关，核心接口量包括子模块门极信号、闭锁信号、桥臂电流、子模块端电压和电容电压；在闭锁状态下，IGBT不可控，电流路径由二极管决定，因此作者引入迭代求解：先根据上一迭代的电流、电压判断二极管状态，更新网络方程后重新求解，直到导通/截止状态不再变化。为避免开关状态突变与梯形积分耦合产生数值振荡，检测到突变后临时切换到后向欧拉积分，再恢复梯形积分。桥臂开关函数模型把每个子模块的开关函数聚合为桥臂开关函数，利用电容电压近似平衡假设，将若干子模块电容和开关行为等效到桥臂层面；平均值模型进一步忽略开关细节，保留控制和主电气动态。
+
+### 3. 验证、优势与不足
+
+作者通过在MMC-HVDC系统上对不同模型进行暂态事件仿真比较来验证模型。测试系统基于法国—西班牙400 kV电网互联的MMC-HVDC设计，论文文本说明采用三相MMC拓扑、每桥臂多个半桥子模块和桥臂电抗器；现有页面给出401电平/每桥臂401个子模块这一信息，但具体数值应以原文图表为准。仿真工具为EMTP-RV，详细IGBT模型用于对比简化模型的波形响应。验证重点包括：等效电路模型在子模块闭锁状态下能通过迭代修正二极管状态；开关函数模型和平均值模型能在保留主要动态的同时减少电气节点和开关事件表示。优势主要体现在模型层级清楚，可按研究目的在器件级、子模块级、桥臂级和平均模型之间取舍。原文摘要未报告可核验的计算时间、误差百分比或内存占用数值；当前证据也不足以说明所有故障类型、控制策略、实时仿真步长或其他MMC拓扑均适用。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把MMC-EMT建模问题从“是否详细”转化为“按暂态问题选择模型粒度”。若研究闭锁、二极管续流、子模块电容动态等细节，应使用等效电路或详细模型；若关注系统级电压、电流、功率控制动态，可考虑桥臂开关函数模型或平均值模型。它适合被后续MMC-HVDC仿真、模型降阶、EMT工具实现、开关函数等值和平均值模型页面复用，也适合作为比较详细模型与简化模型边界的入口。不适合外推为任意MMC拓扑、任意保护动作、宽频器件应力或实时仿真性能的通用结论。
+
+### 证据边界
+
+- 原文明确给出论文题名、作者、期刊、DOI、研究目标：改进简化模型和平均值模型，并比较不同暂态事件下的MMC模型。
+- 原文明确指出已有ON/OFF电阻等效方法未处理子模块闭锁状态，本文提出迭代方案修正该限制；具体收敛次数若无表图核验，不应作为确定量化结论引用。
+- 法国—西班牙400 kV互联系统、MMC-HVDC、半桥子模块和桥臂电抗器来自原文描述；401电平/401子模块信息需回到原文图表或参数表复核。
+- 关于梯形积分与后向欧拉切换、桥臂开关函数和电容电压平衡假设属于方法机制说明；其误差大小和适用范围需依赖原文仿真结果，不能脱离算例泛化。
+- 当前证据未看到可核验的计算时间、误差百分比、步长、硬件平台或内存占用数据，因此不能声称某模型定量加速多少或精度达到多少。
+- 验证范围集中在文中MMC-HVDC暂态事件；未证明对全桥/混合子模块、复杂保护序列、宽频器件损耗分析、谐波精细评估或实时仿真平台同样有效。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于开关函数原理的MMC桥臂等效模型，显著提升仿真效率。
-- 改进等效电路模型，引入迭代算法精确处理子模块闭锁状态。
-- 设计梯形积分与后向欧拉法切换策略，有效消除状态突变振荡。
-
+- 问题定位：论文提出了四种复杂度递减的MMC电磁暂态仿真模型：Model 1（详细IGBT模型，包含理想开关、非线性二极管及缓冲电路）、Model 2（等效电路模型，用ON/OFF电阻替代IGBT并引入迭代算法处理闭锁状态）、Model 3（桥臂开关函数模型，基于半桥开关函数概念聚合子模块）和Model 4（平均值模型AVM）。
+- 方法机制：论文提出了四种复杂度递减的MMC电磁暂态仿真模型：Model 1（详细IGBT模型，包含理想开关、非线性二极管及缓冲电路）、Model 2（等效电路模型，用ON/OFF电阻替代IGBT并引入迭代算法处理闭锁状态）、Model 3（桥臂开关函数模型，基于半桥开关函数概念聚合子模块）和Model 4（平均值模型AVM）。
+- 验证证据：多模型对比仿真验证，将改进的简化模型与详细IGBT模型进行暂态事件对比；基于法国-西班牙400kV电网互联的MMC-HVDC系统设计，三相模块化多电平变换器，每桥臂包含401个半桥子模块（half-bridge SM），包含桥臂电抗器；EMTP-RV仿真软件，使用其内置非线性求解器处理闭锁状态的迭代求解；
+- 量化与结论：对于401电平MMC系统，改进Model 2的迭代算法平均收敛次数严格小于3次（<3 iterations）；详细Model 1需要建模数千个IGBT器件（401电平×6桥臂×2开关=4812个IGBT），而简化模型将节点数减少至桥臂级别；子模块导通电阻设置在毫欧量级（milliohms），关断电阻设置在兆欧量级（megaohms）；
+- 适用边界：适用于理解本文 Modular Multilevel Converter Models （2013） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 平均值模型、开关函数法、等效电路法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
 
 ## 使用的方法
-
 
 - [[平均值模型|平均值模型]]
 - [[开关函数法|开关函数法]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[后向欧拉法|后向欧拉法]]
 - [[迭代求解算法|迭代求解算法]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[半桥子模块|半桥子模块]]
 - [[igbt开关模型|IGBT开关模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[mmc-model|MMC]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[数值振荡抑制|数值振荡抑制]]
 - [[暂态事件分析|暂态事件分析]]
 
-
 ## 主要发现
-
 
 - 改进模型在401电平MMC仿真中平均仅需少于3次迭代即可收敛。
 - 迭代算法结合后向欧拉法切换，有效消除闭锁状态切换引发的振荡。
 - 简化模型在多种暂态工况下保持较高精度，并大幅降低计算时间。
-
-
 
 ## 方法细节
 
@@ -75,41 +95,33 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 ### 数学公式
 
-
 **公式1**: $$$s_i \in \{0,1\}$$$
 
 *子模块i的开关函数，0表示OFF状态（下管导通），1表示ON状态（上管导通）*
-
 
 **公式2**: $$$v_C = \sum_{i=1}^{N} v_{ci}$$$
 
 *桥臂所有子模块电容电压之和，用于Model 3的等效计算*
 
-
 **公式3**: $$$\sum_{i=1}^{N} s_i v_{ci} \approx \frac{v_C}{N} \sum_{i=1}^{N} s_i$$$
 
 *电容电压平衡假设，假设各子模块电容电压近似相等，用于推导桥臂等效电路*
-
 
 **公式4**: $$$C_{arm} = \frac{C}{N}$$$
 
 *桥臂等效电容值，其中C为单个SM电容，N为每桥臂子模块数量*
 
-
 **公式5**: $$$s = \sum_{i=1}^{N} s_i$$$
 
 *桥臂总开关函数，聚合所有子模块的开关状态*
-
 
 **公式6**: $$$i_{hist} = -\frac{2C}{\Delta t}v_C(t-\Delta t) - i_C(t-\Delta t)$$$
 
 *梯形积分规则下的电容历史电流源，用于Model 2的等效电路实现*
 
-
 **公式7**: $$$R_{eq} = \frac{\Delta t}{2C}$$$
 
 *梯形积分规则下的电容等效并联电阻*
-
 
 ### 算法步骤
 
@@ -131,7 +143,6 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 9. 更新各子模块电容电压历史项：$v_C(t) = v_C(t-\Delta t) + \frac{\Delta t}{C}i_C(t)$，为下一时间步做准备
 
-
 ### 关键参数
 
 - **N**: 每桥臂子模块数量，论文中具体为401个
@@ -148,8 +159,6 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 - **迭代收敛阈值**: 二极管导通状态变化的检测容差，具体数值未明确给出但平均迭代<3次
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -164,8 +173,6 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 | 不同模型复杂度对比 | 对比了Model 2（等效电路）、Model 3（开关函数）和Model 4（平均值模型）在不同暂态事件下的精度和效率 | Model 3和Model 4在动态仿真中保持足够精度，同时计算效率高于Model 2；Model 2适用于需要详细电容电压平衡的场合 |
 
-
-
 ## 量化发现
 
 - 对于401电平MMC系统，改进Model 2的迭代算法平均收敛次数严格小于3次（<3 iterations）
@@ -173,7 +180,6 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - 子模块导通电阻$R_{on}$设置在毫欧量级（milliohms），关断电阻$R_{off}$设置在兆欧量级（megaohms）
 - 开关函数模型（Model 3）的精度随子模块数量N增加而提高，当N=401时电容电压平衡假设引入的误差可忽略
 - 后向欧拉法仅需在状态突变后的一个时间步使用即可有效抑制数值振荡，随后恢复梯形积分以保持整体精度
-
 
 ## 关键公式
 
@@ -195,11 +201,34 @@ $$$i_{arm}^{k} = f(v_{sm}^{k-1}, i_{arm}^{k-1}, \text{state})$$$
 
 *Model 2处理闭锁状态时，基于前次迭代值确定二极管导通状态，通过EMTP-RV非线性求解器迭代直至收敛*
 
-
-
 ## 验证详情
 
 - **验证方式**: 多模型对比仿真验证，将改进的简化模型与详细IGBT模型进行暂态事件对比
 - **测试系统**: 基于法国-西班牙400kV电网互联的MMC-HVDC系统设计，三相模块化多电平变换器，每桥臂包含401个半桥子模块（half-bridge SM），包含桥臂电抗器$L_{arm}$
 - **仿真工具**: EMTP-RV仿真软件，使用其内置非线性求解器处理闭锁状态的迭代求解；采用梯形积分（Trapezoidal）与后向欧拉法（Backward Euler）混合积分策略
 - **验证结果**: 改进的Model 2在401电平系统中平均迭代<3次即可准确处理闭锁状态切换，消除了数值振荡；Model 3和Model 4在多种暂态工况下保持较高精度，同时大幅降低计算时间和内存需求
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modular Multilevel Converter Models`（2013） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 平均值模型、开关函数法、等效电路法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于开关函数原理的MMC桥臂等效模型，显著提升仿真效率。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic Transients.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

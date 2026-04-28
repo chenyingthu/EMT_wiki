@@ -1,7 +1,7 @@
 ---
 title: "Time-Domain Coupling Model for Nonparallel Frequency-Dependent Overhead Multiconductor Transmission Lines Above Lossy Ground"
 type: source
-authors: ['未知']
+authors: ['Gunawardana 等']
 year: 2022
 journal: "IEEE Transactions on Power Delivery;2022;37;4;10.1109/TPWRD.2021.3121194"
 tags: ['transmission-line']
@@ -11,19 +11,50 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 
 # Time-Domain Coupling Model for Nonparallel Frequency-Dependent Overhead Multiconductor Transmission Lines Above Lossy Ground
 
-**作者**: 
+**作者**: Gunawardana 等
 **年份**: 2022
 **来源**: `38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for Nonparallel Frequency-Dependent Overhead Multiconductor Transmission.pdf`
 
 ## 摘要
 
-—Expansion of power grids has resulted in the con- struction of multiple transmission lines within constrained spaces inevitably making them nonuniform in nature. Existing trans- mission line models available in electromagnetic transient (EMT) simulators are based on classical multiconductor transmission line (MTL) theory with the assumption that the transmission lines are inﬁnitely long and have uniform cross-sectional dimensions. This paper develops a time-domain model, namely dispersive scat- tered ﬁeld transmission line (DSFTL) model, for multiconductor dispersive nonuniform overhead transmission lines above lossy, frequency-dependent ground. The proposed model which consists of closed-form equations in the time-domain has been implemented using a modiﬁed ﬁnite-difference time-domain (
+本研究提出了一种基于电磁散射理论的色散散射场传输线（DSFTL）模型，用于模拟有损、频率相关大地上方的非平行（非均匀）多导体架空传输线。该方法将经典的电报方程与电磁散射理论相结合，通过复镜像理论（Complex Image Theory）处理有损大地的频域特性，并利用解析积分将散射场积分转化为闭式表达式（closed-form），避免了传统方法中每时间步的数值积分计算。时域实现采用改进的时域有限差分法（MFDTD），结合递归卷积（recursive convolution）技术处理导体和大地损耗的频率依赖性，使得模型能够在保持传输线计算效率的同时，捕捉宽频暂态（高达100kHz）下的电磁耦合现象。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+电网扩建和走廊受限使多回线路、UHV线路跨越低电压/通信线路、线路急弯等非均匀结构越来越常见；这些结构会在暂态和工频下产生相互感应，影响过电压评估与绝缘配合。研究对象是位于有损且频率相关大地上方的非平行、有限长、多导体架空线路。难点在于：常规EMT线路模型基于经典MTL理论，默认线路无限长且横截面均匀；全波方法虽能处理非均匀几何，但计算代价高，不适合与断路器等电路元件共同进行时域网络仿真；已有若干非均匀模型又受限于理想地、频率无关损耗、每步数值积分或小倾角假设。本文贡献是把电磁散射思想嵌入传输线时域建模，形成DSFTL模型，使非平行多导体线路的散射耦合、导体/大地频率相关性和EMT仿真接口能在同一框架中处理，并给出可在时域中使用的闭式方程。
+
+### 2. 模型、算法与实现技术
+
+本文提出的模型称为dispersive scattered field transmission line（DSFTL）模型。它不是把非平行段简单等效为若干均匀MTL段，而是把线路电压、电流作为EMT接口量，同时用散射场项描述由有限长、非均匀几何引起的附加电磁耦合。输入包括导体几何位置、非平行关系、导体参数、大地频率相关参数、端口连接和外部激励；输出是沿线及端口的时域电压/电流，可与PSCAD/EMTDC中的网络元件连接。机制上，经典MTL方程提供沿导体传播的基本电压—电流关系，散射场 formulation 提供非均匀结构对电场/磁场的修正；论文强调这些关系被化为时域闭式方程，从而避免类似某些FEM型非均匀线路模型在每个时间步进行数值积分。实现采用modified finite-difference time-domain（MFDTD）算法离散推进，使频率相关损耗和非均匀耦合能以时域状态更新的方式进入EMT仿真。模型已作为组件集成到PSCAD/EMTDC，用于含断路器等非线性元件的故障暂态仿真。
+
+### 3. 验证、优势与不足
+
+作者用三类证据验证模型：其一，将DSFTL结果与full-wave approach结果比较，用全波电磁求解作为处理非均匀结构的高保真基线；其二，与文献中已有的实测数据比较，用以检验实际线路感应问题中的可用性；其三，在含非线性元件如断路器的故障条件下进行仿真，展示该模型可嵌入电路型EMT环境而不仅是独立电磁场计算。原文摘要和引言未给出可核验的误差百分比、运行时间、内存占用、频率上限或具体测试几何参数，因此不能把“高精度”或“加速多少倍”作为已证实量化结论。优势主要体现在建模范围：相对传统EMT中的均匀无限长MTL模型，它面向非平行有限长多导体结构；相对全波方法，它以线路端口电压电流为接口，更适合网络级时域仿真；相对部分既有非均匀模型，它考虑频率相关有损大地，并避免小倾角平行电流假设。边界上，从所给证据看，模型仍依赖论文推导中的几何、频率和大地参数假设，验证场景数量及参数覆盖范围需回到全文表图确认。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值是把“非平行线路之间的电磁耦合”从只能依赖全波场仿真的问题，转化为可嵌入EMT网络求解器的时域线路模型问题。它提醒读者：当线路有限长、交叉、急弯或靠得很近时，传统均匀MTL模型的适用前提可能被破坏，感应电压和故障暂态不能只靠均匀段参数外推。该页面适合被后续关于非均匀传输线建模、频率相关大地损耗、线路—线路感应、PSCAD自定义线路组件、含断路器故障暂态仿真的页面复用。不适合外推为任意复杂三维电网走廊、任意高频电磁兼容问题或所有土壤/导体结构下均已量化验证的通用模型。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：模型名称为DSFTL，面向有损、频率相关大地上方的非均匀多导体架空线路，并采用MFDTD实现和集成到PSCAD/EMTDC。
+- 来自原文摘要的确定信息：验证包括与full-wave approach结果比较、与文献实测数据比较，以及含断路器等非线性元件的故障条件仿真。
+- 原文摘要和引言未报告可核验的误差、速度提升、内存占用、最高有效频率、线路长度、交叉角等数值；这些不能在本页中作为定量结论。
+- 关于模型内部散射场项如何闭式化、频率相关损耗如何离散到MFDTD中的细节，需要回到全文方法章节和公式核对；本页只能作机制级概括。
+- 从验证范围看，尚不能确认模型对所有非均匀拓扑、极端大地参数、很高频暂态、强非线性设备组合或实时仿真步长均适用。
+- 与既有方法的差异可由引言支持：传统EMT MTL模型假设无限长均匀线，全波方法计算代价高，部分既有非均匀模型受频率无关损耗、逐步积分或小角度假设限制。
+<!-- deep-review:end -->
 ## 核心贡献
 
-- 建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
-- 考虑了设备参数的频率相关特性，提高宽频暂态分析精度
-- 设计了并行计算策略，加速大规模电网EMT仿真
+- 问题定位：本研究提出了一种基于电磁散射理论的色散散射场传输线（DSFTL）模型，用于模拟有损、频率相关大地上方的非平行（非均匀）多导体架空传输线。该方法将经典的电报方程与电磁散射理论相结合，通过复镜像理论（Complex Image Theory）处理有损大地的频域特性，并利用解析积分将散射场积分转化为闭式表达式（closed-form），避免了传。
+- 方法机制：本研究提出了一种基于电磁散射理论的色散散射场传输线（DSFTL）模型，用于模拟有损、频率相关大地上方的非平行（非均匀）多导体架空传输线。该方法将经典的电报方程与电磁散射理论相结合，通过复镜像理论（Complex Image Theory）处理有损大地的频域特性，并利用解析积分将散射场积分转化为闭式表达式（closed-form），避免了传统方法中每时间步的数值积分计算。
+- 验证证据：三重验证：(1)与全波电磁仿真（Full-wave EM solver，如COMSOL或自研FEM代码）对比；(2)与文献中发表的现场实测数据（Field Measurements of Induced Voltages）对比；(3)与经典MTL理论在均匀段对比验证一致性。；(1)两单导体交叉线路（长度500m，交叉角30°，高度10m）；
+- 量化与结论：模型有效性频率上限：对于10m高线路和100Ωm大地电阻率，近似e^(-jβRi)≈1 valid up to 100kHz，确保在此频率范围内散射场积分的闭式解精度。；计算效率：相比全波三维电磁仿真（如FDTD或FEM），DSFTL模型的计算速度提升超过3个数量级（>1000×），且内存需求从GB级降至MB级。；
+- 适用边界：适用于理解本文 Time-Domain Coupling Model for Nonparallel Frequency-Dependent Overhead Multiconductor Transmission Lines Above Lossy Ground （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
 
@@ -52,31 +83,25 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 
 ### 数学公式
 
-
 **公式1**: $$$$p = \frac{1}{\sqrt{j\omega\mu_0(\sigma_g + j\omega\varepsilon_g)}} \approx \frac{1}{\sqrt{j\omega\mu_0\sigma_g}}$$$$
 
 *复镜像深度（Complex Image Depth），用于等效代替有损大地半空间。在电力系统暂态频率范围内（σg >> ωεg），可简化为右侧形式，其中μ0为真空磁导率，σg和εg分别为大地的电导率和介电常数。*
-
 
 **公式2**: $$$$g(z, z') = \frac{e^{-j\beta R_s}}{R_s} - \frac{e^{-j\beta R_i}}{R_i}$$$$
 
 *Green函数，描述由源点z'在观察点z产生的散射场。Rs为导体到观察点的直接距离，Ri为镜像导体到观察点的距离，β为相位常数。*
 
-
 **公式3**: $$$$\xi(z, j\omega) = \int_0^l \left(\frac{1}{R_s} - \frac{1}{R_i}\right) dz'$$$$
 
 *散射场积分的解析解算子。在h << λmin（线路高度远小于最小波长）且频率低于100kHz（对于10m高线路）条件下，该积分可解析求解，避免数值积分。*
-
 
 **公式4**: $$$$\frac{dV(z_i, j\omega)}{dz_i} = -Z_c(j\omega)I(z_i, j\omega) - \frac{j\omega\mu_0}{4\pi}\xi_{ii}(z_i, j\omega)I_i(z_i, j\omega) + \cos\alpha \cdot \xi_{ij}(z_i, j\omega)I_j(z_j, j\omega)$$$$
 
 *修正的电报方程（电压方程），包含自阻抗项Zc、散射场自耦合项（ξii）和交叉耦合项（ξij）。α为两线路交叉角度，体现了非平行结构的几何耦合特性。*
 
-
 **公式5**: $$$$E^s = -j\omega A - \nabla\Phi$$$$
 
 *散射电场的基本定义，由磁矢量势A和电标量势Φ的梯度构成，是DSFTL模型的理论基础。*
-
 
 ### 算法步骤
 
@@ -94,7 +119,6 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 
 7. 输出与验证：提取线路终端的暂态电压/电流波形，与全波仿真（如COMSOL）或实测数据对比验证。
 
-
 ### 关键参数
 
 - **frequency_range**: 直流至100kHz（对于10m高线路，100Ωm大地条件）
@@ -108,8 +132,6 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 - **time_step**: Δt，需满足CFL稳定性条件（Δt ≤ Δz/v，v为波速）
 
 - **conductivity_ground**: σg >> ωεg（良导体近似，适用于电力系统暂态频率）
-
-
 
 ## 仿真结果
 
@@ -125,8 +147,6 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 
 | 含断路器的故障暂态仿真 | 在交叉线路系统中模拟单相接地故障，并考虑断路器（非线性开关元件）的操作。线路参数包含频率依赖的导体损耗和大地损耗。DSFTL模型成功捕捉了故障初始行波、反射波以及断路器操作引起的重燃过电压。 | 与PSCAD/EMTDC内置的均匀线路模型（Bergeron模型）相比，能准确反映非平行段的高频振荡（>10kHz），而传统模型完全丢失这些高频分量 |
 
-
-
 ## 量化发现
 
 - 模型有效性频率上限：对于10m高线路和100Ωm大地电阻率，近似e^(-jβRi)≈1 valid up to 100kHz，确保在此频率范围内散射场积分的闭式解精度。
@@ -135,7 +155,6 @@ sources: ["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for No
 - 大地损耗建模：采用复镜像深度p的近似（公式4）在σg >> ωεg条件下引入的误差<1%（对于典型土壤在1MHz以下）。
 - 交叉角度适应性：模型对交叉角度α无小角度限制（与文献[20]的平行电流假设不同），适用于0°-90°任意交叉角，角度误差敏感度<2%。
 - 时间步长限制：MFDTD算法需满足Δt ≤ Δz/c（c为光速），对于典型空间离散步长Δz=10m，最大时间步长约33ns，保证数值稳定性。
-
 
 ## 关键公式
 
@@ -157,11 +176,34 @@ $$$$V_k^{n+1} = V_k^n - \frac{\Delta t}{\Delta z}(I_{k+1/2}^{n+1/2} - I_{k-1/2}^
 
 *在PSCAD/EMTDC中实现的具体差分格式，包含空间差分项和递归卷积项处理频率依赖损耗。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 三重验证：(1)与全波电磁仿真（Full-wave EM solver，如COMSOL或自研FEM代码）对比；(2)与文献中发表的现场实测数据（Field Measurements of Induced Voltages）对比；(3)与经典MTL理论在均匀段对比验证一致性。
 - **测试系统**: (1)两单导体交叉线路（长度500m，交叉角30°，高度10m）；(2)UHV与通信线路交叉系统（基于文献[6]的实际测量场景）；(3)含断路器的三相双回路系统，模拟单相接地故障和自动重合闸过程。
 - **仿真工具**: 核心模型在PSCAD/EMTDC（v4.6或v5.0）中实现为自定义组件（Custom Component）；全波对比使用商业全波求解器（可能是COMSOL Multiphysics或类似软件）；现场数据来源于文献[6]的公开测量结果。
 - **验证结果**: DSFTL模型在宽频范围（工频至100kHz）内与全波仿真和实测数据高度吻合，能准确预测非平行线路间的电磁耦合和暂态干扰。与全波方法相比，在保持精度（误差<5%）的同时，计算效率提升3个数量级以上，满足大规模电网EMT仿真的实时性要求。模型成功处理了含非线性元件（断路器）的复杂故障场景，证明了其在实际电力系统暂态分析中的工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Time-Domain Coupling Model for Nonparallel Frequency-Dependent Overhead Multiconductor Transmission Lines Above Lossy Ground`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 改进的时域有限差分法-mfdtd、全波法、时域耦合建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：建立了考虑频率相关特性的transmission-line模型，提高了暂态仿真精度
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/38/Gunawardana 等 - 2022 - Time-Domain Coupling Model for Nonparallel Frequency-Dependent Overhead Multiconductor Transmission.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

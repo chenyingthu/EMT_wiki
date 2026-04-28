@@ -1,9 +1,9 @@
 ---
 title: "Using TACS Functions Within EMPT To Teach Protective Relaying Fundamentals - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['Boise', 'ID']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/39/59.574917.pdf.pdf"]
@@ -11,31 +11,58 @@ sources: ["EMT_Doc/39/59.574917.pdf.pdf"]
 
 # Using TACS Functions Within EMPT To Teach Protective Relaying Fundamentals - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: Boise; ID
 **年份**: 2004
 **来源**: `39/59.574917.pdf.pdf`
 
 ## 摘要
 
-The purpose of this discussion is to provide an educational tool for investigating relaying concepts by modeling digital relays using TACS functions within EM- in a closed- loop manner. Various elements of digital protection systems are identified and organized to generate an systematic approach to modeling the actual hardware of relay systems. Discussion is lim- ited to conventional relaying systems that monitor the vitality of the 60 Hz voltages and/or currents. TACS functions for transport delay and pulse generators are used to model dynamics associated with analog to digital conversion and sampling systems. DSP algorithms convert a sequence of sampled data into a sequence of values for magnitude and phase components. A simple example of a time overcurrent relay is developed to demonstr
+本文提出了一种基于EMTP-TACS闭环协同仿真的数字继电器教学建模框架。该方法将电力系统电磁暂态仿真（EMTP网络部分）与数字继电器控制逻辑（TACS部分）深度耦合，通过9个功能模块（图1）系统性地复现实际继电器硬件的动态行为。核心创新在于利用TACS的传输延迟和脉冲发生器函数精确模拟模数转换（ADC）的采样保持动态、量化误差及采样率约束，同时结合离散傅里叶变换（DFT）或Walsh函数实现时域-相量域转换。该方法支持从简单R-X等值电路到复杂多相分布参数输电系统的多层次建模，特别适用于研究故障暂态（持续数毫秒）期间数字滤波器的性能与保护逻辑的协调配合。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自保护工程教学和继电器设计训练：高压电网故障或开关操作后，电压、电流仍处于电磁暂态中，微处理器继电器却必须依据60 Hz基波的幅值和相位作出跳闸判断。研究对象不是某一种商用继电器，而是“常规数字保护系统”的可教学仿真模型，包括电力网络、互感器/信号接口、采样系统、数字滤波/DSP和跳闸控制之间的闭环关系。难点在于，单纯稳态相量或离线信号处理不能展示暂态网络与继电器控制相互作用；而用通用电子电路仿真器建模多相分布参数线路和电力设备又不方便。本文的贡献是把EMTP的电力网络仿真能力与TACS控制函数结合起来，用功能块方式组织数字继电器硬件链路，并用TACS的传输延迟和脉冲发生器模拟A/D转换与采样过程，使学生能在同一闭环仿真中观察网络暂态、数字滤波输出和继电器控制动作。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是一种在EMTP内部用TACS实现数字继电器的功能块建模方法。EMTP部分负责电力系统网络，即线路、设备和开关等电气暂态；TACS部分负责继电器内部控制链路。核心输入量是被保护对象的电压、电流波形，经过测量与信号处理后形成采样序列；核心中间量是DSP算法得到的60 Hz幅值和相位分量；核心输出量是继电器控制信号，例如时间过流继电器的跳闸命令，再反馈到EMTP网络中的开关元件。机制上，传输延迟函数用于表现A/D转换和采样保持带来的时间延迟，脉冲发生器用于规定采样时刻，使连续暂态波形被转换为离散样本序列。随后，数字滤波或DSP算法把样本序列转换成幅值、相角等保护判据所需量。保护逻辑再依据这些量与整定值、延时特性等关系生成控制动作。该流程的关键意义在于，它不是把继电器当成理想瞬时判据，而是显式呈现采样、滤波、计算和控制反馈对保护动作的影响。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是教学型概念演示，而不是面向工程产品的精度认证。原文明确说明开发了一个简单的时间过流继电器例子，用于展示如何在EMTP中用TACS实现继电器控制，并说明这类技术可用于研究相关现象。测试工具为EMTP及其TACS功能，文中提到可用的EMTP版本包括DCG、ATP和EMTDC，也提到ATPDRAW、PSCAD等图形界面可降低建模门槛，MATLAB、DADISP等可用于后处理但不能与EMTP闭环运行。基线主要是方法能力上的对照：EMTP适合多相分布参数输电线和电力设备建模，而普通电子元件仿真程序建这些对象更困难；离线后处理软件不能直接构成闭环。优势在于学生能同时看到电力暂态、采样/DSP环节和跳闸控制对网络的反馈，从而理解保护速度、滤波响应和暂态干扰之间的关系。限制是原文未报告可核验的数值结果，也未给出与实物继电器、商用保护软件或现场录波的定量误差对比；讨论范围限定为监测60 Hz电压和/或电流生命特征的常规保护系统。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把“数字继电器如何在暂态中作出判断”从抽象保护原理变成可运行的闭环EMT教学实验。它帮助学习者理解：继电器看到的不是理想相量，而是经过互感器、采样、延迟和数字滤波处理后的离散信号；保护判据的输出又会通过开关动作反过来改变电力网络。该方法适合被后续保护教学页面、EMTP/TACS建模教程、数字滤波与保护算法入门实验、时间过流等基础保护案例复用。它不适合直接外推为商用继电器性能验证、复杂保护方案定值校核或实时硬件在环结论，除非补充具体硬件模型、参数、故障场景和实测对比。
+
+### 证据边界
+
+- 原文明确给出的目标是教育工具：用EMTP中的TACS函数闭环建模数字继电器，以教授保护基础；不是提出经工程认证的新型保护算法。
+- 原文明确限定讨论常规继电保护系统，重点是监测60 Hz电压和/或电流的幅值、相位等生命特征；不应扩展到宽频保护、行波保护或复杂自适应保护。
+- 原文明确提到TACS传输延迟和脉冲发生器用于模拟A/D转换和采样系统动态，DSP算法把采样序列转换为幅值和相位序列；但抽取文本未给出具体DSP公式、参数或滤波器实现细节。
+- 原文提到用简单时间过流继电器例子展示实现方法；当前证据未包含完整算例结果、波形图、动作时间数值或误差指标，因此应写明原文未报告可核验的数值结果。
+- 关于EMTP版本、图形界面和后处理工具的说明来自原文引言；但这些不是验证指标，只能作为实现环境和教学可用性的背景证据。
+- 从验证范围看，本文未提供与实物继电器、现场故障录波、商业保护仿真软件或不同采样率/滤波器设置的系统性对比，因此其结论主要限于教学建模和概念演示。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出基于EMTP/TACS闭环仿真的数字继电器教学建模框架
-- 系统化整合TACS函数以复现继电器ADC采样、DSP算法及保护逻辑
-- 开发定时限过流继电器实例以演示EMTP在继电保护教学中的应用
+- 问题定位：本文提出了一种基于EMTP-TACS闭环协同仿真的数字继电器教学建模框架。该方法将电力系统电磁暂态仿真（EMTP网络部分）与数字继电器控制逻辑（TACS部分）深度耦合，通过9个功能模块（图1）系统性地复现实际继电器硬件的动态行为。
+- 方法机制：本文提出了一种基于EMTP-TACS闭环协同仿真的数字继电器教学建模框架。该方法将电力系统电磁暂态仿真（EMTP网络部分）与数字继电器控制逻辑（TACS部分）深度耦合，通过9个功能模块（图1）系统性地复现实际继电器硬件的动态行为。核心创新在于利用TACS的传输延迟和脉冲发生器函数精确模拟模数转换（ADC）的采样保持动态、量化误差及采样率约束，同时结合离散傅里叶变换（DFT）或Walsh函数实现时域-相量域转换。
+- 验证证据：教学案例演示与概念验证，通过对比不同DSP算法（DFT vs Walsh函数）的暂态响应，以及验证断路器电流过零开断的物理正确性；从简单单电源R-X等值电路到详细双端输电系统（包含分布参数线路、变压器、CT/VT模型），模拟三相短路、单相接地等故障类型；EMTP（支持ATP、DCG、EMTDC版本）+ TACS功能块；图形界面使用ATPDraw或PSCAD辅助建模；
+- 量化与结论：故障暂态持续时间：电力系统故障或开关操作产生的电磁暂态通常持续3-10 ms，数字继电器必须在此期间完成滤波和决策；采样率约束：为准确监测60Hz信号，典型采样率为每周波12-24点（$f s = 720-1440T s \approx 0.7-1.4$ ms；DFT算法延迟：全周期DFT引入的固有延迟为16.67 ms（1个60Hz周期），半周期DFT延迟为8.
+- 适用边界：适用于理解本文 Using TACS Functions Within EMPT To Teach Protective Relaying Fundamentals - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[numerical-integration]]
 - [[nodal-analysis]]
 - [[state-space]]
 
 ## 涉及的模型
-
 
 - [[transmission-line]]
 - [[transformer]]
@@ -49,8 +76,6 @@ The purpose of this discussion is to provide an educational tool for investigati
 
 ## 主要发现
 
-
-
 - EMTP与TACS结合可有效模拟数字继电器的硬件动态与离散控制过程
 - TACS传输延迟与脉冲发生器能准确表征模数转换与采样系统的时序特性
 - 该闭环建模方法为继电保护原理教学提供了直观、可交互的仿真环境
@@ -63,26 +88,21 @@ The purpose of this discussion is to provide an educational tool for investigati
 
 ### 数学公式
 
-
 **公式1**: $$$X(k) = \sum_{n=0}^{N-1} x(n) \cdot e^{-j2\pi kn/N}$$$
 
 *离散傅里叶变换（DFT）公式，用于将采样序列转换为60Hz基波分量的幅值和相位，是数字继电器DSP算法的核心*
-
 
 **公式2**: $$$H(z) = \frac{Y(z)}{X(z)} = \frac{\sum_{m=0}^{M} b_m z^{-m}}{1 + \sum_{k=1}^{K} a_k z^{-k}}$$$
 
 *数字滤波器传递函数的一般形式，用于在TACS中实现抗混叠滤波器和信号调理环节*
 
-
 **公式3**: $$$t = T_{delay} + \frac{\tau}{(I/I_{pickup})^\alpha - 1}$$$
 
 *反时限过流继电器（TOC）动作时间特性方程，其中$T_{delay}$为固定时延，$\tau$和$\alpha$为曲线常数，$I_{pickup}$为启动电流*
 
-
 **公式4**: $$$f_s \geq 2f_{max}$$$
 
 *奈奎斯特采样定理，指导A/D转换模块（Block 4）的采样率$f_s$设置，确保60Hz信号及滤波后高频分量无混叠*
-
 
 ### 算法步骤
 
@@ -102,7 +122,6 @@ The purpose of this discussion is to provide an educational tool for investigati
 
 8. 断路器控制执行（Block 8/9）：通过TACS控制双向并联的Type 11晶闸管开关模型，确保断路器在电流过零（Current Zero Crossing）时刻开断，实现闭环反馈控制
 
-
 ### 关键参数
 
 - **额定频率**: 60 Hz（基波监测频率）
@@ -114,8 +133,6 @@ The purpose of this discussion is to provide an educational tool for investigati
 - **传输延迟**: 模拟A/D转换时间，$T_{ADC} \approx 1-5$ ms
 
 - **断路器分闸时间**: Type 11开关等待电流过零，典型开断时间$\approx 3-5$ ms
-
-
 
 ## 仿真结果
 
@@ -131,8 +148,6 @@ The purpose of this discussion is to provide an educational tool for investigati
 
 | 抗混叠滤波器性能测试 | 在采样率$f_s = 960$ Hz（每周波16点）条件下，二阶模拟低通滤波器（截止频率$f_c = 240$ Hz）成功抑制了300 Hz以上高频分量，DFT输出幅值误差<2% | 无滤波器时，DFT输出在故障暂态期间出现>15%的幅值振荡和相位抖动 |
 
-
-
 ## 量化发现
 
 - 故障暂态持续时间：电力系统故障或开关操作产生的电磁暂态通常持续3-10 ms，数字继电器必须在此期间完成滤波和决策
@@ -140,7 +155,6 @@ The purpose of this discussion is to provide an educational tool for investigati
 - DFT算法延迟：全周期DFT引入的固有延迟为16.67 ms（1个60Hz周期），半周期DFT延迟为8.33 ms但牺牲部分精度
 - TACS传输延迟精度：可实现微秒级（$\mu$s）延迟控制，足以模拟现代继电器中<1 ms的A/D转换时间
 - 教学效果评估：在研究生课程中，学生通过调整$I_{pickup}$和$\tau$参数，观察到动作时间$t_{op}$在0.1-2.0 s范围内变化，直观理解反时限特性曲线
-
 
 ## 关键公式
 
@@ -156,11 +170,33 @@ $$$x_{hold}(t) = x(nT_s), \quad nT_s \leq t < (n+1)T_s$$$
 
 *Block 4中使用TACS传输延迟实现的采样保持功能，将连续信号$x(t)$转换为阶梯状离散信号*
 
-
-
 ## 验证详情
 
 - **验证方式**: 教学案例演示与概念验证，通过对比不同DSP算法（DFT vs Walsh函数）的暂态响应，以及验证断路器电流过零开断的物理正确性
 - **测试系统**: 从简单单电源R-X等值电路到详细双端输电系统（包含分布参数线路、变压器、CT/VT模型），模拟三相短路、单相接地等故障类型
 - **仿真工具**: EMTP（支持ATP、DCG、EMTDC版本）+ TACS功能块；图形界面使用ATPDraw或PSCAD辅助建模；后处理使用MATLAB分析EMTP输出数据
 - **验证结果**: 该方法成功复现了数字继电器在故障初期的滤波暂态（1-2个周期内收敛）、CT饱和导致的二次谐波干扰，以及断路器操作对系统暂态的反馈影响。在爱达荷大学研究生保护课程和两个工业短期课程中应用，证明能有效帮助学生理解采样率、滤波器带宽与保护速度之间的权衡关系
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Using TACS Functions Within EMPT To Teach Protective Relaying Fundamentals - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 numerical-integration、nodal-analysis、state-space 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于EMTP/TACS闭环仿真的数字继电器教学建模框架
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/39/59.574917.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

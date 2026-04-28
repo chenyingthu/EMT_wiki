@@ -35,6 +35,16 @@ Prony分析是一种基于指数信号分解的系统辨识方法，在电力系
 | 数值稳定性 | 中等 | 较高 |
 | 适用频率 | 低频振荡 | 宽频范围 |
 
+## 定义与边界
+
+Prony 分析在本 wiki 中指从时域暂态序列中辨识指数模态、极点和留数的方法，常服务于 [[network-equivalent|网络等值]]、振荡模态分析和 EMT 波形后处理。它与 [[vector-fitting|矢量拟合]] 的边界在输入数据：Prony 更依赖时域窗口和采样质量，VF 更依赖频域采样和初始极点。
+
+Prony 适合线性或近似线性响应、短时模态提取和等值模型初步构造。对强非线性、时变拓扑、噪声较高或窗口不足的数据，辨识出的弱阻尼模态可能是数值伪模态；用于 EMT 时域等值前仍需检查 [[passivity-enforcement|无源性]] 和 [[state-space-method|状态空间]] 实现稳定性。
+
+## 代表性来源与内部链接
+
+代表性来源包括 [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo|A time-domain approach to transmission network equivalents via Prony analysis]]、[[dynamic-synchrophasor-estimator-based-on-multi-frequency-phasor-model|Dynamic synchrophasor estimator based on multi-frequency phasor model]] 和 [[comparison-of-dynamic-phasor-discrete-time-and-frequency-scanning-based-ssr-mode|Comparison of dynamic phasor, discrete-time and frequency-scanning based SSR models]]。相关入口包括 [[frequency-dependent-modeling|频率相关建模]]、[[harmonic-analysis|谐波分析]] 和 [[co-simulation|协同仿真]]。
+
 ## 相关方法
 - [[vector-fitting]]
 - [[state-space-method]]

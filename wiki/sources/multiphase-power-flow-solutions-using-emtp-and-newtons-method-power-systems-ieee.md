@@ -1,9 +1,9 @@
 ---
 title: "Multiphase power flow solutions using EMTP and Newtons method - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['J. J. Allemong', 'R. J. Bennon', 'P. W. Selent']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emtp']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons method.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 # Multiphase power flow solutions using EMTP and Newtons method - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: J. J. Allemong; R. J. Bennon; P. W. Selent
 **年份**: 2004
 **来源**: `27&28/Multiphase power flow solutions using EMTP and Newtons method.pdf`
 
 ## 摘要
 
-This paper describes a reliable and veay flexible multiphase load-flow solution process which is applicable for large trans- mission systems (up to 500 nodes). The process consists of an interface between the Electromagnetic Transients Rogram (EMTP) and a newly developed multiphase load flow algo- rithm that is based on the Newton-Raphson metbod. Subjects discussed include derivation of basic algorithm, s~ucture of the Jacobian matrix, and convergence charactaistics. INTRODUCTION Well known and reliable methods exist today for solving AC single-phase power flow pblems. Most of tbese are based on the Newton-Raphson method, which has become the method of choice. Single-phase load flows always assume balanced rhree-phase system opeaation, aod are ideaUy suited for representing large transmiss
+本文提出一种基于牛顿-拉夫逊法的多相潮流计算方法，采用直角坐标系（rectangular coordinates）和支路电流法（branch current method）而非传统的节点功率法。该方法与电磁暂态程序（EMTP）深度集成，直接利用EMTP生成的YBUS导纳矩阵，避免了重复构建网络方程。算法通过建立支路层面的约束方程（包括KCL方程和各类非线性元件约束），构建非对称的雅可比矩阵，并采用改进的Tinney排序算法处理矩阵中的零对角线问题。该方法支持三相不平衡系统建模，可处理三角形连接负荷、相间电压源等复杂接线方式，适用于最多500个节点的大型输电系统。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大型输电网三相不平衡分析：高压未换位线路增多后，负序电流、继电保护误动、开相或不平衡电抗器运行等问题不能再由传统单相平衡潮流近似处理。研究对象不是暂态积分本身，而是嵌入EMTP的多相稳态潮流求解器，用于给三相/多相EMTP模型提供满足潮流约束的初始稳态。难点在于：EMTP已有三相相量解法建模受限、收敛差，且不便指定母线电压调节、单/三相发电机和负荷PQ等约束；多相元件还可能是三角形负荷、相间电压源等非标准节点注入形式。本文贡献是把Newton法改写为直角坐标下的支路电流约束问题，直接利用EMTP组装的YBUS表示线性网络，把非线性设备作为未知电流和约束方程加入，从而避免另建潮流网络模型，并使复杂接线方式能按支路量自然建模。
+
+### 2. 模型、算法与实现技术
+
+算法以KCL和元件约束共同组成非线性方程组。线性线路、变压器、并联支路由EMTP形成的YBUS承担，其基本接口关系为[Y]V=[Is]+[Iu]，在直角坐标中展开为实部/虚部方程；V是节点电压，Is为已知电流源，Iu为由非线性设备贡献的未知电流。非线性部分包括同步机、理想电压源、单相PQ负荷、三相静态PQ负荷等，每类元件用支路电流、内部电压E或静态负荷参数y等变量写成约束。例如电压源约束规定端电压与内部电势关系，PQ负荷约束把指定P、Q转化为电压和支路电流之间的非线性关系。Newton迭代时，对这些KCL和约束方程分别对节点电压、电流、机器内部电压、负荷参数求偏导，形成非对称Jacobian，解JΔx=-f后更新所有状态量。其机制要点是：潮流指定量不再只表现为节点功率失配，而是由支路层面的控制量和约束量闭合，因此能表示三角形连接负荷、相间电压源以及多相发电机/负荷控制。
+
+### 3. 验证、优势与不足
+
+原文摘要明确声称方法适用于最多500节点的大型输电系统，并讨论基本算法、Jacobian结构和收敛特性；当前页面还给出124节点系统和443节点AEP实际系统作为验证对象，工具为集成多相潮流模块的EMTP/EPRI DCG版本。页面报告的可核验指标包括：124节点系统中，未经重排序的消元后上三角元素为21321个、填充率24.82%，采用面向非对称Jacobian的改进Tinney排序后为3781个、填充率4.40%；443节点系统用于说明实用规模系统的收敛可行性，并指出三相不平衡潮流对初始电压敏感，传统1.0∠0°初值并不总是合适。优势主要体现在两点：一是复用EMTP详细网络模型和YBUS，减少潮流程序与暂态程序之间的模型不一致；二是支路电流形式增强多相、不平衡、复杂接线元件的表达能力。边界是：从给定证据看，没有看到与商业三相潮流或其他Newton多相算法的运行时间、迭代次数、误差精度系统对比；也未给出不同负荷水平、故障状态、控制极限和更大网络上的完整统计。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心启示是：EMT仿真所需的“稳态初始化”不必依赖简化的单相平衡潮流，也不必在潮流程序中重建一套网络模型；可以把EMTP的YBUS作为线性网络骨架，再用支路电流约束承载多相设备和潮流控制条件。它适合被后续关于EMTP初始化、多相不平衡潮流、三角形负荷/相间源建模、Newton-Jacobian稀疏求解和暂态仿真前稳态求解的页面复用。不宜外推为通用实时EMT加速方法，也不能据此断言所有500节点以上系统、所有控制器或故障场景都能稳定收敛。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：目标是EMTP与新多相Newton潮流算法的接口，适用对象为大型输电系统，作者声称规模可到500节点。
+- 来自原文方法段的确定信息：算法使用直角坐标、支路量建模，线性元件进入YBUS，非线性元件通过未知电流和约束方程进入Newton迭代。
+- 124节点填充率和443节点AEP系统等数值来自当前页面抽取内容；在用户给出的英文节选中未展示对应图表，因此深度引用前应回查PDF表图。
+- 原文节选未给出收敛容差、初值生成规则、迭代次数、CPU时间或失败案例，无法评价数值鲁棒性的完整边界。
+- 没有看到与传统EMTP相量法、节点功率法三相潮流或其他稀疏排序策略的全面定量对比；优势主要由建模机制和页面给出的稀疏性指标支持。
+- 验证范围集中在输电系统稳态潮流初始化；不应直接外推到配电网强非线性负荷、电力电子控制、频率相关模型或实时仿真步长约束。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于支路电流法与直角坐标的牛顿拉夫逊多相潮流算法，提升不平衡系统建模灵活性
-- 实现算法与EMTP无缝接口，直接复用网络导纳矩阵，避免重复构建
-- 为大型输电系统提供精确稳态初始化方案，有效支持后续电磁暂态仿真
-
+- 问题定位：本文提出一种基于牛顿-拉夫逊法的多相潮流计算方法，采用直角坐标系（rectangular coordinates）和支路电流法（branch current method）而非传统的节点功率法。该方法与电磁暂态程序（EMTP）深度集成，直接利用EMTP生成的YBUS导纳矩阵，避免了重复构建网络方程。
+- 方法机制：本文提出一种基于牛顿-拉夫逊法的多相潮流计算方法，采用直角坐标系（rectangular coordinates）和支路电流法（branch current method）而非传统的节点功率法。该方法与电磁暂态程序（EMTP）深度集成，直接利用EMTP生成的YBUS导纳矩阵，避免了重复构建网络方程。
+- 验证证据：124节点系统和443节点实际大型输电系统（American Electric Power系统）；EMTP（Electromagnetic Transients Program）EPRI DCG版本，集成多相潮流模块；在124节点系统上验证雅可比矩阵重排序效果显著（填充率从24.82%降至4.40%）；在443节点系统上验证算法对大型系统的适应性和收敛可靠性；
+- 量化与结论：算法适用规模：可处理最多500个节点的大型输电系统；雅可比矩阵稀疏性：原始排序填充率为24.82%，重排序后降至4.40%；矩阵元素数量：124节点系统消元后上三角元素从21,321个减少至3,781个；计算效率提升：通过支路电流法和矩阵重排序，显著降低内存需求和计算量
+- 适用边界：适用于理解本文 Multiphase power flow solutions using EMTP and Newtons method - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
 - [[支路电流法|支路电流法]]
@@ -36,9 +64,7 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 - [[雅可比矩阵构建|雅可比矩阵构建]]
 - [[emtp接口集成|EMTP接口集成]]
 
-
 ## 涉及的模型
-
 
 - [[同步电机|同步电机]]
 - [[pq负荷|PQ负荷]]
@@ -47,9 +73,7 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 - [[输电线路|输电线路]]
 - [[变压器|变压器]]
 
-
 ## 相关主题
-
 
 - [[多相潮流计算|多相潮流计算]]
 - [[不平衡系统分析|不平衡系统分析]]
@@ -57,15 +81,11 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 - [[emtp集成|EMTP集成]]
 - [[大型输电网络|大型输电网络]]
 
-
 ## 主要发现
-
 
 - 算法在500节点系统中验证可靠，有效克服传统EMTP相量法收敛性差的问题
 - 支路电流法显著提升三角形接线与相间电源等复杂负荷的建模灵活性与精度
 - 与EMTP集成可直接获取精确稳态导纳矩阵，为暂态仿真提供高质量初始条件
-
-
 
 ## 方法细节
 
@@ -75,41 +95,33 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 
 ### 数学公式
 
-
 **公式1**: $$$$\begin{bmatrix} \Delta P \\ \Delta Q \end{bmatrix} = \mathbf{J} \begin{bmatrix} \Delta \theta \\ \Delta V \end{bmatrix}$$$$
 
 *传统单相潮流牛顿-拉夫逊法的基本形式，基于功率失配与电压/角度失配的关系*
-
 
 **公式2**: $$$$[Y]V = [I_s] + [I_u]$$$$
 
 *基尔霍夫电流定律（KCL）的矩阵形式，其中[Y]为节点导纳矩阵，V为节点电压向量，[Is]为已知电流源向量，[Iu]为未知电流源向量*
 
-
 **公式3**: $$$$\begin{bmatrix} Y_R & -Y_I \\ Y_I & Y_R \end{bmatrix} \begin{bmatrix} V_R \\ V_I \end{bmatrix} = \begin{bmatrix} I_{sR} \\ I_{sI} \end{bmatrix} + \begin{bmatrix} I_{uR} \\ I_{uI} \end{bmatrix}$$$$
 
 *直角坐标系下的KCL方程实数形式，YR和YI分别为导纳矩阵的实部和虚部，VR和VI为电压的实部和虚部*
-
 
 **公式4**: $$$$V_k - E_m = 0$$$$
 
 *电压源约束方程，表示节点k的电压受内部电压Em控制*
 
-
 **公式5**: $$$$f_{2k} = V_k^*(V_k - V_m)y^* - (P + jQ)M = 0$$$$
 
 *单相PQ负荷约束方程（load-2），其中y为负荷导纳参数，M为负荷连接矩阵，P和Q为有功和无功功率设定值*
-
 
 **公式6**: $$$$I_{u3} = [V][y][W]V$$$$
 
 *三相静态负荷方程（load-3），其中[y]为静态负荷导纳参数矩阵，[W]为对称比例矩阵（表示零序与正序阻抗比）*
 
-
 **公式7**: $$$$I_{mR} + jI_{mI} = [y_g](E_R + jE_I - V_R - jV_I)$$$$
 
 *同步电机电流方程，[yg]为电机3×3内部导纳矩阵，E为内部电压向量*
-
 
 ### 算法步骤
 
@@ -131,7 +143,6 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 
 9. EMTP稳态初始化：将收敛后的稳态电压和电流作为EMTP暂态仿真的初始条件，实现精确的动态和暂态仿真启动
 
-
 ### 关键参数
 
 - **max_nodes**: 500个节点（适用的大型输电系统规模）
@@ -148,8 +159,6 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 
 - **convergence_criterion**: 功率/电流残差足够小（具体数值未明确给出）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -162,8 +171,6 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 
 | 443节点多相潮流收敛性测试 | 在443节点大型系统上验证算法可靠性，证明传统1.0∠0° p.u.初始电压不适用于三相不平衡潮流计算。通过采用EMTP稳态解作为初始值，成功实现大系统收敛 | 克服了传统EMTP相量法在大型不平衡系统中的收敛性差的问题 |
 
-
-
 ## 量化发现
 
 - 算法适用规模：可处理最多500个节点的大型输电系统
@@ -172,7 +179,6 @@ This paper describes a reliable and veay flexible multiphase load-flow solution 
 - 计算效率提升：通过支路电流法和矩阵重排序，显著降低内存需求和计算量
 - 建模灵活性：支持三角形连接负荷、相间电压源等复杂接线方式，相比节点功率法具有更高的建模精度
 - 收敛特性：对初始电压敏感，需采用非1.0 p.u.的合理初始值以保证牛顿-拉夫逊法收敛
-
 
 ## 关键公式
 
@@ -194,11 +200,33 @@ $$$$I_{m} = [y_g](E - V)$$$$
 
 *建立电机内部电压E与节点电压V之间的关系，用于PV机和摇摆机的控制约束建模*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真验证与对比分析
 - **测试系统**: 124节点系统和443节点实际大型输电系统（American Electric Power系统）
 - **仿真工具**: EMTP（Electromagnetic Transients Program）EPRI DCG版本，集成多相潮流模块
 - **验证结果**: 在124节点系统上验证雅可比矩阵重排序效果显著（填充率从24.82%降至4.40%）；在443节点系统上验证算法对大型系统的适应性和收敛可靠性；与EMTP的集成验证表明可直接利用EMTP的网络建模能力（如输电线路、变压器详细模型）获取精确的稳态导纳矩阵，为暂态仿真提供准确的初始条件
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Multiphase power flow solutions using EMTP and Newtons method - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 牛顿-拉夫逊法、支路电流法、直角坐标法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于支路电流法与直角坐标的牛顿拉夫逊多相潮流算法，提升不平衡系统建模灵活性
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons method.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

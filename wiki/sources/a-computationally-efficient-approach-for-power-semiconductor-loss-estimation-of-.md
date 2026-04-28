@@ -1,9 +1,9 @@
 ---
 title: "A computationally efficient approach for power semiconductor loss estimation of modular multilevel converters in EMT simulations"
 type: source
-authors: ['Ajinkya Sinkar']
+authors: ['Ajinkya Sinkar', 'Chen Jiang', 'Rohitha Jayasinghe', 'Aniruddha M. Gole']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112203. doi:10.1016/j.epsr.2025.112203"
+journal: "Electric Power Systems Research"
 tags: ['mmc']
 created: "2026-04-13"
 sources: ["EMT_Doc/01/Sinkar 等 - 2025 - A Computationally Efficient Approach for Power Semiconductor Loss Estimation of Modular Multilevel C.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2025 - A Computationally Efficient Approach f
 
 # A computationally efficient approach for power semiconductor loss estimation of modular multilevel converters in EMT simulations
 
-**作者**: Ajinkya Sinkar
+**作者**: Ajinkya Sinkar, Chen Jiang, Rohitha Jayasinghe, Aniruddha M. Gole
 **年份**: 2025
 **来源**: `01/Sinkar 等 - 2025 - A Computationally Efficient Approach for Power Semiconductor Loss Estimation of Modular Multilevel C.pdf`
 
 ## 摘要
 
-A computationally efficient approach for power semiconductor loss estimation of modular multilevel converters in EMT simulations a Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada b Manitoba Hydro International, Winnipeg, MB R3R 1A3, Canada This paper presents a computationally efficient approach for estimating the power semiconductor losses of a
+提出一种将器件级损耗估计算法与MMC桥臂级详细等效模型（DEM）深度融合的高效仿真方法。传统逐开关建模需独立求解海量节点，导致计算负担极重。本文利用EMT求解器中的DEM节点消去算法，在每个仿真步长内同步提取各子模块开关的导通/关断状态、换相前后电压电流初值及精确换相时刻（）。结合器件数据手册参数，采用分段线性波形近似重构开关瞬态过程，进而积分计算导通、阻断与开关损耗。该方法在保留桥臂级等效模型计算高效性的同时，支持完全闭锁工况的精确建模，并可独立输出各子模块损耗数据，为热管理设计提供支撑。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+MMC-HVDC工程需要在EMT仿真中评估IGBT/二极管在稳态、启动、故障、闭锁等工况下的导通、阻断和开关损耗，用于校核器件应力、热设计和控制策略影响。研究对象是半桥MMC每个子模块内的功率半导体损耗，但仿真层面关注的是整个MMC桥臂。难点在于：常规损耗算法需要器件级电压、电流和开关瞬态信息；若把MMC中所有IGBT-二极管对逐一建模，节点数和开关事件数量会急剧增加，导致EMT仿真非常慢。现代EMT程序通常用桥臂详细等效模型（DEM）把整臂合并为等效电路以提速，但合并后又失去了单个器件的电气量。本文的贡献是在不恢复逐开关网络节点的情况下，把损耗估计嵌入MMC桥臂DEM：利用DEM每步由触发脉冲和初值计算等效参数的过程，同步推断各子模块器件状态、换相前后电压电流以及开关时刻，再用器件数据手册参数重构开关瞬态并积分损耗，从而在桥臂级高效仿真中仍能输出子模块级损耗。
+
+### 2. 模型、算法与实现技术
+
+方法核心是把MMC桥臂等效求解和器件损耗后处理合成一个同步算法。输入包括MMC拓扑与子模块电容电压、桥臂电流、控制器触发脉冲、器件数据手册参数（导通压降、漏电流、开通/关断延迟、上升/下降时间、二极管反向恢复参数等）以及EMT步长。DEM在每个时间步根据各子模块插入/旁路状态和初始条件，把整条桥臂消去为戴维南等效，从而避免为每个开关建立独立网络节点；本文在这一过程中额外保留损耗计算所需的接口量：各IGBT和二极管的ON/OFF状态、导通电流、阻断电压、换相前后稳态电压电流以及步长内的精确换相时刻。导通损耗按步长内v_on·i_on积分平均，阻断损耗按v_off·i_leak积分平均；开关损耗则不是用10 μs步长直接采样纳秒级暂态，而是依据开关时间参数构造分段线性的电压、电流波形，在换相区间对v_sw·i_sw积分得到单次开关能量。文中还引入增强型DEM等效开关以处理完全闭锁时的续流路径变化，使闭锁后IGBT关断、二极管导通等状态仍能被正确归属到相应子模块损耗。
+
+### 3. 验证、优势与不足
+
+作者用PSCAD/EMTDC中的两端MMC-HVDC系统验证方法：额定功率180 MW，直流电压±75 kV，每桥臂50个半桥子模块，子模块额定电压3 kV，直流线路为200 km频率相关架空线模型。基线是逐开关详细模型（DSM），即为每个IGBT/二极管建立器件级模型并直接提取损耗所需电压电流。验证场景包括系统启动过程，以及额定运行下直流线路中点极间故障并触发过流保护和桥臂闭锁。比较指标是导通、阻断、开关及总损耗的动态曲线一致性，以及CPU计算时间。原文给出的量化结果是10 s仿真中DSM耗时8646 s，所提DEM损耗算法耗时196 s，加速比约44.1倍；损耗曲线与DSM对比吻合。优势在于可在10 μs固定步长EMT系统仿真中估算纳秒级开关过程对应能量，并可输出单个子模块损耗，同时保留DEM的桥臂级计算效率。从验证范围看，该结论主要支撑半桥MMC-HVDC在启动和直流故障闭锁场景下的仿真损耗评估；文中未展示硬件实验、热测量校准、不同器件温度/门极电阻变化、不同拓扑或大规模参数扫描下的误差统计。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：MMC损耗评估不一定要在网络层面显式建出每个开关，只要在DEM等效过程中保留足够的器件状态和换相边界信息，就可以用局部波形重构恢复损耗计算所需的“器件级视角”。它适合复用于MMC系统级EMT研究、控制策略对损耗影响评估、启动/故障暂态热负荷筛查、子模块损耗分布统计，以及与后续集总热网络或寿命模型耦合。不适合直接外推为器件封装级电磁-热仿真，也不能替代基于实测的开关能量标定；若换用全桥/混合子模块、不同门极驱动、强寄生振荡或温度相关器件模型，需要重新检查状态判据、等效路径和参数有效性。
+
+### 证据边界
+
+- 原文明确说明研究目标是在EMT仿真中高效估计MMC功率半导体损耗，并与逐IGBT-二极管组件级方法相比减少计算负担；这支撑本文关于需求和对象的描述。
+- 两端MMC-HVDC、180 MW、±75 kV、每桥臂50个半桥子模块、200 km频率相关线路、PSCAD/EMTDC、DSM基线、启动与直流极间故障场景，以及8646 s对196 s的耗时对比来自给定原文/抽取文本。
+- 分段线性开关波形、导通/阻断/开关损耗积分、利用器件数据手册参数和精确换相时刻进行计算，来自页面抽取的方法细节；若原论文未逐项公开所有参数敏感性，则不能据此断言对所有器件均准确。
+- ‘损耗曲线吻合’主要是相对DSM仿真基线的验证，不等同于实验测量验证；原文未报告硬件样机、热像/结温实测或厂家双脉冲测试对比。
+- 原文验证的拓扑是半桥MMC；对全桥、混合MMC、含旁路晶闸管或不同故障电流路径的拓扑，等效开关和损耗归属需要重新推导，不能直接视为已验证。
+- 原文未给出广泛误差统计、不同步长扫描、温度相关损耗参数、寄生参数振荡和门极驱动变化下的可核验数值结果，因此这些方面只能作为适用边界而非已证明结论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于桥臂级详细等效模型的MMC功率半导体损耗高效估计算法
-- 将器件级损耗计算与EMT仿真DEM更新算法融合，显著提升仿真速度
-- 支持稳态与暂态工况下的精确损耗评估，并可独立输出各子模块损耗
-
+- 问题定位：提出一种将器件级损耗估计算法与MMC桥臂级详细等效模型（DEM）深度融合的高效仿真方法。传统逐开关建模需独立求解海量节点，导致计算负担极重。本文利用EMT求解器中的DEM节点消去算法，在每个仿真步长内同步提取各子模块开关的导通/关断状态、换相前后电压电流初值及精确换相时刻（）。
+- 方法机制：提出一种将器件级损耗估计算法与MMC桥臂级详细等效模型（DEM）深度融合的高效仿真方法。传统逐开关建模需独立求解海量节点，导致计算负担极重。本文利用EMT求解器中的DEM节点消去算法，在每个仿真步长内同步提取各子模块开关的导通/关断状态、换相前后电压电流初值及精确换相时刻（）。结合器件数据手册参数，采用分段线性波形近似重构开关瞬态过程，进而积分计算导通、阻断与开关损耗。
+- 验证证据：仿真对比验证（与逐开关详细模型DSM进行逐点对比分析）；两端MMC-HVDC测试系统，额定功率180 MW，直流电压±75 kV，每桥臂50个半桥子模块（额定电压3 kV），200 km频率相关模型架空线路；在系统启动与直流极间故障两种典型工况下，所提方法的损耗计算结果与DSM对比吻合，同时计算耗时从DSM的8646 s降至DEM损耗算法的196 s。
+- 量化与结论：仿真计算速度提升44.1倍（DEM耗时196 s vs DSM耗时8646 s，针对10 s仿真时长）。；损耗评估精度与逐开关详细模型（DSM）高度一致，稳态及启动、直流故障等暂态工况下的损耗曲线偏差可忽略（视觉与数值对比均无显著差异）。；支持10 μs固定步长下的精确损耗计算，无需将步长缩小至纳秒级即可准确捕捉开关瞬态过程。；
+- 适用边界：适用于MMC在EMT仿真中的系统级损耗评估，尤其是需要比较稳态、启动、闭锁和直流故障等工况的热负荷趋势。；不适合替代器件级电磁/热仿真；寄生参数、封装热耦合、门极驱动细节和实际芯片温度分布仍需要更细模型或实验校准。
 
 ## 使用的方法
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[桥臂级详细等效模型|桥臂级详细等效模型]]
@@ -36,9 +64,7 @@ A computationally efficient approach for power semiconductor loss estimation of 
 - [[插值开关技术|插值开关技术]]
 - [[集总参数热网络模型|集总参数热网络模型]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
@@ -46,9 +72,7 @@ A computationally efficient approach for power semiconductor loss estimation of 
 - [[半桥子模块|半桥子模块]]
 - [[mmc-model|MMC]]
 
-
 ## 相关主题
-
 
 - [[功率半导体损耗评估|功率半导体损耗评估]]
 - [[emt仿真加速|EMT仿真加速]]
@@ -56,15 +80,12 @@ A computationally efficient approach for power semiconductor loss estimation of 
 - [[mmc-model|MMC]]
 - [[开关损耗计算|开关损耗计算]]
 
-
 ## 主要发现
-
 
 - 在两端MMC-HVDC测试系统中验证了算法精度，与器件级模型结果高度一致
 - 相比传统逐开关建模方法，该桥臂级等效方法大幅降低了计算负担并提升仿真速度
 - 能够准确捕捉稳态及暂态工况下的开关与导通损耗，支持子模块级损耗独立输出
-
-
+- 该方法保留DEM的系统级计算效率，但损耗精度仍依赖器件数据手册参数、插值换相时刻和分段线性开关波形假设。
 
 ## 方法细节
 
@@ -74,21 +95,17 @@ A computationally efficient approach for power semiconductor loss estimation of 
 
 ### 数学公式
 
-
 **公式1**: $$$P_{cond} = \frac{1}{\Delta t} \int_{t}^{t+\Delta t} v_{on}(\tau) \cdot i_{on}(\tau) d\tau$$$
 
 *导通损耗计算：在仿真步长内对器件导通压降与流过电流的乘积进行时间平均积分。*
-
 
 **公式2**: $$$P_{block} = \frac{1}{\Delta t} \int_{t}^{t+\Delta t} v_{off}(\tau) \cdot i_{leak}(\tau) d\tau$$$
 
 *阻断损耗计算：在器件关断期间对承受电压与漏电流的乘积进行积分平均。*
 
-
 **公式3**: $$$E_{sw} = \int_{t_{start}}^{t_{end}} v_{sw}(\tau) \cdot i_{sw}(\tau) d\tau$$$
 
 *单次开关能量计算：基于分段线性近似的电压电流波形，在精确换相区间内积分求得。*
-
 
 ### 算法步骤
 
@@ -109,7 +126,6 @@ A computationally efficient approach for power semiconductor loss estimation of 
 8. 可选地将计算得到的各器件损耗输入集总参数热网络模型，求解IGBT与二极管的实时结温分布。
 
 9. 更新系统状态变量与等效电路参数，推进至下一仿真步长循环。
-
 
 ### 关键参数
 
@@ -137,8 +153,6 @@ A computationally efficient approach for power semiconductor loss estimation of 
 
 - **仿真步长($\Delta t$)**: 10 μs
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -151,8 +165,6 @@ A computationally efficient approach for power semiconductor loss estimation of 
 
 | 直流线路中点极间故障 | 在额定功率运行下施加直流极间故障，触发过流保护与桥臂完全闭锁。所提方法准确复现了故障电流上升、IGBT闭锁、二极管续流及故障清除全过程中的损耗分布，验证了增强型DEM在完全闭锁工况下的建模有效性。 | 故障暂态期间的损耗峰值与动态轨迹与DSM吻合，CPU时间对比同样保持44.1倍加速优势。 |
 
-
-
 ## 量化发现
 
 - 仿真计算速度提升44.1倍（DEM耗时196 s vs DSM耗时8646 s，针对10 s仿真时长）。
@@ -160,6 +172,12 @@ A computationally efficient approach for power semiconductor loss estimation of 
 - 支持10 μs固定步长下的精确损耗计算，无需将步长缩小至纳秒级即可准确捕捉开关瞬态过程。
 - 可独立输出每个子模块的损耗数据，满足精细化热管理与寿命评估需求。
 
+## 适用边界
+
+- 适用于MMC在EMT仿真中的系统级损耗评估，尤其是需要比较稳态、启动、闭锁和直流故障等工况的热负荷趋势。
+- 不适合替代器件级电磁/热仿真；寄生参数、封装热耦合、门极驱动细节和实际芯片温度分布仍需要更细模型或实验校准。
+- 损耗模型依赖器件数据手册中的开关时间、压降、反向恢复等参数；换器件型号、冷却条件或门极电阻后需要重新标定。
+- DEM在完全闭锁和续流路径切换时需要额外等效开关处理；若拓扑不是半桥MMC，应重新检查等效路径和损耗归属。
 
 ## 关键公式
 
@@ -175,11 +193,9 @@ $$$E_{sw} = \int_{t_{start}}^{t_{end}} v_{sw}(\tau) \cdot i_{sw}(\tau) d\tau$$$
 
 *利用插值开关技术获取精确换相时刻后，在微秒级步长内对重构的分段线性电压电流波形进行积分，用于替代纳秒级物理仿真。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比验证（与逐开关详细模型DSM进行逐点对比分析）
 - **测试系统**: 两端MMC-HVDC测试系统，额定功率180 MW，直流电压±75 kV，每桥臂50个半桥子模块（额定电压3 kV），200 km频率相关模型架空线路
 - **仿真工具**: PSCAD/EMTDC
-- **验证结果**: 在系统启动与直流极间故障两种典型工况下，所提方法的损耗计算结果与DSM高度吻合，同时计算耗时大幅降低，验证了算法在精度与效率上的双重优势，且完全兼容固定步长EMT求解器。
+- **验证结果**: 在系统启动与直流极间故障两种典型工况下，所提方法的损耗计算结果与DSM对比吻合，同时计算耗时从DSM的8646 s降至DEM损耗算法的196 s。结果说明该方法适合系统级快速损耗评估，但器件级热细节仍需额外热网络或实验校准。

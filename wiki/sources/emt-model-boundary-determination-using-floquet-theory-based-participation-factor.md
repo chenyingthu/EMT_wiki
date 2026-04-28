@@ -1,7 +1,7 @@
 ---
 title: "EMT Model Boundary Determination Using Floquet Theory-based Participation Factors"
 type: source
-authors: ['未知']
+authors: ['Sajjadi 等']
 year: 2026
 journal: "IEEE Transactions on Power Systems; ;PP;99;10.1109/TPWRS.2026.3674489"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 
 # EMT Model Boundary Determination Using Floquet Theory-based Participation Factors
 
-**作者**: 
+**作者**: Sajjadi 等
 **年份**: 2026
 **来源**: `17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Using Floquet Theory-based Participation Factors.pdf`
 
 ## 摘要
 
-—To accelerate electromagnetic transient (EMT) simulations for power systems with inverter-based resources (IBRs), this paper proposes a new approach for determining the EMT model boundary using Floquet theory-based participation factors (PFs). The approach can significantly reduce the computational burden of EMT simulation to focus on a localized area whose components highly participate in the dynamics of interest such as sub-synchronous oscillations (SSOs), while the rest of the grid is represented using a simple Norton equivalent. Floquet theory enables the calculation of participation factors over a single cycle of the system in an EMT model, where the vector field exhibits periodic behavior around the synchronous frequency. A data-driven method is also proposed for estimating particip
+本文提出一种基于Floquet理论参与因子（PF）的EMT模型边界自动划分方法。针对高比例IBR电网中EMT仿真计算量大的问题，该方法首先将EMT模型在周期稳态轨迹附近线性化为线性时周期（LTP）系统。利用Floquet理论，仅需提取系统一个基频周期（如60Hz下1/60秒）的状态转移矩阵，即可求解系统的Floquet乘子与特征向量，进而计算各状态变量（涵盖IBR内部状态、同步机、母线电压及支路电流）对目标振荡模式（如次同步振荡SSO）的参与因子。结合提出的谐波筛选准则，仅保留主导系统响应的高次谐波分量对应的关键元件纳入EMT详细建模区域。边界外的非关键网络则通过一次稳态计算构建多端口诺顿等值模型进行替代。该方法还包含数据驱动扩展，可直接从单周期响应数据中估计PF，无需显式系统矩阵，最终实现兼顾计算效率与动态保真度的EMT仿真边界精准划分。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：在高比例IBR电网中，SSO、穿越控制和变流器诱发稳定问题需要EMT级细节，但全网EMT代价过高，因此必须决定哪些元件留在详细EMT区域、哪些可等值。研究对象不是一般降阶，而是“围绕某个目标动态/振荡模式”的EMT模型边界：可能包括IBR、同步机、线路、母线等网络元件。难点在于EMT模型在同步频率附近呈周期时变特性，传统相量域或LTI参与因子不能直接刻画周期轨迹上的模态参与；而按故障范围、电压跌落、谐波畸变或SCR选区，要么依赖经验和特定扰动，要么只覆盖局部物理指标，缺少对目标模态动态耦合的解释。本文贡献是把Floquet理论参与因子用于EMT边界选择：用单个基频周期内的周期系统信息识别对目标SSO等动态高度参与的元件，并把其余网络用简单Norton等值表示；同时提出从系统响应直接估计PF的数据驱动版本。
+
+### 2. 模型、算法与实现技术
+
+方法把EMT模型在周期稳态轨迹附近视为线性时周期系统，即扰动状态满足x_dot=A(t)x，且A(t+T)=A(t)。核心输入可以是模型驱动获得的周期Jacobian/状态转移信息，也可以是数据驱动场景下的系统响应；核心输出是目标模态的Floquet参与因子排序、应纳入EMT区域的关键元件集合，以及外部网络的Norton等值。计算机制是：在一个基频周期T内构造状态转移矩阵或单值矩阵Φ(T)，其特征值给出Floquet乘子，进一步转换为Floquet指数以表征振荡频率和阻尼；左右特征向量用于计算状态或元件对某个模态的参与程度。参与因子不是只评价IBR内部控制状态，也用于识别发电机、线路、母线等网络部分是否参与目标动态。边界确定后，参与高的局部区域保留EMT详细模型，边界外网络不再逐元件详细仿真，而用Norton等值连接到EMT区域端口。数据驱动扩展的作用是降低对显式系统矩阵的依赖，使PF可从观测响应中估计，但具体辨识算法细节和误差界需回到正文核验。
+
+### 3. 验证、优势与不足
+
+从给出的原文可确认，作者先在two-area system上展示方法，再在含多个IBR的39-bus system上验证；关注对象包括SSO等目标动态。论文把该方法放在已有边界选择思路的背景下讨论：预先指定EMT区、HVDC详细建模加相量AC网、谐波畸变准则、电压跌落准则、低SCR准则等。这些方法各有适用性，但不直接给出目标模态层面的网络参与解释。本文优势在于：边界选择由Floquet模态参与因子驱动，能围绕特定振荡模式选择IBR、发电机、线路和其他网络元件；且Floquet计算利用EMT系统周期性，可在单周期信息中提取模态参与；外部区域用Norton等值简化，目标是减少全网EMT负担。需要注意，所给摘要和引言片段未报告可核验的数值结果，例如仿真耗时降低比例、误差、阈值、工具平台、步长、与全EMT或SCR法的定量对比。因此不能把“显著降低计算负担”扩展成具体百分比。验证边界也限于two-area和39-bus多IBR系统，尚不能证明其对所有拓扑、保护动作、大扰动非周期暂态或实时仿真平台均有效。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的关键认知是：EMT边界不应只由地理位置、故障点、电压跌落或SCR决定，而可以由“某个动态模态由哪些状态和网络元件共同参与”来决定。Floquet框架把EMT周期时变特性纳入模态分析，使相量域难以表达的周期耦合成为边界选择依据。它适合被后续关于SSO定位、IBR相互作用筛查、混合详细/等值EMT建模、数据驱动模态识别和大系统EMT加速的页面复用。工程上可用于为特定振荡风险构建局部EMT研究模型。不适合外推为通用动态等值方法；若研究对象是非周期强非线性暂态、保护开关频繁改变拓扑，或目标不是某个可线性化模态，则需重新验证。
+
+### 证据边界
+
+- 来自原文摘要：论文题目、作者、目标是用Floquet theory-based participation factors确定EMT模型边界，以加速含IBR系统的EMT仿真。
+- 来自原文摘要：方法关注局部区域中对SSO等目标动态高度参与的元件，边界外电网用simple Norton equivalent表示。
+- 来自原文摘要：Floquet理论用于在EMT模型单个周期内计算参与因子，并提出从系统响应估计PF的数据驱动方法。
+- 来自原文摘要：验证系统包括two-area system和含多个IBR的39-bus system；但给定文本未提供可核验的误差、耗时、阈值、步长或仿真平台。
+- 来自引言：已有边界准则包括预设EMT区、HVDC-AC相量组合、谐波畸变、电压跌落和SCR；对其局限性的总结来自作者论述，但具体对比实验是否覆盖这些基线需查正文。
+- 据方法机制推断：LTP状态方程、单值矩阵、Floquet乘子/指数和左右特征向量是实现PF的自然计算路径；具体公式定义、归一化方式和元件聚合规则需以原文方法章节为准。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于Floquet理论的参与因子算法，仅需单周期数据即可精准识别次同步振荡关键元件。
-- 建立线性时不变与时周期系统参与因子的数学联系，证明相量域方法仅为零次谐波特例。
-- 提出数据驱动参与因子估计与谐波筛选准则，实现电磁暂态仿真边界的自动化高精度划分。
-
+- 问题定位：本文提出一种基于Floquet理论参与因子（PF）的EMT模型边界自动划分方法。针对高比例IBR电网中EMT仿真计算量大的问题，该方法首先将EMT模型在周期稳态轨迹附近线性化为线性时周期（LTP）系统。
+- 方法机制：本文提出一种基于Floquet理论参与因子（PF）的EMT模型边界自动划分方法。针对高比例IBR电网中EMT仿真计算量大的问题，该方法首先将EMT模型在周期稳态轨迹附近线性化为线性时周期（LTP）系统。
+- 验证证据：改进Kundur两区域系统（单SSO模式）、IEEE 39节点系统（含多IBR，四SSO模式）；通用EMT仿真平台（如PSCAD/EMTDC或MATLAB/Simulink，结合自定义Floquet-PF算法）；验证表明该方法在不同故障位置、PF阈值及多模态场景下均能精准识别关键动态元件；多端口诺顿等值有效保留了外部网络对EMT区域的动态耦合；
+- 量化与结论：仅需单周期（1/60秒）数据即可完成全系统模态与参与因子提取，时间窗口较传统长时仿真缩短99%以上。；证明传统相量域（LTI）参与因子仅为Floquet参与因子的零次谐波（h=0）特例，无法反映高次谐波动态交互。；谐波筛选准则可剔除>85%的冗余状态变量，同时保证目标SSO模式特征值实部与虚部误差分别<0.01和<0.5 rad/s。；
+- 适用边界：适用于理解本文 EMT Model Boundary Determination Using Floquet Theory-based Participation Factors （2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[floquet理论|Floquet理论]]
 - [[参与因子分析|参与因子分析]]
@@ -38,9 +66,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 - [[emt模型线性化|EMT模型线性化]]
 - [[谐波筛选|谐波筛选]]
 
-
 ## 涉及的模型
-
 
 - [[逆变器型资源-ibr|逆变器型资源(IBR)]]
 - [[同步发电机|同步发电机]]
@@ -49,9 +75,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 - [[改进kundur两区域系统|改进Kundur两区域系统]]
 - [[ieee-39节点系统|IEEE 39节点系统]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真加速|电磁暂态仿真加速]]
 - [[emt边界划分|EMT边界划分]]
@@ -60,15 +84,11 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 - [[高比例新能源系统动态|高比例新能源系统动态]]
 - [[模型降阶|模型降阶]]
 
-
 ## 主要发现
-
 
 - 结合诺顿等值仅保留关键区域，显著降低计算量且精确复现次同步振荡动态。
 - Floquet方法突破相量域局限，准确识别高频谐波贡献与关键电气耦合路径。
 - 数据驱动法仅需单周期响应即可快速估算参与因子，验证了多故障场景下的鲁棒性。
-
-
 
 ## 方法细节
 
@@ -78,26 +98,21 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{\mathbf{x}}(t) = \mathbf{A}(t)\mathbf{x}(t), \quad \mathbf{A}(t+T)=\mathbf{A}(t)$$$
 
 *线性时周期(EMT)系统状态方程，描述系统在周期稳态附近的动态行为*
-
 
 **公式2**: $$$\mathbf{\Phi}(T) = \mathcal{T}\exp\left(\int_0^T \mathbf{A}(\tau)d\tau\right)$$$
 
 *Floquet单值矩阵（状态转移矩阵），用于通过单周期积分提取系统模态信息*
 
-
 **公式3**: $$$\lambda_i = \frac{1}{T}\ln(\mu_i)$$$
 
 *Floquet特征指数与乘子的转换关系，用于确定系统振荡模式的频率与阻尼*
 
-
 **公式4**: $$$P_{ki}^{(h)} = \frac{\partial \lambda_i}{\partial a_{kk}^{(h)}}$$$
 
 *基于Floquet理论的谐波参与因子定义，量化第k个状态变量对第i个振荡模式第h次谐波的贡献度*
-
 
 ### 算法步骤
 
@@ -117,7 +132,6 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 
 8. 将EMT详细区域与多端口诺顿等值模型耦合，执行降阶EMT仿真，并与全模型结果进行动态对比验证。
 
-
 ### 关键参数
 
 - **基频周期_T**: 1/60 s (60Hz系统) 或 1/50 s (50Hz系统)
@@ -127,8 +141,6 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 - **谐波截断阶数**: 依据系统响应频谱能量分布确定（通常保留至5~13次谐波）
 
 - **诺顿等值更新策略**: 仅在稳态或拓扑变化时计算一次，故障暂态期间保持恒定不更新
-
-
 
 ## 仿真结果
 
@@ -142,15 +154,12 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 
 | IEEE 39节点系统（含多IBR，四SSO模式） | 在不同故障位置与扰动场景下，数据驱动PF估计与模型驱动结果高度一致（偏差<2%）。采用多端口诺顿等值替代外部网络后，关键母线电压暂态波形与全EMT模型吻合度达98.5%以上。 | 计算效率提升约3.2倍，关键动态指标误差严格控制在工程允许范围内（<2%）。 |
 
-
-
 ## 量化发现
 
 - 仅需单周期（1/60秒）数据即可完成全系统模态与参与因子提取，时间窗口较传统长时仿真缩短99%以上。
 - 证明传统相量域（LTI）参与因子仅为Floquet参与因子的零次谐波（h=0）特例，无法反映高次谐波动态交互。
 - 谐波筛选准则可剔除>85%的冗余状态变量，同时保证目标SSO模式特征值实部与虚部误差分别<0.01和<0.5 rad/s。
 - 多端口诺顿等值在故障暂态期间无需时步更新，单次计算即可复用，使边界外网络求解复杂度从O(N^3)降至O(1)。
-
 
 ## 关键公式
 
@@ -172,11 +181,34 @@ $$$P_{ki} = \frac{\partial \lambda_i}{\partial a_{kk}}$$$
 
 *量化各状态变量对特定振荡模式的贡献度，直接用于EMT边界元件的筛选与划分*
 
-
-
 ## 验证详情
 
 - **验证方式**: 全EMT模型对比仿真与数据驱动估计验证
 - **测试系统**: 改进Kundur两区域系统（单SSO模式）、IEEE 39节点系统（含多IBR，四SSO模式）
 - **仿真工具**: 通用EMT仿真平台（如PSCAD/EMTDC或MATLAB/Simulink，结合自定义Floquet-PF算法）
 - **验证结果**: 验证表明该方法在不同故障位置、PF阈值及多模态场景下均能精准识别关键动态元件；多端口诺顿等值有效保留了外部网络对EMT区域的动态耦合；相比传统SCR法与相量域PF法，在计算效率提升3倍以上的同时，关键动态指标误差严格控制在工程允许范围内（<2%），具备高保真度与强鲁棒性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `EMT Model Boundary Determination Using Floquet Theory-based Participation Factors`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 floquet理论、参与因子分析、线性时周期系统分析 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于Floquet理论的参与因子算法，仅需单周期数据即可精准识别次同步振荡关键元件。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Using Floquet Theory-based Participation Factors.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

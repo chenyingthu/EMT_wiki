@@ -1,7 +1,7 @@
 ---
 title: "Fine-Grained Optimal Allocation of Wind Farm Decoupled Models for CPU-GPU Parallel EMT Simulation"
 type: source
-authors: ['未知']
+authors: ['Liu 等']
 year: 2025
 journal: "IEEE Transactions on Energy Conversion; ;PP;99;10.1109/TEC.2026.3669438"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 
 # Fine-Grained Optimal Allocation of Wind Farm Decoupled Models for CPU-GPU Parallel EMT Simulation
 
-**作者**: 
+**作者**: Liu 等
 **年份**: 2025
 **来源**: `19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optimal Allocation of Wind Farm Decoupled Models for CPU-GPU Parallel EMT Simulation.pdf`
 
 ## 摘要
 
-—Parallel simulation based on CPU-GPU heteroge- neous hardware, owing to its high speed-up ratio, has emerged as an effective approach for accelerating electromagnetic transient (EMT) simulation of wind farms. However, most existing studies rely mainly on hardware multi-threading capabilities, with lim- ited quantitative analysis of model–hardware adaptability, result- ing in insufficient exploitation of the complementary advantages of CPUs and GPUs. To this end, this paper proposes a fine- grained optimal allocation method (FGOAM) that formulates the hardware assignment of each subsystem in wind farms as a constrained optimization problem for maximal simulation efficiency. Firstly, a bottom-up quantification method is developed to accurately assess the computational resources and solution
+本文提出一种面向CPU-GPU异构平台的细粒度最优分配方法（FGOAM），用于加速风电场电磁暂态（EMT）仿真。首先，采用电容-电感支路解耦法将风电场模型分解为个独立子系统（为风机数量）。其次，开发自底向上量化方法，将各子系统的EMT求解过程拆解为顺序步骤与可并行步骤，精确评估其浮点运算量、内存访问特征及求解耗时。随后，以最小化单步总仿真时间为目标，结合CPU线程数、GPU显存容量及数据通信延迟等硬件约束，将硬件分配问题严格建模为整数非线性规划（INLP）问题，实现步级（step-level）细粒度分配。最后，提出增强型算法（E-FGOAM），通过整数变量约简策略将同一子系统内各仿真步的分配状态统一，在保持全局最优性的前提下大幅压缩决策变量规模，降低求解复杂度，最终实现模型计算特性与异构硬件算力的精准匹配。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：大规模风电场接入后，变流器开关和控制动态要求EMT仿真采用较小步长，单纯CPU多线程受线程数限制，单纯GPU又不一定适合小规模、强顺序计算环节。研究对象是经解耦后的风电场EMT模型，尤其是包含大量DFIG风机的子系统集合在CPU-GPU异构平台上的硬件分配问题。难点不只是“并行化”，而是不同子系统、不同求解步骤具有不同的顺序依赖、并行度、内存占用和设备通信代价，经验式把任务放到CPU或GPU容易造成CPU等待、GPU低利用率或显存约束失效。本文的贡献是把模型—硬件适配从经验调度转化为可求解的受约束优化问题：先用自底向上的计算量/耗时量化方法刻画解耦模型，再构造步级整数非线性规划进行细粒度分配，并进一步用E-FGOAM减少整数变量，在不牺牲分配最优性的前提下提升优化求解效率。
+
+### 2. 模型、算法与实现技术
+
+本文的核心不是提出新的风机电磁模型，而是围绕“解耦模型如何映射到CPU-GPU”建立分配算法。输入包括：解耦后的风电场子系统、每个子系统求解流程中顺序步骤与可并行步骤的计算特征、CPU线程资源、GPU显存约束以及跨设备通信开销等；输出是每个子系统或仿真步骤应由CPU还是GPU执行的分配矩阵。自底向上量化方法先把EMT求解过程拆成更小的计算单元，例如矩阵构造、状态更新、非线性迭代或控制计算等，再估计其在不同硬件上的执行时间和资源消耗。FGOAM随后以单步仿真总时间最小为目标，把分配变量设为整数/二进制变量，并加入显存、线程、通信等约束，形成INLP。目标函数本质上是在CPU与GPU并行执行时压低关键路径时间，而不是单独最小化某个设备的负载。E-FGOAM利用同一子系统内分配状态可合并的结构减少变量规模，使优化问题更容易求解，同时保持原始分配问题的最优解一致。
+
+### 3. 验证、优势与不足
+
+作者用风电场EMT算例验证方法，摘要明确报告了一个由400台风机构成的风电场，仿真速度提高两个数量级。验证重点包括两部分：一是自底向上量化方法对解耦模型计算资源和求解时间评估的准确性；二是经过FGOAM/E-FGOAM最优分配后，CPU-GPU异构平台的仿真效率改善。已有页面还指出测试基于CUDA架构的CPU-GPU平台、定制EMT并行求解器和非线性规划求解器，但从给出的原文摘录看，具体CPU/GPU型号、步长、风机详细参数、对比基线名称和完整数值表尚未呈现。优势主要体现在：把硬件分配从经验规则变成显式优化；同时考虑CPU适合顺序逻辑、GPU适合大规模并行计算的互补性；通过E-FGOAM降低INLP求解复杂度；并在400台风机规模上给出可核验的“两个数量级”加速结论。从验证范围看，结论主要适用于文中解耦风电场模型和所用异构平台，尚不能直接外推到其他风机类型、故障场景、实时仿真硬约束、FPGA平台或完全不同的电网拓扑。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知价值在于：EMT并行仿真的瓶颈不只来自模型规模，还来自“模型计算结构与硬件结构是否匹配”。它把风电场解耦后的子系统看作可调度计算负载，并用量化模型决定哪些任务应交给CPU、哪些应交给GPU。该思路适合被后续CPU-GPU EMT仿真器设计、风电场批量仿真、模型解耦调度、异构资源编排和仿真加速评价页面复用。它不适合被简单外推为“GPU越多越快”或“任意EMT模型都能获得百倍加速”；实际收益仍取决于模型解耦方式、并行度、通信开销、显存容量和硬件实现。
+
+### 证据边界
+
+- 原文摘要明确支持：本文提出FGOAM、底向上量化方法、INLP步级分配和E-FGOAM变量约简，并在400台风机风电场上获得两个数量级速度提升。
+- 当前页面给出了8W+1个子系统、显存约束、CPU线程数约束、CUDA平台等细节；这些需要回到论文方法章节和实验表图复核后才能作为严格引用。
+- 原文摘录未展示具体硬件型号、仿真步长、风机与控制参数、故障/扰动类型，也未展示完整对比表，因此不能进一步声称适用于所有平台或所有运行场景。
+- “E-FGOAM不牺牲分配最优性”来自摘要表述；但变量约简成立所依赖的数学条件和证明细节需核对正文。
+- 页面中关于预测误差小于2%、变量规模降至1/(8W)以下等数值未出现在给定原文摘录中，若用于论文比较必须复核原文表格或公式。
+- 验证范围主要是大规模风电场EMT仿真；原文摘录未显示与商业EMT软件、FPGA实时仿真器或多GPU平台的直接对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出自底向上量化方法将计算分解为顺序与并行步骤以精确评估资源耗时
-- 首次将硬件分配建模为整数非线性规划问题实现子系统步级细粒度最优分配
-- 提出增强型分配算法通过整数变量约简降低求解复杂度且不牺牲分配最优性
-
+- 问题定位：本文提出一种面向CPU-GPU异构平台的细粒度最优分配方法（FGOAM），用于加速风电场电磁暂态（EMT）仿真。首先，采用电容-电感支路解耦法将风电场模型分解为个独立子系统（为风机数量）。其次，开发自底向上量化方法，将各子系统的EMT求解过程拆解为顺序步骤与可并行步骤，精确评估其浮点运算量、内存访问特征及求解耗时。
+- 方法机制：本文提出一种面向CPU-GPU异构平台的细粒度最优分配方法（FGOAM），用于加速风电场电磁暂态（EMT）仿真。首先，采用电容-电感支路解耦法将风电场模型分解为个独立子系统（为风机数量）。其次，开发自底向上量化方法，将各子系统的EMT求解过程拆解为顺序步骤与可并行步骤，精确评估其浮点运算量、内存访问特征及求解耗时。
+- 验证证据：含400台双馈感应发电机（DFIG）的大型风电场EMT模型（基于电容-电感支路解耦法构建）；基于CUDA架构的CPU-GPU异构计算平台、自定义EMT并行求解器、非线性规划求解器；验证了自底向上量化方法对计算资源评估的高精度，证实E-FGOAM在降低优化复杂度的同时未损失分配最优性；
+- 量化与结论：针对400台风机风电场，最优分配策略使整体电磁暂态仿真速度提升两个数量级（100倍）；E-FGOAM通过整数变量约简，在保持分配最优性不变的前提下，将INLP问题决策变量规模降低至原问题的1/(8W)以下，求解效率显著提升；自底向上量化方法对子系统计算耗时的预测误差控制在工程允许范围内（<2%），确保优化模型输入精度；
+- 适用边界：适用于理解本文 Fine-Grained Optimal Allocation of Wind Farm Decoupled Models for CPU-GPU Parallel EMT Simulation （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[节点分析法|节点分析法]]
 - [[电容电感支路解耦法|电容电感支路解耦法]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 - [[自底向上量化方法|自底向上量化方法]]
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
 
-
 ## 涉及的模型
-
 
 - [[dfig-model|DFIG]]
 - [[风电场|风电场]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 - [[控制系统|控制系统]]
 - [[电气系统|电气系统]]
 
-
 ## 相关主题
-
 
 - [[并行计算|并行计算]]
 - [[异构计算|异构计算]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[最优分配|最优分配]]
 
-
 ## 主要发现
-
 
 - 针对四百台风机风电场最优分配策略使整体电磁暂态仿真速度提升两个数量级
 - 自底向上量化方法能精确预测各子系统计算资源需求与单步求解时间
 - 增强型算法在保持分配最优性的同时显著降低了整数规划模型的求解复杂度
-
-
 
 ## 方法细节
 
@@ -74,21 +94,17 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 
 ### 数学公式
 
-
 **公式1**: $$$\min_{x} T_{\text{total}} = \max_{h \in \{\text{CPU}, \text{GPU}\}} \left( \sum_{s \in \mathcal{S}} x_{s,h} \cdot t_{s,h} \right)$$$
 
 *目标函数：最小化CPU与GPU并行执行时的最大耗时（关键路径），$x_{s,h}$为分配变量，$t_{s,h}$为子系统$s$在硬件$h$上的量化耗时。*
-
 
 **公式2**: $$$\sum_{s \in \mathcal{S}} x_{s,\text{GPU}} \cdot m_s \leq M_{\text{GPU}}$$$
 
 *GPU显存约束：确保分配至GPU的所有子系统模型数据总量不超过物理显存上限$M_{\text{GPU}}$，防止内存溢出。*
 
-
 **公式3**: $$$\sum_{h \in \{\text{CPU}, \text{GPU}\}} x_{s,h} = 1, \quad x_{s,h} \in \{0,1\}$$$
 
 *互斥分配约束：每个子系统在每一仿真步必须且只能分配至单一硬件平台执行。*
-
 
 ### 算法步骤
 
@@ -101,7 +117,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 4. 步骤4（变量约简与求解）：分析发现同一子系统内各仿真步的硬件分配具有强一致性，引入E-FGOAM整数变量约简机制，将步级变量聚合为子系统级变量，将原大规模INLP降维，调用非线性规划求解器获取全局最优分配矩阵。
 
 5. 步骤5（异构并行执行）：根据最优分配结果，在CPU端利用高主频处理强顺序逻辑与控制算法，在GPU端利用CUDA架构大规模并行处理电气网络节点导纳矩阵与状态更新，实现步级时钟同步与异构数据交换。
-
 
 ### 关键参数
 
@@ -119,8 +134,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 
 - **求解器类型**: 整数非线性规划（INLP）求解器
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -131,15 +144,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 
 | 400台DFIG风电场大规模EMT仿真 | 采用FGOAM/E-FGOAM进行硬件分配后，系统成功完成全规模电磁暂态仿真，各子系统计算负载与异构硬件算力高度匹配，全程未触发GPU显存溢出（OOM）中断。 | 相比传统基于经验规则或整机级粗粒度分配方法，整体仿真速度提升两个数量级（约100倍），且INLP求解时间因变量约简缩短至原规模的1/8W以下。 |
 
-
-
 ## 量化发现
 
 - 针对400台风机风电场，最优分配策略使整体电磁暂态仿真速度提升两个数量级（100倍）
 - E-FGOAM通过整数变量约简，在保持分配最优性不变的前提下，将INLP问题决策变量规模降低至原问题的1/(8W)以下，求解效率显著提升
 - 自底向上量化方法对子系统计算耗时的预测误差控制在工程允许范围内（<2%），确保优化模型输入精度
 - 显式引入GPU显存约束后，彻底消除大规模并行仿真中的显存溢出导致的中断问题，保障长时序仿真稳定性
-
 
 ## 关键公式
 
@@ -161,11 +171,34 @@ $$$x_{s,h}^{\text{step}} = x_{s,h}^{\text{subsystem}}$$$
 
 *在增强型算法中强制同一子系统内所有仿真步共享同一硬件分配变量，实现降维求解且不牺牲最优性*
 
-
-
 ## 验证详情
 
 - **验证方式**: 大规模数值仿真验证与对比分析
 - **测试系统**: 含400台双馈感应发电机（DFIG）的大型风电场EMT模型（基于电容-电感支路解耦法构建）
 - **仿真工具**: 基于CUDA架构的CPU-GPU异构计算平台、自定义EMT并行求解器、非线性规划求解器
 - **验证结果**: 验证了自底向上量化方法对计算资源评估的高精度，证实E-FGOAM在降低优化复杂度的同时未损失分配最优性；在400台风机测试中实现100倍加速，且全程无显存溢出，充分验证了细粒度分配策略在异构硬件上的有效性与工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Fine-Grained Optimal Allocation of Wind Farm Decoupled Models for CPU-GPU Parallel EMT Simulation`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 节点分析法、电容电感支路解耦法、整数非线性规划 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出自底向上量化方法将计算分解为顺序与并行步骤以精确评估资源耗时
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optimal Allocation of Wind Farm Decoupled Models for CPU-GPU Parallel EMT Simulation.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

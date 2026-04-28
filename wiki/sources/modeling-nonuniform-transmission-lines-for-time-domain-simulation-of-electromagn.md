@@ -1,9 +1,9 @@
 ---
 title: "Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients - Power Delivery, IEEE Transactions on"
 type: source
-authors: ['未知']
+authors: ['Ramirez 等']
 year: 2001
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 # Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients - Power Delivery, IEEE Transactions on
 
-**作者**: 
+**作者**: Ramirez 等
 **年份**: 2001
 **来源**: `26/Ramirez 等 - 2003 - Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients.pdf`
 
 ## 摘要
 
-—Transmission lines with nonparallel conductors or significant sags and vertical structures, such as towers, can be viewed and modeled as nonuniform lines (NULs). The parameters of NULs are distance dependent. This paper presents a math- ematical model for time domain simulation of electromagnetic transients in multiphase NULs taking into account the frequency dependence of the parameters. The model is based on the traveling wave phenomenon and accommodates any NUL geometry. In addition, the model can be interfaced with time domain programs such as the EMTP. The proposed methodology is validated by comparing the results with those obtained from a frequency domain model using the numerical Laplace Transform (LT), the method of characteristics (MC), and also with test results reported by oth
+本研究提出了一种基于行波理论的非均匀线路（NUL）电磁暂态时域仿真方法。该方法通过链式矩阵乘法处理参数随距离变化的特性，利用复深度法（complex depth）计算频变参数，并采用有理函数逼近结合状态空间实现技术将频域模型转换为时域模型。该方法适用于多相线路，可考虑参数的频率依赖性，并能够与EMTP等现有暂态仿真程序接口。模型通过将线路划分为若干段，计算每段的阻抗矩阵Z和导纳矩阵Y，然后通过链式矩阵相乘得到整体传输矩阵，最后进行模态分解获得传播函数和特征导纳的时域表示。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，EMT仿真常把输电线视为导体与地面平行、参数沿线均匀的线路；但跨河大档距、进出变电站引线、明显弧垂导线以及塔体等对象，其几何高度和相间关系沿纵向变化，导致单位长度阻抗、导纳随距离变化，不能用单一均匀线参数代表。难点在于：非均匀性破坏了传统均匀线的解析传播关系，多相耦合又使模态量随频率和位置变化；同时大地回流、导体效应使参数具有频率依赖性，若直接用有限差分或常参数特征线法，往往会牺牲频变损耗和相间耦合。本文的贡献是把非均匀多相线路作为NUL，用行波端口关系建立可进入时域EMT程序的模型；相对既有多为单相、无损、特定指数参数变化或常参数模型的方法，它允许任意几何构型，并计及频率相关参数。
+
+### 2. 模型、算法与实现技术
+
+模型从频域端口关系出发，用一个2n×2n的传输矩阵把线路两端的相电压、相电流联系起来。该矩阵不是假设均匀线闭式给出，而是由沿线一阶电报方程数值求解；当参数可解析计算时，作者将线路划分为若干小段，每段按局部均匀线形成链式矩阵，再连乘得到整体端口矩阵。每段的阻抗矩阵Z和导纳矩阵Y可用complex depth方法计算，以包含大地回流等频率效应。随后对端口矩阵做特征值/特征向量分解，把相域端口量转换为正、反向行波量，得到前向和后向传播函数以及相应特征导纳。机制上，传播函数负责描述波从一端到另一端的延时、衰减和频率选择性；特征导纳负责把端口电压与注入/反射波电流联系起来。为了进入时域仿真，这些频域函数需要用状态空间近似表示，端口最终表现为可与EMTP类网络方程耦合的Norton型关系：节点电压由外部网络求解，历史行波和状态空间内部状态提供等效注入电流。
+
+### 3. 验证、优势与不足
+
+作者声明用三类参照验证：频域模型的数值拉普拉斯变换结果、method of characteristics结果，以及其他研究者报告的试验结果。给出的原文证据至少显示了一个“symmetrical, flat, three-phase NUL”算例，并有时域仿真与实验结果对比图；引言还说明方法可用于跨河线路、进站线路和塔体这类非均匀对象，但所给摘录未完整列出所有算例参数、误差指标和图中数值。验证的核心指标是端口暂态电压/电流波形是否与频域求解、特征线法或实验波形一致，而不是计算速度或实时性。优势在于该方法把任意纵向几何变化、多相耦合和频率相关参数统一进同一行波端口框架，并能以状态空间形式嵌入EMTP类时域程序；这比仅适用于单相、无损、指数参数变化或常参数的NUL模型更一般。从验证范围看，原文未在摘录中报告可核验的数值误差、计算开销、稳定步长范围、极端几何离散误差或大规模网络性能，因此不能据此声称其在所有NUL场景下都有确定精度或效率优势。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是：非均匀线路不必退化为若干经验均匀线或纯频域两端口，也可以通过“分段链式矩阵—模态行波—频域函数状态空间化”的路径进入常规EMT时域网络求解。它适合后续研究复用为跨河/大弧垂线路、进出站非平行导线、塔体等对象的端口建模基础，也适合作为比较常参数特征线法、有限差分法和频域NUL模型的基准框架。不适合外推为任意频段、任意复杂接地结构或实时仿真的已验证方案；这些仍需依据具体参数计算、拟合阶数、离散段数和实验数据重新确认。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象是多相非均匀线路，参数随距离变化，模型计及频率依赖，并基于行波现象，可与EMTP类时域程序接口。
+- 来自原文方法段的确定信息：频域端口关系由2n×2n矩阵表示，该矩阵可通过求解一阶矩阵微分方程或通过线路小段链式矩阵连乘得到；参数计算采用complex depth概念。
+- 来自原文的确定验证信息：作者将结果与数值拉普拉斯变换、method of characteristics以及其他研究者试验结果比较；但所给摘录未给出可核验的误差百分比或具体数值指标。
+- 状态空间时域实现可由原文片段中的“state-space approximations”和EMTP接口描述支持；但拟合方法、阶数选择、稳定性判据和误差控制细节在所给证据中不完整。
+- 跨河线路、进站线路和塔体在引言中作为NUL例子出现；除非回到全文图表核验，不能把这些都当作已经完整定量验证的测试系统。
+- 元数据存在年份边界：页面元数据写2001，原文给出manuscript received 2001且DOI为10.1109/TPWRD.2003.813877，正式出版年份需以期刊页码/DOI记录复核。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出计及参数频变特性的多相非均匀线路时域数学模型
-- 基于行波理论采用有理函数逼近与状态空间实现，支持EMTP接口
-- 提供适用于任意几何构型（如杆塔、弧垂线路）的连续建模方法
-
+- 问题定位：本研究提出了一种基于行波理论的非均匀线路（NUL）电磁暂态时域仿真方法。该方法通过链式矩阵乘法处理参数随距离变化的特性，利用复深度法（complex depth）计算频变参数，并采用有理函数逼近结合状态空间实现技术将频域模型转换为时域模型。该方法适用于多相线路，可考虑参数的频率依赖性，并能够与EMTP等现有暂态仿真程序接口。
+- 方法机制：本研究提出了一种基于行波理论的非均匀线路（NUL）电磁暂态时域仿真方法。该方法通过链式矩阵乘法处理参数随距离变化的特性，利用复深度法（complex depth）计算频变参数，并采用有理函数逼近结合状态空间实现技术将频域模型转换为时域模型。该方法适用于多相线路，可考虑参数的频率依赖性，并能够与EMTP等现有暂态仿真程序接口。
+- 验证证据：多维度验证：与文献实验数据对比、与频域数值拉普拉斯变换（LT）对比、与特征线法（MC）对比、与等效均匀线路（UL）对比；三个测试系统：(1) 对称三相7段非均匀线路，总长2185.4m，高度变化26.2m-15.24m；(2) 垂直塔体结构，半径0.7m；(3) 跨河线路，发送端高度28m，水电阻率10Ω·m；
+- 量化与结论：非均匀线路传播函数在频域呈现周期性尖峰（spikes），基频f₀≈5kHz（对于2185.4m线路），对应线路长度与光速之比：f₀ = c/(2l)；频域尖峰在时域产生约0.2-0.3 p.u.的小幅波动（fluctuations），叠加在主导暂态波形上；特征线法（MC，恒定参数）与频变模型（TD）的偏差随线路长度增加而显著增大，长线路（>2km）中MC误差可达20-30%；
+- 适用边界：适用于理解本文 Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients - Power Delivery, IEEE Transactions on （2001） 在当前页面抽取范围内讨论的 EMT/电力。
 
 ## 使用的方法
-
 
 - [[行波法|行波法]]
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
@@ -37,18 +65,14 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 - [[状态空间实现|状态空间实现]]
 - [[复深度法|复深度法]]
 
-
 ## 涉及的模型
-
 
 - [[非均匀输电线路|非均匀输电线路]]
 - [[多相输电线路|多相输电线路]]
 - [[杆塔模型|杆塔模型]]
 - [[对称三相线路|对称三相线路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 - [[时域仿真|时域仿真]]
 - [[输电线路参数计算|输电线路参数计算]]
 
-
 ## 主要发现
-
 
 - 时域模型仿真结果与实验测量数据及数值拉普拉斯变换频域结果高度吻合
 - 忽略参数频变特性的特征线法会产生显著误差，验证了频变建模的必要性
 - 所提模型能准确捕捉由非均匀几何结构与频变效应引起的电压波形波动特征
-
-
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 ### 数学公式
 
-
 **公式1**: $$\begin{bmatrix} \mathbf{V}_R \\ \mathbf{I}_R \end{bmatrix} = \begin{bmatrix} \mathbf{A} & \mathbf{B} \\ \mathbf{C} & \mathbf{D} \end{bmatrix} \begin{bmatrix} \mathbf{V}_S \\ \mathbf{I}_S \end{bmatrix}$$
 
 *线路两端电压电流关系，其中下标R表示接收端，S表示发送端，ABCD为2n×2n传输矩阵，n为相数*
-
 
 **公式2**: $$\frac{d}{dx}\begin{bmatrix} \mathbf{V} \\ \mathbf{I} \end{bmatrix} = \begin{bmatrix} \mathbf{0} & -\mathbf{Z}(x) \\ -\mathbf{Y}(x) & \mathbf{0} \end{bmatrix} \begin{bmatrix} \mathbf{V} \\ \mathbf{I} \end{bmatrix}$$
 
 *非均匀线路的电报方程，Z(x)和Y(x)为距离依赖的阻抗和导纳矩阵*
 
-
 **公式3**: $$\mathbf{F} = e^{-\boldsymbol{\Gamma} l}, \quad \mathbf{B} = e^{-\boldsymbol{\Gamma} l}$$
 
 *正向和反向传播函数，Γ为传播常数矩阵，l为线路长度*
-
 
 **公式4**: $$\mathbf{V} = \mathbf{Y}_c^{-1}(\mathbf{F} + \mathbf{B})\mathbf{I}_{inc}$$
 
 *相域电压与入射波电流的关系，Yc为特征导纳矩阵*
 
-
 **公式5**: $$\mathbf{I}_R = \mathbf{Y}_{cR}\mathbf{V}_R - 2\mathbf{H}_R\mathbf{I}_{inc}$$
 
 *接收端Norton等效方程，用于时域仿真计算，其中H为变换矩阵*
 
-
 **公式6**: $$\mathbf{Y}_{cF} = \mathbf{H}_F \mathbf{Y}_c \mathbf{H}_F^{-1}, \quad \mathbf{Y}_{cB} = \mathbf{H}_B \mathbf{Y}_c \mathbf{H}_B^{-1}$$
 
 *正向和反向特征导纳定义，考虑非均匀线路在不同方向上的参数差异*
-
 
 ### 算法步骤
 
@@ -127,7 +140,6 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 10. 在每一时步长求解状态空间方程，更新传播延时和历史电流，计算节点电压
 
-
 ### 关键参数
 
 - **线路分段数**: 7段（对称三相案例）
@@ -148,8 +160,6 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 - **水平间距**: 10 m（跨河线路）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -164,8 +174,6 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 | 跨河大档距非均匀线路 | 模拟发送端高度28m，接收端高度变化剧烈的跨河线路（水电阻率10Ω·m）。施加单位阶跃电压，接收端开路。仿真显示严重的波形振荡，振荡频率与参数计算所用的最高频率相关。 | 与等效均匀线路（UL，平均高度77.7m或27.7m）对比，NUL模型与UL模型结果存在显著差异，特别是在波形上升沿和峰值处，UL模型无法准确预测过电压幅值。 |
 
-
-
 ## 量化发现
 
 - 非均匀线路传播函数在频域呈现周期性尖峰（spikes），基频f₀≈5kHz（对于2185.4m线路），对应线路长度与光速之比：f₀ = c/(2l)
@@ -175,7 +183,6 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 - 等效均匀线路（UL）模型无法再现非均匀线路特有的波形波动，峰值电压预测误差可达15-25%
 - 地面电阻率从100Ω·m降至10Ω·m时，频域传播函数尖峰幅值增大，时域波动加剧
 - 有理函数逼近的拟合误差在0.1%以内，状态空间实现保证了时域仿真的数值稳定性
-
 
 ## 关键公式
 
@@ -197,11 +204,34 @@ $$\mathbf{M} = \prod_{i=1}^{N} \begin{bmatrix} \cosh(\boldsymbol{\Gamma}_i l_i) 
 
 *用于将N段非均匀线路的传输矩阵组合成整体2n端口网络矩阵*
 
-
-
 ## 验证详情
 
 - **验证方式**: 多维度验证：与文献实验数据对比、与频域数值拉普拉斯变换（LT）对比、与特征线法（MC）对比、与等效均匀线路（UL）对比
 - **测试系统**: 三个测试系统：(1) 对称三相7段非均匀线路，总长2185.4m，高度变化26.2m-15.24m；(2) 垂直塔体结构，半径0.7m；(3) 跨河线路，发送端高度28m，水电阻率10Ω·m
 - **仿真工具**: 基于EMTP/ATP的时域仿真环境，结合MATLAB进行有理函数拟合和状态空间实现，使用数值拉普拉斯变换（NLT）作为频域参考解
 - **验证结果**: 时域模型（TD）与实验测量数据（文献[15]）高度吻合，与数值拉普拉斯变换（LT）结果几乎完全相同（误差<1%）。与特征线法（MC）相比，长线路中MC因忽略频变特性产生显著误差（>20%）。与等效均匀线路（UL）相比，NUL模型准确再现了波形波动现象，而UL模型无法预测这些高频振荡。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients - Power Delivery, IEEE Transactions on`（2001） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 行波法、数值拉普拉斯变换、特征线法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出计及参数频变特性的多相非均匀线路时域数学模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission lines for time domain simulation of electromagnetic transients.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

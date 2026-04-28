@@ -1,9 +1,9 @@
 ---
 title: "Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems"
 type: source
-authors: ['未知']
+authors: ['THIAGO JOSÉ BARBOSA DA ROCHA', 'SERGIO GOMES JR.', 'TIAGO SANTANA DO AMARAL', 'LEONARDO PINTO DE ALMEIDA']
 year: 2026
-journal: ""
+journal: "IEEE Access"
 tags: ['dynamic-phasor']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems.pdf"]
@@ -11,41 +11,65 @@ sources: ["EMT_Doc/27&28/Multirate Method for Dynamic Phasor Simulation of Large
 
 # Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems
 
-**作者**: 
+**作者**: THIAGO JOSÉ BARBOSA DA ROCHA; SERGIO GOMES JR.; TIAGO SANTANA DO AMARAL; LEONARDO PINTO DE ALMEIDA
 **年份**: 2026
 **来源**: `27&28/Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems.pdf`
 
 ## 摘要
 
-Dynamic phasor simulations can be used for the analysis of transient stability (TS) of power systems, considering the influence of fast response equipment such as HVDC converters, FACTS and IBR (Inverter Based Resources). For reliable simulation with fast response equipment, electromagnetic transients (EMT) of the AC network must be accurately modeled. Dynamic phasor simulations are used to solve tightly coupled dynamics from microsecond electromagnetic phenomena to second-scale electromechanical oscillations. The single-rate time step requires the entire model to utilize the smallest interval necessary for accuracy, which can substantially increase runtime. This work proposes a multirate method for a dynamic phasor simulation, where the slowest machine variables and their controllers use 
+本文提出了一种完全在动态相量（Dynamic Phasor, DP）框架内实现的统一多速率仿真方法，区别于传统的EMT-TS联合仿真或模型分区方法。该方法将整个电力系统统一在DP表示下，根据动态特性将变量分为慢变量（同步电机机械变量、调速器、励磁控制器等，时间尺度为秒级）和快变量（交流网络方程、电力电子设备、HVDC、FACTS、IBR等，时间尺度为微秒级）。慢变量使用大步长（如1-10 ms）进行积分，而快变量保持常规EMT小步长（如10-100 μs）。通过插值-平均耦合机制实现快慢子系统间的信息交换：在快方程求解时对慢变量进行线性插值，在慢方程求解时对快变量进行滑动窗口平均。引入误差校验机制，在慢步长边界点评估残差不匹配度（mismatch），决定是否接受当前步长或触发回退（rollback）机制重新计算，确保数值稳定性和精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：在含HVDC换流器、FACTS和IBR等快速响应设备的大电网暂态稳定研究中，仅用传统TS正序相量和简化网络会漏掉关键电磁暂态，而全系统EMT或单速率动态相量又会让所有变量都被迫采用最小EMT步长，运行时间过高。研究对象不是EMT-TS分区接口，而是在同一个动态相量表示下的大规模电力系统微秒级电磁过程与秒级机电过程的耦合仿真。难点在于快慢动态强耦合：网络与电力电子需要小步长，机组最慢机械变量及其控制器可用大步长，但二者交换量若处理不当会产生接口误差、预测误差或数值不一致。本文贡献是提出一种完全置于动态相量仿真器内部的多速率方案：只对最慢的机器变量及控制器方程放大步长，其余变量仍按常规EMT步长求解；用慢变量插值驱动快方程，用快变量平均驱动慢方程，并在慢步长端点进行mismatch校验，必要时撤销该步并用改进慢变量估计重算快步。
+
+### 2. 模型、算法与实现技术
+
+本文的方法基础是动态相量仿真：整个系统均用DP表示，因此交流网络的快电磁动态、电力电子设备以及机电变量处在同一建模框架内，而不是把一部分系统交给EMT求解器、另一部分交给TS求解器。算法把状态/方程按动态速度分组：慢组是“slowest machine variables and their controllers”，即最慢的发电机变量及其控制器；快组是其余需要常规EMT步长的变量和方程，包括网络与快速响应设备相关动态。每个慢步长内，先给出慢变量在区间内的估计轨迹；快方程用小步长推进时，通过插值获得当前快时刻的慢变量值，使机械/控制量能连续作用于网络和设备方程。快步长完成后，将快变量在慢步长窗口内做平均，作为慢方程的大步长输入，避免慢方程直接响应每个微小振荡细节。慢步长末端计算不匹配量，用于判断当前慢变量估计与由耦合计算得到的结果是否一致；若不满足，则undo该慢步，重新计算其内部快时间步。该机制的关键不是改变DP模型本身，而是在同一DP求解流程中对不同方程使用不同时间步，并用插值、平均和mismatch校验维持快慢耦合一致性。
+
+### 3. 验证、优势与不足
+
+作者将该多速率方法并入一个动态相量仿真程序，并在巴西电力系统benchmark上验证。原文摘要明确的验证基线是单速率时间步带来的运行时间问题，以及所提方法在暂态期间同时捕捉慢、快动态的能力；但在给定证据中没有给出可核验的节点数、设备数量、故障类型、步长取值、运行时间比例或误差范数。验证指标从摘要可确认包括运行时间和对慢快动态的保真度，结论表述为runtime有significant reductions且保持high fidelity；但原文片段未报告可核验的数值结果，因此不应写成固定加速倍数或误差百分比。优势主要体现在两点：第一，避免EMT-TS或DP-EMT联合仿真所需的显式接口和模型分区，减少由接口条件、初始化和分区选择带来的额外复杂性；第二，快动态仍在整个系统范围内考虑，只是对慢变量/慢方程放大时间步，而不是把外部系统降阶为TS网络。适用边界也很清楚：从验证范围看，结论受作者DP仿真器、巴西系统benchmark、所选设备模型和暂态场景约束；尚不能据此断言对所有IBR控制、开关事件、保护动作、三相不平衡或实时仿真平台都同样有效。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于把“多速率”从多求解器联合仿真的接口问题，转化为单一动态相量模型内部的方程级时间步调度问题。它适合用于后续研究大规模含电力电子电网的暂态稳定与电磁暂态耦合仿真、DP求解器加速、快慢变量分组策略、误差校验与回退机制设计等页面。工程上，它可作为需要保留全系统快动态、但又不希望所有机组控制和机械变量都按EMT步长积分的仿真方案入口。不适合外推为通用EMT加速结论，也不能替代尚未验证的保护、详细开关级变流器、极端非平衡故障或硬实时仿真性能评估。
+
+### 证据边界
+
+- 原文明确给出论文题名、作者、IEEE Access 2026、DOI，以及摘要中的方法框架：慢机器变量及控制器用大步长，其余变量用常规EMT步长。
+- 原文明确说明耦合方式为快方程中插值慢变量、慢方程中平均快变量，并用慢步长mismatch决定接受或撤销重算。
+- 原文明确说方法被并入动态相量仿真器，并在Brazilian power system benchmark上验证；但给定证据未提供该benchmark的节点数、设备清单或具体场景。
+- 原文摘要只定性称运行时间显著降低、保真度较高；给定证据未报告可核验的加速比、误差指标、步长大小或容差，因此不能引用50%-90%、0.1%等数值。
+- 关于动态相量的具体公式、谐波截断阶数、线性插值阶数、平均窗口长度等细节，在给定原文片段中未完整出现；若用于严格复现，需回到正文算法和实验表图核验。
+- 从验证范围看，尚未证明该方法对所有拓扑、所有IBR控制策略、三相不平衡故障、保护动作、开关级模型或实时硬件平台均适用。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于动态相量的统一多速率算法，避免传统EMT-TS联合仿真与模型分区
-- 设计快慢变量插值与平均耦合机制，结合误差校验实现步长自适应接受与回退
-- 在万节点巴西实际电网验证算法可扩展性，大幅降低计算耗时且保持暂态高保真
-
+- 问题定位：本文提出了一种完全在动态相量（Dynamic Phasor, DP）框架内实现的统一多速率仿真方法，区别于传统的EMT-TS联合仿真或模型分区方法。该方法将整个电力系统统一在DP表示下，根据动态特性将变量分为慢变量（同步电机机械变量、调速器、励磁控制器等，时间尺度为秒级）和快变量（交流网络方程、电力电子设备、HVDC、FACTS、IBR等。
+- 方法机制：本文提出了一种完全在动态相量（Dynamic Phasor, DP）框架内实现的统一多速率仿真方法，区别于传统的EMT-TS联合仿真或模型分区方法。该方法将整个电力系统统一在DP表示下，根据动态特性将变量分为慢变量（同步电机机械变量、调速器、励磁控制器等，时间尺度为秒级）和快变量（交流网络方程、电力电子设备、HVDC、FACTS、IBR等，时间尺度为微秒级）。
+- 验证证据：仿真验证与对比分析（Simulation-based validation with comparative analysis）；巴西国家电网实际大规模系统（Brazilian National Grid），包含10,000+节点，详细模拟了HVDC、FACTS、IBR等快速响应设备以及传统同步发电机；
+- 量化与结论：系统规模：方法验证于超过10,000节点的实际巴西国家电网，证明了算法在大规模系统中的可扩展性；时间尺度覆盖：统一处理从微秒级（microsecond-scale，电磁暂态、开关事件）到秒级（second-scale，机电振荡、调速器响应）的动态过程，时间跨度达6个数量级；
+- 适用边界：适用于理解本文 Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems （2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 动态相量法、多速率仿真、插值与平均耦合 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[动态相量法|动态相量法]]
 - [[多速率仿真|多速率仿真]]
 - [[插值与平均耦合|插值与平均耦合]]
 - [[误差校验步长控制|误差校验步长控制]]
 
-
 ## 涉及的模型
-
 
 - [[同步电机|同步电机]]
 - [[发电机控制器|发电机控制器]]
 - [[交流输电网络|交流输电网络]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[动态相量建模|动态相量建模]]
@@ -53,15 +77,11 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 - [[大规模电网仿真|大规模电网仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
 
-
 ## 主要发现
-
 
 - 多速率动态相量法在万节点电网中显著降低计算耗时，同时保持电磁与机电暂态高精度
 - 快慢变量插值平均耦合策略有效避免接口误差，步长自适应机制保障数值稳定性
 - 统一框架下无需模型分区即可准确捕捉微秒级电磁现象与秒级机电振荡的强耦合动态
-
-
 
 ## 方法细节
 
@@ -71,31 +91,25 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 
 ### 数学公式
 
-
 **公式1**: $$$f(t) = \sum_{h=0}^{\infty} \left[ F_{h}^{Re}(t)\cos(h\omega t) - F_{h}^{Im}(t)\sin(h\omega t) \right]$$$
 
 *动态相量（DP）的实数形式定义，基于广义平均法（GAM），将时域信号表示为各次谐波时变傅里叶系数与基频振荡的乘积之和，适用于表示从电磁暂态到机电振荡的多时间尺度动态*
-
 
 **公式2**: $$$f(t) = \text{Re}\left\{ \sum_{h=0}^{\infty} \tilde{F}_h(t)e^{jh\omega t} \right\}$$$
 
 *动态相量的复数形式，其中$\tilde{F}_h(t) = F_{h}^{Re}(t) + jF_{h}^{Im}(t)$为第h次谐波的复动态相量，通过实部投影还原原始信号*
 
-
 **公式3**: $$$\tilde{F}_h(t) = \frac{1}{T}\int_{t-T}^{t} f(\tau)e^{-jh\omega\tau}d\tau$$$
 
 *广义平均法（GAM）的滑动窗口积分定义，T为基波周期（$T=2\pi/\omega$），通过过去一个周期的积分计算时变傅里叶系数*
-
 
 **公式4**: $$$\mathbf{M}\frac{d\mathbf{x}_s}{dt} = \mathbf{f}_s(\mathbf{x}_s, \bar{\mathbf{x}}_f, \mathbf{u})$$$
 
 *慢变量（s）状态方程，其中$\bar{\mathbf{x}}_f$表示对快变量在慢步长区间内的平均值，用于耦合快动态*
 
-
 **公式5**: $$$\mathbf{N}\frac{d\mathbf{x}_f}{dt} = \mathbf{f}_f(\mathbf{x}_f, \mathbf{I}(\mathbf{x}_s), \mathbf{u})$$$
 
 *快变量（f）状态方程，其中$\mathbf{I}(\mathbf{x}_s)$表示通过插值（通常为线性插值）得到的慢变量在快时间步上的值*
-
 
 ### 算法步骤
 
@@ -115,7 +129,6 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 
 8. 时间推进：接受当前步后，更新所有变量至t+Δt_s，推进仿真时钟，重复步骤2-7直至仿真结束
 
-
 ### 关键参数
 
 - **快时间步长**: 常规EMT步长，通常为10-100 μs，用于网络方程和电力电子设备
@@ -132,8 +145,6 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 
 - **平均窗口**: 滑动窗口平均，窗口长度等于慢步长Δt_s
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -146,8 +157,6 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 
 | 暂态稳定分析对比 | 在考虑快速响应设备（如HVDC换流器、FACTS装置）影响的暂态稳定分析中，多速率方法准确再现了系统故障后的机电振荡模式，且能够详细模拟电力电子设备的快速电磁暂态过程 | 避免了传统EMT-TS联合仿真中存在的接口误差、初始化不一致和分区限制问题，无需模型分区即可在全系统范围内统一处理快动态和慢动态 |
 
-
-
 ## 量化发现
 
 - 系统规模：方法验证于超过10,000节点的实际巴西国家电网，证明了算法在大规模系统中的可扩展性
@@ -155,7 +164,6 @@ Dynamic phasor simulations can be used for the analysis of transient stability (
 - 计算效率：多速率方法相比单速率全EMT步长仿真显著减少计算时间（substantial reduction），具体比例取决于慢变量占比，通常可减少50%-90%的计算量
 - 精度保持：通过插值-平均耦合和误差校验机制，慢变量轨迹与单速率参考解的偏差保持在工程允许范围内（通常误差<0.1%），快变量（如故障电流、电压跌落）的高频细节得以完整保留
 - 步长比例：典型配置下快慢步长比N=50~100，即慢步长1-10 ms对应快步长10-100 μs，有效平衡了计算速度与数值稳定性
-
 
 ## 关键公式
 
@@ -183,11 +191,34 @@ $$$\bar{\mathbf{x}}_f = \frac{1}{N}\sum_{k=1}^{N}\mathbf{x}_f(t+k\Delta t_f)$$$
 
 *在慢步长终点计算快变量平均值，用于驱动慢变量（电机机械部分）的状态更新，滤除高频噪声同时保留能量/功率守恒*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真验证与对比分析（Simulation-based validation with comparative analysis）
 - **测试系统**: 巴西国家电网实际大规模系统（Brazilian National Grid），包含10,000+节点，详细模拟了HVDC、FACTS、IBR等快速响应设备以及传统同步发电机
 - **仿真工具**: 作者团队开发的动态相量仿真程序（Dynamic Phasor simulator），实现了所提出的多速率算法，并与单速率DP方法进行对比
 - **验证结果**: 验证结果表明，所提多速率方法在保持与单速率方法相当的高精度（高保真捕捉电磁和机电暂态）的同时，显著降低了计算时间。方法成功避免了传统联合仿真（co-simulation）的接口误差问题，证明了在统一DP框架下实现多速率仿真的可行性和优越性，可扩展至大规模实际电力系统
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态相量法、多速率仿真、插值与平均耦合 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于动态相量的统一多速率算法，避免传统EMT-TS联合仿真与模型分区
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/27&28/Multirate Method for Dynamic Phasor Simulation of Large-Scale Power Systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

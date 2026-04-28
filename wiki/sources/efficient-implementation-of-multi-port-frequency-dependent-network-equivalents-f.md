@@ -3,7 +3,7 @@ title: "Efficient Implementation of Multi-Port Frequency Dependent Network Equiv
 type: source
 authors: ['Claudio Saldaña']
 year: 2022
-journal: "Electric Power Systems Research, 212 (2022) 108432. doi:10.1016/j.epsr.2022.108432"
+journal: "Electric Power Systems Research"
 tags: ['frequency-dependent', 'network-equivalent']
 created: "2026-04-13"
 sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent network equivalents for electromagnetic t_Saldaña和Calzolari_2022.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 
 ## 摘要
 
-0378-7796/© 2022 Elsevier B.V. All rights reserved. Efficient Implementation of Multi-Port Frequency Dependent Network Equivalents for Electromagnetic Transient Studies using Norton Power system electromagnetic transient studies require that a small part of the electrical network be modelled in detail. The rest of the system is represented by a network equivalent taking into account the frequency depen­
+本文提出一种基于诺顿等效电路的高阶有理函数实现方法，用于构建多端口频变网络等值(FDNE)。首先通过EMTP-ATP的谐波频率扫描(HFS)获取外部系统的频域导纳矩阵，并创新性地动态更新JMARTI线路模型的模态变换矩阵参数(FREQTRAN)以消除固定频率近似误差。随后利用矢量拟合(Matrix Fitting Toolbox)将各元素拟合为极点-留数形式的有理函数并强制保证无源性。基于导纳矩阵的对称性将其综合为多端型等值电路，将每个支路的有理函数部分分式直接转换为时域微分方程。应用梯形积分法则离散化，得到并联电导与历史电流源组合的诺顿等效电路。该方法通过引入辅助状态变量将复极点对应的二阶微分方程降阶为一阶系统，无需对复极点进行特殊处理，显著减少了导纳支路数量，并通过MODELS本地模型、TACS Type-69设备及MODELS外部子模型三种方式在EMTP-ATP中实现自动化代码生成与集成。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT研究通常只把开关、变压器、线路等“研究区”详细建模，但外部大电网仍会通过边界母线影响暂态过程；若完整建模，数据准备和计算时间都很重。因此本文研究对象是从边界端口看到的外部系统频变导纳矩阵及其时域等值，即多端口FDNE。难点在于外部网络含频变线路、变压器和多相耦合，导纳矩阵元素随频率变化且可能需要高阶有理函数表示；如果把拟合结果再逼近成某种固定电路结构，往往会引入大量支路。本文贡献不是提出新的矢量拟合理论，而是给出一条工程实现链：用EMTP-ATP频率扫描得到外部区导纳矩阵，将矩阵综合为多端π等值，对每个支路的极点-留数分式直接离散为诺顿支路，从而在EMTP类程序中实现高阶FDNE，并比较三种集成方式。
+
+### 2. 模型、算法与实现技术
+
+方法的接口量是边界端口电压与注入电流；输入是外部区在多个频率点的导纳矩阵Y(ω)，输出是在时域EMT步进中可更新的诺顿等效：并联电导加历史电流源。计算流程先用EMTP-ATP的HFS做频率扫描：在边界相端口施加已知正弦源，通过相量解得到导纳矩阵各列。随后将Y(ω)拟合为极点-留数形式，并按多端π网络关系把矩阵元素转成支路导纳，例如自支路由相关矩阵元素求和，互支路取负的互导纳。每个支路的有理函数分式I(s)=[Σ ak/(s-ck)]V(s)被变换为时域微分方程；实极点对应一阶方程，共轭复极点可合并为二阶方程，再通过状态变量写成一阶递推。对这些方程应用梯形积分后，每个分式在当前步表现为I(t)=G·V(t)+hist(t-Δt)。把同一支路所有分式的G和历史项相加，即得到可嵌入节点方程的诺顿支路。实现层面，论文给出MODELS本地模型、TACS Type-69设备和MODELS外部子模型三种EMTP-ATP集成方式。
+
+### 3. 验证、优势与不足
+
+作者用电力公司500 kV输电系统进行验证，将完整系统表示作为基线，并把外部区替换为FDNE后比较开关暂态波形和处理时间。页面抽取信息显示，算例包括500 kV线路空载合闸和单相变压器组励磁涌流；工具链包括EMTP-ATP的HFS、MODELS、TACS Type-69，MATLAB Matrix Fitting Toolbox以及Fortran代码生成。指标包括频域导纳拟合误差、时域电压或涌流波形一致性、CPU运行时间。抽取结果给出的量化例子包括：5–5000 Hz范围内导纳矩阵最大绝对拟合误差为8.805×10^-5 mho；Type-69在变压器合闸算例中耗时为完整系统的29%，外部子模型在线路合闸算例中为45.7%；MODELS本地解释执行反而远慢于完整模型。优势主要体现在高阶有理FDNE可直接作为诺顿支路进入EMTP节点方程，并避免把每个极点展开成大量传统电路元件。边界是：验证只覆盖给定500 kV系统、给定频率扫描范围、给定暂态事件和EMTP-ATP实现；未证明对其他网络拓扑、含电力电子控制的大规模外部区、故障暂态、实时仿真步长或更宽频带同样成立。
+
+### 4. 价值、认知与可复用场景
+
+这项工作有价值的认知在于：FDNE的关键不只是“拟合得准”，还在于拟合后的高阶有理模型能否以数值稳定且低开销的形式进入EMT求解器。论文把频域导纳矩阵、π型多端口综合、极点-留数微分方程和诺顿伴随模型串成可自动生成代码的流程，适合后续研究复用在外部电网等值、EMTP程序扩展、频变网络缩减和工程暂态算例加速中。它不适合被直接外推为通用降阶模型优于所有详细模型，也不能替代对目标系统的频率扫描、无源性检查和时域事件复核。
+
+### 证据边界
+
+- 原文摘要和引言明确说明：研究目标是把高阶有理FDNE以诺顿等效电路形式纳入EMTP类程序，并强调相比拟合特定电路结构可减少电导支路；这属于原文直接证据。
+- HFS频率扫描、JMARTI相关文件插入和Fortran自动生成流程在所给原文片段中有直接描述；关于动态更新FREQTRAN的完整细节需以论文后续方法段落或源PDF复核。
+- 导纳拟合误差8.805×10^-5 mho、Type-69耗时29%、外部子模型45.7%等数值来自当前页面抽取内容；在正式引用前应核对原文表格或图注。
+- 三种实现方式、500 kV电力公司系统、线路合闸与变压器励磁涌流属于页面抽取给出的验证范围；不能据此推出对所有开关、故障或电力电子主导系统有效。
+- 页面元数据只列出Claudio Saldaña，但原文首页显示作者为Claudio Saldaña和Graciela Calzolari；文献条目应修正作者信息后再入库。
+- 原文未在所给片段中报告实时仿真、不同积分步长敏感性、无源性校正失败情形或与其他FDNE实现框架的系统对比，这些属于证据缺口。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于诺顿等效电路的高阶有理模型实现方法，显著减少导纳支路数量
-- 开发动态更新JMARTI线路模型模态变换矩阵的频率扫描方法，消除近似误差
-- 将有理函数部分分式直接转化为时域微分方程并梯形积分，避免复极点特殊处理
-
+- 问题定位：本文提出一种基于诺顿等效电路的高阶有理函数实现方法，用于构建多端口频变网络等值(FDNE)。首先通过EMTP-ATP的谐波频率扫描(HFS)获取外部系统的频域导纳矩阵，并创新性地动态更新JMARTI线路模型的模态变换矩阵参数(FREQTRAN)以消除固定频率近似误差。
+- 方法机制：本文提出一种基于诺顿等效电路的高阶有理函数实现方法，用于构建多端口频变网络等值(FDNE)。首先通过EMTP-ATP的谐波频率扫描(HFS)获取外部系统的频域导纳矩阵，并创新性地动态更新JMARTI线路模型的模态变换矩阵参数(FREQTRAN)以消除固定频率近似误差。随后利用矢量拟合(Matrix Fitting Toolbox)将各元素拟合为极点-留数形式的有理函数并强制保证无源性。
+- 验证证据：全系统详细模型(FSR)与三种FDNE实现方案的时域波形对比分析，包含电压暂态、励磁涌流及CPU运行时间统计；乌拉圭国家电网500 kV辐射状输电系统，以BUS5为边界节点，外部区域包含水电厂、火电厂、多组自耦变压器及长距离换位线路；
+- 量化与结论：导纳矩阵拟合最大绝对误差为$8.805 \times 10^{-5}$ mho，在5~5000 Hz频段内实现极高精度逼近。；Type-69设备实现方案在变压器合闸仿真中计算耗时仅为完整系统模型(FSR)的29%，计算效率提升约3.45倍。；外部子模型(Foreign Submodel)实现方案在线路合闸仿真中计算耗时为FSR的45.7%，效率提升约2.19倍。；
+- 适用边界：适用于理解本文 Efficient Implementation of Multi-Port Frequency Dependent Network Equivalents for Electromagnetic Transient Studies using Norton Equivalent Circuits （2022） 在当前页面。
 
 ## 使用的方法
-
 
 - [[矩阵拟合-矢量拟合|矩阵拟合/矢量拟合]]
 - [[诺顿等效电路|诺顿等效电路]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 - [[有理函数极点-留数逼近|有理函数极点-留数逼近]]
 - [[多端π型等值电路综合|多端π型等值电路综合]]
 
-
 ## 涉及的模型
-
 
 - [[同步发电机次暂态阻抗模型|同步发电机次暂态阻抗模型]]
 - [[变压器漏抗模型|变压器漏抗模型]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 - [[jmarti频变输电线路模型|JMARTI频变输电线路模型]]
 - [[fdne-model|FDNE]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频变网络等值|频变网络等值]]
@@ -58,15 +82,11 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 - [[开关暂态分析|开关暂态分析]]
 - [[emtp程序二次开发|EMTP程序二次开发]]
 
-
 ## 主要发现
-
 
 - 在500kV系统开关暂态仿真中，该等值模型能高精度复现外部网络动态响应
 - 相比完整系统模型与传统电路拟合方法，该实现方案显著降低了计算处理时间
 - 无需特殊处理复极点即可保证模型无源性，简化了EMTP程序实现流程
-
-
 
 ## 方法细节
 
@@ -76,31 +96,25 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 
 ### 数学公式
 
-
 **公式1**: $$$y_{ii,\pi} = \sum_{j=1}^N Y_{ij,fit}, \quad y_{ij,\pi} = -Y_{ij,fit}$$$
 
 *多端$\pi$型等值电路支路导纳计算公式，利用拟合后的导纳矩阵元素合成自导纳与互导纳*
-
 
 **公式2**: $$$I(s) = \left( \sum_k \frac{a_k}{s - c_k} \right) V(s)$$$
 
 *频域中支路电流与电压的极点-留数有理函数关系式*
 
-
 **公式3**: $$$I_i(t) = \text{hist}_i(t-\Delta t) + G_i V(t)$$$
 
 *实极点部分分式经梯形积分离散化后的时域诺顿等效形式*
-
 
 **公式4**: $$$\frac{d^2 I_j(t)}{dt^2} + P\frac{dI_j(t)}{dt} + QI_j(t) = M\frac{dV(t)}{dt} + NV(t)$$$
 
 *共轭复极点对应的二阶时域微分方程*
 
-
 **公式5**: $$$I_j(t) = \text{hist}_j(t-\Delta t) + G_j V(t)$$$
 
 *复极点降阶为一阶系统后离散化的诺顿等效形式，包含历史项与等效电导*
-
 
 ### 算法步骤
 
@@ -120,7 +134,6 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 
 8. 8. EMTP-ATP集成：通过$INCLUDE命令将生成的模型代码和电导参数嵌入仿真算例，在INIT阶段初始化状态变量，在EXEC阶段每个时间步更新历史电流源并输出至Type-60受控源。
 
-
 ### 关键参数
 
 - **frequency_range**: [5.0, 5000.0] Hz
@@ -137,8 +150,6 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 
 - **integration_method**: 梯形积分法 (Trapezoidal Rule)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -151,8 +162,6 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 
 | 425/425/140 MVA单相变压器组励磁涌流 | 考虑铁芯磁滞特性(Type-96非线性元件)及±100%、0%剩磁。A相电压过零时刻三相同时合闸。FDNE计算的A相涌流波形与FSR一致，但因FDNE准确计及了线路模态矩阵的频变特性，涌流衰减速度略快于使用固定模态矩阵的FSR。 | Type-69设备实现耗时仅为FSR的29%，外部子模型为35.4%，MODELS本地模型耗时为FSR的54倍。 |
 
-
-
 ## 量化发现
 
 - 导纳矩阵拟合最大绝对误差为$8.805 \times 10^{-5}$ mho，在5~5000 Hz频段内实现极高精度逼近。
@@ -161,7 +170,6 @@ sources: ["EMT_Doc/15/Efficient implementation of multi-port frequency dependent
 - MODELS本地模型因解释型执行开销，计算耗时高达FSR的54~56倍，不适用于大规模极点模型。
 - 离散换位线路模型与连续换位模型对比表明，全对称假设会导致高频段导纳矩阵响应失真，必须采用相坐标逐列扫描。
 - FDNE实现无需特殊处理复极点，通过状态变量降阶将二阶ODE转化为一阶系统，单支路仅需计算1个等效电导，大幅降低节点导纳矩阵规模。
-
 
 ## 关键公式
 
@@ -183,11 +191,34 @@ $$$G_j = \frac{h(M+\beta_3)}{1-h\beta_2}, \quad \beta_1 = \frac{1-hP}{1+hP}, \be
 
 *处理共轭复极点时，通过引入辅助状态变量避免复数运算，直接计算实数电导与历史项系数*
 
-
-
 ## 验证详情
 
 - **验证方式**: 全系统详细模型(FSR)与三种FDNE实现方案的时域波形对比分析，包含电压暂态、励磁涌流及CPU运行时间统计
 - **测试系统**: 乌拉圭国家电网500 kV辐射状输电系统，以BUS5为边界节点，外部区域包含水电厂、火电厂、多组自耦变压器及长距离换位线路
 - **仿真工具**: EMTP-ATP (HFS模块、MODELS语言、TACS Type-69设备)、MATLAB (Matrix Fitting Toolbox)、Fortran 2003/77 (自动化代码生成)
 - **验证结果**: FDNE在5~5000 Hz频段内导纳拟合误差低于$10^{-4}$ mho，时域暂态波形与完整系统高度一致。Type-69与外部子模型实现方案在保证精度的前提下，将计算时间压缩至完整系统的29%~46%，验证了基于诺顿等效的高阶有理函数实现方法在工程级EMT仿真中的高效性与实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Efficient Implementation of Multi-Port Frequency Dependent Network Equivalents for Electromagnetic Transient Studies using Norton Equivalent Circuits`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 矩阵拟合-矢量拟合、诺顿等效电路、梯形积分法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于诺顿等效电路的高阶有理模型实现方法，显著减少导纳支路数量
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/15/Efficient implementation of multi-port frequency dependent network equivalents for electromagnetic t_Saldaña和Calzolari_2022.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

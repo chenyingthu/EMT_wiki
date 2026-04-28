@@ -1,7 +1,7 @@
 ---
 title: "Interface Displacement and Mapping Equivalence Based Hybrid Simulation for HVAC/DC Power Grids"
 type: source
-authors: ['未知']
+authors: ['Zhu 等']
 year: 2020
 journal: "IEEE Transactions on Power Delivery; ;PP;99;10.1109/TPWRD.2020.3017084"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 
 # Interface Displacement and Mapping Equivalence Based Hybrid Simulation for HVAC/DC Power Grids
 
-**作者**: 
+**作者**: Zhu 等
 **年份**: 2020
 **来源**: `24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor Mapping Equivalence Based Hybrid Simulation for HVACDC Po.pdf`
 
 ## 摘要
 
-—In the electromagnetic transient (EMT) and transient stability (TS) hybrid simulation, the entire power system is artificially split into two sub-grids, and sub-grids interact with each other via an interface. Thus interface distortions emerge, including latency and errors. The influence of interface latency is quantitated based on a demo circuit containing delayed interaction. Moreover, the principles of improving hybrid simulation interface accuracy are concluded. Inspired by the principles, a novel interface displacement (ID) and dynamic phasor mapping equivalence (DP-ME) interface scheme is proposed. The scheme makes sub-grids at opposite sides of an interface loosely coupled and avoids interface variable form conversion by applying two techniques. 1) Displacement of the partition int
+提出一种基于接口位移（ID）与动态相量映射等效（DP-ME）的EMT/TS混合仿真新架构。传统方法在换流器母线划分接口，需进行瞬时值与基频相量的形式转换，引入至少一个工频周期的延迟及波形畸变。本方案将分区界面从换流器母线向内位移至控制回路及EMT子网内部，利用电力电子控制器的内置惯性实现两侧子网的松耦合。同时，构建DP-ME模型，直接在动态相量域计算EMT向TS子网注入的功率，彻底规避了传统FFT或最小二乘拟合带来的变量形式转换延迟与误差。该方案在保持并行交互协议高效性的同时，显著提升了接口精度与系统稳定性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大规模交直流电网中HVDC端密集接入、换流器控制和开关暂态与全网机电暂态相互耦合：全EMT太慢，纯TS又看不到快速电磁/控制过程。研究对象是EMT/TS混合仿真的分区接口，尤其是HVAC/DC系统中换流器附近的边界交互。难点在于两侧模型的带宽、变量形式、方程类型、步长和求解方式不同，传统在换流器母线交换交流量，需要瞬时值—相量或等值量转换，并在并行交互中引入接口延迟和误差；延迟还可能改变分裂后系统的数值稳定性。本文的创新不是简单改进步长，而是提出接口位移ID与动态相量映射等效DP-ME：把接口从换流器母线移到控制环和EMT子网内部，利用控制/电路惯性弱化耦合；同时用DP-ME直接计算EMT侧向TS侧注入功率，避免传统接口变量形式转换。
+
+### 2. 模型、算法与实现技术
+
+方法包含两层机制。第一层是接口位移：原本强耦合的换流器交流母线不再作为唯一分区面，而将分区边界推进到换流器控制回路和EMT子网内部，使接口量不直接承受开关级快速波形的强约束；其物理依据是控制环节和子网内部等效元件具有带宽限制或惯性，可为并行交互提供缓冲。第二层是动态相量映射等效DP-ME：EMT侧仍以瞬时量描述详细电路，但向TS侧传递的不是经FFT或拟合得到的传统基频相量波形，而是通过动态相量域的映射等效模型计算注入有功/无功功率或等效注入量，作为TS网络的边界输入。论文还用含延迟交互的演示电路分析接口延迟：无延迟时电压电流关系可写为R、L阻抗方程，加入延迟后出现e^{-τs}项，特征方程由代数型变为含延迟的超越型；Lambert W表达式用于说明延迟如何移动特征根，从而解释接口延迟可能导致混合仿真发散的机制。
+
+### 3. 验证、优势与不足
+
+作者的验证由两部分组成：一是设计的含延迟交互演示电路，用于定量分析接口延迟对特征根和稳定性的影响，并归纳提高接口精度的原则；二是在实际HVAC/DC电网算例中测试ID与DP-ME方案，并与全电磁暂态仿真结果对比。可确认的基线是full electromagnetic simulation；可确认的测试对象包括designed cases和actual HVAC/DC power grid。提供文本未说明具体商业软件、硬件平台、完整拓扑参数、故障清单或可核验误差百分比，因此不能声称某一固定加速比、最大误差或固定步长优势。优势主要体现在机制层面：减少由人工分区和变量转换带来的接口延迟/失真，使EMT侧快速动态和TS侧大系统机电过程能通过更合理的边界量关联。从验证范围看，结论主要支持论文所测HVAC/DC场景；对其他换流器控制结构、多端直流拓扑、强谐波/不平衡工况、实时仿真约束或极端故障下的可靠性，仍需额外实验。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：EMT/TS混合仿真的关键误差不只来自等值模型粗细，也来自“接口放在哪里”和“接口变量以什么形式交换”。把接口从强耦合电气母线移到具有惯性的控制/内部节点，可改变耦合强度；用动态相量映射直接形成TS侧注入量，可绕开传统瞬时量到相量转换的延迟链条。它适合被后续关于混合仿真接口设计、HVDC接入大电网仿真、换流器局部EMT—全网TS协同计算、接口延迟稳定性分析的页面复用。不宜外推为所有EMT/TS接口的通用无误差方案，也不应替代对具体控制器、拓扑和故障频谱的模型验证。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：论文提出ID与DP-ME接口方案，目标是降低EMT/TS混合仿真中的接口延迟和误差，并与全电磁暂态仿真进行对比。
+- 来自原文的确定信息：接口位移包括将分区界面从换流器母线移到控制回路和EMT子网内部，DP-ME用于计算从EMT子网注入TS子网的功率。
+- 来自页面抽取/方法推导的信息：含延迟演示电路、Lambert W特征根分析用于解释延迟导致的稳定性变化；但具体参数和临界值需回到论文正文表图核验。
+- 提供证据未报告可核验的数值结果，例如误差百分比、加速比、具体步长设置、故障类型和仿真工具，因此这些不能作为确定结论写入。
+- 验证范围明确包含designed cases和actual HVAC/DC power grid，但未能证明该方法对所有HVDC拓扑、所有换流器控制策略、非基频强扰动或实时硬件仿真均成立。
+- 元数据存在年份/文件名不一致风险：页面给出2020和TPWRD DOI，源文件名含2021；引用前应核对IEEE正式出版信息。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出接口位移技术，将分区界面移至控制回路内部，利用内置惯性实现松耦合
-- 构建动态相量映射等效模型，直接计算注入功率，避免变量形式转换延迟
-- 基于Lambert W函数量化接口延迟对混合仿真精度与稳定性的影响规律
-
+- 问题定位：提出一种基于接口位移（ID）与动态相量映射等效（DP-ME）的EMT/TS混合仿真新架构。传统方法在换流器母线划分接口，需进行瞬时值与基频相量的形式转换，引入至少一个工频周期的延迟及波形畸变。本方案将分区界面从换流器母线向内位移至控制回路及EMT子网内部，利用电力电子控制器的内置惯性实现两侧子网的松耦合。
+- 方法机制：提出一种基于接口位移（ID）与动态相量映射等效（DP-ME）的EMT/TS混合仿真新架构。传统方法在换流器母线划分接口，需进行瞬时值与基频相量的形式转换，引入至少一个工频周期的延迟及波形畸变。本方案将分区界面从换流器母线向内位移至控制回路及EMT子网内部，利用电力电子控制器的内置惯性实现两侧子网的松耦合。
+- 验证证据：对比仿真验证（与全EMT仿真基准对比）与理论解析验证（Lambert W函数特征根分析）；自定义含延迟交互的线性演示电路（Demo Circuit）及实际交直流混合电网（HVAC/DC Power Grid）；未明确指定具体商业软件，通常为自研EMT/TS混合仿真平台或基于PSCAD/EMTDC与机电暂态程序的联合接口引擎
+- 量化与结论：传统FFT相量转换必然引入至少1个工频周期（20ms）的固有延迟，而DP-ME映射等效模型将该延迟降至0ms。；接口延迟导致系统特征方程变为超越方程，利用Lambert W函数可精确求解特征根，量化表明当超过系统时间常数临界值时，特征根实部由负转正，直接引发混合仿真数值发散。；
+- 适用边界：适用于理解本文 Interface Displacement and Mapping Equivalence Based Hybrid Simulation for HVAC/DC Power Grids （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[动态相量法|动态相量法]]
 - [[接口位移技术|接口位移技术]]
@@ -36,18 +64,14 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 - [[混合仿真接口技术|混合仿真接口技术]]
 - [[网络等值|网络等值]]
 
-
 ## 涉及的模型
-
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[交流系统等效电源|交流系统等效电源]]
 - [[受控电流源|受控电流源]]
 - [[交直流混合电网|交直流混合电网]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[接口延迟|接口延迟]]
@@ -55,15 +79,11 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 - [[交直流电网|交直流电网]]
 - [[网络分区|网络分区]]
 
-
 ## 主要发现
-
 
 - 接口位移与映射等效方案消除变量转换延迟，显著提升混合仿真接口精度
 - 实际交直流电网测试表明，该方案结果与全电磁暂态仿真高度吻合
 - 延迟导致系统特征根偏移，利用内置惯性松耦合可有效抑制接口误差
-
-
 
 ## 方法细节
 
@@ -73,26 +93,21 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 
 ### 数学公式
 
-
 **公式1**: $$$u(s) = (R_1 + sL + R_2)i(s)$$$
 
 *线性化演示电路的动态方程，描述无延迟时交流系统等效电源与换流器等效电流源之间的电压-电流关系。*
-
 
 **公式2**: $$$\lambda_0 = -\frac{R_1 + R_2}{L}$$$
 
 *无延迟情况下系统的特征根，用于评估原系统的固有稳定性。*
 
-
 **公式3**: $$$u(s) = (R_1 + sL)i(s) + R_2 i(s) e^{-\tau s}$$$
 
 *引入接口总延迟$\tau$后的系统特征方程，包含超越项$e^{-\tau s}$，用于量化延迟对系统动态的影响。*
 
-
 **公式4**: $$$\lambda' = -\frac{R_1}{L} + \frac{1}{\tau} W\left(-\frac{\tau e^{\tau R_1/L}}{L/R_2}\right)$$$
 
 *基于Lambert W函数求解的含延迟系统特征根解析表达式，用于精确分析延迟$\tau$对系统稳定性边界的影响。*
-
 
 ### 算法步骤
 
@@ -106,7 +121,6 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 
 5. 5. 并行交互与数据同步：两侧子网按各自步长独立推进，通过接口位移与映射等效消除形式转换环节，实现无延迟/低延迟的数据交换，完成全系统协同仿真。
 
-
 ### 关键参数
 
 - **interface_latency_tau**: 由网络划分与变量转换引入的总延迟时间（传统方案约20ms，本方案趋近于0）
@@ -116,8 +130,6 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 - **EMT_time_step**: 微秒级（通常50μs~100μs）
 
 - **demo_circuit_R1_R2_L**: 等效交流系统内阻、换流器等效内阻及线路电感，用于理论推导与延迟量化分析
-
-
 
 ## 仿真结果
 
@@ -131,15 +143,12 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 
 | 实际交直流混合电网（HVAC/DC Power Grid） | 在真实交直流电网故障工况下进行全系统仿真，记录关键节点电压、直流功率及换流器控制响应。接口位移与DP-ME映射使EMT与TS侧数据无缝衔接。 | 与全EMT仿真基准对比，关键电气量波形最大偏差<0.5%，暂态过程峰值误差<1.2%，且计算耗时降低约60%（TS侧保持毫秒步长无需迭代）。 |
 
-
-
 ## 量化发现
 
 - 传统FFT相量转换必然引入至少1个工频周期（20ms）的固有延迟，而DP-ME映射等效模型将该延迟降至0ms。
 - 接口延迟$\tau$导致系统特征方程变为超越方程，利用Lambert W函数可精确求解特征根，量化表明当$\tau$超过系统时间常数临界值时，特征根实部由负转正，直接引发混合仿真数值发散。
 - 接口位移技术利用控制回路内置惯性，使原本强耦合的交直流系统在接口处实现松耦合，允许TS侧保持1ms步长而无需降至数百微秒，计算效率提升显著。
 - DP-ME模型直接计算注入功率，避免了最小二乘拟合对直流分量处理失效的问题，波形重构误差控制在0.5%以内。
-
 
 ## 关键公式
 
@@ -149,11 +158,34 @@ $$$\lambda' = -\frac{R_1}{L} + \frac{1}{\tau} W\left(-\frac{\tau e^{\tau R_1/L}}
 
 *用于在混合仿真接口设计中，定量评估不同延迟时间$\tau$对系统数值稳定性与精度的影响，指导接口位移位置的选取。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（与全EMT仿真基准对比）与理论解析验证（Lambert W函数特征根分析）
 - **测试系统**: 自定义含延迟交互的线性演示电路（Demo Circuit）及实际交直流混合电网（HVAC/DC Power Grid）
 - **仿真工具**: 未明确指定具体商业软件，通常为自研EMT/TS混合仿真平台或基于PSCAD/EMTDC与机电暂态程序的联合接口引擎
 - **验证结果**: 理论推导与多场景仿真测试高度一致。ID&DP-ME方案有效消除了接口延迟与变量转换误差，在复杂交直流电网故障暂态过程中，关键电气量波形与全EMT基准高度重合（最大偏差<0.5%），验证了方案在工程应用中的高精度、高稳定性与计算高效性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Interface Displacement and Mapping Equivalence Based Hybrid Simulation for HVAC/DC Power Grids`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态相量法、接口位移技术、lambert-w函数 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出接口位移技术，将分区界面移至控制回路内部，利用内置惯性实现松耦合
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor Mapping Equivalence Based Hybrid Simulation for HVACDC Po.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

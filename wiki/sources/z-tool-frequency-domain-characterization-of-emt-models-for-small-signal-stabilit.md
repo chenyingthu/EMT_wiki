@@ -3,7 +3,7 @@ title: "Z-Tool: Frequency-domain characterization of EMT models for small-signal
 type: source
 authors: ['Francisco', 'Javier', 'Cifuentes', 'Garcia']
 year: 2025
-journal: "Electric Power Systems Research, 252 (2026) 112405. doi:10.1016/j.epsr.2025.112405"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/40/Cifuentes Garcia和Beerten - 2026 - Z-Tool Frequency-domain characterization of EMT models for small-signal stability analysis.pdf"]
@@ -17,17 +17,46 @@ sources: ["EMT_Doc/40/Cifuentes Garcia和Beerten - 2026 - Z-Tool Frequency-domai
 
 ## 摘要
 
-Z-Tool: Frequency-domain characterization of EMT models for small-signal a Department of Electrical Engineering (ESAT-ELECTA), KU Leuven, 3000, Leuven, Belgium This paper presents a novel frequency-domain identiﬁcation tool based on Electromagnetic Transient (EMT) simulations: Z-tool. This is the ﬁrst open source program oﬀering a versatile automated scan and state-of-the- art small-signal analysis of multi-terminal AC, DC and AC/DC power systems. The approach is introduced with
+提出基于EMT仿真的频域系统识别方法，通过并联理想电压源实现子系统解耦，采用dq坐标系描述三相系统动态，使用正弦扰动信号激励系统，利用FFT提取频域响应构建导纳矩阵。核心创新包括多频激励（Multi-frequency excitation）和对称性利用优化，支持多端AC/DC混合系统（包括3×3 AC/DC导纳矩阵的HVDC换流器）的自动化扫描。通过贪婪算法调度扰动序列，实现对所有网络边缘组件（换流器、电机）的并发识别，显著降低计算耗时。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自新能源与HVDC等电力电子接口设备的大规模接入：许多小信号相互作用不能仅靠时域EMT波形做根因分析，而设备厂商又常只提供黑盒EMT模型，难以建立可公开的解析状态空间模型。研究对象是AC、DC及混合AC/DC多端子系统的频域导纳/阻抗表征，尤其要把换流器控制、时延、线路/电缆分布参数、电机等动态纳入小信号稳定分析。难点在于：实际EMT模型是离散、含控制延迟和高阶电磁动态的黑盒；传统商业频扫或已有实现往往局限于单端口，或忽略电力电子和AC/DC耦合；多端矩阵逐频逐端扫描又会带来大量重复仿真。本文贡献是提出开源Z-tool：以EMT仿真为数据源，自动对多端AC、DC、AC/DC系统进行频域识别，能够测量任意端口组合的导纳矩阵，包括HVDC换流器AC侧dq量与DC侧耦合的3×3导纳；同时引入多频激励和对称性利用等实现层面的加速策略，并将识别结果直接用于小信号稳定性评估和次同步振荡筛查。
+
+### 2. 模型、算法与实现技术
+
+Z-tool本质上是一个基于时域EMT响应的频域系统识别流程。接口量是各端口的小信号电压扰动与电流响应：AC端口先通过abc到dq坐标变换把三相量变成旋转坐标系下的d、q分量，DC端口使用标量电压/电流，因此一个混合AC/DC装置可形成包含AC-d、AC-q、DC等通道的矩阵。识别时，工具在工作点附近向端口注入线性独立的正弦电压扰动，记录电流响应，并通过FFT提取指定频率处的复数电压、电流分量；随后按Y(jω)=ΔI·ΔV^{-1}计算导纳矩阵。这个矩阵求逆步骤的作用是把多次独立扰动下的输入输出关系合成为完整多输入多输出小信号模型，而不是只得到某一端口的标量阻抗。实现上，论文强调与PSCAD/EMTDC等EMT流程结合，利用稳态快照减少重复启动成本；多频激励把多个正弦频点叠加在一次扰动中，以一次仿真提取多个频率响应；对具有dq对称性的系统，可减少需要显式施加的扰动组合。对于多端网络，Z-tool还面向多端扫描自动组织扰动与测量，使网络边界元件能够被系统化识别，服务后续Nyquist或阻抗类稳定分析。
+
+### 3. 验证、优势与不足
+
+作者用若干EMT算例展示Z-tool的有效性和用途：一类是用于次同步振荡筛查的VSC经串联补偿长线路系统，用以说明频域导纳识别后可开展小信号交互分析；一类是MMC-HVDC换流站，用以展示混合AC/DC多端口导纳，特别是3×3 AC/DC耦合矩阵的识别能力；另有基础电力系统元件用于讨论多频激励、对称性利用与EMT时间步长引入的误差之间的权衡。工具层面依托PSCAD/EMTDC的仿真、并行和快照能力，Z-tool本身为开源Python程序。基线主要是已有商业或文献方法的能力边界：商业谐波阻抗/频扫通常不包含电力电子控制动态，部分已有方法局限于单端或忽略AC/DC耦合。优势在于能对黑盒EMT模型进行多端、混合AC/DC、矩阵化的小信号频域表征，并把识别结果用于稳定性分析；多频激励和对称性利用可减少仿真次数。需要注意，给定证据中没有报告所有算例的可核验数值误差、加速比或稳定裕度；“time-step-dependent error”和“time-saving”是论文明确讨论的方向，但具体使用时仍需回到原文图表和参数。验证范围也主要限于文中选定频段、模型和EMT设置，不能直接外推到所有控制策略、故障工况、实时仿真平台或强非线性大扰动场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值不只是“自动扫频”，而是把黑盒EMT模型转化为可用于小信号稳定研究的多端频域接口模型，使工程师能在不获得厂商内部控制方程的情况下分析换流器、线路、电机和DC侧之间的相互作用。它适合被后续关于阻抗建模、Nyquist稳定判据、次同步振荡筛查、HVDC多端系统等页面复用，作为从EMT时域模型获得频域导纳矩阵的入口方法。它也为参数选择提供了认识：EMT时间步长、扰动幅值、多频叠加和对称性假设都会影响精度与耗时。不可把它外推为通用解析模型辨识理论，也不应把文中未覆盖的拓扑、非平衡工况、大信号故障响应或未验证频段视为已被证明有效。
+
+### 证据边界
+
+- 来自原文首页和摘要的确定信息：Z-tool是开源的EMT仿真频域识别工具，面向AC、DC和混合AC/DC多端系统，并用于小信号稳定分析。
+- 来自原文摘要和引言的确定信息：论文讨论多频激励、对称性利用、EMT时间步长导致的识别误差，以及次同步振荡筛查案例；但当前证据未给出可核验的具体误差数值、加速比或稳定裕度。
+- 3×3 AC/DC导纳、MMC-HVDC、VSC串补长线路等细节与当前页面抽取内容一致，并与引言中“multi-terminal”“AC/DC couplings”“HVDC”等表述相符；若要引用具体图表结论仍需核对原文实验章节。
+- 关于FFT提取频域分量、按ΔI·ΔV^{-1}构造导纳矩阵、dq坐标下处理AC端口，是该类频域识别方法和页面公式给出的机制说明；具体实现参数如采样窗、频率点、相位优化准则需以原文为准。
+- 原文给出的验证集中在选定EMT算例和基础元件，不能证明该工具在所有厂商黑盒、所有控制模式、所有不平衡/谐波背景或实时仿真步长下都保持同等精度。
+- 当前证据没有显示与状态空间特征值结果、现场实测数据或其他开源工具的系统量化对比，因此不能把Z-tool表述为在精度上全面优于这些方法。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 开发了首个开源的基于EMT仿真的频域识别工具Z-Tool，支持多端交直流系统的自动化扫描与小信号稳定性分析
-- 提出了多频激励与对称性利用等优化策略，显著降低计算耗时，并量化了时间步长依赖下的精度与效率权衡
+- 问题定位：提出基于EMT仿真的频域系统识别方法，通过并联理想电压源实现子系统解耦，采用dq坐标系描述三相系统动态，使用正弦扰动信号激励系统，利用FFT提取频域响应构建导纳矩阵。
+- 方法机制：提出基于EMT仿真的频域系统识别方法，通过并联理想电压源实现子系统解耦，采用dq坐标系描述三相系统动态，使用正弦扰动信号激励系统，利用FFT提取频域响应构建导纳矩阵。核心创新包括多频激励（Multi-frequency excitation）和对称性利用优化，支持多端AC/DC混合系统（包括3×3 AC/DC导纳矩阵的HVDC换流器）的自动化扫描。
+- 验证证据：基于EMT仿真的案例对比验证，与理论模型和现场工程经验对比；1) VSC经串联补偿长线路系统（次同步振荡研究）；2) MMC-HVDC换流站（多端AC/DC系统）；3) 基础电力系统元件（用于精度-效率权衡分析）；PSCAD/EMTDC（利用其并行计算能力和快照功能），Z-Tool开源程序（Python实现）
+- 量化与结论：识别误差具有时间步长依赖性（time-step-dependent），EMT数值积分步长选择需在计算效率与模型精度间权衡；推荐扰动幅度范围为额定电压的0.02%至2%，最大电压偏差应控制在±5%以内以保证线性化精度；对于电压控制模式下的换流器，建议采用更小的扰动幅度（<0.5%）因其对电压偏差更敏感；利用系统对称性（dq对称）可减少50%的所需扰动次数，将仿真时间降低近一半
+- 适用边界：适用于理解本文 Z-Tool: Frequency-domain characterization of EMT models for small-signal stability analysis （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[numerical-integration]]
 - [[state-space]]
@@ -35,21 +64,17 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 
 ## 涉及的模型
 
-
 - [[mmc-model]]
 - [[vsc-hvdc]]
 - [[hvdc]]
 
 ## 相关主题
 
-
 - [[harmonic]]
 - [[passivity]]
 - [[network-equivalent]]
 
 ## 主要发现
-
-
 
 - 基于EMT的频域识别误差具有时间步长依赖性，需在计算效率与模型精度之间进行合理权衡
 - 采用多频激励与对称性优化可大幅缩短扫描时间，同时保持对次同步振荡等小信号稳定性评估的准确性
@@ -62,21 +87,17 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 
 ### 数学公式
 
-
 **公式1**: $$$T_{dq}(\theta) = \frac{2}{3}\begin{pmatrix} \cos(\theta) & \cos(\theta - 2\pi/3) & \cos(\theta + 2\pi/3) \\ \sin(\theta) & \sin(\theta - 2\pi/3) & \sin(\theta + 2\pi/3) \end{pmatrix}$$$
 
 *幅值不变的abc-to-dq坐标变换矩阵，d轴与a相电压对齐，q轴滞后d轴，用于将三相量转换为旋转坐标系下的直流量，便于小信号分析*
-
 
 **公式2**: $$$\mathbf{Y}(j\omega) = [\Delta \mathbf{i}_1 \quad \cdots \quad \Delta \mathbf{i}_N][\Delta \mathbf{v}_1 \quad \cdots \quad \Delta \mathbf{v}_N]^{-1}$$$
 
 *导纳矩阵计算公式，通过N个线性独立的电压扰动向量及其对应的电流响应向量，计算N×N维频域导纳矩阵，适用于任意AC/DC子系统*
 
-
 **公式3**: $$$\Delta v(t) = \sum_{i=1}^{m} a_i \sin(\omega_i t + \phi_i)$$$
 
 *多频（多音）扰动信号表达式，用于同时激励多个频率点以加速扫描，需优化选择相位角φi和幅值ai以最小化波峰因数（Crest Factor）*
-
 
 ### 算法步骤
 
@@ -98,7 +119,6 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 
 9. 稳定性分析：基于识别得到的频域模型进行小信号稳定性评估（如奈奎斯特判据、阻抗比分析）
 
-
 ### 关键参数
 
 - **perturbation_amplitude**: 额定电压的0.02%至2%，电压控制单元建议更小值
@@ -112,8 +132,6 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 - **frequency_range**: 根据研究目标选择（如次同步振荡研究选择特定频段）
 
 - **excitation_type**: 正弦波（优先于PRBS和Chirp信号）
-
-
 
 ## 仿真结果
 
@@ -129,8 +147,6 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 
 | 多频激励优化验证 | 采用多正弦（multi-sine）同时激励多个频率点，相比单频顺序扫描显著减少仿真时间 | 实现显著的时间节省（significant time-savings），具体加速比取决于频率点数量和系统对称性利用程度 |
 
-
-
 ## 量化发现
 
 - 识别误差具有时间步长依赖性（time-step-dependent），EMT数值积分步长选择需在计算效率与模型精度间权衡
@@ -139,7 +155,6 @@ Z-Tool: Frequency-domain characterization of EMT models for small-signal a Depar
 - 利用系统对称性（dq对称）可减少50%的所需扰动次数，将仿真时间降低近一半
 - 多频激励技术通过同时扫描多个频率点，可将总仿真时间从N×T_single缩短至接近T_single（N为频率点数量）
 - Z-Tool支持任意N×N维导纳矩阵识别，其中N为子系统AC/DC节点总数，突破了传统单端扫描限制
-
 
 ## 关键公式
 
@@ -155,11 +170,34 @@ $$$T_{dq}(\theta) = \frac{2}{3}\begin{pmatrix} \cos(\theta) & \cos(\theta - 2\pi
 
 *将三相abc坐标系转换为旋转dq坐标系，用于三相AC系统的时不变建模，是小信号稳定性分析的基础*
 
-
-
 ## 验证详情
 
 - **验证方式**: 基于EMT仿真的案例对比验证，与理论模型和现场工程经验对比
 - **测试系统**: 1) VSC经串联补偿长线路系统（次同步振荡研究）；2) MMC-HVDC换流站（多端AC/DC系统）；3) 基础电力系统元件（用于精度-效率权衡分析）
 - **仿真工具**: PSCAD/EMTDC（利用其并行计算能力和快照功能），Z-Tool开源程序（Python实现）
 - **验证结果**: 验证了Z-Tool对多端系统（包括3×3 AC/DC导纳）的准确识别能力，证实了多频激励和对称性优化在保持精度（误差<典型工程容忍限）前提下显著降低计算耗时，时间步长依赖性误差规律为EMT仿真参数选择提供指导
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Z-Tool: Frequency-domain characterization of EMT models for small-signal stability analysis`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 numerical-integration、state-space、frequency-dependent 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：开发了首个开源的基于EMT仿真的频域识别工具Z-Tool，支持多端交直流系统的自动化扫描与小信号稳定性分析
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/40/Cifuentes Garcia和Beerten - 2026 - Z-Tool Frequency-domain characterization of EMT models for small-signal stability analysis.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

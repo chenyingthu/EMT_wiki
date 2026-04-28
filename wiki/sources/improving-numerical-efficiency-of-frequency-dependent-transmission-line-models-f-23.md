@@ -3,7 +3,7 @@ title: "Improving numerical efficiency of frequency dependent transmission line 
 type: source
 authors: ['H.M.Jeewantha', 'De', 'Silva']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112328. doi:10.1016/j.epsr.2025.112328"
+journal: "Electric Power Systems Research"
 tags: ['frequency-dependent', 'transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency of frequency dependent transmission line models for EMT simulations.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 
 ## 摘要
 
-Improving numerical efficiency of frequency dependent transmission line This paper compares two model order reduction techniques for frequency dependent transmission line models to enhance numerical performance for large cable or overhead line systems. The Modal Truncation and Balanced Truncation methods are applied to reduce the order of propagation matrix. The simulation examples involving underground cable systems are presented for comparison. Time domain simulation results with linear termi­
+本文提出将模型降阶技术(MOR)应用于频变输电线路模型的传播矩阵A(ω)有理函数逼近，以解决多回路电缆系统中因过拟合导致的高阶数问题。方法基于通用线路模型(ULM)的两阶段拟合框架：首先计算模态延迟并独立拟合Amodes(ω)矩阵的各个模态，然后利用模态极点和延迟拟合相位A(ω)矩阵。针对降阶环节，比较了模态截断(MT)和平衡截断(BT)两种技术。MT通过残差/极点比筛选并迭代移除非主导极点；BT则通过求解Lyapunov方程获得可控性和可观性Gramian矩阵，基于Hankel特征值截断状态空间，保证降阶系统的渐近稳定性并提供先验误差界。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大型地下电缆、多回路线路和广域EMT建模：频变线路模型需要在每个时间步通过递归卷积计算传播矩阵A(ω)和特性导纳Yc(ω)的有理逼近，阶数越高，内存和计算负担越重，实时仿真还可能出现time step overshoot。研究对象不是整条线路的物理参数辨识，而是通用线路模型ULM中传播矩阵A(ω)的有理函数阶数。难点在于ULM通常先对模态A_modes(ω)用统一误差容差独立拟合，再用模态极点和延迟去拟合相域A(ω)；复杂电缆系统中某些模态会被过拟合，导致相域公共极点集合过大，并可能诱发无源性问题。本文贡献是把两类截断式模型降阶方法——Modal Truncation和Balanced Truncation——用于A(ω)传播函数降阶，并比较它们在地下电缆时域仿真中的适用性，而不是只依赖提高矢量拟合阶数来满足误差容差。
+
+### 2. 模型、算法与实现技术
+
+实现基础是频域有理逼近的频变线路模型。输入是线路/电缆频率响应，核心接口量是传播矩阵A(ω)；Yc(ω)也属于频变线路模型的拟合对象，但本文重点是降低A(ω)阶数。ULM流程先计算或确定模态延迟，对A_modes(ω)各模态用Vector Fitting等方法拟合为极点-留数形式；随后把模态极点及对应延迟作为相域A(ω)元素的公共候选极点集合，迭代到相域误差满足要求。MT的机制是在极点-留数表达中识别非主导项，原文给出的判据是||c_k||/|a_k|大于容差tol才保留；因此它直接作用于极点贡献大小，删除贡献小的极点后再检查拟合质量。BT则把有理函数转成状态空间系统，通过Lyapunov方程得到可达/可观Gramian，依据Hankel奇异值删除既难激励又难观测的状态；它的机制优势是从输入输出能量贡献而非单个极点幅值判断可删状态，并在标准BT理论下具有稳定性保持和先验误差界性质。
+
+### 3. 验证、优势与不足
+
+作者用地下电缆系统仿真例子比较MT和BT，并给出带线性端接的时域仿真结果；摘要和引言明确验证对象是地下电缆系统，目标指标是传播矩阵A(ω)降阶后对数值性能的影响，以及时域响应是否仍可接受。当前可见原文未报告可核验的运行时间、内存占用、阶数下降百分比或误差曲线数值，因此不能把“更快”量化为固定比例。基线主要是未降阶或常规ULM两阶段拟合得到的高阶A(ω)模型；方法优势在于减少递归卷积所需状态数，缓解复杂多回路电缆因模态过拟合带来的高阶相域函数，并可能降低过拟合相关无源性风险。边界是：验证集中在地下电缆和线性端接，未从给定文本看到对非线性终端、故障开关暂态、架空线大规模系统、不同土壤模型、实时硬件步长或严格无源性保持的系统性结果；BT的稳定性和误差界属于方法理论性质，不能自动等同于所有EMT场景下的电压电流误差保证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把频变线路模型的效率瓶颈定位到“传播矩阵公共极点集合被模态过拟合放大”，而不是泛泛归因于电缆模型复杂。它说明A(ω)拟合后还可以通过模型降阶再整理极点/状态，从而在保持可接受时域响应的前提下减少递归卷积负担。该页面适合被后续关于ULM实现、Vector Fitting后处理、实时EMT电缆建模、多回路互耦电缆模型压缩、BT/MT在电力系统宏模型中的应用页面复用。不适合外推为所有频变线路模型都能无损降阶，也不应据此断言BT一定优于MT；具体优劣需要看误差容差、状态实现、线路类型和时域测试场景。
+
+### 证据边界
+
+- 来自原文的确定信息：论文比较Modal Truncation和Balanced Truncation两种模型降阶方法，并将其用于频变输电线路模型传播矩阵A(ω)的阶数降低。
+- 来自原文的确定信息：背景模型是Universal Line Model一类宽频频变线路模型，A(ω)和Yc(ω)通过频域有理函数拟合，Vector Fitting被列为可用拟合技术。
+- 来自原文的确定信息：ULM中A(ω)拟合通常分两步，先拟合A_modes(ω)，再用模态极点和延迟拟合相域A(ω)；统一模态误差容差可能导致某些模态过拟合。
+- 来自原文的确定信息：MT在极点-留数形式下用||c_k||/|a_k|与tol比较来保留或删除项；BT基于Lyapunov方程、可达/可观Gramian和难以到达且难以观测的状态截断。
+- 不确定或缺失信息：给定原文片段未提供可核验的降阶后阶数、运行时间、内存节省、时域误差数值或图表数据，因此不能量化效率提升幅度。
+- 验证边界：摘要只说明有地下电缆系统仿真例子和线性端接时域结果；未见对非线性元件、故障工况、不同线路拓扑、无源性严格验证或实时硬件平台指标的完整证据。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出将模态截断与平衡截断技术应用于频变线路传播矩阵降阶
-- 设计基于残差极点比与汉克尔特征值的迭代筛选流程降低计算负担
-- 验证平衡截断法在保障系统渐近稳定与提供先验误差界方面的优势
-
+- 问题定位：本文提出将模型降阶技术(MOR)应用于频变输电线路模型的传播矩阵A(ω)有理函数逼近，以解决多回路电缆系统中因过拟合导致的高阶数问题。方法基于通用线路模型(ULM)的两阶段拟合框架：首先计算模态延迟并独立拟合Amodes(ω)矩阵的各个模态，然后利用模态极点和延迟拟合相位A(ω)矩阵。
+- 方法机制：本文提出将模型降阶技术(MOR)应用于频变输电线路模型的传播矩阵A(ω)有理函数逼近，以解决多回路电缆系统中因过拟合导致的高阶数问题。方法基于通用线路模型(ULM)的两阶段拟合框架：首先计算模态延迟并独立拟合Amodes(ω)矩阵的各个模态，然后利用模态极点和延迟拟合相位A(ω)矩阵。针对降阶环节，比较了模态截断(MT)和平衡截断(BT)两种技术。MT通过残差/极点比筛选并迭代移除非主导极点；
+- 验证证据：30km双回路三相地下电缆系统（扁平配置），包含导体、护套、铠装三层金属结构及三层绝缘介质，土壤电阻率100 Ohm.m；基于RTDS Technologies的仿真平台（作者所在单位），采用通用线路模型(ULM)框架，结合Vector Fitting进行有理函数逼近；
+- 量化与结论：ULM方法中单个模态的最大阶数限制为20个极点；相位A(ω)函数的最大允许拟合误差为0.5%；测试电缆系统包含4个不同的模态延迟组，延迟时间范围从0.240ms到1.195ms；原始模态传递函数阶数分别为18、8、18、18，总阶数达62阶
+- 适用边界：适用于理解本文 Improving numerical efficiency of frequency dependent transmission line models for EMT simulations （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[矢量拟合|矢量拟合]]
 - [[模态截断|模态截断]]
@@ -37,9 +65,7 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 - [[有理函数逼近|有理函数逼近]]
 - [[递归卷积|递归卷积]]
 
-
 ## 涉及的模型
-
 
 - [[频变输电线路模型|频变输电线路模型]]
 - [[通用线路模型|通用线路模型]]
@@ -47,9 +73,7 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 - [[多回路电缆系统|多回路电缆系统]]
 - [[传播矩阵|传播矩阵]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -58,15 +82,11 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 - [[广域建模|广域建模]]
 - [[数值效率优化|数值效率优化]]
 
-
 ## 主要发现
-
 
 - 模态截断法直接应用效果不佳需结合残差极点比迭代筛选满足精度
 - 平衡截断法能有效降低传播矩阵阶数同时严格保证降阶模型稳定性
 - 降阶后的频变线路模型在多回路电缆时域仿真中显著提升计算效率
-
-
 
 ## 方法细节
 
@@ -76,31 +96,25 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 
 ### 数学公式
 
-
 **公式1**: $$$f_{model_j}(s) = \sum_{k=1}^{N_j} \frac{c_{jk}e^{-s\tau_j}}{s-a_{jk}}$$$
 
 *第j个模态传播函数的有理函数逼近形式，其中$c_{jk}$为留数，$a_{jk}$为极点，$\tau_j$为模态延迟，$N_j$为模态阶数*
-
 
 **公式2**: $$$f(s)(p,q) = \sum_{j=1}^{M} \sum_{k=1}^{N_j} \frac{c_{jk}e^{-s\tau_j}}{s-a_{jk}}$$$
 
 *相位A(ω)矩阵元素(p,q)的有理函数逼近，M为模态数，利用模态极点和延迟构建相位函数*
 
-
 **公式3**: $$$\frac{\| c_k \|}{|a_k|} > \text{tol}$$$
 
 *模态截断(MT)的筛选条件，基于留数与极点幅值比，保留大于容差tol的项*
-
 
 **公式4**: $$$\left\| \frac{c_k}{s-a_k} + \frac{c_{k+1}}{s-a_{k+1}} \right\| > \text{tol}, \quad s_k = \text{imag}(a_k)$$$
 
 *针对复共轭极点对的联合筛选条件，确保复数模态对的完整性*
 
-
 **公式5**: $$$\tilde{A} = S^{-1}AS, \quad \tilde{B} = S^{-1}B, \quad \tilde{C} = CS$$$
 
 *平衡截断(BT)中的块对角变换，将状态空间系统(A,B,C)转换为实块对角形式以便截断*
-
 
 ### 算法步骤
 
@@ -124,7 +138,6 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 
 10. BT降阶步骤4：计算降阶后$\tilde{A}$矩阵的特征值作为新的极点集，结合原模态延迟重新拟合相位A(ω)矩阵，验证误差界
 
-
 ### 关键参数
 
 - **max_order_per_mode**: 20（每个模态或Yc(ω)函数的最大极点数限制）
@@ -145,8 +158,6 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 
 - **reduction_tolerance_factor**: k < 1.0（MT迭代中的容差缩减系数）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -156,8 +167,6 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 |---------|---------|----------|
 
 | 双回路30km三相地下电缆系统（扁平配置） | 系统包含4个模态延迟组，时间延迟分别为0.240345ms、0.296956ms、1.191263ms和1.194583ms，对应原始传递函数阶数分别为18、8、18和18。经MT和BT降阶后，相位A(ω)矩阵的阶数显著降低，同时保持拟合误差低于0.5%的约束条件。BT方法严格保证降阶后系统的渐近稳定性，并提供基于Hankel奇异值的先验误差界。 | 相比传统ULM方法中可能出现的过拟合（部分模态阶数高达18阶），降阶后的模型在保持相同精度（误差<0.5%）的前提下，显著降低了递归卷积算法的计算负担和内存需求，避免了因过拟合导致的无源性违反问题 |
-
-
 
 ## 量化发现
 
@@ -169,7 +178,6 @@ Improving numerical efficiency of frequency dependent transmission line This pap
 - MT方法通过残差/极点比迭代筛选，逐步降低容差直至相位误差满足$\varepsilon < \varepsilon_{max}$
 - BT方法通过计算Hankel奇异值，删除$\sigma_1 < \text{tol}$的弱可控且弱可观状态，保证降阶系统特征值实部为负（渐近稳定）
 - 降阶后的模型在多回路电缆时域仿真中显著减少计算时间，避免实时仿真中的时间步长越界（time step overshoot）
-
 
 ## 关键公式
 
@@ -191,11 +199,34 @@ $$$\tilde{A} = S^{-1}AS$$$
 
 *BT方法中将状态空间转换为平衡实现的核心变换，确保可控性和可观性Gramian矩阵相等且对角*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真对比分析
 - **测试系统**: 30km双回路三相地下电缆系统（扁平配置），包含导体、护套、铠装三层金属结构及三层绝缘介质，土壤电阻率100 Ohm.m
 - **仿真工具**: 基于RTDS Technologies的仿真平台（作者所在单位），采用通用线路模型(ULM)框架，结合Vector Fitting进行有理函数逼近
 - **验证结果**: 通过对比MT和BT两种降阶方法在处理高阶传播矩阵时的性能，验证了BT在保证系统渐近稳定性和提供先验误差界方面的理论优势。仿真表明，两种方法均能有效降低模型阶数，但MT需要迭代调整容差tol以满足0.5%的相位误差约束，而BT通过Hankel奇异值直接确定降阶阶数。降阶后的模型在保持时域仿真精度的同时，显著提升了多回路电缆系统的计算效率，解决了广域建模中因详细电缆模型导致的仿真速度下降问题。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Improving numerical efficiency of frequency dependent transmission line models for EMT simulations`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 矢量拟合、模态截断、平衡截断 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出将模态截断与平衡截断技术应用于频变线路传播矩阵降阶
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency of frequency dependent transmission line models for EMT simulations.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

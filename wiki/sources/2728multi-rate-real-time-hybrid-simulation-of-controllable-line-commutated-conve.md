@@ -1,15 +1,15 @@
 ---
-title: "27&28/Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC"
+title: "Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC"
 type: source
 authors: ['Guoqing Li']
 year: 2026
-journal: "International Journal of Electrical Power and Energy Systems, 176 (2026) 111707. doi:10.1016/j.ijepes.2026.111707"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC.pdf"]
 ---
 
-# 27&28/Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC
+# Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC
 
 **作者**: Guoqing Li
 **年份**: 2026
@@ -17,22 +17,46 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 
 ## 摘要
 
-Multi-rate real time hybrid simulation of controllable line commutated Guoqing Li a, Mingcheng Yang a,*, Wei Wang a, Guobin Jin a a Key Laboratory of Modern Power System Simulation and Control & Renewable Energy Technology, Ministry of Education, Northeast Electric Power University, Jilin b State Key Laboratory of Advanced Power Transmission Technology, China Electric Power Research Institute Co., Ltd., Beijing 102200, China This paper proposes a CPU-FPGA collaborative multi-rate real-time simul
+本文提出一种面向可控线路换相换流器高压直流（CLCC-HVDC）系统的CPU-FPGA协同多速率实时仿真框架。针对系统多时间尺度动态与复杂开关暂态耦合导致的计算瓶颈，采用异构任务分配策略：CPU子系统以20 μs步长处理低频动态（交直流电网、传统LCC及控制保护逻辑），FPGA子系统以2 μs步长高精度捕捉CLCC高频开关与换相暂态。为实现拓扑分割与数据交互，提出离散电感解耦法，利用梯形积分将电感等效为含历史电流源与受控电压源的对称子电路，作为CPU/FPGA天然解耦边界。针对FPGA端开关器件建模，构建关联离散电路（ADC）模型，通过分解CLCC运行区间求解各阀组电压/电流应力，基于最小虚拟损耗误差准则解析推导最优等效导纳，避免试错调参并维持系统导纳矩阵恒定，从而在保障数值稳定性的同时大幅降低硬件资源消耗与计算延迟。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的是CLCC-HVDC在控制保护验证、换相失败抑制策略测试和新型混合直流拓扑设计中的实时EMT仿真需求。研究对象不是一般HVDC，而是由晶闸管与IGBT等多器件混合构成的可控线路换相换流器高压直流系统，其开关动作、换相过程和交直流网络动态同时存在。难点在于：若全系统用CPU小步长求解，开关暂态会造成计算负担过重；若全放到FPGA，又会受到硬件资源、顺序EMT算法和模型修改需重新综合的限制。本文的贡献在于把CLCC局部高速暂态与外部电网/控制等较慢动态分配到FPGA和CPU，以电感离散等效作为跨平台解耦边界，并为FPGA端ADC开关模型提出解析参数选取方法，使导纳矩阵保持不变，同时避免依赖经验试错选择开关等效导纳。
+
+### 2. 模型、算法与实现技术
+
+方法由三部分组成。第一是CPU-FPGA多速率分区：CPU侧以较大步长承担交流系统、直流线路、传统LCC及控制保护等慢动态，FPGA侧以2 μs步长求解CLCC中高频开关和换相暂态。第二是离散电感解耦。原始电感满足Ldi/dt=uk-um，经梯形积分后写成含历史电流、电感历史电压和等效电阻Req=L/Δt的戴维南形式；这样电感两端的电压、电流成为CPU与FPGA之间交换的接口量，并通过延迟与受控电压源实现拓扑切分。第三是ADC开关建模与参数优选。开关导通/关断分别用小电感和小电容相关离散电路表示，并用LswCsw=(Δt)^2约束保持节点导纳矩阵恒定。作者进一步把CLCC运行划分为稳态导通、换相和主动关断等区间，求解各阀组电压/电流应力，再按最小虚拟损耗误差准则得到近似最优等效导纳Gsw≈Irate/Vrate。其机制是用可解析的额定应力替代反复调参，从而降低FPGA求解中的矩阵更新和资源开销。
+
+### 3. 验证、优势与不足
+
+作者采用实时硬件平台与离线仿真对比验证。测试对象为12脉波CLCC-HVDC系统，包含整流侧交流电网、传统LCC、直流线路、CLCC逆变器和逆变侧交流电网。工具和平台包括OPAL-RT OP5600/OP5607、RT-LAB、Simulink/SimPowerSystems以及Xilinx FPGA综合环境。验证指标主要包括FPGA实时步长、波形误差、计算时间和解耦电感频域误差：原文摘要报告FPGA平台可用2 μs步长运行，电压NRMSE小于7%，相对CPU-only离线仿真计算时间降低约77%；页面抽取还给出0.5 mH离散电感在0–5000 Hz范围内最大相对阻抗误差为3.3%。这些结果支持本文方法在目标系统中兼顾换相细节捕捉、实时性和接口稳定性。但从验证范围看，结论主要限于该12脉波算例、所选步长、OPAL-RT/Xilinx硬件和文中工况；未见与其他多速率接口方法、其他ADC参数优化准则、不同CLCC拓扑规模或更宽频段故障集的系统比较。因此不能直接推出该框架在所有HVDC拓扑、所有控制策略或更高速开关器件上同样成立。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把“混合换流器EMT实时仿真难”具体拆成两个可工程化处理的问题：一是如何在CPU与FPGA之间找到数值稳定的物理接口，二是如何让FPGA开关模型既保持矩阵恒定又具备可解释的参数来源。它适合作为后续研究中CLCC-HVDC实时仿真、CPU-FPGA异构分区、多速率接口、电感解耦和ADC开关参数设计的入口参考，也可为HIL控制器测试和混合HVDC保护逻辑验证提供实现思路。它不适合被外推为通用的所有电力电子系统最优实时仿真方案；若拓扑、电感接口位置、频率关注范围、FPGA资源或控制结构改变，仍需重新验证接口误差、导纳参数和实时调度裕度。
+
+### 证据边界
+
+- 原文明确报告的核心量化结果包括FPGA 2 μs步长、电压NRMSE小于7%、相对CPU-only离线仿真计算时间降低约77%；这些可作为本文验证结论的主要证据。
+- 12脉波CLCC-HVDC测试系统、OPAL-RT OP5600/OP5607、RT-LAB、Simulink/SimPowerSystems和Xilinx环境来自原文/抽取文本，可用于限定适用平台与算例范围。
+- 离散电感0–5000 Hz最大相对阻抗误差3.3%来自当前页面抽取内容；若用于严格引用，应回查论文对应图表或表格确认。
+- CPU侧20 μs步长、FPGA侧2 μs步长和0.5 mH解耦电感为页面抽取的关键参数；不同步长或接口电感下的稳定性不能据此直接保证。
+- ADC等效导纳Gsw≈Irate/Vrate的解释来自文中最小损耗误差准则和方法推断；页面未给出所有阀组应力求解细节和完整参数表。
+- 验证未覆盖所有CLCC拓扑、所有故障类型、不同硬件平台、不同多速率耦合算法或与其他实时仿真框架的全面横向对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-
-- 提出离散电感解耦方法，以电感为边界结合延迟与受控源实现系统拓扑分割。
-- 建立关联离散电路模型参数解析优选策略，基于最小损耗误差准则推导最优导纳。
-- 构建CPU-FPGA协同多速率实时仿真框架，实现高低频动态与开关暂态的异构分配。
-
+- 问题定位：本文提出一种面向可控线路换相换流器高压直流（CLCC-HVDC）系统的CPU-FPGA协同多速率实时仿真框架。针对系统多时间尺度动态与复杂开关暂态耦合导致的计算瓶颈，采用异构任务分配策略：CPU子系统以20 μs步长处理低频动态（交直流电网、传统LCC及控制保护逻辑），FPGA子系统以2 μs步长高精度捕捉CLCC高频开关与换相暂态。
+- 方法机制：本文提出一种面向可控线路换相换流器高压直流（CLCC-HVDC）系统的CPU-FPGA协同多速率实时仿真框架。针对系统多时间尺度动态与复杂开关暂态耦合导致的计算瓶颈，采用异构任务分配策略：CPU子系统以20 μs步长处理低频动态（交直流电网、传统LCC及控制保护逻辑），FPGA子系统以2 μs步长高精度捕捉CLCC高频开关与换相暂态。
+- 验证证据：12脉波CLCC-HVDC系统（含整流侧AC电网、传统LCC、直流线路、CLCC逆变器及逆变侧AC电网）；OPAL-RT OP5600/OP5607实时仿真平台、RT-LAB环境、Simulink/SimPowerSystems (SPS) 库、Xilinx ISE/Vivado (FPGA综合)；
+- 量化与结论：FPGA子系统实现2 μs超小步长实时仿真，有效捕捉微秒级换相细节，避免固定点算术数值饱和。；电压波形归一化均方根误差（NRMSE）严格小于7%，验证了多速率协同架构的高精度复现能力。；计算耗时较纯CPU离线方案降低约77%，大幅缓解大规模混合拓扑的算力瓶颈。；离散电感模型在0-5000 Hz频带内的最大相对阻抗误差仅为3.3%，保障了解耦边界的数值稳定性。
+- 适用边界：适用于理解本文 27&28/Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC （2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
-
-
 
 - [[多速率仿真|多速率仿真]]
 - [[cpu-fpga协同仿真|CPU-FPGA协同仿真]]
@@ -40,11 +64,7 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 - [[关联离散电路模型|关联离散电路模型]]
 - [[参数优化|参数优化]]
 
-
 ## 涉及的模型
-
-
-
 
 - [[lcc-model|LCC]]
 - [[lcc-model|LCC]]
@@ -53,11 +73,7 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 - [[直流输电线路|直流输电线路]]
 - [[金属氧化物避雷器|金属氧化物避雷器]]
 
-
 ## 相关主题
-
-
-
 
 - [[实时仿真|实时仿真]]
 - [[混合仿真|混合仿真]]
@@ -66,17 +82,11 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 - [[高压直流输电建模|高压直流输电建模]]
 - [[开关暂态分析|开关暂态分析]]
 
-
 ## 主要发现
-
-
-
 
 - FPGA平台以2微秒步长运行，电压归一化均方根误差低于7%，实现高精度波形复现。
 - 相比纯CPU离线仿真方案，计算时间缩短约77%，显著提升复杂拓扑的实时仿真效率。
 - 所提参数优选策略消除试错依赖，有效保障混合开关器件在多变工况下的仿真保真度。
-
-
 
 ## 方法细节
 
@@ -86,26 +96,21 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 
 ### 数学公式
 
-
 **公式1**: $$$L \frac{di_L}{dt} = u_k(t) - u_m(t)$$$
 
 *电感连续域微分方程，用于描述电感两端电压与电流变化率的关系，是离散化建模的基础。*
-
 
 **公式2**: $$$u_L(t) = 2R_{eq} i_L(t) - 2R_{eq} i_L^* - u_L^*$$$
 
 *基于梯形积分法的电感离散化戴维南等效模型，其中$R_{eq}=L/\Delta t$，用于实现解耦边界的历史状态传递。*
 
-
 **公式3**: $$$L_{sw} C_{sw} = (\Delta t)^2$$$
 
 *ADC开关模型恒定导纳约束条件，确保开关在通断状态切换时系统节点导纳矩阵保持不变，避免矩阵重构。*
 
-
 **公式4**: $$$G_{sw} \approx \frac{I_{rate}}{V_{rate}}$$$
 
 *基于最小虚拟损耗误差准则推导的最优等效导纳公式，通过额定电压/电流应力确定，用于提升ADC模型精度。*
-
 
 ### 算法步骤
 
@@ -118,7 +123,6 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 4. 步骤4：硬件资源评估与代码生成。根据公式$N_{EHS} = \lceil \max(N_{sw}/C_{sw}, N_{LC}/C_{LC}) \rceil$评估所需EHS模块与FPGA板卡数量。利用RT-XSG生成通用FPGA配置文件，该文件在板卡数量不变时可复用，无需因电路参数修改而重新综合。
 
 5. 步骤5：多速率协同部署与实时运行。将控制算法与EHS配置计算分配至CPU核心，主电路离散模型加载至FPGA的EHS求解器。通过PCIe总线建立跨域通信链路，在RT-LAB环境中以固定步长ODE算法启动确定性实时仿真。
-
 
 ### 关键参数
 
@@ -136,8 +140,6 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 
 - **开关模型约束**: $L_{sw}C_{sw} = (\Delta t)^2$
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -150,8 +152,6 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 
 | 离散电感解耦频响特性验证 | 针对0.5 mH电感在20 μs步长下进行频域对比，在0-5000 Hz范围内，离散模型与连续理论模型的阻抗幅值相对误差最大不超过3.3%。 | 误差远低于实时仿真允许阈值，证明离散电感解耦法在目标频带内具备高保真度，满足多速率接口数据交换的精度要求。 |
 
-
-
 ## 量化发现
 
 - FPGA子系统实现2 μs超小步长实时仿真，有效捕捉微秒级换相细节，避免固定点算术数值饱和。
@@ -159,7 +159,6 @@ Multi-rate real time hybrid simulation of controllable line commutated Guoqing L
 - 计算耗时较纯CPU离线方案降低约77%，大幅缓解大规模混合拓扑的算力瓶颈。
 - 离散电感模型在0-5000 Hz频带内的最大相对阻抗误差仅为3.3%，保障了解耦边界的数值稳定性。
 - 基于最小损耗误差准则的导纳优选策略完全消除传统试错调参过程，实现参数解析化配置。
-
 
 ## 关键公式
 
@@ -181,11 +180,34 @@ $$$N_{EHS} = \lceil \max\left(\frac{N_{sw}}{C_{sw}}, \frac{N_{LC}}{C_{LC}}\right
 
 *用于量化CLCC系统所需的电气硬件求解器（EHS）模块与FPGA板卡数量，确保硬件配置满足拓扑规模且不超限。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 实时硬件在环仿真与离线对比分析
 - **测试系统**: 12脉波CLCC-HVDC系统（含整流侧AC电网、传统LCC、直流线路、CLCC逆变器及逆变侧AC电网）
 - **仿真工具**: OPAL-RT OP5600/OP5607实时仿真平台、RT-LAB环境、Simulink/SimPowerSystems (SPS) 库、Xilinx ISE/Vivado (FPGA综合)
 - **验证结果**: 在稳态运行与典型故障工况下，所提CPU-FPGA多速率框架成功实现2 μs步长实时求解。电压NRMSE<7%，计算效率提升77%，离散接口频响误差<3.3%。验证了离散电感解耦法与ADC参数优选策略在保障数值稳定性、降低硬件资源消耗及提升实时性方面的有效性，为新型混合HVDC拓扑的工程验证提供了可靠范式。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `27&28/Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 多速率仿真、cpu-fpga协同仿真、离散电感解耦法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出离散电感解耦方法，以电感为边界结合延迟与受控源实现系统拓扑分割。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable line commutated converter based HVDC.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

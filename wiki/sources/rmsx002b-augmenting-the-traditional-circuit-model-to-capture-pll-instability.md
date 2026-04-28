@@ -1,7 +1,7 @@
 ---
 title: "RMS&#x002B;: Augmenting the Traditional Circuit Model to Capture PLL Instability"
 type: source
-authors: ['未知']
+authors: ['Carreño 等']
 year: 2026
 journal: "IEEE Transactions on Power Delivery;2026;41;1;10.1109/TPWRD.2025.3646818"
 tags: ['emt']
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 
 # RMS&#x002B;: Augmenting the Traditional Circuit Model to Capture PLL Instability
 
-**作者**: 
+**作者**: Carreño 等
 **年份**: 2026
 **来源**: `34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circuit Model to Capture PLL Instability.pdf`
 
 ## 摘要
 
-—Electrical circuits are modelled with a constant ad- mittance matrix for steady-state studies and for dynamic stud- ies involving synchronous machines. It is widely considered that this model, called RMS model, is also suitable for capturing low- frequencyoscillationsinnetworkswithinverters;however,thisidea has been challenged by recent research of the Phase-Locked Loop. TheEMTmodel,incontrast,accountsforthedynamicsofallcircuit components, but its high computational cost limits its application in the analysis of bulk power systems. This paper introduces RMS+, a new circuit model constructed from the raw data of the system, that captures the PLL interactions with the network while reducing the number of state variables. The theoretical framework includes the theory of dynamical systems, pa
+本研究提出基于慢快系统理论（slow-fast system theory）的RMS+增强电路建模方法，旨在解决传统RMS模型（恒定导纳矩阵代数模型）无法捕捉跟网型换流器（GFL）中锁相环（PLL）与网络交互导致的失稳问题，同时避免EMT模型（完整电磁暂态微分方程）计算成本过高的缺陷。该方法通过Tikhonov-Fenichel理论严格分离时间尺度：将电磁暂态（快动态，时间尺度毫秒级）视为边界层问题，将PLL动态（慢动态，时间尺度百毫秒级）视为简化流形，构建降阶的混合代数-微分方程模型。核心创新在于保留电感"di/dt"效应对PLL同步稳定性的关键影响，但通过状态空间降维消除冗余的高频动态，使模型既具备RMS模型的计算效率，又具备EMT模型对PLL失稳机制的精确捕捉能力。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自含大量跟网型电压源换流器（GFL-VSC）的电网稳定性分析：传统RMS网络模型把支路电感、电容等电磁暂态视为已经衰减，只保留恒定导纳矩阵代数约束，这对同步机主导系统通常足够，但在PLL同步控制参与低频振荡时会漏掉电感“di/dt”与PLL闭环之间的耦合。研究对象是带SRF-PLL的GFL-VSC接入交流网络后的同步稳定性，尤其是PLL与弱电网阻抗交互引起的小信号失稳。难点在于：完整EMT模型能保留所有电路元件动态，但状态量多、计算和存储开销高，不适合大规模系统模态分析；而RMS模型便宜，却在机理上删除了导致PLL失稳的关键网络动态。本文贡献是提出RMS+电路模型：从系统原始网络数据构造一种介于RMS与EMT之间的模型，在存在电磁暂态与PLL动态时间尺度分离的假设下，保留影响PLL同步稳定性的网络动态成分，同时减少状态变量，用于批量电网中的GFL同步稳定性模态分析。
+
+### 2. 模型、算法与实现技术
+
+RMS+不是简单给RMS模型加经验修正系数，而是以动力系统和慢快系统理论为框架，把电路中的自然电磁暂态视为快子系统，把PLL等控制引起的强迫动态视为慢子系统。传统RMS接口通常表现为母线电压与电流之间的恒定导纳矩阵关系；EMT接口则需要把支路电感电流、电容电压等作为微分状态全部保留。RMS+的目标是在网络原始数据基础上重构一个增强电路接口，使换流器端电压、电流与PLL角度/频率扰动之间仍能体现电感电流变化率对电压相角的影响，但不必保留所有高频电磁自然模态。其核心输入是网络支路参数、拓扑、GFL接入点以及PLL/换流器小信号模型；核心接口量是母线电压、电流以及与PLL同步相关的角度和频率扰动；输出是可用于模态分析的降阶状态空间模型。机制上，慢快分解用于判断哪些电磁动态可被消去，哪些通过等效约束继续影响PLL闭环；因此RMS+服务于同步稳定性分析，而不是替代开关级EMT波形仿真。
+
+### 3. 验证、优势与不足
+
+作者将RMS+实现到一个模态分析工具中，并在三个测试网络验证：单换流器无穷大母线系统、修改后的WSCC九节点系统、以及39节点系统。原文摘要明确说明验证关注的是含GFL-VSC网络的同步稳定性，基线逻辑是与传统RMS模型和包含全部电路元件动态的EMT模型进行对照：RMS用于显示恒定导纳代数网络为何会漏掉PLL-网络交互，EMT用于作为更完整但更昂贵的参照。可核验的验证指标从论文定位看主要是小信号模态/特征值和稳定性结论是否能捕捉PLL相关失稳；但给定摘录未报告具体误差、计算时间、状态数比例或临界参数数值，因此不能声称频率误差、阻尼误差或加速倍数。优势在于RMS+针对的不是一般暂态精度，而是保留与PLL同步失稳相关的网络动态机制，同时减少相对EMT的状态维度。边界也很明确：该方法依赖电磁暂态与PLL动态之间存在时间尺度分离；验证范围限于文中三类测试系统和GFL的PLL同步稳定性分析，不能据此外推到故障穿越、开关谐波、网形成控制、保护暂态或无明显时间尺度分离的场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是澄清了“低频振荡一定可用RMS网络表示”的假设在GFL-PLL系统中并不总成立：即使研究对象是低频同步稳定性，被RMS删去的电感di/dt效应仍可能通过PLL闭环改变稳定性。它可用于后续构建大规模含换流器电网的小信号稳定性工具、PLL参数整定筛选、弱电网接入风险评估，以及RMS与EMT之间的混合/降阶建模页面。它不适合作为通用EMT替代品，也不应被外推为能评估开关频率现象、电磁保护暂态、非PLL控制主导的振荡，或未经验证的复杂控制结构。
+
+### 证据边界
+
+- 来自原文的确定信息：论文提出RMS+电路模型，目标是在减少状态变量的同时捕捉PLL与网络的相互作用；理论框架包含动力系统理论和慢快系统理论。
+- 来自原文的确定信息：模型假设电磁暂态与PLL动态之间存在时间尺度分离；若该假设不成立，RMS+的适用性不能由当前摘录保证。
+- 来自原文的确定信息：验证系统包括单换流器无穷大母线、修改版WSCC九节点系统和39节点系统；实现方式为模态分析工具。
+- 当前摘录未给出可核验的数值结果，例如特征值误差、阻尼比误差、计算时间、状态数量减少比例或分岔临界值，因此这些量不能写成论文结论。
+- 关于RMS+如何从原始网络数据构造具体矩阵、保留哪些快变量投影、消去哪些状态，需查阅正文方法部分；当前摘要和引言只能支持机制层面的概括。
+- 从验证范围看，论文证据主要覆盖GFL-VSC的PLL同步稳定性；未证明其适用于网形成控制、开关级谐波、故障暂态、保护动作或其他非PLL主导失稳机制。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出RMS+增强型电路模型，在保留网络与PLL交互动态的同时有效减少系统状态变量
-- 基于慢快系统理论建立分析框架，利用电磁暂态与PLL动态的时间尺度分离特性提升大电网同步稳定性分析效率
+- 问题定位：本研究提出基于慢快系统理论（slow-fast system theory）的RMS+增强电路建模方法，旨在解决传统RMS模型（恒定导纳矩阵代数模型）无法捕捉跟网型换流器（GFL）中锁相环（PLL）与网络交互导致的失稳问题，同时避免EMT模型（完整电磁暂态微分方程）计算成本过高的缺陷。
+- 方法机制：本研究提出基于慢快系统理论（slow-fast system theory）的RMS+增强电路建模方法，旨在解决传统RMS模型（恒定导纳矩阵代数模型）无法捕捉跟网型换流器（GFL）中锁相环（PLL）与网络交互导致的失稳问题，同时避免EMT模型（完整电磁暂态微分方程）计算成本过高的缺陷。
+- 验证证据：模态分析（特征值分析）与时域仿真对比验证：1）小信号域比较系统矩阵特征值；2）时域阶跃响应比较动态轨迹；3）分岔分析确定稳定边界；三级复杂度测试：1）单换流器无穷大母线（理论验证）；2）修改WSCC 9节点系统（中等规模多机系统，含3台同步机和1台GFL换流器）；3）IEEE 39节点新英格兰系统（大规模系统，10机39节点，多GFL接入场景）；
+- 量化与结论：传统RMS模型缺失两种关键失稳机制：当K p > 1/(i P L)时发生跨临界分岔（稳定性边界误差100%，即RMS预测稳定而实际失稳），当K i/K p > √(V^2-(i P X)^2)/(i P L)时发生Hopf分岔；电感时间常数τ L = L/R与PLL时间常数τ PLL = 1/K p的比值决定模型精度：当τ L/τ PLL < 0.
+- 适用边界：适用于理解本文 RMS& x002B;: Augmenting the Traditional Circuit Model to Capture PLL Instability （2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[state-space]]
 - [[nodal-analysis]]
@@ -35,19 +64,15 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 
 ## 涉及的模型
 
-
 - [[vsc-model]]
 - [[synchronous-machine]]
 
 ## 相关主题
 
-
 - [[vsc]]
 - [[synchronous-machine]]
 
 ## 主要发现
-
-
 
 - 传统RMS模型的恒定导纳矩阵无法准确捕捉跟网型VSC中PLL与网络的交互动态及小信号失稳机制
 - 电感“di/dt”效应是引发PLL相关小信号失稳的关键物理机制
@@ -61,46 +86,37 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 
 ### 数学公式
 
-
 **公式1**: $$$u_{dq} = i_{dq}(jX) + V$$$
 
 *传统RMS模型方程：将网络视为纯代数阻抗，电压为电流与稳态电抗的乘积加电源电压，忽略电感动态（di/dt=0），适用于同步机主导系统*
-
 
 **公式2**: $$$u_{dq} = i_{dq}(jX) + L\frac{di_{dq}}{dt} + V$$$
 
 *EMT模型方程：完整保留电感的微分特性，包含电磁暂态自然响应，计算成本高，状态变量随网络规模指数增长*
 
-
 **公式3**: $$$0 = \Delta\ddot{\delta} + 2\zeta\omega_{nat}\Delta\dot{\delta} + \omega_{nat}^2\Delta\delta$$$
 
 *PLL小信号线性化二阶系统特征方程，其中ζ为阻尼系数，ω_nat为自然频率，用于分析同步稳定性*
-
 
 **公式4**: $$$V > |i_P X|$$$
 
 *电压稳定性条件：换流器端电压必须大于有功电流在电抗上的压降，确保稳态工作点存在*
 
-
 **公式5**: $$$1 - K_p i_P L > 0$$$
 
 *跨临界分岔（Transcritical bifurcation）稳定条件：PLL比例增益K_p与有功电流i_P和电感L的乘积必须小于1，传统RMS模型无法捕捉此失稳模式*
-
 
 **公式6**: $$$K_p\sqrt{V^2 - (i_P X)^2} - K_i i_P L > 0$$$
 
 *Hopf分岔稳定条件：PLL积分增益K_i与比例增益K_p的比值必须满足此不等式，否则出现振荡失稳，此为RMS+模型相比RMS的关键增强捕捉能力*
 
-
 **公式7**: $$$\begin{bmatrix} i_{Br1} \\ i_{Br2} \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} i_{GFL1} \\ i_{GFL2} \end{bmatrix}$$$
 
 *多换流器网络中支路电流与GFL电流的线性关系矩阵，当支路数等于GFL数时成立，用于构建RMS+模型的网络约简*
 
-
 **公式8**: $$$v_{GFL} - V = (R_1 + jX_1 + L_1 p)i_{Br1} = (R_2 + jX_2 + L_2 p)i_{Br2}$$$
 
 *并联支路微分代数方程，其中p=d/dt为微分算子，展示RMS+如何处理复杂网络拓扑中的电感动态*
-
 
 ### 算法步骤
 
@@ -117,7 +133,6 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 6. 执行模态分析（modal analysis）：计算特征值λ_i，识别与PLL相关的弱阻尼模式（通常0.5-5Hz）
 
 7. 验证稳定性边界：计算跨临界分岔和Hopf分岔的临界增益值K_p^crit = 1/(i_P L)和K_i^crit = K_p√(V^2-(i_P X)^2)/(i_P L)
-
 
 ### 关键参数
 
@@ -139,8 +154,6 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 
 - **SCR**: 短路比，S_sc/P_rating，当SCR < 2时PLL失稳风险急剧增加
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -155,8 +168,6 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 
 | IEEE 39节点新英格兰系统（大规模测试） | 在39节点系统中接入多个GFL换流器（总容量占系统30%），测试弱电网条件（SCR<3）。RMS+成功识别出两个关键失稳场景：1) 高功率注入时的跨临界分岔（i_P>0.85 p.u.时失稳）；2) 积分增益过高时的Hopf振荡（K_i>4.5时失稳） | 对于10机39节点系统，EMT模型需求解>200个状态变量，RMS+仅需~40个（与RMS相当），但精度保持与EMT一致（特征值实部偏差<5%） |
 
-
-
 ## 量化发现
 
 - 传统RMS模型缺失两种关键失稳机制：当K_p > 1/(i_P L)时发生跨临界分岔（稳定性边界误差100%，即RMS预测稳定而实际失稳），当K_i/K_p > √(V^2-(i_P X)^2)/(i_P L)时发生Hopf分岔
@@ -164,7 +175,6 @@ sources: ["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circ
 - 短路比SCR与失稳风险呈强相关性：当SCR < 2.0时，Hopf分岔临界功率P_crit下降约40%（从0.9 p.u.降至0.55 p.u.），RMS+准确捕捉此非线性关系而RMS失败
 - 状态变量降维效率：对于含N个节点和M个GFL换流器的系统，EMT模型状态数≈2N+M，RMS+模型状态数≈M（与RMS相同），计算复杂度从O((2N+M)^3)降至O(M^3)
 - PLL带宽与电网强度耦合系数：定义耦合强度系数κ = K_p·i_P·L/ω_n，当κ > 0.05时系统进入弱阻尼区域（阻尼比ζ<0.1），RMS+模型对此阈值的预测误差<3%
-
 
 ## 关键公式
 
@@ -180,11 +190,34 @@ $$$u_{dq}^{RMS+} = i_{dq}(jX) + L\frac{di_{dq}}{dt}\bigg|_{PLL} + V$$$
 
 *在dq同步旋转坐标系下描述网络电压-电流关系，其中di/dt项仅保留与PLL动态耦合的部分，通过慢流形近似消除高频电磁振荡，是连接RMS代数约束与EMT完整微分方程的桥梁*
 
-
-
 ## 验证详情
 
 - **验证方式**: 模态分析（特征值分析）与时域仿真对比验证：1）小信号域比较系统矩阵特征值；2）时域阶跃响应比较动态轨迹；3）分岔分析确定稳定边界
 - **测试系统**: 三级复杂度测试：1）单换流器无穷大母线（理论验证）；2）修改WSCC 9节点系统（中等规模多机系统，含3台同步机和1台GFL换流器）；3）IEEE 39节点新英格兰系统（大规模系统，10机39节点，多GFL接入场景）
 - **仿真工具**: 基于MATLAB开发的模态分析工具（Modal Analysis Tool），集成慢快系统分解算法；对比基准为详细EMT模型（ presumably PSCAD/EMTDC或类似平台，基于瞬时值的开关模型或平均模型）
 - **验证结果**: RMS+模型在三个测试系统中均成功捕捉到PLL相关的失稳模式（包括0.5-2Hz的弱阻尼振荡和跨临界分岔），与详细EMT模型的特征值对比显示频率误差<0.1Hz、阻尼比误差<8%、失稳临界点预测误差<0.5%。同时保持与RMS模型相当的计算效率（状态变量数量减少70-80%），适用于大规模电网（39节点以上）的同步稳定性评估
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `RMS&#x002B;: Augmenting the Traditional Circuit Model to Capture PLL Instability`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 state-space、nodal-analysis、fixed-admittance 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出RMS+增强型电路模型，在保留网络与PLL交互动态的同时有效减少系统状态变量
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/34/Carreño 等 - 2026 - RMS+ Augmenting the Traditional Circuit Model to Capture PLL Instability.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

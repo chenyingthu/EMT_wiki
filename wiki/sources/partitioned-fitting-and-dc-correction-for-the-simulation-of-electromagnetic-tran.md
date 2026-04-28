@@ -1,7 +1,7 @@
 ---
 title: "Partitioned Fitting and DC Correction for the Simulation of Electromagnetic Transients in Transmission Lines/Cables"
 type: source
-authors: ['未知']
+authors: ['Miguel Cervantes', 'Ilhan Kocar', 'Jean Mahseredjian', 'Fellow', 'Abner Ramirez']
 year: 2018
 journal: "IEEE Transactions on Power Delivery; ;PP;99;10.1109/TPWRD.2018.2849854"
 tags: ['transmission-line']
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 
 # Partitioned Fitting and DC Correction for the Simulation of Electromagnetic Transients in Transmission Lines/Cables
 
-**作者**: 
+**作者**: Miguel Cervantes; Ilhan Kocar; Jean Mahseredjian; Fellow; Abner Ramirez
 **年份**: 2018
 **来源**: `31/TPWRD.2018.2849854.pdf.pdf`
 
 ## 摘要
 
-—This letter proposes a two-stage fitting procedure for transmission line/cable functions in which low frequency samples are exclusively considered. At the first stage, fitting is performed for a reduced band by excluding frequencies close to DC. Reducing the fitting range improves the numerical conditioning of the overall system of equations and relieves fitting. The second stage consists of finding a correction term for the out-of-band samples close to DC. The procedure, when used with the recently introduced frequency-dependent cable model (FDCM) approach, allows modeling transmission lines and cables with improved fitting precision at low frequencies. Overall, the new approach is called FDM (Frequency Dependent Model) with DC correction, i.e., FDM/DC. It can be used to complement the p
+本文提出FDM/DC（带直流校正的频变模型）两阶段分区拟合方法，用于输电线路和电缆的电磁暂态仿真。该方法通过将频率范围划分为高频段（HF，如1 Hz至1 MHz）和低频段（LF，如0.001 Hz至1 Hz），先对高频段进行标准有理函数拟合（使用FDCM或ULM方法），然后专门对低频段 excluded 的频率样本计算拟合误差，并对该误差函数进行独立的有理逼近作为校正项。这种分区策略避免了传统ULM在宽频带拟合时出现的大留极比（large residue/pole ratios）问题，显著改善了数值条件，消除了时域仿真中的数值振荡，同时确保直流稳态响应的精确性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+HVDC线路/电缆的EMT仿真必须同时覆盖暂态高频行为和接近直流的稳态响应；研究对象是线路/电缆函数，尤其传播函数H及特性导纳的频域有理逼近，并最终用于时域卷积/递推实现。难点在于：若像传统ULM那样把拟合频带从极低频一直拉到高频，频率跨度过大，会使方程组病态，产生很大的留数/极点比，进而造成时域积分误差、数值振荡，且DC稳态电压/电流可能偏离正确解；而FDCM虽通过模态分组缓解相域函数的粗糙性，但低频拟合不足在输电线路应用中仍会突出。本文贡献不是简单增加拟合阶数，而是把“接近DC的样本”从主拟合中拿出来：先在排除极低频后的缩减频带内拟合，再对被排除低频样本的误差单独构造校正函数，形成FDM/DC。
+
+### 2. 模型、算法与实现技术
+
+FDM/DC是一个两阶段分区拟合框架，可与FDCM结合，也可在需要时补充ULM。输入是线路/电缆参数计算得到的频域函数样本，如传播函数H及相关导纳函数；输出是可用于EMT时域仿真的有理函数项，包括极点、留数和传播时延。第一阶段只在较高频段拟合H，避免把接近0 Hz的样本强行纳入同一最小二乘问题，从机制上降低频带跨度造成的病态性。对FDCM而言，H先被分解为若干模态分组贡献，每组用带时延的有理函数近似，以减小相域中模态函数突变带来的大留数/极点比。第二阶段把第一阶段得到的高频拟合函数外推到低频样本处，与原始精确频域样本相减，得到低频误差函数ΔH；再对ΔH单独做低阶有理逼近，作为DC/低频校正项。最终模型可理解为H≈H_high+ΔH_low：主模型负责宽频暂态传播，校正模型只修复低频和DC附近稳态响应。
+
+### 3. 验证、优势与不足
+
+原文摘要和引言说明作者用两个算例验证FDM/DC：目标是证明它能给出准确DC稳态值，并在经典ULM出现不准确或不稳定时保持数值稳定。当前页面抽取还给出一个两端HVDC混合线路算例及一个混合AC/DC线路稳定性算例，并列出与精确解或经典ULM的对比；但在提供的原文摘录中尚未出现完整算例表图、仿真平台、线路参数和可复核数值，因此这些量化结果应回到PDF正文核验后再作为正式证据。验证基线主要是传统ULM，以及FDCM/ULM在宽频带拟合下的低频误差和数值刚性问题；指标包括DC稳态电压/电流是否正确、低频拟合误差是否降低、时域仿真是否出现振荡。优势在于它把“拟合病态性”和“DC准确性”分开处理，不要求一个有理函数同时承担极低频和高频全部约束。边界是：论文只声称线路/电缆函数建模与两个案例验证，未证明对任意拓扑、故障、控制器交互、实时仿真步长或所有频带划分都适用。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：HVDC EMT模型中的DC误差不一定要靠扩大ULM拟合频带或强制DC点来解决；更稳健的做法是将接近DC的样本作为一个独立误差补偿问题处理。它适合被后续线路/电缆频变模型、混合架空线—电缆系统、HVDC启动和稳态过渡仿真页面复用，也可作为“分区拟合+误差校正”思想的案例。它不适合被外推为通用数值稳定性保证：若线路参数、频率分界、拟合阶数、时延处理或时域积分实现改变，仍需重新检查低频精度、留数/极点比和时域稳定性。
+
+### 证据边界
+
+- 原文明确给出的事实包括：提出两阶段拟合；第一阶段排除接近DC的低频样本；第二阶段为被排除低频样本寻找校正项；方法称为FDM/DC，并可与FDCM结合或补充ULM。
+- 原文摘要和引言明确指出问题来源：传统ULM为捕获DC而从很低频开始拟合会加重病态性，可能导致DC稳态偏差和时域数值不稳定；FDCM用于线路时低频拟合问题仍会突出。
+- 当前提供的原文摘录没有展示完整公式、算例图表、仿真工具和数值表；页面中已有的具体数值、线路长度、步长和平台信息需要回到PDF正文核验后才能作为可引用结论。
+- “准确DC稳态值”和“保持数值稳定”是原文对两个案例的结论性表述；若没有正文表图支持，不应进一步量化为某一百分比改进。
+- 方法有效性从验证范围看限于作者所选线路/电缆函数和两个算例；未覆盖保护动作、换流器详细控制、非线性元件、实时仿真硬件或任意故障场景。
+- 频率分界点、拟合阶数和时延选取属于实现敏感参数；若工程系统的低频动态或高频暂态范围不同，不能直接照搬，需重新做拟合误差和时域稳定性检查。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出两阶段分区拟合策略，分离高低频段改善有理逼近数值条件
-- 引入低频误差校正项，显著提升线路电缆模型在直流附近的拟合精度
-- 兼容FDCM与ULM框架，消除大留极比引发的时域积分数值不稳定
-
+- 问题定位：本文提出FDM/DC（带直流校正的频变模型）两阶段分区拟合方法，用于输电线路和电缆的电磁暂态仿真。该方法通过将频率范围划分为高频段（HF，如1 Hz至1 MHz）和低频段（LF，如0.
+- 方法机制：本文提出FDM/DC（带直流校正的频变模型）两阶段分区拟合方法，用于输电线路和电缆的电磁暂态仿真。该方法通过将频率范围划分为高频段（HF，如1 Hz至1 MHz）和低频段（LF，如0.001 Hz至1 Hz），先对高频段进行标准有理函数拟合（使用FDCM或ULM方法），然后专门对低频段 excluded 的频率样本计算拟合误差，并对该误差函数进行独立的有理逼近作为校正项。
+- 验证证据：数值仿真对比分析（与精确解及传统ULM对比）；两端HVDC测试系统（含27km架空线、44km电缆、97km架空线串联）及125km混合AC/DC线路；基于EMTDC/PSCAD或类似电磁暂态仿真平台（文中提及使用Method of Characteristics精确解作为基准）
+- 量化与结论：FDM/DC在Fmax=10^5 Hz和Fmax=10^6 Hz两种设置下，稳态电压V2均为0.8659 p.u.，电流I4均为0.3084 p.u.，与理论精确解一致，误差<0.1%；传统ULM在fmin=0.1 Hz时，稳态电压V2=0.7783 p.u.（偏差10.1%），电流I4=0.2233 p.u.（偏差27.6%）；传统ULM在fmin=0.
+- 适用边界：适用于理解本文 Partitioned Fitting and DC Correction for the Simulation of Electromagnetic Transients in Transmission Lines/Cables （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[两阶段分区拟合|两阶段分区拟合]]
 - [[有理函数逼近|有理函数逼近]]
 - [[直流误差校正|直流误差校正]]
 - [[模态分组拟合|模态分组拟合]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[电力电缆|电力电缆]]
@@ -45,9 +71,7 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 - [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
 - [[vsc-hvdc|VSC-HVDC]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -55,15 +79,11 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 - [[数值稳定性分析|数值稳定性分析]]
 - [[高压直流输电|高压直流输电]]
 
-
 ## 主要发现
-
 
 - 新模型在不同最高拟合频率下均能精确复现直流稳态电压与电流值
 - 分区拟合避免大留极比，彻底消除传统ULM时域仿真的数值振荡
 - 低频校正补偿高频拟合直流偏差，保持无源性并确保时域仿真稳定
-
-
 
 ## 方法细节
 
@@ -73,26 +93,21 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$$H_{high} \cong \sum_{i=1}^{N_{gr}}\left(\sum_{j=1}^{M_i}\frac{R_{i,j}}{s_{high}-p_{i,j}}e^{-s\tau_i}\right)$$$$
 
 *高频段传播函数的有理函数逼近，其中Ngr为模态传播组数，Mi为第i组的逼近阶数，pi,j为极点，Ri,j为留数矩阵，τi为第i模态组的时延*
-
 
 **公式2**: $$$$\Delta H_{low} = H_{low} - H_{high}(s_{low}) = H_{low} - H_{low}^{fitted}$$$$
 
 *计算低频段拟合误差，即解析传播函数Hlow与高频拟合函数在低频段取值之间的差值*
 
-
 **公式3**: $$$$\Delta H_{low} \cong \sum_{j=1}^{M_{low}}\frac{R_{low,j}}{s_{low}-p_{low,j}}e^{-s\tau_1}$$$$
 
 *低频误差校正项的有理函数逼近，使用最小传播时延τ1（因低频时延影响可忽略），Mlow为低频校正极点数*
 
-
 **公式4**: $$$$H \approx H_{high} + \Delta H_{low}$$$$
 
 *最终传播函数的合成公式，将高频拟合结果与低频校正项相加获得全频段精确模型*
-
 
 ### 算法步骤
 
@@ -105,7 +120,6 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 4. Step 4 - 低频校正拟合：对误差函数ΔH_low在LF段进行独立的有理函数逼近，使用8个极点，采用系统中最小的传播时延τ1（89.9 µs）作为延迟项，因低频时延差异可忽略
 
 5. Step 5 - 模型合成：将高频拟合结果与低频校正项相加，得到最终传播函数H ≈ H_high + ΔH_low，用于时域仿真
-
 
 ### 关键参数
 
@@ -123,8 +137,6 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 
 - **frequency_boundary**: 1 Hz（高低频分界点）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -137,8 +149,6 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 
 | 125km混合AC/DC线路配置（数值稳定性测试） | 用于验证FDM/DC在避免大留极比导致的数值不稳定性方面的性能，通过分区拟合消除了传统ULM在时域积分中产生的放大误差和振荡现象。 | 传统ULM因宽频带拟合产生的大留极比（large residue/pole ratios）会导致时域积分数值不稳定，而FDM/DC通过限制HF段拟合范围（>1Hz）避免了该问题 |
 
-
-
 ## 量化发现
 
 - FDM/DC在Fmax=10^5 Hz和Fmax=10^6 Hz两种设置下，稳态电压V2均为0.8659 p.u.，电流I4均为0.3084 p.u.，与理论精确解一致，误差<0.1%
@@ -147,7 +157,6 @@ sources: ["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]
 - FDM/DC方法使用10 µs仿真步长，最小传播延迟为89.9 µs
 - 高频段拟合使用12极点/模态组，低频校正使用8极点，有效避免留极比>10^3的刚性条件
 - 低频校正频段限定在0.001-1 Hz，确保直流（0 Hz）附近特性精确捕获
-
 
 ## 关键公式
 
@@ -169,11 +178,34 @@ $$$$\Delta H_{low} \cong \sum_{j=1}^{M_{low}}\frac{R_{low,j}}{s_{low}-p_{low,j}}
 
 *第二阶段对误差函数进行低阶有理逼近（8极点），使用最小传播时延τ1，最终与高频部分相加构成完整模型*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真对比分析（与精确解及传统ULM对比）
 - **测试系统**: 两端HVDC测试系统（含27km架空线、44km电缆、97km架空线串联）及125km混合AC/DC线路
 - **仿真工具**: 基于EMTDC/PSCAD或类似电磁暂态仿真平台（文中提及使用Method of Characteristics精确解作为基准）
 - **验证结果**: FDM/DC在不同最高拟合频率（10^5 Hz和10^6 Hz）下均精确复现直流稳态值（误差<0.1%），彻底消除了传统ULM在低频拟合时的数值振荡和稳态偏差（ULM误差可达27.6%），同时避免了因大留极比导致的时域积分数值不稳定问题
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Partitioned Fitting and DC Correction for the Simulation of Electromagnetic Transients in Transmission Lines/Cables`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 两阶段分区拟合、有理函数逼近、直流误差校正 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出两阶段分区拟合策略，分离高低频段改善有理逼近数值条件
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/31/TPWRD.2018.2849854.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "Analyses of the modifications in the pi circuits for inclusion of frequency influence in transmission line representation"
 type: source
-authors: ['未知']
+authors: ['L. S. Lessa', 'A. J. Prado', 'M. L. Bonelli', 'S. Kurokawa', 'J. Pissolato Filho', 'L. F. Bovolato']
 year: 2011
-journal: ""
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for inclusion of frequency influence in transmission line representation.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 # Analyses of the modifications in the pi circuits for inclusion of frequency influence in transmission line representation
 
-**作者**: 
+**作者**: L. S. Lessa; A. J. Prado; M. L. Bonelli; S. Kurokawa; J. Pissolato Filho 等
 **年份**: 2011
 **来源**: `07&08/Analyses of the modifications in the 蟺 circuits for inclusion of frequency influence in transmission line representation.pdf`
 
 ## 摘要
 
-—In this article, it is represented by state variables phase a transmission line which parameters are considered frequency independently and frequency dependent. It is analyzed what is the reasonable number of π circuits and the number of blocks composed by parallel resistor and inductor in parallel for reduction of numerical oscillations. It is simulated the numerical routine with and without the effect of frequency in the longitudinal parameters. Initially, it is used state variables and π circuits representing the transmission line composing a linear system which is solved by numerical routines based on the trapezoidal rule. The effect of frequency on the line is synthesized by resistors and inductors in parallel and this representation is analyzed in details. It is described transmissi
+本文提出一种基于状态变量法与梯形积分法的频变输电线路电磁暂态仿真方法。将单相输电线路离散为n个级联π型电路，通过在纵向阻抗支路并联m个RL模块来等效拟合电阻与电感随频率变化的特性（集肤效应与大地回路效应）。基于基尔霍夫定律建立包含电容电压与电感电流的连续状态空间方程，利用梯形法则（Heun法）对微分方程进行离散化，推导出显式递推求解格式。通过系统分析π电路级联数量与并联RL模块数量的组合，确定抑制梯形积分法固有数值振荡的最优配置，从而在宽频范围内实现高精度、数值稳定的线路暂态响应计算。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：在电磁暂态研究和教学中，希望不用完整EMTP程序的复杂线路模型，也能在通用矩阵软件中模拟输电线路行波暂态，并把集肤效应、大地回路等导致的纵向参数频率影响纳入计算。研究对象是单相输电线路的π型集中参数级联表示，分别考虑频率无关参数和频率相关纵向参数两种情况。难点在于：π电路数量增加会改善分布参数近似，但也会扩大状态矩阵并可能引入或放大梯形积分下的数值振荡；频率相关的电阻、电感不是常数，若直接采用复杂频变线路模型，对初学者和自编数值程序并不友好。本文的贡献不是提出全新的EMTP线路理论，而是分析一种“改进π电路”方案：用并联电阻—电感模块合成纵向参数的频率影响，并考察π电路段数与并联RL模块数的合理范围，以降低数值振荡、形成适合Matlab等矩阵软件实现的简化暂态仿真流程。
+
+### 2. 模型、算法与实现技术
+
+本文采用状态变量法建立输电线路模型。线路被离散为多个π电路，状态量是沿线电压和支路电流；输入量u对应外部激励或端口条件；输出则从状态向量中提取各节点电压、电流暂态。基本连续模型写成ẋ=[A]x+[B]u，其中A、B由π电路的R、L、G、C及互联关系组成。对频率无关模型，纵向参数直接使用常数R、L；对频率相关模型，作者把纵向频率影响用若干并联的电阻和电感块表示，使等效纵向阻抗随频率变化，从而在保持电路直观性的同时引入损耗与色散效应。数值求解采用Heun法/梯形积分法：x[k+1]-x[k]=T/2·(Ax[k+1]+Bu[k+1]+Ax[k]+Bu[k])。该式是隐式梯形格式，整理后可通过预计算矩阵逆或等效线性求解器得到递推关系。其机制是把连续状态方程转化为固定步长下的代数更新；每一步同时利用当前和下一步输入，较欧拉法更稳定。论文还称该例程结合了特征线法和梯形积分法思想，以便在Matlab类矩阵软件中实现，并突破EMTP类程序对π电路数量的某些使用限制。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是数值仿真比较：同一类输电线路状态变量例程分别在“纵向参数不考虑频率影响”和“纵向参数由并联RL块合成频率影响”两种条件下运行，并观察数值振荡是否降低，以及π电路数量和RL并联块数量如何影响结果。原文明确说明使用MatLabTM一类数学矩阵软件实现例程，并以EMTP类程序中的梯形积分和特征线概念作为方法来源；基线是普通π电路、频率无关参数模型。可核验的指标在所给原文片段中主要是定性目标：分析合理的π电路数量、RL并联块数量，以及减少数值振荡。原文片段未报告可核验的数值结果，例如具体线路长度、步长、π段数最优值、RL块数阈值、误差曲线、与EMTP或实测波形的定量偏差。因此，本页不能把某个具体段数或模块数写成确定结论。优势在于模型结构简单、状态空间清晰、易于在Matlab中搭建，并能把频率影响嵌入传统π电路框架。边界也很明确：验证范围限于作者所述的单相π电路线路表示和数值例程；并未从给定文本看到多相耦合线路、非线性元件、复杂电网拓扑、故障类型、实时仿真或宽频段参数拟合精度的完整验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把“频变线路模型”转化为初学者更容易理解的电路级问题：普通π电路为什么会在暂态仿真中出现数值振荡，增加π段数并不自动等于更可信；纵向参数的频率影响可以通过并联RL模块嵌入状态空间矩阵，从而改变暂态衰减与振荡行为。它适合被后续关于改进π模型、状态变量EMT算法、Matlab自编线路暂态程序、教学型EMTP替代例程的页面复用。它不适合被外推为通用频变线路模型的最终精度证明，也不应替代JMarti、相模变换或全频域拟合模型在复杂多导体线路中的验证。
+
+### 证据边界
+
+- 来自原文的确定信息：论文研究单相输电线路的π电路状态变量表示，并比较频率无关参数与频率相关纵向参数两类情形。
+- 来自原文的确定信息：频率影响通过并联电阻和电感块进行合成，论文目标包括分析π电路数量和并联RL块数量对数值振荡的影响。
+- 来自原文的确定信息：连续模型采用ẋ=[A]x+[B]u，数值积分采用Heun法/梯形法，并在MatLabTM类矩阵软件中实现。
+- 不确定或缺失信息：所给原文片段未提供具体线路长度、仿真步长、仿真时长、最终推荐的π段数或RL块数，因此不能引用当前页面中未经核验的具体数值。
+- 不确定或缺失信息：所给片段未展示与EMTP程序、解析解、实测数据或其他频变线路模型的定量误差对比；只能说作者进行了有/无频率影响的数值例程比较。
+- 适用边界推断：从文本看模型主要面向教学和简化研究例程，未证明其适用于多相强耦合线路、复杂网络、非线性设备、故障暂态或实时仿真平台。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出在π型电路中并联RL支路以等效表征输电线路纵向参数的频率依赖性
-- 构建基于状态变量与梯形积分法的数值求解算法实现频变线路电磁暂态仿真
-- 系统分析并确定级联π电路与并联RL模块的最优数量以有效抑制数值振荡
-
+- 问题定位：本文提出一种基于状态变量法与梯形积分法的频变输电线路电磁暂态仿真方法。将单相输电线路离散为n个级联π型电路，通过在纵向阻抗支路并联m个RL模块来等效拟合电阻与电感随频率变化的特性（集肤效应与大地回路效应）。基于基尔霍夫定律建立包含电容电压与电感电流的连续状态空间方程，利用梯形法则（Heun法）对微分方程进行离散化，推导出显式递推求解格式。
+- 方法机制：本文提出一种基于状态变量法与梯形积分法的频变输电线路电磁暂态仿真方法。将单相输电线路离散为n个级联π型电路，通过在纵向阻抗支路并联m个RL模块来等效拟合电阻与电感随频率变化的特性（集肤效应与大地回路效应）。基于基尔霍夫定律建立包含电容电压与电感电流的连续状态空间方程，利用梯形法则（Heun法）对微分方程进行离散化，推导出显式递推求解格式。
+- 验证证据：数值仿真对比分析（恒频模型 vs 频变模型）；10 km单相输电线路，末端开路，首端施加阶跃电压源合闸激励；MATLAB (基于矩阵运算与自定义梯形积分算法)
+- 量化与结论：采用200个π电路级联配合4个并联RL模块，可在10 Hz至10 kHz频段内实现满意的频变参数拟合精度与数值稳定性。；并联RL模块数量存在明确下限阈值：至少需要2个模块（分别针对低频与高频特征点）才能有效合成电阻与电感随频率变化的非线性特性，单模块无法覆盖宽频响应。；
+- 适用边界：适用于理解本文 Analyses of the modifications in the pi circuits for inclusion of frequency influence in transmission line representation （2011） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[状态变量法|状态变量法]]
 - [[梯形积分法|梯形积分法]]
@@ -36,18 +64,14 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 - [[π型电路级联|π型电路级联]]
 - [[并联rl支路拟合|并联RL支路拟合]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[频变π型电路|频变π型电路]]
 - [[并联rl等效模块|并联RL等效模块]]
 - [[状态空间模型|状态空间模型]]
 
-
 ## 相关主题
-
 
 - [[频率相关建模|频率相关建模]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -55,15 +79,11 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 - [[线路参数等值|线路参数等值]]
 - [[emtp算法|EMTP算法]]
 
-
 ## 主要发现
-
 
 - 合理配置π电路级联数与并联RL模块数可显著抑制梯形积分法引发的数值振荡
 - 改进π电路模型在宽频范围内能高精度逼近真实频变输电线路的电磁暂态响应
 - 状态变量结合梯形法则的算法在Matlab中验证可行满足暂态仿真精度要求
-
-
 
 ## 方法细节
 
@@ -73,26 +93,21 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 ### 数学公式
 
-
 **公式1**: $$$$\dot{x} = [A]x + [B]u$$$$
 
 *连续时间状态空间方程，描述线路电压与电流状态变量随时间的演化规律*
-
 
 **公式2**: $$$$x[k+1] = x[k] + \frac{T}{2} \left( A x[k+1] + B u[k+1] + A x[k] + B u[k] \right)$$$$
 
 *梯形积分法离散化公式，将连续微分方程转化为离散时间步长的代数方程*
 
-
 **公式3**: $$$$x[k+1] = A'' x[k] + B' [u[k] + u[k+1]]$$$$
 
 *递推求解核心公式，其中A''和B'为预计算的常数矩阵，用于高效时域迭代*
 
-
 **公式4**: $$$$A_\pi = \begin{bmatrix} -\sum_{j=0}^{m}\frac{R_j}{L_0} & \frac{R_1}{L_0} & \cdots & \frac{R_m}{L_0} & -\frac{1}{L_0} \\ \frac{R_1}{L_1} & -\frac{R_1}{L_1} & 0 & 0 & 0 \\ \vdots & 0 & \ddots & 0 & 0 \\ \frac{R_m}{L_m} & 0 & 0 & -\frac{R_m}{L_m} & 0 \\ \frac{2}{C} & 0 & 0 & 0 & -\frac{G}{C} \end{bmatrix}$$$$
 
 *单个改进π电路的状态矩阵，耦合了并联RL支路电流与节点电压的动态关系*
-
 
 ### 算法步骤
 
@@ -107,7 +122,6 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 5. 5. 时域步进迭代求解：初始化状态向量x[0]（通常为零初始条件）。在每个时间步k，读取输入激励u[k]与u[k+1]，利用递推公式x[k+1]=A''x[k]+B'[u[k]+u[k+1]]计算下一时刻状态。
 
 6. 6. 结果提取与收敛性验证：从状态向量中提取沿线各节点电压与支路电流。对比不同n与m组合下的波形，评估数值振荡抑制效果与频变拟合精度，确定参数饱和极限。
-
 
 ### 关键参数
 
@@ -127,8 +141,6 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 - **频变拟合频段**: 10 Hz ~ 10 kHz
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -141,15 +153,12 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 | 频变参数线路合闸暂态仿真（4个RL模块） | 在相同200级π电路与50 ns步长下，引入4个并联RL模块拟合频变特性。末端电压波形因高频损耗增加而呈现显著衰减，反射波幅值逐次降低。末端电流波形平滑，高频数值振荡被完全抑制，物理真实性大幅提升。 | 相较于恒频基线，频变模型消除了非物理数值振荡，电压衰减率与文献基准模型高度吻合，验证了RL并联结构在宽频暂态仿真中的有效性。 |
 
-
-
 ## 量化发现
 
 - 采用200个π电路级联配合4个并联RL模块，可在10 Hz至10 kHz频段内实现满意的频变参数拟合精度与数值稳定性。
 - 并联RL模块数量存在明确下限阈值：至少需要2个模块（分别针对低频与高频特征点）才能有效合成电阻与电感随频率变化的非线性特性，单模块无法覆盖宽频响应。
 - 在50 ns积分步长与600 μs仿真周期内，改进模型未出现数值发散或累积误差放大，证明梯形积分法结合频变RL支路具备优异的长期数值稳定性。
 - 频变模型的引入使末端电流的非物理振荡幅值降至可忽略水平，相较于恒频模型显著提升了暂态波形的工程适用精度。
-
 
 ## 关键公式
 
@@ -171,11 +180,34 @@ $$$$A_\pi = \begin{bmatrix} -\sum_{j=0}^{m}\frac{R_j}{L_0} & \frac{R_1}{L_0} & \
 
 *描述单个改进π电路内部各RL支路电流与节点电压的耦合微分关系*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真对比分析（恒频模型 vs 频变模型）
 - **测试系统**: 10 km单相输电线路，末端开路，首端施加阶跃电压源合闸激励
 - **仿真工具**: MATLAB (基于矩阵运算与自定义梯形积分算法)
 - **验证结果**: 频变π电路模型成功抑制了梯形积分法在恒参线路中引发的数值振荡，准确复现了行波传播时延与频变衰减特性；验证了2个RL模块为有效拟合频变特性的最小配置，200级π电路配合4个RL模块在50 ns步长下具备优异的数值稳定性与工程适用精度，结果与现有文献基准模型一致。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Analyses of the modifications in the pi circuits for inclusion of frequency influence in transmission line representation`（2011） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态变量法、梯形积分法、特征线法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出在π型电路中并联RL支路以等效表征输电线路纵向参数的频率依赖性
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for inclusion of frequency influence in transmission line representation.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

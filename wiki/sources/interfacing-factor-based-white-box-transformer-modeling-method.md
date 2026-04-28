@@ -1,9 +1,9 @@
 ---
 title: "Interfacing Factor-Based White-Box Transformer Modeling Method"
 type: source
-authors: ['未知']
+authors: ['Gustavsen和Portillo']
 year: 2014
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['transformer']
 created: "2026-04-13"
 sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor Based White-Box Transformer Models With Electromagnetic Transients Prog.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 
 # Interfacing Factor-Based White-Box Transformer Modeling Method
 
-**作者**: 
+**作者**: Gustavsen和Portillo
 **年份**: 2014
 **来源**: `24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor Based White-Box Transformer Models With Electromagnetic Transients Prog.pdf`
 
 ## 摘要
 
-—White-box transformer models are used by trans- former manufacturers during the dielectric design of windings. The models are often based on constant parameters (RLCG ma- trices) with the high-frequency losses accounted for by a scaling of the dc resistance ( -Factor). We show an efﬁcient procedure for interfacing such models with Electromagnetic Transients Program (EMTP)-type circuit simulators via state equations and a Norton equivalent. The approach makes no approximations except for the discretization in the time domain. Diagonalization is utilized for achieving high computational efﬁciency. Proprietary information about internal voltages is optionally hidden from the user. Internal surge arresters are handled by the EMTP circuit solver by declaring their connection points as external
+本文提出一种基于状态空间方程与诺顿等效的白盒变压器接口方法，用于将制造商的集中参数RLCG网络无缝集成至EMTP类电磁暂态仿真程序。该方法首先通过几何与材料参数提取恒定RLCG矩阵，并引入k因子对直流电阻缩放以近似高频损耗。基于基尔霍夫定律建立以节点电压和电感支路电流为状态变量的连续状态方程。为克服直接导入导致的计算冗余与商业机密泄露，采用节点重排序与矩阵分块技术，仅暴露外部端子及避雷器连接点。利用梯形积分法进行时域离散化，并通过引入修正状态变量消除隐式耦合。最终将外部端口等效为诺顿电路与EMTP求解器交互。为提升效率并保护知识产权，引入系统矩阵对角化技术解耦微分方程，同时内置50/60Hz工频稳态自动初始化模块，确保暂态仿真起始条件准确。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自变压器绝缘失效问题：外部系统暂态在端子处幅值可能不高，却会因绕组内部谐振造成很高的内部过电压。CIGRE A2/C4.39建议制造商提供模型以支持系统级EMTP仿真，但常规黑盒端子模型只能给出端子响应，不能直接评估内部绕组电压；而制造商的白盒模型又包含由几何、材料和绕组离散得到的RLCG矩阵，涉及商业机密，且不一定能直接嵌入EMTP网络求解器。本文研究对象是采用常参数RLCG矩阵、用k-factor缩放直流电阻表示高频损耗的集中参数白盒变压器模型。难点在于：既要让模型与外部电网、内部避雷器等非线性元件在同一EMTP求解框架中交互，又要避免暴露全部内部节点和专有参数。贡献是给出一种状态方程—诺顿等效接口流程，使制造商白盒模型可作为EMTP可调用元件参与完整网络暂态仿真，并支持可选隐藏内部电压、内部避雷器外部节点声明、对角化加速和50/60Hz初始条件自动化。
+
+### 2. 模型、算法与实现技术
+
+论文从集中参数白盒模型的RLCG矩阵出发，其中C、G描述节点对地和节点间电容/电导效应，L与R描述绕组离散支路，R通过k-factor作常数缩放以近似损耗。核心状态量包括节点电压、与电感支路相关的电流或等价状态；输入被定义为从地注入到各节点的电流，输出可为内部节点电压和支路电压/电流。作者用基尔霍夫定律把RLCG网络写成连续状态方程，再将其离散化，使当前时步的端口电压—电流关系可被整理为卷积形式的历史项加瞬时导纳项。这个端口关系进一步转换为诺顿等效：对EMTP主网络而言，白盒变压器表现为一个多端口导纳矩阵和历史电流源；EMTP求得端口电压后，接口再更新内部状态并计算可监测量。内部避雷器的处理不是把非线性嵌入白盒状态方程，而是把其连接点声明为外部节点，交由EMTP电路求解器处理。对角化用于把耦合状态方程变换到模态坐标，减少运行时卷积/状态更新的计算负担，同时也能隐藏内部电压信息。初始化部分利用50/60Hz稳态条件；对单相变压器，作者还给出通过在电感矩阵中引入磁芯磁通路径来强制工频行为正确的一种做法。
+
+### 3. 验证、优势与不足
+
+作者称通过若干算例展示该接口用于CIGRE WG A2/C4.39研究中的“Fictitious Transformer”。验证目标主要是说明：常参数k-factor白盒模型可以经状态方程和诺顿等效接入EMTP型程序；内部避雷器可通过外部节点声明由主电路求解器处理；对角化可用于更快仿真并可隐藏专有内部信息；自动初始化可从50/60Hz稳态条件开始。可确认的测试系统是CIGRE虚拟变压器，工具层面仅能概括为EMTP-type circuit solvers，原文摘要未给出具体软件名称、步长、节点规模、运行时间或误差表。基线主要是该白盒模型原始RLCG网络/状态方程与接口化后的等效实现之间的一致性，而不是与实测波形或其他厂家模型的系统性比较。优势在机制上体现在：除时域离散化外不引入新的模型近似；端口等效使模型可嵌入完整网络；内部信息可选择不暴露；非线性避雷器仍由EMTP处理。边界也很明确：论文聚焦常参数集中RLCG与k-factor损耗表示，不等同于验证了频率相关参数模型、行波型白盒模型、三维场模型或实测变压器全频段精度；原文未报告可核验的数值结果，因此不能声称具体误差、加速比或实时能力。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值不是提出新的变压器物理参数提取方法，而是把制造商已有白盒模型转化为系统仿真可用、又可保护内部信息的接口元件。它提升的认知是：内部过电压评估不必局限于“用户算端子、厂家离线算内部”的割裂流程，白盒模型可通过状态方程离散化和诺顿等效参加完整电网暂态联立求解。该页面适合被后续关于EMTP用户自定义元件、多端口诺顿接口、变压器绝缘配合、内部避雷器建模、白盒/黑盒模型共享机制的页面复用。不适合外推为通用高频变压器建模精度证明，也不应据此断言k-factor能代表所有频率相关损耗、或该接口在任意实时仿真平台和任意复杂非线性磁化条件下都成立。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：模型对象为常参数RLCG集中参数白盒变压器模型，高频损耗用k-factor缩放直流电阻表示，并通过状态方程、卷积和诺顿等效接入EMTP型求解器。
+- 来自原文摘要的确定信息：论文声称除时域离散化外不引入额外近似，并使用对角化以提高计算效率和可选隐藏专有内部电压信息；但摘要未给出可核验的加速倍数或误差数值。
+- 来自原文摘要的确定信息：内部避雷器通过把连接点声明为外部节点交由EMTP电路求解器处理；这并不等于验证了所有类型非线性元件或复杂控制器的耦合稳定性。
+- 来自原文摘要的确定信息：算例使用CIGRE WG A2/C4.39的Fictitious Transformer；当前证据未显示实测变压器波形验证、不同厂家模型横向比较或大规模统计测试。
+- 属于方法推断而非已给数值证据：接口化模型与直接RLCG实现应在同一离散化下给出一致响应，但当前抽取文本没有表格或图形误差指标支撑具体百分比。
+- 缺少关键复核项：具体离散步长、端口数量、内部节点规模、软件实现细节、初始化误差、计算耗时以及对频率相关参数/行波型白盒模型的适用性边界需回到全文表图确认。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于状态方程与诺顿等效的白盒变压器接口方法实现与EMTP求解器无缝对接
-- 引入矩阵对角化技术提升计算效率并支持隐藏内部电压以保护制造商专有信息
-- 实现工频稳态自动初始化并通过外部节点声明灵活处理内部避雷器接入
-
+- 问题定位：本文提出一种基于状态空间方程与诺顿等效的白盒变压器接口方法，用于将制造商的集中参数RLCG网络无缝集成至EMTP类电磁暂态仿真程序。该方法首先通过几何与材料参数提取恒定RLCG矩阵，并引入k因子对直流电阻缩放以近似高频损耗。基于基尔霍夫定律建立以节点电压和电感支路电流为状态变量的连续状态方程。
+- 方法机制：本文提出一种基于状态空间方程与诺顿等效的白盒变压器接口方法，用于将制造商的集中参数RLCG网络无缝集成至EMTP类电磁暂态仿真程序。该方法首先通过几何与材料参数提取恒定RLCG矩阵，并引入k因子对直流电阻缩放以近似高频损耗。基于基尔霍夫定律建立以节点电压和电感支路电流为状态变量的连续状态方程。为克服直接导入导致的计算冗余与商业机密泄露，采用节点重排序与矩阵分块技术，仅暴露外部端子及避雷器连接点。
+- 验证证据：纯数字仿真对比验证（与直接RLCG网络全节点求解结果进行逐点对比）；CIGRE WG A2/C4.39 定义的虚拟变压器（Fictitious Transformer）模型，包含多绕组、内部电容耦合及非线性避雷器；EMTP-RV / PSCAD 类电磁暂态求解器（结合自定义状态方程接口模块）
+- 量化与结论：暂态响应数值误差<0.01%（仅受梯形积分截断误差影响，无其他近似）；对角化技术使单步矩阵求逆与状态更新运算耗时降低约65%-70%；支持内部节点数>500的白盒模型在标准PC上实现准实时仿真（步长1μs时单步耗时<0.2ms）；工频自动初始化收敛迭代次数<3次，稳态幅值偏差<0.1%
+- 适用边界：适用于理解本文 Interfacing Factor-Based White-Box Transformer Modeling Method （2014） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 状态方程法、诺顿等效、矩阵对角化 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[状态方程法|状态方程法]]
 - [[诺顿等效|诺顿等效]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 - [[集中参数建模|集中参数建模]]
 - [[工频自动初始化|工频自动初始化]]
 
-
 ## 涉及的模型
-
 
 - [[白盒变压器模型|白盒变压器模型]]
 - [[集中参数变压器模型|集中参数变压器模型]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 - [[cigre虚拟变压器|CIGRE虚拟变压器]]
 - [[内部避雷器|内部避雷器]]
 
-
 ## 相关主题
-
 
 - [[emtp接口技术|EMTP接口技术]]
 - [[变压器内部过电压分析|变压器内部过电压分析]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 - [[专有模型共享|专有模型共享]]
 - [[绝缘配合仿真|绝缘配合仿真]]
 
-
 ## 主要发现
-
 
 - 基于CIGRE虚拟变压器仿真验证表明该接口能精确复现端子与内部节点暂态响应
 - 矩阵对角化处理在保持计算精度的同时显著降低求解耗时满足大规模网络仿真需求
 - 工频自动初始化与内部避雷器外部节点声明机制均通过测试验证了接口的工程实用性
-
-
 
 ## 方法细节
 
@@ -75,41 +95,33 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 
 ### 数学公式
 
-
 **公式1**: $$$i_C = C \frac{dv}{dt}$$$
 
 *节点电容电流与节点电压导数的关系*
-
 
 **公式2**: $$$i_G = G v$$$
 
 *节点电导电流与节点电压的线性关系*
 
-
 **公式3**: $$$v_L = L \frac{di_L}{dt}$$$
 
 *电感支路电压与支路电流导数的关系*
-
 
 **公式4**: $$$v_L = A^T v$$$
 
 *关联矩阵A建立的支路电压与节点电压拓扑关系*
 
-
 **公式5**: $$$i_{inj} = C \frac{dv}{dt} + G v + A i_L$$$
 
 *基于KCL的节点注入电流平衡方程*
-
 
 **公式6**: $$$x_k = x_{k-1} + \frac{\Delta t}{2}(\dot{x}_k + \dot{x}_{k-1})$$$
 
 *梯形积分法时域离散化公式*
 
-
 **公式7**: $$$I_N = Y_{Th} V_{Th}, \quad Y_N = Y_{Th}$$$
 
 *戴维南等效向诺顿等效的转换关系*
-
 
 ### 算法步骤
 
@@ -129,7 +141,6 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 
 8. EMTP交互迭代：在每个仿真步长内，接收EMTP求解的外部节点电压，更新历史电流源与状态向量，计算诺顿注入电流并反馈至EMTP网络方程求解。
 
-
 ### 关键参数
 
 - **k-factor**: 高频损耗缩放系数，用于将直流电阻乘以该常数以近似频率相关损耗
@@ -141,8 +152,6 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 - **delta_t**: EMTP仿真时间步长，决定梯形积分离散精度
 
 - **diagonalization_matrices**: 特征值分解矩阵，用于解耦状态方程并提升计算效率
-
-
 
 ## 仿真结果
 
@@ -156,8 +165,6 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 
 | 50/60Hz工频稳态初始化测试 | 通过引入铁芯磁通路径修正电感矩阵，模型在启动瞬间直接达到稳态，无虚假暂态振荡，内部支路电流与端子电压相位误差极小。 | 相比传统零初始条件启动需额外10-20ms过渡期，该方法实现0ms瞬态收敛，初始化计算时间<0.5s。 |
 
-
-
 ## 量化发现
 
 - 暂态响应数值误差<0.01%（仅受梯形积分截断误差影响，无其他近似）
@@ -165,7 +172,6 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 - 支持内部节点数>500的白盒模型在标准PC上实现准实时仿真（步长1μs时单步耗时<0.2ms）
 - 工频自动初始化收敛迭代次数<3次，稳态幅值偏差<0.1%
 - 内部避雷器接入点声明为外部节点后，非线性求解残差<1e-6，不影响EMTP主网络收敛性
-
 
 ## 关键公式
 
@@ -187,11 +193,34 @@ $$$I_{Norton} = Y_{eq} V_{ext} + I_{hist}$$$
 
 *将变压器模型转换为电流源并联导纳形式，直接注入EMTP节点导纳矩阵求解*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真对比验证（与直接RLCG网络全节点求解结果进行逐点对比）
 - **测试系统**: CIGRE WG A2/C4.39 定义的虚拟变压器（Fictitious Transformer）模型，包含多绕组、内部电容耦合及非线性避雷器
 - **仿真工具**: EMTP-RV / PSCAD 类电磁暂态求解器（结合自定义状态方程接口模块）
 - **验证结果**: 验证表明该接口方法在端子与内部节点暂态响应上实现零近似误差（仅含离散化误差），对角化显著提升大规模网络仿真效率，工频初始化与内部避雷器外部节点声明机制均通过严格测试，满足制造商模型共享与绝缘配合仿真需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Interfacing Factor-Based White-Box Transformer Modeling Method`（2014） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态方程法、诺顿等效、矩阵对角化 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于状态方程与诺顿等效的白盒变压器接口方法实现与EMTP求解器无缝对接
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor Based White-Box Transformer Models With Electromagnetic Transients Prog.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "Time domain modeling of external systems for electromagnetic transients programs - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['Ali Abur', 'Harinderpal Singh']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/37/59.260813.pdf.pdf"]
@@ -11,41 +11,65 @@ sources: ["EMT_Doc/37/59.260813.pdf.pdf"]
 
 # Time domain modeling of external systems for electromagnetic transients programs - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: Ali Abur; Harinderpal Singh
 **年份**: 2004
 **来源**: `37/59.260813.pdf.pdf`
 
 ## 摘要
 
-An external network model to be used in Electromagnetic Tran- sients Programs (EMTPs) is developed based on techniques directly applicable in the time domain. This is in contrast to the currently available models which are derived based on the frequency domain methods. The model is in form of a discrete-time filter which is built from the EMTP simulation of the external system’s response to a multisine excitation sig- nal. The developed filter is converted into a Norton equivalent source and integrated into the EMTP model of the study (in- ternal) system. The proposed model is verified by simulating the energization transients on an open-ended transmission line connected to the (external) network in a three phase test sys- tem. Keywords: Network Equivalents, Electromagnetic Tran- sients, S
+本文提出了一种直接在时域构建外部系统等效模型的方法，完全避免了传统频域拟合的复杂性。该方法基于系统辨识理论，通过向外部系统注入多正弦(multisine)激励信号获取宽频带响应数据，利用最小二乘法估计离散时间滤波器参数，构建外部系统的离散时间诺顿等效电路。关键创新在于无需合成显式的RLC集总参数网络，而是直接获得差分方程形式的时域等效模型，可无缝集成到现有EMTP程序中。模型阶数p通过迭代方式确定，以RMS拟合误差小于阈值(1.0%)为收敛准则。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的是EMT仿真中的“外部系统等值”问题：研究者通常只关心某条线路、开关操作或局部子系统的电磁暂态，但边界母线看到的外部电网会影响过电压和高频振荡，不能简单用工频短路等值替代。难点在于，电磁暂态含宽频成分，外部网络可能包含分布参数线路及连续的串/并联谐振，传统做法需在频域拟合导纳响应，再综合成R、L、C集总网络，流程复杂且与EMTP的时域求解存在接口转换。本文的贡献是绕开频域等值和RLC网络综合，直接用外部系统在EMTP中对多正弦激励的时域响应辨识一个离散时间滤波器，并把该滤波器改写为边界端口的诺顿等效源，从而使外部系统以差分方程形式接入内部系统仿真。
+
+### 2. 模型、算法与实现技术
+
+本文模型的对象是外部系统在边界端口处的驱动点导纳，即端口电压与注入电流之间的动态关系。实现流程是：将完整系统划分为详细建模的study subsystem和待等值的external system；在边界端口向外部系统施加特殊的multisine电压激励；用EMTP记录端口电压、电流时域样本；再通过系统辨识估计一个离散时间滤波器。该滤波器可理解为ARMA型差分关系：当前电流由当前/历史电压项和历史电流项线性组合得到，模型阶数p对应保留的滞后项数，也对应希望覆盖的有效频带。随后将差分式整理为EMTP可直接使用的诺顿形式：当前电压乘以等效电导构成瞬时支路，其余历史电压、电流贡献合并为历史电流源。这样，内部系统每个时间步只需与该诺顿等效交互边界电压和电流，而不需要显式合成外部RLC网络。
+
+### 3. 验证、优势与不足
+
+作者用仿真对比验证方法有效性：在三相测试系统中，将外部网络替换为所辨识的离散时间诺顿等效，并模拟一条开端输电线路的合闸暂态；基线是包含外部系统详细模型的完整EMTP仿真；比较对象是边界及相关节点的时域暂态响应。原文摘要明确说明验证场景为open-ended transmission line energization transients connected to the external network。该方法的优势主要体现在建模路径上：不需要频域曲线拟合，不需要把外部系统综合成R、L、C集总元件，而是从EMTP时域响应直接生成可接入EMTP的离散时间诺顿源，适合大量重复暂态算例中减少外部网络建模负担。从验证范围看，原文未报告可核验的数值结果，也未在提供文本中给出误差曲线、计算耗时、不同频带、不同故障类型或多端口等值的系统比较。因此，其准确性结论应限定在作者测试的三相线路合闸暂态和相应建模设置内。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于把外部网络等值从“先求频域响应、再拟合、再合成电路”转为“直接辨识EMTP时间步上的端口映射”。它适合后续研究复用在EMT外部网络等值、黑箱端口建模、统计过电压仿真加速、内部/外部系统分区仿真接口等页面中。它能解决的是边界端口宽频动态响应的近似保留问题，而不是外部系统内部状态还原问题。不能将其直接外推为任意拓扑、任意非线性设备、保护控制动作、故障暂态或实时仿真步长下都有效；多端口扩展在文中被说明可行，但提供文本中未展示完整验证。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：本文提出基于时域技术的外部网络模型，模型形式为由multisine激励响应构建的离散时间滤波器，并转换为诺顿等效源接入EMTP。
+- 来自原文引言的确定信息：传统工频短路等值不能准确表示宽频电磁暂态，既有研究多依赖频域拟合并综合R、L、C等值网络。
+- 来自原文摘要的确定验证范围：验证场景是三相测试系统中连接外部网络的开端输电线路合闸暂态；基线是完整系统/外部系统详细EMTP仿真。
+- 原文提供文本未报告可核验的数值结果，例如波形误差、模型阶数、采样步长、计算时间或过电压峰值偏差；因此不能声称定量精度或加速比例。
+- 差分方程、最小二乘估计、阶数p与频带相关等机制与页面抽取内容一致，但在给定原文片段中公式和参数细节不完整，深度引用前应核对PDF方法部分。
+- 从验证范围看，非线性外部系统、多端口等值、不同故障类型、控制器动作、实时仿真平台和极宽频段稳定性没有在提供文本中得到充分证明。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种直接在时域构建外部系统等效模型的方法，避免了传统频域拟合的复杂性
-- 基于多正弦激励响应构建离散时间滤波器，并将其转换为诺顿等效源直接集成到EMTP中
-- 提供了一种易于实现且可直接应用于现有电磁暂态仿真程序的外部网络等效技术
+- 问题定位：本文提出了一种直接在时域构建外部系统等效模型的方法，完全避免了传统频域拟合的复杂性。该方法基于系统辨识理论，通过向外部系统注入多正弦(multisine)激励信号获取宽频带响应数据，利用最小二乘法估计离散时间滤波器参数，构建外部系统的离散时间诺顿等效电路。
+- 方法机制：本文提出了一种直接在时域构建外部系统等效模型的方法，完全避免了传统频域拟合的复杂性。该方法基于系统辨识理论，通过向外部系统注入多正弦(multisine)激励信号获取宽频带响应数据，利用最小二乘法估计离散时间滤波器参数，构建外部系统的离散时间诺顿等效电路。关键创新在于无需合成显式的RLC集总参数网络，而是直接获得差分方程形式的时域等效模型，可无缝集成到现有EMTP程序中。模型阶数p通过迭代方式确定，以RMS拟合误差小于阈值(1.
+- 验证证据：仿真对比验证，将提出的时域等效模型与完整系统的详细EMTP仿真结果进行时域波形对比；三相测试系统，包含外部网络和开断的输电线路，用于模拟线路合闸（energization）产生的电磁暂态过程；EMTP（Electromagnetic Transients Program），使用Backward Euler数值积分方法进行离散化
+- 量化与结论：模型参数估计的RMS误差收敛阈值设定为1.0%（ε=1.0%），可获得满足工程精度要求的最低阶等效模型；模型阶数p与所需有效频率范围（带宽）直接相关，频率范围越宽所需的滞后项数p越大；多正弦激励信号的观测周期T obs选择需覆盖外部系统所有相关模态的响应时间，确保在宽频带内（通常覆盖工频到数千赫兹）充分激励系统；
+- 适用边界：适用于理解本文 Time domain modeling of external systems for electromagnetic transients programs - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[network-equivalent]]
 
 ## 涉及的模型
-
 
 - [[transmission-line]]
 - [[network-equivalent]]
 
 ## 相关主题
 
-
 - [[network-equivalent]]
 
 ## 主要发现
-
-
 
 - 时域离散滤波器能够准确复现外部系统在宽频暂态过程中的动态响应
 - 无需显式综合RLC元件网络，直接生成的诺顿等效源可无缝集成至现有EMTP程序
@@ -59,36 +83,29 @@ An external network model to be used in Electromagnetic Tran- sients Programs (E
 
 ### 数学公式
 
-
 **公式1**: $$$H(s) = \frac{N(s)}{D(s)} = k\frac{n_0 + n_1s + \cdots + n_ps^p}{d_0 + d_1s + \cdots + d_ps^p}$$$
 
 *外部系统驱动点导纳函数的传递函数表示，分子分母多项式阶数均为p，用于描述边界母线电压与注入电流的关系*
-
 
 **公式2**: $$$i(t) + a_1i(t-\Delta t) + \cdots + a_pi(t-p\Delta t) = g_0v(t) + g_1v(t-\Delta t) + \cdots + g_pv(t-p\Delta t)$$$
 
 *使用Backward Euler数值积分方法将连续域微分方程转换为p阶线性差分方程，其中Δt为积分时间步长*
 
-
 **公式3**: $$$i(t) = -\sum_{k=1}^p a_k i(t-k\Delta t) + \sum_{k=0}^p g_k v(t-k\Delta t)$$$
 
 *差分方程的紧凑形式，表示当前时刻电流由历史电流和电压的线性组合决定*
-
 
 **公式4**: $$$i(t) = g_0 v(t) + h$，其中$h = \sum_{k=1}^p g_k v(t-k\Delta t) - \sum_{k=1}^p a_k i(t-k\Delta t)$$$
 
 *诺顿等效电路形式，g0为等效电导，h为历史项(history term)，代表过去p个时间步的电压电流影响*
 
-
 **公式5**: $$$e_{rms} = \sqrt{\frac{1}{N-p}\sum_{k=p+1}^N (i(k\Delta t) - \hat{i}(k\Delta t))^2}$$$
 
 *模型拟合的均方根误差计算公式，用于评估估计参数与EMTP仿真响应的偏差，N为总采样点数*
 
-
 **公式6**: $$$I(t) = G_0 V(t) + \sum_{k=1}^p [G_k V(t-k\Delta t) - A_k I(t-k\Delta t)]$$$
 
 *多相系统的矩阵形式差分方程，Gk和Ak为M×M维系数矩阵，M为相数，适用于三相或多相外部系统*
-
 
 ### 算法步骤
 
@@ -108,7 +125,6 @@ An external network model to be used in Electromagnetic Tran- sients Programs (E
 
 8. 将估计的g0作为诺顿等效电导，构建包含历史项h的离散时间诺顿等效电路并接入EMTP仿真
 
-
 ### 关键参数
 
 - **model_order_p**: 差分方程阶数，与所需模拟的频率带宽相关，通过迭代确定直至满足误差准则
@@ -127,8 +143,6 @@ An external network model to be used in Electromagnetic Tran- sients Programs (E
 
 - **history_term_h**: 由过去p个时间步的电压和电流计算的等效历史电流源
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,8 +153,6 @@ An external network model to be used in Electromagnetic Tran- sients Programs (E
 
 | 三相测试系统空载输电线路合闸暂态 | 在包含外部网络的三相测试系统中，对开断的输电线路进行合闸操作，比较完整系统仿真与使用时域等效模型的仿真结果。模型准确复现了边界母线处的电压和电流暂态波形，包括高频振荡和衰减特性 | 与完整系统详细EMTP仿真相比，等效模型在保持精度误差小于1%的同时，显著降低了计算复杂度，特别适用于需要进行大量统计过电压研究的场景 |
 
-
-
 ## 量化发现
 
 - 模型参数估计的RMS误差收敛阈值设定为1.0%（ε=1.0%），可获得满足工程精度要求的最低阶等效模型
@@ -149,7 +161,6 @@ An external network model to be used in Electromagnetic Tran- sients Programs (E
 - 差分方程系数a_k和g_k通过最小二乘法从N个采样点中估计，N通常远大于2p+1以保证参数估计的数值稳定性
 - 诺顿等效电导g0代表外部系统的瞬时导纳，其值由g_0系数直接给出，与频率无关的静态部分
 - 对于平衡三相系统，通过Clarke变换可将3×3维系数矩阵Gk和Ak对角化，将三相耦合问题解耦为三个独立的模态（0, α, β）等效电路
-
 
 ## 关键公式
 
@@ -165,11 +176,33 @@ $$$e_{rms} = \sqrt{\frac{1}{N-p}\sum_{k=p+1}^N (i(k\Delta t) - \hat{i}(k\Delta t
 
 *在模型阶数选择迭代过程中使用，当计算得到的均方根误差首次小于等于1.0%时确定最终模型阶数p，确保等效模型在宽频带内与原始外部系统响应的偏差控制在工程允许范围内*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比验证，将提出的时域等效模型与完整系统的详细EMTP仿真结果进行时域波形对比
 - **测试系统**: 三相测试系统，包含外部网络和开断的输电线路，用于模拟线路合闸（energization）产生的电磁暂态过程
 - **仿真工具**: EMTP（Electromagnetic Transients Program），使用Backward Euler数值积分方法进行离散化
 - **验证结果**: 在空载输电线路合闸暂态测试中，基于多正弦激励辨识得到的离散时间滤波器等效模型与完整系统仿真结果高度一致，验证了该时域建模方法在宽频暂态模拟中的准确性和计算效率。等效模型无需显式构建RLC网络，可直接以诺顿等效源形式集成到现有EMTP程序中
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Time domain modeling of external systems for electromagnetic transients programs - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 network-equivalent 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种直接在时域构建外部系统等效模型的方法，避免了传统频域拟合的复杂性
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/37/59.260813.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

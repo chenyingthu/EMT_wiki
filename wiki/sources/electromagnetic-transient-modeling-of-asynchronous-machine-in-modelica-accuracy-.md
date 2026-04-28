@@ -1,7 +1,7 @@
 ---
 title: "Electromagnetic Transient Modeling of Asynchronous Machine in Modelica, Accuracy, and Performance Assessment"
 type: source
-authors: ['未知']
+authors: ['Choi 等']
 year: 2024
 journal: "IEEE Access;2024;12; ;10.1109/ACCESS.2024.3462255"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/16/Choi 等 - 2025 - Electromagnetic Transient Simulation of 
 
 # Electromagnetic Transient Modeling of Asynchronous Machine in Modelica, Accuracy, and Performance Assessment
 
-**作者**: 
+**作者**: Choi 等
 **年份**: 2024
 **来源**: `16/Choi 等 - 2025 - Electromagnetic Transient Simulation of Large-Scale Inverter-Based Resources With High-Granularity.pdf`
 
 ## 摘要
 
-Classical EMT-type simulators are mostly programmed in procedural languages, e.g. Fortran or C. In these languages, the focus is mainly on the solution methods. Modern languages, such as Modelica, are declarative and primarily focused on modeling and simulation. Modelica offers a much higher abstraction level, which makes the codes more concise and understandable. This paper contributes to the electromagnetic transient modeling and simulation of asynchronous machines in Modelica. In this paper, the modeling of a three-phase squirrel cage (single and double cage) and wound-rotor induction machine in three different reference frames is described and implemented. The accuracy and performance of Modelica models are compared and validated with the classical modeling approach used in the referen
+本文提出一种基于Modelica声明式语言的异步电机（ASM）电磁暂态（EMT）建模方法。该方法摒弃传统过程式语言（如Fortran/C）中依赖固定步长和伴随电路诺顿等效的求解逻辑，转而直接以磁链为状态变量构建四阶非线性微分代数方程（DAE）组。模型支持定子、转子及同步三种参考系灵活切换，通过Modelica编译器的符号化扁平化、指标约简与方程撕裂技术自动确定计算顺序，无需预设因果性。结合变步长求解器（如DASSL），算法可根据网络暂态变化率动态调整积分步长，在长周期仿真中显著提升效率，且无需添加人工阻尼电阻即可保证数值稳定性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自EMT仿真中大量异步电机启动、故障、孤岛和长时段顺序启动场景：既要保留电磁暂态波形，又不能在全程用很小固定步长拖慢计算。研究对象是三相异步机在Modelica中的EMT级建模，包括单鼠笼、双鼠笼和绕线转子感应机，并允许在定子、转子和同步参考系下表达。难点在于传统EMTP类实现通常先把电机微分方程按指定积分法离散化，再用伴随电路/Norton等效接入网络；这种写法与求解器、步长和程序流程强绑定，模型方程、控制器和网络求解顺序都需要人工组织，还可能需要并联阻尼电阻等数值处理抑制伪振荡。本文的贡献不是提出新的电机物理模型，而是把成熟的ASM qd方程以Modelica声明式、方程化方式实现，使模型独立于固定步长伴随电路流程，并系统比较其与EMTP经典实现的精度和性能，特别考察变步长求解器在电机顺序启动中的价值。
+
+### 2. 模型、算法与实现技术
+
+本文实现的是面向Modelica的ASM电磁暂态模型。电气部分以定、转子qd轴磁链作为核心状态量，端口量为三相电压、电流，内部通过abc到qd的Park变换把网络端口电压转换到选定参考系；再由磁链微分方程描述定子和转子电磁动态。页面给出的核心形式为pφ=ωbase(Aφ+v)，其中A=-RL^{-1}+W：R和L^{-1}体现绕组电阻与电感耦合，W体现参考系旋转和转子速度引起的交叉耦合。因此，模型并不是把机器先离散成固定步长Norton电流源，而是在连续时间DAE/ODE层面保留磁链状态。电流通过i=L^{-1}φ由磁链代数求得，再经逆Park变换回到abc接口以接入电网。电磁转矩由qd轴磁链和电流叉积计算，机械方程pωr=(Te−Tm)/(2H)更新转速和转子角位置，并反过来影响W矩阵和坐标变换角。实现层面，Modelica编译器负责模型扁平化、变量关联、方程排序、指标约简和撕裂等符号处理；数值积分可由OpenModelica中的DASSL等求解器完成，步长由局部误差控制自动调整，而不是由电机模型代码固定指定。
+
+### 3. 验证、优势与不足
+
+作者采用与参考软件EMTP的对比仿真验证Modelica模型。验证对象包括单机异步电机启动及三相短路、含多台双鼠笼电机和同步机的复杂网络故障/孤岛工况，以及工业厂用电系统中多台电机的顺序启动长周期仿真。工具基线为OpenModelica中Modelica模型与DASSL变步长求解器，对比EMTP中经典固定步长TBE/梯形-后向欧拉类实现；指标包括时域波形一致性、相对误差范数、平均步长和CPU时间。页面给出的量化结果显示，单机场景中Modelica与EMTP基准解相对误差范数约0.64%至0.77%；顺序启动场景中Modelica平均步长可扩展到168.9 µs，60 s仿真耗时112.6 s，而EMTP固定20 µs步长耗时198.4 s；在需要捕捉高频暂态的场景中，页面称EMTP需降至1 µs步长才匹配，耗时1119 s，而Modelica约112.6 s。优势主要来自模型与积分法解耦、变步长在稳态段放大步长、暂态段自动缩小步长，以及无需依赖传统电机伴随电路中的人工阻尼电阻。边界是：验证仍限于论文算例、离线时域仿真、特定求解器和参数；未证明对所有大规模电网、强电力电子开关、实时仿真或任意控制器都稳定高效。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：EMT异步机建模的瓶颈不只在电机方程本身，也在“方程如何被接入网络并被求解”。把ASM写成Modelica声明式方程后，模型可以保持物理方程可读性，并把方程排序、代数环处理和步长控制交给编译器与求解器，从而为长时间电机启动、厂用电恢复、孤岛运行等场景提供一种不同于固定步长Norton等效的实现路线。该页适合被后续关于Modelica-EMT联合仿真、异步机多参考系建模、变步长暂态仿真性能评估、FMI接口或电机顺序启动研究复用。不适合把结论外推为“Modelica总是比EMTP快”，也不应把本文算例中的误差和耗时直接迁移到未测试的网络规模、硬件平台、求解器容差或实时仿真环境。
+
+### 证据边界
+
+- 原文证据明确给出论文题名、DOI、期刊年份、摘要、研究对象为Modelica中单/双鼠笼和绕线转子异步机建模，并声明与EMTP经典方法比较精度和性能。
+- 当前用户元数据写为“Choi 等”，但原文首页证据显示作者为Alireza Masoom和Jean Mahseredjian；作者字段需要以PDF首页为准复核。
+- 关于0.64%至0.77%误差、168.9 µs平均步长、112.6 s、198.4 s和1119 s等数值来自页面已有抽取内容；在本次提供的原文片段中尚未出现对应表图，深度引用前应回查原文结果章节。
+- 模型机制如磁链状态、Park变换、i=L^{-1}φ、转矩和机械方程属于页面给出的公式与异步机标准qd建模逻辑；是否完全对应原文所有符号、基值和符号约定需核对论文第二节及附录/参数表。
+- 验证范围覆盖论文页面列出的电机启动、短路、故障清除、孤岛和顺序启动；未看到对实时仿真、硬件在环、极大规模含大量电力电子变换器系统、不同Modelica工具之间可移植性能的验证。
+- 性能优势与OpenModelica、DASSL容差、EMTP固定步长设置、计算机环境和测试网络有关；从验证范围看，不能推出所有EMT软件或所有步长策略下都有相同加速比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于Modelica实现异步电机多参考系电磁暂态建模，摆脱固定步长求解限制
-- 提出基于磁链状态变量的四阶非线性微分代数方程建模，提升计算效率
-- 验证变步长求解器在电机顺序启动仿真中的优势，实现无附加阻尼直接收敛
-
+- 问题定位：本文提出一种基于Modelica声明式语言的异步电机（ASM）电磁暂态（EMT）建模方法。该方法摒弃传统过程式语言（如Fortran/C）中依赖固定步长和伴随电路诺顿等效的求解逻辑，转而直接以磁链为状态变量构建四阶非线性微分代数方程（DAE）组。
+- 方法机制：本文提出一种基于Modelica声明式语言的异步电机（ASM）电磁暂态（EMT）建模方法。该方法摒弃传统过程式语言（如Fortran/C）中依赖固定步长和伴随电路诺顿等效的求解逻辑，转而直接以磁链为状态变量构建四阶非线性微分代数方程（DAE）组。模型支持定子、转子及同步三种参考系灵活切换，通过Modelica编译器的符号化扁平化、指标约简与方程撕裂技术自动确定计算顺序，无需预设因果性。
+- 验证证据：对比仿真验证（与工业级标准EMTP软件进行波形、精度与性能对比）；1) 900 hp单鼠笼电机单机系统；2) 含6台双鼠笼感应电机、2台同步发电机及非线性变压器的120 kV复杂配电网；3) 工业厂用电系统电机顺序启动长周期网络。；OpenModelica (DASSL变步长求解器, ODE模式) vs EMTP (TBE梯形-后向欧拉固定步长求解器)
+- 量化与结论：Modelica与EMTP基准解的相对误差范数控制在0.64%~0.77%之间，满足高精度EMT仿真要求。；在长周期顺序启动场景中，变步长求解器平均步长可达168.9 µs，仿真耗时112.6 s，比固定步长20 µs的EMTP（198.4 s）快1.76倍。；为捕捉同等高频暂态精度，EMTP需采用1 µs极小步长导致耗时1119 s，而Modelica仅需约112.
+- 适用边界：适用于理解本文 Electromagnetic Transient Modeling of Asynchronous Machine in Modelica, Accuracy, and Performance Assessment （2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[modelica方程建模|Modelica方程建模]]
 - [[变步长求解器|变步长求解器]]
@@ -36,18 +64,14 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 - [[磁链状态空间法|磁链状态空间法]]
 - [[微分代数方程求解|微分代数方程求解]]
 
-
 ## 涉及的模型
-
 
 - [[异步电机|异步电机]]
 - [[单鼠笼感应电机|单鼠笼感应电机]]
 - [[双鼠笼感应电机|双鼠笼感应电机]]
 - [[绕线式感应电机|绕线式感应电机]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[声明式建模|声明式建模]]
@@ -55,15 +79,11 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 - [[故障与孤岛仿真|故障与孤岛仿真]]
 - [[数值收敛性分析|数值收敛性分析]]
 
-
 ## 主要发现
-
 
 - 变步长求解器结合Modelica模型在电机顺序启动暂态过程中实现快速高精度仿真
 - 模型在不同容差下直接收敛，无需并联人工阻尼电阻即可有效消除数值振荡
 - 与EMTP经典方法对比验证了声明式建模在暂态精度与计算效率上的等效性
-
-
 
 ## 方法细节
 
@@ -73,36 +93,29 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 
 ### 数学公式
 
-
 **公式1**: $$$v_{qds} = P(\theta) v_{abcs}$$$
 
 *定子abc坐标系到qd参考系的Park变换电压方程*
-
 
 **公式2**: $$$p\phi = \omega_{base} (A\phi + v)$$$
 
 *以磁链为状态变量的四阶非线性电气状态空间方程，p为微分算子*
 
-
 **公式3**: $$$A = -RL^{-1} + W$$$
 
 *状态矩阵A，包含电阻、电感逆矩阵及旋转速度耦合矩阵W*
-
 
 **公式4**: $$$i = L^{-1}\phi$$$
 
 *磁链与电流的代数关系，用于从状态变量求解支路电流*
 
-
 **公式5**: $$$T_e = \phi_{ds} i_{qs} - \phi_{qs} i_{ds}$$$
 
 *电磁转矩计算公式，基于qd轴磁链与电流的叉积*
 
-
 **公式6**: $$$p\omega_r = \frac{1}{2H}(T_e - T_m)$$$
 
 *转子机械运动方程，描述转速随电磁转矩与机械负载转矩差值的动态变化*
-
 
 ### 算法步骤
 
@@ -118,7 +131,6 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 
 6. 6. 变步长数值积分：调用DASSL等变步长求解器，根据用户设定的容差（如1e-6）和局部截断误差估计，动态调整时间步长。在暂态剧烈时自动缩小步长，稳态时放大步长，直接求解DAE系统直至仿真结束。
 
-
 ### 关键参数
 
 - **求解器容差**: 1e-6（高精度）, 1e-3（高效率）
@@ -132,8 +144,6 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 - **电机额定参数**: 900 hp/2.4 kV/4极 (Case 1); 1100 hp/6.6 kV/4极 (Case 2)
 
 - **参考系类型**: 定子参考系($\omega=0$)、转子参考系($\omega=\omega_r$)、同步参考系($\omega=1$)
-
-
 
 ## 仿真结果
 
@@ -149,8 +159,6 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 
 | Case 3: 电机顺序启动长周期仿真 (ASM2至ASM6) | 电机在15 s至50 s间依次启动，仿真总时长60 s。Modelica平均步长自动扩展至168.9 µs，电压波形与EMTP (20 µs固定步长) 完全一致。 | Modelica耗时112.6 s，EMTP耗时198.4 s。Modelica仿真速度提升约43%（快1.76倍），且启动间隔越长，变步长优势越明显。 |
 
-
-
 ## 量化发现
 
 - Modelica与EMTP基准解的相对误差范数控制在0.64%~0.77%之间，满足高精度EMT仿真要求。
@@ -158,7 +166,6 @@ Classical EMT-type simulators are mostly programmed in procedural languages, e.g
 - 为捕捉同等高频暂态精度，EMTP需采用1 µs极小步长导致耗时1119 s，而Modelica仅需约112.6 s，计算效率提升近10倍。
 - 求解器容差从1e-6放宽至1e-3时，平均步长从15.05 µs增至25.45 µs，波形精度损失极小（误差范数仅增加0.13%），但CPU时间显著下降。
 - 全程无需添加传统EMTP中用于抑制数值振荡的人工并联阻尼电阻，模型直接收敛且保持数值稳定。
-
 
 ## 关键公式
 
@@ -180,11 +187,34 @@ $$$p\omega_r = \frac{1}{2H}(T_e - T_m)$$$
 
 *描述转子角速度随转矩不平衡量的积分过程，适用于单机或多质量块系统的机电暂态耦合仿真。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（与工业级标准EMTP软件进行波形、精度与性能对比）
 - **测试系统**: 1) 900 hp单鼠笼电机单机系统；2) 含6台双鼠笼感应电机、2台同步发电机及非线性变压器的120 kV复杂配电网；3) 工业厂用电系统电机顺序启动长周期网络。
 - **仿真工具**: OpenModelica (DASSL变步长求解器, ODE模式) vs EMTP (TBE梯形-后向欧拉固定步长求解器)
 - **验证结果**: 在电机启动、稳态运行、三相短路、两相接地故障及孤岛运行等多种工况下，Modelica模型输出波形与EMTP高度一致。变步长策略在暂态剧烈时自动加密步长，稳态时大幅放宽步长，在保证误差<0.8%的前提下，长周期仿真效率提升43%~900%，且彻底消除了对人工阻尼电阻的依赖，验证了声明式建模结合变步长求解器在EMT仿真中的优越性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromagnetic Transient Modeling of Asynchronous Machine in Modelica, Accuracy, and Performance Assessment`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 modelica方程建模、变步长求解器、park坐标变换 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于Modelica实现异步电机多参考系电磁暂态建模，摆脱固定步长求解限制
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/16/Choi 等 - 2025 - Electromagnetic Transient Simulation of Large-Scale Inverter-Based Resources With High-Granularity.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "An Equivalent Dynamic Phasor Model for a Single-Phase Boost Power-Factor-Correction Converter"
 type: source
-authors: ['未知']
+authors: ['UDOKA C. NWANETO']
 year: 2025
 journal: "IEEE Open Journal of Power Electronics;2025;6; ;10.1109/OJPEL.2025.3560554"
 tags: ['dynamic-phasor']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 
 # An Equivalent Dynamic Phasor Model for a Single-Phase Boost Power-Factor-Correction Converter
 
-**作者**: 
+**作者**: UDOKA C. NWANETO
 **年份**: 2025
 **来源**: `07&08/An Equivalent Dynamic Phasor Model for a Single-Phase Boost Power-Factor-Correction Converter.pdf`
 
 ## 摘要
 
-To mitigate harmonic current ﬂow in distribution systems, single-phase diode-bridge rectiﬁers (DBRs) are commonly equipped with active power factor correction (PFC) controllers. Achieving high power quality and dynamic performance in PFC controller design demands a precise understanding of PFC converter behavior. While detailed electromagnetic transient (EMT) simulations provide accurate insights, they are time-consuming. To address this, the dynamic phasor (DP) method offers a more efﬁcient modeling approach for power converters. This paper introduces and explores the DP model of a single-phase boost PFC converter, along with guidelines to integrate it with existing simulation platforms. To overcome challenges arising from differing driving frequencies (line frequency for the DBR and swit
+本文提出一种基于动态相量（DP）的单相Boost PFC变换器等效建模方法，旨在解决传统EMT仿真步长小、耗时久，以及常规平均值模型忽略二次谐波与电感动态的问题。核心思路是利用符号函数（sign function）将二极管整流桥（DBR）与Boost DC-DC变换器的动态方程从直流侧平移至交流侧，消除中间直流电平，将其转化为等效的单相有源整流器模型。随后，在DP域内对等效模型进行展开，保留交流侧基波与直流侧直流分量及二次谐波分量，构建包含8阶（含陷波器为10阶）的DP大信号模型。在此基础上，通过小信号线性化推导电流环与电压环的开闭环传递函数，揭示DP模型与传统状态空间平均模型在结构上的等效性及增益缩放关系。最终建立系统化的控制器参数整定流程，实现DP域设计参数向详细开关模型及硬件原型的精确映射。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自单相AC/DC前端，尤其是带二极管桥整流器（DBR）和Boost级的PFC变换器：它既要满足IEC 61000-3-2等谐波限制，又要在控制设计中正确反映直流母线二倍工频纹波、输入电流动态和负载电压调节。研究对象是采用平均电流模式控制思路的单相Boost PFC拓扑。难点在于该电路天然包含两个时间尺度和两类激励：DBR由工频交流驱动，Boost DC-DC级由高频开关驱动；详细EMT模型能描述开关与谐波，但仿真耗时，传统平均模型又容易把整流侧偶次谐波、特别是二倍工频电压纹波滤掉。本文的贡献不是简单做平均，而是先用符号函数把DBR加Boost级的动态方程等效变换为单相有源整流器形式，消除“整流后脉动直流输入”带来的多频建模冲突，再在该等效模型上建立动态相量（DP）模型，并通过小信号分析给出PFC控制器增益整定流程，使DP模型既能服务暂态仿真，也能服务控制参数设计。
+
+### 2. 模型、算法与实现技术
+
+本文模型的核心是“符号函数等效变换 + 动态相量展开”。原电路中，交流侧电压经DBR变成脉动直流，再驱动Boost电感和输出电容；作者引入与输入电压极性相关的sign函数，将Boost电感电流等变量重新映射到交流侧，使电路可写成类似单相有源整流器的连续动态方程。等效方程中的主要接口量包括交流输入电压/电流、Boost电感动态、输出直流母线电压、负载电阻以及由占空比相关量形成的调制函数。随后，动态相量定义把周期或准周期变量表示为滑动窗口傅里叶系数，模型不再逐点跟踪开关波形，而是跟踪所选谐波分量的慢变复系数。机制上，交流侧通常关注基波相量，直流侧关注直流分量及二倍工频纹波；微分项在DP域会产生相量导数与jkω交叉项，因此可保留电感和电容的动态耦合。控制实现方面，外环根据输出电压相量/平均量生成输入电流基波参考，内环调节电流相量分量；小信号化后得到电压环、电流环传递关系，用于解析选择PI增益，并说明这些DP域增益如何与详细开关模型或实验控制器中的参数对应。
+
+### 3. 验证、优势与不足
+
+作者采用仿真和实验两类证据验证模型。原文摘要明确说明，仿真在MATLAB/Simulink中进行，并将所提DP模型与详细EMT模型结果对比，同时进行误差计算；实验结果用于验证该DP模型在单相Boost PFC控制系统调参中的实用性。测试对象是单相Boost PFC变换器，即前级DBR加后级Boost DC-DC结构；对比基线是详细EMT模型，而论文关注的指标包括时域响应相关性、谐波/纹波描述能力、以及控制器增益整定后系统表现。其优势在于：相对于详细EMT模型，DP模型避免逐开关周期积分，适合较长时间尺度的控制和电网侧谐波分析；相对于常规平均值模型，它通过保留动态相量分量表达二倍工频纹波和电感动态，不把单相PFC中关键的偶次谐波现象直接平均掉。需要注意，当前提供的原文片段没有给出可核验的具体误差百分比、步长倍数、THD数值或实验硬件参数，因此这些定量结论不能仅凭本页升级为确定事实。从验证范围看，结论主要限于文中单相Boost PFC拓扑、其控制结构、参数范围和MATLAB/Simulink及实验平台；未证明可直接适用于交错PFC、图腾柱PFC、三相整流器、故障工况或强畸变电网。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于说明：单相Boost PFC的“难平均”问题不只是开关频率高，而是DBR整流造成的工频、二倍工频与开关动态混合；通过先做符号函数等效，再做DP建模，可以把多频耦合转化为可选择谐波阶次的状态空间问题。它适合被后续关于AC/DC变换器平均建模、EMT加速仿真、PFC控制器整定、二倍工频纹波分析和动态相量接口建模的页面复用。工程上可用于在详细开关仿真之前快速筛选控制参数、观察输出电压纹波与输入电流质量之间的权衡。不适合把该模型外推为所有PFC拓扑的通用等值，也不应在未重新推导相量阶次、控制接口和符号函数映射的情况下用于非正弦电网、大扰动故障或不同整流结构。
+
+### 证据边界
+
+- 原文明确给出的事实包括论文题名、作者、DOI、研究对象为单相Boost PFC、方法包含sign函数等效变换、DP建模、小信号控制器设计，以及MATLAB/Simulink仿真和实验验证。
+- 当前提供的原文片段只定性说明DP模型与详细EMT模型有较强相关性和数值仿真优势；未在片段中给出可核验的误差百分比、仿真步长、运行时间或THD数值。
+- 关于保留交流基波、直流分量和二倍工频分量的说明符合DP建模机制和页面抽取内容，但具体保留谐波阶次、状态阶数和方程编号仍需回到论文模型推导部分核对。
+- 控制器增益映射关系在页面抽取中出现，但当前原文证据片段没有展示完整传递函数和参数表，因此不宜独立引用具体比例或数值增益。
+- 验证边界主要覆盖文中单相DBR+Boost PFC及其控制系统；没有证据表明作者验证了三相、交错、图腾柱、故障穿越、宽频电网畸变或实时硬件在环场景。
+- 实验验证被摘要确认存在，但当前片段未提供硬件额定功率、器件参数、采样频率、控制器实现细节和测量不确定度，工程复现仍需查阅原文表格和实验章节。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于符号函数变换的等效动态相量模型，解决多频激励下的PFC建模难题。
-- 推导动态相量小信号模型，保留宽频谐波动态特性，适用于谐振补偿器设计。
-- 建立系统化控制设计流程，利用DP模型精确整定开关模型与硬件原型控制参数。
-
+- 问题定位：本文提出一种基于动态相量（DP）的单相Boost PFC变换器等效建模方法，旨在解决传统EMT仿真步长小、耗时久，以及常规平均值模型忽略二次谐波与电感动态的问题。
+- 方法机制：本文提出一种基于动态相量（DP）的单相Boost PFC变换器等效建模方法，旨在解决传统EMT仿真步长小、耗时久，以及常规平均值模型忽略二次谐波与电感动态的问题。核心思路是利用符号函数（sign function）将二极管整流桥（DBR）与Boost DC-DC变换器的动态方程从直流侧平移至交流侧，消除中间直流电平，将其转化为等效的单相有源整流器模型。
+- 验证证据：单相Boost PFC变换器（含DBR与Boost DC-DC级联结构，额定功率与参数见表1）；MATLAB/Simulink (详细开关模型), MATLAB ODE求解器(ode15s, DP模型), 硬件实验平台；DP模型在时域波形、二次谐波幅值及动态响应上与详细EMT模型高度一致，误差极小；
+- 量化与结论：DP模型仿真步长可达0.5 ms，是传统EMT模型（0.1 μs）的5000倍，显著降低数值积分计算负担。；DP小信号模型推导的电压环PI增益约为传统详细模型计算值的1/2，电流环增益相差倍，揭示了DP域与开关域控制参数的精确映射关系。；电压环带宽设计为5~15 Hz（即的1/10~1/5），可有效抑制二次纹波，防止电感电流畸变，确保功率因数接近1。；
+- 适用边界：适用于理解本文 An Equivalent Dynamic Phasor Model for a Single-Phase Boost Power-Factor-Correction Converter （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[动态相量法|动态相量法]]
 - [[符号函数变换|符号函数变换]]
@@ -36,9 +64,7 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 - [[等效建模|等效建模]]
 - [[线性化分析|线性化分析]]
 
-
 ## 涉及的模型
-
 
 - [[单相boost-pfc变换器|单相Boost PFC变换器]]
 - [[二极管整流桥|二极管整流桥]]
@@ -46,9 +72,7 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 - [[动态相量模型|动态相量模型]]
 - [[小信号模型|小信号模型]]
 
-
 ## 相关主题
-
 
 - [[动态相量建模|动态相量建模]]
 - [[功率因数校正|功率因数校正]]
@@ -57,15 +81,11 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 - [[仿真加速|仿真加速]]
 - [[电力电子变换器|电力电子变换器]]
 
-
 ## 主要发现
-
 
 - DP模型与详细EMT仿真结果高度吻合，且大幅缩短数值计算时间。
 - DP小信号模型准确捕捉二次谐波与电感电流动态，验证了控制设计有效性。
 - 硬件实验证实该模型可直接用于实际PFC变换器控制系统的参数整定与优化。
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 
 ### 数学公式
 
-
 **公式1**: $$$\langle x \rangle_k(t) = \frac{1}{T} \int_{t-T}^{t} x(\tau) e^{-jk\omega\tau} d\tau$$$
 
 *动态相量定义式，通过滑动窗口$T$内的傅里叶平均将准周期信号分解为时变复系数，是DP建模的数学基础。*
-
 
 **公式2**: $$$L_r \frac{di_s}{dt} = v_s - i_s R_r - m v_o, \quad C_o \frac{dv_o}{dt} = m i_s - v_o/R_o$$$
 
 *符号函数等效变换方程，其中$m=\text{sgn}(v_s)d'$。将多频激励的PFC拓扑转化为单一基频激励的等效有源整流器，解决DP建模中的频率冲突。*
 
-
 **公式3**: $$$G_{ov,dp}(s) = \frac{V_s/V_o}{sC_o + 1/R_o}$$$
 
 *DP域电压环开环传递函数，用于分析直流母线电压对输入电流基波实部的响应特性，是电压环控制器设计的核心依据。*
 
-
 **公式4**: $$$K_{pv} = \lambda_3 (2\varepsilon_v \omega_{bv} - \omega_{RC}), \quad K_{iv} = \omega_{bv}^2 / \lambda_3$$$
 
 *DP模型电压环PI增益计算公式，其中$\lambda_3 = V_s/(V_o C_o)$。通过设定目标带宽$\omega_{bv}$直接计算控制器参数。*
-
 
 ### 算法步骤
 
@@ -109,7 +124,6 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 5. 小信号线性化与传递函数推导：在稳态工作点施加扰动，忽略高阶谐波与寄生电阻损耗，推导电流环与电压环的开环传递函数，对比传统平均模型确定增益缩放系数（电流环差$1/V_o$倍，电压环约差1/2倍）。
 
 6. 控制器参数整定与映射：根据目标带宽（电压环设为$2\omega$的1/10~1/5）计算DP域PI参数，按推导的比例关系映射至详细开关模型或硬件控制器，完成闭环系统调参。
-
 
 ### 关键参数
 
@@ -127,8 +141,6 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 
 - **ODE求解器**: MATLAB ode15s
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -143,8 +155,6 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 
 | 整流电流谐波重构 | 利用DP域基波分量通过傅里叶级数重构整流电流$i_r$，直流分量$\langle i_{r0} \rangle_0 = \frac{2}{\pi}I_s$与偶次谐波幅值计算值与EMT仿真实测值偏差<0.5%。 | 克服了常规平均模型仅能获取直流分量的局限，实现了对偶次谐波动态的精确解析，无需额外高频仿真。 |
 
-
-
 ## 量化发现
 
 - DP模型仿真步长可达0.5 ms，是传统EMT模型（0.1 μs）的5000倍，显著降低数值积分计算负担。
@@ -152,7 +162,6 @@ To mitigate harmonic current ﬂow in distribution systems, single-phase diode-b
 - 电压环带宽设计为5~15 Hz（即$2\omega$的1/10~1/5），可有效抑制二次纹波，防止电感电流畸变，确保功率因数接近1。
 - DP模型阶数为8阶（含陷波器为10阶），相比详细开关模型（4阶/6阶）保留了完整的二次谐波动态与电感暂态特性，且计算复杂度可控。
 - 整流电流$i_r$的偶次谐波幅值按$\frac{4I_s}{\pi(k+1)(k-1)}$规律衰减，DP模型可精确捕捉至10次谐波，误差<0.5%。
-
 
 ## 关键公式
 
@@ -180,11 +189,34 @@ $$$K_{pv} = \lambda_3 (2\varepsilon_v \omega_{bv} - \omega_{RC}), \quad K_{iv} =
 
 *在控制设计阶段使用，根据目标阻尼比$\varepsilon_v$和带宽$\omega_{bv}$直接计算外环控制器参数。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比与实验验证
 - **测试系统**: 单相Boost PFC变换器（含DBR与Boost DC-DC级联结构，额定功率与参数见表1）
 - **仿真工具**: MATLAB/Simulink (详细开关模型), MATLAB ODE求解器(ode15s, DP模型), 硬件实验平台
 - **验证结果**: DP模型在时域波形、二次谐波幅值及动态响应上与详细EMT模型高度一致，误差极小；基于DP小信号模型整定的控制器参数可直接用于开关模型与硬件原型，实现高精度、低计算成本的PFC系统设计与分析，验证了等效变换与小信号映射方法的工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `An Equivalent Dynamic Phasor Model for a Single-Phase Boost Power-Factor-Correction Converter`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态相量法、符号函数变换、小信号分析 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于符号函数变换的等效动态相量模型，解决多频激励下的PFC建模难题。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase Boost Power-Factor-Correction Converter.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

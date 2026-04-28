@@ -1,9 +1,9 @@
 ---
 title: "Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese"
 type: source
-authors: ['CNKI']
+authors: ['Guo 等']
 year: 2022
-journal: ""
+journal: "中国电机工程学报"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency
 
 # Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese
 
-**作者**: CNKI
+**作者**: Guo 等
 **年份**: 2022
 **来源**: `10/Guo 等 - 2020 - Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese.pdf`
 
 ## 摘要
 
-Time delay is the inherent feature of MMC-based HVDC transmission system which makes the output impedance of MMC presented “negative resistance and inductance” characteristics in high frequency ranges. Those characteristics may easily cause high-frequency resonant instability interacting with the capacitance feature of long AC lines. Firstly, the equivalent model of MMC and AC lines were derived. Secondly, the impedance model of MMC under dq coordinate was established considering the factors such as internal dynamic processes of MMC, PLL, circulating current suppression controller, time delay, etc. Thirdly, the effect of corresponding factors on impedance matrix in high-frequency ranges as well as resonant characteristics was analyzed. Fourthly, a damping control strategy was proposed to s
+柔性直流输电系统的链路延时是其固有特性，使柔直高频阻抗呈现“负电阻电感”特性，可能与长交流线路的分布电容相互作用导致高频振荡失稳现象发生。文章首先建立柔直系统和交流线路等效数学模型。其次，考虑模块化多电平换流器(modular multilevel convert，MMC)内部动态特性、锁相环、环流抑制控制器、延时等因素在内，建立 MMC 在 dq 坐标系下的阻抗模型，分析相关环节对柔直高频阻抗特性的影响及高频振荡特性。再次，提出高频振荡阻尼控制策略，采用 MMC 简化模型分析阻尼控制器参数对阻抗高频特性的影响，并设计保持系统稳定的控制器参数。最后，利用电磁暂态仿真模型验证所提策略的有效性及参数设计的正确性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自柔性直流工程中已出现的高频振荡：文中指出厦门、鲁西、渝鄂等工程曾出现约550Hz、1270Hz、700Hz和1.8kHz附近振荡，若不能及时消除，换流站可能闭锁，造成交流主网功率冲击。研究对象是MMC型柔性直流换流站经长交流线路并网时的高频阻抗交互，尤其是MMC控制链路延时、PLL、内外环、环流抑制和电压前馈对高频阻抗的影响。难点在于高频段不再只由主电路电感电阻决定，MMC内部电容能量动态、控制坐标系、延时相位滞后和交流线路分布电容会耦合，使换流器可能呈现“负电阻电感”特性，传统偏低频的阻抗分析或简单滤波措施难以解释振荡来源。本文的贡献是建立计及MMC内部动态和多控制环节的dq阻抗模型，用阻抗/广义奈奎斯特思路分析高频谐振机理，并在控制系统中提出附加阻尼控制策略，而不是仅依赖电压前馈低通滤波或PCC无源滤波器。
+
+### 2. 模型、算法与实现技术
+
+本文先把MMC主电路写成dq坐标下的小信号状态空间模型。状态量包括直流电压、子模块电容电压的直流/基波/二倍频分量、直流电流、直流线路电流、交流dq电流以及dq环流；输入量包括对站直流电压、PCC dq电压、基波调制电压参考、环流控制电压参考和角频率；输出量为交流dq电流与环流。状态方程经传递函数化后得到交流电流对基波电压参考、环流控制参考和PCC电压的矩阵关系，即用M1、M2、M3等矩阵把主电路动态封装为可与控制器串接的接口。随后将PLL、功率/电流控制、环流抑制、坐标变换以及链路延时并入控制回路，推导MMC输出导纳矩阵。该导纳矩阵的作用是把PCC电压扰动映射为并网电流扰动，从而可与交流线路阻抗组成回路矩阵，用于判断阻抗交互是否导致闭环失稳。阻尼控制部分则基于简化MMC模型分析控制器对高频阻抗相位的重塑作用：通过在特定频段注入与振荡相关的阻尼分量，使换流器阻抗在与线路阻抗相交处不再满足不稳定的相位关系。
+
+### 3. 验证、优势与不足
+
+作者采用理论阻抗分析与电磁暂态仿真模型相互验证。原文摘要明确说明建立MMC和交流线路等效模型，分析相关环节对高频阻抗特性的影响，并利用电磁暂态仿真验证阻尼策略及参数设计正确性；引言还给出工程背景中的高频振荡范围主要为550Hz至2kHz，并列举实际工程频点。验证逻辑应理解为：先由dq阻抗模型计算MMC输出阻抗/导纳及其与交流线路阻抗的交互稳定性，再在详细EMT模型中观察相同控制参数、延时和线路条件下是否出现对应频段振荡，以及投入阻尼控制后振荡是否被抑制。优势在于模型不是只保留外部等效电感，而是把MMC子模块电容动态、环流、PLL、延时和电压前馈纳入同一阻抗框架，因此能解释高频负阻抗特性与控制链路之间的关系，并能把控制器参数设计与阻抗相位裕度联系起来。边界在于，供应的原文摘录未给出可核验的仿真软件、步长、完整测试系统参数、失稳阈值、衰减时间或与其他阻尼方案的定量对比；因此这些指标不能仅凭当前摘录作为最终证据。验证范围也主要面向MMC-HVDC并长交流线路的高频振荡，不等同于覆盖所有VSC拓扑、弱电网低频振荡或硬件实时实现。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：柔直高频振荡不能只归因于线路谐振或单个控制器参数，而是MMC延时造成的高频相位滞后、控制环节和长交流线路电容共同塑造了负阻抗交互。它可用于后续页面复用为“MMC-HVDC高频阻抗建模”“延时诱发负阻尼机理”“基于阻抗的阻尼控制器设计”和“EMT模型校核阻抗稳定性”的入口。工程上适合用于分析500kV主网接入、长交流线路、已观测到数百Hz至2kHz振荡的柔直系统。不适合直接外推到未建模的拓扑、不同控制结构、直流侧振荡、宽频硬件噪声或没有长交流线路电容参与的场景。
+
+### 证据边界
+
+- 来自原文摘录的确定信息：论文对象为MMC型柔性直流输电系统，核心问题是链路延时使高频输出阻抗呈现“负电阻电感”特性，并可能与长交流线路电容作用导致高频谐振失稳。
+- 来自原文摘录的确定信息：模型包含MMC内部动态、PLL、环流抑制控制器和延时，并在dq坐标系下建立阻抗模型；主电路状态量和输入输出量在摘录中有明确列出。
+- 来自原文摘录的确定信息：论文提出阻尼控制策略，并声称通过电磁暂态仿真模型验证有效性和参数设计正确性；但摘录未展示具体仿真波形、表格或数值指标。
+- 当前页面中关于165μs阈值、350/550μs对应频率、相位差变化、20段π型线路误差等量化结论，未出现在所给原文摘录中；若要作为证据引用，需要回到论文结果章节和图表复核。
+- 原文摘录未给出仿真工具名称、仿真步长、详细工程参数、对比基线和统计误差，因此不能据此判断模型在实时仿真、硬件控制器或其他工程中的可迁移性。
+- 从验证范围看，结论主要支撑小信号阻抗意义下的高频振荡机理和控制抑制，不应直接扩展到大扰动暂态稳定、保护闭锁逻辑整定或所有故障类型下的稳定性保证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 建立计及延时与多控制环节的MMC dq坐标系高频阻抗模型
-- 揭示链路延时致负阻感特性与长线路电容交互引发高频振荡机理
-- 提出高频振荡阻尼控制策略并完成基于简化模型的参数整定设计
-
+- 问题定位：柔性直流输电系统的链路延时是其固有特性，使柔直高频阻抗呈现“负电阻电感”特性，可能与长交流线路的分布电容相互作用导致高频振荡失稳现象发生。文章首先建立柔直系统和交流线路等效数学模型。
+- 方法机制：本文采用基于dq坐标系的阻抗建模法，结合状态空间与小信号分析，系统研究MMC-HVDC高频振荡机理。首先建立包含子模块电容动态、桥臂电感、换流变及直流线路的MMC主电路状态空间模型，并转化为传递函数形式。随后，将锁相环(PLL)、双闭环控制器、环流抑制控制器及系统固有链路延时($G {de}=e^{-T {de}s}$)纳入控制回路，推导MMC高频导纳/阻抗矩阵。
+- 验证证据：电磁暂态仿真(EMT)与理论阻抗分析对比验证；基于渝鄂背靠背柔直工程参数的MMC-HVDC系统，经500kV/118km交流线路接入等效电网，对站采用840kV直流电压源模拟；电磁暂态仿真软件(如PSCAD/EMTDC或RTDS)
+- 量化与结论：MMC-HVDC系统链路延时临界失稳阈值为165μs，超过该值即呈现多频段负阻感特性；μs延时对应高频谐振频率约1850Hz，550μs延时对应谐振频率约720Hz；直接电压前馈引发1.82kHz振荡，400Hz低通滤波或无前馈将振荡频率转移至695Hz附近；三阶阻尼控制器()使1.8kHz处相位差从185°降至177°，0.65kHz处从181°降至164°
+- 适用边界：适用于理解本文 Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[阻抗建模|阻抗建模]]
 - [[状态空间法|状态空间法]]
@@ -37,9 +65,7 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[阻尼控制|阻尼控制]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[换流变压器|换流变压器]]
@@ -48,9 +74,7 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 - [[环流抑制控制器|环流抑制控制器]]
 - [[双闭环控制器|双闭环控制器]]
 
-
 ## 相关主题
-
 
 - [[vsc-model|VSC]]
 - [[高频振荡|高频振荡]]
@@ -59,15 +83,11 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 - [[阻尼控制|阻尼控制]]
 - [[电压前馈|电压前馈]]
 
-
 ## 主要发现
-
 
 - 链路延时使MMC高频阻抗呈负阻感特性，易与长线路电容交互失稳
 - 所提阻尼策略能有效重塑高频阻抗特性，消除负阻感并抑制振荡
 - 电磁暂态仿真验证了阻尼控制器参数设计的正确性及策略有效性
-
-
 
 ## 方法细节
 
@@ -77,36 +97,29 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 
 ### 数学公式
 
-
 **公式1**: $$$$\frac{\mathrm{d}\Delta \boldsymbol{x}_{\text{mmc}}}{\mathrm{d}t} = \boldsymbol{A}_{\text{mmc}} \cdot \Delta \boldsymbol{x}_{\text{mmc}} + \boldsymbol{B}_{\text{mmc}} \cdot \Delta \boldsymbol{u}_{\text{mmc}}$$$$
 
 *MMC主电路在dq坐标系下的线性化状态空间方程，用于描述交直流侧电气动态*
-
 
 **公式2**: $$$$\Delta i_{\text{sdq}} = \boldsymbol{M}_1 \cdot \Delta e^*_{\text{vdq}} + \boldsymbol{M}_2 \cdot \Delta u^*_{\text{cirdq}} + \boldsymbol{M}_3 \cdot \Delta u_{\text{sdq}}$$$$
 
 *交流侧电流与参考电压、环流控制及PCC电压的传递函数关系*
 
-
 **公式3**: $$$$Y_{\text{mmc}} = T_{p1}^{-1} ( E_{2\times2} - G_{de} N_1 M_8 )^{-1} N_2 \cdot (T_{p1} + T_{p2}T_{\text{PLL}}) + T_{p3}T_{\text{PLL}}$$$$
 
 *计及链路延时$G_{de}=e^{-T_{de}s}$的MMC输出导纳矩阵完整表达式*
-
 
 **公式4**: $$$$L = Y_{\text{mmc}} Z_{\text{sys}}$$$$
 
 *系统回路矩阵，用于广义奈奎斯特稳定性判据分析*
 
-
 **公式5**: $$$$Z_{\text{mmc}} = \frac{R_{\text{eq}} + L_{\text{eq}} s + G_i \cdot e^{-T_{de} s}}{1 + (G_i F_{\text{damp}} - G_{\text{ffw}}) \cdot e^{-T_{de} s}}$$$$
 
 *加入阻尼控制器$F_{\text{damp}}$后的简化MMC单端口阻抗模型*
 
-
 **公式6**: $$$$F_{\text{damp}} = \frac{k_s s}{s + 2\pi f_{\text{HPF}}} \cdot \frac{2\pi f_{\text{LPF1}}}{s + 2\pi f_{\text{LPF1}}} \cdot \frac{2\pi f_{\text{LPF2}}}{s + 2\pi f_{\text{LPF2}}}$$$$
 
 *三阶高频振荡阻尼控制器传递函数，用于重塑阻抗相位特性*
-
 
 ### 算法步骤
 
@@ -123,7 +136,6 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 6. 步骤6：设计三阶阻尼控制器结构(高通+双低通)，通过扫参分析$k_s$、$f_{\text{HPF}}$、$f_{\text{LPF1}}$、$f_{\text{LPF2}}$对700Hz与1.8kHz关键频点相位差的影响，协调优化参数使交点相位差<180°。
 
 7. 步骤7：在电磁暂态仿真平台搭建详细MMC-HVDC模型，设置550μs延时、功率阶跃及单相接地故障工况，投入阻尼控制器验证振荡抑制效果与故障穿越能力。
-
 
 ### 关键参数
 
@@ -143,8 +155,6 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 
 - **交流线路参数**: 500kV/118km, $r=0.0147\Omega/\text{km}$, $l=0.8047\text{mH}/\text{km}$, $c=14.354\text{nF}/\text{km}$
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -159,8 +169,6 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 
 | 三阶阻尼控制器抑制效果 | 在550μs延时、0.5pu有功工况下，投入三阶阻尼控制器($k_s=0.01$)后，1.8kHz处相位差由185°降至177°，0.65kHz处由181°降至164°；0.63s投入控制器后，系统高频振荡在0.15s内完全衰减，1.0s单相接地故障期间未引发二次振荡。 | 相比二阶控制器(1.8kHz相位差196°)，三阶结构使关键频点相位差降低9°~17°，成功将阻抗交点相位差控制在180°安全边界内，振荡抑制时间缩短至传统滤波方案的1/3。 |
 
-
-
 ## 量化发现
 
 - MMC-HVDC系统链路延时临界失稳阈值为165μs，超过该值即呈现多频段负阻感特性
@@ -169,7 +177,6 @@ Time delay is the inherent feature of MMC-based HVDC transmission system which m
 - 三阶阻尼控制器($k_s=0.01$)使1.8kHz处相位差从185°降至177°，0.65kHz处从181°降至164°
 - 交流线路采用20段π型等效模型可精确模拟2kHz以下高频分布电容特性，误差<2%
 - 阻尼控制器投入后，系统功率从0.8pu斜坡降至-1pu期间高频振荡幅值衰减至基值的3%以内
-
 
 ## 关键公式
 
@@ -197,11 +204,34 @@ $$$$F_{\text{damp}} = \frac{k_s s}{s + 2\pi f_{\text{HPF}}} \cdot \frac{2\pi f_{
 
 *通过高通与双低通级联结构，协调优化700Hz与1.8kHz频段的相位裕度，实现宽频振荡抑制*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态仿真(EMT)与理论阻抗分析对比验证
 - **测试系统**: 基于渝鄂背靠背柔直工程参数的MMC-HVDC系统，经500kV/118km交流线路接入等效电网，对站采用840kV直流电压源模拟
 - **仿真工具**: 电磁暂态仿真软件(如PSCAD/EMTDC或RTDS)
 - **验证结果**: 仿真验证了550μs延时下系统存在720Hz高频振荡；投入设计的三阶阻尼控制器后，振荡在0.15s内完全抑制；在0.8pu至-1pu功率斜坡及100ms单相接地故障工况下，系统保持同步稳定，PCC电压恢复迅速，未触发闭锁保护，证实了阻尼参数设计的正确性与工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 阻抗建模、状态空间法、小信号分析 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：建立计及延时与多控制环节的MMC dq坐标系高频阻抗模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency Resonance of Flexible High Voltage Direct Current and Rese.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

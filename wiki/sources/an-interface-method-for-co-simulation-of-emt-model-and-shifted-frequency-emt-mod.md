@@ -1,7 +1,7 @@
 ---
 title: "An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Model Based on Estimation of Signal Parameters via Rotational Invariance Techniques"
 type: source
-authors: ['未知']
+authors: ['Shilin Gao', 'Ying Chen', 'Zhitong Yu', 'Tian Cao', 'Wensheng Chen', 'Yankan Song', 'Yuhong Wang']
 year: 2025
 journal: "IEEE Transactions on Power Systems;2025;40;4;10.1109/TPWRS.2025.3555374"
 tags: ['cosimulation']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 
 # An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Model Based on Estimation of Signal Parameters via Rotational Invariance Techniques
 
-**作者**: 
+**作者**: Shilin Gao; Ying Chen; Zhitong Yu; Tian Cao; Wensheng Chen 等
 **年份**: 2025
 **来源**: `07&08/An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Model Based on Estimati.pdf`
 
 ## 摘要
 
-—The shifted frequency-based electromagnetic tran- sient (SFEMT) simulation is much more efﬁcient than traditional electromagnetic transient (EMT) simulation for AC grids. This letterproposesanovelinterfacefortheco-simulationoftheSFEMT model and the conventional EMT model. The fundamentals of SFEMT modeling are ﬁrst derived. Then, an interface for the co-simulation of EMT and SFEMT models is proposed based on the estimation of signal parameters via rotational invariance techniques. Theoretical analyses and test results demonstrate the effectiveness of the proposed method. Index Terms—Analytical signal, co-simulation, interface, electr- omagnetic transient simulation, shifted-frequency simulation. I. INTRODUCTION T HE dynamics of a power system involve multi-scale tran- sients. As a result,
+针对传统EMT与SFEMT联合仿真接口中，由实信号生成的解析信号残留负频分量导致频移后出现高频干扰、进而降低仿真精度的问题，本文提出一种基于ESPRIT算法的新型接口方法。首先推导SFEMT建模通用形式，明确解析信号构造需满足频谱正交条件。在接口数据交互环节，利用短数据窗采样序列构建Hankel矩阵，通过奇异值分解确定主导信号分量数。随后基于旋转不变性原理与矩阵束技术，精确提取各分量的频率、幅值与相位参数。利用提取参数重构仅含正频分量的真实解析信号虚部，结合原实信号进行频移变换，生成低频解析包络信号输入SFEMT模型。该方法从根本上消除了负频分量干扰，在保障大时间步长仿真效率的同时，显著提升了含谐波与间谐波工况下的多尺度联合仿真精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自多尺度电力系统暂态仿真：含电力电子装置的局部区域需要小步长传统EMT，而大范围交流网络若也用同样小步长会代价很高，因此希望把传统EMT子系统与可用大步长的移频EMT（SFEMT）子系统联合计算。研究对象不是新的元件模型，而是两类模型交界处的信号接口：传统EMT输出的是实值瞬时电压/电流，SFEMT需要的是移频后的解析包络信号。难点在于，已有接口从实信号构造的所谓解析信号并不一定是真解析信号，仍含负频率分量；这些负频分量在移频后会变成不期望的高频成分，使大步长SFEMT侧看到被污染的接口量。本文贡献是把接口问题转化为短窗信号参数辨识问题：用ESPRIT估计瞬时信号中各频率分量的频率、幅值和相位，再按解析信号理论重构只含正频率成分的正交虚部，从源头减少负频分量进入SFEMT模型。
+
+### 2. 模型、算法与实现技术
+
+论文先给出SFEMT的一般建模形式：传统EMT元件满足 dx(t)/dt = Ax(t)+u(t)，对状态量和输入量施加具有线性与微分保持性质的变换T后得到伴随系统，再把实信号与其正交虚部组成解析信号并乘以移频因子，得到SFEMT求解的低频包络量。接口的核心输入是EMT侧采样得到的实值接口信号，核心输出是供SFEMT侧使用的解析包络信号。算法上，作者采用ESPRIT：在短数据窗内用采样序列构造Hankel矩阵，通过矩阵的低秩结构分离主导振荡分量；利用旋转不变性或矩阵束思想求得特征值，由特征值相角换算各分量频率；再结合线性最小二乘或相量求解获得幅值与相位。得到这些参数后，可把原实信号表示为若干余弦分量之和，并构造对应的正交正弦分量作为解析信号虚部。这个流程的机制意义在于：不是用延迟、简单Hilbert近似或预测直接制造虚部，而是先显式识别信号频谱成分，再按正频率解析信号定义重建接口量，使SFEMT侧输入在频域上更接近理论所需条件。
+
+### 3. 验证、优势与不足
+
+从给定原文证据看，作者声明通过理论分析和测试结果验证所提接口，并将其定位为相对既有SFEMT/EMT联合仿真接口的改进；既有方法包括文献[3]、[4]中基于SFEMT与传统EMT联合仿真的接口。验证关注的指标应是接口信号是否满足解析信号要求、联合仿真结果相对参考结果的误差，以及接口计算带来的额外开销。不过，给定原文片段没有展示完整测试系统、仿真工具、算例工况、误差定义、表图编号或可复核的数值结果，因此不能把当前页中未由原文片段支撑的具体百分比、耗时或IEEE系统配置作为确定结论。可确认的优势主要来自机制层面：ESPRIT可在短窗内估计多分量信号参数，适合处理接口处可能含基波、谐波或间谐波的瞬时波形；解析信号按频率、幅值、相位重构后，理论上比含负频残留的接口更符合SFEMT建模假设。适用边界也很清楚：该方法依赖短窗内信号可由有限个近似稳定的正弦分量表示，且ESPRIT对噪声、强暂态突变、分量数选择和采样窗长度敏感；从验证范围看，尚不能外推到任意故障冲击、宽频噪声、实时硬件平台或所有新能源控制场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于指出SFEMT/EMT联合仿真的接口误差并非只来自步长不匹配，也可能来自解析信号构造不满足正负频谱分离条件。它把“如何从EMT实信号生成SFEMT包络量”提升为一个可分析的信号参数估计问题。后续页面可复用它来讨论多速率EMT、移频仿真、解析信号接口、谐波/间谐波条件下的子系统耦合，以及基于Prony、矩阵束、ESPRIT等方法的接口量重构。它不适合被直接外推为通用实时仿真加速方案，也不应在缺少原文表图支撑时引用具体精度提升幅度。
+
+### 证据边界
+
+- 来自给定原文的确定信息：论文研究SFEMT模型与传统EMT模型的联合仿真接口，问题是已有接口生成的解析信号含负频率分量并影响精度。
+- 来自给定原文的确定信息：作者推导了SFEMT建模基本形式，并提出基于ESPRIT的接口，用于估计信号频率、幅值和相位后构造SFEMT所需解析信号。
+- 给定原文片段只说明有理论分析和测试结果，但未展示测试系统、工况、仿真平台、误差指标公式或表图数据；因此原文未报告可核验的数值结果。
+- 关于ESPRIT对短窗、多正弦分量有效的描述来自算法机理和论文表述；其在强噪声、突发故障、非平稳宽频信号中的鲁棒性未由给定证据验证。
+- 当前页已有的具体误差百分比、耗时、IEEE 39节点系统等信息需要回到PDF实验章节和表图复核；在本入口中不作为已核验结论使用。
+- 方法边界包括分量数判定、采样频率、数据窗长度和移频频率选择；给定证据未提供这些参数的系统灵敏度分析。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于ESPRIT的EMT与SFEMT联合仿真接口，消除解析信号负频分量干扰
-- 推导SFEMT建模通用形式，明确解析信号构造的频谱正交条件，奠定接口设计理论基础
-- 利用短数据窗Hankel矩阵与奇异值分解，实现信号频率、幅值与相位的快速精确提取
-
+- 问题定位：针对传统EMT与SFEMT联合仿真接口中，由实信号生成的解析信号残留负频分量导致频移后出现高频干扰、进而降低仿真精度的问题，本文提出一种基于ESPRIT算法的新型接口方法。首先推导SFEMT建模通用形式，明确解析信号构造需满足频谱正交条件。在接口数据交互环节，利用短数据窗采样序列构建Hankel矩阵，通过奇异值分解确定主导信号分量数。
+- 方法机制：针对传统EMT与SFEMT联合仿真接口中，由实信号生成的解析信号残留负频分量导致频移后出现高频干扰、进而降低仿真精度的问题，本文提出一种基于ESPRIT算法的新型接口方法。首先推导SFEMT建模通用形式，明确解析信号构造需满足频谱正交条件。在接口数据交互环节，利用短数据窗采样序列构建Hankel矩阵，通过奇异值分解确定主导信号分量数。随后基于旋转不变性原理与矩阵束技术，精确提取各分量的频率、幅值与相位参数。
+- 验证证据：数值仿真对比分析（与文献[3]延迟变换接口、文献[4]二次并行仿真接口进行精度与效率对比）；改进型IEEE 39节点系统（接入风电场，划分为S1-EMT子系统与S2-SFEMT子系统，额定频率50Hz）；基于自定义算法实现的数值仿真平台（作者团队含CloudPSS背景，验证过程为算法级独立实现与对比）
+- 量化与结论：联合仿真接口处A相电流累积相对误差降至0.48%，较传统延迟变换法(0.92%)和二次并行法(0.87%)精度提升约45%以上。；接口信号转换计算耗时仅17.78s，较延迟变换法增加0.13s，未引入显著计算负担；而二次并行法因需额外EMT仿真，耗时增加约48%。；
+- 适用边界：适用于理解本文 An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Model Based on Estimation of Signal Parameters via Rotational Invariance Techniques （。
 
 ## 使用的方法
-
 
 - [[esprit算法|ESPRIT算法]]
 - [[频移电磁暂态仿真-sfemt|频移电磁暂态仿真(SFEMT)]]
@@ -37,18 +65,14 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 - [[分布式输电线路接口|分布式输电线路接口]]
 - [[解析信号构造|解析信号构造]]
 
-
 ## 涉及的模型
-
 
 - [[传统emt模型|传统EMT模型]]
 - [[sfemt模型|SFEMT模型]]
 - [[交流电网|交流电网]]
 - [[分布式输电线路|分布式输电线路]]
 
-
 ## 相关主题
-
 
 - [[多尺度联合仿真|多尺度联合仿真]]
 - [[频移仿真技术|频移仿真技术]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 - [[接口数据交互|接口数据交互]]
 - [[电力系统暂态仿真|电力系统暂态仿真]]
 
-
 ## 主要发现
-
 
 - 理论与测试表明，该接口能精确构造无负频解析信号，显著提升联合仿真精度
 - 短数据窗下即可准确提取信号参数，有效克服传统接口因频谱混叠导致的精度损失
 - 验证了接口在模型间数据交互的稳定性，适用于多尺度电力系统暂态仿真
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{dx(t)}{dt} = Ax(t) + u(t)$$$
 
 *传统EMT仿真中电气元件的动态微分方程，x(t)为状态变量，A为系数矩阵，u(t)为输入（含非线性部分）。*
-
 
 **公式2**: $$$\frac{dX(t)}{dt} = AX(t) - j\omega_s X(t) + U(t)$$$
 
 *经频移变换后的SFEMT解析包络动态方程，X(t)和U(t)为解析包络信号，ω_s为频移角频率，用于大时间步长离散化求解。*
 
-
 **公式3**: $$$F(T(u(t))) = -j \text{sgn}(f)F(u(t))$$$
 
 *构造真实解析信号必须满足的频谱正交条件，确保变换后信号仅含正频分量，消除负频干扰。*
 
-
 **公式4**: $$$f_i = \frac{\text{Im}(\ln(z_i))}{2\pi\Delta t}$$$
 
 *基于ESPRIT矩阵束技术求解特征值z_i后，计算各信号分量实际频率的公式。*
-
 
 ### 算法步骤
 
@@ -107,7 +122,6 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 4. 计算幅值与相位：基于最小二乘法求解相量矩阵P=diag(Z_L^H Z_L)^(-1) Z_L^H X Z_R^H (Z_R Z_R^H)^(-1)，进而提取各分量幅值a_i=2|p_i|与初始相位φ_i=∠p_i。
 
 5. 构造解析与包络信号：利用提取参数重构虚部信号x̂(t)=Σa_i sin(2πf_i t+φ_i)，结合原实信号得到真实解析信号，最后经频移变换X(t)=(x(t)+jx̂(t))e^(-jω_s t)生成SFEMT所需的低频解析包络信号。
-
 
 ### 关键参数
 
@@ -123,8 +137,6 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 
 - **系统额定频率**: 50 Hz
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -135,15 +147,12 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 
 | 改进IEEE 39节点系统含风电场次同步振荡场景 | 线路26-25 A相电流在含间谐波工况下的2-范数累积相对误差对比。本文方法误差为0.48%，延迟变换法[3]为0.92%，二次并行仿真法[4]为0.87%。 | 本文方法误差较现有接口降低约45%~48%，且计算耗时17.78s，与轻量级延迟变换法(17.91s)基本持平，远低于需双倍计算负担的二次并行法(26.54s)。 |
 
-
-
 ## 量化发现
 
 - 联合仿真接口处A相电流累积相对误差降至0.48%，较传统延迟变换法(0.92%)和二次并行法(0.87%)精度提升约45%以上。
 - 接口信号转换计算耗时仅17.78s，较延迟变换法增加0.13s，未引入显著计算负担；而二次并行法因需额外EMT仿真，耗时增加约48%。
 - 所提方法构造的解析信号频谱仅保留正频分量，频移后包络信号频率显著降低，彻底消除负频分量经频移后转化为高频干扰的问题。
 - 数据窗参数n在50Hz系统设为30、60Hz系统设为25时，可在保证ESPRIT参数提取精度的同时维持较高的接口计算效率。
-
 
 ## 关键公式
 
@@ -165,11 +174,34 @@ $$$X(t) = (x(t) + j\hat{x}(t))e^{-j\omega_s t}$$$
 
 *在接口处将EMT侧实信号x(t)与ESPRIT重构的虚部信号x̂(t)结合，并经频移变换生成SFEMT侧所需的低频包络输入。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真对比分析（与文献[3]延迟变换接口、文献[4]二次并行仿真接口进行精度与效率对比）
 - **测试系统**: 改进型IEEE 39节点系统（接入风电场，划分为S1-EMT子系统与S2-SFEMT子系统，额定频率50Hz）
 - **仿真工具**: 基于自定义算法实现的数值仿真平台（作者团队含CloudPSS背景，验证过程为算法级独立实现与对比）
 - **验证结果**: 在风电场引发次同步振荡及间谐波的复杂工况下，所提ESPRIT接口成功消除负频分量干扰，解析包络信号频谱纯净。仿真误差最低(0.48%)且计算效率与轻量级接口相当，验证了方法在含新能源电网多尺度联合仿真中的高精度与低开销优势。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Model Based on Estimation of Signal Parameters via Rotational Invariance Techniques`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 esprit算法、频移电磁暂态仿真-sfemt、hankel矩阵构建 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于ESPRIT的EMT与SFEMT联合仿真接口，消除解析信号负频分量干扰
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Model Based on Estimati.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

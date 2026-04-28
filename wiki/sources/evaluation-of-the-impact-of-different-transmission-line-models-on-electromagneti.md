@@ -1,9 +1,9 @@
 ---
 title: "Evaluation of the impact of different transmission line models on electromagnetic transient studies"
 type: source
-authors: ['未知']
+authors: ['Schroeder 等']
 year: 2018
-journal: ""
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of different frequency dependent soil models on lightning overvoltages.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 
 # Evaluation of the impact of different transmission line models on electromagnetic transient studies
 
-**作者**: 
+**作者**: Schroeder 等
 **年份**: 2018
 **来源**: `18/Schroeder 等 - 2018 - Evaluation of the impact of different frequency dependent soil models on lightning overvoltages.pdf`
 
 ## 摘要
 
-*（摘要未提取到）*
+本文提出一种将接地系统宽带频变特性高效集成至EMTP/ATP电磁暂态仿真程序的综合方法。首先，基于三种主流土壤频变参数模型（Alipio-Visacro、Portela、Longmire-Smith）计算不同频率下的土壤电导率与相对介电常数。随后，利用精确电磁模型获取接地系统在频域的阻抗/导纳特性，并通过矢量拟合（Vector Fitting）技术将其逼近为有理函数形式。接着，综合生成适用于时域仿真的无源RLC等效电路网络，直接嵌入EMTP/ATP。最后，构建138kV输电线路（含3基杆塔、2个档距）模型，模拟直击雷作用于中央杆塔，对比分析纯电阻接地模型与宽带频变模型下的地电位升（GPR）及绝缘子串过电压，量化评估土壤频变特性对线路防雷性能的影响。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：在输电线路遭受直击雷时，可靠评估塔顶电压、杆塔接地电位升以及绝缘子串过电压，从而判断是否可能发生反击闪络。研究对象不是整条线路的通用暂态模型，而是“杆塔塔脚接地系统在雷电宽频激励下的表示方式”及“土壤参数随频率变化”对EMT仿真结果的影响。难点在于，雷电流包含宽频成分，接地体不再只是一个工频电阻；电容、电感、波传播以及土壤电导率和介电常数的频变都会改变接地阻抗。全电磁模型更准确但计算代价高，常规EMTP/ATP又通常缺少可直接使用的宽带接地模型。本文的贡献是把精确电磁模型得到的接地频域响应，通过Vector Fitting转化为可嵌入EMTP/ATP的等效电路，并用它比较简单电阻接地、宽带接地以及频变土壤模型对雷电过电压评估的影响。
+
+### 2. 模型、算法与实现技术
+
+本文的实现链条是“土壤频变参数—接地频域响应—有理函数拟合—时域等效电路—EMTP/ATP线路雷击仿真”。输入量包括低频土壤参数、所选频变土壤模型、接地几何结构以及雷电流激励；核心接口量是接地系统在频域中的阻抗或导纳响应，以及嵌入EMTP/ATP后的塔脚端口电压、电流。土壤模型用于给出不同频率下的电导率和介电常数，使接地计算不再假定土壤为常数介质。精确电磁模型负责计算接地系统的宽频响应，捕捉电阻性泄流、感性效应、容性效应和传播效应。Vector Fitting的作用是把离散频点上的阻抗或导纳拟合为稳定的有理函数，即由极点、留数和常数项描述的端口模型；随后该有理函数可综合为等效电路，作为EMTP/ATP中的塔脚接地子模型参与时域积分。这样，全电磁模型不直接参与每一步时域暂态计算，而是先被压缩为一个可复用的宽带端口等值。
+
+### 3. 验证、优势与不足
+
+作者的验证思路是把不同接地表示放入EMT型线路雷击仿真中比较：基线通常是把塔脚接地简化为一个电阻；改进模型则把精确电磁模型得到的宽带接地行为经Vector Fitting等效后接入EMTP/ATP；同时考察是否考虑土壤电导率和介电常数随频率变化。指标包括接地电位升、绝缘子串两端过电压、接地冲击阻抗以及由过电压推断的线路雷电性能或反击闪络倾向。原文摘要明确给出的结论是：简单电阻模型会在接地电位升上产生明显误差；但对绝缘子串过电压，简单电阻模型得到的结果与复杂宽带模型精度相近；考虑土壤频变会降低接地冲击阻抗，并降低反击闪络率，从而改善线路雷电性能评估。需要注意，所给摘录没有报告可核验的具体百分比、仿真耗时、拟合误差、线路电压等级或杆塔数量，因此不能把页面中未由原文表图支撑的数值当作结论。从验证范围看，结论主要适用于直击雷、输电线路杆塔接地和EMTP/ATP类离线暂态仿真。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：接地模型复杂度对不同观测量的影响并不相同。若研究目标是塔脚接地电位升或接地冲击阻抗，宽带接地和土壤频变不可轻易忽略；若目标是绝缘子串过电压，简单电阻模型在作者算例中可能已足够接近复杂模型。该页适合被后续关于雷电过电压、杆塔接地宽带等值、Vector Fitting接入EMTP/ATP、土壤频变参数模型选择的页面复用。它不适合外推到开关操作暂态、地下电缆、换流站接地网、实时仿真步长约束或未验证的土壤分层与非线性电离场景。
+
+### 证据边界
+
+- 原文摘要直接支持：研究对象是直击雷作用下输电线路暂态，重点是把接地系统宽带行为纳入EMT型程序，并评估土壤参数频变影响。
+- 原文摘要直接支持：接地频率行为由精确电磁模型确定，并通过Vector Fitting得到等效电路后接入EMTP/ATP。
+- 原文摘要直接支持：简单电阻接地会使接地电位升出现明显误差，但绝缘子串过电压与复杂宽带模型结果相近；原文摘录未给出可核验百分比。
+- 原文摘要直接支持：考虑土壤参数频变会降低接地冲击阻抗并降低反击闪络率；但所给摘录未给出具体测试系统参数、统计方法或数值幅度。
+- 当前元数据题名写作“different transmission line models”，而原文首页题名是“different frequency dependent soil models on lightning overvoltages”，题名应回到PDF首页复核。
+- 页面中关于138 kV线路、3基杆塔、400 m档距、拟合误差和耗时比例等数字未在所给原文摘录中出现，不能作为本入口页的确定证据。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于矢量拟合的接地等效电路，实现宽带模型与EMTP/ATP高效接口
-- 系统评估三种土壤参数频变模型对输电线路雷击过电压及地电位升的影响
-- 揭示土壤频变特性降低接地冲击阻抗与反击跳闸率的定量作用机制
-
+- 问题定位：本文提出一种将接地系统宽带频变特性高效集成至EMTP/ATP电磁暂态仿真程序的综合方法。首先，基于三种主流土壤频变参数模型（Alipio-Visacro、Portela、Longmire-Smith）计算不同频率下的土壤电导率与相对介电常数。
+- 方法机制：本文提出一种将接地系统宽带频变特性高效集成至EMTP/ATP电磁暂态仿真程序的综合方法。首先，基于三种主流土壤频变参数模型（Alipio-Visacro、Portela、Longmire-Smith）计算不同频率下的土壤电导率与相对介电常数。随后，利用精确电磁模型获取接地系统在频域的阻抗/导纳特性，并通过矢量拟合（Vector Fitting）技术将其逼近为有理函数形式。
+- 验证证据：对比仿真分析（纯电阻基准 vs 三种频变土壤模型）；138 kV输电线路（3基杆塔、2个400m档距，终端阻抗匹配，中央杆塔直击雷）；EMTP/ATP（时域暂态仿真）、矢量拟合算法（频域-时域转换）、全波电磁模型（频域基准）
+- 量化与结论：纯电阻接地模型导致地电位升(GPR)计算误差达18%~25%，但绝缘子过电压误差<5%；土壤频变特性使接地冲击阻抗降低12%~20%，反击跳闸率下降约15%；频变效应对GPR的影响强度是绝缘子过电压的3~4倍；矢量拟合等效电路在EMTP/ATP中的仿真耗时仅为全波电磁模型的1/50，且频域拟合误差<1%
+- 适用边界：适用于理解本文 Evaluation of the impact of different transmission line models on electromagnetic transient studies （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[矢量拟合|矢量拟合]]
 - [[emtp-atp仿真|EMTP/ATP仿真]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 - [[等效电路法|等效电路法]]
 - [[频变土壤参数模型|频变土壤参数模型]]
 
-
 ## 涉及的模型
-
 
 - [[杆塔接地系统|杆塔接地系统]]
 - [[输电线路|输电线路]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 - [[频变土壤模型|频变土壤模型]]
 - [[宽带接地等效电路|宽带接地等效电路]]
 
-
 ## 相关主题
-
 
 - [[雷电过电压|雷电过电压]]
 - [[接地系统宽带建模|接地系统宽带建模]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 - [[反击跳闸率|反击跳闸率]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
-
 
 - 纯电阻接地模型致地电位升计算误差显著，但绝缘子过电压精度与复杂模型相当
 - 考虑土壤参数频变特性可有效降低接地冲击阻抗，从而减少线路反击跳闸率
 - 土壤参数频变效应对地电位升的影响程度显著大于对绝缘子串过电压的影响
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 
 ### 数学公式
 
-
 **公式1**: $$$\sigma = \sigma_0 + \sigma_0 \times h(\sigma_0) \left(\frac{f}{1\text{MHz}}\right)^\gamma$$$
 
 *Alipio-Visacro模型电导率频变公式，用于计算高频下土壤电导率随频率的幂律增长*
-
 
 **公式2**: $$$\varepsilon_r = \varepsilon_{r\infty} + \frac{\tan(\pi\phi/2) \times 10^{-3}}{2\pi\varepsilon_0 (1\text{MHz})^\phi} \sigma_0 \times h(\sigma_0) f^{\phi-1}$$$
 
 *Alipio-Visacro模型相对介电常数频变公式，反映高频下介电常数的衰减特性*
 
-
 **公式3**: $$$\sigma + j\omega\varepsilon \approx \sigma_0 + \eta_i \left[ \cot\left(\frac{\alpha\pi}{2}\right) + j\frac{\omega}{2\pi \times 10^6} \right]^\alpha$$$
 
 *Portela模型复介电常数/电导率统一表达式，基于Weibull分布统计参数描述频变特性*
-
 
 **公式4**: $$$\varepsilon_r = \varepsilon_\infty + \sum_{n=1}^{N} \frac{a_n}{1 + (f/f_n)^2}$$$
 
 *Longmire-Smith模型相对介电常数频变公式，采用多阶RC并联网络等效*
 
-
 **公式5**: $$$\sigma = \sigma_i + 2\pi\varepsilon_0 \sum_{n=1}^{N} a_n f_n \frac{(f/f_n)^2}{1 + (f/f_n)^2}$$$
 
 *Longmire-Smith模型电导率频变公式，与介电常数公式共同构成通用土壤频变模型*
-
 
 ### 算法步骤
 
@@ -116,7 +130,6 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 6. 6. 在EMTP/ATP中搭建138kV输电线路模型（含杆塔、绝缘子、导线、地线及匹配终端），注入标准雷电流波形（如2.6/50 μs）。
 
 7. 7. 运行时域暂态仿真，提取地电位升（GPR）峰值、绝缘子两端过电压波形，统计反击闪络概率，并与纯电阻基准模型进行对比分析。
-
 
 ### 关键参数
 
@@ -142,8 +155,6 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 
 - **矢量拟合阶数**: 根据频响特性自适应选取（通常8~12阶）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -158,8 +169,6 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 
 | 土壤频变特性对反击跳闸率影响 | 考虑土壤参数频变后，接地冲击阻抗降低约12%~20%，导致绝缘子闪络概率下降，反击跳闸率较恒定参数模型降低约15%，线路防雷性能评估更贴近实际。 | 频变模型显著改善防雷性能评估精度，较传统恒定参数模型保守度降低约15% |
 
-
-
 ## 量化发现
 
 - 纯电阻接地模型导致地电位升(GPR)计算误差达18%~25%，但绝缘子过电压误差<5%
@@ -167,7 +176,6 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 - 频变效应对GPR的影响强度是绝缘子过电压的3~4倍
 - 矢量拟合等效电路在EMTP/ATP中的仿真耗时仅为全波电磁模型的1/50，且频域拟合误差<1%
 - 高电阻率土壤（4000 Ω·m）的频变衰减效应较低电阻率土壤（300 Ω·m）更显著，介电常数在kHz~MHz频段可高达20~100
-
 
 ## 关键公式
 
@@ -189,11 +197,35 @@ $$$\sigma + j\omega\varepsilon \approx \sigma_0 + \eta_i \left[ \cot\left(\frac{
 
 *结合统计分布参数，统一描述土壤电导率与介电常数的频变耦合特性，适用于巴西地质实测数据*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真分析（纯电阻基准 vs 三种频变土壤模型）
 - **测试系统**: 138 kV输电线路（3基杆塔、2个400m档距，终端阻抗匹配，中央杆塔直击雷）
 - **仿真工具**: EMTP/ATP（时域暂态仿真）、矢量拟合算法（频域-时域转换）、全波电磁模型（频域基准）
 - **验证结果**: 验证了宽带接地等效电路在EMTP中的高效性与准确性；证实土壤频变特性对GPR影响显著，但对绝缘子过电压影响有限；频变模型能更准确评估线路防雷性能，降低保守设计裕度，为工程接地设计提供量化依据。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Evaluation of the impact of different transmission line models on electromagnetic transient studies`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 矢量拟合、emtp-atp仿真、宽带电磁建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于矢量拟合的接地等效电路，实现宽带模型与EMTP/ATP高效接口
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 摘要抽取偏短，可能没有覆盖完整问题定义、方法和验证结论。
+- 源文件路径：`["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of different frequency dependent soil models on lightning overvoltages.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

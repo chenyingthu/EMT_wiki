@@ -3,7 +3,7 @@ title: "A multi-area Thevenin equivalent based multi-rate co-simulation for cont
 type: source
 authors: ['Yupeng Li']
 year: 2019
-journal: "Electrical Power and Energy Systems, 115 (2019) 105479. doi:10.1016/j.ijepes.2019.105479"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['lcc', 'cosimulation']
 created: "2026-04-13"
 sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based multi-rate co-simulation for control design of practical LCC.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based mul
 
 ## 摘要
 
-A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupeng Lia, Dewu Shua,⁎, Jingwei Hua, Zheng Yana, Yun Zhoua, Haifeng Wangb a High-Performance Simulation Center, Key Lab of Control and Power Transmission and Conversion, Department of Electrical Engineering, Shanghai Jiaotong University, b State Grid Shanghai Municipal Electric Power Company, China The line commutated converter (LCC) based HVDC transmission is often adopted to transmit the large capacity
+本文提出一种基于多区域戴维南等值（MATE）的多速率协同仿真方法，用于实际LCC-HVDC系统的控制设计与电磁暂态分析。首先，依据长线路阻抗大、弱耦合节点及最小连接母线原则，将大规模交直流电网解耦为直流子系统与多个交流子系统。交流子系统通过MATE技术进一步划分为独立子网络，各子系统间通过MATE-TLM（基于MATE的输电线路模型）接口进行宽频交互。仿真采用多速率架构：直流侧采用小步长Δt捕捉电力电子快速开关动态，交流侧采用大步长ΔT（ΔT=nΔt）降低计算负担。接口变量通过交流侧线性插值与直流侧平均值法进行跨步长同步。此外，提出基于虚拟阻抗的改进VDCOL控制策略，通过引入直流电压/电流变化量的虚拟压降修正电流指令，实现故障下直流电流的快速下调，从而抑制换相失败并加速系统恢复。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的是实际LCC-HVDC工程中两个相互牵连的问题：一是弱交流系统故障下换相失败会导致直流电压跌落、过电流、功率中断和恢复缓慢；二是控制策略设计需要EMT级仿真，但实际交直流大电网规模很大，若全系统都用20–50 μs小步长求解，计算代价过高。研究对象是含实际交流网络和双端LCC-HVDC的交直流系统，重点在逆变侧故障、换相失败抑制和故障后恢复。难点在于LCC阀级/换相动态要求小步长，而大规模交流网络多数动态不需要同等步长；同时交直流接口必须保持宽频暂态交互，否则会牺牲控制设计可信度。本文的贡献不是单纯把步长放大，而是用MATE把大系统按弱耦合边界分区，再用MATE-TLM把交流子网等效成可被直流侧调用的戴维南接口，并在直流小步长、交流大步长之间设计插值和平均同步机制；此外提出基于虚拟阻抗的改进VDCOL，使电流指令对直流电压跌落和过流变化更快响应，以减少连续换相失败。
+
+### 2. 模型、算法与实现技术
+
+方法核心由三层组成。第一层是网络分区：依据长线路、弱耦合节点和最少连接母线原则，把实际交直流网络拆成直流子系统和多个交流子系统，交流部分再通过MATE形成独立子网络。第二层是MATE-TLM接口：每个交流子系统用导纳矩阵、历史电流源和连接矩阵表示，接口处计算戴维南电压源e_th和等效阻抗Z_th；直流子系统看到的不是完整交流网络，而是这些随时间更新的等效边界。核心接口量是连接母线电压、接口支路电流、历史电流源、戴维南电压和阻抗。整体MATE方程的作用是把各子系统内部节点方程和接口支路方程耦合起来，但保持子网可独立求解。第三层是多速率同步：直流侧用小步长Δt求解LCC快速暂态，交流侧用大步长ΔT=nΔt求解较慢动态；在一个交流大步长内，直流侧通过交流接口变量的线性插值得到边界条件，交流侧在大步长结束时接收直流侧n个小步长结果的平均值。控制方面，虚拟阻抗改进VDCOL把直流电流变化和电压变化折算为附加压降/修正信号，用来提前降低直流电流指令，从而减轻换相失败后的过流和恢复压力。
+
+### 3. 验证、优势与不足
+
+作者用实际交直流系统进行验证，页面记录的测试系统为中国南方电网观音岩LCC-HVDC工程及其大规模交流网络，包含2412个母线、599台发电机、1291个负荷和3537条线路，直流工程为500 kV/3 kA双端LCC-HVDC。仿真工具上，所提方法由自主开发的MATE-TLM多速率协同仿真程序实现，并以PSCAD/EMTDC高精度单速率模型作为参考基线。验证场景包括逆变侧三相接地和单相接地故障，并比较传统VDCOL、换相失败预测控制和本文虚拟阻抗策略。指标包括接口变量平均误差、直流子系统误差、仿真耗时/加速比、直流电压跌落、过电流、熄弧角恢复和阀组连续换相失败次数。页面抽取结果显示，当交流步长为500 μs、直流步长为50 μs时，接口误差约0.0084–0.0116，直流子系统误差小于0.012，三相和单相故障算例加速比分别约150和160；改进控制在单相故障下改善电压跌落14.03%、过流3.45%，三相故障下分别为2.55%和6.55%。从验证范围看，优势主要体现在实际大系统EMT仿真和LCC控制策略筛选；但论文验证集中在特定工程、特定故障和离线仿真，未证明其可直接用于所有拓扑、实时仿真平台、VSC-HVDC或更高频开关模型。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：大规模交直流EMT仿真不必把所有区域强制放在同一小步长下，只要接口等值能保持暂态交互，LCC所在直流侧可以细步长求解，远端或弱耦合交流网络可较大步长求解。它适合被后续关于多速率EMT、分网并行仿真、LCC-HVDC控制设计、换相失败抑制和实际大电网离线暂态研究复用，尤其适合作为“如何把工程级交流网络接入阀级直流模型”的方法入口。不适合把结果直接外推为所有HVDC系统的通用加速比或控制收益；虚拟阻抗VDCOL的效果也依赖系统强度、故障类型、控制参数和接口步长选择。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究问题包括LCC-HVDC换相失败、控制保护策略设计需求，以及传统EMT小步长在大规模交直流系统中的计算负担。
+- 来自页面抽取结果的定量信息：2412母线系统、500 kV/3 kA直流工程、50 μs/500 μs步长、约150–160倍加速和误差范围等；这些数值用于说明时应回原文算例表图核验。
+- MATE-TLM接口、交流侧线性插值和直流侧平均反馈的工作机制来自页面公式与方法描述；具体数值稳定性条件、误差阶分析或收敛证明在当前证据中未展开。
+- 虚拟阻抗改进VDCOL的物理作用可由控制结构推断为加快电流指令下调，但具体参数整定原则、参数敏感性和极端工况鲁棒性在当前页面中不足。
+- 验证边界主要是实际LCC-HVDC离线EMT仿真和逆变侧接地故障；未见对VSC-HVDC、多端直流、实时硬件在环、不同网络划分策略或更复杂保护动作的系统验证。
+- 作者比较了传统VDCOL、换相失败预测控制和PSCAD/EMTDC参考模型；当前证据未显示与其他并行EMT、多速率数值积分或商业实时仿真平台的全面对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于多区域戴维南等值的输电线路接口模型，实现交直流宽频交互精确解耦
-- 构建多速率协同仿真架构，结合MATE技术大幅提升大规模电网电磁暂态仿真效率
-- 提出基于虚拟阻抗的改进控制策略，有效降低换相失败概率并加快直流系统恢复
-
+- 问题定位：本文提出一种基于多区域戴维南等值（MATE）的多速率协同仿真方法，用于实际LCC-HVDC系统的控制设计与电磁暂态分析。首先，依据长线路阻抗大、弱耦合节点及最小连接母线原则，将大规模交直流电网解耦为直流子系统与多个交流子系统。
+- 方法机制：本文提出一种基于多区域戴维南等值（MATE）的多速率协同仿真方法，用于实际LCC-HVDC系统的控制设计与电磁暂态分析。首先，依据长线路阻抗大、弱耦合节点及最小连接母线原则，将大规模交直流电网解耦为直流子系统与多个交流子系统。交流子系统通过MATE技术进一步划分为独立子网络，各子系统间通过MATE-TLM（基于MATE的输电线路模型）接口进行宽频交互。
+- 验证证据：电磁暂态仿真对比验证（与PSCAD/EMTDC高精度单速率模型进行精度与效率对比，并对比不同控制策略的动态响应）；中国南方电网实际交直流系统（观音岩LCC-HVDC工程），包含2412节点大规模交流电网与500kV/3kA双端直流输电系统；自主开发的多速率协同仿真程序（基于MATE-TLM架构），PSCAD/EMTDC（作为高精度参考基准）
+- 量化与结论：在交流侧步长扩展至500 μs时，三相接地故障场景仿真速度提升150倍，单相接地故障场景提升160倍。；多速率协同仿真在n=10（ΔT=500 μs）时，接口变量平均误差E avg控制在0.0084~0.0116之间，直流子系统误差<0.012，满足高精度要求。；基于虚拟阻抗的改进控制策略在单相故障下使电压跌落改善14.03%，过电流抑制3.45%；在三相故障下电压跌落改善2.
+- 适用边界：适用于理解本文 A multi-area Thevenin equivalent based multi-rate co-simulation for control design of practical LCC HVDC system （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[多速率协同仿真|多速率协同仿真]]
 - [[多区域戴维南等值-mate|多区域戴维南等值(MATE)]]
@@ -36,9 +64,7 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 - [[网络分割技术|网络分割技术]]
 - [[虚拟阻抗控制|虚拟阻抗控制]]
 
-
 ## 涉及的模型
-
 
 - [[lcc-model|LCC]]
 - [[vsc-hvdc|VSC-HVDC]]
@@ -46,9 +72,7 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 - [[输电线路|输电线路]]
 - [[戴维南等效模型|戴维南等效模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[换相失败抑制|换相失败抑制]]
@@ -57,15 +81,11 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 - [[弱交流系统|弱交流系统]]
 - [[控制策略设计|控制策略设计]]
 
-
 ## 主要发现
-
 
 - 实际交直流电网仿真验证了所提多速率协同仿真方法在精度与效率上的显著优势
 - 虚拟阻抗控制策略有效降低了弱交流系统下的换相失败概率，并提升了直流电压恢复速度
 - MATE-TLM接口模型在保证宽频交互精度的同时，大幅降低了大规模网络求解计算负担
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 
 ### 数学公式
 
-
 **公式1**: $$$$\begin{bmatrix} Y_1 & & M_1 \\ & \ddots & \vdots \\ & & Y_N & M_N \\ M_1^T & \cdots & M_N^T & Z_b \end{bmatrix} \begin{bmatrix} v_1(t) \\ \vdots \\ v_N(t) \\ i_b(t) \end{bmatrix} = \begin{bmatrix} i_{h1}(t-\Delta T) \\ \vdots \\ i_{hN}(t-\Delta T) \\ 0 \end{bmatrix}$$$$
 
 *MATE网络整体动态方程，描述N个子系统导纳矩阵、节点电压、历史电流及接口支路戴维南阻抗与电流的耦合关系。*
-
 
 **公式2**: $$$$e_{thk}(t) = M_2^T [Y_2]^{-1} i_{h2}(t-\Delta T), \quad Z_{thk} = M_2^T [Y_2]^{-1} M_2$$$$
 
 *MATE-TLM接口戴维南等效参数计算公式，用于将交流子系统等效为电压源与阻抗，供直流侧调用。*
 
-
 **公式3**: $$$$\bar{u}_k(t) = L\{u_k[(k-1)\Delta T], u_k[(k-2)\Delta T]\}, \quad \bar{i}_k(t) = L\{i_k[(k-1)\Delta T], i_k[(k-2)\Delta T]\}$$$$
 
 *交流侧接口变量线性插值公式，用于在直流侧小步长仿真时提供连续的边界条件。*
-
 
 **公式4**: $$$$\bar{u}_n(t) = \frac{1}{n} \sum_{i=1}^n u_n[(k-1)\Delta T + i\Delta t], \quad \bar{i}_n(t) = \frac{1}{n} \sum_{i=1}^n i_n[(k-1)\Delta T + i\Delta t]$$$$
 
 *直流侧接口变量平均值公式，用于在一个交流大步长周期结束后，将直流侧高频动态聚合反馈给交流侧。*
 
-
 **公式5**: $$$$\Delta U_{dc} = R_i \cdot \Delta I_{dc} + K_u \cdot \Delta U_{dc}$$$$
 
 *虚拟阻抗修正项计算公式，将直流电流过流与电压跌落转化为附加控制信号，用于加速VDCOL响应。*
-
 
 ### 算法步骤
 
@@ -115,7 +129,6 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 
 6. 6. 判断是否达到总仿真时间Tmax。若未达到，k=k+1并返回步骤3；若达到，则终止仿真并输出全局动态响应曲线。
 
-
 ### 关键参数
 
 - **直流额定参数**: 500 kV / 3 kA，直流电缆长度577 km
@@ -127,8 +140,6 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 - **速率比n**: 1, 2, 10
 
 - **虚拟阻抗参数**: R_i (虚拟电阻), K_u (虚拟电压增益)，具体数值依系统整定，用于调节VDCOL输入信号U_dc_ord
-
-
 
 ## 仿真结果
 
@@ -144,8 +155,6 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 
 | 不同控制策略对比（传统VDCOL vs 换相失败预测 vs 本文虚拟阻抗策略） | 在ΔT=500μs多速率仿真下，本文策略与PSCAD/EMTDC高精度参考曲线高度吻合。换相失败预测策略虽能减少CF，但会导致交流侧无功消耗意外增加；本文策略在同等CF抑制效果下，避免了无功越限问题。 | 本文方法在保持与PSCAD参考曲线一致精度的同时，计算效率提升两个数量级，且控制策略的鲁棒性与经济性更优。 |
 
-
-
 ## 量化发现
 
 - 在交流侧步长扩展至500 μs时，三相接地故障场景仿真速度提升150倍，单相接地故障场景提升160倍。
@@ -153,7 +162,6 @@ A multi-area Thevenin equivalent based multi-rate co-simulation for control Yupe
 - 基于虚拟阻抗的改进控制策略在单相故障下使电压跌落改善14.03%，过电流抑制3.45%；在三相故障下电压跌落改善2.55%，过电流抑制6.55%。
 - 改进策略将传统控制引发的VT3与VT6连续换相失败次数从多次降低至仅1次，显著缩短熄弧角恢复时间。
 - 相比换相失败预测控制，本文策略在同等抑制换相失败效果下，避免了交流侧无功功率的意外增加。
-
 
 ## 关键公式
 
@@ -175,11 +183,34 @@ $$$$E_{avg} = \frac{1}{N} \sum_{i=1}^{N} |x_{i,m} - x_{i,u}|$$$$
 
 *用于定量评估多速率协同仿真结果与PSCAD高精度参考曲线之间的偏差，验证接口模型与多速率架构的数值精度。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态仿真对比验证（与PSCAD/EMTDC高精度单速率模型进行精度与效率对比，并对比不同控制策略的动态响应）
 - **测试系统**: 中国南方电网实际交直流系统（观音岩LCC-HVDC工程），包含2412节点大规模交流电网与500kV/3kA双端直流输电系统
 - **仿真工具**: 自主开发的多速率协同仿真程序（基于MATE-TLM架构），PSCAD/EMTDC（作为高精度参考基准）
 - **验证结果**: 验证表明，所提MATE-TLM多速率协同仿真在交流步长放大至500μs时仍保持<1.2%的平均误差，计算效率提升150~160倍。基于虚拟阻抗的改进控制策略有效降低了弱交流系统下的换相失败概率，避免了无功越限，并显著加快了直流电压与电流的故障恢复速度，完全满足实际工程控制设计与大规模电网EMT仿真的精度与效率需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A multi-area Thevenin equivalent based multi-rate co-simulation for control design of practical LCC HVDC system`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 多速率协同仿真、多区域戴维南等值-mate、输电线路模型-tlm 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于多区域戴维南等值的输电线路接口模型，实现交直流宽频交互精确解耦
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based multi-rate co-simulation for control design of practical LCC.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

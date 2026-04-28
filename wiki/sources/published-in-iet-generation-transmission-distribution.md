@@ -1,34 +1,62 @@
 ---
-title: "Published in IET Generation, Transmission & Distribution"
+title: "Multi-FPGA digital hardware design for detailed large-scale real-time electromagnetic transient simulation of power systems"
 type: source
-authors: ['未知']
+authors: ['Yuan Chen', 'Venkata Dinavahi']
 year: 2013
-journal: ""
+journal: "IET Generation, Transmission & Distribution"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-scale real-time electromagnetic transient simulation of power systems.pdf"]
 ---
 
-# Published in IET Generation, Transmission & Distribution
+# Multi-FPGA digital hardware design for detailed large-scale real-time electromagnetic transient simulation of power systems
 
-**作者**: 
+**作者**: Yuan Chen; Venkata Dinavahi
 **年份**: 2013
 **来源**: `27&28/Multi-FPGA digital hardware design for detailed large-scale real-time electromagnetic transient simulation of power systems.pdf`
 
 ## 摘要
 
-Large-scale electromagnetic transient simulation of power systems in real-time using detailed modelling is computationally very demanding. This study introduces a multi-ﬁeld programmable gate array (FPGA) hardware design for this purpose. A functional decomposition method is proposed to map FPGA hardware resources to system modelling. This systematic method lends itself to fully pipelined and parallel hardware emulation of individual component models and numerical solvers, while preserving original system characteristics without the need for extraneous components to partition the system. Proof-of-concept is provided in terms of a 3-FPGA and 10-FPGA real-time hardware emulation of a three-phase 42-bus and 420-bus power systems using detailed modelling of various system components and iterat
+本研究提出基于功能分解(Functional Decomposition)的多FPGA硬件仿真架构。该方法摒弃了传统基于传输线行波时延的拓扑分区策略，转而按照电力系统组件的功能类型（如传输线、电机、变压器、非线性元件等）进行系统分解。同类组件被映射至独立的处理硬件(PH)模块，通过全流水线(Fully Pipelined)和并行计算实现大规模系统的实时仿真。该方法支持多速率仿真(Multi-rate Simulation)，允许不同功能组件采用不同仿真步长以提高计算效率，同时无需引入人工解耦元件即可保持原始系统拓扑特性，避免了因插入伪传输线导致的频率响应误差。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自大规模电力系统实时EMT仿真：保护、控制、HVDC/FACTS和运行培训等场景需要在硬实时步长内保留线路频变特性、电机高阶动态和非线性元件迭代求解。研究对象不是某个新元件模型，而是如何把包含传输线/电缆、同步机、变压器、负荷、断路器和非线性元件的三相网络映射到多FPGA硬件。难点在于，传统实时仿真常按网络拓扑分区，依靠传输线行波时延解耦；当子系统之间没有合适线路或耦合很强时，需要插入虚拟线路/电缆，会改变暂态频率响应，同时多处理器通信延迟和分区负载不均会限制规模。本文的贡献是提出“功能分解”：按元件功能类型而非地理/拓扑区域聚类，把同类模型放到专用处理硬件PH上并行、流水线执行，从而在不加入额外分区元件的前提下保持原始系统连接关系，并给出3-FPGA和10-FPGA的实时硬件原型验证。
+
+### 2. 模型、算法与实现技术
+
+实现思路是把电力系统计算拆成若干功能处理硬件：例如线路/电缆、电机、线性RLCG、非线性元件等各自有专用PH，所有PH在同一仿真时刻并行生成等效注入量，再通过网络节点求解和接口数据交换推进时间。核心接口量是各元件端口电压、注入电流、等效导纳和历史源。线性集总元件用梯形积分形成Norton等效，形式为当前电流等于等效电导乘端电压加历史电流源；这使不同元件都能以“导纳+历史项”的方式接入节点方程。线路/电缆采用相域通用线路模型，频域特征导纳和传播函数先用有理函数/模态时延表示，时域中通过卷积与延迟对端量更新线路历史电流，因此能描述频率相关传播而非简单π型线。电机采用dq0坐标下通用机模型，离散电压方程把电阻压降、磁链历史项、转速电压项和历史电压项组合起来，机械方程用转矩、惯量和阻尼更新转速。非线性元件使用全Newton迭代。FPGA侧强调完全流水线和32位浮点计算：同一类元件可在流水线中连续进入计算单元，以吞吐率而非单个CPU线程速度满足实时约束。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是把多FPGA实时硬件仿真波形与离线EMTP结果比较。原文明确给出两个proof-of-concept：三相42-bus系统在3片FPGA上运行，三相420-bus系统在10片FPGA上运行；系统包含多类详细元件，并包含迭代非线性求解；FPGA时钟为100 MHz。基线是离线EMTP，不是与商业RTDS、HYPERSIM或CPU集群做同条件性能对比。优势主要体现在结构层面：功能分解避免了为拓扑分区而插入虚拟传输线/电缆，因此不会引入这类人工解耦元件的频率响应误差；同类元件集中到专用流水线PH中，适合传输线、电机、非线性元件这类计算模式重复、数量多的模型；42-bus到420-bus案例说明该硬件组织有扩展潜力。边界也很清楚：原文摘要未报告可核验的误差数值、实时步长、资源占用、通信带宽或延迟余量；验证只覆盖作者构造的两个系统和100 MHz FPGA原型。该方法不等价于任意系统都能线性扩展，因为跨FPGA数据交换、全局节点求解、组件类型比例、流水线深度和FPGA资源都会成为限制。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心启发是：大规模实时EMT并行化不一定只能沿网络拓扑切割，也可以沿“模型计算功能”切割。对于元件数量多、模型结构重复、需要详细频变线路或高阶电机的系统，功能分解能把FPGA的流水线优势转化为稳定吞吐，并减少人为解耦建模对物理网络的干扰。它适合被后续多FPGA EMT架构、专用硬件加速器、线路/电机/非线性求解器页面复用，也可作为讨论实时仿真分区策略的反例：分区目标不只是减少节点数，还要匹配硬件计算模式。但不能把该论文外推为已证明任意电网、任意电力电子密集系统或任意闭环保护测试都可实时运行；这些需要额外报告步长、误差、I/O闭环和资源裕度。
+
+### 证据边界
+
+- 来自原文：论文提出multi-FPGA硬件设计和functional decomposition，将系统组件按功能映射到处理硬件，并强调fully pipelined and parallel hardware emulation。
+- 来自原文：验证为3-FPGA三相42-bus和10-FPGA三相420-bus实时硬件仿真，使用详细组件建模、迭代非线性求解，FPGA时钟为100 MHz，并与离线EMTP结果比较。
+- 来自原文：传统按传输线/电缆行波时延分区在缺少合适连接线或强耦合时可能需要虚拟线路，虚拟线路会引入频率响应误差且位置和长度需谨慎选择。
+- 据方法推断：功能分解可能改善同类元件流水线吞吐和负载组织，但实际可扩展性仍依赖FPGA资源、跨FPGA互连、节点求解规模和元件类型分布；摘要未给出这些瓶颈的量化余量。
+- 缺少关键参数：当前可见原文未报告可核验的波形误差指标、仿真时间步长、FPGA型号、逻辑/DSP/存储资源占用、通信带宽、延迟和最大可支持开关频率。
+- 验证边界：基线是离线EMTP波形对比，不是与现有商业实时仿真器或CPU/GPU并行方案在相同步长、模型和硬件成本下的量化性能对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出功能分解法，将同类组件映射至独立FPGA模块，实现全流水线并行处理
-- 摒弃人工传输线分区策略，无需额外解耦元件即可保持原系统拓扑特性
-- 构建支持全牛顿迭代与32位浮点运算的多FPGA实时硬件仿真架构
-
+- 问题定位：本研究提出基于功能分解(Functional Decomposition)的多FPGA硬件仿真架构。该方法摒弃了传统基于传输线行波时延的拓扑分区策略，转而按照电力系统组件的功能类型（如传输线、电机、变压器、非线性元件等）进行系统分解。
+- 方法机制：本研究提出基于功能分解(Functional Decomposition)的多FPGA硬件仿真架构。该方法摒弃了传统基于传输线行波时延的拓扑分区策略，转而按照电力系统组件的功能类型（如传输线、电机、变压器、非线性元件等）进行系统分解。同类组件被映射至独立的处理硬件(PH)模块，通过全流水线(Fully Pipelined)和并行计算实现大规模系统的实时仿真。
+- 验证证据：对比验证(Comparative Validation)：将多FPGA实时硬件仿真结果与离线电磁暂态仿真软件EMTP进行详细对比；两个测试案例：1) 三相42母线电力系统；2) 三相420母线大规模电力系统。系统包含详细建模的传输线、电缆、同步电机、变压器、线性/非线性负荷及断路器；离线参考仿真使用EMTP软件；
+- 量化与结论：FPGA硬件架构采用100 MHz时钟频率实现实时仿真；分别使用3片和10片FPGA成功仿真42节点和420节点三相电力系统；采用IEEE 32位浮点数表示，确保数值计算精度；电机建模采用8阶通用机(UM)模型，可自定义定转子绕组数和机械部分参数
+- 适用边界：适用于大规模实时 EMT 仿真中传输线、电机、非线性元件等组件计算量较大且可按功能类型流水线化的场景。；功能分解避免了人为插入解耦线路，但跨 FPGA 同步和全局节点数据交换仍是实时步长约束，需要具体硬件互连支撑。
 
 ## 使用的方法
-
 
 - [[功能分解法|功能分解法]]
 - [[全流水线并行计算|全流水线并行计算]]
@@ -37,9 +65,7 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 - [[全牛顿迭代法|全牛顿迭代法]]
 - [[离散时间等效|离散时间等效]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[电缆|电缆]]
@@ -51,9 +77,7 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 - [[负荷|负荷]]
 - [[断路器|断路器]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[多fpga并行计算|多FPGA并行计算]]
@@ -61,15 +85,11 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 - [[大规模电力系统仿真|大规模电力系统仿真]]
 - [[数字硬件仿真|数字硬件仿真]]
 
-
 ## 主要发现
 
-
-- 3与10片FPGA架构成功实现42及420节点系统的百兆赫兹实时仿真
-- 实时仿真结果与离线EMTP高度吻合，验证了架构的计算精度与可扩展性
-- 功能分解法有效均衡硬件负载，消除传统分区引入的通信延迟与频率误差
-
-
+- 3-FPGA 和 10-FPGA 原型分别用于三相 42-bus 和 420-bus 系统的实时硬件仿真，时钟为 100 MHz。
+- 功能分解法按元件功能类型映射处理硬件，避免为了拓扑分区而插入额外伪线路/电缆。
+- 实时结果与离线 EMTP 对比用于评估精度和可扩展性；页面不应把该结果外推为任意系统规模下线性扩展。
 
 ## 方法细节
 
@@ -79,41 +99,33 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 
 ### 数学公式
 
-
 **公式1**: $$$i(t) = Gv(t) + i_{hRLCG}(t-\Delta t)$$$
 
 *线性集总RLCG元件的离散时间等效模型，其中G为等效电导，$i_{hRLCG}$为历史电流项，采用梯形积分法离散化*
-
 
 **公式2**: $$$Y_{c,(i,j)}(s) = \sum_{m=1}^{N_p} \frac{r_{Yc,(i,j)}(m)}{s-p_{Yc}(m)} + d_{(i,j)}$$$
 
 *通用线路模型(ULM)特征导纳矩阵元素的频域有理函数拟合，$N_p$为极点数量，r为留数，p为极点，d为比例项*
 
-
 **公式3**: $$$H_{(i,j)}(s) = \sum_{k=1}^{N_g}\sum_{n=1}^{N_{p,k}} \frac{r_{H,(i,j),k}(n)}{s-p_{H,k}(n)}e^{-st_k}$$$
 
 *传播函数矩阵元素的频域表示，$N_g$为传播模态数，$t_k$为第k模态的时延，包含指数衰减项*
-
 
 **公式4**: $$$i_k(t) = Gv_k(t) - i_{hlinek}$$$
 
 *ULM时域发送端电流方程，G为等效电导矩阵，$i_{hlinek}$为线路历史电流*
 
-
 **公式5**: $$$i_{hlinek} = Y_c * v_k(t) - 2H * i_m(t-\tau)$$$
 
 *线路历史电流递推计算公式，*表示矩阵-向量卷积运算，$\tau$为传播时延，下标m表示对端*
-
 
 **公式6**: $$$v_{dq0}(t) = -Ri_{dq0}(t) - \frac{2}{\Delta t}\lambda_{dq0}(t) + u(t) + v_{hist}$$$
 
 *通用电机(UM)模型在同步旋转dq0坐标系下的离散电压方程，8阶模型，u为转速电压项，$v_{hist}$为历史电压项*
 
-
 **公式7**: $$$T_m = J\frac{dv}{dt} + Dv + T_e$$$
 
 *电机机械动力学方程，$T_m$为机械转矩，$T_e$为电磁转矩，J为转动惯量，D为阻尼系数，v为转速*
-
 
 ### 算法步骤
 
@@ -137,7 +149,6 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 
 10. 时间推进：所有PH模块根据各自步长完成计算后，统一推进至下一时刻，重复上述过程
 
-
 ### 关键参数
 
 - **FPGA时钟频率**: 100 MHz
@@ -156,8 +167,6 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 
 - **传播模态数**: $N_g$（取决于线路结构和频率范围）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -170,8 +179,6 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 
 | 420节点大规模电力系统实时仿真 | 使用10片FPGA实现420母线大规模系统的实时硬件仿真，证明了架构的可扩展性，能够在百兆赫兹时钟频率下处理大规模详细模型 | 相比传统基于人工传输线分区的多处理器方法，消除了因插入伪传输线导致的频率响应误差，实现了负载均衡的并行计算 |
 
-
-
 ## 量化发现
 
 - FPGA硬件架构采用100 MHz时钟频率实现实时仿真
@@ -181,7 +188,6 @@ Large-scale electromagnetic transient simulation of power systems in real-time u
 - 传输线/电缆采用基于有理函数拟合的通用线路模型(ULM)，特征导纳和传播函数分别使用$N_p$极点和$N_g$模态进行拟合
 - 功能分解法实现了计算负载在多个FPGA间的均衡分布，消除了传统拓扑分区中可能出现的子系统规模不均导致的性能瓶颈
 - 支持多速率仿真，不同功能组件可根据模型复杂度选择不同仿真步长，提高整体计算效率
-
 
 ## 关键公式
 
@@ -203,11 +209,16 @@ $$$v_{dq0}(t) = -Ri_{dq0}(t) - \frac{2}{\Delta t}\lambda_{dq0}(t) + u(t) + v_{hi
 
 *在dq0同步旋转坐标系下求解8阶电机电气暂态，结合机械方程形成完整机电暂态模型*
 
+## 适用边界
 
+- 适用于大规模实时 EMT 仿真中传输线、电机、非线性元件等组件计算量较大且可按功能类型流水线化的场景。
+- 功能分解避免了人为插入解耦线路，但跨 FPGA 同步和全局节点数据交换仍是实时步长约束，需要具体硬件互连支撑。
+- 多速率和功能聚类会改变程序结构复杂度；新增组件类型时需要重新设计处理硬件和调度，而不是简单增加一个 CPU 线程。
+- 论文验证为 42-bus/420-bus 原型系统和 100 MHz FPGA 时钟下的 proof-of-concept，其他系统规模、模型细节和保护闭环测试需另行验证。
 
 ## 验证详情
 
 - **验证方式**: 对比验证(Comparative Validation)：将多FPGA实时硬件仿真结果与离线电磁暂态仿真软件EMTP进行详细对比
 - **测试系统**: 两个测试案例：1) 三相42母线电力系统；2) 三相420母线大规模电力系统。系统包含详细建模的传输线、电缆、同步电机、变压器、线性/非线性负荷及断路器
 - **仿真工具**: 离线参考仿真使用EMTP软件；实时硬件基于多FPGA平台（分别配置3片和10片FPGA），时钟频率100 MHz，采用32位浮点运算
-- **验证结果**: 实时仿真结果与离线EMTP结果高度吻合(HIGHLY CONSISTENT)，验证了所提功能分解法在保持原始系统特性（无需人工分区）的同时，能够实现大规模系统的精确实时仿真。架构表现出良好的可扩展性，从42节点到420节点系统通过增加FPGA数量即可实现，计算负载分布均衡。
+- **验证结果**: 实时仿真结果与离线 EMTP 结果对比，验证功能分解法在不插入额外分区元件的情况下可完成详细组件建模的实时仿真。3-FPGA 到 10-FPGA 的案例说明了扩展潜力，但具体扩展性仍受硬件资源、互连和模型类型限制。

@@ -1,9 +1,9 @@
 ---
 title: "Computation of ground potential rise and grounding impedance of simple arrangement of electrodes buried in frequency-dependent stratified soil"
 type: source
-authors: ['Anderson', 'R.J.', 'de', 'Araújo']
+authors: ['Anderson R.J. de Araújo', 'Jaimis S.L. Colqui', 'Claudiner M. de Seixas', 'Sérgio Kurokawa', 'Bamdad Salarieh', 'José Pissolato Filho', 'Behzad Kordi']
 year: 2021
-journal: "Electric Power Systems Research, 198 (2021) 107364. doi:10.1016/j.epsr.2021.107364"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential rise and grounding impedance of simple arrangement of electrodes bur.pdf"]
@@ -11,7 +11,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 # Computation of ground potential rise and grounding impedance of simple arrangement of electrodes buried in frequency-dependent stratified soil
 
-**作者**: Anderson, R.J., de 等
+**作者**: Anderson R.J. de Araújo, Jaimis S.L. Colqui, Claudiner M. de Seixas, Sérgio Kurokawa, Bamdad Salarieh, José Pissolato Filho, Behzad Kordi
 **年份**: 2021
 **来源**: `11/De Araújo 等 - 2021 - Computation of ground potential rise and grounding impedance of simple arrangement of electrodes bur.pdf`
 
@@ -19,16 +19,44 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 0378-7796/© 2021 Elsevier B.V. All rights reserved. Computation of ground potential rise and grounding impedance of simple arrangement of electrodes buried in frequency-dependent stratified soil☆ Anderson R.J. de Araújo a,*, Jaimis S.L. Colqui b, Claudiner M. de Seixas c, S´ergio Kurokawa b, Bamdad Salarieh d, Jos´e Pissolato Filho a, Behzad Kordi d
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，接地极需要在雷击或故障电流注入时提供低阻抗泄放通道，并限制地电位升（GPR）、跨步电压和接触电压。本文研究对象不是完整变电站接地网，而是埋设在分层土壤中的简单电极布置，主要包括垂直接地极和交叉电极。难点在于雷电流含有较宽频谱，土壤电阻率ρ和相对介电常数εr随频率变化，同时实际土壤又具有多层结构；若只考虑频变土壤或只考虑分层土壤，都会遗漏影响接地阻抗和GPR的关键因素。本文的贡献是把频变土壤参数模型、分层介质格林函数和MoM全波频域求解结合起来，计算100 Hz至10 MHz接地阻抗，再通过矢量拟合和递归卷积把频域阻抗转为雷击暂态GPR，从而在同一框架内考察频变土壤与分层结构对简单电极的共同影响。
+
+### 2. 模型、算法与实现技术
+
+本文采用频域到时域的建模流程。输入包括电极几何、埋深、各土层厚度、各层100 Hz电阻率ρ0、土壤相对介电常数模型以及注入雷电流波形。频域部分使用FEKO中的MoM全波电磁求解器，并采用分层介质Green函数处理无限分层土壤，不需要人为截断土壤计算域。土壤参数按Visacro-Alipio经验式随频率更新：ρ(f)由ρ0和频率决定，εr(f)在10 kHz以上按幂函数下降、10 kHz以下取常数。求解器在100 Hz至10 MHz内得到端口接地阻抗Z(f)，这是后续时域计算的核心接口量。随后，矢量拟合把离散频域阻抗拟合为有理函数或等效电路形式，使其可在时域中与电流源相连。雷电流采用Heidler函数描述首次和后续雷击；递归卷积利用拟合后的阻抗响应与注入电流进行卷积，输出GPR暂态电压。机制上，MoM负责捕捉电极电流分布和电磁耦合，频变土壤模型改变各频点传播与耗散特性，VF/递归卷积则完成从频域阻抗到时域过电压的转换。
+
+### 3. 验证、优势与不足
+
+作者的有效性验证主要是把MoM全波结果与已有电磁模型进行对比。当前页面给出的验证系统包括30 m垂直接地极，均质土壤电阻率为30、300、3000 Ωm且εr=10；以及埋深0.5 m、土壤1000 Ωm的30 m水平接地极。工具和基线为FEKO MoM全波求解器，对比Grcev电磁模型和混合电磁模型HEM。指标主要是频域接地阻抗在100 Hz至10 MHz范围内的幅值和趋势，而不是现场实测GPR。验证显示，在中高电阻率土壤低频段MoM与Grcev模型接近，水平电极结果与HEM趋势一致；谐振点附近存在偏差，页面解释为电压定义差异。优势在于该框架可同时处理频变土壤参数和分层介质，并能把全波阻抗转入雷击GPR时域计算。限制也很清楚：验证基线覆盖的是简单长直电极或水平电极，论文主体分析也限于垂直和交叉电极；原文摘要未报告与现场测量的定量误差，也未验证大型接地网、多点注入、土壤电离、含水率时变或热效应。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于区分了两个影响源：频变土壤参数主要改变较高频段接地阻抗，原文明确指出约10 kHz以下影响不明显，而高频变化对高电阻率土壤更突出；分层土壤对垂直接地极GPR的影响比对交叉电极更明显。它适合作为EMT接地模型页面、雷击GPR计算、频变土壤阻抗建模、FEKO/MoM全波接地仿真与矢量拟合接口的参考入口。工程上可用于解释简单电极在分层土壤中的雷击暂态响应和参数敏感性。不宜直接外推到大型变电站接地网、风电场接地系统、建筑钢筋网或强非线性土壤电离场景。
+
+### 证据边界
+
+- 来自原文摘要：研究目标是计算频变分层土壤中简单垂直电极和交叉电极的接地阻抗与雷击GPR，频率范围为100 Hz至10 MHz。
+- 来自原文摘要：频域阻抗由基于MoM的全波电磁求解器和分层介质Green函数获得，时域GPR由矢量拟合得到等效电路后结合递归卷积计算。
+- 来自原文摘要：作者只明确给出定性结论，即约10 kHz以下频变土壤参数对低频接地阻抗无影响，高频影响明显且高电阻率土壤更敏感；摘要未给出可核验的误差百分比。
+- 来自当前页面抽取：验证对比包括30 m垂直/水平电极、FEKO与Grcev模型或HEM模型；但这些验证不是现场实测，且谐振点附近存在差异。
+- 从验证范围看：结论主要支撑简单电极布置，不能证明该方法在大型复杂接地网、多导体耦合网络或多点雷击注入下仍保持同等可靠性。
+- 从方法假设看：模型考虑频变分层土壤，但未在给定证据中验证土壤电离、湿度时变、热效应、强非均匀地质和VF拟合无源性对GPR结果的影响。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于矩量法与分层介质格林函数的全波求解器，计算频变分层土壤接地阻抗
-- 结合矢量拟合与递归卷积法构建等效电路，实现暂态地电位升的时域精确计算
-- 系统量化土壤频变特性与多层结构对垂直及交叉电极接地性能的综合影响
-
+- 问题定位：0378-7796/© 2021 Elsevier B.V. All rights reserved. Computation of ground potential rise and grounding impedance of simple arrangement of electrodes buried in frequency-d。
+- 方法机制：本文提出一种结合全波电磁场求解与频变土壤模型的接地系统暂态分析方法。首先在频域内，基于商业软件FEKO采用矩量法(MoM)结合分层介质格林函数，建立埋设于频变分层土壤中的接地极（垂直极与交叉极）全波模型，计算100 Hz至10 MHz范围内的接地阻抗。土壤电参数（电阻率ρ与相对介电常数εr）采用Visacro-Alipio经验公式进行频率相关建模。
+- 验证证据：30m垂直接地极（均质土壤30/300/3000 Ωm, εr=10）；30m水平接地极（埋深0.5m, 1000 Ωm）；FEKO (MoM全波求解器) vs Grcev电磁模型[28] / 混合电磁模型(HEM)[15]；在中高电阻率土壤低频段，MoM结果与Grcev模型接近；谐振点附近因电压定义差异存在偏差；
+- 量化与结论：土壤频变特性对10 kHz以下低频接地阻抗无显著影响，但在>10 kHz高频段导致阻抗幅值显著下降，且高电阻率土壤衰减更剧烈。；垂直极GPR峰值衰减系数α在首次雷击下介于0.9101~0.9735，后续雷击下介于0.7207~0.9117，表明高频雷电流下频变土壤的降压效果最高达27.93%。；
+- 适用边界：适用于简单接地极、雷击暂态 GPR 和接地阻抗的机理分析，尤其是需要同时考虑分层土壤与频率相关土壤参数时。；论文对象是垂直极和交叉极等简单几何，不直接覆盖大型复杂接地网、建筑物钢筋网、风电场完整接地系统或多点耦合网络。
 
 ## 使用的方法
-
 
 - [[矩量法-mom|矩量法(MoM)]]
 - [[分层介质格林函数|分层介质格林函数]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 - [[全波电磁求解|全波电磁求解]]
 - [[等效电路综合|等效电路综合]]
 
-
 ## 涉及的模型
-
 
 - [[垂直接地极|垂直接地极]]
 - [[交叉接地极|交叉接地极]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 - [[雷电流源|雷电流源]]
 - [[接地系统等效电路|接地系统等效电路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态|电磁暂态]]
 - [[接地阻抗计算|接地阻抗计算]]
@@ -58,15 +82,11 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 - [[分层土壤|分层土壤]]
 - [[雷击暂态分析|雷击暂态分析]]
 
-
 ## 主要发现
 
-
-- 土壤频变特性对十千赫兹以下低频阻抗影响微弱，但显著降低高频段阻抗值
-- 高电阻率土壤中频变效应加剧高频阻抗衰减，使地电位升峰值明显降低
-- 土壤分层结构对垂直接地极地电位升的影响显著大于交叉接地极结构
-
-
+- 土壤频变特性对约10 kHz以下低频阻抗影响较小，但在更高频率会明显改变阻抗，且高电阻率土壤更敏感。
+- 后续雷击波头更陡、频谱更宽，因此比首次雷击更容易放大频变土壤对 GPR 峰值的影响。
+- 垂直接地极跨越多层土壤时更受分层结构影响；交叉极主要受其所在土壤层电阻率控制。
 
 ## 方法细节
 
@@ -76,26 +96,21 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 ### 数学公式
 
-
 **公式1**: $$$\rho(f) = \rho_0 \left\{ 1 + 1.2 \times 10^{-6} (\rho_0)^{0.73} (f - 100)^{0.65} \right\}^{-1}$$$
 
 *Visacro-Alipio土壤电阻率频变模型，用于计算频率f下的动态电阻率，ρ0为100 Hz直流电阻率。*
-
 
 **公式2**: $$$\varepsilon_r(f) = \begin{cases} 7.6 \times 10^3 f^{-0.4} + 1.30 & f \geqslant 10 \text{ kHz} \\ 192 & f < 10 \text{ kHz} \end{cases}$$$
 
 *Visacro-Alipio土壤相对介电常数频变模型，描述介电常数随频率的分段衰减特性。*
 
-
 **公式3**: $$$I(t) = \frac{I_0}{\eta} \frac{(t/\tau_1)^n}{1 + (t/\tau_1)^n} e^{-t/\tau_2}$$$
 
 *Heidler雷电流波形函数，用于模拟首次与后续雷击的时域电流注入，包含幅值、波头/波尾时间常数及修正系数。*
 
-
 **公式4**: $$$\alpha = \frac{V_{p(\omega)}}{V_{pc}}$$$
 
 *GPR峰值衰减系数，用于量化频变土壤模型相对于恒定参数模型的地电位升峰值降低比例。*
-
 
 ### 算法步骤
 
@@ -115,7 +130,6 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 8. 基于递归卷积法，将拟合后的等效电路与Heidler雷电流源进行时域卷积运算（步长Δt=10 ns），输出GPR暂态电压波形。
 
-
 ### 关键参数
 
 - **频率范围**: 100 Hz ~ 10 MHz
@@ -134,8 +148,6 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 - **后续雷击S2参数**: I0=6.5 kA, τ1=2 μs, τ2=230 μs, n=2, η=0.8765
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -150,15 +162,19 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 | 交叉极D3/C3配置(埋深2.5m于100Ωm层)首次雷击 | GPR峰值为0.2545 MV。相较于同埋深但位于高阻层(D3/C1, 2.7185 MV)的配置，峰值降低约90.6%。 | 交叉极GPR峰值主要由其所在土壤层的电阻率决定，上层土壤结构对其影响微弱（C3与C5峰值差异<1%）。 |
 
-
-
 ## 量化发现
 
 - 土壤频变特性对10 kHz以下低频接地阻抗无显著影响，但在>10 kHz高频段导致阻抗幅值显著下降，且高电阻率土壤衰减更剧烈。
 - 垂直极GPR峰值衰减系数α在首次雷击下介于0.9101~0.9735，后续雷击下介于0.7207~0.9117，表明高频雷电流下频变土壤的降压效果最高达27.93%。
 - 交叉极GPR峰值与其所在土壤层电阻率呈强正相关，上层土壤结构对其影响可忽略（如D3埋深下，C3与C5配置峰值差异<1%）。
-- 时域仿真采用10 ns步长，矢量拟合阶数足以在100 Hz~10 MHz范围内精确复现全波MoM阻抗响应，递归卷积法实现高效时域转换，计算误差控制在工程允许范围内。
+- 时域仿真采用10 ns步长，矢量拟合用于在100 Hz~10 MHz范围内复现全波MoM阻抗响应；拟合阶数和无源性仍需在具体模型中检查。
 
+## 适用边界
+
+- 适用于简单接地极、雷击暂态 GPR 和接地阻抗的机理分析，尤其是需要同时考虑分层土壤与频率相关土壤参数时。
+- 论文对象是垂直极和交叉极等简单几何，不直接覆盖大型复杂接地网、建筑物钢筋网、风电场完整接地系统或多点耦合网络。
+- 模型考虑频变分层土壤，但土壤电离、含水率时变、热效应和现场非均匀性仍可能改变实际 GPR。
+- 频域全波结果转入时域依赖矢量拟合质量；若拟合不稳定、不无源或频带不足，递归卷积结果会失真。
 
 ## 关键公式
 
@@ -180,11 +196,9 @@ $$$\alpha = \frac{V_{p(\omega)}}{V_{pc}}$$$
 
 *用于量化对比频变土壤与恒定参数土壤模型下的地电位升差异，评估频变效应对防雷设计的实际影响。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 与文献经典电磁模型对比验证
 - **测试系统**: 30m垂直接地极（均质土壤30/300/3000 Ωm, εr=10）；30m水平接地极（埋深0.5m, 1000 Ωm）
 - **仿真工具**: FEKO (MoM全波求解器) vs Grcev电磁模型[28] / 混合电磁模型(HEM)[15]
-- **验证结果**: 在中高电阻率土壤低频段，MoM结果与Grcev模型高度吻合；谐振点附近因电压定义差异存在微小偏差；水平电极结果与HEM模型在100 Hz~10 MHz范围内一致性良好，验证了分层格林函数与MoM求解器的精度与可靠性。
+- **验证结果**: 在中高电阻率土壤低频段，MoM结果与Grcev模型接近；谐振点附近因电压定义差异存在偏差；水平电极结果与HEM模型在100 Hz~10 MHz范围内趋势一致，支持分层格林函数与MoM求解器用于文中简单电极配置。

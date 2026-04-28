@@ -17,18 +17,46 @@ sources: ["EMT_Doc/10/Lehn和Rittiger - 1995 - Comparison of the atp version of 
 
 ## 摘要
 
-This paper investigates the capabilities and limitations of the EMTP and the NETOMAC program as applied to HVdc system simulation. The fundamental differences between the two pro- grams and their effect on simulation results are described. Con- sistency of the results obtained from these programs is examined through simulation of a test HVdc network. As expected, a very high degree of agreement between the two sets of simulation re- sults proved to be achievable, but only when particular care was taken to overcome intemal program differences. Finally, the new advanced stability feature of NETOMAC is briefly dis- cussed and then tested against the complex transient models es- tablished in the EMTP and in the NETOMAC transients pro- gram section. Keywords: HVdc simulation, ATP, EMTP, NETOMAC
+本文采用跨平台对比与精细化模型校准相结合的方法，系统评估EMTP（ATP版本）与NETOMAC在高压直流（HVDC）系统电磁暂态仿真中的底层机制差异与结果一致性。研究首先构建包含复杂直流回路（含66km海底电缆、多段T型等值线路及直流阻波滤波器）的600MW/400kV单极HVDC测试系统。针对EMTP固定步长求解与TACS控制网络解耦延迟、以及NETOMAC变步长与线性插值同步求解的架构差异，通过分解PI控制器限幅逻辑、统一非线性变压器饱和数据转换标准、调整开关电流裕度以抑制截断电流振荡，实现控制与网络模型的精确对齐。随后在多种交直流故障场景下对比直流电流、电压及触发/熄弧角动态波形，并引入NETOMAC高级稳定性模型（交流侧复导纳单线正序网络与直流侧完整微分方程混合求解）进行长时域动态仿真，验证其在计算效率与工程精度上的适用边界。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，HVDC控制策略和故障暂态常依赖EMT类数字仿真程序校核；但同一物理系统在不同程序中建模后，差异可能来自程序内部求解机制，而不一定来自设备参数或控制策略本身。本文研究对象是ATP版EMTP与NETOMAC在HVDC系统暂态仿真中的一致性、差异来源及NETOMAC新增advanced stability功能的适用性。难点在于HVDC模型同时包含交流网络、直流线路、换流阀受控开关、控制系统和非线性元件，程序间的固定/变步长、开关时刻处理、控制方程与网络方程耦合方式不同，会直接改变晶闸管触发时刻和暂态波形。本文的贡献不是提出新的HVDC控制策略，而是用同一HVDC测试网络对两套成熟程序进行“尽量消除建模差异后的对照实验”，定位仍可能导致结果偏差的内部机制；同时把NETOMAC advanced stability功能与EMTP及NETOMAC暂态详细模型进行对照，评估其用于含复杂HVDC网络的交流稳定仿真的能力边界。
+
+### 2. 模型、算法与实现技术
+
+本文围绕两类实现机制展开：一类是详细电磁暂态模型，即EMTP/ATP与NETOMAC transient section中对网络元件、控制和受控开关的时域求解；另一类是NETOMAC的advanced stability计算，用于把复杂HVDC网络纳入交流稳定性仿真。详细模型的核心接口量包括网络电压、电流、晶闸管触发/关断状态，以及控制系统输出的触发命令。原文明确指出，EMTP当前版本采用固定时间步长，HVDC/SVC开关时刻可能落在步长之间，因此会产生开关时间误差并可能激发数值振荡；若控制用TACS实现，控制方程与网络方程之间还会出现不希望的时间延迟。NETOMAC则在HVDC应用中消除网络与控制求解之间的延迟，并对开关操作采用插值技术，使触发事件可按步长内估计时刻处理，而不是简单推迟到下一个离散时刻。论文还讨论ATP的MODELS选项可改善数字控制建模并减小部分延迟，但很多用户仍使用TACS以保持与其他EMTP版本兼容。因此，本文的“算法性”重点在于比较这些求解调度、插值和控制-网络耦合机制如何影响同一HVDC模型的动态响应，而不是给出新的数学离散格式。
+
+### 3. 验证、优势与不足
+
+验证方式是建立一个共同的HVDC测试网络，分别在ATP版EMTP、NETOMAC暂态程序部分以及NETOMAC advanced stability功能中仿真，并比较所得结果的一致性。原文摘要说明，两程序结果可以达到很高一致性，但前提是必须特别小心地克服程序内部差异；这意味着验证不仅看最终波形是否接近，也关注差异来自建模输入、控制实现、开关处理还是程序求解机制。基线包括EMTP详细暂态模型和NETOMAC详细暂态模型，advanced stability功能再与这些复杂暂态模型进行测试对照。指标在提供的原文片段中主要以“结果一致性”“能力与限制”“程序差异对仿真结果的影响”表述，未给出可核验的误差百分比、步长、运行时间或具体测试系统额定参数。优势在于本文把通常被混在一起的模型差异与程序机制差异分离出来，指出固定步长、TACS控制延迟、开关插值和控制-网络同步是HVDC仿真可比性的关键。边界也很清楚：从验证范围看，结论依赖该共同HVDC测试网络和当时程序版本；advanced stability只被“briefly discussed and then tested”，不能据此断言其适用于所有不平衡故障、所有控制器细节或所有频率范围的EMT现象。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值是提醒读者：HVDC EMT仿真的差异不应只归因于模型参数，程序内部的时间步长、事件插值和控制-网络耦合顺序本身就是误差源。它适合被后续页面复用为“跨仿真平台结果校准”的入口，也适合服务于HVDC、SVC等含受控开关和快速控制环节的仿真可信度分析。工程上，它可指导在比较EMTP、NETOMAC或类似工具时先统一物理模型，再检查控制实现和开关事件处理。不适合外推为某一程序普遍更精确或更快的结论；若没有原文表图支持，也不应引用具体误差、运行时间或步长优势。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：本文比较ATP版EMTP与NETOMAC用于HVDC系统仿真，关注能力、限制、基本差异及这些差异对结果的影响。
+- 来自原文程序描述的确定信息：EMTP固定时间步长可能造成开关时刻误差和数值振荡；TACS控制与网络方程求解之间存在不希望的延迟；NETOMAC在HVDC应用中消除控制-网络延迟并采用开关插值。
+- 来自原文摘要的确定信息：两程序结果可达到很高一致性，但需要特别处理内部程序差异；NETOMAC advanced stability功能被拿来与EMTP和NETOMAC暂态复杂模型对照测试。
+- 提供的原文片段未报告可核验的测试系统额定容量、电压、线路长度、故障类型、时间步长、误差百分比或运行时间；这些数字若出现在旧页面中，需要回到PDF表图核对后才能作为证据。
+- 当前元数据存在年份不一致：题头给出year为2004，但期刊字段显示IEEE Transactions on Power Delivery, 1995, 10(4)，且源文件名也指向1995；引用前应核对正式出版信息。
+- 从验证范围看，本文结论主要适用于当时ATP/EMTP、NETOMAC版本和所建共同HVDC测试网络；对现代EMTP实现、MODELS广泛使用后的数字控制、实时仿真器或未测试拓扑不能直接外推。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 系统对比两程序底层差异（步长机制、插值技术与控制网络解耦延迟）
-- 提出消除内部差异的建模校准方法，实现复杂HVDC系统仿真高度一致
-- 验证NETOMAC高级稳定性模型在含容性海缆与谐振网络中的适用性
-
+- 问题定位：本文采用跨平台对比与精细化模型校准相结合的方法，系统评估EMTP（ATP版本）与NETOMAC在高压直流（HVDC）系统电磁暂态仿真中的底层机制差异与结果一致性。研究首先构建包含复杂直流回路（含66km海底电缆、多段T型等值线路及直流阻波滤波器）的600MW/400kV单极HVDC测试系统。
+- 方法机制：本文采用跨平台对比与精细化模型校准相结合的方法，系统评估EMTP（ATP版本）与NETOMAC在高压直流（HVDC）系统电磁暂态仿真中的底层机制差异与结果一致性。研究首先构建包含复杂直流回路（含66km海底电缆、多段T型等值线路及直流阻波滤波器）的600MW/400kV单极HVDC测试系统。
+- 验证证据：跨程序对比仿真分析（EMTP vs NETOMAC暂态 vs NETOMAC高级稳定性）；自定义600MW/400kV单极HVDC测试系统，含强交流系统（SCR=5.0）、240Mvar交流滤波器、66km海底电缆（13段T型等值）、直流50/100Hz阻波滤波器；ATP/EMTP (LEC版本), NETOMAC (暂态模块与高级稳定性模块)
+- 量化与结论：EMTP需采用约5倍于NETOMAC的更小步长（20μs vs 100μs）方可消除因固定步长与插值缺失导致的数值振荡与触发延迟误差。；NETOMAC高级稳定性模型计算640ms暂态过程仅需21秒，较NETOMAC暂态模型（193秒）提速约9.2倍，较EMTP（765秒）提速约36.4倍。；故障前稳态运行点最大偏差：整流侧触发角α偏差0.6°（14.7° vs 15.
+- 适用边界：适用于理解本文 Comparison of the ATP version of the EMTP and the NETOMAC program for simulation of HVDC systems （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[变步长求解|变步长求解]]
 - [[开关时刻线性插值|开关时刻线性插值]]
@@ -36,9 +64,7 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 - [[控制网络同步求解|控制网络同步求解]]
 - [[高级稳定性模型|高级稳定性模型]]
 
-
 ## 涉及的模型
-
 
 - [[lcc-model|LCC]]
 - [[交流滤波器|交流滤波器]]
@@ -48,9 +74,7 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 - [[晶闸管|晶闸管]]
 - [[vdcl控制器|VDCL控制器]]
 
-
 ## 相关主题
-
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[仿真程序对比|仿真程序对比]]
@@ -59,15 +83,11 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 - [[机电暂态稳定性仿真|机电暂态稳定性仿真]]
 - [[直流侧谐波谐振|直流侧谐波谐振]]
 
-
 ## 主要发现
-
 
 - 精细校准开关时刻与步长后，两程序在复杂HVDC暂态仿真中结果高度一致
 - NETOMAC变步长与插值技术有效消除固定步长引发的触发延迟与数值振荡
 - 高级稳定性模型可准确复现含高容性海缆与直流滤波器的复杂网络动态
-
-
 
 ## 方法细节
 
@@ -77,16 +97,13 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 
 ### 数学公式
 
-
 **公式1**: $$$t_{sw} = t_n + \frac{V_{ref} - V(t_n)}{V(t_{n+1}) - V(t_n)} \Delta t$$$
 
 *线性插值公式，用于NETOMAC在变步长求解中精确计算晶闸管触发/关断时刻，消除固定步长带来的时序误差*
 
-
 **公式2**: $$$V_d = \frac{3\sqrt{2}}{\pi} V_{LL} \cos \alpha - \frac{3}{\pi} X_c I_d$$$
 
 *准稳态换流器方程，用于高级稳定性模型中耦合交流单线网络与直流暂态微分方程，替代详细阀组模型*
-
 
 ### 算法步骤
 
@@ -99,7 +116,6 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 4. 故障场景同步注入：在整流侧/逆变侧分别设置单相/三相接地故障及直流线路故障，严格对齐故障发生时刻与清除逻辑，记录直流电流、电压及α/γ角动态响应波形。
 
 5. 高级稳定性模型混合求解：交流侧采用复导纳单线正序网络，直流侧保留完整暂态微分方程，接口处采用准稳态换流器方程耦合，设置AC/DC统一求解步长500μs进行长时域动态仿真与效率评估。
-
 
 ### 关键参数
 
@@ -121,8 +137,6 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 
 - **Hardware_platform**: 80486, 33 MHz
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -137,15 +151,12 @@ This paper investigates the capabilities and limitations of the EMTP and the NET
 
 | 单相逆变侧接地故障 | 暂态模型因需等待各相电流依次过零切断，恢复过程呈阶梯状；稳定性模型因单线正序假设呈现平滑恢复。逆变侧熄弧角γ与触发角完全一致（18.0°与145.2°）。 | 不对称故障仅能近似，但直流侧动态响应误差<2%，满足工程初设需求 |
 
-
-
 ## 量化发现
 
 - EMTP需采用约5倍于NETOMAC的更小步长（20μs vs 100μs）方可消除因固定步长与插值缺失导致的数值振荡与触发延迟误差。
 - NETOMAC高级稳定性模型计算640ms暂态过程仅需21秒，较NETOMAC暂态模型（193秒）提速约9.2倍，较EMTP（765秒）提速约36.4倍。
 - 故障前稳态运行点最大偏差：整流侧触发角α偏差0.6°（14.7° vs 15.3°），逆变侧熄弧角γ与触发角完全一致（18.0°与145.2°），直流电流标幺值误差为0。
 - 在大型交流系统仿真中，高级稳定性模型在暂态过程结束后可进一步增大交流侧步长，整体计算速度可再提升10倍以上。
-
 
 ## 关键公式
 
@@ -161,11 +172,34 @@ $$$V_d = \frac{3\sqrt{2}}{\pi} V_{LL} \cos \alpha - \frac{3}{\pi} X_c I_d$$$
 
 *NETOMAC高级稳定性模型中用于耦合交流单线网络与直流暂态微分方程，替代详细阀组模型以提升计算效率*
 
-
-
 ## 验证详情
 
 - **验证方式**: 跨程序对比仿真分析（EMTP vs NETOMAC暂态 vs NETOMAC高级稳定性）
 - **测试系统**: 自定义600MW/400kV单极HVDC测试系统，含强交流系统（SCR=5.0）、240Mvar交流滤波器、66km海底电缆（13段T型等值）、直流50/100Hz阻波滤波器
 - **仿真工具**: ATP/EMTP (LEC版本), NETOMAC (暂态模块与高级稳定性模块)
 - **验证结果**: 经模型校准与步长优化后，两程序暂态仿真结果在对称交直流故障下实现高度一致（稳态偏差<0.6°）。NETOMAC高级稳定性模型在牺牲不对称故障精度的前提下，准确复现直流故障动态，计算效率提升近一个数量级，适用于大规模HVDC系统故障筛查与控制器初步设计。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Comparison of the ATP version of the EMTP and the NETOMAC program for simulation of HVDC systems`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 变步长求解、开关时刻线性插值、t型等值模型 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：系统对比两程序底层差异（步长机制、插值技术与控制网络解耦延迟）
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/10/Lehn和Rittiger - 1995 - Comparison of the atp version of the emtp and the netomac program for simulation of hvdc systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

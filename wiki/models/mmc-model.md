@@ -465,7 +465,7 @@ created: "2026-04-13"
 
 | 论文 | 年份 |
 |------|------|
-| [[hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-22|Hybrid-model transient stability simulation using dynamic ph]] | 2006 |
+| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model-22|Hybrid-model transient stability simulation using dynamic ph]] | 2006 |
 | [[hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model|Hybrid-model transient stability simulation using dynamic ph]] | 2006 |
 | [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
 | [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
@@ -529,7 +529,7 @@ created: "2026-04-13"
 | [[基于mmc平均值仿真模型的损耗快速评估方法|Fast Loss Evaluation Method Based on MMC Average Simulation ]] | 2024 |
 | [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag|Shooting method based modular multilevel converter initializ]] | 2024 |
 | [[基于模块化多电平换流器的超级电容储能系统高效仿真方法|基于模块化多电平换流器的超级电容储能系统高效仿真方法]] | 2024 |
-| [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型|适用于交直流混联电网的CH-MMC电磁暂态快速仿真模型]] | 2024 |
+| [[基于模块化多电平换流器的超级电容储能系统高效仿真方法|适用于交直流混联电网的CH-MMC电磁暂态快速仿真模型]] | 2024 |
 | [[a-computationally-efficient-approach-for-power-semiconductor-loss-estimation-of-|A computationally efficient approach for power semiconductor]] | 2025 |
 | [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
 | [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|An Electromagnetic Transient Simulation Model of MMC-BESS fo]] | 2025 |

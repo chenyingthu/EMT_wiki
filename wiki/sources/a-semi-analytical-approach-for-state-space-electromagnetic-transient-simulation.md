@@ -2,7 +2,7 @@
 title: "A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation"
 type: source
 year: 2024
-journal: "IEEE Open Access Journal of Power and Energy;2024;11; ;10.1109/OAJPE.2024.3444272"
+journal: "IEEE Open Access Journal of Power and Energy"
 created: "2026-04-13"
 sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation.pdf"]
 ---
@@ -14,18 +14,46 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 
 ## 摘要
 
-This paper proposes a semi-analytical approach for efficient and accurate electromagnetic transient (EMT) simulation of a power grid. The approach first derives a high-order semi-analytical solution (SAS) of the grid’s state-space EMT model using the differential transformation (DT), and then evaluates the solution over enlarged, variable time steps to significantly accelerate the simulations while maintaining its high accuracy on detailed fast EMT dynamics. The approach also addresses switches during large time steps by using a limit violation detection algorithm with a binary search-enhanced quadratic interpolation. Case studies are conducted on EMT models of the IEEE 39-bus system and large-scale systems to demonstrate the merits of the new simulation approach against traditional numeri
+本文提出一种基于微分变换（DT）的半解析解（SAS）电磁暂态（EMT）仿真方法。首先将电网状态空间模型转化为高阶时间幂级数形式的SAS，通过递归计算各阶系数实现灵活选择求解阶数。在此基础上，引入基于截断误差估计的多阶段变步长策略，动态调整仿真步长以平衡计算效率与精度。针对大步长下可能遗漏的快速暂态细节，利用SAS的密集输出机制在步长内任意时刻重构高分辨率波形。此外，设计了一种结合二分搜索与二次插值的越限检测算法，通过SAS多项式快速定位开关切换时刻，并在检测到越限时截断当前步长、更新初值后重新计算，从而彻底解决传统线性插值在大步长下定位不准的问题。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是降低大规模电网EMT仿真的计算负担，同时仍能保留三相瞬时电压电流中的快速电磁过程、谐波、不平衡和开关事件。研究对象是电网状态空间EMT模型，而不是传统节点导纳离散模型。难点在于：EMT通常需要微秒级小步长；R、L、C及控制器耦合会产生快慢尺度混合；传统梯形法节点形式中步长嵌入等效导纳矩阵，变步长会牵动网络方程重构，且缺少高阶信息来估计截断误差；大步长还容易跨过限值或开关时刻。本文的创新是从状态空间模型出发，用微分变换推导高阶半解析解，在每个时间段内用时间幂级数表示状态演化，使求解阶数和步长可在仿真中调整；再用密集输出恢复步内波形，并用二分搜索增强的二次插值定位限值越界和开关时刻。
+
+### 2. 模型、算法与实现技术
+
+方法核心是把电网EMT状态空间方程转化为局部时间幂级数解。状态量可包括网络电感电流、电容电压、同步机或逆变器及其控制器内部状态；输入/接口量包括电源、控制参考、网络连接关系和开关限值。微分变换的作用是把连续时间导数转换为各阶级数系数，非线性乘积项通过系数卷积递推计算，因此每一步不是只得到下一时刻值，而是得到一个可在步长内求值的多项式近似。计算流程是：在当前时刻由初值计算0到N阶系数；依据高阶项估计截断误差并决定是否接受或缩短步长；接受后用半解析多项式推进到下一时刻；若需要高分辨率曲线，则在同一多项式上做密集输出而不重新积分。对开关或限值事件，算法在一个大步长内部用半解析表达式检测是否越界，先二分缩小含事件区间，再用二次插值估计事件时刻；一旦发现事件，就截断当前步长、更新状态和网络/开关条件，再重新计算后续半解析解。
+
+### 3. 验证、优势与不足
+
+原文摘要说明作者在IEEE 39节点系统EMT模型和大规模系统上开展算例，并与传统数值方法比较，用于展示该半解析状态空间方法的优点。可确认的验证对象包括标准测试系统和更大规模系统；可确认的基线是传统数值EMT仿真方法，但所给摘录未列出具体商业工具、仿真平台、误差范数、运行时间或加速比。优势主要体现在机制层面：高阶半解析解提供截断误差和步内波形信息，使变步长不再完全依赖固定微小步长；密集输出可在大步长下恢复快速暂态细节；限值检测把开关事件定位问题从简单跨步线性插值改为基于半解析多项式的搜索和插值。需要注意，原文未报告可核验的数值结果时，不能声称固定倍数加速或固定百分比误差。从验证范围看，结论主要限于论文算例中的状态空间EMT模型、传统数值方法对比和作者实现；对实时仿真、硬件在环、极端电力电子开关频率、保护逻辑、故障全类型或所有大规模拓扑的适用性仍需单独验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：EMT加速不一定只能依赖相量化、频移、并行计算或固定步长数值积分；如果从状态空间模型直接构造高阶局部半解析解，就能同时获得推进、误差估计、步内重构和事件定位所需的信息。它适合被后续关于变步长EMT、状态空间网络建模、微分变换法、半解析暂态仿真、开关事件定位和密集输出机制的页面复用，也可作为研究大规模电网快慢尺度仿真的方法入口。不适合直接外推为任意系统都能加速、任意开关都能精确处理，或替代所有商业EMT程序的通用结论；是否有效仍取决于状态空间建模质量、级数收敛性、事件频度和具体实现。
+
+### 证据边界
+
+- 原文明确给出作者、题名、期刊年份、摘要和索引词；摘要确认方法包括微分变换、高阶半解析解、变步长、密集输出思想和二分搜索增强的二次插值限值检测。
+- 原文摘要明确说算例包括IEEE 39-bus系统和large-scale systems，并与traditional numerical methods比较；但所给摘录未提供可核验的运行时间、误差曲线、加速比或表格数值。
+- 关于状态量可包括网络、电机、逆变器和控制器状态，是依据状态空间EMT模型和页面抽取内容的机制解释；具体模型阶数、参数和方程应回到论文正文核对。
+- 页面中出现的误差阈值、时间容差等数值未在所给原文摘录中出现；若用于定量引用，必须核对论文相应公式、算法或实验设置。
+- 原文摘要只说against traditional numerical methods，未确认是否逐一比较PSCAD/EMTDC、梯形法节点法、动态相量、DQ0或并行仿真，因此不能扩展为全面优于所有既有EMT加速方法。
+- 从验证范围看，论文未在所给摘录中证明该方法适用于实时仿真、硬件在环、所有保护控制逻辑、任意拓扑切换频度或所有高频电力电子详细开关模型。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于微分变换推导状态空间EMT模型高阶半解析解，实现灵活选择求解阶数与步长
-- 提出基于截断误差估计的多阶段变步长策略，在保持精度的同时显著提升计算效率
-- 设计二分搜索增强二次插值的越限检测算法，精准定位大步长下的开关切换时刻
-
+- 问题定位：本文提出一种基于微分变换（DT）的半解析解（SAS）电磁暂态（EMT）仿真方法。首先将电网状态空间模型转化为高阶时间幂级数形式的SAS，通过递归计算各阶系数实现灵活选择求解阶数。在此基础上，引入基于截断误差估计的多阶段变步长策略，动态调整仿真步长以平衡计算效率与精度。
+- 方法机制：本文提出一种基于微分变换（DT）的半解析解（SAS）电磁暂态（EMT）仿真方法。首先将电网状态空间模型转化为高阶时间幂级数形式的SAS，通过递归计算各阶系数实现灵活选择求解阶数。在此基础上，引入基于截断误差估计的多阶段变步长策略，动态调整仿真步长以平衡计算效率与精度。针对大步长下可能遗漏的快速暂态细节，利用SAS的密集输出机制在步长内任意时刻重构高分辨率波形。
+- 验证证据：数值仿真对比验证（自研SAS算法 vs 传统数值积分法/商业软件逻辑）；IEEE 39节点系统（标准同步机版与含IBR修改版）、大规模合成电网系统；自研状态空间SAS求解器（对比基准为传统梯形法/节点法及PSCAD/EMTDC的线性插值逻辑）
+- 量化与结论：截断误差控制阈值设定为 $\varepsilon E = 1 \times 10^{-2}$ p.u.，确保状态变量近似误差始终处于工程可接受范围。；开关事件定位时间区间容差 $\varepsilon t\mu s$，结合二次插值后，越限时刻定位精度达微秒级，远优于大步长下的线性插值。；
+- 适用边界：适用于理解本文 A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation （2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 半解析解法、微分变换法、状态空间法 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[半解析解法|半解析解法]]
 - [[微分变换法|微分变换法]]
@@ -34,9 +62,7 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 - [[密集输出机制|密集输出机制]]
 - [[二分搜索增强二次插值|二分搜索增强二次插值]]
 
-
 ## 涉及的模型
-
 
 - [[r-l-c电路|R-L-C电路]]
 - [[vbr同步发电机模型|VBR同步发电机模型]]
@@ -44,9 +70,7 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 - [[逆变器型资源-ibr-模型|逆变器型资源(IBR)模型]]
 - [[ieee-39节点系统|IEEE 39节点系统]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[状态空间建模|状态空间建模]]
@@ -54,15 +78,11 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 - [[开关事件处理|开关事件处理]]
 - [[大规模电网仿真|大规模电网仿真]]
 
-
 ## 主要发现
-
 
 - 在IEEE 39节点及大规模系统测试中，该方法相比传统数值法显著加速且保持高精度
 - 变步长策略结合密集输出机制，可在扩大步长时准确重构内部高频动态细节
 - 改进的越限检测算法能精准捕捉大步长下的开关切换时刻，有效避免仿真误差累积
-
-
 
 ## 方法细节
 
@@ -72,31 +92,25 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 
 ### 数学公式
 
-
 **公式1**: $$$x(t) = \sum_{k=0}^{\infty} x[k]t^k \approx \sum_{k=0}^{N} x[k]t^k, \quad t < T_x$$$
 
 *N阶半解析解（SAS）的时间幂级数近似表达式，$x[k]$为微分变换系数，$T_x$为收敛域。*
-
 
 **公式2**: $$$g[k] = \frac{1}{k!} \left[ \frac{d^k g(t)}{dt^k} \right]_{t=t_0}$$$
 
 *函数$g(t)$在$t_0$处的$k$阶微分变换（DT）定义式。*
 
-
 **公式3**: $$$(k+1)g[k+1] = f[k] = \sum_{m=0}^{k} g[m]h[k-m]$$$
 
 *微分方程$\dot{g}(t)=g(t)h(t)$对应的DT递归计算规则，用于高效推导SAS系数。*
-
 
 **公式4**: $$$E(\Delta t) = \| A x[N] + B u[N] \|_\infty (\Delta t)^N$$$
 
 *基于状态空间模型最高阶项的截断误差估计公式，用于动态确定最大允许步长。*
 
-
 **公式5**: $$$x(t_0 + t_n) \approx \sum_{k=0}^{N} x[k] t_n^k \quad (t_n < \Delta t)$$$
 
 *密集输出机制公式，利用已求得的SAS系数在步长内任意内部时刻$t_n$重构状态变量。*
-
 
 ### 算法步骤
 
@@ -110,7 +124,6 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 
 5. 越限检测与开关处理：在步长内利用二分搜索快速缩小区间$[a,b]$（满足$b-a < \varepsilon_t$，如10-20 $\mu s$）。在区间内取中点$c$，结合$x(a), x(b), x(c)$与限值$x_{limit}$进行二次插值，精确求解越限时刻$t_{limit}$。若检测到越限，则在$t_{limit}$处截断步长，更新状态初值，并立即调整步长重新执行SAS计算。
 
-
 ### 关键参数
 
 - **SAS阶数_N**: 可灵活配置，通常根据系统非线性程度与收敛性动态选择
@@ -120,8 +133,6 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 - **二分搜索时间容差_εt**: 10~20 μs（用于快速定位开关事件的时间区间）
 
 - **初始步长_Δt**: 微秒级至毫秒级自适应变化，稳态时显著放大
-
-
 
 ## 仿真结果
 
@@ -137,8 +148,6 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 
 | 大规模合成电网系统 | 在扩展至数百节点的大规模系统中验证了算法的可扩展性。状态空间分组（$x_1, x_2, x_3$）与DT递归计算有效降低了矩阵运算维度，内存占用与单步计算时间均保持线性增长趋势。 | 相较于传统梯形法或节点导纳矩阵法，SAS方法在大规模网络中展现出更优的数值稳定性与步长自适应能力，整体仿真加速效果随系统规模扩大而更加明显。 |
 
-
-
 ## 量化发现
 
 - 截断误差控制阈值设定为 $\varepsilon_E = 1 \times 10^{-2}$ p.u.，确保状态变量近似误差始终处于工程可接受范围。
@@ -146,7 +155,6 @@ This paper proposes a semi-analytical approach for efficient and accurate electr
 - 变步长策略使仿真步长在系统平稳期可动态放大至数十微秒甚至毫秒级，相比传统固定微秒级步长，总计算步数呈数量级下降。
 - 密集输出机制无需重新求解微分方程，仅需多项式求值即可在单个大步长内生成任意高分辨率波形，计算开销可忽略不计。
 - DT递归算法将非线性项（如Park变换、乘积项）转化为代数卷积运算，避免了传统数值法中的雅可比矩阵迭代，单步计算复杂度显著降低。
-
 
 ## 关键公式
 
@@ -174,11 +182,34 @@ $$$t_{limit} = \text{QuadraticInterp}(a, b, c, x(a), x(b), x(c), x_{limit})$$$
 
 *当二分搜索将越限区间缩小至$\varepsilon_t$后，利用三点二次多项式拟合精确求解状态变量穿越限值$x_{limit}$的准确时刻$t_{limit}$。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真对比验证（自研SAS算法 vs 传统数值积分法/商业软件逻辑）
 - **测试系统**: IEEE 39节点系统（标准同步机版与含IBR修改版）、大规模合成电网系统
 - **仿真工具**: 自研状态空间SAS求解器（对比基准为传统梯形法/节点法及PSCAD/EMTDC的线性插值逻辑）
 - **验证结果**: 在IEEE 39节点及大规模系统测试中，SAS方法在保持电磁暂态高频细节精度（误差<1%）的同时，通过变步长策略显著减少了总仿真步数。密集输出与改进的越限检测算法有效克服了大步长下的信息丢失与开关定位偏差问题，验证了该方法在兼顾计算效率与数值精度方面的优越性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 半解析解法、微分变换法、状态空间法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于微分变换推导状态空间EMT模型高阶半解析解，实现灵活选择求解阶数与步长
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

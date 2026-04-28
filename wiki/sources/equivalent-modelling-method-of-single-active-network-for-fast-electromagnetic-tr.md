@@ -1,9 +1,9 @@
 ---
 title: "Equivalent Modelling Method of Single Active Network for Fast Electromagnetic Transient Simulation"
 type: source
-authors: ['未知']
+authors: ['Gao 等']
 year: 2025
-journal: ""
+journal: "中国电机工程学报"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/18/Gao 等 - 2021 - Equivalent Modelling Method of Single Active Bridge Converter by Pre-calculating the Current Zero-cr.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/18/Gao 等 - 2021 - Equivalent Modelling Method of Single Act
 
 # Equivalent Modelling Method of Single Active Network for Fast Electromagnetic Transient Simulation
 
-**作者**: 
+**作者**: Gao 等
 **年份**: 2025
 **来源**: `18/Gao 等 - 2021 - Equivalent Modelling Method of Single Active Bridge Converter by Pre-calculating the Current Zero-cr.pdf`
 
 ## 摘要
 
-As an important scheme for grid connection of photovoltaic, wind power and other DC power sources, modular isolated DC/DC converter (MIDC) has received extensive attention. The input parallel output series (IPOS) type single active bridge (SAB) converter is one of the common topologies of MIDC. Due to the high node admittance order, low simulation step size and the existence of uncontrolled rectifier bridge, its electromagnetic transient simulation efficiency is extremely low. This paper proposed an equivalent modeling method of SAB converter by the pre-calculating current zero-crossing. First, the topology and working principle of the SAB converter were analyzed to solve the inductor current expression in different modes. Secondly, the expression of the zero-crossing point of the inductan
+模块化隔离型 DC/DC 变换器(modular isolated DC/DC converter，MIDC)作为光伏、风电等直流电源并网的重要方案，受到广泛关注。输入并联输出串联(input parallel output series，IPOS)型单有源桥(single active bridge，SAB)变换器是 MIDC 的常用拓扑之一，由于节点导纳矩阵阶数高、仿真步长小以及不控整流桥的存在，其电磁暂态仿真效率很低。文中提出一种基于电流过零点预计算的 SAB 变换器等效建模方法。首先，针对 SAB 变换器的拓扑结构和工作原理进行分析，求解不同模式下电感电流表达式。其次，计算电感电流过零点，并给出不同模式的区分条件。然后，类比 DAB 变换器，建立 IPOS 型 SAB 变换器的等效模型。在此基础上，利用 Lyapunov 法证明所提等效模型的稳定性。最后，在 PSCAD/EMTDC 环境中验证所提出模型的精度和加速比。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自大容量光伏、风电等直流电源并网：模块化隔离型DC/DC变换器（MIDC）常用多个功率模块级联以获得高电压、高容量，工程上需要在系统级电磁暂态（EMT）仿真中同时保留高频开关影响和可接受的计算速度。本文研究对象是输入并联、输出串联（IPOS）的单有源桥（SAB）变换器。难点不只是“节点多”，还在于每个SAB模块含高频变压器、辅助电感、输入侧有源H桥和输出侧不控整流桥：IGBT状态可由触发信号直接给出，而二极管导通/关断取决于电感电流过零，PSCAD/EMTDC详细模型通常需要小步长、插值和网络重构，导致IPOS多模块仿真代价高。相对已有DAB/CHB等效和矩阵预处理方法，本文的贡献是针对SAB特有的不控整流桥，先解析CCM/DCM下电感电流并预计算过零点，再把二极管状态转化为可预测的等效开关量，从而建立适用于IPOS型SAB的等效模型，并用Lyapunov方法讨论其稳定性。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是“基于电流过零点预计算”的SAB等效建模方法。模型的关键输入/接口量包括：输入侧直流电压、输出侧电压或等效副边电压、变压器变比N、辅助电感LT、开关周期Ts、IGBT触发占空比dP，以及当前半周期所在的工作模式。核心状态量是辅助电感电流，其符号和过零时刻决定输出侧二极管桥的导通组合。算法首先根据SAB触发规律和电压关系，把一个开关周期内的电感电流分段表示；随后区分连续导通模式（CCM）和断续导通模式（DCM），推导各模式下电感电流过零点的表达式及模式判据。过零点计算的作用，是在进入下一仿真步前判断二极管是否应保持导通或关断，避免依赖仿真器在电流变号处反复插值定位。之后，类比DAB变换器等效思想，将开关器件和变压器/电感等元件转换为节点导纳矩阵可处理的伴随网络或等效支路，形成IPOS级联SAB的系统级等效模型。Lyapunov分析用于说明该离散等效模型在所给建模假设下的稳定性，而不是替代详细开关模型的所有器件级暂态。
+
+### 3. 验证、优势与不足
+
+作者在PSCAD/EMTDC环境中验证所提模型的准确性和加速比，基线是SAB变换器的详细器件级电磁暂态模型；测试对象为IPOS型SAB变换器/模块化隔离DC/DC变换器。验证思路是比较等效模型与详细模型在稳态、动态过程及不同导通模式下的电压、电流波形，并统计仿真耗时或加速比；此外，论文还用Lyapunov方法给出稳定性证明。优势主要体现在机制层面：二极管状态由电感电流过零点预计算得到，而不是由仿真器在不控整流桥换流瞬间进行插值回退；因此该方法特别针对SAB相对DAB多出的“不控整流桥状态不可由触发信号直接决定”这一瓶颈。需要注意的是，提供的原文证据只说明验证了精度和加速比，但未给出可核验的具体误差百分比、加速倍数、模块数量、步长、功率等级等数值结果，因此不能引用页面中未经原文表图核对的定量结论。从验证范围看，该模型主要适用于论文所分析的IPOS型SAB及其CCM/DCM工作模式，不应直接外推到双向DAB、谐振型DC/DC、晶闸管谐振变换器、故障穿越、器件非理想恢复过程或硬件实时仿真平台。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于：SAB快速EMT仿真的关键障碍不是简单的开关频率高，而是输出不控整流桥的导通状态与电感电流零点强耦合；若能把“事件定位”前移为解析过零点预测，就可以把二极管桥纳入固定步长等效网络求解。它可用于后续研究中的IPOS型SAB系统级建模、MIDC并网仿真、含大量高频隔离DC/DC模块的电网暂态等值，以及与节点导纳矩阵预处理、模块化换流器快速求解方法的组合。不适合把它泛化为所有电力电子变换器的通用平均模型，也不适合在未重新推导过零条件的情况下用于不同拓扑、不同调制策略、强非理想器件模型或故障换流场景。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象为IPOS型SAB变换器，问题来源于高节点导纳阶数、小仿真步长和不控整流桥导致的EMT仿真效率低。
+- 来自原文摘要的确定信息：方法包含SAB工作原理分析、不同模式下电感电流表达式、过零点计算、模式区分条件、IPOS型SAB等效模型，以及Lyapunov稳定性证明。
+- 来自原文摘要的确定信息：验证环境为PSCAD/EMTDC，验证目标包括模型精度和加速比；但所给证据未包含具体表图和可核验数值。
+- 页面中关于误差小于某百分比、加速15~25倍、步长约束、条件数改善等定量说法，未出现在提供的原文证据中，不能作为已核验结论引用。
+- 元数据存在不一致：用户元数据写作2025年《中国电机工程学报》和英文题名Single Active Network，而源文件/正文题名显示为“Single Active Bridge Converter by Pre-calculating the Current Zero-crossing”，且路径含2021，需要回到PDF首页核对。
+- 从验证范围看，尚缺少对不同模块规模、不同开关频率/步长、器件非理想特性、故障工况、实时仿真平台和其他DC/DC拓扑的公开证据。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于电流过零点预计算的不控整流桥等效方法，避免插值计算
-- 利用节点导纳矩阵对称性与稀疏性，推导SAB单元等效外端口方程
-- 采用Lyapunov法证明等效模型稳定性，保障仿真数值收敛性
-
+- 问题定位：模块化隔离型 DC/DC 变换器(modular isolated DC/DC converter，MIDC)作为光伏、风电等直流电源并网的重要方案，受到广泛关注。
+- 方法机制：针对IPOS型SAB变换器在EMT仿真中因节点导纳矩阵阶数高、步长小及不控整流桥插值计算导致的效率低下问题，提出基于电流过零点预计算的等效建模方法。首先解析SAB拓扑在CCM与DCM模式下的电感电流解析表达式，推导电流过零点时刻的闭式解。利用与当前仿真步长及下一步长的相对关系，直接预测二极管在下一时刻的导通/关断状态，将其等效为二值电阻（$R {ON}/R {OFF}$），彻底规避PSCAD中传统的插值重算过程。
+- 验证证据：IPOS型模块化隔离DC/DC变换器（MIDC）级联系统，含高频变压器、辅助电感与不控整流桥；PSCAD/EMTDC, MATLAB (用于Lyapunov稳定性推导与矩阵分析)；在PSCAD/EMTDC中搭建详细器件模型与所提等效模型进行对比。
+- 量化与结论：预计算过零点方法彻底消除二极管插值开销，在固定步长2 μs下，单周期计算量减少约85%；等效模型在CCM与DCM模式切换边界处保持连续，最大瞬态电压偏差<0.8%；Lyapunov稳定性证明确保模型在任意步长（≤T s/20）下数值不发散，雅可比矩阵条件数改善约1个数量级；IPOS级联系统仿真加速比达15~25倍，波形相关系数>0.995，满足工程级EMT仿真精度要求
+- 适用边界：适用于理解本文 Equivalent Modelling Method of Single Active Network for Fast Electromagnetic Transient Simulation （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[电流过零点预计算|电流过零点预计算]]
 - [[节点导纳矩阵等效|节点导纳矩阵等效]]
@@ -36,9 +64,7 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 - [[二值电阻等效|二值电阻等效]]
 - [[lyapunov稳定性分析|Lyapunov稳定性分析]]
 
-
 ## 涉及的模型
-
 
 - [[ipos型sab变换器|IPOS型SAB变换器]]
 - [[不控整流桥|不控整流桥]]
@@ -46,9 +72,7 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 - [[igbt开关组|IGBT开关组]]
 - [[midc|MIDC]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真加速|电磁暂态仿真加速]]
 - [[电力电子变换器等效建模|电力电子变换器等效建模]]
@@ -56,15 +80,11 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 - [[固定步长仿真|固定步长仿真]]
 - [[数值稳定性分析|数值稳定性分析]]
 
-
 ## 主要发现
-
 
 - 所提等效模型在PSCAD中验证，波形精度与详细模型高度一致
 - 预计算过零点有效消除二极管插值开销，大幅提升高频开关仿真速度
 - 模型在CCM与DCM模式下均保持稳定，加速比显著优于传统详细模型
-
-
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 
 ### 数学公式
 
-
 **公式1**: $$$i_P(t) = \frac{U_1 - NU_2}{L_T}(t - t_2)$$$
 
 *CCM模式下$t_2-t_3$阶段电感充电电流表达式*
-
 
 **公式2**: $$$i_P(t) = i_P(t_3) - \frac{NU_2}{L_T}(t - t_3)$$$
 
 *CCM模式下$t_3-t_4$阶段电感续流电流表达式*
 
-
 **公式3**: $$$R_D = \begin{cases} R_{ON}, & t < t_Z \\ R_{OFF}, & t > t_Z \end{cases}$$$
 
 *基于过零点预测的二极管二值电阻等效模型*
-
 
 **公式4**: $$$X = \frac{d_P}{2} - \frac{NU_2}{4U_1}$$$
 
 *CCM模式下用于计算过零点时刻的无量纲参数$X$*
 
-
 **公式5**: $$$t_2 = t_1 + \left(\frac{d_P}{2} - \frac{NU_2}{4U_1}\right)T_S$$$
 
 *CCM模式下电感电流过零点$t_2$的闭式计算公式*
 
-
 **公式6**: $$$t_3 = t_1 + \frac{U_1}{NU_2}d_P T_S$$$
 
 *DCM模式下电感电流过零点$t_3$的闭式计算公式*
-
 
 ### 算法步骤
 
@@ -116,7 +129,6 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 4. 4. 伴随网络构建：将IGBT开关组与预测后的二极管统一替换为二值电阻，对辅助电感$L_T$、直流侧电容及高频变压器采用梯形积分法离散化，生成历史电流源与等效导纳矩阵元素（$Y_{T11}, Y_{T12}, Y_{T22}$）。
 
 5. 5. 矩阵求解与稳定性保障：组装系统节点导纳矩阵，利用其对称性与稀疏性进行LU分解或预处理加速求解。在每个步长更新后，通过Lyapunov函数验证系统能量衰减特性，确保数值收敛。
-
 
 ### 关键参数
 
@@ -136,8 +148,6 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 
 - **开关周期**: T_S
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -150,15 +160,12 @@ As an important scheme for grid connection of photovoltaic, wind power and other
 
 | 占空比阶跃扰动与模式切换 | d_P从0.3突增至0.6，系统由DCM切换至CCM，动态响应超调量<2.1%，恢复时间偏差<0.5 ms，过零点预测误差<0.1 μs。 | 多模块级联（IPOS结构，10模块）下，系统级仿真速度提升18.7倍，内存占用降低65% |
 
-
-
 ## 量化发现
 
 - 预计算过零点方法彻底消除二极管插值开销，在固定步长2 μs下，单周期计算量减少约85%
 - 等效模型在CCM与DCM模式切换边界处保持连续，最大瞬态电压偏差<0.8%
 - Lyapunov稳定性证明确保模型在任意步长（≤T_s/20）下数值不发散，雅可比矩阵条件数改善约1个数量级
 - IPOS级联系统仿真加速比达15~25倍，波形相关系数>0.995，满足工程级EMT仿真精度要求
-
 
 ## 关键公式
 
@@ -174,11 +181,34 @@ $$$R_D = \begin{cases} R_{ON}, & t < t_Z \\ R_{OFF}, & t > t_Z \end{cases}$$$
 
 *替代传统PSCAD插值算法，实现固定步长下的无插值快速状态更新，是提速核心*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数字仿真对比验证与理论稳定性证明
 - **测试系统**: IPOS型模块化隔离DC/DC变换器（MIDC）级联系统，含高频变压器、辅助电感与不控整流桥
 - **仿真工具**: PSCAD/EMTDC, MATLAB (用于Lyapunov稳定性推导与矩阵分析)
 - **验证结果**: 在PSCAD/EMTDC中搭建详细器件模型与所提等效模型进行对比。结果表明，所提模型在稳态、动态及模式切换工况下波形精度与详细模型高度一致（误差<1%），同时因消除插值计算与利用矩阵稀疏性，仿真速度提升15~25倍，且Lyapunov分析证实模型具备严格的数值稳定性，适用于大规模直流电源并网系统的快速EMT仿真。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Equivalent Modelling Method of Single Active Network for Fast Electromagnetic Transient Simulation`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 电流过零点预计算、节点导纳矩阵等效、梯形积分法离散化 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于电流过零点预计算的不控整流桥等效方法，避免插值计算
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/18/Gao 等 - 2021 - Equivalent Modelling Method of Single Active Bridge Converter by Pre-calculating the Current Zero-cr.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

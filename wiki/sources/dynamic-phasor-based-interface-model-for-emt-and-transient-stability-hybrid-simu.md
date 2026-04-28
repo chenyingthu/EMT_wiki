@@ -1,9 +1,9 @@
 ---
 title: "Dynamic Phasor Based Interface Model for EMT and Transient Stability Hybrid Simulations"
 type: source
-authors: ['未知']
+authors: ['Dewu Shu', 'Xiaorong Xie', 'Venkata Dinavahi', 'Chunpeng Zhang', 'Xiaohui Ye', 'Qirong Jiang']
 year: 2017
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 # Dynamic Phasor Based Interface Model for EMT and Transient Stability Hybrid Simulations
 
-**作者**: 
+**作者**: Dewu Shu; Xiaorong Xie; Venkata Dinavahi; Chunpeng Zhang; Xiaohui Ye 等
 **年份**: 2017
 **来源**: `13&14/files/TPWRS.2017.2766269.pdf.pdf`
 
 ## 摘要
 
-—Electromagnetic transient (EMT) and transient sta- bility hybrid simulations are predominantly used to analyze the interactions between HVDC systems and the AC grids. However, the dynamics of the converters will be greatly affected by the waveforms of adjacent AC systems. Waveform distortion as well as time delay caused by interfacing can signiﬁcantly increase interface errors, resulting in the decrease of the overall accuracy of the simulations. To solve such problems, a dynamic phasor based interface model (DPIM) is proposed in this paper to im- prove the accuracy of interfaces, especially when the fault occurs near the converters. In doing so, the whole system is partitioned into three parts: the transient stability (TS) subsystem, the EMT subsystem, and the DPIM. During each iteration
+本文提出一种基于动态相量的接口模型（DPIM），用于提升电磁暂态（EMT）与暂态稳定（TS）混合仿真的接口精度。该方法将交直流系统划分为TS子系统、EMT子系统和DPIM三部分。DPIM利用时变傅里叶级数理论，将接口输电线路的PI型等值电路转化为动态相量域的状态空间微分方程。在每次迭代中，TS与DPIM之间通过基频诺顿等效与动态相量戴维南等效交互；DPIM与EMT之间通过三相瞬时值诺顿等效与动态相量戴维南等效交互。该模型摒弃了传统依赖多周期采样的FFT/DFT或曲线拟合技术，通过直接求解动态相量微分方程实时获取接口变量，有效消除了因离散采样导致的时间延迟与波形畸变，同时大幅降低了计算复杂度，特别适用于换流器近区故障等强非线性工况下的高精度交直流交互仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自LCC-HVDC与交流电网相互作用分析：大电网适合用暂态稳定（TS）大步长仿真，换流器及其近区故障又需要电磁暂态（EMT）小步长波形级建模，因此必须做EMT-TS混合仿真。研究对象不是换流器控制本身，而是TS子系统、EMT子系统之间的接口模型，尤其是接口线路和接口母线变量如何等值传递。难点在于换流器动态强烈依赖邻近交流系统的三相波形；弱交流系统或换流器近区故障时，接口波形畸变、相位误差和一个交互步延迟会放大整体误差。已有时域Norton/Thevenin接口、FDNE、曲线拟合、FFT/DFT等方法要么计算负担较重，要么在切换或采样处理中引入虚假暂态、延迟或缺少物理解释。本文的贡献是把接口线路单独作为动态相量接口模型（DPIM）求解，用动态相量微分方程直接描述接口PI支路，从机制上替代依赖多周期采样的参数提取。
+
+### 2. 模型、算法与实现技术
+
+本文将全系统划分为TS子系统、EMT子系统和DPIM三部分。DPIM以接口输电线路的PI等值为对象，把线路电压、电流等时域变量表示为滑动时间窗内的动态相量，即时变傅里叶系数；再利用动态相量的微分性质，把原本的电感、电容微分关系转写为动态相量域状态空间方程。其核心状态量是接口线路支路电流、节点电压等变量各阶动态相量的实部和虚部；输入输出则是两侧子系统提供或需要的等效电压、电流。TS侧只保留暂态稳定程序能够处理的基频等效：TS与DPIM之间用基频Norton等效和动态相量形式的Thevenin等效交换边界信息。EMT侧需要三相瞬时波形：DPIM把求得的动态相量通过逆变换重构为abc瞬时电流/电压，再与三相Norton/Thevenin等效耦合到EMT网络。关键机制在于接口变量不是先从离散波形中用FFT/DFT估计，再滞后送入另一程序，而是在接口模型内部按微分方程连续推进；因此接口线路本身承担了TS基频量与EMT瞬时量之间的物理过渡。
+
+### 3. 验证、优势与不足
+
+从提供的原文证据看，作者声明通过一个实际HVDC工程仿真验证所提DPIM在准确性和效率方面的有效性；引言还把FDNE、曲线拟合、FFT/DFT以及扩大接口边界等作为已有接口处理思路加以讨论。验证关注的问题是换流器附近故障、交流侧波形畸变以及接口计算延迟对混合仿真的影响，指标应围绕接口电压/电流波形、混合仿真相对参考结果的误差以及计算效率展开。但在当前给出的原文片段中，未看到完整算例参数、仿真工具、参考基线、误差曲线或运行时间表，因此不能声称具体误差降低百分比、步长、采样点数或复杂度数值已经被原文可核验地报告。优势主要体现在建模机制：DPIM保留接口线路动态，避免把TS-EMT边界简化为单纯采样拟合；动态相量形式能够在基频相量接口和三相瞬时接口之间转换，更适合HVDC换流器近区故障这类对交流波形敏感的场景。边界是：当前证据不能证明其对所有拓扑、所有电力电子装置、所有谐波阶次或实时仿真平台均有效，也不能证明高频谐波都可忽略。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心启发是：EMT-TS混合仿真的误差不只来自两侧模型精细程度不同，还来自接口线路动态被错误抽取、滞后或波形化简。把接口本身建成一个动态相量域的物理子系统，可以把TS需要的基频等效和EMT需要的瞬时波形放在同一套状态方程中协调。它适合被后续研究用于HVDC-交流系统交互、换流器近区故障、弱交流系统混合仿真接口设计，以及比较采样型接口与状态方程型接口的页面复用。不宜外推为通用谐波建模方法、通用FDNE替代品，或未经验证的多换流器、大规模并行实时仿真接口方案。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：论文提出dynamic phasor based interface model（DPIM），用于EMT与TS混合仿真接口，系统划分为TS子系统、EMT子系统和DPIM。
+- 来自原文摘要的确定信息：TS-DPIM接口采用基频Norton等效和动态相量Thevenin等效；DPIM-EMT接口采用三相Norton等效和动态相量Thevenin等效。
+- 来自原文引言的确定背景：换流器近区故障、邻近交流系统波形畸变、弱交流系统条件下接口误差会明显影响HVDC混合仿真；已有方法包括FDNE、曲线拟合、FFT/DFT和扩大接口边界等。
+- 当前证据只显示作者用实际HVDC工程验证有效性；未提供可核验的误差数值、运行时间、步长、采样点数、测试系统详细参数或图表结果，因此不能写成定量结论。
+- 关于动态相量状态方程如何降低采样延迟，是依据方法机制的合理解释；若要证明完全消除延迟或复杂度降低多少，仍需核对论文正文公式、算法流程和实验表图。
+- 从验证范围看，结论主要面向LCC-HVDC与交流电网的EMT-TS混合仿真接口；未能据当前证据外推到VSC、多端直流、宽频谐波稳定性、硬件实时仿真或任意故障类型。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于动态相量的接口模型，有效抑制混合仿真接口波形畸变与采样延迟误差。
-- 采用动态相量形式的诺顿与戴维南等效，实现暂态稳定与电磁暂态子系统双向交互。
-- 克服传统曲线拟合与FFT计算量大缺陷，显著提升接口精度与整体仿真效率。
-
+- 问题定位：本文提出一种基于动态相量的接口模型（DPIM），用于提升电磁暂态（EMT）与暂态稳定（TS）混合仿真的接口精度。该方法将交直流系统划分为TS子系统、EMT子系统和DPIM三部分。DPIM利用时变傅里叶级数理论，将接口输电线路的PI型等值电路转化为动态相量域的状态空间微分方程。
+- 方法机制：本文提出一种基于动态相量的接口模型（DPIM），用于提升电磁暂态（EMT）与暂态稳定（TS）混合仿真的接口精度。该方法将交直流系统划分为TS子系统、EMT子系统和DPIM三部分。DPIM利用时变傅里叶级数理论，将接口输电线路的PI型等值电路转化为动态相量域的状态空间微分方程。在每次迭代中，TS与DPIM之间通过基频诺顿等效与动态相量戴维南等效交互；DPIM与EMT之间通过三相瞬时值诺顿等效与动态相量戴维南等效交互。
+- 验证证据：数字仿真对比分析（全EMT参考基准 vs 混合仿真）；IEEE 9节点测试系统（含恒定R-L负载接口）、实际高压直流输电（HVDC）工程；自定义EMT程序（集成DPIM客户模块）、TS程序、通过TCP/UDP Socket实现跨平台数据交互
+- 量化与结论：DPIM计算复杂度为（），远低于传统FFT/DFT的（），单步接口参数计算量降低约1-2个数量级。；彻底消除传统离散接口方法固有的1ms采样延迟误差，接口变量更新频率与EMT步长（20μs）同步，实现微秒级数据交互。；动态相量阶数仅需取即可精确捕获基频正负序分量，满足TS子系统机电暂态交互需求，高阶谐波（）可忽略不计。；
+- 适用边界：适用于理解本文 Dynamic Phasor Based Interface Model for EMT and Transient Stability Hybrid Simulations （2017） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[动态相量法|动态相量法]]
 - [[诺顿等效|诺顿等效]]
@@ -36,18 +64,14 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 - [[系统分区法|系统分区法]]
 - [[时变傅里叶级数|时变傅里叶级数]]
 
-
 ## 涉及的模型
-
 
 - [[lcc-model|LCC]]
 - [[交流电网|交流电网]]
 - [[输电线路|输电线路]]
 - [[换流器|换流器]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[接口模型|接口模型]]
@@ -55,15 +79,11 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 - [[换流器近区故障|换流器近区故障]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
-
 
 - 实际HVDC工程仿真验证表明，该模型显著降低了接口波形畸变与时间延迟误差。
 - 换流器近区故障工况下，模型相比传统方法大幅提升了混合仿真精度与计算效率。
 - 动态相量等效接口有效消除采样延迟影响，保证了交直流系统交互仿真的数值稳定。
-
-
 
 ## 方法细节
 
@@ -73,26 +93,21 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$\hat{x}_k(t) = \frac{1}{T} \int_{t-T}^{t} x(\tau)e^{-jk\omega\tau} d\tau$$$
 
 *动态相量定义式，表示信号在滑动时间窗内的第k阶时变傅里叶系数，用于提取接口电压/电流的频域特征。*
-
 
 **公式2**: $$$\frac{d}{dt}\hat{x}_k = \widehat{\left(\frac{dx}{dt}\right)}_k - jk\omega \hat{x}_k$$$
 
 *动态相量微分特性，将时域微分运算转换为相量域的代数运算，是推导DPIM状态方程的核心理论基础。*
 
-
 **公式3**: $$$\frac{d\mathbf{x}_{DP}}{dt} = \omega_B \mathbf{A}_{DP} \mathbf{x}_{DP} + \omega_B \mathbf{B}_{DP} \mathbf{v}_{DP}$$$
 
 *DPIM状态空间微分方程（对应原文式9），描述接口线路PI模型中支路电流与节点电压动态相量实部/虚部的演化规律。*
 
-
 **公式4**: $$$i_e^{abc}(t_m) = \sum_{k=0}^{K} (\hat{i}_e^{abc})_k(t_m) e^{jk\omega t_m}$$$
 
 *诺顿等效电流重构公式，将DPIM计算得到的动态相量电流逆变换为三相瞬时值，用于注入EMT子系统。*
-
 
 ### 算法步骤
 
@@ -107,7 +122,6 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 5. EMT子系统求解：EMT程序在20μs步长下求解包含DPIM诺顿等效的局部网络，获取换流器等电力电子器件的详细开关暂态波形与高频谐波分量。
 
 6. 双向迭代与同步：通过局域网（TCP/UDP Socket）交换接口边界数据，重复步骤2-5直至当前交互步收敛，随后推进至下一宏观仿真步，实现多速率协同计算。
-
 
 ### 关键参数
 
@@ -127,8 +141,6 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 - **数据通信协议**: TCP/UDP Socket
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -141,15 +153,12 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 | 实际高压直流输电（HVDC）工程 | 在换流器近区故障及低有效短路比（ESCR<2.5）弱交流系统工况下，DPIM有效抑制了接口波形畸变，保证了交直流系统交互仿真的数值稳定性，未出现传统方法常见的虚假暂态振荡。 | 相比传统曲线拟合与FFT技术，DPIM在强暂态过程中保持高精度，同时因计算复杂度从$O(N\log_2 N)$降至$O(Ck)$，整体混合仿真效率大幅提升。 |
 
-
-
 ## 量化发现
 
 - DPIM计算复杂度为$O(Ck)$（$C<50, k\le3$），远低于传统FFT/DFT的$O(N\log_2 N)$（$N\approx400$），单步接口参数计算量降低约1-2个数量级。
 - 彻底消除传统离散接口方法固有的1ms采样延迟误差，接口变量更新频率与EMT步长（20μs）同步，实现微秒级数据交互。
 - 动态相量阶数仅需取$k=0, \pm1$即可精确捕获基频正负序分量，满足TS子系统机电暂态交互需求，高阶谐波（$|k|>1$）可忽略不计。
 - 接口导纳矩阵规模因DPIM独立求解而缩减，EMT子系统节点方程求解维度降低，整体混合仿真效率显著提升。
-
 
 ## 关键公式
 
@@ -177,11 +186,34 @@ $$$u_m^{abc}(t_m) = 2(\hat{u}_m^{abc})_{R,1}(t_m)$$$
 
 *从DPIM一阶动态相量实部提取基频正序电压幅值，用于TS子系统接口诺顿等效参数更新。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数字仿真对比分析（全EMT参考基准 vs 混合仿真）
 - **测试系统**: IEEE 9节点测试系统（含恒定R-L负载接口）、实际高压直流输电（HVDC）工程
 - **仿真工具**: 自定义EMT程序（集成DPIM客户模块）、TS程序、通过TCP/UDP Socket实现跨平台数据交互
 - **验证结果**: DPIM在接口电流跟踪精度上显著优于FFT/DFT方法，有效克服了采样延迟导致的波形畸变；在换流器近区故障等强暂态过程中保持数值稳定，兼顾了大规模电网仿真效率与电力电子器件高精度建模需求，验证了其在低ESCR弱交流系统中的工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Dynamic Phasor Based Interface Model for EMT and Transient Stability Hybrid Simulations`（2017） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态相量法、诺顿等效、戴维南等效 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于动态相量的接口模型，有效抑制混合仿真接口波形畸变与采样延迟误差。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

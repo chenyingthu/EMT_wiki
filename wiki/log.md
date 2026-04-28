@@ -2,6 +2,38 @@
 
 > 追加式记录，永不修改。每条以 `## [日期] 类型 | 标题` 开头。
 
+## [2026-04-26] deep-enrichment | Source Pages 失败重试与脚本加固
+- 工具: `tools/deep_enrich_sources.py --retry-failed --llm-provider codex`
+- LLM: 读取 `~/.codex/config.toml` 中的 Codex Responses provider（`gpt-5.5`），替换失效的旧 LLM engine。
+- 脚本修复: `--dry-run` 不再写文件；新增 `--retry-failed`；增强内容使用 marker 幂等替换；支持 `extracted_text/markdown/` 回退；过滤无效抽取文本。
+- 结果: checkpoint 失败列表 8 → 1，深度增强完整来源页 698/699。
+- 补全页面: Revisiting Dynamic Phasors、2-stage DIRK numerical integration、fdLoad model、链式 STATCOM、虚拟同步机功率振荡协调抑制；另补全 Nelson River hybrid real-time simulation 的 `关键公式` 章节。
+- 剩余异常: `a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener.md` 可从 `extracted_text/markdown/` 读取正文，但 Codex relay 连续返回 HTTP 524；同主题正确页面 `...-1.md` 已完成深度增强。
+
+## [2026-04-26] ingest | 幂等摄入恢复与缺失页补录
+- 工具: `tools/ingest_folder.py`
+- 脚本修复: 默认按 `sources:` PDF 路径跳过已摄入页面，新增 `--dry-run` 与 `--update-existing`，避免重跑文件夹时制造重复 source 页；`fitz` 改为懒加载，缺少 PyMuPDF 时回退文件名。
+- 预检: `metadata.json` 690 条，既有 source 页 699 个；dry-run 全 folder 后仅 2 条 metadata 会创建新页。
+- 实际执行: 摄入 folder `40` 中缺失的 `电力系统机电-电磁混合仿真边界解耦算法研究-40.md`，其余 18 条跳过。
+- 暂缓项: folder `13&14` 的 `TPWRS.2017.2766269.pdf-1.pdf` 只能生成 `未知论文.md`，需要先修 metadata 标题再摄入。
+- 当前状态: source 页 700 个，深度增强完整 698/700；新增页深度增强请求返回 HTTP 524，已加入 `.deep_enrich.json` failed 列表。
+
+## [2026-04-26] ingest | 修复 metadata 标题并补录 13&14 缺失页
+- 修复 `wiki/sources/metadata.json` 中 `TPWRS.2017.2766269.pdf-1.pdf` 的题名、作者、期刊字段。
+- 实际摄入: `dynamic-phasor-based-interface-model-for-emt-and-transient-stability-hybrid-simu-13-14.md`。
+- 基础分析: 相关主题填充为 `[[co-simulation]]`、`[[dynamic-phasor]]`。
+- 审计: metadata 690/690 均已有 source 映射；当前 source 页 701 个，包含历史重复文件/重复页。
+- 新增报告: `reports/duplicate_source_mappings.md`，列出 11 个同一 PDF path 对应多个 source 页的历史重复映射。
+- 当前状态: 深度增强完整 698/701；3 页仍在 `.deep_enrich.json` failed 列表。
+
+## [2026-04-26] cleanup | 重复来源页收敛为指针
+- 输入报告: `reports/duplicate_source_mappings.md`。
+- 决策报告: `reports/duplicate_source_cleanup_plan.md` / `reports/duplicate_source_decisions.json`。
+- 操作: 11 组同一 PDF path 对应多个 source 页的历史重复映射，统一选择 canonical source 页；duplicate source 页改为 `type: duplicate-source` 指针页，未删除文件。
+- 链接修复: wiki 内部指向 duplicate slug 的 wikilink 已重写到 canonical slug。
+- 审计结果: active duplicate source mappings 0；duplicate pointer pages 11。
+- 当前口径: 690 个活跃来源页，对应 metadata 690 条；11 个重复来源指针保留历史链接；深度增强完整 687/690，3 页仍在 failed 列表。
+
 ## [2026-04-17] deep-enrichment | Source Pages 深度增强（进行中）
 - 工具: tools/deep_enrich_sources.py
 - 方法: PDF全文提取(pdftotext) + LLM深度分析(qwen3.6-plus) → 提取公式、算法、仿真结果
@@ -372,3 +404,15 @@
 - 耗时：1.2 分钟（约 0.1 秒/PDF）
 - 输出目录：extracted_text/pdftotext/ (16MB, 698 个.txt 文件)
 - 用途：LLM 深度分析、知识挖掘、后续学习资源
+
+## [2026-04-26] ingest | 文件夹 40 幂等摄入
+- 来源: EMT_Doc/40/ (19 条 metadata)
+- 创建来源页: 1
+- 更新来源页: 0
+- 跳过已存在: 18
+
+## [2026-04-26] ingest | 文件夹 13&14 幂等摄入
+- 来源: EMT_Doc/13&14/ (41 条 metadata)
+- 创建来源页: 1
+- 更新来源页: 0
+- 跳过已存在: 40

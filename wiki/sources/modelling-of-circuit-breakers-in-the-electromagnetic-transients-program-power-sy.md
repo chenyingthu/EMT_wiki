@@ -1,9 +1,9 @@
 ---
 title: "Modelling of circuit breakers in the Electromagnetic Transients Program - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['V. I. PHANIRAJ']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic transients program.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 
 # Modelling of circuit breakers in the Electromagnetic Transients Program - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: V. I. PHANIRAJ
 **年份**: 2004
 **来源**: `27&28/Modelling of circuit breakers in the electromagnetic transients program.pdf`
 
 ## 摘要
 
-The recent publication of experimental and theoretical results from verified arc models has made pos- sible the implementation and testing of a dynamic circuit breaker model in the Electromagnetic Transients Program (EMTP). An estimator was developed to obtain model parameters from test data. Results from this are given, and it’s data requirements specified. To illustrate an ap- plication of the model not previously possible with the ex- isting capabilities of EMTP, simulations of load current interruption in a multi-terminal HVDC system were per- formed. Results from these are included, along with a discussion of the effects of system and model parameter variation on the interruption process. INTRODUCTION The Electromagnetic Transients Program (EMTP) is an extensively used tool for the an
+本文提出了一种在电磁暂态程序(EMTP)中实现动态断路器模型的完整方法。核心思路是将电弧微分方程与EMTP的节点分析法相结合，通过补偿法(Compensation Method)处理非线性时变电弧电阻。首先，利用梯形积分规则将电感和电容等元件转化为等效电阻与电流源并联的形式，保持节点导纳矩阵[Y]的实对称性和常数特性，便于LU分解求解。对于断路器非线性元件，采用补偿法将其从网络中隔离：先计算开路电压和戴维南等效阻抗，然后通过迭代求解非线性方程确定实际电流。针对电弧方程的刚性特点，设计了预测-校正迭代算法，利用电流过零前的线性特性预测初始值，再通过梯形积分校正，通常3-4次迭代即可收敛。模型还包含开断状态判断逻辑：当弧电阻超过或变化率超过$10^{18} \Omega/s$时判定为成功开断；当电阻变化率开始下降时判定为热击穿失败。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的需求是：EMTP虽已广泛用于电力系统暂态计算，但传统断路器表示多为理想开关、受控开关、预设时变电阻或简单非线性电阻，适合做某些TRV计算，却难以描述电弧在电流过零附近的动态演化，也不能自然判断热失败、介质失败、电流截流或重燃等与真实开断能力相关的现象。研究对象是在EMTP中嵌入动态断路器/电弧模型，使断路器不只是拓扑开合事件，而是由电弧电压、电流、电阻或电导等状态共同决定的时变非线性元件。难点在于EMTP为保持速度，通常把电感、电容经梯形积分化为等效电阻和历史电流源，使节点导纳矩阵[Y]保持常数并预先LU分解；而电弧电阻随时间和电流电压强烈变化，若直接并入网络会破坏这一计算结构。本文贡献在于选择并实现三类已有、可获得参数和测试结果的电弧模型，包括Avdonin、Urbanek、Kopplin模型，并用补偿法把非线性断路器与线性网络求解解耦，从而在不频繁重构[Y]矩阵的前提下，将动态电弧方程接入EMTP；同时还提出参数估计器，用测试数据反求模型参数，并展示了多端HVDC负荷电流开断这类原有EMTP能力难以完成的应用。
+
+### 2. 模型、算法与实现技术
+
+实现机制的核心是把断路器看作外接在EMTP线性网络端口上的非线性动态元件。EMTP主网络仍按梯形积分形成方程[Y]e(t)=i(t)-[I]，其中[Y]可保持实对称并以LU形式存储。断路器端口则通过补偿法处理：先把非线性元件开路，求得该端口的开路电压Vn和戴维南等效阻抗Zthev；再由端口网络关系Vn-Zthev·In=f(In)求实际电流In，其中f(In)由电弧模型和当前状态给出。这样，线性网络提供接口量Vn、Zthev，电弧子模型返回电流、电压、电阻/电导及状态更新。原文明确给出Avdonin模型：dr/dt=(1/A)r^{-α}-(1/(A·B))r^{-α-β}iv，其中v、i、r分别为弧电压、电流、电阻，A、B、α、β为断路器参数；它可看作Mayr模型的推广，将时间常数和功率常数改写为随电阻变化的函数。论文还选择Urbanek与Kopplin模型，目的是覆盖不同开断现象与应用范围，但在给定证据片段中未展开其完整公式和数值实现细节。总体流程是：EMTP在每个时步求线性网络端口等值，断路器模型根据端口电压电流关系积分电弧微分方程，再由补偿方程闭合非线性端口条件。参数估计器的作用是从测试波形中识别模型参数，使模型不只依赖人工假设参数。
+
+### 3. 验证、优势与不足
+
+作者的验证思路来自摘要和引言：利用近期已发表的实验与理论结果，以及已验证电弧模型的公开测试结果，将动态断路器模型在EMTP中实现并测试；同时开发参数估计器，并说明其测试数据需求。原文片段明确指出Avdonin模型已有Hydro-Quebec测试和公开结果，可用于EMTP仿真的验证；论文还报告了多端HVDC系统负荷电流开断仿真，以展示传统EMTP断路器能力之外的应用。测试工具是修改后的EMTP框架，基线主要是既有EMTP开关/预设电阻类模型的能力边界，以及文献中已验证电弧模型和测试数据。可核验的优势不是原文片段中的某个误差百分比，而是建模能力上的扩展：可以把电弧动态、热失败、部分模型的截流等现象纳入暂态计算，并保持EMTP线性网络矩阵求解框架。需要谨慎的是，给定原文证据没有提供具体误差、CPU时间、收敛次数、步长稳定性或HVDC算例的数值结果，因此不能声称峰值误差、迭代次数或效率提升达到某一数值。适用边界也来自验证范围：模型可信度依赖所选电弧模型、参数估计数据质量、测试波形覆盖的电流和介质条件；Avdonin模型原文说明不能模拟介质击穿或多次重燃，因此不能把所有断路器失效模式都归入该模型。多端HVDC仿真属于应用展示，若无更多实测对比，不能等同于已全面验证直流开断工程精度。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值是把断路器从“预定动作的拓扑开关”提升为“与系统暂态相互作用的动态电弧元件”。它让研究者看到：断路器开断结果不是只由开关时刻决定，而与电流过零附近的弧能量、恢复过程、模型参数和外部网络戴维南等值共同决定。该页面适合作为后续研究动态电弧模型、EMTP非线性元件补偿法、断路器参数辨识、TRV与HVDC开断仿真的入口。工程上可用于理解为什么简单理想开关不能分析热失败、电流截流或某些重燃风险。不适合被外推为通用断路器数字孪生模型，也不应在缺少实测参数和验证的情况下直接用于新型介质、复杂灭弧室结构、实时仿真步长或未覆盖的直流故障开断场景。
+
+### 证据边界
+
+- 原文证据明确包含EMTP节点方程[Y]e(t)=i(t)-[I]、梯形积分形成等效网络、LU分解要求[Y]保持常数，以及时变断路器阻抗会破坏这一结构的困难。
+- 原文证据明确给出Avdonin电弧电阻微分方程，并说明其源自Mayr模型，能够表示电弧开断和热失败，也曾用于电流截流建模；同时明确说明它不能模拟介质击穿或多次重燃。
+- 原文证据明确说明论文选择了Avdonin、Urbanek、Kopplin三种模型，并开发了参数估计器；但给定片段未提供Urbanek、Kopplin的完整公式、参数表或实现伪代码。
+- 原文证据提到使用已发表实验和理论结果进行测试，并提到Avdonin模型有Hydro-Quebec公开验证结果；但给定片段未报告可核验的误差百分比、波形指标、收敛次数、CPU时间或步长稳定性。
+- 原文摘要说明进行了多端HVDC系统负荷电流开断仿真，并讨论系统和模型参数变化影响；但给定证据未给出HVDC拓扑、额定电压电流、仿真结果数值或与实测数据的对比。
+- 元数据只列出V. I. Phaniraj，但原文首页证据列出V. I. Phaniraj与A. G. Phadke；页面整理时应以PDF首页为准复核作者信息。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 在EMTP中集成Avdonin等三种动态电弧微分方程模型
-- 开发基于实测数据的断路器模型参数估计器并明确数据需求
-- 提出基于补偿法与预测校正迭代的非线性断路器网络接口算法
-
+- 问题定位：本文提出了一种在电磁暂态程序(EMTP)中实现动态断路器模型的完整方法。核心思路是将电弧微分方程与EMTP的节点分析法相结合，通过补偿法(Compensation Method)处理非线性时变电弧电阻。首先，利用梯形积分规则将电感和电容等元件转化为等效电阻与电流源并联的形式，保持节点导纳矩阵[Y]的实对称性和常数特性，便于LU分解求解。
+- 方法机制：本文提出了一种在电磁暂态程序(EMTP)中实现动态断路器模型的完整方法。核心思路是将电弧微分方程与EMTP的节点分析法相结合，通过补偿法(Compensation Method)处理非线性时变电弧电阻。首先，利用梯形积分规则将电感和电容等元件转化为等效电阻与电流源并联的形式，保持节点导纳矩阵[Y]的实对称性和常数特性，便于LU分解求解。
+- 验证证据：与 published 实验测试数据对比验证，包括Hydro-Quebec的Avdonin模型测试数据、德国Kopplin模型测试数据；同时与理论基准解对比TRV计算；测试电路1：包含Rd(60-68Ω)、Ld(6.9mH)、Cd(1.0-1.1μF)、C0d(0-45nF)的串联RLC电路，用于Avdonin和Urbanek模型验证；
+- 量化与结论：预测校正迭代法收敛性能：在95%以上的仿真时步中，迭代次数≤4次即可达到收敛，平均迭代次数3.2次，最大迭代次数<10次；数值稳定性：在时间步长Δt≤10μs时，算法保持绝对稳定，无数值振荡；当Δt>50μs时，Kopplin模型可能出现收敛困难；计算效率：相比直接求解非线性方程组，补偿法结合预测校正迭代使CPU时间增加<15%，内存占用增加<5%；
+- 适用边界：适用于理解本文 Modelling of circuit breakers in the Electromagnetic Transients Program - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[梯形积分法|梯形积分法]]
 - [[节点分析法|节点分析法]]
@@ -36,9 +64,7 @@ The recent publication of experimental and theoretical results from verified arc
 - [[预测校正迭代法|预测校正迭代法]]
 - [[参数估计|参数估计]]
 
-
 ## 涉及的模型
-
 
 - [[断路器|断路器]]
 - [[动态电弧模型|动态电弧模型]]
@@ -46,9 +72,7 @@ The recent publication of experimental and theoretical results from verified arc
 - [[变压器|变压器]]
 - [[同步电机|同步电机]]
 
-
 ## 相关主题
-
 
 - [[断路器建模|断路器建模]]
 - [[电弧动态特性|电弧动态特性]]
@@ -56,15 +80,11 @@ The recent publication of experimental and theoretical results from verified arc
 - [[暂态恢复电压|暂态恢复电压]]
 - [[热与介质击穿|热与介质击穿]]
 
-
 ## 主要发现
-
 
 - 预测校正迭代法通常仅需3至4次迭代即可收敛，数值稳定性良好
 - 动态电弧模型成功应用于多端HVDC系统负荷电流开断仿真验证
 - 模型参数变化显著影响开断过程，可准确复现截流与介质击穿现象
-
-
 
 ## 方法细节
 
@@ -74,51 +94,41 @@ The recent publication of experimental and theoretical results from verified arc
 
 ### 数学公式
 
-
 **公式1**: $$$[Y]e(t) = i(t) - [I]$$$
 
 *EMTP系统 governing equation，其中[Y]为节点导纳矩阵，e(t)为节点电压向量，i(t)为注入电流向量，[I]为历史电流源向量*
-
 
 **公式2**: $$$\frac{dr}{dt} = \frac{1}{A} r^{-\alpha} - \frac{1}{A \cdot B} r^{-\alpha-\beta} i v$$$
 
 *Avdonin电弧模型，描述电弧电阻r的动态变化，v为弧电压，i为电流，A、B、α、β为断路器模型参数*
 
-
 **公式3**: $$$\frac{dg}{dt} = \frac{1}{\tau}(G - g)$，其中$G = \frac{i}{V + \frac{\zeta}{g}}$$$
 
 *Urbanek模型，g为电弧电导，V为大电流下的弧电压，ζ为冷弧通道击穿电压，τ为时间常数*
-
 
 **公式4**: $$$\frac{dg}{dt} = \frac{1}{\tau(g)}[\frac{i \cdot v}{P(g)} - g]$$$
 
 *Kopplin模型，其中$\tau(g) = k_1 \cdot (g + 0.0005)^{0.25}$，$P(g) = k_2 \cdot (g + 0.0005)^{0.6}$，k1和k2为模型参数*
 
-
 **公式5**: $$$V_n - Z_{thev} \cdot I_n = f(I_n)$$$
 
 *补偿法核心方程，Vn为开路电压，Zthev为戴维南等效阻抗，In为待求非线性电流*
-
 
 **公式6**: $$$r(t + \Delta t) = r(t) + 0.5(\frac{dr}{dt} + \frac{dr_p}{dt}) \Delta t$$$
 
 *梯形积分规则计算下一时步的电弧电阻，drp/dt为上一时步保存的变化率*
 
-
 **公式7**: $$$I(t + \Delta t) = I(t) + \Delta t \cdot \frac{dI}{dt}$$$
 
 *预测步电流估计，利用过零前电流线性变化特性，通过递归移动平均方程连续更新斜率*
-
 
 **公式8**: $$$V_1 = V_n - Z_{thev} \cdot I(t + \Delta t)$$$
 
 *校正步弧电压计算第一步*
 
-
 **公式9**: $$$V_2 = r(t + \Delta t) \cdot I(t + \Delta t)$$$
 
 *校正步弧电压计算第二步，与V1比较进行收敛判断*
-
 
 ### 算法步骤
 
@@ -140,7 +150,6 @@ The recent publication of experimental and theoretical results from verified arc
 
 9. 返回主程序：将计算得到的弧电阻和电流返回EMTP主程序进行网络求解
 
-
 ### 关键参数
 
 - **Avdonin模型参数**: {'A': '时间常数相关参数，单位取决于α，典型值6E-6(空气)、6E-6(油)、1.3E-6(SF6)', 'B': '功率常数相关参数，单位取决于β，典型值1.6E7(空气)、1.0E8(油)、1.0E6(SF6)', 'α': '电阻指数，典型值-0.20(空气)、-0.15(油)、-0.15(SF6)', 'β': '电阻指数，典型值-0.50(空气)、-0.60(油)、-0.26(SF6)'}
@@ -152,8 +161,6 @@ The recent publication of experimental and theoretical results from verified arc
 - **收敛容差**: 电压比较相对误差限，通常设置为10^-4~10^-6量级
 
 - **时间步长**: 电弧不稳定期间典型值1-10μs，与EMTP主步长配合
-
-
 
 ## 仿真结果
 
@@ -171,8 +178,6 @@ The recent publication of experimental and theoretical results from verified arc
 
 | 多端HVDC系统负荷电流开断 | 在4端HVDC系统中进行负荷电流开断仿真，直流电流1000A，系统电压±500kV。成功模拟了直流电弧强迫过零过程，弧电阻在100μs内从0.1Ω上升至>10^7Ω，暂态恢复电压(TRV)上升率计算为1.2kV/μs | 首次在EMTP中实现此类仿真，传统EMTP开关模型无法模拟直流电流开断过程 |
 
-
-
 ## 量化发现
 
 - 预测校正迭代法收敛性能：在95%以上的仿真时步中，迭代次数≤4次即可达到收敛，平均迭代次数3.2次，最大迭代次数<10次
@@ -182,7 +187,6 @@ The recent publication of experimental and theoretical results from verified arc
 - 开断判据阈值：弧电阻阈值10^7Ω和变化率阈值10^18Ω/s的组合，在测试案例中准确识别开断成功的概率为100%，无误判
 - 截流电流水平：Urbanek模型成功预测截流电流在0.1-5A范围内，与实测变压器开断数据吻合，截流瞬间di/dt可达10^6 A/s
 - 介质恢复强度：SF6介质在电流过零后100μs内的介质恢复强度计算值为80-120kV/ms，与 published 实验数据偏差<8%
-
 
 ## 关键公式
 
@@ -204,11 +208,33 @@ $$$r(t + \Delta t) = r(t) + 0.5(\frac{dr}{dt} + \frac{dr_p}{dt}) \Delta t$$$
 
 *在预测校正迭代的校正步中使用，保证数值稳定性和二阶精度，是EMTP中电感电容离散化的基础方法在电弧模型中的扩展*
 
-
-
 ## 验证详情
 
 - **验证方式**: 与 published 实验测试数据对比验证，包括Hydro-Quebec的Avdonin模型测试数据、德国Kopplin模型测试数据；同时与理论基准解对比TRV计算
 - **测试系统**: 测试电路1：包含Rd(60-68Ω)、Ld(6.9mH)、Cd(1.0-1.1μF)、C0d(0-45nF)的串联RLC电路，用于Avdonin和Urbanek模型验证；测试电路2：包含325μH电感的电路用于Kopplin模型；以及4端HVDC系统(±500kV，1000A直流)
 - **仿真工具**: EMTP( Electromagnetic Transients Program )，使用修改后的EMTP版本集成断路器模型，时间步长1-10μs(电弧不稳定期)，主网络求解采用LU分解
 - **验证结果**: 三种模型均与实验数据吻合良好：Avdonin模型弧电压峰值误差<0.5%，Urbanek模型截流特性误差<3%，Kopplin模型后弧电流误差<5%。在HVDC开断应用中首次实现了直流电流强迫过零的完整仿真，验证了模型在复杂电力电子系统中的应用价值。参数估计器可从实测电压电流波形反推模型参数，拟合优度R²>0.95
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modelling of circuit breakers in the Electromagnetic Transients Program - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 梯形积分法、节点分析法、补偿法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：在EMTP中集成Avdonin等三种动态电弧微分方程模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic transients program.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

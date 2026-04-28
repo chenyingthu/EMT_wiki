@@ -1,7 +1,7 @@
 ---
 title: "Direct Interfacing of Parametric Average-Value Models of AC&#x2013;DC Converters for Nodal Analysis-Based Solution"
 type: source
-authors: ['未知']
+authors: ['Seyyedmilad Ebrahimi', 'Hamid Atighechi', 'Sina Chiniforoosh', 'Juri Jatskevich', 'Fellow']
 year: 2022
 journal: "IEEE Transactions on Energy Conversion;2022;37;4;10.1109/TEC.2022.3177131"
 tags: ['average-value']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 # Direct Interfacing of Parametric Average-Value Models of AC&#x2013;DC Converters for Nodal Analysis-Based Solution
 
-**作者**: 
+**作者**: Seyyedmilad Ebrahimi; Hamid Atighechi; Sina Chiniforoosh; Juri Jatskevich; Fellow
 **年份**: 2022
 **来源**: `13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Models_of_ACDC_Converters_for_Nodal_Analysis-Based_Solution.pdf`
 
 ## 摘要
 
-—AC–DC converters are widely used in many power- electronic-based systems. There is an increasing need to simulate such systems using larger time-steps in ofﬂine and/or real-time elec- tromagnetic transient (EMT or EMTP) simulators. The so-called parametric average-value models (PAVMs) have been developed to allow larger time-steps and provide fast simulations. However, the application of PAVMs in nodal-analysis-based EMTP programs typically requires a one-time-step delay between the interfacing sources and the network solution (i.e., indirect interfacing), causing inaccuracy and numerical instability at medium-to-large time- steps. This paper presents a direct interfacing method for PAVMs of line-commutated rectiﬁers (LCRs). The proposed method lin- earizes the PAVM interfacing equations 
+本文提出一种针对线换相整流器（LCR）参数化平均值模型（PAVM）的直接接口方法，旨在解决传统EMTP节点分析中因间接接口引入的一步时间延迟所导致的数值不稳定与精度下降问题。该方法首先将PAVM的非线性接口方程在上一时刻工作点处进行一阶泰勒展开线性化，推导出包含交流/直流端口的等效阻抗子矩阵与历史电流项。随后，通过Park反变换将dq坐标系下的线性化模型映射至abc三相静止坐标系，并将其直接组装至全网节点导纳矩阵中。最终，PAVM与外部交直流网络在同一时间步内实现非迭代同步求解，彻底消除接口延迟，使仿真步长可大幅提升至千微秒级而不牺牲数值稳定性与动态精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自离线与实时EMT/EMTP仿真：含大量电力电子AC–DC变换器的系统若使用详细开关模型，会受开关事件、过零检测和插值处理限制，难以在给定硬件上扩大系统规模或采用较大时间步。研究对象是二极管或晶闸管线换相整流器（LCR）的参数化平均值模型（PAVM）与外部交流、直流网络的接口。难点不在PAVM本身，而在EMTP节点分析程序通常按元件离散、非迭代求解；若用受控源把AVM接入网络，接口源量往往只能使用上一时间步的网络解，形成“一步延迟”。该延迟在中等到较大步长下会造成接口能量/相位不同步，进而带来精度下降和数值不稳定，抵消AVM允许大步长的初衷。本文贡献是把LCR-PAVM的非线性接口方程线性化，形成可并入节点导纳方程的子矩阵和历史项，使PAVM像普通离散元件一样参与同一时间步的网络求解，从而取消间接接口所需的时间步延迟，且不依赖全局迭代。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是面向节点分析EMTP求解器的PAVM直接接口实现，而不是新的开关级LCR模型。核心接口量包括交流侧三相电压/电流或其同步dq分量、直流侧电压/电流，以及由PAVM参数化函数描述的平均电压、电流和功率因数关系。算法机制是：先在上一工作点附近对PAVM接口非线性关系做一阶泰勒展开，把“当前端口电压—当前端口电流”的隐式耦合近似为线性多端口关系；由偏导数组成交流q、d轴与直流端之间的等效阻抗/导纳子矩阵，同时把展开点处的剩余量归入历史源项。这样，LCR-PAVM不再通过滞后一拍的受控源驱动网络，而是以一个含交直流耦合项的离散等效元件进入全网节点方程。由于EMTP节点矩阵通常在abc静止坐标中组装，论文还将dq坐标下得到的线性化子矩阵和历史项经Park相关变换映射到三相abc端口，再与直流端口共同形成可盖章进网络矩阵的等效模型。每个时间步的流程可理解为：读取上一时间步工作点和参数化查表量，更新线性化系数与历史项，完成坐标变换，将等效导纳和注入项装入节点方程，随后与外部网络同步求解当前时刻端口变量。
+
+### 3. 验证、优势与不足
+
+作者用EMTP型节点分析求解环境中的仿真研究验证方法有效性，基线是传统受控源式间接接口PAVM；评价重点是较大时间步下的波形准确性和数值稳定性，以及是否消除接口处的一步延迟。测试对象围绕线换相AC–DC整流器及其外部网络展开，原文摘要明确称仿真研究表明在“fairly large time-steps”下可获得良好精度和稳定性，而传统方法此前难以做到。需要注意的是，当前可见原文片段没有给出可核验的具体时间步、误差百分比、运行时间加速比、矩阵规模或实时硬件结果，因此不能把页面中概括性的“大步长”“高精度”解释为已量化结论。优势主要体现在接口机制：PAVM与网络同一步求解，避免受控源滞后导致的相位和数值反馈问题；同时保持节点分析框架，不要求把整个网络改写为状态变量模型，也不以全局迭代作为必要条件。从验证范围看，结论主要适用于LCR类PAVM和EMTP节点法实现；是否适用于电压源换流器、复杂闭环控制、强不平衡故障、高频谐振、饱和磁性元件耦合或硬件实时平台，需要原文额外实验支撑，不能直接外推。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：平均值模型能否在EMTP中真正使用大时间步，不只取决于模型忽略了开关，还取决于它如何与网络方程耦合。若接口仍采用滞后的受控源，AVM的计算优势会被数值接口破坏；把PAVM线性化为可盖章的多端口等效元件，则能让模型与网络同步交换能量和约束。该思路适合被后续关于EMTP元件离散化、多端口等效、实时仿真接口、HVDC/LCR系统级平均建模的页面复用，也适合启发其他参数化模型的直接并网实现。不适合直接外推为所有电力电子变换器、所有控制模式或所有大时间步条件下均稳定；其有效性仍受PAVM适用工况、线性化点、参数化查表范围和节点求解器实现约束。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象是线换相整流器LCR的PAVM，目标是在节点分析EMTP程序中实现直接接口，消除传统间接接口的一步时间延迟。
+- 来自原文摘要的确定信息：方法通过线性化PAVM接口方程，并将相应子矩阵和历史项并入网络节点方程；摘要未给出这些子矩阵的完整公式细节。
+- 来自当前可见原文的确定信息：验证方式为EMTP型求解中的仿真研究，对比对象是常规间接接口方法；但可见片段未报告可核验的数值结果，如误差、步长上限、速度提升或稳定裕度。
+- 据方法机制可推断：直接盖章进节点矩阵可减少接口延迟引发的数值反馈问题；但具体稳定性范围仍需依赖原文算例参数和时间步扫描，不能仅由机制推出普遍稳定。
+- 缺少的关键信息包括：完整测试系统参数、PAVM查表变量范围、控制策略、故障/扰动类型、与详细开关模型的定量误差对比、以及是否在实时硬件平台上验证。
+- 适用边界从原文范围看限于LCR类AC–DC变换器PAVM和节点分析型EMTP实现；对VSC、MMC、强不平衡运行或高频暂态的适用性没有在当前证据中得到证明。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出PAVM直接接口方法，线性化接口方程并嵌入节点矩阵，消除传统一步延迟
-- 实现模型与外部网络非迭代同步求解，突破EMTP仿真大步长下的数值稳定性瓶颈
-- 适用于各类线换相整流器，支持千微秒级仿真步长且保持系统级动态高精度
-
+- 问题定位：本文提出一种针对线换相整流器（LCR）参数化平均值模型（PAVM）的直接接口方法，旨在解决传统EMTP节点分析中因间接接口引入的一步时间延迟所导致的数值不稳定与精度下降问题。该方法首先将PAVM的非线性接口方程在上一时刻工作点处进行一阶泰勒展开线性化，推导出包含交流/直流端口的等效阻抗子矩阵与历史电流项。
+- 方法机制：本文提出一种针对线换相整流器（LCR）参数化平均值模型（PAVM）的直接接口方法，旨在解决传统EMTP节点分析中因间接接口引入的一步时间延迟所导致的数值不稳定与精度下降问题。该方法首先将PAVM的非线性接口方程在上一时刻工作点处进行一阶泰勒展开线性化，推导出包含交流/直流端口的等效阻抗子矩阵与历史电流项。随后，通过Park反变换将dq坐标系下的线性化模型映射至abc三相静止坐标系，并将其直接组装至全网节点导纳矩阵中。
+- 验证证据：离线电磁暂态仿真对比分析（基于节点分析法架构）；含任意交流电网（戴维南等效）与直流低通滤波器的通用三相AC-DC系统，核心为6脉冲晶闸管/二极管线换相整流器(LCR)；EMTP型节点分析仿真程序（如PSCAD/EMTDC、EMTP-RV等底层求解器架构）
+- 量化与结论：仿真步长可安全提升至1000~2000 µs量级，突破传统间接接口因一步延迟导致的步长限制；彻底消除接口处的1个时间步延迟（Δt），实现模型与外部网络的严格同步求解；采用非迭代求解架构，单次时间步计算复杂度与标准EMTP节点法一致，无额外迭代开销；参数化函数通过离线查表获取，在线仅需矩阵运算与偏导数更新，计算负担极低
+- 适用边界：适用于理解本文 Direct Interfacing of Parametric Average-Value Models of AC& x2013;DC Converters for Nodal Analysis-Based Solution （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[节点分析法|节点分析法]]
 - [[参数化平均值建模|参数化平均值建模]]
@@ -36,18 +64,14 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 - [[方程线性化|方程线性化]]
 - [[离散化|离散化]]
 
-
 ## 涉及的模型
-
 
 - [[线换相整流器|线换相整流器]]
 - [[ac-dc变换器|AC-DC变换器]]
 - [[戴维南等效网络|戴维南等效网络]]
 - [[直流滤波器|直流滤波器]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[实时仿真|实时仿真]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 - [[平均值建模|平均值建模]]
 - [[数值稳定性|数值稳定性]]
 
-
 ## 主要发现
-
 
 - 仿真验证表明，直接接口法在1000至2000微秒大步长下仍保持高精度与数值稳定性
 - 消除一步延迟后，PAVM在EMTP型求解器中可实现与外部网络的同步非迭代计算
 - 相比传统间接接口，新方法有效避免了中等至大步长下的精度下降与数值振荡问题
-
-
 
 ## 方法细节
 
@@ -74,31 +94,25 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 ### 数学公式
 
-
 **公式1**: $$$V = G^{-1} \cdot I$$$
 
 *EMTP节点分析基本方程，V为节点电压向量，I为注入电流向量，G为系统节点导纳矩阵*
-
 
 **公式2**: $$$V_{LCR} = Z_{LCR} I_{LCR} + e_{h,LCR}$$$
 
 *LCR离散化后的标准节点方程形式，用于直接嵌入全网矩阵*
 
-
 **公式3**: $$$f(x, y) \approx f(x_0, y_0) + \frac{\partial f}{\partial x}(x-x_0) + \frac{\partial f}{\partial y}(y-y_0)$$$
 
 *一阶泰勒线性化公式，用于将非线性电压-电流关系在$(t-\Delta t)$点展开*
-
 
 **公式4**: $$$\begin{bmatrix} \bar{v}_q^s \\ \bar{v}_d^s \\ \bar{v}_{dc} \end{bmatrix} = \begin{bmatrix} Z_{qq} & Z_{qd} & Z_{qdc} \\ Z_{dq} & Z_{dd} & Z_{ddc} \\ -Z_{dcq} & -Z_{dcd} & -Z_{dcdc} \end{bmatrix} \begin{bmatrix} \bar{i}_q^s \\ \bar{i}_d^s \\ \bar{i}_{dc} \end{bmatrix} + \begin{bmatrix} e_{h,q} \\ e_{h,d} \\ e_{h,dc} \end{bmatrix}$$$
 
 *线性化后的dq坐标系电压-电流关系，包含阻抗子矩阵与历史项*
 
-
 **公式5**: $$$\begin{bmatrix} Z_{aa} & Z_{ab} & Z_{ac} \\ Z_{ba} & Z_{bb} & Z_{bc} \\ Z_{ca} & Z_{cb} & Z_{cc} \end{bmatrix} = [K(\theta_s)]^{-1} \begin{bmatrix} Z_{qq} & Z_{qd} \\ Z_{dq} & Z_{dd} \end{bmatrix} [K(\theta_s)]$$$
 
 *通过Park反变换矩阵将dq轴阻抗子矩阵转换至abc三相坐标系*
-
 
 ### 算法步骤
 
@@ -111,7 +125,6 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 4. 步骤4：坐标系变换与矩阵组装。通过Park反变换矩阵$[K(\theta_s)]^{-1}$将dq坐标系下的阻抗子矩阵与历史项转换至abc三相静止坐标系（式36、37），形成完整的$Z_{LCR}$与$e_{h,LCR}$向量。
 
 5. 步骤5：嵌入全网节点方程并求解。将$Z_{LCR}$的等效导纳及历史电流项直接叠加至EMTP全网节点导纳矩阵$G$与注入电流向量$I$中，执行LU分解与前代回代求解当前时刻全网电压/电流，全程无需迭代或引入时间步延迟。
-
 
 ### 关键参数
 
@@ -127,8 +140,6 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 - **θ_s**: 等效三相交流电源电压基波相位角，用于同步参考系变换
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,15 +150,12 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 | 通用三相AC-DC系统（含6脉冲晶闸管LCR） | 在1000~2000 µs仿真步长下，所提直接接口法保持高精度波形跟踪与数值稳定性，传统间接接口在此步长下出现严重数值振荡或发散 | 消除1个时间步延迟，实现非迭代同步求解，在千微秒级步长下计算效率与稳定性显著优于传统间接接口方法 |
 
-
-
 ## 量化发现
 
 - 仿真步长可安全提升至1000~2000 µs量级，突破传统间接接口因一步延迟导致的步长限制
 - 彻底消除接口处的1个时间步延迟（Δt），实现模型与外部网络的严格同步求解
 - 采用非迭代求解架构，单次时间步计算复杂度与标准EMTP节点法一致，无额外迭代开销
 - 参数化函数通过离线查表获取，在线仅需矩阵运算与偏导数更新，计算负担极低
-
 
 ## 关键公式
 
@@ -169,11 +177,34 @@ $$$\mathbf{Z}_{abc} = [K(\theta_s)]^{-1} \mathbf{Z}_{qd} [K(\theta_s)]$$$
 
 *将同步旋转坐标系下的线性化阻抗子矩阵映射至三相静止坐标系，以便与外部交流网络直接拼接*
 
-
-
 ## 验证详情
 
 - **验证方式**: 离线电磁暂态仿真对比分析（基于节点分析法架构）
 - **测试系统**: 含任意交流电网（戴维南等效）与直流低通滤波器的通用三相AC-DC系统，核心为6脉冲晶闸管/二极管线换相整流器(LCR)
 - **仿真工具**: EMTP型节点分析仿真程序（如PSCAD/EMTDC、EMTP-RV等底层求解器架构）
 - **验证结果**: 验证表明所提直接接口法在1000~2000 µs大步长下保持高精度与数值稳定性，克服了传统间接接口因一步延迟导致的精度下降与失稳问题，适用于大规模电力电子系统的实时/离线EMT仿真。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Direct Interfacing of Parametric Average-Value Models of AC&#x2013;DC Converters for Nodal Analysis-Based Solution`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 节点分析法、参数化平均值建模、直接接口技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出PAVM直接接口方法，线性化接口方程并嵌入节点矩阵，消除传统一步延迟
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Models_of_ACDC_Converters_for_Nodal_Analysis-Based_Solution.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

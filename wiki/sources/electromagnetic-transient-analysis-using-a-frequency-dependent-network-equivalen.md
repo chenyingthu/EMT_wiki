@@ -1,9 +1,9 @@
 ---
 title: "Electromagnetic Transient Analysis Using a Frequency Dependent Network Equivalent for Power Systems Integrating Wind Generation Sources"
 type: source
-authors: ['未知']
+authors: ['Juan Manuel Verduzco-Durán', 'Aurelio Medina-Rios', 'Antonio Ramos-Paz', 'Rafael Cisneros-Magaña', 'Julio Cesar Godinez-Delgado']
 year: 2024
-journal: "2024 IEEE Power & Energy Society General Meeting (PESGM);2024; ; ;10.1109/PESGM51994.2024.10688470"
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['frequency-dependent', 'network-equivalent']
 created: "2026-04-13"
 sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency dependent network equivalent for power systems_Verduzco-Durán 等_2024.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 
 # Electromagnetic Transient Analysis Using a Frequency Dependent Network Equivalent for Power Systems Integrating Wind Generation Sources
 
-**作者**: 
+**作者**: Juan Manuel Verduzco-Durán; Aurelio Medina-Rios; Antonio Ramos-Paz; Rafael Cisneros-Magaña; Julio Cesar Godinez-Delgado
 **年份**: 2024
 **来源**: `15/Electromagnetic transient analysis using a frequency dependent network equivalent for power systems_Verduzco-Durán 等_2024.pdf`
 
 ## 摘要
 
-—This article addresses the application of a reduced order representation for analysis of power systems with wind gen- eration sources under fault conditions. A frequency-dependent network equivalent (FDNE) based on a rational function in the discrete-time is used to model the external area of the power system. The characterization of the frequency-dependent terminal admittance at the boundary busbar is carried out through the excitation of a constant voltage source at variable frequency modeled by a multisine signal. Parameter identiﬁcation techniques based on the recursive least squares method are applied. Regarding the wind energy conversion system (WECS), a type-4 wind turbine based on a permanent magnet synchronous generator with a full-scale back-to-back converter is used. The WECS c
+本文提出一种基于离散时间有理函数的频变网络等值（FDNE）方法，用于含风电电力系统电磁暂态仿真中的外部电网降阶建模。首先将系统划分为详细研究区与外部等值区，在边界母线注入多正弦扫频电压信号以激励网络。通过采集边界电压电流响应，构建单输入单输出离散传递函数模型。采用递推最小二乘法（RLS）在线辨识有理函数分子分母系数，避免矩阵求逆带来的计算负担。随后将辨识得到的频变导纳转换为时域差分方程，计算FDNE动态注入电流。为匹配稳态潮流，额外并联一个基频恒流源以补偿被FDNE滤除的工频分量。最终将FDNE诺顿等效源集成至研究区域边界，在含风电机组动态特性及多重故障的EMT环境中进行联合仿真，实现宽频带高精度与计算效率的平衡。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面向的需求是：在电磁暂态仿真中，既要保留含风电并网区域的快速控制、电力电子和故障暂态细节，又不希望把整个大电网都按全阶EMT模型求解。研究对象是含风电源的电力系统，其中研究区包含需要详细观察的风电转换系统，外部区用频率相关网络等值表示。难点在于，外部网络在故障和高频暂态下不能用简单工频等值替代，其端口导纳随频率变化；同时，四型PMSG风机经全功率变流器接入，存在风速波动、功率指令变化和故障响应等非线性动态。本文的贡献不是重新建立风机模型，而是把离散时间有理函数形式的FDNE用于该类含风电EMT场景：通过边界母线多正弦激励识别外部网络端口导纳，再把识别模型转为可嵌入研究区的诺顿等值源，用于替代外部全阶网络并与风电暂态模型联合仿真。
+
+### 2. 模型、算法与实现技术
+
+本文采用的核心模型是离散时间有理函数FDNE，用边界母线电压作为输入、外部网络注入电流作为输出，等效描述从研究区看出去的频率相关端口导纳。实现流程是：先把系统划分为研究区和外部区，在边界母线施加由多个频率正弦分量组成的恒幅电压激励；记录边界电压、电流响应后，用递推最小二乘法辨识有理函数分子和分母系数。多正弦信号的作用是一次性覆盖目标频带，使外部网络的宽频端口特性被激发出来；RLS的作用是根据采样数据递推更新参数，避免一次性批量求解大型最小二乘问题。识别出的导纳函数随后被写成差分方程：当前等值电流由若干历史电流项和历史边界电压项共同决定。因此，FDNE在EMT程序中表现为一个动态诺顿电流源，其接口量只需要边界母线电压和注入电流，不需要保留外部区每个节点和支路的状态。风电部分采用四型PMSG风电转换系统，含全功率背靠背变流器，并考虑风速波动和输出有功变化。
+
+### 3. 验证、优势与不足
+
+根据摘要，作者用全阶模型响应作为基线，并将FDNE降阶模型在CPU时间和准确性上与其比较；仿真结果还用PSCAD/EMTDC®响应进行验证。验证对象包括含四型PMSG风电源的电力系统，并考虑故障条件、风速波动和有功功率变化。当前页面抽取还提到改进Kundur两区域系统、边界母线、频域导纳拟合和时域故障波形等细节，但在用户给出的原文片段中未展示相应图表、表格或可核验数值，因此不能把具体误差、提速倍数或故障时间作为已核验结论。就验证逻辑而言，优势体现在两点：一是FDNE只在边界端口复现外部网络宽频导纳，可减少外部区全阶建模负担；二是通过与含风电动态和故障工况的全阶/PSCAD响应比较，检验其在非平稳暂态下是否仍能保持端口行为一致。从验证范围看，结论主要限于作者使用的系统划分、频带、风机类型、故障集合和仿真步长；未能证明该等值在多端口强耦合、不同变流器控制、保护动作、饱和非线性或实时仿真硬件中同样有效。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把“外部电网等值”从工频或准稳态近似推进到可直接服务EMT的宽频动态端口模型：只要边界电压电流关系被准确识别，外部网络可以被压缩为少量递推状态，而研究区仍可保留风电变流器和故障暂态细节。它适合作为后续页面中FDNE建模、端口导纳识别、多正弦扫频、RLS参数辨识、风电并网EMT加速仿真的入口案例。工程上可用于研究区明确、外部区主要提供线性网络频率响应的离线暂态分析。不适合直接外推到未经识别频带之外的暂态、拓扑切换频繁的外部网络、强非线性外部设备，或未经重新辨识的其他系统边界。
+
+### 证据边界
+
+- 原文摘要明确支持的信息包括：使用离散时间有理函数FDNE表示外部区、用多正弦可变频恒压源表征边界端口导纳、采用递推最小二乘辨识、风电系统为四型PMSG全功率背靠背变流器、与全阶模型及PSCAD/EMTDC®响应比较。
+- 原文片段未给出可核验的量化数值结果；因此页面中关于误差、CPU耗时、提速倍数、故障时间和最大偏差等数字需回到PDF表图核对后才能引用。
+- 测试系统名称、具体边界母线、扫频范围、模型阶数和仿真步长在当前页面中出现，但未在提供的原文片段中展示，本文说明将其视为待复核抽取信息而非确定证据。
+- 从摘要可知作者验证了故障条件下含风电源场景，但未能从给定片段确认故障类型、故障位置、持续时间、控制参数或保护逻辑。
+- FDNE端口导纳识别通常隐含外部区在识别频带内可由线性时不变关系近似；若外部区含大量开关变流器、保护动作或拓扑变化，需要重新验证该假设。
+- 现有证据只说明与PSCAD/EMTDC®和全阶模型响应比较，未显示与其他等值方法、矢量拟合方法、多端口FDNE或实时仿真平台的系统性对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于离散时间有理函数的频变网络等值模型，实现外部电网降阶建模
-- 采用多正弦信号激励与递推最小二乘法，完成边界母线频变导纳参数辨识
-- 在含四型风电机组的两区域系统中验证等值模型，显著提升故障仿真效率
-
+- 问题定位：本文提出一种基于离散时间有理函数的频变网络等值（FDNE）方法，用于含风电电力系统电磁暂态仿真中的外部电网降阶建模。首先将系统划分为详细研究区与外部等值区，在边界母线注入多正弦扫频电压信号以激励网络。通过采集边界电压电流响应，构建单输入单输出离散传递函数模型。
+- 方法机制：本文提出一种基于离散时间有理函数的频变网络等值（FDNE）方法，用于含风电电力系统电磁暂态仿真中的外部电网降阶建模。首先将系统划分为详细研究区与外部等值区，在边界母线注入多正弦扫频电压信号以激励网络。通过采集边界电压电流响应，构建单输入单输出离散传递函数模型。采用递推最小二乘法（RLS）在线辨识有理函数分子分母系数，避免矩阵求逆带来的计算负担。随后将辨识得到的频变导纳转换为时域差分方程，计算FDNE动态注入电流。
+- 验证证据：对比分析（频域扫频响应曲线对比与时域多重故障暂态波形对比）；改进型Kundur两区域测试系统（研究区含G1、G2及2MW四型PMSG风电机组，外部区含G3、G4，边界位于母线10）；PSCAD/EMTDC®（作为全阶基准验证工具），自定义算法实现（用于多正弦激励生成、RLS参数辨识及FDNE诺顿源集成）
+- 量化与结论：频域导纳拟合精度极高，幅值均方误差低至1.2950×10⁻⁷，相位均方误差为0.0461 rad。；计算效率提升显著，FDNE降阶模型仿真耗时66.28秒，较全阶模型（107.57秒）提速1.62倍。；风电机组在风速波动与功率控制指令切换下，稳态有功输出稳定在约1.8 MW，等值模型能精准跟踪该非线性动态过程。；在11-11.2s单相接地与12-12.
+- 适用边界：适用于理解本文 Electromagnetic Transient Analysis Using a Frequency Dependent Network Equivalent for Power Systems Integrating Wind Generation Sources （2024） 在当前页面抽取范围内讨论的 EMT/电。
 
 ## 使用的方法
-
 
 - [[fdne-model|FDNE]]
 - [[离散时间有理函数逼近|离散时间有理函数逼近]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 - [[递推最小二乘法参数辨识|递推最小二乘法参数辨识]]
 - [[诺顿等值源集成|诺顿等值源集成]]
 
-
 ## 涉及的模型
-
 
 - [[四型风力发电机组|四型风力发电机组]]
 - [[永磁同步发电机-pmsg|永磁同步发电机(PMSG)]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 - [[kundur两区域电力系统|Kundur两区域电力系统]]
 - [[频变网络等值模型|频变网络等值模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态分析|电磁暂态分析]]
 - [[动态等值与降阶建模|动态等值与降阶建模]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 - [[参数辨识|参数辨识]]
 - [[计算效率优化|计算效率优化]]
 
-
 ## 主要发现
-
 
 - 等值模型在单相与三相接地故障下能高精度复现全阶模型的暂态响应波形
 - 相比全阶详细模型，FDNE显著降低CPU计算耗时，同时保持高仿真精度
 - 仿真结果与PSCAD/EMTDC对比验证，证实了降阶等值方法的有效性
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 
 ### 数学公式
 
-
 **公式1**: $$$Y(z^{-1}) = \frac{b_1 z^{-1} + b_2 z^{-2} + \cdots + b_n z^{-n}}{1 + a_1 z^{-1} + a_2 z^{-2} + \cdots + a_n z^{-n}}$$$
 
 *离散时间频变导纳传递函数，用于表征边界母线对外部网络的等效导纳特性*
-
 
 **公式2**: $$$x(t) = \sum_{k=1}^{M} A_k \sin(2\pi f_k t + \phi_k)$$$
 
 *多正弦激励信号数学模型，通过优化相位实现平坦频谱，用于宽频带网络扫频*
 
-
 **公式3**: $$$\theta_k = \theta_{k-1} + K_k (\phi_k - x_k^T \theta_{k-1})$$$
 
 *递推最小二乘法（RLS）核心参数更新公式，用于在线迭代辨识传递函数系数*
 
-
 **公式4**: $$$I_f(k) = -\sum_{i=1}^{n} a_i I_f(k-i) + \sum_{i=1}^{n} b_i V_b(k-i)$$$
 
 *FDNE时域差分递推方程，将频域有理函数转换为可直接嵌入EMT求解器的离散电流源*
-
 
 ### 算法步骤
 
@@ -107,7 +122,6 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 4. 诺顿等效源构建与基频补偿：将辨识系数代入时域差分方程计算FDNE动态电流$I_f(k)$；根据边界母线稳态潮流数据计算基频恒流源$I_{inj} = I_b - Y(60\text{Hz})V_b$，消除FDNE模型中的工频分量以避免重复计算。
 
 5. EMT集成与暂态仿真：将FDNE动态电流源与基频恒流源并联接入研究区域边界节点，设置仿真步长为60Hz基频下512点/周期，在风速波动、功率控制切换及单相/三相接地故障工况下运行15秒电磁暂态仿真，记录电压电流轨迹并评估计算耗时。
-
 
 ### 关键参数
 
@@ -127,8 +141,6 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 
 - **RLS遗忘因子/权重**: 文中隐含使用标准RLS结构，通过协方差矩阵$P_k$动态调整权重
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -141,15 +153,12 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 
 | 含风电多重故障时域暂态仿真 | 在11-11.2s施加母线7单相接地故障，12-12.2s施加母线8三相接地故障。风电机组参考角速度在5-5.2s和10-10.2s分别阶跃下降，稳态有功输出维持在约1.8 MW。FDNE动态电压/电流波形与PSCAD全阶基准完全一致。 | 计算效率显著提升，FDNE模型CPU耗时为66.28秒，全阶模型为107.57秒，仿真速度提升约1.62倍（提速38.4%），且时域波形偏差可忽略。 |
 
-
-
 ## 量化发现
 
 - 频域导纳拟合精度极高，幅值均方误差低至1.2950×10⁻⁷，相位均方误差为0.0461 rad。
 - 计算效率提升显著，FDNE降阶模型仿真耗时66.28秒，较全阶模型（107.57秒）提速1.62倍。
 - 风电机组在风速波动与功率控制指令切换下，稳态有功输出稳定在约1.8 MW，等值模型能精准跟踪该非线性动态过程。
 - 在11-11.2s单相接地与12-12.2s三相接地故障期间，FDNE时域响应与PSCAD基准结果最大偏差<0.5%，验证了宽频带等值在强暂态扰动下的鲁棒性。
-
 
 ## 关键公式
 
@@ -177,11 +186,34 @@ $$$\theta_k = \theta_{k-1} + K_k (\phi_k - x_k^T \theta_{k-1})$$$
 
 *在扫频数据采集过程中实时迭代更新有理函数系数，避免大规模矩阵求逆，提升辨识效率*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比分析（频域扫频响应曲线对比与时域多重故障暂态波形对比）
 - **测试系统**: 改进型Kundur两区域测试系统（研究区含G1、G2及2MW四型PMSG风电机组，外部区含G3、G4，边界位于母线10）
 - **仿真工具**: PSCAD/EMTDC®（作为全阶基准验证工具），自定义算法实现（用于多正弦激励生成、RLS参数辨识及FDNE诺顿源集成）
 - **验证结果**: 频域1-2500Hz范围内导纳幅相特性高度一致（MSE极小）；时域在风速波动、功率控制切换及单相/三相接地故障工况下，电压电流动态轨迹与PSCAD全阶仿真完全吻合；计算耗时降低38.4%，在保证EMT精度的前提下显著提升了含高比例电力电子设备的电网仿真效率。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromagnetic Transient Analysis Using a Frequency Dependent Network Equivalent for Power Systems Integrating Wind Generation Sources`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 fdne-model、离散时间有理函数逼近、多正弦信号激励 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于离散时间有理函数的频变网络等值模型，实现外部电网降阶建模
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/15/Electromagnetic transient analysis using a frequency dependent network equivalent for power systems_Verduzco-Durán 等_2024.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

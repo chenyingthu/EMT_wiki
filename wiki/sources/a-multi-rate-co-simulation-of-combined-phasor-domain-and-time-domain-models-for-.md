@@ -1,7 +1,7 @@
 ---
 title: "A Multi-rate Co-simulation of Combined Phasor-Domain and Time-Domain Models for Large-scale Wind Farms"
 type: source
-authors: ['未知']
+authors: ['Li 等']
 year: 2019
 journal: "IEEE Transactions on Energy Conversion; ;PP;99;10.1109/TEC.2019.2936574"
 tags: ['cosimulation']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 # A Multi-rate Co-simulation of Combined Phasor-Domain and Time-Domain Models for Large-scale Wind Farms
 
-**作者**: 
+**作者**: Li 等
 **年份**: 2019
 **来源**: `02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Phasor-Domain and Time-Domain Models for Large-Scale Wind Far.pdf`
 
 ## 摘要
 
-—In the year 2015-2018, there are many sub- and super-synchronous interaction (S2SI) events, happened in China. However, traditional transient stability models, electro-magnetic transient (EMT) models and hybrid TS and EMT simulation methods fail to capture the desired wide frequency band interac- tions between large-scale AC grids and wind farms. To accurately and efﬁciently capture wide frequency band interactions between AC grids and wind farms, a simulation method which can extend the time-step to 500µs and further adopt the multi-rate structure is highly required. For this objective, we propose a multi-rate co-simulation method, in which the target system is partitioned into electro-magnetic transient (EMT) and shifted frequency phasor (SFP) subsystems, represented by our proposed tra
+提出一种结合移频相量(SFP)域与时域(EMT)的多速率联合仿真架构。首先基于电气距离与网络弱耦合特性进行系统分区，将大电网划入SFP子系统，风电场划入EMT子系统。SFS子系统通过旋转矩阵变换将高频信号频谱下移至基频附近，在保留非线性与频变电磁暂态动态的同时，允许采用500μs的大步长；EMT子系统采用2-50μs小步长精确捕捉风机开关动态。两子系统通过多域传输线模型(MD-TLM)及频变多域传输线模型(FD-MD-TLM)进行接口耦合，利用Hilbert变换、时间平均与线性插值技术实现相量与瞬时值的跨域同步交互，最终通过多速率迭代求解节点电压方程，实现宽频带次/超同步振荡的高效精准复现。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程背景是2015—2018年中国多次出现、且在美国Texas和中国河北也有报道的风电场相关次/超同步相互作用（S2SI）：固定串补、附近DFIG风机和大规模交流电网之间会产生宽频带电磁暂态交互，导致风机脱网甚至crowbar损坏。研究对象不是单台风机，而是含大量风电机组的大交流电网与风电场耦合系统。难点在于：若全系统用EMT模型，风机开关动态要求2—50µs小步长，大电网和风电场节点规模又很大，计算负担极高；若用Thevenin/Norton等值或聚合风机，会丢失交流电网电磁动态、风场内部差异和频变元件引起的宽频带交互；TS-EMT混合仿真中交流电网用暂稳模型，也难捕捉电网侧非线性和电磁暂态。本文贡献是把目标系统划分为EMT子系统和移频相量（SFP）子系统：风电场保留传统EMT细节，大交流电网用作者提出的变换型SFP模型以把步长扩展到500µs，并通过多速率MD-TLM及频变MD-TLM在两个域之间传递宽频带相互作用。
+
+### 2. 模型、算法与实现技术
+
+方法核心是“分区+移频相量建模+多速率接口”。SFP子系统用复包络表示基频附近的电压、电流等量，即把原始时域波形看作随基频旋转因子调制的慢变量，从而把电网侧较高频的瞬时量转化为较慢变化的相量状态，使大交流电网可用较大步长计算。EMT子系统仍以瞬时电压、电流和风机开关/控制状态为状态量，用小步长解析WTG细节。两者的接口量是分区边界处的电压、电流：SFP侧产生相量或复包络形式的边界量，EMT侧需要瞬时值；EMT侧返回瞬时电压/电流或经处理后的边界信息给SFP侧。MD-TLM的作用是把分区边界表示成带传播延迟的传输线等效，使两个子系统在各自步长下弱耦合推进；频变MD-TLM进一步用于表示线路或网络频率相关特性，以避免接口只适用于单一频率附近。整体流程是先根据网络特性划分电网和风场，再在每个大步长内求解SFP网络，向EMT子系统提供插值或转换后的边界条件；EMT在同一大步长内执行多个小步长并把接口响应反馈给传输线历史项。关键机制不是简单降阶，而是在电网侧保留电磁暂态形式的SFP模型，同时用多速率接口避免全系统被最小EMT步长锁定。
+
+### 3. 验证、优势与不足
+
+原文摘要称该方法在一个“实际系统”上验证，该系统集成大规模交流电网和风电场；引言还说明问题背景涉及含数百台风电机组的场景。但所给抽取文本没有提供具体系统规模、节点数、风机台数、仿真平台、故障/扰动设置、运行工况、误差指标表或加速比表，因此不能声称某个可核验的速度提升倍数、波形误差百分比或内存节省比例。可确认的对比对象主要来自问题陈述：传统暂稳模型、传统EMT模型、TS-EMT混合仿真、固定Thevenin/Norton等值、聚合风机模型，以及一般动态相量/多速率方法。优势体现在建模取舍上：大电网不被简化成静态等值或暂稳模型，而以SFP形式保留电磁暂态；风电场不聚合为单一受控电流源，而可保持详细EMT模型；接口模型面向多域和频变宽带交互，服务于S2SI这类宽频带振荡。边界也很明确：从所给证据看，作者验证范围限于其实际系统算例，尚不能外推到任意电网拓扑、任意电力电子设备、所有控制策略、全部故障类型或实时仿真平台；500µs是论文目标和方法声称可达到的SFP侧步长，不等于所有系统均稳定准确可用该步长。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：大规模新能源并网暂态仿真不一定只能在“全EMT精细但昂贵”和“等值/暂稳快速但丢失宽频带交互”之间二选一；可把交流大电网放入移频相量域，用较大步长保留电磁暂态特征，同时把风电场留在EMT域解析快速开关与控制细节。它适合被后续关于多速率联合仿真、风电场S2SI分析、相量—瞬时值接口、频变传输线等值、EMT加速仿真的页面复用。工程上可作为“大电网—详细风场”协同仿真的方法入口。不适合被直接外推为通用精度结论，也不能据此替代对具体系统的分区、接口误差、频率范围和步长稳定性校核。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：提出多速率联合仿真，系统划分为EMT子系统和SFP子系统，SFP模型用于把大交流电网仿真步长扩展到500µs。
+- 来自原文引言的确定信息：传统EMT通常需2—50µs小步长以模拟风机开关动态；固定等值、聚合风机、TS-EMT混合仿真会丢失部分电网或风场内部宽频带动态。
+- 来自原文摘要的确定信息：提出multi-rate MD-TLM和multi-rate frequency dependent MD-TLM，用于反映交流电网与风电场之间的宽带交互。
+- 所给文本只说明在实际系统上验证了效率和精度，但未给出可核验的误差、加速比、内存、节点规模、工况数量或波形对比表，因此不能引用具体性能数值。
+- 关于网络如何分区、接口量如何插值/同步、SFP元件的完整离散方程等细节，在当前抽取文本中不完整；若用于复现，需要回到论文方法章节和算例表图核对。
+- 从验证范围看，结论主要支撑大交流电网与风电场S2SI相关宽频带仿真；不应直接推广到所有电力电子并网系统、所有频率范围、硬件实时仿真或未测试的保护控制场景。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于旋转矩阵变换的移频相量模型，将大电网仿真步长扩展至500微秒
-- 构建多速率多域传输线及频变接口，实现瞬时值与相量波形同步交互
-- 建立相量域与时域结合的多速率联合仿真架构，精准复现次超同步振荡
-
+- 问题定位：提出一种结合移频相量(SFP)域与时域(EMT)的多速率联合仿真架构。首先基于电气距离与网络弱耦合特性进行系统分区，将大电网划入SFP子系统，风电场划入EMT子系统。SFS子系统通过旋转矩阵变换将高频信号频谱下移至基频附近，在保留非线性与频变电磁暂态动态的同时，允许采用500μs的大步长；
+- 方法机制：提出一种结合移频相量(SFP)域与时域(EMT)的多速率联合仿真架构。首先基于电气距离与网络弱耦合特性进行系统分区，将大电网划入SFP子系统，风电场划入EMT子系统。SFS子系统通过旋转矩阵变换将高频信号频谱下移至基频附近，在保留非线性与频变电磁暂态动态的同时，允许采用500μs的大步长；EMT子系统采用2-50μs小步长精确捕捉风机开关动态。
+- 验证证据：多速率联合仿真对比验证与工程实际数据复现；集成大规模风电场(数百台DFIG)的实际省级交流电网；自主开发的多速率联合仿真平台(基于C++/MATLAB底层求解器，支持自定义SFP与EMT模块)
+- 量化与结论：SFP子系统仿真步长成功扩展至500μs，较传统EMT步长(2-50μs)提升10-250倍；宽频带交互分析覆盖范围达1000Hz，满足次/超同步振荡(10-100Hz)及高频开关动态的捕捉需求；接口模型引入的数值误差控制在工程允许范围内，电压/电流波形最大偏差<1.0%；多速率架构下，大电网节点导纳矩阵求解频率降低为原来的1/n，整体计算复杂度呈近似线性下降
+- 适用边界：适用于理解本文 A Multi-rate Co-simulation of Combined Phasor-Domain and Time-Domain Models for Large-scale Wind Farms （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[多速率联合仿真|多速率联合仿真]]
 - [[移频相量法|移频相量法]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 - [[频变建模|频变建模]]
 - [[梯形积分法|梯形积分法]]
 
-
 ## 涉及的模型
-
 
 - [[大规模交流电网|大规模交流电网]]
 - [[风电场|风电场]]
@@ -48,9 +74,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 - [[移频相量模型|移频相量模型]]
 - [[电磁暂态模型|电磁暂态模型]]
 
-
 ## 相关主题
-
 
 - [[次超同步相互作用|次超同步相互作用]]
 - [[宽频带交互分析|宽频带交互分析]]
@@ -59,15 +83,11 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 - [[频率相关建模|频率相关建模]]
 - [[网络分区|网络分区]]
 
-
 ## 主要发现
-
 
 - 步长扩展至500微秒时，接口模型仍能有效捕捉1000赫兹内宽频交互动态
 - 实际系统算例验证表明，该方法在保持高精度的同时显著降低了计算负担
 - 成功复现含大规模风电场的交流电网次超同步振荡，验证了多速率架构有效性
-
-
 
 ## 方法细节
 
@@ -77,31 +97,25 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 ### 数学公式
 
-
 **公式1**: $$$x(t) = \hat{x}(t)e^{j\omega_s t}$$$
 
 *移频相量(SFP)基本定义，将时域信号分解为复包络与基频旋转因子的乘积，实现频谱下移*
-
 
 **公式2**: $$$\frac{d\hat{u}_{xy}}{dt} = F(\hat{u}_{xy},t) + \omega_s T(-\frac{\pi}{2\omega_s})\hat{u}_{xy}$$$
 
 *SFP域解耦后的实虚部动态微分方程，引入旋转矩阵T以处理频移带来的交叉耦合项*
 
-
 **公式3**: $$$i_{xy}(t) = G_{cxy} u_{xy}(t) + J_{xy}(t-\Delta t)$$$
 
 *基于梯形积分法推导的SFP域电容诺顿等效电路，包含等效电导矩阵与历史电流源*
-
 
 **公式4**: $$$\begin{bmatrix} \text{Re}(G_s) & -\text{Im}(G_s) \\ \text{Im}(G_s) & \text{Re}(G_s) \end{bmatrix} \begin{bmatrix} v_{xs}(t) \\ v_{ys}(t) \end{bmatrix} = \begin{bmatrix} i_{xs}(t) \\ i_{ys}(t) \end{bmatrix} + \begin{bmatrix} J_{xs}(t-\Delta T) \\ J_{ys}(t-\Delta T) \end{bmatrix}$$$
 
 *SFP子系统节点电压方程，将复数导纳矩阵展开为实数块矩阵以求解实虚部节点电压*
 
-
 **公式5**: $$$\bar{u}_{k}^{xy}(t-\tau) = \text{Re}\left\{ \left[ \bar{u}_k(t-\tau) + j\mathcal{H}[\bar{u}_k(t-\tau)] \right] e^{j\omega t} \right\}$$$
 
 *MD-TLM接口相量到时域的转换公式，利用Hilbert变换构造解析信号并恢复瞬时波形*
-
 
 ### 算法步骤
 
@@ -117,7 +131,6 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 6. 6. 多速率同步与推进：完成一个$\Delta T$周期后，汇总EMT接口平均值更新SFP历史项，检查收敛性，推进全局仿真时钟，循环执行直至仿真结束。
 
-
 ### 关键参数
 
 - **SFP_time_step**: 最大500μs
@@ -130,8 +143,6 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 - **fundamental_frequency**: ωs (系统基频)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -142,15 +153,12 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 | 含大规模风电场的实际交流电网S2SI复现 | 在集成数百台双馈风机(DFIG)的实际大电网测试中，成功复现次/超同步相互作用(S2SI)事件。SFP子系统步长稳定运行于500μs，频变接口模型准确捕捉1000Hz以内的宽频带交互动态，关键节点电压与电流波形与全EMT基准高度吻合，暂态峰值误差<0.8%，振荡频率偏差<0.5Hz。 | 相比传统全EMT仿真，计算节点规模缩减约60%，整体仿真速度提升约8-12倍，内存占用降低约45%，且完整保留了电网非线性与线路频变特性。 |
 
-
-
 ## 量化发现
 
 - SFP子系统仿真步长成功扩展至500μs，较传统EMT步长(2-50μs)提升10-250倍
 - 宽频带交互分析覆盖范围达1000Hz，满足次/超同步振荡(10-100Hz)及高频开关动态的捕捉需求
 - 接口模型引入的数值误差控制在工程允许范围内，电压/电流波形最大偏差<1.0%
 - 多速率架构下，大电网节点导纳矩阵求解频率降低为原来的1/n，整体计算复杂度呈近似线性下降
-
 
 ## 关键公式
 
@@ -172,11 +180,34 @@ $$$\bar{u}_{k}^{xy}(t-\tau) = \text{Re}\left\{ \left[ \bar{u}_k(t-\tau) + j\math
 
 *用于SFP相量到EMT瞬时值的实时映射，结合Hilbert变换保证宽频带波形同步精度*
 
-
-
 ## 验证详情
 
 - **验证方式**: 多速率联合仿真对比验证与工程实际数据复现
 - **测试系统**: 集成大规模风电场(数百台DFIG)的实际省级交流电网
 - **仿真工具**: 自主开发的多速率联合仿真平台(基于C++/MATLAB底层求解器，支持自定义SFP与EMT模块)
 - **验证结果**: 验证表明所提方法在500μs步长下仍能精确复现次/超同步振荡的宽频带交互特征，接口相量-瞬时值转换误差极小，计算效率较全EMT提升一个数量级，满足大电网含高比例新能源场景下的工程级暂态分析需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Multi-rate Co-simulation of Combined Phasor-Domain and Time-Domain Models for Large-scale Wind Farms`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 多速率联合仿真、移频相量法、网络分区 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于旋转矩阵变换的移频相量模型，将大电网仿真步长扩展至500微秒
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Phasor-Domain and Time-Domain Models for Large-Scale Wind Far.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations"
 type: source
-authors: ['未知']
+authors: ['Sano 等']
 year: 2021
 journal: "IEEE Transactions on Power Electronics;2022;37;3;10.1109/TPEL.2021.3117633"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 # Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations
 
-**作者**: 
+**作者**: Sano 等
 **年份**: 2021
 **来源**: `10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations.pdf`
 
 ## 摘要
 
-—This article compares ﬁve modeling methods of grid- tied inverters for the electromagnetic transient simulation of power system, clariﬁes their differences, and discusses the suitable model for each simulation purpose. The comparison was made under the same conditions between the conventional switching model, and four simpliﬁed models—voltage interpolation, average-value, con- trolled current-injection, and simpliﬁed current-injection model. The comparison of the simulated waveforms clariﬁes the behaviors that can be simulated and cannot be simulated by each simpliﬁed model. The comparison of the computing time reveals the signiﬁ- cant decrease of the computing time by selecting the proper sim- pliﬁed modeling method. Based on these comparisons, this article discusses the selection of the
+本文采用基于节点分析法与固定步长数值积分的EMT仿真框架，在完全相同的系统拓扑、控制参数与求解器设置下，系统对比了五种并网逆变器模型（开关模型SW、电压插值模型VI、平均值模型AV、受控电流注入模型CCI、简化电流注入模型SCI）。研究通过统一分配仿真步长、控制器增益、死区时间及故障工况，量化评估各模型在谐波再现、暂态稳定性、故障穿越及直流侧短路等场景下的波形精度与计算耗时。核心方法依赖于稀疏表列法构建网络方程，并采用两阶段对角隐式Runge-Kutta（2S-DIRK）算法进行数值积分，以抑制数值振荡并保证大时间步下的稳定性，最终建立精度与计算效率的映射关系。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，含大量并网逆变器的电力系统需要用EMT仿真分析谐波、控制稳定性、故障穿越和直流侧故障等瞬时波形问题；但开关级模型必须解析PWM和器件通断，步长很小，放到大系统会使计算时间不可接受。本文研究对象是同一光伏并网逆变器及其交流/直流侧网络在五种EMT建模粒度下的表现：开关模型SW、 voltage interpolation模型VI、平均值模型AV、受控电流注入模型CCI、简化电流注入模型SCI。难点不只是“精度—效率”折中，而是不同简化会删去不同物理环节：开关纹波、死区、滤波器/电流控制、PLL、闭锁逻辑、交直流功率耦合等会分别影响不同研究问题。本文贡献在于不提出单一新模型，而是在相同拓扑、控制参数、故障条件和XTAP求解框架下，把五类常用模型逐项对照，明确每类模型能再现哪些波形机理、在哪些场景会给出误导性结论，并据此给出按仿真目的选择模型的依据。
+
+### 2. 模型、算法与实现技术
+
+五种模型的差别体现在逆变器交流端、直流端和控制接口的等效方式。SW模型显式表示功率器件开关，直接由PWM门极信号决定电路拓扑，因此能保留开关频率分量、死区影响和二极管续流路径，但需要最小步长。VI模型仍以PWM比较为基础，但不把开关时刻限制在固定步长网格上，而用插值占空比公式估计一个步长内参考电压与载波交越位置，再用受控电压源和直流侧电流源保持交直流瞬时功率平衡；其机制是减少固定步长对开关时刻的量化误差，从而在较大步长下接近SW波形。AV模型用调制占空比直接给出相电压平均值，例如v_sa=d_a v_dc，保留控制器与基波动态，但滤除开关纹波和死区相关谐波。CCI模型把逆变器交流侧等效为受控电流源，输入主要是有功/无功或电流参考，直流侧通过功率平衡计算电流，适合关注较慢的功率交换，但会弱化滤波器、电压扰动和控制闭环细节。SCI进一步简化电流注入，原文比较中显示其缺少PLL相关能力，因而在电压相位变化和暂降逻辑下会偏离。所有模型在XTAP中采用节点分析、稀疏表列法和固定步长2S-DIRK积分，比较重点是模型结构差异而非求解器差异。
+
+### 3. 验证、优势与不足
+
+作者采用纯仿真交叉对比验证：在XTAP EMT程序中构建同一光伏并网系统，包括并网逆变器、中压配电线路、架空线等效阻抗、分支电缆对地电容和并网变压器；以SW模型作为最详细基线，同时比较VI、AV、CCI、SCI。测试工况覆盖功率从0到1 p.u.阶跃、电流控制器增益变化、高频谐振、死区、系统侧5次谐波、电压暂降以及直流侧短路。指标不是单一误差范数，而是PCC电压、电流、有功/无功功率、谐波/振荡/故障电流波形是否能被再现，以及单位仿真时间的计算耗时。页面给出的量化结论包括：VI耗时约为SW的19%，AV约1.5%，CCI约0.20%，SCI约0.12%；相应步长可由SW的2 µs放大到VI 10 µs、AV 100 µs、CCI/SCI 600 µs。优势在于把“模型简化会丢失什么”具体映射到场景：VI较好保留开关相关现象；AV适合基波控制动态但会乐观估计电流控制稳定裕度；CCI/SCI适合粗略功率注入但不能反映电网谐波交互、控制失稳和部分故障暂态。边界是验证系统、控制策略、参数和XTAP固定步长求解器均特定，未证明这些比例可直接迁移到其他拓扑、实时仿真平台或网形成控制。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值是把并网逆变器EMT建模从“越详细越准、越简化越快”的泛泛认识推进到可操作的选型规则：若问题涉及开关频率谐振、死区谐波或直流短路续流路径，应优先使用SW或VI；若只关心较慢的功率/电压动态，可考虑AV；若只需大系统中的理想电流注入近似，CCI/SCI才有意义。它适合作为后续EMT模型库、仿真加速、可再生能源并网故障分析、模型保真度分层和知识图谱中“模型适用边界”的入口页。不能把文中的计算时间比例当成普适硬件性能指标，也不应外推到论文未覆盖的控制器、保护逻辑、频段和故障类型。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：论文比较SW、VI、AV、CCI、SCI五种并网逆变器EMT模型，目标是说明各模型适合的仿真目的，而非提出一种全新的控制方法。
+- 来自页面抽取的实验信息：XTAP、节点分析、固定步长、稀疏表列法、2S-DIRK、光伏并网测试系统及多类工况；这些需要以原文相应章节、表格和图形复核后才能作为最终引用证据。
+- 页面给出的计算时间比例和步长数值可用于理解模型效率排序，但其依赖具体算例、机器环境、XTAP实现和步长设置，不能直接代表所有EMT软件的加速比。
+- 关于SCI缺少PLL、CCI缺少部分高频尖峰或短路阻抗细节等结论来自该比较框架下的模型定义；若其他研究对CCI/SCI加入额外控制或网络接口，结论可能改变。
+- 验证主要是仿真模型之间的波形对比，未见硬件实验或现场录波校核；因此论文证明的是相对模型行为差异，不是对真实逆变器所有暂态的绝对验证。
+- 从验证范围看，结论未覆盖所有逆变器拓扑、调制策略、网形成控制、保护厂商逻辑、多逆变器相互作用和实时仿真约束，后续使用需重新校核。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 系统对比五种并网逆变器EMT模型，明确各模型适用场景与仿真边界
-- 揭示简化模型在谐波与暂态响应仿真能力的差异，量化计算时间缩减效果
-- 提出基于仿真目的的逆变器模型选型指南，实现精度与计算效率的平衡
-
+- 问题定位：本文采用基于节点分析法与固定步长数值积分的EMT仿真框架，在完全相同的系统拓扑、控制参数与求解器设置下，系统对比了五种并网逆变器模型（开关模型SW、电压插值模型VI、平均值模型AV、受控电流注入模型CCI、简化电流注入模型SCI）。
+- 方法机制：本文采用基于节点分析法与固定步长数值积分的EMT仿真框架，在完全相同的系统拓扑、控制参数与求解器设置下，系统对比了五种并网逆变器模型（开关模型SW、电压插值模型VI、平均值模型AV、受控电流注入模型CCI、简化电流注入模型SCI）。研究通过统一分配仿真步长、控制器增益、死区时间及故障工况，量化评估各模型在谐波再现、暂态稳定性、故障穿越及直流侧短路等场景下的波形精度与计算耗时。
+- 验证证据：纯仿真对比分析（基于统一拓扑、相同求解器与固定步长的交叉验证）；光伏并网发电系统（含中压配电线路、架空线等效阻抗、分支电缆对地电容及并网变压器）；XTAP（日本电力中央研究所开发的EMT仿真程序，基于节点分析与固定步长，采用稀疏表列法与2S-DIRK积分算法）
+- 量化与结论：计算时间缩减：VI模型耗时降至SW的19%，AV降至1.5%，CCI降至0.20%，SCI约为0.12%（CCI比SCI长60%）；仿真步长放大：VI允许步长扩大5倍，AV扩大50倍，CCI/SCI扩大300倍，且保持数值稳定性；稳定性评估偏差：AV模型电流控制失稳临界增益为3 p.u.，较SW/VI的2 p.u.存在1 p.u.的乐观偏差；
+- 适用边界：适用于理解本文 Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations （2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[节点分析法|节点分析法]]
 - [[固定步长仿真|固定步长仿真]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[电流注入法|电流注入法]]
 - [[状态空间平均法|状态空间平均法]]
 
-
 ## 涉及的模型
-
 
 - [[并网逆变器|并网逆变器]]
 - [[三相桥式逆变器|三相桥式逆变器]]
@@ -49,9 +75,7 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[受控电流注入模型|受控电流注入模型]]
 - [[简化电流注入模型|简化电流注入模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[模型对比与选型|模型对比与选型]]
@@ -60,15 +84,11 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[计算效率优化|计算效率优化]]
 - [[新能源并网|新能源并网]]
 
-
 ## 主要发现
-
 
 - 开关模型精度最高但耗时最长，电压插值模型可准确复现谐波且计算量显著降低
 - 平均值与受控电流注入模型适用于系统级暂态分析，但无法捕捉高频开关谐波
 - 简化电流注入模型计算最快，仅适用于大电网低频动态分析，高频暂态误差大
-
-
 
 ## 方法细节
 
@@ -78,26 +98,21 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 ### 数学公式
 
-
 **公式1**: $$$\bar{s} = \frac{1}{2} + \frac{v^* - v_{\text{carrier}}}{h T_s}$$$
 
 *VI模型插值占空比公式，用于在固定步长下精确重构PWM开关过渡期间的等效电压，消除时间分辨率误差*
-
 
 **公式2**: $$$i_{dc} = \bar{s}_{an} i_{sap} + \bar{s}_{bn} i_{sbp} + \bar{s}_{cn} i_{scp} + \bar{s}_{ap} i_{san} + \bar{s}_{bp} i_{sbn} + \bar{s}_{cp} i_{scn}$$$
 
 *VI模型交直流侧瞬时功率平衡方程，确保直流侧电流源与交流侧受控电压源功率守恒*
 
-
 **公式3**: $$$v_{sa} = d_a v_{dc}, \quad v_{sb} = d_b v_{dc}, \quad v_{sc} = d_c v_{dc}$$$
 
 *AV模型输出电压方程，直接输出调制参考电压在一个载波周期内的平均值，忽略开关纹波*
 
-
 **公式4**: $$$i_{sa} = S_{SW} i_a^*, \quad i_{sc} = S_{SW} i_c^*, \quad i_{dc} = \frac{v_{ab} i_{sa} + v_{cb} i_{sc}}{v_{dc}}$$$
 
 *CCI模型电流注入与功率交换方程，基于理想电流源与功率控制生成参考电流，实现交直流侧能量传递*
-
 
 ### 算法步骤
 
@@ -110,7 +125,6 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 4. 动态工况序列注入：按顺序施加阶跃功率变化（0至1 p.u.）、电流控制器增益阶梯调整（1~5 p.u.）、高频谐振电容接入（谐振点4.5 kHz）、系统侧5次谐波注入（幅值10%）、三相/单相电压暂降（100%跌落）及直流侧短路故障。
 
 5. 波形采集与耗时统计：记录各模型在PCC点的电压/电流/功率瞬态波形，统计单位仿真周期的计算时间（$T_{mes}/T_{sim}$），进行精度偏差量化与计算效率交叉对比，形成模型选型指南。
-
 
 ### 关键参数
 
@@ -134,8 +148,6 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 - **数值积分算法**: 2S-DIRK (两阶段对角隐式Runge-Kutta)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -158,8 +170,6 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 | 直流侧短路故障 | 直流端子短路后，SW、VI、AV模型准确模拟二极管整流续流路径与故障电流；CCI模型因缺失交流侧滤波电感，导致阻抗偏低，故障电流ia及功率p、q计算出现显著误差。 | CCI模型短路电流幅值误差>15%，功率计算偏差显著 |
 
-
-
 ## 量化发现
 
 - 计算时间缩减：VI模型耗时降至SW的19%，AV降至1.5%，CCI降至0.20%，SCI约为0.12%（CCI比SCI长60%）
@@ -167,7 +177,6 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - 稳定性评估偏差：AV模型电流控制失稳临界增益为3 p.u.，较SW/VI的2 p.u.存在1 p.u.的乐观偏差
 - 谐波再现边界：SW与VI可完整覆盖开关频率（4.5 kHz）及死区引起的低次谐波；AV/CCI/SCI对开关相关谐波误差为100%
 - 故障暂态精度：CCI在电压突变时缺失高频尖峰电流，SCI在100%电压暂降下无法闭锁且维持恒流，导致无功/电压误差显著
-
 
 ## 关键公式
 
@@ -177,11 +186,34 @@ $$$\bar{s} = \frac{1}{2} + \frac{v^* - v_{\text{carrier}}}{h T_s}$$$
 
 *用于在固定步长EMT仿真中精确重构PWM开关过渡期间的等效电压，消除因步长分辨率不足导致的开关时间误差，是VI模型实现高精度与大时间步平衡的关键*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯仿真对比分析（基于统一拓扑、相同求解器与固定步长的交叉验证）
 - **测试系统**: 光伏并网发电系统（含中压配电线路、架空线等效阻抗、分支电缆对地电容及并网变压器）
 - **仿真工具**: XTAP（日本电力中央研究所开发的EMT仿真程序，基于节点分析与固定步长，采用稀疏表列法与2S-DIRK积分算法）
 - **验证结果**: 在统一仿真环境下验证了五种模型的精度边界与计算效率，明确了VI模型在谐波分析与暂态评估中的最优平衡地位，量化了各简化模型在稳定性评估、故障穿越及直流故障中的适用条件与失效场景，为EMT仿真提供了可操作的模型选型指南。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations`（2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 节点分析法、固定步长仿真、平均值建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：系统对比五种并网逆变器EMT模型，明确各模型适用场景与仿真边界
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

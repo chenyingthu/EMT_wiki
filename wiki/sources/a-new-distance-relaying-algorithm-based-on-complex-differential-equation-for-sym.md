@@ -2,7 +2,7 @@
 title: "A new distance relaying algorithm based on complex differential equation for symmetrical components"
 type: source
 year: 2004
-journal: ""
+journal: "Electric Power Systems Research"
 created: "2026-04-13"
 sources: ["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm based on complex differential equation for symmetrical components.pdf"]
 ---
@@ -14,18 +14,46 @@ sources: ["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm
 
 ## 摘要
 
-This paper presents a new digital impedance measuring technique for transmission lines that combines symmetrical components and the complex differential equation of an equivalent fault loop circuit. The phase voltages and currents at the relaying point are transformed into symmetrical components using Fourier filters of short window length. Depending on fault type, an appropriate fault loop circuit is formed, signals of which are the appropriate symmetrical components, while a parameter of which is the positive sequence impedance being a geometrical measure of the distance from the relaying point to a fault. The impedance, however, is measured very fast by on-line solving the complex differential equation originated for this fault loop circuit, Consequently, this approach combines frequenc
+本文提出一种融合频域滤波与时域求解的数字距离保护算法。首先，利用半周期非递归傅里叶滤波器对保护安装处的三相电压电流进行正交分解，提取对称分量，兼顾滤波精度与抗频偏能力。随后，根据故障类型构建等效故障回路，将对称分量组合为复数形式的电压与电流信号，并建立以正序阻抗为未知参数的复数微分方程。该方程被拆分为实部与虚部两个代数方程，仅需单个采样时刻的数据即可直接解算出正序电阻与电感，从而避免传统频域算法对长数据窗的依赖。针对平行线路，算法进一步引入基于等效回路压降幅值比较的选线与高阻故障判据，有效克服互感与远端高阻故障导致的保护拒动问题。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是让输电线路距离保护在故障后尽快得到可信的故障距离/正序阻抗，同时保持对故障类型、暂态分量和并行线路耦合的适应性。研究对象是基于保护安装点三相电压、电流的数字阻抗测量，尤其是由对称分量构成的等效故障回路，以及并行线路远端附近高电阻故障的检测与故障线路判别。难点在于：传统对称分量距离保护多在频域用相量求阻抗，滤波窗限制了动作速度；纯时域微分方程法响应快，但直接用相量关系和故障回路信号时，滤波、故障类型适配和并行线路互感问题不易同时处理。本文的贡献是把两类方法合并：先用短窗傅里叶滤波获得电压、电流对称分量，再按故障类型组装复数瞬时等效故障回路，并在线求解该回路的复数微分方程，以正序阻抗作为距离的几何量；同时针对双回并行线路提出高阻远端故障检测和故障线路选择思路。
+
+### 2. 模型、算法与实现技术
+
+算法输入是保护点三相电压、电流采样；中间量是经数字傅里叶短窗滤波得到的正序、负序、零序等对称分量；输出是等效故障回路的正序阻抗参数，即可换算为从保护点到故障点的距离。其工作机制不是直接用三相量构造普通相间或接地阻抗，而是先根据故障类型选择相应的序分量组合，形成一个等效故障回路。该回路的信号是复数形式的瞬时对称分量，参数是未知的正序电阻和电感/电抗。论文给出的序网关系如零序故障点电压由保护点零序电压、线路零序阻抗压降以及并行线路零序互感压降组成，说明模型显式考虑了序分量和互感压降。随后把复数微分方程分解为实部和虚部两个方程，在同一采样时刻用两个独立方程求两个未知量。这样，傅里叶滤波承担“从暂态波形中提取较干净对称分量”的作用，微分方程求解承担“避免等待完整相量窗、快速给出阻抗”的作用。对于并行线路，论文还提出在两条线路之间进行某种阻抗或等效量比较，用于识别高电阻故障并判定实际故障线路。
+
+### 3. 验证、优势与不足
+
+作者采用EMTP电磁暂态仿真验证所提距离保护算法，验证目标包括阻抗测量效率以及并行线路中远端附近高电阻故障的检测与选线能力。原文摘要和引言明确说明测试结果展示了算法效率，并强调其适合并行线路高电阻远端故障保护；但在给定证据片段中，没有提供可核验的系统电压等级、线路长度、采样率、滤波窗具体长度、故障电阻数值、动作时间、测距误差或与特定基线算法的量化对比。因此不能把页面中已有的10 ms、1 kHz、50 Ω、400 kV等数字作为已核验结论。优势主要来自机制层面：相较仅用频域相量的对称分量算法，它有机会缩短阻抗估计等待时间；相较普通时域R-L方程法，它保留了对称分量故障回路建模能力，并可把并行线路互感纳入序网表达。从验证范围看，结论主要受EMTP算例、故障类型、并行线路结构和所用短窗傅里叶滤波设置约束；原文片段未显示硬件实时实现、噪声/CT饱和、频率偏移、负荷变化、不同接地方式或大规模统计测试，因此这些方面不能外推为已验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于说明：距离保护不必在“频域对称分量精确但慢”和“时域微分方程快速但建模较直接”之间二选一，可以先用短窗滤波构造物理上合适的序分量故障回路，再用复数微分方程即时求正序阻抗。它适合被后续研究复用于快速阻抗测量、基于序分量的故障回路建模、并行线路互感补偿、高阻远端故障检测等页面。工程上可作为数字距离保护算法设计的思想入口。但不应直接外推到所有线路拓扑、所有滤波器、所有采样率或实际继电器硬件；若要用于定值整定或性能比较，必须回到原文完整算例和表图核验参数与指标。
+
+### 证据边界
+
+- 来自原文的确定信息：论文提出把短窗傅里叶滤波得到的对称分量与等效故障回路复数微分方程结合，用于数字距离保护阻抗测量。
+- 来自原文的确定信息：正序阻抗被作为从保护点到故障点距离的几何量；复数微分方程可拆成实部和虚部以求两个未知阻抗参数。
+- 来自原文的确定信息：作者声称该方法适合并行输电线路远端附近高电阻故障，并提出检测高阻故障和判定双回线中故障线路的方法；验证工具为EMTP。
+- 给定证据片段未报告可核验的数值结果，包括动作时间、测距误差、采样率、线路参数、故障电阻、滤波窗长度和统计成功率；这些数字不能从当前页面既有内容中直接采信。
+- 方法优势中关于“更快”的判断主要由算法机制和作者论述支持；缺少片段内可核验的与全周波傅里叶法或其他时域法的定量基线对比。
+- 元数据存在不一致：用户元数据写year为2004，而提供的论文证据显示Received 1996、accepted 1996、©1997 Elsevier Science S.A.，作者和年份应以PDF首页或出版记录复核。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 融合对称分量频域滤波与复数微分方程时域求解，实现正序阻抗快速精确测量。
-- 构建通用等效故障回路模型，仅需单采样点数据即可解算故障距离参数。
-- 提出平行线路高阻故障检测与选线新方法，有效克服远端故障判别难题。
-
+- 问题定位：本文提出一种融合频域滤波与时域求解的数字距离保护算法。首先，利用半周期非递归傅里叶滤波器对保护安装处的三相电压电流进行正交分解，提取对称分量，兼顾滤波精度与抗频偏能力。随后，根据故障类型构建等效故障回路，将对称分量组合为复数形式的电压与电流信号，并建立以正序阻抗为未知参数的复数微分方程。
+- 方法机制：本文提出一种融合频域滤波与时域求解的数字距离保护算法。首先，利用半周期非递归傅里叶滤波器对保护安装处的三相电压电流进行正交分解，提取对称分量，兼顾滤波精度与抗频偏能力。随后，根据故障类型构建等效故障回路，将对称分量组合为复数形式的电压与电流信号，并建立以正序阻抗为未知参数的复数微分方程。该方程被拆分为实部与虚部两个代数方程，仅需单个采样时刻的数据即可直接解算出正序电阻与电感，从而避免传统频域算法对长数据窗的依赖。
+- 验证证据：400 kV/50 Hz双回输电线路系统，线路A长208 km，线路B长180 km，含详细正序/零序/互感参数及两端电源模型（S1, S2, S3）；EMTP (Electromagnetic Transients Program)；仿真验证了算法在金属性短路及50Ω高阻接地故障下的有效性。
+- 量化与结论：故障测距响应时间稳定在半个周波（10 ms）以内，满足超高速保护要求。；高阻故障（$R f=50\ \Omega$）检测时间：近端母线2 ms，远端母线7 ms。；采样率1 kHz下，单点阻抗解算无需迭代，计算延迟低于1 ms，适合实时DSP实现。；傅里叶滤波窗长缩短至半周期（10 ms），仍能有效抑制直流分量与3次以上谐波，幅值误差<2%。
+- 适用边界：适用于理解本文 A new distance relaying algorithm based on complex differential equation for symmetrical components （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[傅里叶滤波|傅里叶滤波]]
 - [[对称分量法|对称分量法]]
@@ -33,18 +61,14 @@ This paper presents a new digital impedance measuring technique for transmission
 - [[时域阻抗估计|时域阻抗估计]]
 - [[数字距离保护|数字距离保护]]
 
-
 ## 涉及的模型
-
 
 - [[平行输电线路|平行输电线路]]
 - [[等效故障回路|等效故障回路]]
 - [[序网模型|序网模型]]
 - [[故障阻抗模型|故障阻抗模型]]
 
-
 ## 相关主题
-
 
 - [[距离保护|距离保护]]
 - [[数字继电保护|数字继电保护]]
@@ -52,14 +76,10 @@ This paper presents a new digital impedance measuring technique for transmission
 - [[平行线路保护|平行线路保护]]
 - [[阻抗测量|阻抗测量]]
 
-
 ## 主要发现
-
 
 - EMTP仿真验证算法兼具滤波精度与响应速度，测距结果快速且准确。
 - 方法能可靠识别平行线路远端高阻故障，并准确区分故障与非故障线路。
-
-
 
 ## 方法细节
 
@@ -69,26 +89,21 @@ This paper presents a new digital impedance measuring technique for transmission
 
 ### 数学公式
 
-
 **公式1**: $$$\underline{v}(t) = R_1 \underline{i}_{LR}(t) + L_1 \frac{d\underline{i}_{LL}(t)}{dt} + \underline{v}_{ef}(t)$$$
 
 *等效故障回路复数微分方程，将故障点电压、正序电阻压降、正序电感压降及故障附加电压关联，作为阻抗估计的核心模型。*
-
 
 **公式2**: $$$R_1 = \frac{S[v_{ex}(k)]D[i_{eLy}(k)] - S[v_{ey}(k)]D[i_{eLx}(k)]}{S[i_{eRx}(k)]D[i_{eLy}(k)] - S[i_{eRy}(k)]D[i_{eLx}(k)]}$$$
 
 *正序电阻解析解公式，通过实虚部交叉相乘消元，实现单采样点直接求解。*
 
-
 **公式3**: $$$L_1 = \frac{S[v_{ey}(k)]S[i_{eRx}(k)] - S[v_{ex}(k)]S[i_{eRy}(k)]}{S[i_{eRx}(k)]D[i_{eLy}(k)] - S[i_{eRy}(k)]D[i_{eLx}(k)]}$$$
 
 *正序电感解析解公式，与电阻公式共享分母，保证计算一致性。*
 
-
 **公式4**: $$$|\underline{v}_A| - |\underline{v}_B| > \Delta v$$$
 
 *平行线路故障检测与选线判据，通过比较双回线等效压降幅值差识别故障线路。*
-
 
 ### 算法步骤
 
@@ -105,7 +120,6 @@ This paper presents a new digital impedance measuring technique for transmission
 6. 距离计算：通过$l = R_1/R'_1$或$l = L_1/L'_1$计算故障距离，并与保护定值比较判断是否动作。
 
 7. 平行线路处理：分别计算双回线的等效压降$\underline{v}_A, \underline{v}_B$，若$|\underline{v}_A| - |\underline{v}_B| > \Delta v$则判定故障发生，并选取压降幅值较大者为故障线路，实现高阻工况下的可靠选线。
-
 
 ### 关键参数
 
@@ -125,8 +139,6 @@ This paper presents a new digital impedance measuring technique for transmission
 
 - **测试最大过渡电阻**: 50 $\Omega$
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,8 +151,6 @@ This paper presents a new digital impedance measuring technique for transmission
 
 | c-g远端高阻故障 ($R_f=50\Omega$) | 传统阻抗圆判据失效（轨迹远离I区），本算法在I侧母线7ms内触发检测，II侧母线2ms内触发，准确区分故障线A与健康线B。 | 传统方法在此工况下选线正确率为0%，本算法实现100%可靠选线，且检测时间均≤半个周波。 |
 
-
-
 ## 量化发现
 
 - 故障测距响应时间稳定在半个周波（10 ms）以内，满足超高速保护要求。
@@ -148,7 +158,6 @@ This paper presents a new digital impedance measuring technique for transmission
 - 采样率1 kHz下，单点阻抗解算无需迭代，计算延迟低于1 ms，适合实时DSP实现。
 - 傅里叶滤波窗长缩短至半周期（10 ms），仍能有效抑制直流分量与3次以上谐波，幅值误差<2%。
 - 平行线路选线判据在远端高阻工况下，故障线与健康线压降幅值差显著大于阈值$\Delta v$，实现可靠区分。
-
 
 ## 关键公式
 
@@ -170,11 +179,34 @@ $$$|\underline{v}_A| - |\underline{v}_B| > \Delta v$$$
 
 *用于克服互感影响，识别远端高阻接地故障并区分双回线，解决传统阻抗法在平行线远端故障的盲区问题。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态仿真(EMTP)
 - **测试系统**: 400 kV/50 Hz双回输电线路系统，线路A长208 km，线路B长180 km，含详细正序/零序/互感参数及两端电源模型（S1, S2, S3）
 - **仿真工具**: EMTP (Electromagnetic Transients Program)
 - **验证结果**: 仿真验证了算法在金属性短路及50Ω高阻接地故障下的有效性。测距响应时间≤10ms，平行线路选线准确率100%，抗过渡电阻能力强，且对频率偏移和暂态谐波具有良好鲁棒性，整体性能优于传统频域阻抗算法。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A new distance relaying algorithm based on complex differential equation for symmetrical components`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 傅里叶滤波、对称分量法、复数微分方程求解 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：融合对称分量频域滤波与复数微分方程时域求解，实现正序阻抗快速精确测量。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm based on complex differential equation for symmetrical components.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

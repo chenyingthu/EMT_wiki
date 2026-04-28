@@ -3,7 +3,7 @@ title: "Parallelization of EMT simulations for integration of inverter-based res
 type: source
 authors: ['M. Ouafi']
 year: 2023
-journal: "Electric Power Systems Research, 223 (2023) 109641. doi:10.1016/j.epsr.2023.109641"
+journal: "Electric Power Systems Research"
 tags: ['ibg']
 created: "2026-04-13"
 sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for integration of inverter-based resources.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 
 ## 摘要
 
-0378-7796/© 2023 Elsevier B.V. All rights reserved. Parallelization of EMT simulations for integration of M. Ouafi a, J. Mahseredjian b, J. Peralta c, H. Gras d, S. Denneti`ere a,*, B. Bruned a This paper presents a co-simulation tool to link multiple instances of an electromagnetic transient (EMT) simulation tool for parallel and fast computations. The tool exploits the propagation delays of transmission lines
+基于FMI（Functional Mock-up Interface）标准的主从式协同仿真架构，利用传输线/电缆模型（TLM）的自然传播延迟将大型电网解耦为多个子网络。每个子网络作为独立的EMT仿真实例（Slave）在独立核心上并行求解，通过基于信号量（semaphores）的异步通信机制和双缓冲（double-buffer）技术实现无冲突数据交换。支持多速率仿真，允许不同子网络根据模型特性采用不同积分步长（如详细IGBT用10μs，平均值模型用50μs）。通过DLL接口实现，无需修改底层EMT仿真代码，支持从潮流解自动初始化，并可自动插入单时间步延迟的stubline实现无天然线路位置的解耦。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自高比例风电、光伏等IBR接入后的大电网EMT分析：系统级网络需要保留电磁暂态精度，而场站内电力电子、控制系统和制造商DLL模型又使计算量急剧增加。研究对象不是单个变流器模型，而是“含大量IBR集群的大规模电网”如何被拆成多个可并行求解的EMT子网络。难点在于：EMT步长很小，TLM接口每个时间点都要交换历史量；网络方程和控制方程都应随子网并行，而不能只并行矩阵求解；详细IGBT模型与平均值模型还可能需要不同积分步长。本文贡献是把基于传输线/电缆传播延迟的自然解耦与FMI主从协同仿真结合，用DLL接口连接多个EMT实例，使每个子网在独立核心上求解完整网络和控制方程；同时加入信号量同步、双缓冲通信、多速率步长和基于潮流结果的自动初始化。相对需要修改EMT求解器内部代码的任意切割或补偿类方法，本文强调不改底层EMT软件代码，并面向大规模IBR场景自动化并行化。
+
+### 2. 模型、算法与实现技术
+
+核心模型是TLM解耦接口：在传输线或电缆两端，当前端口电流可由本端电压和对端延迟一个传播时间的历史量表示，因此子网在同一时间步内不需要直接求解对端未知量。接口交换的主要量是TLM两端的历史电流源、端口电压/电流等历史信息；输入是各子网本地网络、控制模型和潮流初始化结果，输出是并行推进后的EMT时域响应。实现上，FMI用于把多个EMT软件实例组织成master-slave通信结构；每个实例求解自己的MANA网络方程和控制方程。信号量承担同步原语作用：一方计算完成并写入共享数据后释放信号，另一方等待数据就绪后读取，避免无序访问。双缓冲机制用两个通信缓冲区交替读写，防止某一实例覆盖另一实例尚未读取的数据，从而保证异步并行通信的数据完整性。多速率机制允许不同子网采用不同积分步长，例如详细开关模型可用更小步长，平均值模型可用较大步长，并在通信点进行协调。若没有天然TLM可用，页面称可插入单时间步延迟的stubline进行解耦，但其误差影响需要结合原文验证场景理解。
+
+### 3. 验证、优势与不足
+
+作者在EMTP®中实现该FMI并行协同仿真框架，并声明方法可通过DLL接口迁移到其他EMT类工具。验证对象包括一个含详细风电场模型的Network-1以及智利电网IBR集成案例。页面给出的Network-1信息包括：4个300 MVA风电场、25台同步发电机、37台三相变压器、105个负荷、791个电气节点、8016个控制图块和1244×1244的MANA矩阵；其中一个DFIG风电场采用详细IGBT模型，页面称其步长为10 μs，其余平均值模型可用50 μs，从而体现多速率协同的用途。验证重点是并行子网求解是否能保持与TLM解耦一致的EMT结果、详细电力电子模型能否嵌入系统级仿真、通信机制是否避免数据竞争、潮流初始化是否支持自动启动。优势主要在工程实现层面：不修改EMT求解器内核，网络和控制系统随子网一起并行，支持多实例和多速率，适合IBR集群仿真。边界是：所给材料未提供可核验的加速比、误差曲线或硬件配置；“without approximations”应理解为利用已有TLM传播延迟的精确解耦，不应推广到所有任意切割位置；stubline单步延迟的影响也不能脱离具体系统和步长泛化。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：大规模IBR的EMT加速不一定要重写求解器内核，也不必只并行线性网络矩阵；如果系统中存在可用的传输线/电缆延迟，可把它们作为物理一致的通信边界，让完整子网实例并行运行，并用FMI、信号量和双缓冲解决工程软件之间的数据交换问题。它适合被后续关于EMT协同仿真、TLM分区、多速率IBR建模、制造商DLL接入和大电网离线加速的页面复用。它不适合作为任意拓扑无误差分割、实时仿真性能保证、所有控制策略稳定性或普遍加速比的证据；这些需要额外实验支持。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：方法使用TLM传播延迟进行子网解耦，采用FMI主从协同仿真、信号量通信、多速率选项，并用潮流结果自动初始化接口。
+- 来自当前页面整理的信息：Network-1的节点数、控制图块数、MANA矩阵规模、风电场和设备构成，以及10 μs/50 μs步长设置；这些数值应在原文表图中复核后再作为最终引用。
+- 原文材料明确说明实现平台为EMTP®，并称可通过DLL接口适配其他EMT工具；但跨软件可移植性在所给材料中没有看到多工具实测对比。
+- 所给材料未报告可核验的加速比、运行时间、CPU核心数、通信开销或误差范数，因此不能用该页支撑定量性能优劣结论。
+- “无近似”只对利用传输线/电缆自然传播延迟的TLM解耦成立；对自动插入stubline的场景，页面仅称误差不显著，缺少可核验的误差边界和适用条件。
+- 验证集中在页面列出的Network-1和智利电网IBR案例；从验证范围看，不能外推到未测试的故障类型、弱网极端控制交互、实时仿真约束或任意规模系统。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于FMI与信号量的多实例协同仿真架构，实现子网络无近似并行求解
-- 引入双缓冲通信机制与多速率选项，保障异步数据完整性并支持变步长计算
-- 开发免改底层代码的DLL接口方案，实现子网自动划分与潮流自动初始化
-
+- 问题定位：基于FMI（Functional Mock-up Interface）标准的主从式协同仿真架构，利用传输线/电缆模型（TLM）的自然传播延迟将大型电网解耦为多个子网络。
+- 方法机制：基于FMI（Functional Mock-up Interface）标准的主从式协同仿真架构，利用传输线/电缆模型（TLM）的自然传播延迟将大型电网解耦为多个子网络。每个子网络作为独立的EMT仿真实例（Slave）在独立核心上并行求解，通过基于信号量（semaphores）的异步通信机制和双缓冲（double-buffer）技术实现无冲突数据交换。
+- 验证证据：仿真验证（基准对比及大规模实际系统测试），验证无近似误差（without approximations）的并行求解；Network-1（基于文献[14]的现实电力系统，含详细制造商模型DLL的风电场）和智利电网（实际运行的大规模IBR集成电网）；EMTP®（实现平台），方法本身软件无关（software agnostic），可通过DLL接口适配其他EMT工具
+- 量化与结论：详细DFIG风电场模型（WP DFIG1）要求时间步长$\Delta t = 10\mu s\Delta t = 50\mu s$，多速率机制允许两者相差5倍步长并行运行；Network-1测试系统的MANA矩阵规模为1244×1244，包含791个电气节点和8016个控制图块；
+- 适用边界：适用于理解本文 Parallelization of EMT simulations for integration of inverter-based resources （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 协同仿真、并行计算、多速率仿真 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[协同仿真|协同仿真]]
 - [[并行计算|并行计算]]
@@ -39,9 +67,7 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 - [[双缓冲通信|双缓冲通信]]
 - [[潮流初始化|潮流初始化]]
 
-
 ## 涉及的模型
-
 
 - [[ibr|IBR]]
 - [[风电场|风电场]]
@@ -51,9 +77,7 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 - [[igbt变流器|IGBT变流器]]
 - [[详细电路模型|详细电路模型]]
 
-
 ## 相关主题
-
 
 - [[并行计算|并行计算]]
 - [[协同仿真|协同仿真]]
@@ -62,15 +86,11 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 - [[仿真加速|仿真加速]]
 - [[多速率仿真|多速率仿真]]
 
-
 ## 主要发现
-
 
 - 智利电网大规模IBR仿真验证了该方法在保持精度的同时显著缩短计算时间
 - 双缓冲与信号量机制有效避免了多线程数据冲突，实现了无近似误差的稳定并行求解
 - 潮流自动初始化大幅减少了非线性IGBT模型的启动耗时，提升了整体仿真效率
-
-
 
 ## 方法细节
 
@@ -80,21 +100,17 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 
 ### 数学公式
 
-
 **公式1**: $$$I_k(t) = -Y_c V_k(t-\tau) + I_k^{hist}(t-\tau)$$$
 
 *传输线模型（TLM）的诺顿等效方程，其中$Y_c$为特征导纳，$\tau$为传播延迟，$I_k^{hist}$为基于历史项的等效电流源，实现子网络间的电气解耦与并行化基础*
-
 
 **公式2**: $$$I_{master}(t) \leftrightarrow \text{Buffer}_{1/2} \leftrightarrow I_{slave}(t)$$$
 
 *双缓冲数据交换机制，通过Buffer 1和Buffer 2交替读写，确保异步并行计算中数据完整性，避免数据竞争（race condition）*
 
-
 **公式3**: $$$\Delta t_{slave} \neq \Delta t_{master}$$$
 
 *多速率仿真条件，允许子网采用与主网不同的时间步长，通过插值或同步点协调*
-
 
 ### 算法步骤
 
@@ -116,7 +132,6 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 
 9. 多速率协调：若启用多速率，各子网按本地步长（如10μs或50μs）推进，在通信点同步数据
 
-
 ### 关键参数
 
 - **时间步长（详细IGBT模型）**: 10 μs
@@ -135,8 +150,6 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 
 - **DLL数量（两子网案例）**: 8个（Master Device/Link ×2, Slave Device/Link ×2, 含双缓冲）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -149,8 +162,6 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 
 | 智利电网（Chilean Grid） | 大规模IBR（逆变器-based资源）集成场景的实际电网仿真，包含多个风电和光伏场站集群 | 首次在FMI-based并行架构上实现大规模IBR集成系统的EMT仿真，验证了方法在实际大规模系统中的可行性，建立了新的性能基准 |
 
-
-
 ## 量化发现
 
 - 详细DFIG风电场模型（WP_DFIG1）要求时间步长$\Delta t = 10\mu s$，而平均值模型可使用$\Delta t = 50\mu s$，多速率机制允许两者相差5倍步长并行运行
@@ -160,7 +171,6 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 - 自动潮流初始化显著减少非线性IGBT模型的启动耗时（minimizing simulation time during initialization）
 - 自动插入的stubline仅引入单时间步延迟，不会造成显著误差（does not cause significant errors）
 - 对详细IGBT变流器采用迭代求解器确保并行计算精度（accurate computations with nonlinear models）
-
 
 ## 关键公式
 
@@ -176,11 +186,34 @@ $$$\text{Wait}(S), \quad \text{Release}(S)$$$
 
 *主从进程间低级别同步机制，Master执行Wait等待Slave完成计算，Slave执行Release通知数据就绪，确保异步并行时序正确性*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真验证（基准对比及大规模实际系统测试），验证无近似误差（without approximations）的并行求解
 - **测试系统**: Network-1（基于文献[14]的现实电力系统，含详细制造商模型DLL的风电场）和智利电网（实际运行的大规模IBR集成电网）
 - **仿真工具**: EMTP®（实现平台），方法本身软件无关（software agnostic），可通过DLL接口适配其他EMT工具
 - **验证结果**: 验证了基于TLM解耦的并行仿真在保持精度（无近似误差）的同时实现计算加速；详细IGBT模型与系统级仿真协同运行；双缓冲机制确保异步通信数据完整性；自动初始化有效减少非线性模型启动时间
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Parallelization of EMT simulations for integration of inverter-based resources`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 协同仿真、并行计算、多速率仿真 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于FMI与信号量的多实例协同仿真架构，实现子网络无近似并行求解
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for integration of inverter-based resources.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

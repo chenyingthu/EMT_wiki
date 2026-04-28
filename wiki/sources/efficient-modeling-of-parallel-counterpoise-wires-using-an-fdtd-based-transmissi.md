@@ -3,7 +3,7 @@ title: "Efficient modeling of parallel counterpoise wires using an FDTD-based tr
 type: source
 authors: ['Naiara Duarte']
 year: 2025
-journal: "Electric Power Systems Research, 247 (2025) 111816. doi:10.1016/j.epsr.2025.111816"
+journal: "Electric Power Systems Research"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an FDTD-based transmission line approach_Duarte 等_2025.pdf"]
@@ -17,35 +17,60 @@ sources: ["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an
 
 ## 摘要
 
-Efficient modeling of parallel counterpoise wires using an FDTD-based a Department of Electrical Engineering, Federal Center of Technological Education of Minas Gerais (CEFET-MG), Belo Horizonte, Brazil b Department of Electrical and Computer Engineering, Federal University of Bahia, Salvador, Brazil c EMC Laboratory, Swiss Federal Inst. Of Technology (EPFL), Lausanne, Switzerland This paper presents an efficient modeling approach for parallel counterpoise wires used in the tower-footing
+提出一种基于传输线理论（TL）与有限差分时域法（FDTD）相结合的并行接地极高效建模方法。该方法将平行埋地裸导线等效为多导体传输线，通过矩阵形式描述导线间的电磁耦合。为准确捕捉雷电暂态下的宽频特性，引入Alipio-Visacro土壤频变模型，利用矢量拟合技术（Vector Fitting）将土壤导纳和导体内部阻抗近似为有理函数（极点-留数形式），并通过逆拉普拉斯变换将其转化为时域卷积项。在FDTD求解过程中，采用递归卷积算法避免存储历史数据，显著提升计算效率。该方法直接在时域求解电报方程，无需频域-时域转换，适用于不同土壤电阻率、导线长度及间距的杆塔接地系统雷电暂态分析，并为后续引入土壤电离等非线性效应预留了接口。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+高压输电线路遭受雷击时，杆塔接地装置决定塔顶过电压、绝缘子闪络风险以及EMT平台中接地等值参数的可信度。本文研究对象不是单根水平接地极，而是从塔基引出、受线路走廊宽度约束的平行埋地裸反击线/接地极。难点在于：多根导线之间存在电磁耦合，土壤和导体参数在雷电宽频暂态下具有频率相关性；若采用严格电磁场模型，长导线和多工况设计的计算代价较高，而简单集中参数模型又难以给出GPR、冲击阻抗和有效长度。本文的贡献是把单根水平接地极常用的传输线建模扩展到平行耦合埋地裸导线，用FDTD直接在时域求解含频变纵向阻抗和并联导纳的多导体电报方程，并据此定量考察导线间距对GPR、冲击阻抗和有效长度的影响，指出有效长度与平行线间距无关。
+
+### 2. 模型、算法与实现技术
+
+模型把平行接地极等效为多导体传输线，核心状态量是沿导线位置和时间变化的电压向量V(x,t)与电流向量I(x,t)，接口量包括首端注入的雷电流、接地极端部边界条件，以及输出的地电位升GPR、冲击阻抗和有效长度。传输线方程中，电压梯度由外部电感项和导体内部频变阻抗卷积项决定，电流梯度由土壤直流电导、高频电容以及土壤频变导纳卷积项决定；矩阵形式用于描述不同平行导线之间的自参数和互参数。为避免在时域中直接处理复杂频变函数，作者将土壤复导纳和导体内部阻抗表示为极点-留数形式的有理函数，再经逆拉普拉斯变换得到指数核。FDTD采用交错时空网格推进V和I，卷积历史量通过递归变量更新，因此每一步只需保留有限辅助状态，而不必存储完整历史波形。该机制使模型能直接生成雷电暂态响应，避免频域逐点求解后再变换到时域。
+
+### 3. 验证、优势与不足
+
+作者用严格电磁模型作为基线验证所提FDTD-TL方法，测试对象为双平行埋地裸反击线接地系统，页面抽取给出的参数包括导线长度10–100 m、间距10/20/40 m、埋深0.8 m、直径9.525 mm、土壤直流电阻率250/1000/4000 Ω·m，以及雷电流激励。评价指标包括GPR波形或峰值、冲击阻抗、冲击系数和有效长度。原文摘要明确报告：所有分析工况中，与严格电磁模型的偏差低于5%，且土壤电阻率越高偏差越小；当间距增加四倍时，GPR和冲击阻抗降低约10%–13%，但改善幅度有限。优势在于它保留了频变土壤、频变导体阻抗和导线耦合，又比全波场模型更适合长导线、多参数扫描和工程设计迭代。从验证范围看，结论主要支撑平行、水平、埋地裸导线且线性土壤条件下的雷电暂态；尚未验证非平行几何、复杂分层土、土壤电离、实际杆塔-线路联合模型或实时仿真步长下的表现。
+
+### 4. 价值、认知与可复用场景
+
+这项工作带来的关键认知是：在所研究的平行反击线范围内，增大导线间距可以降低GPR和冲击阻抗，但收益只有约10%–13%；有效长度不随间距变化，这对受线路走廊宽度限制的接地设计很有用。它适合作为EMT接地等值模型、杆塔雷击响应计算、接地极参数扫描和后续引入土壤非线性电离模型的基础页面复用。使用时应把它定位为线性频变传输线-FDTD模型，而不是通用全波电磁替代品；不宜外推到未验证的接地网、非水平电极、强非线性土壤击穿或复杂实际线路全系统场景。
+
+### 证据边界
+
+- 来自原文摘要的可核验证据包括：方法基于传输线理论和FDTD，计及纵向阻抗与并联导纳的频率相关性，并与严格电磁模型比较。
+- 来自原文摘要的量化结论包括：所有分析案例偏差低于5%，间距增加四倍时GPR和冲击阻抗降低约10%–13%，有效长度与间距无关。
+- 导线长度、间距、埋深、直径、土壤电阻率和雷电流参数来自当前页面抽取内容；若用于正式引用，应回到PDF表格和图注核对。
+- 递归卷积、矢量拟合阶数和具体离散流程属于当前页面对方法细节的整理；摘要只概括了频变效应和FDTD求解，细节需以正文公式为准。
+- 验证基线为严格电磁模型，但当前证据未给出该模型的完整实现设置、网格/频率采样、计算耗时或硬件条件，因此不能据此量化加速比。
+- 从验证范围看，尚缺少土壤电离、分层或非均匀土壤、多于两根导线、真实杆塔与架空线耦合、现场实测数据等场景的验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于FDTD的传输线求解方法，计及埋地平行导线阻抗与导纳的频率相关特性
-- 建立平行接地极灵敏度分析框架，揭示有效长度与导线间距无关特性，简化工程设计
-
+- 问题定位：提出一种基于传输线理论（TL）与有限差分时域法（FDTD）相结合的并行接地极高效建模方法。该方法将平行埋地裸导线等效为多导体传输线，通过矩阵形式描述导线间的电磁耦合。
+- 方法机制：提出一种基于传输线理论（TL）与有限差分时域法（FDTD）相结合的并行接地极高效建模方法。该方法将平行埋地裸导线等效为多导体传输线，通过矩阵形式描述导线间的电磁耦合。为准确捕捉雷电暂态下的宽频特性，引入Alipio-Visacro土壤频变模型，利用矢量拟合技术（Vector Fitting）将土壤导纳和导体内部阻抗近似为有理函数（极点-留数形式），并通过逆拉普拉斯变换将其转化为时域卷积项。
+- 验证证据：与严格全波电磁场模型(Hybrid Electromagnetic Model, HEM)进行对比验证；双平行埋地裸导线接地系统，导线长度10~100m，间距10/20/40m，埋深0.8m，直径9.525mm，土壤直流电阻率覆盖250~4000 m；自主开发的FDTD-TL时域求解器（基于递归卷积算法） vs HEM全波电磁仿真软件
+- 量化与结论：FDTD-TL模型与全波电磁模型(HEM)的GPR及冲击阻抗计算偏差始终低于5%，在高土壤电阻率(4000 m)下误差趋近于0。；导线间距从10m增加至40m（4倍），GPR峰值降低幅度分别为：250 m土壤下9.6%，1000 m下11.8%，4000 m下12.6%。；冲击阻抗()随间距增大而降低，整体改善幅度有限，约为10%至13%。；
+- 适用边界：适用于理解本文 Efficient modeling of parallel counterpoise wires using an FDTD-based transmission line approach （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
 - [[传输线理论|传输线理论]]
 - [[有理函数逼近|有理函数逼近]]
 - [[全波电磁场模型验证|全波电磁场模型验证]]
 
-
 ## 涉及的模型
-
 
 - [[平行接地极|平行接地极]]
 - [[杆塔接地系统|杆塔接地系统]]
 - [[埋地裸耦合导线|埋地裸耦合导线]]
 - [[频率相关土壤模型|频率相关土壤模型]]
 
-
 ## 相关主题
-
 
 - [[接地系统建模|接地系统建模]]
 - [[雷电暂态分析|雷电暂态分析]]
@@ -53,15 +78,11 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 - [[地电位升分析|地电位升分析]]
 - [[冲击阻抗评估|冲击阻抗评估]]
 
-
 ## 主要发现
-
 
 - 模型与全波电磁场结果偏差低于5%，高电阻率下误差更小，验证了方法的高精度
 - 增大导线间距使地电位升与冲击阻抗降低约10%至13%，但整体改善幅度相对有限
 - 接地极有效长度与导线间距无关，该特性可简化不同走廊宽度下的接地系统设计
-
-
 
 ## 方法细节
 
@@ -71,26 +92,21 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{\partial V(x, t)}{\partial x} = - L \frac{\partial I(x, t)}{\partial t} - \zeta_i(t) * \frac{\partial I(x, t)}{\partial t}$$$
 
 *时域电报方程（电压），描述沿线电压梯度，包含导体内部频变阻抗的时域卷积项*
-
 
 **公式2**: $$$\frac{\partial I(x, t)}{\partial x} = - G_0 V(x, t) - C_\infty \frac{\partial V(x, t)}{\partial t} - Y_{FD}(t) * \frac{\partial V(x, t)}{\partial t}$$$
 
 *时域电报方程（电流），描述沿线电流梯度，包含土壤直流电导、高频电容及土壤频变导纳的卷积项*
 
-
 **公式3**: $$$\kappa(s) = \sigma_{DC} + s\epsilon'_\infty + s \sum_{j=1}^{N} \frac{r_j}{s - p_j}$$$
 
 *土壤导纳频变有理逼近公式，将Alipio-Visacro模型转化为拉普拉斯域极点-留数形式，便于时域递归卷积*
 
-
 **公式4**: $$$R_S = \frac{1}{\pi \sigma_g} \left[ \ln\left(\sqrt{\frac{2l}{2hr}}\right) - 1 \right]$$$
 
 *Sunde自电阻公式，用于计算单根平行埋地导线对远方大地的单位长度直流电阻*
-
 
 ### 算法步骤
 
@@ -105,7 +121,6 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 5. 递归卷积迭代求解：在每一时间步更新电流$I$和电压$V$时，引入辅助变量$\Phi_{k,j}$和$\psi_{k,j}$递归计算历史卷积项，避免全量历史数据存储，实现高效时域推进。
 
 6. 边界条件处理与暂态推进：在首端注入Heidler函数表征的雷电流源（等效为戴维南/诺顿电路），末端采用匹配或开路负载，按时间步迭代求解直至暂态过程结束。
-
 
 ### 关键参数
 
@@ -125,8 +140,6 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 
 - **有理拟合阶数$N$**: 19
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -141,8 +154,6 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 
 | 冲击系数(IC)灵敏度分析 | 在有效长度前，$IC = Z_P/R_{LF} < 1$，且随土壤电阻率升高进一步降低。不同间距下的IC-长度曲线几乎完全重合。 | 首次揭示有效长度与导线间距无关的特性，简化了不同走廊宽度下的接地极设计流程，模型计算效率满足工程批量设计需求。 |
 
-
-
 ## 量化发现
 
 - FDTD-TL模型与全波电磁模型(HEM)的GPR及冲击阻抗计算偏差始终低于5%，在高土壤电阻率(4000 $\Omega\cdot$m)下误差趋近于0。
@@ -150,7 +161,6 @@ Efficient modeling of parallel counterpoise wires using an FDTD-based a Departme
 - 冲击阻抗($Z_P$)随间距增大而降低，整体改善幅度有限，约为10%至13%。
 - 接地极有效长度($l_{EF}$)与导线间距$D$完全无关，该特性在不同土壤电阻率下均成立。
 - 冲击系数$IC$在达到有效长度前恒小于1，且土壤电阻率越高，$IC$偏离1的程度越大。
-
 
 ## 关键公式
 
@@ -178,11 +188,34 @@ $$$R_S = \frac{1}{\pi \sigma_g} \left[ \ln\left(\sqrt{\frac{2l}{2hr}}\right) - 1
 
 *计算单根平行埋地导线对远方大地的单位长度直流电阻，用于构建导纳矩阵对角元*
 
-
-
 ## 验证详情
 
 - **验证方式**: 与严格全波电磁场模型(Hybrid Electromagnetic Model, HEM)进行对比验证
 - **测试系统**: 双平行埋地裸导线接地系统，导线长度10~100m，间距10/20/40m，埋深0.8m，直径9.525mm，土壤直流电阻率覆盖250~4000 $\Omega\cdot$m
 - **仿真工具**: 自主开发的FDTD-TL时域求解器（基于递归卷积算法） vs HEM全波电磁仿真软件
 - **验证结果**: 在全部测试工况下，FDTD-TL模型计算的GPR波形、峰值及冲击阻抗与HEM结果高度一致，最大相对误差<5%。随着土壤电阻率升高，模型偏差进一步减小至可忽略水平，充分验证了该传输线近似结合频变土壤建模方法在雷电暂态分析中的高精度与工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Efficient modeling of parallel counterpoise wires using an FDTD-based transmission line approach`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 有限差分时域法-fdtd、传输线理论、有理函数逼近 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于FDTD的传输线求解方法，计及埋地平行导线阻抗与导纳的频率相关特性
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an FDTD-based transmission line approach_Duarte 等_2025.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

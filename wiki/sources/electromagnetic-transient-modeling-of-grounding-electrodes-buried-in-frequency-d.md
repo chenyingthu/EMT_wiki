@@ -3,7 +3,7 @@ title: "Electromagnetic transient modeling of grounding electrodes buried in fre
 type: source
 authors: ['Bamdad Salarieh']
 year: 2020
-journal: "Electric Power Systems Research, 189 (2020) 106595. doi:10.1016/j.epsr.2020.106595"
+journal: "Electric Power Systems Research"
 tags: ['frequency-dependent']
 created: "2026-04-13"
 sources: ["EMT_Doc/16/j.epsr.2020.106595.pdf.pdf"]
@@ -19,16 +19,44 @@ sources: ["EMT_Doc/16/j.epsr.2020.106595.pdf.pdf"]
 
 Electromagnetic transient modeling of grounding electrodes buried in frequency dependent soil with variable water content Bamdad Salarieha,b, H.M. Jeewantha De Silvab, Behzad Kordi⁎,a a Department of Electrical & Computer Engineering, University of Manitoba, Winnipeg, Manitoba, Canada R3T 5V6 b Manitoba Hydro International, Winnipeg, Manitoba R3P 1A3, Canada
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自输电线路遭受直击雷时的接地暂态过电压控制：接地极需要把雷电流泄入大地，降低地电位升（GPR）和反击闪络风险。研究对象是埋设于土壤中的垂直接地极与水平接地极，重点不是工频接地电阻，而是1 kHz至5 MHz范围内、受雷电流高频分量激励时的宽频阻抗和时域GPR。难点在于土壤不是常参数介质：电导率和介电常数随频率变化，并且这种频变又受体积含水率影响；若简单取固定电阻率和εr=10/20，会把高频容性效应、阻抗相角和峰值GPR估计偏离。本文的贡献是把“含水率相关的频变土壤模型”嵌入全波FEM频域接地极模型，比较Scott、Smith-Longmire、Messier、Datsios等土壤模型，再用FRVF把频域阻抗转成EMT可用的等效电路，从而把三维电磁场计算结果接入雷电暂态仿真。相对已有只讨论频变土壤或固定含水率的工作，本文突出考察了含水率、土壤模型、电极长度和首次/后续雷击波形共同作用下的接地暂态响应。
+
+### 2. 模型、算法与实现技术
+
+实现流程是“频域全波求阻抗—有理函数拟合—EMT时域注入”。首先建立包含土壤半球域、空气域和金属接地极的三维FEM模型，在电极端口施加电压激励并提取端口电流，接口量为Z(f)=V(f)/I(f)。土壤参数不是常数，而是在每个频点由含水率相关模型给出σ(f)和εr(f)，因此FEM求解的是随频率改变材料参数的电磁场问题。波动方程中的旋度项描述电场在介质中的传播和扩散，复介电参数则把导电损耗与位移电流共同纳入阻抗计算。得到1 kHz至5 MHz的Z(f)后，作者使用Fast Relaxed Vector Fitting将其表示为Z(s)=D+sE+ΣCn/(s−An)的极点-留数形式；这里极点决定等效网络的动态模态，留数决定每个模态对端口电压电流关系的贡献，D和E对应直接项与高频斜率项。随后按极点-留数综合为RLC型宽带等效电路，使接地极可以像一个频率相关一端口元件一样接入EMT程序。时域输入是典型首次和后续雷电回击电流波形，输出是接地端GPR波形及其峰值、上升过程等暂态指标。
+
+### 3. 验证、优势与不足
+
+验证包含两层。第一层是频域FEM阻抗的可信度：页面证据显示，作者用3 m长、半径12.5 mm的垂直接地极、均匀土壤σ=0.001 S/m和εr=10作为基准，与Grcev等和Karami等全波文献结果比较阻抗幅值和相角；同时用直流接地电阻解析式检查有限土壤域截断半径，页面给出的结论是r0约60 m时收敛。第二层是EMT接口的有效性：用FRVF把FEM阻抗拟合成等效电路，再注入实测地点的首次/后续雷电流波形，观察GPR时域响应是否稳定、无虚假振荡，并比较常参数土壤与频变土壤。优势在于模型同时保留了三维电磁传播、土壤频变和含水率差异，并能落地到EMT仿真而非只停留在频域曲线。页面抽取结果还指出，频变土壤相对于常参数模型会降低GPR峰值，且后续雷击高频含量更高时影响更明显；含水率升高会明显改善接地性能。但从验证范围看，结论主要限于单根垂直/水平电极、给定频带、给定土壤模型和雷电流波形；未见对复杂接地网、多层非均匀土壤、实际现场GPR测量或实时仿真步长约束的验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是说明：雷击暂态接地性能不能只由低频电阻率或工频接地电阻判断，土壤含水率会通过改变σ(f)和εr(f)进一步改变宽频阻抗、相角和GPR峰值。它可用于构建EMT中频率相关接地极元件，服务于输电线路防雷、杆塔接地设计、雷击过电压评估，以及后续研究中比较不同土壤模型或电极长度的影响。该页面也适合作为“FEM全波接地阻抗—FRVF等效电路—EMT雷击响应”方法链的入口。不能把结论直接外推到任意接地网、分层土壤、饱和/冻土、强非线性击穿土壤或超过1 kHz至5 MHz的频率范围；若用于工程定值，还需结合现场土壤含水率和电阻率测量校准。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：研究对象为垂直和水平接地极，频率范围为1 kHz至5 MHz，使用FEM频域全波模型、FRVF等效电路，并考虑四种含水率相关土壤模型和首次/后续雷电流波形。
+- 页面抽取给出了若干量化结论，如频变土壤使GPR峰值相对常参数模型降低13.7%至37.3%、含水率从1.32%到8.74%时峰值GPR约降17倍；这些数字应回到原文图表核验后再作为最终引用。
+- 验证基线主要是文献全波阻抗曲线和直流解析接地电阻收敛性，不等同于现场实测GPR验证；因此模型工程准确性仍依赖土壤参数测量质量。
+- 等效电路稳定性和FRVF阶数等属于页面抽取信息；若要复现，需要原文给出频点采样、拟合误差、无源性处理和RLC综合细节。
+- 适用边界从验证范围推断：单根水平/垂直接地极结果不能直接代表复杂杆塔接地网、网状接地体、分层土壤、强电离土壤或含地下金属结构场景。
+- 原文摘要强调含水率影响依赖土壤类型、含水率数值和电极长度；因此不同地区土壤模型的选择本身是关键不确定性，不能默认某一个经验模型普适。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 构建基于FEM的接地极全波电磁频域模型实现宽频精确求解
-- 对比四种含水频变土壤模型利用FRVF提取EMT兼容等效电路
-- 揭示土壤含水量与电极长度对暂态电位升及阻抗特性的耦合影响
-
+- 问题定位：Electromagnetic transient modeling of grounding electrodes buried in frequency dependent soil with variable water content Bamdad Salarieha,b, H.M.
+- 方法机制：本文提出一种基于有限元法（FEM）的全波电磁频域建模方法，用于精确计算埋设在频变土壤中的垂直接地极和水平接地极的阻抗特性。研究首先构建包含半球形土壤区域和圆锥形空气区域的三维计算域，施加完美电导体（PEC）边界条件以模拟无限大空间并抑制高频反射谐振。
+- 验证证据：3m长、半径12.5mm的垂直接地极，埋设于均匀土壤（σ=0.001 S/m, εr=10）；有限元法(FEM)求解器、快速松弛矢量拟合(FRVF)算法、EMT型暂态仿真软件接口；FEM模型计算的接地阻抗幅频与相频曲线与Grcev等及Karami等的全波文献结果高度吻合；直流电阻在r0=60m时与解析解$R {DC}=1/(2\pi a \sigma {soil})$完全收敛；
+- 量化与结论：土壤频变特性使接地极暂态GPR峰值较恒定参数模型降低13.7%~37.3%，具体降幅取决于雷击波形（后续雷击降幅更大）和土壤含水率。；土壤体积含水率从1.32%提升至8.74%时，接地极峰值GPR下降约17倍，表明含水量对接地暂态性能具有决定性影响。；
+- 适用边界：适用于理解本文 Electromagnetic transient modeling of grounding electrodes buried in frequency dependent soil with variable water content （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[有限元法-fem|有限元法(FEM)]]
 - [[快速松弛矢量拟合-frvf|快速松弛矢量拟合(FRVF)]]
@@ -36,9 +64,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 - [[频域网络分析|频域网络分析]]
 - [[等效电路提取|等效电路提取]]
 
-
 ## 涉及的模型
-
 
 - [[垂直接地极|垂直接地极]]
 - [[水平接地极|水平接地极]]
@@ -46,9 +72,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 - [[雷击回击电流波形|雷击回击电流波形]]
 - [[emt等效电路|EMT等效电路]]
 
-
 ## 相关主题
-
 
 - [[接地系统建模|接地系统建模]]
 - [[土壤频率依赖性|土壤频率依赖性]]
@@ -57,15 +81,11 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 - [[地电位升分析|地电位升分析]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
-
 
 - 土壤参数频变特性使接地极暂态电位升显著低于恒定参数计算值
 - 含水量对接地性能的影响高度依赖土壤类型含水率及电极长度
 - 高频段土壤介电常数下降与电导率上升共同增强接地系统容性效应
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 ### 数学公式
 
-
 **公式1**: $$$\nabla \times \left( \frac{1}{\mu} \nabla \times \mathbf{E} \right) - k_0^2 \mathbf{E} = 0$$$
 
 *频域亥姆霍兹波动方程，用于FEM求解线性均匀各向同性介质中的电场分布*
-
 
 **公式2**: $$$Z(s) = D + sE + \sum_{n=1}^{N} \frac{C_n}{s - A_n}$$$
 
 *FRVF有理函数逼近公式，将频域阻抗转换为极点-留数形式以生成EMT等效电路*
 
-
 **公式3**: $$$\sigma = 8 \times 10^{-3} \times \left( \frac{W}{10} \right)^{1.54} \left( 1 + \frac{4\pi f \varepsilon_0}{W^{1.54} 10^{-4.54}} \right)$$$
 
 *Messier土壤电导率频变模型，显式包含体积含水率W和频率f*
 
-
 **公式4**: $$$L = 0.2 \times h \times \left( \ln \frac{2h}{w} + \frac{0.223w}{h} + 0.5 \right)$$$
 
 *激励端口寄生电感计算公式，用于评估端口长度对高频阻抗精度的影响*
-
 
 ### 算法步骤
 
@@ -111,7 +126,6 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 6. EMT等效电路综合：基于Antonini方法，将极点-留数数据映射为RLC无源网络拓扑，生成可直接接入PSCAD/EMTDC等暂态仿真软件的宽带接地极模型。
 
 7. 时域雷击响应计算：将Morro do Cachimbo和Monte San Salvatore实测的首次/后续雷电流波形（Heidler函数合成）注入等效电路，通过卷积或状态空间法求解时域地电位升（GPR）波形。
-
 
 ### 关键参数
 
@@ -131,8 +145,6 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 - **雷电流波形来源**: MCS站与MSS站实测首次及后续回击波形
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -149,8 +161,6 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 | 10m水平接地极 vs 垂直接地极，Case 1土壤 | 水平电极在工频下散流能力略低于垂直电极，但在1 kHz~5 MHz高频段阻抗幅频与相频特性高度一致，频变规律相同。 | 高频阻抗特性差异<5%，验证了频变土壤模型对电极几何布置的普适性 |
 
-
-
 ## 量化发现
 
 - 土壤频变特性使接地极暂态GPR峰值较恒定参数模型降低13.7%~37.3%，具体降幅取决于雷击波形（后续雷击降幅更大）和土壤含水率。
@@ -159,7 +169,6 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 - 端口长度h=50mm时，5MHz下寄生阻抗仅为0.63Ω，远小于接地极最小阻抗（≥10Ω），满足频域求解精度要求。
 - 截断半径r0≥60m时，FEM计算的直流接地电阻与解析解误差收敛至可忽略水平，确保无限大土壤边界条件有效。
 - FRVF采用6阶极点拟合10m接地极阻抗，拟合残差极小，生成的EMT等效电路在时域仿真中无振荡且完全因果稳定。
-
 
 ## 关键公式
 
@@ -181,11 +190,34 @@ $$$\sigma = 8 \times 10^{-3} \times \left( \frac{W}{10} \right)^{1.54} \left( 1 
 
 *显式关联土壤体积含水率W与频率f，满足因果性条件，用于精确表征潮湿土壤在雷击高频分量下的电导率动态变化*
 
-
-
 ## 验证详情
 
 - **验证方式**: 文献对比验证与解析解校验
 - **测试系统**: 3m长、半径12.5mm的垂直接地极，埋设于均匀土壤（σ=0.001 S/m, εr=10）
 - **仿真工具**: 有限元法(FEM)求解器、快速松弛矢量拟合(FRVF)算法、EMT型暂态仿真软件接口
 - **验证结果**: FEM模型计算的接地阻抗幅频与相频曲线与Grcev等及Karami等的全波文献结果高度吻合；直流电阻在r0=60m时与解析解$R_{DC}=1/(2\pi a \sigma_{soil})$完全收敛；FRVF拟合的等效电路在时域注入雷电流后，GPR波形平滑无虚假振荡，验证了模型在宽频带和时域暂态分析中的高精度与数值稳定性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromagnetic transient modeling of grounding electrodes buried in frequency dependent soil with variable water content`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 有限元法-fem、快速松弛矢量拟合-frvf、全波电磁建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：构建基于FEM的接地极全波电磁频域模型实现宽频精确求解
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/16/j.epsr.2020.106595.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

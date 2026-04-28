@@ -3,7 +3,7 @@ title: "Modeling of inductive constant power load for electromagnetic-transient 
 type: source
 authors: ['Kamel Alboaouh']
 year: 2025
-journal: "Electric Power Systems Research, 242 (2025) 111415. doi:10.1016/j.epsr.2025.111415"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/26/Alboaouh 等 - 2025 - Modeling of inductive constant power load for electromagnetic-transient simulations–Part II.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/26/Alboaouh 等 - 2025 - Modeling of inductive constant power
 
 ## 摘要
 
-Modeling of inductive constant power load for electromagnetic-transient a Dept.of Eng.Tech, Norfolk State Univ., 700 Park Ave,RTC Building,Suite 420M, Norfolk VA 23501, USA b Power Syst.Eng.Center, Nat.Renewable Energy Lab., Golden CO, USA c Power Syst.Eng.Center, Nat. Renewable Energy Lab., Golden CO,USA This paper improves the dynamic constant power (CP) load model that was published in Part I, which is
+本文提出了一种改进的感性恒功率（CP）负载模型，通过引入虚拟变量（dummy variables）实现RMS量的递归更新，解决了Part I模型需整周期计算无法嵌入EMT数值求解器的问题。核心思想是将RMS的历史累积计算分解为前一步的累积值（虚拟变量）与当前瞬时值平方和的形式，使模型能在每个时间步独立求解。该方法基于恒阻抗（CI）负载与恒功率负载在相同电压和功率下的电流等价性，利用基尔霍夫定律（KCL/KVL）建立瞬时量关系，并通过功率约束方程（固定有功功率P和固定功率因数pf）求解当前时刻的电流值。模型适用于正弦和非正弦工况，因其完全基于时域瞬时量计算。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真按微小时间步求解瞬时电压、电流，而恒功率负载的约束通常写在RMS功率、功率因数、有功/无功功率上，二者天然不一致：RMS量需要一个周期内的历史样本，EMT求解器却希望当前步即可形成代数/微分方程。本文研究对象是以感性为主、要求固定有功功率、固定无功功率或固定功率因数的动态恒功率负载。Part I模型可处理正弦和非正弦情形，但需要把一个周期的数据整体计算，难以嵌入逐步迭代的数值求解器。本文贡献是把原先依赖整周期样本的RMS相关约束改写为含“dummy variables”的递推形式，使前一时刻累计信息作为状态保留，当前步只需加入当前瞬时量平方，即可在每个时间步求出负载电流，同时保留Part I关于固定功率、固定功率因数和非正弦适用性的建模目标。
+
+### 2. 模型、算法与实现技术
+
+模型把感性CP负载等效为满足KCL/KVL的R-L型瞬时关系，并用功率约束决定当前应吸收的电流。核心接口量是母线瞬时电压、目标有功功率P、目标功率因数pf；输出是当前时间步的负载电流，供EMT网络方程使用。关键实现不是简单用P除以瞬时电压，而是维护若干历史累计量，例如电流平方累计I、阻性电压平方累计VR、电感电压平方累计VL。当前步n中，RMS相关平方量被写成“当前瞬时量平方+上一时刻dummy变量”，如电流RMS平方由当前电流平方和I_{n-1}构成，阻性/感性电压也类似。然后用P=i_rms·v_Rrms、pf·v_rms=v_Rrms，以及v_t=v_Rt+v_Lt等关系形成当前步方程，求得i_tn和电压分量。机制上，dummy variables把跨周期记忆从一次性批处理变成递归状态，使模型可顺序推进并与EMT求解器的time-step by time-step框架对齐。
+
+### 3. 验证、优势与不足
+
+作者用由恒阻抗负载合成的数据作为基线来验证模型响应，比较提出的CP模型与参考数据是否一致；摘要称比较结果为satisfactory。原文提到该类CP负载模型可用于PSCAD、LTspice、Matlab-Simulink、PSSE等EMT软件背景，但从给定文本看，未报告具体软件版本、算例网络规模、时间步长、谐波含量、误差范数或运行时间。优势主要体现在建模结构上：相比Part I整周期一起计算，新模型能逐时间步仿真，因而更容易嵌入数值求解器；相比直接P/V的传统恒功率实现，它不是把瞬时电压简单相除，因而目标上面向非正弦AC场景和固定功率因数约束。限制也来自验证范围：当前证据只说明与CI合成数据对比令人满意，原文未报告可核验的数值结果；没有看到对大扰动故障、低电压穿越、三相不平衡、频率偏移、收敛失败边界或实时仿真的系统性测试。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：恒功率负载并非只能用瞬时P/V实现，RMS功率约束也可通过历史累计状态嵌入EMT逐步求解。它适合被后续关于EMT负荷建模、非正弦系统CP负载、固定功率因数负荷接口、以及Part I模型工程化实现的页面复用。工程上可作为把RMS型功率约束改写为时域递推模型的参考思路。它不适合作为通用稳定性结论或性能优越性的证据外推；若要用于具体软件、三相复杂网络、保护故障或实时仿真，还需要原文之外的参数、收敛性和误差验证。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：本文改进Part I动态CP负载模型，目标是固定有功/无功功率和固定功率因数，并使其能按时间步仿真以便集成数值求解器。
+- 来自原文摘要的确定信息：有效性验证采用与恒阻抗负载合成数据的响应比较，结论表述为satisfactory；原文未报告可核验的数值误差、运行时间或收敛统计。
+- 来自给定抽取公式/页面的整理信息：dummy variables用于保存前一步平方累计量，RMS相关量由当前瞬时平方加历史累计构成；具体RMS归一化、窗口长度和周期重置规则需核对全文公式。
+- 工具边界：文本提到PSCAD、LTspice、Matlab-Simulink、PSSE等作为CP负载建模背景，但未证明本文模型已在这些软件中逐一实现和测试。
+- 场景边界：从给定证据看，缺少三相不平衡、故障暂态、频率偏移、强谐波定量场景、低电压奇异点和大系统耦合收敛性的验证。
+- 作者元数据边界：用户元数据只列出Kamel Alboaouh，但论文页显示还包括Yaswanth Nag Velaga和Kumaraguru Prabakar；引用时应以PDF首页为准。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出逐时间步求解的恒功率负载模型，克服原模型需整周期计算的求解器集成障碍。
-- 引入虚拟变量实现RMS量递归更新，使模型严格适配EMT仿真器的步进计算机制。
-- 保留感性负载固定功率与功率因数约束，同时兼容正弦与非正弦电网运行工况。
-
+- 问题定位：本文提出了一种改进的感性恒功率（CP）负载模型，通过引入虚拟变量（dummy variables）实现RMS量的递归更新，解决了Part I模型需整周期计算无法嵌入EMT数值求解器的问题。核心思想是将RMS的历史累积计算分解为前一步的累积值（虚拟变量）与当前瞬时值平方和的形式，使模型能在每个时间步独立求解。
+- 方法机制：本文提出了一种改进的感性恒功率（CP）负载模型，通过引入虚拟变量（dummy variables）实现RMS量的递归更新，解决了Part I模型需整周期计算无法嵌入EMT数值求解器的问题。核心思想是将RMS的历史累积计算分解为前一步的累积值（虚拟变量）与当前瞬时值平方和的形式，使模型能在每个时间步独立求解。
+- 验证证据：对比验证（Comparison with synthesized data）；基于恒阻抗（CI）RL负载合成的参考系统，用于生成对比基准数据；理论模型验证提及适用于PSCAD、LTspice、Matlab-Simulink、PSSE等EMT仿真环境，具体实现未指定特定软件版本
+- 量化与结论：模型实现了严格的逐时间步求解（time-step by time-step solution），消除了Part I模型需整周期（one-cycle）批量计算的约束；通过引入虚拟变量，RMS计算从历史全周期求和转换为递归更新，计算复杂度从O(N) per cycle降至O(1) per time-step；
+- 适用边界：适用于理解本文 Modeling of inductive constant power load for electromagnetic-transient simulations–Part II （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[数值建模|数值建模]]
 - [[逐时间步求解|逐时间步求解]]
@@ -36,17 +64,13 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 - [[递归rms量计算|递归RMS量计算]]
 - [[恒阻抗负载合成验证|恒阻抗负载合成验证]]
 
-
 ## 涉及的模型
-
 
 - [[恒功率负载|恒功率负载]]
 - [[恒阻抗负载|恒阻抗负载]]
 - [[感性rl电路|感性RL电路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[负荷建模|负荷建模]]
@@ -54,15 +78,11 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 - [[数值求解器集成|数值求解器集成]]
 - [[固定功率因数|固定功率因数]]
 
-
 ## 主要发现
-
 
 - 仿真验证表明模型可无缝嵌入EMT数值求解器，实现单步迭代且计算逻辑稳定。
 - 在正弦与非正弦工况下，模型均能精确维持预设的有功功率消耗与固定功率因数。
 - 与恒阻抗负载合成数据对比结果高度吻合，证实了模型在动态暂态过程中的准确性。
-
-
 
 ## 方法细节
 
@@ -72,66 +92,53 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 
 ### 数学公式
 
-
 **公式1**: $$$N = \{1, 2, \dots, k, \dots, n, \dots\}$$$
 
 *定义采样时间索引集合，n表示当前时间步*
-
 
 **公式2**: $$$(i_{rms})^2_n = \sum_{k=1, k\in N}^{k=n} (i_{tk})^2$$$
 
 *传统RMS电流定义，基于一个周期内所有采样点的平方和*
 
-
 **公式3**: $$$pf \cdot i_{rms} \cdot v_{rms} = P$$$
 
 *功率因数定义，关联有功功率P、视在功率和功率因数pf*
-
 
 **公式4**: $$$\forall k \in N: i_{tk} = i_{Rtk} = i_{Ltk}$$$
 
 *KCL定律：RL串联电路中电流处处相等*
 
-
 **公式5**: $$$\forall k \in N: v_{tk} = v_{Rtk} + v_{Ltk}$$$
 
 *KVL定律：总电压等于电阻电压与电感电压之和*
-
 
 **公式6**: $$$(v_{Rrms})^2_n = (v_{Rtn})^2 + V_{Rn-1}$$$
 
 *递归RMS计算核心方程：当前RMS平方等于当前瞬时电压平方加前一步虚拟变量*
 
-
 **公式7**: $$$(v_{Lrms})^2_n = (v_{Ltn})^2 + V_{Ln-1}$$$
 
 *电感电压RMS的递归计算*
-
 
 **公式8**: $$$(i_{rms})^2_n = (i_{tn})^2 + I_{n-1}$$$
 
 *电流RMS的递归计算*
 
-
 **公式9**: $$$V_{Rn-1} = \sum_{k=1, k\in N}^{k=n-1} (v_{Rtk})^2$$$
 
 *虚拟变量定义：前n-1步电阻电压平方的累积和*
-
 
 **公式10**: $$$P_n = i_{rmsn} \cdot v_{Rrmsn}$$$
 
 *有功功率约束：RMS电流与RMS电阻电压的乘积等于设定功率*
 
-
 **公式11**: $$$pf_n \cdot v_{rmsn} = v_{Rrmsn}$$$
 
 *功率因数约束：电阻电压与总电压的比值等于功率因数*
 
-
 **公式12**: $$$Q_n = i_{rmsn} \cdot v_{Lrmsn}$$$
 
 *无功功率计算：RMS电流与RMS电感电压的乘积*
-
 
 ### 算法步骤
 
@@ -155,7 +162,6 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 
 10. 周期重置（可选）：当达到一个完整周期时，可选择重置虚拟变量以消除数值累积误差
 
-
 ### 关键参数
 
 - **P**: 有功功率设定值（W），恒定
@@ -170,8 +176,6 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 
 - **i_{tn}**: 待求解的当前时间步电流瞬时值
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -184,8 +188,6 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 
 | 非正弦工况验证 | 在包含谐波分量的非正弦电压波形下测试模型性能，验证模型对非正弦系统的适应性。 | 模型成功维持预设功率和功率因数，克服了传统P/V除法方法在非正弦系统中的局限性 |
 
-
-
 ## 量化发现
 
 - 模型实现了严格的逐时间步求解（time-step by time-step solution），消除了Part I模型需整周期（one-cycle）批量计算的约束
@@ -193,7 +195,6 @@ Modeling of inductive constant power load for electromagnetic-transient a Dept.o
 - 模型严格维持固定功率因数（fixed-PF）约束，功率因数偏差在仿真过程中保持为零
 - 适用于非正弦系统（non-sinusoidal case studies），可处理含谐波分量的电压波形
 - 模型与EMT数值求解器完全兼容，支持单步迭代（single-step iteration）集成
-
 
 ## 关键公式
 
@@ -215,11 +216,34 @@ $$$pf_n \cdot v_{rmsn} = v_{Rrmsn}$$$
 
 *确保负载功率因数恒定，关联总电压RMS与电阻电压RMS*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（Comparison with synthesized data）
 - **测试系统**: 基于恒阻抗（CI）RL负载合成的参考系统，用于生成对比基准数据
 - **仿真工具**: 理论模型验证提及适用于PSCAD、LTspice、Matlab-Simulink、PSSE等EMT仿真环境，具体实现未指定特定软件版本
 - **验证结果**: 提出的CP负载模型与CI合成数据对比结果满意（satisfactory），证实了模型在维持固定功率消耗和固定功率因数方面的准确性。模型成功实现了与EMT数值求解器的逐步集成（step-by-step integration），适用于正弦和非正弦工况。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modeling of inductive constant power load for electromagnetic-transient simulations–Part II`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 数值建模、逐时间步求解、基尔霍夫定律 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出逐时间步求解的恒功率负载模型，克服原模型需整周期计算的求解器集成障碍。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/26/Alboaouh 等 - 2025 - Modeling of inductive constant power load for electromagnetic-transient simulations–Part II.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

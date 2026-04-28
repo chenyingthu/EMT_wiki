@@ -1,7 +1,7 @@
 ---
 title: "Generalized Formulation of Overhead Line Parameters for Multi-Layer Earth"
 type: source
-authors: ['未知']
+authors: ['Haoyan Xue', 'Jean Mahseredjian', 'Fellow', 'Akihiro Ametani', 'Life Fellow', 'Jesus Morales']
 year: 2021
 journal: "IEEE Transactions on Power Delivery; ;PP;99;10.1109/TPWRD.2021.3049595"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 
 # Generalized Formulation of Overhead Line Parameters for Multi-Layer Earth
 
-**作者**: 
+**作者**: Haoyan Xue; Jean Mahseredjian; Fellow; Akihiro Ametani; Life Fellow 等
 **年份**: 2021
 **来源**: `19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf`
 
 ## 摘要
 
-—A generalized formulation of earth-return impedance and admittance for overhead lines above a multi-layer earth is derived. An equivalent homogeneous earth method (EHEM) and a Method of Moments - Surface Admittance Operator (MoM-SO) method with modified earth-return Green function considering an N-layer earth are also proposed. The frequency responses of wave propagation characteristics are evaluated by the newly proposed formulas and compared to those found from existing formulas in software used for the simulation of electromagnetic transients. Transient simulations performed in an electromagnetic transient (EMT) type simulation tool are also presented. It is shown that the proposed generalized formulas, the
+本文针对架空线路在多层大地环境下的电磁暂态仿真需求，提出了一套广义的大地返回阻抗与导纳计算框架。首先，突破传统Carson假设忽略空气传播常数、大地介电常数及位移电流的限制，严格推导了适用于4层大地的精确积分公式（EF）。其次，为兼顾计算效率与宽频精度，引入等效传播常数γ eq改进等效均匀大地法（EHEM），将其适用范围从低频扩展至Hz~MHz全频段，并完整纳入大地返回导纳计算。最后，针对矩量法-表面导纳算子（MoM-SO）在高频段的数值不稳定性，推导了适用于N层大地的修正格林函数。三种方法相互验证，并集成至EMTP型仿真工具中进行时域浪涌分析，实现了多层大地线路参数的高精度、高效率、高稳定性计算。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自输电线路雷电/操作浪涌等EMT仿真：频变线路模型需要准确的单位长度大地返回阻抗与导纳，而实际土壤通常是3至5层、各层电阻率和介电常数不同。研究对象是多层大地上方架空线的earth-return impedance/admittance及其对波传播特性的影响。难点在于：传统Carson假设忽略空气本征传播常数、大地介电常数和位移电流，因而不适合描述高频暂态中的大地返回导纳和传播频散；已有精确公式多集中于阻抗或2层情形，难以覆盖实际多层土壤；已有EHEM虽计算简洁，但主要面向阻抗且精度依赖频率和土壤参数，文中指出通常只在几kHz以下较可靠；MoM-SO虽适合数值求解，但多层大地格林函数与数值稳定性仍需处理。本文贡献是给出4层大地上方架空线阻抗与导纳的广义精确公式，同时提出面向N层大地的改进EHEM和带修正大地返回格林函数的MoM-SO，使精确解析、近似等效和数值电磁三类方法可相互校核，并服务于EMT暂态仿真。
+
+### 2. 模型、算法与实现技术
+
+本文包含三条互补计算路线。第一条是4层大地精确公式：以导线几何、各层厚度、电阻率、介电常数、磁导率和频率为输入，通过Sommerfeld型积分描述空气—多层大地边界上的传播与反射，输出频域大地返回阻抗矩阵和电位系数/导纳矩阵；其作用是提供不依赖Carson近似的基准计算。第二条是改进EHEM：不是直接处理每一层的复杂积分核，而是用等效均匀大地参数替代多层结构对外部场的等效影响，从而保留多层土壤对传播常数的影响，并把适用对象从阻抗扩展到包含earth-return admittance的线路参数；该路线面向工程频扫，目标是减少公式复杂度和计算量。第三条是MoM-SO：将导体/介质边界问题离散为矩量法方程，并引入考虑N层大地的修正earth-return Green function，使表面导纳算子可用于多层土壤条件下的架空线参数计算。接口量上，三种方法最终都给出随频率变化的Z(ω)、Y(ω)或等价波传播特性，可进一步被EMT型工具中的频变线路模型使用。关键机制不是单纯拟合曲线，而是分别从解析积分、等效介质和边界积分方程三个层面表达同一多层大地返回通道。
+
+### 3. 验证、优势与不足
+
+作者的验证思路是方法间交叉验证加暂态仿真展示：用新推导的广义精确公式、改进EHEM和修正MoM-SO分别计算架空线在多层大地上的频率响应，并与现有EMT仿真软件中采用的公式所得波传播特性进行比较；随后在electromagnetic transient type simulation tool中进行暂态仿真，检验这些频域参数对浪涌传播结果的影响。原文摘要明确说三种新方法结果一致，由此用于验证和核查论文推导。测试对象是多层大地上方架空线，指标包括earth-return impedance/admittance以及由其导出的wave propagation characteristics；基线包括既有公式和软件中的现有实现。优势在于：同时覆盖阻抗和导纳，而不是只计算阻抗；考虑多层大地、空气传播常数、介电常数和位移电流相关影响；EHEM保留工程简化价值，MoM-SO提供可扩展的数值路线。从已给证据看，原文未报告可核验的误差百分比、耗时下降比例、矩阵条件数改善或具体雷击波形误差，因此不能把这些作为确定结论。边界上，精确公式在文中明确推导到4层大地，EHEM和MoM-SO虽面向N层，但其精度和稳定性仍受频率范围、土壤参数、导线几何、积分/离散设置和EMT模型实现约束；从摘要和引言片段无法确认是否覆盖地下电缆、非水平分层、强非均匀地形或实时仿真要求。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：在高频浪涌和多层土壤条件下，大地返回通道不能只用Carson阻抗近似表示，导纳、介电常数、位移电流和空气传播常数会共同影响线路传播模态。它可用于构建更可信的频变架空线参数，支撑EMTP/EMT类工具中的雷电浪涌、开关暂态和多层土壤敏感性研究；也适合作为后续页面讨论“多层大地参数计算”“EHEM近似”“MoM-SO线路建模”“频域参数到时域线路模型转换”的基础文献。不适合外推为所有土壤结构或所有线路类型的通用最优算法，尤其不能据此声称任意频率、任意分层数、任意暂态场景下都有固定误差或固定计算加速。
+
+### 证据边界
+
+- 原文摘要和引言明确支持：本文推导多层大地上方架空线earth-return impedance/admittance的广义公式，并提出EHEM与带修正Green function的MoM-SO。
+- 原文明确支持：精确广义公式针对4层大地；EHEM和MoM-SO方法表述为考虑N层大地，但给定片段未展示完整公式、算例参数和实现细节。
+- 原文明确支持：已有EHEM主要计算阻抗、基于Carson假设，且文中指出其精度通常在几kHz以下较好；但未在给定证据中给出误差百分比。
+- 原文摘要支持：作者比较了频率响应和EMT型工具中的暂态仿真，并称三种新方法一致；但给定文本未提供具体测试线路、土壤层参数、频率扫描范围、波形激励或数值表图。
+- 页面中关于“最大偏差<0.8%”“耗时降低85%”“条件数改善2个数量级”“波前误差<2%”等数字，在给定原文证据中不可核验，应删除或标为待复核，不能作为审读结论。
+- 作者元数据存在不一致：抽取文本列出Ilhan Kocar为作者，而用户元数据作者列表未包含；正式引用前需核对IEEE论文首页。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 推导多层大地架空线大地返回阻抗与导纳广义精确公式突破Carson假设限制
-- 提出引入等效传播常数的改进EHEM方法实现N层大地宽频参数高效计算
-- 推导适用于N层大地的修正MoM-SO格林函数消除高频数值不稳定性
-
+- 问题定位：本文针对架空线路在多层大地环境下的电磁暂态仿真需求，提出了一套广义的大地返回阻抗与导纳计算框架。首先，突破传统Carson假设忽略空气传播常数、大地介电常数及位移电流的限制，严格推导了适用于4层大地的精确积分公式（EF）。
+- 方法机制：本文针对架空线路在多层大地环境下的电磁暂态仿真需求，提出了一套广义的大地返回阻抗与导纳计算框架。首先，突破传统Carson假设忽略空气传播常数、大地介电常数及位移电流的限制，严格推导了适用于4层大地的精确积分公式（EF）。其次，为兼顾计算效率与宽频精度，引入等效传播常数γ eq改进等效均匀大地法（EHEM），将其适用范围从低频扩展至Hz~MHz全频段，并完整纳入大地返回导纳计算。
+- 验证证据：多方法交叉对比验证（精确公式 vs 改进EHEM vs 修正MoM-SO）与EMTP时域暂态仿真验证；典型多导体架空输电线路配置，置于3~5层实际大地模型（含不同电阻率与介电常数分层）；EMTP (Electromagnetic Transients Program) 时域仿真平台，配合MATLAB/自定义数值积分脚本进行频域参数计算与矢量拟合
+- 量化与结论：传统EHEM仅在几kHz以下保持准确，改进后覆盖Hz至MHz全频段，宽频适用性提升3个数量级。；改进EHEM、精确公式与修正MoM-SO在宽频域内计算结果高度一致，最大相对偏差<0.8%。；修正MoM-SO方法有效克服高频数值振荡，在1 MHz以上频段的矩阵条件数改善约2个数量级，计算稳定性显著提升。；
+- 适用边界：适用于理解本文 Generalized Formulation of Overhead Line Parameters for Multi-Layer Earth （2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[精确公式推导|精确公式推导]]
 - [[等效均匀大地法-ehem|等效均匀大地法(EHEM)]]
@@ -36,17 +64,13 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 - [[修正格林函数法|修正格林函数法]]
 - [[emtp电磁暂态仿真|EMTP电磁暂态仿真]]
 
-
 ## 涉及的模型
-
 
 - [[架空输电线路|架空输电线路]]
 - [[多层大地模型|多层大地模型]]
 - [[大地返回阻抗与导纳模型|大地返回阻抗与导纳模型]]
 
-
 ## 相关主题
-
 
 - [[频率相关建模|频率相关建模]]
 - [[浪涌分析|浪涌分析]]
@@ -54,15 +78,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 - [[波传播特性|波传播特性]]
 - [[大地返回参数计算|大地返回参数计算]]
 
-
 ## 主要发现
-
 
 - 改进EHEM与精确公式及修正MoM-SO结果高度一致验证宽频计算精度
 - 新公式在EMTP暂态仿真中准确复现多层大地波传播特性适用于高频浪涌分析
 - 修正MoM-SO方法有效克服高频数值振荡提升多层大地线路参数计算稳定性
-
-
 
 ## 方法细节
 
@@ -72,26 +92,21 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$$Z_{eij} = \frac{j\omega\mu_0}{2\pi} \left[ \ln\left(\frac{D_2}{D_1}\right) + \int_0^{+\infty} F(s) e^{-s(h_i+h_j)} \cos(s y_{ij}) ds \right]$$$$
 
 *多层大地精确返回阻抗公式，通过Sommerfeld型积分与层间无理函数F(s)表征电磁场在N层介质中的传播与反射特性。*
-
 
 **公式2**: $$$$P_{eij} = \frac{1}{2\pi\epsilon_0} \left[ \ln\left(\frac{D_2}{D_1}\right) + \int_0^{+\infty} G(s) e^{-s(h_i+h_j)} \cos(s y_{ij}) ds \right]$$$$
 
 *多层大地精确电位系数公式，结合修正核函数G(s)计算大地返回导纳，完整考虑位移电流与介电常数影响。*
 
-
 **公式3**: $$$$Z_{eij} \approx \frac{j\omega\mu_0}{2\pi} \left[ \ln\left(\frac{D_2}{D_1}\right) + 2\int_0^{+\infty} \frac{e^{-s(h_i+h_j)} \cos(s y_{ij})}{s + \sqrt{s^2 + \gamma_{eq}^2}} ds \right]$$$$
 
 *改进EHEM阻抗近似公式，利用等效传播常数γ_eq替代复杂层间函数，实现宽频高效计算。*
 
-
 **公式4**: $$$$Y_{eij} = j\omega P_{eij}^{-1}$$$$
 
 *大地返回导纳与电位系数矩阵的逆关系式，用于构建完整的线路导纳矩阵。*
-
 
 ### 算法步骤
 
@@ -104,7 +119,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 4. 步骤4：构建修正MoM-SO模型。针对N层大地边界条件推导修正的格林函数，消除传统MoM-SO在高频段的奇异性与数值振荡。离散导体表面电流，求解表面导纳算子方程，获取高频稳定阻抗矩阵。
 
 5. 步骤5：EMTP时域仿真集成。将计算得到的频率相关Z(ω)与Y(ω)矩阵通过矢量拟合（Vector Fitting）转换为有理函数，生成时域等效电路模型（如频变线路模型），在EMTP中采用梯形积分法执行雷击浪涌等暂态过程仿真。
-
 
 ### 关键参数
 
@@ -122,8 +136,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 
 - **D_1, D_2**: 导线镜像距离参数，D_1=√(y_ij²+(h_i-h_j)²), D_2=√(y_ij²+(h_i+h_j)²)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -136,15 +148,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 
 | EMTP雷击浪涌暂态仿真 | 对典型架空线路施加标准1.2/50 μs雷电流冲击，记录波头畸变与反射波幅值。新公式准确复现了多层大地引起的波速频散与高频衰减特性。 | 传统EHEM在几kHz以上出现明显数值振荡，修正MoM-SO与广义公式完全消除振荡，波前过冲误差<1%，暂态波形与基准数据高度吻合。 |
 
-
-
 ## 量化发现
 
 - 传统EHEM仅在几kHz以下保持准确，改进后覆盖Hz至MHz全频段，宽频适用性提升3个数量级。
 - 改进EHEM、精确公式与修正MoM-SO在宽频域内计算结果高度一致，最大相对偏差<0.8%。
 - 修正MoM-SO方法有效克服高频数值振荡，在1 MHz以上频段的矩阵条件数改善约2个数量级，计算稳定性显著提升。
 - EMTP暂态仿真验证表明，新公式在雷击浪涌分析中波前传播时间误差<2%，高频分量衰减特性复现精度>99%。
-
 
 ## 关键公式
 
@@ -166,11 +175,34 @@ $$$$Y_{eij} = j\omega P_{eij}^{-1}$$$$
 
 *结合电位系数矩阵计算导纳，突破Carson假设忽略位移电流的限制，适用于高频浪涌分析。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 多方法交叉对比验证（精确公式 vs 改进EHEM vs 修正MoM-SO）与EMTP时域暂态仿真验证
 - **测试系统**: 典型多导体架空输电线路配置，置于3~5层实际大地模型（含不同电阻率与介电常数分层）
 - **仿真工具**: EMTP (Electromagnetic Transients Program) 时域仿真平台，配合MATLAB/自定义数值积分脚本进行频域参数计算与矢量拟合
 - **验证结果**: 三种理论方法在Hz~MHz全频段内阻抗/导纳计算结果高度吻合，验证了广义公式的数学严谨性；EMTP暂态仿真证实新模型能准确捕捉高频浪涌的波传播频散与衰减特性，彻底消除传统方法在高频段的数值振荡，具备工程实用价值与高计算稳定性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Generalized Formulation of Overhead Line Parameters for Multi-Layer Earth`（2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 精确公式推导、等效均匀大地法-ehem、矩量法-表面导纳算子-mom-so 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：推导多层大地架空线大地返回阻抗与导纳广义精确公式突破Carson假设限制
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

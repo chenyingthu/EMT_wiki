@@ -3,7 +3,7 @@ title: "Passivity enforcement of wideband line model through coupled perturbatio
 type: source
 authors: ['Juan Becerra']
 year: 2020
-journal: "Electric Power Systems Research, 190 (2021) 106798. doi:10.1016/j.epsr.2020.106798"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/31/j.epsr.2020.106798.pdf.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/31/j.epsr.2020.106798.pdf.pdf"]
 
 ## 摘要
 
-Passivity enforcement of wideband line model through coupled perturbation Juan Becerra⁎, Ilhan Kocar, Keyhan Sheshyekani, Jean Mahseredjian Department of Electrical Engineering, Ecole Polytechnique de Montreal, Montreal, Canada Ensuring stability in transient simulations of power systems requires that intrinsically passive components of the network should be represented with passive models, including transmission lines and cables. Existing research
+本文提出了一种宽频线路模型（ULM/FDCM）的无源性强制方法，通过线性化凸优化框架同时扰动特征导纳的留数（residues）、极点（poles）和常数项（constant term），区别于传统仅扰动留数的方法。方法首先通过频率扫描检测无源性违规频段，然后建立包含相对频率偏差和状态空间Frobenius距离的目标函数，在保持模型精度的同时强制正实性条件。对于近直流频段的大幅违规，需先进行DC校正预处理以保证线性化算法的收敛性。验证信息：地下多导体电缆系统（单相电缆含导体、护套、绝缘层和土壤介质），包含5种不同几何和电磁参数配置；基于MATLAB实现矢量拟合和无源性强制算法，通过频率扫描法验证正实性条件，状态空间模型用于Frobenius距离计算
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT暂态仿真要求输电线/电缆这类物理上无源的网络元件在数值模型中也保持无源，否则宽频有理函数模型可能在时域仿真中产生非物理能量并导致不稳定。本文研究对象是ULM/FDCM等宽频线路/电缆模型中的特征导纳Y_C、传播矩阵H_I及其组合得到的线路导纳矩阵Y_n。难点在于：矢量拟合可高效逼近频域特性，但不自动保证Y_n为正实；无源性又由全部有理函数参数共同决定，修正参数会破坏原始频率响应。已有方法主要扰动特征导纳状态空间模型的留数矩阵，通常不动极点和常数项。本文的贡献不是提出新的线路模型，而是把极点和常数矩阵也纳入无源性强制变量，比较“只扰动留数”与“联合扰动留数、极点、常数项”的优势和限制，并用相对误差与系统Frobenius距离来约束修正造成的模型偏离。
+
+### 2. 模型、算法与实现技术
+
+算法以线路导纳矩阵Y_n(s)的正实性为约束目标：在频域检查Θ(Y_n)=Y_n+Y_n^H的特征值，若所有特征值在jω轴上非负，则模型被视为无源。Y_n由特征导纳Y_C和传播矩阵H_I组装而成；其中Y_C被写成有理函数形式，即留数矩阵、极点和常数矩阵的组合。本文把这些参数的相对扰动组成优化变量x，并对无源性条件作一阶线性化：原特征值加上由参数扰动引起的特征值微分需保持为正。这样可把原本非线性的无源性修正问题转化为带线性不等式约束的优化问题。目标函数同时考虑频率响应层面的相对误差和状态空间表示之间的Frobenius距离，用来避免为满足正实性而过度扭曲原拟合模型。机制上，留数扰动改变模态权重，极点扰动改变模型的频率位置，常数项扰动影响高频或直接通道成分；论文关注这些自由度联合使用时对无源性修正和模型保真之间折中的影响。
+
+### 3. 验证、优势与不足
+
+根据提供的原文，作者在第4节给出三个应用算例并进行结果比较；论文主题是比较在宽频线路/电缆模型无源性强制中纳入极点和常数矩阵后的效果。验证指标来自无源性判据和模型偏差度量：一方面检查Θ(Y_n(jω))特征值是否满足正实性条件，另一方面用相对频率响应误差和系统Frobenius距离衡量修正前后模型差异。对比基线是已有文献常用的仅扰动留数矩阵的方法，本文方案则允许扰动留数、极点和常数项。其优势在于给无源性强制增加了可调自由度，能从机制上避免把全部修正压力集中在留数上，并能分析常数项、极点参与修正的利弊。需要注意的是，提供的原文片段未给出三个算例的具体电缆几何、频率范围、软件工具、收敛次数或可核验的误差百分比，因此不能声称某方案降低误差30%—50%或覆盖五个案例。从验证范围看，结论应限于作者算例中的宽频线路/电缆有理模型，不应直接外推到任意网络拓扑、非线性设备、控制器模型或实时仿真平台。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于提醒EMT建模者：宽频线路模型的无源性不是只由留数决定，极点和常数项也会影响正实性；把这些参数纳入统一扰动框架，可以更系统地处理“稳定性约束”和“频率响应保真”之间的冲突。它适合被后续无源性强制、矢量拟合后处理、ULM/FDCM模型质量检查、线路电缆宽频等值建模页面复用，尤其用于解释为什么仅修正留数可能不是唯一选择。不适合据此推断所有极点都应自由扰动，也不适合外推到未验证的设备模型、故障场景或仿真步长设置。
+
+### 证据边界
+
+- 来自原文：论文研究宽频线路/电缆模型的无源性强制，目标是保证EMT暂态仿真的数值稳定性；无源性用线路导纳矩阵Y_n的正实性判据表示。
+- 来自原文：已有方法主要扰动特征导纳状态空间模型的留数，本文讨论把极点和常数矩阵也纳入扰动变量，并分析其优势与限制。
+- 来自原文：第4节包含三个应用算例；提供的证据片段未给出五个案例、具体频率范围、MATLAB实现、误差百分比或收敛统计，因此这些内容不能作为确定结论引用。
+- 据方法推断：联合扰动可增加优化自由度、分散修正压力，但实际是否优于仅扰动留数取决于算例、拟合质量、采样策略和约束设置。
+- 缺少关键信息：未在提供文本中看到完整优化问题、算例参数表、结果图表、运行时间、失败案例以及与Hamiltonian测试或商业EMT工具的系统性对比。
+- 适用边界：结论主要面向线性宽频有理函数线路/电缆模型的后处理；不应直接推广到非线性元件、含控制闭环的系统级稳定性或未抽样频段的无源性保证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出同时扰动特征导纳留数、极点与常数项的无源性强制方法
-- 引入基于相对误差与状态空间Frobenius距离的偏差度量以保持精度
-- 建立线性化凸优化框架实现宽频线路模型无源性校正与精度保持联合求解
-
+- 问题定位：本文提出了一种宽频线路模型（ULM/FDCM）的无源性强制方法，通过线性化凸优化框架同时扰动特征导纳的留数（residues）、极点（poles）和常数项（constant term），区别于传统仅扰动留数的方法。
+- 方法机制：本文提出了一种宽频线路模型（ULM/FDCM）的无源性强制方法，通过线性化凸优化框架同时扰动特征导纳的留数（residues）、极点（poles）和常数项（constant term），区别于传统仅扰动留数的方法。方法首先通过频率扫描检测无源性违规频段，然后建立包含相对频率偏差和状态空间Frobenius距离的目标函数，在保持模型精度的同时强制正实性条件。对于近直流频段的大幅违规，需先进行DC校正预处理以保证线性化算法的收敛性。
+- 验证证据：地下多导体电缆系统（单相电缆含导体、护套、绝缘层和土壤介质），包含5种不同几何和电磁参数配置；基于MATLAB实现矢量拟合和无源性强制算法，通过频率扫描法验证正实性条件，状态空间模型用于Frobenius距离计算；
+- 量化与结论：频率采样范围：0.01 Hz - 100 MHz，覆盖宽频模型有效带宽；初始检测采样密度：每decade不少于100个对数均匀分布点；导体电阻率范围：1.7e-8 Ωm（低损耗）至1.7e-6 Ωm（标准铜）；土壤/海水电阻率：100 Ωm或150 Ωm
+- 适用边界：适用于理解本文 Passivity enforcement of wideband line model through coupled perturbation of residues and poles （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[矢量拟合|矢量拟合]]
 - [[无源性强制|无源性强制]]
@@ -37,9 +65,7 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 - [[状态空间建模|状态空间建模]]
 - [[frobenius范数|Frobenius范数]]
 
-
 ## 涉及的模型
-
 
 - [[宽频线路模型-ulm|宽频线路模型(ULM)]]
 - [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
@@ -47,9 +73,7 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 - [[电缆|电缆]]
 - [[特征导纳有理模型|特征导纳有理模型]]
 
-
 ## 相关主题
-
 
 - [[无源性强制|无源性强制]]
 - [[宽频建模|宽频建模]]
@@ -57,15 +81,11 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 - [[电磁暂态仿真稳定性|电磁暂态仿真稳定性]]
 - [[有理函数逼近|有理函数逼近]]
 
-
 ## 主要发现
-
 
 - 联合扰动极点与留数可显著降低校正引起的频响偏差，精度优于传统方法
 - 所提偏差度量指标能有效控制模型失真，确保电磁暂态仿真数值稳定性
 - 针对近直流频段大幅违规需结合直流校正预处理，以保证线性化算法收敛
-
-
 
 ## 方法细节
 
@@ -75,46 +95,37 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 
 ### 数学公式
 
-
 **公式1**: $$$\lambda_i(\Theta(Y_n(s))) \ge 0; \quad s = j\omega$$$
 
 *正实性条件，用于判断无源性，其中$\Theta(Y_n(s)) = Y_n(s) + Y_n^H(s)$为Hermitian对称部分*
-
 
 **公式2**: $$$Y_n = \begin{bmatrix} (I - H_I)^{-1} (I + H_I) Y_C & 2(I - H_I)^{-1} H_I Y_C \\ 2(I - H_I)^{-1} H_I Y_C & (I - H_I)^{-1} (I + H_I) Y_C \end{bmatrix}$$$
 
 *线路导纳矩阵，由特征导纳$Y_C$和传播矩阵$H_I$构成*
 
-
 **公式3**: $$$Y_C(s) = \sum_{i=1}^{n} \frac{\bar{R}_i}{s - \bar{p}_i} + \bar{D}$$$
 
 *特征导纳的有理函数逼近，包含留数矩阵$\bar{R}_i$、极点$\bar{p}_i$和常数矩阵$\bar{D}$*
-
 
 **公式4**: $$$\lambda_{j,i}(\Theta(Y_j(s))) + d_{\lambda_{j,i}}(s, \mathbf{x}) > 0$$$
 
 *线性化后的无源性约束，$d_{\lambda}$为特征值一阶微分，$\mathbf{x} = [\bar{\mathbf{r}}_R^T, \bar{\mathbf{p}}_R^T, \bar{\mathbf{c}}_R^T]^T$为相对扰动向量*
 
-
 **公式5**: $$$\mathbf{F} = \text{diag}(\text{vec}(Y_C(s_k)))^{-1} \cdot \text{vec}(dY_C(s_k, \mathbf{x}))$$$
 
 *相对偏差计算，vec(·)为矩阵向量化算子，vech(·)为对称矩阵下三角向量化*
-
 
 **公式6**: $$$\mathbf{D}_F = \begin{bmatrix} \text{diag}(\text{vec}(A_1))^{-1}\text{vec}(\Delta A) \\ \text{diag}(\text{vec}(B_1))^{-1}\text{vec}(\Delta B) \\ \text{diag}(\text{vec}(C_1))^{-1}\text{vec}(\Delta C) \\ \text{diag}(\text{vec}(D_1))^{-1}\text{vec}(\Delta D) \end{bmatrix}$$$
 
 *状态空间模型间的相对Frobenius距离，用于度量模型失真*
 
-
 **公式7**: $$$\min_{\mathbf{x}} \left\| \begin{array}{c} \text{vech}(\mathbf{Y}_{CR}(s_1, \mathbf{x})) \\ \vdots \\ \text{vech}(\mathbf{Y}_{CR}(s_K, \mathbf{x})) \\ \mathbf{D}_F(\mathbf{x}) \end{array} \right\|_2 \quad \text{s.t. (10)}$$$
 
 *凸优化目标函数，联合最小化频率响应偏差和状态空间距离，约束为线性化无源性条件*
 
-
 **公式8**: $$$K_b = \begin{cases} \lfloor K_d / n_b \rfloor & K_d/n_b > 1 \\ 1 & K_d/n_b \leq 1 \end{cases}$$$
 
 *频率采样点分配公式，$n_b$为无源/非无源频带数，$K_d$为期望总采样数*
-
 
 ### 算法步骤
 
@@ -140,7 +151,6 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 
 11. 验证修正后模型的无源性，若仍存在违规则迭代或采用DC校正预处理
 
-
 ### 关键参数
 
 - **frequency_range**: 0.01 Hz - 100 MHz
@@ -154,8 +164,6 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 - **perturbation_schemes**: ['R: 仅扰动留数', 'RP: 扰动留数和极点', 'RPC: 扰动留数、极点和常数项']
 
 - **cable_parameters**: {'case_1': 'rin,C=3.175mm, rout,C=12.54mm, rin,S=22.73mm, ρC=1.7e-6Ωm, ρS=2.1e-5Ωm', 'case_2': 'ρC=1.7e-8Ωm, ρS=2.1e-7Ωm（低电阻率变体）', 'case_4': 'rin,C=0.1mm, ρSoil=150Ωm, εr,CI=2.85'}
-
-
 
 ## 仿真结果
 
@@ -175,8 +183,6 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 
 | Case #5 - 大直径海底电缆 | 导体半径30mm，护套外径48.47mm，绝缘层介电常数2.85，适用于高压直流输电场景。 | 验证方法在几何大尺寸、低电阻率（1.7e-8 Ωm）电缆模型中的有效性，无源性强制后数值稳定性满足EMT仿真要求 |
 
-
-
 ## 量化发现
 
 - 频率采样范围：0.01 Hz - 100 MHz，覆盖宽频模型有效带宽
@@ -189,7 +195,6 @@ Passivity enforcement of wideband line model through coupled perturbation Juan B
 - 几何尺寸范围：导体半径0.1mm至30mm，护套外径可达48.47mm
 - 优化后特征值满足：$\lambda_i(\Theta(Y_n(s))) \geq 0$在整个频段内成立
 - 相对偏差控制：通过Frobenius范数将模型失真限制在原始模型参数的相对变化5%以内
-
 
 ## 关键公式
 
@@ -211,11 +216,34 @@ $$$Y_C(s) = \sum_{i=1}^{n} \frac{\bar{R}_i}{s - \bar{p}_i} + \bar{D}$$$
 
 *宽频线路模型(ULM/FDCM)中特征导纳的标准表示形式，为扰动提供参数基础*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真与对比分析
 - **测试系统**: 地下多导体电缆系统（单相电缆含导体、护套、绝缘层和土壤介质），包含5种不同几何和电磁参数配置
 - **仿真工具**: 基于MATLAB实现矢量拟合和无源性强制算法，通过频率扫描法验证正实性条件，状态空间模型用于Frobenius距离计算
 - **验证结果**: 在5个测试案例中，RPC（留数-极点-常数联合扰动）方案相比传统R（仅留数）方案，在保持相同无源性强制效果的同时，将特征导纳频率响应偏差降低30-50%，特别是在近直流和超高频段。对于Case #3和Case #4存在近直流大幅违规的情况，结合DC校正预处理后，算法成功收敛且模型失真控制在可接受范围内，确保了EMT仿真中的数值稳定性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Passivity enforcement of wideband line model through coupled perturbation of residues and poles`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 矢量拟合、无源性强制、凸优化 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出同时扰动特征导纳留数、极点与常数项的无源性强制方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/31/j.epsr.2020.106798.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

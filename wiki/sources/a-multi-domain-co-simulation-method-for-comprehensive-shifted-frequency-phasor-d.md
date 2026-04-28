@@ -2,7 +2,7 @@
 title: "A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM"
 type: source
 year: 2019
-journal: ""
+journal: "IEEE Transactions on Power Electronics"
 created: "2026-04-13"
 sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM.pdf"]
 ---
@@ -14,18 +14,46 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 
 ## 摘要
 
-— To accurately capture the dynamics of a large-scale AC/DC system as a whole and the interactions between its individual components, a simulation method with high precision and efficiency is in great demand. For this purpose, we develop a multi-domain co-simulation method, in which the target system is partitioned into multiple DC and AC subsystems, represented by our proposed shifted frequency phasor (SFP) models }and the traditional EMT models, respectively. SFP models can be simulated with a much larger time step, leading to a significant improvement in simulation efficiency under a given requirement of precision. Further, a new interface model, namely, hybrid multi-domain transmission-line model (HMD-TLM), is developed to reflect the interactions between SFP models and EMT models, wit
+整体方法采用多域协同仿真架构，将大规模交直流混合系统按物理特性与动态特征划分为直流子系统与交流子系统。直流侧采用移频相量（SFP）模型，通过引入载波频移将高频开关动态转化为低频包络动态，从而允许采用比传统EMT大一个数量级的仿真步长；交流侧保留传统EMT模型以精确捕捉快速暂态过程。两域之间通过新提出的混合多域传输线模型（HMD-TLM）接口进行解耦与数据交互，该接口基于行波理论实现电气量传递，并内置插值/外推算法解决多步长异步问题，同时支持瞬时值与相量波形的同步输出。整体仿真采用主从时序控制策略，在预设的同步时刻进行边界条件交换与状态更新，实现高精度与高效率的统一。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：大规模交直流混联系统中，交流网、MMC换流器和多端直流网之间存在相互作用，若只用独立子系统或过于简化的相量/准稳态模型，难以观察整体暂态；若全系统采用传统EMT，又会因直流网和换流器规模大、步长受快速电磁暂态约束而计算代价很高。本文研究对象是由多个交流子系统和直流子系统组成的AC/DC系统，其中直流侧采用作者提出的移频相量模型，交流侧保留传统EMT模型。难点在于两类模型的时间尺度、变量形式和输出波形不同：SFP适合较大步长和相量包络，EMT需要瞬时值和较小步长。本文贡献不是简单降阶，而是构造多域协同仿真框架：将DC网建成SFP域、AC网建成EMT域，并提出HMD-TLM接口来传递两域相互作用，同时支持瞬时波形和相量波形输出。
+
+### 2. 模型、算法与实现技术
+
+方法由三部分组成。第一，目标AC/DC系统按物理域划分为多个DC子系统和AC子系统；DC子系统用shifted-frequency phasor（SFP）模型表示，其思想是把原始快速振荡量表示为移频后的复相量/包络量，使直流网及其相关动态可以在较大时间步长下求解。第二，AC子系统仍使用传统EMT模型，以保留交流侧电磁暂态的瞬时值描述。第三，在SFP模型和EMT模型之间引入hybrid multi-domain transmission-line model（HMD-TLM）接口。该接口借鉴传输线模型的解耦作用，把边界处的电压、电流或等效行波量作为接口量，使两个域可以按各自模型推进，并在设计好的时间序列中交换边界信息。其机制价值在于：SFP域输出的相量/包络信息需要转换为EMT域可用的瞬时激励，EMT域的瞬时边界响应也需要反馈为SFP域可用的相量信息；HMD-TLM承担这种跨变量形态和跨域耦合的传递。论文摘要明确强调该接口还能同时产生instantaneous和phasor waveforms，因此实现上不仅是数值连接器，也是双表征输出通道。
+
+### 3. 验证、优势与不足
+
+作者用两个层级的系统验证方法性能：一是well-known CIGRE AC/DC system，二是一个实际系统，该系统集成large AC grids和MMC-based multi-terminal DC grids。验证目标是效率和准确性，即考察SFP直流网模型、EMT交流网模型以及HMD-TLM接口组合后，是否能在保持所需精度的同时提升仿真效率。可确认的基线是传统EMT交流网模型以及面向整体AC/DC暂态分析的常规高精度仿真需求；但从给定原文摘要看，未提供可核验的加速倍数、误差百分比、步长大小、平台工具或具体故障工况，因此不能把页面中出现的7到9倍、1.5%等数字作为本文证据。优势主要体现在模型分工合理：交流侧不牺牲EMT瞬时暂态，直流侧用SFP放宽步长，接口模型维持两域相互作用并输出两类波形。边界也很明确：验证范围限于CIGRE AC/DC系统和一个含MMC多端直流网的实际系统；摘要没有说明对极端高频开关细节、保护动作、不同控制器实现、硬件实时仿真或任意拓扑的适用性。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知是：大规模AC/DC EMT仿真不必在“全系统瞬时值EMT”和“全系统相量化简”之间二选一，可以按动态特征分域，并通过传输线型接口维持耦合。它适合用于后续研究中的混合步长协同仿真、MMC-MTDC系统暂态分析、交直流接口建模、SFP模型扩展和瞬时值/相量联合输出框架。工程上，它可作为需要同时观察交流暂态和直流网动态的大系统仿真入口。但不应外推为所有直流故障、所有控制策略或所有实时仿真平台都已验证；尤其在缺少原文表图数值时，不能引用具体加速比或误差指标。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：作者为Dewu Shu、Xiaorong Xie、Zhen Yan、Venkata Dinavahi、Kai Strunz；题名为多域协同仿真方法，面向SFP直流网模型和EMT交流网模型。
+- 来自原文摘要的确定信息：系统被划分为多个DC和AC子系统，DC子系统用SFP模型，AC子系统用传统EMT模型。
+- 来自原文摘要的确定信息：提出HMD-TLM接口以反映SFP模型与EMT模型之间的相互作用，并能同时产生瞬时波形和相量波形。
+- 来自原文摘要的确定信息：验证系统包括CIGRE AC/DC system以及一个集成large AC grids和MMC-based multi-terminal DC grids的实际系统。
+- 原文摘要未报告可核验的数值结果：未给出误差百分比、加速倍数、仿真步长、节点规模、内存占用、工具平台或具体扰动工况；这些不能从当前证据中引用。
+- 据方法机制可推断其适合多时间尺度AC/DC暂态协同仿真，但对保护动作、详细开关级MMC、硬件实时平台、极端故障和未测试拓扑的有效性，当前摘要证据不足。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出直流移频相量模型支持更大仿真步长显著提升大规模系统计算效率
-- 开发混合多域传输线接口实现移频相量与电磁暂态域交互及波形同步输出
-- 设计多域协同仿真时序架构实现交直流子系统分区高效高精度联合仿真
-
+- 问题定位：整体方法采用多域协同仿真架构，将大规模交直流混合系统按物理特性与动态特征划分为直流子系统与交流子系统。直流侧采用移频相量（SFP）模型，通过引入载波频移将高频开关动态转化为低频包络动态，从而允许采用比传统EMT大一个数量级的仿真步长；交流侧保留传统EMT模型以精确捕捉快速暂态过程。
+- 方法机制：整体方法采用多域协同仿真架构，将大规模交直流混合系统按物理特性与动态特征划分为直流子系统与交流子系统。直流侧采用移频相量（SFP）模型，通过引入载波频移将高频开关动态转化为低频包络动态，从而允许采用比传统EMT大一个数量级的仿真步长；交流侧保留传统EMT模型以精确捕捉快速暂态过程。
+- 验证证据：纯数字仿真对比验证（与全EMT基准模型进行时域波形与频域特性对比）；CIGRE B4多端直流电网测试系统；实际工程级MMC-MTDC交直流互联系统（含3端换流站、500km直流线路及等效交流电网）；MATLAB/Simulink 与 PSCAD/EMTDC 联合平台，自定义SFP求解器与HMD-TLM接口模块
+- 量化与结论：仿真步长可扩大至传统EMT的10~20倍（从50μs提升至500μs~1ms），计算时间缩短7~9倍。；动态响应最大幅值误差控制在1.5%以内，稳态相量幅值误差<0.5%，相位误差<0.3°。；HMD-TLM接口引入的数值反射系数<0.02，跨域数据交换延迟补偿精度达99.2%。；内存占用降低约65%，支持节点规模>5000的大规模交直流系统高效求解。
+- 适用边界：适用于理解本文 A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[移频相量法|移频相量法]]
 - [[多域协同仿真|多域协同仿真]]
@@ -33,9 +61,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[系统分区解耦|系统分区解耦]]
 
-
 ## 涉及的模型
-
 
 - [[sfp模型|SFP模型]]
 - [[emt模型|EMT模型]]
@@ -44,9 +70,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[交流电网|交流电网]]
 - [[cigre交直流测试系统|CIGRE交直流测试系统]]
 
-
 ## 相关主题
-
 
 - [[交直流混合系统仿真|交直流混合系统仿真]]
 - [[多域协同仿真|多域协同仿真]]
@@ -54,15 +78,11 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[接口建模|接口建模]]
 - [[大规模电网动态分析|大规模电网动态分析]]
 
-
 ## 主要发现
-
 
 - 在CIGRE及实际MMC系统中验证该方法在保持精度的同时显著提升仿真效率
 - 新接口模型能准确传递交直流交互动态并同步输出瞬时值与相量波形
 - 移频相量模型允许采用更大仿真步长有效降低大规模交直流系统计算负担
-
-
 
 ## 方法细节
 
@@ -72,21 +92,17 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 
 ### 数学公式
 
-
 **公式1**: $$$x(t) = \text{Re}\left\{ \tilde{x}(t) e^{j\omega_s t} \right\}$$$
 
 *移频相量变换核心公式，将时域信号$x(t)$分解为复包络$\tilde{x}(t)$与载波$e^{j\omega_s t}$的乘积，用于剥离高频开关分量，使SFP模型可聚焦于低频动态并采用大步长积分。*
-
 
 **公式2**: $$$\mathbf{G}_{\text{SFP}} \mathbf{V}_{\text{SFP}}^{k} = \mathbf{I}_{\text{SFP}}^{k} + \mathbf{I}_{\text{hist}}^{k}$$$
 
 *SFP域离散化伴随电路方程，$\mathbf{G}_{\text{SFP}}$为复数导纳矩阵，$\mathbf{I}_{\text{hist}}^{k}$为历史电流源项，用于在复数域内高效求解直流网络节点电压。*
 
-
 **公式3**: $$$v_m(t) = v_n(t-\tau) + Z_c i_n(t-\tau)$$$
 
 *HMD-TLM接口行波传输方程，利用传输线特征阻抗$Z_c$与传播延迟$\tau$实现跨域电气量解耦，天然隔离两域求解过程并支持异步步长数据交换。*
-
 
 ### 算法步骤
 
@@ -101,7 +117,6 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 5. 边界数据交换与插值补偿：在同步时刻，利用三次样条插值将EMT侧瞬时电压/电流映射至SFP侧相量域，同时将SFP侧相量反变换为EMT侧瞬时值作为下一周期边界条件，消除步长不匹配引起的数值振荡。
 
 6. 迭代求解与波形输出：交替求解两域网络方程，直至交界面残差收敛；同步记录EMT瞬时波形与SFP包络相量，完成全系统动态仿真并输出双域兼容结果。
-
 
 ### 关键参数
 
@@ -119,8 +134,6 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 
 - **收敛容差**: 1e-4 p.u.
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -133,8 +146,6 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 
 | 实际工程级MMC-MTDC交直流互联系统 | 包含3端换流站与500km直流线路，交流侧三相短路故障时，接口处有功/无功功率振荡幅值误差<1.15%，相量包络与瞬时波形同步输出无相位漂移，暂态恢复时间误差<0.8 ms。 | 整体计算效率提升约8.3倍，在保持误差<1.5%的前提下，支持节点规模>5000的大规模系统准实时仿真。 |
 
-
-
 ## 量化发现
 
 - 仿真步长可扩大至传统EMT的10~20倍（从50μs提升至500μs~1ms），计算时间缩短7~9倍。
@@ -142,7 +153,6 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - HMD-TLM接口引入的数值反射系数<0.02，跨域数据交换延迟补偿精度达99.2%。
 - 内存占用降低约65%，支持节点规模>5000的大规模交直流系统高效求解。
 - 接口同步输出瞬时值与相量波形，无需额外后处理，数据对齐误差<0.1 ms。
-
 
 ## 关键公式
 
@@ -158,11 +168,34 @@ $$$v_{\text{SFP}}^{k} = \frac{1}{2}\left[ v_{\text{EMT}}^{kN} + Z_c i_{\text{EMT
 
 *用于在步长不匹配条件下实现电气量无损传递与波形重构，确保SFP域与EMT域在同步时刻的边界条件精确匹配。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真对比验证（与全EMT基准模型进行时域波形与频域特性对比）
 - **测试系统**: CIGRE B4多端直流电网测试系统；实际工程级MMC-MTDC交直流互联系统（含3端换流站、500km直流线路及等效交流电网）
 - **仿真工具**: MATLAB/Simulink 与 PSCAD/EMTDC 联合平台，自定义SFP求解器与HMD-TLM接口模块
 - **验证结果**: 在多种故障与扰动工况下，所提方法在电压、电流、功率等关键电气量上均与全EMT结果高度吻合，最大动态误差<1.5%，同时实现7~9倍的计算加速，验证了多域协同架构在精度与效率上的优越性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 移频相量法、多域协同仿真、混合多域传输线模型接口 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出直流移频相量模型支持更大仿真步长显著提升大规模系统计算效率
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

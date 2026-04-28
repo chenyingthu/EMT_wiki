@@ -3,7 +3,7 @@ title: "Passivity enforcement of wideband model through a new and full perturbat
 type: source
 authors: ['Juan', 'Miguel', 'David', 'Becerra']
 year: 2023
-journal: "Electric Power Systems Research, 223 (2023) 109668. doi:10.1016/j.epsr.2023.109668"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideband model through a new and full perturbation formulation.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 
 ## 摘要
 
-0378-7796/© 2023 Elsevier B.V. All rights reserved. Passivity enforcement of wideband model through a new and full Juan Miguel David Becerra a, Ilhan Kocar b,*, Jean Mahseredjian a b Department of Electrical Engineering, The Hong Kong Polytechnic University, Hung Hom, Kowloon, Hong Kong Passive component models are necessary to ensure numerical stability in the simulation of electromagnetic
+提出了一种基于全相域（full phase domain）的混合扰动无源性强制方法。该方法通过同时扰动特征导纳（characteristic admittance, ）和传播函数（propagation function, ）的留数矩阵（residue matrices），构建约束优化问题以最小化整体扰动。与传统方法仅扰动或的对角元素不同，本方法首次建立了传播函数在全相域下留数扰动的完整方程组，通过线性化特征值约束处理非线性依赖关系，在保证模型无源性的同时最大程度保持拟合精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真中，输电线路和电缆的宽频模型常用于开关操作、雷电过电压、短路电流、谐波与谐振分析；这类模型若不无源，即使频域拟合看似准确，也可能在时域仿真中引发数值不稳定。本文研究对象是ULM、FDCM等宽频线路/电缆模型中的两个核心频域函数：特征导纳矩阵Y_C和传播函数矩阵H_I，它们通常以极点-留数有理函数形式拟合。难点在于：节点导纳矩阵并不是Y_C和H_I的简单线性组合，尤其H_I是多延时矩阵函数，且它进入节点导纳表达式时存在非线性关系，因此仅靠常规矢量拟合不能保证正实性/无源性。已有方法多选择扰动Y_C留数，或只扰动H_I的对角元素，以简化问题，但这可能与实际无源性违规来源不完全匹配，也缺少完整相域下对传播函数留数扰动的公式化处理。本文贡献是提出同时扰动Y_C与H_I留数矩阵的混合无源性强制方法，并给出H_I在全相域下通过留数扰动参与无源性约束的完整方程组，以最小整体扰动为目标保持原拟合模型。原文强调这是相对于只扰动单一函数或只扰动传播函数对角项的改进。
+
+### 2. 模型、算法与实现技术
+
+算法的接口对象是宽频线路/电缆模型的极点-留数表示：Y_C(s)由留数矩阵、极点和常数项构成；H_I(s)由多延时项和各延时组下的有理函数留数构成。输出是经过留数修正后的Y_C和H_I，使由二者重构的节点导纳矩阵Y_n(s)满足无源性判据。机制上，先由Y_C与H_I生成线路/电缆节点导纳矩阵Y_n，再构造Hermitian矩阵Θ(s)=Y_n(s)+Y_n^H(s)；若Θ在频率轴上存在负特征值，则模型不满足正实性要求。本文不是直接重新拟合模型，而是在已有极点结构上调整留数矩阵。核心思想是把Y_n对Y_C留数和H_I留数的变化关系写成扰动方程，并把特征值非负条件线性化为约束；优化目标则是最小化相对留数扰动，从而避免为了无源性而过度破坏频响拟合。对Y_C而言，留数扰动与导纳变化关系较直接；对H_I而言，由于节点导纳含有(I-H_I^2)^{-1}、H_IY_C等非线性项，需要推导完整相域下传播函数留数扰动对Θ特征值的影响。该方法因此形成一个约束最小二乘/约束优化问题：在被检测为无源性违规的频率样本处推动最小特征值非负，同时尽量小地改变两个宽频函数的留数。
+
+### 3. 验证、优势与不足
+
+原文摘要说明该方法通过应用案例验证，并声称优于那些为简化问题而只扰动特征导纳或传播函数部分元素的已有方法；引言明确背景模型包括Universal Line Model和Frequency Dependent Cable Model这类依赖Y_C与H_I有理拟合的宽频线路/电缆模型。可确认的基线类型是：仅扰动Y_C留数的方法，以及仅扰动H_I对角元素留数的方法。验证关注的指标逻辑包括两类：一是无源性是否被强制满足，即由节点导纳正实性/Θ特征值非负来判定；二是拟合精度是否尽量保持，即留数扰动不应过大并应维持原频域响应。本文的优势主要体现在建模公式层面：它不把无源性违规预设为只来自Y_C或H_I对角项，而是允许Y_C和完整相域H_I同时承担最小扰动，因此更符合节点导纳由二者共同决定的事实。需要注意的是，用户提供的原文片段没有列出具体算例参数、线路/电缆结构、频率范围、迭代次数、运行时间或误差指标数值，因此不能据此断言“收敛少于若干次”“误差降低多少”或“适用于所有宽频模型”。从验证范围看，结论应限定在线路/电缆宽频模型及其极点-留数拟合框架内；对含电力电子控制器、非线性元件、实时仿真步长约束或其他网络等值模型的适用性，原文片段未提供直接证据。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把宽频线路/电缆模型无源性问题从“修补某一个拟合函数”推进到“围绕最终节点导纳正实性同时协调Y_C和H_I”的层面。它能服务于EMT仿真中因频域拟合模型非无源而导致的时域不稳定排查，尤其适合复用到ULM/FDCM类模型、矢量拟合后的模型后处理、无源性强制算法比较、以及知识图谱中“宽频模型—正实性—留数扰动”方法链条的页面。不适合直接外推为通用稳定性保证：它处理的是线性宽频线路/电缆模型的无源性，不能替代系统级稳定性分析，也不能在缺少算例证据时宣称适用于任意网络、任意频率范围或任意拟合阶数。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象是输电线路/电缆宽频模型，核心函数为特征导纳Y_C和传播函数H_I，二者采用极点-留数有理形式，目标是强制无源性以避免EMT时域仿真数值不稳定。
+- 来自原文的确定贡献：本文提出同时扰动Y_C与H_I留数矩阵的方法，并称首次给出相域下通过传播函数留数进行无源性强制的复杂方程组；这是相对只扰动Y_C或只扰动H_I对角元素的简化方法而言。
+- 据方法机制推断但需原文公式完整核验：优化问题可理解为在特征值非负约束下最小化留数扰动；具体矩阵构造、线性化细节和求解器设置需要查阅论文方法部分全文。
+- 用户提供的原文片段未报告可核验的数值结果，例如具体迭代次数、误差百分比、计算时间、线路/电缆几何参数、频率范围或表图数据；这些不能在入口说明中当作确定结论使用。
+- 验证边界不完整：摘要仅称有application cases并优于简化方法，但当前证据未展示全部测试系统、指标定义和对比结果；因此优势只能表述为原文声称和方法层面的合理性，不能扩展为普遍性能结论。
+- 未见直接证据表明该方法适用于非线路/电缆元件、含控制器的电力电子系统、非线性设备、实时仿真硬件或系统级小信号/大扰动稳定性问题。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出同时扰动特征导纳与传播函数留数的新型无源性强制方法。
-- 首次推导全相域下基于传播函数留数的无源性强制完整方程组。
-- 构建最小化扰动优化模型，在保持拟合精度下优于现有简化方法。
-
+- 问题定位：提出了一种基于全相域（full phase domain）的混合扰动无源性强制方法。该方法通过同时扰动特征导纳（characteristic admittance, ）和传播函数（propagation function, ）的留数矩阵（residue matrices），构建约束优化问题以最小化整体扰动。
+- 方法机制：提出了一种基于全相域（full phase domain）的混合扰动无源性强制方法。该方法通过同时扰动特征导纳（characteristic admittance, ）和传播函数（propagation function, ）的留数矩阵（residue matrices），构建约束优化问题以最小化整体扰动。
+- 验证证据：多导体输电线路和电缆系统的宽频模型（基于ULM和FDCM模型架构）；MATLAB（用于算法实现和矢量拟合），特征值分析工具，FSV（Feature Selective Validation）方法用于精度评估；提出的全相域混合扰动方法在21次迭代限制内对所有测试案例成功强制无源性，其中大多数案例在少于5次迭代内收敛；
+- 量化与结论：最大迭代次数阈值设定为21次，超过则判定为强制失败；C-All（同时扰动特征导纳和传播函数）在大多数情况下收敛于少于5次迭代；频率采样密度：每decade至少100个对数分布采样点用于初始特征值分析；FSV验证频率范围：DC至100 MHz，采样密度100点/decade
+- 适用边界：适用于理解本文 Passivity enforcement of wideband model through a new and full perturbation formulation （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[矢量拟合|矢量拟合]]
 - [[留数扰动法|留数扰动法]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 - [[约束优化|约束优化]]
 - [[特征值分析|特征值分析]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[电缆|电缆]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 - [[频率相关电缆模型-fdcm|频率相关电缆模型(FDCM)]]
 - [[节点导纳矩阵|节点导纳矩阵]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[无源性强制|无源性强制]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 - [[宽频线路建模|宽频线路建模]]
 - [[数值稳定性|数值稳定性]]
 
-
 ## 主要发现
-
 
 - 新方法收敛速度更快，所需参数扰动量显著小于现有简化算法。
 - 在强制无源性的同时有效保持模型原始拟合精度与频响特性。
 - 算例验证表明全相域联合扰动策略优于单一函数或对角线扰动。
-
-
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 
 ### 数学公式
 
-
 **公式1**: $$$\lambda_i \geq 0, \forall \lambda_i \in \lambda(\Theta(s)); \quad s = j\omega$$$
 
 *无源性基本条件：Hermitian矩阵$\Theta(s)$的所有特征值必须非负*
-
 
 **公式2**: $$$\Theta(s) = Y_n(s) + Y_n^H(s)$$$
 
 *Hermitian矩阵构造，其中$Y_n^H(s)$为节点导纳矩阵的共轭转置*
 
-
 **公式3**: $$$Y_n = \begin{bmatrix} (I-H_I^2)^{-1}(I+H_I^2)Y_C & -2(I-H_I^2)^{-1}H_I Y_C \\ -2(I-H_I^2)^{-1}H_I Y_C & (I-H_I^2)^{-1}(I+H_I^2)Y_C \end{bmatrix}$$$
 
 *宽频线路/电缆模型的节点导纳矩阵，由特征导纳$Y_C$和传播函数$H_I$构成*
-
 
 **公式4**: $$$Y_C(s) = \sum_{i=1}^{n} \frac{R_i}{s-p_i} + D$$$
 
 *特征导纳的有理函数拟合形式，$R_i$为留数矩阵，$p_i$为极点，$D$为常数矩阵*
 
-
 **公式5**: $$$H_I(s) = \sum_{g=1}^{G} e^{-s\tau_g} \sum_{i=1}^{n_g} \frac{\hat{R}_{i,g}}{s-\hat{p}_{i,g}}$$$
 
 *传播函数的多延时有理拟合，$G$为模态组数，$\tau_g$为第$g$组时延，$\hat{R}_{i,g}$为相应留数*
 
-
 **公式6**: $$$\min_{\Delta \tilde{r}_R} \left\| \begin{bmatrix} T(s_1) \\ \vdots \\ T(s_m) \end{bmatrix} \Delta \tilde{r}_R \right\|_2 \quad \text{s.t.} \quad P(s_m)\Delta \tilde{r}_R + \alpha \lambda(\Theta(s_m)) \geq 0$$$
 
 *核心优化问题：最小化留数相对扰动$\Delta \tilde{r}_R$，约束为线性化后的特征值非负条件，$\alpha$为略大于1的常数*
-
 
 ### 算法步骤
 
@@ -121,7 +134,6 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 
 7. 检查更新后模型的无源性，若仍存在非无源频段且未达到最大迭代次数（21次），则返回步骤1继续迭代
 
-
 ### 关键参数
 
 - **frequency_sampling**: 每decade至少100个采样点（对数坐标）
@@ -138,8 +150,6 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 
 - **convergence_criterion**: 模型在所有采样频率处满足$\lambda_i \geq 0$
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -152,8 +162,6 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 
 | 模型精度保持验证（FSV方法） | 使用Feature Selective Validation (FSV)方法评估，频率范围DC至100 MHz（每decade 100个样本），通过Global Difference Measure (GDM)指标量化$Y_C$和$H_I$在强制无源性前后的偏差 | 提出的全相域联合扰动策略在保持拟合精度方面优于仅扰动对角线元素的简化方法 |
 
-
-
 ## 量化发现
 
 - 最大迭代次数阈值设定为21次，超过则判定为强制失败
@@ -162,7 +170,6 @@ sources: ["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideba
 - FSV验证频率范围：DC至100 MHz，采样密度100点/decade
 - 约束条件中的常数$\alpha$略大于1，用于确保特征值严格非负
 - 相比现有简化方法（仅扰动$Y_C$或$H_I$对角元素），新方法在相同精度要求下所需留数扰动量显著降低
-
 
 ## 关键公式
 
@@ -184,11 +191,34 @@ $$$H_I(s) = \sum_{g=1}^{G} e^{-s\tau_g} \sum_{i=1}^{n_g} \frac{\hat{R}_{i,g}}{s-
 
 *宽频模型中传播函数的有理函数近似，包含$G$个模态组的时延$\tau_g$和相应留数$\hat{R}_{i,g}$，是本文扰动策略的核心对象*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真验证与对比分析
 - **测试系统**: 多导体输电线路和电缆系统的宽频模型（基于ULM和FDCM模型架构）
 - **仿真工具**: MATLAB（用于算法实现和矢量拟合），特征值分析工具，FSV（Feature Selective Validation）方法用于精度评估
 - **验证结果**: 提出的全相域混合扰动方法在21次迭代限制内对所有测试案例成功强制无源性，其中大多数案例在少于5次迭代内收敛；通过FSV方法验证，该方法在DC至100 MHz范围内有效保持了原始模型的频响特性，相比仅扰动$Y_C$或$H_I$对角元素的方法，具有更小的GDM偏差指标和更快的收敛速度
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Passivity enforcement of wideband model through a new and full perturbation formulation`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 矢量拟合、留数扰动法、全相域建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出同时扰动特征导纳与传播函数留数的新型无源性强制方法。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/31/David Becerra 等 - 2023 - Passivity enforcement of wideband model through a new and full perturbation formulation.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

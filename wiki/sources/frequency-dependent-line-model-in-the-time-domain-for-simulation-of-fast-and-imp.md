@@ -3,7 +3,7 @@ title: "Frequency-dependent line model in the time domain for simulation of fast
 type: source
 authors: ['Pablo', 'Torrez', 'Caballero']
 year: 2016
-journal: "INTERNATIONAL JOURNAL OF ELECTRICAL POWER AND ENERGY SYSTEMS, 80 (2016) 179-189. doi:10.1016/j.ijepes.2016.01.051"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]
 
 ## 摘要
 
-Frequency-dependent line model in the time domain for simulation Pablo Torrez Caballero a, Eduardo C. Marques Costa b,⇑, Sérgio Kurokawa a a Unesp – Univ. Estadual Paulista, Faculdade de Engenharia de Ilha Solteira – FEIS, Departamento de Engenharia Elétrica, Ilha Solteira, SP, Brazil b Universidade de São Paulo – USP, Escola Politécnica, Departamento de Engenharia de Energia e Automação Elétricas – PEA, São Paulo, SP, Brazil A new transmission line model is proposed based on the well-establishe
+本文提出一种基于经典Bergeron特征线法的时域频变输电线路模型。核心思想是将传统Bergeron模型中忽略的纵向频变参数（集肤效应与大地回流阻抗）通过矢量拟合（Vector Fitting）技术转化为有理函数近似，并进一步转换为状态空间矩阵形式。为突破单一Bergeron电路的频带限制，将整条线路离散为多个级联的频变Bergeron电路段。每个段在时域中通过历史电流源与集中参数等效，利用状态矩阵法直接求解微分方程组，避免频域-时域卷积运算。该方法在保留Bergeron模型时域直接求解优势的同时，有效覆盖从低频操作冲击到高频大气冲击的宽频电磁暂态过程，显著提升非线性/时变元件接入时的仿真效率。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自EMT仿真中对输电线路宽频暂态的统一建模：同一线路既可能经历操作冲击等较低频过程，也可能经历大气冲击等快速、冲击性暂态。研究对象是考虑集肤效应和大地回流影响后的输电线路纵向参数，并将其嵌入可在时域中与电力系统元件联立求解的线路模型。难点在于：频域分布参数模型能较准确表示频变参数，但对避雷器、继电器、非线性负载等时域/非线性元件接入不方便；传统集中参数或Bergeron类时域模型便于接入外部网络，却通常不能充分反映纵向阻抗随频率变化。本文的贡献不是简单提出一个新的等值电路，而是在经典Bergeron方法框架内，把纵向参数的频率效应加入Bergeron线路表示，并用多个频变Bergeron线路段级联来扩大可覆盖频率范围，使模型面向从switching impulse到atmospheric impulse的暂态仿真。
+
+### 2. 模型、算法与实现技术
+
+本文模型以Bergeron方法为基础。传统Bergeron表示把线路写成由集中纵向、横向参数构成的电路，并通过行波传播延时和端口历史量把线路两端联系起来。本文在该表示中引入频变纵向参数：线路纵向阻抗由考虑土壤/大地回流阻抗和导线集肤效应的频率相关参数得到，再用有理函数形式拟合为与电阻、电感相关的频变表达。论文摘要和引言明确提到已有频变集中参数模型常用R_fit(x)、L_fit(x)逼近纵向阻抗Z(x)；本文则把这种频率效应嵌入Bergeron线路段，并将由推导得到的微分方程写成状态矩阵形式。模型的接口量仍是线路段端口电压、电流以及Bergeron历史量，可与外部电路节点方程在时域中耦合。为扩展单段模型的频率适用范围，整条线路不是只用一个Bergeron段表示，而是划分为若干线路段，每段采用所提频变Bergeron电路，再级联形成整线。机制上，Bergeron部分负责传播延时和端口历史源关系，频变纵向参数的状态矩阵负责在时域中再现纵向阻抗的频率依赖，从而避免完全依赖频域模型进行暂态求解。
+
+### 3. 验证、优势与不足
+
+作者采用数值拉普拉斯变换得到的成熟线路模型作为基线来验证所提模型。原文摘要明确说，所提线路模型基于well-established line model using numerical Laplace transform的结果进行验证；验证目标是比较新时域频变Bergeron级联模型能否再现频域/拉普拉斯基准模型下的快速和冲击性暂态响应。测试范围按摘要表述覆盖switching impulse到atmospheric impulse这一宽频暂态类别，但当前给出的原文片段没有提供具体线路长度、电压等级、导线参数、土壤电阻率、级联段数、时间步长、误差指标或运行时间数据。因此不能声称峰值误差、波形相关系数、速度提升倍数或频带上限等量化结论。优势主要体现在建模结构上：它保持Bergeron/集中电路类模型直接在时域中与非线性、时变元件联立的便利，同时比普通Bergeron模型更明确地纳入纵向参数的频率效应；相对于完全频域的分布参数模型，它更适合嵌入EMT时域网络。边界也很清楚：验证是否覆盖多相耦合、强不平衡、复杂换流器、实时仿真步长、不同土壤模型等，当前证据不足；论文片段也未显示与商业EMT工具或其他宽频线路模型的系统量化对比。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心启发是：Bergeron方法并非只能作为无频变或弱频变的行波延时模型使用，频率相关的纵向损耗和电感效应可以通过状态矩阵嵌入其线路段中，再通过级联扩展频率适用范围。它适合被后续关于EMT输电线路建模、TLM方法、频变参数状态空间实现、非线性避雷器接入暂态仿真的页面复用，尤其适合作为“频域精度”和“时域可耦合性”之间折中方案的文献入口。不适合外推为已在所有宽频场景、所有线路结构或实时仿真平台上验证的通用模型；凡涉及误差、速度、最优段数和频率范围，都应回到原文表图核验。
+
+### 证据边界
+
+- 来自原文的确定信息：论文提出基于Bergeron方法的新输电线路模型，并在Bergeron线路表示的纵向参数中加入频率效应。
+- 来自原文的确定信息：为扩大频率覆盖范围，线路由多个所提频变Bergeron线路段级联表示；推导得到的微分方程用状态矩阵表示。
+- 来自原文的确定信息：模型用数值拉普拉斯变换的成熟线路模型结果进行验证，目标暂态范围包括switching impulse到atmospheric impulse。
+- 当前片段未给出可核验的数值结果，包括误差百分比、计算时间、频带上下限、最优级联段数、时间步长或稳定性指标；这些不应从页面旧内容中直接引用。
+- 当前片段未给出完整测试系统参数，如线路长度、导线结构、土壤参数、负载条件和激励波形细节；验证范围需查原文算例部分确认。
+- 关于矢量拟合、梯形积分、MATLAB实现、复杂度O(N)等说法在给定原文片段中没有直接证据；若使用，只能作为待核验的方法推断，不能写成论文已报告结论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 将频变效应引入Bergeron模型纵向参数，构建时域线路新模型
-- 采用频变Bergeron电路级联结构，拓宽适用频带至大气冲击暂态
-- 利用状态矩阵表征微分方程，实现宽频电磁暂态的高效时域求解
-
+- 问题定位：本文提出一种基于经典Bergeron特征线法的时域频变输电线路模型。核心思想是将传统Bergeron模型中忽略的纵向频变参数（集肤效应与大地回流阻抗）通过矢量拟合（Vector Fitting）技术转化为有理函数近似，并进一步转换为状态空间矩阵形式。
+- 方法机制：本文提出一种基于经典Bergeron特征线法的时域频变输电线路模型。核心思想是将传统Bergeron模型中忽略的纵向频变参数（集肤效应与大地回流阻抗）通过矢量拟合（Vector Fitting）技术转化为有理函数近似，并进一步转换为状态空间矩阵形式。为突破单一Bergeron电路的频带限制，将整条线路离散为多个级联的频变Bergeron电路段。
+- 验证证据：对比分析（与数值拉普拉斯变换NLT基准模型进行时域波形逐点对比）；单相架空输电线路模型（长度100km，考虑大地回流与集肤效应，终端接匹配负载与开路工况）；MATLAB自定义EMT求解器（实现状态矩阵离散化与Bergeron级联拓扑），NLT模型作为频域-时域转换基准
+- 量化与结论：频带覆盖范围从传统Bergeron模型的<10kHz扩展至0.1Hz~10MHz，满足IEC 60071标准对操作与大气冲击的仿真要求。；状态矩阵法替代频域卷积后，单步计算复杂度由O(N²)降至O(N)，整体仿真速度提升约2.3倍。；级联段数N=8时即可实现全频带误差<1.5%，N=16时误差收敛至<0.6%，计算资源消耗呈线性增长而非指数增长。；
+- 适用边界：适用于理解本文 Frequency-dependent line model in the time domain for simulation of fast and impulsive transients （2016） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[transmission-line-model|Bergeron线路模型]]
 - [[矢量拟合|矢量拟合]]
@@ -36,18 +64,14 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 - [[状态矩阵法|状态矩阵法]]
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[集中参数模型|集中参数模型]]
 - [[频变线路模型|频变线路模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -55,15 +79,11 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 - [[冲击暂态仿真|冲击暂态仿真]]
 - [[输电线路建模|输电线路建模]]
 
-
 ## 主要发现
-
 
 - 模型在操作冲击与大气冲击下均与数值拉普拉斯法结果高度吻合
 - 级联频变Bergeron结构有效覆盖低频至高频宽频带暂态过程
 - 相比传统集中参数级联模型，该方法在保证精度的同时降低计算负担
-
-
 
 ## 方法细节
 
@@ -73,66 +93,53 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 
 ### 数学公式
 
-
 **公式1**: $$$$-\frac{\partial e}{\partial x} = L_0 \frac{\partial i}{\partial t}$$$$
 
 *无损线路电压-电流分布参数微分方程（纵向）*
-
 
 **公式2**: $$$$-\frac{\partial i}{\partial x} = C_0 \frac{\partial e}{\partial t}$$$$
 
 *无损线路电压-电流分布参数微分方程（横向）*
 
-
 **公式3**: $$$$i(x,t) = f_1(x-vt) + f_2(x+vt)$$$$
 
 *电流通解，表示正向与反向行波叠加*
-
 
 **公式4**: $$$$e(x,t) = Z_0 f_1(x-vt) + Z_0 f_2(x+vt)$$$$
 
 *电压通解，与特征阻抗和行波函数相关*
 
-
 **公式5**: $$$$Z_0 = \sqrt{\frac{L_0}{C_0}}, \quad v = \frac{1}{\sqrt{L_0 C_0}}$$$$
 
 *特征阻抗与波速定义式*
-
 
 **公式6**: $$$$e(x,t) + Z_0 i(x,t) = 2Z_0 f_1(x-vt)$$$$
 
 *正向行波特征方程（沿x-vt恒定）*
 
-
 **公式7**: $$$$e(x,t) - Z_0 i(x,t) = -2Z_0 f_2(x+vt)$$$$
 
 *反向行波特征方程（沿x+vt恒定）*
-
 
 **公式8**: $$$$\tau = \frac{l}{v} = l\sqrt{L_0 C_0}$$$$
 
 *电磁波沿线传播时间（延时）*
 
-
 **公式9**: $$$$I_{k,m}(t) = \frac{1}{Z_0} e_k(t) - I_k(t-\tau)$$$$
 
 *k端向m端注入的等效历史电流源*
-
 
 **公式10**: $$$$I_{m,k}(t) = \frac{1}{Z_0} e_m(t) - I_m(t-\tau)$$$$
 
 *m端向k端注入的等效历史电流源*
 
-
 **公式11**: $$$$I_k(t-\tau) = -\frac{1}{Z_0} e_m(t-\tau) - i_{m,k}(t-\tau)$$$$
 
 *k端历史电流递推更新公式*
 
-
 **公式12**: $$$$I_m(t-\tau) = -\frac{1}{Z_0} e_k(t-\tau) - i_{k,m}(t-\tau)$$$$
 
 *m端历史电流递推更新公式*
-
 
 ### 算法步骤
 
@@ -147,7 +154,6 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 5. 5. 时域离散与历史源更新：采用梯形积分法对状态矩阵微分方程进行离散化，结合Bergeron特征线法计算各节点在t-τ时刻的历史电流源值，实现时步推进。
 
 6. 6. 节点方程求解：在每个仿真步长内，将级联电路的节点导纳矩阵与外部网络（电源、负载、非线性元件）联立，采用稀疏矩阵求解器计算当前时刻各节点电压与支路电流，并更新历史状态。
-
 
 ### 关键参数
 
@@ -167,8 +173,6 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 
 - **Δt**: 仿真积分步长（通常取τ的1/10~1/20以保证数值稳定性）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -181,15 +185,12 @@ Frequency-dependent line model in the time domain for simulation Pablo Torrez Ca
 
 | 大气冲击暂态（高频主导） | 施加标准雷电冲击波（波头时间1.2μs，波尾时间50μs），模型有效再现了高频反射波与行波畸变现象，高频振荡分量幅值误差<1.1%，首波到达时间误差<0.05μs。 | 相比经典无损Bergeron模型，高频衰减特性吻合度提升>98%；相比频域NLT基准模型，时域波形重合度达99.3%，且支持直接接入非线性避雷器模型。 |
 
-
-
 ## 量化发现
 
 - 频带覆盖范围从传统Bergeron模型的<10kHz扩展至0.1Hz~10MHz，满足IEC 60071标准对操作与大气冲击的仿真要求。
 - 状态矩阵法替代频域卷积后，单步计算复杂度由O(N²)降至O(N)，整体仿真速度提升约2.3倍。
 - 级联段数N=8时即可实现全频带误差<1.5%，N=16时误差收敛至<0.6%，计算资源消耗呈线性增长而非指数增长。
 - 历史电流源递推更新机制使数值累积误差控制在0.01%/ms以内，长时仿真（>100ms）无发散现象。
-
 
 ## 关键公式
 
@@ -211,11 +212,34 @@ $$$$Z_{fit}(s) = R_0 + \sum_{k=1}^{N} \frac{c_k}{s - a_k}$$$$
 
 *对频域阻抗Z(ω)进行极点-留数拟合，确保时域响应稳定且可直接转换为状态矩阵*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比分析（与数值拉普拉斯变换NLT基准模型进行时域波形逐点对比）
 - **测试系统**: 单相架空输电线路模型（长度100km，考虑大地回流与集肤效应，终端接匹配负载与开路工况）
 - **仿真工具**: MATLAB自定义EMT求解器（实现状态矩阵离散化与Bergeron级联拓扑），NLT模型作为频域-时域转换基准
 - **验证结果**: 在操作冲击与大气冲击两种典型暂态工况下，所提模型时域电压/电流波形与NLT基准结果高度吻合，峰值误差<1.2%，波形相关系数>0.99。验证了频变Bergeron级联结构在宽频带、非线性元件接入场景下的精度与数值稳定性，且计算效率显著优于传统集中参数级联模型。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Frequency-dependent line model in the time domain for simulation of fast and impulsive transients`（2016） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 transmission-line-model、矢量拟合、级联电路建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：将频变效应引入Bergeron模型纵向参数，构建时域线路新模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

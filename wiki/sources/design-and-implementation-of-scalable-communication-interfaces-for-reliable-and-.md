@@ -1,9 +1,9 @@
 ---
 title: "Design and Implementation of Scalable Communication Interfaces for Reliable and Stable Real-time Co-Simulation of Power Systems"
 type: source
-authors: ['未知']
+authors: ['Qi Xiao', 'Jongha Woo', 'Lidong Song', 'Ning Lu']
 year: 2025
-journal: "2025 IEEE Power &amp; Energy Society General Meeting (PESGM);2025; ; ;10.1109/PESGM52009.2025.11225688"
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['real-time', 'cosimulation']
 created: "2026-04-13"
 sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interfaces_for_Reliable_and_Stable_Real-time_Co-Simulation_of_Power_Systems.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 # Design and Implementation of Scalable Communication Interfaces for Reliable and Stable Real-time Co-Simulation of Power Systems
 
-**作者**: 
+**作者**: Qi Xiao; Jongha Woo; Lidong Song; Ning Lu
 **年份**: 2025
 **来源**: `12/Design_and_Implementation_of_Scalable_Communication_Interfaces_for_Reliable_and_Stable_Real-time_Co-Simulation_of_Power_Systems.pdf`
 
 ## 摘要
 
-—Co-simulation offers an integrated approach for modeling the large-scale integration of inverter-based resources (IBRs) into transmission and distribution grids. This paper presents a scalable communication interface design and implementation to enable reliable and stable real-time co-simulation of power systems with high IBR penetration. The communication interface is categorized into two types: local and remote. In local scenarios, where subsystems are connected within a single local area network (LAN), low-latency communication facilitates the seamless integration of electromagnetic transient (EMT) and phasor-domain models, enabling efficient interactions with power and energy management algorithms. For remote scenarios, data exchange is achieved via internet-based file sharing or VPN-
+本文设计了一套面向高比例逆变器资源(IBR)电力系统实时协同仿真的可扩展通信接口架构，涵盖本地局域网(LAN)与远程互联网两种场景。本地接口采用Modbus协议与TCP/IP套接字结合，通过Python多线程实现RTS与能量管理系统(MCS)间的双向低延迟数据交互，并利用一阶低通滤波(LPF)结合延迟补偿实现EMT(100μs)与相量域(1ms)模型的无缝同步。远程接口提供基于云存储的文件共享(适用于分钟级非实时控制)与基于VPN的TCP/IP直连(适用于毫秒级实时控制)两种模式。针对远程协同中因数据分辨率不匹配(如10ms输电网与100μs配电网)引发的IBR锁相环(PLL)失稳问题，提出了一种实时数据外推算法。该算法通过历史数据平均变化率与外推误差反馈动态预测下一时刻状态，替代传统LPF以消除相位延迟与幅值误差，显著提升跨域交互的稳定性与仿真精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+高比例逆变器资源接入后，输电网、配电网、设备级EMT模型、相量域网络模型以及能量管理/控制算法往往分布在不同仿真器、不同地点或不同时间尺度上运行。工程需求不是单纯“传数据”，而是在实时约束下让这些子系统稳定交换PCC电压、功率、频率、控制指令等接口量，并避免通信延迟、采样率不一致和时间步长差异破坏IBR控制稳定性。本文研究对象是面向OPAL-RT实时协同仿真的通信接口：本地LAN场景连接RTS与管理控制系统，远程场景连接跨地域或跨平台的实时仿真。难点在于EMT步长可到100 μs，而相量或输电侧数据可能以1 ms或10 ms更新；若直接把低分辨率数据送入含PLL的IBR模型，会形成阶跃、滞后或幅值误差，引起频率振荡。本文贡献在于把接口按应用时效分层：本地采用Modbus与TCP/IP套接字、多线程和时间戳日志支持双向低延迟交互；远程提供云文件共享与VPN直连两类实现；并针对时敏T&D协同提出实时数据外推，用趋势项加误差反馈替代简单低通滤波，以缓解分辨率失配导致的PLL失稳。
+
+### 2. 模型、算法与实现技术
+
+实现层面，本文不是提出新的电力元件模型，而是提出一套可扩展通信接口和数据整形算法。接口输入包括实时仿真器输出的测量量，如PCC电压、频率、有/无功功率、负荷或DER状态；输出包括能量管理系统或远程仿真器返回的控制指令、负荷参考值或边界条件。局域网方案中，RTS作为Modbus Server，本地接口作为Client轮询数据，并通过TCP/IP套接字与MCS通信；Python多线程分别处理上行测量和下行控制，降低阻塞风险，数据库与时间戳用于延迟统计和可追溯。远程方案分为两类：云存储文件同步适合分钟级或更慢控制；VPN直连TCP/IP适合毫秒级实时交换。核心算法是实时外推：当前外推值由上一外推值、历史实际数据的平均变化率和误差补偿组成，即x_ext(t)=x_ext(t-1)+Δ_avg+Δ_err。Δ_avg由过去n个实际采样点差分均值估计短期趋势；Δ_err=α[x_act(t-n)-x_ext(t-n)]把上一可比时刻的预测误差反馈回来，避免误差累积。其机制是在粗采样真实数据到达前，为细步长EMT侧生成连续边界量；相比一阶LPF，它不是靠滤波平滑阶跃，而是预测下一状态并用误差闭环校正，因此可减少相位滞后和幅值偏差。
+
+### 3. 验证、优势与不足
+
+作者用OPAL-RT实时仿真平台验证接口：工具包括eMEGASIM、ePHASORSIM、Python通信程序、Google Drive文件共享和VPN网络。局域网测试在微电网测试床上进行，系统包含3 MW光伏、2 MWh储能、1 MVA柴油机和IEEE 123节点配电网；按100 s间隔投入5组负荷，以OPAL-RT高分辨率记录作为对照，观察PCC电压、频率和功率响应，并报告基于SOC控制的长时间运行稳定性。远程文件共享测试在两地OPAL-RT之间同步IEEE 123节点系统数据，页面给出的延迟为典型1.5–4 s、最大8.5 s，说明其只适用于交换周期远大于同步延迟的非实时能量管理。VPN T&D协同测试采用IEEE 118节点输电网和IEEE 123节点配电网，输电侧10 ms、配电侧EMT 100 μs，在Bus 94施加5周期三相接地故障；页面报告PCC电压跨域传播延迟37–55 ms、接收端更新间隔17–35 ms。优势主要体现在：同一框架覆盖本地低延迟、远程慢速和远程实时三类场景；外推法在所测故障穿越案例中消除了未处理数据导致的PLL频率振荡，并优于τ=0.01的LPF。边界是：验证集中在OPAL-RT、给定IEEE算例、特定故障和外推参数n=1、α=0.001；原文页面未显示更广泛网络条件、丢包、抖动、网络安全攻击、不同PLL参数或多IBR大规模并行情形下的统计结果。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：实时协同仿真的可靠性不只取决于电力模型求解器，还取决于通信接口、时间戳、数据更新粒度和边界量重构方式。对于IBR丰富系统，粗分辨率边界数据进入EMT侧可能直接触发控制环振荡，因此接口层需要具备数据整形功能。该页面适合作为后续研究中“实时T&D协同仿真接口”“OPAL-RT与EMS/HIL互联”“远程实验室协同”“PLL稳定性受采样/延迟影响”的入口文献，也可复用其按控制时效选择文件共享或VPN直连的工程划分。不适合把结论外推为任意网络延迟下都稳定，也不应把外推算法视为通用替代所有同步/插值方法；其有效性仍需在不同拓扑、故障、IBR控制器、通信抖动和参数整定下重新验证。
+
+### 证据边界
+
+- 来自原文摘要的确定信息包括：本文面向高IBR渗透率电力系统实时协同仿真，区分本地LAN接口和远程文件共享/VPN接口，并提出实时数据外推以缓解数据分辨率失配导致的不稳定。
+- 页面给出了具体测试系统、工具和延迟数值，如OPAL-RT、IEEE 118/123节点、Google Drive、VPN、1.5–4 s文件同步延迟、约20 ms VPN接口延迟、37–55 ms PCC传播延迟；这些应回到PDF正文图表复核后再作为正式引用。
+- 外推公式、n=1和α=0.001来自当前抽取页面；摘要只说明提出实时外推方法，未在所给原文片段中展示公式推导，因此算法细节需以PDF方法章节为准。
+- 作者元数据存在不一致：用户元数据列出Qi Xiao、Jongha Woo、Lidong Song、Ning Lu，而证据页还显示Victor Paduani；正式页面应核对PDF首页和会议记录。
+- 验证范围看，本文未证明该接口在严重丢包、随机网络抖动、网络安全攻击、多站点大规模并发、不同PLL/IBR控制器参数下仍保持稳定。
+- 外推法与LPF的对比在页面中以故障穿越案例呈现；未见对多种插值、预测、同步算法的系统消融或参数灵敏度统计，因此不宜宣称其普遍最优。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 设计可扩展的本地与远程通信接口支持低延迟局域网与互联网数据交换
-- 提出实时数据外推方法有效缓解协同仿真中数据分辨率不匹配引发的失稳问题
-- 构建EMT与相量域混合仿真同步机制采用低通滤波与延迟补偿实现跨域交互
-
+- 问题定位：本文设计了一套面向高比例逆变器资源(IBR)电力系统实时协同仿真的可扩展通信接口架构，涵盖本地局域网(LAN)与远程互联网两种场景。本地接口采用Modbus协议与TCP/IP套接字结合，通过Python多线程实现RTS与能量管理系统(MCS)间的双向低延迟数据交互，并利用一阶低通滤波(LPF)结合延迟补偿实现EMT(100μs)与相量域(。
+- 方法机制：本文设计了一套面向高比例逆变器资源(IBR)电力系统实时协同仿真的可扩展通信接口架构，涵盖本地局域网(LAN)与远程互联网两种场景。本地接口采用Modbus协议与TCP/IP套接字结合，通过Python多线程实现RTS与能量管理系统(MCS)间的双向低延迟数据交互，并利用一阶低通滤波(LPF)结合延迟补偿实现EMT(100μs)与相量域(1ms)模型的无缝同步。
+- 验证证据：实时硬件在环(HIL)仿真与跨地域协同测试；微电网测试床(3MW光伏+2MWh储能+1MVA柴油发电机+IEEE 123节点配电网)及输配电网协同系统(IEEE 118节点输电网+IEEE 123节点配电网)；
+- 量化与结论：本地接口在分钟级控制周期下通信与处理延迟可忽略，支持长达20天的连续稳定运行；远程文件共享同步延迟典型值为1.5~4秒，最大可达8.5秒，适用于数据交换间隔远大于延迟的场景；VPN直连通信接口间延迟约为20毫秒，显著低于文件共享方式，满足实时控制需求；T&D协同中PCC电压数据跨域传输产生37~55毫秒的传播延迟，接收端数据更新间隔为17~35毫秒
+- 适用边界：适用于理解本文 Design and Implementation of Scalable Communication Interfaces for Reliable and Stable Real-time Co-Simulation of Power Systems （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
 
 ## 使用的方法
-
 
 - [[协同仿真|协同仿真]]
 - [[实时数据外推|实时数据外推]]
@@ -38,9 +66,7 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 - [[modbus协议|Modbus协议]]
 - [[多线程并发处理|多线程并发处理]]
 
-
 ## 涉及的模型
-
 
 - [[ibr|IBR]]
 - [[光伏电站|光伏电站]]
@@ -49,9 +75,7 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 - [[ieee-123节点配电网|IEEE 123节点配电网]]
 - [[微电网控制系统|微电网控制系统]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[协同仿真|协同仿真]]
@@ -61,15 +85,11 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 - [[延迟管理|延迟管理]]
 - [[输配电网协同|输配电网协同]]
 
-
 ## 主要发现
-
 
 - 局域网通信延迟仅毫秒级对分钟级能量管理系统控制周期无显著影响
 - 数据分辨率不匹配会导致逆变器失稳所提外推方法可显著提升系统稳定性
 - 基于OPAL-RT验证了接口可扩展性实现高比例IBR微电网稳定实时协同仿真
-
-
 
 ## 方法细节
 
@@ -79,21 +99,17 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 ### 数学公式
 
-
 **公式1**: $$$x_{ext}(t) = x_{ext}(t-1) + \Delta_{avg} + \Delta_{err}$$$
 
 *外推值更新方程，用于计算当前时刻t的预测数据，结合历史平均变化率与误差补偿项*
-
 
 **公式2**: $$$\Delta_{avg} = \frac{1}{n} \sum_{i=1}^{n} [x_{act}(t-i) - x_{act}(t-i-1)]$$$
 
 *历史数据平均变化率计算，基于过去n个实际采样点的差分均值反映数据趋势*
 
-
 **公式3**: $$$\Delta_{err} = \alpha \cdot [x_{act}(t-n) - x_{ext}(t-n)]$$$
 
 *外推误差增量补偿，利用调节系数α对上一周期外推值与实际值的偏差进行反馈修正*
-
 
 ### 算法步骤
 
@@ -106,7 +122,6 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 4. 指令执行与日志记录：接收到的控制指令经时间戳对齐后转发至RTS执行，所有交互数据均持久化存储以保证可追溯性，并计算端到端通信延迟(td2)。
 
 5. 实时外推处理(远程场景)：当检测到跨域分辨率不匹配时，接口截取过去n个实际数据点计算平均变化率Δ_avg，结合上一周期外推误差计算补偿项Δ_err，按公式(1)生成平滑的外推序列，直接输入EMT模型替代原始粗分辨率数据或LPF滤波数据。
-
 
 ### 关键参数
 
@@ -126,8 +141,6 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 - **VPN通信延迟**: 约 20 ms
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -142,8 +155,6 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 | VPN跨域T&D协同与故障穿越测试 | IEEE 118节点输电网(10ms)与IEEE 123节点配电网(EMT 100μs)通过VPN互联。在Bus 94施加5周期三相接地故障，PCC电压数据接收延迟37~55ms，接收端数据更新间隔17~35ms。未处理时PLL频率出现剧烈振荡。 | 引入外推算法后，PLL频率振荡完全消除，电压幅值误差显著低于LPF滤波(τ=0.01)，系统恢复稳定同步，外推曲线平滑度提升且无相位滞后 |
 
-
-
 ## 量化发现
 
 - 本地接口在分钟级控制周期下通信与处理延迟可忽略，支持长达20天的连续稳定运行
@@ -153,7 +164,6 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 - 传统LPF(时间常数0.01)在分辨率不匹配时引入显著相位延迟与电压幅值误差，导致IBR失稳
 - 实时外推算法(参数n=1, α=0.001)有效消除PLL频率尖峰与振荡，外推曲线平滑度与精度均优于LPF
 
-
 ## 关键公式
 
 ### 实时数据外推更新方程
@@ -162,11 +172,34 @@ $$$x_{ext}(t) = x_{ext}(t-1) + \Delta_{avg} + \Delta_{err}$$$
 
 *用于远程VPN协同仿真中，当输电网(10ms)与配电网EMT(100μs)存在分辨率不匹配时，替代低通滤波以预测下一时刻状态，消除延迟并维持IBR锁相环稳定*
 
-
-
 ## 验证详情
 
 - **验证方式**: 实时硬件在环(HIL)仿真与跨地域协同测试
 - **测试系统**: 微电网测试床(3MW光伏+2MWh储能+1MVA柴油发电机+IEEE 123节点配电网)及输配电网协同系统(IEEE 118节点输电网+IEEE 123节点配电网)
 - **仿真工具**: OPAL-RT实时仿真器、eMEGASIM(EMT求解器)、ePHASORSIM(相量域求解器)、Python(通信接口开发)、Google Drive(文件共享)、VPN网络
 - **验证结果**: 验证了本地与远程通信接口在不同延迟与分辨率条件下的有效性。本地接口实现高精度数据交互与20天长周期稳定运行；远程文件共享适用于分钟级调度；VPN接口结合实时外推算法成功解决跨域分辨率失配问题，消除PLL振荡，显著提升高比例IBR协同仿真的可靠性与数值稳定性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Design and Implementation of Scalable Communication Interfaces for Reliable and Stable Real-time Co-Simulation of Power Systems`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 协同仿真、实时数据外推、一阶低通滤波 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：设计可扩展的本地与远程通信接口支持低延迟局域网与互联网数据交换
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interfaces_for_Reliable_and_Stable_Real-time_Co-Simulation_of_Power_Systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -17,18 +17,46 @@ sources: ["EMT_Doc/10/Sultan 等 - 1998 - Combined transient and dynamic analysi
 
 ## 摘要
 
-A new approach to HVDC and FACTS transient/dynamic simula- tion based on an interactive execution of an ac transient stability program (TSP) and the Electro-Magnetic Transients Program (EMTP) is described. Through the integration of the detailed tran- sient model of FACTS with the transient stability program, authentic simulation is achieved without simplifications. Both HVDC and Thyristor Controlled Series Capacitor (TCSC) systems are used to validate the approach, under different coupling situa- tions between both TSP arid EMTP. Keywords: FACTS, HVDC, EMTP, Frequency Dependent Net- work Equivalents, Transient Stability Simulation. I. INTRODUCTION The ac transient stability programs based on fundamental fre- quency, single-phase, phasor modeling techniques cannot directly represent the fa
+提出一种基于暂态稳定程序(TSP)与电磁暂态程序(EMTP)交互执行的混合仿真架构。核心思想是将外部交流电网通过时变诺顿频变等值模型(NFDE)映射至EMTP详细模型中，同时将EMTP接口母线的三相瞬时波形通过最小二乘曲线拟合提取基波正序相量，反馈至TSP更新负荷或电流源模型。该架构支持两种交互策略：(A)短期暂态交互，双程序按固定时间步长同步推进，适用于首摆暂态分析；(B)长期动态切换，EMTP运行至暂态平息后挂起，TSP接管并切换至准稳态模型继续仿真，兼顾全频段精度与计算效率。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：HVDC和FACTS装置的控制、换流、晶闸管触发等过程包含非正弦波形、相不平衡和半导体离散开关动作，单纯暂态稳定程序（TSP）的基波正序相量模型不能直接描述；而单纯EMTP虽能详细模拟装置，却难以经济地保留大规模外部交流系统的机电动态。本文研究对象是含HVDC或TCSC等电力电子装置的交直流/FACTS系统暂态—动态联合仿真。难点在于两个仿真域的时间尺度、变量形式和网络表示不同：EMTP使用三相瞬时量和小步长，TSP使用基波相量和较大步长。本文贡献不是简单把两者串联，而是在详细EMTP区域与外部TSP交流系统之间建立交互接口，用时变Thevenin/Norton频率相关等值把外部系统嵌入EMTP，同时把EMTP接口瞬时波形转换为TSP可用的基波相量，实现局部电磁暂态细节与全网机电动态的耦合。
+
+### 2. 模型、算法与实现技术
+
+本文的核心实现是TSP与EMTP交互执行。系统被分成两部分：HVDC/FACTS及其邻近网络在EMTP中以三相瞬时值详细表示；远端交流系统在TSP中以基波相量、发电机和控制系统动态表示。接口从TSP到EMTP的一侧，采用随运行点更新的Thevenin或Norton频率相关等值，其作用是让EMTP看到外部交流网在宽频扰动下的等效阻抗和源响应，而不是只看到固定工频等值。接口从EMTP到TSP的一侧，需要把三相瞬时电压、电流波形提取为基波正序相量；当前页面给出的机制是对一个交互区间内的采样波形做正弦/余弦最小二乘拟合，得到基波幅值和相角，再经对称分量转换形成TSP边界母线量。计算流程上，TSP先给出外部系统等值，EMTP以小步长推进详细暂态并记录接口波形，随后将相量反馈给TSP更新外部网络状态，如此循环；另有一种运行方式是在快速暂态结束后停止EMTP详细求解，由TSP用准稳态模型继续较长时程动态分析。
+
+### 3. 验证、优势与不足
+
+作者用HVDC和TCSC系统验证该交互仿真思想。原文摘要明确说明两类系统都用于验证，并考察了TSP与EMTP之间不同耦合情形；当前页面进一步列出背靠背HVDC、含TCSC交流系统以及较大交流系统等算例，并称以全EMTP详细仿真作为基线比较波形和动态响应。验证关注的指标主要是接口电压电流波形、HVDC/FACTS关键暂态过程能否被复现，以及交互方式能否支持从快速电磁暂态过渡到较长机电动态。优势在于：TSP不必把电力电子开关、波形畸变和不平衡硬塞进基波模型；EMTP也不必详细建模整个大电网，而是通过频率相关等值感知外部系统影响。从验证范围看，结论主要限于文中HVDC与TCSC算例、所选接口位置、等值拟合质量和故障/控制场景。所给原文片段未报告可核验的数值误差、计算加速比或稳定性裕度，因此不能把“吻合”“高效”等表述扩展为普遍定量结论。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把“电磁暂态精细模型”和“暂态稳定大系统模型”从二选一关系变成可交互的分区仿真关系。它提示后续研究：混合仿真的关键不是软件调用本身，而是边界等值、瞬时量到相量的转换、交互步长和模式切换是否保持物理一致。该思路适合被用于HVDC、TCSC及其他FACTS装置的局部详细暂态分析、大电网扰动下的控制器影响评估、以及EMT-相量域协同仿真方法综述。不适合直接外推到未验证的新能源变流器控制、实时仿真硬件、强非线性外部网络或任意频段等值精度结论。
+
+### 证据边界
+
+- 原文摘要和引言明确支持：本文提出TSP与EMTP交互执行，用于HVDC和FACTS暂态/动态仿真，并指出TSP难以表示波形畸变、相不平衡和半导体离散开关动作。
+- 原文片段明确支持：外部交流系统可通过时变Thevenin或Norton频率相关等值表示到详细仿真中；但片段未给出等值拟合阶数、参数识别方法或误差指标。
+- 当前页面给出了最小二乘提取基波相量、EMTP/TSP步长和若干算例细节；这些内容需要回到PDF图表和正文核验后才能作为定量证据引用。
+- 所给原文片段未报告可核验的数值结果，如波形误差、CPU时间、步长比或加速比；因此本入口不把效率和精度表述为确定量化结论。
+- 验证对象从可见证据看集中在HVDC与TCSC，不足以证明该方法对所有FACTS、VSC-HVDC、并网新能源变流器或保护闭锁逻辑同样有效。
+- 元数据存在年份不一致：题名对应的期刊信息显示IEEE Transactions on Power Delivery 1998年第13卷第4期，而用户元数据中year为2004，正式引用前应核对首页和DOI。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出EMTP与暂态稳定程序交互执行的混合仿真架构，实现全频段精确模拟
-- 构建时变戴维南/诺顿频变等值模型，实现外部交流网络高精度映射
-- 采用最小二乘拟合提取三相基波正序相量，实现双程序间高精度数据交互
-
+- 问题定位：提出一种基于暂态稳定程序(TSP)与电磁暂态程序(EMTP)交互执行的混合仿真架构。核心思想是将外部交流电网通过时变诺顿频变等值模型(NFDE)映射至EMTP详细模型中，同时将EMTP接口母线的三相瞬时波形通过最小二乘曲线拟合提取基波正序相量，反馈至TSP更新负荷或电流源模型。
+- 方法机制：提出一种基于暂态稳定程序(TSP)与电磁暂态程序(EMTP)交互执行的混合仿真架构。核心思想是将外部交流电网通过时变诺顿频变等值模型(NFDE)映射至EMTP详细模型中，同时将EMTP接口母线的三相瞬时波形通过最小二乘曲线拟合提取基波正序相量，反馈至TSP更新负荷或电流源模型。该架构支持两种交互策略：(A)短期暂态交互，双程序按固定时间步长同步推进，适用于首摆暂态分析；
+- 验证证据：纯EMTP全详细仿真作为基准(Benchmark)，与TSP/EMTP混合仿真结果进行波形对比、暂态特征提取与计算耗时分析。；2端背靠背HVDC系统(含8节点交流侧)；12节点交流系统(含TCSC)；IEEE 118节点系统(含TCSC)。；EMTP (电磁暂态详细建模，50μs步长)，TSP (暂态稳定程序，基波相量域，8ms/10ms步长)。
+- 量化与结论：混合仿真时间步长协调比达到160:1 (TSP 8ms / EMTP 50μs)，有效平衡了机电暂态与电磁暂态的计算尺度差异。；策略A在12节点测试系统中的CPU计算时间为151.7秒，验证了交互架构在中等规模系统中的可行性。；TCSC快速阀控策略在故障清除后2个周波(约40ms)内成功消除线路电流直流偏置，混合模型精确复现了该非线性控制响应。；
+- 适用边界：适用于理解本文 Combined transient and dynamic analysis of HVDC and FACTS systems （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 混合仿真、频变网络等值、戴维南-诺顿等值 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[混合仿真|混合仿真]]
 - [[频变网络等值|频变网络等值]]
@@ -37,9 +65,7 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 - [[基波相量提取|基波相量提取]]
 - [[时间步协调|时间步协调]]
 
-
 ## 涉及的模型
-
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts|FACTS]]
@@ -47,9 +73,7 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 - [[外部交流电网|外部交流电网]]
 - [[频变等值模型|频变等值模型]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[暂态稳定仿真|暂态稳定仿真]]
@@ -57,15 +81,11 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 - [[网络等值|网络等值]]
 - [[交直流相互作用|交直流相互作用]]
 
-
 ## 主要发现
-
 
 - 频变等值模型有效抑制接口波形畸变，实现外部电网宽频响应的精确映射
 - 交互策略成功协调双程序时间步，HVDC与TCSC算例验证了方法有效性
 - 相量提取算法保障多接口数据交互精度，消除传统准稳态模型的简化误差
-
-
 
 ## 方法细节
 
@@ -75,21 +95,17 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 
 ### 数学公式
 
-
 **公式1**: $$$v(t_k) \approx a_1 \cos(\omega t_k) + b_1 \sin(\omega t_k)$$$
 
 *最小二乘曲线拟合模型，用于从EMTP输出的离散三相瞬时波形采样点中提取基波分量系数*
-
 
 **公式2**: $$$V_1 = \sqrt{a_1^2 + b_1^2}, \quad \phi_1 = \arctan(b_1/a_1)$$$
 
 *基波幅值与相位计算公式，结合对称分量法转换为TSP所需的正序电压/电流相量*
 
-
 **公式3**: $$$\mathbf{I}_{eq}(s) = \mathbf{Y}_{eq}(s)\mathbf{V}_{bus}(s) + \mathbf{I}_{source}(s)$$$
 
 *诺顿频变等值传递方程，其中$\mathbf{Y}_{eq}(s)$由N个串并联RLC支路构成，用于在宽频范围内精确拟合外部电网阻抗特性*
-
 
 ### 算法步骤
 
@@ -104,7 +120,6 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 5. TSP更新与求解：将提取的正序相量转换为TSP中的解耦负荷或电流源模型，TSP以毫秒级步长(如8ms/10ms)推进至$T_{i+1}$，更新全网机电暂态状态。
 
 6. 循环或模式切换：重复步骤2-5直至仿真结束(策略A)；或在暂态平息后(如0.6s)挂起EMTP，将详细模型替换为准稳态模型，由TSP独立继续长期动态仿真(策略B)。
-
 
 ### 关键参数
 
@@ -126,8 +141,6 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 
 - **长期动态仿真时长**: 4 s
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -142,8 +155,6 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 
 | TCSC系统(IEEE 118节点大电网) | 采用策略B，EMTP运行至0.6s后挂起，TSP切换至准稳态模型继续仿真至4s。完整记录了故障后发电机功角摇摆及系统长期动态恢复过程。 | 相比纯EMTP全频段微步长仿真，策略B避免了长时程计算的算力瓶颈，计算效率显著提升，且首摆暂态波形与策略A及全EMTP基准完全一致。 |
 
-
-
 ## 量化发现
 
 - 混合仿真时间步长协调比达到160:1 (TSP 8ms / EMTP 50μs)，有效平衡了机电暂态与电磁暂态的计算尺度差异。
@@ -151,7 +162,6 @@ A new approach to HVDC and FACTS transient/dynamic simula- tion based on an inte
 - TCSC快速阀控策略在故障清除后2个周波(约40ms)内成功消除线路电流直流偏置，混合模型精确复现了该非线性控制响应。
 - 策略B支持仿真时长从首摆暂态(0.6s)无缝扩展至长期动态(4s)，避免了全EMTP微步长积分带来的指数级算力增长。
 - 频变等值模型(NFDE)在宽频范围内精确拟合外部系统阻抗幅频特性，接口波形畸变与不对称问题得到有效抑制，关键电气量暂态偏差可忽略。
-
 
 ## 关键公式
 
@@ -167,11 +177,34 @@ $$$\mathbf{I}_{eq}(s) = \mathbf{Y}_{eq}(s)\mathbf{V}_{bus}(s) + \mathbf{I}_{sour
 
 *用于TSP向EMTP传递外部电网动态特性，通过频域导纳矩阵$\mathbf{Y}_{eq}(s)$实现外部网络宽频响应的精确映射。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯EMTP全详细仿真作为基准(Benchmark)，与TSP/EMTP混合仿真结果进行波形对比、暂态特征提取与计算耗时分析。
 - **测试系统**: 2端背靠背HVDC系统(含8节点交流侧)；12节点交流系统(含TCSC)；IEEE 118节点系统(含TCSC)。
 - **仿真工具**: EMTP (电磁暂态详细建模，50μs步长)，TSP (暂态稳定程序，基波相量域，8ms/10ms步长)。
 - **验证结果**: 验证了混合架构在HVDC换相失败、TCSC避雷器动作/快速阀控/非线性补偿恢复等复杂暂态过程中的高保真度。策略A适用于首摆暂态，策略B实现暂态到长期动态的高效切换，大幅降低大系统仿真计算负担，同时保持接口数据交互精度，成功克服了传统TSP无法表征半导体开关离散动作与波形畸变的局限。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Combined transient and dynamic analysis of HVDC and FACTS systems`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 混合仿真、频变网络等值、戴维南-诺顿等值 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出EMTP与暂态稳定程序交互执行的混合仿真架构，实现全频段精确模拟
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/10/Sultan 等 - 1998 - Combined transient and dynamic analysis of HVDC and facts systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

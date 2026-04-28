@@ -19,6 +19,16 @@ created: "2026-04-13"
 - 培训和咨询服务
 - 与曼尼托巴大学合作研究
 
+## 定义与边界
+
+Manitoba Hydro International 在本 wiki 中代表 PSCAD/EMTDC 工程生态、Nelson River 多馈入 HVDC 系统实践和实时 HIL 验证经验。它应与 [[pscad-emtdc|PSCAD/EMTDC]]、[[rtds|RTDS]]、[[real-time-simulation|实时仿真]]、[[co-simulation|协同仿真]]、[[lcc-model|LCC 模型]] 和 [[network-equivalent|网络等值]] 一起阅读。
+
+该实体页不应把机构工程经验直接写成通用理论。涉及控制保护 HIL、HVDC 多馈入交互或模型降阶时，需要说明被验证的设备、接口变量、等值边界和对比基准；若来源没有给出可核验数值，应保留定性表述。
+
+## 代表性来源与内部链接
+
+代表性来源包括 [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-|Large-scale hybrid real-time simulation modeling and benchmark for Nelson River]]、[[development-of-data-translators-for-interfacing-13&14|Development of data translators for interfacing]]、[[interfacing-real-time-and-offline-power-system-simulation-tools-using-udp-or-fpg|Interfacing real-time and offline power system simulation tools]] 和 [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|Multi-rate real-time hybrid simulation of controllable line-commutated converter systems]]。人物和机构关联可回到 [[gole]]、[[university-manitoba]] 和 [[manitoba-hydro]]。
+
 ## 相关实体
 - [[university-manitoba]]
 - [[pscad-emtdc]]
@@ -29,7 +39,7 @@ created: "2026-04-13"
 
 ---
 
-# Manitoba Hydro International（深度增强）
+## Manitoba Hydro International（深度增强）
 
 ## 1. 关键技术详解
 

@@ -1,9 +1,9 @@
 ---
 title: "Modeling A Mixed Residential-commercial Load  For Simulations Involving Large Disturbances - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['Bahram Khodabakhchian']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-commercial load for simulations involving large disturbances.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-comme
 
 # Modeling A Mixed Residential-commercial Load  For Simulations Involving Large Disturbances - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: Bahram Khodabakhchian
 **年份**: 2004
 **来源**: `26/Khodabakhchian - 1997 - Modeling a mixed residential-commercial load for simulations involving large disturbances.pdf`
 
 ## 摘要
 
-A detailed EMTP model of a mixed residential-commercial load valid for large voltage variations has been developed. Once validated against field recordings, the model has been used to study the static, dynamic and post-fault recovery characteristics of the real load. From the simulation results, guidelines for modeling this type of load in dynamic studies such as first swing, transient and voltage stability were established. It is expected that the same methodology applied to other loads of reasonably known composition would guarantee more realistic results than those obtained with current practices. Keywords: Load Modeling, LOADSYN, EMTP Simulation, Transient Stability . INTRODUCTION It has been well established that the load characteristics have a major effect on machine-network interact
+采用基于组件的负荷建模方法（Component-based Load Modeling），基于LOADSYN数据库和模型库，使用EMTP电磁暂态仿真程序建立混合居民-商业负荷的详细模型。针对大扰动场景（电压变化高达50%），分别构建三类静态负荷模型（恒阻抗、非线性、电压频率相关）和两类动态负荷模型（单相感应电机、三相感应电机）。通过调整EMTP通用电机模型UM-7（单相）和UM-40（三相）的参数，使其在额定转差率附近匹配LOADSYN的功率因数、额定转差率和转速-转矩曲线特性。模型特别考虑了配电变压器饱和（使用EMTP模型98）和单相电机在大转差率下的零起动转矩特性，突破了LOADSYN原有限制（电压变化<15%，频率变化<5%）。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大扰动稳定与设备应力研究：在故障、失步或孤岛等情况下，负荷电压可能偏离额定值远超常规小扰动范围，而负荷特性会直接影响首摆暂态稳定、电压稳定、动态过电压和机网相互作用。研究对象是Hydro-Québec系统中具有代表性的混合居民—商业负荷，原文称这类负荷约占其基荷的三分之二以上，并以Brossard变电站负荷作为实测对象。难点在于常用LOADSYN模型主要面向电压变化小于15%、频率变化不超过5%的动态研究；大扰动时会出现不平衡运行、谐波、变压器饱和、电机大转差和故障后恢复等现象，简单静态或窄范围负荷模型难以保持物理一致性。本文贡献是在LOADSYN组件化思想和数据库基础上，构造可在EMTP中运行的详细混合负荷模型，并用现场录波校核后，用于提取该类负荷的静态、动态和故障后恢复特性，为后续动态研究建立负荷建模准则。
+
+### 2. 模型、算法与实现技术
+
+本文采用组件化负荷建模：先把混合居民—商业负荷按用电设备类别分解，再分别用EMTP可计算的静态和动态子模型表示，最后在变电站等值网络中组合成复合负荷。接口量主要是母线三相电压、频率或等效频率偏差以及各组件输出的有功、无功和电流；输出是总负荷的P、Q、电流波形及故障后恢复轨迹。静态部分覆盖近似恒阻抗负荷、非线性磁化/饱和类元件以及电压—频率相关负荷；电压频率相关公式如P=P0(V/V0)^np[1+Kp(f-f0)/f0]、Q=Q0(V/V0)^nq[1+Kq(f-f0)/f0]，其作用不是做保护逻辑，而是在给定电压和频率偏移下把设备级经验特性转换为可叠加的功率需求。动态部分用感应电机模型描述居民和商业负荷中的旋转设备，使转差、转矩、电磁暂态和电压跌落期间的功率变化由电机状态方程自然产生。计算流程是：依据LOADSYN负荷构成和参数库确定组件比例；把各组件映射为EMTP元件或受控源；在宽电压范围内扫描得到P-V、Q-V特性；再把复合负荷接入实际供电网络进行故障仿真。
+
+### 3. 验证、优势与不足
+
+有效性验证采用现场录波对比，而不是只做模型间仿真对比。测试对象为Brossard变电站315/25 kV负荷，该站位于Boucherville变电站供电的径向线路末端；Hydro-Québec在该处布置过半永久监测装置，原文说明监测持续两年并记录到多次自然扰动。选取的验证事件是一次单相接地故障，造成正序电压下降17.5%；论文将EMTP复合负荷模型仿真的电压、有功功率和无功功率响应与现场记录进行比较。工具为EMTP，基线主要是LOADSYN方法的适用范围和组件数据，而非与多种现代负荷模型的系统性横向评测。优势在于模型面向大电压偏移、不平衡和非线性网络现象，可在同一电磁暂态平台中描述电机动态、饱和等效应，并能用于研究故障期间及故障后的负荷恢复。边界也很明确：公开摘录中只给出一个大扰动现场案例的核心数字，缺少多季节、多负荷构成、多故障类型和多频率偏移的统计验证；所谓适用于50%电压变化主要是模型设计和仿真研究范围，不能等同于每个参数都已由现场数据在全范围内验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：大扰动下的负荷不能简单看作固定阻抗、固定功率或小扰动指数模型，尤其在含大量电机和商业/居民混合设备时，故障期间P、Q变化和故障后恢复会受到组件构成、转差动态和非线性元件共同影响。它可用于构建EMTP级复合负荷、为暂态稳定或电压稳定程序提取降阶负荷特性、解释现场故障录波中的负荷响应，也适合作为“组件化负荷建模”“现场录波校核负荷模型”“大扰动负荷恢复特性”等后续页面的入口。不宜外推为通用居民商业负荷参数库，也不宜直接用于未校核地区、不同配电结构、强电力电子负荷占比场景或实时仿真步长结论。
+
+### 证据边界
+
+- 原文明确给出的事实包括：开发了适用于大电压变化的混合居民—商业负荷EMTP详细模型，采用LOADSYN组件化思想和数据库，并用现场录波验证后研究静态、动态和故障后恢复特性。
+- 原文摘录明确给出的验证系统为Brossard变电站负荷、Boucherville至Brossard径向供电结构、两年监测数据，以及一次单相接地故障导致正序电压下降17.5%。
+- 页面中关于具体EMTP通用电机型号、三相/单相电机参数整定、变压器饱和模型编号、0.5–1.5 pu扫描等细节需要回到PDF方法和图表逐项核验；在当前摘录中不是全部可见。
+- 原文没有在给定摘录中报告多案例统计误差、参数灵敏度、与其他负荷模型的定量误差表，因此不能声称相对所有传统模型有可核验的数值精度提升。
+- 验证主要覆盖一个实际混合居民—商业负荷和一次严重单相接地事件；从验证范围看，结论不应直接扩展到工业负荷、高电力电子渗透率负荷、不同频率大幅偏移或其他配电网拓扑。
+- 文献元数据存在年份和作者信息不一致：用户元数据列为2004且作者仅Bahram Khodabakhchian，而抽取首页显示Bahram Khodabakhchian与Gia-Tong Vuong，源文件名含1997；正式引用前需核对IEEE记录。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 开发适用于大电压波动的EMTP混合负荷模型，突破传统模型窄范围限制
-- 利用现场单相接地故障录波验证模型，实现大扰动下负荷动态特性的高精度还原
-- 制定混合负荷在暂态与电压稳定研究中的建模指南，提升电力系统动态仿真精度
-
+- 问题定位：采用基于组件的负荷建模方法（Component-based Load Modeling），基于LOADSYN数据库和模型库，使用EMTP电磁暂态仿真程序建立混合居民-商业负荷的详细模型。针对大扰动场景（电压变化高达50%），分别构建三类静态负荷模型（恒阻抗、非线性、电压频率相关）和两类动态负荷模型（单相感应电机、三相感应电机）。
+- 方法机制：采用基于组件的负荷建模方法（Component-based Load Modeling），基于LOADSYN数据库和模型库，使用EMTP电磁暂态仿真程序建立混合居民-商业负荷的详细模型。针对大扰动场景（电压变化高达50%），分别构建三类静态负荷模型（恒阻抗、非线性、电压频率相关）和两类动态负荷模型（单相感应电机、三相感应电机）。
+- 验证证据：现场录波数据对比验证（Field Measurement Validation）；Brossard变电站（315/25 kV），位于Boucherville变电站（735/315 kV）供电的径向线路末端，构成实际的混合居民-商业负荷供电场景；
+- 量化与结论：模型有效电压范围：0.5-1.5 pu（相对额定电压±50%），较LOADSYN原有范围（0.85-1.15 pu，即±15%）扩展了233%；验证案例电压跌落幅度：正序电压17.5%，故障相电压36%，健康相电压8%；故障持续时间：2.5周波（基于60Hz系统为41.67 ms）；负荷有功功率变化：从约300 MW降至240 MW（故障期间），故障后恢复至300 MW
+- 适用边界：适用于理解本文 Modeling A Mixed Residential-commercial Load For Simulations Involving Large Disturbances - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
 
 ## 使用的方法
-
 
 - [[emtp电磁暂态仿真|EMTP电磁暂态仿真]]
 - [[基于组件的负荷建模|基于组件的负荷建模]]
@@ -36,9 +64,7 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 - [[静态与动态负荷建模|静态与动态负荷建模]]
 - [[通用机电模型-um-7-um-40|通用机电模型(UM-7/UM-40)]]
 
-
 ## 涉及的模型
-
 
 - [[混合居民-商业负荷|混合居民-商业负荷]]
 - [[恒阻抗负荷|恒阻抗负荷]]
@@ -48,9 +74,7 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 - [[三相感应电机|三相感应电机]]
 - [[配电变压器饱和模型|配电变压器饱和模型]]
 
-
 ## 相关主题
-
 
 - [[负荷建模|负荷建模]]
 - [[大扰动仿真|大扰动仿真]]
@@ -59,15 +83,11 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[现场数据验证|现场数据验证]]
 
-
 ## 主要发现
-
 
 - EMTP单相电机模型在大转差率下转矩特性更真实，克服了传统单笼模型局限
 - 三相电机静态特性在宽电压范围外迅速发散，证实了扩展负荷模型适用域的必要性
 - 复合模型精准复现严重单相接地故障期间的功率动态，验证了大扰动仿真的有效性
-
-
 
 ## 方法细节
 
@@ -77,16 +97,13 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 
 ### 数学公式
 
-
 **公式1**: $$$P = P_0 \left(\frac{V}{V_0}\right)^{n_p} \left[1 + K_p\frac{f-f_0}{f_0}\right]$$$
 
 *电压频率相关负荷的有功功率计算式，其中P0为额定有功功率，V/V0为电压标幺值，np为有功功率电压指数，Kp为频率有功系数，f0为额定频率*
 
-
 **公式2**: $$$Q = Q_0 \left(\frac{V}{V_0}\right)^{n_q} \left[1 + K_q\frac{f-f_0}{f_0}\right]$$$
 
 *电压频率相关负荷的无功功率计算式，其中Q0为额定无功功率，nq为无功功率电压指数，Kq为频率无功系数*
-
 
 ### 算法步骤
 
@@ -103,7 +120,6 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 6. 利用现场录波数据（单相接地故障）进行模型验证，对比正序电压、有功功率和无功功率的仿真值与实测值
 
 7. 分析负荷的静态特性、动态响应特性和故障后恢复特性，建立暂态稳定研究中的负荷建模指导原则
-
 
 ### 关键参数
 
@@ -123,8 +139,6 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 
 - **监测周期**: 两年（1979年开始的监测系统）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -137,8 +151,6 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 
 | 单相感应电机静态特性验证 | 在0.5-1.5 pu电压范围内，EMTP单相电机模型（UM-7）的P-Q特性曲线与LOADSYN数据在额定转差率附近吻合良好。特别在大转差率区域，EMTP模型显示出单相电机特有的零起动转矩特性，而LOADSYN采用三相电机近似无法体现此特性。 | 在0.35-1.15 pu范围外，LOADSYN模型失效，而EMTP模型在0.5-1.5 pu全范围内保持物理一致性 |
 
-
-
 ## 量化发现
 
 - 模型有效电压范围：0.5-1.5 pu（相对额定电压±50%），较LOADSYN原有范围（0.85-1.15 pu，即±15%）扩展了233%
@@ -148,7 +160,6 @@ A detailed EMTP model of a mixed residential-commercial load valid for large vol
 - 负荷无功功率变化：从约50 MVAr吸收降至-50 MVAr（向系统注入无功功率），故障后恢复
 - 电压扫描测试速率：-1 pu/秒，用于获取负荷的静态P-V和Q-V特性曲线
 - 监测数据平均窗口：1周波（导致陡峭电压变化处的瞬态畸变，需进行信号重构）
-
 
 ## 关键公式
 
@@ -164,11 +175,33 @@ $$$Q = Q_0 \left(\frac{V}{V_0}\right)^{n_q} \left[1 + K_q\frac{f-f_0}{f_0}\right
 
 *用于模拟电视机、荧光灯等负荷的无功功率随电压和频率变化的关系，本研究中因频率变化可忽略，简化为$Q = Q_0 (V/V_0)^{n_q}$*
 
-
-
 ## 验证详情
 
 - **验证方式**: 现场录波数据对比验证（Field Measurement Validation）
 - **测试系统**: Brossard变电站（315/25 kV），位于Boucherville变电站（735/315 kV）供电的径向线路末端，构成实际的混合居民-商业负荷供电场景
 - **仿真工具**: EMTP（Electromagnetic Transients Program），使用UM-7（单相通用电机模型）和UM-40（三相通用电机模型），以及模型98（变压器饱和模型）
 - **验证结果**: EMTP模型成功复现了单相接地故障期间的正序电压（17.5%跌落）、三相电压不对称性（故障相36%跌落，健康相8%跌落）、有功功率（300MW→240MW）和无功功率（50MVAr→-50MVAr）的动态变化。验证了模型在高达36%电压不平衡和50%电压变化范围内的准确性，确认了单相电机模型在大转差率下的零起动转矩特性对精确仿真的重要性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Modeling A Mixed Residential-commercial Load  For Simulations Involving Large Disturbances - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 emtp电磁暂态仿真、基于组件的负荷建模、现场录波数据辨识 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：开发适用于大电压波动的EMTP混合负荷模型，突破传统模型窄范围限制
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-commercial load for simulations involving large disturbances.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

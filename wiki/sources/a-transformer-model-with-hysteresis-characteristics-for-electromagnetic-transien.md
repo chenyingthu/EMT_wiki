@@ -2,7 +2,7 @@
 title: "A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM"
 type: source
 year: 2022
-journal: ""
+journal: "中国电机工程学报"
 created: "2026-04-13"
 sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM.pdf"]
 ---
@@ -14,18 +14,46 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 
 ## 摘要
 
-In order to research the inrush problems in HVDC transmission projects, a new three-phase transformer model with hysteresis characteristics of PSCAD/EMTDC was presented, which derives from ideas of the transformer model considering hysteresis characteristics in ATP-EMTP, in which it consists of Type96 and BCTRAN. This model added an excitation branch considering hysteresis characteristics based on the classical model. The hysteresis characteristics can be described effectively when using experimental data obtained. The simulation results show that the model reflects excitation characteristics well, and parameters are readily available, it’s easy for users to use it in PSCAD/EMTDC. It also studied the differences of excitation characteristics simulated by the hysteresis loop and the hystere
+为了研究高压直流输电中励磁涌流问题，该文结合 ATP-EMTP 电磁暂态仿真软件中描述铁心铁磁材料磁滞特性的非线性电感 Type96 以及 BCTRAN 共同建立考虑磁滞特性变压器模型思想，提出一种考虑磁滞特性变压器 PSCAD/EMTDC 电磁暂态仿真新模型。该模型在经典模型的基础上增加了考虑磁滞特性的励磁支路，利用试验获得的最大磁滞回线数据便可有效地反映变压器的磁滞特性，验证表明该模型能很好地反映变压器磁滞特性，且因参数易得，便于用户在 PSCAD/EMTDC 中仿真使用。同时也仿真研究利用磁滞回线和磁滞中线模拟变压器励磁特性的差异性，得出采用磁滞中线代替磁滞回线来模拟变压器铁心励磁特性在励磁涌流峰值上具有一致性，但磁滞回线对涌流稳态过程特别是谐波特性有较大影响。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这项工作的工程背景是高压直流输电中换流变空载投入时的励磁涌流问题：一极投入运行可能使Y/Y、Y/D换流变同时受励磁，非线性铁心在不同初始磁通、剩磁和饱和状态下产生含非周期分量与高次谐波的涌流，进而冲击变压器结构、造成CT饱和并诱发保护误动。研究对象是PSCAD/EMTDC中的三相电力变压器励磁支路，重点不是常规漏抗或绕组连接建模，而是铁心磁滞回线对暂态涌流和稳态谐波的影响。难点在于PSCAD经典变压器模型通常用单值励磁曲线，难以表达同一电流对应不同磁链的磁滞多值性；而J-A、Preisach等磁滞模型参数较多、辨识复杂，工程可用性受限。本文的贡献是借鉴ATP-EMTP中Type96非线性电感与BCTRAN组合建模思想，在PSCAD/EMTDC经典三相变压器模型外增加可描述磁滞的励磁支路，用试验获得的最大磁滞回线数据构造主回线和次回线，从而提供一个参数相对易得、可直接嵌入PSCAD用户自定义模型的磁滞变压器模型，并进一步比较磁滞回线与磁滞中线两种励磁特性表示对涌流峰值和谐波的差异。
+
+### 2. 模型、算法与实现技术
+
+本文实现的是一个PSCAD/EMTDC三相变压器自定义磁滞模型。电气主体仍基于经典三相变压器模型，新增并联励磁支路用于表示铁心非线性与磁滞。模型的输入主要是铁心最大磁滞回线试验数据、磁滞中线或由主回线整理得到的数据、变压器额定参数及仿真步长；运行时接口量是励磁支路电流、电压和由其积分或插值得到的磁链；输出是每个时步应赋给可变电感元件的瞬时电感值以及对应的励磁电流波形。机制上，模型先用分段线性插值拟合最大磁滞回线的上下支路和磁滞中线，再依据当前工作点、转折点和主回线边界推导内部次磁滞回线簇，使工作点在电流增加和减小时沿不同路径运动。实时计算中，程序通过延时采样比较当前电流、前一时步电流和再前一时步电流，判断电流变化方向与局部峰值位置，并用状态标识记录左、右转折点。若工作点仍处于磁滞多值区域，则按磁滞回线插值更新磁链；若进入单值饱和区或满足切换条件，则转入磁滞中线计算以保持数值连续。核心公式的作用不是建立解析磁滞理论，而是把主回线、转折点和当前电流之间的几何比例转化为当前磁链，并由L=dφ/di或等价的电压、电流变化率关系得到可变电感，实现“采样电流—判别轨迹—计算磁链—更新电感—电路求解”的闭环。
+
+### 3. 验证、优势与不足
+
+作者采用仿真对比和实测录波对比验证模型。根据当前页面抽取，算例包括15 kV、50 Hz交流系统中的10 MVA、YNd11三相电力变压器，以及1 kVA、220/110 V小型试验变压器；工具包括PSCAD/EMTDC和ATP-EMTP；基线包括ATP-EMTP中由BCTRAN及磁滞非线性电感思想构成的模型，以及实际变压器空载合闸录波。评价指标主要是励磁涌流波形、最大峰值、衰减时间、稳态峰值和谐波特性。当前页面给出的量化结果显示，PSCAD用户自定义模型与ATP-EMTP BCTRAN类模型的三相涌流最大峰值平均相对误差约12%，衰减时间误差约9.1%至10%；与1 kVA实测录波相比，涌流最大峰值误差约1.6%至2%，稳态峰值误差约13.3%。优势在于该模型不需要完整辨识复杂磁滞理论参数，只依赖最大磁滞回线等较易获得数据，即可在PSCAD中表达磁滞多值性，并能用于比较磁滞回线和磁滞中线对涌流峰值、稳态过程及谐波的影响。边界也很明确：验证集中在空载合闸励磁涌流场景，尚不能直接证明其适用于故障暂态、直流偏磁、频率大范围变化、实时仿真步长约束或所有换流变结构；三相铁心结构、剩磁设定、材料数据来源和数值切换稳定性对结果的影响仍需回原文表图进一步核验。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于说明：若研究目标只是估算空载合闸暂态涌流峰值，磁滞中线近似可能与完整磁滞回线给出相近峰值；但若关注稳态励磁电流畸变、三次及高次谐波、保护判据或CT饱和风险，磁滞回线的多值路径不能简单忽略。工程上，它为PSCAD/EMTDC用户提供了一个可复用的磁滞励磁支路实现思路，适合后续换流变励磁涌流、合闸角影响、谐波分析和保护误动机理研究页面引用。它不适合被外推为通用铁心磁滞理论模型，也不应在未重新标定磁滞数据和验证步长稳定性的情况下直接用于其他材料、容量等级、极端饱和或不同拓扑。
+
+### 证据边界
+
+- 作者、题名、摘要、关键词、研究动机以及借鉴ATP-EMTP Type96与BCTRAN思想、在PSCAD/EMTDC中增加磁滞励磁支路等内容来自用户提供的原文首页与摘要片段。
+- 最大峰值误差、衰减时间误差、1 kVA实测对比误差等量化数字来自当前页面已有抽取内容；在本次可见的原文片段中没有对应表图，正式引用前应回PDF验证。
+- 关于分段线性插值、次磁滞回线簇、延时电流比较、状态标识和可变电感闭环的机制性描述来自当前页面的方法抽取，并结合公式含义进行解释；具体程序逻辑仍应以原文模型框图和公式为准。
+- 验证范围主要覆盖空载合闸励磁涌流及磁滞回线/磁滞中线差异，未见证据表明作者系统验证了故障暂态、直流偏磁、宽频率范围、实时仿真或不同铁心结构下的适用性。
+- 页面中提到的仿真步长为Δt，但未提供统一、可复核的步长取值及数值稳定性分析；因此不能据此判断模型在更大步长或实时仿真平台中的稳定运行能力。
+- 模型参数易得这一结论限于能够获得最大磁滞回线或材料试验数据的场景；若实际换流变缺少可用磁滞试验数据，参数获取难度和误差传播仍需单独评估。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于PSCAD的考虑磁滞特性三相变压器自定义电磁暂态仿真模型
-- 采用可变电感法构建闭环控制逻辑实现磁滞回线工作点实时跟踪与轨迹转换
-- 利用分段线性插值法拟合主次磁滞回线簇仅需最大磁滞回线数据即可建模
-
+- 问题定位：为了研究高压直流输电中励磁涌流问题，该文结合 ATP-EMTP 电磁暂态仿真软件中描述铁心铁磁材料磁滞特性的非线性电感 Type96 以及 BCTRAN 共同建立考虑磁滞特性变压器模型思想，提出一种考虑磁滞特性变压器 PSCAD/EMTDC 电磁暂态仿真新模型。
+- 方法机制：本文提出一种基于PSCAD/EMTDC的考虑铁心磁滞特性的三相变压器自定义电磁暂态仿真模型。该模型在经典变压器模型基础上并联非线性励磁支路，采用可变电感法构建闭环控制逻辑。通过分段线性插值法拟合最大磁滞回线与磁滞中线，并基于主回线数据推导次磁滞回线簇。利用延时比较法实时采集三相电流历史值，判断工作点在磁滞回线上的运动轨迹与转折点位置，实现磁滞回线与磁滞中线的动态切换。
+- 验证证据：跨平台仿真对比(ATP-EMTP BCTRAN/UMEC)与实际变压器空载合闸试验录波对比分析；15kV/50Hz交流系统，10MVA YNd11三相电力变压器，以及1kVA/220/110V小型试验变压器；PSCAD/EMTDC, ATP-EMTP
+- 量化与结论：UD模型与BCTRAN模型三相励磁涌流最大峰值平均相对误差约为12%，衰减时间相对误差约为9.1%~10%。；UD模型与实际变压器试验录波的涌流最大峰值相对误差约为1.6%~2%，稳态峰值相对误差约为13.3%。；采用磁滞中线替代磁滞回线时，暂态励磁涌流峰值保持一致，但磁滞回线对稳态过程及高次谐波特性影响显著，三次谐波含量差异明显。；
+- 适用边界：适用于理解本文 A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[自定义建模-ud|自定义建模(UD)]]
 - [[可变电感法|可变电感法]]
@@ -33,9 +61,7 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 - [[延时比较法|延时比较法]]
 - [[闭环控制逻辑|闭环控制逻辑]]
 
-
 ## 涉及的模型
-
 
 - [[三相变压器|三相变压器]]
 - [[换流变压器|换流变压器]]
@@ -43,9 +69,7 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 - [[bctran模型|BCTRAN模型]]
 - [[umec模型|UMEC模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[励磁涌流|励磁涌流]]
@@ -53,15 +77,11 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 - [[高压直流输电|高压直流输电]]
 - [[谐波分析|谐波分析]]
 
-
 ## 主要发现
-
 
 - 采用磁滞中线替代完整磁滞回线模拟时励磁涌流峰值在暂态过程中保持一致
 - 完整磁滞回线对涌流稳态过程及高次谐波特性具有更显著的影响
 - 所提模型仅需最大磁滞回线数据即可准确反映变压器铁心非线性励磁特性
-
-
 
 ## 方法细节
 
@@ -71,26 +91,21 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{d_X}{d_{P1}} = \frac{\varphi_X - \varphi_N}{\varphi_{P1} - \varphi_N}$$$
 
 *次磁滞回线上支路磁链差值比例关系，用于线性插值计算当前工作点磁链*
-
 
 **公式2**: $$$\varphi_X = \frac{\varphi_{main}(\varphi_{P1} - \varphi_N) + d_{P1}\varphi_N}{\varphi_{P1} - \varphi_N + d_{P1}}$$$
 
 *次磁滞回线上支路磁链$\varphi_X$的显式求解公式，结合主回线与中线数据动态更新*
 
-
 **公式3**: $$$\frac{d\varphi_X}{di} = \frac{d\varphi_X}{dt} \frac{dt}{di} = u / \frac{di}{dt} = L$$$
 
 *可变电感值计算核心关系式，通过磁链对电流的微分或电压电流变化率实时求解电感L*
 
-
 **公式4**: $$$\begin{cases} I_k(t-\Delta t) - I_k(t-2\Delta t) < 0 \\ I_k(t) - I_k(t-\Delta t) < 0 \end{cases}$$$
 
 *工作点轨迹判断逻辑，通过连续三个仿真步长的电流差分符号判定工作点位于磁滞回线下降段*
-
 
 ### 算法步骤
 
@@ -103,7 +118,6 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 4. 轨迹切换逻辑判断：根据电流峰值点是否超出主磁滞回线饱和区，执行轨迹切换。若峰值在主环内，工作点沿磁滞回线运动；若进入单值饱和区或满足特定F1/F2状态跳变条件，则切换至磁滞中线循环程序，避免多值区域计算发散。
 
 5. 可变电感闭环控制求解：根据当前磁链$\varphi_X$与电流$i$的微分关系或电压电流变化率计算瞬时电感值$L$，将$L$实时赋给PSCAD中的可变电感元件，形成“电流采样-磁链计算-电感更新-电路求解”的闭环控制回路，完成电磁暂态步进仿真。
-
 
 ### 关键参数
 
@@ -123,8 +137,6 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 
 - **仿真步长/延时**: $\Delta t$ (EMTDC默认步长，通常为50μs或更小)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,15 +151,12 @@ In order to research the inrush problems in HVDC transmission projects, a new th
 
 | 磁滞回线(HL) vs 磁滞中线(HML)模拟对比 | 两种模拟方式下暂态励磁涌流峰值基本一致，但HL模型在稳态阶段的电感值动态变化更剧烈，导致高次谐波含量显著高于HML模型。 | HML可快速估算涌流峰值，但HL对稳态谐波特性影响更大，适用于保护定值与谐波分析场景。 |
 
-
-
 ## 量化发现
 
 - UD模型与BCTRAN模型三相励磁涌流最大峰值平均相对误差约为12%，衰减时间相对误差约为9.1%~10%。
 - UD模型与实际变压器试验录波的涌流最大峰值相对误差约为1.6%~2%，稳态峰值相对误差约为13.3%。
 - 采用磁滞中线替代磁滞回线时，暂态励磁涌流峰值保持一致，但磁滞回线对稳态过程及高次谐波特性影响显著，三次谐波含量差异明显。
 - 模型仅需最大磁滞回线试验数据即可完整拟合次磁滞回线簇，参数获取难度大幅降低，工程实用性提升。
-
 
 ## 关键公式
 
@@ -169,11 +178,34 @@ $$$\begin{cases} I_k(t-\Delta t) - I_k(t-2\Delta t) < 0 \\ I_k(t) - I_k(t-\Delta
 
 *通过连续三个步长的电流差分符号判定工作点运动方向（上升/下降段），是磁滞回线实时跟踪的核心判据。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 跨平台仿真对比(ATP-EMTP BCTRAN/UMEC)与实际变压器空载合闸试验录波对比分析
 - **测试系统**: 15kV/50Hz交流系统，10MVA YNd11三相电力变压器，以及1kVA/220/110V小型试验变压器
 - **仿真工具**: PSCAD/EMTDC, ATP-EMTP
 - **验证结果**: 模型在PSCAD平台成功实现磁滞特性模拟，与ATP-EMTP内置模型及实际试验波形高度吻合，暂态峰值误差控制在2%~12%以内，衰减时间误差约10%。验证了可变电感法与闭环控制逻辑在电磁暂态仿真中的有效性与工程实用性，为HVDC换流变励磁涌流及谐波研究提供了可靠工具。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 自定义建模-ud、可变电感法、分段线性插值法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于PSCAD的考虑磁滞特性三相变压器自定义电磁暂态仿真模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

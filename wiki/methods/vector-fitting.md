@@ -97,16 +97,19 @@ created: "2026-04-13"
 - [2024] **Enhancing computation performance of rational approximation **: CVF方法成功处理了具有大量频域峰谷的8端口FDNE，且无需进行复共轭极点配对。
 - [2024] **Enhancing computation performance of rational approximation **: 算法计算性能随模型阶数、端口数及频率样本量的变化表现出良好的可扩展性与稳定性。
 
+## 定义与边界
+
+矢量拟合是把频域采样响应转换为稳定有理函数的系统辨识方法，常用于 [[fdne-model|频率相关网络等值]]、[[transmission-line-model|输电线路模型]]、[[cable-model|电缆模型]] 和 [[transformer-model|变压器模型]] 的宽频 EMT 实现。它解决的是“如何拟合端口响应”的问题，不直接保证模型接入网络后的能量一致性；用于时域仿真前通常还要配合 [[passivity-enforcement|无源性强制]]、[[state-space-method|状态空间实现]] 和模型阶数检查。
+
+该方法适用于线性或线性化端口频响、测量阻抗/导纳曲线和频率相关参数表。若对象包含强饱和、开关限幅或控制器非线性，VF 只能描述选定工作点附近的小信号行为；若频段、采样密度或初始极点选择不足，拟合曲线看似平滑也可能在时域卷积中产生虚假振荡。
+
+## 代表性来源与内部链接
+
+代表性来源包括 [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del|Rational approximation of frequency domain responses by vector fitting]]、[[fast-realization-of-the-modal-vector-fitting|Fast Realization of the Modal Vector Fitting]]、[[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin|Review and comparison of frequency-domain curve-fitting techniques]]、[[transient-analysis-on-multiphase-transmission-line-above-lossy-ground-combining-|Transient Analysis on Multiphase Transmission Line Above Lossy Ground]] 和 [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation for frequency-dependent network equivalents]]。阅读顺序可从 [[frequency-dependent-modeling|频率相关建模]] 进入，再连接到 [[network-equivalent|网络等值]]、[[prony-analysis|Prony 分析]]、[[passivity-enforcement|无源性强制]] 和 [[rtds|RTDS]] 实时实现约束。
+
 ## 深度增强内容
 
- ---
-title: "矢量拟合"
-type: method
-tags: ["有理函数逼近", "系统辨识", "宽频带建模", "频率相关网络等值", "EMT仿真"]
-created: "2026-04-13"
----
-
-# 矢量拟合（Vector Fitting, VF）
+### 矢量拟合（Vector Fitting, VF）
 
 ## 1. 核心原理详解
 
@@ -277,14 +280,7 @@ $$y_{m,i}(s) \approx \sum_{n=1}^{N_i} \frac{r_{i,n}}{s-p_{i,n}} + d_i$$
 
 ## 深度增强内容
 
- ---
-title: "矢量拟合"
-type: method
-tags: ["有理函数逼近", "系统辨识", "宽频建模", "FDNE", "无源性强制"]
-created: "2026-04-13"
----
-
-# 矢量拟合 (Vector Fitting)
+### 矢量拟合 (Vector Fitting)
 
 ## 1. 核心原理详解
 

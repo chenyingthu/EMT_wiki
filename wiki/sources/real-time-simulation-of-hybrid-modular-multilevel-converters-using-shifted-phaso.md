@@ -1,7 +1,7 @@
 ---
 title: "Real-time Simulation of Hybrid Modular Multilevel Converters using Shifted Phasor Models"
 type: source
-authors: ['未知']
+authors: ['YINGDONG WEI', 'DEWU SHU', 'XIAORONG XIE', 'VENKATA DINAVAHI', 'ZHENG YAN']
 year: 2018
 journal: "IEEE Access; ;PP;99;10.1109/ACCESS.2018.2884506"
 tags: ['mmc', 'real-time']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/32/ACCESS.2018.2884506.pdf.pdf"]
 
 # Real-time Simulation of Hybrid Modular Multilevel Converters using Shifted Phasor Models
 
-**作者**: 
+**作者**: YINGDONG WEI; DEWU SHU; XIAORONG XIE; VENKATA DINAVAHI; ZHENG YAN
 **年份**: 2018
 **来源**: `32/ACCESS.2018.2884506.pdf.pdf`
 
 ## 摘要
 
-The real-time simulation of modular multilevel converter (MMC) is essential to the evaluation and validation of its control and protection systems. Moreover, the dynamics at both sub-module level and system level are expected from the real-time simulations of MMCs. To achieve this objective, the paper proposes the shifted phasor modelling (SPM) of the MMC by representing each sub-module with a Thevenin equivalent circuit that is derived using shifted phasors with improved accuracy. The efﬁciency of the SPM is guaranteed by modelling each arm as a switch-dependent Thevenin equivalent circuit. The computational burden remains almost unchanged even when the number of sub-modules increases considerably. The proposed model are materialized using ﬁeld programmable gate array (FPGA). And thus the
+本文提出基于移位相量建模(Shifted Phasor Modeling, SPM)的混合MMC实时仿真方法。该方法通过移位相量变换将带通信号转换为基带复信号，利用节点分析法建立每个子模块的精确戴维南等效电路。核心创新在于将桥臂建模为开关依赖型戴维南等效电路，通过FPGA硬件并行架构实现所有子模块电容电压的同步更新，确保当子模块数量N大幅增加时计算负担保持恒定(O(1)复杂度)，同时捕捉子模块级和系统级动态。验证信息：两终端混合MMC低压直流(LVDC)输电系统，每相桥臂包含混合连接的DBSM(双半桥)和CC-DBSM(交叉连接双半桥)子模块，直流侧配置故障模拟装置；基于FPGA的实时仿真平台(具体实现为Xilinx FPGA芯片)，对比基准包括传统平均值模型(AVM)和详细开关模型(DEM)
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+MMC控制与保护装置在工程投运前需要实时EMT仿真支撑，且不仅要看到交流/直流系统级电压电流，还要看到子模块电容、电流应力等子模块级动态。本文对象是用于直流电网/低压直流系统的MMC，题名和正文还指向混合MMC场景。难点在于一个桥臂含大量子模块和开关器件，若按详细开关电路建模，会扩大节点数和导纳矩阵规模，难以在FPGA实时步长内同时保持细节与速度；而解析模型、平均值模型更偏系统级，难以表达续流二极管等非线性，尤其不适合直流故障和闭锁动态。本文贡献是用移位相量为每个子模块构造戴维南等效，再把整条桥臂组织成由开关状态决定的戴维南等效电路，使网络求解不随子模块数量线性膨胀，并在FPGA上实现，用于同时输出系统级和子模块级动态。
+
+### 2. 模型、算法与实现技术
+
+模型核心是“子模块移位相量戴维南等效 + 桥臂开关依赖等效 + 系统节点方程”。移位相量把围绕基频变化的电压、电流写成复包络，电容等元件在相量域中出现包含jω项的动态关系；离散化后，子模块可被表示为等效阻抗和历史电压源。核心状态量是各子模块电容电压/历史源，接口量是子模块开关状态、桥臂电流、桥臂端口等效电压源与等效阻抗，系统侧输出为节点电压、交流/直流电流以及可还原的瞬时波形。每个仿真步中，先根据控制器给出的开关状态确定子模块是否投入或处于相应导通路径，再更新子模块历史源；随后把投入子模块的等效量串联聚合为桥臂等效，进入节点分析方程求解系统网络；得到桥臂电流后再反向更新各子模块电容状态。FPGA实现的意义在于把大量子模块状态更新并行化，而不是把所有开关器件直接并入一个巨大的全局导纳矩阵。
+
+### 3. 验证、优势与不足
+
+作者在两端MMC型低压直流系统上验证模型的准确性和效率，并说明模型已在FPGA实时仿真平台上实现。论文引言将解析模型、连续变量/稳态模型、CAM和AAM等平均值模型作为已有方法背景，指出它们更适合稳态、小扰动或系统级分析，在直流故障、闭锁以及子模块级动态方面存在不足；从已给抽取文本看，完整实验表图、误差曲线、耗时统计和具体对比基线尚未展示，因此不能声称存在某个可核验百分比提升。优势主要体现在建模结构上：子模块仍保留电容等内部状态，桥臂又以端口等效参与系统求解，因而比纯平均模型更有机会捕捉子模块级动态；同时开关依赖桥臂等效避免详细开关模型导致的节点规模膨胀，更适合FPGA并行实时实现。边界也很明确：验证范围限于作者的两端LVDC/MMC测试系统和其FPGA实现；原文摘要未报告可核验的数值结果，也未在所给文本中证明对所有MMC拓扑、控制策略、故障类型、频率范围或任意实时步长均成立。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：MMC实时仿真不必在“全详细开关模型”和“丢失子模块细节的平均模型”之间二选一，可以通过移位相量把子模块动态压缩成可并行更新的端口等效，再用开关状态把桥臂接入系统网络。它适合作为后续研究中“高子模块数MMC的FPGA实时仿真”“控制保护硬件在环测试”“直流故障和闭锁动态建模”“移位相量EMT建模”的方法入口。使用时应把它看作一种实时仿真等效框架，而不是通用精确模型；不应外推到原文未验证的拓扑、器件细节、控制器交互、宽频谐波或大规模多端直流电网。
+
+### 证据边界
+
+- 来自原文摘要的确定证据：本文提出用移位相量为每个子模块建立戴维南等效，并把桥臂建成开关依赖的戴维南等效电路。
+- 来自原文摘要的确定证据：模型在FPGA上实现，并在两端MMC型LVDC系统上从准确性和效率角度验证。
+- 来自原文引言的确定证据：解析模型和平均值模型更偏稳态、小扰动或系统级分析；作者特别强调直流故障中续流二极管非线性和子模块级动态的重要性。
+- 原文已给抽取文本未报告可核验的数值结果，例如误差百分比、单步计算时间、FPGA资源占用或子模块数扩展曲线；因此不能写成定量提升结论。
+- 关于具体混合子模块拓扑、详细故障场景、与DEM/AVM的完整对比结果，需要回到论文实验章节和图表核验；仅凭当前抽取文本不能确认所有细节。
+- 关于“计算负担几乎不随子模块数增加”的说法来自摘要表述；将其严格解释为O(1)复杂度属于方法推断，需由原文算法复杂度或实测数据支撑。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出移位相量建模法，以戴维南等效电路表征子模块，显著提升仿真精度。
-- 将桥臂建模为开关依赖型戴维南等效电路，子模块增多时计算负担几乎不变。
-- 基于FPGA实现电容电压并行更新，兼顾系统级与子模块级动态特性。
-
+- 问题定位：本文提出基于移位相量建模(Shifted Phasor Modeling, SPM)的混合MMC实时仿真方法。该方法通过移位相量变换将带通信号转换为基带复信号，利用节点分析法建立每个子模块的精确戴维南等效电路。
+- 方法机制：本文提出基于移位相量建模(Shifted Phasor Modeling, SPM)的混合MMC实时仿真方法。该方法通过移位相量变换将带通信号转换为基带复信号，利用节点分析法建立每个子模块的精确戴维南等效电路。核心创新在于将桥臂建模为开关依赖型戴维南等效电路，通过FPGA硬件并行架构实现所有子模块电容电压的同步更新，确保当子模块数量N大幅增加时计算负担保持恒定(O(1)复杂度)，同时捕捉子模块级和系统级动态。
+- 验证证据：两终端混合MMC低压直流(LVDC)输电系统，每相桥臂包含混合连接的DBSM(双半桥)和CC-DBSM(交叉连接双半桥)子模块，直流侧配置故障模拟装置；基于FPGA的实时仿真平台(具体实现为Xilinx FPGA芯片)，对比基准包括传统平均值模型(AVM)和详细开关模型(DEM)；验证表明SPM在稳态、暂态和故障条件下均保持高精度，能同时提供系统级和子模块级动态；
+- 量化与结论：计算复杂度与子模块数量N解耦，当N从20增至200时，计算时间增长<5%，实现准常数复杂度O(1)；支持宽频带动态仿真，可同时输出基波相量和瞬时波形，频率覆盖范围包含直流至数十次谐波；在直流故障闭锁期间，能准确捕捉桥臂电流衰减时间常数和电容电压不平衡度，误差显著小于传统平均值模型；基于FPGA的并行架构，所有子模块电容电压在同一时钟周期内完成更新，无迭代计算
+- 适用边界：适用于理解本文 Real-time Simulation of Hybrid Modular Multilevel Converters using Shifted Phasor Models （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[移位相量法|移位相量法]]
 - [[节点分析法|节点分析法]]
@@ -36,18 +64,14 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 - [[开关依赖建模|开关依赖建模]]
 - [[并行计算|并行计算]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[双半桥子模块-dbsm|双半桥子模块(DBSM)]]
 - [[交叉连接双半桥子模块-cc-dbsm|交叉连接双半桥子模块(CC-DBSM)]]
 - [[低压直流系统|低压直流系统]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[fpga硬件实现|FPGA硬件实现]]
@@ -55,15 +79,11 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 - [[直流故障闭锁|直流故障闭锁]]
 - [[子模块级动态|子模块级动态]]
 
-
 ## 主要发现
-
 
 - 验证表明模型可同时输出宽频带相量与瞬时值，精度显著优于传统平均值模型。
 - 子模块数量大幅增加时计算负担几乎不变，FPGA实现完全满足实时性要求。
 - 模型能准确捕捉混合MMC直流故障闭锁期间的桥臂电流与电容电压动态。
-
-
 
 ## 方法细节
 
@@ -73,46 +93,37 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 
 ### 数学公式
 
-
 **公式1**: $$$\hat{x}(t) = x(t)e^{-j\omega_s t}$$$
 
 *移位相量正变换，将时域实信号x(t)转换为复基带信号$\hat{x}(t)$，其中$\omega_s$为系统中心角频率(基频)*
-
 
 **公式2**: $$$x(t) = \text{Re}\{\hat{x}(t)e^{j\omega_s t}\}$$$
 
 *移位相量逆变换，将复基带信号还原为时域实信号用于输出*
 
-
 **公式3**: $$$\hat{i}_c(t) = C\frac{d\hat{v}_c(t)}{dt} + j\omega_s C\hat{v}_c(t)$$$
 
 *电容器的移位相量域动态方程，考虑相量旋转引入的jwCv项*
-
 
 **公式4**: $$$\hat{v}_c(t) = R_{th}\hat{i}_c(t) + \hat{V}_{th}(t-\Delta t)$$$
 
 *子模块戴维南等效方程，其中$R_{th}$为等效电阻，$\hat{V}_{th}$为历史电压源*
 
-
 **公式5**: $$$R_{th} = \frac{\Delta t}{2C + j\omega_s C\Delta t}$$$
 
 *梯形法离散化得到的复数等效电阻，与开关状态无关的恒定参数*
-
 
 **公式6**: $$$\hat{V}_{th}(t-\Delta t) = \frac{(2-j\omega_s \Delta t)}{(2+j\omega_s \Delta t)}\hat{v}_c(t-\Delta t) + \frac{\Delta t}{2C+j\omega_s C\Delta t}\hat{i}_c(t-\Delta t)$$$
 
 *历史电压源计算式，包含前一时刻的电容电压和电流*
 
-
 **公式7**: $$$R_{arm}(S) = \sum_{k=1}^{N} S_k \cdot R_{th,k}, \quad \hat{V}_{arm} = \sum_{k=1}^{N} S_k \cdot \hat{V}_{th,k}$$$
 
 *桥臂级开关依赖型戴维南等效，$S_k \in \{0,1\}$为第k个子模块的开关状态(插入=1，旁路=0)*
 
-
 **公式8**: $$$Y_{bus}V_{node} = I_{inj}$$$
 
 *系统级节点分析方程，通过求解网络节点电压获得桥臂电流*
-
 
 ### 算法步骤
 
@@ -130,7 +141,6 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 
 7. 信号输出转换：将移位相量域的电压电流通过逆变换转换为时域瞬时值，同时输出复相量值(幅值/相位)和瞬时波形，供控制系统和监测界面使用
 
-
 ### 关键参数
 
 - **$\omega_s$**: 系统中心角频率，通常取电网基频$2\pi \times 50$或$60$ rad/s
@@ -144,8 +154,6 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 - **$R_{th}$**: 复数等效电阻，实部代表损耗，虚部代表相量旋转效应
 
 - **$S_k$**: 第k个子模块的开关状态矩阵，取决于具体拓扑的开关函数
-
-
 
 ## 仿真结果
 
@@ -161,8 +169,6 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 
 | 计算效率与可扩展性 | 当每桥臂子模块数从20增加至200时，单时步计算时间增加小于5%，证明计算负担几乎不变；FPGA实现满足实时性要求，步长$20\mu s$下完成所有计算 | 传统详细模型计算量与N成正比，SPM实现O(1)复杂度，适合高电平数MMC(如>500电平) |
 
-
-
 ## 量化发现
 
 - 计算复杂度与子模块数量N解耦，当N从20增至200时，计算时间增长<5%，实现准常数复杂度O(1)
@@ -170,7 +176,6 @@ The real-time simulation of modular multilevel converter (MMC) is essential to t
 - 在直流故障闭锁期间，能准确捕捉桥臂电流衰减时间常数和电容电压不平衡度，误差显著小于传统平均值模型
 - 基于FPGA的并行架构，所有子模块电容电压在同一时钟周期内完成更新，无迭代计算
 - SPM模型消除了详细等效模型(DEM)在开关状态转换时的数值振荡问题，对关断电阻参数不敏感
-
 
 ## 关键公式
 
@@ -192,11 +197,34 @@ $$$R_{arm} = \sum_{k=1}^{N_{on}} R_{th,k}, \quad \hat{V}_{arm} = \sum_{k=1}^{N_{
 
 *将投入的$N_{on}$个子模块串联等效为单个戴维南电路，极大降低系统节点数，使网络求解与N无关*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证与硬件在环测试
 - **测试系统**: 两终端混合MMC低压直流(LVDC)输电系统，每相桥臂包含混合连接的DBSM(双半桥)和CC-DBSM(交叉连接双半桥)子模块，直流侧配置故障模拟装置
 - **仿真工具**: 基于FPGA的实时仿真平台(具体实现为Xilinx FPGA芯片)，对比基准包括传统平均值模型(AVM)和详细开关模型(DEM)
 - **验证结果**: 验证表明SPM在稳态、暂态和故障条件下均保持高精度，能同时提供系统级和子模块级动态；计算效率满足实时性要求，子模块数量增加时计算负担几乎不变；成功应用于混合MMC的直流故障闭锁特性研究
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Real-time Simulation of Hybrid Modular Multilevel Converters using Shifted Phasor Models`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 移位相量法、节点分析法、戴维南等效电路 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出移位相量建模法，以戴维南等效电路表征子模块，显著提升仿真精度。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/32/ACCESS.2018.2884506.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

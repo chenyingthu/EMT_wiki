@@ -1,9 +1,9 @@
 ---
 title: "Dead-time effect modeling for hybrid modular multilevel converter using twin mapping"
 type: source
-authors: ['Moke Feng']
+authors: ['Moke Feng', 'Jianzhong Xu', 'Wenxia Sima', 'Ming Yang', 'Hang Jing', 'Keying Pan']
 year: 2026
-journal: "International Journal of Electrical Power and Energy Systems, 175 (2026) 111623. doi:10.1016/j.ijepes.2026.111623"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['mmc']
 created: "2026-04-13"
 sources: ["EMT_Doc/12/1-s2.0-S0142061526000657-main.pdf"]
@@ -11,7 +11,7 @@ sources: ["EMT_Doc/12/1-s2.0-S0142061526000657-main.pdf"]
 
 # Dead-time effect modeling for hybrid modular multilevel converter using twin mapping
 
-**作者**: Moke Feng
+**作者**: Moke Feng, Jianzhong Xu, Wenxia Sima 等
 **年份**: 2026
 **来源**: `12/1-s2.0-S0142061526000657-main.pdf`
 
@@ -19,16 +19,44 @@ sources: ["EMT_Doc/12/1-s2.0-S0142061526000657-main.pdf"]
 
 Dead-time effect modeling for hybrid modular multilevel converter using , Jianzhong Xu b, Wenxia Sima a, Ming Yang a, Hang Jing b, Keying Pan b a State Key Laboratory of Power Transmission Equipment Technology, Chongqing University, Chongqing 400044, China b State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University, Beijing 102206, China Dead-time control is essential for modular multilevel converters (MMCs), but it negatively
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，混合MMC用于柔直、海上风电并网等高压大容量场景，死区时间虽然能避免同桥臂IGBT直通和子模块电容短路，却会在桥臂电压中引入尖峰、凹陷，进而影响环流谐波、输出电流、电容电压和器件应力。因此，控制策略设计需要能在EMT尺度复现死区行为的模型。研究对象是由HBSM与FBSM串联构成的三相六桥臂混合MMC，重点是子模块在死区期间由二极管续流形成的非理想开关状态。难点不只是子模块数量多导致详细模型慢，更在于死区续流会使部分子模块的电气路径脱离常规投入/旁路状态，破坏桥臂内子模块可统一串联等效的结构，传统Thevenin桥臂聚合不再直接适用。本文的贡献是把死区影响子模块与非死区子模块分类，用外部二极管H桥表达死区续流通道，并提出“孪生映射”把死区期间的电容电压、电流状态映射到孪生桥臂中，使子模块在死区内外的行为可连续恢复到桥臂级等效框架，从而建立可用于PSCAD/EMTDC的Thevenin等效EM。该创新点具体落在“如何让死区微观导通路径重新可被桥臂级等效吸收”，而非单纯减少开关数量。
+
+### 2. 模型、算法与实现技术
+
+模型实现上，作者先对每个子模块电容采用梯形积分离散，把电容转换为等效电阻RCeq和历史电压源UCeq；再依据IGBT/二极管导通或关断状态，用节点电压法得到子模块端口Thevenin等效电阻RSMeq和等效电压源USMeq。正常情况下，各子模块等效量按串联关系求和，得到桥臂等效电阻Rarmeq和电压源Uarmeq，与外部EMT网络接口。死区发生时，控制信号使同侧IGBT全关断，例如FBSM可能出现(0,0,0,0)状态，电流方向决定二极管续流路径。若仍按原子模块拓扑直接等效，会出现导通路径与子模块端口隔离的问题。本文引入外部二极管H桥承接死区续流，形成“死区区域”；同时把受死区影响子模块的核心状态量——电容电压、电容电流或其历史源状态——从原始桥臂映射到孪生桥臂对应位置。这样，EMT求解器看到的仍是完整桥臂端口等效，而死区导致的电压尖峰/凹陷由外部二极管H桥和孪生状态共同反映。死区结束后，孪生桥臂中的电容状态再映射回原始子模块，保证状态连续。其输入主要包括子模块触发信号、桥臂电流方向、上一时步电容状态和仿真步长；输出是每步可交给网络求解器的桥臂等效电阻、电压源以及更新后的电容状态。文中还给出包含多状态切换函数的全局状态空间表达，用于描述正投入、负投入、旁路和死区等状态的统一切换机制。
+
+### 3. 验证、优势与不足
+
+作者用PSCAD/EMTDC进行EMT仿真验证，将所提Thevenin等效模型EM与详细模型DM、状态空间模型SSM对比。测试对象是高压混合MMC，拓扑为三相六桥臂，每个桥臂由HBSM和FBSM级联组成；验证关注死区注入后桥臂电压尖峰、凹陷等暂态特征，以及仿真速度。摘要明确声称EM能够捕捉dead-time spikes and notches，并能显著加速仿真；但当前提供的原文抽取只到引言和摘要，未包含完整结果表、波形误差、运行时间、步长、子模块数量、死区时间等关键数据。因此应表述为：原文摘要报告了与DM/SSM的对比和加速效果，但本页现有证据无法给出可核验的误差百分比或加速倍数。优势主要体现在建模机制上：它不是忽略死区，也不是只用平均模型修正输出电压，而是把死区二极管续流路径纳入等效模型，使高电平MMC可以在较少端口元件下保留死区瞬态特征。从验证范围看，结论主要支撑混合MMC、HBSM/FBSM级联桥臂、PSCAD/EMTDC环境下的死区暂态仿真；对其他拓扑如两电平VSC、纯HBSM MMC、不同器件模型、极端故障工况、实际控制器硬件延时和器件反向恢复等非理想因素，当前证据不足以直接外推。若完整论文没有进一步实验或现场数据，则该工作仍属于仿真模型验证，而非工程实机验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的关键认知是：混合MMC死区建模的核心障碍并非单个开关状态难以表达，而是死区续流会破坏子模块串联等效的拓扑完整性；只要通过外部二极管H桥和孪生状态映射重建这个完整性，Thevenin桥臂等效仍可用于死区EMT分析。它可用于需要研究死区补偿、死区最小化、环流谐波、电容电压波动、桥臂电压尖峰/凹陷的后续模型页面或控制策略仿真，也适合高电平MMC系统级EMT加速建模。它不适合被外推为通用平均值模型、器件级损耗模型或所有换流器死区效应的普适结论；若研究目标是纳秒级器件开关过程、热失效或实测控制延迟，还需更细的半导体模型和实验校验。
+
+### 证据边界
+
+- 来自原文摘要：研究主题为混合MMC死区效应EMT建模，关键词包括Dead-time、Hybrid MMC、Twin mapping、Thevenin equivalent；验证工具为PSCAD/EMTDC。
+- 来自原文引言：混合MMC为三相六桥臂结构，每个桥臂由FBSM和HBSM串联组成；死区是同侧H桥IGBT在状态切换时同时关断以避免电容短路。
+- 来自原文摘要：作者将子模块分为受死区影响和不受死区影响两类，用diode-H-bridge建模死区，并用twin mapping恢复死区内外电容状态；这支持Thevenin等效应用。
+- 来自原文摘要：所提EM与DM、SSM进行了比较，摘要称可捕捉死区尖峰和凹陷并加速仿真；但当前抽取文本未给出可核验的误差、加速倍数或运行时间。
+- 据方法机制推断：该模型依赖电流方向判定、死区子模块分类和电容状态映射的一致性；若这些逻辑在复杂控制或故障工况下失配，等效精度可能受影响。
+- 缺少关键信息：当前页面未见完整算例参数，包括子模块数量、HBSM/FBSM比例、死区时间、仿真步长、器件电阻、系统电压等级、波形误差指标和是否有实验/实时仿真验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于二极管H桥的死区续流建模方法，将死区微观状态映射至桥臂宏观层面
-- 提出孪生映射方法对电容状态分组切换，恢复桥臂完整性以适用戴维南等效定理
-- 构建支持死区效应的高阶MMC戴维南等效模型，突破传统等效模型无法模拟死区的局限
-
+- 问题定位：Dead-time effect modeling for hybrid modular multilevel converter using , Jianzhong Xu b, Wenxia Sima a, Ming Yang a, Hang Jing b, Keying Pan b a State Key Laboratory of 。
+- 方法机制：本文提出一种基于孪生映射（Twin Mapping）与外部二极管H桥的混合MMC死区效应电磁暂态（EMT）等效建模方法。针对死区续流导致子模块拓扑断裂、传统戴维南等效失效的问题，该方法将死区微观状态映射至桥臂宏观层面。首先，利用外部二极管H桥统一接管进入死区子模块的续流路径，构建“死区区域”；其次，通过孪生映射机制在原始桥臂与孪生桥臂间动态切换电容电压与电流状态，恢复桥臂电气完整性，使戴维南等效定理重新适用；
+- 验证证据：电磁暂态仿真对比分析（所提等效模型 vs 详细模型 vs 状态空间模型）；高压混合模块化多电平换流器（Hybrid MMC），包含半桥子模块（HBSM）与全桥子模块（FBSM）的级联拓扑；摘要称所提EM能够捕捉死区尖峰和凹陷并显著加速仿真；当前本地抽取文本缺少完整结果页，因此尚不能在本页给出可复核的误差百分比或加速倍数。
+- 量化与结论：文本明确给出混合MMC为三相六桥臂结构，每个桥臂由HBSM和FBSM串联组成；死区发生时同侧IGBT全部关断，典型死区状态可表示为FBSM触发信号。；所提模型比较对象包括详细模型（DM）、状态空间模型（SSM）和Thevenin等效模型（EM），验证工具为PSCAD/EMTDC。；摘要称EM可捕捉死区电压尖峰和凹陷，并显著加快仿真；
+- 适用边界：适用于需要分析高电平混合MMC死区电压尖峰、凹陷、环流谐波和电容电压影响的EMT仿真。；方法依赖对死区影响子模块和非死区子模块的正确分类，以及电容状态在原始桥臂和孪生桥臂之间的映射一致性。
 
 ## 使用的方法
-
 
 - [[孪生映射法|孪生映射法]]
 - [[戴维南等效|戴维南等效]]
@@ -36,9 +64,7 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[状态空间模型对比|状态空间模型对比]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[半桥子模块-hbsm|半桥子模块(HBSM)]]
@@ -47,9 +73,7 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 - [[详细模型|详细模型]]
 - [[状态空间模型|状态空间模型]]
 
-
 ## 相关主题
-
 
 - [[死区效应建模|死区效应建模]]
 - [[电磁暂态仿真加速|电磁暂态仿真加速]]
@@ -57,15 +81,12 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 - [[高压直流输电|高压直流输电]]
 - [[电力电子等效建模|电力电子等效建模]]
 
-
 ## 主要发现
-
 
 - PSCAD仿真验证该模型能精确捕捉死区引起的电压尖峰与凹陷波形特征
 - 相比详细模型与状态空间模型，所提等效模型在保持精度的同时显著提升仿真速度
 - 孪生映射法有效解决了死区续流破坏桥臂完整性的问题，实现了高效准确的暂态仿真
-
-
+- 当前本地抽取文本只到论文第3页，未包含完整结果表；因此具体加速倍数、误差百分比和算例参数需要后续从完整PDF补齐。
 
 ## 方法细节
 
@@ -75,31 +96,25 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 ### 数学公式
 
-
 **公式1**: $$$R_{Ceq} = \frac{\Delta t}{2C}, \quad U_{Ceq}(t) = -[u_C(t-\Delta t) + i_C(t-\Delta t)R_{Ceq}]$$$
 
 *基于梯形积分法的子模块电容离散化等效电阻与历史电压源计算式，用于将动态电容转化为伴随电路。*
-
 
 **公式2**: $$$R_{SMeq}(t) = \frac{R_{k5}(t) + R_{k4}(t)R_{Ceq}}{R_{k1}(t) + R_{k2}(t)R_{Ceq}}, \quad U_{SMeq}(t) = \frac{R_{k3}(t)U_{Ceq}(t)}{R_{k1}(t) + R_{k2}(t)R_{Ceq}}$$$
 
 *子模块戴维南等效电阻与等效电压源表达式，通过节点电压法推导，反映IGBT/二极管开关状态对子模块端口的影响。*
 
-
 **公式3**: $$$R_{armeq}(t) = \sum_{k=1}^{N} R_{SMeq,k}(t), \quad U_{armeq}(t) = \sum_{k=1}^{N} U_{SMeq,k}(t)$$$
 
 *桥臂级戴维南等效参数聚合公式，将N个子模块的等效电路串联，形成统一的桥臂端口模型。*
-
 
 **公式4**: $$$K \frac{d}{dt}x(t) = A_{all}(t)x(t) + B_{all}u(t), \quad y(t) = C_{all}(t)x(t)$$$
 
 *融合正投入、负投入、旁路及死区状态的全局状态空间方程，通过切换函数$g_i(t)$实现不同工况的平滑过渡。*
 
-
 **公式5**: $$$x(t) = \left[A^T(t)\right]^{-1} \left[B^T u(t) - C^T(t)\right]$$$
 
 *基于梯形积分法离散化后的状态变量递推求解公式，用于在每一仿真步长内更新系统状态。*
-
 
 ### 算法步骤
 
@@ -119,7 +134,6 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 8. 状态回传与迭代：当死区结束，通过孪生映射将孪生桥臂中的电容状态回传至原始桥臂，清除死区标志，进入下一仿真步长循环。
 
-
 ### 关键参数
 
 - **Δt**: 仿真步长（决定离散化精度与计算量）
@@ -134,8 +148,6 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 - **R1~R4**: IGBT/二极管开关组的瞬时等效电阻
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -146,14 +158,19 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 | 混合MMC死区暂态波形捕捉与效率对比 | 在PSCAD/EMTDC中搭建混合MMC模型，注入死区控制信号。所提等效模型（EM）精确复现了死区导致的桥臂电压尖峰与凹陷特征，波形与详细模型（DM）高度吻合。 | 相较于详细模型（DM）与状态空间模型（SSM），所提模型在保持波形一致性的前提下显著降低计算耗时（注：提供文本截断，未给出具体加速倍数与误差百分比，原文完整结果章节应包含定量对比数据）。 |
 
-
-
 ## 量化发现
 
-- 所提模型能精确捕捉死区引起的电压尖峰与凹陷波形特征，验证了孪生映射法在恢复拓扑完整性方面的有效性。
-- 相比详细模型（DM）与状态空间模型（SSM），等效模型在维持同等精度的同时显著提升仿真速度，适用于高压大容量MMC系统。
-- 外部二极管H桥与孪生映射机制成功规避了传统戴维南模型无法处理死区续流的缺陷，实现了微观死区状态向宏观桥臂等效的无损转换。
+- 文本明确给出混合MMC为三相六桥臂结构，每个桥臂由HBSM和FBSM串联组成；死区发生时同侧IGBT全部关断，典型死区状态可表示为FBSM触发信号$(0,0,0,0)$。
+- 所提模型比较对象包括详细模型（DM）、状态空间模型（SSM）和Thevenin等效模型（EM），验证工具为PSCAD/EMTDC。
+- 摘要称EM可捕捉死区电压尖峰和凹陷，并显著加快仿真；但当前抽取文本未给出具体加速倍数或误差百分比，本页不生成不可追溯数值。
+- 外部二极管H桥与孪生映射机制规避了传统戴维南模型无法处理死区续流的缺陷，实现了微观死区状态向宏观桥臂等效的转换。
 
+## 适用边界
+
+- 适用于需要分析高电平混合MMC死区电压尖峰、凹陷、环流谐波和电容电压影响的EMT仿真。
+- 方法依赖对死区影响子模块和非死区子模块的正确分类，以及电容状态在原始桥臂和孪生桥臂之间的映射一致性。
+- 对低电平VSC或只关心平均功率动态的系统，详细死区等效可能不是必要建模复杂度。
+- 当前页面缺少完整结果表，后续应补齐死区时间、子模块数量、DM/SSM/EM耗时和波形误差指标。
 
 ## 关键公式
 
@@ -175,11 +192,9 @@ $$$x(t) = \left[A^T(t)\right]^{-1} \left[B^T u(t) - C^T(t)\right]$$$
 
 *在每个仿真步长内，利用历史状态与当前输入求解系统状态变量，实现高效数值积分与暂态过程推进。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态仿真对比分析（所提等效模型 vs 详细模型 vs 状态空间模型）
 - **测试系统**: 高压混合模块化多电平换流器（Hybrid MMC），包含半桥子模块（HBSM）与全桥子模块（FBSM）的级联拓扑
 - **仿真工具**: PSCAD/EMTDC
-- **验证结果**: 仿真验证表明，所提孪生映射戴维南等效模型能够精确复现死区控制引发的电压尖峰与凹陷波形，有效克服了传统等效模型因续流二极管导通导致拓扑断裂的局限。在保持与详细模型同等精度的前提下，大幅降低了高阶导纳矩阵求逆的计算负担，显著提升了高压大容量MMC系统的EMT仿真效率。
+- **验证结果**: 摘要称所提EM能够捕捉死区尖峰和凹陷并显著加速仿真；当前本地抽取文本缺少完整结果页，因此尚不能在本页给出可复核的误差百分比或加速倍数。

@@ -2,7 +2,7 @@
 title: "A state-variable-preserving method for the efficient modelling of inverter-based resources in parall"
 type: source
 year: 2025
-journal: ""
+journal: "IET Generation, Transmission & Distribution"
 created: "2026-04-13"
 sources: ["EMT_Doc/04/Wang 等 - 2025 - A state-variable-preserving method for the efficient modelling of inverter-based resources in parall.pdf"]
 ---
@@ -14,18 +14,46 @@ sources: ["EMT_Doc/04/Wang 等 - 2025 - A state-variable-preserving method for t
 
 ## 摘要
 
-The aggregation models of renewable energy power stations are difﬁcult to apply to the stability research of the fault inside the station or the oscillation analysis between the station and the grid-side system, and the high dimensional characteristics of their detailed model will pose an enormous challenge to the simulation efﬁciency. To alleviate the contradiction between accuracy and efﬁciency, this paper proposes a state-variable-preserving method to efﬁciently model inverter-based resources and a node tearing method to realize parallel simulation of the renewable energy power station consisting of inverter-based resources. The state-variable-preserving model uses discrete state space expression to eliminate the internal nodes on the basis of preserving the original variables of the ge
+本文提出一种面向逆变器型资源（IBR）并行电磁暂态（EMT）仿真的状态变量保持（SVP）建模与节点撕裂并行算法。SVP方法基于离散状态空间表达式，在完整保留机组原始状态变量（如动态元件历史电流与控制变量）的前提下，通过受控导纳与受控历史电流源等效消除全部内部电气节点，将包含多支路变换器与滤波器的复杂机组对外收缩为单三相节点，大幅降低系统导纳矩阵求解规模。针对新能源场站典型的共母线互联拓扑，提出节点撕裂法重构节点电压方程，以公共母线三相电压为唯一关联变量实现无延迟解耦，相比传统支路切割法显著降低关联变量维度。结合机组与集群求解的强独立性，设计分层并行算法，实现控制更新、系数矩阵映射与分区电压求解的完全并行化，仅保留极小规模的关联变量串行计算，从而在维持详细模型精度的同时突破大规模场站EMT仿真的效率瓶颈。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面向的需求是：在新能源场站，尤其是由大量逆变器型资源（IBR）组成的光伏电站中，既要做微秒级开关过程的EMT详细仿真，又要能分析站内故障、多机级联影响以及场站—电网侧振荡。传统聚合模型虽然快，但会丢失站内拓扑和单元状态，难以用于站内故障和机网相互作用研究；完整详细模型保留了开关、滤波器和控制动态，却会产生大量内部电气节点和高维导纳矩阵，仿真代价很高。本文研究对象是含PV阵列、Boost变换器、DC/AC逆变器、LCL滤波器及控制系统的IBR发电单元及其多集群并联场站。创新点在于提出状态变量保持（SVP）建模：不把机组简单聚合，也不删除原始动态状态，而是用离散状态空间关系把内部节点等效消去，使每个机组对外只表现为端口受控导纳和历史电流源；同时针对多集群共母线拓扑提出节点撕裂并行求解，把分区之间的耦合集中到公共母线电压上，而不是按多条支路引入大量关联变量。
+
+### 2. 模型、算法与实现技术
+
+SVP模型的核心是把IBR内部网络写成离散状态空间表达式。状态量主要包括动态元件的历史电流、控制器离散状态以及由开关状态决定的内部等效量；接口量是机组外部三相端口电压和注入电流。其机制不是改变原始控制或动态元件，而是通过预先或在线形成系数矩阵，将内部历史电流源、PV阵列注入源和端口电压映射为端口电流，从而把原本包含Boost、逆变器和LCL滤波器多个内部节点的详细单元收缩为一个三相外部节点。论文给出的离散状态空间式中，A、B、E类矩阵推进历史状态，C、D、F类矩阵把历史电流、端口电压和内部注入源变换为端口输出；其中D矩阵对应外部等效导纳，C和F体现受控历史电流源贡献。并行算法方面，作者将光伏集群、电网侧系统和公共母线分块，使用节点撕裂法重构节点电压方程。公共母线三相电压先作为唯一关联变量串行求解；随后各分区根据该电压独立求解本区节点电压和状态更新。这样，控制更新、开关状态更新、SVP系数映射以及各集群网络求解都可分区并行，串行部分被限制在公共母线关联方程。
+
+### 3. 验证、优势与不足
+
+作者用光伏电站算例验证方法，测试系统包含多个PV集群以及电网侧系统，IBR单元含PV阵列、DC/DC Boost、DC/AC逆变器和LCL滤波器。验证内容包括数值精度分析、数值稳定性分析，以及通过改变光伏电站规模考察仿真效率。对比对象从论文表述看主要是传统详细EMT建模/求解思路以及并行解耦中常见的支路切割思想；原文摘要和给定抽取内容未报告可核验的具体误差、加速比、CPU/GPU平台或商业仿真工具名称。优势在于：SVP保留了原始状态变量，因而比站级聚合模型更适合站内故障和振荡分析；同时消除了IBR内部电气节点，减小了系统节点导纳矩阵规模。节点撕裂法利用共母线互联特征，把关联变量集中为公共母线三相电压；给定页面明确称其维度由传统支路切割的3n降为3。边界也很清楚：验证集中在光伏电站和共母线多集群拓扑，不能直接推出对风电、储能、混合交直流网络、非共母线拓扑或不同控制策略同样有效；数值稳定性结论也依赖论文采用的开关导纳、步长、离散化方式和算例参数。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：EMT效率提升不一定只能靠聚合或平均化，也可以在保持单元原始状态变量和开关级动态的前提下，通过端口化的离散状态空间等效减少网络求解维度。它适合用于需要同时关注场站内部动态和大规模并行仿真的场景，例如新能源场站内部故障传播、多个PV集群与电网侧系统振荡分析、面向HPC的EMT分区求解器设计，以及后续关于结构保持等值、端口等效、节点撕裂并行算法的页面复用。不适合把它外推为通用聚合模型替代品，也不宜在缺少原文数值表图支撑时声称具体加速倍数或误差水平。
+
+### 证据边界
+
+- 来自原文首页和摘要的确定信息：论文题名、作者、DOI、发表源，以及提出SVP方法和节点撕裂方法用于IBR并行EMT仿真。
+- 来自原文摘要的确定信息：验证包括光伏电站的数值精度分析、数值稳定性分析，以及通过改变光伏电站规模验证仿真效率；但摘要未给出可核验误差或加速比。
+- 来自页面抽取内容的确定信息：SVP使用离散状态空间表达式消除内部节点并保留发电单元原始变量，节点撕裂法面向不同发电集群由同一母线互联的拓扑。
+- 关于关联变量由3n降为3、开关导纳导通取10^6和关断取0等细节来自当前抽取页面；若用于正式引用，应回到原文公式、表格或算例参数处复核。
+- 工具和硬件平台边界不明确：给定材料未说明具体商业软件、CPU/GPU配置、并行线程数或通信开销，因此不能据此比较不同平台的实际运行性能。
+- 验证范围边界：材料只显示光伏电站算例，未见对风电、储能、弱电网极端工况、非共母线拓扑、不同控制器结构或实时仿真步长约束的系统验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出状态变量保持法，利用离散状态空间消除内部节点并保留原始变量，降低求解规模
-- 提出节点撕裂法重构节点电压方程，降低关联变量求解复杂度，适配共母线互联拓扑
-- 设计分层并行算法，利用机组与集群求解独立性，显著提升大规模场站EMT仿真效率
-
+- 问题定位：本文提出一种面向逆变器型资源（IBR）并行电磁暂态（EMT）仿真的状态变量保持（SVP）建模与节点撕裂并行算法。SVP方法基于离散状态空间表达式，在完整保留机组原始状态变量（如动态元件历史电流与控制变量）的前提下，通过受控导纳与受控历史电流源等效消除全部内部电气节点，将包含多支路变换器与滤波器的复杂机组对外收缩为单三相节点，大幅降低系统导。
+- 方法机制：本文提出一种面向逆变器型资源（IBR）并行电磁暂态（EMT）仿真的状态变量保持（SVP）建模与节点撕裂并行算法。SVP方法基于离散状态空间表达式，在完整保留机组原始状态变量（如动态元件历史电流与控制变量）的前提下，通过受控导纳与受控历史电流源等效消除全部内部电气节点，将包含多支路变换器与滤波器的复杂机组对外收缩为单三相节点，大幅降低系统导纳矩阵求解规模。
+- 验证证据：数值精度分析、数值稳定性分析、规模扩展效率对比测试；含多个PV集群与电网侧系统通过公共母线互联的光伏发电站（采用集散式拓扑，含DC/DC Boost、DC/AC逆变器及LCL滤波器）；基于自定义并行求解架构实现（算法设计适配通用EMT求解器与高性能计算平台，文中未指定具体商业软件）
+- 量化与结论：节点撕裂法将共母线互联拓扑的关联变量求解维度从传统支路切割法的3n（n为分区数）严格降低至固定值3（三相电压）。；SVP模型将包含多支路Boost、DC/AC及LCL滤波器的复杂机组对外等效为单三相节点，消除全部内部电气节点，导纳矩阵规模大幅缩减。；开关导纳参数Y sw在导通时设为10^6，关断时为0，确保离散状态空间矩阵数值条件数稳定，避免病态矩阵求解。；
+- 适用边界：适用于理解本文 A state-variable-preserving method for the efficient modelling of inverter-based resources in parall （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[状态变量保持法|状态变量保持法]]
 - [[节点撕裂法|节点撕裂法]]
@@ -33,9 +61,7 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 - [[分层并行算法|分层并行算法]]
 - [[节点分析法|节点分析法]]
 
-
 ## 涉及的模型
-
 
 - [[逆变器型资源|逆变器型资源]]
 - [[光伏发电单元|光伏发电单元]]
@@ -43,9 +69,7 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 - [[dc-dc变换器|DC/DC变换器]]
 - [[dc-ac逆变器|DC/AC逆变器]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[并行计算|并行计算]]
@@ -53,15 +77,11 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 - [[网络解耦|网络解耦]]
 - [[模型降阶|模型降阶]]
 
-
 ## 主要发现
-
 
 - 数值精度与稳定性分析验证了所提模型在光伏电站内部故障与振荡分析中的可靠性
 - 改变光伏电站规模测试表明，分层并行算法显著降低计算耗时，提升大规模仿真效率
 - 节点撕裂法相比传统支路切割法，有效降低了共母线互联拓扑下关联变量的求解复杂度
-
-
 
 ## 方法细节
 
@@ -71,26 +91,21 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 
 ### 数学公式
 
-
 **公式1**: $$i_{array} = N_p i_{ph} - N_p i_s \left( e^{\frac{q(u_{array} + i_{array} R_s)}{A k T N_s}} - 1 \right) - \frac{N_p u_{array} + i_{array} R_s}{R_{sh} N_s}$$
 
 *光伏阵列伏安特性方程，描述阵列输出电流与电压的非线性关系，用于构建内部节点注入电流源。*
-
 
 **公式2**: $$\begin{cases} I_{hPV}(t) = A_{PV} I_{hPV}(t-\Delta t) + B_{PV} U_{PV}(t-\Delta t) + E_{PV} I_{inj}(t-\Delta t) \\ I_{PV}(t) = C_{PV} I_{hPV}(t) + D_{PV} U_{PV}(t) + F_{PV} I_{inj}(t) \end{cases}$$
 
 *离散状态空间表达式，以历史电流为状态变量、端口电压为输入、端口电流为输出，实现内部节点消除与外部等效。*
 
-
 **公式3**: $$U_p(t) = \left( Y_{pp}(t) - Y_{pg}(t)Y_{gg}^{-1}(t)Y_{gp}(t) - \sum_{k=1}^n Y_{pk}(t)Y_{kk}^{-1}(t)Y_{kp}(t) \right)^{-1} \left( I_p(t) - Y_{pg}(t)Y_{gg}^{-1}(t)I_g(t) - \sum_{k=1}^n Y_{pk}(t)Y_{kk}^{-1}(t)I_k(t) \right)$$
 
 *节点撕裂法关联电压求解方程，用于串行计算公共母线电压，是并行解耦的核心串行步骤。*
 
-
 **公式4**: $$\begin{bmatrix} U_g(t) \\ U_1(t) \\ \vdots \\ U_n(t) \end{bmatrix} = \begin{bmatrix} Y_{gg}^{-1}(t)I_g(t) \\ Y_{11}^{-1}(t)I_1(t) \\ \vdots \\ Y_{nn}^{-1}(t)I_n(t) \end{bmatrix} - \begin{bmatrix} Y_{gg}^{-1}(t)Y_{gp}(t) \\ Y_{11}^{-1}(t)Y_{1p}(t) \\ \vdots \\ Y_{nn}^{-1}(t)Y_{np}(t) \end{bmatrix} U_p(t)$$
 
 *分区节点电压并行求解方程，在获得关联电压后，各分区可完全独立并行计算节点电压。*
-
 
 ### 算法步骤
 
@@ -110,7 +125,6 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 
 8. 状态迭代推进：更新历史电流向量与内部状态，进入下一仿真步长循环，重复执行步骤3至7直至仿真结束。
 
-
 ### 关键参数
 
 - **仿真步长**: \Delta t
@@ -125,8 +139,6 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 
 - **PV阵列参数**: N_s, N_p, R_s, R_{sh}, i_s, i_{ph}
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,8 +151,6 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 
 | 场站规模扩展效率测试 | 通过改变光伏电站内PV机组与集群数量进行并行仿真耗时测试。节点撕裂法将关联变量维度固定为3，传统支路切割法为3n，随规模扩大求解复杂度显著降低。 | 分层并行算法实现控制更新与分区电压求解的完全并行化，仅保留极小串行步骤。随机组数量增加，计算耗时呈近似线性优化趋势，大规模场站仿真效率显著提升。 |
 
-
-
 ## 量化发现
 
 - 节点撕裂法将共母线互联拓扑的关联变量求解维度从传统支路切割法的3n（n为分区数）严格降低至固定值3（三相电压）。
@@ -148,7 +158,6 @@ The aggregation models of renewable energy power stations are difﬁcult to appl
 - 开关导纳参数Y_sw在导通时设为10^6，关断时为0，确保离散状态空间矩阵数值条件数稳定，避免病态矩阵求解。
 - 离散状态空间法通过预计算系数矩阵，将开关动作影响直接映射至矩阵参数，避免传统方法中逐支路重构导纳矩阵的O(N^3)计算开销。
 - 分层并行算法仅保留关联电压U_p(t)的串行求解步骤，其余控制更新、系数映射与分区电压求解均实现100%并行化，计算负载均衡度高。
-
 
 ## 关键公式
 
@@ -170,11 +179,34 @@ $$\begin{bmatrix} U_g(t) \\ U_1(t) \\ \vdots \\ U_n(t) \end{bmatrix} = \begin{bm
 
 *在获得关联电压后，各分区（电网侧与各PV集群）可完全独立并行求解节点电压，实现大规模系统的高效计算。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值精度分析、数值稳定性分析、规模扩展效率对比测试
 - **测试系统**: 含多个PV集群与电网侧系统通过公共母线互联的光伏发电站（采用集散式拓扑，含DC/DC Boost、DC/AC逆变器及LCL滤波器）
 - **仿真工具**: 基于自定义并行求解架构实现（算法设计适配通用EMT求解器与高性能计算平台，文中未指定具体商业软件）
 - **验证结果**: 验证表明SVP模型在消除内部节点的同时完整保留了机组原始状态变量，数值精度与稳定性满足内部故障与机网振荡分析需求；节点撕裂法有效克服共母线拓扑下传统解耦方法关联变量维度爆炸问题；分层并行算法随场站规模扩大显著降低计算耗时，实现精度与效率的平衡。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A state-variable-preserving method for the efficient modelling of inverter-based resources in parall`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态变量保持法、节点撕裂法、离散状态空间法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出状态变量保持法，利用离散状态空间消除内部节点并保留原始变量，降低求解规模
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/04/Wang 等 - 2025 - A state-variable-preserving method for the efficient modelling of inverter-based resources in parall.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

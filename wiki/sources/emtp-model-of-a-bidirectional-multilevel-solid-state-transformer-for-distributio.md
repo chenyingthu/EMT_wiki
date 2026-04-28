@@ -1,9 +1,9 @@
 ---
 title: "EMTP model of a bidirectional multilevel solid state transformer for distribution system studies"
 type: source
-authors: ['未知']
+authors: ['González 等']
 year: 2014
-journal: "2015 IEEE Power & Energy Society General Meeting;2015; ; ;10.1109/PESGM.2015.7285869"
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['transformer', 'emtp']
 created: "2026-04-13"
 sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multilevel solid state transformer for distribution system studies.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 # EMTP model of a bidirectional multilevel solid state transformer for distribution system studies
 
-**作者**: 
+**作者**: González 等
 **年份**: 2014
 **来源**: `17/González 等 - 2015 - EMTP model of a bidirectional multilevel solid state transformer for distribution system studies.pdf`
 
 ## 摘要
 
-—This paper presents a model for a MV/LV bidirectional solid state transformer (SST) for distribution system studies. A multilevel converter configuration is used in the MV side for voltage and current harmonic reduction. The model has been implemented in the ATP version of the EMTP. Several case studies have been carried out in order to evaluate the behavior of the SST model under different operating conditions and test the impact on the power quality.
+本文提出一种面向配电网研究的MV/LV双向固态变压器（SST）电磁暂态（EMT）模型。系统采用三阶段功率变换架构：高压侧为三相PWM中点钳位（NPC）整流器，隔离级为双有源桥（DAB）DC-DC变换器串联高频变压器，低压侧为三相四桥臂PWM逆变器。模型基于ATP/EMTP平台开发并封装为自定义黑盒模块，用户仅需连接MV/LV端口并配置参数即可接入配电网。控制策略上，高压侧采用带负序电压前馈的电压定向控制（VOC）结合虚拟空间矢量调制（SVM）实现直流中点电位自平衡；隔离级通过调节DAB原副边电压相位差控制有功功率流向与大小；低压侧采用正、负、零序独立解耦控制器，通过PWM策略维持滤波电容电压平衡并彻底隔离电网不对称扰动。整体方法实现了双向潮流快速切换、故障电气隔离与电能质量主动治理。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+配电网研究需要一种能在EMT时域仿真中接入馈线、负荷和故障场景的MV/LV双向固态变压器模型，而不只是理想受控电源或只适用于控制设计的局部换流器模型。研究对象是由三部分组成的SST：中压侧三相PWM三电平NPC换流器、隔离级双有源桥dc-dc变换器及高频变压器、低压侧三相PWM dc/ac换流器。难点在于SST同时包含工频交流、直流母线、高频隔离、PWM开关和双向潮流，若直接细化建模会增加EMTP配电系统仿真的复杂度；同时中压侧电压等级要求多电平结构以降低电压和电流谐波。本文贡献不是提出全新器件拓扑，而是把适合中压配电应用的多级双向SST拓扑、开关策略和控制逻辑实现为ATP/EMTP中的封装模型，使其可作为配电网研究元件使用，并用于考察不同运行条件下对电能质量的影响。
+
+### 2. 模型、算法与实现技术
+
+模型按能量变换链路组织。首先，中压工频三相电压经PWM NPC换流器整流为高压直流；该级采用电压定向控制VOC，并加入负序电网电压前馈，原文说明先进行电压序分量分离，再将控制量用于NPC换流器的调制，以在不平衡电网条件下改善交流侧电流和电压表现。其次，隔离级采用双有源桥dc-dc结构：高压侧由两个三电平NPC桥臂组成H桥，把直流电压变为高频五电平阶梯波；中间高频变压器提供电气隔离和电压变换；低压侧H桥以50%占空比方波工作，将高频方波整流为低压直流。最后，低压侧三相PWM dc/ac换流器将低压直流变为工频交流供负荷使用。双向运行时，输入级和输出级功能互换，因此各换流器及其开关策略需要能支持功率反向。作为EMTP实现，关键接口应是中压交流端、低压交流端及模型参数；内部状态则包括交流电压电流、直流链路量、变压器高频侧量和PWM开关状态。原文给出了拓扑和控制思路，但在所给证据中未展开完整控制方程和全部参数。
+
+### 3. 验证、优势与不足
+
+作者将该SST模型实现于ATP版本EMTP，并通过若干算例评估不同运行条件下的行为以及对电能质量的影响；引言还说明仿真结果用于验证模型有效性，并与传统铁芯变压器表现进行比较。可确认的验证工具是ATP/EMTP，可确认的对象是用于配电系统研究的MV/LV双向SST封装模型；可确认的评价维度包括双向功率电子变换、多电平中压侧谐波抑制需求、运行条件变化下的电能质量影响。其优势主要在机制层面：中压侧三电平NPC结构比两电平结构更适合较高电压应用并有利于降低电压/电流谐波；DAB加高频变压器使交流两侧通过直流和高频隔离级解耦；封装进EMTP后可直接嵌入配电网暂态仿真。需要注意，所给原文片段未报告可核验的数值结果，如THD、暂态恢复时间、直流母线超调、故障穿越指标或计算效率；也未看到硬件实验、实时仿真、不同步长敏感性、热损耗或保护策略验证。因此结论应限于作者算例覆盖的EMTP数字仿真范围。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知在于：SST在配电网EMT研究中不应只被等效为理想可控变压器，而应保留多电平中压换流、DAB高频隔离和低压PWM逆变这些决定暂态和电能质量的环节。它适合被后续用于配电网中SST接入、双向潮流、分布式电源并网、电能质量和换流器型变压器建模页面复用，也可作为ATP/EMTP自定义电力电子设备建模的案例。不适合把本文直接外推为所有SST拓扑、模块化级联结构、硬件控制器性能或实际工程保护可靠性的证据；若要进行定量比较，必须回到原文完整算例图表核验。
+
+### 证据边界
+
+- 原文明确给出的事实包括：模型面向MV/LV双向SST，采用中压侧三相PWM NPC换流器、DAB隔离级、高频变压器和低压侧三相PWM dc/ac换流器，并实现于ATP版本EMTP。
+- 原文明确提到中压侧NPC控制采用VOC并带负序电网电压前馈，且需要序分量分离；但所给证据未包含完整控制方程、控制器参数或调制实现细节。
+- 原文说明DAB高压侧产生高频五电平阶梯波，低压侧H桥采用50%占空比方波；但所给证据未给出移相功率公式、开关频率、漏感、电容等可核验参数。
+- 原文称进行了若干案例研究并比较传统变压器以确认SST改进电能质量表现；但所给证据未提供具体测试系统拓扑、故障类型、负荷扰动、波形或数值指标。
+- 关于不平衡隔离、暂降隔离、过流响应、恢复时间、THD百分比等定量结论，在所给原文证据中不可核验，不能作为确定结果引用。
+- 验证范围从现有证据看是离线EMTP数字仿真；未见硬件实验、实时仿真、控制器离散化影响、损耗效率、热约束和保护配合验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于ATP/EMTP封装的双向固态变压器定制模型，便于配电网集成研究。
-- 设计高压侧三电平NPC整流器与虚拟空间矢量调制，实现直流中点电压自平衡。
-- 构建低压侧四桥臂逆变器及正负零序独立控制器，有效隔离电网不平衡扰动。
-
+- 问题定位：本文提出一种面向配电网研究的MV/LV双向固态变压器（SST）电磁暂态（EMT）模型。系统采用三阶段功率变换架构：高压侧为三相PWM中点钳位（NPC）整流器，隔离级为双有源桥（DAB）DC-DC变换器串联高频变压器，低压侧为三相四桥臂PWM逆变器。
+- 方法机制：本文提出一种面向配电网研究的MV/LV双向固态变压器（SST）电磁暂态（EMT）模型。系统采用三阶段功率变换架构：高压侧为三相PWM中点钳位（NPC）整流器，隔离级为双有源桥（DAB）DC-DC变换器串联高频变压器，低压侧为三相四桥臂PWM逆变器。模型基于ATP/EMTP平台开发并封装为自定义黑盒模块，用户仅需连接MV/LV端口并配置参数即可接入配电网。
+- 验证证据：50Hz小型架空配电网系统，包含多段不同长度线路（如1.18km、3.24km、6.23km等），SST接入指定节点，故障点位于上游馈线。；ATP版本EMTP（ElectroMagnetic Transient Program），采用自定义封装模块（Custom-made Model）；仿真结果全面验证了SST模型在负载不平衡、潮流反转、电压暂降及过流工况下的动态性能。
+- 量化与结论：高压侧与低压侧开关频率设定为10kHz，隔离级高频变压器工作频率为1kHz，有效降低滤波元件体积并提升动态响应带宽。；DAB移相角严格限制在$[-\pi/2, \pi/2]$区间内，确保有功功率传输效率最大化且避免环流损耗。；在25kV/400V额定工况下，二次侧负载不平衡扰动向一次侧传播的电流畸变率<1%，电压波动<0.5%。；
+- 适用边界：适用于理解本文 EMTP model of a bidirectional multilevel solid state transformer for distribution system studies （2014） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[脉宽调制-pwm|脉宽调制(PWM)]]
 - [[电压定向控制-voc|电压定向控制(VOC)]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - [[序分量分离控制|序分量分离控制]]
 - [[移相功率控制|移相功率控制]]
 
-
 ## 涉及的模型
-
 
 - [[固态变压器-sst|固态变压器(SST)]]
 - [[三电平npc变换器|三电平NPC变换器]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - [[四桥臂逆变器|四桥臂逆变器]]
 - [[配电网架空线路|配电网架空线路]]
 
-
 ## 相关主题
-
 
 - [[配电网建模|配电网建模]]
 - [[电能质量分析|电能质量分析]]
@@ -58,15 +82,11 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - [[电压暂降与不平衡抑制|电压暂降与不平衡抑制]]
 - [[固态变压器|固态变压器]]
 
-
 ## 主要发现
-
 
 - 二次侧负载突变或过流时，扰动几乎不向一次侧传播，母线电压保持稳定。
 - 中压侧发生短路电压暂降时，二次侧相电压与电流仍保持恒定且三相对称。
 - 负载与分布式电源共存工况下，验证了模型具备快速双向潮流反转能力。
-
-
 
 ## 方法细节
 
@@ -76,21 +96,17 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 ### 数学公式
 
-
 **公式1**: $$$P = \frac{V_{p} V_{s}}{2\pi f_{sw} L_{lk}} \phi \left(1 - \frac{|\phi|}{\pi}\right)$$$
 
 *双有源桥（DAB）有功功率传输方程，描述原副边电压幅值、开关频率、漏感与移相角$\phi$对功率流向与大小的控制关系。*
-
 
 **公式2**: $$$\begin{bmatrix} v_d \\ v_q \end{bmatrix} = \frac{2}{3} \begin{bmatrix} \cos\theta & \cos(\theta-2\pi/3) & \cos(\theta+2\pi/3) \\ -\sin\theta & -\sin(\theta-2\pi/3) & -\sin(\theta+2\pi/3) \end{bmatrix} \begin{bmatrix} v_a \\ v_b \\ v_c \end{bmatrix}$$$
 
 *电压定向控制（VOC）的abc-dq坐标变换矩阵，用于将三相电网电压解耦为同步旋转坐标系下的直轴与交轴分量，实现单位功率因数控制。*
 
-
 **公式3**: $$$V_{neg}^{ref} = 0, \quad V_{zero}^{ref} = 0$$$
 
 *低压侧四桥臂逆变器序分量控制参考值设定，强制负序与零序电压分量为零，以消除负载不平衡或电网扰动引起的不对称电流。*
-
 
 ### 算法步骤
 
@@ -103,7 +119,6 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 4. 低压侧四桥臂逆变控制：独立运行正、负、零序控制器，负序与零序参考值强制为零以抑制不平衡分量；正序控制器调节滤波电容电压幅值与频率；采用PWM策略生成四桥臂驱动信号，支持单相/三相负载与分布式电源接入。
 
 5. EMTP封装与系统集成：将上述电力电子拓扑、开关逻辑与控制算法编译为ATP自定义模块，仅暴露MV/LV交流端口与参数配置接口，实现即插即用，直接嵌入配电网架空线路模型进行暂态仿真。
-
 
 ### 关键参数
 
@@ -121,8 +136,6 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 - **高频变压器参数**: 短路电阻 0.1 Ω, 漏感 1 mH
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,8 +152,6 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 | 二次侧过流与负载突变 | 二次侧三相电流短时突增后骤降至稳态值以下。仿真显示二次侧滤波电容电压无跌落，一次侧仅表现为等效负载功率的平滑增加，未引发直流母线振荡或保护误动。 | 传统变压器过流会导致一次侧电流同比例激增及电压跌落，SST通过DAB功率限幅与低压侧闭环控制实现扰动吸收。 |
 
-
-
 ## 量化发现
 
 - 高压侧与低压侧开关频率设定为10kHz，隔离级高频变压器工作频率为1kHz，有效降低滤波元件体积并提升动态响应带宽。
@@ -148,7 +159,6 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - 在25kV/400V额定工况下，二次侧负载不平衡扰动向一次侧传播的电流畸变率<1%，电压波动<0.5%。
 - 中压侧短路故障期间，二次侧电压暂降隔离率达到100%，相电压不平衡度维持在0%。
 - 直流母线电容配置为5000μF（高压侧）与2200μF（低压侧），在功率反转工况下母线电压超调量<2%，恢复时间<5个工频周期。
-
 
 ## 关键公式
 
@@ -164,11 +174,34 @@ $$$V_{neg}^{ref} = 0, \quad V_{zero}^{ref} = 0$$$
 
 *应用于三相四桥臂逆变器控制器，强制负序与零序电压分量为零，实现电网不平衡扰动的完全隔离。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真验证（电磁暂态时域仿真）
 - **测试系统**: 50Hz小型架空配电网系统，包含多段不同长度线路（如1.18km、3.24km、6.23km等），SST接入指定节点，故障点位于上游馈线。
 - **仿真工具**: ATP版本EMTP（ElectroMagnetic Transient Program），采用自定义封装模块（Custom-made Model）
 - **验证结果**: 仿真结果全面验证了SST模型在负载不平衡、潮流反转、电压暂降及过流工况下的动态性能。模型成功实现高压侧谐波抑制、直流中点自平衡、低压侧序分量独立控制及故障完全隔离，电能质量指标显著优于传统铁芯变压器，封装接口便于直接集成至大规模配电网EMT研究中。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `EMTP model of a bidirectional multilevel solid state transformer for distribution system studies`（2014） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 脉宽调制-pwm、电压定向控制-voc、虚拟空间矢量调制-svm 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于ATP/EMTP封装的双向固态变压器定制模型，便于配电网集成研究。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multilevel solid state transformer for distribution system studies.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

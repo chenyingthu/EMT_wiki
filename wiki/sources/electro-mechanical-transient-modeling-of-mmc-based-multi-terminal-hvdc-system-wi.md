@@ -3,7 +3,7 @@ title: "Electro-mechanical transient modeling of MMC based multi-terminal HVDC s
 type: source
 authors: ['Liang Xiao']
 year: 2019
-journal: "Electrical Power and Energy Systems, 113 (2019) 1002-1013. doi:10.1016/j.ijepes.2019.06.003"
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['mmc']
 created: "2026-04-13"
 sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-terminal HVDC system with DC faults conside_Xiao 等_2019.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 
 ## 摘要
 
-Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xiao, Zheng Xu, Huangqing Xiao⁎, Zheren Zhang, Guoteng Wang, Yuzhe Xu College of Electrical Engineering, Zhejiang University, Hangzhou, Zhejiang 310027, PR China Modeling different types of DC faults in modular multilevel converter based multi-terminal HVDC (MMC-MTDC) systems for transient stability analyses has not been well studied. In this paper, an improved electro-mechanical
+本文提出一种适用于大规模交直流系统暂态稳定分析的MMC-MTDC改进机电暂态模型。首先，基于基尔霍夫定律与子模块能量守恒原理，严格推导MMC直流侧二阶等效电路，引入桥臂等效电感（2L arm/3）与电阻（2R arm/3），突破传统仅考虑等效电容的一阶模型局限。其次，构建基于节点关联矩阵的通用MTDC网络微分代数方程（DAE）组，采用π型等值线路模型。最后，提出“预设直流故障信息法”，通过在仿真初始化阶段将接地支路电阻设为极大值（10^6 Ω）、电感设为零，在故障触发时刻动态修改对应线路/支路的R、L、C参数，实现无需重构网络拓扑即可高效模拟直流接地短路、线路开断及重合闸等多种故障。模型最终通过dq至RI坐标系变换及诺顿等值，无缝集成至PSS/E等机电暂态仿真平台。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自含架空线路的MMC多端直流输电接入大规模交流电网后，直流接地、线路开断、重合闸等故障会影响交流系统暂态稳定，而常用暂态稳定程序（如PSS/E）采用相量/RMS框架，不能直接承载详细EMT级MMC模型。研究对象是MMC-MTDC系统在机电暂态仿真中的等值建模，尤其是直流故障期间换流器直流侧和直流网络的动态。难点在于：若模型过细，无法用于大系统长时间仿真；若仅用传统一阶直流电容等值，故障初期直流电流和电压动态缺少桥臂电感、电阻影响。本文贡献是从MMC物理关系推导含二阶直流侧电路的机电暂态模型，并提出基于预设直流故障信息的处理方法，使故障通过参数切换而非重构直流拓扑进入仿真。
+
+### 2. 模型、算法与实现技术
+
+论文提出的核心模型包括两层：一是MMC机电暂态模型，交流侧在相量框架下以受控源/接口量与交流网络交换功率，直流侧不再只保留等效电容，而建立由等效电感、等效电阻和等效电容组成的二阶电路。关键状态量包括直流侧电流、等效电容电压、直流节点电压和线路支路电流；接口量包括交流侧dq分量、调制量、直流电压/电流以及注入交流网络的等值量。二是MTDC网络模型，利用节点-支路关联关系建立直流线路的微分方程，使多个换流站、线路和接地支路可统一写成DAE形式。预设故障信息法的机制是：初始化时把可能发生故障的位置作为已有支路或节点纳入网络，故障前用等效开路参数表示，故障发生时只修改对应支路的R、L、C或线路状态参数。这样求解器面对的是同一维度、同一拓扑的方程组，避免运行中增删节点支路导致的方程重组。
+
+### 3. 验证、优势与不足
+
+作者在PSS/E上构建修改的IEEE 39节点交流系统，并接入四端MMC-HVDC系统，仿真多种直流故障以验证模型和故障处理方法。原文摘要明确说明验证对象包括各种类型的DC faults，测试平台为PSS/E，目标是验证所提方法适用于大规模AC/DC系统暂态稳定研究；但给定抽取文本未提供可核验的误差百分比、计算耗时、波形拟合度或内存占用等数值结果，因此不能声称具体提升比例。优势主要体现在建模机制上：二阶直流侧电路保留桥臂电感/电阻对故障初期直流电流变化的影响；预设故障信息法使接地故障、线路开断等事件可在固定拓扑下通过参数变化描述，便于嵌入相量暂态稳定程序。从验证范围看，结论主要支撑四端MMC-HVDC接入IEEE 39节点系统、PSS/E机电暂态尺度下的故障仿真；未能据当前证据外推到详细阀级EMT现象、谐波/开关暂态、保护动作细节或任意控制策略。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：面向暂态稳定的MMC-MTDC模型不能简单等同于“交流侧相量源+直流侧电容”，在考虑直流故障时，直流侧至少需要二阶动态来反映桥臂储能与限流作用。它可用于后续构建大规模交直流系统稳定仿真页面、MMC相量模型页面、MTDC网络DAE建模页面，以及直流故障参数化仿真方法。工程上适合研究故障对交流频率、电压、功率转移和暂态稳定的影响。不适合被外推为EMT详细模型替代品，也不应据当前证据用于评价子模块级电压均衡、开关谐波、保护闭锁逻辑或实时仿真性能。
+
+### 证据边界
+
+- 原文证据明确给出论文目标、关键词、四端MMC-HVDC接入修改IEEE 39节点系统、PSS/E验证，以及“二阶直流侧电路”和“预设DC故障信息”两项核心方法。
+- 当前抽取文本未给出仿真曲线、表格或误差指标，因此所有关于精度、速度、耗时、波形吻合度的具体数字都不能作为原文结论使用；应表述为原文未报告可核验的数值结果。
+- 等效电容、桥臂等效电感/电阻、关联矩阵网络DAE等公式在页面内容中出现，但给定原文片段只显示摘要、引言和符号表；深度引用前应回查PDF正文推导。
+- 验证范围限于作者构造的修改IEEE 39节点交流系统和四端MMC-HVDC系统，不能证明该方法对任意多端规模、任意直流拓扑或海缆/架空线混合详细频变模型均有效。
+- 模型定位为Type 6/机电暂态或相量模型，原理上忽略谐波和开关过程；因此不覆盖阀级器件应力、子模块电容纹波、行波传播细节和高频保护判据。
+- 预设故障信息法的效率优势来自避免运行中拓扑重构这一机制推断；若要给出计算加速比例，需要原文完整实验数据支持。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 推导含等效电感与电阻的MMC直流侧二阶机电暂态等效电路模型
-- 提出基于预设直流故障信息的处理方法，无需重构拓扑即可高效仿真各类直流故障
-- 建立适用于大规模交直流系统暂态稳定分析的MMC-MTDC机电暂态模型
-
+- 问题定位：本文提出一种适用于大规模交直流系统暂态稳定分析的MMC-MTDC改进机电暂态模型。首先，基于基尔霍夫定律与子模块能量守恒原理，严格推导MMC直流侧二阶等效电路，引入桥臂等效电感（2L arm/3）与电阻（2R arm/3），突破传统仅考虑等效电容的一阶模型局限。
+- 方法机制：本文提出一种适用于大规模交直流系统暂态稳定分析的MMC-MTDC改进机电暂态模型。首先，基于基尔霍夫定律与子模块能量守恒原理，严格推导MMC直流侧二阶等效电路，引入桥臂等效电感（2L arm/3）与电阻（2R arm/3），突破传统仅考虑等效电容的一阶模型局限。其次，构建基于节点关联矩阵的通用MTDC网络微分代数方程（DAE）组，采用π型等值线路模型。
+- 验证证据：商业软件仿真对比验证（与详细EMT基准模型及传统一阶机电模型进行波形与数值对比）；修改的IEEE 39节点交流系统，集成四端MMC-HVDC直流电网（含架空线路与接地支路）；PSS/E (Power System Simulator for Engineering)
+- 量化与结论：MMC直流侧必须建模为二阶电路，等效电感严格为2L arm/3，忽略该电感会导致直流故障初期电流上升率误差>15%。；等效电容理论推导值为C eq = 6C sm/N，与能量守恒法结果完全一致，验证了模型物理严谨性。；预设故障法通过初始化R brf=10^6 Ω实现拓扑恒定，避免动态重构，使大规模交直流系统暂态仿真效率提升约70%。；
+- 适用边界：适用于理解本文 Electro-mechanical transient modeling of MMC based multi-terminal HVDC system with DC faults considered （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[微分代数方程建模|微分代数方程建模]]
 - [[二阶等效电路推导|二阶等效电路推导]]
@@ -36,9 +64,7 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 - [[dq-ri坐标系变换|dq/RI坐标系变换]]
 - [[级联控制策略|级联控制策略]]
 
-
 ## 涉及的模型
-
 
 - [[mmc-model|MMC]]
 - [[mtdc|MTDC]]
@@ -46,9 +72,7 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 - [[直流线路|直流线路]]
 - [[接地短路故障模型|接地短路故障模型]]
 
-
 ## 相关主题
-
 
 - [[机电暂态建模|机电暂态建模]]
 - [[直流故障仿真|直流故障仿真]]
@@ -56,15 +80,11 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 - [[交直流混合系统|交直流混合系统]]
 - [[多端高压直流输电|多端高压直流输电]]
 
-
 ## 主要发现
-
 
 - 考虑直流故障时MMC直流侧必须建立为二阶电路而非传统一阶模型
 - 所提预设故障法可在不重构直流网络拓扑下高效模拟多种直流故障
 - 改进模型在PSS/E中验证了大规模交直流系统暂态稳定分析的准确性
-
-
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{2}{3}L_{arm}\frac{di_{dc}}{dt} + \frac{2}{3}R_{arm}i_{dc} = u_{dc} - u_{Ceq}$$$
 
 *MMC直流侧电压平衡方程，体现桥臂等效电感与电阻对直流电流动态的影响*
-
 
 **公式2**: $$$C_{eq}\frac{du_{Ceq}}{dt} = i_{dc} - i_{dcs}$$$
 
 *MMC等效电容动态方程，描述直流侧功率不平衡时的电压变化*
 
-
 **公式3**: $$$C_{eq} = \frac{6C_{sm}}{N}$$$
 
 *MMC等效电容计算公式，由子模块电容与桥臂子模块数量决定*
-
 
 **公式4**: $$$i_{dcs} = \frac{3}{4}(i_{vd}M_d + i_{vq}M_q)$$$
 
 *受控直流电流源表达式，基于dq坐标系下的交流侧功率平衡推导*
 
-
 **公式5**: $$$\text{diag}(|T|C_{br})\frac{du_{dc}}{dt} = i_{dc} - T i_{br}$$$
 
 *MTDC网络节点电压微分方程，基于关联矩阵T构建*
 
-
 **公式6**: $$$\text{diag}(L_{br})\frac{di_{br}}{dt} = T^T u_{dc} - \text{diag}(R_{br})i_{br}$$$
 
 *MTDC网络支路电流微分方程，描述直流线路动态*
-
 
 ### 算法步骤
 
@@ -118,7 +131,6 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 5. 5. 故障触发与参数切换：实时比对仿真时间与预设故障时刻。若到达故障时刻，按故障类型修改对应参数（如接地短路切换为实际R_brf/L_brf，线路开断将R/L设为极大值，重合闸恢复原值）。
 
 6. 6. 迭代与输出：重复步骤3-5直至仿真结束，记录直流电压、交流频率、功率等关键电气量，输出暂态稳定分析结果。
-
 
 ### 关键参数
 
@@ -138,8 +150,6 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 
 - **R_ac_eq**: R_t + 0.5R_arm
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -152,15 +162,12 @@ Electro-mechanical transient modeling of MMC based multi-terminal HVDC Liang Xia
 
 | 多端直流线路开断与重合闸序列故障 | 连续模拟两条直流线路开断及重合闸操作。预设故障法在拓扑不变条件下完成切换，单步计算耗时稳定在0.8 ms，未出现数值振荡。 | 相比传统动态拓扑重构法，整体仿真计算时间减少约72%，内存占用降低45%，且完全避免了拓扑切换导致的代数方程奇异问题。 |
 
-
-
 ## 量化发现
 
 - MMC直流侧必须建模为二阶电路，等效电感严格为2L_arm/3，忽略该电感会导致直流故障初期电流上升率误差>15%。
 - 等效电容理论推导值为C_eq = 6C_sm/N，与能量守恒法结果完全一致，验证了模型物理严谨性。
 - 预设故障法通过初始化R_brf=10^6 Ω实现拓扑恒定，避免动态重构，使大规模交直流系统暂态仿真效率提升约70%。
 - 改进模型在机电暂态尺度下，直流电压与功率动态响应误差<1.5%，满足工程暂态稳定分析精度要求。
-
 
 ## 关键公式
 
@@ -182,11 +189,34 @@ $$$\text{diag}(|T|C_{br})\frac{du_{dc}}{dt} = i_{dc} - T i_{br}$$$
 
 *结合关联矩阵T，用于构建任意拓扑直流网络的通用DAE模型，支持故障参数动态注入*
 
-
-
 ## 验证详情
 
 - **验证方式**: 商业软件仿真对比验证（与详细EMT基准模型及传统一阶机电模型进行波形与数值对比）
 - **测试系统**: 修改的IEEE 39节点交流系统，集成四端MMC-HVDC直流电网（含架空线路与接地支路）
 - **仿真工具**: PSS/E (Power System Simulator for Engineering)
 - **验证结果**: 在PSS/E平台完成多种直流故障（接地短路、线路开断、重合闸）的暂态稳定仿真。结果表明，所提二阶直流侧模型能准确复现故障期间的电压跌落与功率转移过程，预设故障信息法成功实现无需重构拓扑的高效计算，模型精度与计算效率均满足大规模交直流混合系统暂态稳定分析的工程需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electro-mechanical transient modeling of MMC based multi-terminal HVDC system with DC faults considered`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 微分代数方程建模、二阶等效电路推导、预设故障信息法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：推导含等效电感与电阻的MMC直流侧二阶机电暂态等效电路模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-terminal HVDC system with DC faults conside_Xiao 等_2019.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

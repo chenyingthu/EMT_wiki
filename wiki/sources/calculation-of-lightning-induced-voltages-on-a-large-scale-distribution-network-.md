@@ -3,7 +3,7 @@ title: "Calculation of lightning-induced voltages on a large-scale distribution 
 type: source
 authors: ['Alberto', 'De', 'Conti']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112232. doi:10.1016/j.epsr.2025.112232"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/10/De Conti和Leal - 2026 - Calculation of lightning-induced voltages on a large-scale distribution network using the JMarti mod.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/10/De Conti和Leal - 2026 - Calculation of lightning-induced 
 
 ## 摘要
 
-Calculation of lightning-induced voltages on a large-scale distribution a Department of Electrical Engineering, Universidade Federal de Minas Gerais (UFMG), Belo Horizonte, MG, 31270-901, Brazil b Institute of Engineering, Science and Technology, Universidade Federal dos Vales do Jequitinhonha e Mucuri (UFVJM), Janaúba, Brazil This paper illustrates the application of a recently proposed time-domain method in the calculation of lightning- induced voltages by nearby cloud-to-ground lightning stri
+本文提出一种基于扩展模域(EMD)模型的时域计算方法，用于在ATP软件中利用JMartí频变线路模型精确计算大规模配电网的雷击感应过电压。该方法将外部雷电电磁场对多导体线路的耦合效应完全等效为连接在线路两端的独立电流源。这些电流源针对特定雷击事件仅需离线计算一次，其数值不随终端负载或非线性元件状态变化，从而大幅提升含避雷器、变压器等复杂系统的参数扫描效率。通过直接调用ATP内置的有理函数拟合工具获取模态传播函数与特征阻抗参数，避免了传统方法中额外的特征导纳拟合步骤，实现了场路耦合的高效、稳定求解，并成功应用于含多次反射与阻抗不连续点的真实配网拓扑。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：在真实配电网中评估附近云地雷击引起的感应过电压，尤其要同时考虑架空线频变损耗、分支、接地点、避雷器、变压器和负荷等 EMT 元件。研究对象不是单根理想线路，而是含中压主干、分支和低压馈线的大规模配电网络。难点在于雷电外部电磁场沿线分布耦合，若用 FDTD 外部程序求线方程，需要处理与 EMT 工具的端口交互和 CFL 稳定约束；若用无损特征线法，则难以反映雷电波频段下导体和大地损耗；若在线路外部单独求含损线方程，又不能直接复用 ATP 已有频变线路模型。本文的贡献是把入射场作用完全转化为线路两端的独立电流源，并用 ATP 的 JMarti 频变线路模型承担网络内传播、反射和频变损耗计算；这些源对给定雷击事件预先计算一次，不随避雷器等非线性元件状态迭代改变。
+
+### 2. 模型、算法与实现技术
+
+本文应用作者此前提出的时域方法，并把它落实到 ATP 的 JMarti 线路模型中。核心接口量是每条受照射线路两端注入的 Norton 型独立电流源 j0(t)、jℓ(t)；输入包括雷电通道模型得到的沿线水平电场 Ex(x,t)、两端垂直电场 Ez(0,t)、Ez(ℓ,t)，以及由 ATP 内置拟合工具得到的模态传播函数和特征阻抗/导纳相关数据。机制上，先由积分式计算两端等效电压源 u0(t)、uℓ(t)：水平电场沿线路径积分表示分布耦合，两端垂直电场项表示导线高度引起的端部耦合。随后通过递推式 ū0=u0−a*ūℓ、ūℓ=uℓ−a*ū0，把对端行波经传播函数 a(t) 衰减和延迟后的影响纳入修正电压源，等价地描述多次往返传播。最后将修正电压源与特征导纳时域响应卷积，得到两端独立电流源并注入 ATP。这样，外部场—线路耦合在仿真前被封装为源文件，而 ATP 内部仍按 JMarti 模型处理频变线路和网络元件。
+
+### 3. 验证、优势与不足
+
+作者用一个真实尺度配电网算例展示方法：网络包含中压线路、分支、接地点、ZnO 避雷器、配电变压器和低压负荷；工具链为 MATLAB 或外部计算用于雷电场和源生成，ATP 用于 EMT 求解，线路采用 JMarti 频变模型。验证思路主要是同一雷击事件下比较频变 JMarti 线路与无损线路假设所得的感应电压，并结合文中所述与已有方法或实验结果的交叉一致性来支撑方法可靠性。指标集中在不同节点的电压波形、首峰和振荡衰减差异。页面抽取给出的量化结果包括：忽略频率相关损耗时，低压负荷首峰误差在 100 Ωm 土壤工况下可达 28%，在 1000 Ωm 工况下可达 18%；近雷击点中压节点受损耗影响小，而远端和低压侧因传播距离、反射和阻抗不连续而更敏感。优势在于能在 ATP 原生 JMarti 框架内处理频变传播和非线性元件，无需每个时间步与外部线路求解器双向耦合。边界是：结论来自特定网络、雷电流、土壤参数和频段设置，未证明对所有配网拓扑、地下电缆、直击故障或实时仿真步长同样成立。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：在大规模配电网雷击感应电压研究中，频变线路损耗不是只影响远距离输电线的细节项；在多分支、变压器、负荷和避雷器共同作用下，低压侧和远端节点的反射路径会放大损耗建模差异。它能解决的核心问题是把复杂雷电场耦合转化为 EMT 工具可直接使用的端口源，使研究者可以复用 ATP/JMarti 线路库来做配网雷电暂态、避雷器配置、负荷端过电压和参数扫描。该页适合作为“雷电感应电压—EMT 接口方法”“JMarti 频变线路应用”“配电网雷害仿真”的入口；不适合外推为任意雷击模型、任意土壤频散模型或所有网络规模下的通用精度证明。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：本文研究附近云地雷击在真实大规模配电网中的感应电压，并在 ATP 中使用 JMarti 频变线路模型。
+- 来自原文方法描述的确定信息：入射电磁场效应用独立电流源表示；这些源对给定雷击事件只计算一次，并利用 ATP 内置拟合工具的数据生成。
+- 页面抽取给出了 100 Ωm、1000 Ωm 土壤下低压首峰偏差 28% 和 18% 等量化结果；这些数值应回到原文图表复核后再作为最终引用。
+- 验证范围限于文中给定的配电网、雷电流参数、线路几何和元件模型；从现有证据不能推出对所有配电网拓扑或所有土壤频散条件均有效。
+- 本文主要比较频变 JMarti 与无损线路模型，并提及与既有方法/实验交叉验证；若需判断绝对精度，还需要查看原文中 FDTD、LIOV 或实验对比的具体误差指标。
+- 该方法假定外部场源可预先计算并作为独立源注入；对强耦合电弧、直击导线、雷击点接地非线性反馈等场—路双向耦合情形，当前页面没有验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于独立电流源的时域方法将外部雷击电磁场效应等效注入线路两端
-- 利用ATP内置拟合工具直接获取JMartí模型参数免去额外导纳拟合步骤
-- 结合JMartí模型与扩展模域方法实现大规模配网雷击暂态高效计算
-
+- 问题定位：本文提出一种基于扩展模域(EMD)模型的时域计算方法，用于在ATP软件中利用JMartí频变线路模型精确计算大规模配电网的雷击感应过电压。该方法将外部雷电电磁场对多导体线路的耦合效应完全等效为连接在线路两端的独立电流源。
+- 方法机制：本文提出一种基于扩展模域(EMD)模型的时域计算方法，用于在ATP软件中利用JMartí频变线路模型精确计算大规模配电网的雷击感应过电压。该方法将外部雷电电磁场对多导体线路的耦合效应完全等效为连接在线路两端的独立电流源。这些电流源针对特定雷击事件仅需离线计算一次，其数值不随终端负载或非线性元件状态变化，从而大幅提升含避雷器、变压器等复杂系统的参数扫描效率。
+- 验证证据：对比分析（频变JMartí模型 vs 无损线路模型）及与文献FDTD方法、LIOV代码及缩尺/全尺寸实验数据交叉验证；1.26 km中压主干线（13.8 kV）+ 540 m分支线 + 4条低压馈线（127 V，含52个三相负荷、4台配电变压器、ZnO避雷器及多点接地系统）；
+- 量化与结论：忽略频率相关线路损耗会导致低压负荷首峰感应电压计算出现最大28%的误差（土壤电阻率100 Ωm工况）；在1000 Ωm土壤条件下，低压负荷感应电压首峰最大偏差达18%，且波形振荡衰减特性被严重扭曲；中压线路避雷器将P4节点相地过电压限制在30 kV以内，但远端节点（P9、P11）在无损假设下幅值偏差随距离呈非线性增长；
+- 适用边界：适用于理解本文 Calculation of lightning-induced voltages on a large-scale distribution network using the JMarti model （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[时域方法|时域方法]]
 - [[扩展模域-emd-模型|扩展模域(EMD)模型]]
@@ -36,9 +64,7 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 - [[有理函数拟合|有理函数拟合]]
 - [[卷积积分计算|卷积积分计算]]
 
-
 ## 涉及的模型
-
 
 - [[jmartí输电线路模型|JMartí输电线路模型]]
 - [[配电变压器|配电变压器]]
@@ -46,9 +72,7 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 - [[接地系统|接地系统]]
 - [[配电网负荷|配电网负荷]]
 
-
 ## 相关主题
-
 
 - [[雷击感应过电压|雷击感应过电压]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -56,15 +80,11 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 - [[大规模配电网|大规模配电网]]
 - [[atp仿真|ATP仿真]]
 
-
 ## 主要发现
-
 
 - 忽略频率相关线路损耗会导致大规模配网雷击感应电压计算出现显著误差
 - 基于JMartí模型与内置拟合数据的时域方法可精确计算复杂配网感应电压
 - 外部场效应仅需计算一次大幅提升了含非线性元件系统参数扫描的效率
-
-
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{j}_0(t) = \mathbf{y}_c(t) * \bar{\mathbf{u}}_0(t)$$$
 
 *线路始端等效独立电流源计算式，由特征导纳时域响应与修正电压源卷积得到*
-
 
 **公式2**: $$$\mathbf{j}_\ell(t) = \mathbf{y}_c(t) * \bar{\mathbf{u}}_\ell(t)$$$
 
 *线路末端等效独立电流源计算式，结构与始端对称*
 
-
 **公式3**: $$$\bar{\mathbf{u}}_0 = \mathbf{u}_0(t) - \mathbf{a}(t) * \bar{\mathbf{u}}_\ell(t)$$$
 
 *始端修正电压源递归方程，包含末端反射波经传播函数衰减后的贡献*
-
 
 **公式4**: $$$\bar{\mathbf{u}}_\ell(t) = \mathbf{u}_\ell(t) - \mathbf{a}(t) * \bar{\mathbf{u}}_0(t)$$$
 
 *末端修正电压源递归方程，包含始端反射波经传播函数衰减后的贡献*
 
-
 **公式5**: $$$\mathbf{u}_0(t) = -\int_0^\ell \mathbf{a}_x(t) * \mathbf{E}_x(x, t) dx - \mathbf{h}\mathbf{E}_z(0, t) + \mathbf{a}(t) * \mathbf{h}\mathbf{E}_z(\ell, t)$$$
 
 *始端等效电压源积分表达式，耦合沿线水平电场与两端垂直电场*
 
-
 **公式6**: $$$\mathbf{u}_\ell(t) = \int_0^\ell \mathbf{a}_x(t) * \mathbf{E}_x(\ell - x, t) dx - \mathbf{h}\mathbf{E}_z(\ell, t) + \mathbf{a}(t) * \mathbf{h}\mathbf{E}_z(0, t)$$$
 
 *末端等效电压源积分表达式，与始端对称并考虑场分布的空间反转*
-
 
 ### 算法步骤
 
@@ -120,7 +133,6 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 6. 采用基于模态特征阻抗拟合的替代方法（避免额外导纳拟合），通过卷积计算独立电流源$\mathbf{j}_0(t)$与$\mathbf{j}_\ell(t)$，并将其作为Norton等效源注入ATP线路两端。
 
 7. 设置仿真步长为10 ns，总时长80 μs，在ATP中执行电磁暂态求解，记录各监测点电压波形并对比频变损耗与无损模型差异。
-
 
 ### 关键参数
 
@@ -142,8 +154,6 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 
 - **传播函数拟合极点类型**: 严格实极点 (ATP内置工具)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -160,8 +170,6 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 
 | 低压负荷C2-9 (土壤电阻率1000 Ωm) | 高土壤电阻率下地模衰减加剧，低压网络谐振特性与线路损耗耦合，波形振荡幅度差异明显。 | 首峰电压最大偏差达18%，证实低压馈线对频变损耗的敏感度高于中压主干线。 |
 
-
-
 ## 量化发现
 
 - 忽略频率相关线路损耗会导致低压负荷首峰感应电压计算出现最大28%的误差（土壤电阻率100 Ωm工况）
@@ -169,7 +177,6 @@ Calculation of lightning-induced voltages on a large-scale distribution a Depart
 - 中压线路避雷器将P4节点相地过电压限制在30 kV以内，但远端节点（P9、P11）在无损假设下幅值偏差随距离呈非线性增长
 - 基于ATP内置工具的实极点拟合在高频段（>1 MHz）精度极高，地模与线模拟合误差<2%，满足雷电暂态分析需求
 - 外部场等效电流源仅需计算一次，使含非线性元件（避雷器、变压器）的系统参数扫描效率提升数倍，无需重复求解场路耦合积分
-
 
 ## 关键公式
 
@@ -191,11 +198,34 @@ $$$\bar{\mathbf{u}}_0 = \mathbf{u}_0(t) - \mathbf{a}(t) * \bar{\mathbf{u}}_\ell(
 
 *用于处理线路两端反射波的时域叠加，确保在复杂拓扑与多次反射场景下电压源计算的数值稳定性*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比分析（频变JMartí模型 vs 无损线路模型）及与文献FDTD方法、LIOV代码及缩尺/全尺寸实验数据交叉验证
 - **测试系统**: 1.26 km中压主干线（13.8 kV）+ 540 m分支线 + 4条低压馈线（127 V，含52个三相负荷、4台配电变压器、ZnO避雷器及多点接地系统）
 - **仿真工具**: ATP (Alternative Transients Program), MATLAB (场计算与源生成), ATP内置有理函数拟合工具
 - **验证结果**: 验证了频变损耗在复杂拓扑配网雷击暂态中的不可忽略性，证实了基于内置拟合的EMD方法在精度与计算效率上的优越性。该方法能准确捕捉多次反射、阻抗不连续点谐振及避雷器限幅特性，首峰误差控制合理，且完全兼容ATP现有频变线路库，无需外部代码接口即可实现高效稳定求解。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Calculation of lightning-induced voltages on a large-scale distribution network using the JMarti model`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 时域方法、扩展模域-emd-模型、独立电流源等效 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于独立电流源的时域方法将外部雷击电磁场效应等效注入线路两端
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/10/De Conti和Leal - 2026 - Calculation of lightning-induced voltages on a large-scale distribution network using the JMarti mod.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

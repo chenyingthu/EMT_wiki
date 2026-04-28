@@ -2,7 +2,7 @@
 title: "A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien"
 type: source
 year: 2022
-journal: ""
+journal: "中国电机工程学报"
 created: "2026-04-13"
 sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien.pdf"]
 ---
@@ -14,18 +14,46 @@ sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Mode
 
 ## 摘要
 
-Common averaging methods were studied for modeling the grid-connected converter in new energy domain to balance the accuracy and efficiency in electromagnetic transient simulation. A piecewise generalized state space averaging (P-GSSA) method was proposed for converters with the large-scale new energy connected to grid. The piecewise technique was applied to generalized state space averaging (GSSA) model of the converters in this method, which combines the time slot with similar operating characteristic together to study. And multi time scale modeling was successfully achieved in the grid-connected converter of new energy domain. An example was simulated according to the P-GSSA model proposed in this paper, and the simulation results show that the model can adapt to the efficient simulatio
+针对新能源并网变流器电磁暂态仿真精度和效率的平衡问题，研究新能源并网变流器的常用平均化建模方法，提出适应大规模新能源并网电磁暂态高效仿真的变流器分段广义状态空间平均建模方法。该方法将分段技术应用于变流器广义状态空间模型中，将变流器动作特性一致的时间段合并研究，实现分段时间上变流器电磁暂态的变尺度建模。应用提出的变流器分段广义状态空间平均模型进行算例仿真，结果表明该模型实现了变流器暂态仿真中效率和精度的平衡，能够适应大规模新能源并网变流器的高效仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大规模新能源并网场景：系统中存在大量由PWM控制的并网变流器，若全部采用详细开关模型，EMT仿真需跟踪微秒级开关动作，计算量很高；若采用传统平均模型，又可能丢失开关引起的高频分量、纹波和谐波。研究对象是新能源并网变流器，尤其是三相PWM型DC/AC变流器在稳态、故障和控制切换过程中的电磁暂态建模。难点在于开关动作具有强非连续性，但不同时间段又可能呈现近似周期性，模型既要保留内部高频动态，又不能每个开关瞬间都按详细拓扑求解。本文的贡献是把“分段”思想嵌入广义状态空间平均模型：把动作特性相近的若干开关周期合并为一个求解区间，在区间内用傅里叶系数描述状态变量，从而在时间尺度上自适应压缩重复开关行为，而不是简单抹去开关谐波。
+
+### 2. 模型、算法与实现技术
+
+本文提出分段广义状态空间平均模型（P-GSSA）。其核心接口量包括：由调制波与载波比较得到的三相开关函数Si，占空比di，变流器状态变量x或平均状态y，以及系统输入u。式(1)定义PWM开关函数，说明模型仍以实际开关逻辑为起点；式(4)用一个开关周期内Si的积分得到占空比，是从离散开关行为进入平均化状态方程的桥梁；式(5)把不同开关状态下的向量场按占空比加权，构成状态空间平均模型。P-GSSA进一步不是在全仿真时段统一平均，而是把运行特性相近的时段划成分段，在每个分段内对状态量作傅里叶展开，仅保留对电磁暂态有贡献的低阶系数；傅里叶微分性质使状态微分方程转化为各阶系数的耦合求解。这样，输出不只是基频平均量，还可由保留的傅里叶系数重构含一定高频信息的电压、电流等状态波形。
+
+### 3. 验证、优势与不足
+
+作者以P-GSSA模型和详细开关模型进行数值仿真对比来验证有效性。当前页面记录的验证对象包括三相PWM DC/AC逆变器，以及含低压穿越控制的小型光伏并网系统；工具记录为MATLAB/Simulink，P-GSSA通过S函数实现，详细模型采用标准开关器件库；指标包括波形吻合程度、状态变量相对误差、分段数和计算耗时。页面给出的结果显示，在不同开关频率、稳态、电压跌落和三相短路故障场景下，P-GSSA能接近详细开关模型，同时减少求解次数；但这些数值需要回到原文表图复核，因为提供的可见原文片段主要覆盖摘要、引言和建模前置公式，未完整展示仿真表格。优势在于模型保留了GSSA描述谐波的能力，又用分段减少重复周期计算。边界是：验证集中在文中算例拓扑、PWM方式和控制策略，不足以证明其适用于所有变流器拓扑、随机开关、强非周期调制或实时硬件仿真。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：EMT高效建模不必在“详细开关”和“完全平均”之间二选一，可以利用开关动作在局部时间段内的近周期性，把重复的开关周期合并，同时用傅里叶系数保留必要高频信息。它适合被后续关于新能源场站等值建模、大规模变流器群EMT仿真、平均模型误差控制、多时间尺度仿真框架的页面复用。使用时应把它定位为一种面向周期性或近周期性PWM变流器的高效EMT模型，而不是通用开关电路求解器；不应外推到原文未测试的拓扑、调制策略、故障类型、控制带宽或硬件平台。
+
+### 证据边界
+
+- 作者、题名、摘要、关键词、基金和基本研究动机来自用户提供的原文首页抽取；作者为王磊、邓新昌、侯俊贤、穆世霞、董毅峰、王铁柱。
+- P-GSSA将分段技术用于GSSA、合并动作特性一致时间段、实现多时间尺度建模，这一贡献直接来自摘要和引言末段。
+- 开关函数Si、占空比di、状态空间平均方程等公式来自可见原文；关于傅里叶系数耦合求解属于GSSA机制解释，与文中方法方向一致，但需结合后续章节公式核验具体实现。
+- 当前页面列出的仿真工具、测试系统和量化误差/耗时未在本次可见原文片段中完整出现，作为页面抽取信息可用于导航，正式引用前应回查原文仿真章节、表格和图。
+- 验证范围从页面看主要是PWM并网变流器和光伏并网故障穿越；未见对MMC、多电平复杂拓扑、非周期调制、弱网多机相互作用、实时仿真步长约束等场景的充分证据。
+- 元数据存在不确定性：页面年份标为2022，源文件路径含“2019”，且题名英文末尾有截断，应以论文首页或期刊数据库记录复核。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出分段广义状态空间平均法，融合分段技术与广义状态空间平均模型
-- 设计基于幅值预测的分段策略，合并动作特性一致的开关周期实现变步长
-- 构建多时间尺度变流器模型，有效兼顾电磁暂态仿真精度与计算效率
-
+- 问题定位：针对新能源并网变流器电磁暂态仿真精度和效率的平衡问题，研究新能源并网变流器的常用平均化建模方法，提出适应大规模新能源并网电磁暂态高效仿真的变流器分段广义状态空间平均建模方法。该方法将分段技术应用于变流器广义状态空间模型中，将变流器动作特性一致的时间段合并研究，实现分段时间上变流器电磁暂态的变尺度建模。
+- 方法机制：分段广义状态空间平均法（P-GSSA）是一种面向电磁暂态高效仿真的变流器建模方法。该方法将分段技术与广义状态空间平均法有机结合，核心思想是根据开关函数占空比的方差阈值，将动作特性一致（具有“近周期性”）的多个开关周期合并为一个时间分段，实现变步长与多时间尺度建模。在每个分段区间内，对状态变量进行傅里叶级数展开，保留低阶系数以重构电气量，从而精确计及高频分量与谐波影响。
+- 验证证据：数值仿真对比分析（P-GSSA模型 vs 详细开关模型）；三相PWM DC/AC逆变器、小型光伏并网发电系统（含低压穿越控制策略）；MATLAB/Simulink（基于S函数搭建P-GSSA模型，详细模型采用标准开关器件库）
+- 量化与结论：开关频率从1kHz升至10kHz时，稳态最大相对误差从5.7003%降至1.3166%，暂态误差从4.0820%降至0.4913%，误差与开关周期Ts大致成正比。；在3秒仿真时长下，P-GSSA模型相比详细开关模型计算耗时降低20%以上（10kHz工况下从119.673s降至95.354s）。；光伏系统三相短路故障期间，采用无功注入低穿策略可将并网电流峰值从>2.
+- 适用边界：适用于理解本文 A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[广义状态空间平均法|广义状态空间平均法]]
 - [[分段状态空间平均法|分段状态空间平均法]]
@@ -33,18 +61,14 @@ Common averaging methods were studied for modeling the grid-connected converter 
 - [[变步长建模|变步长建模]]
 - [[多时间尺度建模|多时间尺度建模]]
 
-
 ## 涉及的模型
-
 
 - [[并网变流器|并网变流器]]
 - [[三相pwm逆变器|三相PWM逆变器]]
 - [[光伏系统|光伏系统]]
 - [[变流器开关详细模型|变流器开关详细模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[新能源并网|新能源并网]]
@@ -52,15 +76,11 @@ Common averaging methods were studied for modeling the grid-connected converter 
 - [[高效仿真|高效仿真]]
 - [[谐波分析|谐波分析]]
 
-
 ## 主要发现
-
 
 - 分段模型能精确反映变流器电磁暂态特性，有效计及高频分量与谐波影响
 - 仿真验证表明该模型在保持高精度的同时显著提升计算效率，优于传统平均法
 - 自适应分段策略成功实现多时间尺度仿真，适用于大规模新能源并网场景
-
-
 
 ## 方法细节
 
@@ -70,31 +90,25 @@ Common averaging methods were studied for modeling the grid-connected converter 
 
 ### 数学公式
 
-
 **公式1**: $$$$S_i = \begin{cases} 1, & v_m > v_c \\ 0, & v_m \le v_c \end{cases}$$$$
 
 *PWM开关函数定义，通过比较调制波与载波确定各相开关状态*
-
 
 **公式2**: $$$$d_i = \frac{1}{T_s} \int_{t-T_s}^{t} S_i(\tau) d\tau$$$$
 
 *周期性开关函数占空比计算，用于表征单个开关周期内的平均导通比例*
 
-
 **公式3**: $$$$\frac{d}{dt} x_k(t) = f(x(t), u(t))_k(t) - jk\omega x_k(t)$$$$
 
 *广义状态空间平均法核心方程，利用傅里叶微分性质建立频域状态微分方程*
-
 
 **公式4**: $$$$\dot{y}(t) = \sum_{q=-\infty}^{\infty} \left[ A_0 y(t)_q + b_0 + \sum_{i=1}^{m} (A_i y(t)_q + b_i) D_i(t) \right]$$$$
 
 *分段广义状态空间平均模型最终状态方程，在分段区间内联合求解各阶傅里叶系数*
 
-
 **公式5**: $$$$\sigma = \max \frac{|x_P - x_D|}{x_D}$$$$
 
 *模型相对误差计算公式，用于对比P-GSSA模型与详细开关模型的偏差*
-
 
 ### 算法步骤
 
@@ -112,7 +126,6 @@ Common averaging methods were studied for modeling the grid-connected converter 
 
 7. 循环迭代推进：重复步骤3至6，直至累计分段时间覆盖全部仿真时长T，完成多时间尺度变步长电磁暂态仿真。
 
-
 ### 关键参数
 
 - **占空比方差阈值(ε1)**: 用于判定连续开关周期是否具有近周期性，决定分段合并长度
@@ -124,8 +137,6 @@ Common averaging methods were studied for modeling the grid-connected converter 
 - **分段长度策略**: 稳态工况一般为2~3个开关周期，暂态工况强制为1个开关周期
 
 - **仿真步长设置**: 详细模型固定为开关周期的1/100，P-GSSA模型采用变步长（步长等于当前分段长度）
-
-
 
 ## 仿真结果
 
@@ -141,8 +152,6 @@ Common averaging methods were studied for modeling the grid-connected converter 
 
 | 光伏系统三相短路及低压穿越测试 | 0.2s发生三相短路（电压跌落70%，持续0.15s）。未采用低穿控制时并网电流峰值超额定值2.5倍；采用无功注入低穿策略后，电流幅值被抑制在0.9~1.1倍标幺值之间。 | P-GSSA模型完整复现了故障穿越全过程，全程误差始终小于5%，验证了其在复杂控制策略与严重故障下的适用性。 |
 
-
-
 ## 量化发现
 
 - 开关频率从1kHz升至10kHz时，稳态最大相对误差从5.7003%降至1.3166%，暂态误差从4.0820%降至0.4913%，误差与开关周期Ts大致成正比。
@@ -150,7 +159,6 @@ Common averaging methods were studied for modeling the grid-connected converter 
 - 光伏系统三相短路故障期间，采用无功注入低穿策略可将并网电流峰值从>2.5倍额定值有效抑制至0.9~1.1倍标幺值。
 - 傅里叶展开阶数q通常取0~3即可满足工程精度要求，超过10阶将导致计算量剧增且易触发求解错误判定。
 - 模型分段数与开关频率呈正相关，稳态工况分段长度可达2~3个周期，暂态工况自动收缩至1个周期，实现动态变步长。
-
 
 ## 关键公式
 
@@ -172,11 +180,34 @@ $$$$\sigma = \max \frac{|x_P - x_D|}{x_D}$$$$
 
 *在误差分析模块中使用，用于动态判定当前傅里叶展开阶数是否满足预设精度ε2，指导阶数自适应调整*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真对比分析（P-GSSA模型 vs 详细开关模型）
 - **测试系统**: 三相PWM DC/AC逆变器、小型光伏并网发电系统（含低压穿越控制策略）
 - **仿真工具**: MATLAB/Simulink（基于S函数搭建P-GSSA模型，详细模型采用标准开关器件库）
 - **验证结果**: 仿真波形在稳态、电压跌落及三相短路故障下均高度吻合。最大相对误差严格控制在5%以内，计算耗时降低超20%。验证了该模型在兼顾微秒级电磁暂态精度与大规模新能源并网仿真效率方面的有效性与工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 广义状态空间平均法、分段状态空间平均法、傅里叶级数展开 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出分段广义状态空间平均法，融合分段技术与广义状态空间平均模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

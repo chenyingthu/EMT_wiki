@@ -287,7 +287,7 @@ created: "2026-04-13"
 | [[an-investigation-of-electromagnetic-transients-for-a-mixed-transmission-system-w|An Investigation of Electromagnetic Transients for a Mixed T]] | 2023 |
 | [[assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und|Assessment of the transmission line theory in the modeling o]] | 2023 |
 | [[impact-of-solenoid-effects-on-series-impedance-of-three-core-armoured-cables|Impact of solenoid effects on series impedance of three-core]] | 2023 |
-| [[morales-等-a-new-tool-for-calculation-of-line-and-cable-parameters|Morales 等 | A new tool for calculation of line and cable par]] | 2023 |
+| [[a-new-tool-for-calculation-of-line-and-cable-parameters|Morales 等 | A new tool for calculation of line and cable par]] | 2023 |
 | [[multi-conductor-cable-modeling-with-inclusion-of-measured-coaxial-wave-propagati|Multi-Conductor Cable Modeling With Inclusion of Measured Co]] | 2023 |
 | [[advanced-wideband-linecable-modeling-for-transient-studies|Advanced Wideband Line/Cable Modeling for Transient Studies]] | 2024 |
 | [[assessment-of-the-accuracy-of-the-modal-domain-line-models-with-real-and-frequen|Assessment of the accuracy of the modal-domain line models w]] | 2024 |
@@ -302,7 +302,7 @@ created: "2026-04-13"
 
 ---
 
-# 电缆模型深度解析
+## 电缆模型深度解析
 
 ## 1. 各类模型数学描述
 

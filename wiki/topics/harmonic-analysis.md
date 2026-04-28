@@ -46,6 +46,12 @@ created: "2026-04-14"
 - 谐波谐振风险评估
 - 无源性要求（稳定性）
 
+## 适用边界
+
+谐波分析关注周期或准周期扰动下的频率分量、谐振和谐波传播。它与一般 EMT 暂态分析的边界在于：谐波分析通常需要稳定频率参考、足够长的观测窗口或动态相量/谐波相量模型；雷电、断路器重燃等非周期陡波暂态仍应优先使用全时域 [[transmission-line-model|输电线路]]、[[cable-model|电缆]] 和 [[transformer-model|变压器]] 模型。
+
+在 EMT wiki 中，谐波分析应连接到 [[dynamic-phasor|动态相量]]、[[vector-fitting|矢量拟合]]、[[frequency-dependent-modeling|频率相关建模]]、[[passivity-enforcement|无源性强制]]、[[vsc-model|VSC 模型]] 和 [[mmc-model|MMC 模型]]。若页面报告谐波抑制效果，需要说明频段、谐波阶次、网络阻抗模型和验证基准；无来源的精确百分比不应保留。
+
 ## 相关方法
 - [[vector-fitting]]
 - [[dynamic-phasor]]

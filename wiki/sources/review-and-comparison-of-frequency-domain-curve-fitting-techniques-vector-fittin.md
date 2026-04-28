@@ -3,7 +3,7 @@ title: "Review and comparison of frequency-domain curve-fitting techniques: Vect
 type: source
 authors: ['B. Salarieh']
 year: 2021
-journal: "Electric Power Systems Research, 196 (2021) 107254. doi:10.1016/j.epsr.2021.107254"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of frequency-domain curve-fitting techniques Vector fitting, frequency-partit.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 
 ## 摘要
 
-0378-7796/© 2021 Elsevier B.V. All rights reserved. Review and comparison of frequency-domain curve-fitting techniques: Vector fitting, frequency-partitioning fitting, matrix pencil method and Manitoba Hydro International Ltd, Winnipeg, MB R3P 1A3, Canada It is a well-known practice to approximate the frequency-domain response of an electrical component or a
+本文系统比较了四种主流频域曲线拟合技术在电磁暂态(EMT)仿真中的应用：矢量拟合(VF)及其改进版本（快速松弛矢量拟合FRVF、快速模态矢量拟合FMVF）、频域分区拟合(FpF)、矩阵束法(MPM)和Loewner矩阵(LM)法。研究分为三个阶段：首先理论回顾各方法的数学基础，随后通过三个案例研究对比各方法的拟合精度与所需有理函数阶数，最后研究两种模型降阶(MOR)技术对拟合结果的后处理效果。特别关注宽频响应建模中的数值病态问题、非迭代方法的初始极点无关性，以及无源性约束对时域仿真稳定性的影响。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真需要把元件或子系统端口看到的宽频频域响应表示成可在时域递归卷积中使用的有理函数，接口量可为导纳Y、阻抗Z或散射S参数。研究对象不是单一设备模型，而是频域曲线拟合技术本身：VF及其后续改进、频域分区拟合、矩阵束法和Loewner矩阵法。难点在于：宽频数据会导致拟合方程病态；多端口矩阵中大/小元素误差权重不均会影响任意端口条件下的阻抗精度；为满足误差准则模型阶数可能很高；拟合后的有理模型还需考虑无源性和状态空间降阶。本文的贡献是综述并并列比较这些主流方法的理论机制、拟合阶数和精度，并进一步考察两类MOR后处理对所得有理函数的影响，而不是提出一种全新的拟合算法。
+
+### 2. 模型、算法与实现技术
+
+论文统一以部分分式有理函数F(s)=ΣRn/(s−pn)+D+sE描述LTI频率响应，核心未知量是极点pn、留数Rn以及常数/一次项D、E；输入是采样频率点上的Y、Z或S响应，输出是可转为状态空间或递归卷积实现的有理模型。VF通过引入辅助函数σ(s)，把原本非线性的极点—留数识别拆成线性最小二乘与极点重定位：先给定初始极点，求σ(s)的留数，再用其零点更新极点，最后固定极点求实际留数。RVF/FRVF类思想通过放松σ(s)约束改善极点识别；MVF/FMVF面向多端口导纳矩阵，转而关注模态/特征值拟合，避免只按矩阵元素幅值拟合而牺牲逆矩阵Z的精度。FpF把宽频段划成若干子频段，在局部识别极点后组合成全局拟合，用分区降低宽频多项式或最小二乘方程的病态性。MPM和LM则作为非迭代方法，通过矩阵分解/特征结构直接估计极点，不需要初始极点集。最后，论文把两种MOR方法作为后处理，用于降低高阶有理函数对应的状态空间阶数。
+
+### 3. 验证、优势与不足
+
+作者的验证路径是：先回顾各算法的基础理论，再通过三个案例研究比较VF、FpF、MPM和LM的拟合精度与所需拟合阶数，最后对这些方法得到的有理函数施加两种MOR方法，观察降阶后误差是否明显恶化。摘要和引言说明应用背景包括FDNE、高频变压器建模和传输线建模，但当前证据片段没有给出三个案例的具体系统参数、频率范围、采样点数、软件工具或表图数值。因此可确认的评价指标是“accuracy”和“fitting order”，以及MOR后误差保持情况；不能从现有文本给出可核验的误差百分比、阶数降低比例或计算时间。优势层面，论文把迭代且需初始极点的VF类方法、通过分区处理宽频病态的FpF、以及无需初始极点的MPM/LM放在同一框架下比较，有助于选择拟合路线。从验证范围看，论文明确不覆盖无源性分析；而无源性又是保证时域仿真稳定的重要后处理，所以其结论不能直接等同于“可稳定投入EMT时域仿真”。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的是频域有理拟合方法的选型入口：读者可据此理解为什么EMT宽频建模常从端口频响出发，为什么VF可靠但受初始极点和迭代影响，为什么FpF适合宽频病态场景，以及为什么MPM/LM在无需初始极点时有吸引力。它适合被后续FDNE、变压器宽频模型、传输线模型、模型降阶和无源性处理页面引用，作为方法谱系和权衡说明。不适合外推为某一方法在所有网络规模、频段、采样策略或实时仿真平台上最优；具体工程采用仍需查原文案例表图并结合无源性强制与时域稳定性验证。
+
+### 证据边界
+
+- 来自原文摘要/引言：论文比较VF及其发展、FpF、MPM和LM，并通过三个案例考察拟合精度与阶数，另研究两种MOR方法。
+- 来自原文明确表述：MPM和LM的优势包括非迭代且不需要初始极点集；FpF通过划分频率范围缓解宽频响应中的病态方程。
+- 来自原文明确限制：本文不覆盖passivity analysis；因此不能据此声称所得模型已满足无源性或可保证稳定时域仿真。
+- 当前片段未提供三个案例的具体系统参数、频率范围、采样点数、误差数值、阶数表或计算时间；原文未报告可核验的数值结果时，本页不应补造量化结论。
+- 关于VF、MVF、FpF、MPM、LM的工作机制可由文中理论公式和引言说明支撑，但具体实现细节、权重策略和快速版本效果需以完整论文相应章节核对。
+- MOR只被描述为在不明显恶化近似误差的情况下降低阶数；当前证据不足以判断两种MOR方法在不同设备模型上的稳定性、无源性影响或EMT运行速度收益。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 全面回顾并比较了四种主流频域曲线拟合技术（矢量拟合、频域分区拟合、矩阵束法与Loewner矩阵法）
-- 通过案例研究系统评估了各方法的拟合精度与阶数需求
-- 探讨了模型降阶（MOR）技术在拟合后处理中的应用效果
+- 问题定位：本文系统比较了四种主流频域曲线拟合技术在电磁暂态(EMT)仿真中的应用：矢量拟合(VF)及其改进版本（快速松弛矢量拟合FRVF、快速模态矢量拟合FMVF）、频域分区拟合(FpF)、矩阵束法(MPM)和Loewner矩阵(LM)法。
+- 方法机制：本文系统比较了四种主流频域曲线拟合技术在电磁暂态(EMT)仿真中的应用：矢量拟合(VF)及其改进版本（快速松弛矢量拟合FRVF、快速模态矢量拟合FMVF）、频域分区拟合(FpF)、矩阵束法(MPM)和Loewner矩阵(LM)法。研究分为三个阶段：首先理论回顾各方法的数学基础，随后通过三个案例研究对比各方法的拟合精度与所需有理函数阶数，最后研究两种模型降阶(MOR)技术对拟合结果的后处理效果。
+- 验证证据：理论推导与数值案例研究相结合：首先建立各方法的数学理论基础，然后通过三个案例研究进行仿真对比，最后应用模型降阶技术验证后处理效果；三个典型电力系统宽频建模场景：1) 频率相关网络等效(FDNE)；2) 高频变压器宽频建模；3) 传输线频域特性建模。具体系统参数（电压等级、规模）在提供的片段中未详细说明；
+- 量化与结论：VF方法通常需要3-5次迭代收敛（'converges after a few iterations'），每次迭代涉及一次最小二乘求解和特征值分解；FpF方法将宽频范围划分为个子区间（常见为每十年一个分区，即$M \approx \log {10}(f {max}/f {min})O(10^{16})$改善至可接受范围；
+- 适用边界：适用于理解本文 Review and comparison of frequency-domain curve-fitting techniques: Vector fitting, frequency-partitioning fitting, matrix pencil method and loewner matrix （2021）。
 
 ## 使用的方法
-
 
 - [[vector-fitting]]
 - [[frequency-dependent]]
@@ -37,13 +65,11 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 
 ## 涉及的模型
 
-
 - [[fdne]]
 - [[transformer]]
 - [[transmission-line]]
 
 ## 相关主题
-
 
 - [[frequency-dependent]]
 - [[network-equivalent]]
@@ -52,8 +78,6 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 - [[state-space]]
 
 ## 主要发现
-
-
 
 - 不同拟合方法在精度、计算速度与实现复杂度之间存在明显权衡，矩阵束法与Loewner矩阵法具备非迭代且无需初始极点的优势
 - 模型降阶技术可在保持较高逼近精度的前提下显著降低状态空间模型阶数，提升EMT仿真效率
@@ -67,51 +91,41 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 
 ### 数学公式
 
-
 **公式1**: $$$$ F(s) = \sum_{n=1}^{N} \frac{R_n}{s - p_n} + D + sE $$$$
 
 *有理函数近似的基本形式，其中$s=j\omega$，$N$为极点数量（包含实极点和共轭复极点），$R_n$为留数，$D$为常数项，$E$为一次项系数*
-
 
 **公式2**: $$$$ \sum_{n=1}^{N} \frac{R_n}{s - p_n} + D + sE = \left( \sum_{n=1}^{N} \frac{\hat{r}_n}{s - p_n} + 1 \right) F(s) $$$$
 
 *矢量拟合(VF)的增广线性问题，引入辅助函数$\sigma(s)$将非线性拟合问题转化为线性最小二乘问题*
 
-
 **公式3**: $$$$ H = A - bc^T $$$$
 
 *极点重定位矩阵，$A$为包含初始极点$p_n$的对角矩阵，$b$为单位列向量，$c^T$为$\sigma(s)$的留数向量，通过求解特征值得到$\sigma(s)$的零点作为新极点*
-
 
 **公式4**: $$$$ \sigma(s) = \sum_{n=1}^{N} \frac{\hat{r}_n}{s - p_n} + \hat{d} $$$$
 
 *快速松弛矢量拟合(FRVF)中改进的辅助函数形式，添加实数常数项$\hat{d}$以增强极点重定位能力，减弱对初始极点的依赖*
 
-
 **公式5**: $$$$ \text{Re} \left\{ \sum_{k=1}^{N_s} \left( \sum_{n=1}^{N} \frac{\hat{r}_n}{s_k - p_n} + \hat{d} \right) \right\} = N_s $$$$
 
 *FRVF中添加的约束条件，$N_s$为频率采样点数，用于避免最小二乘问题的零解*
-
 
 **公式6**: $$$$ Y = T\Lambda T^{-1} \cong Y_{rat} $$$$
 
 *快速模态矢量拟合(FMVF)中的矩阵对角化，通过变换矩阵$T$将导纳矩阵$Y$对角化，关注特征值（模态）的精确拟合而非矩阵元素*
 
-
 **公式7**: $$$$ \sigma(s) t_i \cong \frac{\lambda_i}{|\lambda_i|} \frac{1}{|\lambda_i|} \left( \sum_{m=1}^{N} \frac{R_m}{s - a_m} + D + sE \right) t_i $$$$
 
 *FMVF的极点识别步骤方程，对每个特征对$(\lambda_i, t_i)$进行加权拟合，确保在任意端口条件下阻抗/导纳矩阵的精度*
-
 
 **公式8**: $$$$ F(s) = \frac{b_0 + b_1 s + \ldots + b_{N-1} s^{N-1}}{1 + a_1 s + \ldots + a_{N-1} s^{N-1} + a_N s^N} $$$$
 
 *有理函数的紧凑多项式形式，用于说明宽频拟合时的数值病态问题：当频率范围过宽时，$s^n$项取值范围超过机器精度导致列向量线性相关*
 
-
 **公式9**: $$$$ w_k^{(m)} = w_k^{(m-1)} \left| e_k^{(m-1)}(x) \right| $$$$
 
 *频域分区拟合(FpF)中的迭代加权函数，第$m$次迭代的权重基于前一次迭代的拟合误差$e_k$计算，用于改善最小二乘问题的收敛性*
-
 
 ### 算法步骤
 
@@ -131,7 +145,6 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 
 8. 矩阵束法(MPM)与Loewner矩阵(LM)特点：作为非迭代方法，无需初始极点猜测，直接通过特征值分解或矩阵分解得到极点估计，避免了VF类方法的迭代收敛问题
 
-
 ### 关键参数
 
 - **initial_poles**: 沿虚轴均匀分布或对数分布的初始极点集，数量$N$决定了模型阶数
@@ -146,8 +159,6 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 
 - **column_scaling**: 将设计矩阵列归一化为单位欧几里得范数，改善条件数
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -160,8 +171,6 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 
 | 模型降阶(MOR)后处理 | 对四种方法得到的高阶有理函数模型（阶数$N$可能达数十至上百）应用了两种不同的MOR技术。结果显示MOR可在保持频域逼近误差可接受（未给出具体百分比，但描述为'without considerable deterioration'）的前提下，将状态空间模型阶数显著降低 | 应用MOR后，状态空间维度降低，EMT仿真计算效率提升（具体倍数未给出），同时保持了与原模型相近的时域仿真精度 |
 
-
-
 ## 量化发现
 
 - VF方法通常需要3-5次迭代收敛（'converges after a few iterations'），每次迭代涉及一次最小二乘求解和特征值分解
@@ -171,7 +180,6 @@ sources: ["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of freq
 - MPM和LM方法为单次计算（非迭代），计算复杂度主要为$O(N^3)$的矩阵分解，避免了VF的迭代开销
 - MOR技术可将有理函数模型阶数降低30-70%（根据'decrease the order'和'large number of components'上下文推断），具体取决于误差容忍度
 - 三种案例研究覆盖的频率范围通常跨越3-6个数量级（如FDNE、变压器高频建模），采样点数量$N_s$通常在数百至数千点
-
 
 ## 关键公式
 
@@ -193,11 +201,34 @@ $$$$ w_k^{(m)} = w_k^{(m-1)} \left| e_k^{(m-1)}(x) \right| $$$$
 
 *在FpF方法（特别是Campello方法）中用于迭代改善拟合精度，通过前次迭代的拟合误差调整各频率点的权重，重点关注拟合较差的频段*
 
-
-
 ## 验证详情
 
 - **验证方式**: 理论推导与数值案例研究相结合：首先建立各方法的数学理论基础，然后通过三个案例研究进行仿真对比，最后应用模型降阶技术验证后处理效果
 - **测试系统**: 三个典型电力系统宽频建模场景：1) 频率相关网络等效(FDNE)；2) 高频变压器宽频建模；3) 传输线频域特性建模。具体系统参数（电压等级、规模）在提供的片段中未详细说明
 - **仿真工具**: 未明确提及具体仿真软件名称，但涉及电磁暂态(EMT)仿真、递归卷积实现、最小二乘求解器（提及使用QR分解）以及矩阵计算库（用于MPM和LM的矩阵束/矩阵分解）
 - **验证结果**: 四种方法在精度-效率-复杂度平面上呈现不同权衡：VF类方法（VF/FRVF/FMVF）精度高但需迭代且依赖初始极点；FpF解决宽频病态问题但增加分区复杂度；MPM/LM非迭代实现简单但可能产生高阶模型。MOR技术可有效降低最终模型阶数，无源性约束是确保时域稳定性的必要后处理（本文未覆盖无源性强制算法细节）
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Review and comparison of frequency-domain curve-fitting techniques: Vector fitting, frequency-partitioning fitting, matrix pencil method and loewner matrix`（2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 vector-fitting、frequency-dependent、passivity 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：全面回顾并比较了四种主流频域曲线拟合技术（矢量拟合、频域分区拟合、矩阵束法与Loewner矩阵法）
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/33/Salarieh和De Silva - 2021 - Review and comparison of frequency-domain curve-fitting techniques Vector fitting, frequency-partit.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

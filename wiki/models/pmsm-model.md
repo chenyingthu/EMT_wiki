@@ -46,10 +46,18 @@ created: "2026-04-14"
 ## 相关方法
 - [[state-space-method]]
 - [[fixed-admittance]]
+- [[average-value-model]]
 
 ## 相关主题
 - [[real-time-simulation]]
 - [[frequency-dependent-modeling]]
+- [[co-simulation]]
+- [[network-equivalent]]
+
+## 相关模型
+- [[synchronous-machine-model]]
+- [[vsc-model]]
+- [[dfig-model]]
 
 
 ## 论文方法分析

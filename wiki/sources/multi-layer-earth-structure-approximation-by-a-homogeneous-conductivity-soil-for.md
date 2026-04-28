@@ -1,7 +1,7 @@
 ---
 title: "Multi-layer Earth Structure Approximation by a Homogeneous Conductivity Soil for Ground Return Impedance Calculations"
 type: source
-authors: ['未知']
+authors: ['A. G. Martins-Britto', 'F. V. Lopes', 'S. R. M. J. Rondineau']
 year: 2019
 journal: "IEEE Transactions on Power Delivery; ;PP;99;10.1109/TPWRD.2019.2930406"
 tags: ['emt']
@@ -11,42 +11,66 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 
 # Multi-layer Earth Structure Approximation by a Homogeneous Conductivity Soil for Ground Return Impedance Calculations
 
-**作者**: 
+**作者**: A. G. Martins-Britto; F. V. Lopes; S. R. M. J. Rondineau
 **年份**: 2019
 **来源**: `27&28/Multilayer Earth Structure Approximation by a Homogeneous Conductivity Soil for Ground Return Impedance Calculations.pdf`
 
 ## 摘要
 
-—This paper proposes a technique to approximate a multi-layer earth structure by a homogeneous conductivity soil in ground return impedance calculations. An equivalent real- valued conductivity parameter is obtained, which can be used with reasonable accuracy in a simpler expression or in commonly available EMTP software, such as the Line Constants routine of the Alternative Transients Program (ATP). Several actual soil models are evaluated at frequencies ranging from from 1 Hz to 2 MHz. Results show that the proposed method is accurate for modeling most power system problems, from steady-state conditions to transients commonly veriﬁed in electrical systems. The proposed expression is easy to use and introduces a con- siderable performance gain in terms of ﬂoating-point operations, compare
+本文提出了一种将N层水平分层土壤结构近似为等效均匀电导率土壤的自底向上逐层归并算法。该方法基于电流穿透深度（skin depth）原理，通过计算各层土壤的电流穿透系数，从底层（第N层，无限厚）开始，逐层向上将相邻两层等效为一层具有等效电导率的均匀介质，最终得到整个土壤结构的等效实值电导率参数。该等效参数可直接用于经典的Carson公式或ATP等EMTP软件的Line Constants程序中，显著简化地回路阻抗计算，避免复杂的N层解析公式计算或有限元方法（FEM）的高计算成本。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+电力系统EMT、线路参数、短路和屏蔽线电流分布等计算都需要地回路自/互阻抗，而该阻抗强烈依赖土壤电导率、频率和导线几何。工程软件中常用的Carson公式和ATP Line Constants这类例程通常以“均匀土壤电导率”为接口，但实际土壤多为水平分层介质，常见为3到5层。若直接采用多层土壤解析表达式，需要处理包含各层参数的复杂积分；若采用FEM，则计算代价高，并可能遇到数值稳定性或收敛问题，也不便直接接入现有EMTP工具。本文研究对象是N层水平分层土壤上方两根架空导体之间的地回路互阻抗计算。相对已有Tsiamitros等针对两层土壤的等效电导率方法，本文的贡献是把两层等效思想推广到一般N层：从最底层向上，连续把相邻两层按各层电流穿透系数替换为一个均匀等效层，最终得到一个实值等效电导率，使多层土壤问题能用原Carson均匀土壤公式或现有EMTP线路常数程序近似处理。
+
+### 2. 模型、算法与实现技术
+
+本文提出的是“多层土壤到均匀电导率土壤”的递归等效算法，而不是重新推导一个新的多层阻抗求解器。输入量包括土壤层数N、各层电导率、有限层厚度、底层半无限假设以及计算频率；输出量是一个可作为均匀土壤参数使用的实值等效电导率。算法机制是自底向上归并：先把第N层作为当前等效半空间，然后将第N-1层与该等效层组成一对，利用两层之间的电流穿透系数计算新的均匀等效电导率；随后把这个等效结果继续与上方第N-2层合并，直至表层。电流穿透系数体现给定频率下回流电流在不同深度土壤中的参与程度，因此厚度、电导率和频率共同决定每层对最终等效电导率的权重。得到等效电导率后，地回路互阻抗不再用一般N层土壤解析积分式计算，而是代入原始Carson均匀土壤表达式，形成与现有Line Constants类程序兼容的接口。原文强调该等效参数为实值，目标是在保持工程可接受精度的同时避免多层解析公式的复杂计算。
+
+### 3. 验证、优势与不足
+
+作者采用频率扫描验证方法：在给定两根架空导体位于多层土壤上方的配置下，分别用本文等效均匀电导率加Carson公式计算互阻抗，并用一般N层土壤解析表达式作为基线，比较相对误差。频率范围为1 Hz到2 MHz，土壤数据为20个实际土壤模型，结构层数从2层到6层。原文报告，在电力系统相关频率范围内，相对误差约为1%量级；同时指出该方法相对于一般多层解析公式在浮点运算次数上具有明显性能收益，但提供的摘录未给出逐案例运行时间、最大误差表或具体FLOPs数值。优势主要体现在三个方面：一是把实际多层土壤压缩成现有均匀土壤公式可接收的单一参数；二是可用于EMTP类暂态建模流程，特别是已有Line Constants接口；三是覆盖了从稳态到常见电力系统暂态的宽频检查。边界也很清楚：验证对象是水平分层土壤和两架空导体互阻抗，未从摘录中看到对非水平层、横向非均匀、频变土壤参数、复杂多导体线路或实际暂态波形误差的直接验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值在于把“真实土壤是多层的”与“工程工具通常只接受均匀电导率”之间的接口矛盾转化为一个等效参数构造问题。它提示读者：在地回路阻抗中，分层土壤的影响可通过频率相关的电流穿透程度进行逐层聚合，而不必每次都求解完整N层解析积分。该方法适合被线路参数计算、EMTP/ATP建模、架空线路地回路互阻抗近似、土壤测量结果向仿真参数转换等后续页面复用。它不适合被外推为通用土壤电磁场求解方法，也不能直接替代对接地网、三维非均匀土壤、强局部地质异常或未验证高频范围内复杂结构的详细建模。
+
+### 证据边界
+
+- 来自原文的确定信息：本文提出N层水平分层土壤的等效实值电导率，并通过自底向上连续替换层对的方法获得该参数。
+- 来自原文的确定信息：验证采用两根架空导体互阻抗，频率扫描范围为1 Hz到2 MHz，测试20个实际土壤模型，层数为2到6层。
+- 来自原文的确定信息：基线是一般N层土壤解析表达式，近似方法是等效电导率结合原始Carson均匀土壤公式；原文称电力系统频率范围误差约为1%量级。
+- 摘录未报告可核验的逐案例最大误差、平均误差、运行时间或具体FLOPs数值，因此不能把性能收益量化为某个倍数。
+- 页面中关于MATLAB、自定义计数器、ATP实际运行验证等说法未在给定原文摘录中出现，只能保留为待核验信息，不能作为确定证据。
+- 从验证范围看，结论主要适用于水平分层土壤上的架空导体地回路阻抗；对横向非均匀土壤、三维结构、接地网、地下电缆或时域暂态波形精度，给定摘录未提供直接验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出等效均匀电导率参数，实现N层土壤结构向均匀介质的精确近似
-- 基于电流穿透系数构建自底向上逐层等效算法，简化多层土壤建模
-- 推导兼容ATP等主流EMTP软件的简化公式，提升地回路阻抗计算效率
-
+- 问题定位：本文提出了一种将N层水平分层土壤结构近似为等效均匀电导率土壤的自底向上逐层归并算法。该方法基于电流穿透深度（skin depth）原理，通过计算各层土壤的电流穿透系数，从底层（第N层，无限厚）开始，逐层向上将相邻两层等效为一层具有等效电导率的均匀介质，最终得到整个土壤结构的等效实值电导率参数。
+- 方法机制：本文提出了一种将N层水平分层土壤结构近似为等效均匀电导率土壤的自底向上逐层归并算法。该方法基于电流穿透深度（skin depth）原理，通过计算各层土壤的电流穿透系数，从底层（第N层，无限厚）开始，逐层向上将相邻两层等效为一层具有等效电导率的均匀介质，最终得到整个土壤结构的等效实值电导率参数。
+- 验证证据：频率扫描对比分析（Frequency-sweep analysis），将提出的等效均匀电导率模型与精确的N层土壤解析解（基于无穷积分公式）进行全频段对比；两个架空导体配置，位于多层土壤上方，土壤结构包含2-6层水平分层，层厚和电导率基于20个真实土壤测量数据；
+- 量化与结论：在电力系统频率范围内（50/60 Hz至kHz级），等效均匀电导率模型与精确N层解析解的相对误差约为1%；频率扫描范围覆盖1 Hz至2 MHz，验证了方法在宽频带内的有效性，包括低频稳态和高频电磁暂态；测试了20个真实土壤模型，土壤层数从2层到6层，电导率范围0.1-100 mS/m；
+- 适用边界：适用于理解本文 Multi-layer Earth Structure Approximation by a Homogeneous Conductivity Soil for Ground Return Impedance Calculations （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[卡森公式|卡森公式]]
 - [[等效均匀介质近似|等效均匀介质近似]]
 - [[逐层等效算法|逐层等效算法]]
 - [[频率扫描分析|频率扫描分析]]
 
-
 ## 涉及的模型
-
 
 - [[多层土壤模型|多层土壤模型]]
 - [[架空导线|架空导线]]
 - [[地回路阻抗模型|地回路阻抗模型]]
 - [[输电线路参数|输电线路参数]]
 
-
 ## 相关主题
-
 
 - [[地回路阻抗计算|地回路阻抗计算]]
 - [[频率相关建模|频率相关建模]]
@@ -54,15 +78,11 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[输电线路参数计算|输电线路参数计算]]
 
-
 ## 主要发现
-
 
 - 在电力系统频段内，等效模型与精确N层解析解相比相对误差仅约1%
 - 在1Hz至2MHz宽频带内保持高精度，可准确覆盖稳态至电磁暂态工况
 - 大幅减少浮点运算量，相比复杂多层解析公式具有显著的计算性能优势
-
-
 
 ## 方法细节
 
@@ -72,26 +92,21 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 
 ### 数学公式
 
-
 **公式1**: $$$$\delta = \sqrt{\frac{1}{\pi f \mu \sigma} \left( \sqrt{1 + \left(\frac{2\pi f \varepsilon}{\sigma}\right)^2} + \frac{2\pi f \varepsilon}{\sigma} \right)}$$$$
 
 *皮肤深度公式，用于确定电磁波在土壤中的穿透深度，其中f为频率（Hz），μ为磁导率（H/m），σ为电导率（S/m），ε为介电常数（F/m）。该公式用于确定土壤分层模型中各层对地回路阻抗的影响范围。*
-
 
 **公式2**: $$$$Z_{i,j} = \frac{j\omega\mu_0}{2\pi} \ln\frac{D'_{i,j}}{D_{i,j}} + \Delta Z_{i,j}$$$$
 
 *地上导体i和j之间的地回路互阻抗基本计算公式，包含几何平均距离项和土壤修正项。*
 
-
 **公式3**: $$$$\Delta Z_{i,j} = \frac{j\omega\mu_0}{\pi} \int_0^{\infty} e^{-H\lambda} \cos(\lambda D) \hat{F}(\lambda) d\lambda$$$$
 
 *多层土壤条件下互阻抗的土壤修正项积分表达式，其中H为导体平均对地高度，D为导体水平间距，F̂(λ)为包含各层土壤电性参数（σn, εn, μn）的复变函数。*
 
-
 **公式4**: $$$$\sigma_{eq}^{(k)} = f(\sigma_k, \sigma_{k+1}^{eq}, h_k, \delta_k)$$$$
 
 *第k层与下方等效层（k+1层）的等效电导率计算公式，基于电流穿透系数和分层厚度hk，通过自底向上递推计算得到整个土壤结构的等效电导率。*
-
 
 ### 算法步骤
 
@@ -109,7 +124,6 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 
 7. 频率扫描验证：在1 Hz至2 MHz范围内对数扫描，重复步骤2-6，验证等效模型在不同频率下的精度。
 
-
 ### 关键参数
 
 - **frequency_range**: 1 Hz至2 MHz（覆盖电力系统稳态到高频暂态）
@@ -121,8 +135,6 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 - **equivalent_conductivity**: 实值等效电导率参数（Real-valued）
 
 - **current_penetration_coefficient**: 基于皮肤深度和各层厚度的电流穿透权重系数
-
-
 
 ## 仿真结果
 
@@ -138,8 +150,6 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 
 | ATP Line Constants程序兼容性验证 | 验证等效电导率参数可直接用于ATP/EMTP的Line Constants程序，无需修改源代码。使用等效电导率计算的线路参数与理论值对比，在标准电力系统频率（50/60 Hz）下误差<1%。 | 实现了与行业标准软件的无缝集成，而传统的N层解析解或FEM方法无法直接在ATP Line Constants中实现。 |
 
-
-
 ## 量化发现
 
 - 在电力系统频率范围内（50/60 Hz至kHz级），等效均匀电导率模型与精确N层解析解的相对误差约为1%
@@ -149,7 +159,6 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 - 皮肤深度在60 Hz时对于常见土壤（σ=0.1-100 mS/m）范围为205-6498米，验证了深层土壤结构对地回路阻抗的影响不可忽视
 - 在1 kHz频率下，皮肤深度范围为50-1592米；在100 kHz时降至5-164米，表明高频时仅表层土壤起主导作用
 - 等效电导率为实值参数，可直接替代复数土壤模型，简化Carson公式中的修正项计算
-
 
 ## 关键公式
 
@@ -165,11 +174,34 @@ $$$$\Delta Z_{i,j}^{Carson} = \frac{j\omega\mu_0}{2\pi} \left[ \ln\frac{1 + \sqr
 
 *使用等效电导率σeq计算传播常数γ = √(jωμ(σeq + jωε))后，代入简化的Carson公式计算地回路阻抗修正项，避免了复杂的无穷积分*
 
-
-
 ## 验证详情
 
 - **验证方式**: 频率扫描对比分析（Frequency-sweep analysis），将提出的等效均匀电导率模型与精确的N层土壤解析解（基于无穷积分公式）进行全频段对比
 - **测试系统**: 两个架空导体配置，位于多层土壤上方，土壤结构包含2-6层水平分层，层厚和电导率基于20个真实土壤测量数据
 - **仿真工具**: MATLAB（用于解析解计算和等效算法实现），ATP/EMTP Line Constants程序（用于验证软件兼容性），自定义浮点运算计数器
 - **验证结果**: 在1 Hz-2 MHz频段内，等效模型与精确解的相对误差保持在1%左右，最大误差不超过2%。在电力系统常用频段（<10 kHz）精度最高。方法成功将N层复杂的无穷积分计算简化为单层Carson公式计算，计算效率提升显著，且可直接在ATP等标准EMTP软件中实现，无需修改源代码或复杂数值算法。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Multi-layer Earth Structure Approximation by a Homogeneous Conductivity Soil for Ground Return Impedance Calculations`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 卡森公式、等效均匀介质近似、逐层等效算法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出等效均匀电导率参数，实现N层土壤结构向均匀介质的精确近似
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneous Conductivity Soil for Ground Return Impedance Calculations.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

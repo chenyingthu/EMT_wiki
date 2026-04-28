@@ -40,6 +40,16 @@ created: "2026-04-13"
 - 在线更新策略
 - 等值误差评估
 
+## 定义与边界
+
+网络等值是在选定边界端口上保留外部系统电压、电流、阻抗或动态响应的模型压缩技术。它不是简单删除节点，而是把外部网络替换成可接入 [[emtp|EMTP]]、[[pscad-emtdc|PSCAD/EMTDC]] 或 [[rtds|RTDS]] 的等效模型；常见路径包括 [[fdne-model|频变网络等值]]、[[prony-analysis|Prony 分析]]、[[vector-fitting|矢量拟合]] 和 [[passivity-enforcement|无源性补偿]]。
+
+适用边界取决于端口选择、频段、线性化工作点和所需暂态类型。稳态 Ward/REI 等值不能替代宽频 EMT 等值；单端口戴维南等值也不能表达多馈入 HVDC、[[vsc-model|VSC]] 或 [[lcc-model|LCC]] 系统之间的强耦合。
+
+## 代表性来源与内部链接
+
+代表性来源包括 [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo|A time-domain approach to transmission network equivalents via Prony analysis]]、[[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A guaranteed passive model for multi-port frequency-dependent network equivalent]]、[[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f|Efficient implementation of multi-port frequency-dependent network equivalents]] 和 [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A two-layer network equivalent with local passivity compensation]]。相关模型包括 [[synchronous-machine-model]]、[[transmission-line-model]]、[[cable-model]] 和 [[mmc-model]]。
+
 ## 相关方法
 - [[vector-fitting]]
 - [[prony-analysis]]

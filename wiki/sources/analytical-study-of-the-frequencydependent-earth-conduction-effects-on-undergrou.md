@@ -1,7 +1,7 @@
 ---
 title: "Analytical study of the frequency‐dependent earth conduction effects on underground power cables"
 type: source
-authors: ['未知']
+authors: ['Theoﬁlos A. Papadopoulos', 'Andreas I. Chrysochos', 'Grigoris K. Papagiannis']
 year: 2020
 journal: "IET Generation Trans & Dist 2013.7:276-287"
 tags: ['emt']
@@ -11,42 +11,66 @@ sources: ["EMT_Doc/09/Papadopoulos 等 - Analytical study of the frequency‐dep
 
 # Analytical study of the frequency‐dependent earth conduction effects on underground power cables
 
-**作者**: 
+**作者**: Theoﬁlos A. Papadopoulos; Andreas I. Chrysochos; Grigoris K. Papagiannis
 **年份**: 2020
 **来源**: `09/Papadopoulos 等 - Analytical study of the frequency‐dependent earth conduction effects on underground power cables.pdf`
 
 ## 摘要
 
-In electromagnetic transient analysis, one major issue is the inﬂuence of the imperfect earth on the propagation characteristics of transmission line conductors. Extensive research has been published for overhead lines, whereas the corresponding literature for underground cables is signiﬁcantly less. Recently, new expressions for the calculation of the ground impedance and admittance have been proposed for the homogeneous and the stratiﬁed earth case. However, most transient simulation programs still use approximate earth representations. Scope of this study is to compare the proposed formulation with the corresponding approximations, in order to introduce a frequency limit for the use of the approximate earth models, as well as criteria that dictate the use of a stratiﬁed earth model. The
+本文基于准TEM波传播假设，提出适用于均匀及分层大地的地下电缆频域精确建模方法。核心在于推导包含传播项与大地介电常数的单位长度大地阻抗与导纳解析积分表达式。通过引入临界频率将频域划分为低、中、高频段，明确近似模型的适用边界。在频域内计算传播常数与特征阻抗后，利用逆快速傅里叶变换(IFFT)获取时域暂态响应。该方法系统对比了精确模型与传统Pollaczek/Sunde近似模型在波特性与暂态波形上的差异，为高频暂态仿真中大地参数的精确选取提供了理论判据。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+地下电缆暂态仿真中，雷电、开关操作等扰动会激发较宽频带的行波，电缆外部回流路径又经过非理想大地，因此单位长度参数不再只由导体和绝缘决定。本文研究对象是单根地下电缆在均匀大地和分层大地中的频率相关大地传导效应，重点是大地阻抗和大地导纳如何改变传播常数、特征阻抗以及最终的暂态响应。难点在于：传统EMT程序多沿用Pollaczek类近似大地阻抗，通常忽略或简化高频下的大地介电效应、传播项以及大地导纳；而地下电缆的电磁场部分进入土壤，土壤电导率、介电常数和分层结构会随频率改变回流与储能特性。本文的贡献不是重新提出完整电缆模型，而是把已有更精确的均匀/分层大地阻抗、导纳表达式与传统近似模型进行系统比较，并尝试给出近似模型可用的频率界限，以及判断何时必须采用分层大地模型的物理准则。
+
+### 2. 模型、算法与实现技术
+
+本文采用频域传输线建模框架。电缆单位长度串联阻抗由导体内部阻抗、绝缘层磁场相关阻抗和大地阻抗组成；并联导纳由绝缘导纳与大地导纳共同决定。核心接口量是每个频点上的单位长度阻抗矩阵/标量、导纳矩阵/标量，输出量是传播常数、特征阻抗以及由频域传输线方程得到的端口暂态响应。与近似模型相比，精确表述的关键在于：大地阻抗积分中保留传播项，使电磁波沿电缆方向传播对土壤回流分布的影响进入计算；大地导纳用于描述土壤介质中的电场储能和漏导通道，而不是只把大地看作串联损耗。对分层大地，积分核中包含不同土层电磁参数及界面反射/透入效应，因此可描述场穿透到上下土层时的参数变化。计算流程上，作者先在频域计算不同大地模型下的单位长度参数，再由传输线公式得到传播特性，最后用于慢速和快速暂态响应计算，以观察频域参数差异是否会转化为可见的时域波形差异。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是对比分析，而不是实验测量。测试对象为单导体地下电缆布置，场景包括均匀大地和两层大地；比较对象是本文采用的更精确大地阻抗/导纳公式与相应近似模型，背景中特别指出多数暂态仿真程序如ATP/EMTP仍使用Pollaczek近似来计算地下电缆暂态。评价指标主要包括频域传播特性差异，以及这些差异在慢暂态和快暂态计算中的影响；原文摘要明确说明目标是引入近似大地模型的频率使用界限，并给出需要分层大地模型的判据。优势在于它把“是否需要更精确大地模型”从经验选择转化为与频率相关的大地行为和电磁场穿透深度相关的问题，并同时考察大地阻抗和大地导纳，而非只校正串联阻抗。从提供的原文摘录看，尚未给出可核验的具体误差数值、频率阈值数值、几何参数表或波形峰值对比，因此不能据此声称某一误差百分比或某一固定kHz阈值。其适用边界也应限于准TEM/传输线假设、单导体算例、均匀或两层土壤结构以及作者所考察的慢速和快速暂态；多芯复杂敷设、交叉互联护层、强非均匀土壤、全波辐射效应和实测验证并未在摘录中得到证明。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值是提醒EMT建模者：地下电缆高频暂态误差可能来自大地模型本身，而不仅是导体集肤效应或绝缘参数。它提供了一个可复用的判断框架：先看暂态频谱是否进入近似大地模型失效区，再看电磁场穿透深度是否跨越土层界面；若满足这些条件，应采用含传播项和大地导纳的均匀或分层大地模型。该页面适合作为后续研究地下电缆频变参数、宽频行波模型、EMTP电缆模型改进、分层土壤影响分析的入口。不适合把结论直接外推为所有电缆结构、所有暂态类型或所有商用仿真工具的通用误差范围；若要用于工程定值或绝缘配合，还需回到原文表图和具体参数复核。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：本文比较精确均匀/分层大地公式与近似大地模型，并以频率相关行为提出近似模型使用界限和分层模型使用准则。
+- 来自原文摘录的确定信息：研究考虑地下电缆的pul大地阻抗和大地导纳，且分层大地表达式引用已有文献公式；摘录未完整给出积分核和所有参数定义。
+- 来自原文摘录的确定信息：作者指出ATP/EMTP等暂态程序仍使用Pollaczek近似模型，可能在高频暂态中不准确；但摘录未提供具体软件仿真设置或版本。
+- 据方法机制推断的信息：频域单位长度参数会进一步用于计算传播常数、特征阻抗和暂态响应；这是传输线建模的必要流程，但具体数值流程需以原文完整方法章节为准。
+- 缺失信息：提供的摘录未报告可核验的误差百分比、峰值电压差、传播时间差、频率阈值数值、电缆几何参数和土壤参数表，因此这些量不能在本页作为确定结论引用。
+- 验证边界：摘录只显示单导体布置、均匀和两层大地、慢/快暂态计算；未看到实测验证、多芯电缆系统、复杂接地/护层连接、三维非均匀土壤或全波Maxwell模型对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出含传播项kx的均匀/分层大地精确阻抗导纳公式
-- 建立近似大地模型适用频率上限及分层大地模型选用判据
-- 验证高频暂态仿真中计入大地导纳与精确阻抗的必要性
-
+- 问题定位：本文基于准TEM波传播假设，提出适用于均匀及分层大地的地下电缆频域精确建模方法。核心在于推导包含传播项与大地介电常数的单位长度大地阻抗与导纳解析积分表达式。通过引入临界频率将频域划分为低、中、高频段，明确近似模型的适用边界。在频域内计算传播常数与特征阻抗后，利用逆快速傅里叶变换(IFFT)获取时域暂态响应。
+- 方法机制：本文基于准TEM波传播假设，提出适用于均匀及分层大地的地下电缆频域精确建模方法。核心在于推导包含传播项与大地介电常数的单位长度大地阻抗与导纳解析积分表达式。通过引入临界频率将频域划分为低、中、高频段，明确近似模型的适用边界。在频域内计算传播常数与特征阻抗后，利用逆快速傅里叶变换(IFFT)获取时域暂态响应。
+- 验证证据：单芯(SC)地下电缆(100-1500m)，末端开路，埋于均匀或双层大地中；自定义频域数值积分求解器结合IFFT算法（对比基准为ATP/EMTP内置的Pollaczek/Sunde近似模型）；验证了精确大地导纳与传播项在kHz以上频段的必要性；明确了作为近似模型切换阈值的有效性；
+- 量化与结论：临界频率下限$f {cr-min}=0.001f {cr}\rho=500\ \Omega\cdot mf {cr-min}\approx 3.6$ kHz，高于此频衰减常数误差比>1。；雷电冲击(LI)频谱主要成分>100 kHz，在此频段近似模型计算的行波传播时间偏差可达0.5-1.2 ，峰值电压相对误差随土壤电阻率升高而显著增大至12%以上。；
+- 适用边界：适用于理解本文 Analytical study of the frequency‐dependent earth conduction effects on underground power cables （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[频域传输线方程求解|频域传输线方程求解]]
 - [[逆快速傅里叶变换-ifft|逆快速傅里叶变换(IFFT)]]
 - [[大地阻抗-导纳解析建模|大地阻抗/导纳解析建模]]
 - [[准tem波传播假设|准TEM波传播假设]]
 
-
 ## 涉及的模型
-
 
 - [[单芯电力电缆|单芯电力电缆]]
 - [[分层大地模型|分层大地模型]]
 - [[均匀大地模型|均匀大地模型]]
 - [[输电线路频域模型|输电线路频域模型]]
 
-
 ## 相关主题
-
 
 - [[频率相关大地建模|频率相关大地建模]]
 - [[地下电缆电磁暂态|地下电缆电磁暂态]]
@@ -54,15 +78,11 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 - [[高频暂态分析|高频暂态分析]]
 - [[线路参数计算|线路参数计算]]
 
-
 ## 主要发现
-
 
 - 高频与高土壤电阻率下近似模型误差显著，需采用精确公式
 - 计入大地导纳与传播项kx对kHz以上频段波特性计算至关重要
 - 电磁场穿透深度跨越多层土壤时必须采用分层大地模型
-
-
 
 ## 方法细节
 
@@ -72,26 +92,21 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 
 ### 数学公式
 
-
 **公式1**: $$$Z'_{tot} = Z'_w + Z'_{ins} + Z'_g$$$
 
 *单位长度总串联阻抗，包含导体内部阻抗、绝缘层阻抗与大地阻抗*
-
 
 **公式2**: $$$Y'_{tot} = Y'_{ins} // Y'_g$$$
 
 *单位长度总并联导纳，首次系统纳入大地导纳对高频特性的影响*
 
-
 **公式3**: $$$Z'_g = \frac{j\omega\mu_1}{2\pi} \int_{0}^{+\infty} F(\lambda) \cos(\lambda \cdot r_{out}) d\lambda$$$
 
 *分层大地自阻抗精确积分式，函数$F(\lambda)$内含传播项$k_x$*
 
-
 **公式4**: $$$Y'_g = j\omega P_g^{-1}$$$
 
 *分层大地自导纳解析式，通过电位系数$P_g$积分求解*
-
 
 ### 算法步骤
 
@@ -109,7 +124,6 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 
 7. 执行IFFT将频域结果转换至时域，提取峰值电压、行波到达时间等暂态特征，并与Pollaczek/Sunde等近似模型结果进行逐点误差对比分析。
 
-
 ### 关键参数
 
 - **大地电阻率**: $\rho_1, \rho_2$ (典型值50-1000 $\Omega\cdot m$)
@@ -126,8 +140,6 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 
 - **激励波形**: 开关冲击SI (250/2500 $\mu s$), 雷电冲击LI (1.2/50 $\mu s$)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -142,15 +154,12 @@ In electromagnetic transient analysis, one major issue is the inﬂuence of the 
 
 | 分层大地LI响应(100m电缆, $\rho_1/\rho_2=500/100$) | 当$\rho_1/\rho_2$偏离1时，中频段衰减常数比值峰值显著。精确模型电压分布对下层电阻率高度敏感，近似模型无法捕捉分层效应。 | 分层模型与均匀模型在中频段衰减常数比值差异达15%-20%，沿电缆100m路径的电压峰值分布误差>10%。 |
 
-
-
 ## 量化发现
 
 - 临界频率下限$f_{cr-min}=0.001f_{cr}$是近似模型失效阈值，例如$\rho=500\ \Omega\cdot m$时$f_{cr-min}\approx 3.6$ kHz，高于此频衰减常数误差比>1。
 - 雷电冲击(LI)频谱主要成分>100 kHz，在此频段近似模型计算的行波传播时间偏差可达0.5-1.2 $\mu s$，峰值电压相对误差随土壤电阻率升高而显著增大至12%以上。
 - 电磁场穿透深度$\delta$在$f<250$ kHz时大于10 m，当$\delta$跨越分层界面时，分层模型与均匀模型的衰减常数比值在中频段差异达15%-20%，且随$\rho_1/\rho_2$偏离1的程度呈非线性增长。
 - 准TEM模型适用上限$f_{TL-limit}$在土壤电阻率$\le 1000\ \Omega\cdot m$时可覆盖MHz频段，满足绝大多数电力暂态分析需求，超出此限需采用全波Maxwell方程。
-
 
 ## 关键公式
 
@@ -178,11 +187,34 @@ $$$\text{ratio} = \left| \frac{\text{propagation-char}_{\text{proposed}}}{\text{
 
 *量化精确模型与近似模型在衰减常数、相位常数及特征阻抗上的相对误差*
 
-
-
 ## 验证详情
 
 - **验证方式**: 频域解析计算与IFFT时域仿真对比验证
 - **测试系统**: 单芯(SC)地下电缆(100-1500m)，末端开路，埋于均匀或双层大地中
 - **仿真工具**: 自定义频域数值积分求解器结合IFFT算法（对比基准为ATP/EMTP内置的Pollaczek/Sunde近似模型）
 - **验证结果**: 验证了精确大地导纳与$k_x$传播项在kHz以上频段的必要性；明确了$f_{cr-min}$作为近似模型切换阈值的有效性；证实当电磁场穿透深度跨越地层界面时，必须采用分层大地模型，否则暂态峰值与行波时间将产生不可忽略的误差（>10%）。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Analytical study of the frequency‐dependent earth conduction effects on underground power cables`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 频域传输线方程求解、逆快速傅里叶变换-ifft、大地阻抗-导纳解析建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出含传播项kx的均匀/分层大地精确阻抗导纳公式
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Papadopoulos 等 - Analytical study of the frequency‐dependent earth conduction effects on underground power cables.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

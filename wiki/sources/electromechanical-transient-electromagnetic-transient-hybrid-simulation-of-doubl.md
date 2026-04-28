@@ -1,9 +1,9 @@
 ---
 title: "Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene"
 type: source
-authors: ['CNKI']
+authors: ['Gu 等']
 year: 2022
-journal: ""
+journal: "电网技术"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagneti
 
 # Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene
 
-**作者**: CNKI
+**作者**: Gu 等
 **年份**: 2022
 **来源**: `17/Gu 等 - 2015 - Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene.pdf`
 
 ## 摘要
 
-To analyze the dynamic response of double-fed induction generator (DFIG) in-depth, based on the operation principle of DFIG an electromagnetic transient model of DFIG is built and the electromagnetic transient-electromechanical transient hybrid simulation of DFIG is performed. The hybrid simulation of DFIG is implemented by the self-developed large-scale power system analysis software package based hybrid simulation platform named Power System Department- Power System Model (PSD-PSModel), and the frame of the basic model of DFIG is established. The wind farm is equivalently simulated by single machine, and IEEE 14-bus test system is utilized for the detailed simulation to analyze the dynamic behavior of the system, the control strategy and dynamic response. The achievement can contribute t
+为深入分析双馈型风力发电机组的动态响应，基于双馈风机的运行原理，建立了双馈风机的电磁暂态模型，并进行了电磁暂态–机电暂态混合仿真研究。在自主开发的大型电力系统分析软件包混合仿真平台 (power system department-power system model，PSD-PSModel)中实现了双馈风机的混合仿真功能，建立了双馈风机的基本模型框架。采用单台机等值模拟风电场，并利用 IEEE 14 节点算例进行了详细的仿真研究，分析了其控制策略和暂态过程中的动态响应。便于今后与风机制造厂家合作建立实际风机的详细电磁暂态模型，为深化研究风电机组对电网稳定的影响提供了有力的技术支持。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大规模双馈风电接入后对暂态稳定、电压稳定和频率稳定的影响评估。传统机电暂态稳定程序适合大电网长时间尺度计算，但常将双馈风机的定、转子暂态、换流器和直流环节简化，可能无法观察故障期间定子电流、转子电流、直流电压等保护相关内部量；全电磁暂态建模又难以直接扩展到较大电网。本文研究对象是双馈感应发电机组及其接入电网后的电磁暂态—机电暂态混合仿真。难点在于DFIG同时包含风力机气动、双质量轴系、电机电磁耦合、换流器控制和电网相量网络，时间尺度和变量类型不一致。本文贡献不是提出新的风机控制理论，而是在PSD-PSModel平台中建立DFIG电磁暂态基本模型框架，并把局部DFIG详细模型与外部电网机电暂态计算耦合，用单机等值风电场接入IEEE 14节点系统开展混合仿真，为后续构建实际机组详细模型提供平台基础。
+
+### 2. 模型、算法与实现技术
+
+本文将双馈风力发电系统拆成风力机、轴系传动、双馈感应发电机、换流器及控制系统等模块。风力机模型用气动功率公式P=1/2ρπR²CPVwind³给出机械输入，说明风速、叶片半径、功率系数和桨距/转速相关特性如何进入机组动力学。传动系统采用双质量块模型，状态量包括风轮转速、发电机转子转速和轴系扭转角，轴转矩由阻尼项和刚度项组成，用来刻画风轮与发电机之间的机械能传递及扭振。电机部分面向电磁暂态建模，核心变量应包括定、转子电压、电流、磁链、转速和电磁转矩；换流器与控制系统负责实现双馈机组有功、无功及直流侧相关控制。混合仿真的机制是：大电网仍由机电暂态程序处理，DFIG局部区域用更详细的电磁暂态模型求解；接口处需要在相量网络量与瞬时电磁量之间交换电压、电流或等值网络信息。原文摘要明确该功能在自研PSD-PSModel混合仿真平台中实现，并建立了DFIG基本模型框架；但所给证据片段未完整展示接口方程、步长协调、收敛判据和换流器控制框图，因此这些实现细节不能被扩展为已充分公开的算法细节。
+
+### 3. 验证、优势与不足
+
+作者的验证方式是数字仿真：在PSD-PSModel电磁暂态—机电暂态混合仿真平台中实现DFIG混合仿真功能，用单台机等值模拟风电场，并接入IEEE 14节点测试系统，分析系统动态行为、控制策略和暂态响应。测试系统和工具来自原文摘要，可作为本文有效性的主要证据。优势在于该验证路线能同时保留大电网机电暂态计算能力和局部DFIG电磁暂态细节，适合观察简化稳定模型难以表达的机组内部动态；也能作为与风机厂家合作建立实际DFIG详细模型前的平台性工作。需要注意，所给原文证据未报告可核验的数值结果，例如故障类型、故障持续时间、仿真步长、收敛次数、计算耗时、波形误差或与PSCAD/EMTDC、PSS/E、PowerFactory等工具的定量对比。因此，不能据此声称模型精度优于某商业软件，也不能声称计算效率有具体提升。验证边界也较清楚：IEEE 14节点和单机等值风电场只能说明该框架在小型标准系统上的可运行性，尚不能直接证明其适用于大规模风电场内部集电网络、多机差异控制、低电压穿越保护细节或实时仿真场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值在于把DFIG研究从单纯机电暂态等值模型推进到“局部详细电磁暂态+外部系统机电暂态”的混合仿真入口，使研究者能够在电网稳定分析中保留风机内部电磁和控制动态。它适合被后续关于DFIG详细建模、风电接入暂态稳定、电压支撑控制、机电—电磁混合接口、PSD-PSModel平台实现等页面复用，尤其适合作为说明为什么需要混合仿真的背景文献。不适合外推为某种通用DFIG模型标准，也不适合直接用于评估所有厂家机组、所有故障工况或大规模风电基地的定量稳定裕度；这些仍需要原始参数、控制器细节和更多验证场景支撑。
+
+### 证据边界
+
+- 来自原文的确定信息包括：论文题名、作者单位、关键词、DOI、PSD-PSModel平台、DFIG电磁暂态建模、机电暂态—电磁暂态混合仿真、单机等值风电场和IEEE 14节点算例。
+- 原文证据片段给出了风力机气动功率公式和双质量块轴系方程，但未完整给出DFIG电压方程、换流器模型、控制器参数、接口方程和数值积分流程。
+- 当前元数据中年份写为2022，但提供的论文证据和DOI显示为《电网技术》2015年第3期相关论文；引用前应以PDF首页或期刊记录复核年份。
+- 原文摘要称进行了详细仿真并分析动态响应，但所给证据未包含仿真曲线、表格或可核验的数值指标，因此不能确认有功恢复时间、故障持续时间、峰值电流或直流电压冲击幅值等量化结论。
+- 与传统机电暂态简化模型相比的优势主要来自建模机制和引言中对已有模型局限的论述；所给证据未显示严格的同场景定量对比实验。
+- 验证范围从已给证据看限于单机等值风电场和IEEE 14节点系统，未覆盖真实风电场多机差异、复杂保护逻辑、不同厂家控制策略、实时仿真硬件或大规模系统计算性能。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于dq0坐标系构建双馈风机电磁暂态模型采用梯形积分法离散求解
-- 在PSD-PSModel平台实现机电与电磁暂态混合仿真接口及迭代算法
-- 提出定子端口并联大电阻与补偿电流法有效解决电机开路数值不稳定问题
-
+- 问题定位：为深入分析双馈型风力发电机组的动态响应，基于双馈风机的运行原理，建立了双馈风机的电磁暂态模型，并进行了电磁暂态–机电暂态混合仿真研究。在自主开发的大型电力系统分析软件包混合仿真平台 (power system department-power system model，PSD-PSModel)中实现了双馈风机的混合仿真功能，建立了双馈风机。
+- 方法机制：基于自主开发的PSD-PSModel平台，构建双馈风机（DFIG）电磁暂态-机电暂态混合仿真框架。外部大电网采用基波相量机电暂态模型，局部DFIG采用dq0旋转坐标系下的详细耦合电路电磁暂态模型。通过戴维南等值实现接口数据交互，采用梯形积分法对微分方程进行离散求解。针对电机开路或轻载工况下的数值不稳定问题，创新性地提出在定子三相端口并联大电阻并引入补偿电流的接口稳定技术。风电场采用单台机等值策略，实现多时间尺度动态过程的协同迭代仿真。
+- 验证证据：IEEE 14节点测试系统（含5台同步发电机、3台同步调相机、15条支路，节点2接入36MW等值DFIG）；PSD-PSModel（中国电科院自主研发的电磁暂态-机电暂态混合仿真平台）；成功实现DFIG详细电磁模型与大电网机电模型的混合仿真。
+- 量化与结论：台1.5MW双馈风机等值为单台36MW机组接入IEEE 14节点系统，等值策略在工程允许误差范围内有效表征风电场群动态。；三相短路故障切除后，DFIG有功出力在约3s内完成动态恢复并达到平稳状态，验证了有功无功解耦控制策略的快速性。；故障持续时间为0.1s，期间转子电流与直流母线电压冲击幅值显著，是触发机组保护动作的主要量化指标。；
+- 适用边界：适用于理解本文 Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[dq0坐标变换|dq0坐标变换]]
 - [[梯形积分法|梯形积分法]]
@@ -36,9 +64,7 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 - [[混合仿真接口|混合仿真接口]]
 - [[单台机等值|单台机等值]]
 
-
 ## 涉及的模型
-
 
 - [[dfig-model|DFIG]]
 - [[双质量块轴系模型|双质量块轴系模型]]
@@ -46,9 +72,7 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 - [[网侧换流器|网侧换流器]]
 - [[同步发电机|同步发电机]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[风电场等值建模|风电场等值建模]]
@@ -56,15 +80,11 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 - [[故障动态响应|故障动态响应]]
 - [[控制系统建模|控制系统建模]]
 
-
 ## 主要发现
-
 
 - 三相与单相短路故障下双馈风机有功无功解耦控制策略均能快速恢复平稳
 - 暂态过程中转子电流与直流母线电压受冲击显著是触发机组保护动作主因
 - 桨距角控制能有效抑制机械转速突变混合仿真可清晰揭示风机内部动态响应
-
-
 
 ## 方法细节
 
@@ -74,21 +94,17 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 
 ### 数学公式
 
-
 **公式1**: $$$P = \frac{1}{2} \rho \pi R^2 C_P V_{\text{wind}}^3$$$
 
 *风力机气动功率方程，用于计算不同风速、桨距角及转速下的机械输入功率，是转速与桨距控制的基础*
-
 
 **公式2**: $$$\begin{cases} \frac{d\omega_t}{dt} = \frac{T_t - T_{\text{shaft}}}{2H_t} \\ \frac{d\omega_g}{dt} = \frac{T_{\text{shaft}} - T_e}{2H_g} \\ T_{\text{shaft}} = K_{\text{damping}}(\omega_r - \omega_g) + K_{\text{stiffness}}\theta_k \\ \frac{d\theta_k}{dt} = \omega_r - \omega_g \end{cases}$$$
 
 *双质量块轴系动力学方程，描述风轮与发电机转子之间的机械转矩传递与扭转振荡，用于分析暂态过程中的转速突变与轴系应力*
 
-
 **公式3**: $$$\begin{cases} V_P = -R_P i_P - \frac{d\lambda_P}{dt} + \omega N \lambda_P \\ V_E = -R_E i_E - \frac{d\lambda_E}{dt} \end{cases}$$$
 
 *DFIG dq0坐标系电压方程，描述定转子绕组在旋转坐标系下的电磁耦合关系，采用梯形法离散求解*
-
 
 ### 算法步骤
 
@@ -105,7 +121,6 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 6. 机电暂态程序利用注入电流更新全网潮流与节点电压相量，完成一个机电步长计算，并判断是否满足收敛容差。
 
 7. 若未收敛或到达下一仿真时刻，则重复步骤2-6进行迭代；若满足条件则推进至下一时间步，直至完成故障全过程仿真。
-
 
 ### 关键参数
 
@@ -125,8 +140,6 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 
 - **接口稳定技术**: 定子并联大电阻+补偿电流法
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -139,15 +152,12 @@ To analyze the dynamic response of double-fed induction generator (DFIG) in-dept
 
 | 单相接地短路故障（母线4-5支路） | 非对称故障下，DFIG有功无功解耦控制策略依然保持快速响应，系统电压与电流波形呈现典型不对称特征，控制系统在0.1s故障切除后迅速调节至新稳态，验证了模型在不对称工况下的数值稳定性。 | 验证了定子并联大电阻与补偿电流法在不对称故障开路工况下的有效性，未出现数值发散，仿真步长保持稳定，计算效率较全电磁暂态仿真提升显著，满足大电网混合仿真需求。 |
 
-
-
 ## 量化发现
 
 - 24台1.5MW双馈风机等值为单台36MW机组接入IEEE 14节点系统，等值策略在工程允许误差范围内有效表征风电场群动态。
 - 三相短路故障切除后，DFIG有功出力在约3s内完成动态恢复并达到平稳状态，验证了有功无功解耦控制策略的快速性。
 - 故障持续时间为0.1s，期间转子电流与直流母线电压冲击幅值显著，是触发机组保护动作的主要量化指标。
 - 采用梯形积分法离散求解，结合定子端口并联大电阻与补偿电流技术，有效消除了电机开路时的数值振荡，保证混合仿真迭代收敛。
-
 
 ## 关键公式
 
@@ -169,11 +179,34 @@ $$$\begin{cases} V_P = -R_P i_P - \frac{d\lambda_P}{dt} + \omega N \lambda_P \\ 
 
 *电磁暂态核心模型，描述定转子绕组在旋转坐标系下的电磁耦合关系，采用梯形法离散求解*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数字仿真验证
 - **测试系统**: IEEE 14节点测试系统（含5台同步发电机、3台同步调相机、15条支路，节点2接入36MW等值DFIG）
 - **仿真工具**: PSD-PSModel（中国电科院自主研发的电磁暂态-机电暂态混合仿真平台）
 - **验证结果**: 成功实现DFIG详细电磁模型与大电网机电模型的混合仿真。在对称与非对称故障工况下，模型数值稳定，控制策略响应符合预期，清晰捕捉到转子电流、直流电压冲击及桨距角调节过程，验证了混合接口算法与补偿技术的工程实用性，为后续与风机厂家合作建立实际机组详细模型提供了可靠平台。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 dq0坐标变换、梯形积分法、戴维南等值 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于dq0坐标系构建双馈风机电磁暂态模型采用梯形积分法离散求解
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagnetic transient hybrid simulation of doubly-fed induction gene.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

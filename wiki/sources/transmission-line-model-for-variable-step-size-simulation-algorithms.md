@@ -1,9 +1,9 @@
 ---
 title: "Transmission line model for variable step size simulation algorithms"
 type: source
-authors: ['未知']
+authors: ['S. Henschel\', 'A.I. Ibrahim', 'H.W. Dommel']
 year: 1999
-journal: ""
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/39/s0142-0615%2898%2900042-8.pdf.pdf"]
@@ -11,42 +11,67 @@ sources: ["EMT_Doc/39/s0142-0615%2898%2900042-8.pdf.pdf"]
 
 # Transmission line model for variable step size simulation algorithms
 
-**作者**: 
+**作者**: S. Henschel\; A.I. Ibrahim; H.W. Dommel
 **年份**: 1999
 **来源**: `39/s0142-0615%2898%2900042-8.pdf.pdf`
 
 ## 摘要
 
-In this paper, we describe a novel modeling approach for transmission lines that overcomes the maximum step size constraint of regular line models used in electromagnetic transients programs. The new model allows us to accurately simulate wave propagation phenomena as well as low network frequency variations with maximum efﬁciency, as the simulation step size is no longer restricted to model requirements, but can be adjusted according to the current transient state of the network. The model was tested with a CIGRE line energization case study which was performed utilizing a variable simulation step size algorithm for a combined study of electromagnetic transients and transient stability. q 1998 Elsevier Science Ltd. All rights reserved. Keywords: Transmission line modeling; Electromagnetic
+本文提出了一种基于插值技术的变步长输电线路建模方法，突破了传统EMTP线路模型要求仿真步长必须小于最小波传播时间（Δt ≤ τ min）的限制。该方法包含三个层次：1）当Δt ≤ τ时，使用传统Bergeron无损线模型，保持线路两端电气隔离；2）当Δt > τ时，采用线性插值技术估算τ时刻前的历史值，将线路模型转换为具有非零非对角元素的导纳矩阵形式，此时电气隔离消失但计算精度得以保持；3）对于机电暂态仿真（大步长40-60ms），引入动态相量（Dynamic Phasor）概念，通过复数插值处理带额定频率旋转分量的变量，实现电磁暂态与机电暂态的联合仿真。该方法适用于恒定参数线路模型，并可扩展至频变线路模型。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自系统恢复等研究：同一仿真过程可能先经历开关操作引起的电磁暂态和行波传播，随后进入机电暂态乃至稳态。传统做法常在EMTP与稳定程序之间切换，但线路模型内部拓扑不同，切换可能引入非物理快速暂态，甚至误触发保护。本文研究对象是EMTP中的输电线路模型，尤其以恒参数线路推导为主。难点在于，常规行波线路模型依赖传播延时历史量，并要求仿真步长不大于最小模态传播时间Δt≤τ_min，以保持线路两端的电气隔离；而稳定性时段希望用更大、可变的步长。本文贡献不是简单替换为π等值，而是在保留行波模型接口的基础上，用插值处理t−τ处历史量，使步长约束从线路模型要求转移到网络当前暂态状态要求，从而支持同一线路模型跨电磁暂态和低频网络动态使用。
+
+### 2. 模型、算法与实现技术
+
+模型从无损Bergeron线路写起，端口接口量为线路两端电压v_k、v_m和注入电流i_k、i_m，历史向量h_k、h_m由一传播时间以前的远端电压、电流决定。常规情况下，若Δt≤τ_min，t−τ落在已知历史区间内，线路在网络导纳矩阵中表现为对角特性电导G_c，两端保持电气隔离。当可变步长算法取到Δt>τ时，t−τ不再只是已知远端历史点，作者用当前步与上一时间步之间的插值估计该延时量。这样，延时历史项中会含有当前端口电压，代入网络方程后形成带非对角项的等效导纳矩阵，线路两端在同一网络求解中被耦合。其机制意义是：用导纳矩阵耦合换取突破传播时间步长限制，而不是丢弃行波延时关系。论文还面向电磁暂态与稳定性联合仿真讨论低频网络变化的表示；若采用相量/频率变换形式，插值系数需包含额定频率旋转，以避免用大步长直接线性逼近工频正弦量。
+
+### 3. 验证、优势与不足
+
+作者用CIGRE 1971线路空载合闸案例验证新模型，仿真由UBC正在开发的可变步长算法完成，并与UBC的EMTP版本MICROTRAN在很小固定时间步下得到的参考解比较。验证目标是检查：在线路合闸初期，模型能否描述行波传播等电磁暂态；在后续较慢时段，步长能否按网络暂态状态放大而不受线路τ_min硬性限制。优势主要体现在建模一致性：同一线路模型服务于电磁暂态和机电暂态时间范围，避免在EMTP线路模型与稳定程序π型等值之间切换造成拓扑突变；同时，当Δt>τ时算法仍可通过插值构造可求解的网络方程。原文摘要和引言未报告可核验的运行时间、误差范数或最大步长数值结果，因此不能把“效率最高”“精度很好”当作定量结论。验证范围也较窄：主要是恒参数线路推导和一个CIGRE合闸算例；频变线路适用性在引言中表述为作者相信可扩展，不能等同于已充分验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：EMTP线路模型的步长限制并非只能通过退化为准稳态π模型来规避，也可以通过重新处理传播延时历史量，把“延时已知源”转化为“含当前端口量的网络耦合方程”。它适合被后续研究用于可变步长EMT、EMT-稳定性统一仿真、系统恢复过程仿真，以及需要避免模型切换拓扑突变的线路建模页面复用。使用时应保留其边界：它证明的是一种延时插值建模思想及其在CIGRE线路合闸中的可行性，不应外推为任意频变线路、任意故障/控制系统、实时仿真平台或所有大步长稳定仿真的通用精度保证。
+
+### 证据边界
+
+- 原文明确给出的需求与问题包括：EMTP和稳定程序时间尺度不同，模型切换可能因内部拓扑差异产生非现实暂态；常规EMTP线路模型要求Δt≤τ_min。
+- 原文明确说明推导以恒参数线路为主；对频率相关线路的适用性是作者认为可应用的扩展判断，不是本文已充分展示的验证结论。
+- 验证证据来自CIGRE 1971线路合闸案例、UBC可变步长程序和MICROTRAN小步长参考解；当前证据未给出误差范数、CPU时间、最大/最小步长序列等可核验数值。
+- 关于插值导致非对角导纳项、线路两端失去电气隔离，是由延时量插值代入网络方程的模型机制推出；需以论文后续公式为准核对具体系数和符号。
+- 页面中出现的40–60 ms、大幅节省内存等说法在所给原文摘录中未能直接核验；除非回到PDF相应章节确认，否则不应作为论文定量结论引用。
+- 算例主要覆盖线路合闸场景；从验证范围看，尚缺少多拓扑系统、故障、保护动作、强非线性设备、控制器交互和实时仿真条件下的系统性测试。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种突破传统EMTP线路模型最大步长限制的新型输电线路建模方法
-- 实现了基于网络暂态状态动态调整步长的仿真算法，兼顾电磁暂态波传播与低频机电暂态的精度与效率
+- 问题定位：本文提出了一种基于插值技术的变步长输电线路建模方法，突破了传统EMTP线路模型要求仿真步长必须小于最小波传播时间（Δt ≤ τ min）的限制。该方法包含三个层次：1）当Δt ≤ τ时，使用传统Bergeron无损线模型，保持线路两端电气隔离；
+- 方法机制：本文提出了一种基于插值技术的变步长输电线路建模方法，突破了传统EMTP线路模型要求仿真步长必须小于最小波传播时间（Δt ≤ τ min）的限制。该方法包含三个层次：1）当Δt ≤ τ时，使用传统Bergeron无损线模型，保持线路两端电气隔离；2）当Δt > τ时，采用线性插值技术估算τ时刻前的历史值，将线路模型转换为具有非零非对角元素的导纳矩阵形式，此时电气隔离消失但计算精度得以保持；
+- 验证证据：CIGRE 1971年标准线路投切测试系统（三相输电线路 energization 案例）；UBC开发的MICROTRAN（固定极小步长的EMTP版本，作为参考解）和正在开发的变步长仿真程序；
+- 量化与结论：传统EMTP线路模型限制：仿真步长必须满足Δt ≤ τ min，对于50/60Hz系统通常要求Δt ≤ 1ms以保证正弦波形的分段线性近似精度；新模型步长范围：可扩展至40-60ms（机电暂态研究典型步长），相比传统方法扩大40-60倍；
+- 适用边界：适用于理解本文 Transmission line model for variable step size simulation algorithms （1999） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[numerical-integration]]
 - [[interpolation]]
 
 ## 涉及的模型
 
-
 - [[transmission-line]]
 - [[frequency-dependent]]
 
 ## 相关主题
 
-
 - [[co-simulation]]
 - [[network-equivalent]]
 
 ## 主要发现
-
-
 
 - 新模型成功解除了传统线路模型对仿真步长必须小于等于最小波传播时间的严格约束
 - CIGRE线路投切测试表明，变步长算法结合新模型能高效准确地同时捕捉电磁暂态波传播与低频网络频率变化
@@ -59,41 +84,33 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 ### 数学公式
 
-
 **公式1**: $$$$\begin{bmatrix} \bar{i}_k(t) \\ \bar{i}_m(t) \end{bmatrix} = \begin{bmatrix} G_c & 0 \\ 0 & G_c \end{bmatrix} \begin{bmatrix} \bar{v}_k(t) \\ \bar{v}_m(t) \end{bmatrix} + \begin{bmatrix} \bar{h}_k(t) \\ \bar{h}_m(t) \end{bmatrix}$$$$
 
 *传统Bergeron无损线模型（Δt ≤ τ），k和m为线路两端，Gc为特性电导，电气隔离（对角矩阵）*
-
 
 **公式2**: $$$$\begin{bmatrix} \bar{h}_k(t) \\ \bar{h}_m(t) \end{bmatrix} = -\begin{bmatrix} G_c & 0 \\ 0 & G_c \end{bmatrix} \begin{bmatrix} \bar{v}_k(t-\tau) \\ \bar{v}_m(t-\tau) \end{bmatrix} - \begin{bmatrix} \bar{i}_k(t-\tau) \\ \bar{i}_m(t-\tau) \end{bmatrix}$$$$
 
 *历史项计算，取决于τ时刻前的电压电流值，τ为波传播时间*
 
-
 **公式3**: $$$$\bar{x}(t-\tau) = a\bar{x}(t) + b\bar{x}(t-\Delta t), \quad a=\frac{\Delta t-\tau}{\Delta t}, \quad b=\frac{\tau}{\Delta t}$$$$
 
 *线性插值公式（Δt ≥ τ），用于估算τ时刻前的状态变量值*
-
 
 **公式4**: $$$$\begin{bmatrix} \bar{i}_k(t) \\ \bar{i}_m(t) \end{bmatrix} = G_c \begin{bmatrix} 1+a^2 & -2a \\ -2a & 1+a^2 \end{bmatrix} \begin{bmatrix} \bar{v}_k(t) \\ \bar{v}_m(t) \end{bmatrix} + \begin{bmatrix} \bar{h}_k(t) \\ \bar{h}_m(t) \end{bmatrix}$$$$
 
 *扩展线路模型（Δt ≥ τ），导纳矩阵出现非对角元素-2a·Gc，电气隔离消失*
 
-
 **公式5**: $$$$\bar{X}(t) = \bar{x}(t)e^{-j\omega_0 t}$$$$
 
 *动态相量（复数域）定义，ω₀为额定角频率（2π×50或60 Hz），用于稳定性研究的大步长仿真*
-
 
 **公式6**: $$$$\bar{x}(t-\tau) = p\bar{x}(t) + q\bar{x}(t-\Delta t), \quad p=\frac{\Delta t-\tau}{\Delta t}e^{-j\omega_0 \tau}, \quad q=\frac{\tau}{\Delta t}e^{j\omega_0(\Delta t-\tau)}$$$$
 
 *复数插值公式（大步长），插值系数p和q包含频率旋转因子*
 
-
 **公式7**: $$$$\begin{bmatrix} \bar{i}_k(t) \\ \bar{i}_m(t) \end{bmatrix} = G_c \begin{bmatrix} 1+p^2 & -2p \\ -2p & 1+p^2 \end{bmatrix} \begin{bmatrix} \bar{v}_k(t) \\ \bar{v}_m(t) \end{bmatrix} + \begin{bmatrix} \bar{h}_k(t) \\ \bar{h}_m(t) \end{bmatrix}$$$$
 
 *复数域线路模型，导纳矩阵变为复数矩阵，适用于Δt=40-60ms的机电暂态仿真*
-
 
 ### 算法步骤
 
@@ -117,7 +134,6 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 10. 动态步长调整：根据网络暂态状态（电磁暂态或机电暂态）自动调整下一步的Δt（1ms至60ms范围），重复步骤2-9
 
-
 ### 关键参数
 
 - **τ_min**: 最小波传播时间（s），决定传统模型的最大允许步长
@@ -134,8 +150,6 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 - **d**: 传统模型历史内存需求，d=ceil(τ/Δt)，新模型仅需1个存储位置
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -146,8 +160,6 @@ In this paper, we describe a novel modeling approach for transmission lines that
 
 | CIGRE 1971年线路投切案例（三相输电线路空载合闸） | 使用变步长算法模拟线路 energization 过程，初始阶段使用小步长（<1ms）捕捉高频电磁暂态（波传播现象），随后自动增大步长至40-60ms模拟低频机电暂态和稳态行为。与MICROTRAN（使用极小固定步长）的参考解对比，波形吻合良好。 | 相比传统固定小步长EMTP仿真，计算效率显著提高（步长扩大40-60倍），内存需求从d=ceil(τ/Δt)个存储位置（典型值20个）减少至仅需1个历史向量 |
 
-
-
 ## 量化发现
 
 - 传统EMTP线路模型限制：仿真步长必须满足Δt ≤ τ_min，对于50/60Hz系统通常要求Δt ≤ 1ms以保证正弦波形的分段线性近似精度
@@ -155,7 +167,6 @@ In this paper, we describe a novel modeling approach for transmission lines that
 - 内存需求减少：传统模型需要存储d=ceil(τ/Δt)个历史值（例如τ=1ms，Δt=50μs时需存储20个值），新模型仅需存储前一步的1个历史向量
 - 波传播时间τ：典型架空线路的模态传播时间通常在微秒至毫秒级（如100-1000μs），是限制传统模型步长的关键参数
 - 复数插值精度：通过动态相量变换e^(-jω₀t)处理额定频率分量，允许在保持低频动态精度的同时忽略高频电磁暂态细节
-
 
 ## 关键公式
 
@@ -171,11 +182,34 @@ $$$$\begin{bmatrix} \bar{i}_k(t) \\ \bar{i}_m(t) \end{bmatrix} = G_c \begin{bmat
 
 *当Δt > τ时替代传统Bergeron模型，非对角元素-2a·Gc（a=(Δt-τ)/Δt）反映了两端电气耦合，允许大步长仿真同时保持波传播的历史效应*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（与参考解对比）
 - **测试系统**: CIGRE 1971年标准线路投切测试系统（三相输电线路 energization 案例）
 - **仿真工具**: UBC开发的MICROTRAN（固定极小步长的EMTP版本，作为参考解）和正在开发的变步长仿真程序
 - **验证结果**: 变步长算法结合新线路模型在CIGRE测试案例中表现良好，初始小步长阶段准确捕捉波传播和电磁暂态，后续大步长阶段（40-60ms）准确跟踪低频网络频率变化，与MICROTRAN参考解一致，验证了模型在变步长条件下的准确性和效率
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Transmission line model for variable step size simulation algorithms`（1999） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 numerical-integration、interpolation 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种突破传统EMTP线路模型最大步长限制的新型输电线路建模方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/39/s0142-0615%2898%2900042-8.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

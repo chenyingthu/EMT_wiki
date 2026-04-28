@@ -1,9 +1,9 @@
 ---
 title: "Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model"
 type: source
-authors: ['CNKI']
+authors: ['Bai 等']
 year: 2023
-journal: ""
+journal: "中国电机工程学报"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/13&14/files/Bai 等 - 2018 - Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model; [基于多频率相量模型的动态同步相量测量算法].pdf"]
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/13&14/files/Bai 等 - 2018 - Dynamic Synchrophasor Estimator 
 
 # Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model
 
-**作者**: CNKI
+**作者**: Bai 等
 **年份**: 2023
 **来源**: `13&14/files/Bai 等 - 2018 - Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model; [基于多频率相量模型的动态同步相量测量算法].pdf`
 
 ## 摘要
 
-When the power system was suffered from unbalance and fault, the fundamental frequency would deviate from the nominal frequency, and the measurement accuracy of synchrophasor estimator also would rapidly reduce. Therefore, a dynamic synchrophasor estimator was proposed based on multi-frequency phasor model. The multi-frequency phasor model was employed to reflect the effective information around real frequency, and to establish a phasor model including multi-frequency phasor. The accuracy phasor value could be obtained by estimating rough frequency, looking the matrix table calculated offline, revising the discrete Fourier transform (DFT) value and shifting phasor. Test results of both simulated signals and PSCAD/EMTDC generated signal show that the proposed estimator can provide accurate 
+电力系统中由于发电出力与负载不平衡导致基波频率偏移，进而造成同步相量测量精度迅速下降。基于此，该文提出基于多频率相量模型的动态同步相量测量算法。首先，算法利用多个不同旋转频率的子相量来描述真实频率附近的有效信息，并以此对动态相量进行建模；其次，通过计算粗估频率、调用离线矩阵、修正离散傅里叶变换结果及相移运算等步骤来获得精确的相量测量值。最后，仿真结果表明，算法虽然增加了有限的运算量，但在频率斜坡变化、功率振荡等动态工况中，能够减小频率偏移带来的不利影响，提供准确的测量结果。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自PMU/广域测量系统在扰动期间仍要给出可信同步相量。电网负荷波动、发电与负载不平衡、故障等会使基波频率偏离标称值，并伴随电压/电流幅值振荡；此时按标称频率做DFT会产生非同步采样和频谱泄漏，导致幅值、相角和频率估计误差迅速增大。研究对象是动态工况下的基波同步相量估计，尤其是频率在真实值附近偏移、斜坡变化及功率振荡时的电压/电流波形。难点在于：传统DFT计算快但默认频率锁定在标称值；泰勒级数模型能描述动态变化，却未充分处理大范围频偏；插值DFT可提高频率估计精度，但依赖窗函数和较多采样点，运算负担更高。本文的贡献是把真实频率附近的信息表示为多个不同旋转频率的“子相量”，形成多频率相量模型，并通过粗估频率、查离线修正矩阵、修正DFT结果和报告时刻相移校正，降低频偏造成的泄漏误差，而不是仅在标称频率附近做泰勒展开或频谱插值。
+
+### 2. 模型、算法与实现技术
+
+本文提出的核心模型是多频率相量模型（MFPM）：用中心粗估频率及其两侧按Δf间隔分布的若干子相量共同拟合动态基波信号。其核心未知量是各子相量复系数A_m；输入是采样信号x(n)、标称频率f0、采样频率、窗函数、数据窗位置和粗估频率；输出是报告时刻的同步相量幅值、相角及频率估计。机制上，算法先对窗内采样值按标称DFT频率计算相量，得到不同数据窗几何中心处的DFT结果；再利用相邻窗DFT相位差估计粗略基频，并四舍五入到整数频率，用于选择预先离线计算的修正矩阵。公式中的\hat{X}=CA+DA^*说明，实际DFT结果不仅包含正序旋转子相量贡献，也包含共轭项引起的影响；因此不能简单把DFT值当作真实相量。作者将该关系改写成最小二乘问题，用F=(G^TG)^{-1}G^T对DFT向量进行修正，在线只需查表和矩阵乘法即可求得各子相量参数。最后把所有子相量叠加得到计算参考时刻的总相量，并按报告时刻与参考时刻的时间差进行复数旋转，实现与PMU标准报告时刻对齐。
+
+### 3. 验证、优势与不足
+
+作者采用两类验证：一类是MATLAB中的数学信号测试，覆盖静态频偏、频率斜坡、功率振荡和含噪声工况；另一类是PSCAD/EMTDC生成的电磁暂态波形，测试系统为120MW发电机经200km双回输电线路接入无穷大系统。对比基线包括传统动态相量测量算法DPMA以及页面中提到的CT-DFT；评价指标包括总相量误差TVE、幅值误差、相角误差和阶跃响应时间，并以IEEE C37.118相关限值作为参照。已有抽取结果显示，在45–55Hz静态频偏范围内MFPM的TVE保持在0.8%以内，而DPMA在两端频偏时约为8%；在45Hz基频叠加5Hz振荡时，MFPM最大TVE为0.6435%，DPMA为11.1224%，CT-DFT为0.7756%；采用7个数据窗时幅值和相角阶跃响应时间分别为52.44ms和113.47ms。优势主要体现在频率偏离标称值时仍能用附近多频率子相量吸收有效信息，减少DFT非同步误差，同时在线计算量只小幅增加。边界也很明确：验证集中在给定采样率、窗长、子相量数量、频偏范围、噪声设置和单机—线路—无穷大系统；未证明其在谐波密集、间谐波、衰减直流、复杂保护故障、多机大系统或真实PMU硬件实时实现中的性能。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于：同步相量动态误差不必只通过更复杂窗函数或更多插值点修正，也可以把“基波不是一个固定旋转频率”作为建模对象，用真实频率附近的一组子相量共同解释DFT观测值。它适合用于后续关于PMU算法、动态相量建模、频偏鲁棒DFT修正、EMT仿真波形后处理、广域测量信号分析的页面复用，也可作为比较泰勒模型、插值DFT和频率自适应相量估计方法的入口。不宜外推为所有暂态测量问题的通用最优算法；特别是在原文未覆盖的硬件平台、极端故障、强谐波/间谐波、不同采样率和不同报告率下，仍需重新验证离线矩阵、窗长与响应时间的匹配关系。
+
+### 证据边界
+
+- 题名、作者、单位、摘要、关键词、引言问题定位以及DFT修正关系式来自给定原文抽取文本；静态频偏、振荡TVE、响应时间等量化数值来自当前页面整理结果，深度引用前应回查原文表图。
+- 元数据存在不一致：用户元数据给出year为2023，而源文件路径含“2018”；当前回答不据此判断正式发表年份，建议核对论文首页或期刊数据库。
+- 算法参数如N=48、fs=2400Hz、M=1、Δf=1Hz、7个数据窗等来自当前页面抽取；若原文参数表有不同设置，应以原文为准。
+- PSCAD/EMTDC验证系统为120MW发电机、200km双回线路、无穷大系统；从验证范围看，不能直接代表多机系统、配电网、含电力电子主导系统或真实PMU硬件。
+- 文中优势主要针对频率偏移、斜坡和功率振荡；对谐波、间谐波、衰减直流、饱和互感器误差、通信时标误差等影响没有在给定证据中充分验证。
+- 离线矩阵查表降低在线计算量这一点来自方法机制；但内存占用、不同频率分辨率下矩阵规模、实时嵌入式实现代价在给定证据中未见完整实验。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出多频率相量模型，利用多子相量旋转频率描述真实频偏附近的有效信号信息。
-- 结合粗估频率与离线矩阵查表修正DFT结果，实现动态工况下的高精度相量估计。
-
+- 问题定位：电力系统中由于发电出力与负载不平衡导致基波频率偏移，进而造成同步相量测量精度迅速下降。基于此，该文提出基于多频率相量模型的动态同步相量测量算法。首先，算法利用多个不同旋转频率的子相量来描述真实频率附近的有效信息，并以此对动态相量进行建模；其次，通过计算粗估频率、调用离线矩阵、修正离散傅里叶变换结果及相移运算等步骤来获得精确的相量测量值。
+- 方法机制：本文提出一种基于多频率相量模型(MFPM)的动态同步相量估计算法。针对电力系统频率大范围偏移导致传统DFT和泰勒级数法精度下降的问题，该算法利用多个不同旋转频率的子相量对真实频率附近的动态信号进行建模。首先通过相邻数据窗的DFT结果计算相位差，获得粗估频率；随后根据粗估频率调用预先离线计算好的修正矩阵，利用最小二乘法对DFT频谱泄漏进行补偿，解算出各子相量参数；最后将子相量求和并进行相移运算，对齐至标准报告时刻。
+- 验证证据：自定义数学信号模型(静态/斜坡/振荡/噪声)及PSCAD/EMTDC搭建的120MW发电机-200km双回输电线路-无穷大系统模型；MATLAB(算法实现与数值测试), PSCAD/EMTDC(电磁暂态波形生成)；算法在频率大范围偏移、功率振荡及强噪声工况下均能保持高精度测量，TVE稳定在0.8%以内，响应时间符合IEEE C37.118标准。
+- 量化与结论：在±5Hz静态频偏下，MFPM算法总相量误差(TVE)始终<0.8%，远优于DPMA算法的~8%。；在45Hz基频叠加5Hz振荡工况下，MFPM的TVE最大值为0.6435%，较DPMA的11.1224%降低约94%。；算法在线运算量仅比传统DPMA(K=2)增加7次加法与3次乘法，计算负担增加可忽略不计。；采用7个数据窗时，算法阶跃响应时间为52.44ms(幅值)和113.
+- 适用边界：适用于理解本文 Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 多频率相量模型、离散傅里叶变换-dft、最小二乘拟合 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[多频率相量模型|多频率相量模型]]
 - [[离散傅里叶变换-dft|离散傅里叶变换(DFT)]]
@@ -36,16 +65,12 @@ When the power system was suffered from unbalance and fault, the fundamental fre
 - [[相移运算|相移运算]]
 - [[粗估频率计算|粗估频率计算]]
 
-
 ## 涉及的模型
-
 
 - [[同步相量测量模型|同步相量测量模型]]
 - [[pscad-emtdc测试信号模型|PSCAD/EMTDC测试信号模型]]
 
-
 ## 相关主题
-
 
 - [[同步相量测量|同步相量测量]]
 - [[频率偏移|频率偏移]]
@@ -54,14 +79,10 @@ When the power system was suffered from unbalance and fault, the fundamental fre
 - [[广域测量系统|广域测量系统]]
 - [[pscad-emtdc仿真|PSCAD/EMTDC仿真]]
 
-
 ## 主要发现
-
 
 - 在频率斜坡与功率振荡工况下，算法有效抑制频偏影响，总相量误差满足测量标准。
 - 相比传统泰勒级数法，算法仅增加极少量运算量，显著提升动态相量估计精度。
-
-
 
 ## 方法细节
 
@@ -71,31 +92,25 @@ When the power system was suffered from unbalance and fault, the fundamental fre
 
 ### 数学公式
 
-
 **公式1**: $$$X(t) = \sum_{m=-M}^{M} \sqrt{2} A_m e^{j2\pi (\hat{f}_0 + m\Delta f)t}$$$
 
 *多频率相量模型表达式，利用中心频率$\hat{f}_0$及间隔$\Delta f$的$2M+1$个子相量拟合动态信号。*
-
 
 **公式2**: $$$\hat{X}(l_{\text{mid\_p}}) = CA + DA^*$$$
 
 *加窗DFT后的频域相量表达式，其中C和D为包含窗函数与旋转因子的系数矩阵，A为待求子相量矩阵。*
 
-
 **公式3**: $$$A = (G^T G)^{-1} G^T \hat{X} = F\hat{X}$$$
 
 *基于最小二乘法的子相量参数求解公式，矩阵F为离线预计算的修正矩阵，用于在线快速补偿DFT误差。*
-
 
 **公式4**: $$$\hat{f}_0 = \text{round}\left( f_0 + \frac{\Delta\phi}{2\pi\Delta t} \right)$$$
 
 *粗估频率计算公式，通过相邻数据窗DFT结果的相位差$\Delta\phi$与时间差$\Delta t$推导，并四舍五入取整。*
 
-
 **公式5**: $$$\hat{A} = \sum_{m=-M}^{M} A_m e^{j\delta}, \quad \delta = 2\pi f \Delta\tau$$$
 
 *报告时刻相移校正公式，将计算参考时刻$ttot$的相量结果平移至标准报告时刻$trep$。*
-
 
 ### 算法步骤
 
@@ -114,7 +129,6 @@ When the power system was suffered from unbalance and fault, the fundamental fre
 7. 计算报告时刻$trep$与参考时刻$ttot$的时间差$\Delta\tau$，结合当前频率计算相移角$\delta$，对总相量执行复数旋转校正。
 
 8. 输出校正后的同步相量幅值、相角及频率，完成单次测量周期。
-
 
 ### 关键参数
 
@@ -136,8 +150,6 @@ When the power system was suffered from unbalance and fault, the fundamental fre
 
 - **离线矩阵存储策略**: 按整数粗估频率预计算并查表调用
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -156,15 +168,12 @@ When the power system was suffered from unbalance and fault, the fundamental fre
 
 | PSCAD/EMTDC系统仿真 | 120MW发电机经200km线路扰动产生功率振荡。MFPM算法在电压波峰/波谷处的幅值响应曲线光滑，紧密贴合真实波形。 | DPMA与CT-DFT算法在振荡峰值处出现明显毛刺与跟踪延迟，MFPM动态跟踪精度显著优于对比算法。 |
 
-
-
 ## 量化发现
 
 - 在±5Hz静态频偏下，MFPM算法总相量误差(TVE)始终<0.8%，远优于DPMA算法的~8%。
 - 在45Hz基频叠加5Hz振荡工况下，MFPM的TVE最大值为0.6435%，较DPMA的11.1224%降低约94%。
 - 算法在线运算量仅比传统DPMA(K=2)增加7次加法与3次乘法，计算负担增加可忽略不计。
 - 采用7个数据窗时，算法阶跃响应时间为52.44ms(幅值)和113.47ms(相角)，均满足IEEE C37.118标准规定的140ms限值。
-
 
 ## 关键公式
 
@@ -186,11 +195,34 @@ $$$\hat{f}_0 = \text{round}\left( f_0 + \frac{\Delta\phi}{2\pi\Delta t} \right)$
 
 *在频偏较大时提供整数级频率初值，用于动态切换离线修正矩阵，保证模型中心频率贴近真实值。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 数值仿真与电磁暂态仿真对比验证
 - **测试系统**: 自定义数学信号模型(静态/斜坡/振荡/噪声)及PSCAD/EMTDC搭建的120MW发电机-200km双回输电线路-无穷大系统模型
 - **仿真工具**: MATLAB(算法实现与数值测试), PSCAD/EMTDC(电磁暂态波形生成)
 - **验证结果**: 算法在频率大范围偏移、功率振荡及强噪声工况下均能保持高精度测量，TVE稳定在0.8%以内，响应时间符合IEEE C37.118标准。相比传统泰勒级数法与插值DFT法，在几乎不增加计算负担的前提下，显著提升了动态相量估计的鲁棒性与准确性，具备工程实用价值。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 多频率相量模型、离散傅里叶变换-dft、最小二乘拟合 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出多频率相量模型，利用多子相量旋转频率描述真实频偏附近的有效信号信息。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/13&14/files/Bai 等 - 2018 - Dynamic Synchrophasor Estimator Based on Multi-frequency Phasor Model; [基于多频率相量模型的动态同步相量测量算法].pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

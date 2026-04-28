@@ -3,7 +3,7 @@ title: "Influence of approximate internal impedance formula on half-wavelength t
 type: source
 authors: ['J.E.', 'Guevara', 'Asorza']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112229. doi:10.1016/j.epsr.2025.112229"
+journal: "Electric Power Systems Research"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/24/Rojas Varela 等 - 2025 - Influence of Approximate Internal Impedance Formula on Half-Wavelength Transmission Lines.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/24/Rojas Varela 等 - 2025 - Influence of Approximate Interna
 
 ## 摘要
 
-Influence of approximate internal impedance formula on half-wavelength School of Electrical and Computer Engineering, University of Campinas - UNICAMP, Campinas, Brazil This paper evaluates the impact of using approximate versus exact internal impedance formulations in Overhead Transmission Lines (OHTL), focusing on Half-Wavelength Transmission lines (HWTL) and high-surge impedance loading applications, where multiple conductors per phase are employed. Approximate formulations
+本文采用对比分析方法，系统评估了架空输电线路（OHTL）内部阻抗精确公式（基于修正贝塞尔函数）与近似公式（基于双曲余切函数）在稳态与电磁暂态（EMT）条件下的建模差异。研究聚焦于半波长输电线路（HWTL）及高波阻抗负载（HSIL）应用场景，针对三种不同分裂导线配置（4、6、8分裂）的线路模型，分别计算其串联阻抗与并联导纳矩阵。通过Carson模型处理大地返回阻抗，在60Hz工频下提取正序/零序参数、波阻抗及波阻抗负载（SIL），并基于统计开关操作进行暂态过电压仿真。最终量化近似模型在功率传输能力、焦耳损耗及暂态过电压预测中的累积误差，验证精确建模在超长距离输电分析中的必要性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自超长距离交流输电，尤其是半波长输电线路（HWTL）和高波阻抗负载（HSIL）场景：线路长度接近工频电磁波半波长，串联阻抗、并联导纳、损耗和暂态过电压的微小建模误差会沿数千公里线路累积，进而影响SIL、可传输有功功率、稳态电压和绝缘配合判断。研究对象是多分裂架空输电线路导体的内部阻抗公式，而不是整套新型输电拓扑。难点在于内部阻抗受频率、集肤效应、导体结构和多导体耦合影响；EMT软件常用近似公式以降低计算复杂度，但该近似在HWTL中是否仍足够准确并不显然。本文贡献是把精确内部阻抗公式与近似公式放入同一OHTL建模链条，比较其对稳态参数、SIL、焦耳损耗以及统计开关过电压的影响，重点评估近似公式在HSIL-HWTL应用中的工程后果。
+
+### 2. 模型、算法与实现技术
+
+本文的建模核心是频率相关多导体输电线参数计算。输入量包括线路几何布置、每相分裂导体数量、导体半径与材料参数、系统频率、线路长度以及大地返回参数；接口量是相域或模态域的串联阻抗矩阵和并联导纳矩阵；输出用于进一步计算正序/零序参数、波阻抗、SIL、损耗和EMT暂态响应。计算流程可理解为三层叠加：首先计算导体内部阻抗，其中精确模型用修正贝塞尔函数描述导体内电磁场和集肤效应，近似模型用双曲余切形式替代复杂函数；其次加入外部空气磁场贡献和大地返回阻抗，形成总串联阻抗矩阵；最后由电位系数矩阵得到并联导纳。两套内部阻抗公式的差异并不会停留在单根导体电阻或电感上，而会通过多分裂导线等值、相间耦合、序参数变换和长线传播特性传递到SIL、电压分布和暂态过电压统计结果。因此，该工作不是提出新的暂态求解器，而是检验EMT线路常数计算中一个常被简化的子模型在半波长线路中的系统性影响。
+
+### 3. 验证、优势与不足
+
+作者采用对比验证思路：以精确内部阻抗公式作为基线，将近似内部阻抗公式嵌入相同的OHTL参数计算和EMT暂态分析流程，比较两者在稳态和暂态下的结果差异。测试对象为三种架空线路配置，原文片段明确给出TL1为440 kV、4分裂，TL2为765 kV、6分裂，TL3为800 kV、8分裂；引言还说明本文研究的HWTL长度为2600 km。指标包括SIL、稳态电压计算、可传输有功功率、焦耳损耗，以及统计开关操作下的过电压分布；摘要明确指出近似模型会降低SIL和电压计算准确性，可能限制功率传输并增加电压降，并且在统计开关中预测的过电压高于精确模型，C相偏差最大。优势在于验证范围覆盖了短/中/超长不同线路尺度和不同分裂数，使内部阻抗近似误差的累积效应能够被观察到。限制是：所给原文片段未报告可核验的数值结果、误差百分比、仿真步长、软件设置或完整线路参数；因此不能据此断言误差大小，也不能外推到故障暂态、非60 Hz系统、地下电缆、HVDC或不同导体材料结构。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提升的核心认知是：在普通线路中看似很小的内部阻抗近似误差，在HSIL和HWTL这类强依赖长距离传播特性的应用中，可能改变SIL、损耗、稳态电压和开关过电压判断。它可用于后续建立HWTL参数敏感性分析、EMT线路常数程序校核、绝缘配合研究、统计开关过电压评估和多分裂导线建模方法比较。复用时应把它作为“内部阻抗公式选择会影响系统级结论”的证据入口，而不是作为某个近似公式在所有频率、所有线路结构下失效的通用证明。
+
+### 证据边界
+
+- 来自原文摘要的确定结论：论文比较OHTL内部阻抗的近似公式与精确公式，并关注HWTL和HSIL应用；影响指标包括有功传输、SIL、焦耳损耗和暂态分析准确性。
+- 来自原文引言和表格片段的确定范围：研究包含三种OHTL配置，TL1为440 kV/4分裂，TL2为765 kV/6分裂，TL3为800 kV/8分裂；引言说明本文HWTL取2600 km。
+- 来自原文摘要的确定但非量化结果：近似模型降低SIL和电压计算准确性，统计开关中预测较高过电压，且C相偏差最大；所给片段未报告可核验的误差百分比或峰值数值。
+- 模型公式层面的说明部分依据当前页面整理：总串联阻抗由内部阻抗、外部阻抗和大地返回阻抗组成；精确公式与近似公式的具体数学形式需以论文方法章节原文为准。
+- 所给证据未核验具体EMT软件、线路常数程序版本、仿真步长、统计开关样本数、开关角分布、避雷器/断路器模型等实现细节，因此不宜据此比较不同软件平台优劣。
+- 从验证范围看，论文结论主要适用于60 Hz、多分裂架空交流长线路和半波长线路；未覆盖故障暂态、谐波范围、实时仿真、地下电缆、HVDC线路或其他大地模型的适用性。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 对比评估了线路内部阻抗精确与近似公式在稳态及暂态下的计算差异
-- 揭示了近似公式对半波长线路波阻抗负载及暂态过电压预测精度的影响
-- 量化了近似模型在多分裂导线配置下统计开关操作产生的过电压预测偏差
-
+- 问题定位：本文采用对比分析方法，系统评估了架空输电线路（OHTL）内部阻抗精确公式（基于修正贝塞尔函数）与近似公式（基于双曲余切函数）在稳态与电磁暂态（EMT）条件下的建模差异。研究聚焦于半波长输电线路（HWTL）及高波阻抗负载（HSIL）应用场景，针对三种不同分裂导线配置（4、6、8分裂）的线路模型，分别计算其串联阻抗与并联导纳矩阵。
+- 方法机制：本文采用对比分析方法，系统评估了架空输电线路（OHTL）内部阻抗精确公式（基于修正贝塞尔函数）与近似公式（基于双曲余切函数）在稳态与电磁暂态（EMT）条件下的建模差异。研究聚焦于半波长输电线路（HWTL）及高波阻抗负载（HSIL）应用场景，针对三种不同分裂导线配置（4、6、8分裂）的线路模型，分别计算其串联阻抗与并联导纳矩阵。
+- 验证证据：对比仿真分析（稳态参数计算与EMT暂态统计开关仿真）；三种典型架空输电线路配置：TL1(440kV/4分裂/350km)、TL2(765kV/6分裂/450km)、TL3(800kV/8分裂/2600km半波长线路)；PSCAD/EMTDC (Line Constants Program), ATP (参考精确计算), 自定义数值计算脚本(贝塞尔函数求解)
+- 量化与结论：近似公式在中频段（mid-range frequencies）的内部阻抗计算误差约为0.5%；SIL计算偏差随分裂导线数量增加而单调递增：4分裂为0.0374%，6分裂为0.0579%，8分裂为0.0717%；精确模型计算的正序电阻始终低于近似模型，表明实际线路具备更高的有功传输能力与更低的焦耳损耗；统计开关暂态仿真中，近似模型预测的过电压峰值系统性偏高，且C相偏差幅度最大
+- 适用边界：适用于理解本文 Influence of approximate internal impedance formula on half-wavelength transmission lines （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[贝塞尔函数精确计算|贝塞尔函数精确计算]]
 - [[双曲余切近似公式|双曲余切近似公式]]
@@ -36,18 +64,14 @@ Influence of approximate internal impedance formula on half-wavelength School of
 - [[统计开关操作分析|统计开关操作分析]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 涉及的模型
-
 
 - [[架空输电线路|架空输电线路]]
 - [[半波长输电线路|半波长输电线路]]
 - [[多分裂导线模型|多分裂导线模型]]
 - [[高波阻抗负载线路|高波阻抗负载线路]]
 
-
 ## 相关主题
-
 
 - [[频率相关建模|频率相关建模]]
 - [[波阻抗负载计算|波阻抗负载计算]]
@@ -55,15 +79,11 @@ Influence of approximate internal impedance formula on half-wavelength School of
 - [[长距离输电|长距离输电]]
 - [[线路参数精确建模|线路参数精确建模]]
 
-
 ## 主要发现
-
 
 - 近似公式使波阻抗负载计算偏差随分裂数增加而增大，最高达百分之零点零七
 - 暂态统计开关分析表明近似模型预测过电压偏高，且C相偏差最为显著
 - 近似内部阻抗模型会引入额外电压降落，显著降低半波长线路稳态电压精度
-
-
 
 ## 方法细节
 
@@ -73,26 +93,21 @@ Influence of approximate internal impedance formula on half-wavelength School of
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{Z} = \mathbf{Z}_{\text{int}} + \mathbf{Z}_{\text{ext}} + \mathbf{Z}_{g}$$$
 
 *总串联阻抗矩阵计算公式，叠加导体内部阻抗、外部空气阻抗及大地返回阻抗*
-
 
 **公式2**: $$$\mathbf{Y} = j\omega\mathbf{P}^{-1} = \mathbf{Y}_0 + \mathbf{Y}_{g}$$$
 
 *并联导纳矩阵计算公式，包含恒定项与高频相关的大地导纳项*
 
-
 **公式3**: $$$\mathbf{Z}_{\text{int}(i)} = \frac{p_i \gamma_i}{2\pi r_i} \left[ \frac{I_0(\gamma_i r_i)K_1(\gamma_i q_i) + I_1(\gamma_i q_i)K_0(\gamma_i r_i)}{I_1(\gamma_i r_i)K_1(\gamma_i q_i) - I_1(\gamma_i q_i)K_1(\gamma_i r_i)} \right]$$$
 
 *基于修正贝塞尔函数的精确内部阻抗公式，完整表征集肤效应与电磁场分布*
 
-
 **公式4**: $$$\mathbf{Z}_{\text{int}(i)} = \frac{p_i \gamma_i}{2\pi r_i} \coth\left(0.733\gamma_i r_i + \frac{0.3179\rho_i}{\pi r_i^2}\right)$$$
 
 *实心导体近似内部阻抗公式，引入常数k=0.733优化低频计算效率*
-
 
 ### 算法步骤
 
@@ -114,7 +129,6 @@ Influence of approximate internal impedance formula on half-wavelength School of
 
 9. 对比精确与近似模型在稳态参数、损耗及暂态过电压峰值上的偏差，进行误差量化与工程影响评估。
 
-
 ### 关键参数
 
 - **系统频率**: 60 Hz
@@ -131,8 +145,6 @@ Influence of approximate internal impedance formula on half-wavelength School of
 
 - **20°C直流电阻**: TL1: 0.08989 Ω/km; TL2/TL3: 0.0478 Ω/km
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -147,8 +159,6 @@ Influence of approximate internal impedance formula on half-wavelength School of
 
 | 统计开关暂态过电压分析 | 三相统计开关操作下，近似模型预测的暂态过电压峰值普遍高于精确模型，其中C相过电压偏差最为显著。 | 近似模型高估了过电压水平，可能导致绝缘配合设计过于保守或保护定值误判。 |
 
-
-
 ## 量化发现
 
 - 近似公式在中频段（mid-range frequencies）的内部阻抗计算误差约为0.5%
@@ -156,7 +166,6 @@ Influence of approximate internal impedance formula on half-wavelength School of
 - 精确模型计算的正序电阻始终低于近似模型，表明实际线路具备更高的有功传输能力与更低的焦耳损耗
 - 统计开关暂态仿真中，近似模型预测的过电压峰值系统性偏高，且C相偏差幅度最大
 - 对于2600km半波长线路，近似内部阻抗模型引入的额外压降显著影响稳态电压分布精度
-
 
 ## 关键公式
 
@@ -178,11 +187,34 @@ $$$\mathbf{Z} = \mathbf{Z}_{\text{int}} + \mathbf{Z}_{\text{ext}} + \mathbf{Z}_{
 
 *叠加内部、外部及大地返回阻抗，构建完整线路频变阻抗模型*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真分析（稳态参数计算与EMT暂态统计开关仿真）
 - **测试系统**: 三种典型架空输电线路配置：TL1(440kV/4分裂/350km)、TL2(765kV/6分裂/450km)、TL3(800kV/8分裂/2600km半波长线路)
 - **仿真工具**: PSCAD/EMTDC (Line Constants Program), ATP (参考精确计算), 自定义数值计算脚本(贝塞尔函数求解)
 - **验证结果**: 验证表明近似内部阻抗公式虽提升计算效率，但在多分裂、超长距离及高波阻抗负载工况下会引入不可忽略的累积误差。精确模型在SIL计算、损耗评估及暂态过电压预测中均表现出更高精度，尤其对C相过电压及稳态压降的修正至关重要，为HWTL绝缘设计与保护整定提供了更可靠的建模依据。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Influence of approximate internal impedance formula on half-wavelength transmission lines`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 贝塞尔函数精确计算、双曲余切近似公式、carson大地返回阻抗模型 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：对比评估了线路内部阻抗精确与近似公式在稳态及暂态下的计算差异
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/24/Rojas Varela 等 - 2025 - Influence of Approximate Internal Impedance Formula on Half-Wavelength Transmission Lines.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

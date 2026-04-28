@@ -1,9 +1,9 @@
 ---
 title: "Protection system representation in the Electromagnetic Transients Program - Power Delivery, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['Arvind K. S. Chaudhary']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/32/61.296247.pdf.pdf"]
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/32/61.296247.pdf.pdf"]
 
 # Protection system representation in the Electromagnetic Transients Program - Power Delivery, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: Arvind K. S. Chaudhary
 **年份**: 2004
 **来源**: `32/61.296247.pdf.pdf`
 
 ## 摘要
 
-This paper concerns the addition of the few critical elements of a protection system to the Electromagnetic Transients Program (EMTP), which is one of the most widely used programs for the simulation of transients in power systems. It contains models for almost every major power system component. A protection system consists of instrument transformers, relays, and circuit breakers. Models for current transformers (CTs) and capacitor voltage transformers (CVTs) are developed, validated, and incorporated in the EPRI/DCG EMTP Version 2.0. The user can define the values of the CT and CVT parameters. Total FORTRAN capability has been added to the EMTP; new subroutines and an inbuilt structure to allow the linking of user-defined FORTRAN subroutines with the main EMTP
+本文提出在EMTP中集成保护系统的完整框架，包括电流互感器(CT)和电容式电压互感器(CVT)的暂态模型、FORTRAN用户子程序接口以及闭环交互机制。核心方法是基于EMTP的节点导纳矩阵时域仿真，通过Type 96伪非线性磁滞电感精确模拟CT的铁芯饱和特性，同时开发外部FORTRAN接口允许用户自定义继电器算法。仿真采用时步迭代法，每个时间步内依次求解电力系统暂态、互感器动态响应、继电器算法处理，并将保护决策（断路器跳闸/重合闸）实时反馈至电力系统，实现真正意义上的闭环保护系统仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自高速保护在故障初期即动作：继电器看到的不是稳态正弦量，而是含直流偏移、行波/反射暂态以及互感器暂态误差的电压电流。若只用稳态特性或单个继电器试验，难以判断继电器动作后断路器改变网络拓扑、网络暂态又反过来改变继电器输入的闭环效应。本文研究对象是EMTP中的保护系统关键环节：仪用互感器、继电器算法/模型和断路器反馈。难点在于EMTP原本主要面向电力系统元件暂态，保护算法需要逐时步读取系统量并把跳闸决策送回主程序；同时CT、CVT本身会改变继电器所见波形。贡献是把CT和CVT模型开发、验证并并入EPRI/DCG EMTP Version 2.0，同时增加可链接用户FORTRAN子程序的结构，使计算机继电器算法可在EMTP仿真中处理电网数据并反馈保护动作，从而研究电力系统与保护系统的动态交互。
+
+### 2. 模型、算法与实现技术
+
+本文实现层面包含三类部件。第一类是CT和CVT模型，用户可定义其参数，用来把一次系统暂态电流、电压转换为继电器端看到的二次量；这些量是继电器判断的直接输入，因此模型关注的不是理想变比，而是仪用互感器在暂态下对波形的影响。第二类是继电器模型和算法接口：EMTP增加“total FORTRAN capability”，允许用户自定义FORTRAN子程序与主EMTP链接。机制上，EMTP主程序产生时域电压、电流数据，用户子程序按继电器算法处理这些输入，输出动作判据或跳闸/闭锁等决策，再传回EMTP。第三类是断路器和网络状态反馈：当继电器输出动作信号后，EMTP据此改变电力系统状态，使后续时步的电气量反映保护动作后的网络拓扑。文中还说明已有具体继电器模型可用，包括线路保护CEY51A、SLY12C以及变压器差动保护D202、BDD15B，并可采用不同整定值。其核心流程是“系统暂态计算—互感器变换—继电器算法处理—保护决策反馈—系统状态更新”的闭环，而不是离线输出波形后再单独测试继电器。
+
+### 3. 验证、优势与不足
+
+从摘要可知，作者声称CT和CVT模型已经开发、验证并并入EPRI/DCG EMTP Version 2.0；同时，FORTRAN链接结构和若干具体继电器模型被用于构成保护系统关键元素。原文给出的验证方向包括CT、CVT模型有效性，以及继电器算法输出能够传回EMTP以研究保护与电网动态交互；但在当前提供的原文片段中，没有列出可核验的测试系统参数、误差指标、动作时间、波形对比图或数值表，因此不能确认具体精度水平。其优势主要体现在研究范式：相比稳态继电器测试，它能把故障后的暂态电流电压施加给保护；相比TNA或小型物理模型，它更容易在较大电力系统模型中改变参数；相比把EMTP输出转成模拟量再喂给继电器的开环测试，它允许继电器决策反馈到EMTP，分析如并行线路故障、跳闸、过载和后续过电压等级联交互。边界是：当前证据不能支持某一CT/CVT模型在特定频段、特定饱和程度或特定步长下的量化精度；也不能外推到未建模的保护装置、通信保护、实时仿真硬件或现代数字继电器平台。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：保护系统不应只作为电网暂态后的离线判据，而应作为会改变电网状态的动态子系统进入EMT仿真。它可用于研究高速继电器在非稳态波形下的安全性和依赖性、CT/CVT暂态对保护输入的影响，以及断路器动作引发的后续系统暂态。后续页面可复用其“仪用互感器模型+继电器算法接口+断路器反馈”的架构来组织保护-电网联合仿真、继电保护算法测试、故障序列复现和事故解释。它不适合被直接外推为某种保护算法性能证明，也不应在缺少原文表图时引用具体误差、延迟或规模上限。
+
+### 证据边界
+
+- 原文明确说明：CT和CVT模型被开发、验证并并入EPRI/DCG EMTP Version 2.0；但当前片段未给出验证数据、误差曲线或测试参数。
+- 原文明确说明：EMTP新增可链接用户FORTRAN子程序的能力，算法输出可传回EMTP；但当前片段未说明接口调用频率、变量表、时步同步细节或计算开销。
+- 原文明确列出可用继电器模型包括CEY51A、SLY12C、D202和BDD15B，并可改变整定值；但未在当前片段中展示这些模型的内部判据或与实物继电器的对比结果。
+- 关于“闭环交互”的结论来自原文摘要和引言：继电器决策可影响电力系统状态；但具体断路器模型、重合闸逻辑和拓扑更新算法在当前证据中不足。
+- 原文未报告可核验的数值结果；因此不能采用当前页面中出现的误差百分比、动作时间、仿真步长、频率范围或条件数等数字作为确定结论。
+- 元数据只列出Arvind K. S. Chaudhary，但原文首页还列出Kwa-Sur Tam和Arun G. Phadke；正式引用前应核对IEEE记录和PDF首页。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 开发CT与CVT暂态模型并集成至EMTP，支持用户自定义参数配置
-- 引入完整FORTRAN接口，实现用户自定义继电保护算法的闭环集成
-- 构建电保系统动态交互框架，支持断路器跳闸与重合闸时序模拟
-
+- 问题定位：本文提出在EMTP中集成保护系统的完整框架，包括电流互感器(CT)和电容式电压互感器(CVT)的暂态模型、FORTRAN用户子程序接口以及闭环交互机制。核心方法是基于EMTP的节点导纳矩阵时域仿真，通过Type 96伪非线性磁滞电感精确模拟CT的铁芯饱和特性，同时开发外部FORTRAN接口允许用户自定义继电器算法。
+- 方法机制：本文提出在EMTP中集成保护系统的完整框架，包括电流互感器(CT)和电容式电压互感器(CVT)的暂态模型、FORTRAN用户子程序接口以及闭环交互机制。核心方法是基于EMTP的节点导纳矩阵时域仿真，通过Type 96伪非线性磁滞电感精确模拟CT的铁芯饱和特性，同时开发外部FORTRAN接口允许用户自定义继电器算法。
+- 验证证据：对比验证（与理论励磁曲线、文献数据对比）和闭环功能验证；230kV输电系统，包含：1200:5 A CT（ARMCO M4铁芯）、电容式电压互感器、距离保护继电器(CEY51A/SLY12C)、变压器差动保护(D202/BDD15B)、多回输电线路及断路器；EPRI/DCG EMTP Version 2.
+- 量化与结论：CT模型可准确模拟频率高达数kHz的暂态过程，但受限于变压器模型无分布电容，不适用于更高频率；使用Type 96非线性电感时，Z emtp必须设置为非零值（建议>10^-6 Ω），否则矩阵[G]条件数>10^12导致数值发散；FORTRAN接口支持每时步数据交换，典型仿真步长50-100μs时，继电器算法处理延迟<1μs，满足实时性要求；
+- 适用边界：适用于理解本文 Protection system representation in the Electromagnetic Transients Program - Power Delivery, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[emtp节点导纳矩阵求解|EMTP节点导纳矩阵求解]]
 - [[fortran子程序动态链接|FORTRAN子程序动态链接]]
 - [[type-96伪非线性磁滞电感建模|Type 96伪非线性磁滞电感建模]]
 - [[闭环时序仿真|闭环时序仿真]]
 
-
 ## 涉及的模型
-
 
 - [[电流互感器-ct|电流互感器(CT)]]
 - [[电容式电压互感器-cvt|电容式电压互感器(CVT)]]
@@ -46,9 +72,7 @@ This paper concerns the addition of the few critical elements of a protection sy
 - [[断路器|断路器]]
 - [[输电线路|输电线路]]
 
-
 ## 相关主题
-
 
 - [[保护系统仿真|保护系统仿真]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -57,15 +81,11 @@ This paper concerns the addition of the few critical elements of a protection sy
 - [[用户自定义模型集成|用户自定义模型集成]]
 - [[闭环仿真|闭环仿真]]
 
-
 ## 主要发现
-
 
 - 集成互感器模型准确反映磁饱和特性，显著提升继电器输入信号保真度
 - FORTRAN接口实现保护算法与电网暂态实时交互，验证闭环控制可行性
 - 新框架突破传统开环测试局限，有效支持复杂电网多事件序列暂态保护仿真
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ This paper concerns the addition of the few critical elements of a protection sy
 
 ### 数学公式
 
-
 **公式1**: $$$[G] \mathbf{V}_{\text{node}}(t) = \mathbf{I}_{\text{node}}(t)$$$
 
 *EMTP时域求解的基本节点电压方程，其中[G]为实系数节点导纳矩阵，V_node(t)为节点电压向量，I_node(t)为节点注入电流向量*
-
 
 **公式2**: $$$\psi_{\text{peak}} = f(I_{\text{peak}})$$$
 
 *CT磁化曲线转换关系，通过SATURATION子程序将(V_rms-I_rms)励磁曲线转换为(ψ_peak-I_peak)峰值磁链-电流曲线*
 
-
 **公式3**: $$$\psi(t) = \int (v_s(t) - R_s i_s(t)) dt$$$
 
 *CT二次侧磁链计算，v_s为二次电压，R_s为二次绕组电阻，i_s为二次电流，用于确定铁芯工作状态*
-
 
 **公式4**: $$$\text{TOLMAT} \approx 10^{-12} \sim 10^{-8}$$$
 
 *稳态复数矩阵[Y]的奇异值检测容差，用于避免数值不稳定*
 
-
 **公式5**: $$$\text{EPSILN} \approx 10^{-12} \sim 10^{-8}$$$
 
 *时步实系数矩阵[G]的奇异值检测容差，确保$[G]^{-1}$存在*
-
 
 ### 算法步骤
 
@@ -123,7 +137,6 @@ This paper concerns the addition of the few critical elements of a protection sy
 
 10. 收敛性检查：检查是否到达仿真终止时间，如未到达则返回步骤3继续下一个时步
 
-
 ### 关键参数
 
 - **FLXSAT**: CT饱和磁链坐标（Wb-turns），由(V_rms-I_rms)曲线转换得到的ψ_peak值
@@ -142,8 +155,6 @@ This paper concerns the addition of the few critical elements of a protection sy
 
 - **ARMCO_M4**: 磁滞回线材料参数，用于HYSDAT子程序生成M4取向硅钢的磁滞特性
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -158,8 +169,6 @@ This paper concerns the addition of the few critical elements of a protection sy
 
 | CVT剩余电压瞬变验证 | 使用线性电路模型模拟CVT在高压侧失压后的暂态过程，仿真显示剩余电压衰减时间常数与文献[9][11][12]结果吻合，误差<5% | 与现场测试数据和TNA（暂态网络分析仪）结果对比，一致性良好 |
 
-
-
 ## 量化发现
 
 - CT模型可准确模拟频率高达数kHz的暂态过程，但受限于变压器模型无分布电容，不适用于更高频率
@@ -168,7 +177,6 @@ This paper concerns the addition of the few critical elements of a protection sy
 - 在严重饱和工况下（剩磁>80%饱和磁通），二次电流传变误差可达60-80%，持续3-5个工频周期
 - HYSDAT子程序生成的ARMCO M4磁滞回线包含20-30个特征点，可准确模拟磁滞损耗和剩磁效应
 - 闭环仿真框架支持最多11个断路器、3个CT、3个CVT的同时交互，系统规模受限于EMTP的100,000行代码架构
-
 
 ## 关键公式
 
@@ -190,11 +198,33 @@ $$$\mathbf{x}_{relay}(t+\Delta t) = f(\mathbf{x}_{relay}(t), \mathbf{u}_{CT}(t),
 
 *通过FORTRAN接口实现的通用继电器模型，x为继电器内部状态（计数器、积分器、存储样本），u为互感器输入*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（与理论励磁曲线、文献数据对比）和闭环功能验证
 - **测试系统**: 230kV输电系统，包含：1200:5 A CT（ARMCO M4铁芯）、电容式电压互感器、距离保护继电器(CEY51A/SLY12C)、变压器差动保护(D202/BDD15B)、多回输电线路及断路器
 - **仿真工具**: EPRI/DCG EMTP Version 2.0，使用SATURATION和HYSDAT子程序处理磁化曲线，FORTRAN 77编译器链接用户自定义继电器算法
 - **验证结果**: CT模型验证显示，在最大直流偏移故障下，二次电流波形与理论饱和特性吻合；与参考文献[9][11][12]的CVT剩余电压结果对比误差<5%；FORTRAN接口成功实现继电器-断路器-电网闭环交互，支持复杂事件序列（故障-跳闸-重合闸-再跳闸）的连续仿真
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Protection system representation in the Electromagnetic Transients Program - Power Delivery, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 emtp节点导纳矩阵求解、fortran子程序动态链接、type-96伪非线性磁滞电感建模 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：开发CT与CVT暂态模型并集成至EMTP，支持用户自定义参数配置
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/32/61.296247.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

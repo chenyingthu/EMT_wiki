@@ -1,9 +1,9 @@
 ---
 title: "Analysis on non-characteristic harmonic circulating current in parallel inverter system and its suppression"
 type: source
-authors: ['CNKI']
+authors: ['Hu et al.']
 year: 2022
-journal: ""
+journal: "电网技术"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/07&08/Hu et al. - 2016 - Analysis on non-characteristic harmonic circulating current in parallel inverter system and its supp.pdf"]
@@ -11,33 +11,59 @@ sources: ["EMT_Doc/07&08/Hu et al. - 2016 - Analysis on non-characteristic harmo
 
 # Analysis on non-characteristic harmonic circulating current in parallel inverter system and its suppression
 
-**作者**: CNKI
+**作者**: Hu et al.
 **年份**: 2022
 **来源**: `07&08/Hu et al. - 2016 - Analysis on non-characteristic harmonic circulating current in parallel inverter system and its supp.pdf`
 
 ## 摘要
 
-In Jibei power grid, non-characteristic harmonic circulating current appeared several times and a fault occurred in parallel converters in a 500 kV station. Taking this fault as an example, recorded fault data were analyzed, finding out non-characteristic harmonic circulating current existing in several parallel converters. Analysis of relationship between the problem and parallel converter topology indicated that the problem was liable to appear in cascaded H-bridge multilevel converters. Reappearance of the phenomenon was realized with electromagnetic transient simulation. Simulation results showed validity of the proposed conclusion. Finally, countermeasures were proposed to solve the problem.
+冀北电网中，先后出现了变流器的非特征次谐波环流问题。某 500 kV 变电站变流器并联运行时发生了一次故障，以该故障为例，通过分析变流器故障录波数据，发现多台变流器并列运行容易发生非特征谐波环流。通过分析环流与变流器拓扑结构之间的关系，得出级联 H 桥多电平变流器更容易发生非特征谐波环流；然后，通过电磁暂态仿真复现了故障现象，仿真结果验证了所得结论的正确性。最后，提出了解决非特征次谐波环流的措施。验证信息：现场故障录波数据对比分析 + 电磁暂态(EMT)仿真复现验证；冀北电网500kV变电站35kV/66kV升压变压器低压侧并列运行的两台级联H桥变流器(7号与8号)；张家口某风电场双风机并列运行系统
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自冀北电网实际故障：多台并列运行变流器在系统侧未表现出明显谐波电流时，单台变流器出口却出现高含量非特征次谐波，甚至触发保护跳闸。研究对象不是单台变流器的常规特征谐波，也不是MMC内部环流，而是经并联支路在多台变流器之间闭合的非特征谐波环流；典型场景为某500 kV变电站低压侧两台35 kV级联H桥变流器通过35 kV/66 kV升压变压器并列接入66 kV母线。难点在于该环流不一定向高压系统外送，系统侧监测可能不敏感；环流对象和频率不固定，不能简单按固定特征次滤除；同时级联H桥直流侧电压不平衡会把谐波环流与保护动作耦合起来。本文的贡献是把一次现场跳闸和风电场类似现象作为证据链，利用故障录波频谱识别“变流器间环流”而非“系统谐波注入”，并从并联拓扑和级联H桥结构解释其易发机理，再用电磁暂态仿真复现现象，为后续抑制措施提供定位依据。
+
+### 2. 模型、算法与实现技术
+
+本文的技术路线可理解为“录波辨识—拓扑机理分析—EMT复现—治理思路”的组合。输入量首先是变流器出口电流、升压变压器高压侧电流等故障录波；通过FFT比较同一频率分量在35 kV变流器侧与66 kV母线侧的含量，判断谐波是向系统注入还是在并联变流器间闭合。核心接口量是各并联变流器输出电流、公共母线电流、谐波频率与相位关系。机理分析以两台并联变流器为对象，把每台变流器等效为含高次谐波电压源及其连接阻抗的支路；当两台设备的某些谐波电压存在相位差时，公共连接点外部电流可能相互抵消，而支路间形成环流。对级联H桥而言，谐波环流还会造成阀组内直流侧电压不平衡，进而诱发保护动作。当前页面还给出基于SPWM载波、调制波和双重傅里叶级数的谐波表达式，其作用是把开关调制产生的载波及边带谐波分解为可比较的幅值和相位分量，从机制上说明载波初相、调制相位等差异如何转化为并联系统中的谐波电压差。EMT模型则承担把这种高频开关过程、连接阻抗和并联回路耦合起来的时域验证功能。
+
+### 3. 验证、优势与不足
+
+验证依据主要有两类。第一类是现场故障录波：冀北某500 kV变电站中，7号和8号两台35 kV变流器通过35 kV/66 kV变压器并列接入66 kV母线，8号变流器保护动作前，66 kV侧高次谐波较少，而8号变流器出口电流含有较大谐波；FFT显示720 Hz分量在66 kV侧含量较小、在8号变流器侧达到60%，据此判断该频率电流主要在7号与8号之间环流。第二类是现象外推佐证：张家口某风电场在风机无出力情况下，风场出口电流也出现大量非特征次谐波，说明问题不是单一站点偶发。第三类是电磁暂态仿真复现，原文摘要明确称仿真复现了故障现象并验证了结论，但给定证据中未说明具体仿真软件、步长、详细参数和误差指标。优势在于论文把“系统侧不明显、设备侧很大”的录波差异作为环流判据，避免把问题误判为一般并网谐波；并指出级联H桥多电平变流器因直流侧电压不平衡更易受影响。限制是：除720 Hz和60%外，当前证据未给出可核验的抑制措施量化效果；风电场案例只展示类似波形，未见完整频谱、拓扑和参数闭环；EMT复现的匹配程度也未以数值误差报告。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是把并联变流器的谐波问题从“单机输出质量”推进到“多机之间的隐蔽环流”：系统母线谐波小并不代表设备支路安全，某些非特征频率可能只在并联支路内循环并触发内部直流电压不平衡。它适合被后续关于新能源场站多变流器并列、级联H桥SVG/变流器保护动作分析、EMT谐波环流复现、故障录波频谱诊断的页面复用。工程上可用于指导监测点布置：不能只看高压侧公共母线，还应比较各变流器出口电流频谱。不宜外推为所有拓扑、所有并联系统都会出现同样720 Hz环流，也不宜在缺少原文表图支撑时直接引用当前页面中未核验的治理效果数值。
+
+### 证据边界
+
+- 原文明确证据包括：冀北某500 kV变电站两台35 kV变流器并列运行、8号变流器保护跳闸、66 kV侧谐波较小而变流器侧720 Hz分量达到60%。
+- 原文摘要明确称采用电磁暂态仿真复现故障现象，但当前给定证据未列出仿真软件、时间步长、完整电路参数、控制参数和波形误差指标。
+- 级联H桥更易发生非特征谐波环流、谐波环流可导致直流侧电压不平衡并触发保护动作，是原文给出的机理判断；但当前证据未展示不同拓扑的系统性对比实验数据。
+- 张家口风电场案例在原文中作为类似现象出现，当前证据未给出风机变流器拓扑、并联对象、频谱数值和与500 kV站案例之间的一一对应关系。
+- 当前页面中关于高通滤波、增大电抗、提高或错开开关频率、PLL同步等抑制措施及其百分比效果，未在给定原文证据段落中看到可核验表图；若要引用，需回查PDF后续章节。
+- 元数据存在年份不一致：用户元数据写2022，而给定论文首页和DOI信息对应《电网技术》2016年第7期；正式引用前应以PDF首页和期刊数据库为准。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 揭示级联H桥变流器并列运行时载波相位差引发非特征谐波环流的机理
-- 提出基于高通滤波增大连接电抗及差异化开关频率的环流抑制策略
-- 构建双重傅里叶级数模型解析开关频率次谐波相位与幅值耦合特性
-
+- 问题定位：冀北电网中，先后出现了变流器的非特征次谐波环流问题。某 500 kV 变电站变流器并联运行时发生了一次故障，以该故障为例，通过分析变流器故障录波数据，发现多台变流器并列运行容易发生非特征谐波环流。通过分析环流与变流器拓扑结构之间的关系，得出级联 H 桥多电平变流器更容易发生非特征谐波环流；
+- 方法机制：本文采用“现场录波数据分析-理论建模-电磁暂态仿真复现-抑制策略对比”的综合研究方法。首先对冀北电网500kV变电站及风电场故障录波数据进行FFT频谱分析，定位非特征次谐波环流频率与幅值特征。其次，基于SPWM调制原理，利用双重傅里叶级数建立变流器输出电压谐波解析模型，推导载波相位差对谐波幅值与相位的影响机理。随后，在电磁暂态仿真平台中搭建级联H桥多电平变流器并列运行模型，复现载波相位差180°极端工况下的低阻抗高频环流通路。
+- 验证证据：现场故障录波数据对比分析 + 电磁暂态(EMT)仿真复现验证；冀北电网500kV变电站35kV/66kV升压变压器低压侧并列运行的两台级联H桥变流器(7号与8号)；张家口某风电场双风机并列运行系统；电磁暂态仿真软件(文中未明确指定具体商业软件，基于典型EMT平台搭建)
+- 量化与结论：故障录波FFT分析显示，非特征次谐波环流主导频率为720Hz，在跳闸变流器侧电流中占比高达60%，而66kV母线侧该频率含量极小。；基准仿真参数设定为系统电压380V、连接电抗3mH、开关频率6.4kHz，在此工况下成功复现了相位相反的高频环流。；将连接电抗从3mH增大至5mH，可有效降低环流幅值，但会占用额外无功容量并降低直流电压利用率。；将开关频率从6.4kHz提升至12.
+- 适用边界：适用于理解本文 Analysis on non-characteristic harmonic circulating current in parallel inverter system and its suppression （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[双重傅里叶级数分析|双重傅里叶级数分析]]
 - [[快速傅里叶变换|快速傅里叶变换]]
 - [[spwm调制分析|SPWM调制分析]]
 
-
 ## 涉及的模型
-
 
 - [[级联h桥多电平变流器|级联H桥多电平变流器]]
 - [[并联逆变器|并联逆变器]]
@@ -45,9 +71,7 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 - [[升压变压器|升压变压器]]
 - [[连接电抗|连接电抗]]
 
-
 ## 相关主题
-
 
 - [[谐波环流分析|谐波环流分析]]
 - [[变流器并列运行|变流器并列运行]]
@@ -55,15 +79,11 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 - [[风电场并列运行|风电场并列运行]]
 - [[环流抑制策略|环流抑制策略]]
 
-
 ## 主要发现
-
 
 - 仿真验证载波相位差180度时并联变流器间形成低阻抗高频环流通路
 - 级联H桥拓扑因电容充放电易致直流电压波动加剧非线性区谐波环流
 - 增大连接电抗或提高开关频率可显著降低非特征谐波环流幅值
-
-
 
 ## 方法细节
 
@@ -73,21 +93,17 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 
 ### 数学公式
 
-
 **公式1**: $$$u_{car} = \begin{cases} \frac{2\omega_c t}{\pi} - 2k\pi, & -\frac{\pi}{2} + 2k\pi < \omega_c t + \theta_c < \frac{\pi}{2} + 2k\pi \\ -\frac{2\omega_c t}{\pi} + 2k\pi, & \frac{\pi}{2} + 2k\pi < \omega_c t + \theta_c < \frac{3\pi}{2} + 2k\pi \end{cases}$$$
 
 *三角载波电压表达式，用于定义SPWM调制中的载波波形，其中$\omega_c$为载波角频率，$\theta_c$为载波初始相位。*
-
 
 **公式2**: $$$u_o(t) = \sum_{n=1}^{\infty} [A_{0n}\cos(ny) + B_{0n}\sin(ny)] + \sum_{m=1}^{\infty} [A_{m0}\cos(mx) + B_{m0}\sin(mx)] + \sum_{m=1}^{\infty} \sum_{n=\pm 1}^{\pm \infty} [A_{mn}\cos(mx+ny) + B_{mn}\sin(mx+ny)]$$$
 
 *单桥臂输出电压的双重傅里叶级数展开式，用于解析SPWM调制产生的基波、载波谐波及其边带分量，其中$x=\omega_c t+\theta_c$，$y=\omega_r t+\theta_r$。*
 
-
 **公式3**: $$$A_{mn} + jB_{mn} = \frac{1}{2\pi^2} \int_{0}^{2\pi} \int_{0}^{2\pi} u_p(t) e^{j(m\omega_c t + n\omega_r t)} d(\omega_c t) d(\omega_r t)$$$
 
 *双重傅里叶系数计算公式，用于求解各次谐波分量的幅值与相位，$u_p(t)$为调制后的方波电压。*
-
 
 ### 算法步骤
 
@@ -103,7 +119,6 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 
 6. 步骤6：工程适用性评估。综合对比各策略的谐波抑制效果、无功损耗、开关热应力及控制复杂度，确定最优工程实施方案。
 
-
 ### 关键参数
 
 - **基准开关频率**: 6.4 kHz
@@ -117,8 +132,6 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 - **主导环流频率**: 720 Hz
 
 - **载波相位差极端工况**: 180°
-
-
 
 ## 仿真结果
 
@@ -140,8 +153,6 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 
 | PLL载波相位同步 | 利用锁相环信息强制对齐两台变流器载波相位，使谐波相位一致，环流基本消除。但该方法依赖理想通信与同步精度，实际工程中难以完全实现。 | 理论抑制效果最佳(接近0环流)，但鲁棒性差，仅适用于理想同步条件。 |
 
-
-
 ## 量化发现
 
 - 故障录波FFT分析显示，非特征次谐波环流主导频率为720Hz，在跳闸变流器侧电流中占比高达60%，而66kV母线侧该频率含量极小。
@@ -151,7 +162,6 @@ In Jibei power grid, non-characteristic harmonic circulating current appeared se
 - 采用差异化开关频率(6.45kHz与6.35kHz)可使谐波相位错开，实现中等程度的环流抑制，但牺牲了控制器一致性。
 - 级联H桥拓扑因直流侧电容充放电不平衡易引发控制器饱和，使变流器进入非线性工作区，放大非特征次谐波环流风险。
 
-
 ## 关键公式
 
 ### SPWM输出电压双重傅里叶级数模型
@@ -160,11 +170,34 @@ $$$u_o(t) = \sum_{n=1}^{\infty} [A_{0n}\cos(ny) + B_{0n}\sin(ny)] + \sum_{m=1}^{
 
 *用于解析变流器在SPWM调制下产生的特征次谐波与非特征次谐波的幅值与相位分布，是分析载波相位差引发环流机理的核心理论工具。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 现场故障录波数据对比分析 + 电磁暂态(EMT)仿真复现验证
 - **测试系统**: 冀北电网500kV变电站35kV/66kV升压变压器低压侧并列运行的两台级联H桥变流器(7号与8号)；张家口某风电场双风机并列运行系统
 - **仿真工具**: 电磁暂态仿真软件(文中未明确指定具体商业软件，基于典型EMT平台搭建)
 - **验证结果**: 仿真波形与现场录波数据高度吻合，成功复现了720Hz非特征次谐波环流现象及载波相位差180°时的低阻抗环流通路。五种抑制策略的仿真对比验证了高通滤波器在不影响变流器原有控制特性与无功容量的前提下，能从根本上消除环流，被推荐为最优工程方案。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Analysis on non-characteristic harmonic circulating current in parallel inverter system and its suppression`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 电磁暂态仿真、双重傅里叶级数分析、快速傅里叶变换 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：揭示级联H桥变流器并列运行时载波相位差引发非特征谐波环流的机理
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/07&08/Hu et al. - 2016 - Analysis on non-characteristic harmonic circulating current in parallel inverter system and its supp.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

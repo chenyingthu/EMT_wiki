@@ -1,9 +1,9 @@
 ---
 title: "Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants in Power System Black Start"
 type: source
-authors: ['Quan Nguyen']
-year: 2020
-journal: "2021 IEEE Power & Energy Society General Meeting (PESGM);2021; ; ;10.1109/PESGM46819.2021.9637882"
+authors: ['Quan Nguyen', 'Mallikarjuna R. Vallem', 'Bharat Vyakaranam', 'Ahmad Tbaileh', 'Xinda Ke', 'Nader Samaan']
+year: 2021
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants in Power System Black.pdf"]
@@ -11,24 +11,51 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 # Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants in Power System Black Start
 
-**作者**: Quan Nguyen
-**年份**: 2020
+**作者**: Quan Nguyen, Mallikarjuna R. Vallem, Bharat Vyakaranam, Ahmad Tbaileh, Xinda Ke, Nader Samaan
+**年份**: 2021
 **来源**: `11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants in Power System Black.pdf`
 
 ## 摘要
 
-—Power system restoration is an important part of system planning. Power utilities are required to maintain black start capable generators that can energize the transmission system and provide cranking power to non-blackstart capable generators. Traditionally, hydro and diesel units are used as black start capable generators. With the increased penetration of bulk size solar farms, inverter based generation can play an important role in faster and parallel black start thus en- suring system can be brought back into service without the conventional delays that can be expected with limited black start generators. Inverter-based photovoltaic (PV) power plants have advantages that are suitable for black start. This paper proposes the modeling, control, and simulation of a grid-forming inverter
+提出一种基于构网型逆变器的光储混合电站黑启动控制与仿真方法。系统直流侧由光伏阵列与电池储能通过DC/DC变换器并联构成，交流侧采用H桥逆变器、LC滤波器及升压变压器。控制架构采用主从双层设计：主控制环基于下垂特性，根据PCC点注入的有功与无功功率实时调节电压幅值与频率；次控制环采用PI控制器消除稳态偏差，将电压与频率恢复至额定值。控制信号经dq同步旋转坐标系下的电压/电流双环嵌套处理生成参考电压，最终通过PWM调制驱动开关器件。黑启动过程中，直流母线电压由储能Buck-Boost变换器恒定控制，实现交直流侧解耦。储能优先供电，超出其放电上限后由光伏阵列补充。整体方案在PSCAD中搭建高保真电磁暂态模型进行验证。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：在传统水电、柴油黑启动资源有限且恢复路径可能串行受限的情况下，评估大规模光伏电站能否借助储能和构网型逆变器承担输电网黑启动电源，先给线路、变压器和非黑启动机组提供初始电压、频率与启动功率。研究对象不是普通并网跟网型PV，而是“PV-电池混合电站+构网型逆变器”作为黑启动单元。难点在于黑启动时外部电网不可提供相角、频率和电压支撑，逆变器必须自己建立交流电压源特性；同时PV出力、储能功率、直流母线、交流负荷投切和网络充电暂态强耦合，变压器励磁、线路充电和负荷阶跃都可能引起电压/频率偏移。本文贡献在于把PV-ES电站建成可用于输电级黑启动研究的EMT模型，并配置一次、二次构网控制：一次环用有功-频率、无功-电压下垂模拟同步机调节，二次环恢复额定频率和电压；同时考虑PV与储能在直流侧的协调，使该电站在PSCAD中执行多步网络充电过程。
+
+### 2. 模型、算法与实现技术
+
+本文实现的是一个电磁暂态层面的混合PV-电池构网电站模型。直流侧由PV阵列经DC/DC变换器、储能经双向DC/DC变换器接入共同直流母线；交流侧由逆变器、滤波器和升压接口向PCC注入功率。核心接口量包括PCC处有功功率Pac、无功功率Qac、逆变器输出电压幅值Vg、频率fg、直流母线电压、PV/储能功率以及开关器件PWM指令。控制机制分层工作：一次控制根据下垂关系fg=frated-mp(Pac-Pref)、Vg=Vrated-nq(Qac-Qref)，把负荷变化转化为频率和电压参考的偏移，使逆变器在没有外部电网参考时表现为可调电压源；二次控制用PI环节对频率和电压误差积分补偿，将一次下垂造成的稳态偏差拉回额定值。随后参考电压进入dq坐标系下的电压/电流内外环，生成逆变器调制参考并由PWM驱动功率开关。直流侧控制的作用是维持母线电压并协调PV与储能功率，使交流侧黑启动扰动不直接导致直流侧失稳。
+
+### 3. 验证、优势与不足
+
+作者采用PSCAD/EMTDC时域电磁暂态仿真验证方法，测试系统为由IEEE 9-bus系统修改得到的输电级网络，构网型PV-电池电站作为黑启动资源接入系统。验证任务是多步骤黑启动和网络充电过程，观察线路、变压器和负荷逐步投入时的电压与频率稳定性。基线方面，摘要明确说明使用修改IEEE 9-bus系统验证，并报告仿真结果显示黑启动与网络充电期间电压、频率保持稳定；已有页面还提到稳态结果与数值优化解对比，但所给原文片段未展示该优化模型、指标定义或具体误差，因此应视为需要回到全文表格/图形核验的信息。优势在于模型运行在EMT尺度，能体现逆变器开关控制、dq内环、直流母线和网络暂态之间的动态耦合，比只做潮流或稳态规划更适合检查黑启动初期的电压/频率建立过程。局限是：从提供文本看，论文没有给出可核验的完整量化性能指标、控制器参数、PV辐照/SOC敏感性、保护动作、同步并列、多构网源相互作用或长时恢复调度验证；因此结论应限于该改造IEEE 9节点算例中的控制可行性展示。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值是把“大型PV只能跟随电网”的传统定位推进到“PV-储能电站可作为输电级构网黑启动候选资源”的建模与控制验证框架。它能帮助研究者搭建后续黑启动EMT算例：包括构网下垂/二次恢复控制、PV与储能直流侧协调、以及逐步网络充电的测试流程。工程上可作为评估新能源场站黑启动能力、制定恢复序列和开展控制器初步设计的入口模型。但不宜直接外推为实际电站已经具备黑启动资质，也不宜外推到配电微网、多电源并列、低辐照、SOC不足、保护配合或长时间恢复过程，除非补充相应容量、保护和运行规程验证。
+
+### 证据边界
+
+- 原文明确给出的证据包括：研究对象是grid-forming inverter-based PV-battery power plant，应用目标是black start，验证工具为PSCAD，测试系统为modified IEEE 9-bus system。
+- 原文明确说明控制包括primary and secondary control loops，用于模拟传统同步机控制；下垂方程、PI补偿、dq双环和直流侧拓扑属于当前页面抽取内容，需以全文控制框图和公式进一步核验。
+- 摘要只概括称simulation results show voltage and frequency stability during a multi-step black-start and network energization process；所给原文片段未报告可核验的具体电压偏差、频率偏差、恢复时间或误差百分比。
+- 当前页面中的18秒、7步、负荷数值、<1%误差、<0.2秒恢复等量化结论未出现在所附原文片段中；若用于正式解读，应回查全文图表或仿真记录。
+- 从验证范围看，论文聚焦transmission voltage level；配电级微网黑启动、多构网逆变器并列、与常规机组同步并网、保护/通信/热限制和长期储能SOC约束没有在所给证据中得到验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出构网型光储逆变器黑启动建模与控制策略，模拟同步机外特性
-- 设计下垂与二次PI双层控制架构，实现并网点电压频率自主调节
-- 基于PSCAD构建高保真电磁暂态模型，验证多步黑启动全过程稳定性
-
+- 问题定位：提出一种基于构网型逆变器的光储混合电站黑启动控制与仿真方法。系统直流侧由光伏阵列与电池储能通过DC/DC变换器并联构成，交流侧采用H桥逆变器、LC滤波器及升压变压器。控制架构采用主从双层设计：主控制环基于下垂特性，根据PCC点注入的有功与无功功率实时调节电压幅值与频率；次控制环采用PI控制器消除稳态偏差，将电压与频率恢复至额定值。
+- 方法机制：提出一种基于构网型逆变器的光储混合电站黑启动控制与仿真方法。系统直流侧由光伏阵列与电池储能通过DC/DC变换器并联构成，交流侧采用H桥逆变器、LC滤波器及升压变压器。控制架构采用主从双层设计：主控制环基于下垂特性，根据PCC点注入的有功与无功功率实时调节电压幅值与频率；次控制环采用PI控制器消除稳态偏差，将电压与频率恢复至额定值。控制信号经dq同步旋转坐标系下的电压/电流双环嵌套处理生成参考电压，最终通过PWM调制驱动开关器件。
+- 验证证据：时域电磁暂态仿真（EMT）与数值优化解对比分析；改进型IEEE 9节点输电系统（Bus 1部署光储构网型电站作为黑启动电源）；仿真结果表明，所提构网型控制策略在文中多步黑启动、骨干网架充电及负荷投切过程中能够恢复电压与频率。稳态电气量与数值优化解接近，支持光储混合电站作为输电级黑启动候选资源；工程部署仍需容量、保护和运行规程层面的补充验证。
+- 量化与结论：黑启动全过程历时18秒，完成7次时序投切，系统电压与频率在文中设定阈值内恢复稳定。；频率在0-5秒空载阶段存在微小噪声波动，5秒后主负荷投入，频率稳态值精确收敛至60 Hz。；储能放电上限触发点位于第5秒，此后光伏阵列承担增量有功需求，直流母线电压保持在设定值附近。；仿真稳态电压幅值与数值优化解的匹配误差<1%，用于校核该 PSCAD 模型的稳态一致性。
+- 适用边界：适用于评估输电级光伏-电池混合电站作为黑启动资源时的构网控制、直流侧协调和网架充电过程。；原文明确聚焦 transmission voltage level；配电级微网黑启动、孤岛负荷恢复和多构网电源并列不是本文验证对象。
 
 ## 使用的方法
-
 
 - [[构网型控制|构网型控制]]
 - [[下垂控制|下垂控制]]
@@ -37,9 +64,7 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 - [[时域电磁暂态仿真|时域电磁暂态仿真]]
 - [[pi控制|PI控制]]
 
-
 ## 涉及的模型
-
 
 - [[构网型逆变器|构网型逆变器]]
 - [[光伏阵列|光伏阵列]]
@@ -49,9 +74,7 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 - [[dc-dc变换器|DC/DC变换器]]
 - [[ieee-9节点测试系统|IEEE 9节点测试系统]]
 
-
 ## 相关主题
-
 
 - [[黑启动|黑启动]]
 - [[构网型逆变器|构网型逆变器]]
@@ -60,15 +83,11 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 - [[电压与频率稳定|电压与频率稳定]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 主要发现
 
-
-- 仿真验证多步黑启动过程中母线电压与频率保持稳定，无越限现象
-- 构网型控制有效抑制变压器与线路投切引起的暂态冲击，维持额定值
-- 储能优先供电配合光伏动态补充，维持直流母线电压恒定保障启动
-
-
+- 在文中 7 步黑启动序列中，母线电压和频率能恢复到目标附近，说明构网控制可支撑该测试系统。
+- 直流侧功率分配逻辑是关键：储能先建立直流母线和早期负荷，负荷增大后由光伏补足有功功率。
+- 结论聚焦输电电压层级的 IEEE 9 节点改造系统，尚未覆盖真实电站容量配置、保护配合和多电源并列恢复。
 
 ## 方法细节
 
@@ -78,26 +97,21 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 ### 数学公式
 
-
 **公式1**: $$$f_g = f_{rated} - m_p(P_{ac} - P_{ref})$$$
 
 *一次下垂频率控制方程，根据PCC点有功功率偏差调节逆变器输出频率*
-
 
 **公式2**: $$$V_g = V_{rated} - n_q(Q_{ac} - Q_{ref})$$$
 
 *一次下垂电压控制方程，根据PCC点无功功率偏差调节逆变器输出电压幅值*
 
-
 **公式3**: $$$\Delta f_g = K_{p,f}(f_{ref} - f_g) + K_{i,f}\int(f_{ref} - f_g)dt$$$
 
 *二次PI频率补偿方程，用于消除一次下垂产生的稳态频率偏差*
 
-
 **公式4**: $$$\Delta V_g = K_{p,v}(V_{ref} - V_g) + K_{i,v}\int(V_{ref} - V_g)dt$$$
 
 *二次PI电压补偿方程，用于消除一次下垂产生的稳态电压偏差*
-
 
 ### 算法步骤
 
@@ -114,7 +128,6 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 6. 光储功率动态分配：初始阶段由储能全额提供交流侧需求功率；当需求超过储能放电上限（约5s时刻）时，光伏Boost变换器自动介入，补充剩余有功缺口。
 
 7. 稳定性监测与校验：全程监测母线电压与频率动态响应，将仿真稳态值与独立数值优化解进行对比，验证控制精度与系统稳定性。
-
 
 ### 关键参数
 
@@ -134,8 +147,6 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 - **关键负荷投切值(Step 6)**: P5=26.1 MW, Q5=10.4 Mvar; P6=59.8 MW, Q6=19.9 Mvar; P8=34.3 MW, Q8=12.0 Mvar
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -144,21 +155,25 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 |---------|---------|----------|
 
-| 多步黑启动与骨干网架充电过程 | 在0-18s内完成7次开关操作与负荷投切。母线电压在每次投切后迅速恢复稳定，稳态电压幅值与数值优化解高度吻合。频率在0-5s空载阶段存在可接受波动，负荷投入后稳定在60Hz。 | 仿真稳态电压与优化解偏差极小（<1%），频率恢复精度达额定值60Hz，验证了构网型控制替代传统同步机黑启动的可行性。 |
+| 多步黑启动与骨干网架充电过程 | 在0-18s内完成7次开关操作与负荷投切。母线电压在每次投切后恢复，稳态电压幅值与数值优化解接近。频率在0-5s空载阶段存在波动，负荷投入后稳定在60Hz附近。 | 仿真稳态电压与优化解偏差<1%，支持构网型光储电站在该测试系统中承担黑启动电源的可行性。 |
 
-| 光储功率协同分配 | 0-5s期间交流侧需求功率低于储能放电上限，储能作为主电源全额供电；5s后储能输出保持恒定，光伏阵列通过Boost变换器补充剩余有功需求，直流母线电压全程保持恒定。 | 实现了交直流侧解耦控制，储能与光伏无缝切换，避免了直流电压崩溃，功率分配响应时间<0.1s（基于EMT仿真步长推断）。 |
-
-
+| 光储功率协同分配 | 0-5s期间交流侧需求功率低于储能放电上限，储能作为主电源全额供电；5s后储能输出保持恒定，光伏阵列通过Boost变换器补充剩余有功需求，直流母线电压全程保持恒定。 | 实现了交直流侧解耦控制，储能与光伏按设定逻辑分担有功，避免了文中算例的直流电压崩溃；页面未抽取独立的响应时间指标。 |
 
 ## 量化发现
 
-- 黑启动全过程历时18秒，完成7次时序投切，系统电压与频率全程保持稳定，无越限或失稳现象。
+- 黑启动全过程历时18秒，完成7次时序投切，系统电压与频率在文中设定阈值内恢复稳定。
 - 频率在0-5秒空载阶段存在微小噪声波动，5秒后主负荷投入，频率稳态值精确收敛至60 Hz。
-- 储能放电上限触发点位于第5秒，此后光伏阵列承担增量有功需求，直流母线电压波动率<0.5%。
-- 仿真稳态电压幅值与数值优化解的匹配误差<1%，验证了控制策略的高精度与模型保真度。
+- 储能放电上限触发点位于第5秒，此后光伏阵列承担增量有功需求，直流母线电压保持在设定值附近。
+- 仿真稳态电压幅值与数值优化解的匹配误差<1%，用于校核该 PSCAD 模型的稳态一致性。
 - 辅助负荷投切有效抑制了变压器励磁涌流导致的暂态低压与轻载过电压，母线电压恢复时间<0.2秒。
 - Step 6最大负荷投切量达总有功120.2 MW与总无功42.3 Mvar，构网型逆变器成功支撑该阶跃扰动。
 
+## 适用边界
+
+- 适用于评估输电级光伏-电池混合电站作为黑启动资源时的构网控制、直流侧协调和网架充电过程。
+- 原文明确聚焦 transmission voltage level；配电级微网黑启动、孤岛负荷恢复和多构网电源并列不是本文验证对象。
+- 论文用 PSCAD 和改造 IEEE 9 节点系统验证控制逻辑，未覆盖实际电站保护、通信、同步并列、设备热限制和长时储能容量约束。
+- 光伏出力被作为可用补充电源处理；低辐照、云影、储能SOC不足时需要重新制定黑启动序列和容量裕度。
 
 ## 关键公式
 
@@ -180,11 +195,9 @@ $$$P_{ac} = P_{ES} + P_{PV}$$$
 
 *黑启动过程中交流侧需求功率由储能与光伏共同提供，储能优先，光伏补充*
 
-
-
 ## 验证详情
 
 - **验证方式**: 时域电磁暂态仿真（EMT）与数值优化解对比分析
 - **测试系统**: 改进型IEEE 9节点输电系统（Bus 1部署光储构网型电站作为黑启动电源）
 - **仿真工具**: PSCAD/EMTDC
-- **验证结果**: 仿真结果表明，所提构网型控制策略在多步黑启动、骨干网架充电及负荷投切过程中，能够维持电压与频率的高度稳定。稳态电气量与数值优化解高度一致，验证了光储混合电站作为输电级黑启动电源的可靠性与控制精度。
+- **验证结果**: 仿真结果表明，所提构网型控制策略在文中多步黑启动、骨干网架充电及负荷投切过程中能够恢复电压与频率。稳态电气量与数值优化解接近，支持光储混合电站作为输电级黑启动候选资源；工程部署仍需容量、保护和运行规程层面的补充验证。

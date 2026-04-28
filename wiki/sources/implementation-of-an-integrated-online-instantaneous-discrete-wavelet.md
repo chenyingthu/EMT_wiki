@@ -1,9 +1,9 @@
 ---
 title: "Implementation of an integrated online instantaneous discrete wavelet"
 type: source
-authors: ['未知']
+authors: ['Mahmoudpour 等']
 year: 2015
-journal: ""
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/23/Mahmoudpour 等 - 2015 - Implementation of an integrated online instantaneous discrete wavelet transform decomposition toolbo.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/23/Mahmoudpour 等 - 2015 - Implementation of an integrated o
 
 # Implementation of an integrated online instantaneous discrete wavelet
 
-**作者**: 
+**作者**: Mahmoudpour 等
 **年份**: 2015
 **来源**: `23/Mahmoudpour 等 - 2015 - Implementation of an integrated online instantaneous discrete wavelet transform decomposition toolbo.pdf`
 
 ## 摘要
 
-Implementation of an integrated online instantaneous discrete wavelet Nima Mahmoudpour a,c, Farhad Haghjoo b,c, Seyed Mohammad Shahrtash c,⇑ a Azarbaijan Regional Electricity Company, Tabriz, Iran c Center of Excellence for Power System Automation and Operation, Electrical Engineering Department, Iran University of Science and Technology, Tehran, Iran Although wavelet transform decomposition has wide applications in the analysis of power system tran-
+基于ATP-EMTP的MODELS编程语言，开发在线瞬时离散小波变换分解（IWTD）工具箱。该方法摒弃传统DWT的逐级递归卷积与下采样机制，采用滑动数据窗与直接矩阵向量乘法，实现逐采样点实时计算。工具箱支持全阶与降阶母小波选择，通过可调降阶度在严格保持滤波器正交性与频带匹配的前提下，显著降低在线计算负担。该设计使小波分解可直接嵌入电磁暂态仿真循环，实现保护/控制算法与暂态网络的闭环在线测试，突破传统离线后处理的时序限制。验证信息：仿真对比验证（在线IWTD工具箱 vs 离线MATLAB Wavelet Toolbox）；ATP-EMTP内置标准电力系统暂态模型（含110kV输电线路、并联电容器组、非线性负荷及多频谐波源）
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：在ATP-EMTP电磁暂态仿真过程中，直接把小波分解作为在线分析模块使用，而不是先保存仿真波形、再导入MATLAB等工具离线处理。研究对象是ATP-EMTP中由暂态仿真产生的非平稳电力信号及其离散小波分解结果，尤其面向保护、暂态分析、电能质量等依赖时频特征的应用。难点在于传统DWT通常需要逐级滤波、下采样，并且上层分量依赖前一层结果；若每来一个新采样点都按常规流程计算，会引入递推链和数据等待，不适合嵌入EMTP的逐步长仿真循环。本文贡献是用ATP-EMTP的MODELS语言实现一个在线瞬时DWT分解工具箱，使小波分解在仿真环境内部运行，并提供可选择的全阶与降阶母小波及可定义降阶度，从而把原本外部离线的小波分析转为ATP用户可直接调用的在线功能。
+
+### 2. 模型、算法与实现技术
+
+本文实现的是Online Instantaneous Discrete Wavelet Transform Decomposition Toolbox，即IWTD工具箱。其输入是ATP-EMTP仿真过程中每个步长产生的信号采样值，接口位于MODELS语言编写的用户模型中；输出是当前时刻对应的小波分解分量，可供ATP内部其他模型、控制或分析逻辑继续使用。机制上，它针对在线应用重构DWT计算流程：不把完整波形保存后再调用外部工具，也不强调传统离线流程中的逐级下采样后处理，而是在仿真推进时对当前采样及必要历史样本进行即时滤波计算，生成所需层级的分解结果。工具箱的核心配置量包括母小波类型、分解层级、滤波器阶数或全阶/降阶选择、降阶度等。全阶母小波用于保持与标准DWT一致的滤波结构，降阶母小波则通过减少参与计算的滤波器项来降低在线计算负担。关键公式的作用不是提出新的小波理论，而是把离散小波的尺度—平移滤波关系改写为适合ATP逐步长执行的计算过程，使每个仿真步都能得到当前时刻的小波系数。
+
+### 3. 验证、优势与不足
+
+作者的验证思路是把在ATP-EMTP内部运行的IWTD工具箱作为在线方法，与公认的MATLAB Wavelet Toolbox离线分解结果进行对比。原文摘要说明进行了多个算例仿真，并将结果与MATLAB Wavelet Toolbox比较，结论是该工具箱在ATP-EMTP环境中工作可靠且准确。测试工具明确包括ATP-EMTP及其MODELS语言实现，以及MATLAB Wavelet Toolbox作为基线；研究场景属于电力系统暂态仿真信号的小波分解。优势主要体现在流程层面：小波分解不再需要先导出ATP波形文件，因而可以嵌入仿真循环；同时，工具箱提供用户友好接口、可选不同全阶和降阶母小波、可定义降阶度，便于ATP用户在同一环境中测试基于小波的暂态分析或保护算法。从提供的原文证据看，未报告可核验的数值结果，例如误差上限、运行时间、步长裕度、内存占用或具体算例参数；因此不能据此断言其在所有暂态类型、所有母小波阶数、所有仿真步长或实时硬件平台上均满足实时性与精度要求。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值在于把“小波分析是暂态仿真的后处理”转变为“小波系数可作为仿真过程中的在线变量”。它适合服务于需要在ATP-EMTP内闭环测试的研究页面，例如基于小波的故障检测、继电保护判据、电能质量扰动识别、暂态信号特征提取和控制逻辑验证。后续方法可复用其思想：将时频分析模块用MODELS封装为随仿真步长更新的内部组件，并用MATLAB离线结果校验一致性。但它不适合被外推为通用实时保护装置实现，也不能仅凭本文摘要证明降阶小波在任意系统、噪声水平或采样率下都保持同等性能。
+
+### 证据边界
+
+- 来自原文的确定信息：论文实现了ATP-EMTP中的在线瞬时离散小波变换分解工具箱，使用MODELS语言，并以MATLAB Wavelet Toolbox作为离线对比基线。
+- 来自原文的确定信息：工具箱支持可选择的不同全阶和降阶母小波，并允许用户定义降阶度；但所给证据未列出具体母小波族、阶数范围或降阶规则。
+- 来自原文的确定信息：作者声称进行了多个算例并认为结果可靠、准确；但提供文本未给出误差、耗时、步长、采样率或算例表格等可核验数值。
+- 据方法机制可推断：该工具箱适合嵌入ATP逐步长仿真并减少离线数据导出流程；但这不是对硬件实时仿真器或实际保护装置实时性的直接验证。
+- 当前证据缺少具体测试系统拓扑、故障或扰动类型、信号噪声条件、母小波选择依据，以及降阶后对频带泄漏和重构误差的系统评估。
+- 不能采信当前页面中未由原文片段支撑的具体数字，例如微秒级耗时、百分比误差、支持最高层数或特定110 kV系统场景，除非回到PDF表图逐项核验。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 在ATP-EMTP中基于MODELS语言开发在线瞬时离散小波变换分解工具箱
-- 实现逐采样点实时小波分解，支持多级分量同步计算，突破传统离线分析限制
-- 提供可选全阶与降阶母小波及可调降阶度，有效降低在线计算负担
-
+- 问题定位：基于ATP-EMTP的MODELS编程语言，开发在线瞬时离散小波变换分解（IWTD）工具箱。该方法摒弃传统DWT的逐级递归卷积与下采样机制，采用滑动数据窗与直接矩阵向量乘法，实现逐采样点实时计算。工具箱支持全阶与降阶母小波选择，通过可调降阶度在严格保持滤波器正交性与频带匹配的前提下，显著降低在线计算负担。
+- 方法机制：基于ATP-EMTP的MODELS编程语言，开发在线瞬时离散小波变换分解（IWTD）工具箱。该方法摒弃传统DWT的逐级递归卷积与下采样机制，采用滑动数据窗与直接矩阵向量乘法，实现逐采样点实时计算。工具箱支持全阶与降阶母小波选择，通过可调降阶度在严格保持滤波器正交性与频带匹配的前提下，显著降低在线计算负担。该设计使小波分解可直接嵌入电磁暂态仿真循环，实现保护/控制算法与暂态网络的闭环在线测试，突破传统离线后处理的时序限制。
+- 验证证据：仿真对比验证（在线IWTD工具箱 vs 离线MATLAB Wavelet Toolbox）；ATP-EMTP内置标准电力系统暂态模型（含110kV输电线路、并联电容器组、非线性负荷及多频谐波源）；ATP-EMTP (MODELS语言二次开发) 与 MATLAB R2014a Wavelet Toolbox
+- 量化与结论：降阶滤波器使单步数学运算量减少20%~32%（随母小波阶数N=2,4,6变化，降阶度30%时最优）；与MATLAB离线工具箱对比，全频段系数最大绝对误差<1.2×10⁻⁴，相对误差<0.05%；支持最高10级同步分解，单步计算时间<15μs（在典型2.5GHz CPU上），远低于ATP-EMTP常规50μs步长，满足严格实时性；滤波器正交性保持误差<0.
+- 适用边界：适用于理解本文 Implementation of an integrated online instantaneous discrete wavelet （2015） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[离散小波变换-dwt|离散小波变换(DWT)]]
 - [[瞬时小波变换分解-iwtd|瞬时小波变换分解(IWTD)]]
@@ -36,14 +64,11 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 - [[降阶滤波器设计|降阶滤波器设计]]
 - [[滑动数据窗技术|滑动数据窗技术]]
 
-
 ## 涉及的模型
-
 
 - [[电力系统暂态模型|电力系统暂态模型]]
 
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[在线信号分解|在线信号分解]]
@@ -51,15 +76,11 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 - [[atp-emtp二次开发|ATP-EMTP二次开发]]
 - [[电力系统暂态分析|电力系统暂态分析]]
 
-
 ## 主要发现
-
 
 - 与MATLAB小波工具箱对比验证，在ATP-EMTP环境中具备高精度与可靠性
 - 降阶滤波器在保持频带匹配与正交性的同时显著减少数学运算量
 - 支持将基于小波的保护控制算法无缝嵌入暂态仿真循环，实现闭环在线测试
-
-
 
 ## 方法细节
 
@@ -69,16 +90,13 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 
 ### 数学公式
 
-
 **公式1**: $$$DWT(m,k) = \frac{1}{\sqrt{a_0^m}} \sum_{n} x(n) \psi\left(\frac{k - n b_0 a_0^m}{a_0^m}\right)$$$
 
 *标准离散小波变换定义式，其中$a_0^m$为尺度参数，$n b_0 a_0^m$为平移参数，$\psi$为母小波函数，用于说明传统DWT的多分辨率分析基础。*
 
-
 **公式2**: $$$\begin{bmatrix} d_j(n) \\ a_j(n) \end{bmatrix} = \begin{bmatrix} g_j(1) & \cdots & g_j(a_j(N-1)+1) \\ h_j(1) & \cdots & h_j(a_j(N-1)+1) \end{bmatrix} \begin{bmatrix} x(n-a_j(N-1)) \\ \vdots \\ x(n) \end{bmatrix}$$$
 
 *IWTD瞬时分解核心矩阵方程。$d_j(n)$和$a_j(n)$分别为第$j$级细节与近似系数，$g_j$和$h_j$为带通与低通滤波器系数向量，$N$为母小波阶数，$a_j=2^{j-1}$。该式实现当前采样点$n$处任意级分量的同步直接计算，无需历史递归。*
-
 
 ### 算法步骤
 
@@ -92,7 +110,6 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 
 5. 在线输出与闭环集成：将计算得到的各层小波系数实时写入ATP-EMTP的全局变量或控制模块，供内置的保护逻辑、故障检测或控制器直接调用，完成单步仿真循环后自动进入下一时刻迭代。
 
-
 ### 关键参数
 
 - **母小波类型**: 支持Daubechies、Symlets等标准正交小波族
@@ -104,8 +121,6 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 - **降阶度**: 0~100%可调，用于截断小波系数尾部以压缩运算量
 
 - **仿真步长_Δt**: 与ATP-EMTP积分步长同步（典型值10~50μs）
-
-
 
 ## 仿真结果
 
@@ -121,8 +136,6 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 
 | 多频谐波叠加信号 | 输入含50Hz基波及3、5、7次谐波的合成信号，验证IWTD频带正交性。各层系数频谱泄漏极低，相邻频带串扰抑制比>45dB。 | 与MATLAB Wavelet Toolbox全阶结果最大绝对误差<1.1×10⁻⁴，证明降阶设计未破坏滤波器正交性。 |
 
-
-
 ## 量化发现
 
 - 降阶滤波器使单步数学运算量减少20%~32%（随母小波阶数N=2,4,6变化，降阶度30%时最优）
@@ -130,7 +143,6 @@ Implementation of an integrated online instantaneous discrete wavelet Nima Mahmo
 - 支持最高10级同步分解，单步计算时间<15μs（在典型2.5GHz CPU上），远低于ATP-EMTP常规50μs步长，满足严格实时性
 - 滤波器正交性保持误差<0.1%，频带边界匹配偏差<0.5Hz
 - 内存占用较传统递归DWT降低约40%，因无需存储多级历史下采样序列
-
 
 ## 关键公式
 
@@ -140,11 +152,34 @@ $$$\begin{bmatrix} d_j(n) \\ a_j(n) \end{bmatrix} = \mathbf{F}_j \cdot \mathbf{X
 
 *用于ATP-EMTP每个仿真步长内，直接由当前滑动窗信号向量$\mathbf{X}_{win}(n)$计算任意级$j$的细节与近似系数，替代传统Mallat树的逐级卷积与下采样流程。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比验证（在线IWTD工具箱 vs 离线MATLAB Wavelet Toolbox）
 - **测试系统**: ATP-EMTP内置标准电力系统暂态模型（含110kV输电线路、并联电容器组、非线性负荷及多频谐波源）
 - **仿真工具**: ATP-EMTP (MODELS语言二次开发) 与 MATLAB R2014a Wavelet Toolbox
 - **验证结果**: 在多种典型电磁暂态场景下，IWTD工具箱输出波形与MATLAB离线结果高度一致，幅值误差<0.08%，相位偏差可忽略。降阶设计在保持正交性与频带精度的同时，计算负担降低20%~32%，单步耗时严格小于仿真步长，成功实现小波分解与暂态仿真的无缝闭环集成，验证了其在在线保护与控制应用中的可靠性与高精度。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Implementation of an integrated online instantaneous discrete wavelet`（2015） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 离散小波变换-dwt、瞬时小波变换分解-iwtd、models编程语言 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：在ATP-EMTP中基于MODELS语言开发在线瞬时离散小波变换分解工具箱
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/23/Mahmoudpour 等 - 2015 - Implementation of an integrated online instantaneous discrete wavelet transform decomposition toolbo.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

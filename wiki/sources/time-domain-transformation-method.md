@@ -1,9 +1,9 @@
 ---
 title: "Time Domain Transformation Method"
 type: source
-authors: ['未知']
+authors: ['Shengtao Fan', 'Hui Ding']
 year: 2012
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 
 # Time Domain Transformation Method
 
-**作者**: 
+**作者**: Shengtao Fan; Hui Ding
 **年份**: 2012
 **来源**: `37/tpwrs.2012.2188913.pdf.pdf`
 
 ## 摘要
 
-—Electromagnetic Transients Program (EMTP) is widely used in power system dynamics studies. However, in most cases EMTP is found inadequate for dealing with the realistic size power systems due to the small time step resulting in relatively slow simulation speeds. To accelerate the EMTP simulations of power system dynamics, a novel frequency-adaptive methodology is proposed. In this method, a new transformation is presented. The properties of the transformation and the numerical solutions based on the transformation are discussed. The component models obtained by discretizing the differential equations at the branch level are also given which are convenient for EMTP implementa- tion. The proposed method allows using large time steps without sacriﬁcing accuracy, which greatly improves the s
+本文提出了一种频域自适应的时域变换方法（Time Domain Transformation Method），通过引入旋转变换将原系统中的高频交流载波信号转换为低频慢变信号，从而允许在EMTP仿真中使用更大的时间步长。该方法首先定义了一个从原始x-y坐标系到变换后u-v坐标系的旋转变换，其中变换矩阵随时间以系统基频旋转。在变换后的坐标系中，原本围绕基频变化的信号转换为围绕直流（0 Hz）变化的慢信号。基于此，构建了"微分扩展网络"（Differentially Extended Network）的概念，即将原始网络与其微分网络并联，通过在支路级别离散化微分方程，得到适用于EMTP的伴随模型。数值积分采用梯形法（Trapezoidal Rule, TR）在变换域进行，再通过逆变换得到原始时域的瞬时波形。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大规模电力系统动态仿真：研究者希望像暂态稳定（TS）程序一样能仿真较大系统，又像EMT/EMTP一样保留三相瞬时波形、宽频动态以及FACTS、HVDC等电力电子和控制装置的详细模型。研究对象是用于电力系统动态过程的EMTP数值仿真，而不是单一元件或单一故障类型。难点在于传统EMTP按瞬时量积分，时间步长受50/60 Hz载波及更高频暂态分量约束；系统规模增大后，小步长导致仿真速度难以满足实际规模系统研究。已有系统等值、TS-EMT混合仿真、并行处理、FAST/移频类方法各有局限：等值遇到外部系统非线性会受限，混合仿真存在相量量与瞬时量接口的理论和数据形态差异，并行处理不能单独消除小步长瓶颈。本文贡献是提出一种频率自适应的时域变换方法，将围绕交流载波变化的信号变换到较慢变化的坐标/频率框架中，再在支路层面对微分方程离散化，生成便于EMTP实现的伴随模型，从而在保持EMTP建模形式的同时允许使用较大步长。
+
+### 2. 模型、算法与实现技术
+
+本文的核心不是简单放大EMTP步长，而是先改变被积分变量的频率特性。方法引入一种新的时域变换，可理解为与选定移频频率相关的旋转/移频坐标变换：原始瞬时量在原坐标中含有交流载波，变换后变量相当于把主要基频分量移到低频或近直流附近，因此数值积分看到的是慢变量。核心状态量/接口量包括原EMTP网络中的节点电压、支路电流等瞬时量，以及变换域中的对应慢变量；输入包括网络元件参数、控制/源模型、移频参数和时间步长；输出既可通过逆变换恢复瞬时波形，也可从变换域变量获得类似相量/包络的信息。实现上，作者强调在branch level离散化微分方程，得到component models和companion model，便于嵌入EMTP的节点分析框架。计算流程可概括为：选定移频参数；将元件支路方程写到变换域；对变换域微分方程进行数值离散；形成等效导纳和历史源等伴随模型；组装并求解网络方程；再把结果变回原时域。变换公式的作用是降低被积分信号的表观频率，支路离散化的作用是避免在系统级重构整个EMTP框架，使已有元件—节点导纳求解机制仍可使用。
+
+### 3. 验证、优势与不足
+
+原文摘要说明作者开发了一个general program来验证该方法，并用various case studies支持其声明和展示应用；引言说明目标应用包括含FACTS、HVDC、电力电子和控制装置的大规模电力系统动态仿真。但在当前给出的原文片段中，没有列出具体算例名称、网络规模、元件参数、时间步长、误差曲线、运行时间或与传统EMTP/TS程序的逐项数值对比。因此，能够确认的验证方式是“自研通用程序 + 多个案例研究”，能够确认的基线问题是传统EMTP因小步长导致速度慢，以及TS/EMT混合等已有路线的结构性限制；但不能从当前证据中给出可核验的加速倍数或误差指标。优势主要体现在机制层面：它把加速问题转化为信号频率搬移和慢变量积分问题，同时保留EMTP支路伴随模型接口，因而比单纯并行化更直接针对小步长瓶颈，也比纯TS相量模型更接近瞬时波形建模。从验证范围看，边界包括：方法效果依赖主要频率能否被合适移频参数捕获；对强非线性、开关频繁、宽频冲击、非基频主导暂态的精度和稳定性，当前片段未给出充分证据；原文未报告可核验的数值结果，不能据此声称具体加速倍数、误差上界或实时仿真能力。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于把EMTP加速从“减少网络规模”或“并行拆分”转向“改变被积分变量的频谱位置”：若动态主要表现为基频载波上的慢变化，则把载波移除后再积分，可以在不放弃瞬时量框架的情况下放宽步长限制。它适合被后续关于shifted-frequency analysis、dynamic phasor、频率自适应EMT、EMT-TS统一建模、支路伴随模型改造、含电力电子的大系统动态仿真页面复用。工程上可作为开发大步长EMTP求解器或改造元件模型的入口思想。不适合外推为所有电磁暂态都可大步长精确仿真；对雷击、断路器重燃、PWM高频开关、宽频谐振等高频成分占主导的问题，需要重新验证移频选择、步长和误差。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：论文提出frequency-adaptive methodology和new transformation，讨论其性质和基于该变换的数值解，并在支路层面离散化微分方程以形成便于EMTP实现的component/companion models。
+- 来自原文摘要的确定信息：作者开发了一个general program，并通过various case studies验证和展示方法应用；但当前片段没有给出具体案例参数、系统规模、运行时间或误差数值。
+- 来自原文引言的确定信息：研究动机包括大规模电力系统、FACTS、HVDC、电力电子和控制设备的动态仿真；这些在当前片段中主要作为应用需求出现，不能自动等同于已完整验证的测试系统。
+- 据方法机制推断的信息：变换可解释为把交流载波附近的信号搬移到低频/慢变量后积分；这一解释与shifted frequency analysis索引词一致，但具体矩阵形式、符号约定和离散公式需回到正文核验。
+- 缺少的关键证据：当前片段未提供可核验的量化结果，因此不能声称具体加速倍数、最大可用步长、误差上界、稳定性范围或相对传统EMTP/TS的定量优势。
+- 适用边界不确定：对强非线性元件、频繁开关、宽频暂态、非基频主导扰动以及实时仿真硬件实现，当前证据不足，需依据原文完整算例或后续研究单独判断。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出一种新型频域自适应时域变换方法以加速EMTP仿真
-- 允许在不牺牲精度的情况下使用大时间步长，显著提升大规模电力系统动态仿真速度
-- 提供支路级离散化的元件伴随模型，便于在EMTP中直接实现
+- 问题定位：本文提出了一种频域自适应的时域变换方法（Time Domain Transformation Method），通过引入旋转变换将原系统中的高频交流载波信号转换为低频慢变信号，从而允许在EMTP仿真中使用更大的时间步长。该方法首先定义了一个从原始x-y坐标系到变换后u-v坐标系的旋转变换，其中变换矩阵随时间以系统基频旋转。
+- 方法机制：本文提出了一种频域自适应的时域变换方法（Time Domain Transformation Method），通过引入旋转变换将原系统中的高频交流载波信号转换为低频慢变信号，从而允许在EMTP仿真中使用更大的时间步长。该方法首先定义了一个从原始x-y坐标系到变换后u-v坐标系的旋转变换，其中变换矩阵随时间以系统基频旋转。在变换后的坐标系中，原本围绕基频变化的信号转换为围绕直流（0 Hz）变化的慢信号。
+- 验证证据：通过开发通用仿真程序进行数值验证，并与理论解析解及传统EMTP仿真结果对比分析；包括RLC串联电路（Fig. 3）和含FACTS、HVDC设备的大规模实际电力系统，具体节点数在提供的文本片段中未明确但提及为"realistic size power systems"；自主开发的通用仿真程序（general program），基于所提时域变换方法实现，兼容EMTP的支路级建模框架
+- 量化与结论：时间步长可增大数十倍、数百倍甚至数千倍（tens, hundreds, or even thousands times）而不牺牲精度；方法同时提供EMT仿真器的瞬时波形信息和TS仿真器的相量信息；通过支路级离散化得到的伴随模型可直接集成到现有EMTP框架中，保持良好的兼容性；变换后的信号u和v为慢变信号，其变化速率远低于原始信号x和y，使得数值积分允许使用大步长
+- 适用边界：适用于理解本文 Time Domain Transformation Method （2012） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 dynamic-phasor、numerical-integration、nodal-analysis 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[dynamic-phasor]]
 - [[numerical-integration]]
@@ -38,20 +66,16 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 
 ## 涉及的模型
 
-
 - [[fdne]]
 - [[network-equivalent]]
 
 ## 相关主题
-
 
 - [[real-time]]
 - [[harmonic]]
 - [[frequency-dependent]]
 
 ## 主要发现
-
-
 
 - 所提变换方法可在保持宽频动态特性精度的前提下显著增大仿真步长
 - 该方法有效克服了传统EMTP因小步长导致的计算缓慢问题，大幅提升了仿真效率
@@ -65,36 +89,29 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$\begin{bmatrix} u \\ v \end{bmatrix} = T \begin{bmatrix} x \\ y \end{bmatrix}$$$
 
 *核心时域变换公式，将原始信号(x,y)通过旋转矩阵T变换为慢变信号(u,v)，降低信号变化速率*
-
 
 **公式2**: $$$T = \begin{bmatrix} \cos(\omega_s t) & -\sin(\omega_s t) \\ \sin(\omega_s t) & \cos(\omega_s t) \end{bmatrix}$$$
 
 *旋转变换矩阵，其中$\omega_s$为移频参数（通常等于基频），实现坐标系的旋转以消除基频分量*
 
-
 **公式3**: $$$\begin{bmatrix} \dot{u} \\ \dot{v} \end{bmatrix} = \omega_s \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \begin{bmatrix} u \\ v \end{bmatrix} + T \begin{bmatrix} \dot{x} \\ \dot{y} \end{bmatrix}$$$
 
 *变换后变量(u,v)与原变量(x,y)微分关系，用于构建微分扩展网络的支路方程*
-
 
 **公式4**: $$$\begin{bmatrix} x(t) \\ y(t) \end{bmatrix} = \frac{2}{h} T^{-1}(t) \left( \begin{bmatrix} u(t) \\ v(t) \end{bmatrix} - \begin{bmatrix} u(t-h) \\ v(t-h) \end{bmatrix} \right) - T^{-1}(t) \begin{bmatrix} u(t-h) \\ v(t-h) \end{bmatrix}$$$
 
 *基于梯形法的离散化公式，h为时间步长，实现从变换域到原时域的数值求解*
 
-
 **公式5**: $$$G_{eq} = \frac{2}{h} L^{-1}, \quad R_{eq} = R - \omega_s L$$$
 
 *等效电路参数，其中电导$G_{eq}$和等效电阻$R_{eq}$考虑了变换引入的耦合项和离散化效应*
 
-
 **公式6**: $$$I_{h}(t) = I_{h}(t-h) + \frac{2}{h} L^{-1} [u(t-h), v(t-h)]^T$$$
 
 *电感支路的历史电流更新公式，用于伴随模型中的历史电流源计算*
-
 
 ### 算法步骤
 
@@ -114,7 +131,6 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 
 8. 输出与存储：记录原始时域的瞬时波形（EMT结果）和变换域的慢变包络（相量信息），推进时间步长并重复步骤3-8直至仿真结束
 
-
 ### 关键参数
 
 - **$\omega_s$**: 移频参数（Shift Frequency），通常设置为系统基频（50 Hz或60 Hz），决定坐标系旋转速度
@@ -131,8 +147,6 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 
 - **$R_{eq}$**: 等效电阻，原电阻R减去耦合项$\omega_s L$（感性支路）或加上$\omega_s L$（容性支路）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -145,8 +159,6 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 
 | 大规模电力系统动态仿真 | 开发了通用仿真程序对实际规模电力系统进行验证，系统包含FACTS和HVDC等电力电子设备，仿真了机电暂态过程 | 实现了与暂态稳定（TS）程序相当的计算速度，同时保留了EMTP程序的详细设备级建模能力，克服了传统EMTP因小步长导致的计算缓慢问题 |
 
-
-
 ## 量化发现
 
 - 时间步长可增大数十倍、数百倍甚至数千倍（tens, hundreds, or even thousands times）而不牺牲精度
@@ -154,7 +166,6 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 - 通过支路级离散化得到的伴随模型可直接集成到现有EMTP框架中，保持良好的兼容性
 - 变换后的信号u和v为慢变信号，其变化速率远低于原始信号x和y，使得数值积分允许使用大步长
 - 等效电路参数中，电感支路的等效电阻$R_{eq} = R - \omega_s L$体现了移频引入的耦合效应补偿
-
 
 ## 关键公式
 
@@ -176,11 +187,35 @@ $$$G_{eq} = \frac{2}{h}L^{-1}, \quad I_h(t) = I_h(t-h) + \frac{2}{h}L^{-1}\begin
 
 *用于构建微分扩展网络的等效电路，其中历史电流源$I_h$体现了梯形法的记忆效应*
 
-
-
 ## 验证详情
 
 - **验证方式**: 通过开发通用仿真程序进行数值验证，并与理论解析解及传统EMTP仿真结果对比分析
 - **测试系统**: 包括RLC串联电路（Fig. 3）和含FACTS、HVDC设备的大规模实际电力系统，具体节点数在提供的文本片段中未明确但提及为"realistic size power systems"
 - **仿真工具**: 自主开发的通用仿真程序（general program），基于所提时域变换方法实现，兼容EMTP的支路级建模框架
 - **验证结果**: 各种案例研究（various case studies）证实了该方法允许使用大步长而不牺牲精度，显著提升了大规模电力系统动态仿真的计算速度，同时能够同时提供瞬时波形和相量信息，验证了方法的有效性和实用性
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Time Domain Transformation Method`（2012） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 dynamic-phasor、numerical-integration、nodal-analysis 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出一种新型频域自适应时域变换方法以加速EMTP仿真
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 当前页面没有可核验的量化结果；不能据此声称具体精度、速度或误差改善。
+- 源文件路径：`["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

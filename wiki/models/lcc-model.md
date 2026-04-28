@@ -49,6 +49,16 @@ created: "2026-04-14"
 - 直流电流激增
 - 需要快速保护动作
 
+## 定义与边界
+
+LCC 模型描述基于晶闸管、依赖交流系统换相的高压直流换流器。它与 [[vsc-model|VSC 模型]] 的边界在于 LCC 需要较强交流电压支撑，控制变量主要围绕触发角、熄弧角和直流电流；VSC 则通过自换相器件独立控制有功/无功。用于 EMT 时，LCC 页面应说明换相过程、阀组等值、控制保护接口和交流系统强度，而不是只给出平均功率方程。
+
+该模型适合常规 HVDC、换相失败、交直流故障和多馈入相互作用研究。若研究对象是高频开关谐波、构网控制或 MMC 内部子模块暂态，应转向 [[vsc-model]]、[[mmc-model]] 或 [[average-value-model|平均值模型]]。
+
+## 代表性来源与内部链接
+
+代表性来源包括 [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Average-Value Modeling of Line-Commutated AC-DC Converters With Unbalanced AC Networks]]、[[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail|Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure]]、[[a-topology-based-simplified-dynamic-model-and-solving-algorithm-for-lcc-hvdc-con|A topology-based simplified dynamic model and solving algorithm for LCC-HVDC converters]] 和 [[a-multi-area-thevenin-equivalent-based-multi-rate-co-simulation-for-control-desi|A multi-area Thevenin equivalent based multi-rate co-simulation for control design]]。相关主题包括 [[co-simulation]]、[[network-equivalent]]、[[nodal-analysis]] 和 [[vsc-hvdc]]。
+
 ## 相关方法
 - [[average-value-model]]
 - [[nodal-analysis]]

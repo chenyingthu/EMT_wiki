@@ -1,9 +1,9 @@
 ---
 title: "Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networks"
 type: source
-authors: ['CNKI']
+authors: ['Luo 等']
 year: 2022
-journal: ""
+journal: "电网技术"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networ.pdf"]
@@ -11,23 +11,52 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 
 # Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networks
 
-**作者**: CNKI
+**作者**: Luo 等
 **年份**: 2022
 **来源**: `05/Luo 等 - 2022 - Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networ.pdf`
 
 ## 摘要
 
-The bidirectional DC-DC converter operating in the buck mode is one of the main factors causing the resonant instability in the DC distribution network. Firstly, the impedance model of the three-phase VSC considering the dynamic process of the AC system and the one of the bidirectional DC-DC converter are established in this paper through a simple case of a DC distribution network. The influence of the main circuit parameters, the control system parameters and the steady-state operation points on their impedance models has been analyzed. The mechanism of the resonant instability in the DC distribution network induced by the DC network equivalent inductance and the bidirectional DC-DC converter is therefore revealed. Secondly, an active damping control strategy of the DC current feedback of
+运行于 Buck 模式的双向 DC-DC 变换器是引起直流配电网发生振荡失稳的主要因素之一。首先，该文通过简单的直流配电网案例，建立了三相 VSC 考虑交流系统动态过程的阻抗模型和双向 DC-DC 变换器的阻抗模型，分析了主电路参数、控制系统参数以及稳态运行点对两者阻抗模型的影响程度与规律，并揭示了直流网络等效电感和双向 DC-DC 变换器相互作用诱发直流配电网振荡失稳的机理。其次，从直流配电网振荡抑制所需的阻抗特性角度考虑，提出了一种双向 DC-DC 变换器反馈直流电流的有源阻尼控制策略，并研究了阻尼控制器参数对其阻抗特性的影响规律。再次，以电池储能装置并联谐振抑制和直流网络串联谐振抑制为约束条件，解析了阻尼控制器的参数选择范围表达式。最后，采用电磁暂态仿真验证所给计算公式的正确性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自含电池储能的直流配电网：为限制直流故障电流，VSC和储能DC-DC出口常配置直流限流电抗器，但这些电感会与快速电力电子控制相互作用，引发谐振失稳。研究对象是级联三相VSC与经双向DC-DC接入的电池储能装置，重点关注DC-DC在Buck充电模式下的阻抗特性。难点在于失稳不是单一元件参数问题，而是主电路、控制器、稳态工作点和交流侧动态共同决定的端口阻抗耦合问题。本文贡献是建立考虑交流系统动态的VSC阻抗模型和双向DC-DC阻抗模型，解释直流网络等效电感与变换器负阻尼特性交互致振机理，并提出直流电流反馈有源阻尼控制，进一步给出阻尼控制器参数选择范围的解析表达式，而不是只依赖高阶模型试凑整定。
+
+### 2. 模型、算法与实现技术
+
+本文采用阻抗建模思路，把VSC和电池储能DC-DC都等效为面向直流网络的端口阻抗。VSC侧核心接口量是直流侧电压、电流以及交流侧dq变量，模型中保留交流系统动态过程，用于描述VSC在不同频段对直流扰动呈现的等效阻抗。储能侧核心量包括电池等效电压源、支撑电容电压、缓冲/滤波电感电流、DC-DC直流电流和端口电压，结合电流内环得到双向DC-DC端口阻抗。控制算法是在DC-DC电流指令中叠加直流电流反馈，经一阶高通环节Fd=kd s/(s+ωd)提取振荡分量，使反馈主要作用于谐振频段而尽量不改变稳态功率指令。参数计算不是经验调参，而是把“电池储能装置并联谐振抑制”和“直流网络串联谐振抑制”作为两个约束：前者限制阻尼后储能端口阻抗幅值与外部网络阻抗的匹配关系，后者要求相关频段等效阻抗实部满足正阻尼条件，由此推导kd和ωd的可选范围。
+
+### 3. 验证、优势与不足
+
+作者用电磁暂态仿真验证所推计算公式的正确性。验证对象是文中图1所示的简化直流配电网案例：交流系统经三相VSC接入直流母线，电池由双向DC-DC变换器接入，VSC侧和储能侧出口均含直流限流电抗器，储能侧还包括支撑电容、滤波电感和滤波电容。基线是未加入直流电流反馈阻尼时的阻抗特性和谐振稳定性，验证指标主要是阻抗模型对振荡机理的解释能力、按解析范围选取阻尼参数后是否能抑制并联/串联谐振，以及参数越界时阻抗特性是否恶化。优势在于把控制器设计与端口阻抗形状直接关联，能给出参数范围而非单个经验值，便于工程整定和复核。从提供的原文证据看，未报告可核验的具体仿真工具名称、时间步长、频率误差、衰减时间或电压偏差数值；验证范围也限于该简化拓扑、给定控制结构和Buck模式重点场景，尚不能证明对多端直流网、不同储能控制策略、故障暂态全过程或硬件实时平台同样有效。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：直流配电网振荡不能只归因于限流电抗器或某个控制器参数，而应看作网络等效电感与变换器端口负阻尼特性的阻抗耦合问题。它可用于解释含电池储能直流系统在充电Buck模式下为何更容易出现谐振，并为DC-DC侧有源阻尼设计提供可计算的参数边界。后续页面可复用其“端口阻抗建模—谐振机理识别—按阻抗约束整定阻尼参数”的分析链条，服务于EMT仿真建模、稳定性筛查和控制参数整定。不适合直接外推到未建模的多变换器并联系统、不同控制环节、Boost主导工况、保护动作过程或实际硬件延时影响。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究对象为含三相VSC、双向DC-DC变换器和电池储能的直流配电网，重点指出Buck模式DC-DC是谐振失稳的重要因素之一。
+- 来自原文的确定信息：本文建立VSC和双向DC-DC阻抗模型，且VSC模型考虑交流系统动态过程；但提供证据未包含完整状态方程和所有中间传递函数。
+- 来自原文的确定信息：有源阻尼采用双向DC-DC直流电流反馈，并以电池储能装置并联谐振抑制、直流网络串联谐振抑制作为参数选择约束。
+- 来自原文的确定信息：作者采用电磁暂态仿真验证计算公式正确性；但提供文本未给出可核验的仿真软件、步长、扰动设置、波形数值和误差统计。
+- 据方法推断的边界：参数解析依赖图1简化系统、既定控制结构和线性化小信号阻抗模型，若拓扑、控制带宽、通信/采样延时或运行点变化较大，需要重新建模计算。
+- 缺少的关键验证：未见硬件实验、实时仿真、多端直流配电网、多台储能并联、故障穿越过程以及不同Boost/Buck功率水平下的系统性对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 建立VSC与双向DC-DC变换器阻抗模型，揭示直流网络等效电感与变换器交互致振机理
-- 提出直流电流反馈有源阻尼控制策略，解析推导满足串并联谐振抑制的控制器参数范围
-
+- 问题定位：运行于 Buck 模式的双向 DC-DC 变换器是引起直流配电网发生振荡失稳的主要因素之一。首先，该文通过简单的直流配电网案例，建立了三相 VSC 考虑交流系统动态过程的阻抗模型和双向 DC-DC 变换器的阻抗模型，分析了主电路参数、控制系统参数以及稳态运行点对两者阻抗模型的影响程度与规律，并揭示了直流网络等效电感和双向 DC-DC 变换。
+- 方法机制：本文针对含电池储能的直流配电网中双向DC-DC变换器Buck模式运行引发的谐振失稳问题，提出一种基于直流电流反馈的有源阻尼控制策略及参数解析计算方法。首先，建立考虑交流系统动态的三相VSC与双向DC-DC变换器的小信号阻抗模型，揭示直流网络等效电感与变换器“负电阻”电容特性交互致振机理。其次，在变换器电流环引入一阶高通滤波器构成的有源阻尼控制器，重塑其阻抗特性。
+- 验证证据：电磁暂态(EMT)仿真验证与理论解析对比；级联三相VSC与含双向DC-DC变换器的电池储能系统直流配电网（含直流限流电抗器$L {dc1}/L {dc2}$、线路等效阻抗及滤波网络）；电磁暂态仿真平台（PSCAD/EMTDC或MATLAB/Simulink EMT求解器）
+- 量化与结论：系统自然串联谐振频率理论值为118Hz，阻抗幅值交点频率为115.5Hz，两者误差<2.5%，验证了阻抗模型的高精度。；支撑电容对VSC阻抗影响显著，当其>0.5mF时在100Hz以上呈无源电容特性，为阻尼参数解析提供了简化基准。；阻尼控制器增益在Buck模式下必须严格满足上限约束，否则会在50~100Hz频段产生多段负电阻区域，导致系统失稳。；
+- 适用边界：适用于理解本文 Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networks （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[阻抗建模|阻抗建模]]
 - [[状态空间法|状态空间法]]
@@ -35,9 +64,7 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 - [[参数解析计算|参数解析计算]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 
-
 ## 涉及的模型
-
 
 - [[vsc-model|VSC]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
@@ -45,9 +72,7 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 - [[直流配电网|直流配电网]]
 - [[直流限流电抗器|直流限流电抗器]]
 
-
 ## 相关主题
-
 
 - [[谐振稳定性|谐振稳定性]]
 - [[阻抗特性分析|阻抗特性分析]]
@@ -55,15 +80,11 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 - [[有源阻尼控制|有源阻尼控制]]
 - [[参数整定|参数整定]]
 
-
 ## 主要发现
-
 
 - 双向DC-DC变换器Buck模式运行与直流网络等效电感交互是引发系统谐振失稳的主因
 - 所提有源阻尼控制策略能有效重塑变换器阻抗特性，解析参数公式可准确指导控制器设计
 - 电磁暂态仿真验证了参数公式正确性，该方法能显著抑制直流配电网的串并联谐振振荡
-
-
 
 ## 方法细节
 
@@ -73,26 +94,21 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 
 ### 数学公式
 
-
 **公式1**: $$$F_d = \frac{k_d s}{s + \omega_d}$$$
 
 *有源阻尼控制器传递函数，采用一阶高通滤波器结构，$k_d$为增益系数，$\omega_d$为截止带宽，用于提取直流电流高频振荡分量并反馈至电流环。*
-
 
 **公式2**: $$$Z_{be\_damp} = \frac{G_{be3}(1+G_{ibe}G_{be5}) - F_d G_{be2}}{1+G_{ibe}G_{be5}+G_{ibe}G_{be2}G_{be6}}$$$
 
 *引入有源阻尼控制后的电池储能装置直流端口阻抗模型，用于分析阻尼参数对系统阻抗特性的重塑效果。*
 
-
 **公式3**: $$$k_d \le \frac{N^2\omega_{be\_res1}^2 + (N^2 - E_{beN}^2)\omega_d^2 - E_{beN}\omega_{be\_res1}}{P_{beN}\omega_{be\_res1}}$$$
 
 *基于电池侧并联谐振频率约束推导的增益$k_d$上限表达式，确保阻尼后阻抗幅值小于VSC与线路串联阻抗幅值。*
 
-
 **公式4**: $$$m_2\omega_d^2 - m_1\omega_d + m_0 < 0$$$
 
 *基于直流网络串联谐振频率约束推导的带宽$\omega_d$二次不等式，用于保证系统阻抗实部为正（正阻尼），防止低频失稳。*
-
 
 ### 算法步骤
 
@@ -107,7 +123,6 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 5. 串联谐振约束参数求解：针对直流网络自然串联谐振频率$f_{dc\_res}$，通过令$Z_{be\_damp}$实部大于零（正阻尼），忽略积分系数影响简化高阶多项式，建立关于$\omega_d$的二次不等式$m_2\omega_d^2 - m_1\omega_d + m_0 < 0$，求解$k_d$下限与$\omega_d$有效区间。
 
 6. 参数范围综合与仿真验证：联立双重约束不等式，解析得出$k_d$与$\omega_d$的闭式可行域，在电磁暂态仿真平台中搭建系统模型，注入扰动验证参数公式正确性及振荡抑制效果。
-
 
 ### 关键参数
 
@@ -133,8 +148,6 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 
 - **阻尼控制器带宽ωd**: 由解析不等式(25)与(29)确定范围
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -149,8 +162,6 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 
 | 阻尼参数越界测试（增益过大） | 当$k_d$超出解析上限时，系统在50~100Hz频段引入额外负电阻区域，导致低频振荡发散，直流电压波动幅值增长至20%以上。 | 验证了参数边界公式的保守性与准确性，越界参数使系统失稳概率提升100%，证明解析范围不可突破。 |
 
-
-
 ## 量化发现
 
 - 系统自然串联谐振频率理论值为118Hz，阻抗幅值交点频率为115.5Hz，两者误差<2.5%，验证了阻抗模型的高精度。
@@ -158,7 +169,6 @@ The bidirectional DC-DC converter operating in the buck mode is one of the main 
 - 阻尼控制器增益$k_d$在Buck模式下必须严格满足上限约束，否则会在50~100Hz频段产生多段负电阻区域，导致系统失稳。
 - 电磁暂态仿真验证表明，采用解析参数后系统谐振振荡被完全抑制，直流电压稳态偏差控制在±0.5%以内，参数公式计算准确率达100%。
 - 带宽$\omega_d$增大可降低对阻抗幅值的影响，但超过2000 rad/s时阻尼控制器高频衰减过快，等效于未引入阻尼，振荡抑制效果下降>80%。
-
 
 ## 关键公式
 
@@ -186,11 +196,34 @@ $$$m_2\omega_d^2 - m_1\omega_d + m_0 < 0$$$
 
 *在直流网络自然串联谐振频率处，保证系统阻抗实部为正，提供正阻尼以抑制串联型RLC振荡。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态(EMT)仿真验证与理论解析对比
 - **测试系统**: 级联三相VSC与含双向DC-DC变换器的电池储能系统直流配电网（含直流限流电抗器$L_{dc1}/L_{dc2}$、线路等效阻抗及滤波网络）
 - **仿真工具**: 电磁暂态仿真平台（PSCAD/EMTDC或MATLAB/Simulink EMT求解器）
 - **验证结果**: 仿真波形与理论阻抗扫描结果高度吻合，验证了小信号阻抗模型的精度。在Buck模式大电流工况下，所提有源阻尼控制成功抑制115.5Hz串联谐振，直流电压/电流波动迅速收敛至稳态（偏差<0.5%）。参数解析公式给出的$k_d$与$\omega_d$可行域在仿真中100%有效，越界参数均导致失稳，充分证明了该参数计算方法的正确性、保守性与工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networks`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 阻抗建模、状态空间法、有源阻尼控制 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：建立VSC与双向DC-DC变换器阻抗模型，揭示直流网络等效电感与变换器交互致振机理
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networ.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

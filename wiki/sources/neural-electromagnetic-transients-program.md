@@ -1,9 +1,9 @@
 ---
 title: "Neural Electromagnetic Transients Program"
 type: source
-authors: ['未知']
+authors: ['Yifan Zhou', 'Peng Zhang']
 year: 2022
-journal: "2022 IEEE Power & Energy Society General Meeting (PESGM);2022; ; ;10.1109/PESGM48719.2022.9916869"
+journal: "IEEE Power & Energy Society General Meeting"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/Neural Electromagnetic Transients Program.pdf"]
@@ -11,24 +11,51 @@ sources: ["EMT_Doc/27&28/Neural Electromagnetic Transients Program.pdf"]
 
 # Neural Electromagnetic Transients Program
 
-**作者**: 
+**作者**: Yifan Zhou, Peng Zhang
 **年份**: 2022
 **来源**: `27&28/Neural Electromagnetic Transients Program.pdf`
 
 ## 摘要
 
-—This paper devises a neural electromagnetic tran- sients program (NeuEMTP), an unsupervised, physics-informed learning approach to numerical-integration-free EMTP solutions. The main contributions lie in: (1) a learning-based NeuEMTP architecture to simultaneously generate the electromagnetic states at all desired time steps, making the step-by-step integration unnecessary; (2) an unsupervised, physics-informed training pro- cedure to realize the NeuEMTP functionality without requiring any EMTP trajectories beforehand; (3) an EMTP-oriented- neural-network (EMTPNet) accompanied with a novel activation function Act mix to enable efﬁcient extrapolations of diverse oscillation modes under arbitrary frequencies. Case studies sys- tematically verify that NeuEMTP generates high-ﬁdelity EMTP traj
+NeuEMTP采用物理信息神经网络(PINN)架构，将传统EMTP的梯形积分离散化规则嵌入深度学习框架。核心创新在于：①设计EMTPNet网络结构，通过单次前向传播同步生成全时段(t∈[0,T])的电磁状态量(v(t),i(t))，彻底消除传统逐步数值积分；②构建无监督训练范式，利用基尔霍夫定律和元件本构关系作为物理约束损失函数，无需预生成EMTP轨迹数据；③提出Act mix参数化激活函数，通过可学习参数自适应捕获从工频到高频谐波的多样化振荡模式，解决传统激活函数拟合高频电磁振荡时的频谱偏差问题。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，EMTP用于分析电力系统中由开关、故障、RLC暂态和高频振荡引起的电磁过程，但传统EMTP依赖梯形积分等逐时步递推：每一个时间步都要根据历史电流源和节点导纳方程求解状态，时间窗越长、步长越小，计算负担越重。本文研究对象不是一般的黑箱波形预测，而是将RLC元件的EMTP伴随电路方程嵌入神经网络，使网络直接生成指定时间窗内所有电磁状态。难点有两点：一是EMTP的梯形离散化包含历史项，天然是递推结构，如何改造成可并行学习的约束；二是电磁暂态可能同时包含工频与高频振荡，普通神经网络容易偏向低频函数，难以表达多频振荡。本文贡献是提出NeuEMTP：用EMTPNet一次前向传播输出所有目标时刻的状态；用基尔霍夫定律和梯形离散化残差构造无监督物理损失，不预先生成EMTP轨迹；并设计Act mix激活函数以增强对任意频率振荡模式的外推表达能力。
+
+### 2. 模型、算法与实现技术
+
+NeuEMTP的核心是把传统EMTP中的伴随电路形式转成神经网络训练约束。对元件而言，电流与电压被写成i(t)=g v(t)-i_h(t)：电阻只有g_R=1/R且无历史项；电感、电容的等效电导分别由Δt、L、C决定，历史项由上一时刻电压和电流构成。系统层面再组装为节点方程Gv(t)=i_s(t)+i_h(t)。在传统EMTP中，这些公式用于逐步更新历史源并求解每一时刻的节点电压；在NeuEMTP中，它们变成训练时的物理残差。EMTPNet接收与系统工况相关的量，例如拓扑/元件参数、源特性、初始条件或时间采样点，输出目标时间窗内的电压、电流轨迹。训练时不使用预计算EMTP标签，而是计算网络输出在各时间点是否满足节点导纳方程、元件本构关系和历史项一致性，通过反向传播最小化残差。Act mix是面向EMTP波形设计的参数化混合激活函数，其作用不是改变电路方程，而是提高网络表示多频振荡函数的能力。训练完成后，论文设想用一次前向传播同时生成所有时间步的暂态状态，从而避免推断阶段的逐时步数值积分。
+
+### 3. 验证、优势与不足
+
+原文摘要称作者通过案例研究系统验证NeuEMTP可生成高保真EMTP轨迹，并具有在普通计算机上实现超实时仿真的潜力；但当前给出的原文片段没有包含完整案例表、误差数值、耗时、加速倍数或测试系统参数。因此，只能确认其验证目标包括：与传统梯形积分EMTP思想下的轨迹进行一致性比较，考察无监督物理残差训练能否恢复电磁状态，以及检验EMTPNet/Act mix对多种振荡模式的表达能力。优势主要体现在计算范式变化：传统方法在训练或仿真时都要沿时间递推，而NeuEMTP试图把全时间窗状态作为一个整体学习出来；同时，它不要求先用EMTP生成大量监督数据，避免把传统求解成本前置到数据集构造中。其边界也很明确：原文片段未报告可核验的数值结果，不能据此断言误差水平或实际加速倍数；验证范围看更接近RLC伴随电路可清晰表达的场景，对频繁拓扑切换、电力电子开关逻辑、强非线性饱和、保护控制离散事件等复杂EMT问题，是否仍能无缝适用没有证据。单次前向传播的快速性也依赖离线训练成本、残差收敛质量和工况是否落在训练覆盖范围内。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要价值在于把EMTP从“逐时步数值积分问题”重新表述为“满足离散物理方程的全时间窗函数逼近问题”。它提醒后续研究：PINN用于电磁暂态时，关键不是简单用神经网络拟合历史仿真数据，而是要把梯形规则、伴随电路、节点导纳方程等EMTP内部结构作为训练约束。该思路适合被固定拓扑RLC网络、参数扫描、快速暂态轨迹生成、数字孪生中的候选波形预估、以及面向PINN的EMT求解器页面复用。Act mix也可作为高频振荡神经表示的设计线索。但不应把本文直接外推为可替代商业EMTP/EMTDC的通用求解器；对于开关事件密集、非线性强、控制保护逻辑主导或拓扑持续变化的系统，仍需新的物理约束、事件处理和重新验证。
+
+### 证据边界
+
+- 来自原文：NeuEMTP被定义为unsupervised、physics-informed、numerical-integration-free的EMTP求解思路，目标是在所有目标时间步同时生成电磁状态。
+- 来自原文：论文明确列出三项贡献，即NeuEMTP架构、无需预生成EMTP轨迹的物理信息训练流程、以及带Act mix激活函数的EMTPNet用于多振荡模式外推。
+- 来自原文：关键物理基础是梯形离散化和EMTP伴随电路思想，包括元件等效电导、历史电流源以及系统节点导纳方程。
+- 不确定性：当前提供的原文片段未给出案例系统的完整参数、误差指标、训练时间、推断时间或加速倍数，因此原文未报告可核验的数值结果。
+- 据方法推断：对固定拓扑、RLC或可由伴随电路清晰表达的线性/弱非线性网络更自然；但这不是原文片段中经过量化边界测试的结论。
+- 缺失证据：没有看到对频繁开关、强非线性磁饱和、电力电子控制、保护逻辑离散跳变、大规模实际电网等场景的验证，不能声称NeuEMTP已覆盖这些应用。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出NeuEMTP架构，单次前向传播同步生成全时段状态，消除逐步积分
-- 构建无监督物理信息训练流程，无需预生成轨迹数据即可完成模型训练
-- 设计EMTPNet与Act_mix激活函数，实现任意频率多振荡模式高效外推
-
+- 提出NeuEMTP架构，用单次EMTPNet前向传播同时生成目标时间窗内的电磁暂态状态，避免传统EMTP逐步积分。
+- 构建无监督物理信息训练流程，把梯形积分伴随电路方程作为损失约束，因此训练前不需要预生成大量EMTP轨迹。
+- 设计EMTPNet与Act_mix激活函数，用于表达工频与高频叠加的多振荡模式，缓解普通神经网络对高频电磁波形的频谱偏置。
+- 将方法定位为离线训练后的快速轨迹生成器，而不是替代所有EMTP求解器的通用即插即用模型。
 
 ## 使用的方法
-
 
 - [[物理信息神经网络-pinn|物理信息神经网络(PINN)]]
 - [[无监督学习|无监督学习]]
@@ -36,18 +63,13 @@ sources: ["EMT_Doc/27&28/Neural Electromagnetic Transients Program.pdf"]
 - [[参数化激活函数-act_mix|参数化激活函数(Act_mix)]]
 - [[全时段同步前向传播|全时段同步前向传播]]
 
-
 ## 涉及的模型
-
-
 
 - [[阻抗网络|阻抗网络]]
 - [[rlc集中参数模型|RLC集中参数模型]]
 - [[节点导纳矩阵|节点导纳矩阵]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真-emtp|电磁暂态仿真(EMTP)]]
 - [[物理信息深度学习|物理信息深度学习]]
@@ -56,15 +78,11 @@ sources: ["EMT_Doc/27&28/Neural Electromagnetic Transients Program.pdf"]
 - [[免数值积分仿真|免数值积分仿真]]
 - [[数据驱动计算|数据驱动计算]]
 
-
 ## 主要发现
-
 
 - 算法无需数值积分即可生成高保真电磁暂态轨迹，验证了方法有效性
 - Act_mix函数能精准拟合基频与高频谐波叠加的复杂振荡波形
 - 该方法在普通计算机上具备实现超实时电磁暂态仿真的潜力与加速优势
-
-
 
 ## 方法细节
 
@@ -74,31 +92,25 @@ NeuEMTP采用物理信息神经网络(PINN)架构，将传统EMTP的梯形积分
 
 ### 数学公式
 
-
 **公式1**: $$$i(t) = gv(t) - i_h(t)$$$
 
 *梯形离散化通用形式：将电感/电容的动态微分方程转化为等效电阻g与历史电流源i_h(t)的代数关系，是EMTP数值积分的基础*
-
 
 **公式2**: $$$g_R = \frac{1}{R}, \quad i_{h,R}(t) = 0$$$
 
 *电阻元件离散化：等效电导为电阻倒数，无历史电流项*
 
-
 **公式3**: $$$g_L = \frac{\Delta t}{2L}, \quad i_{h,L}(t) = -g_L v_L(t-\Delta t) - i_L(t-\Delta t)$$$
 
 *电感元件梯形离散化：等效电导与步长Δt成正比，历史电流项包含前一时刻电压和电流状态*
-
 
 **公式4**: $$$g_C = \frac{2C}{\Delta t}, \quad i_{h,C}(t) = g_C v_C(t-\Delta t) + i_C(t-\Delta t)$$$
 
 *电容元件梯形离散化：等效电导与步长Δt成反比，历史电流项体现电荷累积效应*
 
-
 **公式5**: $$$Gv(t) = i_s(t) + i_h(t) := i(t)$$$
 
 *系统级节点导纳方程：G为系统等效导纳矩阵，v(t)为节点电压向量，i_s为独立源注入电流，i_h为历史项等效电流源*
-
 
 ### 算法步骤
 
@@ -112,7 +124,6 @@ NeuEMTP采用物理信息神经网络(PINN)架构，将传统EMTP的梯形积分
 
 5. 全时段状态生成：训练完成后，对任意新工况执行单次前向传播，网络并行输出所有时间步的节点电压和支路电流，计算复杂度从O(N·M)降至O(1)（N为时间步数，M为系统规模）
 
-
 ### 关键参数
 
 - **Δt**: 仿真步长，决定离散化精度与等效电导计算
@@ -122,8 +133,6 @@ NeuEMTP采用物理信息神经网络(PINN)架构，将传统EMTP的梯形积分
 - **Act_mix参数**: 自适应混合激活函数的频率调制参数，用于多尺度振荡拟合
 
 - **网络深度/宽度**: EMTPNet隐藏层配置，需足够表达高频谐波模式
-
-
 
 ## 仿真结果
 
@@ -137,16 +146,18 @@ NeuEMTP采用物理信息神经网络(PINN)架构，将传统EMTP的梯形积分
 
 | 多频率振荡模式外推 | 测试Act_mix激活函数对任意频率(包含高频电磁振荡)的 extrapolation 能力 | 传统ReLU/Tanh激活函数无法同时捕获工频与kHz级高频振荡，Act_mix实现多模式高效外推 |
 
-
-
 ## 量化发现
 
-- 方法实现数值积分完全免除(numerical-integration-free)，训练过程无需任何预生成EMTP轨迹数据
-- 单次前向传播即可生成全时段所有时间步的电磁状态，计算延迟从传统O(N)逐步积分降至常数级
-- Act_mix激活函数支持 diverse oscillation modes under arbitrary frequencies 的高效外推
-- 验证案例显示生成高保真(high-fidelity)EMTP轨迹，满足电力系统电磁暂态分析精度要求
-- 在普通商用计算机(off-the-shelf computers)上展现出超实时(faster-than-real-time)仿真潜力
+- 当前可用抽取文本只覆盖论文前2页，未包含案例表格、误差百分比、训练耗时或加速倍数；因此本页不编造数值精度结论。
+- 方法声称训练和推断阶段均不执行传统逐步数值积分，训练也不依赖预生成EMTP轨迹样本。
+- 单次前向传播生成整个时间窗状态，计算流程从逐时步递推转为时间点并行输出；实际速度提升需以原文完整案例表为准。
+- Act_mix激活函数面向任意频率的多振荡模式外推，但其可靠性边界依赖训练工况、网络规模和物理残差收敛情况。
 
+## 适用边界
+
+- 适合探索固定拓扑、固定参数范围内的快速EMT轨迹生成，尤其是RLC网络和可由伴随电路方程约束的线性/弱非线性场景。
+- 对拓扑频繁变化、开关事件密集、保护逻辑离散跳变或强非线性饱和问题，NeuEMTP需要重新训练或扩展物理约束，不能直接视为传统EMTP的通用替代。
+- 当前仓库抽取文本缺少论文完整Case Studies，因此页面的验证结论只应作为方法定位，不能作为可复核性能基准。
 
 ## 关键公式
 
@@ -162,11 +173,9 @@ $$$i_{h,L}(t) = -\frac{\Delta t}{2L}v_L(t-\Delta t) - i_L(t-\Delta t)$$$
 
 *体现梯形规则的时域递推特性，在NeuEMTP中通过神经网络自动微分计算，无需逐步存储历史状态*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证与物理一致性检验
 - **测试系统**: 包含电阻、电感、电容的集中参数阻抗网络，涵盖多种振荡模式
 - **仿真工具**: 基于Python/PyTorch的NeuEMTP框架，对比基准为传统梯形积分EMTP算法
-- **验证结果**: 系统验证表明，NeuEMTP在不使用任何数值积分的情况下，能够生成与传统EMTP相当的高保真轨迹，且通过无监督训练避免了海量数据生成负担，Act_mix函数有效解决了高频振荡拟合难题
+- **验证结果**: 摘要称案例系统验证了高保真轨迹和超实时潜力；但当前本地抽取文本未包含完整结果页、误差表或耗时表，后续质量提升应优先补齐原文结果数据。

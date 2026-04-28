@@ -3,7 +3,7 @@ title: "Simulation of electromagnetic transients with Modelica, accuracy and per
 type: source
 authors: ['Alireza Masoom']
 year: 2020
-journal: "Electric Power Systems Research, 189 (2020) 106799. doi:10.1016/j.epsr.2020.106799"
+journal: "Electric Power Systems Research"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/35/j.epsr.2020.106799.pdf.pdf"]
@@ -19,15 +19,44 @@ sources: ["EMT_Doc/35/j.epsr.2020.106799.pdf.pdf"]
 
 Simulation of electromagnetic transients with Modelica, accuracy and performance assessment for transmission line models Alireza Masooma, Tarek Ould-Bachirb, Jean Mahseredjian⁎,a, Adrien Guironnetc, Ni Dingc a Department of Electrical Engineering, Polytechnique Montréal, Canada b Department of Computer Engineering and Software Engineering, Polytechnique Montréal, Canada
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是用EMT仿真分析过电压、涌流、继电保护整定、绝缘配合等高频暂态，此类问题必须保留谐波、非线性和不平衡条件。研究对象不是新的线路物理理论，而是把多相输电线/电缆的恒定参数CP模型和宽频WB模型用Modelica这种非因果、方程式、声明式语言实现，并评估其相对EMTP的精度与性能。难点在于传统EMT程序通常把模型、梯形积分、节点导纳组装、稀疏求解等数值细节紧耦合在FORTRAN/C/C++代码中，性能高但可读性和可扩展性差；而Modelica强调“写方程而非写求解顺序”，需要证明它能表达行波时延、历史电流、频率相关线路的递归卷积/状态空间形式，并能被求解器正确处理。本文贡献是以CP和WB两类典型线路模型为载体，展示Modelica在EMT型建模中的可行实现路径，并用两个案例与EMTP对比验证准确性和计算性能，而不是仅停留在语言概念讨论。
+
+### 2. 模型、算法与实现技术
+
+本文实现两类线路模型。CP模型基于无损分布参数线路的行波/贝杰龙等效：端口电流由特性导纳乘以本端电压再减去历史电流构成，历史电流来自对端电压、电流经过传播时延后的量；多相线路通过常数实模态变换矩阵解耦为若干单相模态线路，计算后再变回相域；损耗用集中电阻近似，即在线路端部加入分段电阻而主体仍按无损延迟线处理。WB模型面向频率相关参数线路，先对特性导纳矩阵Yc和传播函数H进行有理函数拟合，得到极点、留数和各模态传播时延；在时域中，Yc部分用一组一阶状态方程生成并联支路电流，H部分用带时延输入的状态方程生成历史电流，最终形成端口诺顿等效电流。Modelica实现上，Pin/Plug连接器把电压作为跨变量、电流作为流变量，连接时自动满足KCL/KVL；线路端口、诺顿等效、历史电流计算等被写成可复用组件。核心机制是把EMT线路端口关系、时延和状态变量直接写成DAE/延迟方程，让仿真环境决定求解顺序，而不是在模型代码中手工嵌入固定数值算法。
+
+### 3. 验证、优势与不足
+
+作者采用对比验证：将Modelica实现的CP和WB线路模型与成熟EMTP程序中的对应模型进行比较，并声称两个案例研究用于验证模型、比较准确性和计算性能。基线工具是EMTP，研究指标包括波形精度和计算性能；开发对象是多相CP与WB线缆/线路模型。就原文摘要和引言可见，验证目标是证明声明式Modelica可用于EMT型仿真，并能保持与传统EMT实现相当的计算结果，同时获得更清晰的方程表达、组件化建模、模型与求解器解耦以及跨Modelica环境复用的潜力。需要强调的是，当前证据文本没有给出两个案例的具体系统拓扑、线路长度、电压等级、故障/开关场景、步长、求解器设置、误差定义、CPU时间或内存消耗等可核验数值；因此不能把“准确”和“性能比较”升级为定量结论。WB模型还依赖外部频域拟合质量、极点稳定性、时延处理和Modelica工具对延迟DAE的支持；CP模型的损耗处理是近似形式。从验证范围看，结论主要限于本文实现的线路模型和案例，不等价于证明任意EMT元件、复杂控制、非线性电弧或实时仿真都适用。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把EMT仿真的关注点从“如何按某个程序框架写求解代码”推进到“如何用可读方程描述电力暂态元件”。它说明CP和WB线路这类包含模态变换、传播时延、历史电流和频率相关状态的核心EMT模型，可以被组织为Modelica组件，从而便于教学、模型审查、跨平台复用和与其他物理域模型耦合。后续页面可复用它作为“方程式EMT建模”“Modelica线路模型”“EMTP基准对比”的入口，也可用于解释传统节点法实现与声明式实现之间的差异。但不适合据此外推为Modelica在所有EMT场景中都具备同等速度、同等稳定性或可替代商业EMTP；具体工程应用仍需针对网络规模、频率范围、求解器和拟合参数重新验证。
+
+### 证据边界
+
+- 来自原文的确定信息：论文研究Modelica在EMT型仿真中的应用，具体实现多相CP和WB线路/电缆模型，并与EMTP进行准确性和计算性能对比。
+- 来自原文的确定信息：Modelica被描述为高层、非因果、方程式、面向对象、声明式语言，模型由DAE和离散方程描述，仿真环境负责转换为可执行代码。
+- 来自方法公式和常规线路模型的整理：CP端口诺顿等效、历史电流、模态解耦、WB的Yc/H有理拟合和状态空间实现属于模型机制说明；具体符号阶数和参数值需以论文正文表图为准。
+- 当前证据缺口：所给文本未展示两个案例研究的详细拓扑、线路参数、扰动类型、时间步长、求解器、硬件平台和误差/性能统计。
+- 当前证据缺口：原文未在提供片段中报告可核验的数值结果，因此不能声称误差百分比、加速比、运行时间或稳定性裕度。
+- 适用边界推断：从验证范围看，结论主要支持CP/WB线路模型的Modelica实现可行性；对变压器饱和、断路器电弧、电力电子开关、保护控制闭环和实时EMT并未由当前证据直接证明。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 验证了Modelica声明式/方程建模语言在电磁暂态(EMT)仿真中的适用性与开发优势
-- 基于Modelica开发并对比了输电线路恒定参数(CP)与宽频(WB)模型的精度与计算性能
+- 问题定位：Simulation of electromagnetic transients with Modelica, accuracy and performance assessment for transmission line models Alireza Masooma, Tarek Ould-Bachirb, Jean Mahsere。
+- 方法机制：本文采用基于Modelica的声明式（Declarative）建模方法开发电磁暂态（EMT）仿真工具，实现了两种输电线路模型：恒定参数（Constant Parameter, CP）模型和宽频（Wide-Band, WB）模型。CP模型基于贝杰龙（Bergeron）行波理论，采用实常数模态分析矩阵将多相线路解耦为独立模态，在模态域计算无损线路的历史电流后转换回相域，并通过在每端接入R/4集中电阻来近似线路损耗。
+- 验证证据：对比验证（Comparative Validation）：将Modelica实现的CP和WB线路模型与成熟商业软件EMTP的仿真结果进行逐点对比（Accuracy Assessment），并对比计算性能（Performance Assessment），验证声明式语言在EMT领域的适用性；
+- 量化与结论：CP模型损耗近似：采用quarter-lumped方法，在线路两端各接入R/4集中电阻（总电阻R的25%每端），中间50%为无损线路段；模态解耦维度：n相线路通过实常数模态矩阵Ti精确解耦为n个独立的单相模态线路；WB模型特征导纳状态空间维度：需要Ny个状态变量（微分方程）来描述并联支路动态；
+- 适用边界：适用于理解本文 Simulation of electromagnetic transients with Modelica, accuracy and performance assessment for transmission line models （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[numerical-integration]]
 - [[nodal-analysis]]
@@ -35,21 +64,17 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 ## 涉及的模型
 
-
 - [[transmission-line]]
 - [[fixed-admittance]]
 - [[frequency-dependent]]
 
 ## 相关主题
 
-
 - [[harmonic]]
 - [[frequency-dependent]]
 - [[numerical-integration]]
 
 ## 主要发现
-
-
 
 - Modelica等声明式语言能显著提升EMT模型的可读性、可维护性与跨平台开发效率
 - 基于Modelica实现的CP与WB输电线路模型在仿真精度上与传统命令式编程工具相当，且具备优异的计算性能
@@ -62,66 +87,53 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 ### 数学公式
 
-
 **公式1**: $$$I_k = Y_c V_k - 2I_k^i$$$
 
 *线路末端k的相电流与特性导纳、入射电流波的关系，Yc为特性导纳矩阵*
-
 
 **公式2**: $$$I_k^i = H I_m^r$$$
 
 *从末端m反射并传播到末端k的入射电流波，H为传播矩阵*
 
-
 **公式3**: $$$Y_c = \sqrt{YZ^{-1}}$$$
 
 *特性导纳矩阵定义，Y和Z分别为单位长度并联导纳和串联阻抗矩阵*
-
 
 **公式4**: $$$H = e^{-\sqrt{YZ}\ell}$$$
 
 *传播矩阵，描述信号沿线长ℓ的传播特性*
 
-
 **公式5**: $$$i_k = y_c v_k - i_k^{hist}$$$
 
 *无损CP线路时域诺顿等效方程（k端），yc为特性导纳，ihist为历史电流*
-
 
 **公式6**: $$$i_k^{hist} = y_c v_m(t-\tau) + i_m(t-\tau)$$$
 
 *k端历史电流，由对端m的延迟信号决定，τ为传播时延*
 
-
 **公式7**: $$$Y_c = G_0 + \sum_{i=1}^{N_y} \frac{G_i}{s-q_i}$$$
 
 *特征导纳的矢量拟合有理函数近似，G0为无穷频率常数留数，Gi为留数矩阵，qi为极点，Ny为拟合阶数*
-
 
 **公式8**: $$$H = \sum_{k=1}^{N_g} \sum_{i=1}^{N_h(k)} \frac{R_{k,i}}{s-p_{k,i}} e^{-s\tau_k}$$$
 
 *传播函数的矢量拟合，Ng为模态数，Nh(k)为第k模态极点数，τk为模态时延，Rk,i为留数，pk,i为极点*
 
-
 **公式9**: $$$\frac{d w_i}{dt} = q_i w_i + G_i v_k$$$
 
 *WB模型并联支路状态空间方程（第i个极点），wi为状态变量，用于计算特性导纳电流*
-
 
 **公式10**: $$$i_{sh,k} = G_0 v_k + \sum_{i=1}^{N_y} w_i$$$
 
 *WB模型k端总并联（特性导纳）电流，为直流项与所有状态变量贡献之和*
 
-
 **公式11**: $$$\frac{d x_{k,i}}{dt} = p_{k,i} x_{k,i} + R_{k,i} i_{mu}(t-\tau_k)$$$
 
 *WB模型历史电流状态空间方程，x_{k,i}为历史项状态变量，imu为正向行波电流，考虑时延τk*
 
-
 **公式12**: $$$i_k^{hist} = \sum_{k=1}^{N_g} \sum_{i=1}^{N_h(k)} x_{k,i}$$$
 
 *WB模型k端总历史电流，为所有模态所有极点状态变量之和*
-
 
 ### 算法步骤
 
@@ -130,7 +142,6 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 2. WB模型算法步骤：1) 使用外部矢量拟合工具（如EMTP预处理）在相域直接拟合特征导纳矩阵Yc和传播矩阵H的频率响应，导出极点qi和pk,i、留数矩阵Gi和Rk,i、以及模态时延τk等参数，自动导入Modelica可读文件；2) 构建状态空间方程描述特性导纳并联支路（方程10-13），通过Ny个一阶微分方程计算并联电流ish；3) 构建状态空间方程描述历史电流（方程14-15），通过Ng×Nh(k)个带时延的微分方程计算历史项ihist，每个模态k具有独立的时延τk；4) 在Modelica中使用时滞算子(t-τk)实现传播时延，计算正向行波电流imu；5) 组装诺顿等效，总注入电流为并联导纳电流减去历史电流。
 
 3. Modelica实现架构：1) 定义Pin连接器类（包含非流变量voltage和流变量current），确保基尔霍夫电压定律（等式耦合）和电流定律（求和为零）的自动满足；2) 定义Plug多相终端（Pin的集合）；3) 创建可复用的诺顿等效组件类（NortonEquivalent）作为一端口电气元件，严格按方程描述；4) 创建History类分别实现CP模型（模态域计算）和WB模型（状态空间时延计算）的历史电流计算；5) 通过图形化连接（黑色表示相域计算，红色表示模态域计算）组装完整线路模型，体现acausal编程特性（无预设输入输出）。
-
 
 ### 关键参数
 
@@ -156,8 +167,6 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 - **R/4**: CP模型每端集中电阻值，线路总电阻R的四分之一，用于近似损耗
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -170,8 +179,6 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 | 宽频(WB)输电线路模型精度与性能测试 | 验证基于矢量拟合和状态空间实现的WB模型在宽频范围（覆盖基波至高频谐波）内的精度。测试评估相域矢量拟合参数导入后的数值稳定性、递归卷积算法的准确性，以及多模态时延处理对不同频率分量的保真度。涉及特征导纳和传播函数的频率依赖特性验证。 | 与EMTP的WB模型对比，评估频率依赖线路模型的仿真一致性（具体偏差百分比和CPU时间对比数据未在提供的文本片段中给出） |
 
-
-
 ## 量化发现
 
 - CP模型损耗近似：采用quarter-lumped方法，在线路两端各接入R/4集中电阻（总电阻R的25%每端），中间50%为无损线路段
@@ -181,7 +188,6 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 - WB模型总计算复杂度：涉及Ny个并联支路状态方程和Ng×Nh(k)个历史电流状态方程的联立求解
 - 时延处理：WB模型明确考虑各模态传播时延τk，通过延迟微分方程实现，时延值取决于模态传播速度和线路长度ℓ
 - Modelica建模优势：实现了方程（What）与求解算法（How）的解耦，模型代码完全对应教科书方程形式
-
 
 ## 关键公式
 
@@ -203,11 +209,34 @@ $$$i_k = y_c v_k - i_k^{hist}$$$
 
 *CP和WB模型通用的线路端点接口方程，将分布参数线路等效为瞬时导纳并联历史电流源，是EMT仿真中线性化网络导纳矩阵构建的基础*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（Comparative Validation）：将Modelica实现的CP和WB线路模型与成熟商业软件EMTP的仿真结果进行逐点对比（Accuracy Assessment），并对比计算性能（Performance Assessment），验证声明式语言在EMT领域的适用性
 - **测试系统**: 文本提及包含两个案例研究（Two case studies），用于全面验证模型并对比准确性与性能，但具体测试系统的拓扑结构、线路长度、电压等级、相数等详细配置未在提供的文本片段中明确说明
 - **仿真工具**: 基准工具：EMTP（经典EMT仿真软件，使用命令式语言FORTRAN/C实现，采用梯形积分法和特定稀疏矩阵求解算法）；开发平台：Modelica语言（支持环境包括商业软件如Dymola、Wolfram System Modeler或开源软件如OpenModelica、Dynaωo，文本未明确指定具体使用哪个环境进行最终测试）
 - **验证结果**: 验证了Modelica声明式语言在EMT仿真中的技术可行性：1) CP和WB模型在仿真精度上与EMTP基准结果相当，满足工程精度要求；2) 基于方程的建模显著提升了代码可读性、可维护性和跨平台开发效率；3) 实现了模型与数值求解器的解耦，保证仿真的可重复性和多环境兼容性。具体定量指标（如最大相对误差<0.5%、均方根误差、CPU时间加速比或开销百分比）未在提供的文本片段中披露。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Simulation of electromagnetic transients with Modelica, accuracy and performance assessment for transmission line models`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 numerical-integration、nodal-analysis、state-space 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：验证了Modelica声明式/方程建模语言在电磁暂态(EMT)仿真中的适用性与开发优势
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/35/j.epsr.2020.106799.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

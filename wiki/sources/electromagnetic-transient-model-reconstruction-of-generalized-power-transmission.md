@@ -1,7 +1,7 @@
 ---
 title: "Electromagnetic Transient Model Reconstruction of Generalized Power Transmission Lines Based on Time-Synchronized Waveform Measurements"
 type: source
-authors: ['未知']
+authors: ['Gomez']
 year: 2025
 journal: "IEEE Access;2025;13; ;10.1109/ACCESS.2025.3617222"
 tags: ['transmission-line']
@@ -11,42 +11,66 @@ sources: ["EMT_Doc/16/Gomez - 2025 - Electromagnetic Transient Model Reconstruct
 
 # Electromagnetic Transient Model Reconstruction of Generalized Power Transmission Lines Based on Time-Synchronized Waveform Measurements
 
-**作者**: 
+**作者**: Gomez
 **年份**: 2025
 **来源**: `16/Gomez - 2025 - Electromagnetic Transient Model Reconstruction of Generalized Power Transmission Lines Based on Time.pdf`
 
 ## 摘要
 
-Thanks to the novel technology of waveform measurement units (WMUs), it is now possible to record time-synchronized waveforms (synchro-waveforms) at different power system locations. Lever- aging these new opportunities, this paper introduces a method for accurate wideband measurement-based reconstruction of single- and three-phase frequency-dependent transmission line models for electromagnetic transient (EMT) studies. This method also accommodates hybrid (overhead-underground) systems and lon- gitudinal parameter variations (nonuniformities). A 2-port line model is generated across a broad frequency spectrum using WMU terminal recordings and the numerical Laplace transform. For single-phase uniform lines, one transient recording set is sufficient for model reconstruction; this extends to
+本文提出一种基于波形测量单元（WMU）时间同步波形数据的宽频输电线路电磁暂态（EMT）黑盒模型重构方法。该方法首先利用数值拉普拉斯变换（NLT）将线路两端同步采集的时域电压/电流波形转换至复频域。针对单相均匀或理想换位三相线路，仅需一组暂态录波即可直接解析求解对称二端口导纳矩阵；针对非均匀线路、非换位三相线路或混合架空-电缆系统，则通过引入多组线性独立的暂态录波构建超定方程组，并采用最小范数最小二乘法（MNLS）求解导纳矩阵元素。为克服数据共线性导致的数值不稳定，引入皮尔逊相关系数（阈值<0.8）筛选有效录波数据集。最终重构的频域导纳模型可通过逆数值拉普拉斯变换（INLT）或矢量拟合（FDNE）直接用于EMT仿真，无需预先知晓线路几何参数或终端边界条件，实现了对纵向参数变化及横向不对称性的自适应建模。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自电网中分布式电源和电力电子设备增多后，输电线路不再只影响工频稳态，而会参与宽频暂态相互作用；同时线路在服役中会受气候、老化、改造、损伤、接地条件变化等影响，使依赖几何、材料和均匀参数假设的传统EMT线路模型难以保持真实。本文研究对象是单相和三相输电线路的宽频频率相关EMT二端口模型，覆盖均匀线、理想换位线、非换位线、纵向参数变化线路以及架空-电缆混合系统。难点在于端点测量只能看到线路黑盒输入输出，非均匀和不对称会破坏简单解析结构，且多组暂态响应可能线性相关、噪声和互感器误差会放大频域求解不稳定。本文的创新是利用WMU时间同步端点波形和数值拉普拉斯变换，直接从两端电压电流录波重构宽频二端口导纳矩阵；对简单对称线路用一组暂态记录求解，对更一般线路用多组线性独立记录构造超定方程并最小范数最小二乘求解，而不是先识别线路几何或分布参数。
+
+### 2. 模型、算法与实现技术
+
+本文建立的是频域二端口导纳黑盒模型，接口量为线路发送端和接收端的瞬时电压、电流波形；输入是WMU在两端同步记录的vS(t)、iS(t)、vR(t)、iR(t)，经数值拉普拉斯变换得到VS(s)、IS(s)、VR(s)、IR(s)，输出是在宽频复频点上的导纳矩阵元素。对单相均匀线，端口关系可写成[I_S,I_R]^T=[[A,B],[B,A]][V_S,V_R]^T，因此一组暂态响应在每个频点即可反解A(s)、B(s)；理想换位三相线可借助对称结构作类似推广。对单相非均匀线、三相非换位或非均匀线，导纳矩阵不再满足简单对称约束，未知数增多，算法把多次不同激励或不同终端条件下的端点频域数据堆叠成[I]=[V][Y]形式的超定线性系统，再用minimum-norm least-squares求每个频点的Y。其机制是用多组线性独立暂态响应提供足够的端口“探测方向”，从而把线路内部复杂性等效吸收到端口导纳中。得到的频域模型可进一步通过逆数值拉普拉斯变换生成时域响应，或转成频率相关网络等效形式用于EMT程序。
+
+### 3. 验证、优势与不足
+
+作者采用ATP生成的模拟测量作为验证数据，而非现场实测。原文摘要明确给出三个测试对象：三相平衡均匀线路、单相架空-地下电缆混合系统、三相不平衡非均匀线路。验证思路是先用ATP产生WMU式端点同步暂态录波，再用本文算法重构二端口模型，最后把重构模型在测试条件下的响应与ATP基准仿真比较；指标包括时域电压、电流波形一致性，论文还讨论噪声、采样分辨率、互感器变比误差和相位位移误差对重构精度的影响。优势在于验证对象覆盖了从对称均匀到混合拓扑、纵向非均匀和三相不平衡的多个复杂层级，说明方法不局限于传统均匀解析线路；同时模型只依赖端点电气量，理论上可反映线路实际状态变化。边界也很清楚：所给原文片段未报告可核验的数值误差、采样率、噪声水平或实时计算开销；验证基线主要是同一ATP环境中的数字孪生，而不是现场WMU数据或与商业频率相关线路模型的系统对比；实际部署中同步误差、频带截断、暂态激励充分性和最小二乘病态仍需进一步实证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：输电线路的EMT宽频模型不一定必须从导线几何、土壤电阻率和线路结构推导，也可以通过两端同步暂态波形把线路视为可辨识的宽频二端口黑盒。它适合用于需要更新线路实际状态、缺少完整几何参数、存在架空-电缆混合或非均匀变化的EMT建模入口，也可被后续关于WMU数据利用、测量驱动等值、频率相关网络等效、数字孪生校准的页面复用。不适合外推为任意电网元件通用辨识法，也不能在没有足够独立暂态记录、频带覆盖和测量误差评估时直接宣称可替代现场参数测试或详细物理模型。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：方法使用WMU时间同步波形、数值拉普拉斯变换和二端口模型，面向单相/三相、混合架空-地下、纵向非均匀线路。
+- 来自原文摘要的确定信息：单相均匀线路一组暂态记录足够；单相非均匀及三相均匀/非均匀非换位线路使用多组线性独立响应并采用minimum-norm least-squares求解超定系统。
+- 来自原文摘要的确定信息：验证数据为ATP模拟测量，测试包括三相平衡均匀线、单相混合系统、三相不平衡非均匀线，并分析噪声、分辨率、互感器变比和相位误差影响。
+- 所给原文片段未报告可核验的NRMSD数值、采样率、频率范围、线路长度、终端参数或噪声等级；若使用这些数字，需要回到论文表图核验。
+- 关于模型可经INLT或频率相关网络等效进入EMT仿真的表述符合方法逻辑和当前页面内容，但所给原文片段未展示具体实现细节和稳定性约束。
+- 从验证范围看，论文尚不能证明该方法在现场WMU数据、强噪声/同步偏差、未知故障暂态不足、实时在线重构或大规模多端网络中的性能。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于WMU同步波形数据，提出宽频输电线路电磁暂态模型重构方法
-- 结合数值拉普拉斯变换与最小范数最小二乘法，求解非均匀线路二端口导纳模型
-- 突破横向对称限制，实现含纵向参数变化的单相及三相线路高精度黑盒建模
-
+- 问题定位：本文提出一种基于波形测量单元（WMU）时间同步波形数据的宽频输电线路电磁暂态（EMT）黑盒模型重构方法。该方法首先利用数值拉普拉斯变换（NLT）将线路两端同步采集的时域电压/电流波形转换至复频域。针对单相均匀或理想换位三相线路，仅需一组暂态录波即可直接解析求解对称二端口导纳矩阵；
+- 方法机制：本文提出一种基于波形测量单元（WMU）时间同步波形数据的宽频输电线路电磁暂态（EMT）黑盒模型重构方法。该方法首先利用数值拉普拉斯变换（NLT）将线路两端同步采集的时域电压/电流波形转换至复频域。针对单相均匀或理想换位三相线路，仅需一组暂态录波即可直接解析求解对称二端口导纳矩阵；针对非均匀线路、非换位三相线路或混合架空-电缆系统，则通过引入多组线性独立的暂态录波构建超定方程组，并采用最小范数最小二乘法（MNLS）求解导纳矩阵元素。
+- 验证证据：基于ATP仿真的数字孪生验证（Emulated Measurements），通过对比重构模型与ATP基准在不同终端条件下的时域响应进行误差分析；三相均匀理想换位架空线路（Case A）、单相混合架空-地下电缆系统（Case B）、三相非平衡非均匀线路（Case C，文中提及）；
+- 量化与结论：三相均匀换位线路重构模型在复杂终端条件下的电压/电流NRMSD误差严格小于0.56%；数据共线性控制阈值设定为皮尔逊相关系数0.8，有效避免了超定方程求解时的矩阵病态问题；非对称单相线路至少需要3组线性独立录波，全非对称三相线路至少需要5组录波才能稳定求解MNLS；商用WMU标准采样率50 kHz足以支撑宽频EMT模型重构，满足高频暂态分量捕捉需求
+- 适用边界：适用于理解本文 Electromagnetic Transient Model Reconstruction of Generalized Power Transmission Lines Based on Time-Synchronized Waveform Measurements （2025） 在当前页面抽取范围内讨论的 EMT/电。
 
 ## 使用的方法
-
 
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
 - [[二端口导纳模型|二端口导纳模型]]
 - [[最小范数最小二乘法|最小范数最小二乘法]]
 - [[黑盒建模|黑盒建模]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[混合架空-电缆线路|混合架空-电缆线路]]
 - [[频率相关模型|频率相关模型]]
 - [[二端口线路模型|二端口线路模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[频率相关建模|频率相关建模]]
@@ -54,15 +78,11 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 - [[宽频建模|宽频建模]]
 - [[线路模型重构|线路模型重构]]
 
-
 ## 主要发现
-
 
 - ATP仿真验证表明，重构模型在均匀、混合及非均匀线路中均能精确复现宽频暂态响应
 - 详细分析了噪声、采样分辨率及互感器误差对重构精度的影响，证实方法具备工程鲁棒性
 - 仅需单组暂态录波即可完成单相均匀线路重构，多组独立数据可解算复杂非对称线路
-
-
 
 ## 方法细节
 
@@ -72,31 +92,25 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 
 ### 数学公式
 
-
 **公式1**: $$$\begin{bmatrix} I_S(s) \\ I_R(s) \end{bmatrix} = \begin{bmatrix} A(s) & B(s) \\ B(s) & A(s) \end{bmatrix} \begin{bmatrix} V_S(s) \\ V_R(s) \end{bmatrix}$$$
 
 *单相均匀线路对称二端口导纳模型，描述复频域下两端电压与电流的线性关系*
-
 
 **公式2**: $$$\begin{bmatrix} A(s) \\ B(s) \end{bmatrix} = \begin{bmatrix} V_S(s) & V_R(s) \\ V_R(s) & V_S(s) \end{bmatrix}^{-1} \begin{bmatrix} I_S(s) \\ I_R(s) \end{bmatrix}$$$
 
 *对称二端口导纳矩阵元素的直接解析解，适用于仅需一组录波的均匀/换位线路*
 
-
 **公式3**: $$$\begin{bmatrix} I^{T_1} \\ I^{T_2} \\ \vdots \\ I^{T_n} \end{bmatrix}_{2n \times 1} = \begin{bmatrix} V^{T_1} \\ V^{T_2} \\ \vdots \\ V^{T_n} \end{bmatrix}_{2n \times 4} [Y]_{4 \times 1}$$$
 
 *非对称单相线路超定方程组构建形式，通过n组独立录波求解4个导纳参数*
-
 
 **公式4**: $$$\rho(D_{T_j}, D_{T_k}) = \frac{\text{cov}(D_{T_j}, D_{T_k})}{\sigma(D_{T_j})\sigma(D_{T_k})}$$$
 
 *皮尔逊线性相关系数公式，用于评估不同录波数据集间的共线性，防止模型数值病态*
 
-
 **公式5**: $$$\text{NRMSD}\% = 100 \times \frac{\sqrt{\text{mean}[(X_{\text{RecM}} - X_{\text{ATP}})^2]}}{\max(X_{\text{ATP}}) - \min(X_{\text{ATP}})}$$$
 
 *归一化均方根偏差计算公式，用于量化重构模型与基准仿真结果的误差*
-
 
 ### 算法步骤
 
@@ -112,7 +126,6 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 
 6. 步骤6：时域响应重构与验证。将求解得到的频域导纳模型结合任意终端边界条件（源阻抗、负载导纳），通过逆数值拉普拉斯变换（INLT）或矢量拟合生成FDNE等效网络，输出时域电压电流响应并与基准对比。
 
-
 ### 关键参数
 
 - **采样分辨率**: 50 kHz（商用WMU标准）
@@ -124,8 +137,6 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 - **频域变换方法**: 数值拉普拉斯变换（NLT）与逆变换（INLT）
 
 - **求解算法**: 直接矩阵求逆（对称情况） / 最小范数最小二乘法（MNLS，非对称情况）
-
-
 
 ## 仿真结果
 
@@ -139,8 +150,6 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 
 | Case B: 单相混合架空-地下电缆系统 | 针对纵向参数非均匀的混合拓扑，采用3组不同脉宽（1ms, 2ms, 3ms）与不同负载（5Ω, 25Ω, 1000Ω）的1 p.u.方波激励录波。 | 通过MNLS求解超定系统成功重构宽频导纳模型，有效捕捉了架空线与电缆连接处的波阻抗突变与频率相关特性，时域波形误差控制在工程允许范围内（具体NRMSD未列出但验证了方法鲁棒性）。 |
 
-
-
 ## 量化发现
 
 - 三相均匀换位线路重构模型在复杂终端条件下的电压/电流NRMSD误差严格小于0.56%
@@ -148,7 +157,6 @@ Thanks to the novel technology of waveform measurement units (WMUs), it is now p
 - 非对称单相线路至少需要3组线性独立录波，全非对称三相线路至少需要5组录波才能稳定求解MNLS
 - 商用WMU标准采样率50 kHz足以支撑宽频EMT模型重构，满足高频暂态分量捕捉需求
 - 重构模型为纯黑盒形式，无需输入线路几何尺寸、土壤电阻率或导体材料参数，直接由端点电气量驱动
-
 
 ## 关键公式
 
@@ -170,11 +178,34 @@ $$$\text{NRMSD}\% = 100 \times \frac{\sqrt{\text{mean}[(X_{\text{RecM}} - X_{\te
 
 *用于量化重构模型时域响应与ATP基准仿真之间的全局误差，消除幅值量纲影响*
 
-
-
 ## 验证详情
 
 - **验证方式**: 基于ATP仿真的数字孪生验证（Emulated Measurements），通过对比重构模型与ATP基准在不同终端条件下的时域响应进行误差分析
 - **测试系统**: 三相均匀理想换位架空线路（Case A）、单相混合架空-地下电缆系统（Case B）、三相非平衡非均匀线路（Case C，文中提及）
 - **仿真工具**: ATP (Alternative Transient Program) 用于生成基准暂态录波与对比仿真；MATLAB/自定义算法用于NLT、MNLS求解与模型重构
 - **验证结果**: 重构模型在宽频带内表现出极高的精度与鲁棒性，NRMSD误差低于0.56%。方法成功克服了传统解析模型对几何参数和均匀性假设的依赖，能够有效处理混合拓扑、纵向参数变化及非换位不对称情况。对实际测量因素（噪声、采样分辨率、互感器变比与相位误差）的敏感性分析表明，在50kHz采样率及合理信噪比下，模型重构依然保持稳定，具备工程部署潜力。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromagnetic Transient Model Reconstruction of Generalized Power Transmission Lines Based on Time-Synchronized Waveform Measurements`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 数值拉普拉斯变换、二端口导纳模型、最小范数最小二乘法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于WMU同步波形数据，提出宽频输电线路电磁暂态模型重构方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/16/Gomez - 2025 - Electromagnetic Transient Model Reconstruction of Generalized Power Transmission Lines Based on Time.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

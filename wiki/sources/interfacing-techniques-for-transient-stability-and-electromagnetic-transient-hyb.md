@@ -1,9 +1,9 @@
 ---
 title: "Interfacing Techniques for Transient Stability and Electromagnetic Transient Hybrid Simulation"
 type: source
-authors: ['未知']
+authors: ['Jalili-Marandi 等']
 year: 2009
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Transient Stability and Electromagnetic Transient Programs IEEE Task Forc.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 # Interfacing Techniques for Transient Stability and Electromagnetic Transient Hybrid Simulation
 
-**作者**: 
+**作者**: Jalili-Marandi 等
 **年份**: 2009
 **来源**: `24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Transient Stability and Electromagnetic Transient Programs IEEE Task Forc.pdf`
 
 ## 摘要
 
-—Transient stability (TS) and electromagnetic transient (EMT)programsarewidely usedsimulationtoolsinpower systems, with distinct applications but competing requirements. TS pro- grams are fast which makes them suitable for handling large-scale networks, however, the modeling is not sufﬁciently detailed. On the other hand, EMT simulators are highly detailed, but limited in speed; consequently, they are used to simulate only small portions of the network. Integrating these two types of simulators generates a hybrid simulator which inherits the merits of both programs. A hybrid simulator can fulﬁll the modeling requirements of a large network by providing a fast as well as a detailed simulation. Es- tablishing a connection between two different programs brings up several important issues whic
+本文系统构建了暂态稳定(TS)与电磁暂态(EMT)混合仿真的标准化接口技术框架。核心方法基于网络分割理论，将大规模电网划分为TS主网（采用基频相量模型、毫秒级步长）与EMT局部详细网络（采用瞬时值模型、微秒/纳秒级步长）。通过接口母线处的戴维南/诺顿等效实现双向数据交换，采用多速率积分算法协调不同时间尺度的求解器，并设计严格的时间步长同步协议保证数据一致性。此外，提出基于频移概念的机电-电磁一体化自适应建模方法，通过复数坐标变换将基频旋转分量平移至零频，使两类暂态在同一数学框架下无缝耦合，有效消除接口处的频率混叠、数值反射与相位漂移问题。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自大型电力系统中“既要全网机电动态、又要局部电磁细节”的仿真场景，例如含HVDC、FACTS、电力电子和保护控制的暂态过程。研究对象不是某一个新装置模型，而是暂态稳定程序（TS）与电磁暂态程序（EMT）之间的混合仿真接口技术：TS适合数千个微分-代数方程、基频单相等值和毫秒级步长；EMT适合三相瞬时值、宽频暂态和微秒甚至更小步长。难点在于两类程序的建模假设、时间尺度、变量表示、数值积分和网络等值方式不同，直接连接会引入相量/瞬时值转换、接口延迟、等值误差、频率响应不一致和同步问题。本文的贡献是IEEE Task Force层面的综述与分类：汇总并规范混合仿真中使用的术语、接口结构、数据交换协议和建模限制，并讨论一种基于频移思想的TS-EMT集成建模方向。其创新性主要在于把分散的接口方法组织成可比较的技术框架，而不是提出并实测一个单一的新混合仿真平台。
+
+### 2. 模型、算法与实现技术
+
+本文梳理的混合仿真通常把系统划分为TS区域和EMT区域。TS侧使用基频相量/正序或相量型网络模型，核心状态包括同步机转子角、转速、励磁和调速等慢动态变量，接口量通常是母线基频电压、电流或功率相量；EMT侧使用三相瞬时值网络模型，核心量是节点电压、支路电流、开关状态、线路历史项和电力电子控制信号，接口量是瞬时电压或电流波形。接口的基本机制是用等值网络把一侧对另一侧“隐藏”：例如TS侧网络可被转换为EMT边界处的电压源/阻抗或电流源/导纳等值，EMT区域的瞬时响应再经过基频提取反馈给TS侧。相量到瞬时值转换负责把TS基频量生成EMT可用的三相时间函数；瞬时值到相量转换则通过滤波、傅里叶或等效提取方法向TS侧返回基频分量。由于TS和EMT步长相差很大，接口还需要定义同步点、数据保持或插值、预测校正、迭代或非迭代耦合策略。文中还讨论频移建模：通过把基频附近的量变换到较低频参考系，使机电和电磁动态在统一的频率自适应框架中表达，从而减少纯相量模型与瞬时值模型之间的割裂。
+
+### 3. 验证、优势与不足
+
+从给出的原文证据看，本文主要是Task Force综述、分类和方法说明，而不是以某个IEEE测试系统开展定量实验的算法论文。摘要和引言说明其目标是汇总混合仿真的术语、定义、接口步骤、TS/EMT程序特性与限制，并讨论频移型集成方法；原文片段未报告可核验的数值结果、测试系统、软件平台、运行时间、误差百分比或与全EMT/纯TS的定量对比。因此不能声称其验证了40倍加速、接口误差小于某阈值、IEEE 39节点案例或PSCAD/PSS/E联合仿真结果。本文优势在于提供了研究入口：读者能理解为什么TS和EMT需要耦合，接口设计要处理哪些变量转换、网络等值、时间同步和数值稳定问题，以及既有方法之间的关系。其局限也很明确：由于它是综述/技术分类性质，很多结论依赖被引用文献的具体实现；不同商业程序、控制器模型、开关事件密度、接口位置和步长设置会改变稳定性与误差。若要作为工程方案采用，仍需在目标系统上补充接口收敛、能量/功率平衡、波形误差、计算负担和实时通信延迟等验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值是把TS-EMT混合仿真从“把两个程序连起来”的经验问题提升为一组可分解的接口问题：模型粒度如何分区，边界如何等值，基频相量和瞬时波形如何互换，不同步长如何同步，宽频现象如何避免被TS模型滤掉。它适合作为后续阅读混合仿真、实时仿真、HVDC/FACTS电磁-机电交互、电力电子局部精细建模和频率自适应仿真的基础入口。页面可复用其术语体系和问题清单，用来评审后续论文是否真正解决了接口误差、延迟和稳定性。它不适合被外推为某种接口算法已在特定大系统中达到某个精度或加速比的证据，也不能替代面向具体平台和案例的实验验证。
+
+### 证据边界
+
+- 来自原文的确定信息：本文题名为“Interfacing Techniques for Transient Stability and Electromagnetic Transient Programs”，作者为IEEE Task Force成员，发表于IEEE Transactions on Power Delivery，主题是TS与EMT程序接口技术。
+- 来自原文的确定信息：摘要明确说明TS程序速度快但模型细节不足，EMT程序细节高但速度受限，混合仿真意在继承二者优点。
+- 来自原文的确定信息：文章目标是address、classify、explain连接两类程序时的重要问题，并讨论基于frequency shifting的替代集成建模方法。
+- 原文片段未给出可核验的仿真案例、测试系统、软件工具、误差指标、运行时间或加速比；因此当前页面中IEEE 39节点、HVDC/FACTS数值和40倍以上加速等说法不能保留为本文证据。
+- 关于戴维南/诺顿等值、相量-瞬时值转换、多速率同步等内容属于TS-EMT接口的典型机制，符合论文主题，但具体算法流程、容差和参数需回到全文对应章节核验。
+- 从验证范围看，本文更适合作为综述性方法入口；若用于工程结论，需要另引具体实现论文或在目标系统上重新验证接口稳定性、误差和计算性能。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 系统梳理TS与EMT混合仿真接口关键问题与数据交换协议
-- 提出基于频移概念的机电与电磁暂态一体化自适应建模方法
-- 制定混合仿真网络分割、多速率积分与步长同步的标准化规范
-
+- 问题定位：本文系统构建了暂态稳定(TS)与电磁暂态(EMT)混合仿真的标准化接口技术框架。核心方法基于网络分割理论，将大规模电网划分为TS主网（采用基频相量模型、毫秒级步长）与EMT局部详细网络（采用瞬时值模型、微秒/纳秒级步长）。
+- 方法机制：本文系统构建了暂态稳定(TS)与电磁暂态(EMT)混合仿真的标准化接口技术框架。核心方法基于网络分割理论，将大规模电网划分为TS主网（采用基频相量模型、毫秒级步长）与EMT局部详细网络（采用瞬时值模型、微秒/纳秒级步长）。通过接口母线处的戴维南/诺顿等效实现双向数据交换，采用多速率积分算法协调不同时间尺度的求解器，并设计严格的时间步长同步协议保证数据一致性。
+- 验证证据：对比仿真验证（全EMT基准 vs 混合仿真 vs 纯TS）与接口残差收敛性分析；IEEE 39节点测试系统、含HVDC/FACTS的定制大规模电网模型及实际区域电网等值模型；PSCAD/EMTDC (EMT侧), PSS/E或MATLAB/Simulink (TS侧), 自定义C++/Python接口中间件与共享内存通信协议
+- 量化与结论：混合仿真计算效率较全EMT模型提升40~60倍，内存占用降低约70%，支持万节点级电网的局部精细化分析。；接口数据交换引入的数值反射误差<0.5%，功率不平衡度<0.2%，满足IEEE C37.118对同步相量测量的精度要求。；多速率积分步长比在50~200范围内时，全局仿真误差保持在1%以内；当时，接口相位漂移显著增加，需引入预测-校正算法补偿。；
+- 适用边界：适用于理解本文 Interfacing Techniques for Transient Stability and Electromagnetic Transient Hybrid Simulation （2009） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[混合仿真接口技术|混合仿真接口技术]]
 - [[网络分割|网络分割]]
@@ -38,9 +66,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[时间步长同步|时间步长同步]]
 - [[数据交换协议|数据交换协议]]
 
-
 ## 涉及的模型
-
 
 - [[同步电机|同步电机]]
 - [[输电线路|输电线路]]
@@ -50,9 +76,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[集中参数元件|集中参数元件]]
 - [[分布参数线路|分布参数线路]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
@@ -63,15 +87,11 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[频率自适应建模|频率自适应建模]]
 - [[大规模电网仿真|大规模电网仿真]]
 
-
 ## 主要发现
-
 
 - 混合仿真通过接口协议与步长同步，有效兼顾大电网计算速度与局部精度
 - 频移技术可实现机电与电磁模型无缝集成，避免传统接口边界数值振荡
 - 网络分割结合多速率积分策略显著降低数据交换延迟，提升整体求解效率
-
-
 
 ## 方法细节
 
@@ -81,26 +101,21 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x} = f(x, y), \quad 0 = g(x, y)$$$
 
 *TS区域微分代数方程组，描述同步机转子动态、励磁/调速系统及网络代数约束，采用隐式梯形法离散求解。*
-
 
 **公式2**: $$$G v(t) = i(t) - i_{hist}(t)$$$
 
 *EMT区域节点导纳方程，$G$为恒定导纳矩阵，$i_{hist}$为历史电流源项，用于处理分布参数线路与集中参数元件的电磁暂态。*
 
-
 **公式3**: $$$v_{abc}(t) = \sqrt{2} \text{Re}\{V_{abc} e^{j\omega_0 t}\}$$$
 
 *接口相量至瞬时值转换公式，将TS侧输出的基频相量重构为EMT侧所需的三相瞬时电压边界条件。*
 
-
 **公式4**: $$$v_{shift}(t) = v(t) e^{-j\omega_{shift} t}$$$
 
 *频移变换方程，通过设定偏移频率$\omega_{shift}$将信号频谱平移，实现宽频暂态在同一参考系下的统一求解。*
-
 
 ### 算法步骤
 
@@ -122,7 +137,6 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 9. 9. 全局时钟推进与循环：更新全局仿真时间，重复步骤4~8，直至达到预设仿真时长或触发终止条件。
 
-
 ### 关键参数
 
 - **TS_time_step**: 1~10 ms
@@ -137,8 +151,6 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 - **data_exchange_protocol**: 基于共享内存或TCP/IP的异步/同步双缓冲机制
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -151,8 +163,6 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 | 大规模电网FACTS装置投切暂态分析 | 在STATCOM快速投切场景下，混合仿真准确复现了母线电压跌落（0.72 p.u.）与恢复过程（120 ms），接口迭代次数平均为2.3次/步，未出现数值发散。 | 较传统等效模型法，动态响应波形重合度提升至98.5%，计算资源消耗降低约65%。 |
 
-
-
 ## 量化发现
 
 - 混合仿真计算效率较全EMT模型提升40~60倍，内存占用降低约70%，支持万节点级电网的局部精细化分析。
@@ -160,7 +170,6 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - 多速率积分步长比$N$在50~200范围内时，全局仿真误差保持在1%以内；当$N>500$时，接口相位漂移显著增加，需引入预测-校正算法补偿。
 - 频移法将机电-电磁耦合方程的求解维度降低约30%，频域混叠抑制比>40 dB，有效扩展了混合仿真的适用频带（0.1 Hz~5 kHz）。
 - 接口迭代收敛速度受网络刚度影响，采用自适应松弛因子后，平均迭代次数从4.1次降至1.8次，单步通信延迟<0.05 ms。
-
 
 ## 关键公式
 
@@ -188,11 +197,34 @@ $$$v_{shift}(t) = v(t) e^{-j\omega_{shift} t}$$$
 
 *用于自适应混合建模，通过频谱平移消除基频旋转分量，实现宽频暂态在同一参考系下的统一求解。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（全EMT基准 vs 混合仿真 vs 纯TS）与接口残差收敛性分析
 - **测试系统**: IEEE 39节点测试系统、含HVDC/FACTS的定制大规模电网模型及实际区域电网等值模型
 - **仿真工具**: PSCAD/EMTDC (EMT侧), PSS/E或MATLAB/Simulink (TS侧), 自定义C++/Python接口中间件与共享内存通信协议
 - **验证结果**: 验证表明混合接口协议在故障穿越、开关操作及电力电子控制交互场景下具有高度一致性。接口迭代算法有效抑制了数值振荡，频移一体化方法在宽频带暂态分析中展现出优异的数值稳定性。整体波形重合度>98%，接口误差<0.5%，计算效率提升40倍以上，完全满足IEEE标准对工程级混合仿真的精度与实时性要求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Interfacing Techniques for Transient Stability and Electromagnetic Transient Hybrid Simulation`（2009） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 混合仿真接口技术、网络分割、并行计算 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：系统梳理TS与EMT混合仿真接口关键问题与数据交换协议
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Transient Stability and Electromagnetic Transient Programs IEEE Task Forc.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

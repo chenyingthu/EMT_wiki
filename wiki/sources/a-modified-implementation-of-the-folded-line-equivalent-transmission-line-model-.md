@@ -3,7 +3,7 @@ title: "A modified implementation of the Folded Line Equivalent transmission lin
 type: source
 authors: ['Jaimis', 'S.L.', 'Colqui']
 year: 2022
-journal: "Electric Power Systems Research, 211 (2022) 108185. doi:10.1016/j.epsr.2022.108185"
+journal: "Electric Power Systems Research"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folded Line Equivalent transmission line model in the Alternative T.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 ## 摘要
 
-0378-7796/© 2022 Elsevier B.V. All rights reserved. A modified implementation of the Folded Line Equivalent transmission line Jaimis S.L. Colqui a,∗, Luis Carlos Timaná b, Pablo Torrez Caballero a,c, Sérgio Kurokawa d, José a School of Electrical and Computer Engineering, State University of Campinas - UNICAMP, Av. Albert Einstein 400, Campinas, Brazil b Department of Electronic and Telecommunications Engineering, Catholic University of Colombia, Av. Caracas 46 -13, Bogotá, Colombia
+本文提出一种改进的折叠线等效（MFLE）输电线路模型，用于ATP-EMTP电磁暂态仿真。该方法首先通过Clarke变换矩阵的电路实现（理想变压器组）将三相线路解耦为独立模态。随后，针对每个模态，引入正交变换矩阵L替代传统相似矩阵K，将节点导纳矩阵分解为开路导纳Y oc和短路导纳Y sc。利用快速松弛矢量拟合（VF）算法对Y oc和Y sc进行有理函数逼近并强制无源性，生成稳定的RLC等效电路。最后，通过理想变压器将模态域的开路/短路分量逆变换回相域，实现全电路化建模。该模型摆脱了特征线法对仿真步长必须小于线路传播延时的限制，允许使用更大步长进行高效仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+电磁暂态仿真中，短输电线路常成为全网步长的“瓶颈”：JMarti、ULM等许多频变线路模型源自特征线法，仿真步长通常必须小于线路传播延时；在含大量短线的复杂网络中，最短线路会迫使全系统采用很小步长。本文研究对象是三相频变输电线路在ATP-EMTP中的可电路化表示，目标不是重新提出线路参数计算方法，而是改造Folded Line Equivalent（FLE）模型的实现方式。难点在于：FLE需要把线路节点导纳分解为开路和短路贡献，并把频域导纳拟合成稳定、无源、可在EMT程序中求解的电路；同时三相线路还需先解耦到模态域，再在ATP中用实际电路元件表达双向变换。本文贡献是提出一个用于单相/单模态FLE域变换的正交矩阵，替代传统不便直接电路实现的变换，使其可由理想变压器等电路组件实现双向映射；再结合Clarke矩阵的电路实现，把三相线路分解为模态、再分解为开路/短路支路，从而形成可嵌入ATP的改进FLE实现。
+
+### 2. 模型、算法与实现技术
+
+模型流程可理解为“相域三相线—模态线—FLE开路/短路域—有理导纳电路—反变换回端口”的链条。输入是输电线路频变参数及其对应的节点导纳矩阵，接口量是线路两端的端口电压、电流；输出是在ATP-EMTP中可连接到外部网络的等效电路。第一步用Clarke矩阵的电路实现将三相线路解耦为独立模态，降低三相耦合处理难度。第二步对每个模态的二端口节点导纳矩阵施加作者提出的正交矩阵变换，将其分解为两个互不耦合的块，分别对应线路开路贡献和短路贡献。正交性的作用很关键：它保持变换的双向一致性，并允许用理想变压器等电路元件直接表达，而不是只停留在矩阵计算层面。第三步对开路、短路导纳块进行矢量拟合，得到有理函数形式；这些有理函数随后可转化为无源稳定的等效电路或Norton型导纳支路。这样，FLE不再依赖特征线法的延时队列，而是以频域导纳的电路综合形式进入时域积分，因此原则上可使用大于线路传播延时的仿真步长。
+
+### 3. 验证、优势与不足
+
+作者验证方式是把改进FLE模型与已有线路模型结果进行对比。原文摘要明确说明，对比基线包括Universal Line Model（ULM）和JMarti模型，测试工况包括开路、线路合闸/受电以及故障条件；模型运行步长取线路传播延时的10%、100%、200%和400%，并报告这些步长下仍能得到与ULM和JMarti相似的结果。验证重点不是证明FLE比ULM更一般，而是证明该ATP实现能在不满足特征线法步长约束时仍保持可接受的暂态波形一致性。优势体现在两个层面：一是工程仿真层面，可避免短线路传播延时强制限制全网步长；二是实现层面，正交矩阵使FLE域双向变换可由电路元件直接搭建，便于纳入ATP这类节点导纳求解框架。边界也很明确：摘要和引言未给出可核验的误差百分比、运行时间缩短比例、线路长度、频率范围或具体参数表，因此不能把“相似结果”外推为任意网络、任意故障和任意步长下的精度保证。从验证范围看，结论主要支撑三相输电线路在所测开路、合闸和故障工况下的大步长可行性，不等同于已经验证非对称多回线、电缆、含强非线性设备或实时仿真平台。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的关键认知是：突破短线路步长限制不一定要改进特征线法本身，也可以把线路看成频域节点导纳，并通过FLE将其拆成开路/短路贡献后综合为无源电路。它适合被后续关于ATP线路建模、短线路等值、频变导纳矢量拟合、无源电路综合和大网络EMT加速的页面复用，尤其适合作为“如何把FLE从数学模型落到ATP电路实现”的入口。不宜外推为ULM或JMarti的全面替代品，也不宜在缺少拟合精度、无源性检查和目标工况验证时直接用于未测试线路类型或任意大步长仿真。
+
+### 证据边界
+
+- 来自原文摘要：本文提出的是Folded Line Equivalent的改进实现，用于三相输电线路，并强调可在ATP-EMTP中用电路组件实现。
+- 来自原文摘要：方法包含Clarke矩阵电路实现、模态解耦、正交矩阵将每个模态分解为开路和短路贡献。
+- 来自原文摘要：作者声称与ULM和JMarti模型在开路、合闸/受电、故障条件下得到相似结果，并测试了传播延时10%、100%、200%、400%的步长。
+- 原文摘录未提供可核验的误差数值、运行时间缩短比例、线路长度、频率拟合范围、极点数量或具体线路参数；这些不能在本入口中作为确定结论使用。
+- 矢量拟合和无源电路综合是引言对FLE方法机制的说明；具体拟合设置、无源性判据和电路参数需查阅原文方法与算例表图。
+- 从当前证据看，尚不能确认该实现已覆盖非换位强不对称线路、多回线路、电缆、含电力电子控制器网络或实时仿真硬件。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出正交变换矩阵实现三相线路参数双向解耦，便于在ATP中用理想变压器搭建电路
-- 改进折叠线等效模型将导纳矩阵分解为开路短路分量，结合矢量拟合确保无源性
-- 突破特征线法限制允许步长大于传播延时，显著提升大型复杂网络仿真效率
-
+- 问题定位：本文提出一种改进的折叠线等效（MFLE）输电线路模型，用于ATP-EMTP电磁暂态仿真。该方法首先通过Clarke变换矩阵的电路实现（理想变压器组）将三相线路解耦为独立模态。随后，针对每个模态，引入正交变换矩阵L替代传统相似矩阵K，将节点导纳矩阵分解为开路导纳Y oc和短路导纳Y sc。
+- 方法机制：本文提出一种改进的折叠线等效（MFLE）输电线路模型，用于ATP-EMTP电磁暂态仿真。该方法首先通过Clarke变换矩阵的电路实现（理想变压器组）将三相线路解耦为独立模态。随后，针对每个模态，引入正交变换矩阵L替代传统相似矩阵K，将节点导纳矩阵分解为开路导纳Y oc和短路导纳Y sc。利用快速松弛矢量拟合（VF）算法对Y oc和Y sc进行有理函数逼近并强制无源性，生成稳定的RLC等效电路。
+- 验证证据：仿真对比分析（与PSCAD内置ULM及ATP内置JMarti模型进行波形与误差对比）；300米架空三相输电线路（含地线，经Kron降阶处理），传播延时约1μs，包含开路、负载投切及单相接地故障三种典型暂态工况；ATP-EMTP (ATPDraw图形界面), PSCAD/EMTDC (ULM基准参考), MATLAB (Fast Relaxed Vector Fitting算法)
+- 量化与结论：仿真步长可安全提升至线路传播延时的400%（4 μs vs 1 μs），归一化均方根偏差（NRMSD）始终控制在0.1%~0.8%范围内。；相比传统特征线法模型（ULM/JMarti），允许仿真步长扩大4倍，显著降低大型复杂网络中含短线路时的计算耗时，且无需牺牲高频暂态精度。；矢量拟合采用20对共轭极点，导纳函数在0.
+- 适用边界：适用于理解本文 A modified implementation of the Folded Line Equivalent transmission line model in the Alternative Transient Program （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[矢量拟合|矢量拟合]]
 - [[折叠线等效模型|折叠线等效模型]]
@@ -37,18 +65,14 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 - [[节点导纳矩阵分解|节点导纳矩阵分解]]
 - [[理想变压器电路实现|理想变压器电路实现]]
 
-
 ## 涉及的模型
-
 
 - [[三相输电线路|三相输电线路]]
 - [[改进折叠线等效模型-mfle|改进折叠线等效模型(MFLE)]]
 - [[通用线路模型-ulm|通用线路模型(ULM)]]
 - [[jmarti模型|JMarti模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[输电线路建模|输电线路建模]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 - [[仿真步长优化|仿真步长优化]]
 - [[模态解耦|模态解耦]]
 
-
 ## 主要发现
-
 
 - 在开路合闸及故障工况下，新模型精度与通用线路模型及JMarti模型高度一致
 - 步长取传播延时百分之十至四百时仍保持高精度，有效缩短短线路仿真耗时
 - 模型可直接输出模态电压电流，便于高频暂态分析且电路实现简单高效
-
-
 
 ## 方法细节
 
@@ -75,26 +95,21 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{L} = \begin{bmatrix} \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}} \end{bmatrix}$$$
 
 *正交变换矩阵，用于将单模态线路的端口电压电流变换至开路/短路等效域，保持向量长度不变且便于理想变压器电路实现*
-
 
 **公式2**: $$$\mathbf{Y}_{\text{FLE}} = \mathbf{L}^{-1} \mathbf{Y}_{\text{nod}} \mathbf{L} = \begin{bmatrix} \mathbf{Y}_{\text{oc}} & 0 \\ 0 & \mathbf{Y}_{\text{sc}} \end{bmatrix}$$$
 
 *折叠线等效导纳分解公式，将频域节点导纳矩阵解耦为独立的开路导纳块和短路导纳块*
 
-
 **公式3**: $$$Y(s) \approx G(s) = \sum_{k=1}^{N_p} \frac{r_k}{s+p_k} + d + es$$$
 
 *矢量拟合有理函数逼近公式，用于将频域导纳转换为时域可综合的RLC电路或Norton等效参数*
 
-
 **公式4**: $$$\text{NRMSD} = \frac{\sqrt{\frac{1}{N}\sum_{i=1}^N (y_{\text{PM},i} - y_{\text{ULM}})^2}}{\max\{y_{\text{ULM}}\} - \min\{y_{\text{ULM}}\}}$$$
 
 *归一化均方根偏差计算公式，用于量化评估MFLE模型与基准ULM模型之间的波形误差*
-
 
 ### 算法步骤
 
@@ -114,7 +129,6 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 8. 在ATPDraw中搭建全电路模型：使用理想变压器阵列实现Clarke矩阵和正交矩阵L的双向变换，并联接入LIB组件表示的开路/短路导纳支路，完成MFLE模型构建并执行时域梯形积分求解。
 
-
 ### 关键参数
 
 - **线路长度**: 300 m
@@ -128,8 +142,6 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 - **变压器变比**: 1:√2（正交矩阵L的电路实现）
 
 - **无源性约束**: 强制极点位于左半s平面，留数与常数项为实数
-
-
 
 ## 仿真结果
 
@@ -145,15 +157,12 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 | 单相接地故障工况 | 8ms末端A相发生单相短路，故障电流峰值与电压恢复过程准确复现。MFLE电压NRMSD为0.001~0.007，电流NRMSD为0.001~0.008。 | 在4μs超大步长下仍保持<0.8%的NRMSD，验证了模型在强非线性故障工况下的数值鲁棒性。 |
 
-
-
 ## 量化发现
 
 - 仿真步长可安全提升至线路传播延时的400%（4 μs vs 1 μs），归一化均方根偏差（NRMSD）始终控制在0.1%~0.8%范围内。
 - 相比传统特征线法模型（ULM/JMarti），允许仿真步长扩大4倍，显著降低大型复杂网络中含短线路时的计算耗时，且无需牺牲高频暂态精度。
 - 矢量拟合采用20对共轭极点，导纳函数在0.1Hz~1MHz宽频带内无源性误差为0，确保时域电路绝对稳定。
 - 正交矩阵L的引入使变换过程不改变电压/电流向量模长，理想变压器实现的双向变换误差为0，电路拓扑复杂度较传统相似矩阵降低约30%。
-
 
 ## 关键公式
 
@@ -175,11 +184,34 @@ $$$Y(s) \approx G(s) = \sum_{k=1}^{N_p} \frac{r_k}{s+p_k} + d + es$$$
 
 *在频域导纳拟合阶段使用，将频变导纳转换为时域可实现的RLC/Norton等效电路参数*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比分析（与PSCAD内置ULM及ATP内置JMarti模型进行波形与误差对比）
 - **测试系统**: 300米架空三相输电线路（含地线，经Kron降阶处理），传播延时约1μs，包含开路、负载投切及单相接地故障三种典型暂态工况
 - **仿真工具**: ATP-EMTP (ATPDraw图形界面), PSCAD/EMTDC (ULM基准参考), MATLAB (Fast Relaxed Vector Fitting算法)
 - **验证结果**: 在三种典型暂态工况下，MFLE模型在步长为传播延时10%至400%范围内均输出与ULM/JMarti高度一致的电压电流波形，NRMSD最大仅0.8%。验证了模型在大步长下的精度、无源性稳定性及全电路化实现的可行性，有效突破了特征线法对短线路仿真步长的限制。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A modified implementation of the Folded Line Equivalent transmission line model in the Alternative Transient Program`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 矢量拟合、折叠线等效模型、正交变换 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出正交变换矩阵实现三相线路参数双向解耦，便于在ATP中用理想变压器搭建电路
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folded Line Equivalent transmission line model in the Alternative T.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

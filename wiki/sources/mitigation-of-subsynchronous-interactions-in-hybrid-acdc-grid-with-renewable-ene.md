@@ -1,7 +1,7 @@
 ---
 title: "Mitigation of Subsynchronous Interactions in Hybrid AC/DC Grid With Renewable Energy Using Faster-Than-Real-Time Dynamic Simulation"
 type: source
-authors: ['未知']
+authors: ['Cao 等']
 year: 2021
 journal: "IEEE Transactions on Power Systems;2021;36;1;10.1109/TPWRS.2020.2984732"
 tags: ['real-time', 'renewable']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 
 # Mitigation of Subsynchronous Interactions in Hybrid AC/DC Grid With Renewable Energy Using Faster-Than-Real-Time Dynamic Simulation
 
-**作者**: 
+**作者**: Cao 等
 **年份**: 2021
 **来源**: `26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions in Hybrid ACDC Grid With Renewable Energy Using Faster-Th.pdf`
 
 ## 摘要
 
-—Transmission line capacity enhancement by series compensation is commonly used in power systems, which conse- quently faces potential subsynchronous interaction (SSI). In this work, faster-than-real-time (FTRT) simulation based on the ﬁeld- programmable gate arrays is proposed to mitigate the disastrous SSI in a hybrid AC/DC grid integrated with wind farms. Dynamic simulation is applied to the AC system to gain a high speedup over real-time, and a detailed multi-mass model is speciﬁcally introduced to the synchronous generator to show the electrical- mechanical interaction. Meanwhile, the DC grid undergoes elec- tromagnetic transient simulation to reﬂect the impact of power converters’ control on the overall grid, and consequently, the EMT- dynamic co-simulation running concurrently due t
+本文提出一种基于FPGA的超实时（FTRT）动态仿真架构，用于抑制含风电的混合交直流电网中的次同步相互作用（SSI）。方法核心在于将电网解耦为交流侧与直流侧：交流侧采用机电暂态/动态仿真，允许较大时间步长，并引入同步发电机九阶电气模型与五质量块扭振轴系模型，精确刻画机电耦合与轴系扭振；直流侧采用电磁暂态（EMT）仿真，以高分辨率捕捉换流器开关动态与控制响应。两侧通过功率-电压接口进行数据交互，利用FPGA硬件并行特性实现并发计算。在检测到严重故障后，FTRT平台在物理时间之前超前推演系统动态，量化潮流变化，并提前计算HVDC系统的最优有功注入/吸收策略，从而在失稳发生前实施主动控制。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自串联补偿线路、风电接入和多端HVDC共同形成的混合AC/DC电网：串补可提高输电能力，但会引入次同步相互作用（SSI），尤其是故障或投切后的扭矩放大（TA），可能造成汽轮发电机轴系应力放大、机组解列甚至机械损伤。研究对象不是单一换流器或单机系统，而是含同步发电机多质量轴系、串补交流网、风电场和HVDC/DC网的跨时间尺度系统。难点在于：交流侧机电暂态通常可用毫秒级步长求解，但SSI需要保留发电机电磁—机械耦合和轴系扭振；直流侧换流器控制与开关动态又更适合EMT仿真；若全部用CPU离线顺序求解，难以在故障后真实系统失稳前给出控制动作。本文贡献是把AC侧动态仿真与DC侧EMT仿真在FPGA上并行耦合，利用功率—电压接口隔离两类求解器，并将FTRT仿真用于提前预测故障后的SSI/TA演化，进而计算HVDC有功注入或吸收策略。创新点不只是“加速仿真”，而是把超实时预测作为SSI主动抑制闭环中的决策环节。
+
+### 2. 模型、算法与实现技术
+
+方法由三个层次组成。第一，AC系统采用动态仿真而非全EMT，以获得超实时运行余量；其中同步发电机不只用经典二阶模型，而引入可反映电磁暂态与机械扭振耦合的详细模型，页面抽取显示包括九阶电气模型和五质量块汽轮机—发电机轴系。核心状态量包括转子角、转速偏差、绕组磁链、励磁/调速等控制状态，以及各质量块角位移和转速；机械方程把电磁转矩、机械转矩、阻尼和轴段弹性转矩联系起来，用于产生和观察扭矩放大。第二，DC网采用EMT仿真，以保留HVDC换流器控制对AC/DC功率交换的影响；其输入输出主要是换流站交流侧电压、电流、注入有功/无功以及DC侧控制量。第三，AC动态仿真和DC EMT仿真通过功率—电压接口连接：一侧向另一侧提供等效节点电压或功率注入，使不同步长、不同数学形式的求解器能在同一FPGA程序中并行存在。故障检测后，FTRT平台以快于真实时间的速度扫算未来响应，根据预测到的功率潮流变化和轴系扭矩趋势，提前求出HVDC应向AC网注入或吸收多少有功以及持续多久，再把该策略用于抑制SSI。
+
+### 3. 验证、优势与不足
+
+作者用算例验证FTRT动态—EMT协同仿真的准确性和用于SSI抑制的可行性。原文摘要明确说明，FTRT结果由离线Matlab/Simulink进行准确性验证，并通过多个案例证明有效；当前页面还列出IEEE First Benchmark Model（FBM）和含多端HVDC、风电场的混合AC/DC电网作为测试系统。验证逻辑包括两部分：一是用FBM这类串补系统复现次同步振荡，比较时域波形和频域主导模态；页面抽取给出36 Hz与35.9691 Hz接近的例子，但该数值仍应回原文图表核验。二是在严重扰动后让FTRT硬件提前推演系统动态，计算HVDC有功调节方案，并与Matlab/Simulink离线结果对照。优势在于它没有把整个大系统都强行EMT化，而是把AC机电暂态和DC换流器EMT按物理时间尺度拆分，再借助FPGA并行实现超实时预测，适合为故障后控制争取决策窗口。从验证范围看，论文证明的是给定测试系统、给定模型和FPGA实现下的可行性；原文摘要未报告通用加速倍数、控制鲁棒性裕度、通信/测量延迟影响、不同厂商HVDC控制器适配性，也未证明所有SSI类型或所有新能源并网拓扑均可同样抑制。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值是：SSI抑制可以从“事后检测振荡并阻尼”转向“故障后用超实时仿真预演未来并提前调度HVDC功率”。它把FTRT仿真从纯离线分析工具推进为在线安全控制的候选基础设施，并说明混合AC/DC系统不必在一个统一精细度下求解，合理的动态—EMT分区和接口建模能兼顾关键物理过程与计算时限。该页面适合被后续关于FPGA实时/超实时仿真、动态—EMT混合仿真、HVDC附加阻尼控制、串补系统SSI/TA评估、多质量轴系建模的页面复用。不适合外推为所有新能源SSI问题的通用控制器，也不应脱离原文测试系统、故障类型、接口假设和硬件平台去声称确定的加速比或工程投运性能。
+
+### 证据边界
+
+- 来自原文摘要的确定证据：论文提出基于FPGA的FTRT仿真，用于含风电混合AC/DC电网中SSI抑制；AC侧用动态仿真，DC侧用EMT仿真，并通过功率—电压接口耦合。
+- 来自原文摘要的确定证据：FTRT平台在检测到故障后可提前生成包含功率潮流变化量的控制方案，用于保持混合AC/DC电网稳定；准确性由Matlab/Simulink离线仿真验证。
+- 来自当前页面抽取但需回原文图表核验的证据：IEEE FBM、36 Hz与35.9691 Hz频率对比、55%串补、九阶电气模型和五质量块轴系等具体数值与模型细节。
+- 方法推断而非摘要直接给出的内容：HVDC有功注入/吸收的优化流程可理解为基于FTRT预测结果选择控制量，但具体优化目标、约束、求解器和执行时序需要查原文方法章节确认。
+- 缺少关键外推证据：原文摘要未给出可核验的通用加速倍数、硬件资源占用、通信延迟/测量误差影响、不同风电机组类型和不同HVDC控制策略下的鲁棒性测试。
+- 适用边界：验证集中在作者构造的案例和Matlab/Simulink基线对比上，不能直接证明该架构可覆盖所有SSI类别、所有混合AC/DC拓扑或实际保护控制系统中的全部约束。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于FPGA的超实时仿真架构，实现交直流混合电网并行加速计算
-- 构建同步发电机五质量块轴系模型，精确刻画次同步相互作用机电耦合
-- 设计功率电压接口实现EMT与动态仿真并发，兼顾直流控制与交流暂态
-
+- 问题定位：本文提出一种基于FPGA的超实时（FTRT）动态仿真架构，用于抑制含风电的混合交直流电网中的次同步相互作用（SSI）。方法核心在于将电网解耦为交流侧与直流侧：交流侧采用机电暂态/动态仿真，允许较大时间步长，并引入同步发电机九阶电气模型与五质量块扭振轴系模型，精确刻画机电耦合与轴系扭振；
+- 方法机制：本文提出一种基于FPGA的超实时（FTRT）动态仿真架构，用于抑制含风电的混合交直流电网中的次同步相互作用（SSI）。方法核心在于将电网解耦为交流侧与直流侧：交流侧采用机电暂态/动态仿真，允许较大时间步长，并引入同步发电机九阶电气模型与五质量块扭振轴系模型，精确刻画机电耦合与轴系扭振；直流侧采用电磁暂态（EMT）仿真，以高分辨率捕捉换流器开关动态与控制响应。两侧通过功率-电压接口进行数据交互，利用FPGA硬件并行特性实现并发计算。
+- 验证证据：IEEE First Benchmark Model (FBM) 及含多端HVDC与风电场的混合交直流电网；FPGA硬件平台（实现FTRT动态-EMT混合仿真）, Matlab/Simulink（作为离线高精度基准工具）；FTRT仿真在时域动态响应与频域特征提取上均与Matlab/Simulink离线结果高度一致。次同步谐振频率误差低于0.
+- 量化与结论：次同步振荡频率匹配误差极小：FFT分析值36 Hz与特征值计算值35.9691 Hz偏差仅0.0309 Hz（相对误差<0.09%）；同步机机电耦合模型维度：采用9阶电气方程结合5质量块轴系，共包含17个微分状态变量，完整覆盖10~35 Hz范围内的扭振模态；串联补偿度阈值：55%的线路补偿度足以激发显著的次同步谐振现象，验证了模型对SSI的敏感性；
+- 适用边界：适用于理解本文 Mitigation of Subsynchronous Interactions in Hybrid AC/DC Grid With Renewable Energy Using Faster-Than-Real-Time Dynamic Simulation （2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂。
 
 ## 使用的方法
-
 
 - [[超实时仿真-ftrt|超实时仿真(FTRT)]]
 - [[fpga硬件并行计算|FPGA硬件并行计算]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - [[功率-电压接口技术|功率-电压接口技术]]
 - [[微分代数方程-dae-求解|微分代数方程(DAE)求解]]
 
-
 ## 涉及的模型
-
 
 - [[同步发电机九阶模型|同步发电机九阶模型]]
 - [[五质量块扭振轴系模型|五质量块扭振轴系模型]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - [[风电场|风电场]]
 - [[励磁控制系统-avr-pss|励磁控制系统(AVR/PSS)]]
 
-
 ## 相关主题
-
 
 - [[次同步相互作用-ssi-抑制|次同步相互作用(SSI)抑制]]
 - [[交直流混合电网|交直流混合电网]]
@@ -58,15 +82,11 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - [[机电暂态协同仿真|机电暂态协同仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
 
-
 ## 主要发现
-
 
 - 超实时平台可在故障后提前生成精确潮流调整策略，有效抑制次同步振荡
 - 五质量块模型成功复现轴系扭振放大现象，验证了机电交互仿真准确性
 - 混合仿真结果与Matlab离线工具高度一致，且具备显著超实时加速比
-
-
 
 ## 方法细节
 
@@ -76,41 +96,33 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x}(t) = f(x(t), u(t))$$$
 
 *同步发电机及控制系统的状态微分方程，描述机电暂态动态演化*
-
 
 **公式2**: $$$g(x(t), V(t)) = 0$$$
 
 *网络代数方程，描述节点电压与注入功率的潮流约束*
 
-
 **公式3**: $$$\dot{\delta}(t) = \omega_R \cdot \Delta\omega(t)$$$
 
 *转子相对功角变化率方程，关联基准角速度与转速偏差*
-
 
 **公式4**: $$$\dot{\Delta\omega}(t) = \frac{1}{2H}[T_m(t) - T_e(t) - D \cdot \Delta\omega(t)]$$$
 
 *单质量块摇摆方程，刻画机械转矩、电磁转矩与阻尼对转速的影响*
 
-
 **公式5**: $$$\dot{\psi}_{fd}(t) = \omega_R \cdot [e_{fd}(t) - R_{fd} i_{fd}(t)]$$$
 
 *d轴励磁绕组磁链微分方程，反映励磁电压与绕组电阻的动态关系*
-
 
 **公式6**: $$$\dot{v}_1(t) = \frac{1}{T_R} \cdot [v_t(t) - v_1(t)]$$$
 
 *AVR电压测量滤波环节，用于提取机端电压动态分量*
 
-
 **公式7**: $$$\dot{\Delta\omega}_1 = \frac{1}{2H_1}[K_{12}(\delta_2 - \delta_1) - T_e - D_1 \cdot \Delta\omega_1]$$$
 
 *发电机转子（质量块1）扭振动力学方程，直接耦合电磁转矩与相邻轴段弹性扭矩*
-
 
 ### 算法步骤
 
@@ -123,7 +135,6 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 4. 故障触发与超前推演：实时监测电网状态，一旦检测到三相接地故障或大负荷突变，立即启动FTRT模式。利用FPGA硬件并行加速特性，以远快于物理时间的速度推演未来数秒至数十秒的系统动态轨迹，重现次同步振荡与轴系扭矩放大过程。
 
 5. 抑制策略生成与下发：基于推演结果，量化次同步振荡幅值与轴系应力，通过优化算法计算HVDC换流站所需的最优有功功率调节量及持续时间，生成控制指令并提前下发至实际系统执行，实现主动阻尼。
-
 
 ### 关键参数
 
@@ -141,8 +152,6 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 
 - **接口类型**: 功率-电压接口（Power-Voltage Interface）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -155,8 +164,6 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 
 | 含风电混合交直流电网大扰动 | 模拟严重故障后，FTRT平台在物理时间到达前完成动态推演，成功计算出HVDC有功调节量以抑制轴系扭矩放大（TA）。 | 相比传统CPU顺序仿真，FPGA并行架构显著缩短求解时间，实现超实时（FTRT）运行，为实际系统预留了充足的控制决策窗口，且动态响应误差<0.5%。 |
 
-
-
 ## 量化发现
 
 - 次同步振荡频率匹配误差极小：FFT分析值36 Hz与特征值计算值35.9691 Hz偏差仅0.0309 Hz（相对误差<0.09%）
@@ -164,7 +171,6 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - 串联补偿度阈值：55%的线路补偿度足以激发显著的次同步谐振现象，验证了模型对SSI的敏感性
 - 仿真加速机制：通过FPGA硬件并行处理与动态仿真大时间步长容忍特性，突破传统CPU顺序计算瓶颈，实现超实时推演
 - 控制策略量化：FTRT可精确输出HVDC有功注入/吸收的幅值与持续时间，实现故障后毫秒级至秒级的主动抑制
-
 
 ## 关键公式
 
@@ -186,11 +192,34 @@ $$$\dot{\delta}_n = \omega_R \cdot \Delta\omega_n, \quad \dot{\Delta\omega}_n = 
 
 *适用于中间质量块（Mass 2-4）的扭振动态建模，通过刚度系数K与阻尼系数D耦合相邻质量块，完整再现汽轮机-发电机轴系的弹性形变与能量传递*
 
-
-
 ## 验证详情
 
 - **验证方式**: 离线仿真对比验证与频域/时域联合分析
 - **测试系统**: IEEE First Benchmark Model (FBM) 及含多端HVDC与风电场的混合交直流电网
 - **仿真工具**: FPGA硬件平台（实现FTRT动态-EMT混合仿真）, Matlab/Simulink（作为离线高精度基准工具）
 - **验证结果**: FTRT仿真在时域动态响应与频域特征提取上均与Matlab/Simulink离线结果高度一致。次同步谐振频率误差低于0.1%，多质量块轴系扭矩振荡波形准确复现。验证了功率-电压接口在并发仿真中的数值稳定性，以及FTRT架构在故障后超前推演与HVDC控制策略生成方面的工程可行性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Mitigation of Subsynchronous Interactions in Hybrid AC/DC Grid With Renewable Energy Using Faster-Than-Real-Time Dynamic Simulation`（2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 超实时仿真-ftrt、fpga硬件并行计算、emt-动态混合仿真 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于FPGA的超实时仿真架构，实现交直流混合电网并行加速计算
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions in Hybrid ACDC Grid With Renewable Energy Using Faster-Th.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

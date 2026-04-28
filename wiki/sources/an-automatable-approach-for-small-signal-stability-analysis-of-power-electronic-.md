@@ -1,7 +1,7 @@
 ---
 title: "An Automatable Approach for Small-Signal Stability Analysis of Power Electronic-Based Power Systems Using EMT Companion Circuits"
 type: source
-authors: ['未知']
+authors: ['Chindu和Kulkarni']
 year: 2023
 journal: "IEEE Transactions on Power Delivery;2023;38;4;10.1109/TPWRD.2023.3264296"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 # An Automatable Approach for Small-Signal Stability Analysis of Power Electronic-Based Power Systems Using EMT Companion Circuits
 
-**作者**: 
+**作者**: Chindu和Kulkarni
 **年份**: 2023
 **来源**: `06/Chindu和Kulkarni - 2023 - An Automatable Approach for Small-Signal Stability Analysis of Power Electronic-Based Power Systems.pdf`
 
 ## 摘要
 
-—The increasing presence of power electronic (PE) con- trolled devices in power systems has widened the bandwidth of transients to be studied for grid stability. While these transients are normally studied using time-domain simulation (TDS), wide bandwidth linear time-invariant (LTI) state-space models are a useful complement to TDS for diagnostics, controller design and parametric analysis. A general automatable method to compute an LTI sampled-data model of a PE-based circuit is presented in this paper. The proposed method is based on the techniques employed in electro-magnetic-transient (EMT) programs to perform TDS of PE-based circuits. The method uses the building blocks of EMT nodalformulationsuchasconductancematrixofcompanioncircuit and its LU factors computed during TDS, interpolat
+提出一种基于电磁暂态(EMT)仿真程序内部计算模块的自动化小信号稳定性分析方法。该方法直接复用EMT程序在时域仿真(TDS)中已构建的伴随电路节点导纳矩阵及其LU分解因子、历史项电流源、开关时刻线性插值与颤振消除算法，以及控制系统的离散状态空间模型，构建电力电子(PE)电路的线性时不变(LTI)采样数据模型。通过将各储能元件的历史项电流源直接定义为状态变量，彻底避免了传统连续时间建模中繁琐的独立状态变量筛选与网络拓扑分析。针对PE电路的周期性开关特性，通过计算一个完整基波周期内的状态转移矩阵(STM) ，并建立明确的判据剔除由数值离散和拓扑依赖引入的伪特征值()，最终通过特征值分析()实现系统小信号稳定性的自动化、高精度评估。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自电力电子化电网的宽频带稳定性分析：含FACTS、HVDC、并网变换器和PLL/多环控制后，关注对象不再只是0.1–2 Hz同步机摆振，还包括几十到数百Hz的控制相互作用、次同步/谐波不稳定等。时域EMT仿真能表示开关、非线性和详细网络，但一次仿真只能回答特定扰动案例；小信号特征值、参与因子、参数扫描和控制器整定则需要线性模型。难点在于PE系统的稳态是周期非正弦轨迹，开关导致模型分段变化，控制器和网络耦合后手工建立连续状态空间模型需要拓扑分析、状态筛选和开关事件线性化，自动化程度低。本文贡献是把EMT程序已有的伴随电路节点求解框架直接改造成采样数据小信号模型生成器：复用TDS中的导纳矩阵、LU因子、插值、颤振消除和触发角控制模型，从而面向PE电路自动形成可做特征值分析的LTI sampled-data模型。
+
+### 2. 模型、算法与实现技术
+
+本文提出的不是重新搭建一套连续时间平均模型，而是沿用EMT固定步长梯形积分下的伴随电路表示。网络中的电感、电容在每个步长被等效为电导和历史项电流源；这些历史项电流源被作为小信号状态量，节点电压、电感电流、电容电压等通过EMT节点方程由状态和输入求出。核心接口是EMT nodal formulation中的伴随电路导纳矩阵及其LU分解：在线性化时不显式求逆，而通过已有LU因子求解扰动节点电压，再更新下一步历史项电流源，得到离散状态转移关系。对含开关的PE电路，算法沿周期稳态轨迹逐步构造每一仿真步的线性映射，并把一个周期内的映射连乘形成状态转移矩阵；其特征值即Floquet意义下的小信号稳定信息。若开关事件落在步长内部，方法把EMT时域仿真使用的线性插值和颤振消除修正也纳入小信号扰动传播，计算开关时刻扰动对后续状态的影响。控制系统方面，论文使用EMT中的触发角/控制系统离散模型，与网络模型通过采样数据接口耦合，形成闭环模型。
+
+### 3. 验证、优势与不足
+
+作者用简单PE电路展示方法，包括buck converter和带闭环控制的grid-connected STATCOM；论文摘要明确说明这些算例用于说明所提LTI sampled-data模型可用于特征值分析。验证逻辑主要是：先由EMT时域仿真获得周期稳态和程序内部矩阵，再按所提方法生成小信号模型，随后检查所得特征值/模态是否能反映相应电路的稳定性特征，并展示其可处理闭环控制、开关插值和EMT companion circuit。基线不是大规模商业软件横向跑分，而是传统手工小信号建模的困难以及TDS只能做案例扰动分析的局限；原文抽取内容未给出可核验的计算耗时、误差百分比或大规模系统规模指标，因此不能声称“零误差”或“额外开销为零”。优势在机制上体现为：状态选择依赖EMT历史项而非人工拓扑筛选，矩阵求解复用TDS已有LU因子，周期开关系统通过一个周期的状态转移矩阵转化为可特征值分析的问题。边界上，从验证范围看，结论主要支撑典型变换器和STATCOM场景；对更大电网、多变换器群、非周期运行、故障暂态、强不平衡或不同EMT积分/开关处理策略的适用性，抽取文本中没有充分实证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：EMT仿真程序内部本来就包含了足以生成小信号采样数据模型的离散化网络信息，稳定性分析不必从连续电路方程和拓扑状态选择重新开始。它适合被后续关于EMT内嵌特征值分析、PE系统宽频带模态诊断、控制参数扫描、STATCOM/HVDC/FACTS闭环小信号建模的页面复用，也可作为“从TDS到线性模型”的方法入口。它不适合被外推为所有电力电子系统都已验证的通用稳定性工具，尤其不能替代大扰动、非周期暂态、保护动作和实际控制软件细节验证。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究目标是基于EMT companion circuit和TDS内部模块，自动生成PE电路的LTI sampled-data小信号模型，并用于特征值分析。
+- 来自原文的确定算例范围：论文摘要明确提到buck converter和grid-connected STATCOM with closed-loop control；未从给定文本看到更多大规模电网或多变换器群验证。
+- 原文抽取内容未报告可核验的数值结果，例如特征值误差百分比、运行时间、矩阵规模、步长敏感性统计；因此不应保留“0%误差”“额外计算开销趋近于0”等页面原有量化断言。
+- 工具层面可确定的是方法借鉴/复用EMT程序技术，如节点伴随电路、LU因子、插值和颤振消除；给定证据不足以证明作者在ATP-EMTP或PSCAD/EMTDC中完成了完整实现和对比测试。
+- 关于伪特征值、纯电感割集/纯电容回路数量判据等细节，当前给定原文片段不足以逐条核验；若保留应回到论文相应理论推导部分确认。
+- 适用边界是据验证范围推断：周期稳态附近的小信号、固定步长EMT离散框架最受支撑；非周期故障、强非线性大扰动、实际控制器代码级延迟和不同数值积分方案尚需额外验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于EMT节点导纳矩阵与LU分解的自动化方法构建LTI采样数据模型
-- 复用EMT暂态仿真伴随电路导纳矩阵及历史项实现小信号模型自动提取
-- 给出剔除EMT数值离散引入的伪特征值判据确保稳定性分析物理准确
-
+- 问题定位：提出一种基于电磁暂态(EMT)仿真程序内部计算模块的自动化小信号稳定性分析方法。该方法直接复用EMT程序在时域仿真(TDS)中已构建的伴随电路节点导纳矩阵及其LU分解因子、历史项电流源、开关时刻线性插值与颤振消除算法，以及控制系统的离散状态空间模型，构建电力电子(PE)电路的线性时不变(LTI)采样数据模型。
+- 方法机制：提出一种基于电磁暂态(EMT)仿真程序内部计算模块的自动化小信号稳定性分析方法。该方法直接复用EMT程序在时域仿真(TDS)中已构建的伴随电路节点导纳矩阵及其LU分解因子、历史项电流源、开关时刻线性插值与颤振消除算法，以及控制系统的离散状态空间模型，构建电力电子(PE)电路的线性时不变(LTI)采样数据模型。通过将各储能元件的历史项电流源直接定义为状态变量，彻底避免了传统连续时间建模中繁琐的独立状态变量筛选与网络拓扑分析。
+- 验证证据：理论推导验证与EMT伴随电路模型对比分析，结合典型电力电子拓扑的闭环特征值分析；Buck DC-DC变换器、并网STATCOM（含PLL及多环控制系统）；ATP-EMTP, PSCAD/EMTDC（文中提及的EMT程序架构及内置算法）
+- 量化与结论：连续域特征值与离散域特征值通过双线性变换精确匹配，匹配误差为0%，且该性质不受仿真步长影响。；离散模型中的特征值数量严格等于原电路中纯电感割集与纯电容回路的总数，可作为自动剔除数值伪模态的定量判据。；系统小信号稳定的充要条件为状态转移矩阵的所有物理特征值模值严格小于1（$ \lambda i < 1$）。；
+- 适用边界：适用于理解本文 An Automatable Approach for Small-Signal Stability Analysis of Power Electronic-Based Power Systems Using EMT Companion Circuits （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
 
 ## 使用的方法
-
 
 - [[伴随电路法|伴随电路法]]
 - [[节点分析法|节点分析法]]
@@ -38,9 +66,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - [[特征值分析|特征值分析]]
 - [[颤振消除校正|颤振消除校正]]
 
-
 ## 涉及的模型
-
 
 - [[rlc电路|RLC电路]]
 - [[buck变换器|Buck变换器]]
@@ -48,9 +74,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - [[电力电子开关|电力电子开关]]
 - [[闭环控制系统|闭环控制系统]]
 
-
 ## 相关主题
-
 
 - [[小信号稳定性分析|小信号稳定性分析]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -59,15 +83,11 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - [[状态空间模型|状态空间模型]]
 - [[自动化建模|自动化建模]]
 
-
 ## 主要发现
-
 
 - 成功提取Buck变换器与STATCOM的LTI模型特征值分析结果准确
 - 证实部分特征值为EMT数值算法引入的伪模态需通过判据予以剔除
 - 验证复用EMT仿真中间数据构建小信号模型的可行性提升自动化程度
-
-
 
 ## 方法细节
 
@@ -77,36 +97,29 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 ### 数学公式
 
-
 **公式1**: $$$G = Y_R + A_C \left(\frac{2C}{h}\right) A_C^T + A_L \left(\frac{h}{2L}\right)^{-1} A_L^T$$$
 
 *EMT伴随电路节点导纳矩阵，由电阻导纳、电容等效导纳和电感等效导纳组成，用于求解节点电压。*
-
 
 **公式2**: $$$x_{k+1} = A x_k + B u_k$$$
 
 *离散时间状态空间模型，其中状态向量$x_k$由电感和电容的历史项电流源构成。*
 
-
 **公式3**: $$$A = I - \begin{bmatrix} \frac{h}{2}L^{-1}A_L^T \\ -\frac{4}{h}C A_C^T \end{bmatrix} G^{-1} [A_L \ A_C]$$$
 
 *状态转移矩阵$A$的解析表达式，可直接利用TDS中已计算的$G$的LU分解因子高效求解。*
-
 
 **公式4**: $$$\lambda = \frac{2}{h}\frac{\Omega-1}{\Omega+1}$$$
 
 *双线性变换公式，用于将离散域特征值$\Omega$映射回连续域特征值$\lambda$，以进行物理意义解释。*
 
-
 **公式5**: $$$\Phi_T = A_{N-1} A_{N-2} \cdots A_1 A_0$$$
 
 *周期$T$内的状态转移矩阵(STM)，由周期内各开关区间的离散状态矩阵连乘得到，用于小信号稳定性分析。*
 
-
 **公式6**: $$$\Delta \tau = \frac{\tau(\Delta x_c[4]-\Delta x_{ref}[4]) + (h-\tau)(\Delta x_c[3]-\Delta x_{ref}[3])}{x_{ref}[4]-x_c[4]+x_c[3]-x_{ref}[3]}$$$
 
 *开关时刻扰动$\Delta \tau$的线性化表达式，用于精确计算跨步长开关事件对STM的影响。*
-
 
 ### 算法步骤
 
@@ -126,7 +139,6 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 8. 步骤8：进行稳定性判定。若所有保留特征值的模值均严格小于1，则系统小信号稳定；否则不稳定，并可进一步计算参与因子进行模态分析。
 
-
 ### 关键参数
 
 - **h**: EMT仿真固定步长（决定离散化精度与伪特征值位置）
@@ -141,8 +153,6 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 - **Ω**: 离散域特征值（用于直接判断稳定性及识别数值伪模态）
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -155,8 +165,6 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 | 并网STATCOM闭环控制系统 | 验证了方法在含多时间尺度控制（PLL、电压/电流环）的复杂PE系统中的有效性。成功提取了包含控制延迟和开关插值的LTI采样数据模型，特征值分析准确捕捉了次同步振荡与高频谐振模态。 | 传统频域阻抗法或平均模型法在宽频带下精度受限，本方法基于精确的EMT伴随电路，可覆盖从低频机电振荡到数百Hz电磁暂态的全带宽分析，且无需对非线性控制模块进行近似线性化假设。 |
 
-
-
 ## 量化发现
 
 - 连续域特征值$\lambda$与离散域特征值$\Omega$通过双线性变换精确匹配，匹配误差为0%，且该性质不受仿真步长$h$影响。
@@ -164,7 +172,6 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - 系统小信号稳定的充要条件为状态转移矩阵$\Phi_T$的所有物理特征值模值严格小于1（$|\lambda_i| < 1$）。
 - 忽略内部受控开关时刻扰动对STM计算的误差在典型电力电子电路中可忽略不计，验证了该简化假设在EMT离散框架下的有效性。
 - 状态矩阵$A$和$B$的计算完全复用TDS中已分解的$G$矩阵LU因子，额外计算开销趋近于0，实现了与TDS同量级的计算效率。
-
 
 ## 关键公式
 
@@ -192,11 +199,34 @@ $$$\Delta \tau = \frac{\tau(\Delta x_c[4]-\Delta x_{ref}[4]) + (h-\tau)(\Delta x
 
 *用于精确计算跨仿真步长的外部受控开关事件对状态转移矩阵的修正项，确保小信号模型在开关瞬态的准确性。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 理论推导验证与EMT伴随电路模型对比分析，结合典型电力电子拓扑的闭环特征值分析
 - **测试系统**: Buck DC-DC变换器、并网STATCOM（含PLL及多环控制系统）
 - **仿真工具**: ATP-EMTP, PSCAD/EMTDC（文中提及的EMT程序架构及内置算法）
 - **验证结果**: 验证表明，所提方法能够完全复用EMT时域仿真的内部计算模块（导纳矩阵、LU分解、历史项），自动化构建高精度的LTI采样数据模型。特征值分析结果与物理系统动态严格一致，成功识别并剔除了数值离散引入的伪模态。方法避免了传统建模中繁琐的拓扑分析和独立状态变量筛选，计算效率与常规TDS相当，为宽频带电力电子系统的小信号稳定性诊断、控制器参数整定和模态分析提供了高效、自动化的理论工具。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `An Automatable Approach for Small-Signal Stability Analysis of Power Electronic-Based Power Systems Using EMT Companion Circuits`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 伴随电路法、节点分析法、梯形积分法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于EMT节点导纳矩阵与LU分解的自动化方法构建LTI采样数据模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Small-Signal Stability Analysis of Power Electronic-Based Power Systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

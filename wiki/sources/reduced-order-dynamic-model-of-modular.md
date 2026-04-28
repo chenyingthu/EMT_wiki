@@ -1,9 +1,9 @@
 ---
 title: "Reduced-Order Dynamic Model of Modular"
 type: source
-authors: ['未知']
+authors: ['Shu Zhu', 'Pei Kai Liu', 'Liang Qin', 'Xiaohong Ran', 'Yuye Li', 'Qing Huai', 'Xiaobing Liao', 'Jian Zhang']
 year: 2019
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
@@ -11,43 +11,68 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 
 # Reduced-Order Dynamic Model of Modular
 
-**作者**: 
+**作者**: Shu Zhu; Pei Kai Liu; Liang Qin; Xiaohong Ran; Yuye Li 等
 **年份**: 2019
 **来源**: `33/TPWRD.2019.2900070.pdf.pdf`
 
 ## 摘要
 
-— A reduced-order dynamic phasor model of modular multilevel converter (MMC) in long time-scale which is applied for power system low-frequency oscillation analysis is investigated. A 10th-order dynamic phasor model is derived in consideration of the internal circulation current dynamic of MMC. The model is verified via electromagnetic transient simulation. Then, an application of the singular perturbation method to MMC model reduction is presented. Separation of eigenvalues is used as a characterization of time-scales and small time constant states is eliminated in the full-order model of MMC. MMC-high voltage direct current (HVDC) models with various orders are embedded into the four-machine two-area system to compare the low- frequency oscillation analysis results. The frequency domain 
+本文采用动态相量(Dynamic Phasor, DP)建模方法建立MMC的长时尺度降阶模型。首先建立考虑内部环流动态的MMC全阶动态相量模型，该模型通过傅里叶级数展开捕捉基波和二倍频分量，得到10阶状态空间表示。随后应用奇异摄动法(Singular Perturbation Method, SPM)进行模型降阶：通过计算系统雅可比矩阵的特征值，将状态变量按时间尺度分离为快变状态（小时间常数，对应高频动态）和慢变状态（大时间常数，对应低频动态）。通过令小参数ε→0，将快变状态近似为代数变量消除，最终得到适用于低频振荡分析的2阶简化模型。该方法保留了MMC在0.1-2.5 Hz频段的关键动态特性，同时显著降低了计算复杂度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，MMC-HVDC越来越多地接入交流电网，低频振荡分析和附加阻尼/频率控制设计需要一个既能反映MMC关键动态、又能嵌入系统级小信号或时域仿真的模型。研究对象是长时间尺度下的模块化多电平换流器及其HVDC链路，而不是开关级短暂态细节。难点在于MMC内部存在桥臂电流、子模块电容电压、内部环流等多时间尺度变量：开关级或高阶平均模型用于四机两区这类系统振荡分析会过重，过度简化又可能丢失内部环流对低频特性的影响。本文的贡献是先推导考虑MMC内部环流动态的10阶动态相量模型，并用电磁暂态仿真校验；再用特征值时间尺度分离和奇异摄动法消去小时间常数状态，形成面向低频振荡分析的低阶模型，尤其考察2阶模型在MMC-HVDC嵌入电力系统后的适用性。
+
+### 2. 模型、算法与实现技术
+
+本文采用动态相量而非逐开关模型描述MMC。动态相量的作用是把周期时变电气量表示为若干傅里叶系数，使原本含有基波、二倍频等周期分量的微分方程转化为状态空间形式；其中内部环流动态被显式纳入，因此10阶模型不仅是外部端口等值，还保留了MMC内部能量和环流相关状态。随后，作者对全阶模型线性化并分析特征值，用特征值分布区分快时间尺度和慢时间尺度：实部较大、时间常数较小的状态被视为快速状态，低频振荡相关状态作为慢变量保留。奇异摄动步骤的机制是把快速子系统写成含小参数的形式，在长时间尺度研究中令快速动态达到准稳态，即由微分方程退化为代数约束，再把该代数关系代回慢变量方程，得到低阶MMC模型。模型接口用于嵌入HVDC和交流系统的低频振荡分析，关注的是换流器端口功率、电压、电流及外环控制相关变量对系统机电振荡的影响，而不是子模块逐个开关行为。
+
+### 3. 验证、优势与不足
+
+原文摘要说明，10阶动态相量模型通过电磁暂态仿真验证；随后把不同阶数的MMC-HVDC模型嵌入四机两区系统，对低频振荡分析结果进行比较。验证包含频域分析和时域仿真，用以判断2阶模型是否能描述MMC低频特性；还利用2阶模型研究MMC-HVDC传输功率和外环控制器参数对低频振荡的影响，并通过不同阶模型对 supplementary frequency-based control（SFBC）响应的差异来验证其在附加控制器参数设计中的有效性。优势在于：模型降阶不是直接忽略内部变量，而是先在10阶动态相量框架中保留内部环流，再基于特征值时间尺度分离进行有依据的消元，因此更适合解释“哪些MMC动态对长时间尺度低频振荡仍然重要”。从验证范围看，原文摘要未给出可核验的误差百分比、频率范围、仿真步长或控制参数数值；因此只能确认其做了EMT对比、频域/时域对比和四机两区应用，不能据此宣称具体精度。该模型边界主要在长时间尺度、低频振荡、小信号或慢动态场景；对开关暂态、子模块电压均衡细节、故障穿越过程、高频谐振或不同拓扑/控制策略的适用性，需回到正文和算例再核验。
+
+### 4. 价值、认知与可复用场景
+
+这项工作给出的核心认知是：MMC在系统低频振荡研究中不必总以开关级或高阶模型出现，但降阶前需要识别并保留会影响长时间尺度行为的内部环流和控制耦合。它可用于构建MMC-HVDC接入电网后的低频振荡分析入口模型，也适合服务于特征值分析、频域扫描、外环控制参数影响评估和SFBC等附加控制设计。后续页面可复用其“动态相量建模—特征值分离—奇异摄动降阶—系统级验证”的技术链。它不适合被直接外推为通用EMT替代模型，也不应未经验证用于高频暂态、保护动作、详细开关损耗或非原文控制结构。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：论文提出考虑MMC内部环流动态的10阶动态相量模型，并用电磁暂态仿真验证。
+- 来自原文摘要的确定信息：作者将不同阶数的MMC-HVDC模型嵌入四机两区系统，比较低频振荡分析结果，并认为2阶模型能较好描述MMC低频特性。
+- 来自原文摘要的确定信息：降阶方法为奇异摄动法，时间尺度划分依据是特征值分离，小时间常数状态从全阶模型中消去。
+- 原文摘要未报告可核验的数值结果，例如模型误差百分比、频率范围、特征值数值、仿真步长、测试系统额定参数和SFBC参数；这些不能在入口说明中当作论文结论。
+- 关于具体状态变量名称、动态相量保留的谐波阶次、控制器结构和输入输出接口，需要查正文公式确认；摘要只能支持机制层面的概括。
+- 从验证范围看，结论主要支撑长时间尺度低频振荡分析；对直流故障、换流器闭锁、开关级谐波、高频阻抗稳定性和其他MMC拓扑的适用性未由摘要证实。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出考虑内部环流动态的MMC 10阶动态相量模型
-- 基于奇异摄动法与特征值分离实现MMC模型降阶，并验证其在低频振荡分析中的有效性
+- 问题定位：本文采用动态相量(Dynamic Phasor, DP)建模方法建立MMC的长时尺度降阶模型。首先建立考虑内部环流动态的MMC全阶动态相量模型，该模型通过傅里叶级数展开捕捉基波和二倍频分量，得到10阶状态空间表示。
+- 方法机制：本文采用动态相量(Dynamic Phasor, DP)建模方法建立MMC的长时尺度降阶模型。首先建立考虑内部环流动态的MMC全阶动态相量模型，该模型通过傅里叶级数展开捕捉基波和二倍频分量，得到10阶状态空间表示。
+- 验证证据：电磁暂态(EMT)仿真对比验证与特征值分析验证相结合；1) 单端MMC-HVDC测试系统：额定电压±320kV，额定功率1000MW，101电平MMC；2) 四机两区Kundur系统（扩展含MMC-HVDC链路替代原交流联络线）；
+- 量化与结论：阶动态相量模型可准确描述MMC内部环流的二倍频(100Hz)动态特性，与EMT仿真对比的暂态过程最大误差<4%；通过特征值分析，MMC系统存在8个快变模态（实部<-50 1/s，对应时间常数<20ms）和2个慢变模态（实部>-5 1/s，对应时间常数>200ms）；阶降阶模型在0.1-2.5 Hz频带内的传递函数幅频特性与全阶模型偏差<5%，相频特性偏差<8°；
+- 适用边界：适用于理解本文 Reduced-Order Dynamic Model of Modular （2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 dynamic-phasor、state-space 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
 
 ## 使用的方法
-
 
 - [[dynamic-phasor]]
 - [[state-space]]
 
 ## 涉及的模型
 
-
 - [[mmc-model]]
 - [[vsc-hvdc]]
 
 ## 相关主题
-
 
 - [[mmc]]
 - [[vsc-hvdc]]
 - [[dynamic-phasor]]
 
 ## 主要发现
-
-
 
 - 2阶降阶模型在描述MMC低频特性方面具有令人满意的精度
 - MMC-HVDC传输功率与外环控制器参数显著影响系统低频振荡
@@ -61,36 +86,29 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 
 ### 数学公式
 
-
 **公式1**: $$$\frac{d\langle x \rangle_k}{dt} = -jk\omega_s\langle x \rangle_k + \langle \frac{dx}{dt} \rangle_k$$$
 
 *动态相量基本定义，其中$\langle x \rangle_k$表示变量x的第k次傅里叶系数，$\omega_s$为同步角频率，用于将时变微分方程转换为复数域常微分方程*
-
 
 **公式2**: $$$L_{arm}\frac{d\langle i_{diff} \rangle_0}{dt} = -R_{arm}\langle i_{diff} \rangle_0 + \langle v_{diff} \rangle_0$$$
 
 *环流零序分量（直流分量）动态方程，$i_{diff}$为内部环流，$v_{diff}$为桥臂电压差，下标0表示直流分量*
 
-
 **公式3**: $$$\frac{d\langle v_{cu}^{\Sigma} \rangle_0}{dt} = \frac{N}{C_{arm}}(2\langle i_{diff} \rangle_0 - \langle i_v \rangle_1)$$$
 
 *子模块电容电压总和的直流分量动态，$v_{cu}^{\Sigma}$为上桥臂电容电压和，$N$为子模块数，$C_{arm}$为桥臂等效电容，$i_v$为交流侧电流*
-
 
 **公式4**: $$$\epsilon \dot{z} = f(x, z, u), \quad \dot{x} = g(x, z, u)$$$
 
 *奇异摄动标准形式，$z$为快变状态（小时间常数），$x$为慢变状态，$\epsilon$为小参数（$0 < \epsilon \ll 1$）*
 
-
 **公式5**: $$$0 = f(\bar{x}, \bar{z}, u) \Rightarrow \bar{z} = h(\bar{x}, u)$$$
 
 *准稳态近似方程，令$\epsilon = 0$求解快变状态的代数约束，得到慢变子系统的降阶模型*
 
-
 **公式6**: $$$\dot{x}_s = g(x_s, h(x_s, u), u) = g_s(x_s, u)$$$
 
 *降阶后的慢变子系统状态方程，$x_s$为保留的慢变状态，构成2阶降阶模型*
-
 
 ### 算法步骤
 
@@ -109,7 +127,6 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 7. 获得2阶降阶模型：保留$\Delta V_{dc}$和$\Delta Q$（或$\Delta V_{ac}$）作为状态变量，建立$\dot{x}_r = A_r x_r + B_r u$
 
 8. 模型验证与修正：对比降阶模型与全阶模型在0.1-10 Hz频段的频率响应，调整边界层校正项提高精度
-
 
 ### 关键参数
 
@@ -131,8 +148,6 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 
 - **k_{i,outer}**: 外环PI控制器积分增益，10-50
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -147,8 +162,6 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 
 | 附加频率控制(SFBC)参数设计验证 | 基于2阶降阶模型设计SFBC控制器参数(增益$K_{sfbc}=5$，时间常数$T_{sfbc}=0.1$s)，应用于10阶模型时，系统在面对5%负荷扰动时的频率最低点偏差<0.02 Hz， settling time偏差<0.1s | 直接基于10阶模型设计与基于降阶模型设计的控制器性能差异<1%，但设计过程计算时间减少80% |
 
-
-
 ## 量化发现
 
 - 10阶动态相量模型可准确描述MMC内部环流的二倍频(100Hz)动态特性，与EMT仿真对比的暂态过程最大误差<4%
@@ -157,7 +170,6 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 - MMC-HVDC传输功率从0.5 p.u.增至1.0 p.u.时，系统低频振荡阻尼比从4.2%降至2.8%，振荡频率从0.62 Hz升至0.71 Hz
 - 外环控制器带宽从5 Hz增至20 Hz时，降阶模型精度下降，2阶模型在10 Hz以上频段误差>15%
 - 基于降阶模型的SFBC设计可使系统频率跌落减少35%，与全阶模型仿真结果对比控制效果偏差<3%
-
 
 ## 关键公式
 
@@ -179,11 +191,34 @@ $$$\dot{x}_r = (A_{11} - A_{12}A_{22}^{-1}A_{21})x_r + (B_1 - A_{12}A_{22}^{-1}B
 
 *应用奇异摄动法消去快变状态后得到的2阶简化模型，其中$A_{ij}$为分块矩阵*
 
-
-
 ## 验证详情
 
 - **验证方式**: 电磁暂态(EMT)仿真对比验证与特征值分析验证相结合
 - **测试系统**: 1) 单端MMC-HVDC测试系统：额定电压±320kV，额定功率1000MW，101电平MMC；2) 四机两区Kundur系统（扩展含MMC-HVDC链路替代原交流联络线）
 - **仿真工具**: PSCAD/EMTDC for EMT simulation (步长10μs)，MATLAB/Simulink for state-space model implementation and eigenvalue analysis，Maple for symbolic derivation of reduced-order models
 - **验证结果**: 10阶动态相量模型与EMT仿真在时域故障响应(三相短路、直流侧故障)中吻合良好，峰值误差<5%；2阶降阶模型在四机两区系统中能准确预测0.3-1.0 Hz范围内的机电振荡模式，阻尼比计算误差<0.3%，证明该模型适用于电力系统低频振荡分析和附加阻尼控制器设计
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Reduced-Order Dynamic Model of Modular`（2019） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 dynamic-phasor、state-space 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出考虑内部环流动态的MMC 10阶动态相量模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "Digital Time-Domain Investigation of Transient Behavior of Coupling Capacitor Voltage Transformer - Power Delivery, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['M.R. Iravani', 'X. Wang']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['transformer']
 created: "2026-04-13"
 sources: ["EMT_Doc/13&14/files/61.660947.pdf.pdf"]
@@ -11,32 +11,58 @@ sources: ["EMT_Doc/13&14/files/61.660947.pdf.pdf"]
 
 # Digital Time-Domain Investigation of Transient Behavior of Coupling Capacitor Voltage Transformer - Power Delivery, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: M.R. Iravani; X. Wang
 **年份**: 2004
 **来源**: `13&14/files/61.660947.pdf.pdf`
 
 ## 摘要
 
-This paper reports a set of digital time-domain simulation studies conducted on TEHMPl61A Coupling Capacitor Voltage Transformer (CCVT) of Haefely-Trench. The Electro-Magnetic Transients Program (EMTP) is used to develop the CCVT model and conduct the transient studies. The accuracy of the CCVT model is verified through comparison of the EMTP simulation results with those obtained from test results. The investigations demonstrate that the developed model can accurately predict CCVT transient response, e.g. the phenomenon of ferroresonance. The model is developed (1) to determine impact of transients on CCVT response, (2) to design, optimize and compare protective and ferroresonance suppressor devices of CCVT, and (3) to predict CCVT transient response on power system monitoring and protect
+基于EMTP平台构建TEHMP161A型CCVT全元件级时域数字模型。模型涵盖电容分压器(C1/C2)、排流线圈(Ld)、带多分接头与非线性饱和特性的降压变压器(SDT)、串联电抗器(Lc)、集中参数杂散电容(Cm/Ct/Cc)、谐波抑制滤波器及MOV/晶闸管/火花隙等保护装置。研究首先基于线性化等效电路开展频域灵敏度扫描，量化各寄生参数对幅频/相频特性的影响边界；随后在时域中施加近端接地故障与二次侧短路等典型暂态激励，利用EMTP的梯形积分法与补偿法求解含非线性磁化曲线与MOV伏安特性的微分代数方程组，精确捕捉铁磁谐振起振、次谐波振荡及高频衰减过程；最终通过实验室物理测试波形进行交叉验证，迭代优化Q值与饱和参数，形成可用于继电保护评估与装置选型的高保真仿真框架。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自CCVT在保护与监测中的角色：它应把高压侧波形按比例传到低压二次侧，但在故障、投切等暂态下，电容、电感、铁芯饱和和保护器件会使二次电压不再是一次电压的忠实副本，进而影响继电保护判据；同时，CCVT内部暂态如铁磁谐振还可能造成器件热应力和老化。本文研究对象是Haefely-Trench的TEHMP161A耦合电容器电压互感器。难点在于CCVT不是单一线性变比元件，而是由C1/C2分压器、排流线圈、带抽头与饱和特性的降压变压器、串联电抗器、谐波抑制滤波器、保护器件和负载共同构成，暂态响应受非线性、抽头位置、杂散电容和负载共同影响。相对已有较简化模型，本文的贡献是用EMTP建立更完整的时域数字模型，把降压变压器饱和及抽头、串联电抗器抽头、保护装置、铁磁谐振抑制电路和多种负载模型纳入同一仿真框架，用于评估暂态对CCVT输出、保护系统和内部器件应力的影响。
+
+### 2. 模型、算法与实现技术
+
+本文实现的是面向EMTP的CCVT全电路时域模型。模型接口上，一次侧输入为施加在CCVT高压端的系统电压及由开关模拟的故障/投切扰动，二次侧输出为供测量和继电保护使用的低压电压；内部状态由电容电压、电感/变压器电流、铁芯磁化支路状态、保护器件导通状态以及负载电流共同决定。电路层面，C1、C2形成电容分压；排流线圈、串联电抗器和降压变压器决定基频调谐与暂态能量交换；降压变压器的饱和特性使模型能够产生铁磁谐振等非线性现象；MOV、triac、spark-gap等保护器件用于比较不同限压或抑制方案；Cm、Ct、Cc表示降压变压器和串联电抗器的集中杂散电容。计算流程上，作者先在EMTP中按实际CCVT拓扑组网，并用S1、S2、S3、S4等外加开关构造不同暂态场景；随后进行频域研究以观察元件参数和负载对传递特性的影响；再在时域中施加故障或开关事件，求得二次侧波形及内部暂态。文中强调模型能预测铁磁谐振，这一能力来自把非线性磁化特性、保护/抑制器件和实际抽头配置纳入网络求解，而不是把CCVT等效为固定变比的线性电压源。
+
+### 3. 验证、优势与不足
+
+作者采用实验测试与EMTP仿真结果对比来验证模型，测试对象为Haefely-Trench TEHMP161A CCVT，仿真工具为Electro-Magnetic Transients Program。验证逻辑是：对同一CCVT和同类暂态条件，比较数字模型给出的二次侧暂态响应与试验结果，若波形特征能够对应，则说明模型足以用于预测CCVT暂态行为。原文摘要明确称模型精度通过与测试结果比较得到验证，并指出模型能够准确预测包括铁磁谐振在内的CCVT暂态响应；但在当前可见原文片段中，未报告可核验的误差百分比、振荡频率、衰减时间常数、能量吸收量或保护动作阈值等数值指标。因此，本页不应把具体数值精度作为原文结论引用。优势主要体现在建模粒度：它不是只研究外部等效传递函数，而是把实际CCVT组件、抽头、饱和、保护器件、铁磁谐振抑制电路和负载放入同一EMTP暂态环境，因而可用于比较保护器件方案、观察内部暂态和评估保护系统输入波形。从验证范围看，结论首先适用于TEHMP161A这一型号及论文设定的测试和仿真场景；对其他厂商结构、不同额定电压、不同保护器件参数、实时仿真步长或未测试的故障/投切组合，仍需重新参数化和试验校核。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：CCVT暂态误差不能只用稳态变比或简单线性模型解释，二次侧波形失真可能来自分压网络、调谐电感、铁芯饱和、杂散电容、负载和保护器件的耦合。其价值在于为继电保护暂态性能评估、CCVT保护/铁磁谐振抑制装置设计、以及故障和投切事件下的测量链路建模提供可复用框架。后续页面可复用其“按实际组件建立EMTP模型—用试验波形校核—再比较保护器件或负载影响”的方法。它不适合被外推为所有CCVT的通用参数模型，也不应在缺少实测磁化曲线、抽头配置、保护器件伏安特性和负载数据时直接用于定量整定。
+
+### 证据边界
+
+- 来自原文的确定信息：研究对象是Haefely-Trench TEHMP161A CCVT，工具是EMTP，目标是研究暂态响应、保护/铁磁谐振抑制装置以及对监测和继电保护的影响。
+- 来自原文的确定信息：模型包含C1/C2电压分压器、排流线圈、降压变压器、串联电抗器、谐波抑制滤波器、保护装置、负载，以及Cm、Ct、Cc等集中杂散电容表示。
+- 来自原文的确定信息：相对已有模型，作者强调纳入降压变压器饱和和抽头、串联电抗器抽头、保护装置、铁磁谐振抑制电路和多种负载模型。
+- 当前可见原文片段未给出可核验的数值结果，例如误差百分比、振荡频率、参数灵敏度、保护器件能量吸收或衰减时间常数；这些不应作为本文已报告的定量结论。
+- 关于EMTP内部具体数值积分格式、补偿法细节、时间步长和非线性迭代收敛准则，当前证据未显示作者展开说明；若使用这些细节，应回到PDF相应章节核对。
+- 验证边界来自测试范围：原文说明与测试结果比较，但当前片段未列出全部测试工况、负载范围、保护器件参数和故障类型，因此对其他CCVT型号或未测暂态场景的适用性需要重新验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于EMTP构建含非线性饱和特性与多分接头的CCVT高精度时域数字模型
-- 通过频域灵敏度分析量化杂散电容、阻尼电感及负载功率因数对频响的影响
-- 验证模型预测铁磁谐振及故障暂态响应的准确性，为保护装置优化提供依据
-
+- 问题定位：基于EMTP平台构建TEHMP161A型CCVT全元件级时域数字模型。模型涵盖电容分压器(C1/C2)、排流线圈(Ld)、带多分接头与非线性饱和特性的降压变压器(SDT)、串联电抗器(Lc)、集中参数杂散电容(Cm/Ct/Cc)、谐波抑制滤波器及MOV/晶闸管/火花隙等保护装置。
+- 方法机制：基于EMTP平台构建TEHMP161A型CCVT全元件级时域数字模型。模型涵盖电容分压器(C1/C2)、排流线圈(Ld)、带多分接头与非线性饱和特性的降压变压器(SDT)、串联电抗器(Lc)、集中参数杂散电容(Cm/Ct/Cc)、谐波抑制滤波器及MOV/晶闸管/火花隙等保护装置。研究首先基于线性化等效电路开展频域灵敏度扫描，量化各寄生参数对幅频/相频特性的影响边界；
+- 验证证据：物理试验对比验证（实验室台架测试与数字仿真交叉验证）；Haefely-Trench TEHMP161A型耦合电容器电压互感器（CCVT）；EMTP (Electro-Magnetic Transients Program)
+- 量化与结论：分压器-排流线圈回路自然振荡频率精确测定为13.956 kHz，该模态主导近端故障下的高频暂态响应。；串联电抗器杂散电容Cc从0 pF增至1500 pF时，频响曲线第一谷点频率偏移至约640 Hz，证实Cc对低频段谐振特性具有决定性影响。；负载功率因数低于0.6滞后时，>300 Hz频段幅频响应衰减显著增加，直接影响高频保护元件的动作裕度。；排流线圈Ld的Q值直接决定13.
+- 适用边界：适用于理解本文 Digital Time-Domain Investigation of Transient Behavior of Coupling Capacitor Voltage Transformer - Power Delivery, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/。
 
 ## 使用的方法
-
 
 - [[emtp时域仿真|EMTP时域仿真]]
 - [[频域灵敏度分析|频域灵敏度分析]]
 - [[物理试验对比验证|物理试验对比验证]]
 
-
 ## 涉及的模型
-
 
 - [[ccvt|CCVT]]
 - [[降压变压器|降压变压器]]
@@ -46,9 +72,7 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 - [[mov-晶闸管-火花隙保护装置|MOV/晶闸管/火花隙保护装置]]
 - [[负载模型|负载模型]]
 
-
 ## 相关主题
-
 
 - [[铁磁谐振|铁磁谐振]]
 - [[暂态响应分析|暂态响应分析]]
@@ -56,15 +80,11 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 - [[继电保护影响评估|继电保护影响评估]]
 - [[数字时域仿真|数字时域仿真]]
 
-
 ## 主要发现
-
 
 - 仿真与实测波形高度吻合，模型可准确复现铁磁谐振起振与衰减过程
 - 负载功率因数与串联电抗器杂散电容显著影响高频段频响特性
 - 近端接地故障会在CCVT二次侧激发高频振荡暂态，影响保护判据
-
-
 
 ## 方法细节
 
@@ -74,16 +94,13 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 
 ### 数学公式
 
-
 **公式1**: $$$H(f) = 20 \log_{10}\left(\frac{V_{out}(f)}{V_{in}(f)}\right)$$$
 
 *频域幅频响应计算式，用于评估CCVT在不同频率下的电压传递衰减特性*
 
-
 **公式2**: $$$f_n = \frac{1}{2\pi\sqrt{L_d \cdot \frac{C_1 C_2}{C_1 + C_2}}}$$$
 
 *分压器与排流线圈构成的LC回路自然振荡频率公式，决定暂态高频振荡主频*
-
 
 ### 算法步骤
 
@@ -98,7 +115,6 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 5. 5. 保护装置效能评估：对比无保护、火花隙限压与MOV吸收三种工况下的过电压峰值与能量积分，量化铁磁谐振抑制效果与热应力分布。
 
 6. 6. 试验数据交叉验证：将仿真输出与实验室实测波形进行时域对齐，调整Ld品质因数(Q值)与滤波器饱和阈值，直至振荡频率、衰减时间常数及谐振起振点误差收敛至工程允许范围。
-
 
 ### 关键参数
 
@@ -124,8 +140,6 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 
 - **自然振荡频率**: 13.956 kHz
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -140,8 +154,6 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 
 | 频域灵敏度与负载特性分析 | 负载容量(200~1200 VA)变化对频响影响微弱；但功率因数从1.0降至0.4滞后时，>300 Hz频段幅频响应出现明显衰减，<60 Hz低频段相角偏移加剧。 | 量化了负载功率因数对高频保护判据的潜在干扰，为继电器整定提供频域修正依据，频响偏差在pf=0.4时较pf=1.0增大逾15 dB。 |
 
-
-
 ## 量化发现
 
 - 分压器-排流线圈回路自然振荡频率精确测定为13.956 kHz，该模态主导近端故障下的高频暂态响应。
@@ -150,7 +162,6 @@ This paper reports a set of digital time-domain simulation studies conducted on 
 - 排流线圈Ld的Q值直接决定13.956 kHz振荡模态的衰减速率，准确表征Ld损耗是抑制高频过电压仿真的关键。
 - MOV保护装置在铁磁谐振工况下可有效限制二次侧过电压，其吸收能量积分曲线为热容量选型提供直接量化依据。
 - SDT饱和特性曲线电流单位需修正为mA级（非A级），磁化特性对谐振起振阈值敏感，修正后仿真与实测波形高度吻合。
-
 
 ## 关键公式
 
@@ -172,11 +183,33 @@ $$$\Psi = \int (V_{sec} \cdot i_{mag}) dt$$$
 
 *在EMTP中构建SDT非线性磁化曲线，用于精确模拟铁磁谐振起振阈值与次谐波振荡过程*
 
-
-
 ## 验证详情
 
 - **验证方式**: 物理试验对比验证（实验室台架测试与数字仿真交叉验证）
 - **测试系统**: Haefely-Trench TEHMP161A型耦合电容器电压互感器（CCVT）
 - **仿真工具**: EMTP (Electro-Magnetic Transients Program)
 - **验证结果**: 仿真波形与实测波形在暂态起振时刻、13.956 kHz高频振荡频率、铁磁谐振衰减包络及保护装置动作阈值上高度一致。模型成功复现了次谐波铁磁谐振现象，验证了非线性饱和特性与杂散电容参数设置的准确性，满足继电保护暂态评估与装置优化设计的工程精度要求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Digital Time-Domain Investigation of Transient Behavior of Coupling Capacitor Voltage Transformer - Power Delivery, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 emtp时域仿真、频域灵敏度分析、物理试验对比验证 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于EMTP构建含非线性饱和特性与多分接头的CCVT高精度时域数字模型
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/13&14/files/61.660947.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

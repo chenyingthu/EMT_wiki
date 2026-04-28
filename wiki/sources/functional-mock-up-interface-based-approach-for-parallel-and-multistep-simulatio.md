@@ -1,7 +1,7 @@
 ---
 title: "Functional Mock-up Interface Based Approach for Parallel and Multistep Simulation of Electromagnetic Transients"
 type: source
-authors: ['未知']
+authors: ['M. Cai', 'H. Gras', 'J. Mahseredjian', 'E. Rutovic', 'A. El-Akoum']
 year: 2018
 journal: "IEEE Transactions on Power Delivery; ;PP;99;10.1109/TPWRD.2018.2860586"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 
 # Functional Mock-up Interface Based Approach for Parallel and Multistep Simulation of Electromagnetic Transients
 
-**作者**: 
+**作者**: M. Cai; H. Gras; J. Mahseredjian; E. Rutovic; A. El-Akoum
 **年份**: 2018
 **来源**: `19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf`
 
 ## 摘要
 
-—This paper presents a new simulation approach based on the Functional Mock-up Interface (FMI) standard for parallel and multistep simulation of electromagnetic transients (EMTs) in power grids with computationally expensive control systems. The control systems are represented by slave subsystems which are decoupled in memory from the power network and encapsulated in Functional Mock-up Units (FMUs). The simulation modes are either asynchronous or synchronous. In the asynchronous mode, the subsystems are simulated in parallel, whereas in the synchronous mode the simulation of each subsystem is executed in a sequential multistep environment. Considerable computation time gains in both modes have been observed in power system protection studies on large-scale networks with accuracy properly 
+本文提出一种面向含高计算量控制系统的 EMT 离线协同仿真方法：用 FMI 2.0 将控制系统封装为 FMU 从系统，与电力网络主系统在内存上解耦。方法提供两种运行模式：异步模式下从系统并行求解；同步模式下从系统在顺序多步环境中采用不同步长。论文以 EMTP 实现和大规模保护系统算例说明，该方法的目标不是把 EMT 与暂稳程序桥接，而是在纯 EMT 求解框架内提高控制密集型模型的可扩展性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自现代电网 EMT 离线研究的计算瓶颈：HVDC、风电和大规模保护控制使仿真不仅要解电力网络的 DAE，还要频繁求解复杂控制逻辑，而 EMT 通常采用预设小步长，控制系统计算量会明显拉长保护研究和大网络暂态扫描的耗时。本文研究对象不是 EMT-暂稳混合仿真，也不是把电网按线路分区的通用并行，而是在同一 EMT 框架内，将电力网络与高计算量控制系统解耦。难点在于控制器与网络在每个离散时刻交换电气量、开关量和控制量，若简单拆开会引入同步、事件顺序和接口精度问题；已有基于传输线传播延迟或线路接口的并行/多步长方法往往依赖网络拓扑、需要人工分区，自动化困难。本文贡献是把 FMI 2.0 协同仿真完整集成到 EMTP：控制系统封装为带内部求解器和变量描述的 FMU slave，主电网作为 master 继续用 EMT 网络求解器；并提供异步并行模式和同步多步模式，使控制子系统可在内存上独立、在计算上并行或采用不同内部步长。
+
+### 2. 模型、算法与实现技术
+
+方法采用 FMI 2.0 Co-Simulation 的 master-slave 架构。主系统是 EMTP 电力网络实例，仍按改进增广节点法形成网络方程，典型形式可理解为 Gv(t)=isrc(t)-ihist(t)，其中导纳矩阵、历史电流源和等效源共同决定当前步节点电压与支路量。从系统是控制系统 FMU，内部包含模型方程、求解器和 XML 变量说明，其状态可抽象为 xc，输入 uc 来自主网络测量量或逻辑量，输出 yc 反馈给主网络作为控制信号、开关命令或等效源参数。接口量可为 floating-point、integer 或 Boolean，master 不解析 slave 内部方程，只按 FMI 函数和变量地址读写。实现上，EMTP 通过 DLL 层连接 FMI 标准函数与本地求解器；每个 slave 配置独立协同仿真总线，包含共享内存缓冲和 SemInitialization、SemMaster、SemSlave 等信号量。计算流程是：master 初始化总线和变量绑定，求解主网络并写入接口输入，释放 slave 信号量；slave 读取输入并执行内部求解，再把输出写回共享内存并通知 master。异步模式下多个 slave 在同一全局步长上并行运行；同步模式下 slave 在顺序环境中可执行多个内部子步，再与主时间点同步。
+
+### 3. 验证、优势与不足
+
+作者以 EMTP 中集成的 FMI 2.0 协同仿真接口进行离线验证，摘要和引言指出验证对象是 large-scale networks 上的 power system protection studies，重点场景是含计算量较高控制系统的 EMT 仿真。可确认的工具是 EMTP，基线是传统控制系统与电力网络在同一 EMT 实例中紧耦合求解，或至少是未采用该 FMI 主从内存解耦方式的常规实现；指标包括计算时间收益和保护研究所需精度是否保持。原文称异步和同步两种模式都观察到 considerable computation time gains，并且 accuracy properly maintained，但当前证据未给出可核验的加速比、误差上限、保护动作时间偏差或不同规模下的统计结果。因此优势应理解为结构性优势：控制 FMU 与主网内存解耦，可利用多核并行；多步模式允许控制子系统采用不同内部步长，不必像线路分区方法那样依赖分布参数线路天然延迟；FMI 变量描述提高了封装和工具接口的规范性。边界也很明确：它主要加速控制系统计算占比高的场景；若耗时来自主网络稀疏矩阵求解、强耦合电力电子开关、网络分区通信或大量线路模型，本方法未必解决核心瓶颈。从验证范围看，论文没有证明其适用于任意 EMT 网络分区、任意强耦合控制-电气接口或实时仿真。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知是：EMT 加速不一定只能从网络拓扑分区或 EMT-暂稳桥接入手，也可以把“控制系统计算”作为可封装、可并行、可多步长的协同仿真对象处理。它适合服务于大规模保护系统、HVDC/新能源控制密集模型、需要保留 EMT 精度但希望复用独立控制模型的离线研究。后续页面可复用其 FMI-FMU 封装、共享内存主从同步、异步并行与同步多步两类调度思想。不能外推为通用 EMT 并行求解框架，也不能在缺少接口误差分析时声称任意耦合强度下精度不受影响。
+
+### 证据边界
+
+- 来自原文：论文明确提出基于 FMI 2.0 的 EMTP master-slave 协同仿真，控制系统封装为 FMU slave，电力网络作为 master。
+- 来自原文：两种模式分别为 asynchronous 和 synchronous；异步模式并行求解子系统，同步模式在顺序 multistep 环境中执行子系统。
+- 来自原文：验证描述限于 large-scale networks 的 power system protection studies，并声称计算时间收益和精度保持；原文未报告可核验的数值结果。
+- 来自页面抽取与方法描述：共享内存总线、SemInitialization、SemMaster、SemSlave 及 DLL 集成属于实现细节；若需引用，应核对论文正文完整段落。
+- 据方法推断：精度依赖接口变量选择、同步时序、保持/插值策略和控制-网络耦合强度；当前摘录未给出系统性误差分析。
+- 缺少信息：未见完整算例参数、网络规模、FMU 数量、CPU/线程配置、步长设置、加速比、误差指标和与其他并行/多步 EMT 方法的定量对比。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于FMI 2.0的协同仿真架构，实现电网与控制系统内存级完全解耦
-- 设计异步并行与同步多步双模式，支持多核分布式计算与子系统变步长求解
-- 开发EMTP全兼容接口，利用共享内存总线与信号量机制实现主从高效同步
-
+- 问题定位：本文提出一种面向含高计算量控制系统的 EMT 离线协同仿真方法：用 FMI 2.0 将控制系统封装为 FMU 从系统，与电力网络主系统在内存上解耦。方法提供两种运行模式：异步模式下从系统并行求解；同步模式下从系统在顺序多步环境中采用不同步长。
+- 方法机制：基于 FMI 2.0 协同仿真标准，论文在 EMTP 中构建 master-slave 架构。电力网络作为 master 仍由 EMT 网络求解器处理；控制系统作为 slave 被封装为 FMU，内部包含模型方程、求解器和 XML 变量描述。运行时 master 不需要了解从系统内部方程，只通过 FMI 变量接口交换控制信号和电气量。
+- 验证证据：论文称使用 realistic networks 和 large-scale protection system studies，摘要提到含计算量较高控制系统的大规模电网场景。；EMTP (深度集成FMI 2.0协同仿真接口)；论文报告异步并行和同步多步两种模式都带来计算时间收益，并在保护研究中保持精度。当前抽取文本未包含完整结果表，页面只保留这一可支撑结论。
+- 量化与结论：论文明确实现了 FMI 2.0 co-simulation 形式，并把控制信号定义为可通过接口交换的 integer、floating-point 或 Boolean 变量。；EMTP 侧保留两个本来就存在的求解器分工：电力网络由改进增广节点法相关的稀疏矩阵求解器处理，控制部分由 Jacobian-based 控制求解器处理。；每个 slave 有独立协同仿真总线；
+- 适用边界：适合控制系统计算量占比较高、且控制块可以通过有限 FMI 接口变量与主网交换信息的 EMT 离线仿真。；不等同于通用网络分区并行算法；若主网内部强耦合元件、分布参数线路或开关事件本身才是主要瓶颈，FMI 控制解耦未必能解决核心耗时。
 
 ## 使用的方法
-
 
 - [[fmi协同仿真|FMI协同仿真]]
 - [[主从架构|主从架构]]
@@ -38,18 +66,14 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 - [[共享内存通信|共享内存通信]]
 - [[信号量同步|信号量同步]]
 
-
 ## 涉及的模型
-
 
 - [[控制系统模型|控制系统模型]]
 - [[电力网络模型|电力网络模型]]
 - [[继电保护系统|继电保护系统]]
 - [[fmu封装模型|FMU封装模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[并行计算|并行计算]]
@@ -58,39 +82,35 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 - [[大规模电网仿真|大规模电网仿真]]
 - [[离线仿真|离线仿真]]
 
-
 ## 主要发现
 
-
-- 异步并行与同步多步模式均显著缩短计算耗时，大幅提升大规模电网仿真效率
-- 在继电保护研究中验证了数值精度，仿真结果与传统全耦合方法保持高度一致
-- 内存解耦架构有效消除人工干预，显著提升含复杂控制系统电网的仿真可扩展性
-
-
+- 论文把瓶颈定位在“大量控制图块/保护控制逻辑”引起的 EMT 计算耗时，而不是网络本身的分布参数线路自然解耦。
+- 与基于传输线延迟的并行方法相比，FMI 方案把解耦边界放在电力网络与控制系统之间，减少了人工选择网络分割点和预存接口稳态量的要求。
+- 异步与同步两种模式都服务于同一目标：在保持 EMT 求解性质的前提下，让控制从系统独立运行并降低主网求解的耦合负担。
 
 ## 方法细节
 
 ### 方法概述
 
-基于FMI 2.0协同仿真标准，在EMTP中构建主从架构的内存级解耦仿真框架。将电力网络定义为主节点（Master），复杂控制系统封装为从节点（Slave FMU）。通过双层DLL接口、共享内存总线与信号量机制实现跨进程数据交换与严格同步。提供异步并行（多核单步长独立求解）与同步多步（顺序执行、各子系统独立变步长）双模式。该架构彻底摒弃传统并行方法中依赖传输线固有延迟进行人工解耦及预存稳态初值的繁琐流程，实现全自动化、高可扩展的纯EMT协同求解。
+基于 FMI 2.0 协同仿真标准，论文在 EMTP 中构建 master-slave 架构。电力网络作为 master 仍由 EMT 网络求解器处理；控制系统作为 slave 被封装为 FMU，内部包含模型方程、求解器和 XML 变量描述。运行时 master 不需要了解从系统内部方程，只通过 FMI 变量接口交换控制信号和电气量。
+
+实现层面，EMTP 通过两层 DLL 接口连接 FMI 标准函数和本地求解器；每个 slave 对应一个协同仿真总线，该总线包含共享内存缓冲区和同步机制。SemInitialization 用于从系统接入 master 创建的总线，SemMaster 用于 slave 完成某些操作后通知 master，SemSlave 用于 master 数据就绪后唤醒 slave。这样，网络求解和控制求解在内存上分离，但仍由 master 统一推进全局离散时间点。
+
+异步模式适合多个控制从系统在同一全局步长下并行求解；同步多步模式适合控制从系统需要比主网更细的内部积分步长时顺序执行。两种模式都保留纯 EMT 仿真性质，没有把网络一部分切换为暂稳程序，因此其准确性前提仍是接口变量能够充分表达主网与控制系统之间的耦合。
 
 ### 数学公式
-
 
 **公式1**: $$$G \mathbf{v}(t) = \mathbf{i}_{src}(t) - \mathbf{i}_{hist}(t)$$$
 
 *主节点电力网络求解方程，采用改进增广节点法构建导纳矩阵G，结合历史电流源项实现节点电压迭代计算。*
 
-
 **公式2**: $$$\dot{\mathbf{x}}_c = f(\mathbf{x}_c, \mathbf{u}_c, t), \quad \mathbf{y}_c = g(\mathbf{x}_c, \mathbf{u}_c, t)$$$
 
 *从节点控制系统状态空间微分代数方程（DAE），描述控制器内部状态演化及输入输出映射关系。*
 
-
 **公式3**: $$$\mathbf{u}_{slave}(t_k) = \mathcal{B}_{read}(\mathbf{y}_{master}, t_k), \quad \mathbf{u}_{master}(t_k) = \mathcal{B}_{read}(\mathbf{y}_{slave}, t_k)$$$
 
 *FMI协同接口数据交换模型，通过共享内存缓冲区$\mathcal{B}$实现主从节点间控制信号与电气量的双向读写。*
-
 
 ### 算法步骤
 
@@ -106,7 +126,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 
 6. 反馈回写与步长推进：Slave将计算结果写回共享内存，释放SemMaster信号量。Master读取控制反馈，更新网络等效源或开关状态，推进至下一全局仿真步长，循环直至仿真结束。
 
-
 ### 关键参数
 
 - **FMI标准版本**: 2.0 (Co-Simulation模式)
@@ -121,8 +140,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 
 - **运行模式配置**: 异步并行(单步长/多核负载) / 同步多步(顺序执行/变步长)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -131,19 +148,16 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 
 |---------|---------|----------|
 
-| 大规模电网继电保护系统协同仿真 | 在包含HVDC控制逻辑与风电并网保护的大规模网络中，采用异步并行模式实现多核计算任务分配。保护控制器与主网解耦后独立运行，接口数据交换延迟被严格控制在微秒级。 | 相比传统全耦合EMTP求解，整体计算耗时降低约65%~75%，多核加速比接近线性，且关键保护动作时序与电压波形保持高度一致。 |
+| 大规模电网继电保护系统协同仿真 | 论文说明该方法面向大规模保护系统研究，控制系统以 FMU 从系统独立求解，主网通过 FMI 接口读写控制信号。 | 与传统把控制逻辑直接耦合在同一 EMT 实例中的做法相比，论文报告两种模式都获得了计算时间收益，并保持了保护研究所需的精度。 |
 
-| 同步多步长变步长控制响应测试 | 验证同步模式下控制系统采用比主网小50倍的内部步长进行高频采样与积分，主网保持固定毫秒级步长。接口数据通过FMI标准插值机制平滑传递。 | 消除传统多步长方法中需人工设置平滑节点及预存稳态解的复杂流程，自动化程度提升100%，接口数值误差稳定在0.08%以内。 |
-
-
+| 同步多步控制响应测试 | 同步模式允许从系统在顺序多步环境中采用不同于主网的内部步长，适合控制系统时间尺度与主网 EMT 步长不一致的场景。 | 该思路避免了依赖网络线路天然延迟来做多步长划分，但仍需要接口变量选择和同步策略能够覆盖控制-网络耦合。 |
 
 ## 量化发现
 
-- 异步并行模式下，利用多核CPU实现计算任务分配，整体仿真速度提升约2.5~4倍（具体取决于核心数量与通信总线带宽）
-- 同步多步模式下，控制系统内部步长可独立设置为主网步长的1/10~1/100，接口数据插值与同步误差严格控制在<0.1%
-- 内存解耦架构彻底消除人工干预节点，模型初始化与总线配置时间缩短约60%，大规模系统仿真可扩展性显著增强
-- 与传统全耦合方法对比，关键节点电压峰值偏差<0.05%，保护继电器动作时间偏差<0.1ms，满足IEEE工程精度标准
-
+- 论文明确实现了 FMI 2.0 co-simulation 形式，并把控制信号定义为可通过接口交换的 integer、floating-point 或 Boolean 变量。
+- EMTP 侧保留两个本来就存在的求解器分工：电力网络由改进增广节点法相关的稀疏矩阵求解器处理，控制部分由 Jacobian-based 控制求解器处理。
+- 每个 slave 有独立协同仿真总线；同步流程至少涉及 SemInitialization、SemMaster、SemSlave 这 3 个信号量。
+- 抽取文本只支持“considerable computation time gains”和“accuracy properly maintained”这一级结论，未给出可复核的百分比加速、误差上限或保护动作时间偏差。
 
 ## 关键公式
 
@@ -159,11 +173,16 @@ $$$\mathbf{u}_{slave}(t_k) = \mathcal{B}_{read}(\mathbf{y}_{master}, t_k)$$$
 
 *主从节点间通过共享内存总线进行控制信号与电气量交换的数学抽象，定义协同仿真数据流*
 
+## 适用边界
 
+- 适合控制系统计算量占比较高、且控制块可以通过有限 FMI 接口变量与主网交换信息的 EMT 离线仿真。
+- 不等同于通用网络分区并行算法；若主网内部强耦合元件、分布参数线路或开关事件本身才是主要瓶颈，FMI 控制解耦未必能解决核心耗时。
+- 精度取决于接口变量选择、同步时序、插值/保持策略以及控制-网络耦合强度；异步模式还需要关注延迟和事件顺序。
+- 当前页面可用抽取文本未提供完整算例表格，因此不应把未核实的百分比加速和误差上限作为确定结论引用。
 
 ## 验证详情
 
 - **验证方式**: 离线仿真对比分析
-- **测试系统**: 含HVDC互联与风电接入的大规模实际电网及复杂继电保护控制系统
+- **测试系统**: 论文称使用 realistic networks 和 large-scale protection system studies，摘要提到含计算量较高控制系统的大规模电网场景。
 - **仿真工具**: EMTP (深度集成FMI 2.0协同仿真接口)
-- **验证结果**: 在大规模保护研究中全面验证了数值精度与计算效率。异步与同步双模式均显著缩短计算耗时，仿真波形、保护动作逻辑与传统全耦合方法高度一致。接口延迟与数值误差均在工程允许范围内，证明了FMI内存解耦架构在含复杂控制系统电网EMT仿真中的高保真性、自动化优势与卓越的可扩展性。
+- **验证结果**: 论文报告异步并行和同步多步两种模式都带来计算时间收益，并在保护研究中保持精度。当前抽取文本未包含完整结果表，页面只保留这一可支撑结论。

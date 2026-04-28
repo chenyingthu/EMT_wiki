@@ -3,7 +3,7 @@ title: "Co-simulation of electrical networks by interfacing EMT and dynamic-phas
 type: source
 authors: ['K. Mudunkotuwa']
 year: 2018
-journal: "Electric Power Systems Research, 163 (2018) 423-429. doi:10.1016/j.epsr.2018.06.010"
+journal: "Electric Power Systems Research"
 tags: ['cosimulation']
 created: "2026-04-13"
 sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electrical networks by interfacing EMT and dynamic-phasor simulators.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 
 ## 摘要
 
-Co-simulation of electrical networks by interfacing EMT and dynamic- b Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB, R3T 5V6, Canada The paper presents a hybrid co-simulator comprising EMT and dynamic phasor-based simulators. The EMT simulator models portion(s) of the network wherein fast transients are prevalent and detailed modeling is ne- cessary. The dynamic phasor solver models the rest of the network using extended-frequency Fourier compo-
+本文提出一种基于传输线解耦的EMT与动态相量(DP)混合协同仿真架构。该方法将电网划分为需详细建模的快速暂态区域（EMT侧）和动态较慢的外部网络（DP侧），利用Bergeron无损传输线模型的固有传播延迟实现两侧节点方程的自然解耦。针对多速率仿真需求，设定DP侧步长ΔT为EMT侧步长Δt的整数倍，并在同步时刻进行数据交换。核心创新在于开发了瞬时EMT样本到扩展频率动态相量的精确映射算法：通过提取基波分量并从瞬时值中减去，直接构造包含直流与所有谐波的基频复合动态相量，避免了传统方法中对各次谐波逐一进行数值积分的庞大计算量。同时引入线性插值处理非同步时刻的中间数据，并可选配阻尼因子α以吸收高频分量，确保多速率接口下的数值稳定性与波形还原精度。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的是大型电网EMT仿真的计算瓶颈：电力电子变流器、故障和开关过程需要微秒级步长与详细模型，但这些快速暂态通常只出现在局部区域，若全网都用EMT求解，会把大量动态较慢的网络也纳入小步长节点方程。研究对象是EMT求解器与动态相量求解器的混合协同仿真接口：局部快速区域由PSCAD/EMTDC类EMT模型处理，其余网络用扩展频率动态相量表示。难点不只是分区，而是两侧变量域不同：EMT交换瞬时采样值，动态相量侧交换随时间变化的傅里叶分量；同时两侧可能使用不同步长，接口延迟、插值和频谱截断都会影响稳定性与波形一致性。本文的贡献在于提出面向EMT-DP接口的样本映射算法和多速率接口要求，使瞬时量与扩展频率动态相量可在协同仿真中互相转换，并用传输线类接口实现两侧求解解耦。
+
+### 2. 模型、算法与实现技术
+
+方法由三部分组成。第一，网络被划分为EMT子系统和动态相量子系统，接口通过具有传播延迟的传输线模型传递历史电压、电流信息，从而避免两个求解器在同一时刻形成强耦合代数方程。第二，动态相量侧用滑动窗口傅里叶表示波形，核心状态量是直流、基波及扩展频率谐波分量；EMT侧核心接口量是瞬时电压、电流样本。原文给出的重构式 x(t−T+s)=x0(t)+2Re(Σxh(t)e^{jhω(t−T+s)}) 说明任意接口波形可由动态相量在窗口内恢复；反向转换则需要从EMT瞬时样本获得对应动态相量。第三，在DP到EMT方向，可用 x(t)=Re(X(t)e^{jωt}) 类关系把复合相量还原为瞬时量；在EMT到DP方向，论文开发专门映射算法，把瞬时样本映射为动态相量样本，而不是简单把瞬时值当作基波相量。对于多速率仿真，两侧只在同步时刻交换数据，较慢求解器步长需与接口延迟和较快步长协调；非同步时刻的数据由历史样本或插值提供，以控制相位误差和数值稳定性。
+
+### 3. 验证、优势与不足
+
+作者用IEEE三相118节点系统验证该协同仿真框架，并在系统中加入风电场：风电场及其邻近网络由PSCAD/EMTDC电磁暂态仿真器建模，其余网络由自编或独立的动态相量求解器建模。验证思路是把混合EMT-DP协同结果与全EMT或等价高保真基线进行比较，考察不同时间步长比下接口电压、电流波形、基波量以及计算时间。当前页面记录的算例包括450 MW Type-4风电场、IEEE 118节点三相网络、三相接地故障场景，以及25:1步长比下计算时间由694 s降至132 s等结果；这些数值应以原文表图复核后引用。优势主要体现在：快速暂态区域仍可保留EMT详细模型，外部网络用动态相量降低求解规模；接口算法针对瞬时量和频域动态量的双向转换，避免把相量-瞬时量映射简化为只含基波；多速率设置允许慢动态区域采用较大步长。边界也很明确：验证集中在特定IEEE 118节点风电场算例和离线数字仿真，未证明所有拓扑、所有接口线长、所有控制器和实时硬件环境下都稳定；高频开关纹波在DP侧如何截断或衰减也会影响可复现精度。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：大电网EMT加速不一定要把外部网络粗略等值成静态阻抗，也不必全网统一微秒步长；只要接口变量在瞬时域和动态相量域之间严格映射，快速局部与慢速外部网络可以由不同求解器协同推进。它适合后续用于风电、HVDC、FACTS、电力电子化电网中“局部详细EMT+外部动态网络”的方法页面，也可作为多速率协同仿真、传输线解耦接口、动态相量建模的入口文献。不适合外推为通用实时仿真方案，或作为任意高频暂态、任意短线路接口、任意步长比都准确稳定的证据。
+
+### 证据边界
+
+- 原文摘要明确给出EMT-DP混合协同仿真、快速暂态区域由EMT建模、其余网络由扩展频率动态相量求解器建模，以及需要瞬时样本与动态相量样本映射。
+- IEEE三相118节点系统、含风电场、风电场及邻近网络在PSCAD/EMTDC中建模，其余系统在动态相量求解器中建模，属于原文摘要可确认的信息。
+- 当前页面列出的450 MW风电场、25:1步长比、694 s到132 s、误差小于1%等量化结果需要回到原文表图核验；仅凭所给摘要片段不能独立确认。
+- 传输线延迟解耦、多速率同步、插值和阻尼因子等机制与页面方法描述一致，但具体稳定性条件、阻尼参数取值和最小线长约束需以原文完整方法章节为准。
+- 从验证范围看，论文主要证明特定离线数字算例中的准确性和加速效果；未覆盖实时仿真平台、硬件在环、不同电网规模、不同电力电子控制策略或极端高频暂态的系统性验证。
+- 动态相量侧对谐波阶数、频率范围和窗口长度的截断策略会影响高频保真度；当前抽取文本未提供足够细节来判断其在所有谐波丰富场景中的误差上界。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出EMT与动态相量混合协同架构，实现网络分区高效求解
-- 开发瞬时EMT与动态相量样本精确映射算法，保障接口数据传递精度
-- 解决多速率时间步长接口问题，确保大范围谐波仿真下的数值稳定性
-
+- 问题定位：本文提出一种基于传输线解耦的EMT与动态相量(DP)混合协同仿真架构。该方法将电网划分为需详细建模的快速暂态区域（EMT侧）和动态较慢的外部网络（DP侧），利用Bergeron无损传输线模型的固有传播延迟实现两侧节点方程的自然解耦。针对多速率仿真需求，设定DP侧步长ΔT为EMT侧步长Δt的整数倍，并在同步时刻进行数据交换。
+- 方法机制：本文提出一种基于传输线解耦的EMT与动态相量(DP)混合协同仿真架构。该方法将电网划分为需详细建模的快速暂态区域（EMT侧）和动态较慢的外部网络（DP侧），利用Bergeron无损传输线模型的固有传播延迟实现两侧节点方程的自然解耦。针对多速率仿真需求，设定DP侧步长ΔT为EMT侧步长Δt的整数倍，并在同步时刻进行数据交换。
+- 验证证据：纯数字仿真对比验证（全EMT基准 vs 混合协同仿真）；IEEE 118节点三相系统，含450MW Type-4风电场（75台6MW机组聚合模型，3节点EMT侧，115节点DP侧）；PSCAD/EMTDC（EMT侧，含详细开关级变流器模型）、自定义动态相量求解器（DP侧）、TCP/IP控制网络接口
+- 量化与结论：在25:1时间步长比下，协同仿真计算耗时从694秒降至132秒，速度提升5.26倍。；接口映射算法在等步长(20μs)条件下实现与全EMT仿真的波形完全一致，高频谐波保留率100%。；多速率(500μs:20μs)仿真下，基波RMS电压、有功及无功功率动态响应误差<1%，低频暂态特征完整还原。；
+- 适用边界：适用于理解本文 Co-simulation of electrical networks by interfacing EMT and dynamic-phasor simulators （2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[动态相量法|动态相量法]]
 - [[多速率仿真|多速率仿真]]
@@ -37,9 +65,7 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 - [[节点导纳矩阵法|节点导纳矩阵法]]
 - [[接口数据映射算法|接口数据映射算法]]
 
-
 ## 涉及的模型
-
 
 - [[ieee-118节点系统|IEEE 118节点系统]]
 - [[风电场|风电场]]
@@ -47,9 +73,7 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 - [[输电网络|输电网络]]
 - [[旋转电机|旋转电机]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[多速率仿真|多速率仿真]]
@@ -58,15 +82,11 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 - [[数值稳定性|数值稳定性]]
 - [[风电场建模|风电场建模]]
 
-
 ## 主要发现
-
 
 - 在不同时间步长比下验证接口精度，混合仿真显著降低整体计算耗时
 - 基于IEEE 118节点系统验证协同架构的数值稳定性与波形还原精度
 - 动态相量法有效替代外部网络详细建模，在保证精度前提下大幅提升效率
-
-
 
 ## 方法细节
 
@@ -76,26 +96,21 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 
 ### 数学公式
 
-
 **公式1**: $$$x(t-T+s) = x_0(t) + 2\text{Re}\left(\sum_{h=1}^{+\infty} x_h(t) e^{j h \frac{2\pi}{T} (t-T+s)}\right)$$$
 
 *动态相量时域重构公式，利用滑动窗口内的傅里叶级数展开表示任意时刻波形*
-
 
 **公式2**: $$$X(t) = x_0(t)e^{-j\frac{2\pi}{T}(t-T+s)} + 2\sum_{k=1}^{+\infty} x_h(t) e^{j(h-1)\frac{2\pi}{T}(t-T+s)}$$$
 
 *基频复合动态相量定义，将全频谱谐波压缩至单一基频复数，大幅简化网络导纳矩阵求解规模*
 
-
 **公式3**: $$$H_k(t) = \left[\frac{2V_m(t-\tau)}{Z_c} - H_m(t-\tau)\right]e^{-j\tau\frac{2\pi}{T}}$$$
 
 *DP侧传输线历史电流源注入公式，利用延迟τ实现两侧求解器解耦*
 
-
 **公式4**: $$$x(t) = \text{Re}\left(X(t)e^{j\frac{2\pi}{T}t}\right)$$$
 
 *DP至EMT瞬时值转换公式，直接将基频复合相量还原为时域样本*
-
 
 ### 算法步骤
 
@@ -111,7 +126,6 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 
 6. 高频阻尼处理（可选）：若接口处高频分量显著，在EMT至DP转换过程中引入阻尼因子α∈[0,1]对高频项进行衰减，防止DP/TS侧因带宽不足引发数值振荡。
 
-
 ### 关键参数
 
 - **时间步长比_n**: 25 (对应ΔT=500μs, Δt=20μs)
@@ -123,8 +137,6 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 - **阻尼因子_α**: 0.93~0.97 (用于TS-EMT接口稳定性控制)
 
 - **仿真总时长**: 3 s
-
-
 
 ## 仿真结果
 
@@ -140,8 +152,6 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 
 | 简化模型加速验证 | 将详细风电场模型替换为受控动态电压源，进一步降低EMT侧计算负担。 | 仿真耗时降至32秒，较全EMT加速比达21.69倍 |
 
-
-
 ## 量化发现
 
 - 在25:1时间步长比下，协同仿真计算耗时从694秒降至132秒，速度提升5.26倍。
@@ -149,7 +159,6 @@ Co-simulation of electrical networks by interfacing EMT and dynamic- b Departmen
 - 多速率(500μs:20μs)仿真下，基波RMS电压、有功及无功功率动态响应误差<1%，低频暂态特征完整还原。
 - 传输线接口最小长度需满足l_min≈3×10^5×ΔT，500μs步长对应至少150km物理线路。
 - 引入阻尼因子α=0.93~0.97可有效抑制TS-EMT接口处的高频数值振荡，恢复仿真稳定性。
-
 
 ## 关键公式
 
@@ -171,11 +180,34 @@ $$$\Delta T = n\Delta t \quad \text{且} \quad \Delta T \le \tau$$$
 
 *确保DP侧大步长与EMT侧小步长整数倍对齐，且传输线延迟足以隔离两侧求解器，防止代数环*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真对比验证（全EMT基准 vs 混合协同仿真）
 - **测试系统**: IEEE 118节点三相系统，含450MW Type-4风电场（75台6MW机组聚合模型，3节点EMT侧，115节点DP侧）
 - **仿真工具**: PSCAD/EMTDC（EMT侧，含详细开关级变流器模型）、自定义动态相量求解器（DP侧）、TCP/IP控制网络接口
 - **验证结果**: 在1.8s施加Bus 8三相接地故障（6周期后清除）场景下，验证了等步长与25:1多速率协同的精度。多速率方案在保留低频机电暂态精度的同时，计算效率提升5.26倍，最高可达21.69倍，证明了接口算法的数值稳定性与工程实用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Co-simulation of electrical networks by interfacing EMT and dynamic-phasor simulators`（2018） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 动态相量法、多速率仿真、傅里叶级数展开 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出EMT与动态相量混合协同架构，实现网络分区高效求解
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electrical networks by interfacing EMT and dynamic-phasor simulators.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -3,7 +3,7 @@ title: "Realization of rational models for tower-footing grounding systems"
 type: source
 authors: ['Antonio', 'C.S.', 'Lima']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112222. doi:10.1016/j.epsr.2025.112222"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/33/Lima 等 - 2026 - Realization of rational models for tower-footing grounding systems.pdf"]
@@ -17,23 +17,51 @@ sources: ["EMT_Doc/33/Lima 等 - 2026 - Realization of rational models for tower
 
 ## 摘要
 
-Realization of rational models for tower-footing grounding systems$ a Universidade Federal do Rio de Janeiro, P.O. Box. 68504, 21945-970, Rio de Janeiro, RJ, Brazil A tower footing grounding system plays an essential role in lightning-related overvoltages. For time-domain analysis, using an Electromagnetic Transient (EMT) program, one typically has to resort to a rational approximation of the harmonic impedance or a frequency-dependent network equivalent (FDNE) for the
+本文采用改进的混合电磁模型(mHEM)建立杆塔接地系统的频域模型，通过两种拓扑结构实现有理逼近：直接谐波导纳(impedance/admittance)逼近和频变网络等效(FDNE)。首先利用mHEM计算接地系统的横向和纵向阻抗矩阵，组装等效节点导纳矩阵；然后采用Vector Fitting(VF)算法进行有理逼近，提出基于均方根误差(rms-error)的启发式阶数确定方法；最后通过主导极点(dominant pole)准则进行模型降阶，实现最小阶数表示。研究重点比较了两种拓扑在数值鲁棒性和模型阶数方面的差异，并分析了有效长度(effective length)对有理逼近实现的影响。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是把杆塔塔脚接地系统的频变特性放进ATP、EMTP、PSCAD等EMT时域程序，用于雷电暂态下的地电位升高和过电压分析。研究对象不是整条线路，而是由水平接地极等构成的tower-footing grounding system及其从频域电磁模型到时域可实现网络的转换。难点在于接地阻抗随频率强烈变化，土壤传播效应、导体间耦合和有效长度会影响高频振荡；直接用详细MoM/HEM/mHEM模型不适合EMT逐步积分，而有理逼近若阶数过高、拓扑选择不当或无源性处理不足，会导致实现复杂或时域不稳定。本文的贡献集中在两个具体问题：比较“直接拟合谐波阻抗/导纳”和“把接地系统作为FDNE多端口网络”等两类有理实现拓扑；并讨论有效长度是否被满足时，对所需逼近阶数、最小阶实现和数值鲁棒性的影响。原文结论称，在尊重有效长度时，FDNE实现略更鲁棒。
+
+### 2. 模型、算法与实现技术
+
+论文的实现链条可理解为“频域电磁计算—端口量提取—有理函数实现—EMT接口”。前端采用mHEM一类混合电磁模型，对有限长埋地电极进行分段，计算横向/纵向电磁耦合阻抗矩阵，并通过关联矩阵组装等效节点导纳矩阵。其核心接口量是接地系统端口的电压、电流以及由此得到的谐波阻抗或导纳；输入包括接地极几何、土壤电导率/介电参数、频率采样点和注入电流位置，输出是可用于EMT程序的有理函数或网络等效。第一种拓扑把单端口谐波阻抗/导纳直接表示为极点—留数形式，随后在时域中转化为卷积或状态空间支路。第二种拓扑把接地系统保留为频变网络等效FDNE，即先形成多节点/多端口导纳关系，再对网络矩阵元素进行有理逼近。Vector Fitting等算法的作用是从频率样本中识别稳定极点和留数；阶数选择与降阶的关键在于保留能解释主要频响特征的极点，同时避免为有效长度之外的高频振荡引入过多非必要动态。
+
+### 3. 验证、优势与不足
+
+作者用counterpoise接地构型作为算例，并以mHEM计算得到的频域响应作为基线，比较两类有理实现拓扑在逼近阶数、频响误差和时域响应中的表现。原文引言说明后续章节会给出FDNE的有理逼近、极点数与精度讨论，并在时域中考察双峰雷电流和快前沿电流激励下的地电位升高响应；目标平台是EMT类程序。验证指标从论文叙述看包括频域拟合精度、实现阶数、时域波形一致性以及实现是否足够鲁棒。优势在于论文没有只证明“能拟合”，而是把拓扑选择和有效长度联系起来，指出FDNE在有效长度被尊重时略更鲁棒，这对工程建模中选单端口等值还是网络等值有直接意义。需要注意的是，提供的原文摘录没有给出可核验的误差数值、极点数量、频率采样设置或具体土壤参数，因此不能据此声称某一阶数或某一误差界必然成立。从验证范围看，结论主要约束于文中counterpoise类塔脚接地、均匀土壤假设、所采用的mHEM基线以及雷电暂态频段，不应直接外推到分层土壤、复杂接地网、杆塔-线路-绝缘子全系统联合模型或实时仿真步长约束。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要价值是把接地系统有理化实现中的一个常被忽略的问题显性化：逼近失败或阶数过高不一定只是算法参数问题，也可能来自实现拓扑和接地极有效长度不匹配。它可用于后续建立雷电暂态EMT模型、接地系统FDNE页面、Vector Fitting/无源性处理页面，以及比较单端口阻抗等值与多端口网络等值的建模指南。工程上，它帮助用户在把塔脚接地纳入EMT程序前判断应采用直接阻抗拟合还是FDNE，并关注有效长度对高频响应的影响。不适合把本文结论外推为所有接地结构中FDNE都优于直接拟合，也不适合替代详细电磁场模型或土壤参数敏感性研究。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：论文研究塔脚接地系统在EMT程序中的有理近似实现，比较谐波阻抗/导纳直接拟合与FDNE两种拓扑，并讨论有效长度影响。
+- 来自原文引言的确定信息：背景模型包括MoM、PEEC/HEM/mHEM，目标EMT程序包括ATP、EMTP和PSCAD；FDNE实现通常需要无源性处理以保证稳定时域响应。
+- 来自原文摘录的确定信息：作者计划用counterpoise配置，并在时域中考察双峰和快前沿电流下的GPR响应；但摘录未提供具体数值结果。
+- 不确定性：当前元数据称期刊为Electric Power Systems Research、年份2025，而摘录脚注称论文提交至IPST2025；正式出版信息需要核对PDF首页或数据库记录。
+- 证据缺口：提供的原文片段未给出可核验的频率范围、土壤参数、极点数量、误差指标数值和无源性修正细节，因此不应引用页面中未核对的量化结论。
+- 适用边界：文中结论从验证范围看主要适用于均匀介质中counterpoise类塔脚接地的频域到EMT等值；分层土壤、复杂接地网、多塔耦合和实时仿真硬件约束未由当前证据覆盖。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 对比了接地系统有理逼近的两种拓扑结构在最小阶数表示方面的差异
-- 探讨了有效长度对有理逼近实现的影响及其与模型阶数的关系
+- 问题定位：本文采用改进的混合电磁模型(mHEM)建立杆塔接地系统的频域模型，通过两种拓扑结构实现有理逼近：直接谐波导纳(impedance/admittance)逼近和频变网络等效(FDNE)。首先利用mHEM计算接地系统的横向和纵向阻抗矩阵，组装等效节点导纳矩阵；
+- 方法机制：本文采用改进的混合电磁模型(mHEM)建立杆塔接地系统的频域模型，通过两种拓扑结构实现有理逼近：直接谐波导纳(impedance/admittance)逼近和频变网络等效(FDNE)。首先利用mHEM计算接地系统的横向和纵向阻抗矩阵，组装等效节点导纳矩阵；然后采用Vector Fitting(VF)算法进行有理逼近，提出基于均方根误差(rms-error)的启发式阶数确定方法；
+- 验证证据：对比验证（与mHEM计算的基准频响对比）；Counterpoise接地配置（图2所示），包含四根放射状水平接地极，测试长度30m、60m、90m、120m；土壤电阻率100 Ω·m和1000 Ω·m；相对介电常数εr=10；mHEM（modified Hybrid Electromagnetic Model）用于基准计算；Vector Fitting算法用于有理逼近；
+- 量化与结论：采用主导极点准则后，模型阶数减少近50%（从约20-40极点降至11极点）；最终模型在100 Hz至10 MHz范围内均满足erms ≤ min( Yg )/1000，即相对误差<0.1%；对于符合有效长度条件的配置，11阶有理模型可实现与详细电磁模型偏差至少三个数量级以内的精度；在1000 Ω·m高电阻率土壤中，90m和120m电极的拟合误差分别为2.
+- 适用边界：适用于理解本文 Realization of rational models for tower-footing grounding systems （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 nodal-analysis、passivity 为核心的建模、仿真、等值、控制或稳定性分析场景；
 
 ## 使用的方法
-
 
 - [[nodal-analysis]]
 - [[passivity]]
 
 ## 涉及的模型
-
 
 - [[fdne]]
 - [[network-equivalent]]
@@ -41,13 +69,10 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 
 ## 相关主题
 
-
 - [[harmonic]]
 - [[frequency-dependent]]
 
 ## 主要发现
-
-
 
 - 准确的频变网络等效（FDNE）在遵循有效长度时具有略高的数值鲁棒性
 - 传统降阶方法在高频范围内精度不足，需采用新方法以实现最小阶数表示
@@ -60,36 +85,29 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 
 ### 数学公式
 
-
 **公式1**: $$$Z_{Tik} = \frac{\exp(-\gamma R)}{4\pi(\sigma+j\omega\varepsilon)} P_{ik}$$$
 
 *横向互阻抗，描述电极i和k之间的横向电磁耦合，其中γ为传播常数，R为距离，Pik为几何积分项*
-
 
 **公式2**: $$$Z_{Lik} = \frac{j\omega\mu \cos\phi \exp(-\gamma R)}{4\pi} P_{ik}$$$
 
 *纵向互阻抗，描述沿电极纵向的电磁耦合，μ为磁导率，φ为电极间夹角*
 
-
 **公式3**: $$$\mathbf{Y}_n = \mathbf{m}_A^T \cdot \mathbf{Z}_T^{-1} \cdot \mathbf{m}_A + \mathbf{m}_B \cdot \mathbf{Z}_L^{-1} \cdot \mathbf{m}_B$$$
 
 *等效节点导纳矩阵，通过关联矩阵mA和mB将横向和纵向阻抗转换为节点导纳形式*
-
 
 **公式4**: $$$Y_g(s) \approx Y_{fit}(s) = R_0 + \sum_{k=1}^{N} \frac{R_k}{s-p_k}$$$
 
 *谐波导纳的有理函数逼近，N为逼近阶数，Rk为留数，pk为极点，可为实数或共轭复数对*
 
-
 **公式5**: $$$e_{rms} = \sqrt{\frac{\sum_{m=1}^{N_s} |Y_g(s_m) - Y_{fit}(s_m)|^2}{N_s}} \cdot \min(|Y_g(s)|) \leq \frac{\min(|Y_g(s)|)}{1000}$$$
 
 *均方根误差停止准则，用于确定有理逼近的阶数，要求相对误差小于0.1%*
 
-
 **公式6**: $$$\arctan\left(\frac{r_{ir}}{p_{ir}}\right) \geq \xi$$$
 
 *主导极点判别准则，其中rir为第i个极点留数的实部，pir为第i个极点的实部，ξ为预定义容差*
-
 
 ### 算法步骤
 
@@ -115,7 +133,6 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 
 11. 对于FDNE拓扑，在得到节点导纳矩阵后，提取多端口网络参数进行有理逼近
 
-
 ### 关键参数
 
 - **frequency_range**: 100 Hz to 10 MHz
@@ -138,8 +155,6 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 
 - **dominant_pole_tolerance**: ξ (pre-defined angle threshold in radians)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -158,8 +173,6 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 
 | Disregarding effective length (short counterpoise in high ρ) | 当在高电阻率土壤(1000 Ω·m)中使用短于有效长度的counterpoise时，谐波导纳Y(ω)在高频呈现更强的振荡行为 | 需要显著高于11阶的模型才能实现同等精度，验证了有效长度对最小阶数实现的关键影响 |
 
-
-
 ## 量化发现
 
 - 采用主导极点准则后，模型阶数减少近50%（从约20-40极点降至11极点）
@@ -168,7 +181,6 @@ Realization of rational models for tower-footing grounding systems$ a Universida
 - 在1000 Ω·m高电阻率土壤中，90m和120m电极的拟合误差分别为2.7303×10^-5和2.2772×10^-5，优于低电阻率案例
 - 当电极长度短于有效长度且土壤电阻率高时，谐波导纳在高频段呈现显著振荡，导致传统降阶方法失效
 - FDNE拓扑在遵循有效长度原则时，相比直接阻抗逼近具有略高的数值鲁棒性
-
 
 ## 关键公式
 
@@ -190,11 +202,34 @@ $$$\arctan\left(\frac{r_{ir}}{p_{ir}}\right) \geq \xi$$$
 
 *模型降阶关键步骤，通过剔除留数实部与极点实部比值过小的极点，实现最小阶数表示而不损失精度*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（与mHEM计算的基准频响对比）
 - **测试系统**: Counterpoise接地配置（图2所示），包含四根放射状水平接地极，测试长度30m、60m、90m、120m；土壤电阻率100 Ω·m和1000 Ω·m；相对介电常数εr=10
 - **仿真工具**: mHEM（modified Hybrid Electromagnetic Model）用于基准计算；Vector Fitting算法用于有理逼近；ATP/EMTP/PSCAD类EMT程序为最终目标实现平台
 - **验证结果**: 所有测试案例在100Hz-10MHz范围内，11阶有理模型与mHEM基准的均方根误差均小于6.5×10^-5（相对误差<0.1%）。验证了在高电阻率土壤中，当电极长度≥有效长度时，11阶模型即可准确捕捉接地系统频变特性；若忽视有效长度，则需要显著更高阶数。FDNE拓扑在保持有效长度时表现出略优的数值鲁棒性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Realization of rational models for tower-footing grounding systems`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 nodal-analysis、passivity 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：对比了接地系统有理逼近的两种拓扑结构在最小阶数表示方面的差异
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/33/Lima 等 - 2026 - Realization of rational models for tower-footing grounding systems.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

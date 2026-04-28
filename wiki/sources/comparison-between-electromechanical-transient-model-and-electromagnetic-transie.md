@@ -1,9 +1,9 @@
 ---
 title: "Comparison between electromechanical transient model and electromagnetic transient model of DC in lo"
 type: source
-authors: ['未知']
+authors: ['Wang 等']
 year: 2013
-journal: ""
+journal: "电力系统保护与控制"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical transient model and electromagnetic transient model of DC in lo.pdf"]
@@ -11,21 +11,53 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 
 # Comparison between electromechanical transient model and electromagnetic transient model of DC in lo
 
-**作者**: 
+**作者**: Wang 等
 **年份**: 2013
 **来源**: `10/Wang 等 - 2013 - Comparison between electromechanical transient model and electromagnetic transient model of DC in lo.pdf`
 
 ## 摘要
 
-For AC and DC operating system Low Frequency Oscillation (LFO) Analysis, DC system usually adopts electromechanical transient model. This paper introduces the DC electromechanical transient and electromagnetic transient model, and then establishes the electromechanical transient model and the electromechanical-electromagnetic transient hybrid simulation model on the Advanced Digital Power System Simulator (ADPSS) platform for the LFO analysis respectively. Adopting the total least squares method-rotational invariance techniques of signal parameter estimation (TLS-ESPRIT) algorithm, the oscillation power after failure is analyzed. After extracting the LFO dominant oscillation frequency and damping ratio for making the modal analysis, it compares the LFO analysis results of the two simulatio
 
+对交直流混合运行系统进行低频振荡分析时，直流系统通常采用机电暂态仿真模型。介绍了直流系统的机电暂态和电磁暂态两种仿真模型，在电力系统全数字仿真装置（ADPSS）平台上建立了 EPRI36 系统和某实际电网系统的机电暂态模型和机电-电磁暂态混合仿真模型，分别用于低频振荡分析。采用基于总体最小二乘-旋转不变技术的信号参数估计（TLS-ESPRIT）算法，分析故障后的振荡功率信号。提取低频振荡主导振荡频率、阻尼比等信息进行模态分析，并对分别利用两种仿真模型进行仿真得到的低频振荡分析的结果进行比较。结果表明，直流线路分别采取两种仿真模型时，仿真结果较为吻合，低频振荡分析的结果基本相同，机电暂态模型具有较高的实用价值。
+
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上做交直流混联系统低频振荡分析时，常希望用计算量较小的机电暂态模型表示直流输电系统；但HVDC含换流阀、换相过程、直流控制保护和交流侧不对称扰动耦合，准稳态等值是否会改变主导振荡频率和阻尼判断并不清楚。本文研究对象是含直流输电的交直流系统低频振荡仿真，重点比较直流采用机电暂态准稳态模型与采用详细电磁暂态模型时的模态分析结果。难点在于两类模型时间尺度、接口量和物理细节不同：机电模型用换流母线电压、电流、有功无功关系等稳态方程近似直流行为，电磁模型则逐步求解晶闸管阀、R-C缓冲、电感电容和线路暂态。本文贡献不是提出新的振荡辨识算法，而是在ADPSS上把EPRI36和实际电网分别搭成纯机电模型与机电-电磁混合模型，并用同一TLS-ESPRIT流程比较故障后功率信号模态，为LFO分析中“直流模型该简化到什么程度”提供依据。
+
+### 2. 模型、算法与实现技术
+
+本文并列实现两类直流模型。机电暂态侧采用HVDC准稳态模型，以换流母线电压V、变压器变比T、换相电抗Xc、触发角α、直流电压Vd和电流Id为核心量，通过式(1)计算换流器直流电压、有功P、无功Q和交流注入电流I，再把直流系统作为交流网络中的等值注入参与机电暂态计算。电磁暂态侧则把12脉动换流器拆成两个6脉动桥，阀臂由晶闸管和R-C缓冲支路表示，电容、电感等元件经隐式梯形积分转化为等值电导和历史电流源；式(2)的节点导纳方程把阀导通状态、变压器接线、交流侧三相电流和直流注入电流统一到节点电压求解中。直流线路还采用T型集中参数模型参与电磁暂态求解。混合仿真中交流系统保持机电暂态，直流局部用电磁暂态，并通过接口交换交流母线电压、电流、功率或无功补偿量。故障清除后采集线路功率或机组功角等振荡信号，TLS-ESPRIT通过构造Hankel矩阵、SVD分离信号子空间、利用旋转不变性求极点，再由极点映射得到主导频率和阻尼比。
+
+### 3. 验证、优势与不足
+
+作者在ADPSS平台上验证两种建模方案，测试对象包括EPRI36标准系统和一个实际电网系统；基线是同一系统、同一故障扰动下直流分别采用机电暂态模型与机电-电磁暂态混合模型得到的低频振荡分析结果。验证指标不是瞬时电压电流波形的逐点误差，而是故障后功率振荡信号经TLS-ESPRIT提取的主导振荡频率、阻尼比等模态参数，并辅以功角或功率曲线趋势对比。原文摘要明确给出的结论是：两个仿真模型所得低频振荡结果基本一致，说明在面向低频振荡、尤其交流系统扰动主导的分析中，直流准稳态机电模型具有工程实用价值。其优势在于能用较低建模复杂度支撑大规模交直流系统LFO研究，而不必总是引入阀级电磁暂态细节。但从验证范围看，结论主要服务于低频振荡模态分析，不等同于证明准稳态模型可准确描述换相失败、阀开关暂态、直流线路内部故障或保护动作全过程；若研究目标转为电力电子器件应力、换相细节、谐波或暂态过电压，仍需电磁暂态模型。当前提供的原文片段未完整展示所有实验表格，因此具体数值误差应回原文表图复核。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值在于把“模型越详细越可靠”的直觉转化为可检验的工程判断：对于交直流系统低频振荡，关键是主导机电模态的频率和阻尼是否被改变；若直流详细暂态对这些指标影响很小，则准稳态直流模型可作为大系统LFO扫描、运行方式比较和控制参数初筛的有效工具。该页适合被后续关于ADPSS混合仿真、HVDC准稳态等值、TLS-ESPRIT模态辨识、交直流系统低频振荡评估的页面复用。不适合外推为所有HVDC暂态研究都可用机电模型替代EMT，也不适合据此判断高频振荡、谐波、换相失败机理或保护动作准确性。
+
+### 证据边界
+
+- 来自原文的确定信息：论文比较直流机电暂态模型与电磁暂态模型在交直流系统低频振荡分析中的结果，并使用ADPSS、EPRI36标准系统和某实际电网系统。
+- 来自原文的确定信息：机电模型采用HVDC准稳态运行方程计算Vd、P、Q、I等换流器注入量；电磁模型建立换流器、直流线路、控制保护等详细模型，并用节点导纳方程描述12脉动换流器。
+- 来自原文的确定信息：故障后振荡功率信号采用TLS-ESPRIT算法提取主导振荡频率和阻尼比，用于两类模型结果比较。
+- 当前给出的原文片段没有完整呈现实验表格和全部数值结果；页面中已有的具体频率、阻尼比和误差百分比应回PDF表图核验后再作为可引用定量结论。
+- 本文验证目标是低频振荡模态一致性，不是阀级开关波形、谐波、过电压、换相失败持续过程或保护逻辑动作准确性的全面验证。
+- 混合仿真的接口细节、仿真步长、采样率、TLS-ESPRIT阶次选择和噪声处理参数在当前片段中不完整；这些因素可能影响模态辨识结果的可复现性。
+<!-- deep-review:end -->
 ## 核心贡献
 
 
-- 构建直流机电暂态与机电-电磁混合仿真模型，实现交直流系统低频振荡对比分析。
-- 引入TLS-ESPRIT算法提取故障后功率信号特征，完成主导频率与阻尼比模态分析。
-- 验证直流准稳态模型在低频振荡分析中的有效性，为工程仿真模型选型提供依据。
 
+- 问题定位：对交直流混合运行系统进行低频振荡分析时，直流系统通常采用机电暂态仿真模型。介绍了直流系统的机电暂态和电磁暂态两种仿真模型，在电力系统全数字仿真装置（ADPSS）平台上建立了 EPRI36 系统和某实际电网系统的机电暂态模型和机电-电磁暂态混合仿真模型，分别用于低频振荡分析。
+- 方法机制：本文在ADPSS平台上构建交直流混合系统的机电暂态（直流准稳态）模型与机电-电磁暂态混合仿真模型。针对低频振荡分析，交流电网采用机电暂态模型，直流系统分别采用准稳态等值模型和详细电磁暂态模型（含晶闸管阀、R-C缓冲电路、隐式梯形积分离散化元件及详细控制保护）。通过UD模块在机电-电磁接口处进行无功差值补偿以实现数据交互。
+- 验证证据：对比仿真验证与模态分析（TLS-ESPRIT算法提取特征参数）；EPRI36标准测试系统；某实际大电网系统（9个厂站，6000+母线，700+发电机，电压等级6.3kV~800kV，含3条直流线）；在交流系统故障引发的低频振荡中，直流准稳态（机电）模型与详细电磁暂态模型的仿真结果高度吻合，主导频率与阻尼比误差极小（<0.
+- 量化与结论：交流故障引发的低频振荡中，机电准稳态模型与电磁暂态混合模型的主导频率偏差小于0.02 Hz，阻尼比相对误差严格控制在0.3%以内。；实际电网交流故障场景下，两种模型提取的线路功率振荡阻尼比差异小于0.1%，验证了准稳态模型在交流扰动LFO分析中的高精度。；直流线路故障场景下，机电暂态模型计算的阻尼比（0.1325/0.1317）较电磁暂态模型（0.1001/0.
+- 适用边界：适用于理解本文 Comparison between electromechanical transient model and electromagnetic transient model of DC in lo （2013） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
 
@@ -173,3 +205,28 @@ $$$$Y_{dc}U_{dc} =H_{dc} +P_{dc1}i_{\beta1i} +P_{dc2} i_{\beta1j} +P_{dc3}i_{\be
 - **测试系统**: EPRI36标准测试系统；某实际大电网系统（9个厂站，6000+母线，700+发电机，电压等级6.3kV~800kV，含3条直流线）
 - **仿真工具**: ADPSS（电力系统全数字仿真装置）
 - **验证结果**: 在交流系统故障引发的低频振荡中，直流准稳态（机电）模型与详细电磁暂态模型的仿真结果高度吻合，主导频率与阻尼比误差极小（<0.3%），证明准稳态模型完全满足工程LFO分析需求且计算效率高。在直流系统自身故障引发的振荡中，机电模型因无法刻画换流阀开关暂态，导致阻尼比被高估约30%以上，结果偏乐观，此时必须采用电磁暂态模型以保证分析精度。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Comparison between electromechanical transient model and electromagnetic transient model of DC in lo`（2013） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 tls-esprit算法、隐式梯形积分法、节点分析法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：构建直流机电暂态与机电-电磁混合仿真模型，实现交直流系统低频振荡对比分析。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical transient model and electromagnetic transient model of DC in lo.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

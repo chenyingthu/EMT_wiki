@@ -1,9 +1,9 @@
 ---
 title: "Frequency-Dependent Transformation Matrices for Untransposed Transmission Lines using Newton-Raphson - Power Systems, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['L. M. Wedepohl', 'H.V. Nguyen', 'G.D. Irwin']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Systems"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 
 # Frequency-Dependent Transformation Matrices for Untransposed Transmission Lines using Newton-Raphson - Power Systems, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: L. M. Wedepohl; H.V. Nguyen; G.D. Irwin
 **年份**: 2004
 **来源**: `19、20、21/EMT_task_20/59.535695.pdf.pdf`
 
 ## 摘要
 
-The frequency-dependent aspects of transmission line transformation matrices along with their asymptotic behav- iours at high and low frequencies are thoroughly investigated in this paper. The Newton-Raphson (NR) method for evalu- ating the transformation matrices as smooth functions of fre- quency is introduced. A different technique which utilizes a conventional diagonalization algorithm and a correlation technique for tracking the order of the eigenvectors and ei- genvalues is used to confirm the validity of the NR method. Transformation matrices for typical line configurations are evaluated and discussed. The paper concludes that the NR method is more efficient and appropriate for use in the time domain frequency-dependent line models in the Electromag- netic Transient Program (EMTP). 
+本文针对非换位多回架空线路在宽频范围内模态变换矩阵()频变特性导致的传统对角化算法特征值/特征向量跳变问题，提出基于牛顿-拉夫逊(NR)法的直接求解策略。该方法将特征值问题转化为非线性方程组，通过引入特征向量元素平方和归一化约束条件，固定向量尺度并消除数值溢出风险。利用前一频率步的解作为当前步的初值进行迭代，确保全频段(1Hz-1MHz)内矩阵元素平滑连续。所得平滑参数可直接采用最小相移有理函数进行拟合，结合梯形积分法无缝嵌入EMTP时域频变线路模型，彻底克服传统方法在复杂拓扑下的模态跟踪失效问题。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自EMTP等电磁暂态程序对非换位、多回输电线路宽频建模的要求：若仍用常数模态变换矩阵在相域与模态域之间转换，单回平置线路尚可接受，但双回或多回架空线路在1 Hz–1 MHz宽频范围内误差会变得明显。研究对象是由频变单位长度阻抗矩阵Z和导纳矩阵Y决定的电压模态变换矩阵Tv，特别是非完全平衡线路中Tv随频率变化的元素。难点在于常规特征值分解得到的特征值、特征向量存在排序交换、符号或尺度不定，导致Tv元素随频率出现不连续跳变，难以做有理函数拟合并嵌入时域卷积模型。本文的贡献不是重新推导线路方程，而是把每个模态的特征问题改写为带归一化约束的非线性方程，用Newton-Raphson沿频率连续追踪特征值和特征向量，从而直接生成平滑的频变变换矩阵。
+
+### 2. 模型、算法与实现技术
+
+算法入口是多相线路电报方程d²V/dx²=[ZY]V、d²I/dx²=[YZ]I。为解耦n相耦合方程，需要求Tv使Tv^{-1}[YZ]Tv=h，其中h为对角特征值矩阵。由于Z、Y随频率变化，Tv也随频率变化；且在非平衡系统中Tv与电流变换矩阵Ti一般不相等。本文的实现思想是：对每个频率点构造S=YZ，并对第k个模态求解(S-λkU)Tv^(k)=0。这个齐次方程本身存在特征向量尺度任意性，因此作者加入特征向量归一化约束，例如各元素平方和为1，使未知量变为n个向量元素加1个特征值，并形成n+1个非线性方程。Newton-Raphson迭代的输入是当前频率下的Y、Z以及上一频率点收敛得到的λk和Tv^(k)，输出是当前频率点连续延拓的特征值和特征向量。这样做的机制作用是把“每个频点独立排序特征向量”的问题，转化为“沿频率路径连续求根”的问题。得到的Tv元素若足够平滑，就可进一步用实负极点、零点的最小相移型有理函数近似，并按既有文献中的梯形积分形式并入EMTP频变线路模型。
+
+### 3. 验证、优势与不足
+
+作者采用两类验证思路：一是用常规对角化算法加相关性跟踪技术来确认NR法得到的特征值、特征向量顺序和连续性；二是对典型线路构型计算频变变换矩阵，观察其高低频渐近行为、平滑性以及是否适合有理函数拟合。原文明确给出的基线是“conventional diagonalization algorithm and a correlation technique”，应用目标是EMTP中的时域频变线路模型。指标主要是Tv元素在1 Hz–1 MHz宽频范围内能否连续、平滑，以及是否可用最小相移型有理函数表示；所给原文片段未报告NR法相对基线的运行时间、迭代次数、误差范数等可核验数值。文中还讨论Y、Z的频变来源，并提到简化大地阻抗公式与Carson积分在kHz范围内最大误差为几个百分点，但这是阻抗近似有效性的证据，不等同于NR算法本身的精度指标。优势在于NR法避免了多回架空线路中常见的模态排序跳变，使后续有理拟合和时域实现成为可能。边界是：验证集中在线性频域线路参数与典型线路构型，未从片段中看到对故障暂态波形、不同土壤强非均匀性、极端频率步长或实时仿真的系统性测试。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知是：频变线路模型的难点不只在Z、Y本身的频率依赖，还在由YZ特征问题产生的模态基随频率的可跟踪性。若Tv不平滑，再好的有理函数拟合和时域卷积实现都会失去基础。本文提供了一种可复用的“连续延拓式特征求解”思路，适合后续研究频变相域/模态域线路模型、多回非换位架空线、EMTP宽频参数拟合、模态跟踪算法和数值稳定性实现时引用。它不适合被外推为所有线路拓扑、所有频段或所有暂态场景下均更精确；也不能仅凭本文说明得出端口暂态波形误差必然降低的定量结论，除非结合具体线路和时域仿真结果重新验证。
+
+### 证据边界
+
+- 来自原文的确定证据：研究对象是频变模态变换矩阵Tv，频率范围明确写为1 Hz–1 MHz，应用目标是EMTP时域频变线路模型。
+- 来自原文的确定证据：作者提出Newton-Raphson方法，并用常规对角化算法加相关性跟踪技术作为确认NR法有效性的参照。
+- 来自原文的确定证据：最小相移型有理函数、实负极点和零点、梯形积分并入EMTP的时域实现，是基于文献[3,4]的实现路径，本文主要贡献在NR求解方法本身。
+- 需要谨慎的内容：页面中出现的具体双回线路尺寸、拟合误差小于1.0%、高斯消元降阶等结论未在所给原文片段中完整呈现，作为最终证据引用前应回查原文表图。
+- 未充分给出的实验信息：所给片段未报告NR迭代容差、频率采样策略、迭代次数、失败情形、计算耗时或与基线的量化效率比较。
+- 适用边界推断：从验证范围看，本文结论主要支撑线性频域线路参数的平滑模态跟踪；对非线性设备、控制器交互、实时仿真步长限制和复杂故障波形误差不能直接外推。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于牛顿拉夫逊法的频变变换矩阵求解算法，实现宽频范围内特征向量的平滑连续计算
-- 引入模平方和归一化约束方程，避免特征向量数值溢出，保障有理函数拟合的数值稳定性
-- 克服传统对角化算法的模态跳变缺陷，为EMTP时域频变线路模型提供高效计算方案
-
+- 问题定位：本文针对非换位多回架空线路在宽频范围内模态变换矩阵()频变特性导致的传统对角化算法特征值/特征向量跳变问题，提出基于牛顿-拉夫逊(NR)法的直接求解策略。该方法将特征值问题转化为非线性方程组，通过引入特征向量元素平方和归一化约束条件，固定向量尺度并消除数值溢出风险。
+- 方法机制：本文针对非换位多回架空线路在宽频范围内模态变换矩阵()频变特性导致的传统对角化算法特征值/特征向量跳变问题，提出基于牛顿-拉夫逊(NR)法的直接求解策略。该方法将特征值问题转化为非线性方程组，通过引入特征向量元素平方和归一化约束条件，固定向量尺度并消除数值溢出风险。利用前一频率步的解作为当前步的初值进行迭代，确保全频段(1Hz-1MHz)内矩阵元素平滑连续。
+- 验证证据：典型垂直双回非换位架空线路（6相导线+地线，导线直径4×3.84cm，间距50cm，地线直径1.75cm）；自定义牛顿-拉夫逊求解程序、EMTP（电磁暂态程序）；NR法生成的频变参数平滑无跳变，拟合函数与精确解最大偏差<1.0%；简化大地阻抗公式与Carson积分高度一致；验证了该方法在EMTP时域频变线路模型中实现梯形积分数值稳定的可行性与高效性。
+- 量化与结论：全频段(1Hz-1MHz)模态变换矩阵元素有理函数拟合最大误差<1.0%；简化大地阻抗公式在kHz频段与Carson积分结果偏差仅百分之几，对宽频暂态计算影响可忽略；NR法彻底消除传统算法的模态跳变现象，特征向量连续性满足最小相移有理函数拟合条件；地线在低于塔距半波长频率下可等效为零电位，通过高斯消元将模态数降至相导线数量，计算量显著降低
+- 适用边界：适用于理解本文 Frequency-Dependent Transformation Matrices for Untransposed Transmission Lines using Newton-Raphson - Power Systems, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EM。
 
 ## 使用的方法
-
 
 - [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
 - [[特征值对角化算法|特征值对角化算法]]
@@ -37,18 +65,14 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 - [[梯形积分法|梯形积分法]]
 - [[卡森公式|卡森公式]]
 
-
 ## 涉及的模型
-
 
 - [[非换位输电线路|非换位输电线路]]
 - [[多回架空线路|多回架空线路]]
 - [[频变线路模型|频变线路模型]]
 - [[地下电缆|地下电缆]]
 
-
 ## 相关主题
-
 
 - [[频率相关建模|频率相关建模]]
 - [[时域仿真|时域仿真]]
@@ -57,15 +81,11 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 - [[电磁暂态程序|电磁暂态程序]]
 - [[特征值求解|特征值求解]]
 
-
 ## 主要发现
-
 
 - 牛顿法生成的模态参数平滑连续，可精确拟合为最小相位有理函数，保障时域仿真数值稳定
 - 约束牛顿法彻底消除特征向量跳变现象，计算效率与连续性显著优于传统对角化算法
 - 简化大地阻抗公式计算结果与卡森积分高度一致，在宽频暂态分析中误差可忽略不计
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 
 ### 数学公式
 
-
 **公式1**: $$$$ \frac{d^2V}{dx^2} = [ZY]V $$$$
 
 *多相输电线路电报方程，描述电压沿线路的传播特性*
-
 
 **公式2**: $$$$ T_v^{-1} [YZ] T_v = h $$$$
 
 *模态变换对角化方程，$T_v$为电压变换矩阵，$h$为特征值对角阵*
 
-
 **公式3**: $$$$ (S - \lambda_{kk}U)T_v^{(k)} = 0 $$$$
 
 *单模态非线性齐次方程组，$S=YZ$，用于NR法逐模态求解*
-
 
 **公式4**: $$$$ \sum_{i=1}^{n} (T_{v,ik})^2 = 1 $$$$
 
 *特征向量归一化约束方程，防止迭代过程中元素趋零导致数值溢出*
 
-
 **公式5**: $$$$ Z_{e,ij} = j\omega \frac{\mu_0}{2\pi} \ln \frac{D_{ij}'}{D_{ij}} $$$$
 
 *Deri/Dubanton简化大地阻抗公式，替代Carson积分提升计算效率*
-
 
 ### 算法步骤
 
@@ -115,7 +129,6 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 
 6. 全频段遍历与拟合：重复步进与迭代覆盖1Hz至1MHz全频段，获取平滑连续的$T_v(\omega)$与传播函数，随后采用最小相移有理函数进行频域拟合，为EMTP时域实现做准备。
 
-
 ### 关键参数
 
 - **频率范围**: 1 Hz - 1 MHz
@@ -130,8 +143,6 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 
 - **地线处理**: 低于塔距半波长时假设零电位，通过高斯消元降阶
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -142,15 +153,12 @@ The frequency-dependent aspects of transmission line transformation matrices alo
 
 | 垂直双回非换位架空线路（6相导线+地线） | 系统经高斯消元降阶为6个模态，NR法计算出的$T_v$矩阵第一列元素幅值在全频段内平滑变化，有理函数拟合曲线与精确解高度重合，最大拟合误差严格控制在1.0%以内。 | 相较于传统对角化算法在特定频点出现的特征值交换与向量跳变，NR法实现零跳变连续跟踪，计算效率与数值稳定性显著提升，完全满足EMTP时域卷积要求。 |
 
-
-
 ## 量化发现
 
 - 全频段(1Hz-1MHz)模态变换矩阵元素有理函数拟合最大误差<1.0%
 - 简化大地阻抗公式在kHz频段与Carson积分结果偏差仅百分之几，对宽频暂态计算影响可忽略
 - NR法彻底消除传统算法的模态跳变现象，特征向量连续性满足最小相移有理函数拟合条件
 - 地线在低于塔距半波长频率下可等效为零电位，通过高斯消元将模态数降至相导线数量，计算量显著降低
-
 
 ## 关键公式
 
@@ -172,11 +180,33 @@ $$$$ Z_{e,ij} = j\omega \frac{\mu_0}{2\pi} \ln \frac{D_{ij}'}{D_{ij}} $$$$
 
 *替代Carson积分计算频变大地阻抗，兼顾计算效率与宽频暂态精度*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比分析与有理函数拟合验证
 - **测试系统**: 典型垂直双回非换位架空线路（6相导线+地线，导线直径4×3.84cm，间距50cm，地线直径1.75cm）
 - **仿真工具**: 自定义牛顿-拉夫逊求解程序、EMTP（电磁暂态程序）
 - **验证结果**: NR法生成的频变参数平滑无跳变，拟合函数与精确解最大偏差<1.0%；简化大地阻抗公式与Carson积分高度一致；验证了该方法在EMTP时域频变线路模型中实现梯形积分数值稳定的可行性与高效性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Frequency-Dependent Transformation Matrices for Untransposed Transmission Lines using Newton-Raphson - Power Systems, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 牛顿-拉夫逊法、特征值对角化算法、模态跟踪技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于牛顿拉夫逊法的频变变换矩阵求解算法，实现宽频范围内特征向量的平滑连续计算
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

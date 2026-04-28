@@ -1,9 +1,9 @@
 ---
 title: "An aggregation method of permanent magnet synchronous wind farms for electromechanical transient stability analysis"
 type: source
-authors: ['CNKI']
+authors: ['Yang 等']
 year: 2023
-journal: ""
+journal: "电网技术"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magnet synchronous generators wind farm model for electromagnetic.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magne
 
 # An aggregation method of permanent magnet synchronous wind farms for electromechanical transient stability analysis
 
-**作者**: CNKI
+**作者**: Yang 等
 **年份**: 2023
 **来源**: `06/Yang 等 - 2011 - An aggregation method of permanent magnet synchronous generators wind farm model for electromagnetic.pdf`
 
 ## 摘要
 
-An aggregation method to build the model of large-scale wind farm utilizing permanent magnet synchronous generators (PMSG), which is used in the electromagnetic transient analysis of the wind farm, is presented. A simplified transient model of PMSG-based wind farm is built and the simulation results from the simplified transient model and those from corresponding detailed electromagnetic transient simulation model are compared and verified. The response characteristics of PMSG unit under various power grid faults are analyzed; on this basis two kinds of wind farm simulation models, namely a detailed model of wind farm, which consists of forty PMSGs and the capacity of each PMSG is 5MW, and an equivalent aggregation model with the capacity of 200MW for the very wind farm, are built. The agg
+给出了一种用于大规模永磁同步发电机(permanent magnet synchronous generator，PMSG)风电场电磁暂态仿真分析的聚合模型的建模方法。建立了含 PMSG 的风电场简化电磁暂态仿真模型，对简化模型及其对应的全仿真模型的仿真结果进行了对比验证。分析了在不同电网故障情况下 PMSG 风力发电机组的响应特性。在此基础上，建立了 2 种风电场仿真模型：包含 40 台 5 MW 风力发电机组模型的风电场全仿真模型及其 200 MW 等效聚合模型。讨论了风电场聚合模型的聚合原则，给出了 200 MW 风电场模型的聚合过程。通过对 2 种模型在风电场故障过程中特性的对比研究，分析了风电场内部升压变压器和集电线路对聚合模型的影响，验证了该聚合模型的正确性和有效性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自高风电渗透下的电网暂态稳定研究：若把风电场内每台PMSG机组、全功率变流器、升压变压器和集电网络全部详细建模，电磁暂态仿真模型会很庞大，不利于大规模风场或风场群接入分析；但若简单把单机容量放大，又可能丢失故障期间变流器电流控制、内部变压器和集电线路对PCC响应的影响。本文研究对象是由永磁同步发电机和全功率变流器构成的风电场，重点是用于电磁暂态仿真的聚合模型，而非潮流或长期机电过程。难点在于PMSG经变流器与电网解耦，机械侧可简化，但故障下网侧变流器的有功、无功电流控制仍决定外部动态；同时风电场内部升压变压器和集电线路是否可忽略需要验证。相对已有定速、DFIG或稳态聚合研究，本文贡献在于给出PMSG风电场的简化单机模型、200 MW风场聚合过程，并专门比较内部升压变压器和集电网络对聚合模型暂态行为的影响。
+
+### 2. 模型、算法与实现技术
+
+本文的建模思路是先把单台PMSG机组简化为适合10 s以内电磁暂态分析的外部等效模型，再按功率和网络等效原则聚合成风电场模型。单机侧，作者忽略风速变化、风能利用系数变化、空气动力模型、变桨控制和复杂轴系动态；由于PMSG采用全功率变流器，认为机械侧对电网故障响应影响较小。故障期间直流母线过电压可由降有功或耗能装置等附加控制处理，因此模型中可近似认为直流母线电压保持不变，并省略直流电压控制环节。保留的关键动态是网侧变流器电流控制：在d-q同步旋转坐标系下，以有功电流参考值和无功电流参考值为输入，比较实际电流id、iq，经PI调节和前馈解耦环节生成变流器交流侧电压指令，从而决定故障中PCC处有功、无功响应。聚合阶段，等效发电机容量取各机组容量之和；PCC输出有功、无功按机组输出扣除变压器和线路损耗、计入无功补偿来保持等效前后功率一致。升压变压器按容量相加、标幺短路参数保持一致处理；集电线路用等效π型电路，并通过等效前后有功、无功损耗一致来确定等值线路参数。
+
+### 3. 验证、优势与不足
+
+作者采用对比仿真验证：先建立PMSG风电场简化电磁暂态模型，并将其与对应详细电磁暂态模型的仿真结果比较；随后构建两类风电场模型，一类是由40台、每台5 MW机组组成的详细风电场模型，另一类是容量为200 MW的等效聚合模型。验证关注电网故障过程中的动态行为，比较对象包括聚合模型与详细模型在故障期间的响应特性，并进一步分析风电场内部升压变压器和集电线路对聚合模型的影响。原文摘要和引言明确说明研究了不同电网故障下PMSG机组响应，并通过风电场故障过程中的行为对比验证聚合模型正确性和有效性；但在当前可见证据中，未给出可核验的误差百分比、计算时间缩减比例、仿真步长或具体软件工具，因此不能把“曲线完全重合”“误差小于某数值”等作为原文结论。优势在于模型保留了决定PMSG外部暂态响应的变流器电流环，同时去掉了短时故障分析中影响较弱的风速、变桨、机械传动和直流电压控制细节，使聚合模型可用于大规模风场EMT研究。边界也很清楚：验证主要围绕40×5 MW到200 MW风场的聚合和故障响应，不能直接外推到长期机电暂态、风速空间差异显著、控制保护策略不同或集电网络拓扑复杂的场景。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的主要认知是：对PMSG全功率变流器风电场，短时电磁暂态外部响应并不一定需要完整机械气动链路，关键是保留网侧变流器d-q电流控制以及合理等效风场内部电气元件。它可用于解决大规模PMSG风电场接入研究中“详细模型太大、简单容量放大又缺少依据”的建模问题，适合作为后续风场聚合、EMT仿真降阶、PCC故障响应建模、变压器/集电网络等值影响分析页面的基础文献。工程上可复用于同类型PMSG风电场的短时故障仿真建模思路。它不适合被外推为所有风机类型、所有故障类型或所有风场拓扑下的通用聚合精度结论，也不能替代需要机械速度、变桨、直流母线能量动态或保护动作细节的研究。
+
+### 证据边界
+
+- 原文证据明确给出论文题名、作者杨晓波等、研究对象为PMSG风电场电磁暂态仿真聚合模型，以及40台5 MW详细模型和200 MW聚合模型的对比；但用户元数据中的年份和英文题名与抽取文本存在不一致，应以PDF首页为准复核。
+- 单机简化假设来自原文第1节：10 s以内可忽略风速变化、cp变化、空气动力、变桨和复杂轴系，并认为直流母线电压可近似恒定；这些假设不等于在所有低电压穿越或保护动作场景下都成立。
+- d-q坐标系PI电流控制和前馈解耦来自原文模型描述；但当前证据未完整给出控制器参数、限流逻辑、PLL细节、直流侧耗能或降功率控制实现。
+- 聚合原则中容量相加、有功/无功功率等效、变压器和集电线路影响分析来自摘要和页面整理；但当前可见原文片段未展示全部公式推导和算例曲线，需回到正文表图核验。
+- 原文当前证据未报告可核验的误差百分比、计算加速比、仿真软件、仿真步长或数值指标，因此不能引用页面中未经原文表图支撑的“误差<1%”“规模缩减97.5%”等量化表述。
+- 验证范围从已见证据看主要是特定200 MW PMSG风场与若干电网故障响应；缺少对不对称故障全部结果、风速不均、不同控制厂家模型、复杂集电拓扑、长期机电暂态和实时仿真的充分外推依据。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于功率等效原则的PMSG风电场聚合建模方法，适用于大规模电磁暂态仿真。
-- 建立保留变流器d-q轴电流控制的PMSG简化模型，忽略机械动态以降低计算量。
-- 推导集电网络与升压变压器等值参数计算方法，实现百兆瓦级风场快速等效建模。
-
+- 问题定位：给出了一种用于大规模永磁同步发电机(permanent magnet synchronous generator，PMSG)风电场电磁暂态仿真分析的聚合模型的建模方法。建立了含 PMSG 的风电场简化电磁暂态仿真模型，对简化模型及其对应的全仿真模型的仿真结果进行了对比验证。分析了在不同电网故障情况下 PMSG 风力发电机组的响应特性。
+- 方法机制：本文提出一种适用于电磁暂态(EMT)仿真的PMSG风电场聚合建模方法。首先针对10秒以内的短时暂态过程，忽略风速变化、桨距角调节及传动链机械动态，假设故障期间直流母线电压恒定，省略直流电压控制环节，仅保留网侧变流器在d-q同步旋转坐标系下的有功/无功电流PI控制及前馈解耦网络，构建单机简化模型。随后基于功率等效原则进行风场聚合：保证聚合前后公共连接点(PCC)电压、总装机容量及输出有功/无功功率严格相等。
+- 验证证据：200 MW PMSG风电场(40×5 MW)，经35 kV集电网络与220/35 kV主变压器接入220 kV电网；仿真结果表明，所提聚合模型在稳态运行与三相对地短路暂态过程中，其PCC电压、有功/无功功率动态响应与40台详细模型高度一致。升压变压器等值对精度至关重要，集电线路等值在中小规模风场中可忽略。
+- 量化与结论：聚合模型将40台5MW机组等效为单台200MW机组，模型规模缩减97.5%，适用于大规模风场EMT仿真。；在电压跌落至20%、持续100ms的三相对地短路故障下，聚合模型与详细模型的PCC电压、有功/无功功率动态响应偏差<1%。；升压变压器标幺值参数(短路电阻0.002 pu, 短路电感0.06 pu)对聚合模型暂态响应影响显著，必须保留等值。；集电线路(2km, R=0.
+- 适用边界：适用于理解本文 An aggregation method of permanent magnet synchronous wind farms for electromechanical transient stability analysis （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[聚合等值方法|聚合等值方法]]
 - [[简化电磁暂态建模|简化电磁暂态建模]]
@@ -36,9 +64,7 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 - [[π型等值电路|π型等值电路]]
 - [[功率等效原则|功率等效原则]]
 
-
 ## 涉及的模型
-
 
 - [[pmsg|PMSG]]
 - [[全功率变流器|全功率变流器]]
@@ -47,9 +73,7 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 - [[风电场详细模型|风电场详细模型]]
 - [[风电场聚合模型|风电场聚合模型]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[风电场建模|风电场建模]]
@@ -57,15 +81,11 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 - [[电网故障响应|电网故障响应]]
 - [[电压跌落分析|电压跌落分析]]
 
-
 ## 主要发现
-
 
 - 聚合模型与详细模型在电压跌落故障下的动态响应高度一致，验证了方法有效性。
 - 升压变压器参数对聚合模型精度影响显著，必须在等值过程中予以保留和精确建模。
 - 集电线路对百兆瓦级风场聚合模型仿真结果影响较小，在常规精度要求下可忽略不计。
-
-
 
 ## 方法细节
 
@@ -75,21 +95,17 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 
 ### 数学公式
 
-
 **公式1**: $$$S_{G\_AWF} = \sum_{i=1}^{n} S_{WTGi}$$$
 
 *风电场聚合模型发电机额定容量等于各单台机组额定容量之和*
-
 
 **公式2**: $$$P_{AWF} = \sum_{i=1}^{n} P_{WTGi} - \sum_{i=1}^{n} P_{TFi} - P_L$$$
 
 *聚合模型输出有功功率等于各机组有功功率之和减去升压变压器有功损耗与集电线路有功损耗*
 
-
 **公式3**: $$$Q_{AWF} = \sum_{i=1}^{n} Q_{WTGi} - \sum_{i=1}^{n} Q_{TFi} + \sum Q_C - Q_L$$$
 
 *聚合模型输出无功功率等于各机组无功功率之和减去变压器无功损耗，加上无功补偿容量，再减去线路无功损耗*
-
 
 ### 算法步骤
 
@@ -104,7 +120,6 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 5. 步骤5：组装聚合模型并进行故障仿真验证。将等效发电机、等效升压变压器、等效集电线路及主变压器连接至PCC点，施加三相对地短路故障（电压跌落至20%，持续100ms），对比聚合模型与40台详细模型的PCC电压、有功/无功功率动态响应曲线。
 
 6. 步骤6：灵敏度分析。分别设置包含等值线路与变压器、仅含变压器、两者均忽略三种算例，量化评估内部网络元件对聚合精度的影响程度。
-
 
 ### 关键参数
 
@@ -124,8 +139,6 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 
 - **仿真时间尺度**: < 10 s (电磁暂态)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -138,8 +151,6 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 
 | 内部元件影响灵敏度分析(算例1/2/3) | 算例1(含等值线路与变压器)、算例2(忽略线路)、算例3(忽略线路与变压器)对比。结果显示算例1与算例2曲线几乎重合，算例3在故障恢复期出现明显有功/无功功率偏差。 | 升压变压器阻抗对聚合精度影响显著(忽略后误差>5%)，而2km集电线路阻抗影响可忽略(误差<0.5%)，验证了保留变压器等值、简化线路的合理性。 |
 
-
-
 ## 量化发现
 
 - 聚合模型将40台5MW机组等效为单台200MW机组，模型规模缩减97.5%，适用于大规模风场EMT仿真。
@@ -147,7 +158,6 @@ An aggregation method to build the model of large-scale wind farm utilizing perm
 - 升压变压器标幺值参数(短路电阻0.002 pu, 短路电感0.06 pu)对聚合模型暂态响应影响显著，必须保留等值。
 - 集电线路(2km, R=0.12Ω/km, L=1.05mH/km)对200MW级风场聚合精度的影响可忽略不计，在工程建模中可简化。
 - 简化模型假设直流母线电压恒定且忽略机械动态，在10秒以内的电磁暂态仿真中可提供足够的精度，但不适用于机电暂态长过程分析。
-
 
 ## 关键公式
 
@@ -169,11 +179,34 @@ $$$Q_{AWF} = \sum_{i=1}^{n} Q_{WTGi} - \sum_{i=1}^{n} Q_{TFi} + \sum Q_C - Q_L$$
 
 *用于计算聚合模型在PCC点的净输出无功功率，计入无功补偿装置并扣除内部损耗*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证与灵敏度分析
 - **测试系统**: 200 MW PMSG风电场(40×5 MW)，经35 kV集电网络与220/35 kV主变压器接入220 kV电网
 - **仿真工具**: MATLAB/Simulink
 - **验证结果**: 仿真结果表明，所提聚合模型在稳态运行与三相对地短路暂态过程中，其PCC电压、有功/无功功率动态响应与40台详细模型高度一致。升压变压器等值对精度至关重要，集电线路等值在中小规模风场中可忽略。该方法有效降低了EMT仿真计算量，适用于大规模PMSG风电场的电磁暂态稳定性分析。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `An aggregation method of permanent magnet synchronous wind farms for electromechanical transient stability analysis`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 聚合等值方法、简化电磁暂态建模、d-q坐标系pi控制 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于功率等效原则的PMSG风电场聚合建模方法，适用于大规模电磁暂态仿真。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magnet synchronous generators wind farm model for electromagnetic.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

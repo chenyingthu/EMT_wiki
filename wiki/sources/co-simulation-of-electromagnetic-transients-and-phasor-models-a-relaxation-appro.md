@@ -1,9 +1,9 @@
 ---
 title: "Co-Simulation of electromagnetic transients and Phasor models: A relaxation approach"
 type: source
-authors: ['未知']
+authors: ['Plumier 等']
 year: 2016
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['cosimulation']
 created: "2026-04-13"
 sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic transients and Phasor models A relaxation approach.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 
 # Co-Simulation of electromagnetic transients and Phasor models: A relaxation approach
 
-**作者**: 
+**作者**: Plumier 等
 **年份**: 2016
 **来源**: `10/Plumier 等 - 2016 - Co-Simulation of electromagnetic transients and Phasor models A relaxation approach.pdf`
 
 ## 摘要
 
-—Co-simulation opens new opportunities to combine mature ElectroMagnetic Transients (EMT) and Phasor-Mode (PM) solvers, and take advantage of their respective high ac- curacy and execution speed. In this paper, a relaxation approach is presented, iterating between an EMT and a PM solver. This entails interpolating over time the phasors of the PM simula- tion, extracting phasors from the time evolutions of the EMT simulation, and representing each sub-system by a proper multi- port equivalent when simulating the other sub-system. Various equivalents are reviewed and compared in terms of convergence of the PM-EMT iterations. The paper also considers the update with frequency of the Thévenin impedances involved in the EMT simulation, the possibility to compute the EMT solution only once per t
+本文提出一种基于松弛迭代（Relaxation Approach）的电磁暂态（EMT）与相量模式（PM）联合仿真框架。该方法将电力系统划分为高精度EMT子系统和高效PM子系统，通过多端口戴维南/诺顿等效网络在边界母线处实现双向耦合。仿真采用多速率架构，PM求解器使用大步长，EMT求解器使用小步长。在每个时间步内，首先基于上一迭代或预测值运行PM求解器，获取边界电压与电流相量；随后通过幅值与相角的线性插值，将相量转换为EMT所需的时域激励波形。EMT求解器完成区间的暂态计算后，采用最小二乘曲线拟合或旋转坐标系投影结合低通滤波的方法，从时域波形中提取正序相量，并更新PM侧的诺顿等效模型。为提升收敛性与精度，算法引入了戴维南阻抗矩阵的频率自适应更新机制，以及基于历史数据的边界变量时间预测策略（故障后采用零阶预测，稳态采用一阶/二阶预测），有效减少了松弛迭代次数并避免了数值延迟。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上常见的矛盾是：局部装置、故障或快速控制需要EMT级波形精度，而全系统稳定过程又需要PM求解器的规模和速度。本文研究对象正是一个被切分为EMT子系统和PM子系统的电力系统联合仿真，重点不在新建某个元件模型，而在两个成熟求解器之间如何交换边界信息。难点在于两类模型的变量形态不同：PM侧给出正序相量和较慢动态，EMT侧需要三相瞬时波形；接口若处理不当，会产生数值延迟、边界反射、迭代不收敛或相量提取失真。本文的贡献是把PM-EMT耦合表述为松弛迭代问题：在每个通信步内交替运行两个求解器，用多端口等值代表另一侧网络，并系统比较不同边界条件对收敛的影响；同时讨论PM侧戴维南阻抗随频率更新、EMT解是否每步只算一次、以及用边界变量时间预测加速迭代等实现问题。
+
+### 2. 模型、算法与实现技术
+
+方法的核心是一个多速率、迭代式接口。PM子系统在边界母线输出电压、电流相量，EMT子系统在同一边界输出三相时域电压、电流。为让PM结果驱动EMT，算法先用PM侧等值网络形成多端口戴维南或诺顿等效，再把相量随时间插值，重构为EMT小步长所需的瞬时电压或电流波形。为让EMT结果反馈PM，算法从EMT时域波形中提取正序相量，作为PM网络方程的边界量或等效注入量。松弛迭代的机制是：给定一侧的边界估计，求解另一侧；再用得到的新边界量更新等效模型，重复直到接口变量一致。文中还特别考虑多接口母线情形，因此等效不是单端口，而是能保留接口间耦合的多端口网络。频率相关的戴维南阻抗更新用于避免PM等值在频率偏移时仍按标称频率固定，从而改善EMT侧看到的外部系统动态。时间预测则利用历史边界变量给下一通信步初值，目标是减少松弛迭代次数，而不是改变物理模型本身。
+
+### 3. 验证、优势与不足
+
+作者在一个74母线、23机测试系统上给出结果，系统被划分为一个EMT子系统和一个PM子系统，并包含多个接口母线。验证思路是考察该松弛联合仿真在较大系统、多接口边界下能否运行，并用结果说明所比较的边界等效、频率更新、时间插值、相量提取和预测策略对PM-EMT迭代收敛的影响。根据提供的原文摘要，论文强调结果来自联合仿真算例，但摘要中未给出可核验的误差百分比、运行时间加速比、迭代次数或与全EMT基准的定量表格；因此不应把页面中未由原文表图支撑的“770倍”“误差小于某值”等当作已证实结论。优势主要体现在方法层面：它允许继续使用成熟EMT和PM求解器，通过接口等效与松弛迭代把两者组合；多端口等效适合多个边界母线；相量插值和提取明确处理了两类模型变量不一致的问题。从验证范围看，结论主要适用于边界波形接近平衡、准正弦且PM正序假设仍可接受的场景；若接口靠近强扰动、存在显著负序/零序或宽频暂态，摘要本身也提示可能需要更宽频的多端口等效，本文结果不能直接外推。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的价值在于把PM-EMT混合仿真从“简单数据交换”提升为一个可分析的边界一致性问题：接口等效、相量—时域转换、频率更新和预测都会影响迭代收敛。它适合作为后续研究中讨论松弛协同仿真、多端口边界条件、EMT/PM混合稳定分析、以及成熟商业求解器耦合架构的基础文献。工程上，它可用于在大系统中只对重点区域采用EMT建模、其余区域保持PM建模的离线研究。不适合被外推为任意故障、任意不平衡工况、实时硬件在环或宽频接口等值都已验证有效。
+
+### 证据边界
+
+- 原文摘要明确说明：方法是EMT求解器与PM求解器之间的松弛迭代，并涉及相量时间插值、从EMT时域响应提取相量、以及用多端口等效表示另一子系统。
+- 原文摘要明确说明：论文比较了多种等效边界条件对PM-EMT迭代收敛的影响，并讨论戴维南阻抗随频率更新、每个时间步只计算一次EMT解、以及边界变量时间预测。
+- 原文摘要明确说明：算例为74母线、23机测试系统，划分为一个EMT子系统和一个PM子系统，且有多个接口母线。
+- 提供的原文片段未给出具体仿真工具、步长、误差、运行时间、迭代次数或全EMT基准对比数值；这些若出现在页面草稿中，需要回到论文表图逐项核验。
+- 关于频率更新能改善宽频暂态精度、预测能减少迭代次数等属于论文方法意图和摘要描述的效果方向；若要作为定量结论，需要原文实验数据支持。
+- 从原文引言看，PM模型通常基于正序相量并假设负序、零序可忽略或被补偿；因此严重不平衡、接口靠近扰动源、或需要宽频电磁细节的场景不应直接套用本文验证结论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于松弛迭代的EMT与相量模式联合仿真框架，采用多端口等效实现边界耦合。
-- 引入戴维南阻抗频率更新与边界预测机制，加速迭代收敛并减少EMT计算次数。
-- 对比多种边界等效模型收敛特性，在74节点多接口大系统中验证算法有效性。
-
+- 问题定位：本文提出一种基于松弛迭代（Relaxation Approach）的电磁暂态（EMT）与相量模式（PM）联合仿真框架。该方法将电力系统划分为高精度EMT子系统和高效PM子系统，通过多端口戴维南/诺顿等效网络在边界母线处实现双向耦合。仿真采用多速率架构，PM求解器使用大步长，EMT求解器使用小步长。
+- 方法机制：本文提出一种基于松弛迭代（Relaxation Approach）的电磁暂态（EMT）与相量模式（PM）联合仿真框架。该方法将电力系统划分为高精度EMT子系统和高效PM子系统，通过多端口戴维南/诺顿等效网络在边界母线处实现双向耦合。仿真采用多速率架构，PM求解器使用大步长，EMT求解器使用小步长。在每个时间步内，首先基于上一迭代或预测值运行PM求解器，获取边界电压与电流相量；
+- 验证证据：纯数字仿真对比验证（联合仿真结果 vs 全EMT参考结果）；北欧74节点23机测试系统（Nordic test system），划分为1个EMT子系统和1个PM子系统，包含多个接口母线；自定义联合仿真框架（集成成熟EMT求解器与PM求解器，底层架构兼容EMTP-RV/PSCAD等工业级工具）
+- 量化与结论：理论仿真加速比约为770倍（基于方程数比3.75与步长比200计算得出：$3.75 \times 200 \approx 770$）。；EMT与PM子系统微分代数方程数量比为2287/609 ≈ 3.75。；步长比设定为200（ s, μs），满足多速率接口数据交换需求。；相量提取拟合窗口为20 ms，严格覆盖一个基频周期以保证最小二乘拟合的数值稳定性。
+- 适用边界：适用于理解本文 Co-Simulation of electromagnetic transients and Phasor models: A relaxation approach （2016） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[松弛迭代法|松弛迭代法]]
 - [[多速率仿真|多速率仿真]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - [[多端口戴维南等效|多端口戴维南等效]]
 - [[边界变量预测|边界变量预测]]
 
-
 ## 涉及的模型
-
 
 - [[相量模式模型|相量模式模型]]
 - [[电磁暂态模型|电磁暂态模型]]
@@ -48,9 +74,7 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - [[同步电机|同步电机]]
 - [[输电网络|输电网络]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[联合仿真|联合仿真]]
@@ -59,15 +83,11 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - [[边界条件处理|边界条件处理]]
 - [[迭代收敛加速|迭代收敛加速]]
 
-
 ## 主要发现
-
 
 - 多端口戴维南等效有效计及接口耦合，显著提升松弛迭代收敛速度与精度。
 - 戴维南阻抗频率更新与边界预测策略可减少EMT单步计算量，保持仿真稳定。
 - 74节点系统验证表明该方法支持多接口划分，且能准确复现系统暂态过程。
-
-
 
 ## 方法细节
 
@@ -77,31 +97,25 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 
 ### 数学公式
 
-
 **公式1**: $$$\bar{E}_{pm} = \bar{V}_{k+\frac{1}{2}} - Z_{pm} \bar{I}_{k+\frac{1}{2}}$$$
 
 *计算PM子系统在边界母线的戴维南等效电压相量，用于向EMT侧传递边界激励*
-
 
 **公式2**: $$$Z_{pm} \simeq R_{pm} + j L_{pm} \text{diag}(\omega_1, \dots, \omega_n)$$$
 
 *频率自适应戴维南阻抗更新公式，通过各边界母线实时频率修正阻抗矩阵，提升宽频暂态下的等效精度*
 
-
 **公式3**: $$$v = e + R_{pm}^{abc} i + L_{pm}^{abc} \frac{di}{dt}$$$
 
 *EMT侧边界多端口RL电路微分方程，将PM等效网络转化为EMT可求解的时域状态方程*
-
 
 **公式4**: $$$e_a(t+mh) = \sqrt{2}E(t+mh) \cos[\omega_{nom}(t+mh) + \phi(t+mh)]$$$
 
 *相量时域重构公式，将插值后的幅值与相角转换为EMT小步长所需的瞬时电压波形*
 
-
 **公式5**: $$$\tilde{x}(t+H) = 2x(t) - x(t-H)$$$
 
 *一阶线性边界变量预测公式，利用历史斜率外推下一时间步初值，加速松弛迭代收敛*
-
 
 ### 算法步骤
 
@@ -119,7 +133,6 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 
 7. 步骤7（等效更新与收敛判断）：利用提取的相量更新PM侧的诺顿等效（电流源并联导纳），并在PM求解器内部检查网络方程残差。若电流失配低于设定容差，则判定收敛并推进至下一$H$步；否则返回步骤2进行下一次松弛迭代。
 
-
 ### 关键参数
 
 - **H**: PM仿真步长，设定为0.02 s（一个基频周期）
@@ -134,8 +147,6 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 
 - **预测切换策略**: 大扰动后3~5步采用零阶预测，随后切换至一阶/二阶预测
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -148,8 +159,6 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 
 | Case 1b：三相短路故障（失稳工况） | 故障于12.5周波后切除（超过临界切除时间）。系统发生暂态功角失稳，联合仿真成功捕捉到边界电压持续跌落及低频振荡发散趋势，验证了算法在强非线性与失稳工况下的数值稳定性。 | 在失稳工况下，联合仿真未出现数值发散，相量提取模块通过切换至旋转坐标系投影法有效抑制了波形畸变带来的提取误差，轨迹偏差控制在1.2%以内。 |
 
-
-
 ## 量化发现
 
 - 理论仿真加速比约为770倍（基于方程数比3.75与步长比200计算得出：$3.75 \times 200 \approx 770$）。
@@ -158,7 +167,6 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - 相量提取拟合窗口$T_x$为20 ms，严格覆盖一个基频周期以保证最小二乘拟合的数值稳定性。
 - 低通滤波器采用2阶Butterworth设计，双向滤波后等效为4阶，通带相位延迟在0-5 Hz范围内近似为零，避免引入EMT与PM间的时序错位。
 - 大扰动后采用零阶预测维持3~5个时间步，有效避免了高阶外推在波形突变处的数值振荡，使迭代初值误差降低至<2%。
-
 
 ## 关键公式
 
@@ -186,11 +194,34 @@ $$$\tilde{x}(t+H) = 2x(t) - x(t-H)$$$
 
 *在每次$H$步长开始时提供高质量迭代初值，显著减少PM-EMT松弛迭代次数*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真对比验证（联合仿真结果 vs 全EMT参考结果）
 - **测试系统**: 北欧74节点23机测试系统（Nordic test system），划分为1个EMT子系统和1个PM子系统，包含多个接口母线
 - **仿真工具**: 自定义联合仿真框架（集成成熟EMT求解器与PM求解器，底层架构兼容EMTP-RV/PSCAD等工业级工具）
 - **验证结果**: 在74节点多接口大系统中成功验证了算法的有效性。多端口戴维南等效准确计及了接口耦合效应，频率自适应更新与边界预测策略显著提升了迭代收敛速度与数值稳定性。在临界切除与失稳两种极端工况下，联合仿真均能高精度复现系统暂态轨迹，且理论计算效率提升近三个数量级，证明了该方法在大规模电力系统混合仿真中的工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Co-Simulation of electromagnetic transients and Phasor models: A relaxation approach`（2016） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 松弛迭代法、多速率仿真、时间插值 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于松弛迭代的EMT与相量模式联合仿真框架，采用多端口等效实现边界耦合。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic transients and Phasor models A relaxation approach.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

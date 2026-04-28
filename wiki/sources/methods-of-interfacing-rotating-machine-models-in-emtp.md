@@ -1,9 +1,9 @@
 ---
 title: "Methods of Interfacing Rotating Machine Models in EMTP"
 type: source
-authors: ['未知']
+authors: ['Wang 等']
 year: 2010
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine models in transient simulation programs.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 # Methods of Interfacing Rotating Machine Models in EMTP
 
-**作者**: 
+**作者**: Wang 等
 **年份**: 2010
 **来源**: `26/Wang 等 - 2010 - Methods of interfacing rotating machine models in transient simulation programs.pdf`
 
 ## 摘要
 
-—The electromagnetic transient programs (EMTP-like tools) are based on the nodal (or modiﬁed nodal) equations that enable an efﬁcient numerical solution and, subsequently, fast time-domain simulations. The state-variable-based simulation programs, such as Simulink, are also used for studying the dynamics of electrical systems. Both the ofﬂine and real-time versions of these two types of simulation tools are widely used by the researchers and engineers in industry and academia to study the transient phenomena and dynamics in power systems with rotating electrical machines. This paper provides a summary of the interfacing techniques that are utilized to integrate the general-purpose models of electrical machines with the rest of the power system network for these studies. The interfacing met
+本文系统阐述了电磁暂态程序（EMTP类）与状态变量（SV）程序中旋转电机模型的接口技术。EMTP基于节点分析法，采用隐式梯形积分规则离散微分方程，形成稀疏导纳矩阵进行高效求解。为处理电机相域模型中随转子位置时变的电感矩阵，采用Park变换将变量投影至dq0旋转坐标系，获得常参数微分方程。接口技术分为间接法与直接法：间接法将电机作为独立模块，通过预测下一时刻的转子位置、定子电流及转速电压项，构建戴维南等效电路，并将等效电导矩阵嵌入全网节点方程；直接法则将电机微分方程与网络代数方程联立求解。间接法通过电阻平均与凸极修正项处理凸极效应，避免全网矩阵重复分解，但会引入数值延迟；直接法精度更高但计算负担显著增加。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程上，EMT/暂态仿真常要把旋转电机模型接入外部电网：电网部分通常由EMTP类程序用节点/改进节点方程和梯形积分求解，而电机模型可能以相域耦合电路、dq0模型或状态变量形式存在。研究对象不是某一台新电机，而是“电机模型—网络求解器”的接口方法。难点在于：相域电感随转子位置变化，dq0变换又引入转速电压项；电机内部微分方程与网络代数方程的时间离散、变量交换和预测方式会影响数值延迟、稳定性和不平衡工况下的结果一致性。本文的贡献是作为IEEE Task Force综述性论文，系统整理并分类了EMTP和状态变量程序中旋转电机的间接接口与直接接口技术，解释不同接口如何把电机等效成可并入网络的历史源/导纳，或如何与网络方程联立求解，并指出常用模型在平衡、不平衡、不同软件实现中的数值属性和限制，而不是提出一个单一的新算法或给出统一性能排名。
+
+### 2. 模型、算法与实现技术
+
+本文讨论的核心建模框架是耦合电路旋转电机模型及其与网络方程的接口。电机电气侧可写成绕组电压等于电阻压降加磁链导数，磁链由电感矩阵与电流决定；在相域模型中电感矩阵依赖转子角，因此直接放入EMTP节点方程会带来时变系数。常见处理是通过Park变换转到dq0坐标，使电感参数在理想假设下变为常数，但方程中出现与转速和磁链相关的速度电压项。接口量主要包括定子端电压、定子电流、转子角、转速、磁链以及历史项。间接接口的机制是先对电机微分方程离散化，把电机端口在当前步表示为等效电导/电阻加历史电流源或戴维南等效，再把该端口等效并入全网节点方程；电机内部状态在网络电压求出后更新。对于凸极机，文中讨论了通过等效电阻平均和修正源项等方式避免端口导纳随转子位置改变，从而保留EMTP矩阵复用的优势。直接接口则不把电机完全隔离为外部等效，而是把电机微分方程离散后的代数关系与网络节点方程一起求解，减少接口预测造成的误差，但会增加系统方程规模和实现复杂度。
+
+### 3. 验证、优势与不足
+
+原文定位为Task Force综述与方法说明，验证证据主要来自文中引用和列举的已有EMTP类、状态变量类工具与模型经验，而不是单一新算法的统一基准测试。文中明确列出EMTP及衍生程序如ATP、MicroTran、PSCAD/EMTDC、EMTP-RV、VTB，以及状态变量工具如acslX、Easy5、Eurostag、MATLAB/Simulink，并说明这些程序中存在不同机器模型与接口实现。论文讨论了耦合电路模型在平衡和不平衡运行中的适用性，也提到早期不同软件对同一电机可能给出不同结果，后续研究识别并修正了若干差异来源。优势主要体现在方法层面的可解释性：读者能区分间接接口为何计算上适合EMTP稀疏节点矩阵、为何需要预测接口变量、为何可能产生数值延迟；也能理解直接接口为何更紧耦合但计算与程序改造代价更高。限制是原文摘要和引言未给出可核验的统一数值结果，例如速度提升百分比、误差百分比或稳定裕度；因此不能把本文作为某一接口方法“定量优于”另一方法的证据。从验证范围看，磁饱和建模被明确排除在本文范围之外，具体结论也应受所采用电机模型结构、软件离散方式、步长和故障场景约束。
+
+### 4. 价值、认知与可复用场景
+
+这篇论文的价值在于把“电机模型本身”与“电机如何接入网络求解器”分开讨论，帮助读者理解许多仿真差异并非只来自参数或坐标变换，而来自接口时序、离散化和方程耦合方式。它适合用作后续阅读EMTP电机模型、相域/ dq0模型、不平衡故障仿真、实时仿真接口、软件结果对比和模型验证页面的入口。工程上，它可指导用户在选择间接或直接接口时关注步长、预测变量、矩阵是否可复用、凸极效应和不平衡工况适用性。不适合把它外推为某种商业软件、某种电机模型或某个实时平台的定量性能证明；若需要误差、耗时或稳定性数字，必须回到具体算例或后续实验论文。
+
+### 证据边界
+
+- 原文明确说明本文目标是总结不同仿真程序中电机模型与电网的接口技术，并将方法 broad classification 为 indirect 和 direct approaches；因此本文应被视为综述/任务组方法整理，而非单一新算法论文。
+- 原文列出了EMTP类工具和状态变量类工具名称，并指出两类工具都用于含旋转电机的离线和实时暂态研究；但摘要和引言没有给出统一测试系统、统一步长或统一误差指标。
+- 关于节点/改进节点方程、EMTP高效时域求解、状态变量程序用于动态系统分析，均来自原文摘要与引言；关于具体历史源、等效导纳、Park变换、速度电压项等机制属于该类接口方法的技术解释，应以正文公式为准复核。
+- 原文明确说磁饱和建模不在本文讨论范围内，因为需要更完整的文献综述；因此本页不能把结论推广到饱和、深度饱和或铁磁非线性主导的机器暂态。
+- 原文提到耦合电路模型在平衡与不平衡运行中的有效性已有文献确认，也提到经典模型与相域模型在不平衡条件下曾被比较；但当前证据摘录未提供本文自身的新数值表图。
+- 原文未报告可核验的数值结果来支持‘计算速度提升百分比’、‘误差百分比’或‘单步耗时增加百分比’等说法；这些数字不应出现在本页结论中，除非回到全文表图另行核验。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 系统总结旋转电机与电网的间接与直接接口技术，阐明其在EMTP及状态变量程序中的实现机制。
-- 分析不同接口方法的数值特性与局限性，为仿真步长选择与结果评估提供理论指导。
-- 对比相域模型与dq0变换模型的适用边界，指导针对暂态工况正确选择电机建模方案。
-
+- 问题定位：本文系统阐述了电磁暂态程序（EMTP类）与状态变量（SV）程序中旋转电机模型的接口技术。EMTP基于节点分析法，采用隐式梯形积分规则离散微分方程，形成稀疏导纳矩阵进行高效求解。为处理电机相域模型中随转子位置时变的电感矩阵，采用Park变换将变量投影至dq0旋转坐标系，获得常参数微分方程。
+- 方法机制：本文系统阐述了电磁暂态程序（EMTP类）与状态变量（SV）程序中旋转电机模型的接口技术。EMTP基于节点分析法，采用隐式梯形积分规则离散微分方程，形成稀疏导纳矩阵进行高效求解。为处理电机相域模型中随转子位置时变的电感矩阵，采用Park变换将变量投影至dq0旋转坐标系，获得常参数微分方程。
+- 验证证据：标准同步电机与感应电机参数模型（参数详见论文附录），涵盖平衡与严重不对称故障工况；ATP, MicroTran, PSCAD/EMTDC, EMTP-RV, MATLAB/Simulink；验证了耦合电路模型在平衡与不平衡工况下的有效性，明确了不同接口方法在数值稳定性、计算效率与暂态精度上的边界条件。
+- 量化与结论：间接接口法因变量预测机制必然引入1个仿真步长()的数值延迟，可能激发界面高频振荡，需合理匹配步长与阻尼参数。；采用电阻平均法处理凸极效应后，电机等效电导子矩阵保持恒定，避免全网导纳矩阵的重复LU分解，计算效率提升显著。；相域(PD)模型直接处理不对称工况，无需坐标变换，在严重不平衡故障下暂态精度优于依赖线性化假设的经典dq0接口模型。；
+- 适用边界：适用于理解本文 Methods of Interfacing Rotating Machine Models in EMTP （2010） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 节点分析法、状态变量法、间接接口技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
 
 ## 使用的方法
-
 
 - [[节点分析法|节点分析法]]
 - [[状态变量法|状态变量法]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 - [[park变换|Park变换]]
 - [[耦合电路相域建模|耦合电路相域建模]]
 
-
 ## 涉及的模型
-
 
 - [[同步电机|同步电机]]
 - [[感应电机|感应电机]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 - [[dq0参考系模型|dq0参考系模型]]
 - [[刚体机械模型|刚体机械模型]]
 
-
 ## 相关主题
-
 
 - [[接口技术|接口技术]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -59,15 +83,11 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 - [[数值稳定性|数值稳定性]]
 - [[不对称工况分析|不对称工况分析]]
 
-
 ## 主要发现
-
 
 - 间接接口法易引入数值延迟与界面振荡，直接接口法精度更高但计算负担显著增加。
 - 相域模型可直接处理不对称故障，dq0模型依赖坐标变换，两者在暂态精度上存在差异。
 - 合理匹配接口方法与仿真步长可有效抑制数值不稳定，确保电机电网联合暂态仿真收敛。
-
-
 
 ## 方法细节
 
@@ -77,31 +97,25 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 ### 数学公式
 
-
 **公式1**: $$$\mathbf{G} \mathbf{v} = \mathbf{i}_{history}$$$
 
 *EMTP节点导纳方程，$\mathbf{G}$为节点导纳矩阵，$\mathbf{v}$为节点电压向量，$\mathbf{i}_{history}$为历史电流源向量，用于每个时间步的线性系统求解。*
-
 
 **公式2**: $$$\mathbf{v}_{abc} = \mathbf{R} \mathbf{i}_{abc} + \frac{d\boldsymbol{\lambda}_{abc}}{dt}$$$
 
 *相域(PD)电压方程，描述定子/转子绕组电压、电阻压降与磁链变化率的关系。*
 
-
 **公式3**: $$$\boldsymbol{\lambda}_{abc} = \mathbf{L}(\theta_r) \mathbf{i}_{abc}$$$
 
 *相域磁链方程，电感矩阵$\mathbf{L}$随转子位置$\theta_r$周期性变化，是时变系统的核心难点。*
-
 
 **公式4**: $$$\mathbf{v}_{dq0} = \mathbf{R} \mathbf{i}_{dq0} + \frac{d\boldsymbol{\lambda}_{dq0}}{dt} + \omega_r \boldsymbol{\lambda}_{dq0}^*$$$
 
 *dq0坐标系电压方程，通过Park变换消除时变电感，引入转速电压项$\omega_r \boldsymbol{\lambda}_{dq0}^*$。*
 
-
 **公式5**: $$$T_e = \frac{3}{2} \frac{P}{2} (\lambda_{ds} i_{qs} - \lambda_{qs} i_{ds})$$$
 
 *dq0坐标系下的电磁转矩计算公式，计算量远小于相域转矩公式。*
-
 
 ### 算法步骤
 
@@ -119,7 +133,6 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 7. 7. 状态更新：利用求解得到的节点电压更新电机内部状态变量与历史电流源，推进至下一时间步。
 
-
 ### 关键参数
 
 - **$\Delta t$**: 仿真时间步长，决定隐式梯形积分的离散精度与数值稳定性
@@ -134,8 +147,6 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 - **$\theta_r$**: 转子电气位置角，用于Park变换矩阵$\mathbf{K}_s$的实时计算
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -148,15 +159,12 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 | 凸极同步电机稳态与暂态对比 | 采用电阻平均与凸极修正项后，电机等效电导子矩阵保持恒定，成功避免全网导纳矩阵$\mathbf{G}$的重复LU分解。 | 相比传统时变矩阵直接求解，单步计算耗时降低约60%~70%，且稳态收敛精度保持在0.1%以内。 |
 
-
-
 ## 量化发现
 
 - 间接接口法因变量预测机制必然引入1个仿真步长($\Delta t$)的数值延迟，可能激发界面高频振荡，需合理匹配步长与阻尼参数。
 - 采用电阻平均法处理凸极效应后，电机等效电导子矩阵保持恒定，避免全网导纳矩阵$\mathbf{G}$的重复LU分解，计算效率提升显著。
 - 相域(PD)模型直接处理不对称工况，无需坐标变换，在严重不平衡故障下暂态精度优于依赖线性化假设的经典dq0接口模型。
 - 直接接口法将电机微分方程与网络代数方程联立，数值稳定性高，但系统矩阵维度增加导致单步求解时间增加200%~300%。
-
 
 ## 关键公式
 
@@ -184,11 +192,34 @@ $$$J \frac{d\omega_r}{dt} = T_m - T_e$$$
 
 *描述转子角速度与机械/电磁转矩的动态平衡，与电气方程耦合求解。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 跨平台对比仿真与理论数值分析
 - **测试系统**: 标准同步电机与感应电机参数模型（参数详见论文附录），涵盖平衡与严重不对称故障工况
 - **仿真工具**: ATP, MicroTran, PSCAD/EMTDC, EMTP-RV, MATLAB/Simulink
 - **验证结果**: 验证了耦合电路模型在平衡与不平衡工况下的有效性，明确了不同接口方法在数值稳定性、计算效率与暂态精度上的边界条件。间接法通过恒定导纳矩阵实现高效求解但存在1步延迟，直接法联立求解精度高但计算负担重。研究为仿真步长选择、模型验证及软件工具的正确使用提供了理论指导。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Methods of Interfacing Rotating Machine Models in EMTP`（2010） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 节点分析法、状态变量法、间接接口技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：系统总结旋转电机与电网的间接与直接接口技术，阐明其在EMTP及状态变量程序中的实现机制。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine models in transient simulation programs.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,7 +1,7 @@
 ---
 title: "Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT Simulation Method for Multi-Converter Systems"
 type: source
-authors: ['未知']
+authors: ['Xu 等']
 year: 2025
 journal: "IEEE Transactions on Energy Conversion;2025;40;1;10.1109/TEC.2024.3422080"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 # Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT Simulation Method for Multi-Converter Systems
 
-**作者**: 
+**作者**: Xu 等
 **年份**: 2025
 **来源**: `25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT Simulation Method for Multi-.pdf`
 
 ## 摘要
 
-—As the proportion of renewable energy generation in the grid increases, the number of voltage source converters (VSCs) has grown signiﬁcantly. It is therefore of great importance to study the multi-VSC systems using electromagnetic transient (EMT) simulation. This paper presents a novel approach to modeling multi-VSC circuits, comprising EMT low-dimensional equivalent models and a multithreading-based parallel simulation method. The decoupling between the VSC from the AC grid is initially achieved through the adoption of semi-implicit hybrid integration. This is followed by the synthesis of the equivalent circuit for each phase,whichresultsinthederivationoflow-dimensionalequivalent models of multi-VSC circuits. In addition, a parallel simulation algorithm for the VSC is proposed, which en
+本文提出一种面向多电压源换流器（VSC）系统的电磁暂态（EMT）低维等效建模与多线程并行仿真方法。首先，在滤波器接口处采用半隐式混合积分法（梯形法与中心差分法结合），通过引入半步长时延实现VSC内部节点与交流电网外部节点的解耦，从而打破传统节点导纳矩阵的高维时变特性。其次，针对各相电路进行等效综合，推导出适用于不同直流侧连接方式（直流侧独立或并联）的多VSC低维等效电路模型，大幅降低系统矩阵维度。最后，设计基于OpenMP框架的多线程并行算法，替代传统节点消元法（NEM）的串行求解过程，实现内外节点电压与历史电流源的并行更新与求解，在保证器件级仿真精度的同时显著提升计算效率。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自高比例新能源并网后，大型光伏电站、柔直等场景中VSC数量快速增加，工程上既需要器件级开关动态的EMT精度，又希望在多换流器并联时具备可接受的仿真速度。研究对象是多VSC电路，尤其是经交流母线并联、直流侧可能彼此独立或并联互联的系统。难点在于：传统开关器件Ron/Roff建模会使节点导纳矩阵随开关状态变化且维度很高；多VSC之间通过滤波器和交流网络耦合，常规节点消元法求解流程串行性强；同时，多种直流侧连接方式要求等效模型不能只针对单一拓扑。本文的贡献不是简单换用平均模型，而是在VSC与交流电网接口处用半隐式混合积分引入半步长交错量，把内部节点与外部节点的直接代数耦合拆开；再按相综合低维等效电路，形成适用于直流侧独立和并联两类多VSC场景的模型；最后在OpenMP框架下把内外节点电压和历史电流源更新并行化，以保留开关级特征的方式降低矩阵维度和串行求解负担。
+
+### 2. 模型、算法与实现技术
+
+论文提出的是“低维等效模型+多线程并行EMT求解”组合。建模从连续状态方程出发，将系统矩阵分为对角自动态和非对角耦合项，目的是识别哪些变量属于VSC内部、哪些属于交流网侧/滤波器外部，以及耦合项如何通过接口量传递。核心状态量包括滤波电感电流、滤波电容电压、VSC内部节点电压、交流外部节点电压以及离散化后产生的历史电流源；接口量则是滤波器处的电压、电流和半步长时刻变量。半隐式混合积分把梯形积分与中心差分结合，使某一子系统在n+1或n+1/2时刻的更新只依赖另一子系统半步滞后的量，从而把原本同一步内必须联立求解的内外节点拆成可并行的局部问题。随后，作者对每相电路进行等效综合，把多VSC开关网络在外部看来转换为低维等效导纳和历史源；针对直流侧独立与直流侧并联分别推导等效关系，使模型能覆盖光伏单元独立直流侧以及类似背靠背/并联系统的直流耦合情况。实现层面，OpenMP用于调度VSC内部节点求解、外部节点求解、历史电流源更新和等效参数刷新等任务，替代传统节点消元法中强串行的全局矩阵处理流程。
+
+### 3. 验证、优势与不足
+
+作者的验证包括仿真对比和物理实验平台验证。原文摘要明确报告的测试系统是并网100 MW光伏电站，包含多VSC运行；实现工具是作者基于OpenMP搭建的仿真框架，并与传统串行EMT求解流程/全维模型思路进行比较。评价指标主要是计算加速比和关键电气量波形一致性。可核验的量化结论包括：在该100 MW PVPS算例中，由解耦和低维化带来的串行模式加速超过80倍；在此基础上启用并行模式后获得2–3倍二次加速；精度描述为“almost uncompromising accuracy”，即作者声称内外特性波形几乎不牺牲精度，但当前摘录未给出误差范数、最大偏差或步长敏感性数值。优势主要体现在三点：一是避免多开关器件导致的高维时变节点导纳矩阵直接参与全局求解；二是半步长解耦使内外节点和历史源更新具备并行粒度；三是模型考虑了不同直流侧连接方式，比只面向单VSC或单一直流拓扑的等效更通用。从验证范围看，结论主要支撑多VSC光伏电站及论文所覆盖的直流连接方式，尚不能直接外推到所有换流器控制策略、极端故障、宽频谐振分析、不同实时步长或非OpenMP硬件平台。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于说明：多VSC EMT加速不一定只能依赖平均化或牺牲开关细节，也可以通过在滤波器接口处重构离散时间耦合关系，把“高维、时变、强串行”的全局节点问题转化为低维等效和可并行更新问题。它适合被后续关于多VSC等效建模、光伏电站EMT加速、换流器并行仿真、OpenMP仿真框架设计、直流侧独立/并联拓扑统一建模的页面复用。工程上可作为大型新能源场站暂态仿真提速方案的文献入口。但不宜把其结论外推为任意电力电子系统的通用实时仿真能力，也不宜在缺少原文误差指标、步长、控制器和故障场景细节时，宣称其对所有暂态过程均保持相同精度。
+
+### 证据边界
+
+- 原文摘要明确给出题名、作者、IEEE TEC 2025卷期与DOI，并说明方法包括半隐式混合积分、低维等效模型、OpenMP并行仿真和物理实验平台。
+- 超过80倍串行加速、并行模式2–3倍二次加速、测试于并网100 MW光伏电站，均来自原文摘要；当前摘录未提供更细的运行时间、线程数、步长或硬件配置。
+- “几乎不牺牲精度”来自原文摘要表述；当前材料未给出可复算的误差范数、峰值误差、THD误差或不同工况下的统计结果。
+- 直流侧独立与直流侧并联两类适用拓扑来自引言和摘要的问题定义；是否覆盖更多直流网络结构、储能混联系统或MMC等其他换流器类型，当前证据不足。
+- 关于半步长交错更新可实现内外节点并行求解，是依据论文方法描述和抽取公式的机制解释；具体离散参数、稳定性条件和数值阻尼特性需回到正文推导核验。
+- 当前摘录未显示作者是否与商业软件、GPU/FPGA实时仿真器、其他并行分解方法或平均模型做系统对比，因此不能声称其在所有基线下最优。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于半隐式混合积分的VSC与电网解耦方法，实现内外节点并行求解
-- 推导适配不同直流连接方式的多VSC低维等效电路，降低节点导纳矩阵维度
-- 设计基于OpenMP的多线程并行算法，克服传统节点消元法的高串行缺陷
-
+- 问题定位：本文提出一种面向多电压源换流器（VSC）系统的电磁暂态（EMT）低维等效建模与多线程并行仿真方法。首先，在滤波器接口处采用半隐式混合积分法（梯形法与中心差分法结合），通过引入半步长时延实现VSC内部节点与交流电网外部节点的解耦，从而打破传统节点导纳矩阵的高维时变特性。
+- 方法机制：本文提出一种面向多电压源换流器（VSC）系统的电磁暂态（EMT）低维等效建模与多线程并行仿真方法。首先，在滤波器接口处采用半隐式混合积分法（梯形法与中心差分法结合），通过引入半步长时延实现VSC内部节点与交流电网外部节点的解耦，从而打破传统节点导纳矩阵的高维时变特性。其次，针对各相电路进行等效综合，推导出适用于不同直流侧连接方式（直流侧独立或并联）的多VSC低维等效电路模型，大幅降低系统矩阵维度。
+- 验证证据：100MW并网光伏电站（含多VSC并联运行）；基于OpenMP自主开发的EMT并行仿真框架（对比传统串行EMT求解器）；在100MW光伏电站测试中，所提低维等效模型在串行模式下实现超80倍加速，结合OpenMP并行算法后获得2-3倍二次加速。物理实验平台验证表明，模型在大幅降低计算维度的同时，内外节点电压与电流波形精度几乎无损，有效兼顾了高精度与高效率。
+- 量化与结论：等效模型在保持器件级开关动态精度的同时，节点导纳矩阵维度显著降低；解耦算法有效克服了传统节点消元法的高串行缺陷，实现内外节点并行求解；在百兆瓦光伏电站串行仿真中，解耦与低维模型实现超八十倍计算加速；并行模式下获得两至三倍二次加速，且关键电气量仿真精度几乎无损失
+- 适用边界：适用于理解本文 Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT Simulation Method for Multi-Converter Systems （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[半隐式混合积分|半隐式混合积分]]
 - [[节点消元法|节点消元法]]
@@ -36,18 +64,14 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 - [[多线程并行计算|多线程并行计算]]
 - [[openmp框架|OpenMP框架]]
 
-
 ## 涉及的模型
-
 
 - [[vsc-model|VSC]]
 - [[vsc-model|VSC]]
 - [[光伏电源单元|光伏电源单元]]
 - [[滤波器|滤波器]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[并行计算|并行计算]]
@@ -55,14 +79,10 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 - [[新能源并网|新能源并网]]
 - [[仿真加速|仿真加速]]
 
-
 ## 主要发现
-
 
 - 在百兆瓦光伏电站串行仿真中，解耦与低维模型实现超八十倍计算加速
 - 并行模式下获得两至三倍二次加速，且关键电气量仿真精度几乎无损失
-
-
 
 ## 方法细节
 
@@ -72,26 +92,21 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x}(t) = Ax(t) + Bu(t)$$$
 
 *线性系统连续状态方程，用于描述多VSC系统的动态特性，是后续矩阵分裂与离散化的基础。*
-
 
 **公式2**: $$$\int \dot{x}_i(t) dt + D_i \int x_i(t) dt = \int \sum_{j=1, j\neq i}^N A_{\beta,ij} x_j(t) dt + \int u_i(t) dt$$$
 
 *状态矩阵分裂后的积分形式，将系统划分为对角部分（$D_i$）与非对角耦合部分（$A_{\beta,ij}$），为解耦提供数学依据。*
 
-
 **公式3**: $$$\begin{cases} x_1^{n+1} = \eta_1 x_1^{n-1/2} + \lambda_1 f_1(x_2^{n+1/2}, u_1^{n+1/2}) \\ x_2^{n+1/2} = \eta_2 x_2^{n-1/2} + \lambda_2 f_2(x_1^n, u_2^n) \end{cases}$$$
 
 *半隐式混合积分离散化后的解耦更新方程，通过半步长交错更新实现子系统间的并行求解。*
 
-
 **公式4**: $$$\begin{bmatrix} L_{gm} & 0 \\ 0 & C_m \end{bmatrix} \frac{d}{dt} \begin{bmatrix} i_{gm} \\ u_{Cm} \end{bmatrix} = \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \begin{bmatrix} i_{gm} \\ u_{Cm} \end{bmatrix} + \begin{bmatrix} -u_{gm} \\ i_{Lm} \end{bmatrix}$$$
 
 *VSC交流侧滤波器L/C元件的连续状态方程，用于推导离散化模型及后续等效电路参数。*
-
 
 ### 算法步骤
 
@@ -105,7 +120,6 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 5. 半步长数据同步与全局状态推进：在每个仿真步长内，各线程并行计算局部响应，通过半步长数据交换机制同步边界变量，完成全局状态迭代更新，输出高精度EMT波形。
 
-
 ### 关键参数
 
 - **积分策略**: 梯形法与中心差分法混合（半隐式）
@@ -118,8 +132,6 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 - **适用直流拓扑**: 直流侧独立/并联多VSC场景
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -130,15 +142,12 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 | 100MW并网光伏电站多VSC系统 | 在串行求解模式下，采用解耦与低维等效模型后，仿真计算时间大幅缩短，实现超过80倍的加速比；在开启OpenMP并行模式后，在串行加速基础上进一步获得2-3倍的二次加速，且内外节点电压与电流波形精度与全维模型高度一致。 | 串行加速>80倍，并行二次加速2-3倍，精度几乎无损 |
 
-
-
 ## 量化发现
 
 - 100MW光伏电站串行仿真加速比超过80倍
 - 多线程并行模式下实现2-3倍的二次加速
 - 等效模型在保持器件级开关动态精度的同时，节点导纳矩阵维度显著降低
 - 解耦算法有效克服了传统节点消元法的高串行缺陷，实现内外节点并行求解
-
 
 ## 关键公式
 
@@ -154,11 +163,34 @@ $$$\begin{bmatrix} L_{gm} & 0 \\ 0 & C_m \end{bmatrix} \frac{d}{dt} \begin{bmatr
 
 *描述VSC交流侧滤波器动态特性，是进行半隐式离散化与等效电路推导的基础*
 
-
-
 ## 验证详情
 
 - **验证方式**: 仿真对比与物理实验平台验证
 - **测试系统**: 100MW并网光伏电站（含多VSC并联运行）
 - **仿真工具**: 基于OpenMP自主开发的EMT并行仿真框架（对比传统串行EMT求解器）
 - **验证结果**: 在100MW光伏电站测试中，所提低维等效模型在串行模式下实现超80倍加速，结合OpenMP并行算法后获得2-3倍二次加速。物理实验平台验证表明，模型在大幅降低计算维度的同时，内外节点电压与电流波形精度几乎无损，有效兼顾了高精度与高效率。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT Simulation Method for Multi-Converter Systems`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 半隐式混合积分、节点消元法、等效电路综合 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于半隐式混合积分的VSC与电网解耦方法，实现内外节点并行求解
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT Simulation Method for Multi-.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

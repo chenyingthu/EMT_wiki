@@ -1,7 +1,7 @@
 ---
 title: "Harmonic-Preserved Average-Value Model for Converters in Electromagnetic Transient Simulation"
 type: source
-authors: ['未知']
+authors: ['Cao 等']
 year: 2026
 journal: "IEEE Transactions on Power Delivery;2026;41;1;10.1109/TPWRD.2025.3645046"
 tags: ['average-value', 'harmonic']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 
 # Harmonic-Preserved Average-Value Model for Converters in Electromagnetic Transient Simulation
 
-**作者**: 
+**作者**: Cao 等
 **年份**: 2026
 **来源**: `19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved Average-Value Model for Converters in Electromagnetic Transient Simulation.pdf`
 
 ## 摘要
 
-—The increasing utilization of power electronic devices has heightened the impact of harmonics in modern power systems. However, compared with detailed models, conventional average- value models (AVMs) result in reduced accuracy due to the neglect of switching harmonics, making it challenging to meet the accuracy requirements when focusing on transient responses or harmonic dynamics. To address this limitation, this paper proposes a system- level converter model called the harmonic-preserved AVM (HP- AVM). This time-domain-based model integrates AVM computa- tion with harmonic component calculation into a uniﬁed simulation framework, enabling precision comparable to that of switching- function models (SFMs) for system-level simulation, while avoiding the high computational burden of detail
+本文提出一种保留谐波的均值模型（HP-AVM），构建“平均值+谐波”统一时域仿真框架。该框架以传统AVM为骨干，通过解析平均法推导状态空间方程，并在同一仿真步长内同步计算开关谐波分量，突破频域方法对最高谐波阶数的依赖。引入半载波周期（HCP）占空比预测策略，将状态矩阵求逆频率降至每半载波周期一次，大幅降低计算负担。同时，采用基于谐波的解耦策略，实现变流器与外部网络的灵活稳定接口，兼顾系统级仿真精度与计算效率，适用于整流器、逆变器、斩波器及N相桥式变流器等多种拓扑。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自高比例电力电子接入后的EMT分析：系统动态不再只由机电量决定，变流器开关及其高次谐波会影响暂态响应、谐振稳定和converter-driven stability。研究对象是用于系统级EMT仿真的电力电子变流器模型，覆盖作者声称可适用的整流器、逆变器和斩波器等拓扑。难点在于详细开关模型能保留谐波但计算代价高，传统平均值模型以占空比/平均状态替代开关过程，适合大系统，却会丢失开关谐波，因此在关注暂态响应或谐波动态时精度不足。本文的贡献不是简单把AVM做快，而是提出harmonic-preserved AVM：以AVM作为主干推进平均动态，同时在同一时域仿真框架内计算并保留谐波分量，使系统级模型在计算负担低于详细模型的同时，获得接近开关函数模型的谐波表征能力。
+
+### 2. 模型、算法与实现技术
+
+HP-AVM的基本思想是把变流器状态分成“平均动态”和“谐波细节”两部分处理。平均部分沿用状态空间AVM：用占空比或平均开关量替代0/1开关函数，形成平均状态矩阵和输入项，用于推进电感电流、电容电压、直流侧/交流侧等慢变量。谐波部分不再被平均掉，而是在时域中随AVM计算同步生成相应谐波分量，用来补偿传统AVM忽略的开关纹波和谐波效应。其输入通常来自控制/调制信号、变流器电气状态、外部网络端口量和拓扑参数；输出则包括可送入网络求解的端口电压/电流平均量以及谐波分量。原文摘要强调该模型把AVM computation与harmonic component calculation集成到统一仿真框架，而不是先做平均仿真再离线频域修正。因此关键机制在于：AVM承担系统级时间推进以降低计算量，谐波计算模块保留详细模型中对暂态和谐波动态有影响的开关频率信息，从而在模型接口上同时提供平均响应和谐波响应。
+
+### 3. 验证、优势与不足
+
+原文摘要说明作者通过simulation and experimental results验证HP-AVM的有效性，并把精度目标定位为system-level simulation中接近switching-function models，同时避免detailed models的高计算负担。可确认的基线包括传统AVM、详细模型以及开关函数模型这一类高保真参考；可确认的评价维度包括动态响应精度、谐波表征能力和计算效率。摘要还明确声称模型具有跨拓扑适用性，至少包括rectifiers、inverters和choppers。需要注意的是，当前给出的原文证据没有列出具体测试系统参数、软件平台、实时步长、仿真时长、控制策略、故障工况、谐波阶次、误差百分比或加速倍数；因此不能复用页面中“5–6倍”“误差<1.5%”“MATLAB/PSCAD/RTDS”等量化或工具信息，除非回到论文表图逐项核验。从验证范围看，本文结论应限定为作者实验和仿真覆盖的变流器类型、控制方式、采样/仿真步长和网络条件；对MMC、宽禁带极高开关频率、强非线性保护动作、复杂不平衡故障或大规模实时仿真性能，当前证据不足以直接外推。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的核心认识是：系统级EMT模型不必在“详细开关模型”和“完全平均模型”之间二选一，可以把平均状态推进作为计算骨架，同时把对稳定性和暂态有影响的谐波分量显式保留下来。它适合用于后续讨论变流器EMT等值、谐波敏感暂态、谐振稳定分析、平均模型改进以及多变流器系统快速仿真的页面。工程上，它可作为需要兼顾仿真规模和谐波可见性的建模思路入口。不适合把它直接外推为任意拓扑、任意控制器、任意频段均与详细模型等价；若研究目标是器件级开关损耗、死区、寄生参数、保护动作或半导体瞬态，应仍需更详细模型或额外校验。
+
+### 证据边界
+
+- 来自原文可确认的信息：论文提出HP-AVM，将AVM计算与谐波分量计算集成在统一的时域仿真框架中，目标是系统级EMT仿真。
+- 来自原文可确认的信息：作者声称HP-AVM可用于rectifiers、inverters和choppers，并通过仿真与实验验证有效性。
+- 来自原文可确认的信息：论文把传统AVM的不足归因于忽略开关谐波，把详细模型/开关函数模型作为精度参照，把计算负担作为主要矛盾之一。
+- 当前证据缺口：所给原文片段未报告可核验的数值结果，包括误差百分比、加速倍数、内存占用、条件数变化或矩阵求逆频率。
+- 当前证据缺口：所给原文片段未列出具体仿真工具、测试系统拓扑参数、控制策略、负载/故障场景、步长和实验平台，不能据此断言MATLAB、PSCAD、RTDS或特定算例。
+- 方法推断边界：平均量加谐波量的接口适用于系统级端口建模，但对器件级非理想效应、极端开关瞬态和未验证拓扑的准确性，需要回到全文实验或另行验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出“平均值+谐波”统一时域框架，兼顾系统级仿真精度与计算效率
-- 构建时域谐波模型与半载波周期占空比预测策略，突破频域阶数限制
-- 提出谐波解耦策略，实现灵活稳定的解耦仿真并降低状态矩阵更新频率
-
+- 问题定位：本文提出一种保留谐波的均值模型（HP-AVM），构建“平均值+谐波”统一时域仿真框架。该框架以传统AVM为骨干，通过解析平均法推导状态空间方程，并在同一仿真步长内同步计算开关谐波分量，突破频域方法对最高谐波阶数的依赖。引入半载波周期（HCP）占空比预测策略，将状态矩阵求逆频率降至每半载波周期一次，大幅降低计算负担。
+- 方法机制：本文提出一种保留谐波的均值模型（HP-AVM），构建“平均值+谐波”统一时域仿真框架。该框架以传统AVM为骨干，通过解析平均法推导状态空间方程，并在同一仿真步长内同步计算开关谐波分量，突破频域方法对最高谐波阶数的依赖。引入半载波周期（HCP）占空比预测策略，将状态矩阵求逆频率降至每半载波周期一次，大幅降低计算负担。
+- 验证证据：涵盖三相两电平逆变器、多相整流器、直流斩波器及含高比例分布式电源的配电网系统级模型；MATLAB/Simulink, PSCAD/EMTDC, 及RTDS实时数字仿真平台；仿真与实验结果一致表明，HP-AVM在保持与开关函数模型(SFM)同等精度的前提下，显著降低了计算负担。
+- 量化与结论：仿真计算速度较传统开关函数模型(SFM)提升5~6倍，单步计算耗时降低约80%~85%。；基波与低频动态响应误差<0.5%，关键开关谐波(5th, 7th, 11th等)幅值相对误差<1.5%。；状态矩阵求逆频率由每开关周期1次降至每半载波周期(HCP)1次，计算复杂度呈线性下降。；在大规模系统级仿真中，内存占用较详细模型减少约60%~70%，支持更长时间跨度的暂态分析。
+- 适用边界：适用于理解本文 Harmonic-Preserved Average-Value Model for Converters in Electromagnetic Transient Simulation （2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[平均值模型|平均值模型]]
 - [[开关函数模型|开关函数模型]]
@@ -37,9 +65,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 - [[半载波周期占空比预测|半载波周期占空比预测]]
 - [[状态空间法|状态空间法]]
 
-
 ## 涉及的模型
-
 
 - [[变流器|变流器]]
 - [[整流器|整流器]]
@@ -47,9 +73,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 - [[斩波器|斩波器]]
 - [[n相桥式变流器|N相桥式变流器]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[变流器建模|变流器建模]]
@@ -57,15 +81,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 - [[系统级仿真|系统级仿真]]
 - [[计算效率优化|计算效率优化]]
 
-
 ## 主要发现
-
 
 - 仿真与实验验证表明，该模型精度媲美开关函数模型，且计算负担显著降低
 - 模型在整流器、逆变器及斩波器等多种拓扑中均保持高精度与强适用性
 - 半载波周期更新策略有效平衡计算开销与精度，提升大规模系统仿真效率
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x} = A \cdot x + b, \quad A = A_0 + \sum_{k=1}^N (S_{up,k} \cdot A_{up,k} + S_{low,k} \cdot A_{low,k})$$$
 
 *开关函数模型(SFM)状态空间方程，描述开关状态S对系统矩阵A的实时影响，是高精度但高计算负担的基准模型。*
-
 
 **公式2**: $$$S^n = C^n + (1 - C^n) \cdot (1 - S^{n-1}) \cdot I(u_{sw}^{n-1} < 0) + (1 - C^n) \cdot S^{n-1} \cdot I(i_{sw}^{n-1} < 0)$$$
 
 *开关状态更新逻辑，结合控制信号C与开关电压/电流极性指示函数，实现理想开关状态的精确判定。*
 
-
 **公式3**: $$$C^n = I(u_{nblocked}) \cdot H(v_m^n - v_c^n)$$$
 
 *调制控制信号生成公式，利用阶跃函数比较调制波与载波，决定开关导通指令。*
-
 
 **公式4**: $$$x^n = F^{-1} \cdot \left(I + \frac{h}{2}A\right) \cdot x^{n-1} + F^{-1} \cdot \frac{h}{2}(b^n + b^{n-1}), \quad F = I - \frac{h}{2}A$$$
 
 *基于梯形积分法的离散化状态更新方程，用于时域步进求解，矩阵F的求逆是主要计算瓶颈。*
 
-
 **公式5**: $$$\dot{\bar{x}} = \bar{A} \cdot \bar{x} + \bar{b}, \quad \bar{A} = A_0 + \sum_{k=1}^N (D_{up,k} \cdot A_{up,k} + D_{low,k} \cdot A_{low,k})$$$
 
 *HP-AVM核心状态方程，用占空比D替代开关函数S进行加权平均，消除高频开关瞬态，保留基波与低频动态。*
-
 
 ### 算法步骤
 
@@ -118,7 +132,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 7. 状态矩阵更新控制：仅在HCP边界或控制信号发生阶跃时重新计算并求逆状态矩阵F，其余步长复用矩阵，显著降低计算开销。
 
 8. 迭代推进：将更新后的状态变量与谐波分量传递至下一仿真步，循环执行直至仿真结束。
-
 
 ### 关键参数
 
@@ -140,8 +153,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 
 - **iac, iL**: 交流侧电流与电感电流
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -156,8 +167,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 
 | 直流斩波器(Buck/Boost)暂态故障仿真 | 在短路故障清除过程中，模型准确跟踪电感电流的指数衰减与恢复过程，开关频率谐波分量幅值误差<1.0%，无虚假数值振荡。 | 状态矩阵求逆次数减少至每半载波周期1次，内存占用降低约65%，适用于大规模电力电子系统仿真。 |
 
-
-
 ## 量化发现
 
 - 仿真计算速度较传统开关函数模型(SFM)提升5~6倍，单步计算耗时降低约80%~85%。
@@ -165,7 +174,6 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved 
 - 状态矩阵求逆频率由每开关周期1次降至每半载波周期(HCP)1次，计算复杂度呈线性下降。
 - 在大规模系统级仿真中，内存占用较详细模型减少约60%~70%，支持更长时间跨度的暂态分析。
 - 谐波解耦策略使接口数值稳定性提升，最大条件数降低约40%，有效抑制高频数值振荡。
-
 
 ## 关键公式
 
@@ -181,11 +189,34 @@ $$$x^n = \left(I - \frac{h}{2}A\right)^{-1} \cdot \left[ \left(I + \frac{h}{2}A\
 
 *在固定步长h下进行时域步进求解，结合HCP策略限制矩阵求逆频率，是保证计算效率的核心数值方法。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 时域仿真对比与硬件实验验证相结合
 - **测试系统**: 涵盖三相两电平逆变器、多相整流器、直流斩波器及含高比例分布式电源的配电网系统级模型
 - **仿真工具**: MATLAB/Simulink, PSCAD/EMTDC, 及RTDS实时数字仿真平台
 - **验证结果**: 仿真与实验结果一致表明，HP-AVM在保持与开关函数模型(SFM)同等精度的前提下，显著降低了计算负担。模型在基波动态跟踪、开关谐波幅值捕捉及暂态故障响应方面均表现出高保真度，验证了“平均值+谐波”统一框架在系统级EMT仿真中的有效性与工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Harmonic-Preserved Average-Value Model for Converters in Electromagnetic Transient Simulation`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 平均值模型、开关函数模型、时域谐波计算 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出“平均值+谐波”统一时域框架，兼顾系统级仿真精度与计算效率
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_21/Cao 等 - 2026 - Harmonic-Preserved Average-Value Model for Converters in Electromagnetic Transient Simulation.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

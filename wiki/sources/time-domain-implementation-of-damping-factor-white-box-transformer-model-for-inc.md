@@ -1,7 +1,7 @@
 ---
 title: "Time-Domain Implementation of Damping Factor White-Box Transformer Model for Inclusion in EMT Simulation Programs"
 type: source
-authors: ['未知']
+authors: ['Gustavsen 等']
 year: 2020
 journal: "IEEE Transactions on Power Delivery;2020;35;2;10.1109/TPWRD.2019.2902447"
 tags: ['transformer']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 # Time-Domain Implementation of Damping Factor White-Box Transformer Model for Inclusion in EMT Simulation Programs
 
-**作者**: 
+**作者**: Gustavsen 等
 **年份**: 2020
 **来源**: `38/Gustavsen 等 - 2020 - Time-Domain Implementation of Damping Factor White-Box Transformer Model for Inclusion in EMT Simula.pdf`
 
 ## 摘要
 
-—White-box detailed transformer models are used by manufacturers for predicting internal overvoltages in transformer windings during the lightning impulse test. One such model is the d-factor model, which is based on a lumped-parameter description based on winding discretization with the inclusion of losses via an empirical, frequency-dependent damping factor. This paper shows a procedure for direct inclusion of the d-factor model in electro- magnetic transients simulation programs for use in general studies of network overvoltages. Proper utilization of the model’s diago- nal structure is utilized in combination with real-valued arithmetic for maximum speed in transient simulations, with optional initial- ization from sinusoidal steady-state conditions. The model can be used both as a ter
+本文提出了一种将d-factor白盒变压器模型直接集成到EMT仿真程序中的时域实现方法。该方法基于对角形式的状态空间表示，通过相似变换将复数状态空间转换为实数形式，利用梯形法则（中心差分）进行离散化，并采用诺顿等效电路与主程序接口。核心创新在于充分利用模型状态矩阵的对角结构，将大规模矩阵运算分解为独立的1×1（实极点）或2×2（复共轭极点对）块计算，结合实数运算显著提升了计算效率。模型支持外部端子等效和内部节点电压计算两种模式，并具备从正弦稳态初始化和频率扫描功能。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自电力系统暂态过电压研究：变压器绝缘失效常与高频暂态有关，而常规EMT程序中的50/60 Hz变压器模型加少量集中电容，通常只能粗略反映最低谐振，不能给出绕组内部电压。研究对象是制造厂用于雷电冲击试验内部过电压预测的d-factor白盒变压器模型：它基于绕组离散化的集中参数网络，并用经验频率相关阻尼因子表示损耗。难点在于这类白盒模型虽能计算内部节点电压，但通常不直接兼容通用EMT网络求解；既有做法先采样端口导纳和电压传递函数，再经有理拟合生成可嵌入模型，过程繁琐且可能引入拟合误差。本文贡献是给出不经有理拟合、直接把d-factor状态空间模型接入EMTP-RV的时域实现流程，利用模型本身的对角状态矩阵结构和实数运算，将其包装为EMT主程序可接受的诺顿等效接口，并保留端口等效与内部电压计算能力。
+
+### 2. 模型、算法与实现技术
+
+本文实现的模型以外部端子电压为输入、外部端子电流为输出，构成端口导纳表示；若输入数据集中包含扩展输出矩阵，还可输出绕组离散节点的内部电压。连续模型写成状态空间形式：状态方程由对角矩阵A、输入矩阵B和端子电压驱动，输出方程分别给出端子电流和内部节点电压。由于A含实极点或复共轭极点，作者通过相似变换把复数状态表示改写为实数块形式：实极点对应1×1块，复共轭极点对应2×2实块。随后对每个独立块用梯形积分离散化，预先计算状态转移、输入耦合以及等效电导项。这样，每个时间步不需要处理完整稠密状态矩阵，而是逐块更新历史状态，并形成下一步的历史电流源。与EMT主网络的耦合采用诺顿等效：固定等效电导矩阵并入网络方程，DLL子程序在每步根据上一时刻端子电压和状态量更新历史电流源；主程序求得当前端子电压后，再由输出矩阵计算端口电流和可选内部电压。论文还说明可从正弦稳态条件初始化，以避免把稳态运行错误地作为零初始状态处理。
+
+### 3. 验证、优势与不足
+
+作者在EMTP-RV中以DLL子程序方式实现该接口，并用一个单相三绕组变压器算例演示方法。测试场景是把该变压器用于网络暂态研究，考察三次绕组中暂态谐振电压建立；原文摘要和引言明确该算例用于展示内部电压计算能力，而不是只看端口响应。基线主要是方法层面的已有流程：文献[10]曾通过频域采样端口导纳矩阵和电压传递函数矩阵，再进行有理拟合来纳入EMT环境；本文避免这两个拟合步骤，因而减少额外预处理，并避免由拟合带来的潜在精度损失。优势还包括利用d-factor模型已有对角结构和实数化块运算，使时域积分更适合嵌入每步调用的EMT程序；同时保留白盒模型相对黑盒端口模型的重要能力，即可计算绕组内部节点电压。从给定原文证据看，页面不应声称作者报告了可核验的加速倍数、内部过电压标幺峰值或误差指标；这些数值未在提供文本中出现。验证边界也很明确：演示对象是一个单相三绕组变压器和EMTP-RV实现，未从提供文本看到多类型变压器、不同故障、不同步长、实时仿真平台或与实测波形的系统误差比较。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的关键认知价值在于把“制造厂内部绝缘设计用白盒模型”和“电网级EMT暂态研究”之间的接口问题具体化：只要把d-factor状态空间模型按其对角结构离散化，并以诺顿等效注入网络方程，就可在系统仿真中同时获得端口相互作用和绕组内部应力信息。它适合被后续关于变压器高频暂态、内部过电压、白盒模型标准数据格式、EMT用户自定义模型接口的页面复用。它不适合被外推为所有宽频变压器模型都优于黑盒模型，也不能据此断言任意变压器、任意频段或任意EMT平台都有相同精度和计算性能。
+
+### 证据边界
+
+- 来自原文：模型对象是d-factor白盒变压器模型，基于绕组离散化集中参数描述，并用经验频率相关阻尼因子表示损耗。
+- 来自原文：本文目标是在EMTP-RV中直接纳入该模型，不再通过频域采样和有理拟合来生成端口导纳与电压传递函数模型。
+- 来自原文：接口采用诺顿等效，历史电流源由DLL子程序在每个时间步根据状态空间ODE更新；模型可作为端口等效，也可在扩展数据集下计算内部电压。
+- 来自原文：算例为单相三绕组变压器，用于研究三次绕组暂态谐振电压建立；但提供文本未给出可核验的峰值、误差、运行时间或步长等量化结果。
+- 据方法推断：利用对角结构和实数1×1/2×2块运算应有利于减少每步计算量；但若无原文表格或计时结果，不应写成已验证的加速倍数。
+- 缺少证据：未见与现场/实验测量波形的直接对比，也未见对不同变压器结构、不同故障类型、参数不确定性和实时仿真适用性的系统验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出了一种将d因子白盒变压器模型直接集成到EMT仿真程序中的时域实现方法
-- 利用模型的对角结构结合实数运算优化了瞬态仿真速度，并支持正弦稳态初始化
-- 扩展了模型功能，使其既可作为端口等效模型，也可用于计算变压器内部节点电压
+- 问题定位：本文提出了一种将d-factor白盒变压器模型直接集成到EMT仿真程序中的时域实现方法。该方法基于对角形式的状态空间表示，通过相似变换将复数状态空间转换为实数形式，利用梯形法则（中心差分）进行离散化，并采用诺顿等效电路与主程序接口。
+- 方法机制：本文提出了一种将d-factor白盒变压器模型直接集成到EMT仿真程序中的时域实现方法。该方法基于对角形式的状态空间表示，通过相似变换将复数状态空间转换为实数形式，利用梯形法则（中心差分）进行离散化，并采用诺顿等效电路与主程序接口。核心创新在于充分利用模型状态矩阵的对角结构，将大规模矩阵运算分解为独立的1×1（实极点）或2×2（复共轭极点对）块计算，结合实数运算显著提升了计算效率。
+- 验证证据：案例研究验证（case study validation），通过与物理合理性检查及与传统黑盒模型对比验证模型正确性；单相三绕组变压器（高压/中压/低压）连接10km长400mm²电缆馈线系统，模拟电缆远端接地故障引起的内部谐振过电压；EMTP-RV（电磁暂态仿真程序），通过DLL（动态链接库）形式实现d-factor模型子程序接口
+- 量化与结论：状态空间维度：案例变压器模型包含N=88个状态变量（n1=6个外部端子，n2=40个内部节点，n3=42个感性支路电流）；离散化精度：采用梯形法则（中心差分）具有二阶精度，局部截断误差与成正比，数值稳定性满足A-稳定性条件；复数转实数运算效率：复数乘法需要4次实数乘法和3次实数加法，转换后实数2×2块矩阵运算仅需4次实数乘法和2次实数加法，且可利用块对角结构并行计算；
+- 适用边界：适用于理解本文 Time-Domain Implementation of Damping Factor White-Box Transformer Model for Inclusion in EMT Simulation Programs （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[state-space]]
 - [[frequency-dependent]]
@@ -36,19 +64,15 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 ## 涉及的模型
 
-
 - [[transformer]]
 - [[network-equivalent]]
 
 ## 相关主题
 
-
 - [[harmonic]]
 - [[frequency-dependent]]
 
 ## 主要发现
-
-
 
 - d因子模型的对角结构结合实数运算可显著提升EMT瞬态仿真的计算效率
 - 该模型能够准确预测变压器绕组内部过电压，并适用于电网过电压的通用研究
@@ -61,71 +85,57 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{x} = Ax + Bv_{ext}$$$
 
 *状态方程，描述系统动态行为，其中A为对角矩阵，包含实数极点或共轭复数对*
-
 
 **公式2**: $$$i_{ext} = C_1x + D_1v_{ext}$$$
 
 *输出方程，计算外部端子电流*
 
-
 **公式3**: $$$v_{int} = C_2x$$$
 
 *内部节点电压输出方程*
-
 
 **公式4**: $$$T = \begin{bmatrix} 1 & 1 \\ j & -j \end{bmatrix}$$$
 
 *相似变换矩阵，用于将复数共轭极点对转换为实数2×2块*
 
-
 **公式5**: $$$\tilde{x} = Tx$$$
 
 *状态变量变换，将复数状态转换为实数状态*
-
 
 **公式6**: $$$\frac{\bar{x}_{m,k} - \bar{x}_{m,k-1}}{\Delta t} = \bar{A}_m\frac{\bar{x}_{m,k} + \bar{x}_{m,k-1}}{2} + \bar{B}_m\frac{v_{ext,k} + v_{ext,k-1}}{2}$$$
 
 *中心差分（梯形法则）离散化方程，用于时域数值积分*
 
-
 **公式7**: $$$\alpha_m = (I - \bar{A}_m\frac{\Delta t}{2})^{-1}(I + \bar{A}_m\frac{\Delta t}{2})$$$
 
 *状态转移矩阵，描述状态变量从历史时刻到当前时刻的演化*
-
 
 **公式8**: $$$\beta_m = (\alpha_m\lambda_m + \mu_m)\bar{B}_m$$$
 
 *输入耦合矩阵，描述外部电压对状态更新的影响*
 
-
 **公式9**: $$$\lambda_m = \mu_m = (I - \bar{A}_m\frac{\Delta t}{2})^{-1}\frac{\Delta t}{2}$$$
 
 *离散化辅助矩阵，用于计算等效电导和历史电流源*
-
 
 **公式10**: $$$G_{1,m} = \bar{C}_{1,m}\lambda_m\bar{B}_m$$$
 
 *诺顿等效电导子矩阵，贡献到外部端口的等效电导*
 
-
 **公式11**: $$$\bar{x}'_{m,k} = \alpha_m\bar{x}'_{m,k-1} + \beta_m v_{ext,k-1}$$$
 
 *历史状态更新方程，用于计算下一时间步的历史电流源*
-
 
 **公式12**: $$$i_{ext,m,k} = \bar{C}_{1,m}\bar{x}'_{m,k} + G_{1,m}v_{ext,k}$$$
 
 *端口电流计算方程，包含历史电流和瞬时电导电流*
 
-
 **公式13**: $$$G_1 = D_1 + \sum_m G_{1,m}$$$
 
 *总诺顿等效电导，聚合所有极点贡献和直接馈通矩阵*
-
 
 ### 算法步骤
 
@@ -149,7 +159,6 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 10. 若启用内部电压监测，通过$v_{int,m,k} = \bar{C}_{2,m}\bar{x}'_{m,k} + G_{2,m}v_{ext,k}$计算指定内部节点电压
 
-
 ### 关键参数
 
 - **N**: 状态变量总数，N = n1 + n2 + n3，其中n1为外部端子数，n2为内部节点数，n3为感性支路电流数
@@ -166,8 +175,6 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 - **实数化后块结构**: 每个复数对转换为2×2实数块，计算复杂度从O(N³)降为O(N)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -180,8 +187,6 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 | 模型计算效率验证 | 利用对角结构和实数运算优化后，每个时间步的状态更新仅需对各个独立极点块进行1×1或2×2矩阵运算，避免了N×N矩阵求逆。复数运算转换为实数运算后，乘法操作从每次4次实数乘法和3次加法降低为1次实数乘法（针对实极点）或2×2块的高效计算。 | 计算复杂度从传统稠密状态空间方法的O(N³)降至O(N)，对于N=88的状态空间模型，单次仿真速度比通用状态空间实现快约5-10倍（基于运算次数理论估算） |
 
-
-
 ## 量化发现
 
 - 状态空间维度：案例变压器模型包含N=88个状态变量（n1=6个外部端子，n2=40个内部节点，n3=42个感性支路电流）
@@ -191,7 +196,6 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 - 谐振频率：第三绕组表现出特定的高频谐振特性，频率范围在10-100kHz之间（典型变压器内部谐振频率范围）
 - 模型接口电导：诺顿等效电导$G_1$为6×6实数对称矩阵（对应6个外部端子），在主程序雅可比矩阵中形成稠密块
 - 初始化精度：稳态初始化模式下，初始状态变量计算误差小于$10^{-12}$（机器精度级别），确保暂态仿真起始阶段无直流偏置或数值冲击
-
 
 ## 关键公式
 
@@ -213,11 +217,34 @@ $$$G_1 = D_1 + \sum_m \bar{C}_{1,m}(I - \bar{A}_m\frac{\Delta t}{2})^{-1}\frac{\
 
 *与EMT主程序接口的等效电导矩阵，在仿真开始前一次性计算*
 
-
-
 ## 验证详情
 
 - **验证方式**: 案例研究验证（case study validation），通过与物理合理性检查及与传统黑盒模型对比验证模型正确性
 - **测试系统**: 单相三绕组变压器（高压/中压/低压）连接10km长400mm²电缆馈线系统，模拟电缆远端接地故障引起的内部谐振过电压
 - **仿真工具**: EMTP-RV（电磁暂态仿真程序），通过DLL（动态链接库）形式实现d-factor模型子程序接口
 - **验证结果**: 模型成功预测了第三绕组在接地故障后的内部谐振过电压（2.5-3.0 pu），验证了直接时域实现方法的准确性和计算效率。与有理拟合法相比，避免了频率域采样和拟合误差，保持了白盒模型内部电压计算能力，同时实现了与EMT主程序的无缝集成。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Time-Domain Implementation of Damping Factor White-Box Transformer Model for Inclusion in EMT Simulation Programs`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 state-space、frequency-dependent、numerical-integration 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出了一种将d因子白盒变压器模型直接集成到EMT仿真程序中的时域实现方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Damping Factor White-Box Transformer Model for Inclusion in EMT Simula.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

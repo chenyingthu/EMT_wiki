@@ -42,6 +42,12 @@ created: "2026-04-13"
 - 变压器频响模型
 - 电缆频变参数
 
+## 适用边界
+
+无源性强制适用于由 [[vector-fitting|矢量拟合]]、[[state-space-method|状态空间方法]] 或频域测量得到的线性多端口模型，目标是保证端口连接后不会向外部网络产生非物理净能量。它不替代原始模型辨识，也不能修复错误的频率采样、端口定义或强非线性工作点迁移。
+
+在 [[fdne-model|FDNE]]、[[transmission-line-model|输电线路模型]]、[[cable-model|电缆模型]] 和 [[transformer-model|变压器模型]] 中，审计应同时检查拟合误差、无源性判据和接入 EMT 后的时域稳定性。若只报告频域曲线吻合，仍不足以证明模型在 [[emtp|EMTP]]、[[pscad-emtdc|PSCAD/EMTDC]] 或 [[rtds|RTDS]] 中可稳定使用。
+
 ## 相关方法
 - [[vector-fitting]]
 - [[state-space-method]]
@@ -67,7 +73,7 @@ created: "2026-04-13"
 
 ---
 
-# 无源性强制 (Passivity Enforcement) - 深度技术解析
+## 无源性强制 (Passivity Enforcement) - 深度技术解析
 
 ## 1. 核心原理详解
 

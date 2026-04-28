@@ -1,7 +1,7 @@
 ---
 title: "Parallel-in-Time Object-Oriented Electromagnetic Transient Simulation of Power Systems"
 type: source
-authors: ['未知']
+authors: ['TIANSHI CHENG', 'TONG DUAN', 'VENKATA DINAVAHI']
 year: 2020
 journal: "IEEE Open Access Journal of Power and Energy;2020;7; ;10.1109/OAJPE.2020.3012636"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/30/oajpe.2020.3012636.pdf.pdf"]
 
 # Parallel-in-Time Object-Oriented Electromagnetic Transient Simulation of Power Systems
 
-**作者**: 
+**作者**: TIANSHI CHENG; TONG DUAN; VENKATA DINAVAHI
 **年份**: 2020
 **来源**: `30/oajpe.2020.3012636.pdf.pdf`
 
 ## 摘要
 
-Parallel-in-time methods are emerging to accelerate the solution of time-consuming problems in different research ﬁelds. However, the complexity of power system component models brings challenges to realize the parallel-in-time power system electromagnetic transient (EMT) simulation, including the traveling wave transmission lines. This paper proposes a system-level parallel-in-time EMT simulation method based on traditional nodal analysis and the Parareal algorithm. A new interpretation scheme is proposed to solve the transmission line convergence problem. To integrate different kinds of traditional EMT models, a component- based EMT system solver architecture is proposed to address the increasing model complexity. An object- oriented C++ implementation is proposed to realize the parallel
+提出基于传统节点分析法(Nodal Analysis)与Parareal算法的系统级并行电磁暂态仿真框架。该方法将整体仿真时间域$[t 0, t {end}]NI k=[T {j-1}, T j]$，通过粗算子(Coarse Operator )与细算子(Fine Operator )的迭代校正实现时间并行。针对电力系统传输线行波模型引入的延迟微分方程(DDE)导致的收敛难题，提出改进插值策略(Modified Interpolation Scheme)处理历史项依赖问题。采用组件化(Component-Based)架构抽象各类EMT模型（如贝杰龙传输线、RLC元件、开关器件等），通过面向对象C++实现求解器工作区重用与内存优化，支持多线程并行计算。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的需求是：大规模电力系统EMT仿真需要很小时间步长和详细设备模型，传统串行时域推进即使用稀疏矩阵和优化模型仍受CPU顺序执行限制。研究对象不是单个元件加速，而是把包含RLC、开关、传输线等传统EMT组件的系统级节点分析求解器改造成时间方向并行。难点在于EMT模型具有DAE/ODE耦合、非线性开关事件、组件历史项，以及行波传输线带来的延迟微分方程；Parareal依赖相邻时间子区间边界状态迭代校正，而传输线延迟项需要访问过去时刻状态，容易破坏收敛。本文贡献在于：将Parareal与传统节点分析结合，提出适配传输线延迟的改进插值/解释策略；设计组件化EMT求解器架构以接纳传统模型；用面向对象C++实现时间并行，并通过复用solver worker和workspace降低Parareal迭代中的对象分配与内存开销。
+
+### 2. 模型、算法与实现技术
+
+算法上，整体仿真区间被划分为多个粗时间子区间，每个子区间由粗算子G和细算子F共同推进。G使用较粗时间步长给出各时间接口状态的串行预测，F使用细时间步长在各子区间内计算高精度局部解；Parareal校正公式U_j^(k)=G(T_j,T_{j-1},U_{j-1}^(k))+F(T_j,T_{j-1},U_{j-1}^(k-1))-G(T_j,T_{j-1},U_{j-1}^(k-1))的作用，是用上一轮可并行获得的细解差值修正当前轮粗传播结果，使时间接口状态逐轮接近全串行细步长解。EMT底层仍采用传统节点分析：每个离散步形成节点导纳方程，节点电压是全局未知量，独立源注入和组件历史电流源进入右端项；电感、电容、传输线等组件通过companion model或历史项接口更新内部状态。实现上，组件类封装元件端口、等效导纳、历史量更新和状态保存，使Parareal调度器可以在不同时间子区间启动细算任务。传输线部分的关键是对t-τ时刻所需历史状态进行改进插值，缓解延迟项跨越子区间边界时对未收敛历史轨迹的依赖。
+
+### 3. 验证、优势与不足
+
+作者采用自主实现的面向对象C++ EMT程序进行验证，基线是相同模型和精度要求下的传统顺序EMT算法，而非商业PSCAD/EMTDC或MATLAB/Simulink对比。原文摘要明确报告IEEE-118测试系统在6个CPU线程上相对顺序算法获得2.30倍加速，并行效率约40%，且是在same accuracy条件下得到；此外，作者还比较了多个IEEE测试案例，用于说明不同系统时域特性会影响Parareal加速效果，传输线延迟会显著影响时间并行EMT仿真的性能。优势主要体现在：在保留节点分析和传统EMT组件建模方式的同时，引入时间域并行；组件化架构提高模型接入能力；workspace复用降低面向对象迭代实现的额外开销。从验证范围看，已证实的是离线多线程CPU环境下、论文测试系统中的数值一致性和有限加速比；原文摘要未报告GPU/FPGA、实时仿真、超大规模系统、复杂保护控制交互、不同故障类型的系统性量化结果，也未给出可由当前摘录核验的收敛阈值、步长比或传输线延迟参数扫描细节。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：EMT时间并行的瓶颈不只是Parareal公式本身，而是传统电力系统组件，特别是行波传输线延迟历史项，如何与时间子区间迭代一致地耦合。它可作为后续研究时间并行EMT、组件化求解器、Parareal在DAE/DDE系统中收敛问题、以及CPU多线程离线仿真加速的入口。工程上，它适合启发已有节点分析EMT程序的架构改造：把元件历史项、节点方程和时间调度接口分离。不适合直接外推为任意大系统、任意延迟网络或实时仿真平台都能获得同等加速；2.30倍和40%效率只应绑定论文报告的IEEE-118、6线程和相同精度基线。
+
+### 证据边界
+
+- 来自原文摘要的可核验证据包括：论文题名、作者、IEEE OAJPE 2020、基于传统节点分析和Parareal的系统级并行EMT方法、IEEE-118测试系统、6 CPU线程、2.30x speed-up和约40% parallel efficiency。
+- 传输线延迟会影响Parareal性能、并提出新interpretation/interpolation scheme处理收敛问题，是原文摘要和引言明确表述；但当前摘录未给出该策略的完整公式、伪代码或参数取值。
+- 组件化架构、面向对象C++实现、复用solver worker和workspace降低内存及对象分配开销来自原文引言列出的特性；当前证据未提供具体类设计、内存占用数值或开销分解。
+- 节点导纳方程、companion model和历史电流源机制符合传统EMT节点分析框架，并与论文研究方向一致；但当前摘录中未展示所有相关公式，具体实现细节需回到正文方法部分核验。
+- 验证基线可确认为顺序算法；当前证据未表明作者与PSCAD/EMTDC、EMTP-RV、MATLAB/Simulink或其他商业工具进行了数值或性能对比。
+- 从当前摘录看，缺少可核验的粗/细步长、收敛阈值、最大Parareal迭代次数、传输线延迟扫描范围、硬件CPU型号及不同线程数扩展性结果，因此不应据此外推并行效率上限。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于节点分析与Parareal算法的系统级并行电磁暂态仿真方法
-- 设计改进插值策略解决行波传输线模型在并行计算中的收敛难题
-- 构建组件化面向对象求解器架构实现传统EMT模型灵活集成
-
+- 问题定位：提出基于传统节点分析法(Nodal Analysis)与Parareal算法的系统级并行电磁暂态仿真框架。该方法将整体仿真时间域$[t 0, t {end}]NI k=[T {j-1}, T j]$，通过粗算子(Coarse Operator )与细算子(Fine Operator )的迭代校正实现时间并行。
+- 方法机制：提出基于传统节点分析法(Nodal Analysis)与Parareal算法的系统级并行电磁暂态仿真框架。该方法将整体仿真时间域$[t 0, t {end}]NI k=[T {j-1}, T j]$，通过粗算子(Coarse Operator )与细算子(Fine Operator )的迭代校正实现时间并行。
+- 验证证据：基于仿真对比的验证方法，将提出的并行算法与相同模型参数下的传统串行电磁暂态仿真结果进行时域波形对比；IEEE-118节点标准测试系统，包含多机系统、传输网络及负荷模型，是具有代表性的中等规模电力系统测试案例；自主开发的面向对象C++电磁暂态仿真程序，基于组件化架构实现，支持多线程并行计算；未使用商业软件如PSCAD/EMTDC或MATLAB/Simulink
+- 量化与结论：在IEEE-118测试系统上使用6个CPU线程时，加速比达到2.30倍(2.30x speed-up)；并行效率约为40%(Parallel Efficiency around 40%)，表明在6核配置下有效利用了硬件资源；仿真精度与传统串行算法保持一致(Under the same accuracy)，验证了新方法的数值一致性；
+- 适用边界：适用于理解本文 Parallel-in-Time Object-Oriented Electromagnetic Transient Simulation of Power Systems （2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[parareal算法|Parareal算法]]
 - [[节点分析法|节点分析法]]
@@ -36,18 +64,14 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 - [[改进插值策略|改进插值策略]]
 - [[多核并行计算|多核并行计算]]
 
-
 ## 涉及的模型
-
 
 - [[行波传输线模型|行波传输线模型]]
 - [[贝杰龙模型|贝杰龙模型]]
 - [[微分代数方程系统|微分代数方程系统]]
 - [[延迟微分方程模型|延迟微分方程模型]]
 
-
 ## 相关主题
-
 
 - [[时间并行计算|时间并行计算]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -55,15 +79,11 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 - [[延迟微分方程求解|延迟微分方程求解]]
 - [[组件化建模|组件化建模]]
 
-
 ## 主要发现
-
 
 - IEEE-118系统测试表明六线程下加速比达2.30倍且并行效率约40%
 - 系统时域特性决定Parareal算法加速效果传输线延迟显著影响性能
 - 改进插值策略有效解决传输线收敛问题保持与传统串行算法同等精度
-
-
 
 ## 方法细节
 
@@ -73,31 +93,25 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 
 ### 数学公式
 
-
 **公式1**: $$$$U_j^{(k)} = G(T_j, T_{j-1}, U_{j-1}^{(k)}) + F(T_j, T_{j-1}, U_{j-1}^{(k-1)}) - G(T_j, T_{j-1}, U_{j-1}^{(k-1)})$$$$
 
 *Parareal算法核心校正公式，其中$k$为迭代次数，$j$为时间子区间索引。通过粗算子预测与细算子校正的结合，逐步逼近精细解。*
-
 
 **公式2**: $$$$W(U) := \begin{cases} U^1 - F(T_1, T_0, U^0) = 0 \\ U^2 - F(T_2, T_1, U^1) = 0 \\ \vdots \\ U^{N-1} - F(T_{N-1}, T_{N-2}, U^{N-2}) = 0 \end{cases}$$$$
 
 *全局非线性方程组形式，描述各时间子区间状态向量$U^j$需满足的连续性约束，$U^0$为已知初始条件。*
 
-
 **公式3**: $$$$Y v^{n+1} = s^{n+1} - i_{hist}^{n+1}$$$$
 
 *基于梯形法离散的电路节点导纳方程，$Y$为节点导纳矩阵，$v$为节点电压向量，$s$为独立源注入，$i_{hist}$为历史项等效电流源。*
-
 
 **公式4**: $$$$i_{hist}^{n+1} = g(x^n, v^n), \quad x^{n+1} = h(i_{hist}^{n+1}, v^{n+1})$$$$
 
 *组件历史项更新方程，$x$为元件内部状态变量（如电感电流、电容电压），通过本地状态空间积分保持与全局系统的解耦。*
 
-
 **公式5**: $$$$i^{n+1} = G_{eq} v^{n+1} + i_{hist}^{n+1}, \quad i_{hist}^{n+1} = i^n + G_{eq} v^n$$$$
 
 *电感/电容元件的梯形法离散 companion model，$G_{eq}$为等效电导，实现将动态元件转换为等效电阻并联电流源的诺顿等效形式。*
-
 
 ### 算法步骤
 
@@ -115,7 +129,6 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 
 7. 内存管理阶段：重用求解器工作区(Solver Workspace)和组件历史状态缓冲区，避免Parareal迭代过程中的重复内存分配开销
 
-
 ### 关键参数
 
 - **coarse_time_step**: \Delta t，粗网格时间步长，决定Parareal粗算子的离散间隔
@@ -127,8 +140,6 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 - **cpu_threads**: 6，并行计算使用的CPU线程数，对应测试案例中的硬件配置
 
 - **convergence_tolerance**: 未明确给出具体数值，但提及与传统串行算法达到相同精度(Same Accuracy)
-
-
 
 ## 仿真结果
 
@@ -142,8 +153,6 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 
 | 多规模IEEE测试系统对比分析 | 针对不同规模的IEEE标准测试系统（如IEEE-39、IEEE-118等）进行性能评估，分析系统时域特性对Parareal算法加速效果的影响。重点考察传输线延迟分布、系统刚性(Stiffness)与并行性能的关系。 | 发现系统时域特性决定加速效果，特别是传输线延迟参数\tau显著影响收敛速度；延迟越大，Parareal迭代收敛所需的校正次数越多，并行效率相应降低 |
 
-
-
 ## 量化发现
 
 - 在IEEE-118测试系统上使用6个CPU线程时，加速比达到2.30倍(2.30x speed-up)
@@ -152,7 +161,6 @@ Parallel-in-time methods are emerging to accelerate the solution of time-consumi
 - 传输线传播延迟\tau显著影响并行性能，长延迟线路导致Parareal迭代收敛速度下降
 - 系统时域特性（如刚性、时间常数分布）是决定Parareal算法加速效果的关键因素
 - 通过重用求解器工作区，有效降低了面向对象实现中对象分配带来的内存开销
-
 
 ## 关键公式
 
@@ -174,11 +182,34 @@ $$$$Y v^{n+1} = s^{n+1} - i_{hist}^{n+1}, \quad i_{hist}^{n+1} = g(x^n, v^n)$$$$
 
 *基于梯形法对微分代数方程(DAE)进行离散后，描述电力网络节点电压与元件历史电流源关系的全局系统方程*
 
-
-
 ## 验证详情
 
 - **验证方式**: 基于仿真对比的验证方法，将提出的并行算法与相同模型参数下的传统串行电磁暂态仿真结果进行时域波形对比
 - **测试系统**: IEEE-118节点标准测试系统，包含多机系统、传输网络及负荷模型，是具有代表性的中等规模电力系统测试案例
 - **仿真工具**: 自主开发的面向对象C++电磁暂态仿真程序，基于组件化架构实现，支持多线程并行计算；未使用商业软件如PSCAD/EMTDC或MATLAB/Simulink
 - **验证结果**: 验证结果表明，所提出的并行方法在6线程配置下实现2.30倍加速，并行效率约40%，且所有节点电压、支路电流的仿真波形与传统串行算法完全一致，证明了方法在保持数值精度的同时显著提升了计算效率。此外，通过不同规模系统的测试，确认了传输线延迟对算法收敛性能的关键影响。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Parallel-in-Time Object-Oriented Electromagnetic Transient Simulation of Power Systems`（2020） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 parareal算法、节点分析法、面向对象编程 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于节点分析与Parareal算法的系统级并行电磁暂态仿真方法
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/30/oajpe.2020.3012636.pdf.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

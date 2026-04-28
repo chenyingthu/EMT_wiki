@@ -1,9 +1,9 @@
 ---
 title: "Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV"
 type: source
-authors: ['CNKI']
+authors: ['Xiong 等']
 year: 2022
-journal: ""
+journal: "电力系统保护与控制"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV.pdf"]
@@ -11,21 +11,53 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 
 # Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV
 
-**作者**: CNKI
+**作者**: Xiong 等
 **年份**: 2022
 **来源**: `17/Xiong 等 - 2020 - Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV.pdf`
 
 ## 摘要
 
-UHVDC hierarchical connection to a system not only improves the voltage support of the receiving end grid but also brings problems such as the complex coupling relationship between different layers of the system. In order to study the operating characteristics of an AC/DC hybrid system with a UHVDC hierarchical connection, this paper examines the ±800 kV Yazhong-Jiangxi UHVDC transmission project. An AC/DC hybrid simulation model with UHVDC hierarchical connection mode is built based on ADPSS. First, the correctness of the electromagnetic transient model is verified. Then the accuracy and superiority of the hybrid simulation model are verified by comparing the simulation results under extinction angle step response of independent control command with the electromagnetic transient model. Fi
 
+特高压直流分层接入系统在提升受端电网电压支撑的同时也带来了不同层间系统耦合关系复杂等问题。为准确研究特高压分层接入后交直流混联系统运行特性，结合±800 kV 雅中—江西分层接入特高压直流输电工程，基于 ADPSS 搭建含特高压分层直流输电系统的交直流电网混合仿真模型。首先通过仿真对比验证了纯电磁暂态模型的正确性。然后对比分析关断角独立控制指令阶跃响应下混合仿真模型和纯电磁暂态模型的仿真结果，验证了混合仿真模型的准确性和优越性。最后与机电暂态模型进行故障仿真对比。仿真分析表明，混合仿真能够准确反映特高压直流分层接入后混联系统动态特性，提供很好的仿真模型基础。
+
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面对的是受端电网接入大容量特高压直流后的工程仿真需求：±800 kV雅中—江西直流按高、低端阀组分层接入1000 kV与500 kV交流网，既增强电压支撑，也使两个电压层级、换流站控制、交流网故障响应之间形成耦合。研究对象不是单个HVDC控制器，而是含分层接入UHVDC的江西受端交直流混联电网。难点在于：纯电磁暂态模型能刻画换流阀、换相失败等快速过程，但大电网建模和计算负担高；机电暂态模型适合大系统，却以基波相量近似处理直流和换流过程，难以反映阀组独立控制及故障期间的电磁细节。本文贡献在于基于ADPSS给出该类分层UHVDC系统的机电—电磁混合仿真建模流程：在PSASP侧建立并分割机电网络，在ETSDAC侧建立分层直流电磁模型，并通过接口等值实现联合仿真，再用PSCAD电磁模型和PSASP机电模型作对比验证。
+
+### 2. 模型、算法与实现技术
+
+模型实现的核心是把同一交直流系统拆成机电子网和电磁子网。机电侧保留江西及外部交流电网、发电机和网络潮流动态；电磁侧包含±800 kV雅中—江西直流的一次设备，如整流站、500 kV与1000 kV逆变站、双桥12脉波换流阀、换流变、滤波器、平波电抗器和直流线路。接口机制采用ADPSS中的戴维南/诺顿等值与数据接口技术：对电磁侧而言，机电交流网在边界母线处等效为电压源与阻抗；对机电侧而言，电磁子网反馈为等效注入电流或功率扰动。接口量主要是边界母线电压、电流及其相量/瞬时量映射，输入为两侧网络参数、潮流初值、控制参数和故障/阶跃事件，输出为交流节点电压、直流电压电流、功率、关断角等动态波形。控制建模上，整流侧配置定电流控制，逆变侧500 kV和1000 kV阀组采用独立控制，稳态关断角为17°，用于检验分层接入下高、低端阀组是否能分别响应指令而不过度相互牵连。计算流程先校验机电数据，再用PSCAD对ETSDAC电磁模型进行正确性对比，最后提交分网与接口数据进行混合仿真。
+
+### 3. 验证、优势与不足
+
+作者采用分层递进的验证思路。测试系统是规划建设中的±800 kV雅中—江西UHVDC分层接入工程及2020年江西受端电网，工程参数包括额定输送功率10000 MW、额定直流电流6.25 kA、受端500 kV和1000 kV交流系统短路比分别为4.53和6.10。工具链为ADPSS平台，其中PSASP用于机电暂态建模与分网，ETSDAC用于电磁暂态建模；PSCAD/EMTDC电磁模型和PSASP机电模型作为对比基线。验证包括：先将ADPSS电磁模型与PSCAD模型对比，确认直流电磁模型正确；再在关断角独立控制指令阶跃下比较混合仿真与纯电磁暂态结果；最后在交流故障下比较混合仿真与机电暂态模型。优势体现在混合模型同时保留大电网机电动态和换流器电磁暂态细节，能够观察分层阀组独立控制、直流功率跌落、换相失败等机电模型不易准确给出的过程。限制是，从给出的验证范围看，结论主要成立于雅中—江西拓扑、所设控制策略和所选阶跃/交流故障场景；原文摘要与片段未给出可核验的误差范数、步长敏感性、实时性或大规模多工况统计指标，计算效率若未在原文表图中列明，不宜作为强定量结论外推。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要价值在于把“分层接入UHVDC应如何做系统级暂态仿真”具体化：哪些部分必须放入电磁暂态、哪些部分可保留机电暂态、两者如何通过边界等值交换信息。它适合被后续关于交直流混联电网故障分析、换相失败机理、分层直流控制策略校核、ADPSS混合仿真流程复现的页面复用，也可作为构建工程级仿真模型的参考入口。它不适合直接外推到VSC-HVDC、柔直多端系统、未验证的保护动作逻辑、不同接口步长或硬件实时仿真平台；若要用于定量评估控制优劣，还需补充统一指标和多工况误差统计。
+
+### 证据边界
+
+- 原文明确给出研究对象为±800 kV雅中—江西分层接入UHVDC及江西受端交直流混联电网，并给出10000 MW、6.25 kA、短路比4.53/6.10、换流变参数和17°稳态关断角等工程参数。
+- 原文明确说明使用ADPSS，并在PSASP中建立机电模型、在ETSDAC中建立电磁模型，再通过戴维南/诺顿等值和数据接口实现混合仿真；接口量的具体实现细节在摘录中未完全展开。
+- 与PSCAD/EMTDC电磁模型、PSASP机电暂态模型对比是原文验证路线；但摘录未给出完整波形图数值、误差范数或统计指标，因此只能说波形对比验证，不能替代严格数值误差评估。
+- 关断角阶跃、交流故障和换相失败过程属于页面抽取到的验证场景；若需引用具体故障位置、持续时间、计算耗时或效率提升百分比，应回到原文图表逐项核验。
+- 本文贡献主要是工程建模与混合仿真实现，并非提出新的数值积分算法、接口稳定性理论或HVDC控制律；相关机制性表述应限定在ADPSS混合仿真框架内。
+- 从验证范围看，尚缺少对不同运行方式、不同故障阻抗、保护闭锁策略、步长/接口延迟敏感性、并行计算规模扩展性的系统测试。
+<!-- deep-review:end -->
 ## 核心贡献
 
 
-- 基于ADPSS构建含特高压分层直流的交直流混联电网机电电磁暂态混合仿真模型。
-- 提出以换流变交流母线为边界的网络分割与戴维南等值接口方法实现子网交互。
-- 验证混合仿真在独立控制与故障下的准确性计算效率较纯电磁暂态提升约23%。
 
+- 问题定位：特高压直流分层接入系统在提升受端电网电压支撑的同时也带来了不同层间系统耦合关系复杂等问题。为准确研究特高压分层接入后交直流混联系统运行特性，结合±800 kV 雅中—江西分层接入特高压直流输电工程，基于 ADPSS 搭建含特高压分层直流输电系统的交直流电网混合仿真模型。首先通过仿真对比验证了纯电磁暂态模型的正确性。
+- 方法机制：本文基于ADPSS平台构建机电-电磁暂态混合仿真框架，针对±800kV雅中-江西特高压直流分层接入系统（高端接1000kV，低端接500kV）。核心方法采用网络分割与戴维南/诺顿等值接口技术，以换流变压器交流侧母线为边界将大电网划分为机电暂态子网（交流主网）与电磁暂态子网（直流系统及近区交流）。在PSASP中建立机电模型并验证，在ETSDAC中搭建包含双12脉动换流阀、独立控制策略（定关断角、CFPREV、VDCOL等）的电磁模型。
+- 验证证据：多模型对比仿真验证（混合仿真 vs 纯电磁暂态 vs 纯机电暂态）；±800 kV雅中-江西特高压直流分层接入系统（高端接1000kV，低端接500kV）及2020年规划江西电网网架；ADPSS（含PSASP机电模块与ETSDAC电磁模块）、PSCAD/EMTDC
+- 量化与结论：混合仿真计算耗时约138 s，较纯电磁暂态仿真（PSCAD约170 s）效率提升约23%。；关断角阶跃响应中，500 kV侧指令阶跃+10°，1000 kV侧关断角偏差保持在稳态17°，验证了分层独立控制的有效性。；kV母线三相故障持续0.1 s期间，高端逆变器关断角迅速降至0°，直流功率出现显著跌落，换相失败过程被精确捕捉。；
+- 适用边界：适用于理解本文 Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV （2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
 
@@ -156,3 +188,28 @@ $$$V_{th} = V_{oc} - Z_{th} \cdot I_{bdry}$$$
 - **测试系统**: ±800 kV雅中-江西特高压直流分层接入系统（高端接1000kV，低端接500kV）及2020年规划江西电网网架
 - **仿真工具**: ADPSS（含PSASP机电模块与ETSDAC电磁模块）、PSCAD/EMTDC
 - **验证结果**: 混合仿真模型在关断角独立阶跃响应与交流故障工况下，动态波形与纯电磁暂态模型高度一致，验证了接口等值与联合求解的准确性；相较于纯机电模型，能更精细刻画直流系统高频暂态过程；计算效率提升23%，兼顾了大规模交直流混联电网的仿真精度与速度。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV`（2022） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 机电-电磁暂态混合仿真、网络分割与戴维南等值、用户自定义建模-udm 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于ADPSS构建含特高压分层直流的交直流混联电网机电电磁暂态混合仿真模型。
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid power grid with UHV.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

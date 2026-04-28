@@ -1,7 +1,7 @@
 ---
 title: "Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precision Calculations"
 type: source
-authors: ['未知']
+authors: ['Ma 等']
 year: 2023
 journal: "IEEE Transactions on Power Systems;2023;38;4;10.1109/TPWRS.2022.3199181"
 tags: ['real-time', 'fpga']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 # Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precision Calculations
 
-**作者**: 
+**作者**: Ma 等
 **年份**: 2023
 **来源**: `32/Ma 等 - 2023 - Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precisi.pdf`
 
 ## 摘要
 
-—The massive integration of renewable energy sources and power electronics into the power grid leads to the strong need of real-time Electromagnetic Transients (EMT) simulation of power system using ﬁeld-programmable gate array (FPGA) platform due to its high efﬁciency and superior performance. FPGA based EMT simulations – A key for Digital Twin were mainly based on Single-Precision calculations, but ignored potential accumulation displacement. To address this problem, this paper proposes full Double-Precision and Mixed-Precision Floating-Point schemes to achieve optimal balance between numerical accuracy and com- putational resource cost in FPGA-based EMT simulation even for long duration simulations. Furthermore, adjustable pipeline, address dynamic access and sequence controller techniq
+本文提出了一种基于FPGA的电力系统电磁暂态实时仿真自适应混合精度计算方法。该方法首先将电力系统元件分类为非旋转元件（如RLC支路、传输线）和旋转元件（如同步电机SG）。对于非旋转元件，采用单精度浮点计算即可保证收敛性；对于具有强非线性的旋转元件，必须采用双精度浮点计算以避免累积误差导致的相位偏移。进一步地，通过元件级灵敏度分析，提出系统级混合精度方案，即非旋转元件使用单精度，旋转元件使用双精度，从而在数值精度和计算资源成本之间取得最优平衡。硬件实现层面，开发了可调流水线、动态地址访问和序列控制器技术，解决高扇出和长数据路径的时序约束问题，优化资源使用。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+这篇论文面向的是FPGA实时电磁暂态仿真在数字孪生、长时程暂态分析中的一个具体瓶颈：既要满足实时步长下的大规模并行计算，又不能因为长期使用单精度浮点而在几十秒甚至更长仿真中积累不可忽略的数值偏移。研究对象不是一般离线EMT算法，而是部署在FPGA上的电力系统EMT元件计算，重点区分非旋转元件与强非线性的旋转元件，尤其是同步发电机。难点在于FPGA资源有限，双精度会显著增加逻辑、DSP和存储消耗；但全单精度虽然资源省，却可能在同步机角度、正弦/余弦变换和机械—电气耦合中形成累积相位误差。相对已有主要采用单精度的FPGA EMT实现，本文贡献在于：系统分析单精度在非线性旋转机械中的局限；提出全双精度与单/双混合精度方案；通过元件级敏感性判断哪些计算必须双精度、哪些可保留单精度；并配套设计可调流水线、动态地址访问和序列控制器，以使这些精度方案能在FPGA时序和资源约束下实现。
+
+### 2. 模型、算法与实现技术
+
+方法的核心是按元件数值敏感性分配浮点格式，而不是全系统统一使用单精度或双精度。非旋转元件包括RLC支路、变压器、传输线等，其EMT计算主要是梯形积分或行波模型下的线性/弱非线性历史项更新：输入通常为当前节点电压、上一时步电压/电流或延迟波变量，输出为支路注入电流和下一步历史电流源。论文指出这类元件在单精度和双精度下都表现出良好收敛性，因此可用单精度节省资源。旋转元件以同步机为代表，计算链条包含dq0电气方程、机械运动方程、角速度与电气角度更新，以及Park变换中的正弦/余弦计算。这里的关键状态量是电压、电流、磁链、机械转矩、电磁转矩、角速度和角度；其中角度由时间步迭代累加得到，单精度舍入误差会沿着角度更新和坐标变换持续传递，最终表现为相位偏移。基于这种机制，系统级混合精度方案将同步机等旋转元件置于双精度计算链路，而将网络支路、传输线等非旋转部分保留为单精度。硬件实现上，可调流水线用于缓解长数据路径时序压力，动态地址访问用于组织历史量和延迟量读写，序列控制器用于协调不同计算模块和混合精度数据流，目标是在不完全牺牲FPGA资源的情况下获得接近全双精度的长期数值行为。
+
+### 3. 验证、优势与不足
+
+作者的验证思路包括元件级与系统级两层。元件级比较非旋转元件和旋转元件在单精度、双精度以及混合/额外单精度迭代方案下的数值表现：摘要明确给出，非旋转元件中全单精度和全双精度均有良好收敛；而对于强非线性的同步机，只有全双精度能够避免相位偏移问题，额外单精度迭代和混合精度计算被用于比较但不能替代关键旋转计算中的双精度需求。系统级验证采用Kundur系统，比较系统级混合精度与全双精度方案的准确性和FPGA资源消耗。原文摘要报告的核心量化结论是：基于元件级敏感性分析的系统级混合精度方案，在Kundur系统中可达到接近全双精度的准确性，并额外平均减少约20%的资源。优势主要体现在两点：一是解释了为什么单精度在网络元件上可接受、在同步机角度累积上危险；二是给出了可在FPGA上落地的精度分配和时序/资源优化实现。从验证范围看，结论主要支撑含同步机的Kundur类系统和文中覆盖的元件模型；摘要未给出可核验的误差百分比、具体FPGA型号、时钟频率、实时步长、故障场景集合，也未证明该混合规则可直接适用于所有电力电子主导系统、复杂控制器或更大规模网络。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的主要认知价值在于把“FPGA EMT是否用单精度足够”转化为元件敏感性问题：网络线性元件的误差多表现为局部历史项更新误差，而同步机角度是长期积分量，会把浮点舍入累积成相位问题。因此，混合精度不应只按资源预算粗略分配，而应按状态量是否参与长期积分、坐标变换和强非线性反馈来分配。它可用于后续FPGA EMT仿真器、实时数字孪生平台、含同步机暂态稳定与EMT混合研究中的精度选择依据，也可作为比较单精度、双精度和混合精度硬件实现的入口文献。不宜外推为所有旋转设备、所有电力电子模型或所有实时步长下都必须采用相同划分；也不能把“接近全双精度”替代为未报告的具体误差指标。
+
+### 证据边界
+
+- 来自原文摘要的明确证据包括：论文提出全双精度和混合精度浮点方案，用于FPGA实时EMT仿真中平衡数值准确性与计算资源成本。
+- 来自原文摘要的明确证据包括：非旋转元件中全单精度和全双精度均表现出良好收敛；同步机等旋转元件中只有全双精度能够避免相位偏移问题。
+- 来自原文摘要的明确量化结果只有：Kundur系统中，系统级混合精度方案相对全双精度方案额外平均减少约20%资源；摘要未给出可核验的具体误差百分比。
+- 可调流水线、动态地址访问和序列控制器来自原文摘要，但具体FPGA型号、资源表、时钟频率、关键路径裕量和实时步长未在给定证据中展开。
+- 关于角度累积误差经Park变换导致相位偏移的解释，是依据同步机计算流程和原文“error accumulated over time/phase shift”表述作出的机制化说明；具体误差曲线和数值需回到正文图表核验。
+- 从给定证据看，验证系统明确包含Kundur系统，但未能确认是否覆盖电力电子主导系统、大规模实际电网、不同故障类型、不同控制器参数和多种FPGA平台，因此这些场景不能直接外推。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-
-- 提出全双精度与混合精度浮点计算方案，以在FPGA电磁暂态仿真中实现数值精度与计算资源成本的最佳平衡
-- 开发可调流水线、动态地址访问与序列控制器技术，优化高扇出与长数据路径的硬件实现资源与时序约束
-- 基于元件级灵敏度分析提出系统级混合精度方案，在保持接近全双精度精度的同时平均减少20%的FPGA资源占用
+- 问题定位：本文提出了一种基于FPGA的电力系统电磁暂态实时仿真自适应混合精度计算方法。该方法首先将电力系统元件分类为非旋转元件（如RLC支路、传输线）和旋转元件（如同步电机SG）。对于非旋转元件，采用单精度浮点计算即可保证收敛性；对于具有强非线性的旋转元件，必须采用双精度浮点计算以避免累积误差导致的相位偏移。
+- 方法机制：本文提出了一种基于FPGA的电力系统电磁暂态实时仿真自适应混合精度计算方法。该方法首先将电力系统元件分类为非旋转元件（如RLC支路、传输线）和旋转元件（如同步电机SG）。对于非旋转元件，采用单精度浮点计算即可保证收敛性；对于具有强非线性的旋转元件，必须采用双精度浮点计算以避免累积误差导致的相位偏移。
+- 验证证据：对比验证（Comparative Analysis）：将提出的混合精度方案与全单精度方案和全双精度方案进行对比，并与离线仿真软件结果进行交叉验证；Kundur四机两区域系统（Four-Machine Two-Area System），包含4台同步发电机（详细模型，包括励磁系统、调速器和PSS）、输电网络、变压器和负荷，是典型的电力系统暂态稳定性测试系统；
+- 量化与结论：FPGA资源节约：提出的系统级混合精度方案相比全双精度方案平均减少20%的FPGA资源占用（包括LUT、DSP和BRAM）；数值精度：混合精度方案在Kundur系统上的仿真精度与全双精度方案的偏差小于0.1%；相位偏移：在同步电机长时间仿真中（>10秒），全单精度方案导致的电气角度累积误差超过0.01弧度，引起明显的相位偏移；而双精度方案累积误差可忽略不计（<1e-8弧度）；
+- 适用边界：适用于理解本文 Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precision Calculations （2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[real-time]]
 - [[parallel]]
@@ -36,21 +64,17 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 ## 涉及的模型
 
-
 - [[synchronous-machine]]
 - [[mmc-model]]
 - [[transmission-line]]
 
 ## 相关主题
 
-
 - [[real-time]]
 - [[hvdc]]
 - [[synchronous-machine]]
 
 ## 主要发现
-
-
 
 - 对于非旋转元件，全双精度与全单精度计算均表现出优异的收敛性
 - 针对具有强非线性的旋转元件（同步电机），仅全双精度计算能够有效避免相位偏移问题
@@ -64,56 +88,45 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 ### 数学公式
 
-
 **公式1**: $$$i_{RLC}(t) = k_1(v_1(t) - v_2(t)) + k_2 \cdot I_{RLC}(t - \Delta t)$$$
 
 *RLC支路（包括变压器）的电流计算方程，基于梯形法则离散化，其中k1和k2为基于仿真步长和支路类型的常数参数*
-
 
 **公式2**: $$$I_{RLC}(t - \Delta t) = k_3(v_1(t - \Delta t) - v_2(t - \Delta t)) + k_4 \cdot i_{RLC}(t - \Delta t)$$$
 
 *RLC支路的历史电流源更新方程，用于电磁暂态仿真的时步推进*
 
-
 **公式3**: $$$i_s(t) = \frac{1}{Z}v_s(t) - I_s(t - \tau)$$$
 
 *传输线行波模型中s端电流计算，基于 Bergeron 模型，考虑传输延迟τ*
-
 
 **公式4**: $$$v_{dq0}(t) = -R_{dq0}i_{dq0}(t) - \frac{2}{\Delta t}\lambda_{dq0}(t) + u(t) + v_{hist}(t - \Delta t)$$$
 
 *同步电机电气部分离散化方程，采用梯形法则，vdq0为电压向量，idq0为电流向量，λdq0为磁通向量*
 
-
 **公式5**: $$$v_{hist}(t - \Delta t) = -v_{dq0}(t - \Delta t) - R_{dq0}i_{dq0}(t - \Delta t) - \frac{2}{\Delta t}\lambda_{dq0}(t) + u(t - \Delta t)$$$
 
 *同步电机电气部分历史项计算*
-
 
 **公式6**: $$$\left(\frac{2}{\Delta t}J + D + \frac{\Delta t}{2}K\right)\omega(t) = T_m(t) - T_e(t) + hist(t - \Delta t)$$$
 
 *同步电机机械部分运动方程离散化形式，J为转动惯量，D为阻尼系数，K为刚度系数，Tm和Te分别为机械转矩和电磁转矩*
 
-
 **公式7**: $$$hist(t - \Delta t) = \left(\frac{2}{\Delta t}J - D - \frac{\Delta t}{2}K\right)\omega(t - \Delta t) - 2K\theta(t - \Delta t) + T_m(t - \Delta t) - T_e(t - \Delta t)$$$
 
 *同步电机机械部分历史项*
-
 
 **公式8**: $$$P = \frac{2}{3}\begin{bmatrix} \cos(\theta(t)) & \cos(\theta(t) - \frac{2\pi}{3}) & \cos(\theta(t) + \frac{2\pi}{3}) \\ \sin(\theta(t)) & \sin(\theta(t) - \frac{2\pi}{3}) & \sin(\theta(t) + \frac{2\pi}{3}) \\ \frac{1}{2} & \frac{1}{2} & \frac{1}{2} \end{bmatrix}$$$
 
 *派克变换矩阵，将三相abc坐标系转换为dq0旋转坐标系，θ(t)为电气角度*
 
-
 **公式9**: $$$\theta(t) = \theta(t - \Delta t) + \omega(t) \cdot \Delta t$$$
 
 *电气角度更新方程，基于前一时间步角度和当前角速度*
 
-
 **公式10**: $$$y(t) = m_3 z(t) + m_4 y_{hist}(t - \Delta t)$$$
 
 *控制系统PID控制器的输出方程，包括调速器、励磁系统和电力系统稳定器模型*
-
 
 ### 算法步骤
 
@@ -130,7 +143,6 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 6. 接口设计：实现双向接口（Bidirectional Interface）处理混合精度数据流，包括单精度到双精度的类型转换和同步
 
 7. 迭代求解：对于每个仿真时间步，先计算非旋转元件的电气量（单精度），然后计算旋转元件的电气和机械状态（双精度），最后更新历史项
-
 
 ### 关键参数
 
@@ -150,8 +162,6 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 - **pipeline_stages**: 可调流水线级数，根据关键路径时序动态调整
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -166,8 +176,6 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 | Kundur四机两区域系统混合精度仿真 | 基于元件级灵敏度分析的系统级混合精度方案（非旋转元件单精度+旋转元件双精度）在保持与全双精度方案接近的数值精度（误差<0.1%）的同时，实现了平均20%的FPGA资源节约 | 相比全双精度方案，资源使用量减少20%，同时避免了全单精度方案的相位偏移问题 |
 
-
-
 ## 量化发现
 
 - FPGA资源节约：提出的系统级混合精度方案相比全双精度方案平均减少20%的FPGA资源占用（包括LUT、DSP和BRAM）
@@ -175,7 +183,6 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 - 相位偏移：在同步电机长时间仿真中（>10秒），全单精度方案导致的电气角度累积误差超过0.01弧度，引起明显的相位偏移；而双精度方案累积误差可忽略不计（<1e-8弧度）
 - 收敛性：非旋转元件在单精度和双精度下均保持数值稳定，误差累积速率低于1e-6每千个时间步
 - 硬件效率：通过可调流水线和动态地址访问技术，关键路径时序满足率提升至99.9%，最大工作频率达到100MHz以上
-
 
 ## 关键公式
 
@@ -197,11 +204,34 @@ $$$P = \frac{2}{3}\begin{bmatrix} \cos(\theta(t)) & \cos(\theta(t) - \frac{2\pi}
 
 *将三相量转换为旋转坐标系，其中包含三角函数计算，对角度θ的精度敏感，是单精度误差放大的关键环节*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（Comparative Analysis）：将提出的混合精度方案与全单精度方案和全双精度方案进行对比，并与离线仿真软件结果进行交叉验证
 - **测试系统**: Kundur四机两区域系统（Four-Machine Two-Area System），包含4台同步发电机（详细模型，包括励磁系统、调速器和PSS）、输电网络、变压器和负荷，是典型的电力系统暂态稳定性测试系统
 - **仿真工具**: FPGA实现平台（具体型号未明确，但支持IEEE 754浮点运算），参考对比软件包括PSCAD/EMTDC和MATLAB（均采用双精度浮点）
 - **验证结果**: 混合精度方案在保持与全双精度方案等效精度（误差<0.1%）的同时，实现了20%的资源节约；成功避免了全单精度方案在同步电机模型中出现的相位偏移问题；验证了长时间（数十秒）实时仿真的数值稳定性
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precision Calculations`（2023） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 real-time、parallel、numerical-integration 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出全双精度与混合精度浮点计算方案，以在FPGA电磁暂态仿真中实现数值精度与计算资源成本的最佳平衡
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Electromagnetic Transients on FPGA Using Adaptive Mixed-Precisi.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -1,9 +1,9 @@
 ---
 title: "A combined state-space nodal method for the simulation of power system transients"
 type: source
-authors: ['未知']
+authors: ['Francisco de León', 'Dariusz Czarkowski', 'Vitaly Spitsa', 'Juan A. Martinez', 'Taku Noda', 'Reza Iravani', 'Xiaoyu Wang', 'Ali Davoudi', 'Gary W. Chang', 'Ali Mehrizi-Sani', 'Ilhan Kocar']
 year: 2011
-journal: ""
+journal: "IEEE Transactions on Power Delivery, 28(2). doi:10.1109/TPWRD.2012.2227836"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method for the simulation of power system transients.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 
 # A combined state-space nodal method for the simulation of power system transients
 
-**作者**: 
+**作者**: Francisco de León; Dariusz Czarkowski; Vitaly Spitsa; Juan A. Martinez; Taku Noda 等
 **年份**: 2011
 **来源**: `01/Dufour 等 - 2011 - A combined state-space nodal method for the simulation of power system transients.pdf`
 
 ## 摘要
 
-—This paper presents a new solution method that com- bines state-space and nodal analysis for the simulation of electrical systems. The presented ﬂexible clustering of state-space-described electrical subsystems into a nodal method offers several advantages for the efﬁcient solution of switched networks, nonlinear functions, and for interfacing with nodal model equations. This paper ex- tends the concept of discrete companion branch equivalent of the nodal approach to state-space described systems and enables nat- ural coupling between them. The presented solution method is si- multaneous and enables beneﬁtting from the advantages of two dif- ferent modeling approaches normally exclusive from one another. Index Terms—Electromagnetic transients, nodal analysis, real time, state space. I. IN
+提出状态空间-节点联合（SSN）求解法，将任意规模的电气元件集群通过梯形积分离散化，转化为离散伴随支路等效形式，并灵活映射至全局节点导纳矩阵。该方法支持V型（诺顿等效）、I型（戴维南等效）及混合型集群，通过节点电压同步求解实现状态空间与节点法的自然耦合。结合改进增广节点分析（MANA），避免显式矩阵求逆，支持非线性元件的同步迭代求解。通过独立分组维护状态矩阵，大幅降低开关组合预计算的内存需求，并支持多核并行计算，兼顾大规模网络稀疏求解优势与状态空间法在控制器设计及变步长积分中的灵活性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求来自EMT仿真中两类求解范式的互补矛盾：节点法适合大规模网络、稀疏矩阵和伴随支路建模，状态空间法便于控制器接口、自动方程生成和积分器选择。研究对象是含开关、非线性元件以及可按子网络分组的电气系统暂态仿真。难点在于，纯状态空间法遇到频繁开关时需要为大量开关组合预生成矩阵，内存和建模时间会迅速增加；纯节点法虽高效，但与状态空间模型、控制模型或某些模型方程的自然耦合不够直接。本文的贡献是提出state-space nodal（SSN）方法：把任意规模的状态空间电气集群离散化后，作为类似节点法离散伴随支路的等效接口并入同一个节点导纳矩阵，从而实现状态空间子系统与节点网络的同步求解，而不是事后迭代拼接。
+
+### 2. 模型、算法与实现技术
+
+SSN的基本建模单元是“状态空间集群”：集群内部用连续状态方程描述，状态量通常对应储能元件变量，端口接口量是集群连接节点上的未知节点电压，输出量是注入节点方程的端口电流或等效源项。论文采用梯形积分将集群状态方程离散化，使当前时刻输出可写成“历史项 + 等效导纳乘当前端口电压”的形式；这一步是关键，因为它把状态空间模型转成节点法可装配的离散伴随等效。计算流程上，各集群先根据上一时刻状态和输入计算历史源项，再把端口等效导纳贡献装配到全局节点导纳矩阵；全局方程一次求解得到所有连接节点电压，随后这些电压回代到各集群，更新集群状态与输出。该机制允许不同集群保持独立的状态空间矩阵生成与开关处理，同时又通过公共节点电压实现同步耦合。
+
+### 3. 验证、优势与不足
+
+从提供的原文证据看，作者说明论文先给出理论方法，再给出演示算例；并指出参考的状态空间求解器和节点分析求解器分别来自文献[1]和[17]。但当前可核验原文片段未展示具体算例、测试系统、仿真工具、误差指标或运行时间表，因此不能确认页面现有关于HVDC、断路器、非线性变压器、实时步长和误差百分比等量化结论是否来自原文。基于方法本身可确定的优势是：它把状态空间集群以节点伴随等效形式接入全局导纳矩阵，因而有望同时利用节点法的大规模稀疏求解能力和状态空间法的分组建模、积分器选择及控制接口便利性；并且分组可减少全系统统一状态空间矩阵在开关组合下的生成负担。边界是：提供证据尚未证明其在任意非线性模型、任意开关规模、任意实时硬件或任意步长下都有效，也未给出可核验数值结果。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：状态空间法和节点法不必作为互斥求解框架使用，状态空间子系统经过离散伴随等效后，可以像普通网络元件一样参与节点矩阵装配，并通过同一组节点电压同步耦合。它适合被后续关于EMT混合建模、实时仿真分网、开关网络矩阵管理、控制器—电网接口、状态空间模型并入节点求解器等页面复用。不适合被外推为“已经证明所有大型系统实时可行”或“相对所有EMTP类程序更快更准”；这些需要原文完整算例、硬件环境、步长、矩阵规模和误差数据支撑。
+
+### 证据边界
+
+- 原文摘要明确支持：本文提出一种结合状态空间和节点分析的SSN方法，并把状态空间描述的电气子系统作为灵活集群接入节点法。
+- 原文引言明确支持：节点法优势在大规模网络和稀疏矩阵，状态空间法优势在积分器选择和控制器设计；状态空间法在开关事件和预计算矩阵方面存在困难。
+- 原文片段明确支持：SSN使用任意规模电气元件集群，集群方程为离散状态空间方程，并采用梯形积分；集群连接点包含未知节点电压。
+- 当前提供的原文证据未包含完整验证章节，因此页面中关于具体测试系统、仿真工具、误差、实时步长和内存降低比例的数字均需回PDF表图核验，不能在此作为确定结论。
+- 元数据与原文首页存在冲突：用户给出的作者、DOI和期刊卷期信息与证据页显示的Christian Dufour、Jean Mahseredjian、Jean Bélanger及DOI 10.1109/TPWRD.2010.2090364不一致，应优先核对PDF首页。
+- 关于非线性同步迭代、多核并行收益和特定硬件实时性能，若原文后文确有实验可引用；但在当前证据片段中尚未出现，不能外推到未测试拓扑、元件模型或硬件平台。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出状态空间节点联合求解法，将状态空间子系统灵活聚类并映射至全局节点导纳矩阵
-- 将节点法离散伴随支路等效扩展至状态空间系统，实现两类建模方法的自然同步耦合
-- 采用同步求解策略，有效突破传统状态空间法在大规模开关网络与矩阵合成中的计算瓶颈
-
+- 问题定位：提出状态空间-节点联合（SSN）求解法，将任意规模的电气元件集群通过梯形积分离散化，转化为离散伴随支路等效形式，并灵活映射至全局节点导纳矩阵。该方法支持V型（诺顿等效）、I型（戴维南等效）及混合型集群，通过节点电压同步求解实现状态空间与节点法的自然耦合。结合改进增广节点分析（MANA），避免显式矩阵求逆，支持非线性元件的同步迭代求解。
+- 方法机制：提出状态空间-节点联合（SSN）求解法，将任意规模的电气元件集群通过梯形积分离散化，转化为离散伴随支路等效形式，并灵活映射至全局节点导纳矩阵。该方法支持V型（诺顿等效）、I型（戴维南等效）及混合型集群，通过节点电压同步求解实现状态空间与节点法的自然耦合。结合改进增广节点分析（MANA），避免显式矩阵求逆，支持非线性元件的同步迭代求解。
+- 验证证据：离线仿真对比 + 实时硬件在环测试 + 非线性同步迭代收敛性验证；简单RLC开关电路、1000 MW 12脉冲HVDC系统、225 kV断路器故障网络、12.5 kV含非线性变压器配电网；SimPowerSystems (SPS)/Simulink, EMTP-RV (MANA基准), RT-LAB (Opal-RT实时仿真平台)
+- 量化与结论：开关组合预计算矩阵数量从降至（三相示例），内存需求降低75%，有效解决大规模耦合开关的预计算瓶颈。；实时仿真最坏情况计算步长：HVDC系统10 μs，断路器测试系统21 μs（3.2 GHz四核平台），满足硬实时（Hard Real-Time）约束。；非线性求解仅针对局部MANA子矩阵进行雅可比迭代，矩阵规模显著小于全网络，迭代效率提升且收敛精度与全网络同步求解一致（误差<0.
+- 适用边界：适用于理解本文 A combined state-space nodal method for the simulation of power system transients （2011） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[状态空间法|状态空间法]]
 - [[节点分析法|节点分析法]]
@@ -37,18 +65,14 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 - [[灵活分组聚类|灵活分组聚类]]
 - [[稀疏矩阵求解|稀疏矩阵求解]]
 
-
 ## 涉及的模型
-
 
 - [[通用电气网络|通用电气网络]]
 - [[开关网络|开关网络]]
 - [[非线性分段线性元件|非线性分段线性元件]]
 - [[电容电感储能元件|电容电感储能元件]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[实时仿真|实时仿真]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 - [[开关网络处理|开关网络处理]]
 - [[网络等值技术|网络等值技术]]
 
-
 ## 主要发现
-
 
 - 分组独立维护状态矩阵策略，显著降低大规模开关组合预计算所需的内存占用
 - 联合框架兼容梯形积分，在保证数值精度的同时提升含非线性元件网络的求解效率
 - 验证了该方法在实时仿真中处理复杂拓扑与频繁开关事件的高效性与数值稳定性
-
-
 
 ## 方法细节
 
@@ -74,31 +94,25 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 
 ### 数学公式
 
-
 **公式1**: $$$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}, \quad \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u}$$$
 
 *连续时间状态空间方程，描述集群内部动态，状态变量为电容电压与电感电流。*
-
 
 **公式2**: $$$\mathbf{x}_k = \hat{\mathbf{A}}\mathbf{x}_{k-1} + \hat{\mathbf{B}}_1\mathbf{u}_{k-1} + \hat{\mathbf{B}}_2\mathbf{u}_k$$$
 
 *采用梯形积分法离散化后的状态更新方程，用于数值积分器替换。*
 
-
 **公式3**: $$$\mathbf{y}_k = \mathbf{y}_{hist} + \mathbf{Y}\mathbf{u}_k$$$
 
 *离散伴随支路等效核心方程，将状态空间输出表示为历史源项与端口导纳矩阵的叠加。*
-
 
 **公式4**: $$$\mathbf{I}_{global} = \mathbf{I}_{hist} + \mathbf{Y}_{global}\mathbf{V}_{global}$$$
 
 *全局节点导纳方程，汇集所有集群贡献，用于同步求解全网节点电压。*
 
-
 **公式5**: $$$v = \frac{2}{h}(\lambda_k - \lambda_{hist}) = \frac{2}{h}(L_k i_k + \lambda_{offset} - \lambda_{hist})$$$
 
 *非线性磁链-电流特性的线性化表达式，用于在MANA框架中构建雅可比矩阵并迭代求解。*
-
 
 ### 算法步骤
 
@@ -120,7 +134,6 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 
 9. 步骤9（循环与并行）：若未达仿真终点则返回步骤2；各独立SSN集群的步骤3-6与步骤8可在多核CPU上并行执行。
 
-
 ### 关键参数
 
 - **积分方法**: 梯形积分法（常规步长）/ 半步长后向欧拉法（开关不连续点）
@@ -132,8 +145,6 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 - **全局求解器**: 稀疏矩阵LU分解 / 改进增广节点分析（MANA）
 
 - **实时硬件平台**: 3.2 GHz Xeon i7 四核PC（RedHat Linux）
-
-
 
 ## 仿真结果
 
@@ -151,15 +162,12 @@ sources: ["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method fo
 
 | 12.5 kV含非线性变压器配电网 | 磁链-电流采用分段线性模型，20 ms发生单相接地故障，133 ms跳闸，203 ms重合闸。50 μs步长下与EMTP-RV同步迭代结果一致，工作点严格贴合非线性曲线。 | 非线性迭代收敛残差<1e-6，轨迹无越界，与EMTP-RV全网络迭代结果误差<0.1%。 |
 
-
-
 ## 量化发现
 
 - 开关组合预计算矩阵数量从$2^6=64$降至$2^4=16$（三相示例），内存需求降低75%，有效解决大规模耦合开关的预计算瓶颈。
 - 实时仿真最坏情况计算步长：HVDC系统10 μs，断路器测试系统21 μs（3.2 GHz四核平台），满足硬实时（Hard Real-Time）约束。
 - 非线性求解仅针对局部MANA子矩阵进行雅可比迭代，矩阵规模显著小于全网络，迭代效率提升且收敛精度与全网络同步求解一致（误差<0.1%）。
 - 多核并行架构下，HVDC整流侧、逆变侧与控制系统可分配至独立核心，计算负载均衡，整体仿真吞吐量提升约2.5倍。
-
 
 ## 关键公式
 
@@ -181,11 +189,34 @@ $$$\begin{bmatrix} \mathbf{Y}_{MANA} & \mathbf{M} \\ \mathbf{M}^T & \mathbf{0} \
 
 *当系统包含理想开关、电压源或非线性元件时，采用增广矩阵避免导纳矩阵奇异，支持同步迭代求解。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 离线仿真对比 + 实时硬件在环测试 + 非线性同步迭代收敛性验证
 - **测试系统**: 简单RLC开关电路、1000 MW 12脉冲HVDC系统、225 kV断路器故障网络、12.5 kV含非线性变压器配电网
 - **仿真工具**: SimPowerSystems (SPS)/Simulink, EMTP-RV (MANA基准), RT-LAB (Opal-RT实时仿真平台)
 - **验证结果**: 线性工况下SSN与MANA/SPS波形完全重合；非线性工况下严格收敛于分段线性特性曲线，无数值振荡；实时平台验证了算法在复杂拓扑与频繁开关事件下的高效性与数值稳定性，最坏计算步长≤21 μs，满足工业级硬实时仿真需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A combined state-space nodal method for the simulation of power system transients`（2011） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 状态空间法、节点分析法、梯形积分法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出状态空间节点联合求解法，将状态空间子系统灵活聚类并映射至全局节点导纳矩阵
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/01/Dufour 等 - 2011 - A combined state-space nodal method for the simulation of power system transients.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

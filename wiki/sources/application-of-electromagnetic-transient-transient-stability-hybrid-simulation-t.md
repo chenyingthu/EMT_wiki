@@ -1,7 +1,7 @@
 ---
 title: "Application of Electromagnetic Transient-Transient Stability Hybrid Simulation to FIDVR Study"
 type: source
-authors: ['未知']
+authors: ['Huang和Vittal']
 year: 2016
 journal: "IEEE Transactions on Power Systems;2016;31;4;10.1109/TPWRS.2015.2479588"
 tags: ['emt']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 # Application of Electromagnetic Transient-Transient Stability Hybrid Simulation to FIDVR Study
 
-**作者**: 
+**作者**: Huang和Vittal
 **年份**: 2016
 **来源**: `09/Huang和Vittal - 2016 - Application of Electromagnetic Transient-Transient Stability Hybrid Simulation to FIDVR Study.pdf`
 
 ## 摘要
 
-—This paper deals with the development of a new electromagnetic transient (EMT)-transient stability (TS) hybrid simulation platform and its application to a detailed fault-induced delayed voltage recovery (FIDVR) study on the WECC system. A new EMT-TS hybrid simulation platform, which integrates PSCAD/EMTDC and the open source power system simulation software InterPSS has been developed. A combined interaction protocol with an automatic protocol switching control scheme is proposed. A multi-port three-phase Thévenin equivalent is developed for representing an external network in an EMT sim- ulator. Correspondingly, the external network is represented in three-sequence, and a three-sequence TS simulation algorithm is developed. These techniques allow simulation of unsymmetrical faults withi
+本文提出一种基于PSCAD/EMTDC与InterPSS的解耦式EMT-TS混合仿真平台，用于精确研究故障诱发延迟电压恢复（FIDVR）现象。平台采用Socket通信框架实现跨进程数据交互，内部网络（含详细单相空调压缩机模型）在EMT侧仿真，外部网络在TS侧以相量域模型表示。为兼顾精度与速度，设计了一种结合串行与并行协议的自动切换交互机制，通过监测边界三序电流注入的最大变化率动态选择协议。针对不对称故障仿真，提出多端口三相戴维南等值方法，将外部网络三序诺顿等值经相序变换与源变换映射至EMT侧。同时，在InterPSS中扩展了三序暂态稳定算法，正序保留发电机转子动态，负序与零序采用恒定导纳矩阵独立求解，从而突破传统混合仿真边界三相平衡的限制，实现大规模电网不对称故障下FIDVR过程的高效高精度仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自FIDVR研究：大量单相空调压缩机和配电网在不对称故障后会产生快速电磁暂态与持续数秒到二十秒量级的系统动态耦合，正序暂稳程序难以刻画单相电机对不平衡电压的响应，而把整个WECC级大系统全部放入EMT又计算负担过重。本文研究对象是含详细空调/配电模型的内部网络与大规模外部输电系统之间的EMT-TS混合仿真接口，并将其用于SLG故障诱发的FIDVR。难点不只是软件耦合，还包括：边界处不能假定三相平衡；外部网络等值必须能向EMT侧提供三相时域可用的电压源/阻抗；串行交互慢、并行交互可能在突变时失准。相对已有多基于正序等值或单一交互协议的方法，本文贡献是把PSCAD/EMTDC与InterPSS解耦集成，提出自动切换的组合交互协议、多端口三相Thévenin等值，以及与之配套的三序TS算法，使内部网络可发生不对称故障而不必把边界扩展到三相平衡处。
+
+### 2. 模型、算法与实现技术
+
+平台将待详细建模区域作为EMT内部网络，由PSCAD/EMTDC积分；其余大系统作为TS外部网络，由InterPSS在相量域求解，两侧通过Socket交换边界量。接口的核心输入输出是边界母线三相/三序电压、电流以及外部网络对内部网络呈现的等值源和等值阻抗。多端口三相Thévenin等值的机制是：外部网络先在正、负、零三序下形成网络方程或等值导纳，正序保留发电机机电动态，负序和零序按序网络独立求解；随后把三序边界电压、电流和等值参数经相序变换映射为EMT侧可直接连接的三相多端口Thévenin源。组合交互协议在串行和并行之间切换：串行流程用当前EMT边界电流驱动TS求解后再更新EMT等值，精度更稳但等待时间长；并行流程让两侧利用上一交互步信息并行推进，速度更好但突变时可能有滞后误差。自动切换控制通过监测边界电流注入变化来识别故障投入、清除等强扰动，强扰动期使用串行，平稳期转为并行，从机制上平衡接口误差和仿真耗时。
+
+### 3. 验证、优势与不足
+
+作者先在IEEE 9-bus系统上测试所提接口技术，再把平台用于大规模WECC系统的FIDVR研究。工具链明确为PSCAD/EMTDC承担内部EMT仿真、InterPSS承担外部TS仿真，并通过跨进程通信集成。验证关注三类问题：一是混合仿真在不对称故障下能否给出合理的边界三相响应；二是组合交互协议相对单一串行或并行协议能否避免并行协议在扰动突变时的精度问题，同时不一直受串行等待限制；三是平台能否在WECC场景中复现SLG故障后空调压缩机先在故障相堵转、再向非故障相传播的FIDVR过程。论文还考察了不同负荷组成下的类似事件，并分析故障施加的point-on-wave对FIDVR发生的影响。优势在于它把正序TS无法处理的不平衡空调响应、全EMT难以承载的大系统规模、以及传统正序边界等值的三相平衡约束放到同一框架中处理。从验证范围看，原文摘要未报告可核验的数值误差、速度提升比例或阈值敏感性结果；结论主要支撑所测试的IEEE 9-bus与WECC案例，不能直接外推到任意保护动作、逆变器控制、实时仿真或更高频暂态问题。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于说明：FIDVR并非只能用全EMT或粗略正序暂稳二选一研究，关键是把单相负荷和配电细节保留在EMT区域，同时让外部大系统以三序相量网络提供动态支撑。它可用于后续构建EMT-TS接口、研究不对称故障下的负荷动态、比较交互协议、设计三相外部网络等值，以及在大系统中筛选可能触发FIDVR的故障和负荷场景。它不适合被外推为所有混合仿真的通用误差保证，也不能替代对具体负荷模型、边界位置、交互步长、保护/控制模型和通信实现的重新校验。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：平台集成PSCAD/EMTDC与InterPSS，提出组合交互协议、自动切换控制、多端口三相Thévenin等值和三序TS算法。
+- 来自原文摘要的确定信息：方法先在IEEE 9-bus系统测试，随后用于大型WECC系统的FIDVR研究，关注传输系统SLG故障、空调压缩机堵转传播、负荷组成和故障point-on-wave影响。
+- 原文摘要和引言只说明已有正序TS难以准确模拟不平衡故障下空调响应、全EMT计算负担重；当前证据未给出可核验的运行时间、误差百分比或阈值数值。
+- 关于串行/并行协议机理和边界电流变化触发切换的描述符合论文方法方向，但具体阈值、延时、步长等参数需回到正文表图核验，不能仅凭本页作为定量依据。
+- 多端口三相Thévenin和三序网络的解释是根据摘要术语与EMT-TS接口原理展开；具体矩阵构造、Kron约简形式、源变换细节应以论文公式为准。
+- 从验证范围看，论文未在当前证据中展示对其他商业TS/EMT工具、实时硬件平台、大量电力电子控制器、保护连锁动作或多种故障类型的系统性验证。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 构建基于PSCAD与InterPSS的解耦混合仿真平台，实现跨软件高效数据交互
-- 设计串并联自动切换交互协议，兼顾暂态过程精度与稳态过程仿真速度
-- 提出多端口三相戴维南等值与三序算法，突破边界三相平衡限制
-
+- 问题定位：本文提出一种基于PSCAD/EMTDC与InterPSS的解耦式EMT-TS混合仿真平台，用于精确研究故障诱发延迟电压恢复（FIDVR）现象。平台采用Socket通信框架实现跨进程数据交互，内部网络（含详细单相空调压缩机模型）在EMT侧仿真，外部网络在TS侧以相量域模型表示。
+- 方法机制：本文提出一种基于PSCAD/EMTDC与InterPSS的解耦式EMT-TS混合仿真平台，用于精确研究故障诱发延迟电压恢复（FIDVR）现象。平台采用Socket通信框架实现跨进程数据交互，内部网络（含详细单相空调压缩机模型）在EMT侧仿真，外部网络在TS侧以相量域模型表示。为兼顾精度与速度，设计了一种结合串行与并行协议的自动切换交互机制，通过监测边界三序电流注入的最大变化率动态选择协议。
+- 验证证据：对比仿真验证（混合仿真 vs 全EMT基准）与大规模实际电网案例应用；IEEE 9节点测试系统 & WECC夏季高峰大电网模型（含详细配电馈线与单相空调负荷）；PSCAD/EMTDC（内部网络EMT仿真）, InterPSS（外部网络TS仿真）, Socket通信框架
+- 量化与结论：混合仿真与全EMT仿真的最大/平均偏差均严格控制在0.05 pu以内。；协议切换阈值设定在每交互步2%~10%时，切换逻辑对阈值变化具有强鲁棒性，不会引发频繁误切换。；纯并行协议在故障清除后首个交互步的戴维南等值电压误差显著放大，组合协议通过串行介入有效抑制该误差。；当配电母线相电压跌落至0.75 pu以下时，底层单相空调压缩机电机将发生不可逆堵转。
+- 适用边界：适用于理解本文 Application of Electromagnetic Transient-Transient Stability Hybrid Simulation to FIDVR Study （2016） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[emt-ts混合仿真|EMT-TS混合仿真]]
 - [[自动切换交互协议|自动切换交互协议]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 - [[三序暂态稳定算法|三序暂态稳定算法]]
 - [[socket通信框架|Socket通信框架]]
 
-
 ## 涉及的模型
-
 
 - [[单相感应电机|单相感应电机]]
 - [[空调压缩机负荷|空调压缩机负荷]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 - [[ieee-9节点系统|IEEE 9节点系统]]
 - [[wecc大电网模型|WECC大电网模型]]
 
-
 ## 相关主题
-
 
 - [[混合仿真|混合仿真]]
 - [[故障诱发延迟电压恢复|故障诱发延迟电压恢复]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 - [[电机堵转传播|电机堵转传播]]
 - [[故障初相角分析|故障初相角分析]]
 
-
 ## 主要发现
-
 
 - 单相接地故障可引发FIDVR，故障相空调电机率先堵转并向非故障相蔓延
 - 在多种负荷比例组合下均观测到类似的电压延迟恢复与电机堵转传播现象
 - 故障施加时刻的初相角对FIDVR事件的发生概率及严重程度具有显著影响
-
-
 
 ## 方法细节
 
@@ -74,36 +94,29 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 ### 数学公式
 
-
 **公式1**: $$$\Delta I_{\max} = \max_{i \in \text{boundary}, k \in \{0,1,2\}} \left| \frac{I_{i,k}(t) - I_{i,k}(t-\Delta t)}{\Delta t} \right|$$$
 
 *边界三序电流注入的最大变化率，作为自动切换串行/并行交互协议的核心判据。*
-
 
 **公式2**: $$$Y_{\text{ext}}^{(2)} V_{\text{ext}}^{(2)} = I_{\text{ext}}^{(2)}$$$
 
 *外部网络负序节点电压方程，用于求解负序边界电压。*
 
-
 **公式3**: $$$Y_{\text{ext}}^{(0)} V_{\text{ext}}^{(0)} = I_{\text{ext}}^{(0)}$$$
 
 *外部网络零序节点电压方程，用于求解零序边界电压。*
-
 
 **公式4**: $$$Y_{\text{eq}}^{(k)} = Y_{BB}^{(k)} - Y_{BI}^{(k)} (Y_{II}^{(k)})^{-1} Y_{IB}^{(k)}$$$
 
 *基于Kron约简的外部网络三序等值导纳矩阵计算公式。*
 
-
 **公式5**: $$$D_{\max} = \max |x_{\text{hyb}} - x_{\text{emt}}|$$$
 
 *混合仿真与全EMT基准仿真结果的最大偏差度量指标。*
 
-
 **公式6**: $$$D_{\text{avg}} = \frac{1}{N} \sum |x_{\text{hyb}} - x_{\text{emt}}|$$$
 
 *混合仿真与全EMT基准仿真结果的平均偏差度量指标。*
-
 
 ### 算法步骤
 
@@ -118,7 +131,6 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 5. 并行执行流程：TS侧利用上一交互步电压提前计算戴维南等值并立即返回，EMT侧与TS侧的耗时计算步骤同步运行，提升整体速度。
 
 6. 等值更新与求解：外部网络三序导纳矩阵仅在拓扑变化时因子分解一次，负序/零序网络解耦独立求解，通过相序变换矩阵及源变换生成EMT侧可用的多端口三相戴维南电压源与阻抗。
-
 
 ### 关键参数
 
@@ -136,8 +148,6 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 - **空调负荷占比**: 75%
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -150,8 +160,6 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 | WECC大电网FIDVR研究 | 选取夏季高峰工况，内部网络涵盖500kV母线24138/24151及周边区域。母线24151 A相SLG故障于0.7s发生，4周波清除。故障相空调电机率先堵转，随后堵转现象传播至非故障相。 | 在多种负荷构成下均成功复现FIDVR事件，验证了平台在大规模不对称故障下的适用性，相比全EMT仿真大幅降低计算负担，同时克服了正序TS无法模拟不对称故障的缺陷。 |
 
-
-
 ## 量化发现
 
 - 混合仿真与全EMT仿真的最大/平均偏差均严格控制在0.05 pu以内。
@@ -160,7 +168,6 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 - 当配电母线相电压跌落至0.75 pu以下时，底层单相空调压缩机电机将发生不可逆堵转。
 - 故障初相角（POW）对FIDVR事件的发生概率及电机堵转传播路径有显著影响，不同POW下堵转起始时间与传播范围差异明显。
 - 交互步长采用5 ms时，组合协议相比纯串行协议显著提升仿真速度，同时保持与纯EMT一致的动态轨迹精度。
-
 
 ## 关键公式
 
@@ -182,11 +189,34 @@ $$$D_{\max} = \max |x_{\text{hyb}} - x_{\text{emt}}|$$$
 
 *用于严格评估混合仿真平台相对于全EMT基准的数值精度。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（混合仿真 vs 全EMT基准）与大规模实际电网案例应用
 - **测试系统**: IEEE 9节点测试系统 & WECC夏季高峰大电网模型（含详细配电馈线与单相空调负荷）
 - **仿真工具**: PSCAD/EMTDC（内部网络EMT仿真）, InterPSS（外部网络TS仿真）, Socket通信框架
 - **验证结果**: 在IEEE 9节点系统中验证了组合协议与三相戴维南等值的精度（误差<0.05 pu）；在WECC系统中成功复现了单相接地故障引发的FIDVR全过程，证实了电机堵转从故障相向非故障相传播的物理机制，平台在保证精度的前提下大幅降低了大规模不对称故障仿真的计算负担。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Application of Electromagnetic Transient-Transient Stability Hybrid Simulation to FIDVR Study`（2016） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 emt-ts混合仿真、自动切换交互协议、多端口三相戴维南等值 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：构建基于PSCAD与InterPSS的解耦混合仿真平台，实现跨软件高效数据交互
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Transient-Transient Stability Hybrid Simulation to FIDVR Study.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

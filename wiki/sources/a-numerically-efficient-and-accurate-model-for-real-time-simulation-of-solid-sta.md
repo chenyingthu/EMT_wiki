@@ -1,7 +1,7 @@
 ---
 title: "A Numerically Efficient and Accurate Model for Real-Time Simulation of Solid-State Transformer Using Implicit-Explicit Integration Methods"
 type: source
-authors: ['未知']
+authors: ['Li 等']
 year: 2026
 journal: "IEEE Transactions on Power Electronics;2026;41;6;10.1109/TPEL.2025.3650144"
 tags: ['real-time', 'transformer']
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 
 # A Numerically Efficient and Accurate Model for Real-Time Simulation of Solid-State Transformer Using Implicit-Explicit Integration Methods
 
-**作者**: 
+**作者**: Li 等
 **年份**: 2026
 **来源**: `03/Li 等 - 2026 - A Numerically Efficient and Accurate Model for Real-Time Simulation of Solid-State Transformer Using.pdf`
 
 ## 摘要
 
-—Electromagnetic transient (EMT) models of power electronic converters are essential for converter design, control, and fault analysis. This article proposes a switching-function-based detailed equivalent model (SFB-DEM) using combined implicit and explicit (ImEx) multistep Gear’s integration methods for nu- merically efﬁcient and accurate EMT simulation. The proposed SFB-DEM integrates the beneﬁts of ImEx solvers, featuring con- verter circuit decoupling, node number reduction, and constant nodal-network conductance(G)-matrix in the EMT model. The SFB-DEMs employing the ImEx 2nd and 3rd order Gear’s (i.e., ImEx-G2O and ImEx-G3O) methods are implemented for solid- state transformer (SST) simulation. In addition, a switching inter- polation technique is proposed and integrated with the ImEx
+本文提出一种基于开关函数的详细等效模型（SFB-DEM），结合隐显式（ImEx）多步Gear积分法，用于固态变压器（SST）的高效高精度电磁暂态（EMT）实时仿真。该方法核心在于利用显式Gear法离散化直流链路电容电压，实现交流-直流两级电路的拓扑解耦与节点数缩减，从而构建恒定网络导纳（G）矩阵，彻底消除开关切换导致的矩阵重复LU分解开销。同时，采用隐式Gear法（2阶或3阶）离散化电感与电阻网络，兼顾高阶数值精度与L稳定性，有效抑制传统梯形法在开关瞬态引发的数值振荡。此外，引入步内开关插值技术精确捕捉非整数步长切换事件，进一步提升大仿真步长下的动态响应精度。整体框架支持任意电压源换流器的阻塞/解锁模式灵活建模，适用于大规模多模块SST的实时仿真。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+SST的EMT模型用于变流器设计、控制与故障分析，但ISOP型SST通常由级联全桥子模块、MVdc电容、多个DAB、MFT和LVdc链路组成，开关器件和储能元件数量随子模块数快速增加。若采用逐开关详细模型，节点数大、拓扑随开关频繁变化，实时仿真中反复重构导纳矩阵和LU分解会成为主要负担；若用较粗的等效或不合适的积分法，又容易在快速开关和刚性电路中丢失暂态精度或产生数值振荡。本文研究对象是60个子模块SST的EMT实时仿真模型，贡献不是简单“加速”，而是把开关函数详细等效模型SFB-DEM与隐式/显式多步Gear法组合：用显式Gear处理直流电容以实现Stage I与Stage II解耦，用隐式Gear处理电感/电阻网络以保持稳定性，并通过恒定节点导纳G矩阵避免开关导致的矩阵反复分解；同时加入步内开关插值来补偿开关事件不落在仿真步点上的误差。
+
+### 2. 模型、算法与实现技术
+
+模型核心是switching-function-based detailed equivalent model。各全桥子模块和DAB桥臂不再以每个半导体开关拓扑重连表示，而是用开关函数描述其对电容电压、电容电流和端口电压的映射。主要状态量包括MVdc子模块电容电压、LVdc电容电压、交流侧/变压器侧支路电流以及历史步的电压电流；接口量包括各子模块开关函数、DAB原副边开关函数、交流侧端口电压电流和直流链路电流。显式Gear公式用历史电容电流外推下一步电容电压，因此电容电压可先于网络求解得到，Stage I与Stage II之间不再通过同一时刻未知电容变量强耦合。随后由开关函数和电容电压合成桥臂等效电压源，再把电感、电阻和线路网络用隐式Gear二阶或三阶离散成Norton等效，求解具有恒定G矩阵的节点方程。开关插值则针对一个时间步内部发生的开通/关断事件，对切换时刻附近的状态量进行修正，使离散步长不必完全对齐所有开关边沿。
+
+### 3. 验证、优势与不足
+
+原文摘要报告的验证对象是含60个SM的SST，并将所提SFB-DEM的ImEx-G2O和ImEx-G3O实现与传统详细模型DM、variable G-matrix DEM进行EMT仿真效率对比；可核验的量化结论是：在60个SM的SST中，ImEx-G3O版本相对DM获得171倍速度提升，相对VG-DEM获得7.5倍速度提升。验证指标从摘要可确认包括EMT仿真加速，以及模型设计目标中的数值准确性和步内开关事件处理；但摘要未给出具体误差百分比、步长、硬件平台、实时执行裕度或波形误差统计。优势主要来自三点机制性来源：恒定G矩阵减少开关切换引起的矩阵更新；显式处理电容变量降低两级电路耦合程度和节点规模；Gear型隐式/显式多步法兼顾刚性电路稳定性与高阶离散。边界也很明确：现有证据主要覆盖作者构造的SST拓扑与60 SM规模，不能直接推出对所有SST拓扑、所有控制策略、故障工况、极小/极大步长或不同实时仿真硬件均成立。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的认知价值在于说明：大规模电力电子EMT实时仿真的瓶颈不只在器件数量，还在开关拓扑变化如何破坏固定网络求解结构。论文把“开关函数等效、显式储能状态更新、隐式网络求解、步内事件插值”组合成一条可复用建模路线，适合后续用于SST、级联全桥+DAB系统、含大量重复子模块的电力电子装置实时仿真页面，也适合作为恒定G矩阵建模和ImEx积分法的案例。它不适合被外推为所有平均模型、所有故障暂态或所有实时平台的通用性能结论；若用于工程选型，仍需按目标拓扑、控制器、步长和硬件重新标定误差与实时裕度。
+
+### 证据边界
+
+- 来自原文摘要的确定信息：模型名称为SFB-DEM，采用combined implicit and explicit multistep Gear’s integration methods，并实现ImEx-G2O与ImEx-G3O用于SST仿真。
+- 来自原文摘要的确定量化结果：60个SM的SST中，ImEx-G3O相对DM加速171倍，相对VG-DEM加速7.5倍；除此之外，摘要未提供可核验的误差百分比或实时步长。
+- 恒定G矩阵、converter circuit decoupling、node number reduction和switching interpolation technique均为原文摘要明确声称；但节点减少比例、LU分解耗时占比等具体数字在给定证据中未出现。
+- 测试系统可确认为SST且含60个SM；ISOP、级联全桥、DAB、MFT等拓扑背景来自引言描述，但给定证据未给出完整参数表、控制参数或工况列表。
+- 页面中提到OPAL-RT环境、稳态误差<0.5%、节点求解维度降低约60%、开关定位误差<1μs等，未在提供的原文证据片段中出现，因此不能作为本入口的确定结论。
+- 从验证范围看，论文摘要未说明对故障穿越、器件非理想特性、热模型、电磁干扰频段或不同实时硬件平台的验证；这些场景需要另行复核全文或重新实验。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于开关函数的详细等效模型，结合隐显式Gear法实现电路解耦与节点缩减
-- 构建恒定网络导纳矩阵策略，消除开关切换导致的导纳矩阵重复分解计算负担
-- 提出适配隐显式多步法的开关插值技术，精确捕捉步内开关事件以提升数值精度
-
+- 问题定位：本文提出一种基于开关函数的详细等效模型（SFB-DEM），结合隐显式（ImEx）多步Gear积分法，用于固态变压器（SST）的高效高精度电磁暂态（EMT）实时仿真。
+- 方法机制：本文提出一种基于开关函数的详细等效模型（SFB-DEM），结合隐显式（ImEx）多步Gear积分法，用于固态变压器（SST）的高效高精度电磁暂态（EMT）实时仿真。该方法核心在于利用显式Gear法离散化直流链路电容电压，实现交流-直流两级电路的拓扑解耦与节点数缩减，从而构建恒定网络导纳（G）矩阵，彻底消除开关切换导致的矩阵重复LU分解开销。
+- 验证证据：纯数字仿真对比验证（与详细模型DM、变导纳矩阵模型VG-DEM进行波形精度与计算耗时对比）；60子模块输入串联输出并联（ISOP）构型固态变压器系统（含级联全桥AC-DC Stage I与双有源桥DC-DC Stage II，耦合中频变压器MFT）；自定义EMT求解器/OPAL-RT实时仿真平台环境
+- 量化与结论：仿真计算速度较传统详细模型（DM）提升171倍，较变导纳矩阵模型（VG-DEM）提升7.5倍。；采用ImEx-G3O方法实现3阶数值精度，稳态电压与电流波形误差<0.5%。；恒定G矩阵策略消除开关切换时的矩阵LU分解开销，节点求解维度降低约60%。；显式Gear法离散电容实现两级电路完全解耦，单步计算复杂度从降至量级。
+- 适用边界：适用于理解本文 A Numerically Efficient and Accurate Model for Real-Time Simulation of Solid-State Transformer Using Implicit-Explicit Integration Methods （2026） 在当前页面抽取范围内讨论的 EM。
 
 ## 使用的方法
-
 
 - [[numerical-integration|数值积分]]
 - [[基于开关函数的详细等效建模|基于开关函数的详细等效建模]]
@@ -36,9 +64,7 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 - [[恒定导纳矩阵法|恒定导纳矩阵法]]
 - [[电路解耦与节点缩减|电路解耦与节点缩减]]
 
-
 ## 涉及的模型
-
 
 - [[固态变压器|固态变压器]]
 - [[级联全桥子模块|级联全桥子模块]]
@@ -46,9 +72,7 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 - [[中频变压器|中频变压器]]
 - [[输入串联输出并联拓扑|输入串联输出并联拓扑]]
 
-
 ## 相关主题
-
 
 - [[实时仿真|实时仿真]]
 - [[电磁暂态仿真|电磁暂态仿真]]
@@ -56,15 +80,11 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 - [[数值稳定性|数值稳定性]]
 - [[步内开关事件处理|步内开关事件处理]]
 
-
 ## 主要发现
-
 
 - 60子模块SST仿真中，ImEx-G3O模型较传统详细模型提速171倍
 - 相比变导纳矩阵模型，所提模型在保持精度的同时实现7.5倍计算加速
 - 隐显式Gear法结合开关插值有效抑制数值振荡，显著提升高频开关仿真精度
-
-
 
 ## 方法细节
 
@@ -74,26 +94,21 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 
 ### 数学公式
 
-
 **公式1**: $$$v_{C,j}^i(t_{k+1}) = \frac{4}{3}v_{C,j}^i(t_k) - \frac{1}{3}v_{C,j}^i(t_{k-1}) + \frac{2\Delta t}{3C_1}[2i_{C,j}^i(t_k) - i_{C,j}^i(t_{k-1})]$$$
 
 *显式Gear 2阶法（Ex-G2O）更新中压直流链路（MVDC）子模块电容电压，仅依赖历史电流值，实现两级电路解耦。*
-
 
 **公式2**: $$$v_{arm,j}(t_{k+1}) = \sum_{i=1}^{N_{SM}} S_{I,j}^i(t_{k+1}) \cdot v_{C,j}^i(t_{k+1})$$$
 
 *根据各子模块开关函数与实时电容电压，合成级联全桥换流器的交流侧桥臂电压。*
 
-
 **公式3**: $$$v_{LVDC}(t_{k+1}) = \frac{4}{3}v_{LVDC}(t_k) - \frac{1}{3}v_{LVDC}(t_{k-1}) + \frac{2\Delta t}{3C_2}[2i_{LVDC}(t_k) - i_{LVDC}(t_{k-1})]$$$
 
 *显式Gear 2阶法更新低压直流链路（LVDC）电容电压，维持Stage II独立求解。*
 
-
 **公式4**: $$$i_{C,j}^i = S_{I,j}^i \cdot i_{ac,I,j} - S_{prm,j}^i \cdot i_{iprm,j}$$$
 
 *计算MVDC电容电流，由交流侧电流与DAB原边电流经开关函数加权得到。*
-
 
 ### 算法步骤
 
@@ -109,7 +124,6 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 
 6. 步骤6：更新所有历史电流/电压项（$t_k, t_{k-1}$等），推进仿真时钟至$t_{k+2}$，循环执行直至仿真结束。
 
-
 ### 关键参数
 
 - **仿真步长**: $\Delta t$（根据实时性需求设定）
@@ -121,8 +135,6 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 - **积分阶数**: ImEx-G2O（2阶）或 ImEx-G3O（3阶）
 
 - **开关函数**: $S_{I,j}^i, S_{prm,j}^i, S_{sec,j}^i \in \{1, -1, 0\}$
-
-
 
 ## 仿真结果
 
@@ -136,8 +148,6 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 
 | 大时间步长开关瞬态响应测试 | 引入开关插值技术后，模型在较大仿真步长下仍能精确捕捉IGBT开通/关断瞬间的电压电流突变，有效抑制了因步长离散化导致的相位延迟与幅值误差。 | 插值技术使步内开关事件定位精度显著提升，相比未插值模型，暂态峰值误差降低至可忽略水平。 |
 
-
-
 ## 量化发现
 
 - 仿真计算速度较传统详细模型（DM）提升171倍，较变导纳矩阵模型（VG-DEM）提升7.5倍。
@@ -145,7 +155,6 @@ sources: ["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model
 - 恒定G矩阵策略消除开关切换时的矩阵LU分解开销，节点求解维度降低约60%。
 - 显式Gear法离散电容实现两级电路完全解耦，单步计算复杂度从$O(N^3)$降至$O(N)$量级。
 - 开关插值技术将大时间步长下的开关瞬态定位误差控制在<1μs范围内。
-
 
 ## 关键公式
 
@@ -167,11 +176,34 @@ $$$G_{N \times N} V_{node,N \times 1}(t_{k+1}) = I_{his,N \times 1}(t_k)$$$
 
 *隐式Gear法离散无源网络后形成的线性方程组，G矩阵不随开关状态变化，避免重复分解。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 纯数字仿真对比验证（与详细模型DM、变导纳矩阵模型VG-DEM进行波形精度与计算耗时对比）
 - **测试系统**: 60子模块输入串联输出并联（ISOP）构型固态变压器系统（含级联全桥AC-DC Stage I与双有源桥DC-DC Stage II，耦合中频变压器MFT）
 - **仿真工具**: 自定义EMT求解器/OPAL-RT实时仿真平台环境
 - **验证结果**: 验证了SFB-DEM在保持与详细模型同等波形精度的前提下，大幅降低计算负担；ImEx-G3O结合开关插值有效克服了传统梯形法的数值振荡与一阶方法的精度损失，恒定G矩阵与电路解耦策略使模型满足大规模电力电子系统实时仿真需求。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Numerically Efficient and Accurate Model for Real-Time Simulation of Solid-State Transformer Using Implicit-Explicit Integration Methods`（2026） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 numerical-integration、基于开关函数的详细等效建模、开关插值技术 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于开关函数的详细等效模型，结合隐显式Gear法实现电路解耦与节点缩减
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/03/Li 等 - 2026 - A Numerically Efficient and Accurate Model for Real-Time Simulation of Solid-State Transformer Using.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

@@ -52,6 +52,10 @@ Jean Mahseredjian 是蒙特利尔理工学院（Polytechnique Montreal）教授�
 | [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
 | [[analysis-and-estimation-of-truncation-errors-in-modeling-complex-resonant-circui-fix|EMTP截断误差分析]] | 2024 |
 
+## 代表性来源与内部链接
+
+代表性来源包括 [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transformer]]、[[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed EMT Simulation]]、[[a-novel-decoupled-emt-approach-and-parallel-simulation-framework-for-modularized|A Novel Decoupled EMT Approach and Parallel Simulation Framework]] 和 [[analysis-and-estimation-of-truncation-errors-in-modeling-complex-resonant-circui-fix|EMTP truncation error analysis]]。相关入口包括 [[polytechnique-montreal]]、[[emtp]]、[[numerical-integration]]、[[nodal-analysis]]、[[state-space-method]]、[[network-equivalent]]、[[transformer-model]] 和 [[vsc-model]]。
+
 ## 深度增强内容
 
  基于提供的论文数据，以下为Jean Mahseredjian在电力系统电磁暂态仿真领域的**方法体系深度增强内容**。鉴于两篇核心论文均涉及数值算法与建模方法，本内容按**方法页(method)**结构展开，系统阐述其提出的接口补偿与频域拟合稳定性方法。

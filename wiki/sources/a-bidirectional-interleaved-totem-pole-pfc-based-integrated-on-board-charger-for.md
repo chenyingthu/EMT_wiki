@@ -1,7 +1,7 @@
 ---
 title: "A Bidirectional Interleaved Totem Pole PFC-Based Integrated On-Board Charger for EV SRM Drive"
 type: source
-authors: ['未知']
+authors: ['M. Cai', 'H. Gras', 'J. Mahseredjian', 'E. Rutovic', 'A. El-Akoum']
 year: 2024
 journal: "IEEE Access;2024;12; ;10.1109/ACCESS.2024.3432791"
 tags: ['emt']
@@ -11,42 +11,66 @@ sources: ["EMT_Doc/01/Faheem Ali 等 - 2024 - A Bidirectional Interleaved Totem 
 
 # A Bidirectional Interleaved Totem Pole PFC-Based Integrated On-Board Charger for EV SRM Drive
 
-**作者**: 
+**作者**: M. Cai; H. Gras; J. Mahseredjian; E. Rutovic; A. El-Akoum
 **年份**: 2024
 **来源**: `01/Faheem Ali 等 - 2024 - A Bidirectional Interleaved Totem Pole PFC-Based Integrated On-Board Charger for EV SRM Drive.pdf`
 
 ## 摘要
 
-This paper presents an improved integrated on-board charger (IOBC) tailored for a 4-phase switched reluctance motor (SRM) drive. The proposed IOBC is non-isolated and utilizes the totem pole power factor correction (PFC) operation for reduced common-mode voltage. Furthermore, the proposed system accommodates bidirectional functions, ensuring versatility during charging mode. A non-isolated IOBC for SRM with reduced common-mode voltage and bidirectional capability has largely been ignored in the literature. The proposed system utilizes a modified Miller converter in the motoring mode and is easily reconfigured into a two-phase interleaved totem pole converter during charging modes without the need for any magnetic contactors. The proposed system features zero instantaneous torque (ZIT) at s
+本文提出一种面向4相开关磁阻电机(SRM)的无隔离集成车载充电器(IOBC)。在驱动模式下采用改进型Miller变换器实现相电流独立控制；充电模式下通过闭合开关S，无需磁接触器即可将拓扑重构为两相交错图腾柱PFC变换器，利用A、C相绕组作为滤波电感。控制策略采用基于K因子法的Type-2补偿器设计电流/电压环，结合SOGI-PLL实现电网同步。针对充电时转子自由旋转导致的电感位置变化，通过小信号模型取平均电感值进行控制器设计，并利用交错并联技术抑制电流纹波。系统通过自然磁阻转矩平衡使转子稳定于四个零瞬时转矩(ZIT)位置，实现稳态零转矩与双向功率流(G2V/V2G)，同时图腾柱结构有效抑制共模电压。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是把EV牵引逆变器、电机绕组和车载充电器复用，减少独立OBC的器件、体积和成本，同时保留电网侧PFC、双向G2V/V2G和充电时低机械磨损。研究对象是4相开关磁阻电机SRM驱动的非隔离集成车载充电器。难点在于：SRM相电感随转子位置强非线性变化，充电时绕组被当作PFC电感会产生磁阻转矩；非隔离充电还面临共模电压/漏电流风险；已有SRM-IOBC常需磁接触器、分裂绕组或不支持双向功率流。本文的贡献是用改进型Miller变换器作为驱动拓扑，并在充电模式下无需磁接触器重构为两相交错图腾柱PFC，复用A、C相绕组作滤波电感；通过四个零瞬时转矩稳定位置实现稳态净转矩为零；并利用图腾柱PFC与交错控制获得双向、正负半周对称的电网电流。
+
+### 2. 模型、算法与实现技术
+
+实现机制分为拓扑重构、电机电磁约束和PFC控制三层。驱动模式下，改进型Miller变换器对4相SRM相电流独立控制；充电模式下闭合开关S后，A、C两相绕组并联参与两相交错图腾柱PFC，交流侧接电网、直流侧接电池/直流母线。核心接口量包括电网电压相位与极性、两路电感电流、电池/母线电压、占空比d1/d2以及转子位置相关电感。转矩分析使用SRM相转矩关系Tph=i_ph^2 dLph/dθ，A、C相净转矩为Tnet=TA+TC；当两相电感斜率相反且电流受控对称时，转矩抵消形成ZIT稳定点。控制上，SOGI-PLL提取电网同步正弦量，电压外环给出参考电流峰值，电流内环跟踪瞬时正弦参考；Type-2补偿器按K因子法整定。由于充电时转子可自由移动、绕组电感可能落在3.8、11.5、22.8 mH等位置，作者用平均电感12.4 mH建立PFC小信号模型，并用交错并联降低纹波和缓解两相电感不一致。
+
+### 3. 验证、优势与不足
+
+作者给出的验证链包括Ansys RMxprt/Maxwell电磁暂态仿真、MATLAB/Simulink系统级SRM驱动与充电仿真、1-hp实验样机以及文献对比分析。测试对象是4相SRM、改进型Miller变换器/交错图腾柱PFC、约400 V直流侧和交流电网接口；页面给出的实验/仿真器件还包括dSPACE/DSP控制实现和IGBT功率模块。关键指标包括转子能否自然收敛到四个ZIT位置、最大自然位移约7.5°、不同稳定位置下A/C相电感组合、G2V/V2G切换、电网电流谐波、直流电压纹波和充电功率能力。页面报告在电感差异最大的稳定位置II，电网电流THD为4.61%，并声称并联两相可使充电功率达到驱动功率两倍。优势主要体现在：无需磁接触器重构、无需分裂绕组、支持双向充放电、充电稳态零瞬时转矩、图腾柱PFC有利于降低共模电压。从验证范围看，当前证据未展示完整车辆级安全认证、不同电网扰动/故障、长期热应力、绝缘漏电流实测数值和大功率车规平台结果，因此不宜外推为所有非隔离EV充电场景均适用。
+
+### 4. 价值、认知与可复用场景
+
+这项工作提供的关键认知是：SRM绕组在IOBC中不只是“可复用电感”，其位置相关电感和磁阻转矩必须同时进入充电控制设计；通过选择相隔合适的两相并使电流正负半周对称，可以把不希望的充电转矩转化为自然ZIT稳定机制。它适合被后续研究复用为SRM-IOBC拓扑入口、非隔离图腾柱PFC与电机绕组复用案例、充电模式电磁暂态/控制联合仿真样例，以及无接触器重构方案的对比基线。不适合直接外推到永磁电机、感应电机、分裂绕组SRM、隔离型OBC或存在强电网扰动和故障穿越要求的场景；控制参数也需随电机电感曲线、功率等级和采样/开关频率重新设计。
+
+### 证据边界
+
+- 原文首页证据显示作者为T. Faheem Ali、D. Arun Dominic、Prajof Prabhakaran、Arun P. Parameswaran；用户元数据中的作者列表与PDF首页不一致，引用时应以PDF首页/DOI为准。
+- 拓扑、双向能力、无需磁接触器、改进型Miller变换器重构为两相交错图腾柱PFC、ZIT和充电功率为驱动功率两倍，均来自摘要或页面抽取内容。
+- THD=4.61%、最大角位移7.5°、电感组合和平均电感12.4 mH来自当前页面抽取；若用于正式比较，应回到原文对应图表核验工况、测量窗口和谐波计算方法。
+- 共模电压降低在摘要中作为图腾柱PFC优势提出，但当前证据未给出可核验的漏电流或共模电压数值，因此只能表述为拓扑层面和作者验证范围内的降低。
+- 验证覆盖Ansys电磁暂态、MATLAB仿真和1-hp实验样机，但当前材料未显示车辆级大功率、长期热循环、绝缘老化、EMI合规和异常电网故障测试。
+- 平均电感小信号建模适用于作者给定SRM和稳定位置；对电感曲线、极槽组合、绕组电阻或饱和特性不同的SRM，需要重新识别电磁参数和整定控制器。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出无磁接触器重构拓扑，将改进型Miller变换器切换为交错图腾柱PFC
-- 设计考虑电感位置变化的控制策略，实现充电稳态零瞬时转矩并消除偶次谐波
-- 利用电机绕组并联使充电功率翻倍，同时抑制共模电压并支持双向能量流动
-
+- 问题定位：本文提出一种面向4相开关磁阻电机(SRM)的无隔离集成车载充电器(IOBC)。在驱动模式下采用改进型Miller变换器实现相电流独立控制；充电模式下通过闭合开关S，无需磁接触器即可将拓扑重构为两相交错图腾柱PFC变换器，利用A、C相绕组作为滤波电感。
+- 方法机制：本文提出一种面向4相开关磁阻电机(SRM)的无隔离集成车载充电器(IOBC)。在驱动模式下采用改进型Miller变换器实现相电流独立控制；充电模式下通过闭合开关S，无需磁接触器即可将拓扑重构为两相交错图腾柱PFC变换器，利用A、C相绕组作为滤波电感。控制策略采用基于K因子法的Type-2补偿器设计电流/电压环，结合SOGI-PLL实现电网同步。
+- 验证证据：有限元电磁暂态仿真(Ansys Maxwell)、系统级时域仿真(MATLAB/Simulink)、1-hp硬件样机实验验证；4相开关磁阻电机(SRM)驱动系统，集成改进型Miller变换器与交错图腾柱PFC，直流侧接400V模拟电池/100Ω负载，交流侧接电网；
+- 量化与结论：充电功率可达驱动功率的2倍（通过两相绕组并联实现）。；在电感差异最大的稳定位置II，电网电流THD仅为4.61%。；转子从任意初始位置到稳定位置的最大自然角位移为7.5°。；四个稳定位置对应的电感组合分别为：(11.5, 11.5)mH、(22.8, 3.8)mH、(11.5, 11.5)mH、(3.8, 22.8)mH，平均电感为12.4mH。
+- 适用边界：适用于理解本文 A Bidirectional Interleaved Totem Pole PFC-Based Integrated On-Board Charger for EV SRM Drive （2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[交错图腾柱pfc控制|交错图腾柱PFC控制]]
 - [[零瞬时转矩控制|零瞬时转矩控制]]
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[双向功率流控制|双向功率流控制]]
 
-
 ## 涉及的模型
-
 
 - [[开关磁阻电机-srm|开关磁阻电机(SRM)]]
 - [[改进型miller变换器|改进型Miller变换器]]
 - [[交错图腾柱pfc变换器|交错图腾柱PFC变换器]]
 - [[集成车载充电器-iobc|集成车载充电器(IOBC)]]
 
-
 ## 相关主题
-
 
 - [[电动汽车集成车载充电|电动汽车集成车载充电]]
 - [[功率因数校正|功率因数校正]]
@@ -55,15 +79,11 @@ This paper presents an improved integrated on-board charger (IOBC) tailored for 
 - [[零瞬时转矩控制|零瞬时转矩控制]]
 - [[谐波分析|谐波分析]]
 
-
 ## 主要发现
-
 
 - 仿真与实验验证拓扑无需接触器重构，充电稳态实现零瞬时转矩且无转子振动
 - 对称电流控制消除电网偶次谐波，正负半周等效电感一致显著提升电能质量
 - 绕组并联配置使充电功率达驱动功率两倍，共模电压大幅降低且系统效率提升
-
-
 
 ## 方法细节
 
@@ -73,31 +93,25 @@ This paper presents an improved integrated on-board charger (IOBC) tailored for 
 
 ### 数学公式
 
-
 **公式1**: $$$T_{ph} = i_{ph}^2 \frac{dL_{ph}}{d\theta}$$$
 
 *SRM单相瞬时转矩公式，表明转矩与相电流平方及电感变化率成正比，用于分析充电模式下的转矩产生机制。*
-
 
 **公式2**: $$$T_{net} = T_A + T_C$$$
 
 *充电模式下A相与C相的净转矩叠加公式，用于验证零瞬时转矩(ZIT)条件。*
 
-
 **公式3**: $$$\frac{dL_A}{d\theta} = -\frac{dL_C}{d\theta} \Rightarrow T_A = -T_C \Rightarrow T_{net} = 0$$$
 
 *稳定位置I和III的零转矩条件，两相电感斜率相反，转矩相互抵消。*
-
 
 **公式4**: $$$L_{avg} = \frac{3.8 + 11.5 + 11.5 + 22.8}{4} = 12.4 \text{ mH}$$$
 
 *四个稳定位置下的平均电感值，用于PFC变换器小信号建模与控制器参数整定。*
 
-
 **公式5**: $$$C_{bat} = \frac{P_{out}}{2\pi f_{ripple} V_{bat}^2 \Delta V} \approx 1000 \mu F$$$
 
 *直流母线电容计算公式，基于1kW最小功率、400V电压及1%纹波要求设计。*
-
 
 ### 算法步骤
 
@@ -110,7 +124,6 @@ This paper presents an improved integrated on-board charger (IOBC) tailored for 
 4. 4. 零瞬时转矩自然稳定：充电电流注入A、C相后，转子受磁阻转矩作用自由旋转。根据电感斜率特性，转子自动对齐至四个稳定位置之一(7.5°, 22.31°, 37.5°, 52.69°)。在稳态下，两相转矩大小相等方向相反或同时为零，实现净瞬时转矩为零，避免机械制动。
 
 5. 5. 双向无缝切换：通过改变参考电流极性(正为G2V，负为V2G)，控制器自动调整开关管导通时序，实现电网与电池间的双向能量流动，过渡过程无转矩脉动。
-
 
 ### 关键参数
 
@@ -142,8 +155,6 @@ This paper presents an improved integrated on-board charger (IOBC) tailored for 
 
 - **相位裕度**: 70° (电流) / 80° (速度) / 60° (充电环)
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -158,8 +169,6 @@ This paper presents an improved integrated on-board charger (IOBC) tailored for 
 
 | 驱动模式动态响应仿真 | 速度参考从0阶跃至800 rpm及800 rpm降至300 rpm，相电流独立控制响应迅速，无交叉耦合干扰。线性化小信号模型与实际非线性特性匹配度高。 | 改进型Miller拓扑相比传统不对称半桥，实现更快的退磁速度与更平滑的转矩输出。 |
 
-
-
 ## 量化发现
 
 - 充电功率可达驱动功率的2倍（通过两相绕组并联实现）。
@@ -169,7 +178,6 @@ This paper presents an improved integrated on-board charger (IOBC) tailored for 
 - 直流母线电容设计值为1000µF，满足400V/1kW工况下1%的电压纹波要求。
 - 控制器离散化采样周期为20µs，充电模式开关频率为20kHz，电流环带宽达2kHz。
 - 稳态充电时瞬时转矩严格为零，消除偶次谐波，实现对称正负半周电网电流。
-
 
 ## 关键公式
 
@@ -197,11 +205,34 @@ $$$C_{bat} = \frac{P_{out}}{2\pi f_{ripple} V_{bat}^2 \Delta V} \approx 1000 \mu
 
 *基于输出功率、允许纹波及开关频率计算储能电容，确保充电模式直流侧电压稳定。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 有限元电磁暂态仿真(Ansys Maxwell)、系统级时域仿真(MATLAB/Simulink)、1-hp硬件样机实验验证
 - **测试系统**: 4相开关磁阻电机(SRM)驱动系统，集成改进型Miller变换器与交错图腾柱PFC，直流侧接400V模拟电池/100Ω负载，交流侧接电网
 - **仿真工具**: Ansys RMxprt/Maxwell (电磁场与瞬态分析), MATLAB/Simulink (控制算法与系统级仿真), dSPACE/DSP (数字控制器实现), 实验室IGBT功率模块(SKM50GB12T4)
 - **验证结果**: 仿真与实验一致验证了拓扑无接触器重构的可行性。充电模式下转子自然稳定于四个ZIT位置，最大位移7.5°；电网电流THD低至4.61%，偶次谐波被有效消除；G2V/V2G双向切换无缝，直流电压纹波控制在1%以内。系统共模电压显著降低，充电功率翻倍，整体控制策略在电感大幅波动下仍保持高鲁棒性与电能质量。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `A Bidirectional Interleaved Totem Pole PFC-Based Integrated On-Board Charger for EV SRM Drive`（2024） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 交错图腾柱pfc控制、零瞬时转矩控制、电磁暂态仿真 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出无磁接触器重构拓扑，将改进型Miller变换器切换为交错图腾柱PFC
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/01/Faheem Ali 等 - 2024 - A Bidirectional Interleaved Totem Pole PFC-Based Integrated On-Board Charger for EV SRM Drive.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

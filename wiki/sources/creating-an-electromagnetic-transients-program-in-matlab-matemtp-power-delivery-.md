@@ -1,9 +1,9 @@
 ---
 title: "Creating An Electromagnetic Transients Program In Matlab: MatEMTP - Power Delivery, IEEE Transactions on"
 type: source
-authors: ['IEEE']
+authors: ['Varennes', 'Quebec', 'Canada J3X 1S1']
 year: 2004
-journal: ""
+journal: "IEEE Transactions on Power Delivery"
 tags: ['emtp']
 created: "2026-04-13"
 sources: ["EMT_Doc/11/Creating_an_Electromagnetic_Transients_Program_in_MATLAB_MatEMTP.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/11/Creating_an_Electromagnetic_Transients_Program_in_MATLAB_M
 
 # Creating An Electromagnetic Transients Program In Matlab: MatEMTP - Power Delivery, IEEE Transactions on
 
-**作者**: IEEE
+**作者**: Varennes; Quebec; Canada J3X 1S1
 **年份**: 2004
 **来源**: `11/Creating_an_Electromagnetic_Transients_Program_in_MATLAB_MatEMTP.pdf`
 
 ## 摘要
 
-The traditional method for developing electric network analysis computer programs is based on coding using a conventional computer language: FORTRAN, C or Pascal. The programming language of the EMTP (Electromagnetic Transients Program) is FORTRAN-77. Such a program has a closed architecture and uses a large number of code lines to satisfy requirements ranging from low level data manipulation to the actual solution mathematics which eventually become diluted and almost impossible to visualize. This paper pro- poses a new design idea suitable for EM" re-development in a high level programming context. It presents the creation of the transient analysis numerical simulator MatEMTP in the computational engine frame of MATLAB. This new approach to software engineering can afford a dramatic codi
+本文提出基于MATLAB计算引擎重构电磁暂态仿真程序（MatEMTP）的全新架构。摒弃传统FORTRAN逐行编码模式，采用高级矩阵/向量运算实现算法向量化。核心创新在于构建增广稀疏网络方程，显式引入开关关联矩阵与电压源关联矩阵，使导纳矩阵在拓扑切换时无需重构，仅需更新开关状态子矩阵。采用固定步长离散化（默认梯形积分，可选后向欧拉），通过数据驱动的模块化设计（输入处理器、模型选择器、组织器、核心求解器）实现组件即插即用。利用MATLAB稀疏矩阵运算与内存预分配策略，大幅降低解释器开销，提升代码可读性与可维护性。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+实际需求是：传统EMTP等电磁暂态程序长期用FORTRAN-77逐行实现，网络方程、元件模型、拓扑处理和底层数据操作混杂在大量代码中，导致算法结构难以看见，模型扩展和新算法试验成本很高。研究对象不是新的电力元件模型，而是一个用MATLAB计算引擎重构的EMT时域仿真程序MatEMTP。难点在于EMT仿真既要保持与现有EMTP相同的离散代数网络求解逻辑，又要处理开关、理想电压源、历史项、稀疏大规模网络和固定步长时域推进；若直接把FORTRAN逐行翻译成M文件，解释器开销会很大，也无法体现MATLAB矩阵语言优势。本文贡献在于把网络求解显式改写为矩阵/向量驱动的高层结构，利用MATLAB稀疏矩阵能力组织节点导纳、源关联和开关关联关系，并以模块化M文件实现输入处理、元件模型插入、时间循环和线性方程求解，从而把EMTP类程序从封闭低层代码改造成可读、可修改、便于实验算法思想的研究平台。
+
+### 2. 模型、算法与实现技术
+
+MatEMTP沿用EMTP的基本时域思想：将电网络的代数-微分方程在固定步长Δt上离散化，形成每个时刻待解的代数网络方程。元件模型通过统一接口向全局方程贡献局部导纳和历史电流，典型形式为Ix=YxVx(t)+Ixh，其中Yx是离散化后的等效导纳，Ixh保存前一时刻状态形成的历史注入。局部元件量通过关联矩阵映射到全局节点导纳和节点注入，例如把MaᵀYxMa累加到Yn，把历史项作为等效电流注入。为处理理想电压源和任意开关互联，程序构造增广稀疏网络方程，未知量不仅包括节点电压Vn，还包括电压源电流IVs和开关电流IS；右端包含节点电流注入、理想电压源给定值以及开关约束项。开关状态通过激活矩阵或状态子矩阵进入增广方程，拓扑变化时更新相关块并重新分解，否则复用LU分解进行前代/回代。实现上，MatEMTP由MATLAB M-files组成，强调矩阵预分配、稀疏存储、向量化更新和按功能分离的组件调用，使元件模型与核心网络求解器通过矩阵接口耦合，而不是散落在多处低层代码中。
+
+### 3. 验证、优势与不足
+
+作者用既有FORTRAN-77 EMTP作为参考程序，验证MatEMTP的数值结果和运行时间。页面记录的测试包括：含60 Hz及谐波源的混合网络，用于检验稳态/谐波初始化和时域响应；230 kV、15英里三相电缆投切暂态，采用分段π型等值并考虑护套接地；以及约1503节点的分布参数线路冲击电压传播算例，用于考察稀疏矩阵和历史项维护在较大网络中的可用性。指标主要是波形一致性和CPU时间比，基线为传统EMTP。当前页面称各算例中MatEMTP与EMTP波形重合或高度一致，纯时域计算速度通常慢于FORTRAN EMTP，速度比约在2.5到10之间；含初始化的特定算例中，MatEMTP因可直接做谐波初始化而节省了传统EMTP达到稳态所需的长时间仿真。优势主要体现在代码结构透明、矩阵公式接近数学表达、开关和电压源处理更显式、便于在MATLAB中快速开发和可视化。边界也很清楚：验证基线限于FORTRAN-77 EMTP，算例数量有限；论文没有证明在所有非线性元件、复杂控制、保护逻辑、实时仿真或极大规模系统中仍保持同等性能；运行效率结论依赖当时MATLAB稀疏矩阵实现、硬件和M文件解释执行环境。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心价值是把“EMTP程序如何被组织”本身作为研究对象：它说明EMT仿真不必只能依靠庞大、封闭、逐行编码的传统程序，也可以把网络方程、元件离散化、开关约束和线性代数求解显式表达为可组合的矩阵运算。它适合被后续研究复用为教学型EMTP、算法原型平台、开关拓扑处理方法、稀疏矩阵组装框架和元件模型接口设计的入口文献。工程上，它更适合用于离线暂态分析、模型验证和新算法试验，而不宜直接外推为比工业级EMTP更快、更完整或可实时运行的仿真器。若后续页面讨论MATLAB/Octave EMT、改进节点分析、理想开关处理、模块化仿真内核或EMTP软件工程，本页可作为方法源头之一。
+
+### 证据边界
+
+- 来自原文首页和摘要的确定信息：论文提出MatEMTP，即用MATLAB M-files和MATLAB计算引擎重构电磁暂态分析程序；动机是传统FORTRAN-77 EMTP架构封闭、代码量大、数学结构被低层实现掩盖。
+- 来自原文方法段的确定信息：MatEMTP采用与EMTP类似的固定步长时域离散思路，把代数-微分方程转化为离散代数方程，并在0到tmax的离散时刻求解。
+- 增广方程、开关关联矩阵、电压源关联矩阵、历史电流项和稀疏矩阵组装机制与当前页面给出的公式一致；若用于严格引用，应回查PDF中公式编号、符号定义和矩阵维度。
+- 运行时间比、测试算例规模和波形一致性数字来自当前抽取页面的结果整理；在提供的原文片段中未出现完整表格，因此这些量化结论需要以PDF实验表图复核后再作为最终证据引用。
+- 验证范围主要是与FORTRAN-77 EMTP的离线仿真对比；未见对商业EMT工具、实时仿真器、并行实现、复杂电力电子控制或大规模非线性系统的系统比较。
+- 论文目标偏软件架构和数值实现，不是提出新的电缆、线路、开关物理模型；因此不应把MatEMTP的验证结果外推为对所有元件模型精度的独立证明。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于MATLAB的MatEMTP架构，利用矩阵运算实现暂态仿真代码的模块化重构
-- 构建增广稀疏网络方程，显式引入开关关联矩阵，支持任意拓扑切换且免重构导纳阵
-- 设计向量化求解流程与数据解析器，消除冗余判断，显著提升代码可读性与计算效率
-
+- 问题定位：本文提出基于MATLAB计算引擎重构电磁暂态仿真程序（MatEMTP）的全新架构。摒弃传统FORTRAN逐行编码模式，采用高级矩阵/向量运算实现算法向量化。核心创新在于构建增广稀疏网络方程，显式引入开关关联矩阵与电压源关联矩阵，使导纳矩阵在拓扑切换时无需重构，仅需更新开关状态子矩阵。
+- 方法机制：本文提出基于MATLAB计算引擎重构电磁暂态仿真程序（MatEMTP）的全新架构。摒弃传统FORTRAN逐行编码模式，采用高级矩阵/向量运算实现算法向量化。核心创新在于构建增广稀疏网络方程，显式引入开关关联矩阵与电压源关联矩阵，使导纳矩阵在拓扑切换时无需重构，仅需更新开关状态子矩阵。采用固定步长离散化（默认梯形积分，可选后向欧拉），通过数据驱动的模块化设计（输入处理器、模型选择器、组织器、核心求解器）实现组件即插即用。
+- 验证证据：对比仿真验证（与工业标准FORTRAN-77 EMTP进行数值结果与耗时对比）；自定义测试网络：1) 多频源混合电路；2) 230kV/15英里三相电缆（9段型等值）；3) 1503节点分布参数传输线（每相500段，含冲击电压源）；MatEMTP（基于MATLAB M-files与稀疏矩阵工具箱） vs. 传统EMTP（FORTRAN-77版本）
+- 量化与结论：MatEMTP与传统EMTP的数值解完全一致，波形重合度达100%，验证了增广矩阵公式与离散化算法的数学等价性。；纯时域计算速度比（eratio）在2.5至10之间，具体取决于步长与网络规模；Case 1在$\Delta t=50\mu s\Delta t=10\mu s$时eratio=10。；
+- 适用边界：适用于理解本文 Creating An Electromagnetic Transients Program In Matlab: MatEMTP - Power Delivery, IEEE Transactions on （2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[改进节点分析法|改进节点分析法]]
 - [[梯形积分法|梯形积分法]]
@@ -37,19 +65,14 @@ The traditional method for developing electric network analysis computer program
 - [[向量化编程|向量化编程]]
 - [[固定步长离散化|固定步长离散化]]
 
-
 ## 涉及的模型
-
-
 
 - [[多相耦合元件|多相耦合元件]]
 - [[理想开关|理想开关]]
 - [[电压源|电压源]]
 - [[通用无源支路|通用无源支路]]
 
-
 ## 相关主题
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[仿真软件架构|仿真软件架构]]
@@ -58,15 +81,11 @@ The traditional method for developing electric network analysis computer program
 - [[稳态初始化|稳态初始化]]
 - [[开源计算引擎|开源计算引擎]]
 
-
 ## 主要发现
-
 
 - 验证表明MatEMTP与传统EMTP求解精度与耗时高度一致，具备工程可用性
 - 增广矩阵公式有效消除非法开关回路，实现浮空节点与任意开关互联的稳定求解
 - 向量化编程与内存预分配策略显著降低解释器开销，使高级语言仿真效率满足需求
-
-
 
 ## 方法细节
 
@@ -76,26 +95,21 @@ The traditional method for developing electric network analysis computer program
 
 ### 数学公式
 
-
 **公式1**: $$$$\begin{bmatrix} \mathbf{Y}_n & \mathbf{V}_{adj}^T & \mathbf{S}_{adj}^T \mathbf{S}_{active} \\ \mathbf{V}_{adj} & \mathbf{0} & \mathbf{0} \\ \mathbf{S}_{active} \mathbf{S}_{adj} & \mathbf{0} & -\mathbf{S}_{active} \end{bmatrix} \begin{bmatrix} \mathbf{V}_n \\ \mathbf{I}_{Vs} \\ \mathbf{I}_S \end{bmatrix} = \begin{bmatrix} \mathbf{I}_n \\ \mathbf{V}_s \\ \mathbf{0} \end{bmatrix}$$$$
 
 *增广稀疏网络方程，显式包含节点导纳阵、电压源关联阵和开关关联阵，支持任意拓扑切换且避免非法开关回路导致的奇异问题。*
-
 
 **公式2**: $$$$\mathbf{I}_x = \mathbf{Y}_x \mathbf{V}_{x(t)} + \mathbf{I}_{xh}$$$$
 
 *元件时域离散化通用方程，将微分方程转化为代数方程，$\mathbf{I}_{xh}$为历史电流项。*
 
-
 **公式3**: $$$$\mathbf{Y}_n^{after} = \mathbf{Y}_n^{before} + \mathbf{M}_a^T \mathbf{Y}_x \mathbf{M}_a$$$$
 
 *节点导纳矩阵组装公式，通过元件关联矩阵$\mathbf{M}_a$将局部导纳阵映射至全局网络。*
 
-
 **公式4**: $$$$\mathbf{I}_n^{after} = \mathbf{I}_n^{before} - \mathbf{M}_a^T \mathbf{I}_{xh}$$$$
 
 *历史电流注入向量更新公式，用于时域步进中累加元件历史项对节点电流的贡献。*
-
 
 ### 算法步骤
 
@@ -113,7 +127,6 @@ The traditional method for developing electric network analysis computer program
 
 7. 7. 状态更新与迭代：调用`mbranch(7)`和`mswitch(7)`更新各元件历史存储矩阵及开关开闭状态，记录输出数据，循环直至达到最大仿真时间$t_{max}$。
 
-
 ### 关键参数
 
 - **integration_step**: 固定步长$\Delta t$（测试用例采用$10\mu s$或$50\mu s$）
@@ -123,8 +136,6 @@ The traditional method for developing electric network analysis computer program
 - **switch_control**: 基于时间阈值的开关动作矩阵$\mathbf{S}_{active}$，支持任意互联与浮空节点
 
 - **history_storage**: 二维稀疏数组配合旋转矩阵$\mathbf{T}_{rotate}$实现传输线历史项的高效存取
-
-
 
 ## 仿真结果
 
@@ -140,8 +151,6 @@ The traditional method for developing electric network analysis computer program
 
 | Case 3: 1503节点分布参数线路冲击电压传播 | 每相细分为500段，总计1503个节点，A相施加冲击电压函数。MatEMTP采用稀疏矩阵历史维护法，波形与EMTP高度吻合，仅因冲击函数编程差异存在微小$\Delta t$级延迟。 | 1503节点规模下eratio约为6；若缩减至500段（500节点），eratio约为5.7。计算耗时随步数呈近似线性增长。 |
 
-
-
 ## 量化发现
 
 - MatEMTP与传统EMTP的数值解完全一致，波形重合度达100%，验证了增广矩阵公式与离散化算法的数学等价性。
@@ -149,7 +158,6 @@ The traditional method for developing electric network analysis computer program
 - CPU时间分布分析显示：LU分解与三角求解占比<15%，右端向量更新占比约60%（其中电源函数调用占一半），元件模型更新占比约25%。
 - 采用稀疏矩阵与向量化编程后，MATLAB解释器开销显著降低，1503节点大规模网络的仿真耗时仅比传统FORTRAN慢约6倍，且代码量减少一个数量级。
 - 通过MEX文件编译核心循环或替换电源函数，预计可进一步将速度比优化至接近传统EMTP水平。
-
 
 ## 关键公式
 
@@ -171,11 +179,33 @@ $$$$\mathbf{Y}_n^{after} = \mathbf{Y}_n^{before} + \mathbf{M}_a^T \mathbf{Y}_x \
 
 *在初始化或拓扑改变时，将各元件局部导纳阵通过关联矩阵映射并累加至全局节点导纳阵。*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比仿真验证（与工业标准FORTRAN-77 EMTP进行数值结果与耗时对比）
 - **测试系统**: 自定义测试网络：1) 多频源混合电路；2) 230kV/15英里三相电缆（9段$\pi$型等值）；3) 1503节点分布参数传输线（每相500段，含冲击电压源）
 - **仿真工具**: MatEMTP（基于MATLAB M-files与稀疏矩阵工具箱） vs. 传统EMTP（FORTRAN-77版本）
 - **验证结果**: MatEMTP在所有测试用例中均输出与EMTP完全一致的暂态波形，验证了算法精度。计算效率方面，纯时域求解速度为传统EMTP的1/2.5至1/10，但凭借向量化架构、显式开关矩阵处理及谐波初始化能力，在代码可维护性、拓扑灵活性与开发效率上实现跨越式提升，具备替代传统闭源架构的工程潜力。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Creating An Electromagnetic Transients Program In Matlab: MatEMTP - Power Delivery, IEEE Transactions on`（2004） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 改进节点分析法、梯形积分法、后向欧拉法 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于MATLAB的MatEMTP架构，利用矩阵运算实现暂态仿真代码的模块化重构
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 源文件路径：`["EMT_Doc/11/Creating_an_Electromagnetic_Transients_Program_in_MATLAB_MatEMTP.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

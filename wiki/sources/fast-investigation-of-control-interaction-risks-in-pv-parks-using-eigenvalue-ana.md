@@ -3,7 +3,7 @@ title: "Fast investigation of control interaction risks in PV parks using eigenv
 type: source
 authors: ['A. Masoom']
 year: 2025
-journal: "Electric Power Systems Research, 251 (2026) 112316. doi:10.1016/j.epsr.2025.112316"
+journal: "Electric Power Systems Research"
 tags: ['emt']
 created: "2026-04-13"
 sources: ["EMT_Doc/19、20、21/EMT_task_19/Masoom 等 - 2026 - Fast investigation of control interaction risks in PV parks using eigenvalue analysis in Modelica.pdf"]
@@ -17,18 +17,46 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Masoom 等 - 2026 - Fast investigati
 
 ## 摘要
 
-Fast investigation of control interaction risks in PV parks using eigenvalue a Hydro-Qu´ebec Research Institute, Varennes, QC J3 × 1S1, Canada b Department of Electrical Engineering, Polytechnique Montr´eal, Montreal, QC H3T 1J4, Canada c Department of Electrical and Electronics Engineering, Middle East Technical University, Turkey This paper contributes to the fast detection of control interaction risk in a PV park using the eigenvalue analysis
+本文提出一种基于Modelica方程建模的光伏场站控制交互风险快速评估框架。首先利用MSEMT库构建包含光伏阵列、DC-AC变流器、集电线路、变压器及含故障穿越逻辑控制器的完整EMT详细模型。Modelica编译器自动将分层物理模型展平为微分代数方程组（DAEs），并在任意稳态或准稳态运行点处进行泰勒级数线性化，直接提取显式状态空间矩阵（A, B, C, D）。随后对系统矩阵A进行特征值扫描，通过复特征值的实部正负与频率分布识别潜在的不稳定振荡模态。该方法无需对输入滤波器、非线性环节或保护逻辑进行简化，克服了传统手动推导状态方程的繁琐与精度损失问题，最后通过时域EMT仿真与阻抗扫描进行交叉验证，实现多工况下控制交互风险的快速定位与阻尼设计指导。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求来自新能源场站并网后的控制交互风险筛查：光伏场站的全功率变流器、滤波器、集电线路、升压变压器和弱电网等环节可能在次/超同步频段形成负阻尼振荡，单靠长时间EMT仿真只能看到是否振荡，难以快速定位模态来源；阻抗法适合黑箱和两端口问题，但对多端、多变流器交互机理解释有限。本文研究对象是完整PV park及其互联网络在Modelica中的时域方程模型，并关注由该模型线性化得到的状态矩阵特征值。难点在于传统特征值分析通常要把各设备简化成dq坐标下的线性状态空间模型，再按拓扑手工拼接；一旦网络或控制结构变化，就要重写方程和邻接关系，且省略测量滤波器等环节会影响小扰动精度。本文的贡献不是提出新的稳定判据，而是把方程式建模、自动DAE展平、运行点线性化和特征值扫描连成一套流程，使较完整的PV场站EMT模型可直接生成A/B/C/D矩阵，用于快速发现潜在控制交互工况，并用EMT仿真和阻抗扫描交叉验证。
+
+### 2. 模型、算法与实现技术
+
+实现上，作者使用Modelica及MSEMT库表示PV场站和外部网络，模型包含光伏阵列、DC-AC变流器、LV/MV与MV/HV升压变压器、π型线路、控制器及故障穿越/保护相关逻辑。Modelica编译器先把分层图形模型展平为全局微分代数方程F(t, x_dot, x, y, z)=0，其中x是动态状态，y是代数变量，z或u是外部输入/扰动接口。随后将DAE重构为显式形式x_dot=h(t,x,u)、y=k(t,x,u)，在选定时刻t_l附近做一阶泰勒线性化，得到δx_dot=Aδx+Bδu、δy=Cδx+Dδu。这里A矩阵承载场站内部控制、电磁储能元件和网络耦合的局部动态；B、C、D则描述输入扰动到观测量的线性映射。算法流程是：先通过时域仿真获得目标运行点或扰动前后准稳态，再调用Modelica线性化功能计算雅可比并输出状态空间矩阵，最后对A做特征值分解。复特征值虚部换算振荡频率，实部判断阻尼符号；若某模态实部为正，则该运行点存在小扰动负阻尼风险。PV阵列方程采用包含光生电流、二极管、串并联电阻的I-V关系，MPP条件用于参数求解；这些非线性本身在线性化时通过运行点雅可比进入小信号模型。
+
+### 3. 验证、优势与不足
+
+作者声称用两类证据验证：一是EMT时域仿真，观察由特征值分析预测的风险工况是否出现相应振荡；二是阻抗基稳定性分析，采用EMT型阻抗扫描并比较相位裕度/频域稳定性结论与特征值结果的一致性。测试系统为完整PV park及互联网络，工具包括Modelica/MSEMT建模线性化与EMTP®时域验证。对比基线主要是文献中常见的MATLAB或Julia手工推导、手工拼接状态空间模型，以及IBSA和EMT仿真的常规用途；原文摘要称仿真时间和精度有outstanding improvement，但给定抽取文本未包含可核验的具体时间、误差或规模数字，因此不能把该表述量化。优势在于：拓扑变化时不必重新手工推导全系统状态方程；可保留测量滤波器等以往线性化中容易省略的环节；特征值结果能给出振荡模态频率和阻尼方向，比单纯EMT波形更利于筛查风险工况。从验证范围看，结论仍限于作者建模的PV场站、控制结构、运行点和扫描场景；自动线性化本质是局部小信号分析，不能直接证明大扰动、保护切换、限幅饱和或离散控制事件后的全局稳定性。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心认知价值在于把“EMT详细模型”和“状态空间特征值分析”之间的人工建模断点打通：研究者不必为每个场站拓扑重新手写线性模型，而可从同一Modelica时域模型抽取小信号模态，用于快速筛选弱网、不同出力或扰动前后运行点下的控制交互风险。它适合被后续页面复用为：新能源场站模态筛查流程、Modelica自动线性化案例、EV与IBSA/EMT交叉验证框架、以及控制参数阻尼设计前的风险定位工具。不适合外推为通用稳定性保证方法，也不应替代详细EMT大扰动验证、保护动作验证或实际装置控制器黑箱模型测试。
+
+### 证据边界
+
+- 来自原文摘要和引言的确定信息：研究主题是利用Modelica线性化得到状态空间方程，并用特征值分析快速检测PV park控制交互风险。
+- 来自原文公式的确定信息：模型先表示为DAE F(t, x_dot, x, y, z)=0，再重构为x_dot=h(t,x,u)、y=k(t,x,u)，并在任意时刻t_l做泰勒线性化。
+- 来自原文的确定信息：验证方法包括EMT仿真和基于EMT型阻抗扫描的IBSA；工具和库包括Modelica/MSEMT，页面还给出EMTP®作为时域验证工具。
+- 原文未报告可核验的数值结果：给定抽取文本没有提供仿真加速倍数、特征值频率误差、阻尼比、模型阶数或计算耗时表，因此不能量化所谓outstanding improvement。
+- 部分模型细节来自页面抽取而非完整论文表图复核，例如具体保护逻辑、PPC细节、PV阵列参数和线路/变压器参数；使用时应回查原PDF算例章节。
+- 适用性边界是据方法性质推断：线性化特征值分析只反映选定运行点附近的小扰动动态，对限幅、保护切换、故障穿越过程中的强非线性和离散事件不能直接给出全局结论。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 基于Modelica构建光伏场站EMT模型，自动提取线性化状态空间矩阵
-- 无需简化模型，实现多工况下控制交互风险的快速特征值扫描与稳定性评估
-- 结合EMT仿真与阻抗扫描验证，显著提升新能源并网稳定性分析效率与精度
-
+- 问题定位：本文提出一种基于Modelica方程建模的光伏场站控制交互风险快速评估框架。首先利用MSEMT库构建包含光伏阵列、DC-AC变流器、集电线路、变压器及含故障穿越逻辑控制器的完整EMT详细模型。
+- 方法机制：本文提出一种基于Modelica方程建模的光伏场站控制交互风险快速评估框架。首先利用MSEMT库构建包含光伏阵列、DC-AC变流器、集电线路、变压器及含故障穿越逻辑控制器的完整EMT详细模型。Modelica编译器自动将分层物理模型展平为微分代数方程组（DAEs），并在任意稳态或准稳态运行点处进行泰勒级数线性化，直接提取显式状态空间矩阵（A, B, C, D）。
+- 验证证据：时域电磁暂态（EMT）仿真与阻抗基稳定性分析（IBSA）交叉验证；完整光伏场站及互联网络（含聚合光伏阵列、DC-AC变流器、LV/MV与MV/HV升压变压器、π型集电线路、含FRT逻辑的控制器、保护系统及PPC）；Modelica (MSEMT库), EMTP®
+- 量化与结论：特征值实部>0直接指示负阻尼风险，无需依赖时域长周期仿真即可快速定位不稳定工况。；保留输入滤波器与非线性环节后，小扰动场景下的线性化精度显著提升，避免了传统简化模型导致的误判。；Modelica自动线性化流程消除了手动推导状态方程的拓扑依赖，任意电路结构变更均可直接提取A/B/C/D矩阵。；
+- 适用边界：适用于理解本文 Fast investigation of control interaction risks in PV parks using eigenvalue analysis in Modelica （2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[特征值分析|特征值分析]]
 - [[modelica方程建模|Modelica方程建模]]
@@ -38,9 +66,7 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[模态分析|模态分析]]
 
-
 ## 涉及的模型
-
 
 - [[光伏场站|光伏场站]]
 - [[dc-ac变流器|DC-AC变流器]]
@@ -50,9 +76,7 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 - [[逆变器型资源|逆变器型资源]]
 - [[保护系统|保护系统]]
 
-
 ## 相关主题
-
 
 - [[控制交互风险|控制交互风险]]
 - [[稳定性分析|稳定性分析]]
@@ -61,15 +85,11 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 - [[阻抗稳定性分析|阻抗稳定性分析]]
 - [[快速仿真评估|快速仿真评估]]
 
-
 ## 主要发现
-
 
 - 相比传统方法，该框架在保持模型完整性的同时大幅缩短计算时间并提升精度
 - 无需忽略输入滤波器等非线性环节，即可准确识别多工况下的潜在不稳定振荡模式
 - 经EMT仿真与阻抗扫描交叉验证，该方法能有效定位控制交互风险并指导阻尼设计
-
-
 
 ## 方法细节
 
@@ -79,31 +99,25 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 
 ### 数学公式
 
-
 **公式1**: $$$F(t, \dot{x}, x, y, z) = 0$$$
 
 *系统展平后的微分代数方程组（DAEs），包含状态变量x、代数变量y和输入变量z*
-
 
 **公式2**: $$$\dot{x} = h(t, x, u), \quad y = k(t, x, u)$$$
 
 *DAE系统的显式重构形式，用于后续线性化处理*
 
-
 **公式3**: $$$\delta\dot{x} = A\delta x + B\delta u, \quad \delta y = C\delta x + D\delta u$$$
 
 *在运行点$t_l$处线性化后得到的显式状态空间方程，A为系统状态矩阵*
-
 
 **公式4**: $$$I_{PV} = I_{ph} - I_0 \left[ e^{\frac{V_{PV} + I_{PV}R_s}{a N_s V_{th}}} - 1 \right] - \frac{V_{PV} + I_{PV}R_s}{R_p}$$$
 
 *光伏阵列的I-V特性方程，包含二极管非线性、串联与并联电阻*
 
-
 **公式5**: $$$\frac{d(V_{PV}I_{PV})}{dV_{PV}}\bigg|_{max} = I_{max,PV} + V_{max,PV}\frac{dI_{PV}}{dV_{PV}}\bigg|_{max} = 0$$$
 
 *最大功率点（MPP）处的导数条件，用于求解并联电阻$R_p$*
-
 
 ### 算法步骤
 
@@ -120,7 +134,6 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 6. 步骤6：对矩阵 $A$ 进行特征值分解，提取复特征值对应的振荡频率与阻尼比。若共振频段内特征值实部为正，则判定存在负阻尼控制交互风险。
 
 7. 步骤7：将识别出的高风险工况导入Modelica或EMTP®进行时域EMT仿真，并采用EMT型阻抗扫描法进行阻抗基稳定性分析（IBSA），交叉验证特征值预测的准确性。
-
 
 ### 关键参数
 
@@ -142,8 +155,6 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 
 - **线性化参考点**: 任意稳态或准稳态时刻 $t_l$
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -156,15 +167,12 @@ Fast investigation of control interaction risks in PV parks using eigenvalue a H
 
 | EMT时域仿真与阻抗扫描交叉验证 | 将特征值分析识别出的不稳定工况输入EMTP®进行时域仿真，观察电压/电流振荡发散趋势；同时采用EMT型阻抗扫描获取频域阻抗曲线，验证相位裕度与特征值阻尼的一致性。 | 特征值预测的振荡频率与EMT仿真实测频率高度吻合，克服了IBSA仅适用于双端系统且无法揭示多机交互机理的局限。 |
 
-
-
 ## 量化发现
 
 - 特征值实部>0直接指示负阻尼风险，无需依赖时域长周期仿真即可快速定位不稳定工况。
 - 保留输入滤波器与非线性环节后，小扰动场景下的线性化精度显著提升，避免了传统简化模型导致的误判。
 - Modelica自动线性化流程消除了手动推导状态方程的拓扑依赖，任意电路结构变更均可直接提取A/B/C/D矩阵。
 - （注：原文提供部分在第3节末尾截断，第4节具体数值对比数据未包含在输入文本中，上述结论基于摘要与引言的明确技术声明提取。）
-
 
 ## 关键公式
 
@@ -186,11 +194,34 @@ $$$I_{PV} = I_{ph} - I_0 \left[ e^{\frac{V_{PV} + I_{PV}R_s}{a N_s V_{th}}} - 1 
 
 *用于精确表征光伏组件在标准测试条件及变工况下的直流侧输出特性，保留在完整EMT模型中参与线性化*
 
-
-
 ## 验证详情
 
 - **验证方式**: 时域电磁暂态（EMT）仿真与阻抗基稳定性分析（IBSA）交叉验证
 - **测试系统**: 完整光伏场站及互联网络（含聚合光伏阵列、DC-AC变流器、LV/MV与MV/HV升压变压器、π型集电线路、含FRT逻辑的控制器、保护系统及PPC）
 - **仿真工具**: Modelica (MSEMT库), EMTP®
 - **验证结果**: 特征值分析结果与EMT时域振荡波形及阻抗扫描相位裕度高度一致。该方法在保持模型完整性的前提下，实现了多工况下控制交互风险的快速、高精度识别，验证了基于Modelica自动线性化框架在新能源并网稳定性评估中的工程适用性。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Fast investigation of control interaction risks in PV parks using eigenvalue analysis in Modelica`（2025） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 特征值分析、modelica方程建模、微分代数方程线性化 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：基于Modelica构建光伏场站EMT模型，自动提取线性化状态空间矩阵
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 具体适用范围仍以原文算例、参数表和验证场景为准，当前页面不应外推到未验证系统。
+- 源文件路径：`["EMT_Doc/19、20、21/EMT_task_19/Masoom 等 - 2026 - Fast investigation of control interaction risks in PV parks using eigenvalue analysis in Modelica.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

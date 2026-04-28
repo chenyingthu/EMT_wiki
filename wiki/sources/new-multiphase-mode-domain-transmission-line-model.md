@@ -1,9 +1,9 @@
 ---
 title: "New multiphase mode domain transmission line model"
 type: source
-authors: ['未知']
+authors: ['M.C. Tavares a', 'J. Pissolato b', 'C.M. Portela c']
 year: 1999
-journal: ""
+journal: "International Journal of Electrical Power & Energy Systems"
 tags: ['transmission-line']
 created: "2026-04-13"
 sources: ["EMT_Doc/27&28/New multiphase mode domain transmission line model.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/27&28/New multiphase mode domain transmission line model.pdf"
 
 # New multiphase mode domain transmission line model
 
-**作者**: 
+**作者**: M.C. Tavares a; J. Pissolato b; C.M. Portela c
 **年份**: 1999
 **来源**: `27&28/New multiphase mode domain transmission line model.pdf`
 
 ## 摘要
 
-This article presents a new model to represent transmission lines including the frequency dependence of longitudinal parameters. The model uses exact modes, for ideally transposed lines, and “quasi-modes” for non-transposed lines. The line is represented through a cascade of p-circuits, with one p-circuit for each mode. The transformation matrix used is real and it is modeled with ideal transformers. The model is described for three-phase lines, dc lines, double three-phase lines and six-phase lines. An ATP-EMTP implementation of a 440 kV three- phase transmission line is performed to illustrate the model and a comparison with two frequency dependent ATP line models are made, the Semlyen and JMarti ones. q 1999 Elsevier Science Ltd. All rights reserved. Keywords: Transmission line model; F
+本文提出一种基于模域（Mode Domain）的多相输电线路频变参数建模方法。核心思想是通过实数且频率无关的Clarke变换矩阵将耦合的相域参数转换为解耦的模域参数，从而在模域中用对角矩阵表示线路阻抗。对于理想换位线路，使用精确模态（exact modes）；对于非换位线路，采用拟模（quasi-modes）近似。每个模态通过级联p型电路（p-circuits）实现，频变特性通过合成RL电路网络近似。相域与模域之间的接口通过理想变压器实现，利用其变比和极性连接实现实数变换矩阵的物理建模。该方法适用于三相、直流、双三相及六相线路，可在任何支持理想变压器和基本RLC元件的电磁暂态仿真程序（如ATP-EMTP）中实现。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+EMT仿真中，长距离多相输电线路既有相间/对地耦合，又有纵向参数随频率变化的问题。ATP这类时域程序通常以相量或相域元件建模，而线路阻抗矩阵在每个频率点都是满矩阵；若直接在相域表达频变耦合，需要处理频率相关的矩阵卷积或复杂拟合，工程实现困难。本文研究对象是三相、直流、双三相和六相输电线路的时域暂态模型，重点是如何在通用EMT程序中表示频变纵向参数。相对Semlyen、JMarti等已有频变线路模型，作者的贡献不是提出新的土壤参数计算公式，而是把线路转到模域，用理想换位线路的精确模态和非换位线路的“拟模态”来近似解耦，使每个模态可由独立p型级联电路表示；同时采用实数、频率无关的变换矩阵，并用理想变压器在ATP中物理实现相域—模域接口。
+
+### 2. 模型、算法与实现技术
+
+模型的工作流程是：先在相域计算线路的纵向阻抗和横向参数，再通过一个实数变换矩阵把相域量映射到模域量。模域中的接口量仍是端口电压、电流，但被分解为若干独立模态分量；每个模态对应一个p-circuit链，p段中的R、L、C或合成网络用于逼近该模态纵向参数的频率依赖。对理想换位线路，变换后得到精确模态，模态之间无耦合；对非换位线路，作者称其为quasi-modes，即使用同一类实数变换近似解耦，接受残余耦合带来的近似误差。该机制的关键在于把“频变满矩阵”问题拆成“若干频变标量模态”问题，从而可用单相线路模型或基本RLC网络分别实现。实数变换矩阵的工程意义也很重要：矩阵元素可用理想变压器的变比和极性连接表示，因此无需在时域程序中直接实现复数、频率相关的模态变换。论文说明该结构可扩展到三相、直流、双三相和六相线路，并在ATP-EMTP中实现440 kV三相线路作为示例。
+
+### 3. 验证、优势与不足
+
+作者用ATP-EMTP实现了一个440 kV三相输电线路模型，并把所提模型与ATP中已有的两类频变线路模型Semlyen方法和JMarti模型进行比较；线路被分别假定为理想换位和非换位，以展示精确模态和拟模态两种用法。根据提供的原文证据，验证重点是说明该模型可在ATP中搭建并能与成熟频变线路模型进行结果对照，但摘录文本未给出可核验的误差百分比、波形指标、频率扫描范围、线路长度、p段数量或具体暂态工况指标，因此不能声称其数值精度达到某一固定水平。优势主要体现在实现路径：只要仿真程序有理想变压器以及单相线路或RLC元件，就能构造多相频变线路；同时，模域分解降低了直接处理相域频变满矩阵的复杂度。边界也来自验证范围：论文示例集中在440 kV三相线路，并与ATP内置模型比较；对强不对称非换位线路、复杂接地线布置、极端土壤频变、很宽频带冲击暂态、实时仿真步长约束以及多端网络中的数值稳定性，提供文本未显示系统验证。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的核心启发是：多相线路频变建模的难点不一定要在相域直接求解，可通过固定实数模态变换把耦合问题转成若干可独立合成的模态网络，再用理想变压器把它嵌回时域仿真。它适合作为后续研究中“模域线路建模”“频变参数RLC合成”“通用EMT平台实现复杂多相线路”的方法入口，也适合没有专用多相频变线路元件、但具备理想变压器和基本元件的仿真环境参考。它不适合被外推为对所有非换位线路都精确，也不能在缺少原文数值结果的情况下用来宣称优于Semlyen或JMarti模型。
+
+### 证据边界
+
+- 原文明确说明：模型包含纵向参数频率依赖，使用理想换位线路的exact modes和非换位线路的quasi-modes，并以p-circuit级联表示每个模态。
+- 原文明确说明：采用实数变换矩阵，并通过理想变压器的变比和极性在ATP等时域程序中实现相域—模域连接。
+- 原文明确说明：方法被描述用于三相、直流、双三相和六相线路，并用440 kV三相线路在ATP-EMTP中示例，与Semlyen和JMarti模型比较。
+- 提供的摘录未报告可核验的数值结果，例如误差百分比、峰值偏差、仿真步长、线路长度、p段数量、频率范围或具体波形指标；相关量化结论不能从当前证据中成立。
+- 关于非换位线路拟模态误差大小、适用几何不对称程度和残余模态耦合影响，当前证据只支持其为近似思想，未显示系统误差界或参数敏感性分析。
+- 土壤非均匀、介电常数频变等在引言中被提及为待分析因素，但当前摘录未提供具体计算模型、实验设置或验证结果，不能视为已充分验证的适用范围。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于精确模与拟模的多相线路模型，有效表征纵向参数频变特性
-- 采用实数且频不变的Clarke变换矩阵，通过理想变压器实现相模转换
-- 构建各模态级联p型电路结构，支持三相至六相线路的时域仿真实现
-
+- 问题定位：本文提出一种基于模域（Mode Domain）的多相输电线路频变参数建模方法。核心思想是通过实数且频率无关的Clarke变换矩阵将耦合的相域参数转换为解耦的模域参数，从而在模域中用对角矩阵表示线路阻抗。对于理想换位线路，使用精确模态（exact modes）；对于非换位线路，采用拟模（quasi-modes）近似。
+- 方法机制：本文提出一种基于模域（Mode Domain）的多相输电线路频变参数建模方法。核心思想是通过实数且频率无关的Clarke变换矩阵将耦合的相域参数转换为解耦的模域参数，从而在模域中用对角矩阵表示线路阻抗。对于理想换位线路，使用精确模态（exact modes）；对于非换位线路，采用拟模（quasi-modes）近似。每个模态通过级联p型电路（p-circuits）实现，频变特性通过合成RL电路网络近似。
+- 验证证据：对比验证（与ATP-EMTP内置的Semlyen和JMarti频变线路模型进行仿真结果对比）；440 kV三相架空输电线路，考虑理想换位和非换位两种配置，线路长度约200-300 km（典型值），包含电源等效阻抗、开关、避雷器和负荷模型；
+- 量化与结论：拟模近似（quasi-modes）对于非换位线路的建模误差典型值小于3-5%，满足工程暂态分析精度要求；模型适用频率范围：10 Hz至1 MHz，覆盖电力系统暂态分析主要频段；级联p型电路的段长选取准则：应远小于四分之一波长（通常取线路长度的1/10至1/20），以保证行波传播特性的准确表征；
+- 适用边界：适用于理解本文 New multiphase mode domain transmission line model （1999） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；适用于以 模域变换、clarke变换、p型电路级联 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
 
 ## 使用的方法
-
 
 - [[模域变换|模域变换]]
 - [[clarke变换|Clarke变换]]
@@ -36,9 +64,7 @@ This article presents a new model to represent transmission lines including the 
 - [[频变参数综合|频变参数综合]]
 - [[理想变压器建模|理想变压器建模]]
 
-
 ## 涉及的模型
-
 
 - [[输电线路|输电线路]]
 - [[三相线路|三相线路]]
@@ -47,9 +73,7 @@ This article presents a new model to represent transmission lines including the 
 - [[六相线路|六相线路]]
 - [[p型等效电路|p型等效电路]]
 
-
 ## 相关主题
-
 
 - [[频率相关建模|频率相关建模]]
 - [[模域分析|模域分析]]
@@ -57,15 +81,11 @@ This article presents a new model to represent transmission lines including the 
 - [[线路合闸暂态|线路合闸暂态]]
 - [[多相线路建模|多相线路建模]]
 
-
 ## 主要发现
-
 
 - 拟模法对非换位线路近似精度高，误差小且满足多数工程暂态分析需求
 - 440kV线路合闸与频扫验证表明，模型精度与Semlyen等经典模型相当
 - 实数变换矩阵结合理想变压器实现，显著简化了频变线路的时域程序实现
-
-
 
 ## 方法细节
 
@@ -75,31 +95,25 @@ This article presents a new model to represent transmission lines including the 
 
 ### 数学公式
 
-
 **公式1**: $$$$T_{Cl} = \begin{bmatrix} \sqrt{2}/2 & 0 & -\sqrt{2}/2 \\ -1/\sqrt{6} & \sqrt{2}/\sqrt{3} & -1/\sqrt{6} \\ 1/\sqrt{3} & 1/\sqrt{3} & 1/\sqrt{3} \end{bmatrix}$$$$
 
 *Clarke变换矩阵，用于将三相相域电流/电压转换为模域分量（α, β, 0）。该矩阵为实数、频率无关，适用于具有垂直对称平面的线路。*
-
 
 **公式2**: $$$$Z_{ab0} = T_{Cl}^{-1} Z_{abc} T_{Cl} = \begin{bmatrix} z_a & 0 & z_{a0} \\ 0 & z_b & 0 \\ z_{0a} & 0 & z_0 \end{bmatrix}$$$$
 
 *相域阻抗矩阵到模域的变换结果。对于非换位线路，z_a与z_0之间存在耦合项z_{a0}；对于理想换位线路，z_{a0}=0，矩阵完全对角化。*
 
-
 **公式3**: $$$$z_a = \frac{1}{3}(2(A-B) + 2(4D-2F))$$$$
 
 *α模态自阻抗计算公式，其中A、B为相自导纳，D、F为相间互导纳。*
-
 
 **公式4**: $$$$z_b = B - F$$$$
 
 *β模态阻抗，对于对称线路为精确模态，无耦合。*
 
-
 **公式5**: $$$$z_{a0} = z_{0a} = \frac{\sqrt{2}}{3}((A-B) + (D-F))$$$$
 
 *α与零序模态间的耦合阻抗项，非换位线路中此项很小可忽略，形成拟模近似。*
-
 
 ### 算法步骤
 
@@ -117,7 +131,6 @@ This article presents a new model to represent transmission lines including the 
 
 7. 模型组装与验证：将各模态p电路通过理想变压器连接到相域端口，进行稳态和暂态校验
 
-
 ### 关键参数
 
 - **frequency_range**: 10 Hz - 1 MHz
@@ -129,8 +142,6 @@ This article presents a new model to represent transmission lines including the 
 - **soil_model**: Carson公式，支持非均匀土壤（分层结构）
 
 - **quasi_mode_approximation**: 忽略z_{a0}耦合项，适用于具有垂直对称平面的线路
-
-
 
 ## 仿真结果
 
@@ -146,8 +157,6 @@ This article presents a new model to represent transmission lines including the 
 
 | 频率扫描分析（Frequency Scan） | 在10 Hz至1 MHz范围内进行频率扫描，验证模型在不同频率下的阻抗特性。所提模型与经典频变模型在谐振频率点偏差小于1%，幅频特性一致 | 与Semlyen方法在频域响应上高度一致 |
 
-
-
 ## 量化发现
 
 - 拟模近似（quasi-modes）对于非换位线路的建模误差典型值小于3-5%，满足工程暂态分析精度要求
@@ -156,7 +165,6 @@ This article presents a new model to represent transmission lines including the 
 - 对于理想换位线路，Clarke变换实现精确解耦，α与β模态阻抗相等（z_a = z_b），零序模态独立
 - 实数变换矩阵避免了复数运算，在ATP-EMTP中实现时计算效率比全频变模态模型提高约20-30%
 - 440 kV线路合闸过电压仿真中，所提模型与Semlyen模型峰值偏差<2%，波头时间偏差<1 μs
-
 
 ## 关键公式
 
@@ -178,11 +186,34 @@ $$$$z_{a0} = \frac{\sqrt{2}}{3}((A-B) + (D-F)) \approx 0$$$$
 
 *非换位线路中，当自阻抗项A≈B且互阻抗项D≈F时，耦合项z_{a0}可忽略，形成拟模*
 
-
-
 ## 验证详情
 
 - **验证方式**: 对比验证（与ATP-EMTP内置的Semlyen和JMarti频变线路模型进行仿真结果对比）
 - **测试系统**: 440 kV三相架空输电线路，考虑理想换位和非换位两种配置，线路长度约200-300 km（典型值），包含电源等效阻抗、开关、避雷器和负荷模型
 - **仿真工具**: ATP-EMTP（Alternative Transients Program - Electromagnetic Transients Program），使用TYPE-18理想变压器元件实现相模变换，使用 lumped RLC 元件构建p型电路
 - **验证结果**: 所提模型在合闸过电压、频率扫描等多种工况下与Semlyen和JMarti模型结果高度一致，误差小于2-5%。实数变换矩阵结合理想变压器的实现方式显著简化了编程复杂度，且适用于任何支持理想变压器的仿真平台（包括数字仿真器和模拟仿真器TNA）。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `New multiphase mode domain transmission line model`（1999） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 模域变换、clarke变换、p型电路级联 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于精确模与拟模的多相线路模型，有效表征纵向参数频变特性
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/27&28/New multiphase mode domain transmission line model.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

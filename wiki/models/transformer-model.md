@@ -362,7 +362,7 @@ created: "2026-04-13"
 
 | 论文 | 年份 |
 |------|------|
-| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-voltage-transformer-13&14|Digital Time-Domain Investigation of Transient Behavior of C]] | 1998 |
+| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Digital Time-Domain Investigation of Transient Behavior of C]] | 1998 |
 | [[电磁暂态计算中新的变压器模型|电磁暂态计算中新的变压器模型]] | 1999 |
 | [[a-z-transform-model-of-transformers-for-the-study-of-electromagnetic-transients-|A Z-transform model of transformers for the study of electro]] | 2004 |
 | [[a-high-frequency-transformer-model-for-the-emtp-power-delivery-ieee-transactions|A high frequency transformer model for the EMTP - Power Deli]] | 2004 |
@@ -610,7 +610,7 @@ $$ \frac{d}{dt} \begin{bmatrix} \langle i \rangle_1^r \\ \langle i \rangle_1^i \
 
 ---
 
-# 变压器模型 (Transformer) - 深度技术文档
+## 变压器模型 (Transformer) - 深度技术文档
 
 ## 1. 各类模型数学描述
 

@@ -1,9 +1,9 @@
 ---
 title: "Damping of Subsynchronous Control Interactions in Large-Scale PV Installations Through Faster-Than-Real-Time Dynamic Emulation"
 type: source
-authors: ['未知']
+authors: ['SHIQI CAO', 'NING LIN', 'VENKATA DINAVAHI']
 year: 2021
-journal: ""
+journal: "IEEE Access"
 tags: ['real-time']
 created: "2026-04-13"
 sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Scale_PV_Installations_Through_Faster-Than-Real-Time_Dynamic_Emulation.pdf"]
@@ -11,24 +11,52 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 
 # Damping of Subsynchronous Control Interactions in Large-Scale PV Installations Through Faster-Than-Real-Time Dynamic Emulation
 
-**作者**: 
+**作者**: SHIQI CAO; NING LIN; VENKATA DINAVAHI
 **年份**: 2021
 **来源**: `12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Scale_PV_Installations_Through_Faster-Than-Real-Time_Dynamic_Emulation.pdf`
 
 ## 摘要
 
-Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in the integration into transmission and distribution network, manifesting subsynchronous control interaction (SSCI) when the host grid is weak. In this work, the oscillation modes of a typical PV network are analyzed, and a faster-than- real-time (FTRT) emulation is proposed for predicting the SSCI and consequently mitigating its impacts on AC grid by taking the effective active/reactive power control action. The electromagnetic transient (EMT) simulation is utilized to model the PV panels and converter stations to reﬂect the actual dynamic process. Meanwhile, the AC grid undergoes transient stability (TS) simulation to obtain a high speed up over real-time, and consequently, a power-voltage interface is adopted f
+本文提出一种基于FPGA的超实时（FTRT）电磁暂态-机电暂态（EMT-TS）混合仿真架构，用于预测并抑制弱电网下大型光伏电站的次同步控制交互（SSCI）。该方法将光伏阵列与电压源换流器（VSC）采用EMT详细建模以捕捉高频开关与控制动态，而交流主网采用TS模型以提升计算速度。通过功率-电压接口实现双域数据同步：EMT侧每200 µs计算一次，TS侧每5 ms计算一次，EMT在单个TS步长内并行迭代25次。利用FPGA的硬件并行性与可重构性，系统实现122倍超实时运行。当检测到SSCI时，控制平台利用FTRT推演能力快速扫描多种有功/无功注入方案，将光伏系统等效为PV-STATCOM，动态调整功率输出以提供次同步阻尼，从而在振荡恶化前实现主动抑制。
 
+
+<!-- deep-review:start -->
+## 研究解读
+
+### 1. 需求、对象、挑战与贡献
+
+工程需求是：大型光伏经长距离线路接入弱电网时，逆变器控制、PLL与线路阻抗可能形成次同步控制交互（SSCI），振荡增长快，等到离线EMT分析完成再采取措施往往来不及。研究对象是含400 MW光伏电站、换流器、长距离交流线路、IEEE 39节点交流系统和4端HVDC的交直流混合系统。难点在于光伏/VSC侧需要EMT级细节才能反映控制与开关动态，而主网若也用EMT会使预测速度难以超过实时；若只用机电暂态，又会丢失SSCI相关快速动态。本文的贡献不是单纯做加速仿真，而是把PV与换流站放在EMT域、AC主网放在TS域，通过功率-电压接口在FPGA上并行协同运行，实现122倍超实时推演，并用该推演结果选择有功/无功控制动作，把光伏作为PV-STATCOM参与阻尼。相对传统离线时域仿真或单一TS分析，它面向“检测后、恶化前”的在线预测与控制决策。
+
+### 2. 模型、算法与实现技术
+
+模型上，PV阵列采用非线性伏安关系和直流电容功率平衡方程描述直流侧动态；并网VSC包含电流环、电压/功率控制和PLL，PLL相位方程与d/q轴电流方程共同决定与弱网阻抗耦合后的次同步模态。作者将这些快速控制与电气变量作为EMT域状态量，以200 µs步长求解。AC主网在TS域中用同步机微分方程和网络代数方程表示，采用四阶Runge-Kutta以5 ms步长推进。两域之间不是直接拼接节点方程，而是采用功率-电压接口：EMT侧把P+jQ作为时变注入送入TS网络，TS侧把PCC电压幅值和相角反馈给EMT侧控制器和PLL；每个TS步长内EMT域迭代25次以实现多速率同步。实现上，PV二极管等非线性元件被转换为适合硬件流水和并行计算的等效电导/诺顿形式，FPGA利用可重构并行结构同时执行EMT与TS任务。控制流程是先监测SSCI模态或时域振荡，再利用FTRT裕度快速试算多组有功/无功指令，选择能增加阻尼且不破坏主网暂态约束的方案执行。
+
+### 3. 验证、优势与不足
+
+作者用离线工具和硬件结果交叉验证：EMT侧与Matlab/Simulink结果对比，TS侧与DSATools套件中的TSAT对比，硬件综合与实现基于Xilinx Vivado HLS。测试系统为IEEE 39节点交流系统、4端HVDC系统和经长距离线路接入Bus 39的400 MW光伏电站。指标包括FTRT加速比、PCC电压电流和功率波形一致性、SSCI频率、特征值位置、SCR变化下稳定性以及控制后系统频率恢复。原文报告硬件仿真达到122倍超实时；特征值分析得到11.8207 Hz模态，与时域FFT约12 Hz相符；SCR降至1.8时相关特征值进入右半平面；扰动后约0.09 s执行功率补偿可阻尼振荡；后续通过HVDC有功从400 MW降至300 MW使频率恢复到60 Hz。优势在于把局部快速SSCI机理和大电网暂态影响放入同一预测闭环，并给控制器留出实时前瞻裕度。边界也很明确：验证集中在一个测试系统、指定PV/VSC控制结构、给定步长和FPGA平台；没有证明对所有PV控制器、保护动作、通信延迟、故障类型或更大规模网络均成立。
+
+### 4. 价值、认知与可复用场景
+
+这项工作的重要认知是：大型光伏SSCI不能只看局部逆变器，也不能只用主网机电暂态近似；有效入口是把快动态保留在EMT域，把慢动态主网放在TS域，并用接口变量维持两者耦合。它能服务于弱电网光伏接入评估、SSCI在线预警、基于预测的有功/无功阻尼控制、FPGA超实时仿真平台设计，以及后续PV-STATCOM或HVDC协调控制研究。复用时应继承其“多速率EMT-TS协同+FTRT控制筛选”的思想，而不是把122倍加速比或11.82 Hz模态外推为其他系统的通用数值结论。
+
+### 证据边界
+
+- 来自原文的可核验证据包括 DOI、IEEE Access 2021发表信息、作者、122倍FTRT比例、Matlab/Simulink与TSAT验证工具，以及FPGA并行EMT-TS协同仿真框架。
+- 11.8207 Hz特征值模态、约12 Hz FFT结果、SCR为1.8时失稳、400 MW光伏和IEEE 39节点加4端HVDC测试系统属于页面给出的原文/抽取证据，应回到论文图表核对具体曲线和参数。
+- “扫描多组有功/无功指令并选择最优控制”的描述反映论文的FTRT预测控制机制，但具体优化准则、搜索空间和约束条件若原文未给完整公式，不应解释为通用最优控制算法。
+- 验证主要是仿真和硬件仿真对离线工具的对比，不等同于现场实测；论文未证明在实际通信延迟、测量噪声、保护动作或设备限幅下仍能保持同样效果。
+- 模型边界限于文中PV阵列、VSC控制、PLL、弱网线路和所选AC/DC系统；不应直接推广到不同厂家控制器、构网型逆变器、串补线路、风电场或其他频段振荡。
+- 122倍加速比依赖所用FPGA实现、步长设置和模型规模；更大网络、更细EMT步长或更复杂开关模型下是否仍有相同实时裕度，原文未在所给证据中覆盖。
+<!-- deep-review:end -->
 ## 核心贡献
 
-
-- 提出基于FPGA的EMT-TS混合仿真架构，实现超实时动态推演
-- 设计功率-电压接口实现电磁暂态与机电暂态模型的并行协同计算
-- 利用光伏逆变器等效STATCOM，通过有功无功注入抑制次同步振荡
-
+- 问题定位：本文提出一种基于FPGA的超实时（FTRT）电磁暂态-机电暂态（EMT-TS）混合仿真架构，用于预测并抑制弱电网下大型光伏电站的次同步控制交互（SSCI）。该方法将光伏阵列与电压源换流器（VSC）采用EMT详细建模以捕捉高频开关与控制动态，而交流主网采用TS模型以提升计算速度。
+- 方法机制：本文提出一种基于FPGA的超实时（FTRT）电磁暂态-机电暂态（EMT-TS）混合仿真架构，用于预测并抑制弱电网下大型光伏电站的次同步控制交互（SSCI）。该方法将光伏阵列与电压源换流器（VSC）采用EMT详细建模以捕捉高频开关与控制动态，而交流主网采用TS模型以提升计算速度。通过功率-电压接口实现双域数据同步：EMT侧每200 µs计算一次，TS侧每5 ms计算一次，EMT在单个TS步长内并行迭代25次。
+- 验证证据：IEEE 39节点交流系统 + 4端HVDC系统 + 400 MW光伏电站（经长距离输电线路接入Bus 39）；Matlab/Simulink（EMT验证）、DSATools套件中的TSAT（TS验证）、Xilinx Vivado HLS（FPGA硬件综合与IP核生成）；
+- 量化与结论：FTRT硬件仿真加速比达到122倍（EMT步长200 µs对应FPGA延迟163个时钟周期，TS步长5 ms对应1529个时钟周期）；SSCI振荡模态频率经特征值分析为11.8207 Hz，与FFT时域分析结果（约12 Hz）高度一致，验证了线性化模型的准确性；电网短路比（SCR）降至1.8时，系统特征值λ5、λ6移至右半平面，确认弱电网是诱发SSCI的关键因素；
+- 适用边界：适用于理解本文 Damping of Subsynchronous Control Interactions in Large-Scale PV Installations Through Faster-Than-Real-Time Dynamic Emulation （2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。；
 
 ## 使用的方法
-
 
 - [[电磁暂态仿真|电磁暂态仿真]]
 - [[机电暂态仿真|机电暂态仿真]]
@@ -38,9 +66,7 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 - [[特征值分析|特征值分析]]
 - [[功率-电压接口|功率-电压接口]]
 
-
 ## 涉及的模型
-
 
 - [[光伏电站|光伏电站]]
 - [[电压源换流器|电压源换流器]]
@@ -48,9 +74,7 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 - [[串联补偿输电线路|串联补偿输电线路]]
 - [[pv-statcom|PV-STATCOM]]
 
-
 ## 相关主题
-
 
 - [[次同步控制交互|次同步控制交互]]
 - [[超实时仿真|超实时仿真]]
@@ -60,15 +84,11 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 - [[光伏并网|光伏并网]]
 - [[并行计算|并行计算]]
 
-
 ## 主要发现
-
 
 - 提出的FPGA硬件仿真平台实现了122倍超实时加速比，满足快速预测需求
 - 通过有功无功功率控制策略有效阻尼了弱电网下光伏电站的次同步振荡
 - 硬件仿真结果与Matlab及TSAT离线工具高度吻合，验证了模型准确性
-
-
 
 ## 方法细节
 
@@ -78,46 +98,37 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 
 ### 数学公式
 
-
 **公式1**: $$$I_{PV} = N_p I_s [1 - C_1 (e^{\frac{U_{dc}}{C_2 N_s U_T}} - 1)]$$$
 
 *光伏阵列伏安特性方程，描述光照与温度对输出电流的非线性影响*
-
 
 **公式2**: $$$U_{dc} \cdot C \frac{dU_{dc}}{dt} = U_{dc} \cdot I_{PV} - U_{td} \cdot I_d$$$
 
 *直流侧滤波电容动态方程，反映光伏输出与并网电流的功率平衡*
 
-
 **公式3**: $$$\frac{d\theta_{pll}}{dt} = K_{p4}U_{tq} + K_{i4}x_{pll} + \omega_0$$$
 
 *锁相环（PLL）相位动态方程，决定系统同步稳定性与次同步模态阻尼*
-
 
 **公式4**: $$$L_g \frac{dI_d}{dt} = U_{td} - U_{gd} + \omega L_g I_q$$$
 
 *d轴并网电流微分方程，用于构建系统状态空间模型*
 
-
 **公式5**: $$$\Delta \dot{x} = A \Delta x + B \Delta u$$$
 
 *系统线性化状态空间方程，用于特征值分析获取振荡频率与模态*
-
 
 **公式6**: $$$SCR = \frac{U_N^2}{Z_g \cdot S_N}$$$
 
 *短路比定义式，量化电网强度，SCR<3判定为弱电网*
 
-
 **公式7**: $$$x_{n+1} = x_n + \frac{1}{6}(RK_1 + 2RK_2 + 2RK_3 + RK_4)$$$
 
 *四阶Runge-Kutta数值积分公式，用于TS域同步发电机微分方程求解*
 
-
 **公式8**: $$$G_{pv} = \frac{G_d + G_{sh}}{G_d R_s + R_s G_{sh} + 1}$$$
 
 *光伏单元诺顿等效电导，实现非线性二极管线性化以适配FPGA并行计算*
-
 
 ### 算法步骤
 
@@ -136,7 +147,6 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 7. 最优控制执行：选取使系统恢复稳定的功率设定值，通过PV-STATCOM控制逻辑动态注入有功/无功，抑制次同步谐振。
 
 8. 全局稳定性校验：持续监测同步机功角、频率与电压，若功率注入引发频率越限（>1%），则联动HVDC系统调整有功传输直至频率恢复至额定值。
-
 
 ### 关键参数
 
@@ -160,8 +170,6 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 
 - **次同步振荡频率**: 约11.82 Hz
 
-
-
 ## 仿真结果
 
 ### 仿真测试
@@ -174,8 +182,6 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 
 | Case 2: 功率注入对交流主网频率的影响与恢复 | 光伏功率注入导致同步机频率上升并超过1%安全阈值。t=5.0 s时联动4端HVDC系统，将有功传输从400 MW降至300 MW。系统频率在t=9.5 s精确恢复至60 Hz，同步机功角与端电压同步恢复至扰动前水平。 | 验证了FTRT平台不仅能抑制局部SSCI，还能通过多端协调控制维持全局暂态稳定，结果与DSATools/TSAT离线机电暂态仿真曲线高度一致。 |
 
-
-
 ## 量化发现
 
 - FTRT硬件仿真加速比达到122倍（EMT步长200 µs对应FPGA延迟163个时钟周期，TS步长5 ms对应1529个时钟周期）
@@ -183,7 +189,6 @@ Large-scale photovoltaic (PV) power plant has witnessed a dramatic increase in t
 - 电网短路比（SCR）降至1.8时，系统特征值λ5、λ6移至右半平面，确认弱电网是诱发SSCI的关键因素
 - 控制动作响应时间仅0.09 s（t=1.0 s扰动，t=1.09 s注入补偿），有效阻止振荡扩散至主网
 - 功率注入导致系统频率上升超过1%阈值，通过HVDC有功从400 MW降至300 MW，频率在t=9.5 s精确恢复至60 Hz
-
 
 ## 关键公式
 
@@ -211,11 +216,34 @@ $$$G_{pv} = \frac{G_d + G_{sh}}{G_d R_s + R_s G_{sh} + 1}$$$
 
 *将非线性光伏二极管线性化后构建两节点EMT模型，实现FPGA上的高效并行计算与接口数据交换*
 
-
-
 ## 验证详情
 
 - **验证方式**: 离线仿真对比验证
 - **测试系统**: IEEE 39节点交流系统 + 4端HVDC系统 + 400 MW光伏电站（经长距离输电线路接入Bus 39）
 - **仿真工具**: Matlab/Simulink（EMT验证）、DSATools套件中的TSAT（TS验证）、Xilinx Vivado HLS（FPGA硬件综合与IP核生成）
 - **验证结果**: FTRT硬件仿真输出的PCC电压、电流及功率波形与Matlab/Simulink和TSAT离线结果在幅值、相位及动态响应上完全一致，验证了混合接口同步策略的准确性；同时证实了基于FTRT预测的有功/无功功率注入策略可在0.09 s内有效抑制11.82 Hz次同步振荡，且通过HVDC协调控制可避免频率越限，整体系统恢复稳定。
+
+## 适用边界
+
+### 适用条件
+
+- 适用于理解本文 `Damping of Subsynchronous Control Interactions in Large-Scale PV Installations Through Faster-Than-Real-Time Dynamic Emulation`（2021） 在当前页面抽取范围内讨论的 EMT/电力系统暂态问题。
+- 适用于以 电磁暂态仿真、机电暂态仿真、混合仿真 为核心的建模、仿真、等值、控制或稳定性分析场景；具体对象以原文算例和页面“涉及的模型”为准。
+- 可作为知识图谱中的方法定位和文献入口，尤其用于追踪：提出基于FPGA的EMT-TS混合仿真架构，实现超实时动态推演
+
+### 失效边界
+
+- 不应外推到原文未覆盖的拓扑、控制策略、故障类型、频率范围、硬件平台或实时步长。
+- 不应把页面中的“提高、显著、快速、准确”等概括性表述当作定量结论；只有“量化发现”和原文表图可核验的数字才可用于比较。
+- 若页面作者、期刊、摘要或验证字段仍不完整，本页只能作为待复核文献入口，不能作为最终证据页引用。
+
+### 关键假设
+
+- 页面内容假设当前 PDF 抽取文本与 frontmatter 的 `sources` 指向同一篇论文。
+- 方法结论默认受原文仿真工具、测试系统、参数设置、采样步长和对比基线约束。
+- 当前边界层为保守整理：未从原文直接核验的内容不得升级为确定结论。
+
+### 证据缺口
+
+- 作者元数据仍需回到 PDF 首页或 metadata.json 复核。
+- 源文件路径：`["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Scale_PV_Installations_Through_Faster-Than-Real-Time_Dynamic_Emulation.pdf"]`；需要深修时应优先核对该 PDF 的首页、摘要、方法和实验表图。

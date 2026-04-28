@@ -9,7 +9,7 @@ import json
 import os
 import re
 import sys
-import fitz  # PyMuPDF for PDF title extraction
+import argparse
 
 WIKI_ROOT = "/home/chenying/researches/EMT_LLM_Wiki"
 METADATA_PATH = os.path.join(WIKI_ROOT, "wiki/sources/metadata.json")
@@ -76,6 +76,7 @@ def extract_title_from_filename(rel_path: str) -> str:
 def extract_title_from_pdf(pdf_path: str) -> str:
     """Try to extract the real title from the first page of a PDF."""
     try:
+        import fitz  # PyMuPDF for PDF title extraction
         doc = fitz.open(pdf_path)
         text = doc[0].get_text() if doc.page_count > 0 else ""
         doc.close()
@@ -222,57 +223,126 @@ sources: ["EMT_Doc/{rel_path}"]
     return page, slug
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python tools/ingest_folder.py <folder_number>")
-        print("Example: python tools/ingest_folder.py 01")
-        sys.exit(1)
+def source_path_for_paper(paper: dict) -> str:
+    return f"EMT_Doc/{paper.get('relative_path', '')}"
 
-    folder_num = sys.argv[1]
 
-    # Load metadata
+def collect_existing_sources(sources_dir: str = None) -> dict:
+    """Map source PDF paths to existing source page filenames."""
+    if sources_dir is None:
+        sources_dir = SOURCES_DIR
+    existing = {}
+    for name in sorted(os.listdir(sources_dir)):
+        if not name.endswith(".md"):
+            continue
+        path = os.path.join(sources_dir, name)
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        match = re.search(r'sources:\s*\["([^"]+)"\]', content)
+        if match:
+            existing.setdefault(match.group(1), []).append(name)
+    return existing
+
+
+def unique_page_path(slug: str, folder_num: str, sources_dir: str = None) -> str:
+    if sources_dir is None:
+        sources_dir = SOURCES_DIR
+    out_path = os.path.join(sources_dir, f"{slug}.md")
+    if not os.path.exists(out_path):
+        return out_path
+    folder_slug = re.sub(r"[^a-zA-Z0-9\u4e00-\u9fff]+", "-", folder_num).strip("-")
+    out_path = os.path.join(sources_dir, f"{slug}-{folder_slug}.md")
+    if not os.path.exists(out_path):
+        return out_path
+    i = 2
+    while True:
+        candidate = os.path.join(sources_dir, f"{slug}-{folder_slug}-{i}.md")
+        if not os.path.exists(candidate):
+            return candidate
+        i += 1
+
+
+def ingest_folder(folder_num: str, dry_run: bool = False, update_existing: bool = False) -> dict:
     with open(METADATA_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    # Filter papers for this folder
     folder_papers = [p for p in data["papers"] if p["folder"] == folder_num]
     if not folder_papers:
-        print(f"No papers found for folder {folder_num}")
-        sys.exit(1)
+        raise ValueError(f"No papers found for folder {folder_num}")
+
+    existing_sources = collect_existing_sources()
+    created_pages = []
+    skipped_pages = []
+    updated_pages = []
 
     print(f"Ingesting folder {folder_num}: {len(folder_papers)} papers")
+    if dry_run:
+        print("Dry run: no files will be written")
 
-    created_pages = []
     for paper in folder_papers:
+        source_path = source_path_for_paper(paper)
+        existing_pages = existing_sources.get(source_path, [])
+        if existing_pages and not update_existing:
+            skipped_pages.append((source_path, existing_pages))
+            print(f"  Skip existing: {existing_pages[0]} | {source_path}")
+            continue
+
         page_content, slug = build_source_page(paper)
-        out_path = os.path.join(SOURCES_DIR, f"{slug}.md")
+        if existing_pages and update_existing:
+            out_path = os.path.join(SOURCES_DIR, existing_pages[0])
+            action = "Updated"
+            updated_pages.append(os.path.basename(out_path))
+        else:
+            out_path = unique_page_path(slug, folder_num)
+            action = "Created"
+            created_pages.append(os.path.basename(out_path))
 
-        # Avoid overwriting existing files
-        if os.path.exists(out_path):
-            out_path = os.path.join(SOURCES_DIR, f"{slug}-{folder_num}.md")
+        if not dry_run:
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(page_content)
 
-        with open(out_path, "w", encoding="utf-8") as f:
-            f.write(page_content)
+        title = paper.get("title", "")[:60] or paper.get("relative_path", "")[:60]
+        print(f"  {action}: {os.path.basename(out_path)} | {title}")
 
-        title = paper.get("title", "")[:60]
-        if not title:
-            title = paper.get("relative_path", "")[:60]
-        print(f"  Created: {os.path.basename(out_path)} | {title}")
-        created_pages.append(os.path.basename(out_path))
-
-    # Update log
-    log_entry = f"""
-## [2026-04-13] ingest | 文件夹 {folder_num} 批量摄入
-- 来源: EMT_Doc/{folder_num}/ ({len(folder_papers)} 篇论文)
+    if not dry_run:
+        log_entry = f"""
+## [2026-04-26] ingest | 文件夹 {folder_num} 幂等摄入
+- 来源: EMT_Doc/{folder_num}/ ({len(folder_papers)} 条 metadata)
 - 创建来源页: {len(created_pages)}
-  {', '.join(created_pages[:10])}{'...' if len(created_pages) > 10 else ''}
-- 主题/方法/模型页: 待分析后创建
+- 更新来源页: {len(updated_pages)}
+- 跳过已存在: {len(skipped_pages)}
 """
-    with open(LOG_PATH, "a", encoding="utf-8") as f:
-        f.write(log_entry)
+        with open(LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(log_entry)
 
-    print(f"\nDone! Created {len(created_pages)} source pages.")
-    print(f"Log updated in {LOG_PATH}")
+    return {
+        "folder": folder_num,
+        "total": len(folder_papers),
+        "created": created_pages,
+        "updated": updated_pages,
+        "skipped": skipped_pages,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Idempotently ingest source pages for a metadata folder")
+    parser.add_argument("folder_number", help="Folder number/key from metadata.json, e.g. 01 or 13&14")
+    parser.add_argument("--dry-run", action="store_true", help="Preview without writing source pages or log")
+    parser.add_argument("--update-existing", action="store_true", help="Overwrite existing page for the same source PDF")
+    args = parser.parse_args()
+
+    try:
+        result = ingest_folder(args.folder_number, dry_run=args.dry_run, update_existing=args.update_existing)
+    except ValueError as e:
+        print(e)
+        sys.exit(1)
+
+    print(
+        f"\nDone! created={len(result['created'])}, "
+        f"updated={len(result['updated'])}, skipped={len(result['skipped'])}"
+    )
+    if not args.dry_run:
+        print(f"Log updated in {LOG_PATH}")
 
 
 if __name__ == "__main__":
