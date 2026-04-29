@@ -2,6 +2,31 @@
 
 > 追加式记录，永不修改。每条以 `## [日期] 类型 | 标题` 开头。
 
+## [2026-04-29] model | 扩展模型系统 - 新增12个EMT仿真模型页
+
+- 背景: 基于682篇论文分析，识别出高频引用但缺少专门模型页的重要设备
+- 创建12个新模型页，模型总数从10个扩展至22个
+
+**新增模型页**:
+
+| 模型 | 页名 | 行数 | 核心内容 |
+|------|------|------|----------|
+| 换流变压器 | converter-transformer-model | 350 | 阀侧绝缘、谐波负载、磁饱和、BCTRAN模型 |
+| 多端直流电网 | mtdc-model | 380 | MTDC拓扑、下垂控制、直流故障、张北工程 |
+| 感应电机 | induction-machine-model | 350 | dq0模型、深槽效应、负荷建模、启动暂态 |
+| 光伏系统 | pv-system-model | 180 | I-V特性、MPPT、逆变器、LVRT |
+| 电池储能 | bess-model | 200 | 电化学模型、BMS、PCS控制、LFP参数 |
+| 电力电子变压器 | pet-sst-model | 280 | DAB/CLLC、软开关、三级拓扑、高频隔离 |
+| 避雷器 | surge-arrester-model | 220 | ZnO非线性、Cassie/Mayr电弧、保护配合 |
+| 接地系统 | grounding-system-model | 200 | 频变土壤、接地电阻、跨步电压 |
+| 锁相环 | pll-model | 200 | SRF-PLL、DSOGI-PLL、小信号模型 |
+| 断路器 | circuit-breaker-model | 220 | 电弧模型、开断过程、TRV、重击穿 |
+| 负荷模型 | load-model | 180 | ZIP负荷、频率特性、综合负荷、电机比例 |
+| SVC/TCR | svc-tcr-model | 180 | TCR电纳调节、触发角控制、谐波、斜率特性 |
+
+- 更新: wiki/index.md 模型数 10→22，添加全部新模型摘要
+- 所有新模型页均包含：物理功能、数学模型、EMT仿真实现、典型参数、相关链接
+
 ## [2026-04-29] model | 完善模型页 - FDNE与LCC模型深度增强
 
 - 背景: 模型页质量检查发现 fdne-model.md (248行) 和 lcc-model.md (332行) 未达到400行标准

@@ -2,7 +2,7 @@
 title: "EMT Wiki 索引"
 type: index
 created: 2026-04-13
-updated: 2026-04-26
+updated: 2026-04-29
 ---
 
 # EMT Wiki 索引
@@ -17,7 +17,7 @@ updated: 2026-04-26
 - 深度增强：682/682 (100%)
 - 主题页：11
 - 方法页：10
-- 模型页：10
+- 模型页：22
 - 实体页：22
 - 来源页：682 个活跃来源页
 
@@ -66,6 +66,18 @@ updated: 2026-04-26
 | [[dfig-model\|DFIG]] | 双馈感应发电机，风电并网 |
 | [[lcc-model\|LCC]] | 线路换相换流器，传统HVDC核心设备 |
 | [[pmsm-model\|PMSM]] | 永磁同步电机，风力发电/电动汽车 |
+| [[converter-transformer-model\|换流变压器]] | HVDC专用变压器，阀侧绝缘、谐波负载、直流偏磁 |
+| [[mtdc-model\|MTDC]] | 多端直流电网，并联/串联拓扑、下垂控制、直流故障 |
+| [[induction-machine-model\|感应电机]] | 鼠笼/绕线式异步电机，dq0模型、启动暂态 |
+| [[pv-system-model\|光伏系统]] | 光伏阵列+逆变器，MPPT、I-V特性、LVRT |
+| [[bess-model\|电池储能]] | 锂电池储能系统，BMS、PCS、电化学模型 |
+| [[pet-sst-model\|电力电子变压器]] | 固态变压器，DAB/CLLC、高频隔离 |
+| [[surge-arrester-model\|避雷器]] | ZnO金属氧化物避雷器，非线性V-I特性、过电压保护 |
+| [[grounding-system-model\|接地系统]] | 接地网、频变土壤、跨步电压/接触电压 |
+| [[pll-model\|锁相环]] | SRF-PLL/DSOGI-PLL，电网同步、不平衡适应 |
+| [[circuit-breaker-model\|断路器]] | 真空/SF6断路器，电弧模型、开断过程 |
+| [[load-model\|负荷模型]] | ZIP负荷、感应电机负荷、温控负荷、频率特性 |
+| [[svc-tcr-model\|SVC/TCR]] | 静止无功补偿器，TCR/TSC、触发角控制、谐波 |
 
 ## 实体 (Entities)
 
