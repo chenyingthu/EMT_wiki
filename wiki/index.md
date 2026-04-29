@@ -18,7 +18,7 @@ updated: 2026-04-26
 - 主题页：11
 - 方法页：10
 - 模型页：10
-- 实体页：9
+- 实体页：20
 - 来源页：682 个活跃来源页
 
 ## 主题 (Topics)
@@ -76,6 +76,9 @@ updated: 2026-04-26
 | [[emtp]] | 经典EMT程序，EMTP-RV版本 |
 | [[atp-emtp]] | EMTP开源免费版本 |
 | [[rtds]] | 实时数字仿真器，HIL测试 |
+| [[matlab-simulink]] | MATLAB/Simulink控制设计与代码生成平台 |
+| [[comsol]] | 多物理场有限元仿真软件，变压器/电缆建模 |
+| [[ansys]] | ANSYS/Maxwell电磁场有限元分析工具 |
 
 ### 机构
 | 页面 | 摘要 |
@@ -83,12 +86,24 @@ updated: 2026-04-26
 | [[polytechnique-montreal]] | 蒙特利尔理工学院，EMTP-RV开发 |
 | [[university-manitoba]] | 曼尼托巴大学，PSCAD/EMTDC开发 |
 | [[manitoba-hydro]] | 曼尼托巴水电国际，PSCAD商业化 |
+| [[tsinghua-university]] | 清华大学，MMC-HVDC与新能源研究重镇 |
+| [[china-epri]] | 中国电力科学研究院，特高压直流与新能源仿真 |
+| [[abb]] | ABB集团，HVDC技术先驱与设备制造商 |
+| [[siemens]] | 西门子，HVDC Plus®技术与电力电子 |
 
 ### 学者
 | 页面 | 摘要 |
 |------|------|
 | [[gole]] | A.M. Gole，曼尼托巴大学，PSCAD/EMTDC核心开发者 |
 | [[mahseredjian]] | Jean Mahseredjian，蒙特利尔理工学院，EMTP-RV核心开发者 |
+| [[bjorn-gustavsen]] | Bjørn Gustavsen，SINTEF，矢量拟合算法创始人 |
+| [[adam-semlyen]] | Adam Semlyen，多伦多大学，电磁暂态理论先驱 |
+
+### 标准组织
+| 页面 | 摘要 |
+|------|------|
+| [[ieee]] | IEEE，电力系统标准制定与期刊发表（351次提及） |
+| [[cigre]] | CIGRE，国际大电网委员会，技术报告权威（28次提及） |
 
 ## 来源 (Sources)
 
