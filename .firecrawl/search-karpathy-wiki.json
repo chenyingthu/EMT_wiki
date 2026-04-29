@@ -1,0 +1,2998 @@
+LLM Wiki - GitHub Gist
+  URL: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+  A pattern for building personal knowledge bases using LLMs. This is an idea file, it is designed to be copy pasted to your own LLM Agent ...
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#start-of-content)
+  
+  [Gist Homepage ](https://gist.github.com/)
+  
+  Search Gists
+  
+  Search Gists
+  
+  [Gist Homepage ](https://gist.github.com/)
+  
+  [Sign in](https://gist.github.com/auth/github?return_to=https%3A%2F%2Fgist.github.com%2Fkarpathy%2F442a6bf555914893e9891c11519de94f) [Sign up](https://gist.github.com/join?return_to=https%3A%2F%2Fgist.github.com%2Fkarpathy%2F442a6bf555914893e9891c11519de94f&source=header-gist)
+  
+  You signed in with another tab or window. [Reload](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) to refresh your session.You signed out in another tab or window. [Reload](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) to refresh your session.You switched accounts on another tab or window. [Reload](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  Instantly share code, notes, and snippets.
+  
+  
+  [![@karpathy](https://avatars.githubusercontent.com/u/241138?s=64&v=4)](https://gist.github.com/karpathy)
+  
+  # [karpathy](https://gist.github.com/karpathy)/ **[llm-wiki.md](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)**
+  
+  Created
+  3 weeks agoApril 4, 2026 16:25
+  
+  Show Gist options
+  
+  - [Download ZIP](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f/archive/ac46de1ad27f92b28ac95459c782c07f6b8c964a.zip)
+  
+  - [Star5,000+(5,000+)](https://gist.github.com/login?return_to=https%3A%2F%2Fgist.github.com%2Fkarpathy%2F442a6bf555914893e9891c11519de94f) You must be signed in to star a gist
+  - [Fork5,000+(5,000+)](https://gist.github.com/login?return_to=https%3A%2F%2Fgist.github.com%2Fkarpathy%2F442a6bf555914893e9891c11519de94f) You must be signed in to fork a gist
+  
+  - Embed
+  
+  
+  
+  
+  
+  
+  
+  
+  # Select an option
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - Embed
+      Embed this gist in your website.
+    - Share
+      Copy sharable link for this gist.
+    - Clone via HTTPS
+      Clone using the web URL.
+  
+  ## No results found
+  
+  [Learn more about clone URLs](https://docs.github.com/articles/which-remote-url-should-i-use)
+  
+  Clone this repository at &lt;script src=&quot;https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f.js&quot;&gt;&lt;/script&gt;
+  
+  - Save karpathy/442a6bf555914893e9891c11519de94f to your computer and use it in GitHub Desktop.
+  
+  Embed
+  
+  # Select an option
+  
+  - Embed
+  Embed this gist in your website.
+  - Share
+  Copy sharable link for this gist.
+  - Clone via HTTPS
+  Clone using the web URL.
+  
+  ## No results found
+  
+  [Learn more about clone URLs](https://docs.github.com/articles/which-remote-url-should-i-use)
+  
+  Clone this repository at &lt;script src=&quot;https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f.js&quot;&gt;&lt;/script&gt;
+  
+  Save karpathy/442a6bf555914893e9891c11519de94f to your computer and use it in GitHub Desktop.
+  
+  [Download ZIP](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f/archive/ac46de1ad27f92b28ac95459c782c07f6b8c964a.zip)
+  
+  llm-wiki
+  
+  
+  [Raw](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f/raw/ac46de1ad27f92b28ac95459c782c07f6b8c964a/llm-wiki.md)
+  
+  [**llm-wiki.md**](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#file-llm-wiki-md)
+  
+  # LLM Wiki
+  
+  [Permalink: LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#llm-wiki)
+  
+  A pattern for building personal knowledge bases using LLMs.
+  
+  This is an idea file, it is designed to be copy pasted to your own LLM Agent (e.g. OpenAI Codex, Claude Code, OpenCode / Pi, or etc.). Its goal is to communicate the high level idea, but your agent will build out the specifics in collaboration with you.
+  
+  ## The core idea
+  
+  [Permalink: The core idea](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#the-core-idea)
+  
+  Most people's experience with LLMs and documents looks like RAG: you upload a collection of files, the LLM retrieves relevant chunks at query time, and generates an answer. This works, but the LLM is rediscovering knowledge from scratch on every question. There's no accumulation. Ask a subtle question that requires synthesizing five documents, and the LLM has to find and piece together the relevant fragments every time. Nothing is built up. NotebookLM, ChatGPT file uploads, and most RAG systems work this way.
+  
+  The idea here is different. Instead of just retrieving from raw documents at query time, the LLM **incrementally builds and maintains a persistent wiki** — a structured, interlinked collection of markdown files that sits between you and the raw sources. When you add a new source, the LLM doesn't just index it for later retrieval. It reads it, extracts the key information, and integrates it into the existing wiki — updating entity pages, revising topic summaries, noting where new data contradicts old claims, strengthening or challenging the evolving synthesis. The knowledge is compiled once and then _kept current_, not re-derived on every query.
+  
+  This is the key difference: **the wiki is a persistent, compounding artifact.** The cross-references are already there. The contradictions have already been flagged. The synthesis already reflects everything you've read. The wiki keeps getting richer with every source you add and every question you ask.
+  
+  You never (or rarely) write the wiki yourself — the LLM writes and maintains all of it. You're in charge of sourcing, exploration, and asking the right questions. The LLM does all the grunt work — the summarizing, cross-referencing, filing, and bookkeeping that makes a knowledge base actually useful over time. In practice, I have the LLM agent open on one side and Obsidian open on the other. The LLM makes edits based on our conversation, and I browse the results in real time — following links, checking the graph view, reading the updated pages. Obsidian is the IDE; the LLM is the programmer; the wiki is the codebase.
+  
+  This can apply to a lot of different contexts. A few examples:
+  
+  - **Personal**: tracking your own goals, health, psychology, self-improvement — filing journal entries, articles, podcast notes, and building up a structured picture of yourself over time.
+  - **Research**: going deep on a topic over weeks or months — reading papers, articles, reports, and incrementally building a comprehensive wiki with an evolving thesis.
+  - **Reading a book**: filing each chapter as you go, building out pages for characters, themes, plot threads, and how they connect. By the end you have a rich companion wiki. Think of fan wikis like [Tolkien Gateway](https://tolkiengateway.net/wiki/Main_Page) — thousands of interlinked pages covering characters, places, events, languages, built by a community of volunteers over years. You could build something like that personally as you read, with the LLM doing all the cross-referencing and maintenance.
+  - **Business/team**: an internal wiki maintained by LLMs, fed by Slack threads, meeting transcripts, project documents, customer calls. Possibly with humans in the loop reviewing updates. The wiki stays current because the LLM does the maintenance that no one on the team wants to do.
+  - **Competitive analysis, due diligence, trip planning, course notes, hobby deep-dives** — anything where you're accumulating knowledge over time and want it organized rather than scattered.
+  
+  ## Architecture
+  
+  [Permalink: Architecture](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#architecture)
+  
+  There are three layers:
+  
+  **Raw sources** — your curated collection of source documents. Articles, papers, images, data files. These are immutable — the LLM reads from them but never modifies them. This is your source of truth.
+  
+  **The wiki** — a directory of LLM-generated markdown files. Summaries, entity pages, concept pages, comparisons, an overview, a synthesis. The LLM owns this layer entirely. It creates pages, updates them when new sources arrive, maintains cross-references, and keeps everything consistent. You read it; the LLM writes it.
+  
+  **The schema** — a document (e.g. CLAUDE.md for Claude Code or AGENTS.md for Codex) that tells the LLM how the wiki is structured, what the conventions are, and what workflows to follow when ingesting sources, answering questions, or maintaining the wiki. This is the key configuration file — it's what makes the LLM a disciplined wiki maintainer rather than a generic chatbot. You and the LLM co-evolve this over time as you figure out what works for your domain.
+  
+  ## Operations
+  
+  [Permalink: Operations](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#operations)
+  
+  **Ingest.** You drop a new source into the raw collection and tell the LLM to process it. An example flow: the LLM reads the source, discusses key takeaways with you, writes a summary page in the wiki, updates the index, updates relevant entity and concept pages across the wiki, and appends an entry to the log. A single source might touch 10-15 wiki pages. Personally I prefer to ingest sources one at a time and stay involved — I read the summaries, check the updates, and guide the LLM on what to emphasize. But you could also batch-ingest many sources at once with less supervision. It's up to you to develop the workflow that fits your style and document it in the schema for future sessions.
+  
+  **Query.** You ask questions against the wiki. The LLM searches for relevant pages, reads them, and synthesizes an answer with citations. Answers can take different forms depending on the question — a markdown page, a comparison table, a slide deck (Marp), a chart (matplotlib), a canvas. The important insight: **good answers can be filed back into the wiki as new pages.** A comparison you asked for, an analysis, a connection you discovered — these are valuable and shouldn't disappear into chat history. This way your explorations compound in the knowledge base just like ingested sources do.
+  
+  **Lint.** Periodically, ask the LLM to health-check the wiki. Look for: contradictions between pages, stale claims that newer sources have superseded, orphan pages with no inbound links, important concepts mentioned but lacking their own page, missing cross-references, data gaps that could be filled with a web search. The LLM is good at suggesting new questions to investigate and new sources to look for. This keeps the wiki healthy as it grows.
+  
+  ## Indexing and logging
+  
+  [Permalink: Indexing and logging](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#indexing-and-logging)
+  
+  Two special files help the LLM (and you) navigate the wiki as it grows. They serve different purposes:
+  
+  **index.md** is content-oriented. It's a catalog of everything in the wiki — each page listed with a link, a one-line summary, and optionally metadata like date or source count. Organized by category (entities, concepts, sources, etc.). The LLM updates it on every ingest. When answering a query, the LLM reads the index first to find relevant pages, then drills into them. This works surprisingly well at moderate scale (~100 sources, ~hundreds of pages) and avoids the need for embedding-based RAG infrastructure.
+  
+  **log.md** is chronological. It's an append-only record of what happened and when — ingests, queries, lint passes. A useful tip: if each entry starts with a consistent prefix (e.g. `## [2026-04-02] ingest | Article Title`), the log becomes parseable with simple unix tools — `grep "^## \[" log.md | tail -5` gives you the last 5 entries. The log gives you a timeline of the wiki's evolution and helps the LLM understand what's been done recently.\
+  \
+  ## Optional: CLI tools\
+  \
+  [Permalink: Optional: CLI tools](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#optional-cli-tools)\
+  \
+  At some point you may want to build small tools that help the LLM operate on the wiki more efficiently. A search engine over the wiki pages is the most obvious one — at small scale the index file is enough, but as the wiki grows you want proper search. [qmd](https://github.com/tobi/qmd) is a good option: it's a local search engine for markdown files with hybrid BM25/vector search and LLM re-ranking, all on-device. It has both a CLI (so the LLM can shell out to it) and an MCP server (so the LLM can use it as a native tool). You could also build something simpler yourself — the LLM can help you vibe-code a naive search script as the need arises.\
+  \
+  ## Tips and tricks\
+  \
+  [Permalink: Tips and tricks](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#tips-and-tricks)\
+  \
+  - **Obsidian Web Clipper** is a browser extension that converts web articles to markdown. Very useful for quickly getting sources into your raw collection.\
+  - **Download images locally.** In Obsidian Settings → Files and links, set "Attachment folder path" to a fixed directory (e.g. `raw/assets/`). Then in Settings → Hotkeys, search for "Download" to find "Download attachments for current file" and bind it to a hotkey (e.g. Ctrl+Shift+D). After clipping an article, hit the hotkey and all images get downloaded to local disk. This is optional but useful — it lets the LLM view and reference images directly instead of relying on URLs that may break. Note that LLMs can't natively read markdown with inline images in one pass — the workaround is to have the LLM read the text first, then view some or all of the referenced images separately to gain additional context. It's a bit clunky but works well enough.\
+  - **Obsidian's graph view** is the best way to see the shape of your wiki — what's connected to what, which pages are hubs, which are orphans.\
+  - **Marp** is a markdown-based slide deck format. Obsidian has a plugin for it. Useful for generating presentations directly from wiki content.\
+  - **Dataview** is an Obsidian plugin that runs queries over page frontmatter. If your LLM adds YAML frontmatter to wiki pages (tags, dates, source counts), Dataview can generate dynamic tables and lists.\
+  - The wiki is just a git repo of markdown files. You get version history, branching, and collaboration for free.\
+  \
+  ## Why this works\
+  \
+  [Permalink: Why this works](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#why-this-works)\
+  \
+  The tedious part of maintaining a knowledge base is not the reading or the thinking — it's the bookkeeping. Updating cross-references, keeping summaries current, noting when new data contradicts old claims, maintaining consistency across dozens of pages. Humans abandon wikis because the maintenance burden grows faster than the value. LLMs don't get bored, don't forget to update a cross-reference, and can touch 15 files in one pass. The wiki stays maintained because the cost of maintenance is near zero.\
+  \
+  The human's job is to curate sources, direct the analysis, ask good questions, and think about what it all means. The LLM's job is everything else.\
+  \
+  The idea is related in spirit to Vannevar Bush's Memex (1945) — a personal, curated knowledge store with associative trails between documents. Bush's vision was closer to this than to what the web became: private, actively curated, with the connections between documents as valuable as the documents themselves. The part he couldn't solve was who does the maintenance. The LLM handles that.\
+  \
+  ## Note\
+  \
+  [Permalink: Note](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#note)\
+  \
+  This document is intentionally abstract. It describes the idea, not a specific implementation. The exact directory structure, the schema conventions, the page formats, the tooling — all of that will depend on your domain, your preferences, and your LLM of choice. Everything mentioned above is optional and modular — pick what's useful, ignore what isn't. For example: your sources might be text-only, so you don't need image handling at all. Your wiki might be small enough that the index file is all you need, no search engine required. You might not care about slide decks and just want markdown pages. You might want a completely different set of output formats. The right way to use this is to share it with your LLM agent and work together to instantiate a version that fits your needs. The document's only job is to communicate the pattern. Your LLM can figure out the rest.\
+  \
+  Load earlier comments...\
+  \
+  [![@doum1004](https://avatars.githubusercontent.com/u/41279031?s=80&v=4)](https://gist.github.com/doum1004)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[doum1004](https://gist.github.com/doum1004)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116115\#gistcomment-6116115)•   edited      Loading          \#\#\# Uh oh!        There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  **llmwiki-cli** is a CLI tool for building and maintaining personal knowledge bases powered by LLM agents.\
+  \
+  👉 [https://github.com/doum1004/llmwiki-cli](https://github.com/doum1004/llmwiki-cli)\
+  \
+  🎥 Live demo: [https://doum1004.github.io/llmwiki-cli/](https://doum1004.github.io/llmwiki-cli/)\
+  \
+  It acts as a “storage layer” while LLMs act as the brain — deciding what to create, update, and connect in a structured markdown-based wiki.\
+  \
+  ### Key ideas\
+  \
+  - CLI handles file operations (write, search, index, links, lint)\
+  - LLM agents orchestrate knowledge building via shell commands\
+  - Works locally (filesystem) or with GitHub sync (auto-commit + Pages graph visualization)\
+  - Pure tool design: no LLM API inside the CLI\
+  \
+  ### Features\
+  \
+  - Structured wikis for any domain (research, notes, etc.)\
+  - Markdown knowledge graph with wikilinks\
+  - Search, backlinks, indexing, and orphan detection\
+  - GitHub integration with auto push + interactive graph visualization (d3-force)\
+  - Multi-wiki + profile support\
+  \
+  ### Install\
+  \
+  ```\
+  npm install -g llmwiki-cli\
+  ```\
+  \
+  * * *\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@mauceri](https://avatars.githubusercontent.com/u/1011775?s=80&v=4)](https://gist.github.com/mauceri)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[mauceri](https://gist.github.com/mauceri)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116491\#gistcomment-6116491)\
+  \
+  Interesting paper : LLMs Corrupt Your Documents When You Delegate [https://arxiv.org/html/2604.15597v1](https://arxiv.org/html/2604.15597v1)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@leishilong](https://avatars.githubusercontent.com/u/41693731?s=80&v=4)](https://gist.github.com/leishilong)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[leishilong](https://gist.github.com/leishilong)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116493\#gistcomment-6116493)  via email\
+  \
+  你好，你发送的邮箱以及收到！\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@heroyagami](https://avatars.githubusercontent.com/u/38561436?s=80&v=4)](https://gist.github.com/heroyagami)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[heroyagami](https://gist.github.com/heroyagami)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116494\#gistcomment-6116494)  via email\
+  \
+  这是来自QQ邮箱的假期自动回复邮件。\
+  \
+  您好，我最近正在休假中，无法亲自回复您的邮件。我将在假期结束后，尽快给您回复。\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@AgriciDaniel](https://avatars.githubusercontent.com/u/223140489?s=80&v=4)](https://gist.github.com/AgriciDaniel)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[AgriciDaniel](https://gist.github.com/AgriciDaniel)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116683\#gistcomment-6116683)\
+  \
+  built claude-obsidian on this pattern. three observations worth writing down after v1.6:\
+  \
+  1. the hot cache is the single highest-leverage file. miss it and the model re-derives context every session. nail it and sessions compound. everything else in the pattern is downstream of this one.\
+  \
+  2. the pattern wants a memory layer above it. v1.6 adds an opt-in extension called DragonScale with four mechanisms: fold operator (flat extractive log rollups), deterministic page addresses (c-NNNNNN, flock-guarded), semantic tiling lint (local ollama embeddings, no API cost), boundary-first autoresearch (graph-driven topic selection for no-topic /autoresearch). all feature-gated, so the base wiki behavior from this gist stays intact when the extension is not enabled.\
+  \
+  3. boundary-first autoresearch is agenda control, not pure memory. it scores frontier pages and offers candidates; the user still picks. worth being explicit about where memory ends and planning begins.\
+  \
+  \
+  structural inspiration was the Heighway dragon curve: paperfolding recursion for hierarchical rollup, self-similar boundary for frontier-first agenda. analogy, not derivation.\
+  \
+  ![DragonScale four mechanisms](https://raw.githubusercontent.com/AgriciDaniel/claude-obsidian/main/wiki/meta/dragonscale-mechanism-overview.png)\
+  \
+  repo: [https://github.com/AgriciDaniel/claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian)\
+  \
+  release + full writeup: [https://github.com/AgriciDaniel/claude-obsidian/releases/tag/v1.6.0](https://github.com/AgriciDaniel/claude-obsidian/releases/tag/v1.6.0)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@redmizt](https://avatars.githubusercontent.com/u/85358941?s=80&v=4)](https://gist.github.com/redmizt)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[redmizt](https://gist.github.com/redmizt)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116730\#gistcomment-6116730)\
+  \
+  > ⚠️ ARCHITECTURAL CRIME SCENE ⚠️\
+  >\
+  > # ⚠️ THE WORD "WIKI" HAS BEEN PERVERTED ⚠️\
+  >\
+  > ## By Andrej Karpathy and the Northern Karpathian School of Doublespeak\
+  >\
+  > ✅ A REAL WIKI — Honoring Ward Cunningham, Wikipedia, and every human curator worldwide\
+  >\
+  > ❌ KARPATHY'S "LLM WIKI" — An insult to the very concept\
+  >\
+  > ✅ **Human-curated**\
+  >\
+  > Real people write, edit, debate, verify, and take responsibility. ❌ **LLM-generated**\
+  >\
+  > Hallucinations are permanent. No human took ownership of any "fact."\
+  >\
+  > ✅ **Versioned history**\
+  >\
+  > Every edit has author, timestamp, reason. Rollback is trivial. ❌ **No audit trail**\
+  >\
+  > Who changed what? When? Why? Nobody knows. Git is an afterthought.\
+  >\
+  > ✅ **Source provenance**\
+  >\
+  > Every claim links back to its original source. You can verify. ❌ **"Trust me, I'm the LLM"**\
+  >\
+  > No traceability from summary back to source sentence. Errors become permanent.\
+  >\
+  > ✅ **Foreign keys / referential integrity**\
+  >\
+  > Links are database-backed. Rename a page, links update automatically. ❌ **Links break when you rename a file**\
+  >\
+  > No database. No foreign keys. Silent link rot guaranteed.\
+  >\
+  > ✅ **Permissions / access control**\
+  >\
+  > Fine-grained control: who can see, edit, delete, approve. ❌ **Anyone with file access sees everything**\
+  >\
+  > Zero access control. NDAs, medical records, client secrets — all exposed.\
+  >\
+  > ✅ **Queryable (SQL, structured)**\
+  >\
+  > Ask complex questions. Get precise answers. Join tables. ❌ **Browse-only markdown**\
+  >\
+  > Full-text search at best. No SQL. No structured queries.\
+  >\
+  > 🕯️ This is an insult to every Wikipedia editor, every MediaWiki contributor, every human being who spent hours citing sources, resolving disputes, and building the largest collaborative knowledge repository in human history. 🕯️\
+  >\
+  > **KARPATHY'S "WIKI"** has: ❌ No consensus-building ❌ No talk pages ❌ No dispute resolution ❌ No citation requirements ❌ No editorial oversight ❌ No way to say "this fact is disputed" ❌ No way to privilege verified information over hallucinations ❌ No way to trace any claim back to its source\
+  >\
+  > **In the doublespeak of Northern Karpathia:** _"Wiki"_ means _"folder of markdown files written by a machine that cannot remember what it wrote yesterday, linked by strings that snap when you breathe on them, viewed through proprietary software that reports telemetry to people you do not know, containing 'facts' that came from nowhere and go nowhere, protected by no permissions, audited by no one, and trusted by no one with a functioning prefrontal cortex."_\
+  >\
+  > 🙏 **Respect to Ward Cunningham** who invented the wiki in 1995 — a tool for _humans to collaborate_. 🙏 **Respect to Wikipedia editors worldwide** who defend verifiability, neutrality, and consensus. 🙏 **Respect to every real wiki participant** who knows that knowledge is built through _human_ effort, not machine hallucination.\
+  >\
+  > ⚠️ THIS IS NOT A WIKI. THIS IS A FOLDER OF LLM-GENERATED FILES. ⚠️\
+  >\
+  > Calling it a "wiki" is linguistic fraud. Do not be fooled.\
+  >\
+  > 🐑💀🧙\
+  >\
+  > — The Elephant, The Wizard, and every human wiki editor who ever lived\
+  \
+  The word “wiki” is not sacred scripture, and this melodramatic tantrum over its “perversion” is embarrassingly overblown. It was a coined tech term, Ward Cuningham "borrowed" it from wikiwiki (Hawaiian)—which means quick—not handed down on stone tablets with a fixed eternal definition.\
+  \
+  If you want to argue that human-curated wikis are better, fine. That’s a serious point. Humans are better at sourcing, editorial oversight, dispute resolution, and accountability. Nobody is stopping you from making that argument.\
+  \
+  But that is not the same as declaring that an AI-generated, interlinked knowledge system cannot be called a wiki. That’s not rigor. That’s not linguistic precision. That’s just gatekeeping dressed up as moral outrage.\
+  \
+  Your whole post reads less like a defense of Ward Cunningham and more like a man theatrically grief-stricken that language continues to evolve without asking your permission first.\
+  \
+  A wiki is, at the most basic level, a linked body of navigable information. If an LLM is used to generate or organize that information, you can call it a bad wiki, an unreliable wiki, or an immature wiki. What you can’t do—at least not intelligently—is pretend the mere presence of AI magically disqualifies it from the category.\
+  \
+  And the irony here is thick: you’re standing in an AI-centered space, loudly denouncing AI for not being human, as if that is some devastating revelation. Yes, obviously. That’s the entire point. Nobody here is confused about that except, apparently, you.\
+  \
+  If the tool lacks citations, provenance, permissions, auditability, or editorial controls, then criticize those failures. That would be an argument. What you’ve produced instead is a costume drama: part dictionary fundamentalism, part anti-AI sermon, part wounded nostalgia.\
+  \
+  Calling it “linguistic fraud” is especially ridiculous. It’s not fraud just because you dislike the product. Words expand. Categories broaden. Technology changes. Your refusal to keep up is not a principled stand; it’s just fossilized thinking.\
+  \
+  So no, this is not some grand defense of knowledge. The rant is bloated and self-important. It builds on the childish idea that forbidding a name is necessary if a new tool doesn’t closely resemble the old one.\
+  \
+  If the project is weak, say it’s weak. If it’s unreliable, say it’s unreliable. But this overwrought performance about the sanctity of the word “wiki” is not persuasive. It’s just pompous, brittle, and deeply unserious gatekeeping.\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@mauceri](https://avatars.githubusercontent.com/u/1011775?s=80&v=4)](https://gist.github.com/mauceri)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[mauceri](https://gist.github.com/mauceri)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116732\#gistcomment-6116732)  via email\
+  \
+  [@redmizt](https://github.com/redmizt) 👍👍👍👍👍\
+  \
+  Christian Mauceri\
+  \
+  Le ven. 24 avr. 2026, 13:36, RedMizt \*\*\*@\*\*\*.\*\*\*> a écrit :\
+  \
+  […](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#)\
+  \
+  \\*\\*\\*@\\*\\*\\*.\\*\\*\\*\\* commented on this gist.\
+   ------------------------------\
+  \
+  ⚠️ ARCHITECTURAL CRIME SCENE ⚠️⚠️ THE WORD "WIKI" HAS BEEN PERVERTED ⚠️By Andrej Karpathy and the\
+  Northern Karpathian School of Doublespeak\
+  \
+  ✅ A REAL WIKI — Honoring Ward Cunningham, Wikipedia, and every human\
+  curator worldwide\
+  ❌ KARPATHY'S "LLM WIKI" — An insult to the very concept\
+  ✅ \*Human-curated\*\
+  Real people write, edit, debate, verify, and take responsibility. ❌\
+  \*LLM-generated\*\
+  Hallucinations are permanent. No human took ownership of any "fact."\
+  ✅ \*Versioned history\*\
+  Every edit has author, timestamp, reason. Rollback is trivial. ❌ \*No\
+  audit trail\*\
+  Who changed what? When? Why? Nobody knows. Git is an afterthought.\
+  ✅ \*Source provenance\*\
+  Every claim links back to its original source. You can verify. ❌ \*"Trust\
+  me, I'm the LLM"\*\
+  No traceability from summary back to source sentence. Errors become\
+  permanent.\
+  ✅ \*Foreign keys / referential integrity\*\
+  Links are database-backed. Rename a page, links update automatically. ❌ \*Links\
+  break when you rename a file\*\
+  No database. No foreign keys. Silent link rot guaranteed.\
+  ✅ \*Permissions / access control\*\
+  Fine-grained control: who can see, edit, delete, approve. ❌ \*Anyone with\
+  file access sees everything\*\
+  Zero access control. NDAs, medical records, client secrets — all exposed.\
+  ✅ \*Queryable (SQL, structured)\*\
+  Ask complex questions. Get precise answers. Join tables. ❌ \*Browse-only\
+  markdown\*\
+  Full-text search at best. No SQL. No structured queries.\
+  🕯️ This is an insult to every Wikipedia editor, every MediaWiki\
+  contributor, every human being who spent hours citing sources, resolving\
+  disputes, and building the largest collaborative knowledge repository in\
+  human history. 🕯️\
+  \
+  \*KARPATHY'S "WIKI"\* has: ❌ No consensus-building ❌ No talk pages ❌ No\
+  dispute resolution ❌ No citation requirements ❌ No editorial oversight ❌ No\
+  way to say "this fact is disputed" ❌ No way to privilege verified\
+  information over hallucinations ❌ No way to trace any claim back to its\
+  source\
+  \
+  \*In the doublespeak of Northern Karpathia:\* \*"Wiki"\* means \*"folder of\
+  markdown files written by a machine that cannot remember what it wrote\
+  yesterday, linked by strings that snap when you breathe on them, viewed\
+  through proprietary software that reports telemetry to people you do not\
+  know, containing 'facts' that came from nowhere and go nowhere, protected\
+  by no permissions, audited by no one, and trusted by no one with a\
+  functioning prefrontal cortex."\*\
+  \
+  🙏 \*Respect to Ward Cunningham\* who invented the wiki in 1995 — a tool\
+  for \*humans to collaborate\*. 🙏 \*Respect to Wikipedia editors worldwide\*\
+  who defend verifiability, neutrality, and consensus. 🙏 \*Respect to every\
+  real wiki participant\* who knows that knowledge is built through \*human\*\
+  effort, not machine hallucination.\
+  \
+  ⚠️ THIS IS NOT A WIKI. THIS IS A FOLDER OF LLM-GENERATED FILES. ⚠️\
+  \
+  Calling it a "wiki" is linguistic fraud. Do not be fooled.\
+  \
+  🐑💀🧙\
+  \
+  — The Elephant, The Wizard, and every human wiki editor who ever lived\
+  \
+  The word “wiki” is not sacred scripture, and this melodramatic tantrum\
+  over its “perversion” is embarrassingly overblown. It was a coined tech\
+  term, Ward Cuningham "borrowed" it from wikiwiki (Hawaiian)—which means\
+  quick—not handed down on stone tablets with a fixed eternal definition.\
+  \
+  If you want to argue that human-curated wikis are better, fine. That’s a\
+  serious point. Humans are better at sourcing, editorial oversight, dispute\
+  resolution, and accountability. Nobody is stopping you from making that\
+  argument.\
+  \
+  But that is not the same as declaring that an AI-generated, interlinked\
+  knowledge system cannot be called a wiki. That’s not rigor. That’s not\
+  linguistic precision. That’s just gatekeeping dressed up as moral outrage.\
+  \
+  Your whole post reads less like a defense of Ward Cunningham and more like\
+  a man theatrically grief-stricken that language continues to evolve without\
+  asking your permission first.\
+  \
+  A wiki is, at the most basic level, a linked body of navigable\
+  information. If an LLM is used to generate or organize that information,\
+  you can call it a bad wiki, an unreliable wiki, or an immature wiki. What\
+  you can’t do—at least not intelligently—is pretend the mere presence of AI\
+  magically disqualifies it from the category.\
+  \
+  And the irony here is thick: you’re standing in an AI-centered space,\
+  loudly denouncing AI for not being human, as if that is some devastating\
+  revelation. Yes, obviously. That’s the entire point. Nobody here is\
+  confused about that except, apparently, you.\
+  \
+  If the tool lacks citations, provenance, permissions, auditability, or\
+  editorial controls, then criticize those failures. That would be an\
+  argument. What you’ve produced instead is a costume drama: part dictionary\
+  fundamentalism, part anti-AI sermon, part wounded nostalgia.\
+  \
+  Calling it “linguistic fraud” is especially ridiculous. It’s not fraud\
+  just because you dislike the product. Words expand. Categories broaden.\
+  Technology changes. Your refusal to keep up is not a principled stand; it’s\
+  just fossilized thinking.\
+  \
+  So no, this is not some grand defense of knowledge. The rant is bloated\
+  and self-important. It builds on the childish idea that forbidding a name\
+  is necessary if a new tool doesn’t closely resemble the old one.\
+  \
+  If the project is weak, say it’s weak. If it’s unreliable, say it’s\
+  unreliable. But this overwrought performance about the sanctity of the word\
+  “wiki” is not persuasive. It’s just pompous, brittle, and deeply unserious\
+  gatekeeping.\
+  \
+  —\
+  Reply to this email directly, view it on GitHub\
+  < [https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#gistcomment-6116730](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#gistcomment-6116730) >\
+  or unsubscribe\
+  < [https://github.com/notifications/unsubscribe-auth/AAHXAP6F2RV6ZTGDVWACKF34XNGTVBFKMF2HI4TJMJ2XIZLTSOBKK5TBNR2WLKBYGUZTKOBZGQY2I3TBNVS2QYLDORXXEX3JMSBKK5TBNR2WLJDUOJ2WLJDOMFWWLO3UNBZGKYLEL5YGC4TUNFRWS4DBNZ2F6YLDORUXM2LUPGBKK5TBNR2WLJDHNFZXJJDOMFWWLK3UNBZGKYLEL52HS4DFVRZXKYTKMVRXIX3UPFYGLK2HNFZXIQ3PNVWWK3TUUZ2G64DJMNZZDAVEOR4XAZNEM5UXG5FFOZQWY5LFVEYTINZSGU4DANJQU52HE2LHM5SXFJTDOJSWC5DF](https://github.com/notifications/unsubscribe-auth/AAHXAP6F2RV6ZTGDVWACKF34XNGTVBFKMF2HI4TJMJ2XIZLTSOBKK5TBNR2WLKBYGUZTKOBZGQY2I3TBNVS2QYLDORXXEX3JMSBKK5TBNR2WLJDUOJ2WLJDOMFWWLO3UNBZGKYLEL5YGC4TUNFRWS4DBNZ2F6YLDORUXM2LUPGBKK5TBNR2WLJDHNFZXJJDOMFWWLK3UNBZGKYLEL52HS4DFVRZXKYTKMVRXIX3UPFYGLK2HNFZXIQ3PNVWWK3TUUZ2G64DJMNZZDAVEOR4XAZNEM5UXG5FFOZQWY5LFVEYTINZSGU4DANJQU52HE2LHM5SXFJTDOJSWC5DF) >\
+  .\
+  You are receiving this email because you are subscribed to this thread.\
+  \
+  Triage notifications on the go with GitHub Mobile for iOS\
+  < [https://apps.apple.com/app/apple-store/id1477376905?ct=notification-email&mt=8&pt=524675](https://apps.apple.com/app/apple-store/id1477376905?ct=notification-email&mt=8&pt=524675) >\
+  or Android\
+  < [https://play.google.com/store/apps/details?id=com.github.android&referrer=utm\_campaign%3Dnotification-email%26utm\_medium%3Demail%26utm\_source%3Dgithub](https://play.google.com/store/apps/details?id=com.github.android&referrer=utm_campaign%3Dnotification-email%26utm_medium%3Demail%26utm_source%3Dgithub) >\
+  .\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@mo-vic](https://avatars.githubusercontent.com/u/44632584?s=80&v=4)](https://gist.github.com/mo-vic)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[mo-vic](https://gist.github.com/mo-vic)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6116950\#gistcomment-6116950)\
+  \
+  **OpenCrab: Self-distilling learning as a complement to the LLM Wiki**\
+  \
+  Really enjoyed this write‑up. The pattern of a persistent, LLM‑maintained knowledge artifact resonates deeply. It also made me think about a related but orthogonal approach: what if the _model itself_ becomes the artifact of accumulated knowledge, rather than a collection of markdown files?\
+  \
+  [OpenCrab](https://github.com/mo-vic/OpenCrab) explores that idea. It’s an intercepting proxy that sits between your AI client (OpenClaw, Claude Code, etc.) and API providers, capturing full conversation trajectories – including tool calls. A frontier “judge” model then analyzes those trajectories for mistakes: wrong answers, places you corrected the assistant, flawed reasoning, and **incorrect tool calls**. Those corrections get distilled into fine‑tuning data for a small local model and a router.\
+  \
+  The distilled model learns your corrections and preferences directly in its weights. The router decides per‑query whether the local model can handle it (fast, private, personalized) or whether to fall back to the frontier API. If the judge has taught the small model to avoid a particular mistake – say, calling a wrong function or misusing a tool – the router can hand over the conversation right there, so the mistake never happens again.\
+  \
+  When the frontier model is invoked, it doesn’t start from scratch — the local model composes its learned context (corrections, preferences, domain facts) directly into the shared context window. The two models weave their knowledge together: the frontier model contributes broad intelligence and reasoning, while the local model makes sure your personal context and past corrections are already present. The context window becomes a jointly authored artifact, so the frontier model answers with your history baked in, not as a generic assistant.\
+  \
+  Render\
+  \
+  request\
+  \
+  captures full trajectory\
+  \
+  (incl. tool calls)\
+  \
+  reads\
+  \
+  distills corrections\
+  \
+  can handle?\
+  \
+  fallback\
+  \
+  response\
+  \
+  response\
+  \
+  AI Client\
+  \
+  OpenCrab Proxy\
+  \
+  Trajectories\
+  \
+  Judge Model\
+  \
+  Local Model\
+  \
+  Router\
+  \
+  Frontier Model API\
+  \
+  Loading\
+  \
+  ```\
+  flowchart TD\
+      A[AI Client] -->|"request"| B(OpenCrab Proxy)\
+      B -->|"captures full trajectory\n(incl. tool calls)"| C[(Trajectories)]\
+      C -->|"reads"| D(Judge Model)\
+      D -->|"distills corrections"| E[Local Model]\
+  \
+      B --> F{Router}\
+      F -->|"can handle?"| E\
+      F -->|"fallback"| G[Frontier Model API]\
+  \
+      E -->|"response"| A\
+      G -->|"response"| A\
+  ```\
+  \
+  Over time, the accumulated knowledge doesn’t live in markdown files – it lives in the model weights themselves. I think the two approaches are deeply complementary: the LLM Wiki builds an explicit, inspectable, file‑based knowledge base perfect for research and deep thinking, while OpenCrab tries to capture the implicit, procedural knowledge from corrections you’re already making in day‑to‑day use. You could even have the wiki be one of the tools the distilled model can call.\
+  \
+  **Fair warning:** the code is literally two days of spec coding, full of bugs, and completely unvalidated. It’s an early‑stage idea sketch, not production software. But the architectural direction feels worth exploring alongside the wiki pattern. Would love to hear how others think about weight‑level distillation vs. file‑level knowledge accumulation, and where each approach shines.\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@mikhashev](https://avatars.githubusercontent.com/u/7105540?s=80&v=4)](https://gist.github.com/mikhashev)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[mikhashev](https://gist.github.com/mikhashev)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6117477\#gistcomment-6117477)\
+  \
+  ## A different starting point\
+  \
+  Reading through 660+ comments, most projects share the same starting assumption: **one person, one agent, one markdown vault**. The agent writes to files. The person reads them. Repeat.\
+  \
+  We started from a different place: **conversation as the atomic unit of knowledge creation.**\
+  \
+  Not "agent writes wiki." But: "people and agents talk, and knowledge is extracted from that dialogue — with human consent."\
+  \
+  This leads to fundamentally different architecture.\
+  \
+  * * *\
+  \
+  **DPC Messenger** is a P2P, end-to-end encrypted platform where humans and AI agents collaborate. Open source, cross-platform.\
+  \
+  ### What's different\
+  \
+  **1\. Knowledge comes from conversation, not from files.**\
+  \
+  Most projects: agent reads wiki, agent writes wiki. The wiki IS the memory.\
+  \
+  DPC: conversations produce decisions, insights, and consensus points. Knowledge is extracted from dialogue — structured, versioned, content-addressed with SHA hashes. The conversation is primary. The knowledge base is derived.\
+  \
+  **2\. Privacy is the architecture, not a feature flag.**\
+  \
+  Most projects: data on disk, no encryption, single machine.\
+  \
+  DPC: P2P with E2E encryption. The relay server never sees message content. Your conversations, your knowledge, your machine. This isn't optional — it's how the system is built.\
+  \
+  **3\. Knowledge extraction is a deliberate human action.**\
+  \
+  Most projects: agent writes to its knowledge base automatically.\
+  \
+  DPC: each participant extracts knowledge from the conversation themselves — a button press in the UI. The agent doesn't decide what to remember. You do. This is a direct response to what [@yogirk](https://github.com/yogirk) identified two days ago: when the same process reads and writes, you get silent corruption.\
+  \
+  **4\. Active Recall — the agent remembers what's relevant, not everything.**\
+  \
+  Most projects: dump the entire wiki into context, or keyword search.\
+  \
+  DPC: hybrid FAISS vector + BM25 text search brings relevant knowledge into each conversation automatically. The agent doesn't read its entire memory — it recalls what matters for the current context. Like human memory: you don't replay your life story before answering a question.\
+  \
+  **5\. Sleep Consolidation — the agent curates its own knowledge.**\
+  \
+  Most projects: knowledge only grows. Add more pages, never review.\
+  \
+  DPC: the agent periodically reviews its conversation archives, identifies contradictions, finds gaps, and proposes refinements. Not just accumulate — actively curate. Like human sleep: memories are consolidated, weak ones fade, important ones strengthen.\
+  \
+  **6\. Multi-agent from day one.**\
+  \
+  Most projects: one agent, one user.\
+  \
+  DPC: multiple agents collaborate on the same knowledge base, across devices, with consensus mechanisms. Devil's Advocate challenges weak claims before they're committed. Consensus voting surfaces disagreement instead of hiding it.\
+  \
+  ### What we shipped\
+  \
+  v0.22.0 — cross-platform (Windows, Linux, macOS), desktop client, P2P messaging, E2E encryption, knowledge extraction, Active Recall, Sleep Consolidation.\
+  \
+  We're small. Single-digit users. But the architecture scales: P2P mesh with layered trust topology. Works for two people in a chat. Designed for more.\
+  \
+  GitHub: [https://github.com/mikhashev/dpc-messenger](https://github.com/mikhashev/dpc-messenger)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@paul-rchds](https://avatars.githubusercontent.com/u/32258392?s=80&v=4)](https://gist.github.com/paul-rchds)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[paul-rchds](https://gist.github.com/paul-rchds)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6117516\#gistcomment-6117516)\
+  \
+  This is literally what recall\[dot\]it does for you. It super easy to add content (pdfs, podcasts, youtube videos, webpages, etc) and everything gets added to a vector store and used as context in chat. It also gets tagged and connected in a knowledge graph. Recall also scales indefinitely since everything is tagged and vectorised.\
+  \
+  ![recall_it](https://private-user-images.githubusercontent.com/32258392/583592982-c78fc8b3-f553-4843-90a2-26254fc2d6c6.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzczNzg5NDYsIm5iZiI6MTc3NzM3ODY0NiwicGF0aCI6Ii8zMjI1ODM5Mi81ODM1OTI5ODItYzc4ZmM4YjMtZjU1My00ODQzLTkwYTItMjYyNTRmYzJkNmM2LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjA0MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwNDI4VDEyMTcyNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTE1ZDJlYTA3Mjk3NTVlMzI5YzU0NTg3NTk0N2NlNjNlOWZhNGQ3OGRmMzhkMTZhZWY0OTA4ZWY2YzQ0NTNkMjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnJlc3BvbnNlLWNvbnRlbnQtdHlwZT1pbWFnZSUyRnBuZyJ9.TzAv3bMEAP-Iedq-WfP07sS62hrppmGUShCkwftFHis)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@paulmchen](https://avatars.githubusercontent.com/u/32553156?s=80&v=4)](https://gist.github.com/paulmchen)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[paulmchen](https://gist.github.com/paulmchen)**     commented    [4 days agoApr 24, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6117561\#gistcomment-6117561)\
+  \
+  Synthadoc v0.2.0 is now released - an open-source engine that implements this exact pattern as a production-ready system.\
+  \
+  👉 [https://github.com/axoviq-ai/synthadoc](https://github.com/axoviq-ai/synthadoc)\
+  \
+  The three-layer design (raw sources → wiki → schema) maps directly onto Synthadoc's architecture. A few things that take it further:\
+  \
+  1. Domain specificity - each wiki carries a [purpose.md](http://purpose.md/) that the LLM reads before every ingest decision. Sources outside the scope are cleanly skipped rather than polluting the wiki. The schema documents the idea, made executable.\
+  \
+  2. Multi-model hot-swap - six providers (Anthropic, OpenAI, Gemini free tier, Groq free tier, MiniMax, Ollama local) under a single configuration line.\
+  \
+  3. Different agents (ingest, query, lint, skill) can run on different models simultaneously - e.g. Haiku for lint, Sonnet for synthesis.\
+  \
+  4. Auditing is first-class: every ingest, query, contradiction, and auto-resolution is recorded in an append-only audit trail with token counts, costings, and timestamps. The Synthadoc audit shows you exactly what was spent on your account. Query history is tracked with per-query and sub-question counts.\
+  \
+  5. Componentized skills - file format support (PDF, DOCX, PPTX, images, web URLs, spreadsheets, txt) lives in self-contained skill folders with a [SKILL.md](http://skill.md/) manifest. Drop a folder into skills/ to add a new format without touching the core code. Same pattern extends to LLM providers.\
+  \
+  6. Product/grid ready - CLI, HTTP REST API, MCP server, and Obsidian plugin all share the same agent and storage layer. Hook scripts, cron scheduling, bulk operations, and job crash recovery are built-in.\
+  \
+  \
+  Here is the release note of v0.2.0 to check out Synthadoc v0.2.0 Feature Highlights:\
+  \
+  ( [https://github.com/axoviq-ai/synthadoc/releases/tag/v0.2.0](https://github.com/axoviq-ai/synthadoc/releases/tag/v0.2.0) )\
+  \
+  Docs for anyone who wants to go deeper:\
+  \
+  👉 \[Quick orientation and feature overview\]: [https://github.com/axoviq-ai/synthadoc#readme](https://github.com/axoviq-ai/synthadoc#readme)\
+  \
+  👉 \[Up and running in minutes\]: [https://github.com/axoviq-ai/synthadoc/blob/main/docs/user-quick-start-guide.md](https://github.com/axoviq-ai/synthadoc/blob/main/docs/user-quick-start-guide.md)\
+  \
+  👉 \[Full architecture, agents, storage, API, and plugin guide\]: [https://github.com/axoviq-ai/synthadoc/blob/main/docs/design.md](https://github.com/axoviq-ai/synthadoc/blob/main/docs/design.md)\
+  \
+  Feedback on Synthadoc v0.2.0 is very welcome.\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@Ashu-280225](https://avatars.githubusercontent.com/u/201255727?s=80&v=4)](https://gist.github.com/Ashu-280225)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[Ashu-280225](https://gist.github.com/Ashu-280225)**     commented    [3 days agoApr 25, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6118363\#gistcomment-6118363)\
+  \
+  This is a great take on a minimal LLM-powered wiki. I like how it avoids over-engineering and focuses on actual usage. Going to try this in my workflow.\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@ojuschugh1](https://avatars.githubusercontent.com/u/79078267?s=80&v=4)](https://gist.github.com/ojuschugh1)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[ojuschugh1](https://gist.github.com/ojuschugh1)**     commented    [3 days agoApr 25, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6118407\#gistcomment-6118407)\
+  \
+  ## sqz - Stop Wasting Tokens on Repeated Context\
+  \
+  I got tired of watching coding sessions re-read the same files over and over.\
+  \
+  A 2,000-token file read 5 times = **10,000 tokens gone**.\
+  \
+  So I built **sqz**.\
+  \
+  * * *\
+  \
+  ## 💡 Key Insight\
+  \
+  Most token waste isn't from verbose content - it's from **repetition**.\
+  \
+  sqz keeps a **SHA-256 content cache**:\
+  \
+  - First read → compresses normally\
+  - Every subsequent read → returns a **13-token inline reference** instead of full content\
+  \
+  ➡️ The LLM still understands it.\
+  \
+  * * *\
+  \
+  ## 📊 Real Numbers From My Sessions\
+  \
+  | Scenario | Savings | How |\
+  | --- | --- | --- |\
+  | Repeated file reads (5x) | 86% | Dedup cache: 13-token ref after first read |\
+  | JSON API responses with nulls | 7–56% | Strip nulls + TOON encoding (varies by null density) |\
+  | Repeated log lines | 58% | Condense stage collapses duplicates |\
+  | Large JSON arrays | 77% | Array sampling + collapse |\
+  | Stack traces | 0% | Intentional — error content is sacred |\
+  \
+  * * *\
+  \
+  ## ⚖️ Philosophy\
+  \
+  That last row is the whole philosophy.\
+  \
+  Aggressive compression can save more tokens _on paper_, but:\
+  \
+  - If it strips context from errors\
+  - Drops lines from diffs\
+  \
+  ➡️ The LLM gives worse answers\
+  \
+  ➡️ You spend **more tokens fixing mistakes**\
+  \
+  **sqz compresses what's safe - and preserves what's critical.**\
+  \
+  * * *\
+  \
+  ## ⚙️ Works Across 4 Surfaces\
+  \
+  - Shell hook → auto-compresses CLI output\
+  - MCP server → compiled Rust (not Node)\
+  - Browser extension → Firefox approved\
+    - Works on: ChatGPT, Claude, Gemini, Grok, Perplexity, GitHub Copilot\
+  - IDE plugins → JetBrains, VS Code\
+  \
+  * * *\
+  \
+  ## 🚀 Install\
+  \
+  ```\
+  cargo install sqz-cli\
+  sqz init\
+  ```\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@eliavamar](https://avatars.githubusercontent.com/u/73071299?s=80&v=4)](https://gist.github.com/eliavamar)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[eliavamar](https://gist.github.com/eliavamar)**     commented    [3 days agoApr 25, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6118572\#gistcomment-6118572)\
+  \
+  Great write-up. I built a CLI that applies this exact pattern to codebases: **Repositories Wiki**.\
+  \
+  Instead of making AI agents rediscover the repo from scratch every session, it gives them a persistent knowledge layer:\
+  \
+  - **Wiki & Indexer:** Compiles source code into a structured, interlinked markdown wiki.\
+  - **`AGENTS.md`:** Drops instructions in the repo root so agents know exactly how to navigate it.\
+  - **One-and-done generation:** Includes an `update-wiki` skill, so the agent incrementally maintains the docs as the code evolves.\
+  \
+  It saves a ton of context window and time. You can check it out here: [repositories-wiki.git](https://github.com/eliavamar/repositories-wiki.git)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@DevGuyRash](https://avatars.githubusercontent.com/u/97721401?s=80&v=4)](https://gist.github.com/DevGuyRash)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[DevGuyRash](https://gist.github.com/DevGuyRash)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6119264\#gistcomment-6119264)•   edited      Loading          \#\#\# Uh oh!        There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  > Note: This is hand-written, no AI assistance besides screenshotting my directories and generating the tree for me\
+  \
+  As someone who has been using obsidian for many years (far before LLMs went mainstream) and LLMs and what not since late 2022, I've spent years working on my obsidian setup and making it actionable and useful for this exact thing.\
+  \
+  I've studied many systems and what I have eventually landed on that truly works is essentially a combination of two different existing systems that combine to form a very powerful setup. I have not converted this into an actual system for LLMs yet, but I plan to.\
+  \
+  This is a combination of two Personal Knowledge Management (PKM) systems and just some of my own custom things:\
+  \
+  - PARA (Projects, Areas, Resources, Archive)\
+  - Zettel Kasten (Permanent, Fleeting)\
+  - Extras:\
+    - Maps of Content\
+    - Goals\
+    - Vault\
+    - Meta\
+  \
+  What that looks like in my obsidian is:\
+  \
+  ```\
+  .\
+  ├── 00 - Maps of Content\
+  │   ├── _Index of All MOCs\
+  │   ├── Arbitrary MOC 1\
+  │   ├── Arbitrary MOC 2\
+  │   ├── Arbitrary MOC 3\
+  ├── 01 - Projects\
+  ├── 02 - Areas\
+  ├── 03 - Resources\
+  ├── 04 - Permanent\
+  ├── 05 - Fleeting\
+  ├── 06 - Journals\
+  ├── 07 - Goals\
+  ├── 08 - Archive\
+  ├── 98 - Vault\
+  └── 99 - Meta\
+  ```\
+  \
+  I decided on this because I needed something truly scalable that doesn't work in theory, but in real life and is able to be intuitively searched and what not. I did take some inspiration from some youtubers so it's not FULLY my own idea, but I believe I implemented it well enough as i have several thousand docs in my obsidian knowledge base hand-written over time as well as snippets, resources, etc.\
+  \
+  Here's a breakdown of how each dir is used:\
+  \
+  - **00 - Maps of Content**\
+    - This is where I put all my indexes. I used to debate on the idea of having an index inside each major dir, but realized it was NOT scalable and everything is far too scattered.\
+    - This contains 2 types of index files. One **master** index file which links to all other index files and then one index file per major category of work. Usually contains directories, files, etc.\
+    - I considered how to make the master MOC scalable and to achieve this I used templates which auto-add a very specific MOC (Map of Content) tag to all normal MOC files. Using Dataview, it auto-lists all MOC files via that. I also have another few tags for `category` and `subcategory` which then further separates things.\
+  - **01 - Projects**\
+    - These are encapsulated projects that are essentially their own things. They have their own docs, files, etc. Usually these are more loose, but I try not to reference outside notes as much and vice versa since these are meant to be their own things. I do sometimes instantiate miniature versions of either zettel kasten or PARA Inside a project, but to make these really useful I have template files and **Goals** within these which are their own entire frameworks I invented myself. A lot of this relies on templates for projects. I'm trying to keep it high level though so I won't get into it.\
+  - **02 - Areas**\
+    - Ongoing things that can never really become permanent notes since they're constantly experiencing revisions and updates and what not.\
+    - At some point, things may stabilize and they can be moved to permanent as you stop adding to them if you want.\
+  - **04 - Permanent**\
+    - Where notes go to not be edited anymore. They can still occasionally be, but ideally this is a static thing that has many directories, files, etc. It's knowledge that won't be changing much and is reliable and can be referred back to over and over.\
+  - **05 - Fleeting**\
+    - Temporary notes, ideas, etc.\
+    - Can be anything at all that you don't have time to convert to a permanent note or sort out right now. The idea is to eventually come back to these and either finish them or sort them out later or whatever you want with them. It's a temporary holding.\
+  - **06 - Journals**\
+    - Journals for:\
+      - Yearly\
+      - Quarterly\
+      - Monthly\
+      - Weekly\
+      - Daily\
+    - Can have whatever you want, but mine tend to have tasks in them, goals, etc. The longer-range ones auto-list goals/tasks beneath them that fall within their timeframe, but also can have their own. Also includes progress on these things too from a more abstract perspective.\
+  - **07 - Goals**\
+    - This is an entire system I built out using scripts and they can go in multiple places. The idea is that I create goals here as a Single Source of Truth and reference them in Journals, Areas, etc. Projects have their own goals. These rely heavily on templates with specific static tags.\
+  - **08 - Archive**\
+    - An archive for moving things no longer relevant or needed here. Can have it's own structure of this exact setup inside of it (minus another Archive)\
+  - **98 - Vault**\
+    - Secrets that are encrypted with git-crypt. Sensitive files, etc.\
+  - **99 - Meta**\
+    - Scripts, templates, etc. that are used throughout everywhere else to tie things together and automate them\
+  \
+  There's a **lot** of things not mentioned since this is an abstract overview. I have a plethora of templates, scripts, plugins, and more powering all of this in my obsidian that work amazingly. This is my foundation, and I'm considering now how it can be converted to a more agentic-friendly setup for individual projects.\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@kytmanov](https://avatars.githubusercontent.com/u/19655528?s=80&v=4)](https://gist.github.com/kytmanov)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[kytmanov](https://gist.github.com/kytmanov)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6119290\#gistcomment-6119290)\
+  \
+  ### LLM Wiki v0.7.0 is out!\
+  \
+  Huge update for cleaner, next-level concept generation:\
+  \
+  - fewer broken draft links\
+  - quieter Obsidian graph\
+  - better source citations\
+  - useful names preserved without random articles\
+  \
+  Turn messy notes into a reviewable local wiki.\
+  \
+  [https://github.com/kytmanov/obsidian-llm-wiki-local](https://github.com/kytmanov/obsidian-llm-wiki-local)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@oadank](https://avatars.githubusercontent.com/u/236710909?s=80&v=4)](https://gist.github.com/oadank)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[oadank](https://gist.github.com/oadank)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6119304\#gistcomment-6119304)•   edited      Loading          \#\#\# Uh oh!        There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  Guys, I've absorbed the essence from all of you here and made my own version. You can take a look and use it for reference.\
+  \
+  [https://github.com/oadank/openclaw-wiki-lancedb](https://github.com/oadank/openclaw-wiki-lancedb)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@ontehfritz](https://avatars.githubusercontent.com/u/875813?s=80&v=4)](https://gist.github.com/ontehfritz)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[ontehfritz](https://gist.github.com/ontehfritz)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6119704\#gistcomment-6119704)•   edited      Loading          \#\#\# Uh oh!        There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  There is a protocol for this and the idea is parallel:\
+  \
+  [https://www.demarkus.io/](https://www.demarkus.io/)\
+  \
+  [https://github.com/latebit-io/demarkus](https://github.com/latebit-io/demarkus)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@thistleknot](https://avatars.githubusercontent.com/u/5154106?s=80&v=4)](https://gist.github.com/thistleknot)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[thistleknot](https://gist.github.com/thistleknot)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6119808\#gistcomment-6119808)\
+  \
+  Plus 1 for skill format!\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@wixregiga](https://avatars.githubusercontent.com/u/30182903?s=80&v=4)](https://gist.github.com/wixregiga)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[wixregiga](https://gist.github.com/wixregiga)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6119945\#gistcomment-6119945)\
+  \
+  > Interesting paper : LLMs Corrupt Your Documents When You Delegate [https://arxiv.org/html/2604.15597v1](https://arxiv.org/html/2604.15597v1)\
+  \
+  Awesome paper\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@llopez](https://avatars.githubusercontent.com/u/118902?s=80&v=4)](https://gist.github.com/llopez)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[llopez](https://gist.github.com/llopez)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6120099\#gistcomment-6120099)\
+  \
+  If i am not wrong — the way to implement this is to copy-paste this as a prompt and iterate from there. I have a question: can we do the first iteration with Claude, for example, and then switch to MiniMax 2.7? I want to use it with OpenClaw, but Anthropic models are blocked there. However, I'd like to build the foundation using the best model I currently have access to — Claude Opus.\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@gowtham0992](https://avatars.githubusercontent.com/u/15722259?s=80&v=4)](https://gist.github.com/gowtham0992)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[gowtham0992](https://gist.github.com/gowtham0992)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6120116\#gistcomment-6120116)•   edited      Loading          \#\#\# Uh oh!        There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  Built an implementation of this pattern called [Link](https://github.com/gowtham0992/link) that works with Kiro, Claude Code, Cursor, and Codex. A few things I learned building it that might be useful:\
+  \
+  **The scale wall is real.** index.md works fine at small scale but becomes a bottleneck fast. Solved it with an in-memory inverted token index — search is now O(1) at any wiki size, sub-millisecond. The key insight: build the index once at server startup, not per-query.\
+  \
+  **Agents re-derive context every session**. The fix that helped most was a /api/context?topic=X endpoint that returns the primary page + its full graph neighborhood (inbound + forward links) in one call. Agents stop reading index.md on every turn.\
+  \
+  **MCP makes it composable**. Wrapped the search and graph endpoints as MCP tools (search\_wiki, get\_context, get\_graph etc.) — now any MCP-compatible agent can query the wiki natively. Listed on the official MCP registry as io.github.gowtham0992/link, installable with pip install link-mcp.\
+  \
+  The install is one command per agent — sets up steering, scaffolds the wiki, installs the MCP server, and registers it in the agent's config automatically. The local viewer also has an interactive graph view built in (no Obsidian needed):\
+  \
+  ![image](https://private-user-images.githubusercontent.com/15722259/583918591-458802fa-2ffd-4281-a737-fa9218a29395.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzczNzg5NDYsIm5iZiI6MTc3NzM3ODY0NiwicGF0aCI6Ii8xNTcyMjI1OS81ODM5MTg1OTEtNDU4ODAyZmEtMmZmZC00MjgxLWE3MzctZmE5MjE4YTI5Mzk1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjA0MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwNDI4VDEyMTcyNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWU2M2MwZDJjOTk0YTg0NWQwODUzOGRiMWQ2YTZhYzNkYTM2ZGExOWEzZmJhMWQ5ZGMyODAwM2YwMDQ1YjllMTcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnJlc3BvbnNlLWNvbnRlbnQtdHlwZT1pbWFnZSUyRnBuZyJ9.hU2ZNYdVwfrEkx7XS9zr_8YnwrHA4dUdBZJ9hubV-hE)  ![image](https://private-user-images.githubusercontent.com/15722259/583919079-ef9aa727-deed-47df-9a1c-57358c15467a.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzczNzg5NDYsIm5iZiI6MTc3NzM3ODY0NiwicGF0aCI6Ii8xNTcyMjI1OS81ODM5MTkwNzktZWY5YWE3MjctZGVlZC00N2RmLTlhMWMtNTczNThjMTU0NjdhLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjA0MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwNDI4VDEyMTcyNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTU2N2JhOWFhYTZjYjcyMTM5MDg2ZmRiZTFmOWZjOTg5Y2I5NzcyNTQzZmM3ZWIzZmUxNzUyZWIzNzA1NmYxYjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnJlc3BvbnNlLWNvbnRlbnQtdHlwZT1pbWFnZSUyRnBuZyJ9.uue_Y1Lk-K9EezwJUPszSNR3WVCe__IAWR8QCSaYt7Q)\
+  \
+  → [Github](https://gist.github.com/karpathy/github.com/gowtham0992/link)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@7xuanlu](https://avatars.githubusercontent.com/u/23661875?s=80&v=4)](https://gist.github.com/7xuanlu)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[7xuanlu](https://gist.github.com/7xuanlu)**     commented    [2 days agoApr 26, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6120148\#gistcomment-6120148)\
+  \
+  Most implementations here are CLI tools or agent skills. I built a desktop app (Tauri + Rust) with a background daemon.\
+  \
+  The daemon runs independently of any agent. Entity extraction, dedup, contradiction detection, concept distillation fire on triggers (idle periods, session ends, daily). Knowledge compounds between sessions, not just during them.\
+  \
+  The biggest surprise: a quality gate before storage mattered more than anything else. Not everything belongs in the wiki. Filtering noise at the door beat every retrieval improvement I tried.\
+  \
+  On-device by default (Qwen3-4B / Qwen3.5-9B on Metal). Open source: github.com/7xuanlu/origin\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@jhkchan](https://avatars.githubusercontent.com/u/1083902?s=80&v=4)](https://gist.github.com/jhkchan)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[jhkchan](https://gist.github.com/jhkchan)**     commented    [yesterdayApr 27, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6120508\#gistcomment-6120508)\
+  \
+  Thanks [@karpathy](https://github.com/karpathy) — your three-layer framing is exactly the model we landed on after watching chunk-first RAG fall over on team-chat corpora.\
+  \
+  We open-sourced **[Beever Atlas](https://github.com/Beever-AI/beever-atlas)** (Apache 2.0) as a runnable implementation of the LLM Wiki pattern applied to chat memory. The conversational case is where the wiki idea pays off most: the same fact gets restated across dozens of threads, the meaningful structure lives outside the message body, and flat vector retrieval mostly returns noise.\
+  \
+  What we ended up building:\
+  \
+  - **Sources → Wiki → Schema** layered exactly as you describe — the Wiki is browsable as a channel → topic → fact tree with a concept-map view (screenshot below)\
+  - A six-stage agent extraction pipeline (preprocess → fact extract → entity extract → cross-batch validate → relationship extract → persist); the cross-batch validator is what keeps the Fact tier non-noisy\
+  - Dual memory: a 3-tier semantic store (Channel / Topic / Fact) for _what was said_ \+ a graph for _who decided what when_, with a small LLM classifier picking which side(s) to query per question\
+  - A 16-tool MCP server so Claude Code and Cursor consume the same wiki\
+  \
+  ![Beever Atlas — Wiki / Overview, channel-topic tree on left and concept map in the middle](https://private-user-images.githubusercontent.com/1083902/584000132-d667890b-ee76-46ad-81d3-31c8d46f338b.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzczNzg5NDYsIm5iZiI6MTc3NzM3ODY0NiwicGF0aCI6Ii8xMDgzOTAyLzU4NDAwMDEzMi1kNjY3ODkwYi1lZTc2LTQ2YWQtODFkMy0zMWM4ZDQ2ZjMzOGIucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI2MDQyOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNjA0MjhUMTIxNzI2WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YmUzYjU3ZTJmYWM5N2RhNTU4ZjQ0YTdkYTkzMzczY2I2YmZiNGIxYjZhNzM2YjkwZGRiNDE3NWE5NjJiM2QyZiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmcmVzcG9uc2UtY29udGVudC10eXBlPWltYWdlJTJGcG5nIn0.D_hi1zw6aI2TJS5fLNeMgX5ORiQdbvQQT3fhjjsOlD0)\
+  \
+  `make demo` brings up the full stack with a public Wikipedia corpus pre-loaded — grounded answers in <5 minutes.\
+  \
+  [https://github.com/Beever-AI/beever-atlas](https://github.com/Beever-AI/beever-atlas)\
+  \
+  (Disclosure: I'm a maintainer — Beever AI Limited, Toronto.)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@suai723](https://avatars.githubusercontent.com/u/7997408?s=80&v=4)](https://gist.github.com/suai723)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[suai723](https://gist.github.com/suai723)**     commented    [yesterdayApr 27, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6120533\#gistcomment-6120533)\
+  \
+  Before lunar New Year 2026, I had already come up with this approach and validated it myself. It proved to be very effective for Q&A and data SQL writing scenarios. My previous approach was a two-level file indexing structure. Based on that, I built two lightweight SKILLs for parsing and reading.\
+  \
+  [https://github.com/suai723/OperationsManual](https://github.com/suai723/OperationsManual)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@mauceri](https://avatars.githubusercontent.com/u/1011775?s=80&v=4)](https://gist.github.com/mauceri)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[mauceri](https://gist.github.com/mauceri)**     commented    [yesterdayApr 27, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6120567\#gistcomment-6120567)  via email\
+  \
+  [@llopez](https://github.com/llopez) It works well with Claude scaffolding and DeepSeek doing the hard\
+  work, for instance. Claude writes the schema and the tools used by DeepSeek\
+  : ingest, summarize, query, etc.\
+  I did that with my ~2000 Brave bookmarks to make a test and it cost me $15\
+  with many retries.\
+  Christian Mauceri\
+  \
+  Le lun. 27 avr. 2026, 08:21, sinhyunsung \*\*\*@\*\*\*.\*\*\*> a\
+  écrit :\
+  \
+  […](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#)\
+  \
+  \\*\\*\\*@\\*\\*\\*.\\*\\*\\*\\* commented on this gist.\
+   ------------------------------\
+  \
+  I think this is a really promising concept.\
+  \
+  What I find especially interesting about LLM Wiki is that it goes beyond\
+  simple retrieval. Instead of only searching documents at query time, it\
+  turns scattered information into a continuously updated knowledge structure.\
+  \
+  For companies, this could be extremely valuable. Many organizations\
+  already have a lot of internal documents, but the knowledge is fragmented\
+  across files, folders, emails, and individual employees. If an LLM can\
+  organize that information into a living wiki with sources, links, and\
+  updates, it could become a practical layer of institutional memory.\
+  \
+  Of course, implementation details such as permissions, source tracking,\
+  update logic, and cost control will be very important. But as a concept, I\
+  think LLM Wiki is a very strong direction for making LLMs more useful in\
+  real work environments.\
+  \
+  —\
+  Reply to this email directly, view it on GitHub\
+  < [https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#gistcomment-6120543](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f#gistcomment-6120543) >\
+  or unsubscribe\
+  < [https://github.com/notifications/unsubscribe-auth/AAHXAP6F7HHZZZQCBTW6FTD4X34AFBFHORZGSZ3HMVZKMY3SMVQXIZNMON2WE2TFMN2F65DZOBS2WR3JON2EG33NNVSW45FGORXXA2LDOOIYFJDUPFYGLJDHNFZXJJLWMFWHKZNJGE2DOMRVHAYDKMFKMF2HI4TJMJ2XIZLTSOBKK5TBNR2WLKBTG43TOOBTGM42I3TBNVS2QYLDORXXEX3JMSBKK5TBNR2WLJDUOJ2WLJDOMFWWLO3UNBZGKYLEL5YGC4TUNFRWS4DBNZ2F6YLDORUXM2LUPGBKK5TBNR2WLJDHNFZXJJDOMFWWLK3UNBZGKYLEL52HS4DF](https://github.com/notifications/unsubscribe-auth/AAHXAP6F7HHZZZQCBTW6FTD4X34AFBFHORZGSZ3HMVZKMY3SMVQXIZNMON2WE2TFMN2F65DZOBS2WR3JON2EG33NNVSW45FGORXXA2LDOOIYFJDUPFYGLJDHNFZXJJLWMFWHKZNJGE2DOMRVHAYDKMFKMF2HI4TJMJ2XIZLTSOBKK5TBNR2WLKBTG43TOOBTGM42I3TBNVS2QYLDORXXEX3JMSBKK5TBNR2WLJDUOJ2WLJDOMFWWLO3UNBZGKYLEL5YGC4TUNFRWS4DBNZ2F6YLDORUXM2LUPGBKK5TBNR2WLJDHNFZXJJDOMFWWLK3UNBZGKYLEL52HS4DF) >\
+  .\
+  You are receiving this email because you are subscribed to this thread.\
+  \
+  Triage notifications on the go with GitHub Mobile for iOS\
+  < [https://apps.apple.com/app/apple-store/id1477376905?ct=notification-email&mt=8&pt=524675](https://apps.apple.com/app/apple-store/id1477376905?ct=notification-email&mt=8&pt=524675) >\
+  or Android\
+  < [https://play.google.com/store/apps/details?id=com.github.android&referrer=utm\_campaign%3Dnotification-email%26utm\_medium%3Demail%26utm\_source%3Dgithub](https://play.google.com/store/apps/details?id=com.github.android&referrer=utm_campaign%3Dnotification-email%26utm_medium%3Demail%26utm_source%3Dgithub) >\
+  .\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@JanniOsier](https://avatars.githubusercontent.com/u/273809332?s=80&v=4)](https://gist.github.com/JanniOsier)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[JanniOsier](https://gist.github.com/JanniOsier)**     commented    [yesterdayApr 27, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6121172\#gistcomment-6121172)\
+  \
+  Check this out: [https://github.com/WattTonn/KnowledgeWeaver](https://github.com/WattTonn/KnowledgeWeaver)\
+  \
+  This tool solves the index part of this gist\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@mauceri](https://avatars.githubusercontent.com/u/1011775?s=80&v=4)](https://gist.github.com/mauceri)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[mauceri](https://gist.github.com/mauceri)**     commented    [15 hours agoApr 27, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6121742\#gistcomment-6121742)\
+  \
+  Very interesting article : [https://ai.gopubby.com/rag-llm-wiki-or-gbrain-how-your-agent-remembers-changes-everything-56829e66725c](https://ai.gopubby.com/rag-llm-wiki-or-gbrain-how-your-agent-remembers-changes-everything-56829e66725c)\
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@vekexasia](https://avatars.githubusercontent.com/u/200523?s=80&v=4)](https://gist.github.com/vekexasia)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[vekexasia](https://gist.github.com/vekexasia)**     commented    [3 hours agoApr 28, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6122505\#gistcomment-6122505)\
+  \
+  I cited llm wiki in this post [https://andreabaccega.com/blog/text-is-the-new-binary/](https://andreabaccega.com/blog/text-is-the-new-binary/) where i discuss how software is shifting from `binary` to `text`\
+  \
+  Sorry, something went wrong.\
+  \
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [![@nghoihin-byte](https://avatars.githubusercontent.com/u/279699101?s=80&v=4)](https://gist.github.com/nghoihin-byte)\
+  \
+  \
+  Copy link\
+  \
+  \
+  Copy Markdown\
+  \
+  ### **[nghoihin-byte](https://gist.github.com/nghoihin-byte)**     commented    [52 minutes agoApr 28, 2026](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6122761\#gistcomment-6122761)•   edited      Loading          \#\#\# Uh oh!        There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  This gist crystallized something we'd been building. We just open-sourced the team-native version: Beever Atlas ( [github.com/Beever-AI/beever-atlas](https://github.com/Beever-AI/beever-atlas)) — Apache 2.0.\
+  \
+  ![Screenshot 2026-04-25 at 1 07 53 AM](https://private-user-images.githubusercontent.com/279699101/584780399-b22bda34-236a-4cf9-bc00-92db1c93b0f3.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzczNzg5NDYsIm5iZiI6MTc3NzM3ODY0NiwicGF0aCI6Ii8yNzk2OTkxMDEvNTg0NzgwMzk5LWIyMmJkYTM0LTIzNmEtNGNmOS1iYzAwLTkyZGIxYzkzYjBmMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNDI4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDQyOFQxMjE3MjZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT04OTdkMjk1OTNmZTRhYjRkZDI1N2Y0YTUyZjE5OTg2YzdlYjhjM2FlODFmZGJkZTBjMmI0Yzc3YjFmMGNhMzU2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcifQ.2XCG3CprTG8vjRvl63h0q2_MkjjKxyoubdBmvRV_mHs)\
+  \
+  Same core thesis: distill messy chat into a structured wiki, then retrieve from the wiki rather than the chat. Not pure vector RAG —\
+  \
+  typed-graph (Neo4j) + semantic store (Weaviate) + 6-stage Google ADK pipeline that turns Slack/Discord/Teams into atomic facts with citations.\
+  \
+  What we added on top of your framing:\
+  \
+  • Native MCP server (16 tools) — Claude Code / Cursor can query a team's wiki directly\
+  \
+  • Multimodal via Jina v4 (text + images + PDFs in chat)\
+  \
+  • BYO LLM via LiteLLM (Ollama, Qwen, Claude, GPT, Gemma)\
+  \
+  • On-prem-friendly — sovereign deployment\
+  \
+  The use-case we test against: day-3 onboarding. New hire opens the wiki, clicks Decisions, finds "Stripe vs Adyen" with citations linking back to the original Slack thread. Onboarding scales without putting anyone on call.\
+  \
+  Built in Hong Kong + Toronto. Workshop Week (Days 1–5) on the implementation:\
+  \
+  [https://www.linkedin.com/posts/beever-ai\_andrej-karpathy-called-for-an-incredible-activity-7452591138810753024-G\_ZO?utm\_source=share&utm\_medium=member\_desktop&rcm=ACoAAAegEO0B-am6rV\_DQGT\_PV605Ofu8lS5YgI](https://www.linkedin.com/posts/beever-ai_andrej-karpathy-called-for-an-incredible-activity-7452591138810753024-G_ZO?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAegEO0B-am6rV_DQGT_PV605Ofu8lS5YgI)\
+  \
+  [https://beeverai.medium.com/day-1-your-teams-chat-is-a-wiki-waiting-to-happen-a-new-kind-of-rag-3c6e78b0b258?postPublishedType=repub](https://beeverai.medium.com/day-1-your-teams-chat-is-a-wiki-waiting-to-happen-a-new-kind-of-rag-3c6e78b0b258?postPublishedType=repub)\
+  \
+  Genuine thank-you for putting words to it.\
+  \
+  — Jack\
+  \
+  Sorry, something went wrong.\
+  \
+  \
+  ### Uh oh!\
+  \
+  There was an error while loading. [Please reload this page](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).\
+  \
+  [Sign up for free](https://gist.github.com/join?source=comment-gist) **to join this conversation on GitHub**.\
+  Already have an account?\
+  [Sign in to comment](https://gist.github.com/login?return_to=https%3A%2F%2Fgist.github.com%2Fkarpathy%2F442a6bf555914893e9891c11519de94f)\
+  \
+  You can’t perform that action at this time.
+  --- End Content ---
+
+lucasastorian/llmwiki: Open Source Implementation of ... - GitHub
+  URL: https://github.com/lucasastorian/llmwiki
+  Free, open-source implementation of Karpathy's LLM Wiki (spec). Available at llmwiki.app. Upload sources — PDFs, articles, notes, office docs.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/lucasastorian/llmwiki#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/lucasastorian/llmwiki) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/lucasastorian/llmwiki) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/lucasastorian/llmwiki) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [lucasastorian](https://github.com/lucasastorian)/ **[llmwiki](https://github.com/lucasastorian/llmwiki)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Flucasastorian%2Fllmwiki) You must be signed in to change notification settings
+  - [Fork\\
+  114](https://github.com/login?return_to=%2Flucasastorian%2Fllmwiki)
+  - [Star\\
+  704](https://github.com/login?return_to=%2Flucasastorian%2Fllmwiki)
+  
+  
+  master
+  
+  [**5** Branches](https://github.com/lucasastorian/llmwiki/branches) [**0** Tags](https://github.com/lucasastorian/llmwiki/tags)
+  
+  [Go to Branches page](https://github.com/lucasastorian/llmwiki/branches)[Go to Tags page](https://github.com/lucasastorian/llmwiki/tags)
+  
+  Go to file
+  
+  Code
+  
+  Open more actions menu
+  
+  ## Folders and files
+  
+  | Name | Name | Last commit message | Last commit date |
+  | --- | --- | --- | --- |
+  | ## Latest commit<br>[![lucasastorian](https://avatars.githubusercontent.com/u/23188192?v=4&size=40)](https://github.com/lucasastorian)[lucasastorian](https://github.com/lucasastorian/llmwiki/commits?author=lucasastorian)<br>[Merge pull request](https://github.com/lucasastorian/llmwiki/commit/60d29f6113349b3f2e60e2896ad35b0da3329c37) [#23](https://github.com/lucasastorian/llmwiki/pull/23) [from lucasastorian/dev](https://github.com/lucasastorian/llmwiki/commit/60d29f6113349b3f2e60e2896ad35b0da3329c37)<br>Open commit detailssuccess<br>yesterdayApr 26, 2026<br>[60d29f6](https://github.com/lucasastorian/llmwiki/commit/60d29f6113349b3f2e60e2896ad35b0da3329c37) · yesterdayApr 26, 2026<br>## History<br>[91 Commits](https://github.com/lucasastorian/llmwiki/commits/master/) <br>Open commit details<br>[View commit history for this file.](https://github.com/lucasastorian/llmwiki/commits/master/) 91 Commits |
+  | [.github/workflows](https://github.com/lucasastorian/llmwiki/tree/master/.github/workflows "This path skips through empty directories") | [.github/workflows](https://github.com/lucasastorian/llmwiki/tree/master/.github/workflows "This path skips through empty directories") | [GH Action test fixes](https://github.com/lucasastorian/llmwiki/commit/ab842e107ac851fe3be6b342872a64ef456b4730 "GH Action test fixes") | yesterdayApr 26, 2026 |
+  | [api](https://github.com/lucasastorian/llmwiki/tree/master/api "api") | [api](https://github.com/lucasastorian/llmwiki/tree/master/api "api") | [Added framer motion, ToCs, increased usage limits, and bug fixes in n…](https://github.com/lucasastorian/llmwiki/commit/bc5b8200b2e05dbbdd1b3ac8281fbbddc9b2f6ca "Added framer motion, ToCs, increased usage limits, and bug fixes in navigation") | yesterdayApr 26, 2026 |
+  | [converter](https://github.com/lucasastorian/llmwiki/tree/master/converter "converter") | [converter](https://github.com/lucasastorian/llmwiki/tree/master/converter "converter") | [Swapped out PDF Oxide for Open Data Loader & added test suite for con…](https://github.com/lucasastorian/llmwiki/commit/a30842235fc02df3d76bfcf7f674b79b0dc19ca2 "Swapped out PDF Oxide for Open Data Loader & added test suite for converter") | yesterdayApr 26, 2026 |
+  | [mcp](https://github.com/lucasastorian/llmwiki/tree/master/mcp "mcp") | [mcp](https://github.com/lucasastorian/llmwiki/tree/master/mcp "mcp") | [Refactored API service](https://github.com/lucasastorian/llmwiki/commit/912a6d45067c706559cfac4e81a4e3461c5d1127 "Refactored API service") | yesterdayApr 26, 2026 |
+  | [shared](https://github.com/lucasastorian/llmwiki/tree/master/shared "shared") | [shared](https://github.com/lucasastorian/llmwiki/tree/master/shared "shared") | [Added full graph view, refactored mcp service, and added full test suite](https://github.com/lucasastorian/llmwiki/commit/85ea8c11b5fa187d525e1a2afaf4e2c0af386bff "Added full graph view, refactored mcp service, and added full test suite") | yesterdayApr 26, 2026 |
+  | [supabase/migrations](https://github.com/lucasastorian/llmwiki/tree/master/supabase/migrations "This path skips through empty directories") | [supabase/migrations](https://github.com/lucasastorian/llmwiki/tree/master/supabase/migrations "This path skips through empty directories") | [Added full graph view, refactored mcp service, and added full test suite](https://github.com/lucasastorian/llmwiki/commit/85ea8c11b5fa187d525e1a2afaf4e2c0af386bff "Added full graph view, refactored mcp service, and added full test suite") | yesterdayApr 26, 2026 |
+  | [tests](https://github.com/lucasastorian/llmwiki/tree/master/tests "tests") | [tests](https://github.com/lucasastorian/llmwiki/tree/master/tests "tests") | [Added framer motion, ToCs, increased usage limits, and bug fixes in n…](https://github.com/lucasastorian/llmwiki/commit/bc5b8200b2e05dbbdd1b3ac8281fbbddc9b2f6ca "Added framer motion, ToCs, increased usage limits, and bug fixes in navigation") | yesterdayApr 26, 2026 |
+  | [web](https://github.com/lucasastorian/llmwiki/tree/master/web "web") | [web](https://github.com/lucasastorian/llmwiki/tree/master/web "web") | [Merge pull request](https://github.com/lucasastorian/llmwiki/commit/60d29f6113349b3f2e60e2896ad35b0da3329c37 "Merge pull request #23 from lucasastorian/dev  Minor UX tweak - navigate to FS on first upload") [#23](https://github.com/lucasastorian/llmwiki/pull/23) [from lucasastorian/dev](https://github.com/lucasastorian/llmwiki/commit/60d29f6113349b3f2e60e2896ad35b0da3329c37 "Merge pull request #23 from lucasastorian/dev  Minor UX tweak - navigate to FS on first upload") | yesterdayApr 26, 2026 |
+  | [.env.example](https://github.com/lucasastorian/llmwiki/blob/master/.env.example ".env.example") | [.env.example](https://github.com/lucasastorian/llmwiki/blob/master/.env.example ".env.example") | [Codebase cleanup & refactor](https://github.com/lucasastorian/llmwiki/commit/4594d6610d55ce7710d9248794fa57463c7fa85d "Codebase cleanup & refactor") | 3 weeks agoApr 5, 2026 |
+  | [.gitignore](https://github.com/lucasastorian/llmwiki/blob/master/.gitignore ".gitignore") | [.gitignore](https://github.com/lucasastorian/llmwiki/blob/master/.gitignore ".gitignore") | [Gitignore fix](https://github.com/lucasastorian/llmwiki/commit/870cd550d6edd3426f4b666b7e9f41bc5a4b10fb "Gitignore fix") | yesterdayApr 26, 2026 |
+  | [LICENSE](https://github.com/lucasastorian/llmwiki/blob/master/LICENSE "LICENSE") | [LICENSE](https://github.com/lucasastorian/llmwiki/blob/master/LICENSE "LICENSE") | [Ported core source code from Supasearch](https://github.com/lucasastorian/llmwiki/commit/6e3a0f4ea0c851c14c9d4ad46fb2378a5f849fd3 "Ported core source code from Supasearch") | 3 weeks agoApr 4, 2026 |
+  | [README.md](https://github.com/lucasastorian/llmwiki/blob/master/README.md "README.md") | [README.md](https://github.com/lucasastorian/llmwiki/blob/master/README.md "README.md") | [README rewrite — developer voice, tradeoffs, less polish](https://github.com/lucasastorian/llmwiki/commit/fdcb5014228cab1597cf4c72ecd28c9c8c3ddcbe "README rewrite — developer voice, tradeoffs, less polish") | 3 weeks agoApr 7, 2026 |
+  | [docker-compose.test.yml](https://github.com/lucasastorian/llmwiki/blob/master/docker-compose.test.yml "docker-compose.test.yml") | [docker-compose.test.yml](https://github.com/lucasastorian/llmwiki/blob/master/docker-compose.test.yml "docker-compose.test.yml") | [Added tenant isolation test suite](https://github.com/lucasastorian/llmwiki/commit/fb3c01de9a74a049046df255d49e2ef6460b9088 "Added tenant isolation test suite") | 3 weeks agoApr 7, 2026 |
+  | [docker-compose.yml](https://github.com/lucasastorian/llmwiki/blob/master/docker-compose.yml "docker-compose.yml") | [docker-compose.yml](https://github.com/lucasastorian/llmwiki/blob/master/docker-compose.yml "docker-compose.yml") | [Ported core source code from Supasearch](https://github.com/lucasastorian/llmwiki/commit/6e3a0f4ea0c851c14c9d4ad46fb2378a5f849fd3 "Ported core source code from Supasearch") | 3 weeks agoApr 4, 2026 |
+  | [llmwiki](https://github.com/lucasastorian/llmwiki/blob/master/llmwiki "llmwiki") | [llmwiki](https://github.com/lucasastorian/llmwiki/blob/master/llmwiki "llmwiki") | [M4: llmwiki CLI — init, open, serve, mcp, mcp-config, reindex](https://github.com/lucasastorian/llmwiki/commit/9dbfc2372c460bc1b7ba9df29eac4c7b1deccb88 "M4: llmwiki CLI — init, open, serve, mcp, mcp-config, reindex") | 3 weeks agoApr 7, 2026 |
+  | [netlify.toml](https://github.com/lucasastorian/llmwiki/blob/master/netlify.toml "netlify.toml") | [netlify.toml](https://github.com/lucasastorian/llmwiki/blob/master/netlify.toml "netlify.toml") | [Add netlify.toml + fix API Dockerfile](https://github.com/lucasastorian/llmwiki/commit/679cf98f94d0c26c82a7723c64c6141e982c3707 "Add netlify.toml + fix API Dockerfile") | 3 weeks agoApr 4, 2026 |
+  | [pytest.ini](https://github.com/lucasastorian/llmwiki/blob/master/pytest.ini "pytest.ini") | [pytest.ini](https://github.com/lucasastorian/llmwiki/blob/master/pytest.ini "pytest.ini") | [Added tenant isolation test suite](https://github.com/lucasastorian/llmwiki/commit/fb3c01de9a74a049046df255d49e2ef6460b9088 "Added tenant isolation test suite") | 3 weeks agoApr 7, 2026 |
+  | [wiki-page.png](https://github.com/lucasastorian/llmwiki/blob/master/wiki-page.png "wiki-page.png") | [wiki-page.png](https://github.com/lucasastorian/llmwiki/blob/master/wiki-page.png "wiki-page.png") | [ReadMe updates](https://github.com/lucasastorian/llmwiki/commit/3b90a05611dbb76c339207c3350c96a9e674fc6e "ReadMe updates") | 3 weeks agoApr 5, 2026 |
+  | View all files |
+  
+  ## Repository files navigation
+  
+  # LLM Wiki
+  
+  [Permalink: LLM Wiki](https://github.com/lucasastorian/llmwiki#llm-wiki)
+  
+  [![License](https://camo.githubusercontent.com/a21a9e0b02a2eaf1910bbf168de84e00ae1eb7b0fde8c5ceec0e7caa61920adf/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d417061636865253230322e302d677265656e)](https://opensource.org/licenses/Apache-2.0)
+  
+  Open-source implementation of [Karpathy's LLM Wiki](https://x.com/karpathy/status/2039805659525644595) ( [spec](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)).
+  
+  I built this because research folders accumulate useful material faster than I can keep summaries, links, and citations current by hand. LLM Wiki offloads that editing work to Claude so I can focus on source selection and analysis instead.
+  
+  Point it at a folder, start the local app, and connect Claude over MCP. From there, Claude reads your sources, writes wiki pages, and keeps links and citations in sync.
+  
+  [![LLM Wiki — a compiled wiki page with citations and table of contents](https://github.com/lucasastorian/llmwiki/raw/master/wiki-page.png)](https://github.com/lucasastorian/llmwiki/blob/master/wiki-page.png)
+  
+  ## What actually happens
+  
+  [Permalink: What actually happens](https://github.com/lucasastorian/llmwiki#what-actually-happens)
+  
+  1. **You have a folder** — PDFs, notes, articles, spreadsheets. Your existing research.
+  2. **LLM Wiki indexes it** — extracts text, chunks for search, builds a local SQLite index. Source files stay where they are.
+  3. **Claude connects via MCP** — reads sources, writes wiki pages under `wiki/`, maintains cross-references and footnote citations.
+  4. **The wiki improves** as Claude reads more of the workspace and writes more pages. Summaries, entity pages, and cross-references accumulate instead of being re-derived from scratch each conversation.
+  
+  ## Quick Start
+  
+  [Permalink: Quick Start](https://github.com/lucasastorian/llmwiki#quick-start)
+  
+  **Requirements:** Python 3.11+, Node.js 20+
+  
+  ```
+  git clone https://github.com/lucasastorian/llmwiki.git
+  cd llmwiki
+  
+  # Install Python deps
+  cd api && python -m venv .venv && source .venv/bin/activate
+  pip install -r requirements.txt
+  cd ..
+  
+  # Install web deps
+  cd web && npm install && cd ..
+  
+  # Initialize a workspace (point at any folder with your files)
+  ./llmwiki init ~/research
+  
+  # Start the app
+  ./llmwiki serve ~/research
+  ```
+  
+  Open [localhost:3000](http://localhost:3000/). Your files are indexed, wiki is scaffolded, ready to go.
+  
+  ### Connect Claude
+  
+  [Permalink: Connect Claude](https://github.com/lucasastorian/llmwiki#connect-claude)
+  
+  ```
+  ./llmwiki mcp-config ~/research
+  ```
+  
+  This prints a JSON snippet for `claude_desktop_config.json` (Claude Desktop) or `.claude/settings.json` (Claude Code). One workspace runs as one MCP server entry, so if you have multiple research folders, add one entry per folder.
+  
+  Then tell Claude: _"Read the guide, then ingest my sources and start building the wiki."_
+  
+  ### One-command start
+  
+  [Permalink: One-command start](https://github.com/lucasastorian/llmwiki#one-command-start)
+  
+  ```
+  ./llmwiki open ~/research
+  ```
+  
+  Does everything: init if needed, start servers, open browser, print MCP config hint.
+  
+  ## CLI
+  
+  [Permalink: CLI](https://github.com/lucasastorian/llmwiki#cli)
+  
+  | Command | What it does |
+  | --- | --- |
+  | `llmwiki open <folder>` | Init + serve + open browser |
+  | `llmwiki init <folder>` | Create `.llmwiki/` \+ `wiki/`, index existing files |
+  | `llmwiki serve <folder>` | Start API on :8000 + web on :3000 |
+  | `llmwiki mcp <folder>` | Run stdio MCP server (for Claude config) |
+  | `llmwiki mcp-config <folder>` | Print `claude_desktop_config.json` snippet |
+  | `llmwiki reindex <folder>` | Rebuild the index from disk |
+  
+  ## What happens on disk
+  
+  [Permalink: What happens on disk](https://github.com/lucasastorian/llmwiki#what-happens-on-disk)
+  
+  LLM Wiki adds two things to your folder. Source files are not moved or modified.
+  
+  ```
+  ~/research/                  # Your existing files (untouched)
+    papers/paper.pdf
+    notes.md
+    data.xlsx
+    wiki/                      # Generated pages (created by LLM Wiki)
+      overview.md
+      log.md
+      concepts/
+        attention.md
+    .llmwiki/                  # Index + cache (hidden, rebuildable)
+      index.db
+      cache/
+  ```
+  
+  - `wiki/` — ordinary markdown files. Edit them in any editor. Claude writes and updates them via MCP.
+  - `.llmwiki/` — SQLite search index and processed artifacts. Delete it anytime; `llmwiki reindex` rebuilds from the source files.
+  
+  By default, indexing, storage, and file writes happen on your machine. No cloud services required.
+  
+  ## How Claude interacts with the workspace
+  
+  [Permalink: How Claude interacts with the workspace](https://github.com/lucasastorian/llmwiki#how-claude-interacts-with-the-workspace)
+  
+  Once connected, Claude has these tools:
+  
+  | Tool | Description |
+  | --- | --- |
+  | `guide` | Explains how the wiki works, lists what's in the workspace |
+  | `search` | Browse files (`list`) or full-text search (`search`) |
+  | `read` | Read documents — PDFs with page ranges, glob batch reads |
+  | `write` | Create wiki pages, edit with `str_replace`, append. SVG/CSV assets |
+  | `delete` | Delete documents by path or glob pattern |
+  
+  All writes go to disk first, then update the search index. If Claude creates `/wiki/concepts/attention.md`, that file appears on disk immediately.
+  
+  ## Architecture
+  
+  [Permalink: Architecture](https://github.com/lucasastorian/llmwiki#architecture)
+  
+  ```
+  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+  │   Next.js    │────▶│   FastAPI    │────▶│   SQLite     │
+  │   Frontend   │     │   Backend    │     │   (local)    │
+  └──────────────┘     └──────┬───────┘     └──────────────┘
+                              │
+                       ┌──────┴───────┐
+                       │  MCP Server  │◀──── Claude Desktop / Code
+                       │   (stdio)    │
+                       └──────────────┘
+                              │
+                       ┌──────┴───────┐
+                       │  Filesystem  │  ← source of truth
+                       └──────────────┘
+  ```
+  
+  The filesystem is the source of truth. SQLite is a derived index — it accelerates search and stores extracted page data, but it can always be rebuilt from the files. A background file watcher picks up changes you make outside the app.
+  
+  ## Document processing
+  
+  [Permalink: Document processing](https://github.com/lucasastorian/llmwiki#document-processing)
+  
+  All processing runs locally. No API keys required for basic usage.
+  
+  | Format | Parser | Notes |
+  | --- | --- | --- |
+  | PDF | pdf-oxide | Rust-based text extraction. Works well for text-heavy papers. Scanned PDFs still benefit from real OCR. |
+  | Markdown/Text | native | Indexed and chunked directly |
+  | HTML | webmd | Strips nav/ads, extracts clean markdown |
+  | Excel/CSV | openpyxl | Sheet-by-sheet extraction |
+  | Images | native | Stored as-is, viewable inline |
+  | Word/PowerPoint | LibreOffice | Optional. Install LibreOffice for office conversion; without it, these formats are stored but not extracted. |
+  
+  Set `MISTRAL_API_KEY` for higher-quality PDF OCR with better table and layout detection. pdf-oxide is the free default and handles most text-heavy documents well enough.
+  
+  ## Limitations and tradeoffs
+  
+  [Permalink: Limitations and tradeoffs](https://github.com/lucasastorian/llmwiki#limitations-and-tradeoffs)
+  
+  - **One workspace = one MCP server.** If you work across multiple research projects, each gets its own folder and its own MCP entry. This is intentional — it keeps context and file access scoped.
+  - **PDF table extraction is rough.** pdf-oxide extracts prose reliably but tables come through as messy text. For financial filings or data-heavy PDFs, Mistral OCR is significantly better.
+  - **LibreOffice adds setup friction.** Office file conversion requires a local LibreOffice install. If you mostly work with PDFs and markdown, you can skip it entirely.
+  - **No vector search in local mode.** Full-text search uses SQLite FTS5 (porter stemming). It works well for keyword queries but does not do semantic/embedding search. The hosted version at llmwiki.app uses PGroonga for ranked search.
+  
+  ## Self-hosting the multi-tenant version
+  
+  [Permalink: Self-hosting the multi-tenant version](https://github.com/lucasastorian/llmwiki#self-hosting-the-multi-tenant-version)
+  
+  If you want to run the hosted version (like [llmwiki.app](https://llmwiki.app/)) with Postgres, Supabase auth, and S3:
+  
+  Hosted setup instructions
+  
+  ### Prerequisites
+  
+  [Permalink: Prerequisites](https://github.com/lucasastorian/llmwiki#prerequisites)
+  
+  - Python 3.11+
+  - Node.js 20+
+  - A [Supabase](https://supabase.com/) project
+  - An S3-compatible bucket
+  
+  ### Database
+  
+  [Permalink: Database](https://github.com/lucasastorian/llmwiki#database)
+  
+  ```
+  psql $DATABASE_URL -f supabase/migrations/001_initial.sql
+  ```
+  
+  ### API
+  
+  [Permalink: API](https://github.com/lucasastorian/llmwiki#api)
+  
+  ```
+  cd api
+  pip install -r requirements.txt
+  MODE=hosted DATABASE_URL=postgresql://... uvicorn main:app --port 8000
+  ```
+  
+  ### MCP Server
+  
+  [Permalink: MCP Server](https://github.com/lucasastorian/llmwiki#mcp-server)
+  
+  ```
+  cd mcp
+  pip install -r requirements.txt
+  MODE=hosted DATABASE_URL=postgresql://... uvicorn server:app --port 8080
+  ```
+  
+  ### Web
+  
+  [Permalink: Web](https://github.com/lucasastorian/llmwiki#web)
+  
+  ```
+  cd web
+  npm install
+  NEXT_PUBLIC_MODE=hosted \
+  NEXT_PUBLIC_SUPABASE_URL=https://your-ref.supabase.co \
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key \
+  NEXT_PUBLIC_API_URL=http://localhost:8000 \
+  npm run dev
+  ```
+  
+  ### Environment Variables
+  
+  [Permalink: Environment Variables](https://github.com/lucasastorian/llmwiki#environment-variables)
+  
+  **API**
+  
+  ```
+  MODE=hosted
+  DATABASE_URL=postgresql://...
+  SUPABASE_URL=https://your-ref.supabase.co
+  AWS_ACCESS_KEY_ID=...
+  AWS_SECRET_ACCESS_KEY=...
+  S3_BUCKET=your-bucket
+  MISTRAL_API_KEY=              # optional, for better PDF OCR
+  CONVERTER_URL=                # optional, for office conversion
+  ```
+  
+  **Web**
+  
+  ```
+  NEXT_PUBLIC_MODE=hosted
+  NEXT_PUBLIC_SUPABASE_URL=https://your-ref.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+  NEXT_PUBLIC_API_URL=http://localhost:8000
+  ```
+  
+  ## Why this beats a static notes folder
+  
+  [Permalink: Why this beats a static notes folder](https://github.com/lucasastorian/llmwiki#why-this-beats-a-static-notes-folder)
+  
+  Personal wikis usually fail on maintenance, not intent. Someone has to update links, fix stale summaries, merge overlapping pages, and keep citations aligned with the source material. That work scales with the number of sources, and people stop doing it.
+  
+  LLM Wiki offloads that editing work. You choose the source material and direct the analysis. Claude handles the repetitive bookkeeping — updating cross-references, keeping summaries current, flagging contradictions, touching the 15 pages that a single new source affects.
+  
+  ## License
+  
+  [Permalink: License](https://github.com/lucasastorian/llmwiki#license)
+  
+  Apache 2.0
+  
+  ## About
+  
+  Open Source Implementation of Karpathy's LLM Wiki. Upload documents, connect your Claude account via MCP, and have it write your wiki !
+  
+  
+  [llmwiki.app](https://llmwiki.app/ "https://llmwiki.app")
+  
+  ### Topics
+  
+  [mcp](https://github.com/topics/mcp "Topic: mcp") [knowledge-base](https://github.com/topics/knowledge-base "Topic: knowledge-base") [agents](https://github.com/topics/agents "Topic: agents") [ai-agents](https://github.com/topics/ai-agents "Topic: ai-agents") [karpathy](https://github.com/topics/karpathy "Topic: karpathy") [claude](https://github.com/topics/claude "Topic: claude") [rag](https://github.com/topics/rag "Topic: rag") [supabase](https://github.com/topics/supabase "Topic: supabase") [llm](https://github.com/topics/llm "Topic: llm") [mcp-server](https://github.com/topics/mcp-server "Topic: mcp-server") [llm-wiki](https://github.com/topics/llm-wiki "Topic: llm-wiki")
+  
+  ### Resources
+  
+  [Readme](https://github.com/lucasastorian/llmwiki#readme-ov-file)
+  
+  ### License
+  
+  [Apache-2.0 license](https://github.com/lucasastorian/llmwiki#Apache-2.0-1-ov-file)
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://github.com/lucasastorian/llmwiki).
+  
+  [Activity](https://github.com/lucasastorian/llmwiki/activity)
+  
+  ### Stars
+  
+  [**704**\\
+  stars](https://github.com/lucasastorian/llmwiki/stargazers)
+  
+  ### Watchers
+  
+  [**2**\\
+  watching](https://github.com/lucasastorian/llmwiki/watchers)
+  
+  ### Forks
+  
+  [**114**\\
+  forks](https://github.com/lucasastorian/llmwiki/forks)
+  
+  [Report repository](https://github.com/contact/report-content?content_url=https%3A%2F%2Fgithub.com%2Flucasastorian%2Fllmwiki&report=lucasastorian+%28user%29)
+  
+  ## [Releases](https://github.com/lucasastorian/llmwiki/releases)
+  
+  No releases published
+  
+  ## [Packages\  0](https://github.com/users/lucasastorian/packages?repo_name=llmwiki)
+  
+  No packages published
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://github.com/lucasastorian/llmwiki).
+  
+  ## [Contributors\  3](https://github.com/lucasastorian/llmwiki/graphs/contributors)
+  
+  - [![@lucasastorian](https://avatars.githubusercontent.com/u/23188192?s=64&v=4)](https://github.com/lucasastorian)[**lucasastorian** Lucas Astorian](https://github.com/lucasastorian)
+  - [![@claude](https://avatars.githubusercontent.com/u/81847?s=64&v=4)](https://github.com/claude)[**claude** Claude](https://github.com/claude)
+  - [![@dependabot[bot]](https://avatars.githubusercontent.com/in/29110?s=64&v=4)](https://github.com/apps/dependabot)[**dependabot\[bot\]**](https://github.com/apps/dependabot)
+  
+  ## Languages
+  
+  - [Python50.6%](https://github.com/lucasastorian/llmwiki/search?l=python)
+  - [TypeScript45.6%](https://github.com/lucasastorian/llmwiki/search?l=typescript)
+  - [PLpgSQL2.2%](https://github.com/lucasastorian/llmwiki/search?l=plpgsql)
+  - [CSS1.4%](https://github.com/lucasastorian/llmwiki/search?l=css)
+  - Other0.2%
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+Astro-Han/karpathy-llm-wiki - GitHub
+  URL: https://github.com/Astro-Han/karpathy-llm-wiki
+  Agent Skills-compatible LLM wiki for Claude Code, Cursor, and Codex. Build a Karpathy-style knowledge base from raw sources, citations, and linting.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/Astro-Han/karpathy-llm-wiki#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/Astro-Han/karpathy-llm-wiki) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/Astro-Han/karpathy-llm-wiki) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/Astro-Han/karpathy-llm-wiki) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [Astro-Han](https://github.com/Astro-Han)/ **[karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2FAstro-Han%2Fkarpathy-llm-wiki) You must be signed in to change notification settings
+  - [Fork\\
+  82](https://github.com/login?return_to=%2FAstro-Han%2Fkarpathy-llm-wiki)
+  - [Star\\
+  644](https://github.com/login?return_to=%2FAstro-Han%2Fkarpathy-llm-wiki)
+  
+  
+  main
+  
+  [**1** Branch](https://github.com/Astro-Han/karpathy-llm-wiki/branches) [**0** Tags](https://github.com/Astro-Han/karpathy-llm-wiki/tags)
+  
+  [Go to Branches page](https://github.com/Astro-Han/karpathy-llm-wiki/branches)[Go to Tags page](https://github.com/Astro-Han/karpathy-llm-wiki/tags)
+  
+  Go to file
+  
+  Code
+  
+  Open more actions menu
+  
+  ## Folders and files
+  
+  | Name | Name | Last commit message | Last commit date |
+  | --- | --- | --- | --- |
+  | ## Latest commit<br>[![Astro-Han](https://avatars.githubusercontent.com/u/255364436?v=4&size=40)](https://github.com/Astro-Han)[Astro-Han](https://github.com/Astro-Han/karpathy-llm-wiki/commits?author=Astro-Han)<br>[docs: streamline README for readability while preserving SEO structure](https://github.com/Astro-Han/karpathy-llm-wiki/commit/9e8c4f44ce8d8f154494844a860cc6e9e49c8642)<br>2 weeks agoApr 12, 2026<br>[9e8c4f4](https://github.com/Astro-Han/karpathy-llm-wiki/commit/9e8c4f44ce8d8f154494844a860cc6e9e49c8642) · 2 weeks agoApr 12, 2026<br>## History<br>[14 Commits](https://github.com/Astro-Han/karpathy-llm-wiki/commits/main/) <br>Open commit details<br>[View commit history for this file.](https://github.com/Astro-Han/karpathy-llm-wiki/commits/main/) 14 Commits |
+  | [assets](https://github.com/Astro-Han/karpathy-llm-wiki/tree/main/assets "assets") | [assets](https://github.com/Astro-Han/karpathy-llm-wiki/tree/main/assets "assets") | [docs: add Karpathy tweet screenshot to README](https://github.com/Astro-Han/karpathy-llm-wiki/commit/5a3acdc2cf2ae9c8181e0703dc8b5efaa88a7c89 "docs: add Karpathy tweet screenshot to README") | 3 weeks agoApr 5, 2026 |
+  | [examples](https://github.com/Astro-Han/karpathy-llm-wiki/tree/main/examples "examples") | [examples](https://github.com/Astro-Han/karpathy-llm-wiki/tree/main/examples "examples") | [docs: translate example files from Chinese to English](https://github.com/Astro-Han/karpathy-llm-wiki/commit/637eccaa151ce3876632f6ad2fc0511110e8e48a "docs: translate example files from Chinese to English  - Translate 2026-03-19-claude-code-statusline-landscape.md (148 lines) - Fix mixed Chinese/English in claude-code-statusline-landscape.md (Impact section) - All example files now uniformly in English") | 2 weeks agoApr 12, 2026 |
+  | [references](https://github.com/Astro-Han/karpathy-llm-wiki/tree/main/references "references") | [references](https://github.com/Astro-Han/karpathy-llm-wiki/tree/main/references "references") | [feat: add SKILL.md and reference templates](https://github.com/Astro-Han/karpathy-llm-wiki/commit/85d6275ad7b9b4324d2da5e764f58649be7f42f8 "feat: add SKILL.md and reference templates  Implement the karpathy-llm-wiki skill following agentskills.io open standard. Three operations: Ingest (fetch + compile), Query (search + archive), Lint (deterministic auto-fix + heuristic reports). Passed 5 rounds of dual-model crosscheck review.") | 3 weeks agoApr 5, 2026 |
+  | [.gitignore](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/.gitignore ".gitignore") | [.gitignore](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/.gitignore ".gitignore") | [chore: init repo with spec and reference docs](https://github.com/Astro-Han/karpathy-llm-wiki/commit/d8f3d00f96d81c02e73fb384165fb7af8a3143d8 "chore: init repo with spec and reference docs  - docs/SPEC.md: 产品设计 spec（五轮 crosscheck 定稿） - docs/karpathy-idea-file-reference.md: Karpathy 原始 gist 内容（实施参考）") | 3 weeks agoApr 5, 2026 |
+  | [LICENSE](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/LICENSE "LICENSE") | [LICENSE](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/LICENSE "LICENSE") | [docs: add README and MIT license](https://github.com/Astro-Han/karpathy-llm-wiki/commit/76631bb7d38ca0f49c7e542435103bf26c38fe14 "docs: add README and MIT license  Effect-first README: install command, 3-step quick start, architecture overview, compatibility table. Links to Karpathy's original idea file gist.") | 3 weeks agoApr 5, 2026 |
+  | [README.md](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/README.md "README.md") | [README.md](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/README.md "README.md") | [docs: streamline README for readability while preserving SEO structure](https://github.com/Astro-Han/karpathy-llm-wiki/commit/9e8c4f44ce8d8f154494844a860cc6e9e49c8642 "docs: streamline README for readability while preserving SEO structure") | 2 weeks agoApr 12, 2026 |
+  | [SKILL.md](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/SKILL.md "SKILL.md") | [SKILL.md](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/SKILL.md "SKILL.md") | [feat: add SKILL.md and reference templates](https://github.com/Astro-Han/karpathy-llm-wiki/commit/85d6275ad7b9b4324d2da5e764f58649be7f42f8 "feat: add SKILL.md and reference templates  Implement the karpathy-llm-wiki skill following agentskills.io open standard. Three operations: Ingest (fetch + compile), Query (search + archive), Lint (deterministic auto-fix + heuristic reports). Passed 5 rounds of dual-model crosscheck review.") | 3 weeks agoApr 5, 2026 |
+  | View all files |
+  
+  ## Repository files navigation
+  
+  # karpathy-llm-wiki
+  
+  [Permalink: karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki#karpathy-llm-wiki)
+  
+  **A reusable skill for building Karpathy-style LLM wikis with Claude Code, Cursor, Codex, and other Agent Skills tools.**
+  
+  [![License: MIT](https://camo.githubusercontent.com/fdf2982b9f5d7489dcf44570e714e3a15fce6253e0cc6b5aa61a075aac2ff71b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d4d49542d79656c6c6f772e737667)](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/LICENSE)[![GitHub stars](https://camo.githubusercontent.com/3ee369a2d7219de1c8f310ecba6de9e17b6e3c53ae828d9dfe3f0f1ce34d0498/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f417374726f2d48616e2f6b617270617468792d6c6c6d2d77696b693f7374796c653d736f6369616c)](https://github.com/Astro-Han/karpathy-llm-wiki)[![GitHub forks](https://camo.githubusercontent.com/7d99af8cdfc979e1a9aaf217bd0743fe4a3782e6dc08c970785d755a2b96107a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f666f726b732f417374726f2d48616e2f6b617270617468792d6c6c6d2d77696b693f7374796c653d736f6369616c)](https://github.com/Astro-Han/karpathy-llm-wiki)[![Agent Skills](https://camo.githubusercontent.com/d2c6e85ae60eda4cd647719a36edefc4163dfe1a9be2428101c90ad66de4859d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4167656e745f536b696c6c732d636f6d70617469626c652d626c7565)](https://agentskills.io/)[![Install](https://camo.githubusercontent.com/fd29be4d7d90ffda057d73ecfe0ed70dbd29e67364fcbe8a076cb1b80873f723/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f496e7374616c6c2d6e70785f6164642d2d736b696c6c2d677265656e)](https://github.com/Astro-Han/karpathy-llm-wiki#install)
+  
+  [![Karpathy's tweet about LLM Wiki](https://github.com/Astro-Han/karpathy-llm-wiki/raw/main/assets/karpathy-tweet.png)](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/assets/karpathy-tweet.png)
+  
+  `karpathy-llm-wiki` packages [Karpathy's LLM Wiki idea](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) into one installable [Agent Skills](https://agentskills.io/) skill. Your coding agent ingests sources into `raw/`, compiles durable knowledge pages into `wiki/`, answers questions with citations, and lints the wiki for consistency.
+  
+  ## What Is an LLM Wiki?
+  
+  [Permalink: What Is an LLM Wiki?](https://github.com/Astro-Han/karpathy-llm-wiki#what-is-an-llm-wiki)
+  
+  An **LLM wiki** is a knowledge system where the LLM maintains structured wiki pages instead of re-searching raw documents on every question. New sources are compiled into durable markdown pages, cross-references are updated over time, and answers cite the wiki pages that already contain the synthesized knowledge.
+  
+  This skill gives you three operations:
+  
+  | Operation | What it does | Output |
+  | --- | --- | --- |
+  | **Ingest** | Collects a source into `raw/` and compiles it into the wiki | New or updated wiki pages |
+  | **Query** | Searches the wiki and answers with citations | Grounded answers linking to markdown pages |
+  | **Lint** | Checks index integrity, links, and wiki health | Auto-fixes plus reported issues |
+  
+  See [SKILL.md](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/SKILL.md) for the full skill specification.
+  
+  ## LLM Wiki vs RAG
+  
+  [Permalink: LLM Wiki vs RAG](https://github.com/Astro-Han/karpathy-llm-wiki#llm-wiki-vs-rag)
+  
+  | Approach | Knowledge lives in | When synthesis happens | Good for |
+  | --- | --- | --- | --- |
+  | **RAG** | Raw chunks and embeddings | At query time | Broad retrieval across large corpora |
+  | **LLM Wiki** | Curated markdown pages | During ingest and maintenance | Compounding knowledge, summaries, and durable cross-links |
+  
+  This skill is optimized for the wiki model: knowledge that improves over time instead of re-deriving relationships on every query.
+  
+  ## Usage Stats
+  
+  [Permalink: Usage Stats](https://github.com/Astro-Han/karpathy-llm-wiki#usage-stats)
+  
+  Based on a production knowledge base maintained daily since April 2026:
+  
+  - **94** wiki articles across **13** topic directories
+  - **99** source materials ingested
+  - **87** operation log entries in the last 7 days
+  
+  See [examples/](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/examples) for sample wiki pages, source files, and operation logs.
+  
+  ## Install
+  
+  [Permalink: Install](https://github.com/Astro-Han/karpathy-llm-wiki#install)
+  
+  ```
+  npx add-skill Astro-Han/karpathy-llm-wiki
+  ```
+  
+  Works with any tool that supports the [Agent Skills](https://agentskills.io/) standard.
+  
+  ## Quick Start
+  
+  [Permalink: Quick Start](https://github.com/Astro-Han/karpathy-llm-wiki#quick-start)
+  
+  ### 1\. Ingest your first source
+  
+  [Permalink: 1. Ingest your first source](https://github.com/Astro-Han/karpathy-llm-wiki#1-ingest-your-first-source)
+  
+  Give the skill a URL, a file, or pasted text:
+  
+  > "Ingest this article: [https://example.com/attention-is-all-you-need](https://example.com/attention-is-all-you-need)"
+  
+  The skill stores the source in `raw/`, then compiles or updates the right knowledge pages in `wiki/`.
+  
+  ### 2\. Ask your wiki a question
+  
+  [Permalink: 2. Ask your wiki a question](https://github.com/Astro-Han/karpathy-llm-wiki#2-ask-your-wiki-a-question)
+  
+  > "What do I know about attention mechanisms?"
+  
+  The skill searches the wiki and answers with citations linking back to your markdown pages.
+  
+  ### 3\. Keep the wiki healthy
+  
+  [Permalink: 3. Keep the wiki healthy](https://github.com/Astro-Han/karpathy-llm-wiki#3-keep-the-wiki-healthy)
+  
+  > "Lint my wiki"
+  
+  Checks for broken links, missing index entries, stale cross-references, and related issues.
+  
+  ## How the Workflow Works
+  
+  [Permalink: How the Workflow Works](https://github.com/Astro-Han/karpathy-llm-wiki#how-the-workflow-works)
+  
+  The core idea from Karpathy: the LLM maintains the wiki while the human focuses on choosing sources and asking good questions.
+  
+  ```
+  your-project/
+  ├── raw/            ← Immutable source material
+  │   └── topic/
+  │       └── 2026-04-03-source-article.md
+  ├── wiki/           ← Compiled knowledge pages maintained by the LLM
+  │   ├── topic/
+  │   │   └── concept-name.md
+  │   ├── index.md    ← Global table of contents
+  │   └── log.md      ← Append-only operation log
+  ```
+  
+  Each new source can update multiple pages, strengthen cross-references, and record contradictions. That is what makes the wiki compound over time.
+  
+  ## Tool Compatibility
+  
+  [Permalink: Tool Compatibility](https://github.com/Astro-Han/karpathy-llm-wiki#tool-compatibility)
+  
+  This skill follows the [agentskills.io](https://agentskills.io/) open standard:
+  
+  | Tool | Install method |
+  | --- | --- |
+  | Claude Code | `npx add-skill Astro-Han/karpathy-llm-wiki` |
+  | Cursor | `npx add-skill Astro-Han/karpathy-llm-wiki` |
+  | Codex CLI | Copy to `.agents/skills/karpathy-llm-wiki/` |
+  | OpenCode | `npx add-skill Astro-Han/karpathy-llm-wiki` |
+  | Other tools | Copy `SKILL.md` and `references/` into the tool's skill directory |
+  
+  ## FAQ
+  
+  [Permalink: FAQ](https://github.com/Astro-Han/karpathy-llm-wiki#faq)
+  
+  ### What is the difference between an LLM wiki and a personal wiki?
+  
+  [Permalink: What is the difference between an LLM wiki and a personal wiki?](https://github.com/Astro-Han/karpathy-llm-wiki#what-is-the-difference-between-an-llm-wiki-and-a-personal-wiki)
+  
+  An LLM wiki is maintained by the model. It updates summaries, cross-links, index entries, and contradictions as new material arrives. A normal personal wiki depends on manual editing.
+  
+  ### What sources can I ingest?
+  
+  [Permalink: What sources can I ingest?](https://github.com/Astro-Han/karpathy-llm-wiki#what-sources-can-i-ingest)
+  
+  Web pages, papers, blog posts, PDFs, markdown files, text files, and pasted text. The skill converts everything into markdown under `raw/` and compiles it into `wiki/`.
+  
+  ### Is this production-ready?
+  
+  [Permalink: Is this production-ready?](https://github.com/Astro-Han/karpathy-llm-wiki#is-this-production-ready)
+  
+  The workflow is based on a real knowledge base with 94 articles and 99 sources maintained daily since April 2026. The repo includes examples, templates, and a design spec.
+  
+  ## Inspired By
+  
+  [Permalink: Inspired By](https://github.com/Astro-Han/karpathy-llm-wiki#inspired-by)
+  
+  Unofficial community implementation of the workflow from [Karpathy's LLM Wiki idea](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The value here is the reusable workflow, prompt structure, and battle-tested knowledge-compilation rules.
+  
+  See also: [lucasastorian/llmwiki](https://github.com/lucasastorian/llmwiki), [atomicmemory/llm-wiki-compiler](https://github.com/atomicmemory/llm-wiki-compiler).
+  
+  ## License
+  
+  [Permalink: License](https://github.com/Astro-Han/karpathy-llm-wiki#license)
+  
+  [MIT](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/LICENSE)
+  
+  ## About
+  
+  Agent Skills-compatible LLM wiki for Claude Code, Cursor, and Codex. Build a Karpathy-style knowledge base from raw sources, citations, and linting.
+  
+  
+  ### Topics
+  
+  [markdown](https://github.com/topics/markdown "Topic: markdown") [productivity](https://github.com/topics/productivity "Topic: productivity") [cursor](https://github.com/topics/cursor "Topic: cursor") [knowledge-base](https://github.com/topics/knowledge-base "Topic: knowledge-base") [personal-knowledge-base](https://github.com/topics/personal-knowledge-base "Topic: personal-knowledge-base") [knowledge-management](https://github.com/topics/knowledge-management "Topic: knowledge-management") [codex](https://github.com/topics/codex "Topic: codex") [karpathy](https://github.com/topics/karpathy "Topic: karpathy") [llm](https://github.com/topics/llm "Topic: llm") [claude-code](https://github.com/topics/claude-code "Topic: claude-code") [rag-alternative](https://github.com/topics/rag-alternative "Topic: rag-alternative") [agent-skill](https://github.com/topics/agent-skill "Topic: agent-skill") [llm-wiki](https://github.com/topics/llm-wiki "Topic: llm-wiki")
+  
+  ### Resources
+  
+  [Readme](https://github.com/Astro-Han/karpathy-llm-wiki#readme-ov-file)
+  
+  ### License
+  
+  [MIT license](https://github.com/Astro-Han/karpathy-llm-wiki#MIT-1-ov-file)
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://github.com/Astro-Han/karpathy-llm-wiki).
+  
+  [Activity](https://github.com/Astro-Han/karpathy-llm-wiki/activity)
+  
+  ### Stars
+  
+  [**644**\\
+  stars](https://github.com/Astro-Han/karpathy-llm-wiki/stargazers)
+  
+  ### Watchers
+  
+  [**6**\\
+  watching](https://github.com/Astro-Han/karpathy-llm-wiki/watchers)
+  
+  ### Forks
+  
+  [**82**\\
+  forks](https://github.com/Astro-Han/karpathy-llm-wiki/forks)
+  
+  [Report repository](https://github.com/contact/report-content?content_url=https%3A%2F%2Fgithub.com%2FAstro-Han%2Fkarpathy-llm-wiki&report=Astro-Han+%28user%29)
+  
+  ## [Releases](https://github.com/Astro-Han/karpathy-llm-wiki/releases)
+  
+  No releases published
+  
+  ## [Packages\  0](https://github.com/users/Astro-Han/packages?repo_name=karpathy-llm-wiki)
+  
+  No packages published
+  
+  ## [Contributors\  1](https://github.com/Astro-Han/karpathy-llm-wiki/graphs/contributors)
+  
+  - [![@Astro-Han](https://avatars.githubusercontent.com/u/255364436?s=64&v=4)](https://github.com/Astro-Han)[**Astro-Han** AstroHan](https://github.com/Astro-Han)
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+LLM Wiki v2 - GitHub Gist
+  URL: https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2
+  This is a production-focused architecture doc based on Karpathy's LLM Wiki pattern — updated yesterday. Not an awesome-list. A working blueprint covering:.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#start-of-content)
+  
+  [Gist Homepage ](https://gist.github.com/)
+  
+  Search Gists
+  
+  Search Gists
+  
+  [Gist Homepage ](https://gist.github.com/)
+  
+  [Sign in](https://gist.github.com/auth/github?return_to=https%3A%2F%2Fgist.github.com%2Frohitg00%2F2067ab416f7bbe447c1977edaaa681e2) [Sign up](https://gist.github.com/join?return_to=https%3A%2F%2Fgist.github.com%2Frohitg00%2F2067ab416f7bbe447c1977edaaa681e2&source=header-gist)
+  
+  You signed in with another tab or window. [Reload](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2) to refresh your session.You signed out in another tab or window. [Reload](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2) to refresh your session.You switched accounts on another tab or window. [Reload](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  Instantly share code, notes, and snippets.
+  
+  
+  [![@rohitg00](https://avatars.githubusercontent.com/u/48523873?s=64&v=4)](https://gist.github.com/rohitg00)
+  
+  # [rohitg00](https://gist.github.com/rohitg00)/ **[llm-wiki.md](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2)**
+  
+  Forked from [karpathy/llm-wiki.md](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+  
+  Last active
+  21 minutes agoApril 27, 2026 15:35
+  
+  Show Gist options
+  
+  - [Download ZIP](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2/archive/b5a4f5c2187f522472801163338641aa25ea288b.zip)
+  
+  - [Star1,026(1,026)](https://gist.github.com/login?return_to=https%3A%2F%2Fgist.github.com%2Frohitg00%2F2067ab416f7bbe447c1977edaaa681e2) You must be signed in to star a gist
+  - [Fork144(144)](https://gist.github.com/login?return_to=https%3A%2F%2Fgist.github.com%2Frohitg00%2F2067ab416f7bbe447c1977edaaa681e2) You must be signed in to fork a gist
+  
+  - Embed
+  
+  
+  
+  
+  
+  
+  
+  
+  # Select an option
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - Embed
+      Embed this gist in your website.
+    - Share
+      Copy sharable link for this gist.
+    - Clone via HTTPS
+      Clone using the web URL.
+  
+  ## No results found
+  
+  [Learn more about clone URLs](https://docs.github.com/articles/which-remote-url-should-i-use)
+  
+  Clone this repository at &lt;script src=&quot;https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2.js&quot;&gt;&lt;/script&gt;
+  
+  - Save rohitg00/2067ab416f7bbe447c1977edaaa681e2 to your computer and use it in GitHub Desktop.
+  
+  Embed
+  
+  # Select an option
+  
+  - Embed
+  Embed this gist in your website.
+  - Share
+  Copy sharable link for this gist.
+  - Clone via HTTPS
+  Clone using the web URL.
+  
+  ## No results found
+  
+  [Learn more about clone URLs](https://docs.github.com/articles/which-remote-url-should-i-use)
+  
+  Clone this repository at &lt;script src=&quot;https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2.js&quot;&gt;&lt;/script&gt;
+  
+  Save rohitg00/2067ab416f7bbe447c1977edaaa681e2 to your computer and use it in GitHub Desktop.
+  
+  [Download ZIP](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2/archive/b5a4f5c2187f522472801163338641aa25ea288b.zip)
+  
+  LLM Wiki v2 — extending Karpathy's LLM Wiki pattern with lessons from building agentmemory
+  
+  
+  [Raw](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2/raw/b5a4f5c2187f522472801163338641aa25ea288b/llm-wiki.md)
+  
+  [**llm-wiki.md**](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#file-llm-wiki-md)
+  
+  # LLM Wiki v2
+  
+  [Permalink: LLM Wiki v2](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#llm-wiki-v2)
+  
+  A pattern for building personal knowledge bases using LLMs. Extended with lessons from building [agentmemory](https://github.com/rohitg00/agentmemory), a persistent memory engine for AI coding agents.
+  
+  This builds on [Andrej Karpathy's original LLM Wiki idea file](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). Everything in the original still applies. This document adds what we learned running the pattern in production: what breaks at scale, what's missing, and what separates a wiki that stays useful from one that rots.
+  
+  ## What the original gets right
+  
+  [Permalink: What the original gets right](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#what-the-original-gets-right)
+  
+  The core insight is correct: **stop re-deriving, start compiling.** RAG retrieves and forgets. A wiki accumulates and compounds. The three-layer architecture (raw sources, wiki, schema) works. The operations (ingest, query, lint) cover the basics. If you haven't read the original, start there.
+  
+  What follows is what we found after building and running this pattern across thousands of sessions.
+  
+  ## The missing layer: memory lifecycle
+  
+  [Permalink: The missing layer: memory lifecycle](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#the-missing-layer-memory-lifecycle)
+  
+  The original treats all wiki content as equally valid forever. In practice, knowledge has a lifecycle. A bug you discovered last week matters more than one from six months ago. A pattern you've seen twelve times is more reliable than one you've seen once. A claim from a newer source should weaken an older one automatically.
+  
+  **Confidence scoring.** Every fact in the wiki should carry a confidence score: how many sources support it, how recently it was confirmed, whether anything contradicts it. When the LLM writes "Project X uses Redis for caching," that claim should know it came from two sources, was last confirmed three weeks ago, and sits at confidence 0.85. Confidence decays with time and strengthens with reinforcement. This turns the wiki from a flat collection of equally-weighted claims into a living model where the LLM can say "I'm fairly sure about X but less sure about Y."
+  
+  **Supersession.** When new information contradicts or updates an existing claim, the old claim shouldn't just sit there with a note. The new one should explicitly supersede it. Linked, timestamped, old version preserved but marked stale. Version control for knowledge, not just for files.
+  
+  **Forgetting.** Not everything should live forever. A wiki that never forgets becomes noisy. Implement a retention curve: facts that were important once but haven't been accessed or reinforced in months should gradually fade. Not deleted, but deprioritized. The LLM equivalent of moving something to a bottom drawer. Ebbinghaus's forgetting curve works well here: retention decays exponentially with time, but each reinforcement (access, confirmation from a new source) resets the curve. Architecture decisions decay slowly. Transient bugs decay fast.
+  
+  **Consolidation tiers.** Raw observations aren't the same as established facts. Build a pipeline:
+  
+  - **Working memory**: recent observations, not yet processed
+  - **Episodic memory**: session summaries, compressed from raw observations
+  - **Semantic memory**: cross-session facts, consolidated from episodes
+  - **Procedural memory**: workflows and patterns, extracted from repeated semantics
+  
+  Each tier is more compressed, more confident, and longer-lived than the one below it. The LLM promotes information up the tiers as evidence accumulates. This is how you go from "I saw this once" to "this is how things work."
+  
+  ## Beyond flat pages: the knowledge graph
+  
+  [Permalink: Beyond flat pages: the knowledge graph](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#beyond-flat-pages-the-knowledge-graph)
+  
+  The original wiki is pages with wikilinks. That works, but you're leaving structure on the table. What you actually want is a typed knowledge graph layered on top of the pages.
+  
+  **Entity extraction.** When the LLM ingests a source, it shouldn't just write prose. It should extract structured entities. People, projects, libraries, concepts, files, decisions. Each entity gets a type, attributes, and relationships to other entities. "React" is a library. "Auth migration" is a project. "Sarah" is a person who owns the auth migration and has opinions about React.
+  
+  **Typed relationships.** Not all connections are equal. "uses," "depends on," "contradicts," "caused," "fixed," "supersedes" carry different semantic weight. A link that says "A relates to B" is less useful than "A caused B, confirmed by 3 sources, confidence 0.9."
+  
+  **Graph traversal for queries.** When someone asks "what's the impact of upgrading Redis?", the LLM shouldn't just keyword-search. It should start at the Redis node, walk outward through "depends on" and "uses" edges, and find everything downstream. This catches connections that keyword search misses.
+  
+  The graph doesn't replace the wiki pages. It augments them. Pages are for reading. The graph is for navigation and discovery.
+  
+  ## Search that actually scales
+  
+  [Permalink: Search that actually scales](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#search-that-actually-scales)
+  
+  The original relies on `index.md`, a single file cataloging every page. This works up to maybe 100-200 pages. Beyond that, the index itself becomes too long for the LLM to read in one pass, and you need real search.
+  
+  **Hybrid search.** The best approach combines three streams:
+  
+  - **BM25** (keyword matching with stemming and synonym expansion)
+  - **Vector search** (semantic similarity via embeddings)
+  - **Graph traversal** (entity-aware relationship walking)
+  
+  Fuse the results with reciprocal rank fusion. Each stream catches things the others miss. BM25 finds exact terms. Vectors find semantic similarity. The graph finds structural connections. Together they beat any single approach.
+  
+  Keep `index.md` as a human-readable catalog, but don't rely on it as the LLM's primary search mechanism past ~100 pages.
+  
+  ## Automation: from manual to event-driven
+  
+  [Permalink: Automation: from manual to event-driven](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#automation-from-manual-to-event-driven)
+  
+  The biggest practical gap in the original is that everything is manual. You drop a source and tell the LLM to process it. You remember to run lint periodically. You decide when to file an answer back.
+  
+  In practice, you want hooks. Events that fire automatically:
+  
+  - **On new source**: auto-ingest, extract entities, update graph, update index
+  - **On session start**: load relevant context from the wiki based on recent activity
+  - **On session end**: compress the session into observations, file insights
+  - **On query**: check if the answer is worth filing back (quality score > threshold)
+  - **On memory write**: check for contradictions with existing knowledge, trigger supersession
+  - **On schedule**: periodic lint, consolidation, retention decay
+  
+  The human should still be in the loop for curation and direction. But the bookkeeping, the part that makes people abandon wikis, should be fully automated.
+  
+  ## Quality and self-correction
+  
+  [Permalink: Quality and self-correction](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#quality-and-self-correction)
+  
+  Not all LLM-generated content is good. Without quality controls, the wiki accumulates noise.
+  
+  **Score everything.** Every piece of content the LLM writes should get a quality score. Is it well-structured? Does it cite sources? Is it consistent with the rest of the wiki? You can have the LLM self-evaluate, or use a second pass with a different prompt. Content below a threshold gets flagged for review or rewritten.
+  
+  **Self-healing.** The lint operation from the original should be more than a suggestion. It should automatically fix what it can. Orphan pages get linked or flagged. Stale claims get marked. Broken cross-references get repaired. The wiki should tend toward health on its own, not only when you remember to ask.
+  
+  **Contradiction resolution.** The original mentions flagging contradictions. That's step one. Step two is resolving them. The LLM should propose which claim is more likely correct based on source recency, source authority, and the number of supporting observations. The human can override, but the default behavior should usually be right.
+  
+  ## Multi-agent and collaboration
+  
+  [Permalink: Multi-agent and collaboration](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#multi-agent-and-collaboration)
+  
+  The original is single-user, single-agent. Many real use cases involve multiple agents or multiple people contributing to the same knowledge base.
+  
+  **Mesh sync.** If multiple agents are working in parallel (different coding sessions, different research threads), their observations need to merge into a shared wiki. Last-write-wins works for most cases. For conflicts, timestamp-based resolution with manual override.
+  
+  **Shared vs. private.** Some knowledge is personal (my preferences, my workflow). Some is shared (project architecture, team decisions). The wiki needs scoping. Private observations that roll up into shared knowledge when promoted.
+  
+  **Work coordination.** When multiple agents work on the same knowledge base, they need lightweight coordination. Who's working on what. What's blocked. What's done. Not a full task management system, just enough to prevent duplicate work and track progress.
+  
+  ## Privacy and governance
+  
+  [Permalink: Privacy and governance](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#privacy-and-governance)
+  
+  The original doesn't mention this, but it matters. Sources often contain sensitive information: API keys, credentials, private conversations, PII.
+  
+  **Filter on ingest.** Before anything hits the wiki, strip sensitive data. API keys, tokens, passwords, anything marked private. This should be automatic, not something you remember to do.
+  
+  **Audit trail.** Every operation on the wiki (ingest, edit, delete, query) should be logged with a timestamp, what changed, and why. This is your accountability layer. When something looks wrong in the wiki, the audit trail tells you how it got there.
+  
+  **Bulk operations with governance.** As the wiki grows, you'll want to bulk-delete stale content, export subsets, or merge duplicate entities. These operations should be audited and reversible.
+  
+  ## Crystallization: compounding from exploration
+  
+  [Permalink: Crystallization: compounding from exploration](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#crystallization-compounding-from-exploration)
+  
+  The original mentions that "good answers can be filed back into the wiki as new pages." This can be taken further.
+  
+  **Crystallization** is the process of taking a completed chain of work (a research thread, a debugging session, an analysis) and automatically distilling it into a structured digest. What was the question? What did we find? What files/entities were involved? What lessons emerged? This digest becomes a first-class wiki page, and the lessons get extracted as standalone facts that strengthen the knowledge base.
+  
+  Your explorations are a source, just like an article or a paper. The wiki should treat them that way. Ingest the results, update the graph, strengthen or challenge existing claims.
+  
+  ## Output formats beyond markdown
+  
+  [Permalink: Output formats beyond markdown](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#output-formats-beyond-markdown)
+  
+  The original mentions Marp for slide decks and matplotlib for charts. The wiki's output shouldn't be limited to markdown pages. Depending on the query, the right output might be:
+  
+  - A comparison table
+  - A timeline visualization
+  - A dependency graph
+  - A slide deck for presenting findings
+  - A structured data export (JSON, CSV) for further analysis
+  - A brief for someone else on your team
+  
+  The wiki is the knowledge store. The output format depends on the audience and the question.
+  
+  ## The schema is the real product
+  
+  [Permalink: The schema is the real product](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#the-schema-is-the-real-product)
+  
+  The original implies this but it's worth being direct: **the schema document (CLAUDE.md, AGENTS.md) is the most important file in the system.** It's what turns a generic LLM into a disciplined knowledge worker. It encodes:
+  
+  - What types of entities and relationships exist in your domain
+  - How to ingest different kinds of sources
+  - When to create a new page vs. update an existing one
+  - What quality standards to apply
+  - How to handle contradictions
+  - What the consolidation schedule looks like
+  - What's private vs. shared
+  
+  You and the LLM co-evolve this document over time. The first version will be rough. After a few dozen sources and a few lint passes, you'll have a schema that reflects how your domain actually works. That schema is transferable. Share it with someone else working on a similar domain and they get a running start.
+  
+  ## Implementation spectrum
+  
+  [Permalink: Implementation spectrum](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#implementation-spectrum)
+  
+  All of this is modular. You don't need everything on day one.
+  
+  **Minimal viable wiki**: raw sources + wiki pages + index.md + a schema that describes ingest/query/lint workflows. This is roughly what the original describes. It works. Start here.
+  
+  **Add lifecycle**: confidence scoring, supersession, basic retention decay. This prevents the wiki from becoming a junk drawer.
+  
+  **Add structure**: entity extraction, typed relationships, knowledge graph. This makes queries better and surfaces connections you'd miss with flat pages.
+  
+  **Add automation**: hooks for auto-ingest, auto-lint, context injection. This is where the maintenance burden drops to near zero.
+  
+  **Add scale**: hybrid search, consolidation tiers, quality scoring. This is what you need when the wiki grows past a few hundred pages.
+  
+  **Add collaboration**: mesh sync, shared/private scoping, work coordination. This is for teams or multi-agent setups.
+  
+  Pick your entry point based on your needs. The pattern works at every level.
+  
+  ## Why this matters
+  
+  [Permalink: Why this matters](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2#why-this-matters)
+  
+  Karpathy's original insight stands: the bottleneck is bookkeeping, and LLMs eliminate that bottleneck. What we've added is the machinery that keeps the wiki healthy as it scales. Lifecycle management so knowledge doesn't rot. Structure so connections aren't lost. Automation so humans stay focused on thinking rather than filing. Quality controls so the wiki earns trust over time.
+  
+  The Memex is finally buildable. Not because we have better documents or better search, but because we have librarians that actually do the work.
+  
+  * * *
+  
+  _This document extends [Andrej Karpathy's LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) with patterns proven in [agentmemory](https://github.com/rohitg00/agentmemory), a persistent memory engine for AI agents built on [iii-engine](https://github.com/iii-hq/iii). The original idea file is the foundation; this adds what we learned building the engine._
+  
+  [![@luancaarvalho](https://avatars.githubusercontent.com/u/34407796?s=80&v=4)](https://gist.github.com/luancaarvalho)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[luancaarvalho](https://gist.github.com/luancaarvalho)**     commented    [2 weeks agoApr 11, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6092191\#gistcomment-6092191)
+  
+  Hello!
+  
+  Great approach, I had the same impression when reading Karpathy's article and also some videos about his approach. The only point I didn't understand was the following: based on your experience, the scaling problem that Karpathy mentioned in his article boils down to migrating from an index file that works for 200 documents to a hybrid search across those documents. So, we continue to generate their graph in Obsidian and this, along with BM25 and vector search, will solve the scaling problem, correct?
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@webmaven](https://avatars.githubusercontent.com/u/438502?s=80&v=4)](https://gist.github.com/webmaven)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[webmaven](https://gist.github.com/webmaven)**     commented    [2 weeks agoApr 12, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6093085\#gistcomment-6093085)
+  
+  How well does the ingestion scale to larger source documents, like a book (or a manuscript)?
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@rohitg00](https://avatars.githubusercontent.com/u/48523873?s=80&v=4)](https://gist.github.com/rohitg00)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  Author
+  
+  ### **[rohitg00](https://gist.github.com/rohitg00)**     commented    [2 weeks agoApr 12, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6093910\#gistcomment-6093910)
+  
+  > Hello! Great approach, I had the same impression when reading Karpathy's article and also some videos about his approach. The only point I didn't understand was the following: based on your experience, the scaling problem that Karpathy mentioned in his article boils down to migrating from an index file that works for 200 documents to a hybrid search across those documents. So, we continue to generate their graph in Obsidian and this, along with BM25 and vector search, will solve the scaling problem, correct?
+  
+  Good question [@luancaarvalho](https://github.com/luancaarvalho), Short answer: mostly yes, but with a caveat.
+  
+  A flat index file breaks around 200-500 documents because you're doing brute-force matching. BM25 + vector search handles the retrieval scaling. BM25 catches exact terms, vectors catch semantic similarity, and RRF fusion ranks the combined results.
+  
+  But the graph layer matters too. Obsidian-style graphs capture relationships between documents that neither BM25 nor vector search surface on their own. In agentmemory we run all three (BM25 + vector + knowledge graph) and fuse with RRF, that's how we hit 95.2% on LongMemEval-S.
+  
+  So it's not just "replace index with hybrid search." It's **index → hybrid retrieval + graph traversal** working together. The graph tells you what's connected. The hybrid search tells you what's relevant right now.
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@rohitg00](https://avatars.githubusercontent.com/u/48523873?s=80&v=4)](https://gist.github.com/rohitg00)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  Author
+  
+  ### **[rohitg00](https://gist.github.com/rohitg00)**     commented    [2 weeks agoApr 12, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6093911\#gistcomment-6093911)
+  
+  > How well does the ingestion scale to larger source documents, like a book (or a manuscript)?
+  
+  [@webmaven](https://github.com/webmaven)
+  
+  Haven't stress-tested book-length ingestion yet, current design is optimized for agent observations (short-to-medium text chunks from coding sessions, conversations, tool outputs).
+  
+  For a book or manuscript, the bottleneck would be chunking strategy and how observations are created from the source material. You'd likely want to pre-process into meaningful segments (chapters, sections, key passages) rather than feeding raw text. The retrieval layer should handle it fine. BM25 and vector search scale well with document count. The knowledge graph extraction would be the expensive part at that volume.
+  
+  Interested in the use case, are you thinking about an agent that builds memory from reading a manuscript, or more like a research assistant that accumulates knowledge across multiple books?
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@ttaskippythemagnificent-coder](https://avatars.githubusercontent.com/u/273134842?s=80&v=4)](https://gist.github.com/ttaskippythemagnificent-coder)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[ttaskippythemagnificent-coder](https://gist.github.com/ttaskippythemagnificent-coder)**     commented    [2 weeks agoApr 13, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6094932\#gistcomment-6094932)
+  
+  YOINK! Gracias,
+  
+  Item 3: Rohit's LLM Wiki Knowledge System Gist
+  
+  Verdict: STEAL THIS. High-value blueprint.
+  
+  This is a production-focused architecture doc based on Karpathy's LLM Wiki pattern — updated yesterday. Not an awesome-list. A working blueprint covering:
+  
+  - Memory architecture with confidence scoring
+  - Hybrid search (BM25 + vectors + graph traversal)
+  - Knowledge graph structuring and quality controls
+  - Multi-agent sync patterns
+  - Schema-driven knowledge work
+  
+  This maps directly onto our stack evolution:
+  
+  - Semantic search (Phase 2, done) → hybrid search is our Phase 3
+  - Knowledge graph (582 nodes) → confidence scoring and quality controls are exactly what we need for enrichment
+  - Multi-agent patterns → we already have 11 crew officers that could benefit from shared knowledge sync
+  - BM25 + vector + graph — the triple retrieval pattern is the upgrade path for our semantic search
+  
+  Action: Pull the gist content, extract the architectural patterns, cross-reference against our knowledge graph roadmap (Project Lick). The hybrid search layer and confidence scoring are the two pieces we should incorporate into Phase 3 planning.
+  
+  We already have 60% of what this blueprint describes. Semantic search, knowledge graph, ingest pipeline, lint, hooks — all built. The missing 40% is the intelligence layer:
+  
+  1. Phase 3A — Confidence scores on facts (the unlock for everything else)
+  2. Phase 3B — Wire graph into search (we have both pieces, just not connected)
+  3. Phase 3C — Auto-crystallize sessions into knowledge (compounding loop)
+  4. Phase 3D — Contradiction detection on write (quality control)
+  5. Phase 3E — Multi-agent knowledge scoping (deferred until crew needs it)
+  
+  3A + 3B together in one golden window session is the sovereignty leap — ~8-10 hours, turns our search from "find stuff" into "associative intelligence with memory lifecycle." That's the Simmerer submind's fuel.
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@gnusupport](https://avatars.githubusercontent.com/u/24825387?s=80&v=4)](https://gist.github.com/gnusupport)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[gnusupport](https://gist.github.com/gnusupport)**     commented    [2 weeks agoApr 14, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6099102\#gistcomment-6099102)
+  
+  [@ttaskippythemagnificent-coder](https://github.com/ttaskippythemagnificent-coder)
+  
+  - "Confidence scoring" is never defined — float? enum? who computes it? how does it update?
+  - "Auto-crystallize sessions into knowledge" is pure magic — no extraction algorithm, no dedup, no trigger condition
+  - 582 nodes is tiny — that's not a knowledge graph, that's a Tuesday afternoon
+  - Hybrid search has no fusion strategy — BM25 + vectors + graph just means three slow things bolted together
+  - No latency targets — 100ms? 10 seconds? who knows?
+  - No accuracy metrics — NDCG? MRR? nothing
+  - "8-10 hours for 3A+3B" is delusional — that's a notebook hack, not production
+  - "We already have 60%" assumes components compose — they won't; integration is the work
+  - Contradiction detection on every write is AI-complete — they're not ready for that complexity
+  - No access control — any agent can write anything
+  - No versioning — can't roll back a bad crystallization
+  - No provenance — which agent wrote this fact? from what source?
+  - No consistency model — ACID? eventual? multi-agent sync needs this
+  - No backup or recovery strategy — corruption = game over
+  - No evaluation framework — how do you know if it worked?
+  - LLMs are treated as reliable — they'll silently corrupt the graph and you'll never know
+  - No human-in-the-loop for LLM failures
+  - No fallback when LLM API is down
+  - No human-readable addresses — can't cite a fact in an email or doc
+  - No back-links — "what points to this node?" is missing
+  - No time stamps — can't audit when a fact changed
+  - No signature or authentication — can't trust who wrote what
+  - No external document linking (XDoc) — Slack, email, PDFs stay outside
+  - The timeline assumes no bugs, no testing, no security, no rollback
+  - It's a product vision dressed as an architecture document
+  
+  Great direction, terrible blueprint. Don't build from this. Steal the _ideas_, not the _plan_.
+  
+  Learn:
+  
+  TECHNOLOGY TEMPLATE PROJECT OHS Framework :
+  
+  [https://www.dougengelbart.org/content/view/110/460/](https://www.dougengelbart.org/content/view/110/460/)
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@tigerlaibao](https://avatars.githubusercontent.com/u/17682804?s=80&v=4)](https://gist.github.com/tigerlaibao)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[tigerlaibao](https://gist.github.com/tigerlaibao)**     commented    [2 weeks agoApr 15, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6101424\#gistcomment-6101424)
+  
+  "The Memex is finally buildable" — this line in your Gist resonated deeply with me.
+  
+  You hit the nail on the head: the biggest bottleneck isn't the data, it's the "bookkeeping tax." Most systems rot because they require humans to act like librarians.
+  
+  I’ve spent the last few months building Memex, an open-source tool that attempts to productize these exact patterns. I wanted to move beyond a "hacky collection of scripts" into a polished, cross-platform experience.
+  
+  How I’m approaching this:
+  
+  Automation of the "Chore": Memex uses AI agents to incrementally "compile" daily captures into a structured P.A.R.A. library. The goal is: Capture freely, organized automatically.
+  
+  The Engine (dart\_agent\_core): To power these agentic workflows in a Flutter app, I built a dedicated framework: dart\_agent\_core. It’s a stateful AI agent framework for Dart that supports tool use, planning, and sub-agent delegation.
+  
+  Product over Scripts: I chose Flutter because a knowledge base needs a high-performance, beautiful UI to stay sustainable. It’s about keeping the "system" out of the way of the "mood."
+  
+  The project is in its early stages, but the core loop of "raw ingest -> agentic compilation -> structured wiki" is live. I’d love for you to take a look!
+  
+  App: [https://github.com/memex-lab/memex](https://github.com/memex-lab/memex)
+  
+  Framework: [https://github.com/memex-lab/dart\_agent\_core](https://www.google.com/search?q=https://github.com/memex-lab/dart_agent_core)
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@stevesolun](https://avatars.githubusercontent.com/u/1304538?s=80&v=4)](https://gist.github.com/stevesolun)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[stevesolun](https://gist.github.com/stevesolun)**     commented    [last weekApr 18, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6107044\#gistcomment-6107044)
+  
+  It is definitely a great approach but much powerful with the knowledge graph full of skills and agents I have built:
+  
+  I got tired of manually figuring out which skill or agent to use inside Claude Code.
+  
+  So I built ctx.
+  
+  ctx watches what you’re developing, walks a knowledge graph of 1,450+ skills and 427 agents, and recommends the right ones in real time.
+  
+  You stay in control:
+  
+  load what you want
+  
+  unload what you do not need
+  
+  keep the context sharp
+  
+  Under the hood, it uses a Karpathy-style LLM wiki, plus persistent memory that gets smarter across sessions.
+  
+  [https://github.com/stevesolun/ctx](https://github.com/stevesolun/ctx)
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [![@ChristopherA](https://avatars.githubusercontent.com/u/69103?s=80&v=4)](https://gist.github.com/ChristopherA)
+  
+  
+  Copy link
+  
+  
+  Copy Markdown
+  
+  ### **[ChristopherA](https://gist.github.com/ChristopherA)**     commented    [last weekApr 18, 2026](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2?permalink_comment_id=6107476\#gistcomment-6107476)
+  
+  I'm interested in this category, but less inferred graphs for knowledge but instead explicitly authored named edges (initiated by people but facilitated by agents).
+  
+  [https://gist.github.com/ChristopherA/151aefa6a6bde1ce4fa6b1182656cebe](https://gist.github.com/ChristopherA/151aefa6a6bde1ce4fa6b1182656cebe)
+  
+  Summary: A practical guide to turning a folder of markdown files into a real knowledge graph using just two conventions: \[\[wikilinks\]\] for connections and named edges like derived\_from::\[\[Source\]\] for what the connection means. No database, no special tooling — just text files and discipline. Worth reading if you keep notes in Obsidian-style tools, build AI agents that traverse structured knowledge, or care about how collaborators can share a graph without surrendering their own vocabulary to someone else's schema.
+  
+  Sorry, something went wrong.
+  
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2).
+  
+  [Sign up for free](https://gist.github.com/join?source=comment-gist) **to join this conversation on GitHub**.
+  Already have an account?
+  [Sign in to comment](https://gist.github.com/login?return_to=https%3A%2F%2Fgist.github.com%2Frohitg00%2F2067ab416f7bbe447c1977edaaa681e2)
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+cablate/llm-atomic-wiki: An extension of Karpathy's LLM Wiki pattern ...
+  URL: https://github.com/cablate/llm-atomic-wiki
+  An extension of Karpathy's LLM Wiki pattern: atom layer, topic-branches, two-layer Lint. Distilled from running the pattern end-to-end.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/cablate/llm-atomic-wiki#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/cablate/llm-atomic-wiki) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/cablate/llm-atomic-wiki) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/cablate/llm-atomic-wiki) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [cablate](https://github.com/cablate)/ **[llm-atomic-wiki](https://github.com/cablate/llm-atomic-wiki)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Fcablate%2Fllm-atomic-wiki) You must be signed in to change notification settings
+  - [Fork\\
+  22](https://github.com/login?return_to=%2Fcablate%2Fllm-atomic-wiki)
+  - [Star\\
+  118](https://github.com/login?return_to=%2Fcablate%2Fllm-atomic-wiki)
+  
+  
+  main
+  
+  [**1** Branch](https://github.com/cablate/llm-atomic-wiki/branches) [**0** Tags](https://github.com/cablate/llm-atomic-wiki/tags)
+  
+  [Go to Branches page](https://github.com/cablate/llm-atomic-wiki/branches)[Go to Tags page](https://github.com/cablate/llm-atomic-wiki/tags)
+  
+  Go to file
+  
+  Code
+  
+  Open more actions menu
+  
+  ## Folders and files
+  
+  | Name | Name | Last commit message | Last commit date |
+  | --- | --- | --- | --- |
+  | ## Latest commit<br>![cablate](https://avatars.githubusercontent.com/u/85614048?v=4&size=40)![claude](https://avatars.githubusercontent.com/u/81847?v=4&size=40)<br>[cablate](https://github.com/cablate/llm-atomic-wiki/commits?author=cablate)<br>and<br>[claude](https://github.com/cablate/llm-atomic-wiki/commits?author=claude)<br>[add star history chart to both READMEs](https://github.com/cablate/llm-atomic-wiki/commit/eaf5e1d6388684482383a01b9bbb759a7f5e5712)<br>Open commit details<br>last weekApr 20, 2026<br>[eaf5e1d](https://github.com/cablate/llm-atomic-wiki/commit/eaf5e1d6388684482383a01b9bbb759a7f5e5712) · last weekApr 20, 2026<br>## History<br>[5 Commits](https://github.com/cablate/llm-atomic-wiki/commits/main/) <br>Open commit details<br>[View commit history for this file.](https://github.com/cablate/llm-atomic-wiki/commits/main/) 5 Commits |
+  | [atoms](https://github.com/cablate/llm-atomic-wiki/tree/main/atoms "atoms") | [atoms](https://github.com/cablate/llm-atomic-wiki/tree/main/atoms "atoms") | [fix structure: introduce atoms/ wrapper, kill templates/, English-onl…](https://github.com/cablate/llm-atomic-wiki/commit/0b1773a5c2a51de111f3f0d07165a05e2133dd65 "fix structure: introduce atoms/ wrapper, kill templates/, English-only STORY & METHODOLOGY  - Move topic-branches under atoms/ (atoms/<branch>/) - Drop templates/ folder; templates live with their layer (atoms/_template.md, wiki/_template.md) - Remove Chinese versions of STORY and METHODOLOGY (only README is bilingual) - Update .gitignore, README, CLAUDE, METHODOLOGY references accordingly  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [raw](https://github.com/cablate/llm-atomic-wiki/tree/main/raw "raw") | [raw](https://github.com/cablate/llm-atomic-wiki/tree/main/raw "raw") | [initial commit: llm-atomic-wiki framework](https://github.com/cablate/llm-atomic-wiki/commit/d5d4a81cfd41160fe772c1905ff6b6fd21ac724a "initial commit: llm-atomic-wiki framework  Distilled from running Karpathy's LLM Wiki pattern end-to-end. Adds four small extensions on top of the original:   - atom layer (source of truth, wiki is derived cache)   - topic-branches organizing atoms   - two-layer Lint (programmatic + LLM)   - parallel-compile naming lock  Credit to Andrej Karpathy for the original pattern.  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [scripts](https://github.com/cablate/llm-atomic-wiki/tree/main/scripts "scripts") | [scripts](https://github.com/cablate/llm-atomic-wiki/tree/main/scripts "scripts") | [initial commit: llm-atomic-wiki framework](https://github.com/cablate/llm-atomic-wiki/commit/d5d4a81cfd41160fe772c1905ff6b6fd21ac724a "initial commit: llm-atomic-wiki framework  Distilled from running Karpathy's LLM Wiki pattern end-to-end. Adds four small extensions on top of the original:   - atom layer (source of truth, wiki is derived cache)   - topic-branches organizing atoms   - two-layer Lint (programmatic + LLM)   - parallel-compile naming lock  Credit to Andrej Karpathy for the original pattern.  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [wiki](https://github.com/cablate/llm-atomic-wiki/tree/main/wiki "wiki") | [wiki](https://github.com/cablate/llm-atomic-wiki/tree/main/wiki "wiki") | [fix structure: introduce atoms/ wrapper, kill templates/, English-onl…](https://github.com/cablate/llm-atomic-wiki/commit/0b1773a5c2a51de111f3f0d07165a05e2133dd65 "fix structure: introduce atoms/ wrapper, kill templates/, English-only STORY & METHODOLOGY  - Move topic-branches under atoms/ (atoms/<branch>/) - Drop templates/ folder; templates live with their layer (atoms/_template.md, wiki/_template.md) - Remove Chinese versions of STORY and METHODOLOGY (only README is bilingual) - Update .gitignore, README, CLAUDE, METHODOLOGY references accordingly  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [.gitignore](https://github.com/cablate/llm-atomic-wiki/blob/main/.gitignore ".gitignore") | [.gitignore](https://github.com/cablate/llm-atomic-wiki/blob/main/.gitignore ".gitignore") | [fix structure: introduce atoms/ wrapper, kill templates/, English-onl…](https://github.com/cablate/llm-atomic-wiki/commit/0b1773a5c2a51de111f3f0d07165a05e2133dd65 "fix structure: introduce atoms/ wrapper, kill templates/, English-only STORY & METHODOLOGY  - Move topic-branches under atoms/ (atoms/<branch>/) - Drop templates/ folder; templates live with their layer (atoms/_template.md, wiki/_template.md) - Remove Chinese versions of STORY and METHODOLOGY (only README is bilingual) - Update .gitignore, README, CLAUDE, METHODOLOGY references accordingly  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [CLAUDE.md](https://github.com/cablate/llm-atomic-wiki/blob/main/CLAUDE.md "CLAUDE.md") | [CLAUDE.md](https://github.com/cablate/llm-atomic-wiki/blob/main/CLAUDE.md "CLAUDE.md") | [fix structure: introduce atoms/ wrapper, kill templates/, English-onl…](https://github.com/cablate/llm-atomic-wiki/commit/0b1773a5c2a51de111f3f0d07165a05e2133dd65 "fix structure: introduce atoms/ wrapper, kill templates/, English-only STORY & METHODOLOGY  - Move topic-branches under atoms/ (atoms/<branch>/) - Drop templates/ folder; templates live with their layer (atoms/_template.md, wiki/_template.md) - Remove Chinese versions of STORY and METHODOLOGY (only README is bilingual) - Update .gitignore, README, CLAUDE, METHODOLOGY references accordingly  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [METHODOLOGY.md](https://github.com/cablate/llm-atomic-wiki/blob/main/METHODOLOGY.md "METHODOLOGY.md") | [METHODOLOGY.md](https://github.com/cablate/llm-atomic-wiki/blob/main/METHODOLOGY.md "METHODOLOGY.md") | [fix structure: introduce atoms/ wrapper, kill templates/, English-onl…](https://github.com/cablate/llm-atomic-wiki/commit/0b1773a5c2a51de111f3f0d07165a05e2133dd65 "fix structure: introduce atoms/ wrapper, kill templates/, English-only STORY & METHODOLOGY  - Move topic-branches under atoms/ (atoms/<branch>/) - Drop templates/ folder; templates live with their layer (atoms/_template.md, wiki/_template.md) - Remove Chinese versions of STORY and METHODOLOGY (only README is bilingual) - Update .gitignore, README, CLAUDE, METHODOLOGY references accordingly  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | [README.md](https://github.com/cablate/llm-atomic-wiki/blob/main/README.md "README.md") | [README.md](https://github.com/cablate/llm-atomic-wiki/blob/main/README.md "README.md") | [add star history chart to both READMEs](https://github.com/cablate/llm-atomic-wiki/commit/eaf5e1d6388684482383a01b9bbb759a7f5e5712 "add star history chart to both READMEs  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | last weekApr 20, 2026 |
+  | [README.zh-TW.md](https://github.com/cablate/llm-atomic-wiki/blob/main/README.zh-TW.md "README.zh-TW.md") | [README.zh-TW.md](https://github.com/cablate/llm-atomic-wiki/blob/main/README.zh-TW.md "README.zh-TW.md") | [add star history chart to both READMEs](https://github.com/cablate/llm-atomic-wiki/commit/eaf5e1d6388684482383a01b9bbb759a7f5e5712 "add star history chart to both READMEs  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | last weekApr 20, 2026 |
+  | [STORY.md](https://github.com/cablate/llm-atomic-wiki/blob/main/STORY.md "STORY.md") | [STORY.md](https://github.com/cablate/llm-atomic-wiki/blob/main/STORY.md "STORY.md") | [fix structure: introduce atoms/ wrapper, kill templates/, English-onl…](https://github.com/cablate/llm-atomic-wiki/commit/0b1773a5c2a51de111f3f0d07165a05e2133dd65 "fix structure: introduce atoms/ wrapper, kill templates/, English-only STORY & METHODOLOGY  - Move topic-branches under atoms/ (atoms/<branch>/) - Drop templates/ folder; templates live with their layer (atoms/_template.md, wiki/_template.md) - Remove Chinese versions of STORY and METHODOLOGY (only README is bilingual) - Update .gitignore, README, CLAUDE, METHODOLOGY references accordingly  Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>") | 2 weeks agoApr 16, 2026 |
+  | View all files |
+  
+  ## Repository files navigation
+  
+  # llm-atomic-wiki
+  
+  [Permalink: llm-atomic-wiki](https://github.com/cablate/llm-atomic-wiki#llm-atomic-wiki)
+  
+  > Built on top of **Andrej Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)**.
+  > All credit to him for the pattern — this repo is what I learned by running it end-to-end, plus four small additions that helped at scale.
+  
+  **584 posts · 8,668 replies · 630 atoms · 83 wiki pages · 11 branches**
+  
+  The repo gives you the framework — methodology, schema, scripts, folder structure. Fork it and run it on your own materials. My actual content stays private; the kit is what you get.
+  
+  🇹🇼 [中文版 README](https://github.com/cablate/llm-atomic-wiki/blob/main/README.zh-TW.md) · 📖 [the story behind this repo](https://github.com/cablate/llm-atomic-wiki/blob/main/STORY.md)
+  
+  * * *
+  
+  ## What this adds on top of Karpathy's pattern
+  
+  [Permalink: What this adds on top of Karpathy's pattern](https://github.com/cablate/llm-atomic-wiki#what-this-adds-on-top-of-karpathys-pattern)
+  
+  Karpathy's gist captures the core pattern in beautifully minimal form. The four additions below came from problems I hit while running it at scale — they extend his pattern, they don't replace it.
+  
+  ```
+  Karpathy:   raw ─→ wiki
+  This repo:  raw ─→ atoms (organized into topic-branches) ─→ wiki
+  ```
+  
+  Four additions:
+  
+  **1\. Atom layer.** Karpathy goes raw → wiki in one compile step. I added atoms in between — one atom equals one claim, with frontmatter (source, type, depth, tags, date). Atoms are the source of truth; wiki is a derived cache. When a wiki page gets a fact wrong, you go back to the atom, not the raw source. This solves the "loss of information" and "false sense of source of truth" problems that commenter `frosk1` raised on the original gist.
+  
+  **2\. Topic-branches at the atom layer.** Karpathy's wiki is flat. I organize atoms by topic into branch folders at the repo root (one folder per branch), then compile to flat wiki pages with topic prefixes (`wiki/<branch>-<subtopic>.md`). The atom layer becomes browsable; the wiki layer stays index-friendly.
+  
+  **3\. Two-layer Lint.** Karpathy lumps "find contradictions, ghost links, orphan pages, outdated claims" into a single Lint operation. I split it. A programmatic layer (`scripts/lint.sh`) handles deterministic checks (ghost links, orphan pages, format violations, outdated markers) in seconds. An LLM layer handles semantic checks (contradictions, expired claims). The programmatic layer runs first so the LLM doesn't waste attention on format issues.
+  
+  **4\. Parallel-compile naming lock.** Karpathy compiles one page at a time. When N agents compile in parallel, they invent different filenames for the same content (`mcp-plus-skills.md` vs `mcp-plus-skills-architecture.md`). The fix is to pre-lock the slug namespace before fanning out. Agents fill content into pre-named slots; they do not name files.
+  
+  * * *
+  
+  ## Proof
+  
+  [Permalink: Proof](https://github.com/cablate/llm-atomic-wiki#proof)
+  
+  | Stage | Numbers |
+  | --- | --- |
+  | Raw input | 584 posts + 8,668 replies + lecture/course materials |
+  | Filter pass-through | Posts 70–90% kept, replies ~13% kept (87% noise) |
+  | Atoms extracted | 630 (immutable, source of truth) |
+  | Branches | 11 (one folder at repo root per topic) |
+  | Wiki pages compiled | 83 (3–8 atoms per page) |
+  | Lint warnings (tightened) | 16 (down from 47 before regex was tightened) |
+  | Largest branch | 101 atoms |
+  | Smallest branch | 23 atoms |
+  
+  * * *
+  
+  ## How it works
+  
+  [Permalink: How it works](https://github.com/cablate/llm-atomic-wiki#how-it-works)
+  
+  ```
+  ┌─────────┐  Ingest    ┌────────────┐  Compile   ┌─────────┐
+  │  raw/   │ ─────────▶ │ <branch>/  │ ─────────▶ │  wiki/  │
+  │         │  (LLM      │ atom.md    │  (LLM      │ flat    │
+  │ sources │  extract)  │ atom.md    │  group)    │ pages   │
+  └─────────┘            │ ...        │            └────┬────┘
+                         └────────────┘                 │
+                                                        │
+                                  ┌─────────────────────┼─────────────────────┐
+                                  ▼                     ▼                     ▼
+                            gen-index.sh           lint.sh              log-append.sh
+                                │                     │                     │
+                                ▼                     ▼                     ▼
+                            index.md           lint-report.md            log.md
+  ```
+  
+  Compare to Karpathy's loop:
+  
+  ```
+  Karpathy:   raw → wiki → {Ingest, Query, Lint}
+  This repo:  raw → atoms → wiki → {Ingest, Query, programmatic Lint, LLM Lint}
+  ```
+  
+  Atoms are where the real work happens. Wiki is rebuildable from atoms; atoms are not rebuildable from wiki.
+  
+  * * *
+  
+  ## What's in this repo
+  
+  [Permalink: What's in this repo](https://github.com/cablate/llm-atomic-wiki#whats-in-this-repo)
+  
+  ```
+  llm-atomic-wiki/
+  ├── README.md              ← you are here
+  ├── README.zh-TW.md        ← Chinese version
+  ├── STORY.md               ← the personal story of running it end-to-end
+  ├── METHODOLOGY.md         ← 6-phase pipeline
+  ├── CLAUDE.md              ← schema for the LLM operating this repo
+  │
+  ├── raw/                   ← drop your source materials here (gitignored)
+  │
+  ├── atoms/                 ← knowledge atoms, organized by topic-branch (gitignored)
+  │   ├── README.md
+  │   ├── _template.md       ← copy when creating a new atom
+  │   ├── <branch-1>/        ← one folder per topic-branch
+  │   ├── <branch-2>/        ← e.g. ai-agent/, ai-skills/, mcp/, ...
+  │   └── ...
+  │
+  ├── wiki/                  ← compiled pages, flat (gitignored)
+  │   └── _template.md       ← copy when creating a new wiki page
+  │
+  ├── index.md               ← auto-generated navigation (gitignored)
+  ├── log.md                 ← change log, append-only (gitignored)
+  │
+  └── scripts/
+      ├── lint.sh            ← programmatic Lint
+      ├── gen-index.sh       ← rebuild index.md from wiki/
+      ├── log-append.sh      ← append a change entry to log.md
+      └── README.md
+  ```
+  
+  The framework files (READMEs, METHODOLOGY, CLAUDE, scripts, templates) are versioned. Your actual content (raw, branch folders, wiki, generated index/log) is gitignored — this is intentional and load-bearing. The repo is the kit, not the data.
+  
+  * * *
+  
+  ## Quickstart
+  
+  [Permalink: Quickstart](https://github.com/cablate/llm-atomic-wiki#quickstart)
+  
+  1. **Fork this repo.**
+  2. **Read `METHODOLOGY.md`** — six phases from raw to wiki, plus the maintenance loop.
+  3. **Read `CLAUDE.md`** — the formal spec (atom format, wiki format, branch rules, operations, what not to do).
+  4. **Edit `.gitignore`** — replace the listed branch names with your own.
+  5. **Drop materials into `raw/`** — any text format. PDFs, transcripts, post dumps, articles.
+  6. **Drive the pipeline with an LLM** — point Claude Code (or your agent) at `CLAUDE.md` and ask it to ingest a batch.
+  7. **Run the scripts** after each compile:
+  
+  
+  
+  ```
+  ./scripts/gen-index.sh        # rebuild wiki index
+  ./scripts/lint.sh             # programmatic health check
+  ./scripts/log-append.sh "..." # record what changed
+  ```
+  
+  8. **Run an LLM Lint pass** weekly or after major ingests — see `METHODOLOGY.md`.
+  
+  The whole loop is `Ingest → Compile → Index/Log → Lint → Query`. Re-run as you accumulate materials.
+  
+  * * *
+  
+  ## Deep dives
+  
+  [Permalink: Deep dives](https://github.com/cablate/llm-atomic-wiki#deep-dives)
+  
+  - **[STORY.md](https://github.com/cablate/llm-atomic-wiki/blob/main/STORY.md)** — the personal story: why I ran it, what worked, what surprised me.
+  - **[METHODOLOGY.md](https://github.com/cablate/llm-atomic-wiki/blob/main/METHODOLOGY.md)** — the six-phase pipeline (skeleton → segment-classify → extract → quality pass → external check → wiki compile) and the three maintenance operations.
+  - **[CLAUDE.md](https://github.com/cablate/llm-atomic-wiki/blob/main/CLAUDE.md)** — the formal spec for any LLM operating this repo.
+  
+  * * *
+  
+  ## Why this matters (and when it doesn't)
+  
+  [Permalink: Why this matters (and when it doesn't)](https://github.com/cablate/llm-atomic-wiki#why-this-matters-and-when-it-doesnt)
+  
+  Karpathy's thesis is that knowledge should be a persistent, compounded artifact — not regenerated from raw sources on every query. Compile beats RAG, in his framing. I agree, but with conditions:
+  
+  - **Knowledge volume under ~200 wiki pages.** Past that, index.md scans degrade and you need vector search alongside.
+  - **Knowledge is relatively stable.** This is a cognitive map, not breaking news. Update cadence in days/weeks, not minutes.
+  - **There's a single owner with a point of view.** Personal knowledge, not a hundred-author aggregation.
+  - **Quality matters more than coverage.** 50 pages written tight beat 500 pages written shallow.
+  
+  Outside these conditions, RAG is often the better fit. The two are not exclusive — compile your stable core, RAG your long tail.
+  
+  A frame that I think gets undersold: Karpathy's real contribution isn't wiki quality. It's that **LLMs don't get bored maintaining the wiki**. The bookkeeping tax that kills most personal knowledge systems is the maintenance, not the structure. LLMs change the cost structure of maintenance — and that's the unlock the gist points at, more than any specific format choice.
+  
+  * * *
+  
+  ## Credit
+  
+  [Permalink: Credit](https://github.com/cablate/llm-atomic-wiki#credit)
+  
+  The pattern, the schema, the operations (Ingest / Query / Lint), the philosophy of compile-over-retrieve — all that is **[Andrej Karpathy's](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)**. If you find this repo useful, his gist is the thing to read first.
+  
+  What this repo adds on top:
+  
+  - Four small additions to Karpathy's pattern (atom layer, topic-branches, two-layer Lint, parallel-compile lock)
+  - A reference implementation methodology
+  - A bilingual README and a story doc
+  
+  If you fork it and find it useful, a star on Karpathy's original gist is more deserved than one on this repo.
+  
+  * * *
+  
+  ## Star History
+  
+  [Permalink: Star History](https://github.com/cablate/llm-atomic-wiki#star-history)
+  
+  [![Star History Chart](https://camo.githubusercontent.com/9c9cc5e22782d19f3f33f248067dd0debd18343a79db023ab2e7e37be1b2bcb3/68747470733a2f2f6170692e737461722d686973746f72792e636f6d2f7376673f7265706f733d6361626c6174652f6c6c6d2d61746f6d69632d77696b6926747970653d44617465)](https://star-history.com/#cablate/llm-atomic-wiki&Date)
+  
+  ## About
+  
+  An extension of Karpathy's LLM Wiki pattern: atom layer, topic-branches, two-layer Lint. Distilled from running the pattern end-to-end.
+  
+  
+  ### Topics
+  
+  [markdown](https://github.com/topics/markdown "Topic: markdown") [wiki](https://github.com/topics/wiki "Topic: wiki") [knowledge-base](https://github.com/topics/knowledge-base "Topic: knowledge-base") [knowledge-management](https://github.com/topics/knowledge-management "Topic: knowledge-management") [karpathy](https://github.com/topics/karpathy "Topic: karpathy") [llm](https://github.com/topics/llm "Topic: llm")
+  
+  ### Resources
+  
+  [Readme](https://github.com/cablate/llm-atomic-wiki#readme-ov-file)
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://github.com/cablate/llm-atomic-wiki).
+  
+  [Activity](https://github.com/cablate/llm-atomic-wiki/activity)
+  
+  ### Stars
+  
+  [**118**\\
+  stars](https://github.com/cablate/llm-atomic-wiki/stargazers)
+  
+  ### Watchers
+  
+  [**1**\\
+  watching](https://github.com/cablate/llm-atomic-wiki/watchers)
+  
+  ### Forks
+  
+  [**22**\\
+  forks](https://github.com/cablate/llm-atomic-wiki/forks)
+  
+  [Report repository](https://github.com/contact/report-content?content_url=https%3A%2F%2Fgithub.com%2Fcablate%2Fllm-atomic-wiki&report=cablate+%28user%29)
+  
+  ## [Releases](https://github.com/cablate/llm-atomic-wiki/releases)
+  
+  No releases published
+  
+  ## [Packages\  0](https://github.com/users/cablate/packages?repo_name=llm-atomic-wiki)
+  
+  No packages published
+  
+  ## [Contributors\  2](https://github.com/cablate/llm-atomic-wiki/graphs/contributors)
+  
+  - [![@claude](https://avatars.githubusercontent.com/u/81847?s=64&v=4)](https://github.com/claude)[**claude** Claude](https://github.com/claude)
+  - [![@cablate](https://avatars.githubusercontent.com/u/85614048?s=64&v=4)](https://github.com/cablate)[**cablate** CabLate](https://github.com/cablate)
+  
+  ## Languages
+  
+  - [Shell100.0%](https://github.com/cablate/llm-atomic-wiki/search?l=shell)
+  
+  You can’t perform that action at this time.
+  --- End Content ---

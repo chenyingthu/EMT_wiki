@@ -7,6 +7,10 @@ created: "2026-04-29"
 
 # 感应电机 (Induction Machine)
 
+## 定义与概述
+
+感应电机（异步电机）是电力系统中应用最广泛的旋转电机类型，通过定子绕组产生的旋转磁场与转子感应电流相互作用产生电磁转矩。作为电力系统的主要负荷和工业驱动设备，感应电机在EMT仿真中需要精确建模以准确分析启动暂态、电压跌落响应和系统稳定性。本模型涵盖相域模型、dq0坐标变换模型、 deep bar效应建模，适用于机电暂态和电磁暂态仿真。
+
 ## 1. 物理对象概述
 
 ### 1.1 功能与分类
@@ -477,22 +481,43 @@ INDUCTION_MACHINE
 - [[load-model|负荷模型]] - 综合负荷建模
 
 ### 6.2 相关方法
-- [[dq0-transformation|dq0变换]] - 旋转坐标变换
-- [[vector-control|矢量控制]] - 感应电机矢量控制
-- [[vfd|变频驱动]] - 变频调速技术
+- dq0变换 - 旋转坐标变换
+- 矢量控制 - 感应电机矢量控制
+- 变频驱动(VFD) - 变频调速技术
 
 ### 6.3 相关主题
-- [[motor-starting|电机启动]] - 启动方式与冲击
-- [[voltage-dip|电压暂降]] - 电压跌落对电机影响
-- [[load-modeling|负荷建模]] - 电力系统负荷模型
+- 电机启动 - 启动方式与冲击
+- 电压暂降 - 电压跌落对电机影响
+- 负荷建模 - 电力系统负荷模型
 
-## 7. 来源论文
+### 5.4 适用边界与限制
+
+#### 5.4.1 适用条件
+- **电压范围**：0.7-1.2 p.u.（电压过低可能失速）
+- **频率范围**：45-55Hz（大范围需特殊模型）
+- **转差率**：0-0.1（正常运行），启动时可达1.0
+- **负荷类型**：恒转矩、平方转矩、恒功率
+
+#### 5.4.2 模型限制
+- **饱和效应**：磁路饱和简化处理
+- **集肤效应**：深槽效应模型简化
+- **机械系统**：单质块模型，复杂轴系需扩展
+- **温度影响**：参数温升修正简化
+
+#### 5.4.3 精度边界
+| 模型类型 | 稳态电流 | 启动转矩 | 暂态响应 | 适用场景 |
+|---------|---------|---------|---------|---------|
+| 详细dq0 | ±1% | ±3% | 精确 | 设备级 |
+| 简化三阶 | ±3% | ±5% | ±5% | 系统级 |
+| 稳态等效 | ±5% | - | - | 潮流计算 |
+
+## 6. 来源论文
 
 | 论文 | 年份 | 核心贡献 |
 |------|------|----------|
-| [[improved-induction-machine-model-for-real-time-simulations|Improved induction machine model for real-time simulations]] | 2010 | 改进的实时仿真感应电机模型 |
-| [[a-detailed-squirrel-cage-induction-machine-model-for-electromagnetic-transient-p|A detailed squirrel cage induction machine model for EMT]] | 2015 | 鼠笼式感应机详细EMT模型 |
-| [[modeling-and-simulation-of-induction-motor-during-starting|Modeling and simulation of induction motor during starting]] | 2018 | 感应电机启动过程建模 |
+| Improved induction machine model for real-time simulations | 2010 | 改进的实时仿真感应电机模型 |
+| A detailed squirrel cage induction machine model for EMT | 2015 | 鼠笼式感应机详细EMT模型 |
+| Modeling and simulation of induction motor during starting | 2018 | 感应电机启动过程建模 |
 
 ---
 

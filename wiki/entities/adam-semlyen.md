@@ -244,7 +244,7 @@ Adam Semlyen的学术影响体现在：
 
 ## 相关实体
 - [[bjorn-gustavsen|Bjørn Gustavsen]]
-- [[university-of-toronto|多伦多大学]]
+- 多伦多大学 (University of Toronto)
 - [[vector-fitting|矢量拟合]]
 - [[gole|A.M. Gole]]
 - [[ieee|IEEE]]
@@ -254,6 +254,18 @@ Adam Semlyen的学术影响体现在：
 - [[frequency-dependent-modeling]]
 - [[numerical-integration]]
 - [[passivity-enforcement]]
+
+## 适用边界与限制
+
+### 研究范围边界
+- **时间范围**：主要活跃于1970s-2000s，近年为荣誉退休状态
+- **地域范围**：主要在北美（多伦多大学）开展研究
+- **合作网络**：与SINTEF、曼尼托巴大学等机构有深入合作
+
+### 资料获取限制
+- **原始文献**：早期文献可能获取困难
+- **技术细节**：部分工程实现细节未完全公开
+- **软件代码**：矢量拟合算法开源实现需独立寻找
 
 ## 相关主题
 - [[network-equivalent]]

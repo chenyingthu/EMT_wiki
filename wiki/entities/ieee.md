@@ -218,7 +218,7 @@ IEEE (电气电子)
 
 ## 相关实体
 - [[cigre]]
-- [[epri]]
+- EPRI (美国电力研究院)
 - [[university-manitoba]]
 - [[polytechnique-montreal]]
 

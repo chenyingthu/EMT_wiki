@@ -210,30 +210,30 @@ $$
 - [[vector-fitting|矢量拟合]]
 
 ## 相关模型
-- [[models/mmc-model|MMC模型]]
-- [[models/vsc-model|VSC模型]]
-- [[models/fdne-model|频变网络等值]]
-- [[models/synchronous-machine-model|同步电机模型]]
+- [[mmc-model|MMC模型]]
+- [[vsc-model|VSC模型]]
+- [[fdne-model|频变网络等值]]
+- [[synchronous-machine-model|同步电机模型]]
 
 ## 相关主题
-- [[topics/vsc-hvdc|VSC-HVDC]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/parallel-computing|并行计算]]
-- [[topics/co-simulation|混合仿真]]
+- [[vsc-hvdc|VSC-HVDC]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[parallel-computing|并行计算]]
+- [[co-simulation|混合仿真]]
 
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[linear-state-space-modeling-of-modular-multilevel-converters|Linear State-Space Modeling of Modular Multilevel Converters]] | 2015 |
-| [[线性开关电路电磁暂态分析的状态方程法|线性开关电路电磁暂态分析的状态方程法]] | 2016 |
-| [[基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法|基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法]] | 2019 |
-| [[适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型|适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型]] | 2019 |
-| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|A Comparative Study of Electromagnetic Transient Simulations using Companion Circuits]] | 2021 |
-| [[a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti|A Piecewise Generalized State Space Model of Power Converters]] | 2022 |
-| [[alternative-method-to-include-the-frequency-effect-on-transmission-line-paramete|Alternative method to include the frequency-effect on transmission line parameters]] | 2023 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular multilevel converters]] | 2025 |
-| [[splitting-state-space-method-for-converter-integrated-power-systems-emt-simulati|Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulation]] | 2025 |
+| Linear State-Space Modeling of Modular Multilevel Converters | 2015 |
+| 线性开关电路电磁暂态分析的状态方程法 | 2016 |
+| 基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法 | 2019 |
+| 适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型 | 2019 |
+| A Comparative Study of Electromagnetic Transient Simulations using Companion Circuits | 2021 |
+| A Piecewise Generalized State Space Model of Power Converters | 2022 |
+| Alternative method to include the frequency-effect on transmission line parameters | 2023 |
+| A state-space approach for accelerated simulation of modular multilevel converters | 2025 |
+| Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulation | 2025 |
 
 ## 深度增强内容
 

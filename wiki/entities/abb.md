@@ -267,7 +267,7 @@ ABB（Asea Brown Boveri）是全球领先的电力与自动化技术公司，在
 
 ## 相关实体
 - [[siemens|Siemens]]
-- [[ge|GE]]
+- GE (通用电气)
 - [[china-epri|中国电科院]]
 - [[tsinghua-university|清华大学]]
 - [[university-manitoba]]
@@ -277,6 +277,18 @@ ABB（Asea Brown Boveri）是全球领先的电力与自动化技术公司，在
 - [[lcc-model]]
 - [[vsc-model]]
 - [[average-value-model]]
+
+## 适用边界与限制
+
+### 数据获取边界
+- **技术文档**：部分最新技术细节可能受限
+- **工程数据**：实际运行数据需通过合作获取
+- **模型参数**：标准模型参数公开，定制化参数需协商
+
+### 使用限制
+- **商业用途**：模型库需授权使用
+- **学术研究**：引用需注明来源
+- **技术支持**：官方技术支持需付费服务合同
 
 ## 相关主题
 - [[vsc-hvdc]]

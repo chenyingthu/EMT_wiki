@@ -255,7 +255,7 @@ Bjørn Gustavsen的矢量拟合算法是与多伦多大学的**Adam Semlyen**教
 - [[vector-fitting|矢量拟合]]
 - [[polytechnique-montreal]]
 - [[university-manitoba]]
-- [[sinter|SINTEF]]
+- SINTEF (挪威科技工业研究院)
 
 ## 相关方法
 - [[vector-fitting]]
@@ -267,6 +267,18 @@ Bjørn Gustavsen的矢量拟合算法是与多伦多大学的**Adam Semlyen**教
 - [[transformer-model]]
 - [[transmission-line-model]]
 - [[cable-model]]
+
+## 适用边界与限制
+
+### 研究范围边界
+- **机构归属**：SINTEF能源研究所，挪威
+- **合作网络**：与曼尼托巴大学A.M. Gole长期合作
+- **活跃状态**：持续活跃于学术和工业界
+
+### 资料获取限制
+- **软件工具**：MATLAB vfits工具箱需授权
+- **技术报告**：部分工业合作项目受限
+- **最新研究**：最新成果可能尚未发表
 
 ## 相关主题
 - [[frequency-dependent-modeling]]

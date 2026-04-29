@@ -7,6 +7,10 @@ created: "2026-04-29"
 
 # 多端直流电网 (Multi-Terminal DC, MTDC)
 
+## 定义与概述
+
+多端直流电网（MTDC）是指具有三个及以上换流站互联的高压直流输电系统，支持多电源多负荷的功率交换和路径选择。与传统点对点HVDC相比，MTDC具有更高的灵活性和可靠性，是构建未来直流电网和汇集大规模新能源的关键技术。本模型涵盖并联型MTDC拓扑、直流潮流计算、下垂控制策略、直流故障分析，适用于柔性直流输电系统规划和运行分析。
+
 ## 1. 物理对象概述
 
 ### 1.1 功能与定义
@@ -458,24 +462,45 @@ AC Grid ←→ AC/DC ↔ DC Bus ↔ DC/DC ↔ EV Charging
 - [[transmission-line-model|输电线路模型]] - 直流线路建模
 
 ### 8.2 相关方法
-- [[droop-control|下垂控制]] - 直流电网电压控制策略
-- [[power-flow|潮流计算]] - 直流电网稳态分析
-- [[fault-analysis|故障分析]] - 直流故障特性与保护
+- 下垂控制 - 直流电网电压控制策略
+- 潮流计算 - 直流电网稳态分析
+- 故障分析 - 直流故障特性与保护
 
 ### 8.3 相关主题
 - [[vsc-hvdc|VSC-HVDC]] - 柔性直流输电技术
-- [[offshore-wind|海上风电]] - 海上风电汇集与输送
-- [[dc-protection|直流保护]] - 直流电网保护技术
-- [[hybrid-ac-dc|交直流混合电网]] - 未来电网架构
+- 海上风电 - 海上风电汇集与输送
+- 直流保护 - 直流电网保护技术
+- 交直流混合电网 - 未来电网架构
 
-## 9. 来源论文
+### 7.4 适用边界与限制
+
+#### 7.4.1 适用条件
+- **电压等级**：±320kV至±800kV（柔性直流）
+- **功率范围**：100MW至10GW
+- **换流站数**：3-20个（多端定义）
+- **控制模式**：主从控制、下垂控制、裕度控制
+
+#### 7.4.2 模型限制
+- **直流故障**：故障电流上升极快，模型需极小时步
+- **换流器非线性**：线性化模型仅适用于小扰动
+- **电缆模型**：长电缆行波效应复杂
+- **保护配合**：直流保护选择性难以保证
+
+#### 7.4.3 精度边界
+| 模型类型 | 直流电压 | 功率分配 | 故障电流 | 适用场景 |
+|---------|---------|---------|---------|---------|
+| 详细MMC | ±1% | ±2% | 精确 | 设备级 |
+| 平均值 | ±3% | ±5% | ±10% | 系统级 |
+| 直流潮流 | ±5% | ±3% | - | 稳态分析 |
+
+## 8. 来源论文
 
 | 论文 | 年份 | 核心贡献 |
 |------|------|----------|
-| [[a-unified-droop-control-strategy-for-vsc-mtdc-systems-based-on-voltage-margin-con|A unified droop control strategy for VSC-MTDC]] | 2018 | 基于电压裕度的统一下垂控制策略 |
-| [[multi-terminal-dc-grids-modeling-analysis-and-control|Multi-terminal DC grids: Modeling, analysis and control]] | 2020 | MTDC建模、分析与控制的综合综述 |
-| [[a-review-on-protection-of-meshed-multi-terminal-hvdc-systems|A review on protection of meshed multi-terminal HVDC systems]] | 2021 | 网状MTDC系统保护技术综述 |
-| [[impedance-based-stability-analysis-of-the-multi-terminal-cascaded-hybrid-hvdc-sy|Impedance-based stability analysis of multi-terminal cascaded hybrid HVDC]] | 2025 | 多端口级联混合HVDC的阻抗稳定性分析 |
+| A unified droop control strategy for VSC-MTDC | 2018 | 基于电压裕度的统一下垂控制策略 |
+| Multi-terminal DC grids: Modeling, analysis and control | 2020 | MTDC建模、分析与控制的综合综述 |
+| A review on protection of meshed multi-terminal HVDC systems | 2021 | 网状MTDC系统保护技术综述 |
+| Impedance-based stability analysis of multi-terminal cascaded hybrid HVDC | 2025 | 多端口级联混合HVDC的阻抗稳定性分析 |
 
 ---
 

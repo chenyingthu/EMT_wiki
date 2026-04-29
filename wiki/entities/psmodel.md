@@ -319,7 +319,7 @@ PSModel采用先进的模型-数据分离架构和分布式并行计算技术，
 - 电力系统自动化期刊论文
 
 ## 相关实体
-- [[state-grid|国家电网公司]]
+- 国家电网公司 (State Grid)
 - [[china-epri|中国电力科学研究院]]
 - [[cloudpss|CloudPSS]]
 - [[adpss|ADPSS]]
