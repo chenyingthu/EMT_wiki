@@ -436,3 +436,9 @@ $$\mathbf{a} = -(\mathbf{H}^T\mathbf{H} + \lambda \mathbf{I})^{-1}\mathbf{H}^T\m
 对于超大规模系统（>1000节点），建议采用**两阶段方法**：
 1. 使用 **Prony分析** 在时域提取主导模态（如前70阶），获得初始极点估计；
 2. 将这些极点作为 **Vector Fitting** 的初始极点，在频域进行精修，以同时保证计算效率和宽频精度。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo|A TIME-DOMAIN APPROACH TO TRANSMISSION NETWORK EQUIVALENTS V]] | 2004 |

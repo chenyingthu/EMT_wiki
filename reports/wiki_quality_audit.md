@@ -66,3 +66,4 @@ This is a heuristic triage report based on `schema/QUALITY.md`. Scores indicate 
 | 95 | A | topic | `wiki/topics/dynamic-phasor.md` |  |
 
 ## Upgrade Queues
+

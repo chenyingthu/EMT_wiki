@@ -2,6 +2,35 @@
 
 > 追加式记录，永不修改。每条以 `## [日期] 类型 | 标题` 开头。
 
+## [2026-04-28] cleanup | 清理 out-of-scope 和 duplicate 来源页
+
+- 识别: 19 个来源页需要清理
+  - 2 个 out-of-scope (非EMT论文)
+    - `32jepsr2020106596.md` - 医学期刊
+    - `analysis-of-the-harmonic-transmission...` - 内容不匹配
+  - 17 个 duplicate (重复来源指针)
+    - 包括 `dynamic-phasor-based-interface-model...-13-14.md` 等
+- 检查: 所有 19 个页面均无入链引用，可安全删除
+- 操作: 删除 19 个页面
+- 结果: wiki/sources/ 从 701 页 → 682 页
+- 更新: README.md 统计，标记为"已删除"
+
+## [2026-04-28] lint | Wiki 健康检查与深度增强覆盖率验证
+
+- 工具: 自定义脚本 + `tools/audit_wiki_strict.py` + `tools/audit_wiki_quality.py`
+- 检查项:
+  - 页面统计: 总 744 页 (来源页 701 + 主题 11 + 方法 10 + 模型 10 + 实体 9)
+  - 深度增强状态: 活跃来源页 682/682 (100%)
+  - 严格审计: 0 严重问题
+  - 质量审计: 722/722 页 A 级
+  - 核心章节填充率: ~98%
+- 关键发现:
+  - 19 个"未增强"来源页实为特殊情况，无需处理:
+    - 2 个 out-of-scope (非 EMT 论文)
+    - 17 个 duplicate (重复来源指针，已收敛为指针页)
+  - 活跃来源页深度增强覆盖率: **100%**
+- 报告: `reports/lint_report_20260428.md`
+
 ## [2026-04-26] deep-enrichment | Source Pages 失败重试与脚本加固
 - 工具: `tools/deep_enrich_sources.py --retry-failed --llm-provider codex`
 - LLM: 读取 `~/.codex/config.toml` 中的 Codex Responses provider（`gpt-5.5`），替换失效的旧 LLM engine。

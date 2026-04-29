@@ -69,3 +69,10 @@ $\Phi$ 和 $\Gamma$ 可由矩阵指数、梯形法、后向欧拉法、指数积
 - [[models/fdne-model|频变网络等值]]
 - [[topics/vsc-hvdc|VSC-HVDC]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |

@@ -68,9 +68,7 @@ created: "2026-04-14"
 
 | 论文 | 年份 |
 |------|------|
-| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Digital Time-Domain Investigation of Transient Behavior of C]] | 1998 |
-| [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Saturable reactor hysteresis model based on Jiles-Atherton f]] | 2024 |
-
+| [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Saturable reactor hysteresis model based on Jiles–Atherton f]] | 2018 |
 ## 深度增强内容
 
  基于提供的论文数据，以下是针对铁磁谐振 (Ferroresonance) 主题页的深度增强内容：

@@ -354,3 +354,9 @@ created: "2026-04-13"
 - [2012] **电磁–机电暂态混合仿真中的频率相关网络等值**: FDNE能够同时精确表征网络的基频与高频响应特性，有效消除混合仿真接口处的波形畸变。
 - [2012] **电磁–机电暂态混合仿真中的频率相关网络等值**: 摄动校正算法成功确保了等值模型的无源性，避免了数值仿真过程中的不稳定发散现象。
 - [2012] **电磁–机电暂态混合仿真中的频率相关网络等值**: 算例结果表明该方法在维持高精度的同时，大幅降低了大规模电力系统电磁暂态仿真的计算量。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[time-domain-coupling-model-for-nonparallel-frequency-dependent-overhead-multicon|Time-Domain Coupling Model for Nonparallel Frequency-Depende]] | 2022 |

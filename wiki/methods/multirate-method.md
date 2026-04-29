@@ -48,21 +48,27 @@ created: "2026-04-13"
 - [[dynamic-phasor]]
 - [[numerical-integration]]
 - [[interpolation-method]]
+- [[fixed-admittance]]
+- [[state-space-method]]
+- [[average-value-model]]
+
+## 相关模型
+- [[mmc-model]]
+- [[vsc-model]]
+- [[transformer-model]]
+- [[fdne-model]]
+
+## 相关主题
+- [[real-time-simulation]]
+- [[parallel-computing]]
+- [[vsc-hvdc]]
+- [[network-equivalent]]
 
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC]] | 2017 |
-| [[a-multi-rate-co-simulation-of-combined-phasor-domain-and-time-domain-models-for-|A Multi-rate Co-simulation of Combined Phasor-Domain and Tim]] | 2019 |
-| [[a-multi-area-thevenin-equivalent-based-multi-rate-co-simulation-for-control-desi|A multi-area Thevenin equivalent based multi-rate co-simulat]] | 2019 |
 | [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems|Shifted frequency analysis-EMTP multirate simulation of powe]] | 2021 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations|Stability Assessment of Multi-Rate Electromagnetic Transient]] | 2025 |
-| [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|27&28/Multi-rate real time hybrid simulation of controllable]] | 2026 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
-| [[multirate-method-for-dynamic-phasor-simulation-of-large-scale-power-systems|Multirate Method for Dynamic Phasor Simulation of Large-Scal]] | 2026 |
-
 ## 深度增强内容
 
  基于提供的论文数据及电力系统电磁暂态仿真理论，以下是针对**多速率方法 (Multi-Rate Method)**的深度增强内容：

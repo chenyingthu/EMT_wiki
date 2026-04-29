@@ -240,25 +240,111 @@ created: "2026-04-13"
 | 论文 | 年份 |
 |------|------|
 | [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s|Modeling Synchronous Voltage Source Converters in Transmissi]] | 2004 |
+| [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s|Modeling Synchronous Voltage Source Converters in Transmissi]] | 2004 |
+| [[含统一潮流控制器装置的电力系统动态混合仿真接口算法研究|含统一潮流控制器装置的电力系统动态混合仿真接口算法研究]] | 2005 |
+| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
+| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
+| [[能量回馈型电力电子负载的控制方法|能量回馈型电力电子负载的控制方法]] | 2010 |
 | [[a-vsc-hvdc-model-with-reduced-computational-intensity|A VSC-HVDC Model with Reduced Computational Intensity]] | 2012 |
+| [[a-vsc-hvdc-model-with-reduced-computational-intensity|A VSC-HVDC Model with Reduced Computational Intensity]] | 2012 |
+| [[dynamic-averaged-and-simplified-models-for|Dynamic Averaged and Simplified Models for]] | 2013 |
+| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
+| [[modular-multilevel-converter-models|Modular Multilevel Converter Models]] | 2013 |
+| [[ahmed-等-a-computationally-efficient-continuous-model-for-the-modular-multilevel-|Ahmed 等 | A Computationally Efficient Continuous Model for t]] | 2014 |
+| [[ahmed-等-a-computationally-efficient-continuous-model-for-the-modular-multilevel-|Ahmed 等 | A Computationally Efficient Continuous Model for t]] | 2014 |
+| [[analysis-and-mitigation-of-subsynchronous-resonance-in-series-compensated-wind-p|Analysis and Mitigation of Subsynchronous Resonance in Serie]] | 2014 |
 | [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid|Average-Value Models for Modular Multilevel Converters Opera]] | 2014 |
+| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid|Average-Value Models for Modular Multilevel Converters Opera]] | 2014 |
+| [[fast-voltage-balancing-control-and-fast|Fast Voltage-Balancing Control and Fast Numerical Simulation]] | 2014 |
+| [[the-use-of-averaged-value-model-of-modular-37|The Use of Averaged-Value Model of Modular]] | 2014 |
+| [[a-parallel-multi-modal-optimization-algorithm-for-simulation-based-design-of-pow|A Parallel Multi-Modal Optimization Algorithm for Simulation]] | 2015 |
+| [[a-parallel-multi-modal-optimization-algorithm-for-simulation-based-design-of-pow|A Parallel Multi-Modal Optimization Algorithm for Simulation]] | 2015 |
+| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
+| [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
+| [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
 | [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
 | [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Comparison of Detailed Modeling Techniques for MMC Employed ]] | 2015 |
+| [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Comparison of Detailed Modeling Techniques for MMC Employed ]] | 2015 |
+| [[dynamic-performance-of-embedded-hvdc-with-13&14|Dynamic Performance of Embedded HVDC with]] | 2015 |
+| [[dynamic-performance-of-embedded-hvdc-with-13&14|Dynamic Performance of Embedded HVDC with]] | 2015 |
 | [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr|Modulation Index Dependent Thévenin Equivalent Circuit Model]] | 2015 |
+| [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr|Modulation Index Dependent Thévenin Equivalent Circuit Model]] | 2015 |
+| [[improved-accuracy-average-value-models-of-modular-multilevel-converters|Improved Accuracy Average Value Models of Modular Multilevel]] | 2016 |
+| [[improved-accuracy-average-value-models-of-modular-multilevel-converters|Improved Accuracy Average Value Models of Modular Multilevel]] | 2016 |
+| [[a-novel-interfacing-technique-for-distributed-hybrid-simulations-combining-emt-a|A Novel Interfacing Technique for Distributed Hybrid Simulat]] | 2017 |
+| [[a-novel-interfacing-technique-for-distributed-hybrid-simulations-combining-emt-a|A Novel Interfacing Technique for Distributed Hybrid Simulat]] | 2017 |
 | [[含vsc-hvdc交直流系统多尺度暂态建模与仿真研究-40|含VSC-HVDC交直流系统多尺度暂态建模与仿真研究]] | 2017 |
+| [[a-dynamic-phasor-model-of-an-mmc-with-extended-frequency-range-for-emt-simulatio|A Dynamic Phasor Model of an MMC with Extended Frequency Ran]] | 2018 |
+| [[a-new-topology-for-current-limiting-hvdc-circuit-breaker|A new topology for current limiting HVDC circuit breaker]] | 2018 |
 | [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr|A Novel Ultra-High-Speed Traveling-Wave Protection Principle]] | 2019 |
+| [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr|A Novel Ultra-High-Speed Traveling-Wave Protection Principle]] | 2019 |
+| [[a-universal-blocking-module-based-average-value-model-of-modular-multilevel-conv|A Universal Blocking-Module-Based Average Value Model of Mod]] | 2019 |
 | [[modeling-a-voltage-source-converter-assisted-resonant-current-dc-breaker-for-rea|Modeling a voltage source converter assisted resonant curren]] | 2019 |
+| [[modeling-a-voltage-source-converter-assisted-resonant-current-dc-breaker-for-rea|Modeling a voltage source converter assisted resonant curren]] | 2019 |
+| [[three-phase-adaptive-auto-reclosing-for-single-outgoing-line-of-wind-farm-based-|Three-phase Adaptive Auto-Reclosing for Single Outgoing Line]] | 2019 |
+| [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|适用于交直流混联电网的CH-MMC电磁暂态快速仿真模型]] | 2019 |
+| [[适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型|适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型]] | 2019 |
+| [[a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy|A Harmonic Phasor Domain Co-Simulation Method and New Insigh]] | 2020 |
 | [[a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy|A Harmonic Phasor Domain Co-Simulation Method and New Insigh]] | 2020 |
 | [[a-pulse-source-pair-based-acdc-interactive-simulation-approach-for-multiple-vsc-|A Pulse-Source-Pair-Based AC/DC Interactive Simulation Appro]] | 2020 |
+| [[a-pulse-source-pair-based-acdc-interactive-simulation-approach-for-multiple-vsc-|A Pulse-Source-Pair-Based AC/DC Interactive Simulation Appro]] | 2020 |
+| [[characteristics-and-optimal-configuration-of-capacitive-current-limiter-consider|Characteristics and Optimal Configuration of Capacitive Curr]] | 2020 |
+| [[interpolation-for-power-electronic-circuit-simulation-revisited-with-matrix-expo|Interpolation for power electronic circuit simulation revisi]] | 2020 |
+| [[spurious-power-and-its-elimination-in-modular-multilevel-converter-models|Spurious power and its elimination in modular multilevel con]] | 2020 |
+| [[grid-forming-converters-sufficient-conditions-for-rms-modeling|Grid-forming converters: Sufficient conditions for RMS model]] | 2021 |
 | [[mmc-hvdc系统高频稳定性分析与抑制策略(一)稳定性分析|High Frequency Stability Analysis and Suppression Strategy o]] | 2021 |
+| [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution|Active Damping Control and Parameter Calculation for Resonan]] | 2022 |
+| [[an-equivalent-hybrid-model-for-a-large-scale-modular-multilevel-converter-and-co|An Equivalent Hybrid Model for a Large-Scale Modular Multile]] | 2022 |
+| [[an-equivalent-hybrid-model-for-a-large-scale-modular-multilevel-converter-and-co|An Equivalent Hybrid Model for a Large-Scale Modular Multile]] | 2022 |
+| [[characteristic-analysis-of-high-frequency-resonance-of-flexible-high-voltage-dir|Characteristic Analysis of High-frequency Resonance of Flexi]] | 2022 |
 | [[fast-simulation-model-of-voltage-source-converters-with-arbitrary-topology-using|Fast Simulation Model of Voltage Source Converters With Arbi]] | 2022 |
-| [[modeling-and-electromagnetic-transient-simulation-of-vsc-hvdc-system|Modeling and electromagnetic transient simulation of VSC-HVD]] | 2022 |
+| [[mmc-mtdc系统的电磁-机电暂态建模与实时仿真分析|MMC-MTDC系统的电磁-机电暂态建模与实时仿真分析]] | 2022 |
+| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte|Multi-timescale simulator of nonlinear electrical elements b]] | 2022 |
+| [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|一种用于电磁暂态仿真的两电平电压源型换流器解耦模型]] | 2022 |
+| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
+| [[中-国-电-机-工-程-学-报-36|中  国  电  机  工  程  学  报]] | 2022 |
+| [[协调分布式潮流控制器串并联变流器能量交换的等效模型|协调分布式潮流控制器串并联变流器能量交换的等效模型]] | 2022 |
+| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
+| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
+| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
+| [[模块化多电平换流器电磁暂态模型研究综述|模块化多电平换流器电磁暂态模型研究综述]] | 2022 |
+| [[混合型mmc全状态高效电磁暂态仿真方法研究|混合型MMC全状态高效电磁暂态仿真方法研究]] | 2022 |
+| [[直驱式风电机组机电暂态建模及仿真|直驱式风电机组机电暂态建模及仿真]] | 2022 |
+| [[直驱风力发电单元的电磁暂态半隐式延迟解耦与仿真方法|直驱风力发电单元的电磁暂态半隐式延迟解耦与仿真方法]] | 2022 |
+| [[高频隔离型电力电子变压器电磁暂态加速仿真方法与展望|高频隔离型电力电子变压器电磁暂态加速仿真方法与展望]] | 2022 |
+| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
+| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
+| [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt|Average-Value Model for Voltage-Source Converters With Direc]] | 2023 |
+| [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt|Average-Value Model for Voltage-Source Converters With Direc]] | 2023 |
+| [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati|Equivalent grid-following inverter-based generator model for]] | 2023 |
 | [[fast-electromagnetic-transient-modeling-method-for-half-bridge-type-voltage-sour|Fast Electromagnetic Transient Modeling Method for Half-brid]] | 2023 |
 | [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Hybrid SVC-VSC modeling approaches for hardware-in-the-loop ]] | 2023 |
 | [[modeling-and-simulation-of-vsc-hvdc-with-dynamic-phasors|Modeling and simulation of VSC-HVDC with dynamic phasors]] | 2023 |
+| [[portal-analysis-approach-used-for-the-efficient-electromagnetic-transient-emt-si|Portal Analysis Approach Used for the Efficient Electromagne]] | 2023 |
+| [[real-time-simulation-for-detailed-wind-turbine-model-based-on-heterogeneous-comp|Real-time simulation for detailed wind turbine model based o]] | 2023 |
+| [[the-impact-of-frame-transformations-on-power-system-emt-simulation|The Impact of Frame Transformations on Power System EMT Simu]] | 2023 |
+| [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids|Unified MANA-based load-flow for multi-frequency hybrid AC/D]] | 2023 |
+| [[基于cpu-fpga异构平台的虚拟同步并网逆变器实时仿真算法设计|基于CPU-FPGA异构平台的虚拟同步并网逆变器实时仿真算法设计]] | 2023 |
+| [[基于一致性算法的多虚拟同步机功率振荡协调抑制|基于一致性算法的多虚拟同步机功率振荡协调抑制]] | 2023 |
+| [[基于一致性算法的多虚拟同步机功率振荡协调抑制|基于一致性算法的多虚拟同步机功率振荡协调抑制]] | 2023 |
+| [[大功率链式statcom电磁暂态快速等效建模和误差评估|大功率链式STATCOM电磁暂态快速等效建模和误差评估]] | 2023 |
+| [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f|Efficient electromagnetic transient simulation for DFIG-base]] | 2024 |
 | [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
+| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation|Key Technologies and Prospects for Electromagnetic Transient]] | 2024 |
+| [[numerically-efficient-average-value-model-for-voltage-source-converters-in-nodal|Numerically Efficient Average-Value Model for Voltage-Source]] | 2024 |
+| [[新能源电力系统细粒度并行与多速率电磁暂态仿真|新能源电力系统细粒度并行与多速率电磁暂态仿真]] | 2024 |
+| [[a-computationally-efficient-approach-for-power-semiconductor-loss-estimation-of-|A computationally efficient approach for power semiconductor]] | 2025 |
+| [[discretized-impedance-based-modeling-of-converter-interfaced-energy-resources-fo|Discretized Impedance-Based Modeling of Converter-Interfaced]] | 2025 |
+| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using frequenc]] | 2025 |
+| [[low-dimensional-equivalent-models-and-multithreading-based-parallel-emt-simulati|Low-Dimensional Equivalent Models and Multithreading-Based P]] | 2025 |
+| [[low-dimensional-equivalent-models-and-multithreading-based-parallel-emt-simulati|Low-Dimensional Equivalent Models and Multithreading-Based P]] | 2025 |
+| [[reduced-order-and-simultaneous-solution-of-power-and-control-system-equations-in|Reduced-order and simultaneous solution of power and control]] | 2025 |
 | [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |
-
+| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
+| [[分布式光伏电源分散式自适应主动频率支撑控制|分布式光伏电源分散式自适应主动频率支撑控制]] | 2025 |
+| [[改善暂态稳定性的多构网型变换器频率同步协同控制|改善暂态稳定性的多构网型变换器频率同步协同控制]] | 2025 |
+| [[equivalent-modeling-of-electromagnetic-transient-for-mmc-hvdc-based-on-semi-impl|Equivalent modeling of electromagnetic transient for MMC-HVD]] | 2026 |
+| [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability|RMS&#x002B;: Augmenting the Traditional Circuit Model to Cap]] | 2026 |
 ## 深度增强内容
 
  基于提供的论文数据，以下是针对**电压源换流器（VSC）电磁暂态模型**的深度增强内容：
@@ -494,236 +580,3 @@ $$
 ---
 
 **注**：以上模型参数与性能指标均基于2004-2025年间发表的19篇核心论文实测数据，实际应用时需根据具体硬件平台（如RTDS、MATLAB/Simulink、PSCAD）进行微调。
-
-## 深度增强内容
-
-### 电压源换流器 (VSC)
-
-## 1. 各类模型数学描述
-
-### 1.1 详细开关模型（Detailed Switching Model）
-
-详细开关模型基于器件级物理特性，将每个IGBT/二极管视为理想开关或双状态电阻网络。
-
-**拓扑方程**：
-对于两电平VSC，三相桥臂的开关状态由开关函数 $s_j \in \{0,1\}$ 描述（$j=a,b,c$）。相电压输出为：
-
-$$v_{jN} = \frac{V_{dc}}{2}(2s_j - 1)$$
-
-**直流侧动态**：
-$$C_{DC}\frac{dV_{dc}}{dt} = \sum_{j=a,b,c} i_{dc,j} = \sum_{j=a,b,c} s_j \cdot i_j$$
-
-**开关电阻模型**：
-采用双状态电阻等效：
-$$R_{sw} = \begin{cases} R_{on} \approx 0.01\,\Omega & \text{导通状态} \\ R_{off} \approx 10^6\,\Omega & \text{关断状态} \end{cases}$$
-
-**电容储能时间常数**（规划研究用）：
-$$\tau = \frac{C_{DC}E_{DC}^2}{S_{rated}}$$
-典型值取 $\tau = 0.5\,\text{s}$，对应额定工况下直流电容的惯性响应特性。
-
----
-
-### 1.2 动态平均值模型（Dynamic Average-Value Model）
-
-动态平均值模型通过开关周期平均化消除高频开关细节，保留基频及低次谐波动态。
-
-**基本假设**：
-- 开关频率 $f_{sw}$ 远高于基频 $f_0$（通常 $f_{sw} > 20f_0$）
-- 直流电容电压在开关周期内恒定
-
-**交直流功率平衡方程**：
-$$P_{ac} = \frac{3}{2}(v_d i_d + v_q i_q) = V_{dc} I_{dc} = P_{dc}$$
-
-**受控源等效**：
-- 交流侧等效为受控电压源：
-  $$\vec{V}_{conv} = \frac{m V_{dc}}{2} \angle \delta$$
-  其中 $m$ 为调制比，$\delta$ 为功角。
-
-- 直流侧等效为受控电流源：
-  $$I_{dc} = \frac{3}{4} m I_{ac} \cos\phi$$
-
-**改进型平均值模型**（含阻塞模式）：
-当换流器闭锁时，引入阻塞模块（Blocking Module）等效：
-$$V_{arm} = N_{on} \cdot V_{cap} + (N - N_{on}) \cdot V_{diode}$$
-其中 $N_{on}$ 为投入子模块数，$V_{diode}$ 为二极管压降。
-
----
-
-### 1.3 直接接口平均值模型（Direct Interfacing AVM, DI-AVM）
-
-传统AVM采用受控源间接接口引入一个步长延迟，DI-AVM通过节点导纳形式实现同步求解。
-
-**节点导纳方程重构**：
-将AVM重构为诺顿等效形式，与外部网络节点导纳矩阵 $\mathbf{Y}_{net}$ 联立：
-$$\begin{bmatrix} \mathbf{Y}_{net} & \mathbf{Y}_{interface} \\ \mathbf{Y}_{conv} & \mathbf{Y}_{internal} \end{bmatrix} \begin{bmatrix} \mathbf{V}_{net} \\ \mathbf{V}_{conv} \end{bmatrix} = \begin{bmatrix} \mathbf{I}_{inj} \\ \mathbf{I}_{eq} \end{bmatrix}$$
-
-**关键优势**：
-- 消除传统间接接口（IDI-AVM）的 $\Delta t$ 延迟
-- 允许仿真步长放宽至 $\Delta t \leq 1000\,\mu\text{s}$（传统方法极限约 $100\,\mu\text{s}$）
-
-**数值稳定性判据**：
-DI-AVM的稳定性与接口导纳 $Y_{eq}$ 密切相关，满足：
-$$Y_{eq} \geq \frac{C_{eq}}{\Delta t}$$
-其中 $C_{eq}$ 为换流器等效电容。
-
----
-
-### 1.4 动态相量模型（Dynamic Phasor Model）
-
-动态相量模型基于移频分析（Frequency Shift），将时域信号 $x(t)$ 表示为：
-$$x(t) = \sum_{k=-N}^{N} X_k(t) e^{jk\omega_0 t}$$
-
-**基频动态相量（BFDP）**：
-对于VSC，保留基频分量（$k=\pm 1$）及关键低次谐波（$k=\pm 2, \pm 3...$）：
-$$\frac{dX_k}{dt} = \frac{1}{T} \int_{t-T}^{t} x(\tau) e^{-jk\omega_0 \tau} d\tau - jk\omega_0 X_k$$
-
-**dq-SF转换矩阵**：
-$$T_{dq\rightarrow SF} = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \cdot e^{-j\Delta\omega t}$$
-
-**扩展频率范围模型**：
-保留至第 $K$ 次谐波时，模型阶数增加 $2K$，但接口导纳矩阵维度保持恒定，较传统多频DP模型计算量减少约 $90\%$。
-
----
-
-### 1.5 半隐式延迟解耦模型（Semi-Implicit Delay Decoupled Model）
-
-针对大规模交直流系统，采用半隐式延迟插入法（LIM）实现交直流侧解耦。
-
-**解耦原理**：
-利用桥臂互斥导通特性，等效电导 $G_{eq}$ 与电阻 $R_{eq}$ 满足：
-$$G_{eq} = \frac{1}{R_{on} + R_{off}} \approx 0, \quad R_{eq} = \frac{R_{on}R_{off}}{R_{on} + R_{off}} \approx R_{on}$$
-
-**半步时延技术**：
-交直流侧状态变量更新引入 $\Delta t/2$ 延迟：
-$$\mathbf{V}_{dc}(t) = f(\mathbf{I}_{ac}(t - \Delta t/2))$$
-$$\mathbf{I}_{ac}(t) = g(\mathbf{V}_{dc}(t - \Delta t/2))$$
-
-**恒定导纳矩阵**：
-由于 $G_{eq} \approx 0$ 不随开关状态变化，系统导纳矩阵 $\mathbf{Y}$ 保持恒定，避免每一步长的LU分解，计算复杂度从 $O(N^3)$ 降至 $O(N)$。
-
----
-
-### 1.6 固定导纳模型（Fixed Admittance Model）
-
-适用于实时仿真（RTS）和硬件在环（HIL）测试，采用伴随离散电路（ADC）建模。
-
-**伴随电路等效**：
-开关器件等效为固定电导 $G_{fix}$ 并联历史电流源 $I_{hist}$：
-$$G_{fix} = \frac{2C_{par}}{\Delta t} + \frac{1}{R_{on} + R_{off}}$$
-$$I_{hist}(t) = -G_{fix}v(t-\Delta t) - i(t-\Delta t)$$
-
-**Pejovic等效模型**（小步长限制下）：
-当硬件限制步长 $\Delta t = 32.5521\,\mu\text{s}$（512点/周波）时，采用阻尼因子 $\delta$ 修正：
-$$V_{sw} = v - i \cdot \frac{\Delta t}{2C_{eq}} \cdot \delta$$
-
----
-
-## 2. 仿真参数参考表
-
-| 参数类别 | 参数名称 | 符号 | 典型值/范围 | 单位 | 来源论文 |
-|---------|---------|------|------------|------|----------|
-| **额定电气** | 交流额定电压 | $V_{ac}$ | 12.5 | kV | modeling-synchronous-vsc |
-| | 额定容量 | $S_{rated}$ | 10 | MVA | modeling-synchronous-vsc |
-| | 直流额定电压 | $V_{dc}$ | 5 | kV | modeling-synchronous-vsc |
-| | 直流电容 | $C_{DC}$ | 200 | μF | modeling-synchronous-vsc |
-| | 电容时间常数 | $\tau$ | 0.5 | s | modeling-synchronous-vsc |
-| **开关器件** | 导通电阻 | $R_{on}$ | 0.01 | Ω | efficient-modeling-mmc |
-| | 关断电阻 | $R_{off}$ | $10^6$ | Ω | 两电平vsc解耦模型 |
-| | 开关频率 | $f_{sw}$ | 1980 | Hz | vsc-hvdc-reduced-intensity |
-| **仿真设置** | 详细模型步长 | $\Delta t_{det}$ | 1 - 5 | μs | mmc-review-2015 |
-| | AVM常规步长 | $\Delta t_{avm}$ | 40 - 100 | μs | vsc-hvdc-reduced-intensity |
-| | DI-AVM最大步长 | $\Delta t_{max}$ | 1000 | μs | average-value-direct-interfacing |
-| | 机电暂态步长 | $\Delta t_{emt}$ | 10 | ms | electromechanical-transient-mmc |
-| | HIL固定步长 | $\Delta t_{hil}$ | 32.5521 (512点/周波) | μs | hybrid-svc-vsc-hil |
-| **控制参数** | 采样更新频率 | $f_{ctrl}$ | 每1/4基波周期 | - | modeling-synchronous-vsc |
-| | 锁相环带宽 | $\omega_{pll}$ | 20 - 100 | rad/s | equivalent-grid-following |
-| | 直流电流限制 | $I_{dc}^{lim}$ | 1.2 - 1.5 | p.u. | 多构网型变换器频率同步 |
-| **模型精度** | 波形误差限值 | $\epsilon$ | < 0.5 - 1.5 | % | efficient-modeling-mmc |
-| | 稳态偏差 | $\delta_{ss}$ | < 2 | % | vsc-hvdc-reduced-intensity |
-| | 计算加速比 | $\eta$ | 15 - 310 | 倍 | efficient-modeling-mmc |
-
----
-
-## 3. 模型选择指南
-
-### 3.1 按应用场景选择
-
-| 应用场景 | 推荐模型 | 步长建议 | 关键考量 |
-|---------|---------|---------|---------|
-| **器件级应力分析**<br>（IGBT损耗、热评估） | 详细开关模型<br>+ 损耗计算模块 | 1 - 10 μs | 需精确捕捉开关瞬态，<br>支持逐开关损耗计算 |
-| **控制策略验证**<br>（PLL、环流抑制） | 详细等效模型<br>（戴维南等效） | 5 - 50 μs | 保留内部谐波动态，<br>支持控制层 Detail |
-| **大规模系统暂态**<br>（风电场、省级电网） | 解耦模型 / DI-AVM | 50 - 1000 μs | 恒定导纳矩阵，<br>支持并行计算 |
-| **机电暂态稳定**<br>（功角稳定、频率分析） | 动态相量模型<br>/ 简化平均值模型 | 1 - 10 ms | 忽略高频电磁暂态，<br>保留基频功率动态 |
-| **实时仿真/HIL** | 固定导纳模型<br>（ADC/LIM） | 20 - 50 μs | 严格实时性要求，<br>避免迭代求解 |
-| **故障穿越分析**<br>（直流故障、闭锁） | 通用阻塞模块AVM<br>（UBM-AVM） | 20 - 50 μs | 精确模拟阻塞模式<br>二极管续流路径 |
-
-### 3.2 按精度-效率权衡选择
-
-**高精度需求（误差 < 1%）**：
-- 详细开关模型（Detailed Switching）
-- 戴维南等效详细模型（Thevenin Equivalent Detailed）
-
-**中等精度（误差 1-3%）**：
-- 直接接口平均值模型（DI-AVM）
-- 分段广义状态空间平均（P-GSSA）
-
-**高效率优先（误差 3-5%）**：
-- 基频动态相量模型（BFDP）
-- 简化平均值模型（Simplified AVM）
-
-### 3.3 特殊拓扑建议
-
-**模块化多电平换流器（MMC）**：
-- **子模块数 < 50**：详细开关模型
-- **50 < N < 400**：戴维南等效模型（模型2/3）
-- **N > 400**：嵌套快速求解 + 分组等效（主从集混合模型）
-
-**混合级联拓扑（CH-MMC）**：
-- 采用阀段等效模型，将 $N_{HB}$ 个半桥与 $N_{FB}$ 个全桥分别聚合为2个等效阀段，状态变量从 $O(N)$ 降至 $O(1)$。
-
----
-
-## 4. 前沿研究方向
-
-### 4.1 多尺度混合仿真技术
-
-**机电-电磁暂态接口**：
-- 基于移频相量（SFP）的多速率仿真，通过 $T_{dq\rightarrow SF}$ 矩阵实现机电暂态（10 ms步长）与电磁暂态（50 μs步长）的无缝接口。
-- 谐波相量域（HPD）协同仿真，解决VSC-HVDC中特征谐波（11次、13次）与直流网络动态的交互问题。
-
-**细粒度并行计算**：
-- 基于延迟插入法（LIM）的GPU并行求解，将系统解耦为三相节点/支路级并行单元，实现细粒度并行（每个节点对应独立GPU线程）。
-
-### 4.2 构网型（Grid-Forming）VSC建模
-
-**虚拟同步机（VSG）等效**：
-- 建立计及虚拟惯量 $J$ 和阻尼 $D$ 的机电暂态等效模型，满足：
-  $$J\frac{d\Delta\omega}{dt} = P_{ref} - P_e - D\Delta\omega$$
-- 多VSG并联系统的一致性算法建模，通过功角构造性能评价函数抑制功率振荡。
-
-**RMS模型充分条件**：
-- 推导外环控制增益充分条件，确保控制与网络动态时间尺度分离，当短路比 $SCR \in [1,3]$ 时，RMS模型误差可控制在3%以内。
-
-### 4.3 数据驱动的混合建模
-
-**AI辅助模型降阶**：
-- 利用神经网络逼近开关函数非线性，构建"黑箱+白箱"混合模型，在保证详细模型精度的同时实现AVM级计算效率。
-
-**实时参数自适应**：
-- 基于硬件在环（HIL）的在线模型切换：正常工况采用AVM，故障检测后自动切换至详细模型，故障清除后恢复，平衡实时性与精度。
-
-### 4.4 损耗与热-电耦合建模
-
-**器件级损耗精确计算**：
-- 将通态损耗（$I^2R$）、开关损耗（$E_{on/off} \cdot f_{sw}$）与EMT仿真DEM更新算法融合，支持10 μs步长下的精确损耗评估，误差 < 2%。
-- 独立输出每个子模块损耗，支持精细化热管理与寿命预测。
-
-### 4.5 直流故障与保护协同建模
-
-**限流拓扑等效**：
-- 含直流断路器（DCCB）的VSC系统建模，考虑限流电抗器（$L_{limit}$）与故障检测延时（最大放宽至12 ms）的耦合效应。
-- 基于行波保护原理的VSC模型，利用二进小波变换（WTMM）提取故障特征，实现超高速保护（< 1 ms）。
-
-**故障自清除能力量化**：
-- 全桥子模块比例 $\eta = N_{FB}/(N_{HB}+N_{FB})$ 对故障电流阻断能力的建模，优化混合MMC的 $\eta$ 配置。
-```

@@ -339,3 +339,13 @@ $$
 - [2019] **Functional Mock-Up Interface Based Parallel Multistep Approa**: 线性外推信号校正技术有效抑制了多步长同步过程中的接口误差，提高了仿真精度。
 - [2019] **Functional Mock-Up Interface Based Parallel Multistep Approa**: 数值测试表明，改进后的方法在计算效率和准确性上均显著优于原有FMI并行方案。
 - [2019] **Parallel-in-Time Simulation Algorithm for Power Electronics:**: 在使用5个计算核心的条件下，算法实现了最高3.47倍的仿真加速比。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[the-diode-clamped-half-bridge-mmc-structure-with-internal-spontaneous-capacitor-|The diode-clamped half-bridge MMC structure with internal sp]] | 2018 |
+| [[use-of-efficient-task-allocation-algorithm-for-parallel-real-time-emt-simulation|Use of efficient task allocation algorithm for parallel real]] | 2020 |
+| [[time-domain-coupling-model-for-nonparallel-frequency-dependent-overhead-multicon|Time-Domain Coupling Model for Nonparallel Frequency-Depende]] | 2022 |
+| [[sparse-solver-application-for-parallel-real-time-electromagnetic-transient-simul|Sparse solver application for parallel real-time electromagn]] | 2023 |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |

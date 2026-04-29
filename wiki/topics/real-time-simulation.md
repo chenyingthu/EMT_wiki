@@ -376,3 +376,14 @@ $$
 - [2018] **Real-time Simulation of Hybrid Modular Multilevel Converters**: FPGA实现成功捕获了系统级与子模块级的详细电磁暂态响应。
 - [2018] **Real-time Simulation of Hybrid Modular Multilevel Converters**: 在两端LVDC测试系统上的验证表明，该方法在精度与计算效率上均优于传统模型。
 - [2019] **Modeling a voltage source converter assisted resonant curren**: 所建模型的外部电流-电压特性与真实设备高度一致。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[use-of-efficient-task-allocation-algorithm-for-parallel-real-time-emt-simulation|Use of efficient task allocation algorithm for parallel real]] | 2020 |
+| [[sparse-solver-application-for-parallel-real-time-electromagnetic-transient-simul|Sparse solver application for parallel real-time electromagn]] | 2023 |
+| [[shifted-frequency-analysis-based-faster-than-real-time-simulation-of-power-syste|Shifted frequency analysis based, faster-than-real-time simu]] | 2024 |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+| [[su-等-a-fixed-admittance-algorithm-for-the-fpga-based-microsecond-level-nonlinear|Su 等 | A fixed-admittance algorithm for the FPGA-based micro]] | 2025 |
