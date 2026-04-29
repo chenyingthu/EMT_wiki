@@ -18,7 +18,7 @@ updated: 2026-04-26
 - 主题页：11
 - 方法页：10
 - 模型页：10
-- 实体页：21
+- 实体页：22
 - 来源页：682 个活跃来源页
 
 ## 主题 (Topics)
@@ -78,6 +78,8 @@ updated: 2026-04-26
 | [[rtds]] | 实时数字仿真器，HIL测试 |
 | [[matlab-simulink]] | MATLAB/Simulink控制设计与代码生成平台 |
 | [[cloudpss]] | CloudPSS云仿真平台，清华大学研发，国产EMT工具 |
+| [[adpss]] | ADPSS国产电力系统仿真软件，中国电科院研发 |
+| [[psmodel]] | PSModel国产超大规模电网仿真平台，国家电网研发 |
 | [[comsol]] | 多物理场有限元仿真软件，变压器/电缆建模 |
 | [[ansys]] | ANSYS/Maxwell电磁场有限元分析工具 |
 
