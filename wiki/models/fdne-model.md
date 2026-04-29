@@ -246,3 +246,167 @@ $$
 ### 4.5 新型电力系统应用
 - **MMC-HVDC电网**：双层网络等值在含MMC的AC/DC电网混合仿真中，局部无源性补偿避免18.7%的仿真发散率（2019）
 - **雷击过电压黑盒模型**：全波麦克斯韦方程+FDNE，替代传统多节杆塔模型，误差从11.5%降至<1%（2021）
+
+## 技术演进脉络
+
+### 1990年代 (理论奠基)
+- **矢量拟合算法提出 (1999)**
+  - Gustavsen和Semlyen提出矢量拟合(VF)算法
+  - 为频变网络等值提供数学基础
+  - 解决频域数据有理函数逼近问题
+
+- **频变网络等值概念确立**
+  - 将外部网络等效为频率相关多端口模型
+  - 保留宽频特性同时降低仿真规模
+  - 应用于EMTP类仿真器
+
+### 2000年代 (方法成熟)
+- **多端口FDNE (2004)**
+  - 扩展至MIMO系统
+  - 公共极点策略降低计算复杂度
+  - 应用于大规模电网边界等值
+
+- **无源性强制技术 (2008-2010)**
+  - 提出残差摄动法确保模型无源性
+  - 解决时域仿真发散问题
+  - 建立Hamiltonian矩阵检验方法
+
+### 2010年代 (应用扩展)
+- **在线辨识与实时仿真 (2018)**
+  - RLS递推最小二乘实现z域在线辨识
+  - 免除离线频域扫描
+  - FPGA实现亚微秒级实时仿真
+
+- **双层网络等值 (2019)**
+  - FDNE+DLFE分层结构
+  - 高频电磁与低频机电分离
+  - 局部无源性补偿策略
+
+- **Loewner矩阵数据驱动 (2015)**
+  - 非迭代模型降阶方法
+  - SVD自动确定模型阶数
+  - 适用于黑箱系统辨识
+
+### 2020年代 (异构并行与智能化)
+- **网络综合法 (2021)**
+  - Tellegen综合实现物理RLCM网络
+  - 内禀保证无源性
+  - 计算加速3.3倍
+
+- **并行复数矢量拟合 (2024)**
+  - C语言+Intel MKL并行化
+  - CVF解除共轭约束
+  - 支持8端口以上大规模系统
+
+- **FPGA超实时仿真 (2025)**
+  - 状态空间方程定点实现
+  - 亚微秒级步长
+  - 电力电子开关动态捕捉
+
+## 代表性来源
+
+| 论文 | 年份 | 关联要点 |
+|------|------|----------|
+| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the EMTP]] | 2004 | 多端口FDNE基础理论 |
+| [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs of power systems]] | 2015 | Loewner矩阵数据驱动方法 |
+| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced Wide-Band Multi-Port FDNE]] | 2018 | 在线无源性强制与实时仿真 |
+| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensation]] | 2019 | 双层网络等值与局部补偿 |
+| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A Guaranteed Passive Model for Multi-Port FDNE]] | 2021 | 严格无源性保证模型 |
+| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation for FDNE]] | 2024 | 并行CVF与高性能计算 |
+| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based Simulation of Grid-Tied Converters Using FDNE]] | 2025 | FPGA硬件加速实现 |
+
+## 最佳实践与注意事项
+
+### 5.1 建模前准备
+1. **确定端口位置**：选择电气距离适中的边界点
+2. **频率范围设定**：覆盖关注频段（通常DC-10MHz）
+3. **采样策略**：对数均匀分布，谐振峰处加密
+
+### 5.2 矢量拟合参数调优
+- **初始极点**：对数分布，实部为虚部1/100
+- **模型阶数**：每decade 2-3个极点，每个谐振峰2-4个
+- **迭代收敛**：通常3-5次，最大21次
+
+### 5.3 无源性强制策略
+| 违规类型 | 推荐方法 | 关键参数 |
+|---------|---------|---------|
+| 低频大违规 | 人工电导 | $G_{add}=10^{-6}$ S/m, $\tau=1$s |
+| 带内小违规 | 残差摄动 | 仅修正传播矩阵对角 |
+| 高频渐近违规 | 高频约束 | $f_c=10$ MHz |
+| 多频点分散违规 | 全摄动优化 | Frobenius距离<5% |
+
+### 5.4 实时仿真适配
+- **状态空间实现**：极点-留数转A,B,C,D矩阵
+- **步长选择**：满足稳定性条件 $\Delta t < 2/|p_{max}|$
+- **定点化**：注意数值精度损失
+
+### 5.5 验证与校核
+- [ ] 频域拟合误差<1%
+- [ ] 无源性全频段验证
+- [ ] 时域波形对比详细模型
+- [ ] 能量守恒检查
+- [ ] 极端工况稳定性测试
+
+### 5.6 常见问题与解决
+
+| 问题 | 原因 | 解决方案 |
+|------|------|---------|
+| 拟合不收敛 | 初始极点选择不当 | 复数极点，对数分布 |
+| 时域发散 | 无源性违规 | 强制无源性后重新验证 |
+| 低频精度差 | 采样点不足 | DC附近加密采样 |
+| 计算太慢 | QR分解瓶颈 | 并行化或降阶 |
+| 实时性不足 | 状态数太多 | SVD压缩或MOR降阶 |
+
+## 来源论文
+
+| 论文 | 年份 | 核心贡献 |
+|------|------|----------|
+| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the EMTP]] | 2004 | 多端口FDNE基础理论，公共极点策略 |
+| [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs]] | 2015 | Loewner矩阵数据驱动方法，SVD自动定阶 |
+| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced FDNE]] | 2018 | 在线无源性强制，RLS递推辨识，FPGA实时仿真 |
+| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensation]] | 2019 | 双层网络等值，局部无源性补偿，FDNE+DLFE分层 |
+| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A Guaranteed Passive Model for Multi-Port FDNE]] | 2021 | Tellegen网络综合法，物理RLCM实现，内禀无源性 |
+| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation]] | 2024 | 并行复数矢量拟合，C+MKL实现，8端口+系统 |
+| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based Simulation Using FDNE]] | 2025 | 状态空间定点实现，亚微秒步长，电力电子应用 |
+| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model]] | 2021 | 全波黑盒杆塔模型，10kHz-10MHz雷击暂态 |
+| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning-based simulation solution]] | 2020 | 压缩划分FDNE，实时仿真，11子模块划分 |
+| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using FDNE]] | 2024 | 系统级EMT分析，FDNE边界等值应用 |
+
+## 相关主题
+- [[network-equivalent|网络等值]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[co-simulation|混合仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[passivity-enforcement|无源性强制]]
+
+## 相关方法
+- [[vector-fitting|矢量拟合]]
+- [[state-space-method|状态空间法]]
+- [[numerical-integration|数值积分]]
+- [[prony-analysis|Prony分析]]
+
+## 典型应用案例
+
+### 案例1：风电场并网宽频等值
+**场景**：含66台风机的海上风电场，需进行电能质量与谐波分析
+**方案**：
+- 端口设置：PCC点（3相）+ 集电线路中点
+- 频率范围：0.1 Hz - 10 kHz
+- 模型阶数：80个极点（考虑电力电子设备开关频率）
+- 验证指标：频域拟合误差<0.5%，时域故障波形偏差<1%
+
+### 案例2：MMC-HVDC交直流混合仿真
+**场景**：MMC换流站接入大电网，需兼顾内部子模块动态与外部网络响应
+**方案**：
+- 双层等值结构：FDNE层（>10Hz）+ DLFE层（控制动态）
+- 局部无源性补偿：层间解耦，避免全局优化
+- 实时性：FPGA实现，步长<1μs
+**效果**：仿真发散率从18.7%降至0%
+
+### 案例3：雷击过电压杆塔建模
+**场景**：500kV输电线路雷击塔顶过电压计算
+**方案**：
+- 黑盒FDNE模型：10kHz - 10MHz
+- 杆塔三端口等值：塔顶、塔身、接地极
+- 对比传统多节Π模型：误差从11.5%降至<1%
+**性能**：计算加速3.3倍
