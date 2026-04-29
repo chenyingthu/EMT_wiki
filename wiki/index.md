@@ -18,7 +18,7 @@ updated: 2026-04-26
 - 主题页：11
 - 方法页：10
 - 模型页：10
-- 实体页：20
+- 实体页：21
 - 来源页：682 个活跃来源页
 
 ## 主题 (Topics)
@@ -77,6 +77,7 @@ updated: 2026-04-26
 | [[atp-emtp]] | EMTP开源免费版本 |
 | [[rtds]] | 实时数字仿真器，HIL测试 |
 | [[matlab-simulink]] | MATLAB/Simulink控制设计与代码生成平台 |
+| [[cloudpss]] | CloudPSS云仿真平台，清华大学研发，国产EMT工具 |
 | [[comsol]] | 多物理场有限元仿真软件，变压器/电缆建模 |
 | [[ansys]] | ANSYS/Maxwell电磁场有限元分析工具 |
 
