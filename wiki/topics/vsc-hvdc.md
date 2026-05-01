@@ -11,7 +11,7 @@ created: "2026-04-14"
 
 VSC-HVDC（Voltage Source Converter High Voltage Direct Current）是基于电压源换流器的高压直流输电技术。它通过自关断电力电子器件和快速控制系统实现有功、无功和直流电压控制，常用于新能源并网、海上风电送出、孤岛供电、城市电网接入和多端直流系统。
 
-在 EMT wiki 中，VSC-HVDC 是一个系统级主题：它把 [[models/vsc-model|VSC 模型]]、[[models/mmc-model|MMC 模型]]、直流电缆、控制器、保护和混合仿真接口连接在一起。建模目标通常不是单个器件，而是换流站、直流线路、电网交互和控制保护动作的综合暂态。
+在 EMT wiki 中，VSC-HVDC 是一个系统级主题：它把 [[vsc-model|VSC模型]]、[[mmc-model|MMC模型]]、直流电缆、控制器、保护和混合仿真接口连接在一起。建模目标通常不是单个器件，而是换流站、直流线路、电网交互和控制保护动作的综合暂态。
 
 ## 作用机制
 
@@ -51,18 +51,28 @@ $$
 | [[modeling-and-electromagnetic-transient-simulation-of-vsc-hvdc-system|Modeling and electromagnetic transient simulation of VSC-HVDC system]] | 2022 | VSC-HVDC 系统 EMT 建模。 |
 | [[modeling-and-simulation-of-vsc-hvdc-with-dynamic-phasors|Modeling and simulation of VSC-HVDC with dynamic phasors]] | 2023 | 用动态相量模拟 VSC-HVDC。 |
 
-## 相关页面
+## 相关方法
+- [[average-value-model|平均值模型]] - MMC/VSC平均值简化
+- [[state-space-method|状态空间法]] - VSC状态空间建模
+- [[fixed-admittance|恒导纳模型]] - VSC恒导纳实现
+- [[multirate-method|多速率方法]] - 交直流多速率仿真
+- [[switching-function|开关函数法]] - VSC开关建模
 
-- [[models/vsc-model|VSC 模型]]
-- [[models/mmc-model|MMC 模型]]
-- [[models/lcc-model|LCC 模型]]
-- [[models/cable-model|电缆模型]]
-- [[methods/average-value-model|平均值模型]]
-- [[methods/fixed-admittance|恒导纳模型]]
-- [[methods/state-space-method|状态空间法]]
-- [[topics/dynamic-phasor|动态相量]]
-- [[topics/co-simulation|协同仿真]]
-- [[topics/real-time-simulation|实时仿真]]
+## 相关模型
+- [[vsc-model|VSC模型]] - 两电平/三电平换流器
+- [[mmc-model|MMC模型]] - 模块化多电平换流器
+- [[cable-model|电缆模型]] - 直流电缆建模
+- [[lcc-model|LCC模型]] - 传统HVDC对比
+- [[transformer-model|换流变压器]] - 换流变建模
+- [[mtdc-model|MTDC模型]] - 多端直流系统
+
+## 相关主题
+- [[dynamic-phasor|动态相量法]] - VSC动态相量简化
+- [[co-simulation|混合仿真]] - VSC-HVDC机电-电磁混合
+- [[real-time-simulation|实时仿真]] - VSC-HVDC实时仿真
+- [[frequency-dependent-modeling|频率相关建模]] - 直流电缆频变建模
+- [[harmonic-analysis-methods|谐波分析]] - VSC谐波特性分析
+- [[network-equivalent|网络等值]] - 交流系统等值接入
 
 ## 技术演进脉络
 

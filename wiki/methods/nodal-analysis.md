@@ -408,4 +408,19 @@ $$
 
 ---
 
+## 相关模型
+
+- [[transformer-model|变压器模型]] - 变压器伴随电路建模与节点接入
+- [[transmission-line-model|输电线路模型]] - Bergeron行波等值模型节点实现
+- [[mmc-model|MMC模型]] - 换流器桥臂等效导纳矩阵建模
+- [[vsc-model|VSC模型]] - 电压源换流器节点导纳模型
+- [[synchronous-machine-model|同步电机模型]] - 电机等效电路节点分析
+
+## 相关主题
+
+- [[numerical-integration|数值积分]] - 梯形法/后向欧拉法离散化
+- [[sparse-matrix-solver|稀疏矩阵求解]] - KLU算法与稀疏LU分解
+- [[real-time-simulation|实时仿真]] - 实时节点分析算法优化
+- [[fixed-admittance|恒导纳模型]] - 开关处理与恒定导纳技术
+
 **注**：以上内容基于2011-2025年间54篇相关论文的最新研究成果，特别整合了2023-2025年间关于频率畸变分析、PAVM直接接口、固态变压器等效建模等前沿进展。

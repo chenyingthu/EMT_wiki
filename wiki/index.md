@@ -2,7 +2,7 @@
 title: "EMT Wiki 索引"
 type: index
 created: 2026-04-13
-updated: 2026-04-29
+updated: 2026-04-30
 ---
 
 # EMT Wiki 索引
@@ -15,9 +15,9 @@ updated: 2026-04-29
 - 已分析：690 篇 (100%)
 - 来源页填充率：100% (核心贡献/使用的方法/涉及的模型/相关主题/主要发现 全部填充)
 - 深度增强：682/682 (100%)
-- 主题页：11
-- 方法页：10
-- 模型页：22
+- 主题页：15
+- 方法页：28
+- 模型页：38
 - 实体页：22
 - 来源页：682 个活跃来源页
 
@@ -36,6 +36,10 @@ updated: 2026-04-29
 | [[cable-modeling\|电缆建模]] | 地下/海底电缆、集肤效应、螺线管效应 |
 | [[harmonic-analysis\|谐波分析]] | 谐波潮流、谐振频率分析、宽频暂态 |
 | [[wind-farm-modeling\|风电场建模]] | DFIG/PMSG风机、等值聚合、大规模风电仿真 |
+| [[protection-relay-modeling\|保护继电器建模]] | 距离保护、差动保护、行波保护、故障检测 |
+| [[switching-transient\|开关暂态]] | 断路器操作过电压、合闸电阻、重燃、预击穿 |
+| [[lightning-overvoltage\|雷电过电压]] | 直击雷、感应雷、避雷器、绝缘配合 |
+| [[transformer-modeling\|变压器建模]] | 饱和、励磁涌流、内部故障、白箱/黑箱模型 |
 
 ## 方法 (Methods)
 
@@ -51,6 +55,24 @@ updated: 2026-04-29
 | [[fixed-admittance\|恒导纳模型]] | ADC模型，避免导纳矩阵重构 |
 | [[interpolation-method\|插值方法]] | 多速率仿真数据同步、变步长中间值计算 |
 | [[prony-analysis\|Prony分析]] | 指数信号分解、模态参数提取、系统辨识 |
+| [[thevenin-norton-equivalent\|戴维南-诺顿等效]] | 网络简化核心技术，端口等效建模，MANA框架集成 |
+| [[switching-function\|开关函数法]] | 电力电子开关建模，PWM占空比计算，状态空间平均 |
+| [[dynamic-phasor\|动态相量法]] | 频谱搬移建模，复包络仿真，多时间尺度分析 |
+| [[fpga-real-time-simulation\|FPGA实时仿真]] | 硬件并行加速，TLM求解，纳秒级步长，确定性实时性 |
+| [[gpu-accelerated-simulation\|GPU加速仿真]] | CUDA并行计算，SIMT架构，自适应CPU-GPU协同，10-20倍加速 |
+| [[hil-simulation\|硬件在环仿真]] | 信号级/功率级HIL，RTDS-TSA混合，FDNE接口，实时测试 |
+| [[electromechanical-electromagnetic-hybrid-simulation\|机电-电磁混合仿真]] | TSA-EMT协同，FDNE宽频等值，多速率接口，大规模交直流电网仿真 |
+| [[wideband-modeling\|宽频建模方法]] | 频变参数建模，矢量拟合，FDNE，电缆/变压器/线路宽频特性 |
+| [[sparse-matrix-solver\|稀疏矩阵求解]] | KLU求解器，AMD排序，BTF预处理，分网并行，避免重分解 |
+| [[stiff-system-handling\|刚性系统处理]] | 隐式积分、自动变步长、CDA、Gear法、DIRK，多时间尺度稳定性 |
+| [[model-order-reduction\|模型降阶方法]] | 高维模型降阶，Kron消去、Brune综合、矩匹配，提速1-2个数量级 |
+| [[discretization-methods\|离散化方法]] | 连续系统离散化，伴随电路模型，梯形/BE/DIRK，多速率离散化 |
+| [[switch-modeling\|开关建模方法]] | 电力电子开关建模，二值电阻/分段线性/详细模型，开关函数法 |
+| [[iterative-solvers\|迭代求解方法]] | 牛顿迭代、Krylov子空间、预处理技术，线性与非线性求解 |
+| [[fault-analysis-methods\|故障分析方法]] | 对称分量法、故障建模、故障电流计算、保护配合，668篇来源 |
+| [[harmonic-analysis-methods\|谐波分析方法]] | 傅里叶分析、THD、谐波阻抗、滤波器设计，223篇来源 |
+| [[small-signal-analysis\|小信号分析]] | 线性化、特征值、参与因子、小干扰稳定性、SSO分析 |
+| [[parameter-identification\|参数辨识]] | 变压器饱和辨识、线路参数反演、FDNE拟合、故障测距 |
 
 ## 模型 (Models)
 
@@ -78,6 +100,22 @@ updated: 2026-04-29
 | [[circuit-breaker-model\|断路器]] | 真空/SF6断路器，电弧模型、开断过程 |
 | [[load-model\|负荷模型]] | ZIP负荷、感应电机负荷、温控负荷、频率特性 |
 | [[svc-tcr-model\|SVC/TCR]] | 静止无功补偿器，TCR/TSC、触发角控制、谐波 |
+| [[resistor-model\|电阻]] | 基础无源元件，频率相关特性、寄生参数、趋肤效应 |
+| [[capacitor-model\|电容]] | 储能元件，ESR/ESL、介质损耗、超级电容模型 |
+| [[inductor-model\|电感]] | 感性元件，磁饱和、磁滞损耗、分布电容 |
+| [[diode-model\|二极管]] | 功率半导体，整流/续流、反向恢复、结电容 |
+| [[igbt-model\|IGBT]] | 绝缘栅双极晶体管，开关特性、导通损耗、热模型 |
+| [[pi-controller-model\|PI控制器]] | 比例-积分控制器，参数整定、抗饱和、离散实现 |
+| [[pwm-modulator-model\|PWM调制器]] | 脉宽调制，SPWM/SVPWM/THIPWM、载波频率、谐波分析 |
+| [[coordinate-transformation-model\|坐标变换]] | Clarke/Park变换、abc/dq0转换、参考坐标系选择 |
+| [[vector-control-model\|矢量控制]] | FOC/DTC、磁场定向、电机控制、弱磁控制 |
+| [[droop-control-model\|下垂控制]] | P-f/Q-V下垂、虚拟同步机、微电网功率均分 |
+| [[gfl-inverter-model\|跟网型变流器]] | GFL、电流控制、PLL、弱电网稳定性、新能源并网 |
+| [[gfm-inverter-model\|构网型变流器]] | GFM、VSM、虚拟惯量、100%新能源、孤岛运行 |
+| [[energy-storage-converter-model\|储能变流器]] | PCS、双向变换、SOC管理、调频、并离网切换 |
+| [[hybrid-converter-model\|混合AC/DC变流器]] | 多端口、DAB、CHB、能量路由器、PET |
+| [[voltage-current-sensor-model\|电压电流传感器]] | PT/CT、霍尔传感器、罗氏线圈、饱和特性、测量精度 |
+| [[emi-filter-model\|EMI滤波器]] | 共模/差模滤波、传导干扰抑制、EMC设计 |
 
 ## 实体 (Entities)
 

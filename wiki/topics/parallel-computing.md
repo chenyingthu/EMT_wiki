@@ -41,8 +41,25 @@ $$
 ## 验证共识
 该主题需要同时验证数值一致性和并行收益。常见证据包括与串行 EMT/商业软件波形对比、单步时间或总运行时间、并行效率、负载均衡、通信开销，以及实时场景下是否满足固定步长 deadline。
 
-## 相关页面
-[[real-time-simulation]] · [[co-simulation]] · [[multirate-method]] · [[frequency-dependent-modeling]] · [[fixed-admittance]] · [[nodal-analysis]] · [[state-space-method]] · [[mmc-model]]
+## 相关方法
+- [[state-space-method|状态空间法]] - 子系统状态空间并行求解
+- [[fixed-admittance|恒导纳模型]] - 避免导纳矩阵重构的并行优化
+- [[multirate-method|多速率方法]] - 不同子系统差异化步长并行
+- [[numerical-integration|数值积分]] - 并行积分算法实现
+- [[nodal-analysis|节点分析]] - 网络分割与并行求解
+
+## 相关模型
+- [[mmc-model|MMC模型]] - 子模块级并行建模
+- [[vsc-model|VSC模型]] - 换流器并行仿真
+- [[fdne-model|频变网络等值(FDNE)]] - 外部网络并行等值
+- [[synchronous-machine-model|同步电机模型]] - 电机集群并行计算
+
+## 相关主题
+- [[real-time-simulation|实时仿真]] - 实时约束下的并行策略
+- [[co-simulation|混合仿真]] - 多求解器并行协同
+- [[frequency-dependent-modeling|频率相关建模]] - 频变模型并行计算
+- [[gpu-accelerated-simulation|GPU加速仿真]] - GPU并行架构应用
+- [[hil-simulation|硬件在环仿真]] - 分布式HIL并行测试
 
 ## 论文方法分析
 > 基于 48 篇相关论文的深度内容分析生成

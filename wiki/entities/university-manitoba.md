@@ -199,6 +199,24 @@ Manitoba 相关页面的质量重点是“详细 EMT 基准是否可复核”。
 - **教学资源**：与全球200+高校合作，提供教育版软件
 - **开源贡献**：支持ATP-EMTP等开源项目发展
 
+## 相关方法
+- [[vector-fitting|矢量拟合]] - A.M. Gole团队开发的宽频端口建模核心方法
+- [[passivity-enforcement|无源性强制]] - 保证频域拟合模型时域稳定的关键算法
+- [[average-value-model|平均值模型]] - 电力电子设备降阶建模用于加速仿真
+- [[nodal-analysis|节点分析法]] - PSCAD/EMTDC求解器的基础算法
+
+## 相关模型
+- [[fdne-model|FDNE模型]] - 多端口频率相关网络等值用于外部系统降阶
+- [[transmission-line-model|输电线路模型]] - 宽频线路模型与频变参数建模
+- [[mmc-model|MMC模型]] - 模块化多电平换流器详细与等效模型
+- [[transformer-model|变压器模型]] - 宽频变压器建模与饱和特性
+
+## 相关主题
+- [[real-time-simulation|实时仿真]] - 与RTDS合作的HIL测试和实时仿真平台
+- [[co-simulation|混合仿真]] - 机电-电磁暂态联合仿真接口技术
+- [[vsc-hvdc|VSC-HVDC]] - 柔性直流输电系统EMT建模与控制
+- [[network-equivalent|网络等值]] - 大规模系统降阶与等值边界建模
+
 ## 相关实体
 - [[pscad-emtdc]]
 - [[manitoba-hydro]]

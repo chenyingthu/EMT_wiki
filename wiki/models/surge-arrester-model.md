@@ -249,13 +249,26 @@ $$L_{max} = \frac{BIL - V_{res}}{2S}$$
 | Frequency Dependent Arrester Model for Lightning Studies | 2017 | 雷电研究用频变避雷器模型 |
 | Metal Oxide Arrester Thermal Modeling and Analysis | 2019 | 金属氧化物避雷器热建模分析 |
 
-## 5. 相关主题
+## 相关方法
+- [[vector-fitting|矢量拟合]] - 频变特性有理函数拟合
+- [[frequency-dependent-modeling|频率相关建模]] - 高频响应建模
+- [[numerical-integration|数值积分]] - 热模型计算
+- [[state-space-method|状态空间法]] - 避雷器状态建模
+- [[passivity-enforcement|无源性强制]] - 频变模型无源性
 
-- 雷电保护 - 防雷系统设计
-- 绝缘配合 - 设备绝缘水平
-- 过电压分析 - 雷电/操作过电压
-- 接地系统 - 接地网设计
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - 线路雷电入侵波
+- [[transformer-model|变压器模型]] - 变压器绝缘配合
+- [[circuit-breaker-model|断路器模型]] - 操作过电压配合
+- [[grounding-system-model|接地系统模型]] - 接地网设计
+- [[cable-model|电缆模型]] - 电缆过电压保护
+
+## 相关主题
+- [[frequency-dependent-modeling]] - 频变建模应用
+- [[harmonic-analysis]] - 谐波与避雷器配合
+- [[real-time-simulation]] - 避雷器实时仿真
+- [[network-equivalent]] - 网络等值与保护
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建*
+*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*

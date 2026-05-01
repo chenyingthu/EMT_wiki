@@ -233,3 +233,9 @@ IEEE (电气电子)
 - [[vsc-hvdc]]
 - [[network-equivalent]]
 - [[co-simulation]]
+
+## 相关模型
+- [[transformer-model|变压器模型]] - IEEE Std C57系列变压器测试与建模标准
+- [[transmission-line-model|输电线路模型]] - IEEE Std 1313绝缘配合与线路模型
+- [[synchronous-machine-model|同步电机模型]] - IEEE标准电机参数与测试规程
+- [[cable-model|电缆模型]] - 地下电缆电磁暂态建模标准

@@ -257,3 +257,9 @@ EMT工具 (系统级)
 - [[transformer-model]]
 - [[cable-model]]
 - [[co-simulation]]
+
+## 相关模型
+- [[transformer-model|变压器模型]] - 用于白盒建模、磁场分布分析和漏感参数提取
+- [[cable-model|电缆模型]] - 用于宽频参数提取和集肤效应分析
+- [[synchronous-machine-model|同步电机模型]] - 用于电磁场分析和电感参数计算
+- [[transmission-line-model|输电线路模型]] - 用于多物理场耦合和参数验证

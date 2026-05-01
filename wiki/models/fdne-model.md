@@ -359,19 +359,24 @@ $$
 
 ## 来源论文
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the EMTP]] | 2004 | 多端口FDNE基础理论，公共极点策略 |
-| [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs]] | 2015 | Loewner矩阵数据驱动方法，SVD自动定阶 |
-| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced FDNE]] | 2018 | 在线无源性强制，RLS递推辨识，FPGA实时仿真 |
-| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensation]] | 2019 | 双层网络等值，局部无源性补偿，FDNE+DLFE分层 |
-| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A Guaranteed Passive Model for Multi-Port FDNE]] | 2021 | Tellegen网络综合法，物理RLCM实现，内禀无源性 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation]] | 2024 | 并行复数矢量拟合，C+MKL实现，8端口+系统 |
-| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based Simulation Using FDNE]] | 2025 | 状态空间定点实现，亚微秒步长，电力电子应用 |
-| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model]] | 2021 | 全波黑盒杆塔模型，10kHz-10MHz雷击暂态 |
-| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning-based simulation solution]] | 2020 | 压缩划分FDNE，实时仿真，11子模块划分 |
-| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using FDNE]] | 2024 | 系统级EMT分析，FDNE边界等值应用 |
-
+| 论文 | 年份 |
+|------|------|
+| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the E]] | 2004 |
+| [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
+| [[frequency-domain-simulation-of-electromagnetic-transients-using-variable|Frequency-Domain Simulation of Electromagnetic Transients Us]] | 2015 |
+| [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs of power systems]] | 2015 |
+| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced W]] | 2018 |
+| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
+| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
+| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning‐based simulation solution for fr]] | 2020 |
+| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A guaranteed passive model for multi-port frequency dependen]] | 2021 |
+| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
+| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
+| [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f|Efficient Implementation of Multi-Port Frequency Dependent N]] | 2022 |
+| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using a Frequency Depende]] | 2024 |
+| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend-17|Enhancing computation performance of rational approximation ]] | 2024 |
+| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation ]] | 2024 |
+| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using frequenc]] | 2025 |
 ## 相关主题
 - [[network-equivalent|网络等值]]
 - [[frequency-dependent-modeling|频率相关建模]]
@@ -384,6 +389,13 @@ $$
 - [[state-space-method|状态空间法]]
 - [[numerical-integration|数值积分]]
 - [[prony-analysis|Prony分析]]
+
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - FDNE端口边界模型
+- [[transformer-model|变压器模型]] - 变压器宽频等值
+- [[vsc-model|VSC模型]] - 换流器外部系统简化
+- [[wind-farm-modeling|风电场模型]] - 风电场宽频聚合
+- [[mmc-model|MMC模型]] - MMC外部网络等值
 
 ## 典型应用案例
 

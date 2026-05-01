@@ -300,6 +300,12 @@ EMT仿真
 - [[transformer-model|变压器模型]]
 - [[synchronous-machine-model|同步电机模型]]
 
+## 相关模型
+- [[transformer-model|变压器模型]] - Maxwell核心应用场景，三维磁场分析与参数提取
+- [[synchronous-machine-model|同步电机模型]] - 旋转电机电磁场建模与参数计算
+- [[pmsm-model|PMSM模型]] - 永磁同步电机详细建模，用于参数提取
+- [[cable-model|电缆模型]] - 电缆电磁场分析与宽频参数建模
+
 ## 相关方法
 - [[vector-fitting]]
 - [[state-space-method]]

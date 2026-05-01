@@ -56,9 +56,18 @@ created: "2026-04-13"
 - [[vector-fitting]]
 - [[passivity-enforcement]]
 
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - 架空线与电缆对比
+- [[fdne-model|频变网络等值(FDNE)]] - 电缆网络等值
+- [[transformer-model|变压器模型]] - 电缆-变压器接口
+- [[grounding-system-model|接地系统模型]] - 电缆护套接地
+
 ## 相关主题
 - [[frequency-dependent-modeling]]
 - [[transmission-line-model]]
+- [[real-time-simulation]]
+- [[parallel-computing]]
+- [[network-equivalent]]
 
 
 ## 论文方法分析

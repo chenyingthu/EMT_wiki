@@ -321,6 +321,12 @@ IEEE/IEC标准 (全球推广)
 - [[gole|A.M. Gole]]
 - [[bjorn-gustavsen|Bjørn Gustavsen]]
 
+## 相关模型
+- [[mmc-model|MMC模型]] - CIGRE TB 604和TB 553涵盖的MMC-HVDC换流器建模指南
+- [[transformer-model|变压器模型]] - CIGRE TB 368和TB 404变压器EMT建模技术报告
+- [[vsc-model|VSC模型]] - CIGRE WG B4.57发布的VSC换流器EMT仿真指南
+- [[lcc-model|LCC模型]] - CIGRE TB 553涵盖的传统HVDC换流器模型开发指南
+
 ## 相关方法
 - [[vector-fitting]]
 - [[average-value-model]]

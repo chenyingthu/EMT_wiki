@@ -65,9 +65,18 @@ created: "2026-04-13"
 - [[passivity-enforcement]]
 - [[numerical-integration]]
 
+## 相关模型
+- [[cable-model|电缆模型]] - 架空线与电缆对比
+- [[fdne-model|频变网络等值(FDNE)]] - 线路网络等值
+- [[transformer-model|变压器模型]] - 线路-变压器接口
+- [[grounding-system-model|接地系统模型]] - 线路接地
+
 ## 相关主题
 - [[frequency-dependent-modeling]]
 - [[cable-modeling]]
+- [[real-time-simulation]]
+- [[parallel-computing]]
+- [[network-equivalent]]
 
 
 ## 论文方法分析

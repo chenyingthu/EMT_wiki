@@ -214,12 +214,46 @@ $$\omega = \omega_0 + k_{p,pll} \cdot v_q + k_{i,pll} \int v_q dt$$
 | Single Diode PV Model Parameter Extraction | 2018 | 单二极管模型参数提取 |
 | PV Inverter Control for Grid Integration | 2019 | 光伏逆变器并网控制 |
 
-## 7. 相关主题
+## 6. 相关主题与链接
 
+### 6.1 相关模型
+- [[gfl-inverter-model|跟网型变流器]] - 光伏逆变器控制
+- [[vsc-model|VSC模型]] - 电压源变换器
+- [[pll-model|锁相环]] - 并网同步
+- [[pi-controller-model|PI控制器]] - 功率环控制
+- [[igbt-model|IGBT模型]] - 开关器件模型
+
+### 6.2 相关方法
+- [[average-value-model|平均值模型]] - 逆变器平均模型
+- [[numerical-integration|数值积分]] - 光伏特性计算
+- [[state-space-method|状态空间法]] - 系统级分析
+- [[coordinate-transformation-model|坐标变换]] - dq控制实现
+
+### 6.3 相关主题
 - [[vsc-model|VSC模型]] - 逆变器建模
 - 逆变器控制 - MPPT和并网控制
 - 新能源并网 - 光伏接入电网
 - 电能质量 - 谐波与闪变
+
+## 相关方法
+- [[numerical-integration|数值积分]] - 光伏特性与MPPT计算
+- [[state-space-method|状态空间法]] - 逆变器控制分析
+- [[average-value-model|平均值模型]] - 逆变器系统级仿真
+- [[coordinate-transformation-model|坐标变换模型]] - dq控制实现
+
+## 相关模型
+- [[gfl-inverter-model|跟网型变流器]] - 光伏逆变器控制
+- [[vsc-model|VSC模型]] - 电压源变换器
+- [[pll-model|锁相环]] - 并网同步
+- [[pi-controller-model|PI控制器]] - 功率环控制
+- [[igbt-model|IGBT模型]] - 开关器件
+
+## 相关主题
+- [[vsc-hvdc|VSC-HVDC]] - 光伏集中外送
+- 新能源并网 - 光伏接入电网
+- 电能质量 - 谐波与闪变
+- 低电压穿越 - 故障穿越能力
+- MPPT控制 - 最大功率点跟踪
 
 ---
 

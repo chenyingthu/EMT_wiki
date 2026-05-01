@@ -225,12 +225,46 @@ $$Q = Q_0 - k_v (V - V_0)$$
 | Lithium-Ion Battery Model for Electromagnetic Transient Studies | 2019 | 锂电池暂态仿真模型 |
 | Grid-Scale Battery Storage EMT Modeling and Validation | 2020 | 电网级储能EMT建模与验证 |
 
-## 7. 相关主题
+## 6. 相关主题与链接
 
+### 6.1 相关模型
+- [[energy-storage-converter-model|储能变流器]] - 储能PCS控制
+- [[vsc-model|VSC模型]] - 电压源变换器
+- [[igbt-model|IGBT模型]] - 开关器件模型
+- [[inductor-model|电感模型]] - 滤波电感设计
+- [[capacitor-model|电容模型]] - 直流电容模型
+
+### 6.2 相关方法
+- [[numerical-integration|数值积分]] - SOC计算方法
+- [[state-space-method|状态空间法]] - 电池模型状态空间
+- [[pi-controller-model|PI控制器]] - 功率环控制
+- [[droop-control-model|下垂控制]] - 一次调频控制
+
+### 6.3 相关主题
 - [[vsc-model|VSC模型]] - 储能变流器
 - 电池管理系统(BMS) - BMS控制策略
 - 频率调节 - 一次/二次调频
 - 新能源并网 - 风光储联合
+
+## 相关方法
+- [[numerical-integration|数值积分]] - SOC计算与电池模型离散化
+- [[state-space-method|状态空间法]] - 电池状态空间建模
+- [[average-value-model|平均值模型]] - 系统级简化仿真
+- [[droop-control-model|下垂控制模型]] - 一次调频控制实现
+
+## 相关模型
+- [[energy-storage-converter-model|储能变流器]] - PCS详细控制模型
+- [[vsc-model|VSC模型]] - 电压源变换器拓扑
+- [[igbt-model|IGBT模型]] - 开关器件模型
+- [[inductor-model|电感模型]] - 滤波电感设计
+- [[capacitor-model|电容模型]] - 直流电容模型
+
+## 相关主题
+- [[vsc-hvdc|VSC-HVDC]] - 储能接入高压直流
+- 频率调节 - 一次/二次调频
+- 新能源并网 - 风光储联合运行
+- [[real-time-simulation|实时仿真]] - 储能系统实时仿真
+- 微电网 - 储能微电网应用
 
 ---
 

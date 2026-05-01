@@ -272,6 +272,12 @@ ABB（Asea Brown Boveri）是全球领先的电力与自动化技术公司，在
 - [[tsinghua-university|清华大学]]
 - [[university-manitoba]]
 
+## 相关模型
+- [[mmc-model|MMC模型]] - ABB开发的模块化多电平换流器模型，用于HVDC Light Evo技术
+- [[lcc-model|LCC模型]] - ABB传统的线路换相换流器模型，用于经典HVDC工程
+- [[vsc-model|VSC模型]] - ABB的电压源换流器模型，支持HVDC Light技术
+- [[transformer-model|变压器模型]] - ABB换流变压器详细模型，含饱和和漏磁特性
+
 ## 相关方法
 - [[mmc-model]]
 - [[lcc-model]]

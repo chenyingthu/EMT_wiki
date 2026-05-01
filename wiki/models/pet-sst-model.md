@@ -285,13 +285,23 @@ $$G_{eq,DAB} = \frac{P}{V_{dc1}^2 - V_{dc2}^2/n^2}$$
 | Dual Active Bridge Converter Modeling for Smart Transformer | 2019 | DAB变换器智能变压器应用 |
 | Power Electronic Transformer EMT Simulation and Analysis | 2020 | PET电磁暂态仿真分析 |
 
-## 7. 相关主题
+## 相关方法
+- [[average-value-model|平均值模型]] - DAB/CLLC平均值建模
+- [[state-space-method|状态空间法]] - SST状态空间建模
+- [[fixed-admittance|恒导纳模型]] - 高频变换器恒导纳实现
+- [[dynamic-phasor|动态相量法]] - SST动态相量简化
 
-- DC-DC变换器 - DAB/CLLC拓扑
-- [[vsc-model|VSC模型]] - 整流/逆变级
-- 高频变压器 - 磁芯与绕组
-- 软开关技术 - ZVS/ZCS
-- 智能变压器 - 配电网应用
+## 相关模型
+- [[vsc-model|VSC模型]] - 整流/逆变级建模
+- [[mmc-model|MMC模型]] - MMC型SST对比
+- [[transformer-model|变压器模型]] - 高频变压器建模
+- [[emi-filter-model|EMI滤波器]] - 高频噪声滤波
+
+## 相关主题
+- [[vsc-hvdc]] - 柔性直流输电
+- [[real-time-simulation]] - SST实时仿真
+- [[co-simulation]] - SST多域混合仿真
+- [[frequency-dependent-modeling]] - 宽频变压器建模
 
 ---
 

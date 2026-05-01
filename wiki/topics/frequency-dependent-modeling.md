@@ -32,8 +32,26 @@ created: "2026-04-13"
 ## 验证共识
 验证通常需要频域拟合误差、时域波形对比和无源性/稳定性检查同时成立。单独给出拟合曲线不足以证明 EMT 可用；论文普遍需要与解析模型、现有 EMT 工具、现场/实验数据或全波仿真对比。
 
-## 相关页面
-[[vector-fitting]] · [[passivity-enforcement]] · [[fdne-model]] · [[network-equivalent]] · [[transmission-line-model]] · [[cable-model]] · [[harmonic-analysis]] · [[real-time-simulation]]
+## 相关方法
+- [[vector-fitting|矢量拟合]] - 频响有理函数拟合
+- [[passivity-enforcement|无源性强制]] - 模型无源性保证
+- [[state-space-method|状态空间法]] - 频变状态空间实现
+- [[prony-analysis|Prony分析]] - 时域模态参数辨识
+- [[model-order-reduction|模型降阶方法]] - 高阶模型压缩
+
+## 相关模型
+- [[fdne-model|频变网络等值(FDNE)]] - 外部网络宽频等值
+- [[transmission-line-model|输电线路模型]] - 频变线路建模
+- [[cable-model|电缆模型]] - 频变电缆建模
+- [[transformer-model|变压器模型]] - 宽频变压器模型
+- [[grounding-system-model|接地系统模型]] - 频变接地建模
+
+## 相关主题
+- [[network-equivalent|网络等值]] - 系统级频变等值
+- [[harmonic-analysis|谐波分析]] - 宽频谐波建模
+- [[real-time-simulation|实时仿真]] - 频变模型实时实现
+- [[co-simulation|混合仿真]] - 多域频变接口
+- [[wideband-modeling|宽频建模方法]] - 全频段统一建模
 
 ## 论文方法分析
 > 基于 52 篇相关论文的深度内容分析生成

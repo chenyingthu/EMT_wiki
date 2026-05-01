@@ -56,9 +56,18 @@ created: "2026-04-13"
 - [[state-space-method]]
 - [[fixed-admittance]]
 
+## 相关模型
+- [[pmsm-model|PMSM模型]] - 永磁同步发电机对比
+- [[induction-machine-model|感应电机]] - 异步电机基础模型
+- [[wind-farm-modeling|风电场建模]] - 风电场等值聚合
+- [[mmc-model|MMC模型]] - 风电MMC并网
+- [[vsc-model|VSC模型]] - 机侧/网侧换流器
+
 ## 相关主题
 - [[wind-farm-modeling]]
 - [[real-time-simulation]]
+- [[co-simulation]]
+- [[network-equivalent]]
 
 
 ## 论文方法分析

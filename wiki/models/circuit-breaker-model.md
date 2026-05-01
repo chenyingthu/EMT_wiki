@@ -243,12 +243,25 @@ $$P_{restrike} = \begin{cases}
 | Cassie-Mayr Arc Model Parameter Identification | 2018 | Cassie-Mayr模型参数辨识 |
 | Vacuum Circuit Breaker Transient Recovery Voltage | 2019 | 真空断路器TRV分析 |
 
-## 7. 相关主题
+## 相关方法
+- [[numerical-integration|数值积分]] - 电弧动态方程离散化
+- [[state-space-method|状态空间法]] - 断路器状态建模
+- [[frequency-dependent-modeling|频率相关建模]] - TRV宽频分析
+- [[interpolation-method|插值方法]] - 电弧特性插值
+- [[nodal-analysis|节点分析]] - 断路器节点处理
 
-- 保护继电器 - 继电保护配合
-- 开关暂态 - 操作过电压
-- 消弧技术 - 灭弧技术
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - 线路TRV特性
+- [[transformer-model|变压器模型]] - 变压器保护配合
+- [[surge-arrester-model|避雷器模型]] - 过电压保护配合
+- [[load-model|负荷模型]] - 负荷电流开断特性
+- [[inductor-model|电感模型]] - 小电感电流开断
+
+## 相关主题
+- [[harmonic-analysis|谐波分析]] - 开断过程谐波
+- [[ferroresonance|铁磁谐振]] - 铁磁谐振与开断
+- [[real-time-simulation|实时仿真]] - 断路器实时仿真
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建*
+*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*

@@ -502,6 +502,25 @@ AC Grid ←→ AC/DC ↔ DC Bus ↔ DC/DC ↔ EV Charging
 | A review on protection of meshed multi-terminal HVDC systems | 2021 | 网状MTDC系统保护技术综述 |
 | Impedance-based stability analysis of multi-terminal cascaded hybrid HVDC | 2025 | 多端口级联混合HVDC的阻抗稳定性分析 |
 
+## 相关方法
+- [[average-value-model|平均值模型]] - MTDC平均值简化
+- [[state-space-method|状态空间法]] - MTDC状态空间建模
+- [[droop-control-model|下垂控制]] - 直流电压下垂控制
+- [[multirate-method|多速率方法]] - 多换流站多速率仿真
+
+## 相关模型
+- [[mmc-model|MMC模型]] - MMC-MTDC核心设备
+- [[vsc-model|VSC模型]] - VSC-MTDC两电平换流器
+- [[lcc-model|LCC模型]] - LCC-MTDC传统HVDC
+- [[cable-model|电缆模型]] - 直流电缆建模
+
+## 相关主题
+- [[vsc-hvdc]] - 柔性直流输电
+- [[co-simulation]] - MTDC多域混合仿真
+- [[real-time-simulation]] - MTDC实时仿真
+- [[network-equivalent]] - MTDC网络等值
+- [[parallel-computing]] - MTDC并行计算
+
 ---
 
 *本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*

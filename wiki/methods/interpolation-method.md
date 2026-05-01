@@ -59,9 +59,19 @@ created: "2026-04-14"
 - [[numerical-integration]]
 - [[nodal-analysis]]
 
+## 相关模型
+
+- [[mmc-model|MMC模型]] - 子模块开关时刻精确插值建模
+- [[vsc-model|VSC模型]] - PWM变流器开关插值应用
+- [[igbt-model|IGBT模型]] - 强制换流器件插值处理
+- [[transmission-line-model|输电线路模型]] - 波过程插值计算
+- [[transformer-model|变压器模型]] - 饱和特性插值建模
+
 ## 相关主题
-- [[co-simulation]]
-- [[real-time-simulation]]
+- [[co-simulation|混合仿真]] - 多子系统接口插值同步
+- [[real-time-simulation|实时仿真]] - 固定步长下的插值应用
+- [[multirate-method|多速率方法]] - 不同步长系统的插值协调
+- [[numerical-integration|数值积分]] - 插值与积分方法的结合
 
 ## 来源论文
 

@@ -239,3 +239,20 @@ $$
 - [[university-manitoba]]
 - [[atp-emtp]]
 - [[pscad-emtdc]]
+
+## 相关方法
+- [[vector-fitting|矢量拟合]] - 宽频参数有理函数拟合的核心方法
+- [[passivity-enforcement|无源性强制]] - 保证频域模型时域稳定性
+- [[nodal-analysis|节点分析]] - Dommel型电磁暂态求解基础
+- [[state-space-method|状态空间法]] - 多端口网络等值实现
+
+## 相关模型
+- [[transformer-model|变压器模型]] - 白盒/黑盒变压器宽频建模
+- [[cable-model|电缆模型]] - 地下电缆频变参数模型
+- [[transmission-line-model|输电线路模型]] - 频变线路Jmarti/Noda模型
+- [[fdne-model|FDNE模型]] - 频变网络等值与外部系统降阶
+
+## 相关主题
+- [[network-equivalent|网络等值]] - 外部网络降阶与等值技术
+- [[real-time-simulation|实时仿真]] - 并行仿真与实时求解
+- [[co-simulation|协同仿真]] - 多物理场与多速率协同

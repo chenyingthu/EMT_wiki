@@ -385,23 +385,26 @@ end
 | 系统级稳定性 | 平均值模型 | 大步长可行 |
 | 实时仿真 | 简化等效 | 实时性要求 |
 
-## 6. 相关主题与链接
+## 相关方法
+- [[vector-fitting|矢量拟合]] - 频变参数辨识
+- [[fixed-admittance|恒导纳模型]] - 高效变压器仿真
+- [[state-space-method|状态空间法]] - 变压器状态空间实现
+- [[frequency-dependent-modeling|频率相关建模]] - 宽频变压器建模
+- [[nodal-analysis|节点分析]] - 变压器节点导纳矩阵
 
-### 6.1 相关模型
+## 相关模型
 - [[transformer-model|变压器模型]] - 通用变压器建模方法
 - [[mmc-model|MMC模型]] - 换流阀详细模型
 - [[vsc-model|VSC模型]] - 电压源换流器模型
 - [[lcc-model|LCC模型]] - 线路换相换流器模型
+- [[transmission-line-model|输电线路模型]] - HVDC连接线路
 
-### 6.2 相关方法
-- [[vector-fitting|矢量拟合]] - 频变参数辨识
-- [[fixed-admittance|恒导纳模型]] - 高效变压器仿真
-- [[state-space-method|状态空间法]] - 变压器状态空间实现
-
-### 6.3 相关主题
-- [[vsc-hvdc|VSC-HVDC]] - 柔性直流输电系统
-- [[ferroresonance|铁磁谐振]] - 变压器铁磁谐振现象
-- [[harmonic-analysis|谐波分析]] - 换流变压器谐波负载
+## 相关主题
+- [[vsc-hvdc]] - 柔性直流输电系统
+- [[ferroresonance]] - 变压器铁磁谐振现象
+- [[harmonic-analysis]] - 换流变压器谐波负载
+- [[real-time-simulation]] - 变压器实时仿真
+- [[frequency-dependent-modeling]] - 频变建模应用
 
 ## 7. 来源论文
 

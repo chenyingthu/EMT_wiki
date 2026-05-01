@@ -276,6 +276,23 @@ graph TD
 | **HBDF2** | 2阶 | 混合阻尼 | 电力电子变拓扑，抑制虚假振荡 |
 | **变步长BDF** | 自适应 | 刚性稳定 | 长过程仿真，电机启动等 |
 
+## 相关方法
+- [[numerical-integration|数值积分]] - EMTP核心算法，梯形积分与后向欧拉法
+- [[nodal-analysis|节点分析]] - Dommel节点电导矩阵求解方法
+- [[state-space-method|状态空间法]] - 用于频变参数建模和传输线模型
+- [[vector-fitting|矢量拟合]] - 宽频网络等值参数拟合
+
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - 频变参数模型与模态分解
+- [[transformer-model|变压器模型]] - 饱和特性与J-A磁滞模型
+- [[synchronous-machine-model|同步电机模型]] - VBR/AVBR接口模型
+- [[vsc-model|VSC模型]] - 电压源换流器详细模型与平均值模型
+
+## 相关主题
+- [[real-time-simulation|实时仿真]] - FPGA实时仿真与硬件在环测试
+- [[network-equivalent|网络等值]] - 频变网络等值与外部系统降阶
+- [[co-simulation|协同仿真]] - 多速率仿真与电磁-机电混合仿真
+
 ---
 
 **参考文献**：本文档技术细节基于所提供的116篇EMTP相关论文数据，涵盖1960年代经典理论至2025年最新进展，包括Polytechnique Montreal的EMTP-RV开发团队、IEEE Transactions on Power Delivery及EMTP社区的核心研究成果。

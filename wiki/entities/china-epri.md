@@ -259,6 +259,12 @@ created: "2026-04-29"
 - [[ieee|IEEE]]
 - [[cigre|CIGRE]]
 
+## 相关模型
+- [[mmc-model|MMC模型]] - 中国电科院开发的模块化多电平换流器模型，用于特高压柔直工程
+- [[synchronous-machine-model|同步电机模型]] - 详细的同步发电机模型，用于特高压交流系统仿真
+- [[fdne-model|FDNE模型]] - 频变网络等值模型，用于大规模系统降阶等值
+- [[dfig-model|DFIG模型]] - 双馈风机模型，用于大规模新能源并网仿真
+
 ## 相关方法
 - [[mmc-model]]
 - [[fdne-model]]

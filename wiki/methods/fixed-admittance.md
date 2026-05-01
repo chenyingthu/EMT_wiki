@@ -49,14 +49,24 @@ $$
 | [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State-Variables-Elimination-Based EMTP-Type Constant-Admittance Equivalent Model]] | 2024 | 通过状态变量消元构造恒导纳等效。 |
 | [[unified-high-speed-emt-equivalent-and-implementation-method-of-mmcs-with-single-|Unified high-speed EMT equivalent and implementation method of MMCs]] | 2024 | 将恒定矩阵思想用于 MMC 高速等效。 |
 
-## 相关页面
+## 相关方法
+- [[nodal-analysis|节点分析法]] - 恒导纳模型的求解框架
+- [[numerical-integration|数值积分]] - 决定伴随导纳形式
+- [[switch-modeling|开关建模方法]] - 恒导纳开关等效
+- [[sparse-matrix-solver|稀疏矩阵求解]] - 固定矩阵的重复利用
+- [[interpolation-method|插值方法]] - 开关时刻精度修正
+- [[fpga-real-time-simulation|FPGA实时仿真]] - 恒导纳的实时应用
 
-- [[nodal-analysis|节点分析法]]
-- [[numerical-integration|数值积分]]
-- [[state-space-method|状态空间法]]
-- [[average-value-model|平均值模型]]
-- [[models/mmc-model|MMC 模型]]
-- [[topics/real-time-simulation|实时仿真]]
+## 相关模型
+- [[mmc-model|MMC 模型]] - 恒导纳的主要应用场景
+- [[vsc-model|VSC 模型]] - VSC桥臂恒导纳等效
+- [[igbt-model|IGBT 模型]] - 开关器件恒导纳模型
+- [[converter-transformer-model|换流变压器]] - 变压器恒导纳接口
+
+## 相关主题
+- [[real-time-simulation|实时仿真]] - 恒导纳的主要应用场景
+- [[parallel-computing|并行计算]] - 固定矩阵利于并行化
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]] - 恒导纳用于混合接口
 
 ## 技术演进脉络
 

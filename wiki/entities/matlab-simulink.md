@@ -322,3 +322,9 @@ measurement = read(udp_socket, 10);
 - [[vsc-hvdc]]
 - [[parallel-computing]]
 - [[co-simulation]]
+
+## 相关模型
+- [[vsc-model|VSC模型]] - 电压源换流器控制系统建模
+- [[mmc-model|MMC模型]] - 模块化多电平换流器控制与调制
+- [[dfig-model|DFIG模型]] - 双馈感应风机控制模型
+- [[synchronous-machine-model|同步电机模型]] - 电机驱动与发电机控制

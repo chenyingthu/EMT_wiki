@@ -44,20 +44,22 @@ created: "2026-04-14"
 - 航空航天
 
 ## 相关方法
-- [[state-space-method]]
-- [[fixed-admittance]]
-- [[average-value-model]]
-
-## 相关主题
-- [[real-time-simulation]]
-- [[frequency-dependent-modeling]]
-- [[co-simulation]]
-- [[network-equivalent]]
+- [[state-space-method|状态空间法]] - PMSM状态空间建模
+- [[fixed-admittance|恒导纳模型]] - 电机驱动恒导纳实现
+- [[average-value-model|平均值模型]] - 变流器平均值等效
+- [[numerical-integration|数值积分]] - 电机动态方程离散化
 
 ## 相关模型
-- [[synchronous-machine-model]]
-- [[vsc-model]]
-- [[dfig-model]]
+- [[synchronous-machine-model|同步电机模型]] - 电励磁同步机对比
+- [[vsc-model|VSC模型]] - 机侧/网侧换流器建模
+- [[dfig-model|DFIG模型]] - 双馈风机对比
+- [[induction-machine-model|感应电机模型]] - 异步电机对比
+
+## 相关主题
+- [[real-time-simulation|实时仿真]] - PMSM实时仿真
+- [[frequency-dependent-modeling|频率相关建模]] - 电机宽频特性
+- [[co-simulation|混合仿真]] - 多域协同仿真
+- [[network-equivalent|网络等值]] - 风电场等值聚合
 
 
 ## 论文方法分析

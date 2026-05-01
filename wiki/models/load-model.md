@@ -196,11 +196,41 @@ $$H_{eq} = \frac{\sum H_i S_i}{\sum S_i}$$
 | Induction Motor Load Modeling | 2017 | 感应电机负荷建模 |
 | Composite Load Modeling for Transient Analysis | 2018 | 综合负荷暂态分析建模 |
 
-## 7. 相关主题
+## 7. 相关方法
+- [[numerical-integration|数值积分]] - 负荷动态方程离散化
+- [[state-space-method|状态空间法]] - 感应电机负荷状态分析
+- [[average-value-model|平均值模型]] - 电力电子负荷等效
+- [[fixed-admittance|恒导纳模型]] - ZIP负荷恒导纳实现
 
-- [[induction-machine-model|感应电机模型]] - 主要动态负荷
-- ZIP负荷 - 静态负荷建模
-- 需求响应 - 可控负荷
+## 8. 相关模型
+- [[induction-machine-model|感应电机模型]] - 主要动态负荷组成
+- [[transformer-model|变压器模型]] - 负荷侧变压器
+- [[transmission-line-model|输电线路模型]] - 供电线路建模
+- [[synchronous-machine-model|同步电机模型]] - 电源侧动态特性
+
+## 9. 相关主题
+- [[real-time-simulation|实时仿真]] - 负荷实时仿真
+- [[harmonic-analysis|谐波分析]] - 非线性负荷谐波
+- 电压稳定 - 负荷电压特性分析
+- 需求响应 - 可控负荷管理
+
+## 相关方法
+- [[numerical-integration|数值积分]] - 负荷动态方程离散化
+- [[state-space-method|状态空间法]] - 感应电机负荷状态分析
+- [[average-value-model|平均值模型]] - 电力电子负荷等效
+- [[fixed-admittance|恒导纳模型]] - ZIP负荷恒导纳实现
+
+## 相关模型
+- [[induction-machine-model|感应电机模型]] - 主要动态负荷组成
+- [[transformer-model|变压器模型]] - 负荷侧变压器
+- [[transmission-line-model|输电线路模型]] - 供电线路建模
+- [[synchronous-machine-model|同步电机模型]] - 电源侧动态特性
+
+## 相关主题
+- 电压稳定 - 负荷电压特性分析
+- 可控负荷管理 - 需求侧响应
+- [[harmonic-analysis|谐波分析]] - 非线性负荷谐波
+- [[real-time-simulation|实时仿真]] - 负荷实时仿真
 
 ---
 

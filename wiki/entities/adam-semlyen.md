@@ -249,6 +249,12 @@ Adam Semlyen的学术影响体现在：
 - [[gole|A.M. Gole]]
 - [[ieee|IEEE]]
 
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - Semlyen研究的频变输电线路模型，为矢量拟合提供应用场景
+- [[cable-model|电缆模型]] - 电缆频变参数建模，矢量拟合算法的重要应用领域
+- [[fdne-model|FDNE模型]] - 频变网络等值模型，基于矢量拟合的宽频等值方法
+- [[transformer-model|变压器模型]] - 变压器宽频模型，Semlyen频域分析方法的应用对象
+
 ## 相关方法
 - [[vector-fitting]]
 - [[frequency-dependent-modeling]]

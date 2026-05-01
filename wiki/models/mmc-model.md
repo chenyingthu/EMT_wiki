@@ -60,10 +60,19 @@ created: "2026-04-13"
 - [[state-space-method]]
 - [[dynamic-phasor]]
 
+## 相关模型
+- [[vsc-model|VSC模型]] - 两电平/三电平换流器对比
+- [[fdne-model|频变网络等值(FDNE)]] - MMC外部网络等值
+- [[transformer-model|换流变压器]] - MMC换流变建模
+- [[cable-model|电缆模型]] - 直流电缆连接
+- [[mtdc-model|MTDC模型]] - 多端MMC系统
+
 ## 相关主题
 - [[vsc-hvdc]]
 - [[real-time-simulation]]
 - [[co-simulation]]
+- [[frequency-dependent-modeling]]
+- [[parallel-computing]]
 
 
 ## 论文方法分析

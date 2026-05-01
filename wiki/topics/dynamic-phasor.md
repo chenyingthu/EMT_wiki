@@ -47,8 +47,24 @@ $$
 ## 验证共识
 验证通常采用全 EMT、实验或基准系统波形对比，关注目标频率分量、包络动态、暂态峰值和计算时间。共识是动态相量可在合适频谱假设下显著降低求解负担，但必须公开截断策略、步长、频率偏移处理和接口映射误差，否则“高效”结论不可迁移。
 
-## 相关页面
-[[co-simulation]] · [[harmonic-analysis]] · [[frequency-dependent-modeling]] · [[real-time-simulation]] · [[multirate-method]] · [[numerical-integration]] · [[mmc-model]] · [[vsc-model]]
+## 相关方法
+- [[numerical-integration|数值积分]] - 动态相量频率匹配积分
+- [[state-space-method|状态空间法]] - 相量域状态空间建模
+- [[average-value-model|平均值模型]] - 开关周期平均化
+- [[multirate-method|多速率方法]] - 相量-时域多速率接口
+
+## 相关模型
+- [[mmc-model|MMC模型]] - MMC动态相量建模
+- [[vsc-model|VSC模型]] - VSC动态相量简化
+- [[transformer-model|变压器模型]] - 变压器相量域建模
+- [[transmission-line-model|输电线路模型]] - 线路相量域接口
+
+## 相关主题
+- [[harmonic-analysis|谐波分析]] - 谐波相量域(HPD)建模
+- [[frequency-dependent-modeling|频率相关建模]] - 宽频移频相量
+- [[co-simulation|混合仿真]] - 动态相量接口
+- [[real-time-simulation|实时仿真]] - 动态相量实时实现
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]] - TS-EMT相量接口
 
 ## 论文方法分析
 > 基于 37 篇相关论文的深度内容分析生成

@@ -41,8 +41,26 @@ $$
 ## 验证共识
 实时仿真验证不只看波形精度，还要证明 deadline 可满足。常见证据包括与离线 EMT/商业软件/实验波形对比、硬件在环闭环测试、单步执行时间、最坏情况延迟、资源占用和长时间稳定运行记录。
 
-## 相关页面
-[[parallel-computing]] · [[co-simulation]] · [[frequency-dependent-modeling]] · [[multirate-method]] · [[fixed-admittance]] · [[state-space-method]] · [[rtds]] · [[pscad-emtdc]]
+## 相关方法
+- [[fixed-admittance|恒导纳模型]] - 避免矩阵重分解的实时优化
+- [[state-space-method|状态空间法]] - 快速状态空间求解
+- [[multirate-method|多速率方法]] - 实时多速率调度
+- [[numerical-integration|数值积分]] - 实时稳定积分方法
+- [[interpolation-method|插值方法]] - 实时接口数据同步
+
+## 相关模型
+- [[mmc-model|MMC模型]] - MMC实时等效建模
+- [[vsc-model|VSC模型]] - 换流器实时仿真
+- [[fdne-model|频变网络等值(FDNE)]] - 外部系统实时等值
+- [[transmission-line-model|输电线路模型]] - 行波模型实时实现
+
+## 相关主题
+- [[parallel-computing|并行计算]] - 多核/FPGA实时并行
+- [[co-simulation|混合仿真]] - 实时协同仿真
+- [[frequency-dependent-modeling|频率相关建模]] - 频变模型实时实现
+- [[fpga-real-time-simulation|FPGA实时仿真]] - 硬件级实时加速
+- [[gpu-accelerated-simulation|GPU加速仿真]] - GPU实时计算
+- [[hil-simulation|硬件在环仿真]] - HIL实时测试
 
 ## 论文方法分析
 > 基于 52 篇相关论文的深度内容分析生成

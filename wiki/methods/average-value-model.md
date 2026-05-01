@@ -53,14 +53,24 @@ $$
 | [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt|Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMT]] | 2023 | 面向 VSC 的直接接口 AVM。 |
 | [[numerically-efficient-average-value-model-for-voltage-source-converters-in-nodal|Numerically Efficient Average-Value Model for Voltage-Source Converters in Nodal Analysis]] | 2024 | 将 VSC AVM 写成适合节点求解的扩展等效导纳形式。 |
 
-## 相关页面
+## 相关方法
+- [[switching-function|开关函数法]] - AVM的开关函数基础
+- [[state-space-method|状态空间法]] - AVM的状态空间实现
+- [[fixed-admittance|恒导纳模型]] - 与AVM互补的高效建模方法
+- [[multirate-method|多速率方法]] - AVM用于多速率接口
+- [[dynamic-phasor|动态相量法]] - 与AVM类似的平均化方法
+- [[model-order-reduction|模型降阶方法]] - 与AVM协同降低复杂度
 
-- [[models/vsc-model|VSC 模型]]
-- [[models/mmc-model|MMC 模型]]
-- [[topics/vsc-hvdc|VSC-HVDC]]
-- [[state-space-method|状态空间法]]
-- [[fixed-admittance|恒导纳模型]]
-- [[topics/dynamic-phasor|动态相量]]
+## 相关模型
+- [[vsc-model|VSC 模型]] - AVM的主要应用对象
+- [[mmc-model|MMC 模型]] - MMC-AVM增强模型
+- [[lcc-model|LCC 模型]] - 电网换相换流器AVM
+- [[dfig-model|DFIG 模型]] - 风电变流器AVM
+
+## 相关主题
+- [[vsc-hvdc|VSC-HVDC]] - AVM在柔直中的应用
+- [[real-time-simulation|实时仿真]] - AVM的实时实现
+- [[co-simulation|混合仿真]] - AVM用于机电-电磁混合
 
 ## 技术演进脉络
 

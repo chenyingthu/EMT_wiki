@@ -42,8 +42,25 @@ $$
 ## 验证共识
 该主题的验证以仿真对比为主，常见基准包括全 EMT、PSCAD/EMTDC、机电暂态程序、实时仿真平台或硬件在环结果。论文通常报告波形一致性、接口暂态误差、计算效率和强扰动响应；但跨论文缺少统一公开基准，原页面/来源汇总未给出可直接比较的标准数据集。
 
-## 相关页面
-[[dynamic-phasor]] · [[frequency-dependent-modeling]] · [[parallel-computing]] · [[real-time-simulation]] · [[multirate-method]] · [[network-equivalent]] · [[fdne-model]]
+## 相关方法
+- [[multirate-method|多速率方法]] - 子系统差异化步长协同
+- [[vector-fitting|矢量拟合]] - 接口频变网络等值
+- [[passivity-enforcement|无源性强制]] - 等值模型稳定性保证
+- [[state-space-method|状态空间法]] - 多域状态空间接口
+- [[average-value-model|平均值模型]] - 多尺度模型切换
+
+## 相关模型
+- [[fdne-model|频变网络等值(FDNE)]] - 外部系统宽频等值
+- [[synchronous-machine-model|同步电机模型]] - 机电侧等值模型
+- [[mmc-model|MMC模型]] - 电磁侧详细模型
+- [[vsc-model|VSC模型]] - 换流器接口模型
+
+## 相关主题
+- [[dynamic-phasor|动态相量法]] - 跨域动态相量接口
+- [[frequency-dependent-modeling|频率相关建模]] - 宽频混合建模
+- [[real-time-simulation|实时仿真]] - 实时协同仿真
+- [[parallel-computing|并行计算]] - 多求解器并行协同
+- [[network-equivalent|网络等值]] - 系统分割与等值
 
 ## 论文方法分析
 > 基于 46 篇相关论文的深度内容分析生成

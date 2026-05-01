@@ -58,7 +58,7 @@ sources: ["EMT_Doc/13&14/files/A novel distance protection algorithm in frequenc
 
 ## 使用的方法
 
-- [[参数辨识|参数辨识]]
+- [[parameter-identification|参数辨识]]
 - [[矩阵束算法|矩阵束算法]]
 - [[频域分析|频域分析]]
 - [[相模变换|相模变换]]

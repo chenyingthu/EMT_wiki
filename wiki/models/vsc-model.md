@@ -63,10 +63,19 @@ created: "2026-04-13"
 - [[fixed-admittance]]
 - [[dynamic-phasor]]
 
+## 相关模型
+- [[mmc-model|MMC模型]] - MMC与VSC拓扑对比
+- [[lcc-model|LCC模型]] - 传统HVDC换流器对比
+- [[fdne-model|频变网络等值(FDNE)]] - VSC外部网络等值
+- [[pll-model|锁相环模型]] - VSC同步控制
+- [[pi-controller-model|PI控制器]] - VSC电流/电压控制
+
 ## 相关主题
 - [[vsc-hvdc]]
 - [[mmc-model]]
 - [[real-time-simulation]]
+- [[frequency-dependent-modeling]]
+- [[harmonic-analysis]]
 
 
 ## 论文方法分析

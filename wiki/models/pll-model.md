@@ -234,11 +234,40 @@ end
 | SRF-PLL Performance Under Grid Faults | 2019 | 电网故障下SRF-PLL性能分析 |
 | DSOGI-PLL Design for Weak Grid | 2020 | 弱电网DSOGI-PLL设计 |
 
-## 7. 相关主题
+## 6. 相关主题与链接
 
+### 6.1 相关模型
+- [[gfl-inverter-model|跟网型变流器]] - 并网逆变器控制
+- [[vsc-model|VSC模型]] - 电压源变换器
+- [[coordinate-transformation-model|坐标变换模型]] - dq变换实现
+- [[pi-controller-model|PI控制器]] - 锁相环PI参数设计
+
+### 6.2 相关方法
+- [[numerical-integration|数值积分]] - 相位角积分计算
+- [[state-space-method|状态空间法]] - PLL小信号分析
+- [[frequency-dependent-modeling|频率相关建模]] - 频率自适应
+
+### 6.3 相关主题
 - 逆变器控制 - 并网控制策略
 - 电网同步 - 同步技术对比
 - 电能质量 - 谐波与不平衡
+
+## 相关方法
+- [[numerical-integration|数值积分]] - 相位角离散积分
+- [[state-space-method|状态空间法]] - 小信号稳定性分析
+- [[average-value-model|平均值模型]] - 系统级PLL简化
+
+## 相关模型
+- [[vsc-model|VSC模型]] - 并网换流器PLL应用
+- [[coordinate-transformation-model|坐标变换]] - dq变换基础
+- [[pi-controller-model|PI控制器]] - 锁相环核心算法
+- [[vector-control-model|矢量控制]] - 同步坐标系应用
+
+## 相关主题
+- 电网同步方法 - 并网技术
+- 电能质量分析 - 谐波与不平衡适应
+- 微电网技术 - 孤岛/并网切换
+- [[real-time-simulation|实时仿真]] - PLL实时实现
 
 ---
 

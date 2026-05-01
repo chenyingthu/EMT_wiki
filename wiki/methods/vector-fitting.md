@@ -103,6 +103,25 @@ created: "2026-04-13"
 
 该方法适用于线性或线性化端口频响、测量阻抗/导纳曲线和频率相关参数表。若对象包含强饱和、开关限幅或控制器非线性，VF 只能描述选定工作点附近的小信号行为；若频段、采样密度或初始极点选择不足，拟合曲线看似平滑也可能在时域卷积中产生虚假振荡。
 
+## 相关方法
+- [[parameter-identification|参数辨识]] - 频域响应参数提取的核心算法
+- [[prony-analysis|Prony分析]] - 时域信号分解的对比方法
+- [[passivity-enforcement|无源性强制]] - 保证拟合模型无源性的后处理
+- [[state-space-method|状态空间法]] - VF模型的状态空间实现
+- [[wideband-modeling|宽频建模方法]] - VF在宽频建模中的应用
+- [[model-order-reduction|模型降阶方法]] - 降低VF模型阶数的技术
+
+## 相关模型
+- [[fdne-model|FDNE模型]] - VF的主要应用对象
+- [[transmission-line-model|输电线路模型]] - 线路宽频参数拟合
+- [[transformer-model|变压器模型]] - 变压器频响拟合
+- [[cable-model|电缆模型]] - 电缆宽频建模
+
+## 相关主题
+- [[frequency-dependent-modeling|频率相关建模]] - VF的应用背景
+- [[network-equivalent|网络等值]] - 大规模系统等值
+- [[real-time-simulation|实时仿真]] - VF模型的实时实现约束
+
 ## 代表性来源与内部链接
 
 代表性来源包括 [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del|Rational approximation of frequency domain responses by vector fitting]]、[[fast-realization-of-the-modal-vector-fitting|Fast Realization of the Modal Vector Fitting]]、[[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin|Review and comparison of frequency-domain curve-fitting techniques]]、[[transient-analysis-on-multiphase-transmission-line-above-lossy-ground-combining-|Transient Analysis on Multiphase Transmission Line Above Lossy Ground]] 和 [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation for frequency-dependent network equivalents]]。阅读顺序可从 [[frequency-dependent-modeling|频率相关建模]] 进入，再连接到 [[network-equivalent|网络等值]]、[[prony-analysis|Prony 分析]]、[[passivity-enforcement|无源性强制]] 和 [[rtds|RTDS]] 实时实现约束。

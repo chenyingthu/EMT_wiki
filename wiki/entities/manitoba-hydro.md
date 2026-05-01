@@ -33,6 +33,23 @@ Manitoba Hydro International 在本 wiki 中代表 PSCAD/EMTDC 工程生态、Ne
 - [[university-manitoba]]
 - [[pscad-emtdc]]
 
+## 相关方法
+- [[average-value-model|平均值模型]] - HVDC换流器平均值建模
+- [[numerical-integration|数值积分]] - 电磁暂态仿真数值方法
+- [[interpolation-method|插值方法]] - 开关动作插值算法
+- [[multirate-method|多速率方法]] - 多速率协同仿真技术
+
+## 相关模型
+- [[lcc-model|LCC模型]] - 电网换相换流器详细模型
+- [[transmission-line-model|输电线路模型]] - 直流输电线路Bergeron模型
+- [[vsc-model|VSC模型]] - 电压源换流器控制保护模型
+- [[mmc-model|MMC模型]] - 模块化多电平换流器模型
+
+## 相关主题
+- [[real-time-simulation|实时仿真]] - RTDS硬件在环实时仿真
+- [[co-simulation|协同仿真]] - 混合实时仿真与多速率接口
+- [[network-equivalent|网络等值]] - 大规模系统动态等值与降阶
+
 ## 深度增强内容
 
  基于提供的论文数据，Manitoba Hydro International作为PSCAD/EMTDC的开发者与Nelson River复杂多馈入HVDC系统的运营商，其技术实践代表了大规模电磁暂态实时仿真的前沿水平。以下为针对该机构技术特色的深度增强内容，聚焦于**大规模混合实时仿真与多馈入HVDC系统建模**这一主题。

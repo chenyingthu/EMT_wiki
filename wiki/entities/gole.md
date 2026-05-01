@@ -73,6 +73,12 @@ $$
 - [[fdne-model]]
 - [[transmission-line-model]]
 
+## 相关主题
+- [[real-time-simulation|实时仿真]] - 大规模系统实时仿真与硬件在环测试
+- [[co-simulation|混合仿真]] - 详细EMT子系统与外部大系统的联合仿真
+- [[network-equivalent|网络等值]] - 多端口外部网络降阶与等值建模
+- [[vsc-hvdc|VSC-HVDC]] - 电压源换流器HVDC的EMT建模与控制
+
 ## 相关论文
 
 | 论文 | 年份 |

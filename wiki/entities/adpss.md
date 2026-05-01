@@ -319,6 +319,12 @@ ADPSS涵盖机电暂态仿真、电磁暂态仿真、中长期动态仿真等多
 - [[university-manitoba|曼尼托巴大学]]
 - [[tsinghua-university|清华大学]]
 
+## 相关模型
+- [[synchronous-machine-model|同步电机模型]] - ADPSS中详细的同步发电机dq0轴模型
+- [[dfig-model|DFIG模型]] - 双馈感应风机模型，用于大规模风电场仿真
+- [[pmsm-model|PMSM模型]] - 直驱永磁同步风机模型，新能源并网仿真核心模型
+- [[mmc-model|MMC模型]] - 模块化多电平换流器模型，用于柔直和直流电网仿真
+
 ## 相关方法
 - [[state-space-method|状态空间法]]
 - [[numerical-integration|数值积分]]

@@ -48,6 +48,14 @@ created: "2026-04-13"
 
 在 [[fdne-model|FDNE]]、[[transmission-line-model|输电线路模型]]、[[cable-model|电缆模型]] 和 [[transformer-model|变压器模型]] 中，审计应同时检查拟合误差、无源性判据和接入 EMT 后的时域稳定性。若只报告频域曲线吻合，仍不足以证明模型在 [[emtp|EMTP]]、[[pscad-emtdc|PSCAD/EMTDC]] 或 [[rtds|RTDS]] 中可稳定使用。
 
+## 相关模型
+
+- [[transmission-line-model|输电线路模型]] - 宽频线路无源性强制
+- [[cable-model|电缆模型]] - 电缆频变模型无源性处理
+- [[transformer-model|变压器模型]] - 变压器频响模型无源性
+- [[fdne-model|FDNE模型]] - 频率相关网络等值无源性
+- [[grounding-system-model|接地系统模型]] - 接地阻抗宽频建模
+
 ## 相关方法
 - [[vector-fitting]]
 - [[state-space-method]]

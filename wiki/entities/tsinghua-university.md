@@ -195,3 +195,9 @@ created: "2026-04-29"
 - [[vsc-hvdc]]
 - [[wind-farm-modeling]]
 - [[co-simulation]]
+
+## 相关模型
+- [[mmc-model|MMC模型]] - 多电平换流器详细等效建模与大规模系统仿真
+- [[vsc-model|VSC模型]] - 电压源换流器控制策略与故障穿越建模
+- [[dfig-model|DFIG模型]] - 双馈感应风力发电机并网暂态模型
+- [[pmsm-model|PMSM模型]] - 永磁同步电机在新能源和柔直中的应用模型

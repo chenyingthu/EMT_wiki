@@ -202,18 +202,21 @@ $$
 | [[splitting-state-space-method-for-converter-integrated-power-systems-emt-simulati|Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulation]] | 2025 | 变流器集成电力系统的分裂状态空间求解 |
 
 ## 相关方法
-- [[nodal-analysis|节点分析法]]
-- [[numerical-integration|数值积分]]
-- [[average-value-model|平均值模型]]
-- [[fixed-admittance|恒导纳模型]]
-- [[multirate-method|多速率方法]]
-- [[vector-fitting|矢量拟合]]
+- [[small-signal-analysis|小信号分析]] - 状态空间线性化分析
+- [[parameter-identification|参数辨识]] - 状态空间参数提取
+- [[nodal-analysis|节点分析法]] - 网络方程求解框架
+- [[numerical-integration|数值积分]] - 状态空间离散化
+- [[average-value-model|平均值模型]] - 状态空间平均化建模
+- [[fixed-admittance|恒导纳模型]] - 伴随状态空间实现
+- [[multirate-method|多速率方法]] - 分区状态空间
+- [[vector-fitting|矢量拟合]] - 状态空间模型拟合
+- [[model-order-reduction|模型降阶方法]] - 状态空间降阶
 
 ## 相关模型
-- [[mmc-model|MMC模型]]
-- [[vsc-model|VSC模型]]
-- [[fdne-model|频变网络等值]]
-- [[synchronous-machine-model|同步电机模型]]
+- [[mmc-model|MMC模型]] - 模块化多电平换流器状态空间
+- [[vsc-model|VSC模型]] - 电压源换流器状态空间
+- [[fdne-model|频变网络等值]] - 宽频状态空间实现
+- [[synchronous-machine-model|同步电机模型]] - 电机状态空间
 
 ## 相关主题
 - [[vsc-hvdc|VSC-HVDC]]
@@ -225,16 +228,8 @@ $$
 
 | 论文 | 年份 |
 |------|------|
-| Linear State-Space Modeling of Modular Multilevel Converters | 2015 |
-| 线性开关电路电磁暂态分析的状态方程法 | 2016 |
-| 基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法 | 2019 |
-| 适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型 | 2019 |
-| A Comparative Study of Electromagnetic Transient Simulations using Companion Circuits | 2021 |
-| A Piecewise Generalized State Space Model of Power Converters | 2022 |
-| Alternative method to include the frequency-effect on transmission line parameters | 2023 |
-| A state-space approach for accelerated simulation of modular multilevel converters | 2025 |
-| Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulation | 2025 |
-
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
 ## 深度增强内容
 
 ### 1. 核心原理详解

@@ -260,3 +260,21 @@ $$
 - [[transmission-line-model]]
 - [[university-manitoba]]
 - [[manitoba-hydro]]
+
+## 相关方法
+- [[vector-fitting|矢量拟合]] - 用于ATP中宽频线路和变压器模型的有理函数逼近
+- [[nodal-analysis|节点分析]] - ATP核心求解方法，基于Dommel节点导纳矩阵
+- [[numerical-integration|数值积分]] - 梯形积分法，ATP电磁暂态求解的基础算法
+- [[interpolation-method|插值方法]] - 开关时刻插值算法，消除数值振荡的关键技术
+
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - ATP核心模型，支持Bergeron和Marti频变线路模型
+- [[transformer-model|变压器模型]] - 变压器宽频白盒/黑盒模型，用于铁磁谐振研究
+- [[lcc-model|LCC模型]] - 线路换相换流器模型，用于经典HVDC仿真
+- [[synchronous-machine-model|同步电机模型]] - 同步发电机暂态模型，用于稳定性分析
+
+## 相关主题
+- [[co-simulation|混合仿真]] - ATP与控制系统(TACS/MODELS)的协同仿真能力
+- [[real-time-simulation|实时仿真]] - ATP用于算法验证和教学，与实时仿真平台对比
+- [[harmonic-analysis|谐波分析]] - ATP支持的电力系统谐波和电能质量研究
+- [[frequency-dependent-modeling|频变建模]] - 频变线路和变压器模型在ATP中的实现

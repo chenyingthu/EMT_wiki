@@ -68,9 +68,17 @@ created: "2026-04-13"
 - [[state-space-method]]
 - [[nodal-analysis]]
 
+## 相关模型
+- [[induction-machine-model|感应电机模型]] - 同步机与异步机对比
+- [[vsc-model|VSC模型]] - 新能源并网接口
+- [[fdne-model|频变网络等值(FDNE)]] - 外部网络等值
+- [[transformer-model|变压器模型]] - 机端变压器
+
 ## 相关主题
 - [[co-simulation]]
 - [[network-equivalent]]
+- [[real-time-simulation]]
+- [[wind-farm-modeling]]
 
 
 ## 论文方法分析
