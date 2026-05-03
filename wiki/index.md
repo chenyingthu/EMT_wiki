@@ -2,7 +2,7 @@
 title: "EMT Wiki 索引"
 type: index
 created: 2026-04-13
-updated: 2026-04-30
+updated: 2026-05-03
 ---
 
 # EMT Wiki 索引
@@ -15,10 +15,11 @@ updated: 2026-04-30
 - 已分析：690 篇 (100%)
 - 来源页填充率：100% (核心贡献/使用的方法/涉及的模型/相关主题/主要发现 全部填充)
 - 深度增强：682/682 (100%)
-- 主题页：15
+- 主题页：34
 - 方法页：28
 - 模型页：38
 - 实体页：22
+- 测试系统：22
 - 来源页：682 个活跃来源页
 
 ## 主题 (Topics)
@@ -40,6 +41,26 @@ updated: 2026-04-30
 | [[switching-transient\|开关暂态]] | 断路器操作过电压、合闸电阻、重燃、预击穿 |
 | [[lightning-overvoltage\|雷电过电压]] | 直击雷、感应雷、避雷器、绝缘配合 |
 | [[transformer-modeling\|变压器建模]] | 饱和、励磁涌流、内部故障、白箱/黑箱模型 |
+| [[emt-mathematical-foundation\|EMT数学基础]] | 微分代数方程、节点法vs状态空间法、Laplace变换、数值稳定性 |
+| [[numerical-integration-methods\|数值积分方法]] | 梯形法、后向欧拉、Gear法、DIRK、指数积分器、步长选择 |
+| [[rotating-machine-modeling\|旋转电机建模]] | 同步电机、感应电机、Park变换、VBR模型、相域建模 |
+| [[emt-software-history\|EMT软件平台发展史]] | EMTP、PSCAD、ATP、RTDS、CloudPSS发展历程与技术演进 |
+| [[network-equation-solution\|网络方程求解]] | 节点导纳矩阵、开关处理、稀疏矩阵技术、直接/迭代法 |
+| [[transmission-line-modeling\|输电线路与电缆建模]] | Bergeron模型、频变线路、行波传播、宽频建模 |
+| [[mmc-modeling\|MMC建模]] | 详细开关模型、平均值模型、戴维南等效、自适应框架 |
+| [[electromechanical-electromagnetic-hybrid\|机电-电磁混合仿真]] | 接口技术、FDNE等值、多速率协同、实时仿真 |
+| [[transformer-modeling\|变压器建模]] | 铁芯饱和、磁滞、励磁涌流、宽频建模、内部故障 |
+| [[power-electronic-device-modeling\|电力电子设备建模]] | IGBT、MMC、VSC、开关建模、平均值模型、实时仿真 |
+| [[model-order-reduction\|模型降阶与动态等值]] | MOR、FDNE、戴维南等效、Kron消去、Brune综合 |
+| [[load-and-dg-modeling\|负荷与分布式电源建模]] | ZIP负荷、频率动态负荷、光伏、风电、储能 |
+| [[grounding-lightning-overvoltage\|接地防雷与过电压]] | 接地系统、频变接地、雷击、过电压保护 |
+| [[multirate-and-network-partitioning\|多速率与分网方法]] | MATE、时间/频域分区、端口分析、图划分 |
+| [[low-rank-and-efficient-solvers\|低秩近似与高效求解器]] | KLU、AMD排序、BTF、部分重分解 |
+| [[tools-comparison-guide\|工具对比与选择指南]] | 商业vs开源、离线vs实时、模型兼容性、选择决策 |
+| [[model-verification-benchmark\|模型验证与基准测试]] | CIGRE/IEEE标准、跨工具对比、误差评估、验证流程 |
+| [[microgrid-distribution-network\|微电网与配电网]] | 微电网控制、下垂控制、孤岛检测、配电网保护 |
+| [[wideband-oscillation-stability\|宽频振荡与稳定性]] | SSO/SSCI、阻抗判据、次同步振荡、新能源振荡 |
+| [[simulation-practice-guide\|仿真实践与工程指南]] | 方法选择、步长选择、收敛性、数值振荡抑制 |
 
 ## 方法 (Methods)
 
@@ -157,6 +178,33 @@ updated: 2026-04-30
 |------|------|
 | [[ieee]] | IEEE，电力系统标准制定与期刊发表（351次提及） |
 | [[cigre]] | CIGRE，国际大电网委员会，技术报告权威（28次提及） |
+
+## 测试系统 (Test Systems)
+
+| 页面 | 摘要 |
+|------|------|
+| [[ieee-14-bus-system\|IEEE 14节点系统]] | 小型教学测试系统，5台发电机，用于入门学习和算法验证 |
+| [[ieee-30-bus-system\|IEEE 30节点系统]] | 优化研究标准系统，6台发电机，最优潮流和电容器配置测试 |
+| [[ieee-39-bus-system\|IEEE 39节点系统]] | 新英格兰测试系统，10台发电机，暂态稳定分析标准 |
+| [[ieee-57-bus-system\|IEEE 57节点系统]] | 配电与输电混合系统，7台发电机，配电网分析常用 |
+| [[ieee-118-bus-system\|IEEE 118节点系统]] | 大规模系统，54台发电机，阻塞管理和电力市场研究 |
+| [[wscc-9-bus-system\|WSCC 9节点系统]] | 经典暂态稳定测试系统，3台发电机，Anderson教材标准算例 |
+| [[cigre-hvdc-benchmark\|CIGRE HVDC Benchmark]] | HVDC国际基准系统，1000MW/±500kV，LCC-HVDC模型验证标准 |
+| [[nordic-32-system\|Nordic 32系统]] | 北欧电力系统简化模型，20台发电机，长期电压稳定研究 |
+| [[vsc-hvdc-five-terminal\|VSC-HVDC五端测试系统]] | MTDC多端直流标准测试系统，5端VSC换流站，主从/下垂/电压裕度控制验证平台 |
+| [[mmc-21-level-hvdc\|MMC-HVDC 21电平系统]] | 中等规模MMC测试系统，400-500MW，学术界标准测试平台 |
+| [[mmc-41-level-hvdc\|MMC-HVDC 41电平系统]] | 中等规模MMC测试系统，640MW，EAVM验证标准平台 |
+| [[mmc-201-level-hvdc\|MMC-HVDC 201电平系统]] | 超大规模MMC测试系统，1000-3000MW，节点消去算法测试平台 |
+| [[dfig-wind-farm\|DFIG风电场]] | 双馈风电场测试系统，17/100台机组，风电并网与故障穿越研究 |
+| [[pmsg-offshore-wind-farm\|PMSG海上风电场]] | 永磁直驱海上风电场，5-10MW机组，全功率变流器测试平台 |
+| [[vsc-hvdc-two-terminal\|VSC-HVDC两端测试系统]] | 柔性直流标准测试系统，100-1000MW，点对点拓扑验证 |
+| [[luxi-back-to-back-mmc\|鲁西背靠背MMC]] | 中国首个超高压背靠背工程，±350kV/1000MW，4800+子模块 |
+| [[zhangbei-four-terminal-vsc\|张北四端柔性直流]] | 世界首个直流电网工程，±500kV/3000MW，新能源汇集 |
+| [[pv-inverter-test-system\|光伏逆变器测试系统]] | 光伏发电核心设备，3kW-5MW，MPPT/LVRT/孤岛检测测试平台 |
+| [[three-phase-grid-connected-converter\|三相并网变流器测试系统]] | 两电平/三电平/NPC/T型拓扑，LCL滤波器，锁相环同步，功率控制 |
+| [[virtual-synchronous-generator-converter\|虚拟同步机变流器测试系统]] | VSG控制策略，虚拟惯量/阻尼/励磁，构网型控制，惯量支撑能力测试 |
+| [[bess-converter-test-system\|储能变流器PCS测试系统]] | 双向DC/AC变换器，锂电池储能，SOC管理，调频/调峰/黑启动测试 |
+| [[statcom-svg-test-system\|STATCOM/SVG测试系统]] | 级联H桥拓扑，星形/三角形级联，无功补偿，电压支撑，谐波治理 |
 
 ## 来源 (Sources)
 
