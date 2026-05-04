@@ -63,7 +63,7 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 - [[牛顿-拉夫逊迭代|牛顿-拉夫逊迭代]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[伴随模型法|伴随模型法]]
-- [[混合仿真接口|混合仿真接口]]
+- [[topics/co-simulation|混合仿真接口]]
 
 ## 涉及的模型
 

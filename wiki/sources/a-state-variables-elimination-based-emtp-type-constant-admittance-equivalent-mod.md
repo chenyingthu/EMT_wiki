@@ -69,7 +69,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2025 - A State Variables Elimination-Based EMTP-T
 
 - [[topics/power-electronics|电力电子变换器]]
 - [[光伏电厂|光伏电厂]]
-- [[电力电子变压器|电力电子变压器]]
+- [[topics/power-electronics|电力电子变压器]]
 - [[models/mmc-model|模块化多电平换流器]]
 - [[models/vsc-model|电压源换流器]]
 

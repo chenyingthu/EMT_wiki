@@ -88,7 +88,7 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 - [[methods/multirate-method|多速率仿真]]
 - [[topics/dynamic-phasor|动态相量建模]]
 - [[逆变器型资源|逆变器型资源]]
-- [[网络解耦|网络解耦]]
+- [[topics/parallel-computing|网络解耦]]
 - [[自动初始化|自动初始化]]
 
 ## 主要发现

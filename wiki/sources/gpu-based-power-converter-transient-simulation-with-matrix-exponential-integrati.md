@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2020.106186.pdf.pdf"]
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[gpu加速|GPU加速]]
+- [[methods/gpu-accelerated-simulation|GPU加速]]
 - [[变流器建模|变流器建模]]
 - [[topics/wind-farm-modeling|风电场建模]]
 - [[内存管理|内存管理]]

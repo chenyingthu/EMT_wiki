@@ -61,7 +61,7 @@ sources: ["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagneti
 - [[dq0坐标变换|dq0坐标变换]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[戴维南等值|戴维南等值]]
-- [[混合仿真接口|混合仿真接口]]
+- [[topics/co-simulation|混合仿真接口]]
 - [[单台机等值|单台机等值]]
 
 ## 涉及的模型

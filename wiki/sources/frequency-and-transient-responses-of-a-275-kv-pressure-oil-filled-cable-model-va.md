@@ -63,7 +63,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Liu 等 - 2026 - Frequency and trans
 - [[methods/modal-analysis|模态分析]]
 - [[克罗恩降阶|克罗恩降阶]]
 - [[宽频电缆模型|宽频电缆模型]]
-- [[频变参数建模|频变参数建模]]
+- [[topics/frequency-dependent-modeling|频变参数建模]]
 
 ## 涉及的模型
 

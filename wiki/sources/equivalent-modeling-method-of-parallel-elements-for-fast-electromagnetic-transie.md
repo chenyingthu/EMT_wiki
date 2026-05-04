@@ -71,7 +71,7 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 - [[级联h桥型pet-chb-pet|级联H桥型PET(CHB-PET)]]
 - [[功率模块-pm|功率模块(PM)]]
 - [[h桥单元|H桥单元]]
-- [[高频隔离变压器|高频隔离变压器]]
+- [[models/transformer-model|高频隔离变压器]]
 - [[igbt-二极管开关组|IGBT-二极管开关组]]
 
 ## 相关主题
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 - [[topics/parallel-computing|并行计算]]
 - [[methods/average-value-model|等效建模]]
 - [[topics/parallel-computing|仿真加速]]
-- [[系统级仿真|系统级仿真]]
+- [[topics/large-scale-system-simulation|系统级仿真]]
 
 ## 主要发现
 

@@ -63,11 +63,11 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/numerical-integration|后向欧拉法]]
 - [[电路平均模型|电路平均模型]]
-- [[开关模型|开关模型]]
+- [[methods/switch-modeling|开关模型]]
 
 ## 涉及的模型
 
-- [[并网逆变器|并网逆变器]]
+- [[models/gfl-inverter-model|并网逆变器]]
 - [[半桥逆变器|半桥逆变器]]
 - [[逆变器桥臂等效电路|逆变器桥臂等效电路]]
 - [[pwm调制模型|PWM调制模型]]

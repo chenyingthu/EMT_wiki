@@ -67,7 +67,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2019.106030.pdf.pdf"]
 ## 涉及的模型
 
 - [[电池储能系统-bess|电池储能系统(BESS)]]
-- [[并网逆变器|并网逆变器]]
+- [[models/gfl-inverter-model|并网逆变器]]
 - [[topics/dynamic-phasor|锁相环(PLL)]]
 - [[功率电流双环控制器|功率电流双环控制器]]
 - [[滤波电路|滤波电路]]

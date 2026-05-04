@@ -58,7 +58,7 @@ sources: ["EMT_Doc/25/Zhou 等 - 2021 - Large-scale hybrid real time simulation 
 
 ## 使用的方法
 
-- [[实时数字仿真|实时数字仿真]]
+- [[topics/real-time-simulation|实时数字仿真]]
 - [[methods/hil-simulation|硬件在环仿真]]
 - [[模块化建模|模块化建模]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]

@@ -78,7 +78,7 @@ sources: ["EMT_Doc/02/Rupasinghe 等 - 2023 - A multi-solver framework for co-si
 - [[频率自适应仿真|频率自适应仿真]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/transient-stability-analysis|暂态稳定]]
-- [[网络分区|网络分区]]
+- [[topics/parallel-computing|网络分区]]
 
 ## 主要发现
 

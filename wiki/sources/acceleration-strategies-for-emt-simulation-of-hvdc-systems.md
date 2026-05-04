@@ -79,7 +79,7 @@ sources: ["EMT_Doc/05/Allabadi 等 - 2026 - Acceleration strategies for EMT Simu
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[多端直流输电-mtdc|多端直流输电(MTDC)]]
 - [[topics/parallel-computing|并行计算]]
-- [[离线仿真|离线仿真]]
+- [[topics/emt-simulation|离线仿真]]
 - [[控制系统加速|控制系统加速]]
 - [[混合加速策略|混合加速策略]]
 

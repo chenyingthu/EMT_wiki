@@ -59,8 +59,8 @@ sources: ["EMT_Doc/22/Zhu 等 - 2006 - Hybrid-model transient stability simulati
 ## 使用的方法
 
 - [[topics/dynamic-phasor|动态相量法]]
-- [[开关函数法|开关函数法]]
-- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[methods/switching-function-method|开关函数法]]
+- [[methods/nodal-analysis|牛顿-拉夫逊法]]
 - [[传统相量法|传统相量法]]
 
 ## 涉及的模型

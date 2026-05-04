@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Wang 等 - 2024 - Fixed-admittance S
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力电子实时仿真|电力电子实时仿真]]
-- [[fpga硬件加速|FPGA硬件加速]]
+- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
 - [[虚拟功率损耗抑制|虚拟功率损耗抑制]]
 - [[硬件资源复用|硬件资源复用]]
 

@@ -72,7 +72,7 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 - [[topics/distributed-generation|分布式电源]]
 - [[topics/power-electronics|电力电子变换器]]
 - [[基本电气元件|基本电气元件]]
-- [[交直流混合电网|交直流混合电网]]
+- [[topics/hybrid-acdc-network|交直流混合电网]]
 
 ## 相关主题
 

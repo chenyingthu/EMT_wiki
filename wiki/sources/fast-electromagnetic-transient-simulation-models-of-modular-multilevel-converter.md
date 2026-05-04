@@ -79,7 +79,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Fast electromagnetic transient simul
 - [[topics/co-simulation|混合仿真]]
 - [[环流抑制|环流抑制]]
 - [[电压均衡控制|电压均衡控制]]
-- [[直流输电|直流输电]]
+- [[topics/vsc-hvdc|直流输电]]
 
 ## 主要发现
 

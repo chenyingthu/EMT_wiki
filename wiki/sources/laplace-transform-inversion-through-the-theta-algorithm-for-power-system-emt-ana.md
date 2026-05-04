@@ -64,7 +64,7 @@ sources: ["EMT_Doc/25/Castañón 等 - 2021 - Laplace transform inversion throug
 - [[padé逼近|Padé逼近]]
 - [[shanks变换|Shanks变换]]
 - [[epsilon算法|Epsilon算法]]
-- [[快速傅里叶变换|快速傅里叶变换]]
+- [[methods/fft|快速傅里叶变换]]
 
 ## 涉及的模型
 

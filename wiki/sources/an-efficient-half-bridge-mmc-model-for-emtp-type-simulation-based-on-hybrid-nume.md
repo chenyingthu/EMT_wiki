@@ -60,7 +60,7 @@ sources: ["EMT_Doc/07&08/An Efficient Half-Bridge MMC Model for EMTP-Type Simula
 
 - [[混合数值积分|混合数值积分]]
 - [[中点法|中点法]]
-- [[梯形法|梯形法]]
+- [[methods/numerical-integration|梯形法]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[methods/norton-equivalent|诺顿等效]]
 - [[临界阻尼调整|临界阻尼调整]]

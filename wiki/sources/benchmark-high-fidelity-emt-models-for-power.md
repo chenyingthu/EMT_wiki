@@ -58,7 +58,7 @@ sources: ["EMT_Doc/10/Marthi 等 - 2024 - Benchmark High-Fidelity EMT Models for
 
 ## 使用的方法
 
-- [[微分代数方程|微分代数方程]]
+- [[methods/dae-solvers|微分代数方程]]
 - [[二阶梯形积分|二阶梯形积分]]
 - [[kron降阶法|Kron降阶法]]
 - [[dae聚类与聚合|DAE聚类与聚合]]

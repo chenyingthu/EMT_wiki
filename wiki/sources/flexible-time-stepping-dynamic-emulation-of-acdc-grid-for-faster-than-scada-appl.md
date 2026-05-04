@@ -80,7 +80,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrs.2020.3038850.pdf.pdf"]
 - [[硬件仿真|硬件仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[动态安全评估|动态安全评估]]
-- [[交直流混合电网|交直流混合电网]]
+- [[topics/hybrid-acdc-network|交直流混合电网]]
 - [[topics/electromechanical-transient|暂态稳定分析]]
 - [[预测控制|预测控制]]
 

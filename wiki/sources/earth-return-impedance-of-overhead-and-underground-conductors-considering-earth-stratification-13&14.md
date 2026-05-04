@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2008.923816.pdf.pdf"]
 - [[赫兹矢量法|赫兹矢量法]]
 - [[电磁场解析法|电磁场解析法]]
 - [[互易定理|互易定理]]
-- [[数值积分法|数值积分法]]
+- [[methods/numerical-integration|数值积分法]]
 - [[准tem模假设|准TEM模假设]]
 
 ## 涉及的模型

@@ -80,7 +80,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 - [[topics/co-simulation|协同仿真]]
 - [[多步长仿真|多步长仿真]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
-- [[离线仿真|离线仿真]]
+- [[topics/emt-simulation|离线仿真]]
 
 ## 主要发现
 

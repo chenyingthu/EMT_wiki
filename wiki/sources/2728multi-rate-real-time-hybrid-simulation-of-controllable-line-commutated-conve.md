@@ -80,7 +80,7 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 - [[methods/multirate-method|多速率仿真]]
 - [[异构并行计算|异构并行计算]]
 - [[高压直流输电建模|高压直流输电建模]]
-- [[开关暂态分析|开关暂态分析]]
+- [[topics/emt-simulation|开关暂态分析]]
 
 ## 主要发现
 

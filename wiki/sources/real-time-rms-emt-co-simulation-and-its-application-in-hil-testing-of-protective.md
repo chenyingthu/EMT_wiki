@@ -81,7 +81,7 @@ sources: ["EMT_Doc/32/j.epsr.2021.107326.pdf.pdf"]
 - [[methods/hil-simulation|硬件在环]]
 - [[多域仿真|多域仿真]]
 - [[继电保护测试|继电保护测试]]
-- [[网络解耦|网络解耦]]
+- [[topics/parallel-computing|网络解耦]]
 
 ## 主要发现
 

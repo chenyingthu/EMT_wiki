@@ -59,11 +59,11 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 ## 使用的方法
 
 - [[methods/average-value-model|补偿法]]
-- [[节点分析|节点分析]]
+- [[methods/nodal-analysis|节点分析]]
 - [[methods/nodal-analysis|戴维南等效]]
 - [[稀疏lu分解|稀疏LU分解]]
 - [[topics/parallel-computing|并行计算]]
-- [[网络解耦|网络解耦]]
+- [[topics/parallel-computing|网络解耦]]
 
 ## 涉及的模型
 
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[并行仿真|并行仿真]]
+- [[topics/parallel-computing|并行仿真]]
 - [[methods/hil-simulation|硬件在环]]
-- [[网络解耦|网络解耦]]
-- [[开关暂态分析|开关暂态分析]]
+- [[topics/parallel-computing|网络解耦]]
+- [[topics/emt-simulation|开关暂态分析]]
 
 ## 主要发现
 

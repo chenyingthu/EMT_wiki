@@ -77,7 +77,7 @@ sources: ["EMT_Doc/24/TPWRD.2020.3017084.pdf.pdf"]
 - [[接口延迟|接口延迟]]
 - [[topics/hybrid-acdc-network|交直流电网]]
 - [[动态相量映射|动态相量映射]]
-- [[网络分区|网络分区]]
+- [[topics/parallel-computing|网络分区]]
 
 ## 主要发现
 

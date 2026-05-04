@@ -58,7 +58,7 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 
 ## 使用的方法
 
-- [[联合仿真|联合仿真]]
+- [[topics/co-simulation|联合仿真]]
 - [[准静态时间序列分析|准静态时间序列分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[戴维南等效提取|戴维南等效提取]]

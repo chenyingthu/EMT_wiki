@@ -60,7 +60,7 @@ sources: ["EMT_Doc/26/Dehkordi 等 - 2026 - Modeling of cross-magnetization effe
 
 - [[耦合电路法|耦合电路法]]
 - [[dq0双反应理论|dq0双反应理论]]
-- [[实时数字仿真|实时数字仿真]]
+- [[topics/real-time-simulation|实时数字仿真]]
 - [[磁动势幅值与角度评估法|磁动势幅值与角度评估法]]
 
 ## 涉及的模型

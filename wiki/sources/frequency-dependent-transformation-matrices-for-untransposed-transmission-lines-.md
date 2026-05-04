@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 
 ## 使用的方法
 
-- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[methods/nodal-analysis|牛顿-拉夫逊法]]
 - [[特征值对角化算法|特征值对角化算法]]
 - [[模态跟踪技术|模态跟踪技术]]
 - [[methods/vector-fitting|有理函数拟合]]

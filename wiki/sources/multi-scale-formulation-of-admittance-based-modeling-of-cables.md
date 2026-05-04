@@ -74,11 +74,11 @@ sources: ["EMT_Doc/27&28/Multi-scale formulation of admittance-based modeling of
 
 ## 相关主题
 
-- [[多尺度仿真|多尺度仿真]]
+- [[topics/co-simulation|多尺度仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电暂态联合仿真|机电暂态联合仿真]]
-- [[变步长仿真|变步长仿真]]
+- [[methods/multirate-method|变步长仿真]]
 
 ## 主要发现
 

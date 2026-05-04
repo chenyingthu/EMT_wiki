@@ -58,7 +58,7 @@ sources: ["EMT_Doc/10/Azevedo 等 - 2024 - Comparison of soil modeling concernin
 
 ## 使用的方法
 
-- [[矩量法-mom|矩量法(MoM)]]
+- [[methods/vector-fitting|矩量法(MoM)]]
 - [[全波电磁仿真|全波电磁仿真]]
 - [[atp电磁暂态仿真|ATP电磁暂态仿真]]
 - [[集中参数电路模型|集中参数电路模型]]

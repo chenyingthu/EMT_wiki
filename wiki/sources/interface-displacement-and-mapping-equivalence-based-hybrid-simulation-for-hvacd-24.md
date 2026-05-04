@@ -69,7 +69,7 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 - [[vsc-hvdc|VSC-HVDC]]
 - [[交流系统等效电源|交流系统等效电源]]
 - [[受控电流源|受控电流源]]
-- [[交直流混合电网|交直流混合电网]]
+- [[topics/hybrid-acdc-network|交直流混合电网]]
 
 ## 相关主题
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 - [[接口延迟|接口延迟]]
 - [[动态相量|动态相量]]
 - [[topics/hybrid-acdc-network|交直流电网]]
-- [[网络分区|网络分区]]
+- [[topics/parallel-computing|网络分区]]
 
 ## 主要发现
 

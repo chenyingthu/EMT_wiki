@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 ## 使用的方法
 
-- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[methods/nodal-analysis|牛顿-拉夫逊法]]
 - [[支路电流法|支路电流法]]
 - [[直角坐标法|直角坐标法]]
 - [[雅可比矩阵构建|雅可比矩阵构建]]

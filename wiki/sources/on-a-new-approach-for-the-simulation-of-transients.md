@@ -68,7 +68,7 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 
 - [[理想电压源|理想电压源]]
 - [[理想变压器|理想变压器]]
-- [[理想开关|理想开关]]
+- [[models/ideal-switch-model|理想开关]]
 - [[models/synchronous-machine-model|电机模型]]
 - [[非线性设备|非线性设备]]
 - [[控制系统|控制系统]]

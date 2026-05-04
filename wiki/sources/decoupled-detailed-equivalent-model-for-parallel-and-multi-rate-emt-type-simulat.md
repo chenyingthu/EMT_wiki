@@ -62,7 +62,7 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 - [[开关插值技术|开关插值技术]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[混合并行计算|混合并行计算]]
-- [[等效电路建模|等效电路建模]]
+- [[methods/average-value-model|等效电路建模]]
 
 ## 涉及的模型
 
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 - [[topics/energy-storage|BESS]]
 - [[models/mmc-model|子模块]]
 - [[dc-dc变换器|DC-DC变换器]]
-- [[详细等效模型|详细等效模型]]
+- [[methods/average-value-model|详细等效模型]]
 
 ## 相关主题
 

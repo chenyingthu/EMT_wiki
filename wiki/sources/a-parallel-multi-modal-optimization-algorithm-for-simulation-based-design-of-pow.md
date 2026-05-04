@@ -71,7 +71,7 @@ sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]
 - [[基于仿真的优化设计|基于仿真的优化设计]]
 - [[多模态优化|多模态优化]]
 - [[topics/parallel-computing|并行计算]]
-- [[灵敏度分析|灵敏度分析]]
+- [[methods/sensitivity-analysis|灵敏度分析]]
 - [[vsc-model|VSC]]
 
 ## 主要发现

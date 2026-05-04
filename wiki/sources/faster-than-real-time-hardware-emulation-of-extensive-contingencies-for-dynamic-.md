@@ -80,7 +80,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[topics/real-time-simulation|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[交直流混合电网|交直流混合电网]]
+- [[topics/hybrid-acdc-network|交直流混合电网]]
 - [[故障预想分析|故障预想分析]]
 
 ## 主要发现

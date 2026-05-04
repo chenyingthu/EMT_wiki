@@ -76,8 +76,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2015.2449754.pdf.pdf"]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[频域仿真|频域仿真]]
 - [[topics/network-equivalent|网络等值]]
-- [[变步长仿真|变步长仿真]]
-- [[开关暂态分析|开关暂态分析]]
+- [[methods/multirate-method|变步长仿真]]
+- [[topics/emt-simulation|开关暂态分析]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 
 ## 主要发现

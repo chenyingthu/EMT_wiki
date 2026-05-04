@@ -72,7 +72,7 @@ sources: ["EMT_Doc/31/Gao 等 - 2023 - Portal Analysis Approach Used for the Eff
 - [[储能系统|储能系统]]
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]
-- [[电力电子变压器|电力电子变压器]]
+- [[topics/power-electronics|电力电子变压器]]
 
 ## 相关主题
 

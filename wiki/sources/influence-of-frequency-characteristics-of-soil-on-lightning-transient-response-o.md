@@ -60,7 +60,7 @@ sources: ["EMT_Doc/24/Li 等 - 2016 - Influence of frequency characteristics of 
 
 - [[复返回平面法|复返回平面法]]
 - [[准模态法|准模态法]]
-- [[频变参数建模|频变参数建模]]
+- [[topics/frequency-dependent-modeling|频变参数建模]]
 - [[宽带介电谱测量|宽带介电谱测量]]
 
 ## 涉及的模型

@@ -67,7 +67,7 @@ CISS的实现前提是可获得GVSC平均值模型及外环控制参数。它以
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[多端直流系统|多端直流系统]]
+- [[topics/hybrid-acdc-network|多端直流系统]]
 - [[methods/average-value-model|平均值模型]]
 - [[风电场模型|风电场模型]]
 - [[models/transformer-model|变压器]]

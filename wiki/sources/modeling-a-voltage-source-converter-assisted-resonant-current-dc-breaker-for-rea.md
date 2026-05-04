@@ -80,7 +80,7 @@ sources: ["EMT_Doc/26/Mirhosseini 等 - 2020 - Modeling a voltage source convert
 - [[直流断路器建模|直流断路器建模]]
 - [[多端直流电网保护|多端直流电网保护]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[系统级仿真|系统级仿真]]
+- [[topics/large-scale-system-simulation|系统级仿真]]
 - [[故障开断特性|故障开断特性]]
 
 ## 主要发现

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 - [[多速率联合仿真|多速率联合仿真]]
 - [[移频相量法|移频相量法]]
-- [[网络分区|网络分区]]
+- [[topics/parallel-computing|网络分区]]
 - [[多域传输线模型|多域传输线模型]]
 - [[topics/frequency-dependent-modeling|频变建模]]
 - [[methods/numerical-integration|梯形积分法]]
@@ -81,7 +81,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 - [[topics/co-simulation|混合仿真]]
 - [[topics/wind-farm-modeling|风电场建模]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[网络分区|网络分区]]
+- [[topics/parallel-computing|网络分区]]
 
 ## 主要发现
 

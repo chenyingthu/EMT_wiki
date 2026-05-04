@@ -60,7 +60,7 @@ sources: ["EMT_Doc/26/Yao 等 - 2008 - Modeling and simulation of VSC-HVDC with 
 
 - [[topics/dynamic-phasor|动态相量法]]
 - [[时变傅里叶级数|时变傅里叶级数]]
-- [[开关函数法|开关函数法]]
+- [[methods/switching-function-method|开关函数法]]
 - [[平均值近似|平均值近似]]
 
 ## 涉及的模型

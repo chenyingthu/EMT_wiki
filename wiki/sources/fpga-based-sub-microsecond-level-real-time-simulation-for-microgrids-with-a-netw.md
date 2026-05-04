@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Xu 等 - 2020 - FPGA-Based Sub-Micro
 
 - [[topics/real-time-simulation|实时仿真]]
 - [[fpga仿真|FPGA仿真]]
-- [[网络解耦|网络解耦]]
+- [[topics/parallel-computing|网络解耦]]
 - [[topics/co-simulation|混合仿真]]
 - [[亚微秒级仿真|亚微秒级仿真]]
 - [[微电网建模|微电网建模]]

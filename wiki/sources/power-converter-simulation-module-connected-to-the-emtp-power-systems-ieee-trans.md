@@ -58,7 +58,7 @@ sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
 
 ## 使用的方法
 
-- [[节点分析|节点分析]]
+- [[methods/nodal-analysis|节点分析]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/average-value-model|补偿法]]
 - [[戴维南等值|戴维南等值]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
 
 - [[emtp仿真|EMTP仿真]]
 - [[换流器建模|换流器建模]]
-- [[混合仿真接口|混合仿真接口]]
+- [[topics/co-simulation|混合仿真接口]]
 - [[methods/numerical-integration|数值振荡抑制]]
 - [[变拓扑网络求解|变拓扑网络求解]]
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/01/Chen 等 - 2010 - A hybrid parallel computation algorithm 
 
 ## 使用的方法
 
-- [[隐式梯形积分法|隐式梯形积分法]]
+- [[methods/numerical-integration|隐式梯形积分法]]
 - [[诺顿等效模型|诺顿等效模型]]
 - [[多端口戴维南等效-mate|多端口戴维南等效(MATE)]]
 - [[元件级并行|元件级并行]]

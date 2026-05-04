@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2017 - Half-wavelength S
 ## 使用的方法
 
 - [[topics/dynamic-phasor|动态相量法]]
-- [[变步长仿真|变步长仿真]]
+- [[methods/multirate-method|变步长仿真]]
 - [[线性插值近似法|线性插值近似法]]
 - [[节点导纳矩阵交替求解|节点导纳矩阵交替求解]]
 - [[贝瑞隆模型|贝瑞隆模型]]

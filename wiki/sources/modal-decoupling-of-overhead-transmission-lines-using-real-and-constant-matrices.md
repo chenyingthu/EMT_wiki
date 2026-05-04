@@ -75,7 +75,7 @@ sources: ["EMT_Doc/26/Torrez Caballero 等 - 2017 - Modal decoupling of overhead
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[models/transmission-line-model|输电线路建模]]
 - [[模态解耦|模态解耦]]
-- [[频变参数建模|频变参数建模]]
+- [[topics/frequency-dependent-modeling|频变参数建模]]
 - [[线路长度影响分析|线路长度影响分析]]
 
 ## 主要发现

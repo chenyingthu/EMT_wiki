@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[时域分析|时域分析]]
+- [[topics/emt-simulation|时域分析]]
 - [[冲击暂态仿真|冲击暂态仿真]]
 - [[models/transmission-line-model|输电线路建模]]
 

@@ -74,7 +74,7 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 ## 相关主题
 
-- [[系统级仿真|系统级仿真]]
+- [[topics/large-scale-system-simulation|系统级仿真]]
 - [[环流分析|环流分析]]
 - [[电容电压纹波|电容电压纹波]]
 - [[参数选型|参数选型]]

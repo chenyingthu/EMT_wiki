@@ -75,7 +75,7 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2021 - A Comparative Study of Electromagnetic
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[网络方程建模|网络方程建模]]
-- [[混合仿真接口|混合仿真接口]]
+- [[topics/co-simulation|混合仿真接口]]
 - [[topics/parallel-computing|并行计算]]
 - [[系统特征值分析|系统特征值分析]]
 

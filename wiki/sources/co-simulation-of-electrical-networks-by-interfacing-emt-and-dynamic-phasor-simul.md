@@ -77,7 +77,7 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 
 - [[topics/co-simulation|混合仿真]]
 - [[methods/multirate-method|多速率仿真]]
-- [[网络分区|网络分区]]
+- [[topics/parallel-computing|网络分区]]
 - [[methods/harmonic-analysis-methods|谐波分析]]
 - [[methods/numerical-integration|数值稳定性]]
 - [[topics/wind-farm-modeling|风电场建模]]

@@ -77,7 +77,7 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[离线仿真|离线仿真]]
+- [[topics/emt-simulation|离线仿真]]
 - [[topics/co-simulation|混合仿真]]
 - [[电磁暂态与机电暂态接口|电磁暂态与机电暂态接口]]
 - [[topics/electromechanical-transient|暂态稳定分析]]

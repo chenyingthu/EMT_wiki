@@ -75,7 +75,7 @@ sources: ["EMT_Doc/03/TPWRD.2017.2690145.pdf.pdf"]
 - [[topics/co-simulation|混合仿真]]
 - [[分布式仿真|分布式仿真]]
 - [[topics/network-equivalent|网络等值]]
-- [[接口技术|接口技术]]
+- [[topics/co-simulation|接口技术]]
 - [[并行协调仿真|并行协调仿真]]
 - [[vsc-model|VSC]]
 

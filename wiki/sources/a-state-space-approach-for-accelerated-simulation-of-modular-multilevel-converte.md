@@ -59,7 +59,7 @@ sources: ["EMT_Doc/04/Zhao 等 - 2026 - A state-space approach for accelerated s
 ## 使用的方法
 
 - [[methods/state-space-method|状态空间法]]
-- [[降阶建模|降阶建模]]
+- [[methods/model-order-reduction|降阶建模]]
 - [[methods/numerical-integration|数值积分]]
 - [[分段线性开关模型|分段线性开关模型]]
 - [[电容电压均衡算法|电容电压均衡算法]]

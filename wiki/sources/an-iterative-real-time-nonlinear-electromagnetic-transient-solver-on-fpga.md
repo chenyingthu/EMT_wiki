@@ -77,7 +77,7 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[fpga硬件加速|FPGA硬件加速]]
+- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
 - [[topics/parallel-computing|并行计算]]
 - [[非线性网络求解|非线性网络求解]]
 - [[topics/emt-simulation|电磁暂态仿真]]

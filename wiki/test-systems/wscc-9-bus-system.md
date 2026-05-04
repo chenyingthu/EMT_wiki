@@ -622,11 +622,11 @@ mpc.branch = [
 ## 相关测试系统
 
 - [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
-- [[ieee-30-bus]] - IEEE 30节点系统
-- [[ieee-39-bus]] - IEEE 39节点系统(新英格兰系统)
-- [[ieee-57-bus]] - IEEE 57节点系统
-- [[ieee-118-bus]] - IEEE 118节点系统
-- [[wscc-9-bus]] - WSCC 9节点系统(本页)
+- [[test-systems/ieee-30-bus-system]] - IEEE 30节点系统
+- [[test-systems/ieee-39-bus-system]] - IEEE 39节点系统(新英格兰系统)
+- [[test-systems/ieee-57-bus-system]] - IEEE 57节点系统
+- [[test-systems/ieee-118-bus-system]] - IEEE 118节点系统
+- [[test-systems/wscc-9-bus-system]] - WSCC 9节点系统(本页)
 - [[cigre-b4]] - CIGRE B4直流测试系统
 
 ## 参考文献

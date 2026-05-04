@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/An improved approach for modeling lightning transients 
 
 ## 使用的方法
 
-- [[等效电路建模|等效电路建模]]
+- [[methods/average-value-model|等效电路建模]]
 - [[多导体系统离散化|多导体系统离散化]]
 - [[诺伊曼积分法|诺伊曼积分法]]
 - [[电磁类比法|电磁类比法]]

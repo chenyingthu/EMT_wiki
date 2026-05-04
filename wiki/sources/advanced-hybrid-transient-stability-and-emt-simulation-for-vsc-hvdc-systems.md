@@ -69,7 +69,7 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 
 - [[vsc-model|VSC]]
 - [[vsc-model|VSC]]
-- [[多端直流系统|多端直流系统]]
+- [[topics/hybrid-acdc-network|多端直流系统]]
 - [[海上风电场|海上风电场]]
 - [[锁相环模型|锁相环模型]]
 - [[故障穿越模型|故障穿越模型]]

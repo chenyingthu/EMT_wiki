@@ -59,7 +59,7 @@ sources: ["EMT_Doc/07&08/An Equivalent Hybrid Model for a Large-Scale Modular Mu
 ## 使用的方法
 
 - [[混合仿真建模|混合仿真建模]]
-- [[详细等效模型|详细等效模型]]
+- [[methods/average-value-model|详细等效模型]]
 - [[扩容控制结构|扩容控制结构]]
 - [[硬件在环-hil|硬件在环(HIL)]]
 

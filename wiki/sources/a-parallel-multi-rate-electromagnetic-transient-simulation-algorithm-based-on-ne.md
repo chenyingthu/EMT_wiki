@@ -62,7 +62,7 @@ sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic tran
 - [[传输线等效模型|传输线等效模型]]
 - [[methods/multirate-method|多速率仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[状态空间分析|状态空间分析]]
+- [[methods/state-space-method|状态空间分析]]
 
 ## 涉及的模型
 

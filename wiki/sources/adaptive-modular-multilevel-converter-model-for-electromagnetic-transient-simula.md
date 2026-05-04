@@ -61,7 +61,7 @@ sources: ["EMT_Doc/05/TPWRD.2020.2993502.pdf.pdf"]
 - [[模型切换技术|模型切换技术]]
 - [[methods/average-value-model|平均值模型]]
 - [[桥臂等效模型|桥臂等效模型]]
-- [[详细等效模型|详细等效模型]]
+- [[methods/average-value-model|详细等效模型]]
 - [[时域初始化|时域初始化]]
 - [[methods/norton-equivalent|诺顿等效]]
 

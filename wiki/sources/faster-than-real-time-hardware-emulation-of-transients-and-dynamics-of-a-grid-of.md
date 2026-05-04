@@ -61,7 +61,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[暂态稳定仿真|暂态稳定仿真]]
 - [[动态电压注入接口|动态电压注入接口]]
-- [[fpga并行计算|FPGA并行计算]]
+- [[methods/fpga-real-time-simulation|FPGA并行计算]]
 - [[topics/real-time-simulation|超实时仿真]]
 
 ## 涉及的模型

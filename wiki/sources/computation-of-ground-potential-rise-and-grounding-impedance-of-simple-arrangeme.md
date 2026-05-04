@@ -58,7 +58,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 ## 使用的方法
 
-- [[矩量法-mom|矩量法(MoM)]]
+- [[methods/vector-fitting|矩量法(MoM)]]
 - [[分层介质格林函数|分层介质格林函数]]
 - [[矢量拟合-vf|矢量拟合(VF)]]
 - [[递归卷积法|递归卷积法]]

@@ -74,7 +74,7 @@ sources: ["EMT_Doc/01/Wang 等 - 2026 - A component-level modeling and fine-grai
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[细粒度仿真|细粒度仿真]]
-- [[gpu加速|GPU加速]]
+- [[methods/gpu-accelerated-simulation|GPU加速]]
 - [[新能源并网建模|新能源并网建模]]
 
 ## 主要发现

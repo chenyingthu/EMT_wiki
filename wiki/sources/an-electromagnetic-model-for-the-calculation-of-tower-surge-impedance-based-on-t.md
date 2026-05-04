@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Model for the Calculation of Tower S
 
 ## 使用的方法
 
-- [[矩量法-mom|矩量法(MoM)]]
+- [[methods/vector-fitting|矩量法(MoM)]]
 - [[细线近似|细线近似]]
 - [[nec4数值电磁计算|NEC4数值电磁计算]]
 - [[频域阻抗分析|频域阻抗分析]]

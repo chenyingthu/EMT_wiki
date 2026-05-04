@@ -58,7 +58,7 @@ sources: ["EMT_Doc/09/Wang和Jatskevich - 2010 - Approximate voltage-behind-reac
 
 ## 使用的方法
 
-- [[隐式梯形积分法|隐式梯形积分法]]
+- [[methods/numerical-integration|隐式梯形积分法]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[电压后电抗法|电压后电抗法]]
 - [[methods/nodal-analysis|相域建模]]

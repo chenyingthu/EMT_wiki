@@ -61,7 +61,7 @@ sources: ["EMT_Doc/25/Matar和Iravani - 2011 - Massively parallel implementation
 - [[dq0变换模型|dq0变换模型]]
 - [[单步延迟接口法|单步延迟接口法]]
 - [[topics/parallel-computing|并行计算]]
-- [[fpga硬件实现|FPGA硬件实现]]
+- [[methods/fpga-real-time-simulation|FPGA硬件实现]]
 - [[常数电感矩阵离散化|常数电感矩阵离散化]]
 
 ## 涉及的模型

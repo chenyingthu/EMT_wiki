@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Shi和Liu - 2024 - Fixed-admittance 
 
 ## 使用的方法
 
-- [[隐式梯形积分法|隐式梯形积分法]]
+- [[methods/numerical-integration|隐式梯形积分法]]
 - [[伴随离散电路模型|伴随离散电路模型]]
 - [[虚拟阻抗补偿|虚拟阻抗补偿]]
 - [[恒导纳建模|恒导纳建模]]

@@ -75,7 +75,7 @@ MTOF的核心实现思路是把EMT数学模型先转成适合硬件流水/并行
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[fpga硬件加速|FPGA硬件加速]]
+- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
 - [[自动代码生成|自动代码生成]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力系统建模|电力系统建模]]

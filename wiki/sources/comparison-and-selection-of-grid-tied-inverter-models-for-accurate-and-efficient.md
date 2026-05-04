@@ -67,9 +67,9 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 ## 涉及的模型
 
-- [[并网逆变器|并网逆变器]]
+- [[models/gfl-inverter-model|并网逆变器]]
 - [[三相桥式逆变器|三相桥式逆变器]]
-- [[开关模型|开关模型]]
+- [[methods/switch-modeling|开关模型]]
 - [[methods/average-value-model|平均值模型]]
 - [[电压插值模型|电压插值模型]]
 - [[受控电流注入模型|受控电流注入模型]]

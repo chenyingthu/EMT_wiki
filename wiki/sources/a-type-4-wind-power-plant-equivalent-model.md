@@ -76,7 +76,7 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 - [[动态等值|动态等值]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/wind-farm-modeling|风电场建模]]
-- [[降阶建模|降阶建模]]
+- [[methods/model-order-reduction|降阶建模]]
 - [[宽频带响应|宽频带响应]]
 
 ## 主要发现

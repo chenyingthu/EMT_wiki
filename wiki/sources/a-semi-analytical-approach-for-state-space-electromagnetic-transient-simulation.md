@@ -58,7 +58,7 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 - [[半解析解法|半解析解法]]
 - [[微分变换法|微分变换法]]
 - [[methods/state-space-method|状态空间法]]
-- [[变步长仿真|变步长仿真]]
+- [[methods/multirate-method|变步长仿真]]
 - [[密集输出机制|密集输出机制]]
 - [[二分搜索增强二次插值|二分搜索增强二次插值]]
 

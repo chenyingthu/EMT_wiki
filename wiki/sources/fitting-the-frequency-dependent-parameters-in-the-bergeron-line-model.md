@@ -74,7 +74,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2014.07.023.pdf.pdf"]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[models/transmission-line-model|输电线路建模]]
-- [[时域分析|时域分析]]
+- [[topics/emt-simulation|时域分析]]
 - [[集肤效应|集肤效应]]
 
 ## 主要发现

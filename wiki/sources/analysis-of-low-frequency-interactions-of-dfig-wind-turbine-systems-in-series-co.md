@@ -61,7 +61,7 @@ Analysis of low frequency interactions of DFIG wind turbine systems in Aramis S.
 - [[methods/state-space-method|状态空间建模]]
 - [[methods/modal-analysis|模态分析]]
 - [[参与因子分析|参与因子分析]]
-- [[灵敏度分析|灵敏度分析]]
+- [[methods/sensitivity-analysis|灵敏度分析]]
 - [[组合扫描技术|组合扫描技术]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 

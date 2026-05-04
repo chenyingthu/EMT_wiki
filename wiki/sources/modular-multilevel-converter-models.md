@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 ## 使用的方法
 
 - [[methods/average-value-model|平均值模型]]
-- [[开关函数法|开关函数法]]
+- [[methods/switching-function-method|开关函数法]]
 - [[methods/nodal-analysis|等效电路法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/numerical-integration|后向欧拉法]]

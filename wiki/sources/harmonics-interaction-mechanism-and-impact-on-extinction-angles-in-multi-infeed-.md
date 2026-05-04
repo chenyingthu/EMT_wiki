@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Yao 等 - 2023 - Harmonics Interacti
 
 ## 使用的方法
 
-- [[等效电路建模|等效电路建模]]
+- [[methods/average-value-model|等效电路建模]]
 - [[谐波传递系数推导|谐波传递系数推导]]
 - [[关断角定量计算|关断角定量计算]]
 - [[电磁暂态仿真验证|电磁暂态仿真验证]]

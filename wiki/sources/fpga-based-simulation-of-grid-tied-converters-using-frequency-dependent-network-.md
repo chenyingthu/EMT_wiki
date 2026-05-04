@@ -78,7 +78,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 
 - [[topics/real-time-simulation|实时仿真]]
 - [[topics/real-time-simulation|超实时仿真]]
-- [[fpga硬件加速|FPGA硬件加速]]
+- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[methods/hil-simulation|硬件在环]]
 - [[资源优化|资源优化]]

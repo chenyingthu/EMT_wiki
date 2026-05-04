@@ -73,7 +73,7 @@ sources: ["EMT_Doc/13&14/files/J.EPSR.2021.107305.pdf-1.pdf"]
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[fpga硬件实现|FPGA硬件实现]]
+- [[methods/fpga-real-time-simulation|FPGA硬件实现]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/parallel-computing|并行计算]]
 - [[topics/emt-simulation|电磁暂态分析]]

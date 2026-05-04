@@ -68,16 +68,16 @@ sources: ["EMT_Doc/30/j.epsr.2021.107168.pdf.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[详细等效模型|详细等效模型]]
+- [[methods/average-value-model|详细等效模型]]
 - [[models/mmc-model|子模块]]
 - [[mmc-model|MMC]]
-- [[igbt|IGBT]]
+- [[models/igbt-model|IGBT]]
 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[离线仿真|离线仿真]]
+- [[topics/emt-simulation|离线仿真]]
 - [[多核cpu加速|多核CPU加速]]
 - [[mmc-model|MMC]]
 - [[电容均压|电容均压]]

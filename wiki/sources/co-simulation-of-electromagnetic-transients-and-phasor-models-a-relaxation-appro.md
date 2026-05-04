@@ -77,7 +77,7 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 ## 相关主题
 
 - [[topics/co-simulation|混合仿真]]
-- [[联合仿真|联合仿真]]
+- [[topics/co-simulation|联合仿真]]
 - [[topics/network-equivalent|网络等值]]
 - [[methods/multirate-method|多速率仿真]]
 - [[边界条件处理|边界条件处理]]

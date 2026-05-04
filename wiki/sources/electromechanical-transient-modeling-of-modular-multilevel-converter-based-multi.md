@@ -62,7 +62,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2014 - Electromechanical transient modeling of m
 - [[methods/power-flow-calculation|潮流计算]]
 - [[methods/nodal-analysis|等效电路法]]
 - [[动态过程定量分析|动态过程定量分析]]
-- [[节点分析|节点分析]]
+- [[methods/nodal-analysis|节点分析]]
 
 ## 涉及的模型
 

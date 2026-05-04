@@ -70,7 +70,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Gao 等 - 2022 - Fast Simulation Mod
 - [[两电平变换器|两电平变换器]]
 - [[三电平npc变换器|三电平NPC变换器]]
 - [[三电平t型变换器|三电平T型变换器]]
-- [[直流微电网|直流微电网]]
+- [[topics/microgrid-distribution-network|直流微电网]]
 
 ## 相关主题
 

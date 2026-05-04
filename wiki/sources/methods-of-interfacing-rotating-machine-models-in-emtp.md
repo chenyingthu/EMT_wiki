@@ -75,7 +75,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 ## 相关主题
 
-- [[接口技术|接口技术]]
+- [[topics/co-simulation|接口技术]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[emtp工具|EMTP工具]]
 - [[状态变量仿真|状态变量仿真]]

@@ -64,7 +64,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[methods/modal-analysis|模态分解]]
 - [[部分分式展开|部分分式展开]]
 - [[数值递归卷积|数值递归卷积]]
-- [[多尺度仿真|多尺度仿真]]
+- [[topics/co-simulation|多尺度仿真]]
 
 ## 涉及的模型
 

@@ -59,8 +59,8 @@ sources: ["EMT_Doc/22/j.epsr.2005.09.017.pdf-1.pdf"]
 ## 使用的方法
 
 - [[topics/dynamic-phasor|动态相量法]]
-- [[开关函数法|开关函数法]]
-- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[methods/switching-function-method|开关函数法]]
+- [[methods/nodal-analysis|牛顿-拉夫逊法]]
 - [[混合仿真算法|混合仿真算法]]
 - [[topics/electromechanical-transient|机电暂态建模]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/22/j.epsr.2005.09.017.pdf-1.pdf"]
 - [[topics/co-simulation|混合仿真]]
 - [[topics/electromechanical-transient|暂态稳定分析]]
 - [[交直流互联系统|交直流互联系统]]
-- [[接口算法|接口算法]]
+- [[topics/co-simulation|接口算法]]
 - [[topics/dynamic-phasor|动态相量建模]]
 
 ## 主要发现

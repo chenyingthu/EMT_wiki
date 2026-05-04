@@ -60,7 +60,7 @@ sources: ["EMT_Doc/05/Liu 等 - 2024 - Adaptive Variable Step Size Calculation M
 
 - [[有限元法|有限元法]]
 - [[本征正交分解-pod|本征正交分解(POD)]]
-- [[降阶建模|降阶建模]]
+- [[methods/model-order-reduction|降阶建模]]
 - [[αats自适应变步长算法|αATS自适应变步长算法]]
 - [[奇异值分解|奇异值分解]]
 - [[流热耦合计算|流热耦合计算]]

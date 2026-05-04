@@ -67,7 +67,7 @@ sources: ["EMT_Doc/03/TPWRD.2020.2984275.pdf.pdf"]
 - [[vsc-model|VSC]]
 - [[igbt-反并联二极管开关|IGBT/反并联二极管开关]]
 - [[直流侧电容|直流侧电容]]
-- [[交直流混合电网|交直流混合电网]]
+- [[topics/hybrid-acdc-network|交直流混合电网]]
 
 ## 相关主题
 

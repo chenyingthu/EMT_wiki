@@ -60,14 +60,14 @@ sources: ["EMT_Doc/27&28/Modeling of overhead transmission lines for trapped cha
 
 - [[methods/vector-fitting|矢量拟合]]
 - [[methods/numerical-integration|数值拉普拉斯变换]]
-- [[灵敏度分析|灵敏度分析]]
+- [[methods/sensitivity-analysis|灵敏度分析]]
 - [[methods/vector-fitting|有理函数拟合]]
 - [[相域直接拟合|相域直接拟合]]
 
 ## 涉及的模型
 
 - [[models/transmission-line-model|架空输电线路]]
-- [[频变模型|频变模型]]
+- [[topics/frequency-dependent-modeling|频变模型]]
 - [[宽频模型|宽频模型]]
 - [[集中参数模型|集中参数模型]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/27&28/Modeling of overhead transmission lines for trapped cha
 - [[残余电荷放电|残余电荷放电]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[输电线路暂态建模|输电线路暂态建模]]
-- [[开关暂态分析|开关暂态分析]]
+- [[topics/emt-simulation|开关暂态分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现

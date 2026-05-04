@@ -78,7 +78,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[大信号暂态分析|大信号暂态分析]]
-- [[系统级仿真|系统级仿真]]
+- [[topics/large-scale-system-simulation|系统级仿真]]
 - [[动态等值|动态等值]]
 - [[换流器控制|换流器控制]]
 

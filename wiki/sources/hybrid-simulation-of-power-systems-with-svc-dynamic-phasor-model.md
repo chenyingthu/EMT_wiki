@@ -60,7 +60,7 @@ sources: ["EMT_Doc/22/Zhijun 等 - 2009 - Hybrid simulation of power systems wit
 
 - [[topics/dynamic-phasor|动态相量法]]
 - [[topics/co-simulation|混合仿真]]
-- [[接口算法|接口算法]]
+- [[topics/co-simulation|接口算法]]
 - [[单相等效建模|单相等效建模]]
 - [[状态空间平均法|状态空间平均法]]
 

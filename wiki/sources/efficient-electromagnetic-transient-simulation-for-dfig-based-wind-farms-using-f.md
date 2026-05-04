@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/Yu 等 - 2024 - Efficient electromagnetic transie
 - [[methods/nodal-analysis|节点分析法]]
 - [[细粒度网络解耦|细粒度网络解耦]]
 - [[多线程并行计算|多线程并行计算]]
-- [[开关函数法|开关函数法]]
+- [[methods/switching-function-method|开关函数法]]
 - [[集中参数模型|集中参数模型]]
 
 ## 涉及的模型
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/13&14/files/Yu 等 - 2024 - Efficient electromagnetic transie
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[topics/wind-farm-modeling|风电场建模]]
-- [[网络解耦|网络解耦]]
+- [[topics/parallel-computing|网络解耦]]
 - [[大规模系统仿真|大规模系统仿真]]
 
 ## 主要发现

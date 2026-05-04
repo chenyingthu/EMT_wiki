@@ -74,7 +74,7 @@ sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmissi
 - [[topics/emt-simulation|电磁暂态]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[输电线路参数计算|输电线路参数计算]]
-- [[开关暂态分析|开关暂态分析]]
+- [[topics/emt-simulation|开关暂态分析]]
 - [[methods/modal-analysis|模态分析]]
 
 ## 主要发现

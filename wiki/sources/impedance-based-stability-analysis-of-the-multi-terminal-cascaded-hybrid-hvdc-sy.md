@@ -61,7 +61,7 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 - [[methods/impedance-modeling|阻抗建模]]
 - [[谐波状态空间法|谐波状态空间法]]
 - [[阻抗重塑|阻抗重塑]]
-- [[灵敏度分析|灵敏度分析]]
+- [[methods/sensitivity-analysis|灵敏度分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型

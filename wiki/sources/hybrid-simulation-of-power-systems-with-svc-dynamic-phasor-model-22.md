@@ -62,7 +62,7 @@ sources: ["EMT_Doc/22/j.ijepes.2009.01.002.pdf.pdf"]
 - [[topics/co-simulation|混合仿真]]
 - [[topics/electromechanical-transient|机电暂态仿真]]
 - [[时变傅里叶级数展开|时变傅里叶级数展开]]
-- [[接口算法|接口算法]]
+- [[topics/co-simulation|接口算法]]
 
 ## 涉及的模型
 

@@ -68,7 +68,7 @@ sources: ["EMT_Doc/12/1-s2.0-S014206152200254X-main.pdf"]
 - [[lcc-model|LCC]]
 - [[混合串联换流阀|混合串联换流阀]]
 - [[晶闸管|晶闸管]]
-- [[igbt|IGBT]]
+- [[models/igbt-model|IGBT]]
 - [[动态均压电路|动态均压电路]]
 
 ## 相关主题

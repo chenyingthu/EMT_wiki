@@ -76,8 +76,8 @@ sources: ["EMT_Doc/07&08/Analysis and Prospect of Development of China's Indepen
 - [[dc-pfc|DC-PFC]]
 - [[chb-dab|CHB-DAB]]
 - [[h桥子模块|H桥子模块]]
-- [[高频隔离变压器|高频隔离变压器]]
-- [[igbt|IGBT]]
+- [[models/transformer-model|高频隔离变压器]]
+- [[models/igbt-model|IGBT]]
 
 ## 相关主题
 

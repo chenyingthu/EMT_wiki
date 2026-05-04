@@ -68,8 +68,8 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 
 - [[mmc-model|MMC]]
 - [[cdsm|CDSM]]
-- [[igbt|IGBT]]
-- [[多端直流系统|多端直流系统]]
+- [[models/igbt-model|IGBT]]
+- [[topics/hybrid-acdc-network|多端直流系统]]
 
 ## 相关主题
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 - [[电热暂态|电热暂态]]
 - [[直流故障穿越|直流故障穿越]]
 - [[mmc-model|MMC]]
-- [[多端直流系统|多端直流系统]]
+- [[topics/hybrid-acdc-network|多端直流系统]]
 - [[硬件加速|硬件加速]]
 
 ## 主要发现

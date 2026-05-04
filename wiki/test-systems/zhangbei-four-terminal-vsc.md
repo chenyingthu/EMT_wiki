@@ -571,7 +571,7 @@ created: "2026-05-03"
 ### 其他测试系统
 - [[ieee-39-bus-system]] - IEEE 39节点系统
 - [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
-- [[ieee-118-bus]] - IEEE 118节点系统
+- [[test-systems/ieee-118-bus-system]] - IEEE 118节点系统
 - [[cigre-b4-57]] - CIGRE B4-57测试系统
 
 ## 参考文献

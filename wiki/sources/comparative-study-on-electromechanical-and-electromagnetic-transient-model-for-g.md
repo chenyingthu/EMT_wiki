@@ -70,7 +70,7 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 - [[mppt控制器|MPPT控制器]]
 - [[dc-dc变换器|DC/DC变换器]]
 - [[直流母线电容|直流母线电容]]
-- [[并网逆变器|并网逆变器]]
+- [[models/gfl-inverter-model|并网逆变器]]
 - [[机电暂态模型|机电暂态模型]]
 - [[电磁暂态模型|电磁暂态模型]]
 

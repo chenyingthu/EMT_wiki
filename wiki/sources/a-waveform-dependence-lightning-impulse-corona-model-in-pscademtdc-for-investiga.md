@@ -60,7 +60,7 @@ sources: ["EMT_Doc/05/Jiang 等 - 2024 - A waveform-dependence lightning impulse
 
 - [[临界体积法|临界体积法]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
+- [[methods/nodal-analysis|牛顿-拉夫逊法]]
 - [[无迭代求解算法|无迭代求解算法]]
 - [[电磁暂态程序仿真|电磁暂态程序仿真]]
 
